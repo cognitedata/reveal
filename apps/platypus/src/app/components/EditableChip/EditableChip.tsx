@@ -103,10 +103,10 @@ export const EditableChip = ({
         />
       ) : (
         <Tooltip content={tooltip} disabled={!tooltip} placement="bottom">
-          <Label hasValue={!!value} isLocked={!!isLocked}>
+          <Label isLocked={!!isLocked} isPlaceholder={!value}>
             <ValueWrapper>{value || placeholder}</ValueWrapper>
             {isLocked && <StyledIcon data-testid="icon-lock" type="Lock" />}
-            {!isLocked && value && (
+            {!isLocked && (
               <StyledButton
                 icon="Edit"
                 aria-label="Edit"
@@ -126,25 +126,25 @@ const ValueWrapper = styled.span`
   white-space: nowrap;
 `;
 
-const Label = styled.div<{ hasValue: boolean; isLocked: boolean }>`
+const Label = styled.div<{ isPlaceholder?: boolean; isLocked: boolean }>`
   align-items: center;
+  background: var(--cogs-surface--status-undefined--muted--hover);
+  border-radius: 6px;
+  display: inline-flex;
+  opacity: ${(props) => (props.isPlaceholder ? 0.5 : 1)};
+  color: ${(props) =>
+    props.isPlaceholder
+      ? 'var(--cogs-text-icon--muted)'
+      : 'var(--cogs-text-icon--medium)'};
   background: ${(props) =>
-    props.hasValue
+    props.isPlaceholder
       ? 'var(--cogs-surface--status-undefined--muted--hover)'
       : 'var(--cogs-surface--status-undefined--muted--default)'};
-  border-radius: 6px;
-  color: ${(props) =>
-    props.hasValue
-      ? 'var(--cogs-text-icon--medium)'
-      : 'var(--cogs-text-icon--muted)'};
-  display: inline-flex;
   height: 36px;
   margin: 0;
   max-width: 100%;
-  opacity: ${(props) => (props.hasValue ? 1 : 0.5)};
   padding-left: 12px;
-  padding-right: ${(props) =>
-    props.hasValue && !props.isLocked ? '0' : '12px'};
+  padding-right: ${(props) => (!props.isLocked ? '0' : '12px')};
 `;
 
 const StyledIcon = styled(Icon)`

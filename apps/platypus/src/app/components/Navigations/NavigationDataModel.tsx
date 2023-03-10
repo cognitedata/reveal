@@ -14,21 +14,25 @@ import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
 import { useState } from 'react';
 import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export const NavigationDataModel = () => {
   const { dataModelExternalId, space } = useParams();
   const { data: dataModel } = useDataModel(dataModelExternalId!, space!);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation('data-model-navigation');
 
   const renderTopBarRight = () => {
     return (
       <StyledTopBarRight>
-        <StyledButton
-          icon="Settings"
-          aria-label="Settings"
-          onClick={() => setIsSettingsModalVisible(true)}
-        />
+        <Tooltip content={t('tooltip-settings', 'Data model settings')}>
+          <StyledButton
+            icon="Settings"
+            aria-label="Settings"
+            onClick={() => setIsSettingsModalVisible(true)}
+          />
+        </Tooltip>
       </StyledTopBarRight>
     );
   };
@@ -37,7 +41,12 @@ export const NavigationDataModel = () => {
     return (
       <StyledTopBarLeft>
         <StyledFlex alignItems="center">
-          <Tooltip content="Go Back to data model list page">
+          <Tooltip
+            content={t(
+              'tooltip-header-back',
+              'Go back to data model list page'
+            )}
+          >
             <StyledTitleButton
               type="ghost"
               icon="ArrowLeft"

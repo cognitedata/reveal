@@ -42,7 +42,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { EndpointModal } from '../components/EndpointModal';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
 import {
@@ -134,7 +133,6 @@ export const DataModelPage = () => {
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
-  const [showEndpointModal, setShowEndpointModal] = useState(false);
   const [publishModalVersionType, setPublishModalVersionType] =
     useState<VersionType | null>(null);
   const [errorsByGroup, setErrorsByGroup] = useState<ErrorsByGroup>({
@@ -145,7 +143,6 @@ export const DataModelPage = () => {
     TOKENS.dataModelTypeDefsBuilderService
   );
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
-  const fdmClient = useInjection(TOKENS.fdmClient);
 
   /*
   If in view mode and there are no published versions, set to edit mode. This should
@@ -408,7 +405,6 @@ export const DataModelPage = () => {
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
             onPublishClick={handleClickPublish}
-            onEndpointClick={() => setShowEndpointModal(true)}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
             selectedDataModelVersion={selectedDataModelVersion}
@@ -462,16 +458,8 @@ export const DataModelPage = () => {
               </Flex>
             }
           />
-          )
         </PageContentLayout.Body>
       </PageContentLayout>
-
-      {showEndpointModal && (
-        <EndpointModal
-          endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}
-          onRequestClose={() => setShowEndpointModal(false)}
-        />
-      )}
 
       {publishModalVersionType && (
         <PublishVersionModal

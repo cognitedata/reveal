@@ -28,7 +28,6 @@ export interface DataModelHeaderProps {
   onDiscardClick: () => void;
   onPublishClick: () => void;
   onDataModelVersionSelect: (schema: DataModelVersion) => void;
-  onEndpointClick: () => void;
   selectedDataModelVersion: DataModelVersion;
   title: string;
 }
@@ -44,7 +43,6 @@ export const DataModelHeader = ({
   onDiscardClick,
   onPublishClick,
   onDataModelVersionSelect,
-  onEndpointClick,
   selectedDataModelVersion,
   title,
 }: DataModelHeaderProps) => {
@@ -247,14 +245,6 @@ export const DataModelHeader = ({
             {t('edit_data_model', 'Edit data model')}
           </Button>
         </Tooltip>
-        <Button
-          style={{ marginRight: '8px' }}
-          icon="Link"
-          data-cy="btn-endpoint-modal"
-          onClick={onEndpointClick}
-        >
-          URL
-        </Button>
         {docLink}
       </Flex>
     );
