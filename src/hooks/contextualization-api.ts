@@ -255,6 +255,30 @@ export const useCreateEMModel = () => {
           }, [])
         : undefined;
 
+      const filteredSources = sources.map((source) => {
+        const keys = Object.keys(source);
+        const filteredSource: Record<string, unknown> = {};
+        keys
+          .filter((key) => matchFields.some(({ source }) => source === key))
+          .forEach((key) => {
+            filteredSource[key] = (source as any)[key];
+          });
+        filteredSource.id = source.id;
+        return filteredSource;
+      });
+
+      const filteredTargets = targetsList.map((target) => {
+        const keys = Object.keys(target);
+        const filteredTarget: Record<string, unknown> = {};
+        keys
+          .filter((key) => matchFields.some(({ target }) => target === key))
+          .forEach((key) => {
+            filteredTarget[key] = (target as any)[key];
+          });
+        filteredTarget.id = target.id;
+        return filteredTarget;
+      });
+
       return sdk
         .post<EntityMatchingModel>(
           `/api/v1/projects/${sdk.project}/context/entitymatching`,
@@ -262,8 +286,8 @@ export const useCreateEMModel = () => {
             data: {
               ignoreMissingFields: true,
               featureType,
-              sources,
-              targets: targetsList,
+              sources: filteredSources,
+              targets: filteredTargets,
               trueMatches,
               matchFields: matchFields.filter(
                 ({ source, target }) => !!source && !!target
