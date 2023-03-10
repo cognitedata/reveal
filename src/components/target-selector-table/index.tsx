@@ -2,7 +2,7 @@ import { Checkbox, Flex } from '@cognite/cogs.js';
 import { Input } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
-import AssetTable from 'components/resource-selector-table/AssetTable';
+import AssetTable from 'components/source-selector-table/AssetTable';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import { getAdvancedFilter } from 'utils';
 import { useMemo } from 'react';

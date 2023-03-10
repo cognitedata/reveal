@@ -4,42 +4,68 @@ import { Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
-import { RawAsset } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { RawFileInfo } from 'types/api';
+import { SourceTableProps } from 'types/types';
+import { useSearch } from 'hooks/search';
 
-type AssetListTableRecord = { key: string } & Pick<
-  RawAsset,
-  'name' | 'rootId' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
-type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
+type FileInfoListTableRecord = { key: string } & RawFileInfo;
+type FileInfoListTableRecordCT = ColumnType<FileInfoListTableRecord> & {
   title: string;
-  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
-export default function AssetTable({
+export default function FileInfoTable({
   selected,
   setSelected,
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
+  query,
+}: SourceTableProps) {
   const { t } = useTranslation();
-  const { data, isInitialLoading, error } = useList('assets', {
+
+  const {
+    data: listData,
+    isInitialLoading: listLoading,
+    error: listError,
+  } = useList('files', {
     filter,
     advancedFilter,
+    limit: 100,
   });
 
-  const dataSource = useMemo(
+  const {
+    data: searchData,
+    isInitialLoading: searchLoading,
+    error: searchError,
+  } = useSearch(
+    'files',
+    { name: query },
+    {
+      filter,
+      advancedFilter,
+    },
+    { enabled: !!query }
+  );
+
+  const items = useMemo(
     () =>
-      data?.map((a) => ({
+      (query ? searchData : listData)?.map((a) => ({
         ...a,
         key: a.id.toString(),
         disabled: allSources,
       })) || [],
-    [data, allSources]
+    [listData, allSources, query, searchData]
   );
 
-  const columns: AssetListTableRecordCT[] = useMemo(
+  const isInitialLoading = query ? searchLoading : listLoading;
+  const error = query ? searchError : listError;
+
+  const dataSource = items?.map((file) => ({
+    ...file,
+    disabled: allSources,
+  }));
+
+  const columns: FileInfoListTableRecordCT[] = useMemo(
     () => [
       {
         title: t('resource-table-column-name'),
@@ -47,9 +73,14 @@ export default function AssetTable({
         key: 'name',
       },
       {
-        title: t('resource-table-column-description'),
-        dataIndex: 'description',
-        key: 'description',
+        title: t('resource-table-column-mimeType'),
+        dataIndex: 'mimeType',
+        key: 'mimeType',
+      },
+      {
+        title: t('resource-table-column-directory'),
+        dataIndex: 'directory',
+        key: 'directory',
       },
       {
         title: t('resource-table-column-lastUpdated'),
@@ -65,12 +96,13 @@ export default function AssetTable({
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
+
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+    onChange(_: (string | number)[], rows: FileInfoListTableRecord[]) {
+      setSelected(rows);
     },
     hideSelectAll: true,
-    getCheckboxProps(_: AssetListTableRecord) {
+    getCheckboxProps(_: any) {
       return {
         disabled: allSources,
       };
@@ -88,13 +120,13 @@ export default function AssetTable({
   }
 
   return (
-    <Table<AssetListTableRecord>
+    <Table<FileInfoListTableRecord>
       loading={isInitialLoading}
       columns={columns}
       emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      dataSource={dataSource}
+      dataSource={dataSource || []}
     />
   );
 }

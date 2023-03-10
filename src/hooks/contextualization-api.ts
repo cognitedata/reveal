@@ -3,7 +3,6 @@ import {
   CogniteError,
   EntityMatchingModel,
   EntityMatchingPredictResponse,
-  InternalId,
 } from '@cognite/sdk';
 import {
   QueryKey,
@@ -16,6 +15,15 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
+import {
+  RawCogniteEvent,
+  RawFileInfo,
+  RawSource,
+  RawTarget,
+  RawTimeseries,
+  SourceType,
+} from 'types/api';
+import { filterFieldsFromObjects } from 'utils';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -203,50 +211,64 @@ type ConfirmedMatch = {
 
 export const useCreateEMModel = () => {
   const sdk = useSDK();
-  const queryClient = useQueryClient();
 
   return useMutation(
     ['create-em-model'],
     async ({
+      sourceType,
       sources,
       targetsList,
       matchFields,
       featureType,
       supervisedMode,
     }: {
-      sources: any[];
-      targetsList: InternalId[];
+      sourceType: SourceType;
+      sources: RawSource[];
+      targetsList: RawTarget[];
       matchFields: ModelMapping;
       featureType: EMFeatureType;
       supervisedMode?: boolean;
     }) => {
-      const targets = await queryClient.fetchQuery(
-        getQMTargetDownloadKey(),
-        async () => {
-          const assets = await sdk.assets.retrieve(targetsList);
-          return assets.map(({ id, externalId, name }) => ({
-            id,
-            externalId,
-            name,
-          }));
-        }
-      );
-
       const trueMatches = supervisedMode
-        ? sources.reduce(
-            (accl: ConfirmedMatch[], ts) =>
-              ts.assetId
+        ? sources.reduce((accl: ConfirmedMatch[], item) => {
+            if (sourceType === 'events' || sourceType === 'timeseries') {
+              return (item as RawFileInfo | RawCogniteEvent).assetIds
                 ? [
                     ...accl,
-                    {
-                      sourceId: ts.id,
-                      targetId: ts.assetId,
-                    },
+                    ...((item as RawFileInfo | RawCogniteEvent).assetIds?.map(
+                      (assetId) => ({
+                        sourceId: item.id,
+                        targetId: assetId,
+                      })
+                    ) ?? []),
                   ]
-                : accl,
-            []
-          )
+                : accl;
+            }
+            return !!(item as RawTimeseries).assetId
+              ? [
+                  ...accl,
+                  {
+                    sourceId: item.id,
+                    targetId: (item as RawTimeseries).assetId as number,
+                  },
+                ]
+              : accl;
+          }, [])
         : undefined;
+
+      const filteredSources = filterFieldsFromObjects(sources, [
+        'id',
+        ...matchFields
+          .filter((source) => !!source)
+          .map(({ source }) => source as string),
+      ]);
+
+      const filteredTargets = filterFieldsFromObjects(targetsList, [
+        'id',
+        ...matchFields
+          .filter((target) => !!target)
+          .map(({ target }) => target as string),
+      ]);
 
       return sdk
         .post<EntityMatchingModel>(
@@ -255,8 +277,8 @@ export const useCreateEMModel = () => {
             data: {
               ignoreMissingFields: true,
               featureType,
-              sources,
-              targets,
+              sources: filteredSources,
+              targets: filteredTargets,
               trueMatches,
               matchFields: matchFields.filter(
                 ({ source, target }) => !!source && !!target

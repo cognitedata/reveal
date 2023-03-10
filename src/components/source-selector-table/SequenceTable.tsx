@@ -1,34 +1,30 @@
 import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
-import { RawCogniteEvent } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { RawSequence } from 'types/api';
+import { SourceTableProps } from 'types/types';
 
-type EventListTableRecord = { key: string } & Pick<
-  RawCogniteEvent,
-  'dataSetId' | 'id' | 'description' | 'lastUpdatedTime' | 'type' | 'subtype'
->;
-type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
+type SequenceListTableRecord = { key: string } & RawSequence;
+type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
   title: string;
 };
 
-export default function EventTable({
+export default function SequenceTable({
   selected,
   setSelected,
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
-  const {
-    data,
-    isInitialLoading: listLoading,
-    error,
-  } = useList('events', { filter, advancedFilter, limit: 100 });
+}: SourceTableProps) {
+  const { data, isInitialLoading, error } = useList('sequences', {
+    filter,
+    advancedFilter,
+    limit: 100,
+  });
 
-  const loading = listLoading;
   const { t } = useTranslation();
 
   const items = useMemo(
@@ -45,22 +41,17 @@ export default function EventTable({
     disabled: allSources,
   }));
 
-  const columns: EventListTableRecordCT[] = useMemo(
+  const columns: SequenceListTableRecordCT[] = useMemo(
     () => [
+      {
+        title: t('resource-table-column-name'),
+        dataIndex: 'name',
+        key: 'name',
+      },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
-      },
-      {
-        title: t('resource-table-column-type'),
-        dataIndex: 'type',
-        key: 'type',
-      },
-      {
-        title: t('resource-table-column-subtype'),
-        dataIndex: 'subtype',
-        key: 'subtype',
       },
       {
         title: t('resource-table-column-lastUpdated'),
@@ -78,8 +69,8 @@ export default function EventTable({
       : selected.map((s) => s.id.toString()),
 
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: EventListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+    onChange(_: (string | number)[], rows: SequenceListTableRecord[]) {
+      setSelected(rows);
     },
     hideSelectAll: true,
     getCheckboxProps(_: any) {
@@ -99,15 +90,11 @@ export default function EventTable({
     );
   }
 
-  if (listLoading) {
-    return <Loader />;
-  }
-
   return (
-    <Table<EventListTableRecord>
-      loading={loading}
+    <Table<SequenceListTableRecord>
+      loading={isInitialLoading}
       columns={columns}
-      emptyContent={loading ? <Icon type="Loader" /> : undefined}
+      emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}

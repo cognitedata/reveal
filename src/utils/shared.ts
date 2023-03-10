@@ -176,3 +176,16 @@ export const getAdvancedFilter = ({
       }
     : undefined;
 };
+
+export const filterFieldsFromObjects = (
+  arr: Record<string, any>[],
+  keys: string[]
+): Record<string, any>[] => {
+  return arr.map((item) => {
+    const filteredItem: Record<string, any> = {};
+    keys.forEach((key: string) => {
+      filteredItem[key] = key.split('.').reduce((acc, k) => acc[k], item);
+    });
+    return filteredItem;
+  });
+};
