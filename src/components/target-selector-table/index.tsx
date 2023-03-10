@@ -1,40 +1,28 @@
 import { Checkbox, Flex } from '@cognite/cogs.js';
-import { Select, Input } from 'antd';
+import { Input } from 'antd';
 import { useSearchParams } from 'react-router-dom';
-
-import { useTranslation } from 'common';
 import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
 import AssetTable from 'components/source-selector-table/AssetTable';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
-import { useAllDataSets } from 'hooks/datasets';
 import { getAdvancedFilter } from 'utils';
 import { useMemo } from 'react';
 import ResourceCount from 'components/resource-count';
+import { DataSetSelect } from 'components/data-set-select';
 
 type Props = {};
 
 export default function TargetSelectionTable({}: Props) {
-  const { t } = useTranslation();
   const {
     targetsList,
     setTargetsList,
     targetFilter,
     setTargetFilter,
-
     allTargets,
     setAllTargets,
   } = useQuickMatchContext();
 
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
-  const { data: datasets, isInitialLoading } = useAllDataSets({
-    select(items) {
-      return items.map(({ id, name }) => ({
-        value: id,
-        label: name || id.toString(),
-      }));
-    },
-  });
 
   const query = searchParams.get(TARGET_TABLE_QUERY_KEY);
   const advancedFilter = useMemo(
@@ -46,21 +34,8 @@ export default function TargetSelectionTable({}: Props) {
     <Flex direction="column">
       <Flex justifyContent="space-between">
         <Flex gap={12}>
-          <Select
-            mode="multiple"
-            allowClear
-            placeholder={t('resource-type-datasets', {
-              count: 0,
-            })}
-            style={{ width: 120 }}
-            loading={isInitialLoading}
-            optionFilterProp="label"
-            options={datasets}
-            value={datasets
-              ?.filter(({ value }) =>
-                targetFilter.dataSetIds?.find(({ id }) => id === value)
-              )
-              .map((ds) => ds.value)}
+          <DataSetSelect
+            api="assets"
             onChange={(e: number[]) => {
               setTargetFilter({
                 ...targetFilter,
@@ -72,6 +47,7 @@ export default function TargetSelectionTable({}: Props) {
                     : undefined,
               });
             }}
+            selected={targetFilter.dataSetIds?.map((ds) => ds.id) || []}
           />
           <Input.Search
             style={{ width: 120 }}

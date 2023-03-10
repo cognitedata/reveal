@@ -1,6 +1,7 @@
 {
   "cancel": "Cancel",
   "create-pipeline": "Create pipeline",
+  "dataset-error-body": "An error occurred while retrieving data sets: '{{error}}'",
   "error": "Error",
   "entity-matching-pipelines": "Entity Matching pipelines",
   "error-403-description": "No do not have access to the selected resource type.",
