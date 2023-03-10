@@ -1,5 +1,4 @@
 import { Checkbox, Flex } from '@cognite/cogs.js';
-import { Input } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
 import AssetTable from 'components/source-selector-table/AssetTable';
@@ -8,6 +7,7 @@ import { getAdvancedFilter } from 'utils';
 import { useMemo } from 'react';
 import ResourceCount from 'components/resource-count';
 import { DataSetSelect } from 'components/data-set-select';
+import SearchInput from 'components/search-input';
 
 type Props = {};
 
@@ -49,8 +49,7 @@ export default function TargetSelectionTable({}: Props) {
             }}
             selected={targetFilter.dataSetIds?.map((ds) => ds.id) || []}
           />
-          <Input.Search
-            style={{ width: 120 }}
+          <SearchInput
             disabled={allTargets}
             value={query || ''}
             onChange={(e) => {

@@ -19,7 +19,7 @@ import { PipelineTableTypes } from 'types/types';
 import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
 
 import { stringContains } from 'utils/shared';
-import EntityMatchingFilter from 'components/em-filter/EntityMatchingFilter';
+
 import { useSearchParams } from 'react-router-dom';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 
@@ -34,7 +34,7 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
 
 const PipelineTable = (): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams('');
+  const [searchParams] = useSearchParams('');
   const { data, isInitialLoading } = useEMPipelines();
   const { mutate: deletePipeline } = useDeleteEMPipeline();
   const { mutate: duplicatePipeline } = useDuplicateEMPipeline();
@@ -184,10 +184,6 @@ const PipelineTable = (): JSX.Element => {
 
   return (
     <>
-      <EntityMatchingFilter
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
       <Table<PipelineListTableRecord>
         columns={columns}
         emptyContent={undefined}

@@ -1,11 +1,14 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Title, Flex } from '@cognite/cogs.js';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import { CreatePipelineButton } from 'components/create-pipeline-button/CreatePipelineButton';
 import PipelineList from 'components/pipeline-list';
+import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
+import NoWrapButton from 'components/no-wrap-button';
+import SearchInput from 'components/search-input';
 
 export default function RootList() {
   const { t } = useTranslation();
@@ -13,17 +16,39 @@ export default function RootList() {
     subAppPath: string;
   }>();
 
+  const [searchParams, setSearchParams] = useSearchParams('');
+
   return (
     <ListWrapper>
       <Title level={3}>{t('entity-matching-pipelines')}</Title>
-      <Link to={createLink(`/${subAppPath}/quick-match/create/select-sources`)}>
-        {t('quick-match')}
-      </Link>
-      <CreatePipelineButton />
+      <TopRow gap={22} alignItems="center" justifyContent="space-between">
+        <SearchInput
+          placeholder={t('filter-placeholder')}
+          onChange={(e) => {
+            searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
+            setSearchParams(searchParams);
+          }}
+          value={searchParams.get(SOURCE_TABLE_QUERY_KEY) || ''}
+        />
+        <Flex gap={12}>
+          <Link
+            to={createLink(`/${subAppPath}/quick-match/create/select-sources`)}
+          >
+            <NoWrapButton type="primary" icon="GanttChart">
+              {t('quick-match')}
+            </NoWrapButton>
+          </Link>
+          <CreatePipelineButton />
+        </Flex>
+      </TopRow>
       <PipelineList />
     </ListWrapper>
   );
 }
+
+const TopRow = styled(Flex)`
+  margin-top: 40px;
+`;
 
 const ListWrapper = styled(Flex).attrs({ direction: 'column' })`
   padding: 24px 40px;
