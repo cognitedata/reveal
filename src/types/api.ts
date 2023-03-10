@@ -4,6 +4,7 @@ import {
   CogniteEvent,
   InternalId,
   Timeseries,
+  Sequence,
 } from '@cognite/sdk';
 
 export type RawTimeseries = Omit<
@@ -32,12 +33,22 @@ export type RawFileInfo = Omit<FileInfo, 'lastUpdatedTime' | 'createdTime'> & {
   createdTime: number;
 };
 
+export type RawSequence = Omit<Sequence, 'lastUpdatedTime' | 'createdTime'> & {
+  lastUpdatedTime: number;
+  createdTime: number;
+};
+
 export type Filter = {
   dataSetIds?: InternalId[];
 };
 
-export const SOURCE_TYPES = ['timeseries', 'events', 'files'] as const;
+export const SOURCE_TYPES = [
+  'timeseries',
+  'events',
+  'files',
+  'sequences',
+] as const;
+
 export type SourceType = (typeof SOURCE_TYPES)[number];
 export type TargetType = 'assets';
-
 export type API = SourceType | TargetType;
