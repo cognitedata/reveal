@@ -3,6 +3,7 @@ import { Row, Col, Dropdown, Menu, Icon, Modal, Title } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
 import { format, formatDistance } from 'date-fns';
 import styled from 'styled-components';
+import { durationFormatter } from 'utils/date';
 import { AlertResponse } from './types';
 import { useAlertsResolveCreate } from './hooks';
 import {
@@ -55,13 +56,12 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
   const duration =
     alert.startTime &&
     alert.lastTriggeredTime &&
-    `- ${formatDistance(
-      new Date(alert.startTime),
-      new Date(alert.lastTriggeredTime)
-    )
-      .replace(/ minute[s]?/i, 'M')
-      .replace(/ hour[s]?/i, 'H')
-      .replace(/about /i, '~')}`;
+    durationFormatter(
+      `- ${formatDistance(
+        new Date(alert.startTime),
+        new Date(alert.lastTriggeredTime)
+      )}`
+    );
 
   return (
     <Row>

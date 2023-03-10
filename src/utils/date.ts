@@ -70,10 +70,18 @@ export const customFormatDuration = ({
 }) => {
   const durations = intervalToDuration({ start, end });
 
-  const regexMinutes = / minute(s)?/i;
-  const regexHours = / hour(s)?/i;
+  return durationFormatter(formatDuration(durations));
+};
 
-  return formatDuration(durations)
-    .replace(regexMinutes, 'm')
-    .replace(regexHours, 'h');
+export const durationFormatter = (date: string) => {
+  return date
+    .replace(/ less than a minute/i, ' < 1 min')
+    .replace(/ minute[s]?/i, ' min')
+    .replace(/ hour[s]?/i, ' hr')
+    .replace(/ day[s]?/i, ' day')
+    .replace(/ month[s]?/i, ' mo')
+    .replace(/ year[s]?/i, ' yr')
+    .replace(/about /i, '~')
+    .replace(/almost /i, '~')
+    .replace(/ over/i, ' >');
 };
