@@ -1,6 +1,6 @@
-import { InternalId } from '@cognite/sdk/dist/src';
 import { Dispatch, SetStateAction } from 'react';
-import { Filter } from './api';
+
+import { Filter, RawSource, RawTarget } from './api';
 
 export type PipelineTableTypes =
   | 'id'
@@ -11,11 +11,19 @@ export type PipelineTableTypes =
 
 export type PredictionsTableTypes = 'source' | 'matches';
 
-export type ResourceTableProps = {
+type TablePropsBase = {
   query?: string | null;
   advancedFilter?: any;
   filter: Filter;
-  selected: InternalId[];
-  setSelected: Dispatch<SetStateAction<InternalId[]>>;
   allSources: boolean;
+};
+
+export type SourceTableProps = TablePropsBase & {
+  selected: RawSource[];
+  setSelected: Dispatch<SetStateAction<RawSource[]>>;
+};
+
+export type TargetTableProps = TablePropsBase & {
+  selected: RawTarget[];
+  setSelected: Dispatch<SetStateAction<RawTarget[]>>;
 };

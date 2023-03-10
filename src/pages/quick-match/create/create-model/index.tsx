@@ -2,14 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Infobox } from '@cognite/cogs.js';
-import { useQueryClient } from '@tanstack/react-query';
 import { Navigate, useParams } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import {
-  getQMTargetDownloadKey,
   IN_PROGRESS_EM_STATES,
   useCreateEMModel,
   useCreateEMPredictionJob,
@@ -24,7 +22,6 @@ const CreateModel = (): JSX.Element => {
     subAppPath: string;
   }>();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const {
     sourceType,
     allSources,
@@ -34,8 +31,9 @@ const CreateModel = (): JSX.Element => {
     matchFields,
     supervisedMode,
     featureType,
-    scope,
     unmatchedOnly,
+    allTargets,
+    targetFilter,
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
 
@@ -44,21 +42,20 @@ const CreateModel = (): JSX.Element => {
 
   const { mutateAsync: buildModel, isLoading } = useCreateEMModel();
 
-  const targetState = queryClient.getQueryState(getQMTargetDownloadKey());
-
   const advancedFilter = useMemo(
     () => getAdvancedFilter({ api: sourceType, excludeMatched: unmatchedOnly }),
     [unmatchedOnly, sourceType]
   );
 
+  // fetch sources if "select all" option is applied
+
   const {
     data: sourcePages,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-    isFetching: sourceFetching,
-    isError: sourceError,
-    isFetched,
+    isFetchingNextPage: isFetchingNextSourcePage,
+    fetchNextPage: fetchNextSourcePage,
+    hasNextPage: hasNextSourcePage,
+    isFetching: isFetchingSource,
+    isError: isSourceError,
   } = useInfiniteList(
     sourceType,
     10,
@@ -71,17 +68,19 @@ const CreateModel = (): JSX.Element => {
     }
   );
 
-  const sourceStatus = bulkDownloadStatus({
-    isError: sourceError,
-    isFetching: sourceFetching,
-    hasNextPage,
-  });
+  const sourceStatus = allSources
+    ? bulkDownloadStatus({
+        isError: isSourceError,
+        isFetching: isFetchingSource,
+        hasNextPage: hasNextSourcePage,
+      })
+    : 'success';
 
   useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+    if (hasNextSourcePage && !isFetchingNextSourcePage) {
+      fetchNextSourcePage();
     }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasNextSourcePage, isFetchingNextSourcePage, fetchNextSourcePage]);
 
   const sources = useMemo((): any[] => {
     let stuff: any[] = [];
@@ -91,11 +90,60 @@ const CreateModel = (): JSX.Element => {
     return stuff;
   }, [sourcePages?.pages]);
 
+  // fetch targets if "select all" option is applied
+
+  const {
+    data: targetPages,
+    isFetchingNextPage: isFetchingNextTargetPage,
+    fetchNextPage: fetchNextTargetPage,
+    hasNextPage: hasNextTargetPage,
+    isFetching: isFetchingTarget,
+    isError: isTargetError,
+  } = useInfiniteList(
+    sourceType,
+    10,
+    { advancedFilter, filter: targetFilter, limit: 10000 },
+    {
+      enabled: allTargets,
+      staleTime: Infinity,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const targetStatus = allTargets
+    ? bulkDownloadStatus({
+        isError: isTargetError,
+        isFetching: isFetchingTarget,
+        hasNextPage: hasNextTargetPage,
+      })
+    : 'success';
+
   useEffect(() => {
-    if (!modelId && !isLoading && !hasNextPage && isFetched) {
+    if (hasNextTargetPage && !isFetchingNextTargetPage) {
+      fetchNextTargetPage();
+    }
+  }, [hasNextTargetPage, isFetchingNextTargetPage, fetchNextTargetPage]);
+
+  const targets = useMemo((): any[] => {
+    let stuff: any[] = [];
+    targetPages?.pages?.forEach((i) => {
+      stuff = stuff.concat(i.items);
+    });
+    return stuff;
+  }, [targetPages?.pages]);
+
+  useEffect(() => {
+    if (
+      !modelId &&
+      !isLoading &&
+      sourceStatus === 'success' &&
+      targetStatus === 'success'
+    ) {
       buildModel({
-        sources,
-        targetsList,
+        sourceType,
+        sources: allSources ? sources : sourcesList,
+        targetsList: allTargets ? targets : targetsList,
         featureType,
         matchFields,
         supervisedMode,
@@ -111,14 +159,15 @@ const CreateModel = (): JSX.Element => {
     buildModel,
     featureType,
     matchFields,
-    scope,
     setModelId,
-    sourceFilter,
     sourcesList,
     supervisedMode,
+    allTargets,
     targetsList,
-    hasNextPage,
-    isFetched,
+    targets,
+    targetStatus,
+    sourceStatus,
+    sourceType,
   ]);
 
   const { data: model, status: createModelStatus } = useEMModel(modelId!, {
@@ -174,12 +223,10 @@ const CreateModel = (): JSX.Element => {
             <Body level={2}>{t(`source-data-fetch-${sourceStatus}`)}</Body>
           </Flex>
         )}
-        {targetState?.status && (
+        {targetStatus && (
           <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={targetState?.status} />
-            <Body level={2}>
-              {t(`target-data-fetch-${targetState?.status}`)}
-            </Body>
+            <QueryStatusIcon status={targetStatus} />
+            <Body level={2}>{t(`target-data-fetch-${targetStatus}`)}</Body>
           </Flex>
         )}
         <Flex alignItems="center" gap={8}>
