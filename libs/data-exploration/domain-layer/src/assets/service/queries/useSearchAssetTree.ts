@@ -89,8 +89,8 @@ export const useSearchAssetTree = ({
 const setIsLastFetched = (
   rootAsset: InternalAssetTreeData
 ): InternalAssetTreeData => {
-  const aggregateChildCount = rootAsset.aggregates?.childCount || 0;
-  let childrenArr = rootAsset.children || [];
+  const aggregateChildCount = rootAsset?.aggregates?.childCount || 0;
+  let childrenArr = rootAsset?.children || [];
   if (aggregateChildCount > childrenArr.length) {
     childrenArr = childrenArr.map((asset, index, arr) => {
       return {
