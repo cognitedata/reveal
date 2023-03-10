@@ -13,7 +13,6 @@ import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '../../../components';
 import {
   InternalTimeseriesDataWithMatchingLabels,
@@ -21,6 +20,8 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
+import noop from 'lodash/noop';
+import { EMPTY_ARRAY } from '@data-exploration-lib/core';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -28,13 +29,11 @@ export interface TimeseriesTableProps
   extends Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'>,
     RelationshipLabels,
     DateRangeProps {
-  hideEmptyData?: boolean;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }
 const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
-  hideEmptyData = false,
   onRootAssetClick,
   ...props
 }: TimeseriesTableProps) => {
@@ -44,26 +43,12 @@ export const TimeseriesTable = ({
   const [dateRange, setDateRange] = useState(
     dateRangeProp || TIME_SELECT['1Y'].getTime()
   );
-  const [emptyTimeseriesMap, setEmptyTimeseriesMap] = useState<
-    Record<number, boolean>
-  >({});
 
   useEffect(() => {
     if (dateRangeProp) {
       setDateRange(dateRangeProp);
     }
   }, [dateRangeProp]);
-
-  useEffect(() => {
-    const emptyTimeseriesMap = data.reduce(
-      (emptyTimeseriesMap, { id }) => ({
-        ...emptyTimeseriesMap,
-        [id]: false,
-      }),
-      {} as Record<number, boolean>
-    );
-    setEmptyTimeseriesMap(emptyTimeseriesMap);
-  }, [data]);
 
   const metadataColumns = useMemo(() => {
     return metadataKeys.map((key) =>
@@ -89,7 +74,7 @@ export const TimeseriesTable = ({
             timeseriesId={timeseries.id}
             numberOfPoints={100}
             showAxis="horizontal"
-            timeOptions={[]}
+            timeOptions={EMPTY_ARRAY}
             showContextGraph={false}
             showPoints={false}
             enableTooltip={false}
@@ -98,13 +83,7 @@ export const TimeseriesTable = ({
             enableTooltipPreview
             dateRange={dateRange}
             margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
-            onDateRangeChange={() => {}}
-            onDataFetched={(data) =>
-              setEmptyTimeseriesMap((emptyTimeseriesMap) => ({
-                ...emptyTimeseriesMap,
-                [timeseries.id]: isEmpty(data?.datapoints),
-              }))
-            }
+            onDateRangeChange={noop}
           />
         );
       },
@@ -156,14 +135,10 @@ export const TimeseriesTable = ({
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
-  const timeseriesWithDatapoints = useMemo(() => {
-    return data.filter(({ id }) => !emptyTimeseriesMap[id]);
-  }, [data, emptyTimeseriesMap]);
-
   return (
     <Table<InternalTimeseriesDataWithMatchingLabels>
       columns={columns}
-      data={hideEmptyData ? timeseriesWithDatapoints : data}
+      data={data}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
       {...rest}

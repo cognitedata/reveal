@@ -23,3 +23,4 @@ export const NIL_FILTER_LABEL = 'N/A';
 
 export const METADATA_KEY_SEPARATOR = '-';
 export const MAX_RESULT_LIMIT_ASSET = 1000;
+export const MAX_RESULT_LIMIT_DATAPOINTS = 100;

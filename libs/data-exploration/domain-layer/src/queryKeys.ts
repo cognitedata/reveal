@@ -39,6 +39,9 @@ export const queryKeys = {
   timeseriesUniqueValues: (property: string, filter?: any) =>
     [...queryKeys.timeseries(), 'unique-values', property, filter] as const,
 
+  timeseriesDatapoints: (items: IdEither[], filter?: any) =>
+    [...queryKeys.timeseries(), 'datapoints', items, filter] as const,
+
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,
   eventsMetadataValues: (metadataKey: string, filter?: any) =>

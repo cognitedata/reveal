@@ -9,7 +9,7 @@ import { TimeseriesTable } from '@data-exploration-components/containers/Timeser
 
 import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 
-import { Flex, Button } from '@cognite/cogs.js';
+import { Flex, Button, Tooltip } from '@cognite/cogs.js';
 
 import {
   SearchResultCountLabel,
@@ -20,7 +20,7 @@ import {
 import {
   InternalTimeseriesFilters,
   useTimeseriesAggregateCountQuery,
-  useTimeseriesSearchResultWithLabelsQuery,
+  useTimeseriesWithDatapointsAvailabliity,
 } from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
@@ -70,15 +70,16 @@ export const TimeseriesSearchResults = ({
     query,
     api: query && query.length > 0 ? 'search' : 'list',
   });
-  // TODO Needs refactoring for hiding emppty datasets
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [hideEmptyData, setHideEmptyData] = useState(false);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useTimeseriesSearchResultWithLabelsQuery(
+    useTimeseriesWithDatapointsAvailabliity(
       {
         query,
         filter,
         sortBy,
+        dateRange,
       },
       { enabled: enableAdvancedFilters }
     );
@@ -91,10 +92,14 @@ export const TimeseriesSearchResults = ({
     { enabled: enableAdvancedFilters }
   );
 
-  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
   const totalDataCount = enableAdvancedFilters
     ? countData?.count || 0
     : itemCount;
+  const timeseries = enableAdvancedFilters ? data : items;
+
+  const filteredTimeseries = data.filter((item) => item.hasDatapoints);
+
+  const timeseriesData = hideEmptyData ? filteredTimeseries : timeseries;
 
   return (
     <>
@@ -116,7 +121,7 @@ export const TimeseriesSearchResults = ({
               showCount={showCount}
               resultCount={
                 <SearchResultCountLabel
-                  loadedCount={loadedDataCount}
+                  loadedCount={timeseries.length}
                   totalCount={totalDataCount}
                   resourceType="timeSeries"
                 />
@@ -133,11 +138,24 @@ export const TimeseriesSearchResults = ({
                   </Button>
                 </RangePicker>
               )}
+              <Tooltip
+                content="All loaded timeseries are empty. Button will be enabled when at least 1 timeseries has datapoints"
+                disabled={filteredTimeseries.length !== 0}
+              >
+                <Button
+                  toggled={hideEmptyData}
+                  disabled={filteredTimeseries.length === 0}
+                  onClick={() => setHideEmptyData((prev) => !prev)}
+                >
+                  Hide empty timeseries
+                </Button>
+              </Tooltip>
+
               <VerticalDivider />
             </Flex>
           </TimeseriesHeaderContainer>
         }
-        data={enableAdvancedFilters ? data : items}
+        data={timeseriesData}
         isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
         fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
         hasNextPage={
@@ -151,7 +169,7 @@ export const TimeseriesSearchResults = ({
           />
         }
         showLoadButton
-        onRowClick={(timeseries) => onClick(timeseries)}
+        onRowClick={(currentTimeseries) => onClick(currentTimeseries)}
         onRootAssetClick={onRootAssetClick}
         enableSorting={enableAdvancedFilters}
         sorting={sortBy}
