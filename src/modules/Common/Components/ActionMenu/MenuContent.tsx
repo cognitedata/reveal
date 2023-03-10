@@ -3,6 +3,7 @@ import { Icon, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { SKIP_MENU_CLOSE_ID } from 'src/constants/ContextMenuConstants';
+import styled from 'styled-components';
 
 export interface ActionMenuProps {
   showExifIcon?: boolean;
@@ -30,7 +31,7 @@ export const MenuContent = ({
     onClick={handleClick}
   >
     <Menu.Item onClick={handleFileDetails}>
-      <div style={{ display: 'flex', height: '21px' }}>
+      <MenuContainer>
         <Icon type="Document" style={{ marginRight: '17px' }} />
         File details
         {showExifIcon && (
@@ -40,7 +41,7 @@ export const MenuContent = ({
             </ExifIcon>
           </Tooltip>
         )}
-      </div>
+      </MenuContainer>
     </Menu.Item>
 
     {handleReview && (
@@ -54,7 +55,6 @@ export const MenuContent = ({
       placement="left"
       onConfirm={handleFileDelete}
       content="Are you sure you want to permanently delete this file?"
-      style={{ backgroundColor: 'red !important' }}
     >
       <Menu.Item id={SKIP_MENU_CLOSE_ID} disabled={reviewDisabled}>
         <Icon type="Delete" style={{ marginRight: '17px' }} />
@@ -63,3 +63,8 @@ export const MenuContent = ({
     </Popconfirm>
   </Menu>
 );
+
+const MenuContainer = styled.div`
+  display: flex;
+  height: 21px;
+`;

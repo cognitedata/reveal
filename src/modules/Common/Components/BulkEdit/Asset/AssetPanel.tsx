@@ -94,7 +94,7 @@ export const AssetPanel = ({
 
   return (
     <PanelContainer>
-      <TastContainer>
+      <TaskWrapper>
         <Body level={2}>Task</Body>
         <SelectContainer>
           <Select
@@ -104,7 +104,7 @@ export const AssetPanel = ({
             closeMenuOnSelect
           />
         </SelectContainer>
-      </TastContainer>
+      </TaskWrapper>
       <AssetEditPanel
         task={task}
         bulkEditUnsaved={bulkEditUnsaved}
@@ -121,7 +121,7 @@ const PanelContainer = styled.div`
   align-items: end;
   grid-gap: 8px;
 `;
-const TastContainer = styled.div`
+const TaskWrapper = styled.div`
   display: grid;
   grid-gap: 6px;
   height: 62px;
