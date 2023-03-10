@@ -21,6 +21,13 @@ export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
     margin: 100px auto;
     text-align: center;
   }
+
+  #delete-button {
+    opacity: 0;
+  }
+  .ag-row-hover #delete-button {
+    opacity: 1;
+  }
 `;
 
 export const StyledRow = styled(Row)`

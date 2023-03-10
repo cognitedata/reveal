@@ -129,7 +129,10 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             isLocked={props.isExternalIdLocked}
             label={t('external_id_label', 'External ID')}
             onChange={props.onExternalIdChange}
-            placeholder="DataModel-ID"
+            placeholder={t(
+              'data_model_id_placeholder',
+              'Data model external ID'
+            )}
             tooltip={
               props.externalId
                 ? t('tooltip_external_id_label', 'External ID')

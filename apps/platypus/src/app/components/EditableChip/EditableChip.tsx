@@ -120,10 +120,14 @@ export const EditableChip = ({
   );
 };
 
-const ValueWrapper = styled.span`
+const ValueWrapper = styled.span<{ isPlaceholder?: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: ${(props) =>
+    props.placeholder
+      ? 'var(--cogs-text-icon--muted)'
+      : 'var(--cogs-text-icon--medium)'};
 `;
 
 const Label = styled.div<{ isPlaceholder?: boolean; isLocked: boolean }>`

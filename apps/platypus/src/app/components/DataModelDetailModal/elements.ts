@@ -8,6 +8,7 @@ export const NameWrapper = styled.div`
 export const StyledEditableChip = styled(EditableChip)`
   display: inline-block;
   margin-bottom: 24px;
+  max-width: 100%;
 `;
 
 export const InputDetail = styled.div`

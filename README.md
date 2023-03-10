@@ -159,11 +159,11 @@ To run Platypus using the mock server, start the mock server and then run:
 
 We use cypress to run our e2e test suite. To run them from the terminal using a headless browser, make sure the mock server is running, and then from another terminal window, run:
 
-`nx run platypus-e2e:e2e`
+`NODE_ENV=mock nx run platypus-e2e:e2e`
 
 To run them in the Cypress GUI:
 
-`nx run platypus-e2e:e2e --watch`
+`NODE_ENV=mock nx run platypus-e2e:e2e --watch`
 
 You can optionally run the e2e tests using the `Nx Console` VSCode extension by clicking to run `e2e` and then choosing the `platypus-e2e` project.
 

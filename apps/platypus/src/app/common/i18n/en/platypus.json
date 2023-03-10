@@ -48,6 +48,7 @@
   "data_model_endpoint_modal_copy_button_text": "Copy",
   "data_model_endpoint_modal_ok_button": "Close",
   "data_model_endpoint_modal_title": "URL to GraphQL endpoint",
+  "data_model_id_placeholder": "Data model external ID",
   "data_model_name_error_message": "The data model name can only contain alphanumeric characters, hyphens, and underscores. It can have up to 43 characters but can't start with a number.",
   "data_model_not_found": "Something went wrong. We couldn't load the data model.",
   "data_model_settings_modal_title": "Settings",
