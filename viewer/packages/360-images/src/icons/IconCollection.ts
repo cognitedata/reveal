@@ -27,7 +27,7 @@ export class IconCollection {
 
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
-  private _proximityRadius = Number.POSITIVE_INFINITY;
+  private _proximityRadius = 0;
   private _proximityPointLimit = 50;
 
   get icons(): Image360Icon[] {
@@ -57,7 +57,7 @@ export class IconCollection {
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
-    this._proximityRadius = radius > 0 ? radius : Number.POSITIVE_INFINITY;
+    this._proximityRadius = radius;
     this._proximityPointLimit = pointLimit;
   }
 
@@ -130,16 +130,22 @@ export class IconCollection {
 
   private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     return ({ camera }) => {
-      const points = octree
-        .findPoints(camera.position, this._proximityRadius, true)
+      const points =
+        this._proximityRadius < 1
+          ? this._icons
+          : octree.findPoints(camera.position, this._proximityRadius, true).map(pointContainer => {
+              return pointContainer.data;
+            });
+
+      const closestPoints = points
         .sort((a, b) => {
-          return b.data.position.distanceTo(camera.position) - a.data.position.distanceTo(camera.position);
+          return b.position.distanceTo(camera.position) - a.position.distanceTo(camera.position);
         })
         .slice(-this._proximityPointLimit);
 
       this._icons.forEach(p => (p.visible = false));
-      points.forEach(p => (p.data.visible = true));
-      iconSprites.setPoints(points.map(p => p.data.position));
+      closestPoints.forEach(p => (p.visible = true));
+      iconSprites.setPoints(closestPoints.map(p => p.position));
     };
   }
 
