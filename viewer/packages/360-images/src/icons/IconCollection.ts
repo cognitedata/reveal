@@ -18,7 +18,7 @@ export class IconCollection {
   private readonly _iconsSprite: InstancedIconSprite;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
-  private readonly _iconRadius = 0.1;
+  private readonly _iconRadius = 0.3;
 
   get icons(): Image360Icon[] {
     return this._icons;

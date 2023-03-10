@@ -88,7 +88,8 @@ export class Image360Icon {
         this._minPixelSize,
         this._iconRadius
       );
-      this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
+      const scale = this._adaptiveScale * 2 * this._iconRadius; //???
+      this._hoverSprite.scale.set(scale, scale, 1.0);
     };
 
     function computeAdaptiveScaling(
@@ -104,14 +105,14 @@ export class Image360Icon {
         return 1.0;
       }
       renderer.getSize(renderSize);
-      const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * iconRadius) / ndcPosition.w;
+      const pointSize = renderSize.y * camera.projectionMatrix.elements[5] * (iconRadius / ndcPosition.w);
       const resolutionDownSampleFactor = renderSize.x / renderer.domElement.clientWidth;
       const clampedSize = clamp(
         pointSize,
         minHeight * resolutionDownSampleFactor,
         maxHeight * resolutionDownSampleFactor
       );
-      return (clampedSize * 2 * iconRadius) / pointSize;
+      return clampedSize / pointSize;
     }
   }
 
