@@ -18,8 +18,7 @@
         "assets": ["apps/platypus/src/favicon.ico", "apps/platypus/src/assets"],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/platypus/webpack-config.js",
-        "isolatedConfig": true
+        "webpackConfig": "apps/platypus/webpack-config.js"
       },
       "configurations": {
         "development": {

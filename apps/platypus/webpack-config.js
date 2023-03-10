@@ -44,6 +44,11 @@ module.exports = composePlugins(
       new MonacoWebpackPlugin({ publicPath: '/', languages: ['graphql'] })
     );
 
+    if (nodeEnv !== 'production') {
+      delete config.optimization;
+    }
+
+    config.mode = nodeEnv === 'production' ? 'production' : 'development';
     return config;
   }
 );
