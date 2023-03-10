@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { RawTable } from 'utils/types';
-import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
 import Typography from 'antd/lib/typography';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Flex } from '@cognite/cogs.js';
-import { getJetfireUrl, getContainer } from 'utils/shared';
+import { Flex, Table } from '@cognite/cogs.js';
+import { getJetfireUrl } from 'utils/shared';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import {
   LineageSubTitle,
@@ -208,9 +207,8 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
                       onDeleteTransformationClick
                     )}
                     dataSource={transformationsData}
-                    pagination={{ pageSize: 5 }}
-                    rowKey="id"
-                    getPopupContainer={getContainer}
+                    pageSize={5}
+                    rowKey={(d: any) => `${d.id}`}
                   />
                 )}
                 {getExternalTransformations()}

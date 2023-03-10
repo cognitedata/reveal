@@ -8,8 +8,11 @@ import {
   Flex,
   Icon,
   Menu,
+  Input,
+  Dropdown,
+  Select,
+  OptionType,
 } from '@cognite/cogs.js';
-import { Dropdown, Input, Select } from 'antd';
 import { useTranslation } from 'common/i18n';
 import { getContainer } from 'utils/shared';
 import {
@@ -101,8 +104,10 @@ const TableFilter = ({
     });
   };
 
-  const handleSelectedLabelChange = (updatedValue: string[]) => {
-    setTempSelectedLabels(updatedValue.length ? updatedValue : undefined);
+  const handleSelectedLabelChange = (updatedValue: OptionType<string[]>[]) => {
+    setTempSelectedLabels(
+      updatedValue.length ? updatedValue.map((item) => item.label) : undefined
+    );
   };
 
   const handleGovernanceStatusChange = (
@@ -125,7 +130,8 @@ const TableFilter = ({
       <Flex alignItems="center" gap={8}>
         <StyledInputContainer>
           <Input
-            prefix={<Icon type="Search" />}
+            icon={'Search'}
+            iconPlacement={'left'}
             placeholder={t('search-by-name-description-or-label')}
             onChange={(e) => {
               const searchText = e.target.value;
@@ -133,13 +139,12 @@ const TableFilter = ({
               trackUsage({ e: 'data.sets.filter', searchText });
             }}
             value={searchQuery}
-            allowClear
+            fullWidth
+            clearable={{ callback: () => setSearchQuery('') }}
           />
         </StyledInputContainer>
         <Dropdown
-          destroyPopupOnHide
-          getPopupContainer={getContainer}
-          overlay={
+          content={
             <StyledMenu>
               <Flex gap={8} direction="column">
                 <StyledMenuTitle>
@@ -150,7 +155,7 @@ const TableFilter = ({
                     {t('clear-filters')}
                   </Button>
                 </StyledMenuTitle>
-                <Flex gap={8} direction="column">
+                <Flex gap={8} direction="column" id="filterWrapper">
                   <StyledMenuContent>
                     <StyledSectionWrapper>
                       <Flex direction="column" gap={8}>
@@ -183,16 +188,20 @@ const TableFilter = ({
                         <Body level="3" strong>
                           {t('label_one')}
                         </Body>
-                        <Select<string[]>
+                        <Select
                           allowClear
-                          getPopupContainer={getContainer}
-                          mode="multiple"
+                          // getPopupContainer={getContainer}
                           onChange={handleSelectedLabelChange}
                           options={labelOptions.map((label) => ({
                             label,
                             value: label,
                           }))}
-                          value={tempSelectedLabels}
+                          isMulti
+                          menuPlacement="bottom"
+                          value={tempSelectedLabels?.map((label) => ({
+                            label,
+                            value: label,
+                          }))}
                           menuItemSelectedIcon={
                             <Icon
                               css={{ verticalAlign: 'middle' }}
@@ -212,16 +221,15 @@ const TableFilter = ({
               </Flex>
             </StyledMenu>
           }
-          trigger={['click']}
-          placement="bottomLeft"
+          onClickOutside={() => setIsVisible(false)}
           visible={isVisible}
-          onVisibleChange={setIsVisible}
         >
           <Button
             icon="Filter"
             aria-label="Filter"
             type="secondary"
             toggled={isVisible}
+            onClick={() => setIsVisible(!isVisible)}
           >
             {t('filter')}
           </Button>

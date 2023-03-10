@@ -7,6 +7,7 @@ import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import HiddenTransformation from './HiddenTranformation';
 import { useTranslation } from 'common/i18n';
+import { CogsTableCellRenderer } from 'utils';
 
 export const useTransformationsColumns = () => {
   const { t } = useTranslation();
@@ -15,10 +16,10 @@ export const useTransformationsColumns = () => {
     onDeleteTransformationClick: (transformation: any) => void
   ) => [
     {
-      title: t('transform'),
-      key: 'name',
+      Header: t('transform'),
+      id: 'name',
       sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
-      render: (_text: string, transform: any) => {
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => {
         const onTransformationClick = () =>
           trackEvent(
             'DataSets.LineageFlow.Clicked on an external transformation'
@@ -41,9 +42,10 @@ export const useTransformationsColumns = () => {
       },
     },
     {
-      title: t('created'),
-      key: 'created',
-      render: (_text: string, transform: any) => {
+      Header: t('created'),
+      id: 'created',
+      disableSortBy: true,
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => {
         const { hidden, created } = transform;
         const cellText = hidden
           ? t('not-available')
@@ -54,9 +56,10 @@ export const useTransformationsColumns = () => {
       },
     },
     {
-      title: t('updated'),
-      key: 'updated',
-      render: (_text: string, transform: any) => {
+      Header: t('updated'),
+      id: 'updated',
+      disableSortBy: true,
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => {
         const { hidden, updated } = transform;
         const cellText = hidden
           ? t('not-available')
@@ -67,9 +70,10 @@ export const useTransformationsColumns = () => {
       },
     },
     {
-      title: t('owner'),
-      key: 'owner',
-      render: (_text: string, transform: any) => {
+      Header: t('owner'),
+      id: 'owner',
+      disableSortBy: true,
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => {
         const { hidden, owner: _owner, ownerIsCurrentUser } = transform;
         const owner = ownerIsCurrentUser ? (
           <CellTransformation>
@@ -87,8 +91,9 @@ export const useTransformationsColumns = () => {
       },
     },
     {
-      key: 'actions',
-      render: (_: string, transform: any) => (
+      id: 'actions',
+      disableSortBy: true,
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => (
         <Popconfirm
           content={t('lineage-transformation-remove-confirmation')}
           onConfirm={() => onDeleteTransformationClick(transform)}

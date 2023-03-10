@@ -1,6 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Button, Flex, Icon, Chip, Checkbox, toast } from '@cognite/cogs.js';
-import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import {
+  Button,
+  Flex,
+  Icon,
+  Chip,
+  Checkbox,
+  toast,
+  Table,
+} from '@cognite/cogs.js';
+import { TableNoResults } from '@cognite/cdf-utilities';
 import DataSetEditor from 'pages/DataSetEditor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
@@ -24,7 +32,7 @@ import Page from 'components/page';
 import RowActions from 'components/data-sets-list/row-actions';
 import TableFilter, { GovernanceStatus } from 'components/table-filters';
 import { useSearchParamState } from 'hooks/useSearchParamState';
-import { trackUsage } from 'utils';
+import { CogsTableCellRenderer, trackUsage } from 'utils';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -147,20 +155,24 @@ const DataSetsList = (): JSX.Element => {
   };
 
   const statusColumn = {
-    title: t('status'),
-    key: 'status',
+    Header: t('status'),
+    id: 'status',
     width: '5%',
-    render: (row: DataSetRow) =>
-      row.archived && (
+    maxWidth: 20,
+    Cell: ({ row: { original: record } }: CogsTableCellRenderer<DataSetRow>) =>
+      record.archived && (
         <Chip size="medium" type="danger" label={t('archived')} />
       ),
   };
 
   const actionsColumn = {
-    dataIndex: 'options',
-    key: 'options',
-    title: '',
-    render: (_: any, record: DataSetRow) => (
+    accessor: 'options',
+    id: 'options',
+    Header: '',
+    maxWidth: 50,
+    Cell: ({
+      row: { original: record },
+    }: CogsTableCellRenderer<DataSetRow>) => (
       <div
         onClick={(evt) => {
           evt.stopPropagation();
@@ -286,7 +298,11 @@ const DataSetsList = (): JSX.Element => {
   };
 
   if (!didFetchWithExtpipes || !didFetchDataSets) {
-    return <Icon type="Loader" />;
+    return (
+      <div className="loader-wrapper">
+        <Icon type="Loader" size={32} />
+      </div>
+    );
   }
 
   return (
@@ -323,36 +339,32 @@ const DataSetsList = (): JSX.Element => {
           {CreateButton}
         </Flex>
       </Flex>
-      <Table<DataSetRow>
-        rowKey="key"
-        key="data-sets-table"
-        loading={loading}
-        columns={[
-          ...getTableColumns(
-            dataSetsWithExtpipes.map((x) => x.dataSet),
-            showArchived,
-            withExtpipes,
-            isExtpipesFetched
-          ),
-          ...(showArchived ? [statusColumn] : []),
-          actionsColumn,
-        ]}
-        dataSource={filteredTableData}
-        onChange={(_pagination, _filters, sorter) => {
-          if (!isArray(sorter) && sorter?.columnKey && sorter?.order)
-            setItemInStorage(sorter?.columnKey, sorter?.order);
-        }}
-        getPopupContainer={getContainer}
-        emptyContent={
-          <TableNoResults
-            title={t('data-set-list-no-records')}
-            content={t('data-set-list-search-not-found', {
-              $: !!searchFilter ? `"${searchFilter}"` : searchFilter,
-            })}
-          />
-        }
-        appendTooltipTo={getContainer()}
-      />
+      <div className="data-sets-list-table">
+        <Table<DataSetRow>
+          key="data-sets-table"
+          columns={[
+            ...getTableColumns(
+              dataSetsWithExtpipes.map((x) => x.dataSet),
+              showArchived,
+              withExtpipes,
+              isExtpipesFetched
+            ),
+            ...(showArchived ? [statusColumn] : []),
+            actionsColumn,
+          ]}
+          dataSource={filteredTableData}
+          locale={{
+            emptyText: (
+              <TableNoResults
+                title={t('data-set-list-no-records')}
+                content={t('data-set-list-search-not-found', {
+                  $: !!searchFilter ? `"${searchFilter}"` : searchFilter,
+                })}
+              />
+            ),
+          }}
+        />
+      </div>
     </Page>
   );
 };

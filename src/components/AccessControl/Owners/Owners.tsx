@@ -1,8 +1,7 @@
-import Table from 'antd/lib/table';
-
 import { Group } from '@cognite/sdk';
-import { getAllSetOwnersFromGroups, getContainer } from 'utils/shared';
+import { getAllSetOwnersFromGroups } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
+import { Table } from '@cognite/cogs.js';
 
 interface OwnersProps {
   dataSetId: number;
@@ -16,14 +15,14 @@ const Owners = (props: OwnersProps) => {
 
   const ownerColumns = [
     {
-      title: t('group'),
-      key: 'group',
-      dataIndex: 'name',
+      Header: t('group'),
+      id: 'group',
+      accessor: 'name',
     },
     {
-      title: t('sourceid'),
-      key: 'sourceId',
-      dataIndex: 'sourceId',
+      Header: t('sourceid'),
+      id: 'sourceId',
+      accessor: 'sourceId',
     },
   ];
 
@@ -36,13 +35,14 @@ const Owners = (props: OwnersProps) => {
   }));
 
   return (
-    <Table
-      style={{ marginTop: '20px' }}
-      columns={ownerColumns}
-      dataSource={ownersDataSource}
-      rowKey="groupId"
-      getPopupContainer={getContainer}
-    />
+    <div className="resource-table">
+      <Table
+        css={{ marginTop: '20px' }}
+        columns={ownerColumns}
+        dataSource={ownersDataSource}
+        rowKey={(d) => `${d['groupId']}`}
+      />
+    </div>
   );
 };
 

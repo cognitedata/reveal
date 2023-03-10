@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Tabs from 'antd/lib/tabs';
+
 import {
   filesCounter,
   timeSeriesCounter,
@@ -14,15 +14,13 @@ import {
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import EmptyDataState from './EmptyDataState';
-import TabTitle from 'pages/DataSetDetails/TabTitle';
 import AssetsTable from 'components/AssetsTable';
 import EventsTable from 'components/EventsTable';
 import FilesTable from 'components/FilesTable';
 import SequencesTable from 'components/SequencesTable';
 import TimeseriesTable from 'components/TimeseriesTable';
 import EventsProfile from 'components/EventsProfile';
-import { Flex, Icon } from '@cognite/cogs.js';
-import { Input } from 'antd';
+import { Flex, Tabs, Input } from '@cognite/cogs.js';
 import useDebounce from 'hooks/useDebounce';
 import { TableFilter } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
@@ -30,8 +28,6 @@ import { useFormik } from 'formik';
 import AppliedFilters from 'components/applied-filters';
 import { StyledItemCount } from 'components/table-filters';
 import { ResourcesFilters, useResourcesSearch } from 'hooks/useResourcesSearch';
-
-const { TabPane } = Tabs;
 
 interface ExploreDataProps {
   dataSetId: number;
@@ -240,7 +236,7 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
           >
             <Input
               value={query}
-              prefix={<Icon type="Search" />}
+              icon="Search"
               placeholder={t('search')}
               onChange={(evt) => {
                 const searchText = evt.currentTarget.value;
@@ -248,7 +244,9 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
                 setQuery(searchText);
               }}
               style={{ width: 312 }}
-              allowClear
+              clearable={{
+                callback: () => setQuery(''),
+              }}
             />
             <TableFilter
               onClear={onClearFilters}
@@ -270,7 +268,7 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
                   onChange={formik.handleChange}
                   value={formik.values.externalIdPrefix}
                   placeholder={t('starts-with')}
-                  allowClear
+                  fullWidth
                 />
               </StyledTableFilterSection>
             </TableFilter>
@@ -290,41 +288,32 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
           />
         </Flex>
         <Tabs
-          animated={false}
           defaultActiveKey="assets"
           size="large"
           activeKey={activeResourceTabKey}
-          onChange={activeResourceTabChangeHandler}
+          onTabClick={activeResourceTabChangeHandler}
         >
-          <TabPane
-            tab={
-              <TabTitle
-                title={t('assets')}
-                iconType="Assets"
-                label={assetCount.toLocaleString()}
-                disabled={assetCount === 0}
-                isTooltip={assetCount < 0}
-                resource="assets"
-              />
-            }
-            key="assets"
+          <Tabs.Tab
+            tabKey="assets"
+            label={t('assets')}
+            iconLeft="Assets"
             disabled={assetCount === 0}
+            chipRight={{
+              label: assetCount.toLocaleString(),
+              size: 'small',
+            }}
           >
             <AssetsTable data={assetsData} isLoading={isAssetsLoading} />
-          </TabPane>
-          <TabPane
-            tab={
-              <TabTitle
-                title={t('events')}
-                iconType="Events"
-                label={eventsCount.toLocaleString()}
-                disabled={eventsCount === 0}
-                isTooltip={eventsCount < 0}
-                resource="events"
-              />
-            }
-            key="events"
+          </Tabs.Tab>
+          <Tabs.Tab
+            tabKey="events"
+            label={t('events')}
+            iconLeft="Events"
             disabled={eventsCount === 0}
+            chipRight={{
+              label: eventsCount.toLocaleString(),
+              size: 'small',
+            }}
           >
             <EventsTable
               dataSetId={dataSetId}
@@ -332,61 +321,49 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
               data={eventsData}
               isLoading={isEventsLoading}
             />
-          </TabPane>
-          <TabPane
-            tab={
-              <TabTitle
-                title={t('files')}
-                iconType="Document"
-                label={filesCount.toLocaleString()}
-                disabled={filesCount === 0}
-                isTooltip={filesCount < 0}
-                resource="files"
-              />
-            }
-            key="files"
+          </Tabs.Tab>
+          <Tabs.Tab
+            tabKey="files"
+            label={t('files')}
+            iconLeft="Document"
             disabled={filesCount === 0}
+            chipRight={{
+              label: filesCount.toLocaleString(),
+              size: 'small',
+            }}
           >
             <FilesTable data={filesData} isLoading={isFilesLoading} />
-          </TabPane>
-          <TabPane
-            tab={
-              <TabTitle
-                title={t('sequence_other')}
-                iconType="Sequences"
-                label={sequencesCount.toLocaleString()}
-                disabled={sequencesCount === 0}
-                isTooltip={sequencesCount < 0}
-                resource="sequences"
-              />
-            }
-            key="sequences"
+          </Tabs.Tab>
+          <Tabs.Tab
+            tabKey="sequences"
+            label={t('sequence_other')}
+            iconLeft="Sequences"
             disabled={sequencesCount === 0}
+            chipRight={{
+              label: sequencesCount.toLocaleString(),
+              size: 'small',
+            }}
           >
             <SequencesTable
               data={sequencesData}
               isLoading={isSequencesLoading}
             />
-          </TabPane>
-          <TabPane
-            tab={
-              <TabTitle
-                title={t('time-series')}
-                iconType="Timeseries"
-                label={timeseriesCount.toLocaleString()}
-                disabled={timeseriesCount === 0}
-                isTooltip={timeseriesCount < 0}
-                resource="timeseries"
-              />
-            }
-            key="timeseries"
+          </Tabs.Tab>
+          <Tabs.Tab
+            tabKey="timeseries"
+            label={t('time-series')}
+            iconLeft="Timeseries"
             disabled={timeseriesCount === 0}
+            chipRight={{
+              label: timeseriesCount.toLocaleString(),
+              size: 'small',
+            }}
           >
             <TimeseriesTable
               data={timeseriesData}
               isLoading={isTimeseriesLoading}
             />
-          </TabPane>
+          </Tabs.Tab>
         </Tabs>
         {exploreView.visible && renderExploreView()}
       </DetailsPane>

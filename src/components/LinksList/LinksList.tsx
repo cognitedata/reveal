@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Input from 'antd/lib/input';
-import { Button } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
 import useDebounce from 'hooks/useDebounce';
 import { useTranslation } from 'common/i18n';
+import { Col, Row } from 'utils';
 
 interface UrlInputProps {
   value: { name: string; id: string };
@@ -39,38 +39,46 @@ const LinksList = (props: UrlInputProps) => {
   }, [debouncedName, debouncedLink, props.value]);
 
   return (
-    <Input.Group compact>
-      <Input
-        style={{ width: '35%' }}
-        placeholder={t('link-name')}
-        value={name}
-        onChange={(e) => {
-          e.preventDefault();
-          setName(e.currentTarget.value);
-        }}
-      />
-      <Input
-        placeholder="e.g., docs.cognite.com"
-        required
-        type="text"
-        value={link}
-        onChange={(e) => {
-          e.preventDefault();
-          setLink(e.currentTarget.value);
-        }}
-        style={{ width: '65%', marginBottom: '10px' }}
-        onPressEnter={() => props.add()}
-        addonAfter={
-          <Button
-            size="small"
-            type="ghost"
-            icon="Close"
-            aria-label="Close"
-            onClick={() => props.remove(props.index)}
-          />
-        }
-      />
-    </Input.Group>
+    <Row css={{ marginBottom: '10px' }}>
+      <Col span={8}>
+        <Input
+          placeholder={t('link-name')}
+          value={name}
+          fullWidth
+          onChange={(e) => {
+            e.preventDefault();
+            setName(e.currentTarget.value);
+          }}
+        />
+      </Col>
+      <Col span={16}>
+        <Input
+          placeholder="e.g., docs.cognite.com"
+          required
+          type="text"
+          value={link}
+          fullWidth
+          onChange={(e) => {
+            e.preventDefault();
+            setLink(e.currentTarget.value);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              props.add();
+            }
+          }}
+          postfix={
+            <Button
+              size="small"
+              type="secondary"
+              icon="Close"
+              aria-label="Close"
+              onClick={() => props.remove(props.index)}
+            />
+          }
+        />
+      </Col>
+    </Row>
   );
 };
 

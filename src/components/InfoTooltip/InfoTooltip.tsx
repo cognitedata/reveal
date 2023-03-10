@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { TooltipLink } from 'utils/styledComponents';
-import { Icon } from '@cognite/cogs.js';
-import Tooltip, { TooltipPlacement } from 'antd/lib/tooltip';
+import { Icon, Tooltip, TooltipProps } from '@cognite/cogs.js';
 import { getContainer } from 'utils/shared';
 
 interface InfoTooltipProps {
@@ -10,7 +9,7 @@ interface InfoTooltipProps {
   urlTitle?: string;
   title?: string;
   showIcon: boolean;
-  placement?: TooltipPlacement;
+  placement?: TooltipProps['position'];
   children?: any;
 }
 
@@ -25,8 +24,8 @@ const InfoTooltip = ({
 }: InfoTooltipProps) => {
   return (
     <Tooltip
-      placement={placement}
-      title={
+      placement={placement || ('top' as any)}
+      content={
         <p>
           {tooltipText}
           {url && urlTitle && (
@@ -37,17 +36,21 @@ const InfoTooltip = ({
           )}
         </p>
       }
-      getPopupContainer={getContainer}
+      wrapped
+      interactive
+      appendTo={getContainer}
     >
-      {title} {children}{' '}
-      {showIcon && (
-        <Icon
-          type="InfoFilled"
-          css={{
-            marginLeft: '5px',
-          }}
-        />
-      )}
+      <>
+        {title} {children}{' '}
+        {showIcon && (
+          <Icon
+            type="InfoFilled"
+            css={{
+              marginLeft: '5px',
+            }}
+          />
+        )}
+      </>
     </Tooltip>
   );
 };

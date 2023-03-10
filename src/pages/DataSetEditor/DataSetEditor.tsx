@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import Drawer from 'components/Drawer';
 import { Group } from '@cognite/sdk';
-import { DrawerHeader } from 'utils/styledComponents';
 import DataSetCreation from 'components/DataSetCreation';
 import useDebounce from 'hooks/useDebounce';
 
@@ -92,21 +91,13 @@ const DataSetEditor = ({
 
   return (
     <Drawer
-      headerStyle={{
-        background: '#4a67fb',
-        color: 'white',
-        fontSize: '16px',
-      }}
-      title={
-        <DrawerHeader>
-          {dataSetWithExtpipes?.dataSet?.name ?? t('create-data-set')}
-        </DrawerHeader>
-      }
+      title={dataSetWithExtpipes?.dataSet?.name ?? t('create-data-set')}
       width="60%"
       visible={visible}
-      destroyOnClose
       onClose={onClose}
+      onCancel={onClose}
       cancelHidden
+      isPrimarySidebar
       okHidden
     >
       <DataSetCreation

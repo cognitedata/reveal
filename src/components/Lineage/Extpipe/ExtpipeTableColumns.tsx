@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { Tooltip } from '@cognite/cogs.js';
 import { toString as cronstureToString } from 'cronstrue';
-import { Extpipe, SupportedSchedule } from 'utils/types';
+import { CogsTableCellRenderer, Extpipe, SupportedSchedule } from 'utils/types';
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { useTranslation } from 'common/i18n';
 
@@ -68,16 +68,17 @@ export const useExtpipeTableColumns = () => {
 
   const extpipeTableColumns = [
     {
-      title: t('name'),
-      key: 'name',
-      render: (row: Extpipe) => {
-        return <ExtpipeLink extpipe={row} />;
-      },
+      Header: t('name'),
+      id: 'name',
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Extpipe>) => (
+        <ExtpipeLink extpipe={record} />
+      ),
     },
     {
-      title: t('schedule'),
-      key: 'schedule',
-      render: ({ schedule }: Extpipe) => {
+      Header: t('schedule'),
+      id: 'schedule',
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Extpipe>) => {
+        const { schedule } = record;
         if (!schedule) {
           return t('not-defined');
         }
@@ -94,26 +95,29 @@ export const useExtpipeTableColumns = () => {
       ellipsis: true,
     },
     {
-      title: t('last-run-time'),
-      key: 'latestRun',
-      render: ({ lastFailure, lastSuccess }: Extpipe) => {
+      Header: t('last-run-time'),
+      id: 'latestRun',
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Extpipe>) => {
+        const { lastFailure, lastSuccess } = record;
         const lastRunTime = calculate({ lastFailure, lastSuccess });
         return lastRunTime > 0 ? moment(lastRunTime).fromNow() : '–';
       },
       ellipsis: true,
     },
     {
-      title: t('source_one'),
-      key: 'source',
-      render: ({ source }: Extpipe) => {
-        return source ?? '–';
+      Header: t('source_one'),
+      id: 'source',
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Extpipe>) => {
+        return record.source ?? '–';
       },
       ellipsis: true,
     },
     {
-      title: t('owner'),
-      key: 'owner',
-      render: (extpipe: Extpipe) => {
+      Header: t('owner'),
+      id: 'owner',
+      Cell: ({
+        row: { original: extpipe },
+      }: CogsTableCellRenderer<Extpipe>) => {
         const owner = extpipe.contacts?.find(
           (contact) => !!contact.role && contact.role.toLowerCase() === 'owner'
         );

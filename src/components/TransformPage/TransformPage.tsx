@@ -245,7 +245,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>{t('transform-drawer-title')}</div>}
+      // title={<div>{t('transform-drawer-title')}</div>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}

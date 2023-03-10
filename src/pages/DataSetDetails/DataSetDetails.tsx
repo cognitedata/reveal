@@ -8,7 +8,6 @@ import copy from 'copy-to-clipboard';
 import { notification } from 'antd';
 import Spin from 'antd/lib/spin';
 
-import Tabs from 'antd/lib/tabs';
 import {
   Button,
   Flex,
@@ -17,6 +16,7 @@ import {
   Title,
   Tooltip,
   Menu,
+  Tabs,
 } from '@cognite/cogs.js';
 
 import DataSetEditor from 'pages/DataSetEditor';
@@ -47,8 +47,6 @@ import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-
-const { TabPane } = Tabs;
 
 const tabTypes = [
   'overview',
@@ -195,6 +193,7 @@ const DataSetDetails = (): JSX.Element => {
     searchParams.get('activeTab') || 'overview'
   );
   const activeTabChangeHandler = (tabKey: string) => {
+    console.log('activeTabChangeHandler', tabKey);
     // Navigate the user to the new data exploration UI if it's feature toggled.
     // After discussions, we decided not to have the link to data exploration from
     // here, instead we want to keep the tables in view, will comment out this code
@@ -313,47 +312,35 @@ const DataSetDetails = (): JSX.Element => {
           extraContent={
             <DetailsPane>
               <Tabs
-                animated={false}
                 defaultActiveKey="overview"
                 size="large"
                 activeKey={activeTab}
-                onChange={activeTabChangeHandler}
+                onTabClick={activeTabChangeHandler}
               >
-                <TabPane
-                  tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
-                  key="overview"
-                  style={{ height: '100%' }}
+                <Tabs.Tab
+                  tabKey="overview"
+                  label={t('tab-overview')}
+                  iconLeft="Info"
                 />
-                <TabPane
-                  tab={
-                    <TabTitle
-                      title={t('tab-explore-data')}
-                      iconType="DataSource"
-                    />
-                  }
-                  key="data"
+                <Tabs.Tab
+                  tabKey="data"
+                  label={t('tab-explore-data')}
+                  iconLeft="DataSource"
                 />
-                <TabPane
-                  tab={<TabTitle title={t('tab-lineage')} iconType="Lineage" />}
-                  key="lineage"
+                <Tabs.Tab
+                  tabKey="lineage"
+                  label={t('tab-lineage')}
+                  iconLeft="Lineage"
                 />
-                <TabPane
-                  tab={
-                    <TabTitle
-                      title={t('tab-documentation')}
-                      iconType="Documentation"
-                    />
-                  }
-                  key="documentation"
+                <Tabs.Tab
+                  tabKey="documentation"
+                  label={t('tab-documentation')}
+                  iconLeft="Documentation"
                 />
-                <TabPane
-                  tab={
-                    <TabTitle
-                      title={t('tab-access-control')}
-                      iconType="Users"
-                    />
-                  }
-                  key="access-control"
+                <Tabs.Tab
+                  tabKey="access-control"
+                  label={t('tab-access-control')}
+                  iconLeft="Users"
                 />
               </Tabs>
             </DetailsPane>

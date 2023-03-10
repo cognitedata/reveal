@@ -1,11 +1,9 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
-import Table from 'antd/lib/table';
-import { Button, Colors, Icon, Link } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Link, Table } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { getContainer } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
 import { DataSetWithExtpipes } from 'actions';
 import {
@@ -85,9 +83,8 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
             <Table
               columns={extpipeTableColumns}
               dataSource={extpipes}
-              pagination={{ pageSize: 5 }}
+              pageSize={5}
               rowKey={(record: Extpipe) => `${record?.id}`}
-              getPopupContainer={getContainer}
             />
           ) : (
             <Icon type="Loader" />

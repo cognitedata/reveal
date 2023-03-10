@@ -4,24 +4,27 @@ import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { NoStyleList } from 'utils/styledComponents';
 import { useTranslation } from 'common/i18n';
 import { createLink } from '@cognite/cdf-utilities';
+import { CogsTableCellRenderer } from 'utils';
 
 export const useRawTableColumns = () => {
   const { t } = useTranslation();
 
   const rawTablesColumns = [
     {
-      title: t('lineage-raw-table-column-databaseName'),
-      key: 'databaseName',
-      render: (row: RawWithUpdateTime) => (
+      Header: t('lineage-raw-table-column-databaseName'),
+      id: 'databaseName',
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<RawWithUpdateTime>) => (
         <a
           href={createLink(`/raw`, {
-            activeTable: `["${row.databaseName}","${row.tableName}",null]`,
-            tabs: `[["${row.databaseName}","${row.tableName}",null]]`,
+            activeTable: `["${record.databaseName}","${record.tableName}",null]`,
+            tabs: `[["${record.databaseName}","${record.tableName}",null]]`,
           })}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {row.databaseName}
+          {record.databaseName}
         </a>
       ),
       sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) => {
@@ -29,27 +32,30 @@ export const useRawTableColumns = () => {
       },
     },
     {
-      title: t('lineage-raw-table-column-tableName'),
-      key: 'tableName',
-      render: (row: RawWithUpdateTime) => (
+      Header: t('lineage-raw-table-column-tableName'),
+      id: 'tableName',
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<RawWithUpdateTime>) => (
         <a
           href={createLink(`/raw`, {
-            activeTable: `["${row.databaseName}","${row.tableName}",null]`,
-            tabs: `[["${row.databaseName}","${row.tableName}",null]]`,
+            activeTable: `["${record.databaseName}","${record.tableName}",null]`,
+            tabs: `[["${record.databaseName}","${record.tableName}",null]]`,
           })}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {row.tableName}
+          {record.tableName}
         </a>
       ),
       sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) =>
         a.tableName.localeCompare(b.tableName),
     },
     {
-      title: t('lineage-raw-table-column-lastUpdate'),
-      dataIndex: 'lastUpdate',
-      key: 'lastUpdateTime',
+      Header: t('lineage-raw-table-column-lastUpdate'),
+      accessor: 'lastUpdate',
+      id: 'lastUpdateTime',
+      disableSortBy: true,
     },
   ];
 
@@ -57,10 +63,13 @@ export const useRawTableColumns = () => {
     return [
       ...rawTablesColumns.slice(0, 2),
       {
-        title: t('lineage-raw-table-column-extpipe'),
-        key: 'extpipe',
-        render: (row: RawExtpipeWithUpdateTime) => {
-          const { extpipes } = row;
+        Header: t('lineage-raw-table-column-extpipe'),
+        id: 'extpipe',
+        disableSortBy: true,
+        Cell: ({
+          row: { original: record },
+        }: CogsTableCellRenderer<RawExtpipeWithUpdateTime>) => {
+          const { extpipes } = record;
           if (!extpipes || extpipes.length === 0) {
             return '–';
           }

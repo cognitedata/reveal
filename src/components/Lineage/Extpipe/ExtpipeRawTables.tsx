@@ -5,8 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Icon } from '@cognite/cogs.js';
-import Table from 'antd/lib/table';
+import { Icon, Table } from '@cognite/cogs.js';
 import {
   LineageSection,
   LineageSubTitle,
@@ -15,7 +14,6 @@ import {
 import { useRawTableColumns } from 'components/Lineage/rawTableColumns';
 import { Extpipe, RawTable } from 'utils/types';
 import { DataSetWithExtpipes } from 'actions';
-import { getContainer } from 'utils/shared';
 import {
   combineDataSetAndExtpipesRawTables,
   updateRawTableWithLastUpdate,
@@ -63,14 +61,12 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
       {isExtpipesFetched ? (
         <Table
-          loading={loadingRaw}
           columns={rawTablesColumnsWithExtpipe()}
           dataSource={rawList}
-          pagination={{ pageSize: 5 }}
+          pageSize={5}
           rowKey={(record: RawExtpipeWithUpdateTime) =>
             `${record.databaseName}/${record.tableName}`
           }
-          getPopupContainer={getContainer}
         />
       ) : (
         <Icon type="Loader" />

@@ -6,3 +6,4 @@ export * from './metrics';
 export * from './datasetUtils';
 export * from './handleError';
 export * from './tableUtils';
+export * from './antdStyledComponents';

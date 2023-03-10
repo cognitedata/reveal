@@ -168,7 +168,7 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<StyledTitle2>{t('document-consumers')}</StyledTitle2>}
+      // title={<StyledTitle2>{t('document-consumers')}</StyledTitle2>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}

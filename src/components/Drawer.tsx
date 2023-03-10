@@ -1,25 +1,30 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 
-import { Button } from '@cognite/cogs.js';
-import AntdDrawer, { DrawerProps as AntdDrawerProps } from 'antd/lib/drawer';
+import {
+  Button,
+  Drawer as CogsDrawer,
+  DrawerProps as CogsDrawerProps,
+} from '@cognite/cogs.js';
+// import AntdDrawer, { DrawerProps as AntdDrawerProps } from 'antd/lib/drawer';
 import { getContainer } from 'utils/shared';
 import noop from 'lodash/noop';
 
-interface DrawerProps extends AntdDrawerProps {
+interface DrawerProps extends CogsDrawerProps {
   children: JSX.Element;
   visible: boolean;
-  title?: ReactNode;
+  isPrimarySidebar?: boolean;
+  title?: string;
   actions?: ReactNode;
   hideActions?: boolean;
 
-  okText?: ReactNode;
+  okText?: string;
   onOk?: (...args: any[]) => any;
   okDisabled?: boolean;
   okHidden?: boolean;
   okLoading?: boolean;
 
-  cancelText?: ReactNode;
+  cancelText?: string;
   onCancel?: (...args: any[]) => any;
   cancelDisabled?: boolean;
   cancelHidden?: boolean;
@@ -50,18 +55,17 @@ const Drawer = (props: DrawerProps): JSX.Element => {
   const {
     children,
     visible,
+    isPrimarySidebar,
     title,
     actions = null,
     hideActions = false,
 
     okText = 'Ok',
-    onOk = noop,
     okDisabled = false,
     okHidden = false,
     okLoading = false,
 
     cancelText = 'Cancel',
-    onCancel = noop,
     cancelDisabled = false,
     cancelHidden = false,
     cancelLoading = false,
@@ -69,6 +73,10 @@ const Drawer = (props: DrawerProps): JSX.Element => {
     width = 720,
     ...otherProps
   } = props;
+
+  // Cogs drawer does not handle this by default, so we have to assign an action
+  const onCancel = props.onCancel || noop;
+  const onOk = props.onOk || noop;
 
   const getCancelButton = () =>
     !cancelHidden && (
@@ -105,18 +113,19 @@ const Drawer = (props: DrawerProps): JSX.Element => {
   const Content = title ? ContentWithTitle : ContentWithoutTitle;
 
   return (
-    <AntdDrawer
+    <CogsDrawer
       visible={visible}
       title={title}
       width={width}
-      bodyStyle={{ height: 'calc(100vh - 55px)', padding: 0 }}
+      className={isPrimarySidebar ? 'primary-sidebar' : ''}
+      // bodyStyle={{ height: 'calc(100vh - 55px)', padding: 0 }}
       onClose={onCancel}
       getContainer={getContainer}
       {...otherProps}
     >
       <Content>{children}</Content>
       {!hideActions && <Actions>{getActions()}</Actions>}
-    </AntdDrawer>
+    </CogsDrawer>
   );
 };
 

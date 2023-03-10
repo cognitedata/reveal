@@ -98,7 +98,7 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>{t('document-data-extraction')}</div>}
+      // title={<div>{t('document-data-extraction')}</div>}
       width="50%"
       onClose={() => props.closeModal()}
       visible={props.visible}

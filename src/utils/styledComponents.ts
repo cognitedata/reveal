@@ -1,15 +1,14 @@
 import styled from 'styled-components';
 import theme from 'styles/theme';
 import Input from 'antd/lib/input';
-import Card from 'antd/lib/card';
-import Table from 'antd/lib/table';
-import { Button, Colors, Input as CogsInput } from '@cognite/cogs.js';
+
+import { Button, Colors, Input as CogsInput, Table } from '@cognite/cogs.js';
 import Tag from 'antd/lib/tag';
 import Select from 'antd/lib/select';
 import Menu from 'antd/lib/menu';
 
-import Row from 'antd/lib/row';
 import zIndex from 'utils/zIndex';
+import { Card, Row } from './antdStyledComponents';
 
 const { Search } = Input;
 
@@ -39,6 +38,10 @@ export const SectionCard = styled(Card)`
     transform: scale(1.01);
     box-shadow: 0 2px 7px grey;
   }
+
+  &.with-extra-padding {
+    padding: 34px;
+  }
 `;
 
 export const IconWrapper = styled.div`
@@ -49,6 +52,7 @@ export const StatusTable = styled(Table)`
   border: 2px solid ${theme.disabledColor};
   box-sizing: border-box;
   border-radius: 8px;
+  table-layout: fixed;
 `;
 
 export const ChangesSavedWrapper = styled.div`
@@ -251,9 +255,10 @@ export const DetailsPane = styled.div`
   height: 100%;
   display: inline-block;
   width: 100%;
+  margin-bottom: -4px;
 
-  .ant-card-body {
-    padding: 0 !important;
+  .cogs-tabs__list__tab {
+    padding-bottom: 17px !important;
   }
 
   .ant-tabs-nav::before {

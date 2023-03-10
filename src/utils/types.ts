@@ -224,3 +224,16 @@ export interface UpdateGroupData {
   update: any;
   // update: Partial<Omit<Group, 'id' | 'isDeleted' | 'deletedTime'>>;
 }
+
+// Ts types for Cell renderer are not exposed in Cogs
+// this is just a small set of the props that we need to avoid using any
+export interface CogsTableCellRenderer<T> {
+  row: {
+    id: string;
+    index: number;
+    isExpanded: boolean;
+    isSelected: boolean;
+    original: T;
+  };
+  value: string | number;
+}

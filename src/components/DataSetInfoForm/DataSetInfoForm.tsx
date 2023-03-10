@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
-import Select from 'antd/lib/select';
-import Col from 'antd/lib/col';
+import AntdSelect from 'antd/lib/select';
 import theme from 'styles/theme';
-import Switch from 'antd/lib/switch';
+// import Switch from 'antd/lib/switch';
 import {
   SectionTitle,
   TitleOrnament,
@@ -18,12 +17,13 @@ import { Group } from '@cognite/sdk';
 import Tag from 'antd/lib/tag';
 import { getReadableCapabilities, getContainer } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
-import Collapse from 'antd/lib/collapse';
 import { useCdfGroups, useLabelSuggestions } from 'actions';
 import Alert from 'antd/lib/alert';
 
 import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
+import { Col } from 'utils';
+import { Switch, Collapse, Select } from '@cognite/cogs.js';
 
 const { Panel } = Collapse;
 
@@ -43,7 +43,7 @@ interface DataSetInfoFormProps {
   setOwners(value: Group[]): void;
 }
 
-const { Option } = Select;
+const { Option } = AntdSelect;
 
 declare module 'antd/lib/select' {
   export interface OptionProps {
@@ -101,7 +101,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       />
 
       <FieldLabel>{t('label_other')}</FieldLabel>
-      <Select
+      <AntdSelect
         mode="tags"
         style={{ width: '600px', background: theme.blandColor }}
         value={props.selectedLabels}
@@ -135,7 +135,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
               {suggestion}
             </Option>
           ))}
-      </Select>
+      </AntdSelect>
       <FieldLabel>
         <InfoTooltip
           title={t('write-protected')}
@@ -147,9 +147,9 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       </FieldLabel>
       <Switch
         checked={props.writeProtected}
-        onChange={(val) => {
+        onChange={() => {
           props.setChangesSaved(false);
-          props.setWriteProtected(val);
+          props.setWriteProtected(!props.writeProtected);
         }}
       />
 
@@ -164,8 +164,9 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
               )}`}
             />
           ) : (
-            <Select<any>
-              mode="multiple"
+            <Select
+              isMulti
+              options={[]}
               style={{ width: '100%', background: theme.blandColor }}
               loading={isLoading || !props.owners}
               onChange={(selection: string[]) => {
@@ -178,7 +179,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
                   );
                 }
               }}
-              value={props.owners.map((group) => String(group.id))}
+              // value={props.owners.map((group) => String(group.id))}
               optionLabelProp="label"
               filterOption={(input: string, option: any) =>
                 option.props.label.props.children &&
@@ -188,7 +189,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
               }
               getPopupContainer={getContainer}
             >
-              {groupsList?.map((group: any) => (
+              {/* {groupsList?.map((group: any) => (
                 <Select.Option
                   value={String(group.id)}
                   label={<GroupLabel>{group.name}</GroupLabel>}
@@ -206,14 +207,14 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
                     </OptionDescription>
                   </OptionWrapper>
                 </Select.Option>
-              ))}
+              ))} */}
             </Select>
           )}
         </div>
       )}
       <Collapse
-        bordered={false}
-        style={{
+        ghost
+        css={{
           padding: '0px',
           marginLeft: '-16px',
           background: 'transparent',
