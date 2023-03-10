@@ -12,6 +12,7 @@
   "filter-placeholder": "Filter by name",
   "filter_one": "Filter",
   "filter_other": "Filters",
+  "search-data-sets": "Search data sets",
   "model-configuration-fields-body-p1": "By default, the model uses the similarity between name and description when it searches for matches.",
   "model-configuration-fields-body-p2": "Create new connections between name, description, and available metadata fields with Add fields. Note: You can rerun the model later.",
   "model-configuration-fields-body": "By default, the model uses the similarity between name and description when it searches for matches. You can create new connections between name, description, and available metadata fields with Add fields.",
