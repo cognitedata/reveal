@@ -5,7 +5,7 @@ import { Filter, SourceType, TargetType } from 'types/api';
 
 type Props = {
   type: SourceType | TargetType;
-  filter: Filter;
+  filter?: Filter;
   advancedFilter?: any;
 };
 const NumberFormat = new Intl.NumberFormat(undefined);
