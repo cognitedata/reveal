@@ -1,4 +1,5 @@
 {
+  "cancel": "Cancel",
   "create-pipeline": "Create pipeline",
   "error": "Error",
   "entity-matching-pipelines": "Entity Matching pipelines",
@@ -97,5 +98,9 @@
   "create-prediction-job-loading": "Creating the prediction job",
   "do-not-leave-the-page-quick-match": "Creating the job, please do not leave the page",
   "results": "Results",
-  "create": "Create"
+  "create": "Create",
+  "validation-error-field-required": "You must enter a value in this field",
+  "name": "Name",
+  "description": "Description",
+  "pipeline": "Pipeline"
 }
