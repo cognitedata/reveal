@@ -1,14 +1,14 @@
+import { toast } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { useTranslation } from 'common';
 import { useDataSets } from 'hooks/datasets';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { API } from 'types/api';
 
 type Props = { api: API; onChange: (e: number[]) => void; selected?: number[] };
 export function DataSetSelect({ api, onChange, selected }: Props) {
   const { t } = useTranslation();
-  // TODO: error
-  const { data: datasets = [], isInitialLoading } = useDataSets(api);
+  const { data: datasets = [], isInitialLoading, error } = useDataSets(api);
 
   const items = useMemo(
     () =>
@@ -20,6 +20,14 @@ export function DataSetSelect({ api, onChange, selected }: Props) {
       })),
     [datasets]
   );
+
+  useEffect(() => {
+    if (error) {
+      toast.error(t('dataset-error-body', { error: error.message }), {
+        toastId: `dataset-error-${api}`,
+      });
+    }
+  }, [error, api, t]);
 
   return (
     <Select
