@@ -23,6 +23,7 @@ import {
   RawTimeseries,
   SourceType,
 } from 'types/api';
+import { filterFieldsFromObjects } from 'utils';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -255,6 +256,20 @@ export const useCreateEMModel = () => {
           }, [])
         : undefined;
 
+      const filteredSources = filterFieldsFromObjects(sources, [
+        'id',
+        ...matchFields
+          .filter((source) => !!source)
+          .map(({ source }) => source as string),
+      ]);
+
+      const filteredTargets = filterFieldsFromObjects(targetsList, [
+        'id',
+        ...matchFields
+          .filter((target) => !!target)
+          .map(({ target }) => target as string),
+      ]);
+
       return sdk
         .post<EntityMatchingModel>(
           `/api/v1/projects/${sdk.project}/context/entitymatching`,
@@ -262,8 +277,8 @@ export const useCreateEMModel = () => {
             data: {
               ignoreMissingFields: true,
               featureType,
-              sources,
-              targets: targetsList,
+              sources: filteredSources,
+              targets: filteredTargets,
               trueMatches,
               matchFields: matchFields.filter(
                 ({ source, target }) => !!source && !!target
