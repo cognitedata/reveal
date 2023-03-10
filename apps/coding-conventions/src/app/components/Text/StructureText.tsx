@@ -37,6 +37,11 @@ export const StructureText: React.FC<Props> = ({
           rectangle.x -= textElementPosition.x;
           rectangle.y -= textElementPosition.y;
 
+          rectangle.x -= 2;
+          rectangle.y -= 2;
+          rectangle.width += 4;
+          rectangle.height += 4;
+
           return { rect: rectangle, color: colors[convention.start] };
         });
 
@@ -52,10 +57,6 @@ export const StructureText: React.FC<Props> = ({
           <Text id="textElement">{text}</Text>
           {editMode &&
             boundingBoxes.map((box) => {
-              box.rect.x -= 2;
-              box.rect.y -= 2;
-              box.rect.width += 4;
-              box.rect.height += 4;
               return (
                 <div
                   style={{

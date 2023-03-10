@@ -1,10 +1,16 @@
 import { Convention } from '../../types';
 import { BaseTable } from './BaseTable';
 
-const baseColumns = [
+interface Props {
+  selectedConvention: Convention;
+  conventions?: Convention[];
+  dependsOnId?: string;
+}
+
+const defaultColumns = [
   {
-    Header: 'Abbreviation',
-    accessor: 'key',
+    Header: 'Regex String',
+    accessor: 'regex',
   },
   {
     Header: 'Description',
@@ -12,13 +18,7 @@ const baseColumns = [
   },
 ];
 
-interface Props {
-  selectedConvention: Convention;
-  conventions?: Convention[];
-  dependsOnId?: string;
-}
-
-export const AbbreviationTable: React.FC<Props> = ({
+export const RegexTable: React.FC<Props> = ({
   selectedConvention,
   conventions,
   dependsOnId,
@@ -28,8 +28,8 @@ export const AbbreviationTable: React.FC<Props> = ({
       <BaseTable
         selectedConvention={selectedConvention}
         conventions={conventions}
-        baseColumns={baseColumns}
-        tagType="Abbreviation"
+        baseColumns={defaultColumns}
+        tagType="Regex"
         dependsOnId={dependsOnId}
       />
     </div>

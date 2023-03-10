@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Button } from '@cognite/cogs.js';
 import { memoize } from 'lodash';
 import React, { useEffect } from 'react';
 import { useTable } from 'react-table';
@@ -36,6 +35,9 @@ const EditableCell = ({
           <SelectPasteFormat onPasteFormatChange={setPasteFormat} />
         )}
       <input
+        style={{
+          width: '100%',
+        }}
         value={initialValue}
         onChange={onChange}
         id={index + SPLITROWCOL + id}
@@ -59,12 +61,7 @@ const addNewRows = (setter: (a: any) => void, count?: number) => {
   });
 };
 
-export function Table({
-  columns,
-  dataSource: inputData,
-  onSaveDataClick,
-}: any) {
-  const [data, setData] = React.useState(inputData);
+export function Table({ columns, dataSource, onDataSourceChange }: any) {
   const [newColumns, setNewColumns] = React.useState(columns);
 
   const [pasteFormat, setPasteFormat] = React.useState<PasteDelimiter>(' ');
@@ -103,20 +100,20 @@ export function Table({
       ...emptyColumnsRightArray,
     ]);
 
-    if (data.length < MIN_ROW_LENGTH) {
-      addNewRows(setData, MIN_ROW_LENGTH - data.length);
+    if (dataSource.length < MIN_ROW_LENGTH) {
+      addNewRows(onDataSourceChange, MIN_ROW_LENGTH - dataSource.length);
     }
   }, []);
 
   const handleScroll = (e: any) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     if (scrollTop + clientHeight >= scrollHeight) {
-      addNewRows(setData);
+      addNewRows(onDataSourceChange);
     }
   };
 
   const updateMyData = (rowIndex: number, columnId: string, value: string) => {
-    setData((old: any[]) =>
+    onDataSourceChange((old: any[]) =>
       old.map((row, index) => {
         if (index === rowIndex) {
           if (columnId === 'key') {
@@ -140,7 +137,7 @@ export function Table({
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns: newColumns,
-      data,
+      data: dataSource,
       defaultColumn,
       initialState: {
         // @ts-ignore
@@ -359,9 +356,6 @@ export function Table({
 
   return (
     <div className="App">
-      <RightSideButton>
-        <Button onClick={() => onSaveDataClick(data)}>Save</Button>
-      </RightSideButton>
       <TableContainer onScroll={handleScroll}>
         <table
           {...getTableProps()}
@@ -431,17 +425,5 @@ export function Table({
 const TableContainer = styled.div`
   overflow-y: scroll;
   height: 500px;
-`;
-
-const RightSideButton = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-left: 1px solid #e6e6e6;
-  cursor: pointer;
+  width: 100%;
 `;

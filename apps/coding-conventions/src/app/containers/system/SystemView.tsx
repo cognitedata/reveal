@@ -47,7 +47,7 @@ interface Props {
     structured: string
   ) => void;
 }
-const CreateModal: React.FC<Props> = ({ toggleVisibility }) => {
+const CreateModal: React.FC<Props> = ({ toggleVisibility, onCreateClick }) => {
   const [title, setTitle] = useState('');
   const [resource, setResource] = useState<{
     label: string;
@@ -59,14 +59,25 @@ const CreateModal: React.FC<Props> = ({ toggleVisibility }) => {
   const [description, setDescription] = useState('');
   const [structure, setStructure] = useState('');
 
+  const handleOkClick = () => {
+    if (!(title && structure && resource.value)) {
+      alert('Title, resource and structure is required');
+      return;
+    }
+
+    onCreateClick(title, resource.value, description, structure);
+
+    toggleVisibility();
+  };
+
   return (
     <Modal
       visible
       modalWidth="450px"
-      modalHeight="490px"
+      modalHeight="530px"
       onCancel={toggleVisibility}
+      onOk={handleOkClick}
       title="Creating coding system"
-      // footer={<ModalFooter onCancel={toggleVisibility} onOk={handleOkClick} />}
     >
       <Flex gap={8} direction="column">
         <Subtitle>Title *</Subtitle>
@@ -108,7 +119,7 @@ const CreateModal: React.FC<Props> = ({ toggleVisibility }) => {
 
         <Subtitle>Description</Subtitle>
         <Textarea
-          label="This is the label"
+          fullWidth
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />

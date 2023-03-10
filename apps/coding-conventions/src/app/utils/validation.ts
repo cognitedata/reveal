@@ -28,6 +28,7 @@ export const validate = (
   conventions: Convention[],
   tags?: string[]
 ): string[] => {
+  conventions.sort((a, b) => a.start - b.start);
   const fetchData = validateDataMap.get('files') || (() => []);
   const dataToValidate = tags ? tags : fetchData();
 
@@ -138,9 +139,11 @@ export const backTrackingIsValid = (
         if (convention.optional) {
           return true;
         }
-        return previousMatches.some(
+
+        const hasBeenMatched = previousMatches.some(
           (match) => match.tagConventionId === convention.id
         );
+        return hasBeenMatched;
       }
     );
     return allNonOptionalConventionsHaveBeenMatched;

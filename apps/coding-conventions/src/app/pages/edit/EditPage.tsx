@@ -1,5 +1,6 @@
-import { Title } from '@cognite/cogs.js';
 import { Table as EditTable } from './DataCleanupComponent';
+import { Modal } from '../../components/Modal/Modal';
+import React from 'react';
 
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,7 +22,7 @@ const columns = [
 ];
 
 export const EditPage = () => {
-  const { conventionId, dependsOnId } = useParams();
+  const { conventionId, dependsOnId, systemId } = useParams();
 
   const { data: system } = useSystemQuery();
   const { data: conventions } = useConventionListQuery();
@@ -33,9 +34,13 @@ export const EditPage = () => {
     return item.id === conventionId;
   });
 
-  const definitions = convention?.definitions?.filter((item) => {
-    return item.dependsOn === dependsOnId;
+  const conventionDefinitions = convention?.definitions?.filter((item) => {
+    return item.dependsOn === dependsOnId && item.type === 'Abbreviation';
   });
+
+  const [definitions, setDefinitions] = React.useState<TagAbbreviation[]>(
+    (conventionDefinitions as TagAbbreviation[]) || []
+  );
 
   const saveData = (data: TagAbbreviation[]) => {
     const filteredData = data.filter((item: TagAbbreviation) => {
@@ -53,27 +58,37 @@ export const EditPage = () => {
     });
 
     if (convention && newData) {
-      convention.definitions = newData as TagDefinitions[];
+      const oldDefinitions = convention.definitions?.filter((item) => {
+        return item.dependsOn !== dependsOnId || item.type !== 'Abbreviation';
+      }) as TagDefinitions[];
+
+      convention.definitions = [
+        ...(oldDefinitions || []),
+        ...(newData as TagDefinitions[]),
+      ];
       updateConventions(conventions!);
     }
 
     navigate(`/conventions/${system?.id}`);
   };
+
   return (
-    <div>
-      <Header>
-        <Title level={2}>
-          Edit {system?.title} {dependsOnId && 'with dependency'}
-        </Title>
-      </Header>
+    <Modal
+      title="Edit data"
+      visible={!!true}
+      modalWidth="80%"
+      modalMaxHeight="80%"
+      onCancel={() => navigate(`/conventions/${systemId}`)}
+      onOk={() => saveData(definitions)}
+    >
       <Container>
         <EditTable
           columns={columns}
-          dataSource={definitions || []}
-          onSaveDataClick={saveData}
+          dataSource={definitions}
+          onDataSourceChange={setDefinitions}
         />
       </Container>
-    </div>
+    </Modal>
   );
 };
 
@@ -83,16 +98,4 @@ const Container = styled.div`
   align-items: center;
   gap: 16px;
   padding-bottom: 24px;
-`;
-
-const Header = styled.div`
-  border-top: 1px solid #d9d9d9;
-  border-bottom: 1px solid #d9d9d9;
-  height: 70px;
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px;
-  gap: 8px;
-  margin-bottom: 16px;
 `;

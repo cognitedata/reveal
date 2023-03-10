@@ -8,12 +8,18 @@ import { ConventionView } from '../containers/convention/ConventionView';
 import { Modal } from '../components/Modal/Modal';
 import { ConventionTest } from '../containers/convention/ConventionTest';
 import { ConventionValidation } from '../containers/convention/ConventionValidation';
+import { ConventionEdit } from '../containers/convention/ConventionEdit';
 
 interface Props {
   validate?: boolean;
   test?: boolean;
+  editDefinition?: boolean;
 }
-export const ConventionsPage: React.FC<Props> = ({ validate, test }) => {
+export const ConventionsPage: React.FC<Props> = ({
+  validate,
+  test,
+  editDefinition,
+}) => {
   const { systemId } = useParams();
 
   const navigate = useNavigate();
@@ -49,6 +55,8 @@ export const ConventionsPage: React.FC<Props> = ({ validate, test }) => {
       >
         {validate && <ConventionValidation />}
       </Modal>
+
+      {editDefinition && <ConventionEdit />}
 
       <Drawer
         title="Coding conventions for 'file name'"
