@@ -23,6 +23,7 @@ import {
   RawTimeseries,
   SourceType,
 } from 'types/api';
+import { filterFieldsFromObjects } from 'utils';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -255,29 +256,19 @@ export const useCreateEMModel = () => {
           }, [])
         : undefined;
 
-      const filteredSources = sources.map((source) => {
-        const keys = Object.keys(source);
-        const filteredSource: Record<string, unknown> = {};
-        keys
-          .filter((key) => matchFields.some(({ source }) => source === key))
-          .forEach((key) => {
-            filteredSource[key] = (source as any)[key];
-          });
-        filteredSource.id = source.id;
-        return filteredSource;
-      });
+      const filteredSources = filterFieldsFromObjects(sources, [
+        'id',
+        ...matchFields
+          .filter((source) => !!source)
+          .map(({ source }) => source as string),
+      ]);
 
-      const filteredTargets = targetsList.map((target) => {
-        const keys = Object.keys(target);
-        const filteredTarget: Record<string, unknown> = {};
-        keys
-          .filter((key) => matchFields.some(({ target }) => target === key))
-          .forEach((key) => {
-            filteredTarget[key] = (target as any)[key];
-          });
-        filteredTarget.id = target.id;
-        return filteredTarget;
-      });
+      const filteredTargets = filterFieldsFromObjects(targetsList, [
+        'id',
+        ...matchFields
+          .filter((target) => !!target)
+          .map(({ target }) => target as string),
+      ]);
 
       return sdk
         .post<EntityMatchingModel>(
