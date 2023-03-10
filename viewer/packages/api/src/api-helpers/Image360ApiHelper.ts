@@ -22,7 +22,6 @@ import {
   SceneHandler
 } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
-import { IconCullingScheme } from '@reveal/360-images/src/icons/IconCollection';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 
@@ -151,7 +150,7 @@ export class Image360ApiHelper {
 
     const image360Visualization = image360Entity.image360Visualization;
     image360Visualization.visible = true;
-    this._image360Facade.allIconCullingScheme = IconCullingScheme.Proximity;
+    this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allIconsVisibility = true;
     this._image360Facade.allHoverIconsVisibility = false;
     image360Entity.icon.visible = false;
@@ -289,7 +288,7 @@ export class Image360ApiHelper {
 
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
-    this._image360Facade.allIconCullingScheme = IconCullingScheme.Clustered;
+    this._image360Facade.allIconCullingScheme = 'clustered';
     if (this._interactionState.currentImage360Entered !== undefined) {
       this._image360Facade.collections
         .filter(imageCollection =>

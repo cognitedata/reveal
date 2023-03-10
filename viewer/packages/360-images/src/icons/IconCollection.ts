@@ -8,10 +8,7 @@ import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
 
-export enum IconCullingScheme {
-  Clustered,
-  Proximity
-}
+export type IconCullingScheme = 'clustered' | 'proximity';
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
@@ -41,11 +38,11 @@ export class IconCollection {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
 
     switch (this._iconCullingScheme) {
-      case IconCullingScheme.Clustered: {
+      case 'clustered': {
         this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
         break;
       }
-      case IconCullingScheme.Proximity: {
+      case 'proximity': {
         this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
         break;
       }
@@ -56,8 +53,8 @@ export class IconCollection {
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
-    this._proximityRadius = radius;
-    this._proximityPointLimit = pointLimit;
+    this._proximityRadius = Math.max(0, radius);
+    this._proximityPointLimit = Math.max(0, pointLimit);
   }
 
   constructor(
@@ -83,7 +80,7 @@ export class IconCollection {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
-    this._iconCullingScheme = IconCullingScheme.Clustered;
+    this._iconCullingScheme = 'clustered';
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
     this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
@@ -128,23 +125,23 @@ export class IconCollection {
   private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     return ({ camera }) => {
       const points =
-        this._proximityRadius < 1
-          ? this._icons
-          : octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
+        this._proximityRadius > 0
+          ? octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
               return pointContainer.data;
-            });
+            })
+          : this._icons;
 
       let closestPoints = points.sort((a, b) => {
-        return b.position.distanceTo(camera.position) - a.position.distanceTo(camera.position);
+        return a.position.distanceToSquared(camera.position) - b.position.distanceToSquared(camera.position);
       });
 
       if (this._proximityPointLimit > 0) {
-        closestPoints = closestPoints.slice(-(this._proximityPointLimit + 1)); //Add 1 to "skipSelf"..
+        closestPoints = closestPoints.slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
       }
 
       this._icons.forEach(p => (p.visible = false));
       closestPoints.forEach(p => (p.visible = true));
-      iconSprites.setPoints(closestPoints.map(p => p.position));
+      iconSprites.setPoints(closestPoints.reverse().map(p => p.position));
     };
   }
 
