@@ -7,6 +7,7 @@ import { useTranslation } from 'common';
 import PipelineDetailsForm, {
   PipelineDetailsFormValues,
 } from 'components/pipeline-details-form';
+import { useCreatePipeline } from 'hooks/pipeline';
 
 type CreatePipelineModalProps = Pick<ModalProps, 'onCancel' | 'visible'> & {};
 
@@ -21,6 +22,8 @@ const CreatePipelineModal = ({
 
   const { t } = useTranslation();
 
+  const { mutateAsync } = useCreatePipeline();
+
   const handleValidate = (
     values: PipelineDetailsFormValues
   ): FormikErrors<PipelineDetailsFormValues> => {
@@ -33,8 +36,14 @@ const CreatePipelineModal = ({
 
   const detailsForm = useFormik<PipelineDetailsFormValues>({
     initialValues: {},
-    onSubmit: () => {
-      navigate(createLink(`/${subAppPath}/pipeline/create/select-sources`));
+    onSubmit: (values) => {
+      mutateAsync({
+        name: values.name,
+        description: values.description,
+      }).then(({ id }) => {
+        onCancel?.();
+        navigate(createLink(`/${subAppPath}/pipeline/${id}/sources`));
+      });
     },
     validate: handleValidate,
     validateOnBlur: false,
