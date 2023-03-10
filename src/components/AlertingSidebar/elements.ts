@@ -1,5 +1,6 @@
 import { Button, Col, Dropdown, Icon, Menu, Title } from '@cognite/cogs.js';
 import { SidebarCollapseWrapped } from 'components/MonitoringSidebar/elements';
+import { Sidebar } from 'components/Common/SidebarElements';
 import styled from 'styled-components';
 
 export const DividerLine = styled.div`
@@ -158,6 +159,10 @@ export const SidebarCollapseAlert = styled(SidebarCollapseWrapped)`
       border-radius: 4px;
     }
   }
+`;
+
+export const SidebarWithScroll = styled(Sidebar)`
+  overflow-y: auto;
 `;
 
 export const DropdownActionAlerts = styled(Dropdown)``;

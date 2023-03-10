@@ -1,27 +1,26 @@
-import { Button, Collapse, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
 import {
-  CollapsePanelTitle,
-  ExpandIcon,
-  LoadingRow,
-  Sidebar,
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
 } from 'components/Common/SidebarElements';
-import EmptyState from 'components/AlertingSidebar/EmptyState';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
-import { MonitoringJob } from 'components/MonitoringSidebar/types';
-import { Col, Row } from 'antd';
 import { useMonitoringFoldersWithJobs } from 'components/MonitoringSidebar/hooks';
-import styled from 'styled-components';
 import { saveToLocalStorage } from '@cognite/storage';
 import { jobsToAlerts } from 'pages/ChartViewPage/NotificationIndicator';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from 'utils/constants';
 import { useQueryClient } from 'react-query';
-import { JobsWithAlertsContainer, SidebarCollapseAlert } from './elements';
-import MonitoringJobWithAlerts from './MonitoringJobWithAlerts';
+import {
+  JobAndAlertsFilter,
+  FilterOption,
+  FILTER_OPTIONS,
+} from 'components/MonitoringSidebar/JobAndAlertsFilter';
+import { useChartAtom } from 'models/chart/atom';
+import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
+import { getTsIds } from '../../domain/timeseries/internal/transformers/getTsIds';
+import { DisplayAlerts } from './DisplayAlerts';
 
 const defaultTranslations = makeDefaultTranslations(
   'Alerts',
@@ -34,7 +33,8 @@ type Props = {
   translations?: typeof defaultTranslations;
   onClose: () => void;
 };
-const AlertingSidebar = ({
+
+export const AlertingSidebar = ({
   onViewMonitoringJobs,
   translations,
   onClose,
@@ -44,6 +44,11 @@ const AlertingSidebar = ({
     ...translations,
   };
   const userInfo = useUserInfo();
+  const [chart] = useChartAtom();
+
+  const [filterOption, setFilterOption] = useState<FilterOption>(
+    FILTER_OPTIONS[0]
+  );
 
   const userAuthId = userInfo.data?.id;
 
@@ -51,7 +56,11 @@ const AlertingSidebar = ({
     isError,
     isFetching,
     data: taskData,
-  } = useMonitoringFoldersWithJobs('sidebar', userAuthId);
+  } = useMonitoringFoldersWithJobs('alerting-sidebar', userAuthId, {
+    subscribed: filterOption.value === 'subscribed',
+    timeseriesIds:
+      filterOption.value === 'current' ? getTsIds(chart) : undefined,
+  });
 
   const cache = useQueryClient();
 
@@ -61,7 +70,7 @@ const AlertingSidebar = ({
     .filter((job) => job.alertCount > 0);
 
   useEffect(() => {
-    cache.invalidateQueries(['monitoring-folders-jobs-sidebar']);
+    cache.invalidateQueries(['monitoring-folders-jobs-alerting-sidebar']);
   }, []);
 
   useEffect(() => {
@@ -96,6 +105,7 @@ const AlertingSidebar = ({
         </TopContainerAside>
       </TopContainer>
       <JobsWithAlertsContainer>
+        <JobAndAlertsFilter onChange={setFilterOption} value={filterOption} />
         <DisplayAlerts
           jobs={allJobs}
           isFetching={isFetching}
@@ -106,64 +116,3 @@ const AlertingSidebar = ({
     </SidebarWithScroll>
   );
 };
-
-type DisplayAlertsProps = {
-  isFetching: boolean;
-  isError: boolean;
-  jobs: MonitoringJob[] | undefined;
-  onViewMonitoringJobs: () => void;
-};
-const DisplayAlerts = ({
-  isFetching,
-  isError,
-  jobs,
-  onViewMonitoringJobs,
-}: DisplayAlertsProps) => {
-  const [activeKeys, setActiveKeys] = useState([]);
-
-  const handleToggleAccordian = (key: any) => {
-    setActiveKeys(key);
-  };
-  if (activeKeys.length === 0 && isFetching) {
-    return <LoadingRow lines={30} />;
-  }
-  if (isError === true || jobs?.length === 0) {
-    return <EmptyState onViewMonitoringJobs={onViewMonitoringJobs} />;
-  }
-  return (
-    <>
-      <SidebarCollapseAlert
-        activeKey={activeKeys}
-        onChange={handleToggleAccordian}
-        expandIcon={({ isActive }) => (
-          <ExpandIcon $active={Boolean(isActive)} type="ChevronDownLarge" />
-        )}
-      >
-        {jobs?.map((job: MonitoringJob) => (
-          <Collapse.Panel
-            key={job.externalId}
-            header={
-              <CollapsePanelTitle>
-                <Row align="middle" wrap={false}>
-                  <Col>{job.externalId}</Col>
-                </Row>
-              </CollapsePanelTitle>
-            }
-          >
-            <MonitoringJobWithAlerts
-              job={job}
-              key={job.id}
-              onViewMonitoringJobs={onViewMonitoringJobs}
-            />
-          </Collapse.Panel>
-        ))}
-      </SidebarCollapseAlert>
-    </>
-  );
-};
-
-export default AlertingSidebar;
-
-const SidebarWithScroll = styled(Sidebar)`
-  overflow-y: auto;
-`;

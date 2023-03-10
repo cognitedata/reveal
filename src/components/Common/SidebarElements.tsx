@@ -72,7 +72,8 @@ export const TopContainerAside = styled.div`
 
 export const ContentOverflowWrapper = styled.article`
   &&& {
-    height: calc(100% - 32px);
+    /* height of header */
+    height: calc(100% - 56px);
     overflow: auto;
   }
 `;
@@ -89,6 +90,7 @@ export const OverlayContentOverflowWrapper = styled.article`
 `;
 
 export const ContentContainer = styled.div`
+  height: 100%;
   &&& {
     padding: 20px;
   }

@@ -37,110 +37,113 @@ const defaultTranslation = makeDefaultTranslations(
   'Back'
 );
 
-const MonitoringSidebar = memo(({ onClose, onViewAlertingSidebar }: Props) => {
-  const [showMonitoringJobForm, setShowMonitoringJobForm] = useState(false);
-  const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
-  const [, setMonitoringJobIdParam] = useSearchParam(
-    MONITORING_SIDEBAR_HIGHLIGHTED_JOB
-  );
-  const [, setMonitoringFolder] = useSearchParam(
-    MONITORING_SIDEBAR_SELECTED_FOLDER
-  );
+export const MonitoringSidebar = memo(
+  ({ onClose, onViewAlertingSidebar }: Props) => {
+    const [showMonitoringJobForm, setShowMonitoringJobForm] = useState(false);
+    const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
+    const [, setMonitoringJobIdParam] = useSearchParam(
+      MONITORING_SIDEBAR_HIGHLIGHTED_JOB
+    );
+    const [, setMonitoringFolder] = useSearchParam(
+      MONITORING_SIDEBAR_SELECTED_FOLDER
+    );
 
-  const [navFromAlerts, setNavFromAlerts] = useSearchParam(
-    MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR
-  );
+    const [navFromAlerts, setNavFromAlerts] = useSearchParam(
+      MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR
+    );
 
-  const t = {
-    ...defaultTranslation,
-    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
-  };
-  const [monitoringShowAlerts, setMonitoringShowAlerts] = useSearchParam(
-    MONITORING_SIDEBAR_SHOW_ALERTS
-  );
-
-  const onCancel = () => {
-    setShowMonitoringJobForm(false);
-  };
-
-  useEffect(() => {
-    return () => {
-      setShowAlerts(undefined);
-      setMonitoringJobIdParam(undefined);
-      setMonitoringFolder(undefined);
-      setMonitoringShowAlerts(undefined);
+    const t = {
+      ...defaultTranslation,
+      ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar')
+        .t,
     };
-  }, []);
+    const [monitoringShowAlerts, setMonitoringShowAlerts] = useSearchParam(
+      MONITORING_SIDEBAR_SHOW_ALERTS
+    );
 
-  return (
-    <Sidebar visible>
-      <TopContainer>
-        <TopContainerTitle>
-          {/* @ts-ignore */}
-          <Icon size={21} type="Alarm" />
-          {t.Monitoring}
-        </TopContainerTitle>
-        <TopContainerAside>
-          <Tooltip content={t.Hide}>
-            <Button
-              icon="Close"
-              type="ghost"
-              onClick={onClose}
-              aria-label="Close"
-            />
-          </Tooltip>
-        </TopContainerAside>
-      </TopContainer>
-      <ContentOverflowWrapper>
-        <ContentContainer>
-          {showMonitoringJobForm && <CreateMonitoringJob onCancel={onCancel} />}
-          {!showMonitoringJobForm && monitoringShowAlerts !== 'true' && (
-            <>
-              <SidebarHeaderActions>
-                {!showMonitoringJobForm && (
+    const onCancel = () => {
+      setShowMonitoringJobForm(false);
+    };
+
+    useEffect(() => {
+      return () => {
+        setShowAlerts(undefined);
+        setMonitoringJobIdParam(undefined);
+        setMonitoringFolder(undefined);
+        setMonitoringShowAlerts(undefined);
+      };
+    }, []);
+
+    return (
+      <Sidebar visible>
+        <TopContainer>
+          <TopContainerTitle>
+            {/* @ts-ignore */}
+            <Icon size={21} type="Alarm" />
+            {t.Monitoring}
+          </TopContainerTitle>
+          <TopContainerAside>
+            <Tooltip content={t.Hide}>
+              <Button
+                icon="Close"
+                type="ghost"
+                onClick={onClose}
+                aria-label="Close"
+              />
+            </Tooltip>
+          </TopContainerAside>
+        </TopContainer>
+        <ContentOverflowWrapper>
+          <ContentContainer>
+            {showMonitoringJobForm && (
+              <CreateMonitoringJob onCancel={onCancel} />
+            )}
+            {!showMonitoringJobForm && monitoringShowAlerts !== 'true' && (
+              <>
+                <SidebarHeaderActions>
+                  {!showMonitoringJobForm && (
+                    <Button
+                      icon="Plus"
+                      type="primary"
+                      size="small"
+                      aria-label="Add monitoring task"
+                      onClick={() => {
+                        setShowMonitoringJobForm(true);
+                      }}
+                    >
+                      {t.Create}
+                    </Button>
+                  )}
+                </SidebarHeaderActions>
+                <ListMonitoringJobs />
+              </>
+            )}
+            {monitoringShowAlerts === 'true' && (
+              <>
+                <SidebarHeaderActions>
                   <Button
-                    icon="Plus"
-                    type="primary"
+                    icon="ArrowLeft"
                     size="small"
-                    aria-label="Add monitoring task"
+                    aria-label="Back"
                     onClick={() => {
-                      setShowMonitoringJobForm(true);
+                      if (navFromAlerts === 'true') {
+                        onViewAlertingSidebar();
+                        setNavFromAlerts(undefined);
+                      }
+                      setShowAlerts(undefined);
+                      setMonitoringJobIdParam(undefined);
                     }}
                   >
-                    {t.Create}
+                    {t.Back}
                   </Button>
-                )}
-              </SidebarHeaderActions>
-              <ListMonitoringJobs />
-            </>
-          )}
-          {monitoringShowAlerts === 'true' && (
-            <>
-              <SidebarHeaderActions>
-                <Button
-                  icon="ArrowLeft"
-                  size="small"
-                  aria-label="Back"
-                  onClick={() => {
-                    if (navFromAlerts === 'true') {
-                      onViewAlertingSidebar();
-                      setNavFromAlerts(undefined);
-                    }
-                    setShowAlerts(undefined);
-                    setMonitoringJobIdParam(undefined);
-                  }}
-                >
-                  {t.Back}
-                </Button>
-              </SidebarHeaderActions>
+                </SidebarHeaderActions>
 
-              <ListMonitoringJobAlerts />
-            </>
-          )}
-        </ContentContainer>
-      </ContentOverflowWrapper>
-    </Sidebar>
-  );
-});
-
-export default MonitoringSidebar;
+                <ListMonitoringJobAlerts />
+              </>
+            )}
+          </ContentContainer>
+        </ContentOverflowWrapper>
+      </Sidebar>
+    );
+  }
+);

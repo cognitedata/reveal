@@ -7,6 +7,9 @@ import {
   Input,
   Label,
   Select,
+  Flex,
+  Title,
+  Body,
 } from '@cognite/cogs.js';
 import { Input as AntdInput } from 'antd';
 
@@ -280,4 +283,23 @@ export const ClientCredentialsDetails = styled.div`
 
 export const ClientCredentialsOptionMessage = styled.div`
   margin: 0.5em 0em;
+`;
+
+export const EmptyStateContainer = styled(Flex)`
+  /* create button & show filter select with margins */
+  height: calc(100% - 92px);
+`;
+
+export const EmptyStateTitle = styled(Title)`
+  margin-top: 20px;
+  text-align: center;
+`;
+
+// no body level has this configuration
+export const EmptyStateBody = styled(Body)`
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
 `;

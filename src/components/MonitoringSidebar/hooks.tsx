@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import { EMPTY_ARRAY } from '../../domain/constants';
 import {
   AlertResponsePayload,
   CreateMonitoringJobPayload,
@@ -98,9 +99,14 @@ export const useCreateMonitoringJob = () => {
  */
 export const useMonitoringFoldersWithJobs = (
   hookId?: string,
-  userAuthId?: string
+  userAuthId?: string,
+  filters?: {
+    timeseriesIds?: number[];
+    subscribed?: boolean;
+  }
 ) => {
   const sdk = useSDK();
+  const { subscribed, timeseriesIds } = filters || {};
   const hookConfig: any = {
     enabled: userAuthId !== undefined,
   };
@@ -109,11 +115,25 @@ export const useMonitoringFoldersWithJobs = (
   }
 
   return useQuery(
-    `monitoring-folders-jobs-${hookId}`,
+    [
+      `monitoring-folders-jobs-${hookId}`,
+      Boolean(subscribed),
+      timeseriesIds || EMPTY_ARRAY,
+    ],
     () =>
       sdk
-        .get<MonitoringFolderJobs[]>(
-          `apps/v1/projects/${sdk.project}/charts/monitoring/folders?listJobs=true&userAuthId=${userAuthId}`
+        .post<MonitoringFolderJobs[]>(
+          `apps/v1/projects/${sdk.project}/charts/monitoring/folders/filter`,
+          {
+            data: {
+              timeseriesIds: timeseriesIds || EMPTY_ARRAY,
+              subscribed,
+            },
+            params: {
+              listJobs: true,
+              userAuthId,
+            },
+          }
         )
         .then(({ data }) => {
           /**
@@ -209,6 +229,7 @@ export const useMonitoringSubscriptionCreate = () => {
         const ids = [payload.channelID].join(',');
         cache.invalidateQueries([`monitoring-subscriptions-list-${ids}`]);
         cache.invalidateQueries([`monitoring-folders-jobs-indicator`]);
+        cache.invalidateQueries([`monitoring-folders-jobs-monitoring-sidebar`]);
       },
     }
   );
@@ -251,6 +272,7 @@ export const useMonitoringSubscriptionDelete = () => {
         const queryToInvalidate = `monitoring-subscriptions-list-${ids}`;
         cache.invalidateQueries([queryToInvalidate]);
         cache.invalidateQueries([`monitoring-folders-jobs-indicator`]);
+        cache.invalidateQueries([`monitoring-folders-jobs-monitoring-sidebar`]);
       },
     }
   );
