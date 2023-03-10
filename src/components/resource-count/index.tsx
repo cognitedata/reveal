@@ -11,12 +11,12 @@ type Props = {
 const NumberFormat = new Intl.NumberFormat(undefined);
 export default function ResourceCount({ type, filter, advancedFilter }: Props) {
   const { data } = useAggregate({ type, filter, advancedFilter });
+  const count = data?.[0].count;
 
-  const n = data && Number.isFinite(data) && NumberFormat.format(data);
-
-  return Number.isFinite(data) ? (
+  return Number.isFinite(count) ? (
     <>
-      {n} <ResourceTypei18n t={type} count={data} downcase />
+      {NumberFormat.format(count as number)}{' '}
+      <ResourceTypei18n t={type} count={count} downcase />
     </>
   ) : null;
 }

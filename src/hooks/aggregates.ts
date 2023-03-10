@@ -60,29 +60,43 @@ export const useAggregateProperties = (
 type AggregateParams = {
   type: T;
   filter: Filter;
+  aggregate?: string;
+  aggregateFilter?: any;
   advancedFilter?: any;
+  properties?: any[];
 };
 const aggregateQueryKey = ({
   type,
   filter,
   advancedFilter,
+  aggregate,
+  aggregateFilter,
+  properties,
 }: AggregateParams): QueryKey => [
   ...AGGREGATE_BASE_KEY,
   type,
+  aggregate,
+  aggregateFilter,
   filter,
   advancedFilter,
+  properties,
 ];
+
+type Aggregate = {
+  count: number;
+  values?: string[];
+};
 
 export const useAggregate = (
   params: AggregateParams,
-  options?: UseQueryOptions<number | undefined, CogniteError>
+  options?: UseQueryOptions<Aggregate[] | undefined, CogniteError>
 ) => {
   const sdk = useSDK();
   return useQuery(
     aggregateQueryKey(params),
     () => {
       return sdk
-        .post<{ items: { count: number }[] }>(
+        .post<{ items: Aggregate[] }>(
           `/api/v1/projects/${sdk.project}/${params.type}/aggregate`,
           {
             headers: {
@@ -91,12 +105,15 @@ export const useAggregate = (
             data: {
               filter: params.filter,
               advancedFilter: params.advancedFilter,
+              aggregate: params.aggregate,
+              aggregateFilter: params.aggregateFilter,
+              properties: params.properties,
             },
           }
         )
         .then((r) => {
           if (r.status === 200) {
-            return r.data.items[0]?.count;
+            return r.data.items;
           } else {
             return Promise.reject(r);
           }
