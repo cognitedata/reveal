@@ -5,12 +5,9 @@ import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawSequence } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { SourceTableProps } from 'types/types';
 
-type SequenceListTableRecord = { key: string } & Pick<
-  RawSequence,
-  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
+type SequenceListTableRecord = { key: string } & RawSequence;
 type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
   title: string;
 };
@@ -21,7 +18,7 @@ export default function SequenceTable({
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
+}: SourceTableProps) {
   const { data, isInitialLoading, error } = useList('sequences', {
     filter,
     advancedFilter,
@@ -73,7 +70,7 @@ export default function SequenceTable({
 
     type: 'checkbox' as RowSelectionType,
     onChange(_: (string | number)[], rows: SequenceListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+      setSelected(rows);
     },
     hideSelectAll: true,
     getCheckboxProps(_: any) {
