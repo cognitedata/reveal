@@ -52,7 +52,6 @@ export class IconCollection {
       default:
         break;
     }
-
     this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
   }
 
@@ -84,12 +83,10 @@ export class IconCollection {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
+    this._iconCullingScheme = IconCullingScheme.Clustered;
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
-
-    this._iconCullingScheme = IconCullingScheme.Clustered;
     this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
-
     onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
 
     this._sceneHandler = sceneHandler;
