@@ -101,5 +101,6 @@
   "create": "Create",
   "validation-error-field-required": "You must enter a value in this field",
   "name": "Name",
-  "description": "Description"
+  "description": "Description",
+  "pipeline": "Pipeline"
 }
