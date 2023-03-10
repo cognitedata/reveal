@@ -12,12 +12,15 @@ import { HoverLine } from './HoverLine';
 import { HoverLineInfo } from './HoverLineInfo';
 import { HoverMarker } from './HoverMarker';
 import { getPlotStyleData } from '../../utils/getPlotStyleData';
+import { useCursorPosition } from '../../hooks/useCursorPosition';
+import { useEffect, useState } from 'react';
 
 export interface HoverLayerProps {
   chartRef: React.RefObject<HTMLDivElement>;
   layout: Layout;
   plotHoverEvent?: PlotHoverEvent;
   backgroundColor?: string;
+  isCursorOnPlotArea: boolean;
   onHover?: () => void;
   onUnhover?: () => void;
   formatHoverLineInfo?: (props: HoverLineData) => string;
@@ -26,48 +29,54 @@ export interface HoverLayerProps {
 export const HoverLayer: React.FC<HoverLayerProps> = ({
   chartRef,
   layout,
-  plotHoverEvent,
+  plotHoverEvent: plotHoverEventCurrent,
   backgroundColor = DEFAULT_BACKGROUND_COLOR,
+  isCursorOnPlotArea,
   onHover,
   onUnhover,
   formatHoverLineInfo,
 }) => {
   const { showHoverLine, showHoverLineInfo, showHoverMarker } = layout;
 
+  const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
+
+  const { cursorPosition } = useCursorPosition(chartRef);
+
   const markerPosition = getMarkerPosition(plotHoverEvent);
   const plotStyleData = getPlotStyleData(chartRef.current);
 
-  const getHoverLayerComponentVisibility = (showConfig: boolean) => {
-    if (!plotHoverEvent) {
-      return false;
+  useEffect(() => {
+    if (plotHoverEventCurrent) {
+      setPlotHoverEvent(plotHoverEventCurrent);
     }
-    return showConfig;
-  };
+  }, [plotHoverEventCurrent]);
 
   return (
     <HoverLayerWrapper
-      style={{ visibility: plotHoverEvent ? 'visible' : 'hidden' }}
+      style={{
+        display: isCursorOnPlotArea ? 'initial' : 'none',
+      }}
       onMouseEnter={onHover}
       onMouseLeave={onUnhover}
     >
       <HoverLine
-        isVisible={getHoverLayerComponentVisibility(showHoverLine)}
-        markerPosition={markerPosition}
+        isVisible={showHoverLine}
+        position={cursorPosition}
         plotStyleData={plotStyleData}
       />
 
       <HoverLineInfo
         chartRef={chartRef}
-        isVisible={getHoverLayerComponentVisibility(showHoverLineInfo)}
-        markerPosition={markerPosition}
+        isVisible={showHoverLineInfo && Boolean(plotHoverEvent)}
+        position={cursorPosition}
         plotStyleData={plotStyleData}
         plotHoverEvent={plotHoverEvent}
         formatHoverLineInfo={formatHoverLineInfo}
       />
 
       <HoverMarker
-        isVisible={getHoverLayerComponentVisibility(showHoverMarker)}
-        markerPosition={markerPosition}
+        isVisible={showHoverMarker && Boolean(plotHoverEvent)}
+        position={markerPosition}
         plotHoverEvent={plotHoverEvent}
         backgroundColor={backgroundColor}
       />

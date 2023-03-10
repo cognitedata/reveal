@@ -24,7 +24,6 @@ import { useAxisTickCount } from '../../hooks/useAxisTickCount';
 import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
 import { useLayoutMargin } from '../../hooks/useLayoutMargin';
 import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
-import { useIsCursorOnPlotArea } from '../../hooks/useIsCursorOnPlotArea';
 import { usePlotDataRange } from '../../hooks/usePlotDataRange';
 import { adaptToPlotlyPlotData } from '../../utils/adaptToPlotlyPlotData';
 
@@ -40,13 +39,28 @@ export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   data: Data | Data[];
   layout: Layout;
   config: Config;
+  isCursorOnPlotArea: boolean;
   onHover?: (event: PlotHoverEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
+  onInitialized?: (figure: Figure, graph: HTMLElement) => void;
 }
 
 export const Plot = React.memo(
   React.forwardRef<PlotElement, PlotProps>(
-    ({ data, xAxis, yAxis, layout, config, onHover, onUnhover }, ref) => {
+    (
+      {
+        data,
+        xAxis,
+        yAxis,
+        layout,
+        config,
+        isCursorOnPlotArea,
+        onHover,
+        onUnhover,
+        onInitialized,
+      },
+      ref
+    ) => {
       const { showTicks, showMarkers } = layout;
       const { responsive } = config;
 
@@ -62,9 +76,6 @@ export const Plot = React.memo(
       });
 
       const { margin, updateLayoutMargin } = useLayoutMargin(layout);
-
-      const { isCursorOnPlotArea, initializePlotAreaCursorDetector } =
-        useIsCursorOnPlotArea();
 
       const initialRange = usePlotDataRange(data, showMarkers);
 
@@ -101,6 +112,7 @@ export const Plot = React.memo(
         },
         ...fixedRangeLayoutConfig,
         margin,
+        hovermode: 'x',
       };
 
       const plotConfig: Partial<PlotlyConfig> = {
@@ -109,8 +121,8 @@ export const Plot = React.memo(
         displayModeBar: false,
       };
 
-      const handleInitialized = (_figure: Figure, graph: HTMLElement) => {
-        initializePlotAreaCursorDetector(graph);
+      const handleInitialized = (figure: Figure, graph: HTMLElement) => {
+        onInitialized?.(figure, graph);
         resetPlotRange();
       };
 

@@ -9,22 +9,22 @@ import { Marker } from './elements';
 
 export interface HoverMarkerProps {
   isVisible: boolean;
-  markerPosition: Coordinate;
+  position?: Coordinate;
   plotHoverEvent?: PlotHoverEvent;
   backgroundColor: string;
 }
 
 export const HoverMarker: React.FC<HoverMarkerProps> = ({
   isVisible,
-  markerPosition,
+  position,
   plotHoverEvent,
   backgroundColor,
 }) => {
   return (
     <Marker
       style={{
-        top: markerPosition.y,
-        left: markerPosition.x,
+        top: position?.y,
+        left: position?.x,
         backgroundColor: getHoveredLineColor(plotHoverEvent),
         border: `${HOVER_MARKER_BORDER_WIDTH}px solid ${backgroundColor}`,
         opacity: isVisible ? 1 : 0,

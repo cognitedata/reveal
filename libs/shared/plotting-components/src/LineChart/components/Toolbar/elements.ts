@@ -4,6 +4,7 @@ export const ToolbarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 8px;
 `;
 
 export const FiltersWrapper = styled.div`

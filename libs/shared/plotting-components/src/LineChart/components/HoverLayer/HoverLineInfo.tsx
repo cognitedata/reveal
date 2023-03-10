@@ -13,7 +13,7 @@ import { LineInfo } from './elements';
 export interface HoverLineInfoProps {
   chartRef: React.RefObject<HTMLDivElement>;
   isVisible: boolean;
-  markerPosition: Coordinate;
+  position?: Coordinate;
   plotStyleData: Record<string, number>;
   plotHoverEvent?: PlotHoverEvent;
   formatHoverLineInfo?: (props: HoverLineData) => string;
@@ -22,7 +22,7 @@ export interface HoverLineInfoProps {
 export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
   chartRef,
   isVisible,
-  markerPosition,
+  position,
   plotStyleData,
   plotHoverEvent,
   formatHoverLineInfo,
@@ -43,7 +43,7 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
   const { offsetTop, height } = plotStyleData;
   const { lineInfoLeft, lineInfoOffset } = getLineInfoPosition(
     chartRef.current,
-    markerPosition.x,
+    position?.x,
     lineInfoWidth
   );
 

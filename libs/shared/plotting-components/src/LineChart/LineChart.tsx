@@ -14,6 +14,7 @@ import { getLayout } from './utils/getLayout';
 import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
 import { getConfig } from './utils/getConfig';
 import { getStyleProperties } from './utils/getStyleProperties';
+import { useCursorHandler } from './hooks/useCursorHandler';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
@@ -34,7 +35,16 @@ export const LineChart: React.FC<LineChartProps> = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
 
-  const { plotHoverEvent, plotHoverEventHandler } = usePlotHoverEvent();
+  const {
+    hoverStatus,
+    isCursorOnPlotArea,
+    initializePlotLayerHandler,
+    hoverLayer,
+    unhoverLayer,
+  } = useCursorHandler();
+
+  const { plotHoverEvent, plotHoverEventHandler } =
+    usePlotHoverEvent(hoverStatus);
 
   const layout = getLayout(layoutProp, variant);
   const config = getConfig(configProp);
@@ -68,6 +78,8 @@ export const LineChart: React.FC<LineChartProps> = ({
         yAxis={yAxis}
         layout={layout}
         config={config}
+        isCursorOnPlotArea={isCursorOnPlotArea}
+        onInitialized={(_, graph) => initializePlotLayerHandler(graph)}
         onHover={plotHoverEventHandler.onHoverPlot}
         onUnhover={plotHoverEventHandler.onUnhoverPlot}
       />
@@ -77,8 +89,9 @@ export const LineChart: React.FC<LineChartProps> = ({
         layout={layout}
         plotHoverEvent={plotHoverEvent}
         backgroundColor={backgroundColor}
-        onHover={plotHoverEventHandler.hoverPlot}
-        onUnhover={plotHoverEventHandler.unhoverPlot}
+        isCursorOnPlotArea={isCursorOnPlotArea}
+        onHover={() => hoverLayer('hoverLayer')}
+        onUnhover={() => unhoverLayer('hoverLayer')}
         formatHoverLineInfo={formatHoverLineInfo}
       />
 
@@ -90,8 +103,8 @@ export const LineChart: React.FC<LineChartProps> = ({
         backgroundColor={backgroundColor}
         disableTooltip={disableTooltip}
         renderTooltipContent={renderTooltipContent}
-        onHover={plotHoverEventHandler.hoverPlot}
-        onUnhover={plotHoverEventHandler.unhoverPlot}
+        onHover={() => hoverLayer('tooltip')}
+        onUnhover={() => unhoverLayer('tooltip')}
       />
 
       <Legend

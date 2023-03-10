@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-export const usePlotHoverEvent = () => {
+import { HoverStatus } from './useCursorHandler';
+
+export const usePlotHoverEvent = (hoverStatus: HoverStatus) => {
   const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
   const [isPlotHovered, setPlotHovered] = useState(false);
-  const [isMarkerHovered, setMarkerHovered] = useState(false);
 
   useEffect(() => {
-    if (!isPlotHovered && !isMarkerHovered) {
+    if (!isPlotHovered && !hoverStatus.hoverLayer && !hoverStatus.tooltip) {
       setPlotHoverEvent(undefined);
     }
-  }, [isPlotHovered, isMarkerHovered]);
+  }, [isPlotHovered, hoverStatus.hoverLayer, hoverStatus.tooltip]);
 
   const onHoverPlot = (event: PlotHoverEvent) => {
     setPlotHoverEvent(event);
@@ -21,8 +22,6 @@ export const usePlotHoverEvent = () => {
   const plotHoverEventHandler = {
     onHoverPlot,
     onUnhoverPlot: () => setPlotHovered(false),
-    hoverPlot: () => setMarkerHovered(true),
-    unhoverPlot: () => setMarkerHovered(false),
   };
 
   return {
