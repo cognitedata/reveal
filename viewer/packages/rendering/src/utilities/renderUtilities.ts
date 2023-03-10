@@ -33,6 +33,7 @@ export function createFullScreenTriangleMesh(shaderMaterial: THREE.RawShaderMate
 export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1): THREE.WebGLRenderTarget {
   const renderTarget = new THREE.WebGLRenderTarget(width, height);
   renderTarget.samples = multiSampleCount > 1 ? multiSampleCount : 0;
+  renderTarget.texture.encoding = THREE.sRGBEncoding;
 
   renderTarget.depthTexture = new THREE.DepthTexture(width, height);
   renderTarget.depthTexture.format = THREE.DepthFormat;

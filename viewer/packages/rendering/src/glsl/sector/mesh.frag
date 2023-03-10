@@ -37,8 +37,8 @@ void main()
     }
 
 #if defined(IS_TEXTURED)
-    // Gamma correction of 1.3 times to match GLTFViewer (Magic number determined based on visual comparison).
-    vec3 diffuseColor = pow(texture(tDiffuse, v_uv).rgb, vec3(1.3));
+    vec3 diffuseColor = texture(tDiffuse, v_uv).rgb;
+    // Convert color to sRGB as the GLTF format texture are in sRGB. TODO: https://cognitedata.atlassian.net/browse/REV-826.
     diffuseColor = LinearTosRGB(vec4(diffuseColor, 1.0)).xyz;
     vec4 color = determineColor(diffuseColor, appearance);
 

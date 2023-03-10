@@ -147,6 +147,7 @@ export class CadMaterialManager {
 
     // Refer https://threejs.org/docs/#examples/en/loaders/GLTFLoader under Textures for details on GLTF model texture color information.
     texture.encoding = THREE.sRGBEncoding;
+    texture.flipY = false;
 
     const newMaterial = modelData.materials.triangleMesh.clone();
     newMaterial.uniforms.tDiffuse = { value: texture };
