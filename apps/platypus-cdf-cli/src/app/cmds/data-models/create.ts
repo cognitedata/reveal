@@ -9,10 +9,12 @@ import Response, {
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import {
   DataModelExternalIdValidator,
+  DataModelNameValidator,
+  SpaceIdValidator,
   DataUtils,
   Validator,
+  PlatypusValidationError,
 } from '@platypus/platypus-core';
-import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
 
 import { Arguments, Argv } from 'yargs';
 
@@ -66,15 +68,22 @@ export class CreateCmd extends CLICommand {
 
   async execute(args: Arguments<DataModelCreateCommandArgs>) {
     const validator = new Validator(args);
-    if (args['name'] !== undefined) {
-      validator.addRule('name', new DataModelNameValidator());
-    }
-    if (args['external-id'] !== undefined) {
-      validator.addRule('external-id', new DataModelExternalIdValidator());
-    }
+    validator.addRule('name', new DataModelNameValidator());
+    validator.addRule('external-id', new DataModelExternalIdValidator());
+    validator.addRule('space', new SpaceIdValidator());
+
     const validationResult = validator.validate();
     if (!validationResult.valid) {
-      throw validationResult.errors;
+      let validationErrors = [];
+      for (const field in validationResult.errors) {
+        validationErrors.push({ message: validationResult.errors[field] });
+      }
+
+      throw new PlatypusValidationError(
+        'Could not create data model, one or more of the arguments you passed are invalid.',
+        'VALIDATION',
+        validationErrors
+      );
     }
 
     const dataModelsHandler = getDataModelsHandler();

@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { NameWrapper } from './elements';
 import { Validator } from '@platypus/platypus-core';
-import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
 import { FormLabel } from '../FormLabel/FormLabel';
+import { SpaceIdValidator } from '@platypus-core/domain/data-model/validators/space-id-validator';
 
 export type CreateNewSpaceModalProps = {
   onCancel: () => void;
@@ -25,10 +25,10 @@ export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
     const validator = new Validator({ name: value });
     validator.addRule(
       'name',
-      new DataModelNameValidator({
+      new SpaceIdValidator({
         validationMessage: t(
-          'space_name_error_message',
-          'May only contain numbers, letters, hyphens and underscores. Cannot start with a number, or contain more than 43 characters.'
+          'space_id_not_valid_message',
+          'May only contain numbers, letters, hyphens and underscores. Cannot start with a number, or contain more than 43 characters'
         ),
       })
     );
@@ -61,11 +61,11 @@ export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
               value={spaceName}
               placeholder={t('modal_space_input_placeholder', 'Enter name')}
               onChange={(e) => {
-                setSpaceName(e.currentTarget.value);
                 validateName(e.currentTarget.value);
+                setSpaceName(e.currentTarget.value);
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && spaceNameError === '') {
                   handleSubmit();
                 }
               }}
