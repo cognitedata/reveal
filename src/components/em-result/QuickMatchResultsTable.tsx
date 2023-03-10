@@ -4,6 +4,8 @@ import { useTranslation } from 'common';
 import { Prediction, PredictionObject } from 'hooks/contextualization-api';
 import { PredictionsTableTypes } from 'types/types';
 import { formatPredictionObject } from 'utils';
+import ConfidenceScore from './Confidence';
+import { Checkbox, Flex } from '@cognite/cogs.js';
 
 type Predictions = {
   predictions: Prediction[];
@@ -36,12 +38,14 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         title: t('qm-result-score'),
         dataIndex: 'matches',
         key: 'matches',
+        width: '30%',
         render: (matches: any[]) => matches[0]?.score.toFixed(1) || '—',
       },
       {
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
+        width: '30%',
         render: (source: PredictionObject) =>
           formatPredictionObject(source) || '—',
       },
@@ -49,8 +53,37 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         title: t('qm-result-target'),
         dataIndex: 'matches',
         key: 'matches',
+        width: '30%',
         render: (matches: any[]) =>
           formatPredictionObject(matches[0]?.target) || '—',
+      },
+
+      {
+        title: 'Confidence',
+        dataIndex: 'matches',
+        key: 'matches',
+        align: 'center',
+        width: '30%',
+        render: (matches: any[]) => (
+          <ConfidenceScore score={matches[0]?.score} />
+        ),
+        sorter: (a: Prediction, b: Prediction) =>
+          (a.matches[0]?.score ?? 0) - (b.matches[0]?.score ?? 0),
+        sortDirections: ['descend', 'ascend'],
+        defaultSortOrder: 'descend',
+      },
+      {
+        title: 'Confirm',
+        dataIndex: 'source',
+        key: 'source',
+        width: 10,
+        render: (source: PredictionObject) => {
+          return (
+            <Flex justifyContent="center">
+              <Checkbox name={`checkbox-${source.id}`} />
+            </Flex>
+          );
+        },
       },
     ],
     [t]
