@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Asset, InternalId, Timeseries } from '@cognite/sdk';
+import { Asset, Timeseries } from '@cognite/sdk';
 import {
   createContext,
   Dispatch,
@@ -8,7 +8,7 @@ import {
   useContext,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Filter, SourceType } from 'types/api';
+import { Filter, RawSource, RawTarget, SourceType } from 'types/api';
 import { useContextState } from 'utils';
 
 const QUICK_MATCH_STEPS = [
@@ -58,8 +58,8 @@ type QuickMatchContext = {
   allSources: boolean;
   setAllSources: Dispatch<SetStateAction<boolean>>;
 
-  sourcesList: InternalId[];
-  setSourcesList: Dispatch<SetStateAction<InternalId[]>>;
+  sourcesList: RawSource[];
+  setSourcesList: Dispatch<SetStateAction<RawSource[]>>;
 
   sourceFilter: Filter;
   setSourceFilter: Dispatch<SetStateAction<Filter>>;
@@ -70,8 +70,8 @@ type QuickMatchContext = {
   allTargets: boolean;
   setAllTargets: Dispatch<SetStateAction<boolean>>;
 
-  targetsList: InternalId[];
-  setTargetsList: Dispatch<SetStateAction<InternalId[]>>;
+  targetsList: RawTarget[];
+  setTargetsList: Dispatch<SetStateAction<RawTarget[]>>;
 
   hasNextStep: () => boolean;
   hasPrevStep: () => boolean;
@@ -85,7 +85,7 @@ type QuickMatchContext = {
 export const QuickMatchContext = createContext<QuickMatchContext>({
   allSources: false,
   sourcesList: [],
-  setSourcesList: function (_: SetStateAction<InternalId[]>): void {
+  setSourcesList: function (_: SetStateAction<RawSource[]>): void {
     throw new Error('Function not implemented.');
   },
   allTargets: false,
@@ -93,7 +93,7 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
     throw new Error('Function not implemented.');
   },
   targetsList: [],
-  setTargetsList: function (_: SetStateAction<InternalId[]>): void {
+  setTargetsList: function (_: SetStateAction<RawTarget[]>): void {
     throw new Error('Function not implemented.');
   },
   setAllSources: function (_: SetStateAction<boolean>): void {
@@ -179,12 +179,12 @@ export const QuickMatchContextProvider = ({
     'unmatchedOnly'
   );
   const [allSources, setAllSources] = useContextState(false, 'allSources');
-  const [sourcesList, setSourcesList] = useContextState<InternalId[]>(
+  const [sourcesList, setSourcesList] = useContextState<RawSource[]>(
     [],
     'sourcesList'
   );
   const [allTargets, setAllTargets] = useContextState(false, 'allTargets');
-  const [targetsList, setTargetsList] = useContextState<InternalId[]>(
+  const [targetsList, setTargetsList] = useContextState<RawTarget[]>(
     [],
     'targetsList'
   );

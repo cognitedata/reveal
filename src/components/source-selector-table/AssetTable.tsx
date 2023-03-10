@@ -4,47 +4,39 @@ import { Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
-import { RawSequence } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { RawAsset } from 'types/api';
+import { TargetTableProps } from 'types/types';
 
-type SequenceListTableRecord = { key: string } & Pick<
-  RawSequence,
-  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
-type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
+type AssetListTableRecord = { key: string } & RawAsset;
+type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
   title: string;
+  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
-export default function SequenceTable({
+export default function AssetTable({
   selected,
   setSelected,
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
-  const { data, isInitialLoading, error } = useList('sequences', {
+}: TargetTableProps) {
+  const { t } = useTranslation();
+  const { data, isInitialLoading, error } = useList('assets', {
     filter,
     advancedFilter,
-    limit: 100,
   });
 
-  const { t } = useTranslation();
-
-  const items = useMemo(
+  const dataSource = useMemo(
     () =>
       data?.map((a) => ({
         ...a,
         key: a.id.toString(),
+        disabled: allSources,
       })) || [],
-    [data]
+    [data, allSources]
   );
 
-  const dataSource = items?.map((event) => ({
-    ...event,
-    disabled: allSources,
-  }));
-
-  const columns: SequenceListTableRecordCT[] = useMemo(
+  const columns: AssetListTableRecordCT[] = useMemo(
     () => [
       {
         title: t('resource-table-column-name'),
@@ -70,13 +62,12 @@ export default function SequenceTable({
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
-
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: SequenceListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+    onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
+      setSelected(rows);
     },
     hideSelectAll: true,
-    getCheckboxProps(_: any) {
+    getCheckboxProps(_: AssetListTableRecord) {
       return {
         disabled: allSources,
       };
@@ -94,13 +85,13 @@ export default function SequenceTable({
   }
 
   return (
-    <Table<SequenceListTableRecord>
+    <Table<AssetListTableRecord>
       loading={isInitialLoading}
       columns={columns}
       emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      dataSource={dataSource || []}
+      dataSource={dataSource}
     />
   );
 }

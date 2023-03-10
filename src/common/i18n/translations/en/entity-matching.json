@@ -1,5 +1,7 @@
 {
+  "cancel": "Cancel",
   "create-pipeline": "Create pipeline",
+  "dataset-error-body": "An error occurred while retrieving data sets: '{{error}}'",
   "error": "Error",
   "entity-matching-pipelines": "Entity Matching pipelines",
   "error-403-description": "No do not have access to the selected resource type.",
@@ -97,5 +99,9 @@
   "create-prediction-job-loading": "Creating the prediction job",
   "do-not-leave-the-page-quick-match": "Creating the job, please do not leave the page",
   "results": "Results",
-  "create": "Create"
+  "create": "Create",
+  "validation-error-field-required": "You must enter a value in this field",
+  "name": "Name",
+  "description": "Description",
+  "pipeline": "Pipeline"
 }

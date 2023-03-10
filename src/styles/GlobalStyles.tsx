@@ -1,4 +1,4 @@
-import { Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Loader, Tooltip as CogsTooltip, Modal } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 
@@ -14,6 +14,11 @@ CogsTooltip.defaultProps = {
   // @ts-ignore
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,
+};
+
+Modal.defaultProps = {
+  getContainer,
+  ...Modal.defaultProps,
 };
 
 notification.config({

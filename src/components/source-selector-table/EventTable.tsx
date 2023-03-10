@@ -3,32 +3,27 @@ import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { RawTimeseries } from 'hooks/timeseries';
-
 import { useList } from 'hooks/list';
-import { ResourceTableProps } from 'types/types';
+import { RawCogniteEvent } from 'types/api';
+import { SourceTableProps } from 'types/types';
 
-type TimeseriesListTableRecord = { key: string; disabled?: boolean } & Pick<
-  RawTimeseries,
-  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
-type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
+type EventListTableRecord = { key: string } & RawCogniteEvent;
+type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
   title: string;
-  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
-export default function TimeseriesTable({
+export default function EventTable({
   selected,
   setSelected,
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
+}: SourceTableProps) {
   const {
     data,
     isInitialLoading: listLoading,
     error,
-  } = useList('timeseries', { limit: 1000, advancedFilter, filter });
+  } = useList('events', { filter, advancedFilter, limit: 100 });
 
   const loading = listLoading;
   const { t } = useTranslation();
@@ -42,22 +37,27 @@ export default function TimeseriesTable({
     [data]
   );
 
-  const dataSource = items?.map((ts) => ({
-    ...ts,
+  const dataSource = items?.map((event) => ({
+    ...event,
     disabled: allSources,
   }));
 
-  const columns: TimeseriesListTableRecordCT[] = useMemo(
+  const columns: EventListTableRecordCT[] = useMemo(
     () => [
-      {
-        title: t('resource-table-column-name'),
-        dataIndex: 'name',
-        key: 'name',
-      },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
+      },
+      {
+        title: t('resource-table-column-type'),
+        dataIndex: 'type',
+        key: 'type',
+      },
+      {
+        title: t('resource-table-column-subtype'),
+        dataIndex: 'subtype',
+        key: 'subtype',
       },
       {
         title: t('resource-table-column-lastUpdated'),
@@ -73,12 +73,13 @@ export default function TimeseriesTable({
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
+
     type: 'checkbox' as RowSelectionType,
-    hideSelectAll: true,
-    onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+    onChange(_: (string | number)[], rows: EventListTableRecord[]) {
+      setSelected(rows);
     },
-    getCheckboxProps(_: TimeseriesListTableRecord) {
+    hideSelectAll: true,
+    getCheckboxProps(_: any) {
       return {
         disabled: allSources,
       };
@@ -100,13 +101,13 @@ export default function TimeseriesTable({
   }
 
   return (
-    <Table<TimeseriesListTableRecord>
+    <Table<EventListTableRecord>
       loading={loading}
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
+      appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
-      appendTooltipTo={undefined}
     />
   );
 }
