@@ -13,6 +13,7 @@ export class Image360Icon {
   private readonly _sceneHandler: SceneHandler;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
+  private readonly _iconRadius: number;
   private readonly _setAdaptiveScale: BeforeSceneRenderedDelegate;
   private readonly _onRenderTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
   private _adaptiveScale = 1;
@@ -24,10 +25,12 @@ export class Image360Icon {
     sceneHandler: SceneHandler,
     minPixelSize: number,
     maxPixelSize: number,
+    iconRadius: number,
     onRenderTrigger: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
+    this._iconRadius = iconRadius;
 
     this._hoverSprite = this.createHoverSprite(hoverIconTexture);
     this._hoverSprite.position.copy(position);
@@ -60,7 +63,7 @@ export class Image360Icon {
   }
 
   public intersect(ray: Ray): Vector3 | null {
-    const sphere = new Sphere(this._position, 0.5 * this._adaptiveScale);
+    const sphere = new Sphere(this._position, this._iconRadius * this._adaptiveScale);
     return ray.intersectSphere(sphere, new Vector3());
   }
 
@@ -78,7 +81,13 @@ export class Image360Icon {
       if (!this.visible) {
         return;
       }
-      this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize);
+      this._adaptiveScale = computeAdaptiveScaling(
+        renderer,
+        camera,
+        this._maxPixelSize,
+        this._minPixelSize,
+        this._iconRadius
+      );
       this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
     };
 
@@ -86,7 +95,8 @@ export class Image360Icon {
       renderer: THREE.WebGLRenderer,
       camera: THREE.Camera,
       maxHeight: number,
-      minHeight: number
+      minHeight: number,
+      iconRadius: number
     ) {
       ndcPosition.set(position.x, position.y, position.z, 1);
       ndcPosition.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
@@ -94,14 +104,14 @@ export class Image360Icon {
         return 1.0;
       }
       renderer.getSize(renderSize);
-      const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * 0.5) / ndcPosition.w;
+      const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * iconRadius) / ndcPosition.w;
       const resolutionDownSampleFactor = renderSize.x / renderer.domElement.clientWidth;
       const clampedSize = clamp(
         pointSize,
         minHeight * resolutionDownSampleFactor,
         maxHeight * resolutionDownSampleFactor
       );
-      return clampedSize / pointSize;
+      return (clampedSize * 2 * iconRadius) / pointSize;
     }
   }
 

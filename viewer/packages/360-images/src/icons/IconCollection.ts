@@ -10,7 +10,7 @@ import { IconOctree } from './IconOctree';
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 64;
+  private readonly MAX_PIXEL_SIZE = 256;
   private readonly _sceneHandler: SceneHandler;
   private readonly _hoverIconTexture: CanvasTexture;
   private readonly _sharedTexture: Texture;
@@ -18,6 +18,7 @@ export class IconCollection {
   private readonly _iconsSprite: InstancedIconSprite;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
+  private readonly _iconRadius = 0.1;
 
   get icons(): Image360Icon[] {
     return this._icons;
@@ -29,7 +30,7 @@ export class IconCollection {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const sharedTexture = this.createOuterRingsTexture();
-    const iconSpriteRadius = 0.5;
+    const iconSpriteRadius = this._iconRadius;
     const iconsSprites = new InstancedIconSprite(
       points.length,
       sharedTexture,
@@ -98,6 +99,7 @@ export class IconCollection {
           sceneHandler,
           this.MIN_PIXEL_SIZE,
           this.MAX_PIXEL_SIZE,
+          this._iconRadius,
           onBeforeSceneRendered
         )
     );
