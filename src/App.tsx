@@ -18,8 +18,8 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Details from 'pages/Details';
 import QuickMatch from 'pages/quick-match';
-import CreatePipeline from 'pages/CreatePipeline';
 import { CogniteError } from '@cognite/sdk/dist/src';
+import Pipeline from 'pages/pipeline';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,8 +67,8 @@ const App = () => {
                         element={<QuickMatch />}
                       />
                       <Route
-                        path="/:projectName/:subAppPath/create"
-                        element={<CreatePipeline />}
+                        path="/:projectName/:subAppPath/pipeline*"
+                        element={<Pipeline />}
                       />
                       <Route
                         path="/:projectName/:subAppPath/:id"
