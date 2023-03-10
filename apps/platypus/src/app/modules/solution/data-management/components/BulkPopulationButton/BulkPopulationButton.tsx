@@ -19,10 +19,10 @@ export const BulkPopulationButton = ({
   return (
     <Tooltip
       disabled={missingPermissions.length === 0}
-      content={t(
+      content={`${t(
         'transformation-acl-message',
-        `You do not have enough permissions to load data. Missing permissions: [${missingPermissions}]`
-      )}
+        'You do not have enough permissions to load data. Missing transformationsACL permissions:'
+      )} [${missingPermissions}]`}
     >
       <Button
         disabled={missingPermissions.length > 0}

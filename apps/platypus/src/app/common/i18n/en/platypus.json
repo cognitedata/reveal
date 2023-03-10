@@ -138,6 +138,7 @@
   "toggle-visualizer-toolbar-label-text": "The preview might be slow due to the size of the data model.",
   "tooltip_external_id_explanation": "The external ID is automatically generated from the data model name.",
   "tooltip_external_id_label": "External ID",
+  "transformation-acl-message": "You do not have enough permissions to load data. Missing transformationsACL permissions:",
   "type_title": "Types",
   "updated": "updated",
   "version": "Version",

@@ -29,17 +29,14 @@ export const NoRowsOverlay = ({
   const { isEnabled: isManualPopulationEnabled } =
     useManualPopulationFeatureFlag();
   const isTransformationsEnabled = useTransformationsFeatureFlag();
-  const { data: transformations } = useTransformations({
+  const { data: transformations = [] } = useTransformations({
     space,
     isEnabled: isTransformationsEnabled,
     typeName,
     version,
   });
 
-  if (
-    isTransformationsEnabled &&
-    (!transformations || transformations.length > 0)
-  ) {
+  if (isTransformationsEnabled && transformations.length > 0) {
     return null;
   }
 
