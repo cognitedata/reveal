@@ -1,4 +1,4 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
   AdvancedFilter,
@@ -6,6 +6,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
+
 import { InternalTimeseriesFilters } from '../types';
 
 export type TimeseriesProperties = {
@@ -87,23 +88,38 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
   builder.and(filterBuilder);
 
   if (query) {
-    const searchQueryBuilder = new AdvancedFilterBuilder<TimeseriesProperties>()
-      .search('name', isEmpty(query) ? undefined : query)
-      .search('description', isEmpty(query) ? undefined : query);
+    const searchQueryBuilder =
+      new AdvancedFilterBuilder<TimeseriesProperties>();
+
+    if (searchConfigData.timeSeries.name) {
+      searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
+    }
+    if (searchConfigData.timeSeries.description) {
+      searchQueryBuilder.search(
+        'description',
+        isEmpty(query) ? undefined : query
+      );
+    }
 
     /**
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    searchQueryBuilder.prefix(`metadata`, query);
+    if (searchConfigData.timeSeries.metadata) {
+      searchQueryBuilder.prefix(`metadata`, query);
+    }
 
-    if (isNumeric(query)) {
+    if (isNumeric(query) && searchConfigData.timeSeries.id) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    searchQueryBuilder.prefix('unit', query);
+    if (searchConfigData.timeSeries.unit) {
+      searchQueryBuilder.prefix('unit', query);
+    }
 
-    searchQueryBuilder.prefix('externalId', query);
+    if (searchConfigData.timeSeries.externalId) {
+      searchQueryBuilder.prefix('externalId', query);
+    }
 
     builder.or(searchQueryBuilder);
   }

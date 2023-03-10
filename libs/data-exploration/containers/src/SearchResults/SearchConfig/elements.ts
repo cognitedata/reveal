@@ -20,6 +20,4 @@ export const CommonColumnWrapper = styled.div`
   border-radius: 8px;
 `;
 
-export const CommonWrapper = styled(Flex)`
-  padding: 8px;
-`;
+export const CommonWrapper = styled(Flex)``;

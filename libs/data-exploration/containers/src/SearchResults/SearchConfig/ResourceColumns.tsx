@@ -1,78 +1,63 @@
+import React from 'react';
 import { Divider } from '@cognite/cogs.js';
 import {
+  FilterIdType,
   getTitle,
-  ResourceType,
-  SearchConfigColumnType,
   SearchConfigDataType,
+  SearchConfigResourceType,
 } from '@data-exploration-lib/core';
 import { ColumnHeader, CommonWrapper, ModalCheckbox } from './elements';
 
 type Props = {
-  data: SearchConfigDataType[];
-  commonColumns: SearchConfigColumnType[];
+  searchConfigData: SearchConfigDataType;
   onChange: (
-    isChecked: boolean,
-    resource: ResourceType,
-    column: SearchConfigColumnType
+    enabled: boolean,
+    resource: SearchConfigResourceType,
+    filterId: FilterIdType
   ) => void;
 };
 
 export const ResourceColumns: React.FC<Props> = ({
-  data,
-  commonColumns,
+  searchConfigData,
   onChange,
 }: Props) => {
-  const commonColumnIds = commonColumns.map((column) => column.id);
+  const sizeOfCommonSection = 5;
   return (
     <>
-      {data.map((configData) => {
-        return (
-          <div key={`${configData.resourceType}`}>
-            <CommonWrapper direction="column">
-              <ColumnHeader>
-                {getTitle(configData.resourceType, true)}
-              </ColumnHeader>
-              {commonColumns.map((column) => {
-                const commonColumn = configData.columns.find(
-                  (col) => col.id === column.id
-                );
+      {(Object.keys(searchConfigData) as Array<SearchConfigResourceType>).map(
+        (resource) => {
+          const resourceFilterIds = Object.keys(
+            searchConfigData[resource]
+          ) as Array<FilterIdType>;
 
-                if (!commonColumn) return null;
-
-                return (
-                  <ModalCheckbox
-                    key={`${configData.resourceType}_${column.id}`}
-                    onChange={(_, isChecked) =>
-                      onChange(!!isChecked, configData.resourceType, column)
-                    }
-                    name={commonColumn.label}
-                    checked={commonColumn?.isChecked}
-                  >
-                    {commonColumn.label}
-                  </ModalCheckbox>
-                );
-              })}
-            </CommonWrapper>
-            <Divider />
-            <CommonWrapper direction="column">
-              {configData.columns
-                .filter((column) => !commonColumnIds.includes(column.id))
-                .map((column) => (
-                  <ModalCheckbox
-                    key={`${configData.resourceType}_${column.id}`}
-                    onChange={(_, isChecked) =>
-                      onChange(!!isChecked, configData.resourceType, column)
-                    }
-                    checked={column.isChecked}
-                    name={column.label}
-                  >
-                    {column.label}
-                  </ModalCheckbox>
-                ))}
-            </CommonWrapper>
-          </div>
-        );
-      })}
+          return (
+            <div key={`${resource}`}>
+              <CommonWrapper direction="column">
+                <ColumnHeader>{getTitle(resource, true)}</ColumnHeader>
+                {resourceFilterIds.map((filterId, index) => {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore Property does not exist on type
+                  const config = searchConfigData[resource][filterId];
+                  return (
+                    <React.Fragment key={`${resource}_${filterId}`}>
+                      <ModalCheckbox
+                        onChange={(_, isChecked) =>
+                          onChange(!!isChecked, resource, filterId)
+                        }
+                        name={config?.label}
+                        checked={config?.enabled}
+                      >
+                        {config?.label}
+                      </ModalCheckbox>
+                      {index === sizeOfCommonSection - 1 && <Divider />}
+                    </React.Fragment>
+                  );
+                })}
+              </CommonWrapper>
+            </div>
+          );
+        }
+      )}
     </>
   );
 };

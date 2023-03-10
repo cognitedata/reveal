@@ -1,4 +1,4 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -112,29 +112,45 @@ export const mapFiltersToEventsAdvancedFilters = (
   builder.and(filterBuilder);
 
   if (query) {
-    const searchQueryBuilder =
-      new AdvancedFilterBuilder<EventsProperties>().search(
+    const searchQueryBuilder = new AdvancedFilterBuilder<EventsProperties>();
+
+    if (searchConfigData.event.description) {
+      searchQueryBuilder.search(
         'description',
         isEmpty(query) ? undefined : query
       );
+    }
 
     /**
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    searchQueryBuilder.prefix(`metadata`, query);
+    if (searchConfigData.event.metadata) {
+      searchQueryBuilder.prefix(`metadata`, query);
+    }
 
-    searchQueryBuilder.prefix('type', query);
-    searchQueryBuilder.prefix('subtype', query);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // the type here is a bit wrong, will be refactored in later PRs
-    searchQueryBuilder.prefix('source', query);
+    if (searchConfigData.event.type) {
+      searchQueryBuilder.prefix('type', query);
+    }
 
-    if (isNumeric(query)) {
+    if (searchConfigData.event.subtype) {
+      searchQueryBuilder.prefix('subtype', query);
+    }
+
+    if (searchConfigData.event.source) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // the type here is a bit wrong, will be refactored in later PRs
+      searchQueryBuilder.prefix('source', query);
+    }
+
+    if (searchConfigData.event.id && isNumeric(query)) {
       searchQueryBuilder.equals('id', Number(query));
     }
-    searchQueryBuilder.prefix('externalId', query);
+
+    if (searchConfigData.event.externalId) {
+      searchQueryBuilder.prefix('externalId', query);
+    }
 
     builder.or(searchQueryBuilder);
   }

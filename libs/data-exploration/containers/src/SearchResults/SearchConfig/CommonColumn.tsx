@@ -1,7 +1,8 @@
 import {
-  SearchConfigColumnType,
+  searchConfigCommonColumns,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
+import { getNumberOfCheckedColumns } from '../utils/getNumberOfCheckedColumns';
 import {
   ColumnHeader,
   CommonColumnWrapper,
@@ -10,15 +11,13 @@ import {
 } from './elements';
 
 type Props = {
-  data: SearchConfigDataType[];
-  commonColumns: SearchConfigColumnType[];
+  searchConfigData: SearchConfigDataType;
   resourcesLength: number;
-  onChange: (isChecked: boolean, column: SearchConfigColumnType) => void;
+  onChange: (enabled: boolean, index: number) => void;
 };
 
 export const CommonColumn = ({
-  data,
-  commonColumns,
+  searchConfigData,
   resourcesLength,
   onChange,
 }: Props) => {
@@ -37,20 +36,19 @@ export const CommonColumn = ({
     <CommonColumnWrapper>
       <CommonWrapper direction="column">
         <ColumnHeader>Common</ColumnHeader>
-        {commonColumns.map((column) => {
-          const checkedColumnsLength = data.filter(
-            (item) =>
-              item.columns.find((col) => col.id === column.id)?.isChecked
-          ).length;
-
+        {searchConfigCommonColumns.map((column, index) => {
+          const checkedColumnsLength = getNumberOfCheckedColumns(
+            searchConfigData,
+            index
+          );
           return (
             <ModalCheckbox
               key={`common_${column}`}
-              onChange={(_, isChecked) => onChange(!!isChecked, column)}
+              onChange={(_, isChecked) => onChange(!!isChecked, index)}
               indeterminate={isOptionIndeterminate(checkedColumnsLength)}
               checked={isOptionChecked(checkedColumnsLength)}
             >
-              {column.label}
+              {column}
             </ModalCheckbox>
           );
         })}

@@ -1,23 +1,60 @@
-import { ResourceType } from './resource';
+export type FilterIdType =
+  | keyof AssetType
+  | keyof TimeseriesType
+  | keyof SequenceType
+  | keyof FileType
+  | keyof EventType;
 
-export type SearchConfigDataIdType =
-  | 'name_or_type'
-  | 'description_or_content'
-  | 'external_id'
-  | 'id'
-  | 'metadata'
-  | 'source'
-  | 'label'
-  | 'unit'
-  | 'subtype';
+export type SearchConfigResourceType = keyof SearchConfigDataType;
 
-export type SearchConfigColumnType = {
-  id: SearchConfigDataIdType;
-  label: string;
-  isChecked?: boolean;
+export type SearchConfig = { label: string; enabled: boolean };
+
+type CommonKeys = {
+  externalId: SearchConfig;
+  id: SearchConfig;
+};
+
+type AssetType = CommonKeys & {
+  name: SearchConfig;
+  description: SearchConfig;
+  metadata: SearchConfig;
+  source: SearchConfig;
+  labels: SearchConfig;
+};
+
+type TimeseriesType = CommonKeys & {
+  name: SearchConfig;
+  description: SearchConfig;
+  metadata: SearchConfig;
+  unit: SearchConfig;
+};
+
+type SequenceType = CommonKeys & {
+  name: SearchConfig;
+  description: SearchConfig;
+  metadata: SearchConfig;
+};
+
+type FileType = CommonKeys & {
+  'sourceFile|name'?: SearchConfig;
+  content: SearchConfig;
+  'sourceFile|metadata': SearchConfig;
+  'sourceFile|source': SearchConfig;
+  labels: SearchConfig;
+};
+
+type EventType = CommonKeys & {
+  type: SearchConfig;
+  description: SearchConfig;
+  metadata: SearchConfig;
+  source: SearchConfig;
+  subtype: SearchConfig;
 };
 
 export type SearchConfigDataType = {
-  resourceType: ResourceType;
-  columns: SearchConfigColumnType[];
+  asset: AssetType;
+  timeSeries: TimeseriesType;
+  sequence: SequenceType;
+  file: FileType;
+  event: EventType;
 };

@@ -1,4 +1,4 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -59,20 +59,32 @@ export const mapFiltersToSequenceAdvancedFilters = (
   builder.and(filterBuilder);
 
   if (query) {
-    const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>()
-      .search('name', isEmpty(query) ? undefined : query)
-      .search('description', isEmpty(query) ? undefined : query);
+    const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>();
+
+    if (searchConfigData.sequence.name) {
+      searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
+    }
+    if (searchConfigData.sequence.description) {
+      searchQueryBuilder.search(
+        'description',
+        isEmpty(query) ? undefined : query
+      );
+    }
 
     /**
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    searchQueryBuilder.prefix(`metadata`, query);
+    if (searchConfigData.sequence.metadata) {
+      searchQueryBuilder.prefix(`metadata`, query);
+    }
 
-    if (isNumeric(query)) {
+    if (isNumeric(query) && searchConfigData.sequence.id) {
       searchQueryBuilder.equals('id', Number(query));
     }
-    searchQueryBuilder.prefix('externalId', query);
+    if (searchConfigData.sequence.externalId) {
+      searchQueryBuilder.prefix('externalId', query);
+    }
 
     builder.or(searchQueryBuilder);
   }
