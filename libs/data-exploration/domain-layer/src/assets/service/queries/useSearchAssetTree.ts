@@ -8,6 +8,7 @@ import {
   useAssetsSearchResultWithLabelsQuery,
 } from '../../internal';
 import keyBy from 'lodash/keyBy';
+import isEmpty from 'lodash/isEmpty';
 import { buildTree } from '../utils/buildTree';
 import { concatParents } from '../utils/concatParents';
 import { TableSortBy } from '../../../types';
@@ -75,9 +76,12 @@ export const useSearchAssetTree = ({
       }, [] as InternalAssetTreeData[]);
 
       const concattedParentsTree = concatParents(tree);
-      const flaggedTreeForMore = setIsLastFetched(concattedParentsTree[0]);
 
-      return { data: [flaggedTreeForMore], ...rest };
+      const flaggedTreeForMore = isEmpty(concattedParentsTree)
+        ? ([] as InternalAssetTreeData[])
+        : [setIsLastFetched(concattedParentsTree[0])];
+
+      return { data: flaggedTreeForMore, ...rest };
     }
 
     return { data, ...rest };
