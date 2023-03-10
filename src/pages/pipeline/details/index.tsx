@@ -1,7 +1,7 @@
 import { Route, Routes, useParams } from 'react-router-dom';
 
-import { useTranslation } from 'common';
 import Page from 'components/page';
+import { useEMPipeline } from 'hooks/contextualization-api';
 
 import Sources from './sources';
 
@@ -10,10 +10,12 @@ const PipelineDetails = (): JSX.Element => {
     pipelineId: string;
   }>();
 
-  const { t } = useTranslation();
+  const { data: pipeline } = useEMPipeline(parseInt(pipelineId ?? ''), {
+    enabled: !!pipelineId,
+  });
 
   return (
-    <Page subtitle={pipelineId} title={t('pipeline')}>
+    <Page subtitle={pipeline?.description ?? '-'} title={pipeline?.name ?? ''}>
       <Routes>
         <Route path="/sources" element={<Sources />} />
       </Routes>
