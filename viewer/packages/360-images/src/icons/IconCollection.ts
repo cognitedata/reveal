@@ -7,7 +7,7 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
-import { clamp } from 'lodash';
+import clamp from 'lodash/clamp';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
