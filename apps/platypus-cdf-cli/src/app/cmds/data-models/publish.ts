@@ -11,6 +11,9 @@ import {
   CreateDataModelVersionDTO,
   DataModelsHandler,
   DataModelVersionHandler,
+  DataModelVersionValidator,
+  PlatypusValidationError,
+  Validator,
 } from '@platypus/platypus-core';
 import { readFileSync } from 'fs';
 import { Arguments, Argv } from 'yargs';
@@ -85,6 +88,24 @@ export class PublishCmd extends CLICommand {
   }
 
   async execute(args: Arguments<DataModelPublishCommandArgs>) {
+    const validator = new Validator(args);
+
+    validator.addRule('version', new DataModelVersionValidator());
+
+    const validationResult = validator.validate();
+    if (!validationResult.valid) {
+      let validationErrors = [];
+      for (const field in validationResult.errors) {
+        validationErrors.push({ message: validationResult.errors[field] });
+      }
+
+      throw new PlatypusValidationError(
+        'Could not publish data model, one or more of the arguments you passed are invalid.',
+        'VALIDATION',
+        validationErrors
+      );
+    }
+
     this.dataModelVersionsHandler = getDataModelVersionsHandler();
     this.dataModelsHandler = getDataModelsHandler();
     DEBUG('dataModelVersionsHandler initialized');

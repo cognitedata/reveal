@@ -1,6 +1,10 @@
 import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
 import { isFDMv3 } from '@platypus-app/flags';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import {
+  DataModelVersionValidator,
+  DataModelVersionValidatorV2,
+} from '@platypus/platypus-core';
 import { useEffect, useState } from 'react';
 import { StyledBreakingChanges } from './elements';
 
@@ -41,41 +45,27 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
   };
 
   useEffect(() => {
-    if (version.length < 1 || version.length > 43) {
-      setError(
-        t(
-          'custom_version_error_text',
-          'Version length should be between 1-43 characters.'
-        )
-      );
-      return;
-    }
-
     if (
       props.versionType !== 'FIRST' &&
       props.publishedVersions.includes(`${version}`)
     ) {
       setError(
         t(
-          'custom_version_error_text',
-          'This version tag has already been used.'
+          'publish_data_model_version_already_exists_error_message',
+          'Version already exists'
         )
       );
       return;
     }
 
-    const matchingPattern = isFDMV3
-      ? /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$/
-      : /^[1-9][0-9]{0,41}[0-9]?$/;
-    if (!version.match(matchingPattern)) {
-      setError(
-        t(
-          'custom_version_error_text',
-          isFDMV3
-            ? 'Allowed characters: a-z, A-Z, 0-9, _, -, .'
-            : 'Please use numeric values greater than 0'
-        )
-      );
+    const validator = isFDMV3
+      ? new DataModelVersionValidator()
+      : new DataModelVersionValidatorV2();
+
+    const validationResult = validator.validate('version', version);
+
+    if (!validationResult.valid) {
+      setError(validationResult.errors.version);
       return;
     }
 

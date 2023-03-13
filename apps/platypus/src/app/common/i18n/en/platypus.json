@@ -41,6 +41,7 @@
   "custom-filter-select-filter-options": "Filter options...",
   "custom-filter-select-range-from": "From...",
   "custom-filter-select-range-to": "To...",
+  "publish_data_model_version_already_exists_error_message": "Version already exists",
   "data_for": "Data for",
   "data_management_title": "Data management",
   "data_model_create_modal_title": "Create data model",
