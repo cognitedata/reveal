@@ -1,10 +1,7 @@
 import { useState } from 'react';
-
-import { Button } from '@cognite/cogs.js';
-import styled from 'styled-components';
-
 import { useTranslation } from 'common';
 import CreatePipelineModal from 'components/create-pipeline-modal';
+import NoWrapButton from 'components/no-wrap-button';
 
 export const CreatePipelineButton = (): JSX.Element => {
   const { t } = useTranslation();
@@ -17,17 +14,13 @@ export const CreatePipelineButton = (): JSX.Element => {
         onCancel={() => setIsModalOpen(false)}
         visible={isModalOpen}
       />
-      <StyledButton
+      <NoWrapButton
         onClick={() => setIsModalOpen(true)}
         type="primary"
         icon="AddLarge"
       >
         {t('title-create-pipeline')}
-      </StyledButton>
+      </NoWrapButton>
     </>
   );
 };
-
-const StyledButton = styled(Button)`
-  white-space: nowrap;
-`;
