@@ -109,6 +109,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
                 name="dataModelName"
                 data-cy="input-data-model-name"
                 value={props.name}
+                disabled={props.isLoading}
                 placeholder={t('modal_name_input_placeholder', 'Enter name')}
                 onChange={(e) => {
                   validateName(e.target.value);
@@ -126,7 +127,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
           <StyledEditableChip
             data-testid="external-id-field"
             errorMessage={externalIdErrorMessage}
-            isLocked={props.isExternalIdLocked}
+            isLocked={props.isExternalIdLocked || props.isLoading}
             label={t('external_id_label', 'External ID')}
             onChange={props.onExternalIdChange}
             placeholder={t(
@@ -151,6 +152,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             <Textarea
               name="dataModelDescription"
               data-cy="input-data-model-description"
+              disabled={props.isLoading}
               value={props.description}
               onChange={(e) => props.onDescriptionChange(e.target.value)}
               placeholder={t(
@@ -163,7 +165,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
           {isFDMV3 && (
             <DataModelSpaceSelect
-              isDisabled={props.isSpaceDisabled}
+              isDisabled={props.isSpaceDisabled || props.isLoading}
               onChange={(selectedSpaceOption) =>
                 props.onSpaceChange?.(selectedSpaceOption)
               }
