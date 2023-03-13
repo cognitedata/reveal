@@ -99,7 +99,7 @@ export class Image360UI {
 
     async function set360IconCullingRestrictions() {
       if (sets.length > 0) {
-        sets.forEach(p => (p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit)));
+        sets.forEach(p => p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit));
         viewer.requestRedraw();
       }
     }
