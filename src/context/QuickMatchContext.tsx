@@ -228,14 +228,30 @@ export const QuickMatchContextProvider = ({
     }
   }, [hasTargets, navigate, step, subAppPath]);
 
+  const stepDone = () => {
+    switch (step) {
+      case 'select-sources': {
+        return hasSources;
+      }
+      case 'select-targets': {
+        return hasTargets;
+      }
+      default: {
+        return true;
+      }
+    }
+  };
+
   const hasNextStep = () => {
     const order = getQuickMatchStepOrder(step);
-    return order >= 0 && order < QUICK_MATCH_STEPS.length - 1;
+    return stepDone() && order >= 0 && order < QUICK_MATCH_STEPS.length - 1;
   };
 
   const hasPrevStep = () => {
     const order = getQuickMatchStepOrder(step);
-    return order > 0 && order < QUICK_MATCH_STEPS.length;
+    return (
+      step !== 'create-model' && order > 0 && order < QUICK_MATCH_STEPS.length
+    );
   };
 
   const pushStep = () => {
