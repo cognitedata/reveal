@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro';
 
-import { HOVER_MARKER_SIZE } from '../../constants';
-
 export const HoverLayerWrapper = styled.div``;
 
 export const Line = styled.div`
@@ -34,13 +32,4 @@ export const LineInfo = styled.div`
     border-style: solid;
     border-color: transparent transparent #262626 transparent;
   }
-`;
-
-export const Marker = styled.div`
-  position: absolute;
-  width: ${HOVER_MARKER_SIZE}px;
-  height: ${HOVER_MARKER_SIZE}px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.4s ease;
 `;

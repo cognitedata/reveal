@@ -1,18 +1,18 @@
 import { DEFAULT_MARGIN } from '../constants';
 import { Layout } from '../types';
 
-export const getMarginBottom = (layout: Layout) => {
+export const getMarginBottom = (layout: Layout, hasAxisLabel: boolean) => {
   const { showAxisNames, showTickLabels } = layout;
 
-  if (showAxisNames && showTickLabels) {
+  if (hasAxisLabel && showAxisNames && showTickLabels) {
     return 50;
   }
 
-  if (!showAxisNames && showTickLabels) {
-    return 16;
+  if ((!hasAxisLabel || !showAxisNames) && showTickLabels) {
+    return 18;
   }
 
-  if (showAxisNames && !showTickLabels) {
+  if (hasAxisLabel && showAxisNames && !showTickLabels) {
     return 24;
   }
 

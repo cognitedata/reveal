@@ -23,7 +23,7 @@ export const HoverLine: React.FC<HoverLineProps> = ({
         top: offsetTop,
         height: height + 1,
         opacity: isVisible ? 1 : 0,
-        visibility: isVisible ? 'visible' : 'hidden',
+        display: isVisible ? 'initial' : 'none',
       }}
     />
   );

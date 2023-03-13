@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import { PlotMouseEvent } from 'plotly.js';
+import { Coordinate } from '../types';
 import { getMarkerPosition } from './getMarkerPosition';
 import { getPlotStyleData } from './getPlotStyleData';
 
@@ -9,7 +10,8 @@ export const getTooltipPosition = (
   chartRef: React.RefObject<HTMLDivElement>,
   plotMouseEvent?: PlotMouseEvent,
   tooltipWidth?: number,
-  tooltipHeight?: number
+  tooltipHeight?: number,
+  referencePosition: Coordinate = {}
 ) => {
   if (!plotMouseEvent || !tooltipWidth || !tooltipHeight) {
     return {
@@ -26,7 +28,10 @@ export const getTooltipPosition = (
 
   const { offsetTop, height } = getPlotStyleData(chartRef.current);
 
-  const { x = 0, y = 0 } = getMarkerPosition(plotMouseEvent);
+  const { x = 0, y = 0 } = {
+    ...getMarkerPosition(plotMouseEvent),
+    ...referencePosition,
+  };
 
   return {
     x: calculateTooltipPositionX(x, tooltipWidth, chartWidth),

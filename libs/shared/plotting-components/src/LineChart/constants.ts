@@ -16,13 +16,12 @@ export const SMALL_VARIANT_PADDING = 8;
 export const DEFAULT_MARGIN = 1;
 
 export const LINE_WIDTH = 1.4;
+export const MARKER_SIZE = 8;
+export const HOVER_MARKER_BORDER_WIDTH = 2;
 export const DEFAULT_LINE_COLOR = '#4A67FB';
 export const DEFAULT_LINE_NAME = 'Line';
 
 export const BUTTON_ZOOM_STEP_SIZE = 5; // percentage
-
-export const HOVER_MARKER_SIZE = 12;
-export const HOVER_MARKER_BORDER_WIDTH = 2;
 
 export const DEAULT_LAYOUT: Layout = {
   legendPlacement: 'left',
@@ -35,6 +34,7 @@ export const DEAULT_LAYOUT: Layout = {
   showFilters: true,
   showActions: true,
   showMarkers: true,
+  showTooltip: true,
   showHoverMarker: true,
   showHoverLine: true,
   showHoverLineInfo: true,
@@ -75,6 +75,7 @@ export const DEAULT_CONFIG: Config = {
   selectionZoom: DEFAULT_AXIS_DIRECTION_CONFIG,
   buttonZoom: DEFAULT_AXIS_DIRECTION_CONFIG,
   pan: DEFAULT_AXIS_DIRECTION_CONFIG,
+  hoverMode: 'x',
 };
 
 export const DEFAULT_STYLE_PROPERTIES: CSSProperties = {

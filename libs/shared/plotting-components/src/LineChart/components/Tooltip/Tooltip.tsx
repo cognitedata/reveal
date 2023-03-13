@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
@@ -7,7 +7,7 @@ import head from 'lodash/head';
 import get from 'lodash/get';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
-import { TooltipRendererProps } from '../../types';
+import { Coordinate, TooltipRendererProps } from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
 import { TooltipDetail } from './TooltipDetail';
@@ -19,10 +19,9 @@ export interface TooltipProps {
   xAxisName?: string;
   yAxisName?: string;
   backgroundColor?: string;
-  disableTooltip?: boolean;
+  referencePosition?: Coordinate;
+  showTooltip: boolean;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
-  onHover?: () => void;
-  onUnhover?: () => void;
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({
@@ -31,26 +30,24 @@ export const Tooltip: React.FC<TooltipProps> = ({
   xAxisName = 'X',
   yAxisName = 'Y',
   backgroundColor = DEFAULT_BACKGROUND_COLOR,
-  disableTooltip,
+  referencePosition,
+  showTooltip,
   renderTooltipContent,
-  onHover,
-  onUnhover,
 }) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const [tooltipWidth, setTooltipWidth] = useState<number>();
   const [tooltipHeight, setTooltipHeight] = useState<number>();
 
-  const { x, y } = useMemo(() => {
-    return getTooltipPosition(
-      chartRef,
-      plotHoverEvent,
-      tooltipWidth,
-      tooltipHeight
-    );
-  }, [chartRef, plotHoverEvent, tooltipWidth, tooltipHeight]);
-
   const point = head(plotHoverEvent?.points);
+
+  const { x, y } = getTooltipPosition(
+    chartRef,
+    plotHoverEvent,
+    tooltipWidth,
+    tooltipHeight,
+    referencePosition
+  );
 
   const updateTooltipWidth = useCallback(() => {
     setTooltipWidth(tooltipRef.current?.clientWidth);
@@ -97,7 +94,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     );
   };
 
-  if (disableTooltip) {
+  if (!showTooltip) {
     return null;
   }
 
@@ -106,14 +103,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <TooltipWrapper
       ref={tooltipRef}
+      className="tooltip"
       style={{
         top: y,
         left: x,
         visibility: isTooltipVisible ? 'visible' : 'hidden',
         opacity: isTooltipVisible ? 1 : 0,
       }}
-      onMouseEnter={onHover}
-      onMouseLeave={onUnhover}
     >
       {getTooltipContent()}
     </TooltipWrapper>

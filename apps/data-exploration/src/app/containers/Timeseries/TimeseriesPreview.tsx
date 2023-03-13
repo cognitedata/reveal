@@ -8,7 +8,7 @@ import { Tabs } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
   Loader,
-  TimeseriesChart,
+  TimeseriesChart as TimeseriesChartOld,
   Metadata,
   TimeseriesDetails,
 } from '@cognite/data-exploration';
@@ -23,6 +23,8 @@ import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/eleme
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import { TimeOptions } from '@data-exploration-components/containers/Timeseries/types';
 import { usePreviewDateRange } from '@data-exploration-app/hooks';
+
+// import { TimeseriesChart } from '@cognite/plotting-components';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -121,7 +123,7 @@ export const TimeseriesPreview = ({
               <Tabs.Tab label="Details" key="details" tabKey="details">
                 <DetailsTabWrapper>
                   <TimeseriesChartWrapper>
-                    <TimeseriesChart
+                    <TimeseriesChartOld
                       timeseriesId={timeseries.id}
                       showCustomRangePicker
                       dateRange={dateRange}
@@ -133,6 +135,11 @@ export const TimeseriesPreview = ({
                       ]}
                     />
                   </TimeseriesChartWrapper>
+                  {/* <TimeseriesChart
+                    timeseriesId={timeseries.id}
+                    dateRange={dateRange}
+                    style={{ height: 300 }}
+                  /> */}
                   <TimeseriesDetails timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />
                 </DetailsTabWrapper>

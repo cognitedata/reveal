@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Layout as PlotlyLayout } from 'plotly.js';
 
-import { Config } from '../types';
+import { AxisIdentifier, Config } from '../types';
 import { getFixedRangeConfig } from '../utils/getFixedRangeConfig';
 import { getSelectDirection } from '../utils/getSelectDirection';
 import { useAxisDirection } from './useAxisDirection';
@@ -10,7 +10,7 @@ import { getPlotAreaCursor } from '../utils/getPlotAreaCursor';
 
 export const useLayoutFixedRangeConfig = (
   config: Config,
-  isCursorOnPlotArea: boolean
+  isCursorOnPlot: boolean
 ) => {
   const { scrollZoom, selectionZoom, pan } = config;
 
@@ -19,8 +19,8 @@ export const useLayoutFixedRangeConfig = (
   const panDirection = useAxisDirection(pan);
 
   const getAxisFixedRange = useCallback(
-    (axis: 'x' | 'y') => {
-      if (scrollZoomDirection && isCursorOnPlotArea) {
+    (axis: AxisIdentifier) => {
+      if (scrollZoomDirection && isCursorOnPlot) {
         return getFixedRangeConfig(scrollZoomDirection, axis);
       }
       if (panDirection) {
@@ -28,7 +28,7 @@ export const useLayoutFixedRangeConfig = (
       }
       return false;
     },
-    [isCursorOnPlotArea, panDirection, scrollZoomDirection]
+    [isCursorOnPlot, panDirection, scrollZoomDirection]
   );
 
   const fixedRange = useMemo(() => {

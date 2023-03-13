@@ -73,7 +73,7 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
         left: lineInfoLeft,
         top: offsetTop + height,
         opacity: isVisible ? 1 : 0,
-        visibility: isVisible ? 'visible' : 'hidden',
+        display: isVisible ? 'initial' : 'none',
       }}
       offset={lineInfoOffset}
     >

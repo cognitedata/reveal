@@ -13,14 +13,15 @@ export const useHandlePlotRange = (initialRange: Required<PlotRange>) => {
       if (
         isUndefined(newRange.x) ||
         isUndefined(newRange.y) ||
-        isEqual(range, newRange)
+        isEqual(range, newRange) ||
+        isEqual(initialRange, newRange)
       ) {
         return;
       }
 
       setRange(newRange);
     },
-    [range]
+    [initialRange, range]
   );
 
   const resetPlotRange = useCallback(() => {

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { LABEL_COLOR, TICK_COLOR } from '../../constants';
 

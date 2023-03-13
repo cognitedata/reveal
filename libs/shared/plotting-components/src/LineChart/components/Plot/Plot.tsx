@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useImperativeHandle, useMemo, useRef } from 'react';
+import { useImperativeHandle, useRef } from 'react';
 
 import PlotlyPlot, { Figure } from 'react-plotly.js';
 import {
@@ -25,9 +25,11 @@ import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
 import { useLayoutMargin } from '../../hooks/useLayoutMargin';
 import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
 import { usePlotDataRange } from '../../hooks/usePlotDataRange';
-import { adaptToPlotlyPlotData } from '../../utils/adaptToPlotlyPlotData';
+import { getPlotlyHoverMode } from '../../utils/getPlotlyHoverMode';
 
 import { PlotWrapper } from './elements';
+import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
+import { usePlotData } from '../../hooks/usePlotData';
 
 export interface PlotElement {
   getPlotRange: () => PlotRange;
@@ -39,7 +41,11 @@ export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   data: Data | Data[];
   layout: Layout;
   config: Config;
-  isCursorOnPlotArea: boolean;
+  plotHoverEvent?: PlotHoverEvent;
+  isCursorOnPlot: boolean;
+  width?: number;
+  height?: number;
+  backgroundColor?: string;
   onHover?: (event: PlotHoverEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
   onInitialized?: (figure: Figure, graph: HTMLElement) => void;
@@ -54,10 +60,13 @@ export const Plot = React.memo(
         yAxis,
         layout,
         config,
-        isCursorOnPlotArea,
+        plotHoverEvent,
+        isCursorOnPlot,
+        width,
+        height,
+        backgroundColor = DEFAULT_BACKGROUND_COLOR,
         onHover,
         onUnhover,
-        onInitialized,
       },
       ref
     ) => {
@@ -66,16 +75,23 @@ export const Plot = React.memo(
 
       const plotRef = useRef<HTMLDivElement>(null);
 
-      const adaptedData = useMemo(() => {
-        return adaptToPlotlyPlotData(data, showMarkers);
-      }, [data, showMarkers]);
+      const { plotData, dataRevision } = usePlotData({
+        data,
+        layout,
+        plotHoverEvent,
+        backgroundColor,
+      });
 
       const { tickCount, updateAxisTickCount } = useAxisTickCount({
         x: xAxis?.tickCount,
         y: yAxis?.tickCount,
       });
 
-      const { margin, updateLayoutMargin } = useLayoutMargin(layout);
+      const { margin, updateLayoutMargin } = useLayoutMargin({
+        layout,
+        xAxis,
+        yAxis,
+      });
 
       const initialRange = usePlotDataRange(data, showMarkers);
 
@@ -83,7 +99,7 @@ export const Plot = React.memo(
         useHandlePlotRange(initialRange);
 
       const { fixedRange, fixedRangeLayoutConfig, cursor } =
-        useLayoutFixedRangeConfig(config, isCursorOnPlotArea);
+        useLayoutFixedRangeConfig(config, isCursorOnPlot);
 
       useImperativeHandle(
         ref,
@@ -112,18 +128,14 @@ export const Plot = React.memo(
         },
         ...fixedRangeLayoutConfig,
         margin,
-        hovermode: 'x',
+        hovermode: getPlotlyHoverMode(config.hoverMode),
+        datarevision: dataRevision,
       };
 
       const plotConfig: Partial<PlotlyConfig> = {
-        scrollZoom: Boolean(config.scrollZoom) && isCursorOnPlotArea,
+        scrollZoom: Boolean(config.scrollZoom) && isCursorOnPlot,
         showAxisDragHandles: true,
         displayModeBar: false,
-      };
-
-      const handleInitialized = (figure: Figure, graph: HTMLElement) => {
-        onInitialized?.(figure, graph);
-        resetPlotRange();
       };
 
       const handleUpdate = (figure: Figure, _graph: HTMLElement) => {
@@ -147,29 +159,22 @@ export const Plot = React.memo(
         });
       };
 
-      const handleDeselect = () => {
-        resetPlotRange();
-      };
-
-      const handleDoubleClick = () => {
-        resetPlotRange();
-      };
-
       return (
         <PlotWrapper ref={plotRef} showticks={showTicks} cursor={cursor}>
           <PlotlyPlot
-            data={adaptedData}
+            data={plotData}
             layout={plotLayout}
             config={plotConfig}
+            style={{ height, width }}
             useResizeHandler={responsive}
-            onInitialized={handleInitialized}
+            onInitialized={resetPlotRange}
             onHover={onHover}
             onUnhover={onUnhover}
             onUpdate={handleUpdate}
             onRelayout={handleRelayout}
             onSelected={handleSelected}
-            onDeselect={handleDeselect}
-            onDoubleClick={handleDoubleClick}
+            onDeselect={resetPlotRange}
+            onDoubleClick={resetPlotRange}
           />
         </PlotWrapper>
       );

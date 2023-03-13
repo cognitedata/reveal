@@ -14,7 +14,9 @@ import { getLayout } from './utils/getLayout';
 import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
 import { getConfig } from './utils/getConfig';
 import { getStyleProperties } from './utils/getStyleProperties';
-import { useCursorHandler } from './hooks/useCursorHandler';
+import { useCursorPosition } from './hooks/useCursorPosition';
+import { getMarkerPosition } from './utils/getMarkerPosition';
+import { isContinuousHoverEnabled } from './utils/isContinuousHoverEnabled';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
@@ -26,7 +28,6 @@ export const LineChart: React.FC<LineChartProps> = ({
   layout: layoutProp = {},
   config: configProp = {},
   style: styleProp = {},
-  disableTooltip,
   renderTooltipContent,
   renderFilters,
   renderActions,
@@ -35,31 +36,42 @@ export const LineChart: React.FC<LineChartProps> = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
 
-  const {
-    hoverStatus,
-    isCursorOnPlotArea,
-    initializePlotLayerHandler,
-    hoverLayer,
-    unhoverLayer,
-  } = useCursorHandler();
-
-  const { plotHoverEvent, plotHoverEventHandler } =
-    usePlotHoverEvent(hoverStatus);
-
   const layout = getLayout(layoutProp, variant);
   const config = getConfig(configProp);
   const style = getStyleProperties(styleProp, variant);
 
-  const { legendPlacement, showTitle, showSubtitle, showLegend } = layout;
-  const { backgroundColor, padding } = style;
+  const {
+    legendPlacement,
+    showTitle,
+    showSubtitle,
+    showLegend,
+    showTooltip,
+    showFilters,
+    showActions,
+  } = layout;
+  const { buttonZoom, hoverMode } = config;
+  const { backgroundColor } = style;
+
+  const isContinuousHover = isContinuousHoverEnabled(hoverMode);
+
+  const { cursorPosition, isCursorOnPlot } = useCursorPosition(chartRef);
+
+  const { plotHoverEvent, updatePlotHoverEvent, setPlotUnhovered } =
+    usePlotHoverEvent({
+      chartRef,
+      isCursorOnPlot,
+      isContinuousHover,
+    });
+
+  const markerPosition = getMarkerPosition(plotHoverEvent);
 
   return (
-    <LineChartWrapper ref={chartRef} style={{ backgroundColor, padding }}>
+    <LineChartWrapper ref={chartRef} style={style}>
       <Toolbar
         plotRef={plotRef}
-        zoomDirectionConfig={config.buttonZoom}
-        showFilters={layout.showFilters}
-        showActions={layout.showActions}
+        zoomDirectionConfig={buttonZoom}
+        showFilters={showFilters}
+        showActions={showActions}
         renderFilters={renderFilters}
         renderActions={renderActions}
       />
@@ -78,33 +90,32 @@ export const LineChart: React.FC<LineChartProps> = ({
         yAxis={yAxis}
         layout={layout}
         config={config}
-        isCursorOnPlotArea={isCursorOnPlotArea}
-        onInitialized={(_, graph) => initializePlotLayerHandler(graph)}
-        onHover={plotHoverEventHandler.onHoverPlot}
-        onUnhover={plotHoverEventHandler.onUnhoverPlot}
+        plotHoverEvent={plotHoverEvent}
+        isCursorOnPlot={isCursorOnPlot}
+        height={styleProp?.height}
+        width={styleProp?.width}
+        backgroundColor={backgroundColor}
+        onHover={updatePlotHoverEvent}
+        onUnhover={setPlotUnhovered}
       />
 
       <HoverLayer
         chartRef={chartRef}
         layout={layout}
         plotHoverEvent={plotHoverEvent}
-        backgroundColor={backgroundColor}
-        isCursorOnPlotArea={isCursorOnPlotArea}
-        onHover={() => hoverLayer('hoverLayer')}
-        onUnhover={() => unhoverLayer('hoverLayer')}
+        position={isContinuousHover ? cursorPosition : markerPosition}
         formatHoverLineInfo={formatHoverLineInfo}
       />
 
       <Tooltip
         chartRef={chartRef}
-        plotHoverEvent={plotHoverEvent}
         xAxisName={xAxis?.name}
         yAxisName={yAxis?.name}
         backgroundColor={backgroundColor}
-        disableTooltip={disableTooltip}
+        plotHoverEvent={plotHoverEvent}
+        referencePosition={isContinuousHover ? { x: cursorPosition?.x } : {}}
+        showTooltip={showTooltip}
         renderTooltipContent={renderTooltipContent}
-        onHover={() => hoverLayer('tooltip')}
-        onUnhover={() => unhoverLayer('tooltip')}
       />
 
       <Legend

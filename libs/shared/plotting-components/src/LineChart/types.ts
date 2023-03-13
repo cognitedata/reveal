@@ -1,5 +1,3 @@
-import { CSSProperties } from 'react';
-
 import { Datum } from 'plotly.js';
 
 export interface LineChartProps {
@@ -12,8 +10,7 @@ export interface LineChartProps {
   variant?: Variant;
   layout?: Partial<Layout>;
   config?: Partial<Config>;
-  style?: CSSProperties;
-  disableTooltip?: boolean;
+  style?: Style;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
   renderFilters?: () => [JSX.Element, ...JSX.Element[]];
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
@@ -39,6 +36,7 @@ export interface Layout {
   showFilters: boolean;
   showActions: boolean;
   showMarkers: boolean;
+  showTooltip: boolean;
   showHoverMarker: boolean;
   showHoverLine: boolean;
   showHoverLineInfo: boolean;
@@ -50,6 +48,14 @@ export interface Config {
   selectionZoom: AxisDirectionConfig;
   buttonZoom: AxisDirectionConfig;
   pan: AxisDirectionConfig;
+  hoverMode: HoverMode;
+}
+
+export interface Style {
+  backgroundColor?: string;
+  padding?: number;
+  height?: number;
+  width?: number;
 }
 
 export interface Axis {
@@ -106,3 +112,4 @@ export interface Coordinate {
   x?: number;
   y?: number;
 }
+export type HoverMode = 'data-point' | 'x';

@@ -2,30 +2,62 @@ import { useEffect, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-import { HoverStatus } from './useCursorHandler';
+import head from 'lodash/head';
 
-export const usePlotHoverEvent = (hoverStatus: HoverStatus) => {
-  const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
+import { createEventListener } from '../utils/createEventListener';
+
+export interface Props {
+  chartRef: React.RefObject<HTMLDivElement>;
+  isCursorOnPlot: boolean;
+  isContinuousHover: boolean;
+}
+
+export const usePlotHoverEvent = ({
+  chartRef,
+  isCursorOnPlot,
+  isContinuousHover,
+}: Props) => {
   const [isPlotHovered, setPlotHovered] = useState(false);
+  const [preventClearEvent, setPreventClearEvent] = useState(false);
+  const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
 
-  useEffect(() => {
-    if (!isPlotHovered && !hoverStatus.hoverLayer && !hoverStatus.tooltip) {
-      setPlotHoverEvent(undefined);
-    }
-  }, [isPlotHovered, hoverStatus.hoverLayer, hoverStatus.tooltip]);
-
-  const onHoverPlot = (event: PlotHoverEvent) => {
+  const updatePlotHoverEvent = (event: PlotHoverEvent) => {
     setPlotHoverEvent(event);
     setPlotHovered(true);
   };
 
-  const plotHoverEventHandler = {
-    onHoverPlot,
-    onUnhoverPlot: () => setPlotHovered(false),
+  const setPlotUnhovered = () => {
+    setPlotHovered(false);
   };
+
+  useEffect(() => {
+    ['hover-layer', 'tooltip'].forEach((className) => {
+      const element = head(chartRef.current?.getElementsByClassName(className));
+
+      createEventListener(element, 'mouseenter', () => {
+        setPreventClearEvent(true);
+      });
+      createEventListener(element, 'mouseleave', () => {
+        setPreventClearEvent(false);
+      });
+    });
+  }, [chartRef]);
+
+  useEffect(() => {
+    if (!isCursorOnPlot) {
+      setPlotHoverEvent(undefined);
+      return;
+    }
+
+    if (!isContinuousHover && !isPlotHovered && !preventClearEvent) {
+      setPlotHoverEvent(undefined);
+      return;
+    }
+  }, [isContinuousHover, preventClearEvent, isCursorOnPlot, isPlotHovered]);
 
   return {
     plotHoverEvent,
-    plotHoverEventHandler,
+    updatePlotHoverEvent,
+    setPlotUnhovered,
   };
 };

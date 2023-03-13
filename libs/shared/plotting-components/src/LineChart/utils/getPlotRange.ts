@@ -1,4 +1,5 @@
 import isNumber from 'lodash/isNumber';
+import isDate from 'lodash/isDate';
 
 import { PlotRange, Data, ValueType } from '../types';
 import { getDataAsArray } from './getDataAsArray';
@@ -27,5 +28,10 @@ export const getPointValue = (value: ValueType, index: number): number => {
   if (isNumber(value)) {
     return value;
   }
+
+  if (isDate(value)) {
+    return value.getTime();
+  }
+
   return index;
 };
