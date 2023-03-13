@@ -6,6 +6,7 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Filter, RawSource, RawTarget, SourceType } from 'types/api';
@@ -204,6 +205,29 @@ export const QuickMatchContextProvider = ({
     'sourceType'
   );
 
+  const hasSources = allSources || sourcesList.length > 0;
+  const hasTargets = allTargets || targetsList.length > 0;
+
+  useEffect(() => {
+    if (step === 'select-targets' && !hasSources) {
+      navigate(createLink(`/${subAppPath}/quick-match/create/select-sources`), {
+        replace: true,
+      });
+    }
+  }, [hasSources, navigate, step, subAppPath]);
+
+  useEffect(() => {
+    if (
+      step &&
+      ['configure-model', 'create-model'].includes(step) &&
+      !hasTargets
+    ) {
+      navigate(createLink(`/${subAppPath}/quick-match/create/select-targets`), {
+        replace: true,
+      });
+    }
+  }, [hasTargets, navigate, step, subAppPath]);
+
   const hasNextStep = () => {
     const order = getQuickMatchStepOrder(step);
     return order >= 0 && order < QUICK_MATCH_STEPS.length - 1;
@@ -220,7 +244,9 @@ export const QuickMatchContextProvider = ({
     }
     const order = getQuickMatchStepOrder(step);
     const next = QUICK_MATCH_STEPS[order + 1];
-    navigate(createLink(`/${subAppPath}/quick-match/create/${next}`));
+    navigate(createLink(`/${subAppPath}/quick-match/create/${next}`), {
+      replace: true,
+    });
   };
   const popStep = () => {
     if (!hasPrevStep()) {
@@ -228,7 +254,9 @@ export const QuickMatchContextProvider = ({
     }
     const order = getQuickMatchStepOrder(step);
     const next = QUICK_MATCH_STEPS[order - 1];
-    navigate(createLink(`/${subAppPath}/quick-match/create/${next}`));
+    navigate(createLink(`/${subAppPath}/quick-match/create/${next}`), {
+      replace: true,
+    });
   };
   return (
     <QuickMatchContext.Provider
