@@ -60,7 +60,7 @@ export const AssetTable = ({
           enableSorting: false,
         },
         Table.Columns.source(),
-        Table.Columns.dataSet,
+        { ...Table.Columns.dataSet, enableSorting: true },
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
