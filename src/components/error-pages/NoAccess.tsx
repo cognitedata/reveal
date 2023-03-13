@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Colors, Icon, Title } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
+import { Trans, useTranslation } from 'common';
 import {
   ErrorInfo,
   InfoWrapper,
@@ -20,8 +20,12 @@ const NoAccessPage = () => {
       <Instructions>{t('no-access-detail')}</Instructions>
       <InfoWrapper className="z-4">
         <ErrorInfo>
-          <p>{/* <Trans i18nKey="no-access-info-prerequisite" /> */}</p>
-          <p>{/* <Trans i18nKey="no-access-info-transformations" /> */}</p>
+          <p>
+            <Trans i18nKey="no-access-info-prerequisite" />
+          </p>
+          <p>
+            <Trans i18nKey="no-access-info-transformations" />
+          </p>
         </ErrorInfo>
       </InfoWrapper>
     </ErrorPageContent>

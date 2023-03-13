@@ -15,6 +15,6 @@ export const languages = Object.keys(translations);
 
 export const useTranslation = () => useTypedTranslation<TranslationKeys>();
 
-// export const Trans = (props: TypedTransProps<TranslationKeys>) => (
-//   <TypedTrans<TranslationKeys> {...props} />
-// );
+export const Trans = (props: TypedTransProps<TranslationKeys>) => (
+  <TypedTrans<TranslationKeys> {...props} />
+);
