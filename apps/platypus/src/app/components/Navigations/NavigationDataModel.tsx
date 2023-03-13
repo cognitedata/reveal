@@ -71,11 +71,13 @@ export const NavigationDataModel = () => {
         <>
           {renderTitleButton()}
           {renderTopBarRight()}
-          <DataModelSettingsModal
-            visible={isSettingsModalVisible}
-            dataModel={dataModel}
-            onRequestClose={() => setIsSettingsModalVisible(false)}
-          />
+          {isSettingsModalVisible && (
+            <DataModelSettingsModal
+              visible
+              dataModel={dataModel}
+              onRequestClose={() => setIsSettingsModalVisible(false)}
+            />
+          )}
         </>
       )}
     </StyledTopBar>
