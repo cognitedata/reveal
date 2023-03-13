@@ -1,5 +1,6 @@
 precision highp float;
 
+#pragma glslify: import('../math/colorSpaceConversion.glsl')
 #pragma glslify: import('../math/derivateNormal.glsl')
 #pragma glslify: import('../base/updateFragmentColor.glsl')
 #pragma glslify: import('../base/nodeAppearance.glsl')
@@ -37,6 +38,8 @@ void main()
 
 #if defined(IS_TEXTURED)
     vec3 diffuseColor = texture(tDiffuse, v_uv).rgb;
+    // Convert color to sRGB as the GLTF format texture are in sRGB. TODO: https://cognitedata.atlassian.net/browse/REV-826.
+    diffuseColor = LinearTosRGB(vec4(diffuseColor, 1.0)).xyz;
     vec4 color = determineColor(diffuseColor, appearance);
 
     color = vec4(mix(diffuseColor, vec3(color), 0.6), color.a);
