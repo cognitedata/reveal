@@ -18,6 +18,7 @@ import {
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,
+  useGetMetadataResourceQuery,
   useGetModelFileQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -71,6 +72,13 @@ export function ModelDetails({
       { project, modelName, simulator },
       { skip: simulator === 'UNKNOWN', refetchOnMountOrArgChange: true }
     );
+
+  const simulatorConfigDetails = useMemo(() => {
+    const selectedSimulatorConfig = definitions?.simulatorsConfig?.filter(
+      ({ key }) => key === simulator
+    );
+    return selectedSimulatorConfig?.[0];
+  }, [definitions?.simulatorsConfig, simulator]);
 
   const [deleteModelFile, { isSuccess: isDeleteModelSuccess }] =
     useDeleteModelFileMutation();
@@ -151,9 +159,7 @@ export function ModelDetails({
           <div>
             <span className="model-name">{modelFile.metadata.modelName}</span>
             <ul>
-              <li>
-                {definitions?.type.simulator[modelFile.metadata.simulator]},{' '}
-              </li>
+              <li>{simulatorConfigDetails?.name}, </li>
               <li>
                 {definitions?.type.unitSystem[modelFile.metadata.unitSystem]},
               </li>
@@ -252,20 +258,23 @@ export function ModelDetails({
             simulator={modelFile.metadata.simulator}
           />
         </Tabs.TabPane>
-        <Tabs.TabPane
-          key="calculations"
-          tab={
-            <>
-              <Icon type="Function" /> Calculations
-            </>
-          }
-        >
-          <CalculationList
-            modelName={modelName}
-            showConfigured={showCalculations === 'configured'}
-            simulator={simulator}
-          />
-        </Tabs.TabPane>
+        {simulatorConfigDetails?.isCalculationsEnabled ? (
+          <Tabs.TabPane
+            key="calculations"
+            tab={
+              <>
+                <Icon type="Function" /> Calculations
+              </>
+            }
+          >
+            <CalculationList
+              modelName={modelName}
+              showConfigured={showCalculations === 'configured'}
+              simulator={simulator}
+            />
+          </Tabs.TabPane>
+        ) : null}
+
         {selectedTab === 'new-version' && (
           <Tabs.TabPane
             key="new-version"

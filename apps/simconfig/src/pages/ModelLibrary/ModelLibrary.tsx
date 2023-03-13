@@ -8,7 +8,7 @@ import { getProject } from '@cognite/cdf-utilities';
 import { Button, Input, Skeleton } from '@cognite/cogs.js';
 import { Illustrations } from '@cognite/cogs.js-v9';
 import { useSDK } from '@cognite/sdk-provider';
-import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { capabilitiesSlice } from 'store/capabilities';
@@ -43,13 +43,14 @@ export function ModelLibrary() {
     data: modelFiles,
     isLoading: isLoadingModelFiles,
     refetch: refetchModelFiles,
-  } = useGetModelFileListQuery(
+  } = useGetModelFileListV2Query(
     {
       project,
       labelIds: selectedLabels.map((label) => label.value).join(','),
     },
     { refetchOnMountOrArgChange: true }
   );
+
   const navigate = useNavigate();
 
   useEffect(() => {

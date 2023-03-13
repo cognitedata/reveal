@@ -13,6 +13,7 @@ import { Illustrations } from '@cognite/cogs.js-v9';
 import {
   useGetCalculationRunListQuery,
   useGetModelFileListQuery,
+  useGetSimulatorsListV2Query,
 } from '@cognite/simconfig-api-sdk/rtk';
 import type {
   CalculationRun,
@@ -21,7 +22,6 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { selectProject } from 'store/simconfigApiProperties/selectors';
-import { excludeUnknownSimulator } from 'utils/simulatorUtils';
 
 import { CalculationRunList } from './CalculationRunList';
 import { generateOptions } from './options';
@@ -66,6 +66,17 @@ export function CalculationRuns() {
   );
 
   const { data: modelFileList } = useGetModelFileListQuery({ project });
+
+  const { data: simulatorsList } = useGetSimulatorsListV2Query({ project });
+
+  const simualtorKeys = simulatorsList?.simulators?.reduce(
+    (prev: Record<string, string>, { simulator }): Record<string, string> => {
+      // eslint-disable-next-line no-param-reassign
+      prev[simulator] = simulator;
+      return prev;
+    },
+    {}
+  );
 
   const handleScroll = (event: UIEvent<HTMLDivElement>) => {
     if (!calculationsRunList?.nextCursor) {
@@ -160,11 +171,7 @@ export function CalculationRuns() {
           filterKey="simulator"
           isClearable={false}
           label="Simulator"
-          options={generateOptions(
-            'simulator',
-            'Simulator',
-            excludeUnknownSimulator(definitions?.type.simulator)
-          )}
+          options={generateOptions('simulator', 'Simulator', simualtorKeys)}
           setSearchParams={setSearchParams}
         />
 

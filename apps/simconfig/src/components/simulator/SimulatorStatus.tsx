@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
-import { useGetSimulatorsListQuery } from '@cognite/simconfig-api-sdk/rtk';
+import { useGetSimulatorsListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 
 import {
   HEADER_VISIBLE_SIMULATORS_COUNT,
@@ -18,7 +18,7 @@ export function SimulatorStatus() {
   const project = useSelector(selectProject);
 
   const { data: simulatorsList, isLoading: isLoadingSimulatorsList } =
-    useGetSimulatorsListQuery(
+    useGetSimulatorsListV2Query(
       { project },
       { pollingInterval: HEARTBEAT_POLL_INTERVAL }
     );

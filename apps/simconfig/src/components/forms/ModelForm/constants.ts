@@ -10,16 +10,6 @@ export const FileExtensionToSimulator: Record<
 };
 
 // TODO(SIM-209) Use definitions endpoint
-export const Simulator: Record<
-  keyof DefinitionMap['type']['simulator'],
-  string
-> = {
-  UNKNOWN: 'Unknown',
-  PROSPER: 'PROSPER',
-  ProcessSim: 'ProcessSim',
-};
-
-// TODO(SIM-209) Use definitions endpoint
 export const UnitSystem = {
   OilField: 'Oil field units',
   // eslint-disable-next-line

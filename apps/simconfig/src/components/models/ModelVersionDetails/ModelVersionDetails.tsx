@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import formatISO9075 from 'date-fns/formatISO9075';
@@ -23,6 +24,8 @@ import { trackUsage } from 'utils/metrics/tracking';
 
 import { BoundaryConditionTable } from './BoundaryConditionTable';
 
+import type { AppLocationGenerics } from 'routes';
+
 interface ModelVersionDetailsProps {
   modelFile: ModelFile;
 }
@@ -41,8 +44,20 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     setIsAdditionMetaInfoTooltipEnabled,
   ] = useState(false);
 
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
+
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
+
+  const simulatorConfigDetails = useMemo(() => {
+    const data = definitions?.simulatorsConfig?.filter(
+      ({ key }) => key === simulator
+    );
+    return data?.[0];
+  }, [definitions?.simulatorsConfig, simulator]);
+
   const pollingOptions = {
     pollingInterval: !isProcessingReady
       ? PROCESSING_POLLING_INTERVAL
@@ -59,7 +74,10 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       modelName,
       version,
     },
-    pollingOptions
+    {
+      ...pollingOptions,
+      skip: !simulatorConfigDetails?.isBoundaryConditionsEnabled,
+    }
   );
   const { data: modelFileItem } = useGetModelFileQuery(
     {
@@ -141,12 +159,15 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
 
   return (
     <ModelVersionDetailsContainer>
-      <BoundaryConditionsContainer>
-        <BoundaryConditionTable
-          boundaryConditions={boundaryConditions?.modelBoundaryConditionList}
-          modelFile={modelFileItem}
-        />
-      </BoundaryConditionsContainer>
+      {simulatorConfigDetails?.isBoundaryConditionsEnabled ? (
+        <BoundaryConditionsContainer>
+          <BoundaryConditionTable
+            boundaryConditions={boundaryConditions?.modelBoundaryConditionList}
+            modelFile={modelFileItem}
+          />
+        </BoundaryConditionsContainer>
+      ) : undefined}
+
       <ModelVersionProperties>
         <div className="info-stack">
           <div className="info">
