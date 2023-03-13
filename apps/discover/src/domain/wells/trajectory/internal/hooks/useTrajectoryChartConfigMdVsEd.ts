@@ -10,10 +10,10 @@ export const useTrajectoryChartConfigMdVsEd = () => {
       },
       chartVizData: {
         axisNames: {
-          x: 'Equivalent Departure (<%= unit %>)',
+          x: 'Horizontal Departure (<%= unit %>)',
           y: 'Measured Depth (<%= unit %>)',
         },
-        title: 'MD vs ED',
+        title: 'MD vs HD',
       },
     }
   );

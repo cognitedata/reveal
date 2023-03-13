@@ -12,7 +12,7 @@ export interface TrajectoryColumnConfig {
 }
 
 export enum TrajectoryCurve {
-  MD_ED = 'MD vs ED',
-  TVD_ED = 'TVD vs ED',
+  MD_HD = 'MD vs HD',
+  TVD_HD = 'TVD vs HD',
   NS_EW = 'NS vs EW',
 }
