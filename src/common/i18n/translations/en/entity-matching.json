@@ -1,6 +1,5 @@
 {
   "entity-matching-pipelines": "Entity Matching pipelines",
-  "quick-match": "Quick match",
   "create-pipeline": "Create pipeline",
   "pipeline-list-table-column-title-description": "Description",
   "pipeline-list-table-column-title-name": "Name",
@@ -13,6 +12,12 @@
   "model-configuration-header": "Configure model",
   "navigate-back": "Back",
   "navigate-next": "Next",
+  "no-access": "Missing access to RAW explorer",
+  "no-access-detail": "Check the required access rights below and contact the person responsible for access management in your organization.",
+  "no-access-info": "You don't have access to view or create databases",
+  "no-access-info-prerequisite": "It is a prerequisite to have <strong>groups:list</strong> scoped at least for the current user to access any feature.",
+  "no-access-info-transformations": "To use Transformations, you need to have the <strong> transformations:read </strong>and <strong> project:list </strong>capabilities.",
+  "no-access-title": "You have insufficient access this feature",
   "pipeline-list-empty-description": "Use this section to create pipelines and tune entity matching models to match CDF resources with assets.",
   "pipeline-list-empty-title": "No pipelines have been added.",
   "quick-match": "Quick match",
@@ -28,5 +33,9 @@
   "title-select-assets": "Select assets",
   "title-select-data": "Select data",
   "title-select-entities": "Select entities",
-  "title-view-model-result": "Review the results"
+  "title-view-model-result": "Review the results",
+  "unknown-error-detail": "If you need, you can contact support with the following details:",
+  "unknown-error-request-id": "Request ID:",
+  "unknown-error-timestamp": "Timestamp:",
+  "unknown-error-title": "An error occurred"
 }

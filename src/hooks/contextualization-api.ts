@@ -77,7 +77,7 @@ export const useEMPipelines = (
 ) => {
   const sdk = useSDK();
   const qc = useQueryClient();
-  return useQuery(
+  return useQuery<Pipeline[], CogniteError, string[]>(
     getEMPipelinesKey(),
     ({ pageParam }) =>
       sdk
