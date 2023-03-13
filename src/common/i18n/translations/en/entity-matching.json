@@ -1,3 +1,4 @@
+{
   "cancel": "Cancel",
   "create-pipeline": "Create pipeline",
   "dataset-error-body": "An error occurred while retrieving data sets: '{{error}}'",

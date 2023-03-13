@@ -18,7 +18,7 @@ export default function RootList() {
   const { subAppPath } = useParams<{
     subAppPath: string;
   }>();
-  const { data, isInitialLoading, error } = useEMPipelines();
+  const { error } = useEMPipelines();
 
   if (error) {
     if (error?.status === 403) {
