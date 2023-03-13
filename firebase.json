@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "site": "cognite-entity-matching-production",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    },
+    {
+      "site": "cognite-entity-matching-staging",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    }
+  ]
+}

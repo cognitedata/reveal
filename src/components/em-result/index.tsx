@@ -1,14 +1,17 @@
-import { Button, Flex, Icon } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/contextualization-api';
 import { useUpdateTimeseries } from 'hooks/timeseries';
-import { formatPredictionObject } from 'utils';
+import styled from 'styled-components';
+import QuickMatchResultsTable from './QuickMatchResultsTable';
 
 type Props = {
   predictions: Prediction[];
 };
 export default function EntityMatchingResult({ predictions }: Props) {
   const { mutate, isLoading, status } = useUpdateTimeseries();
+  const { t } = useTranslation();
   const applyAll = () => {
     mutate(
       predictions.map(({ source, matches }) => ({
@@ -20,18 +23,26 @@ export default function EntityMatchingResult({ predictions }: Props) {
     );
   };
   return (
-    <Flex direction="column">
-      <Button type="primary" disabled={isLoading} onClick={() => applyAll()}>
-        Apply all <QueryStatusIcon status={status} />
-      </Button>
-      {predictions.map(({ source, matches }) => (
-        <Flex key={source.id} gap={12}>
-          <div>{matches[0]?.score.toFixed(1)}s</div>
-          <div>{formatPredictionObject(source)}</div>
-          <Icon type="ArrowRight" />
-          <div>{formatPredictionObject(matches[0]?.target)}</div>
-        </Flex>
-      ))}
-    </Flex>
+    <StyledFlex direction="column">
+      <Flex justifyContent="flex-end">
+        <StyledButton
+          type="primary"
+          disabled={isLoading}
+          onClick={() => applyAll()}
+        >
+          {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
+        </StyledButton>
+      </Flex>
+      <QuickMatchResultsTable predictions={predictions} />
+    </StyledFlex>
   );
 }
+
+const StyledButton = styled(Button)`
+  width: 150px;
+  padding: 10px;
+`;
+
+const StyledFlex = styled(Flex)`
+  padding: 20px;
+`;

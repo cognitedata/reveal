@@ -3,18 +3,27 @@ import {
   CogniteError,
   EntityMatchingModel,
   EntityMatchingPredictResponse,
-  InternalId,
 } from '@cognite/sdk';
 import {
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
-  useMutation,
-  UseMutationOptions,
   useQuery,
   useQueryClient,
   UseQueryOptions,
+  useMutation,
+  UseMutationOptions,
 } from '@tanstack/react-query';
+import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
+import {
+  RawCogniteEvent,
+  RawFileInfo,
+  RawSource,
+  RawTarget,
+  RawTimeseries,
+  SourceType,
+} from 'types/api';
+import { filterFieldsFromObjects } from 'utils';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -70,6 +79,15 @@ export type Pipeline = {
   name: string;
   description: string;
   owner: string;
+  run: string;
+  sources: {
+    dataSetIds: [{ id: number }];
+    resource: string;
+  };
+  targets: {
+    dataSetIds: [{ id: number }];
+    resource: string;
+  };
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (
@@ -114,6 +132,72 @@ export const useEMPipeline = (
   );
 };
 
+export const useDeleteEMPipeline = (
+  opts?: UseMutationOptions<unknown, CogniteError, { id: number }>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+  return useMutation(
+    ({ id }: { id: number }) =>
+      sdk.post<{ items: Pipeline[]; nextCursor?: string }>(
+        `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/delete`,
+        { data: { items: [{ id }] } }
+      ),
+    {
+      ...opts,
+      onSuccess: (...params) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        opts?.onSuccess?.(...params);
+      },
+    }
+  );
+};
+
+type PipelineCreateParams = Partial<Pick<Pipeline, 'name' | 'description'>>;
+export const useCreatePipeline = (
+  options?: UseMutationOptions<Pipeline, CogniteError, PipelineCreateParams>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<Pipeline, CogniteError, PipelineCreateParams>(
+    async ({ name, description }) => {
+      return sdk
+        .post<Pipeline>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines`,
+          {
+            data: {
+              name,
+              description,
+              sources: {
+                dataSetIds: [],
+                resource: 'time_series',
+              },
+              targets: {
+                dataSetIds: [],
+                resource: 'assets',
+              },
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        });
+    },
+    {
+      ...options,
+      onSuccess: (...params) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        options?.onSuccess?.(...params);
+      },
+    }
+  );
+};
+
 const getEMModelKey = (id: number): QueryKey => ['em', 'models', id];
 export const useEMModel = (
   id: number,
@@ -143,7 +227,7 @@ export const useEMModelPredictResults = (
     () =>
       sdk
         .get<EntityMatchingPredictions>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/jobs/${id}`
+          `/api/v1/projects/${sdk.project}/context/entitymatching/jobs/${id}`
         )
         .then((r) => {
           if (r.status === 200) {
@@ -165,39 +249,124 @@ export const getQMTargetDownloadKey = (): QueryKey => [
   'target-download',
 ];
 
+type ConfirmedMatch = {
+  sourceId: number;
+  targetId: number;
+};
+
 export const useCreateEMModel = () => {
   const sdk = useSDK();
-  const queryClient = useQueryClient();
 
   return useMutation(
     ['create-em-model'],
     async ({
-      sourcesList,
+      sourceType,
+      sources,
       targetsList,
+      matchFields,
+      featureType,
+      supervisedMode,
     }: {
-      sourcesList: InternalId[];
-      targetsList: InternalId[];
+      sourceType: SourceType;
+      sources: RawSource[];
+      targetsList: RawTarget[];
+      matchFields: ModelMapping;
+      featureType: EMFeatureType;
+      supervisedMode?: boolean;
     }) => {
-      const [sources, targets] = await Promise.all([
-        queryClient.fetchQuery(getQMSourceDownloadKey(), async () => {
-          const timeseries = await sdk.timeseries.retrieve(sourcesList);
-          return timeseries.map(({ id, externalId, name }) => ({
-            id,
-            externalId,
-            name,
-          }));
-        }),
-        queryClient.fetchQuery(getQMTargetDownloadKey(), async () => {
-          const assets = await sdk.assets.retrieve(targetsList);
-          return assets.map(({ id, externalId, name }) => ({
-            id,
-            externalId,
-            name,
-          }));
-        }),
+      const trueMatches = supervisedMode
+        ? sources.reduce((accl: ConfirmedMatch[], item) => {
+            if (sourceType === 'events' || sourceType === 'timeseries') {
+              return (item as RawFileInfo | RawCogniteEvent).assetIds
+                ? [
+                    ...accl,
+                    ...((item as RawFileInfo | RawCogniteEvent).assetIds?.map(
+                      (assetId) => ({
+                        sourceId: item.id,
+                        targetId: assetId,
+                      })
+                    ) ?? []),
+                  ]
+                : accl;
+            }
+            return !!(item as RawTimeseries).assetId
+              ? [
+                  ...accl,
+                  {
+                    sourceId: item.id,
+                    targetId: (item as RawTimeseries).assetId as number,
+                  },
+                ]
+              : accl;
+          }, [])
+        : undefined;
+
+      const filteredSources = filterFieldsFromObjects(sources, [
+        'id',
+        ...matchFields
+          .filter((source) => !!source)
+          .map(({ source }) => source as string),
       ]);
 
-      return sdk.entityMatching.create({ sources, targets });
+      const filteredTargets = filterFieldsFromObjects(targetsList, [
+        'id',
+        ...matchFields
+          .filter((target) => !!target)
+          .map(({ target }) => target as string),
+      ]);
+
+      return sdk
+        .post<EntityMatchingModel>(
+          `/api/v1/projects/${sdk.project}/context/entitymatching`,
+          {
+            data: {
+              ignoreMissingFields: true,
+              featureType,
+              sources: filteredSources,
+              targets: filteredTargets,
+              trueMatches,
+              matchFields: matchFields.filter(
+                ({ source, target }) => !!source && !!target
+              ),
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        });
+    }
+  );
+};
+
+export const useDuplicateEMPipeline = () => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (
+      pipeline: Pick<
+        Pipeline,
+        'id' | 'name' | 'description' | 'sources' | 'targets'
+      >
+    ) =>
+      sdk.post<Pipeline>(
+        `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines`,
+        {
+          data: {
+            name: `${pipeline.name ?? pipeline.id} copy`,
+            description: pipeline.description,
+            sources: pipeline.sources,
+            targets: pipeline.targets,
+          },
+        }
+      ),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+      },
     }
   );
 };

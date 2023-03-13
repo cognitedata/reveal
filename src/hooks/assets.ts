@@ -8,8 +8,10 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 
+const assetRootKey = ['assets'];
+
 const useAssetsKey = (limit: number, filter?: AssetFilterProps): QueryKey => [
-  'assets',
+  ...assetRootKey,
   'list',
   { limit, filter },
 ];
@@ -38,7 +40,7 @@ export const useAssets = (
 const useAssetSearchKey = (
   query: string,
   filter?: AssetFilterProps
-): QueryKey => ['assets', 'search', query, { filter }];
+): QueryKey => [...assetRootKey, , 'search', query, { filter }];
 
 export const useAssetSearch = <T>(
   query: string,

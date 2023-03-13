@@ -1,60 +1,51 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { InternalId, Timeseries } from '@cognite/sdk';
-import { useTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
-import { Filter } from 'context/QuickMatchContext';
+import { RawTimeseries } from 'hooks/timeseries';
 
-type TimeseriesListTableRecord = { key: string } & Pick<
-  Timeseries,
-  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
+import { useList } from 'hooks/list';
+import { SourceTableProps } from 'types/types';
+
+type TimeseriesListTableRecord = {
+  key: string;
+  disabled?: boolean;
+} & RawTimeseries;
 type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
   title: string;
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
-type Props = {
-  query?: string | null;
-  unmatchedOnly?: boolean;
-  filter: Filter;
-  selected: InternalId[];
-  setSelected: Dispatch<SetStateAction<InternalId[]>>;
-};
 export default function TimeseriesTable({
-  query,
   selected,
   setSelected,
-  unmatchedOnly,
+  advancedFilter,
   filter,
-}: Props) {
+  allSources,
+}: SourceTableProps) {
   const {
-    data: listPages,
+    data,
     isInitialLoading: listLoading,
     error,
-  } = useTimeseries({ unmatchedOnly, filter }, { enabled: !query });
+  } = useList('timeseries', { limit: 1000, advancedFilter, filter });
 
-  const { data: searchResult, isInitialLoading: searchLoading } =
-    useTimeseriesSearch(query!, {
-      enabled: !!query,
-      select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
-    });
-
-  const loading = listLoading || searchLoading;
+  const loading = listLoading;
   const { t } = useTranslation();
 
-  const collapsedListPages = useMemo(
+  const items = useMemo(
     () =>
-      listPages?.pages[0]?.items?.map((a) => ({
+      data?.map((a) => ({
         ...a,
         key: a.id.toString(),
       })) || [],
-    [listPages]
+    [data]
   );
 
-  const dataSource = !!query ? searchResult : collapsedListPages;
+  const dataSource = items?.map((ts) => ({
+    ...ts,
+    disabled: allSources,
+  }));
 
   const columns: TimeseriesListTableRecordCT[] = useMemo(
     () => [
@@ -79,12 +70,19 @@ export default function TimeseriesTable({
   );
 
   const rowSelection = {
-    selectedRowKeys: selected.map((s) => s.id.toString()),
+    selectedRowKeys: allSources
+      ? dataSource?.map((d) => d.id.toString())
+      : selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
-    },
     hideSelectAll: true,
+    onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
+      setSelected(rows);
+    },
+    getCheckboxProps(_: TimeseriesListTableRecord) {
+      return {
+        disabled: allSources,
+      };
+    },
   };
 
   if (error?.status === 403) {
@@ -106,10 +104,9 @@ export default function TimeseriesTable({
       loading={loading}
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
-      appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      pagination={false}
       dataSource={dataSource || []}
+      appendTooltipTo={undefined}
     />
   );
 }
