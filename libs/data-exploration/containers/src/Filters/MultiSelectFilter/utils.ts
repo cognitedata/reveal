@@ -4,7 +4,6 @@ import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 import has from 'lodash/has';
-import { OptionValue } from '../SourceFilter';
 
 // TODO: Add unit tests
 export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
@@ -16,7 +15,7 @@ export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
 
 // TODO: Add unit tests
 export const formatValue = <ValueType>(
-  value?: ValueType[] | OptionValue<ValueType>[]
+  value?: ValueType[] | OptionType<ValueType>[]
 ): OptionType<ValueType>[] | undefined => {
   return value?.map((el) => {
     if (has(el, 'value')) {

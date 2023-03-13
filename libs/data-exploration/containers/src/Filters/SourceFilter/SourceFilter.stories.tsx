@@ -8,5 +8,5 @@ export default {
 };
 
 export const Example: ComponentStory<typeof SourceFilter> = () => {
-  return <SourceFilter items={[]} />;
+  return <SourceFilter options={[]} />;
 };

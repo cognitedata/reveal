@@ -51,6 +51,6 @@ export interface EventsMetadataAggregateResponse extends AggregateResponse {
   values: string[];
 }
 
-export type EventProperty = 'type' | 'subtype' | 'dataSetId';
+export type EventProperty = 'type' | 'subtype' | 'dataSetId' | 'source';
 
 export type EventMetadataProperty = ['metadata', string];

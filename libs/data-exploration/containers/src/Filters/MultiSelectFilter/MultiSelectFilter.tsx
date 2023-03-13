@@ -9,7 +9,7 @@ import isEmpty from 'lodash/isEmpty';
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
 import { formatValue, isNilOption } from './utils';
-import { OptionValue } from '../SourceFilter';
+
 import {
   FilterLabel,
   MultiSelect,
@@ -19,11 +19,11 @@ import {
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {
   label?: string;
-  value?: ValueType[] | OptionValue<ValueType>[];
+  value?: ValueType[] | OptionType<ValueType>[];
   options: OptionType<ValueType>[];
   onChange: (
     selectedValues: ValueType[],
-    selectedOptions: OptionValue<ValueType>[]
+    selectedOptions: OptionType<ValueType>[]
   ) => void;
 }
 

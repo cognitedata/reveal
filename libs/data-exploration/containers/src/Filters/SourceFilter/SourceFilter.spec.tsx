@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 describe('SourceFilter', () => {
   describe('Base', () => {
     test('Expect N/A to be in the list', () => {
-      render(<SourceFilter items={[]} />);
+      render(<SourceFilter options={[]} />);
 
       userEvent.click(screen.getByText('Select...'));
 

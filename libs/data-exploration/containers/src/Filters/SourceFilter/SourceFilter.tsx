@@ -1,51 +1,34 @@
 import * as React from 'react';
 
-import { extractSources } from './utils';
 import {
   InternalAssetFilters,
+  InternalDocumentFilter,
   InternalEventsFilters,
-  transformNewFilterToOldFilter,
   useAssetsUniqueValuesByProperty,
+  useDocumentAggregateSourceQuery,
+  useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter } from '../types';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import { CogniteEvent } from '@cognite/sdk/dist/src';
+
+import { OptionType } from '@cognite/cogs.js';
 
 interface BaseSourceFilterProps<TFilter> extends BaseFilter<TFilter> {
-  value?: OptionValue<string>[];
-  onChange?: (newSources: OptionValue<string>[]) => void;
+  value?: OptionType<string>[];
+  onChange?: (newSources: OptionType<string>[]) => void;
   addNilOption?: boolean;
 }
 
-export interface SourceFilterProps<
-  TData extends { source?: string | number },
-  TFilter
-> extends BaseSourceFilterProps<TFilter> {
-  items: TData[];
+export interface SourceFilterProps<TFilter>
+  extends BaseSourceFilterProps<TFilter> {
+  options: OptionType<string>[];
 }
 
-//TODO: Move this type to a more common place (core? or maybe in ../types)
-export type OptionValue<ValueType> = {
-  label?: string;
-  value: ValueType;
-};
-
-export const SourceFilter = <
-  TData extends { source?: string | number },
-  TFilter
->({
-  items,
+export function SourceFilter<TFilter>({
+  options,
   onChange,
   ...rest
-}: SourceFilterProps<TData, TFilter>) => {
-  const options = React.useMemo(() => {
-    return extractSources(items).map((option) => ({
-      label: option,
-      value: option,
-    }));
-  }, [items]);
-
+}: SourceFilterProps<TFilter>) {
   return (
     <MultiSelectFilter<string>
       addNilOption
@@ -55,30 +38,48 @@ export const SourceFilter = <
       onChange={(_, newSources) => onChange?.(newSources)}
     />
   );
-};
+}
 
 const AssetSourceFilter = (
   props: BaseSourceFilterProps<InternalAssetFilters>
 ) => {
   const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
 
-  const mappedSources = sources.map((item) => ({ source: item.value }));
+  const mappedSources = sources.map((item) => ({
+    label: `${item.value}`,
+    value: String(item.value),
+  }));
 
-  return <SourceFilter {...props} items={mappedSources} />;
+  return <SourceFilter {...props} options={mappedSources} />;
 };
 
 SourceFilter.Asset = AssetSourceFilter;
 
-const EventSourceFilter = ({
-  filter,
-  ...rest
-}: BaseSourceFilterProps<InternalEventsFilters>) => {
-  const { data: items = [] } = useList<CogniteEvent>('events', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
+const EventSourceFilter = (
+  props: BaseSourceFilterProps<InternalEventsFilters>
+) => {
+  const { data: sources = [] } = useEventsUniqueValuesByProperty('source');
 
-  return <SourceFilter {...rest} items={items} />;
+  const mappedSources = sources.map((item) => ({
+    label: `${item.value}`,
+    value: String(item.value),
+  }));
+
+  return <SourceFilter {...props} options={mappedSources} />;
+};
+
+export const FileSourceFilter = (
+  props: BaseSourceFilterProps<InternalDocumentFilter>
+) => {
+  const { data: sources = [] } = useDocumentAggregateSourceQuery();
+  const mappedSources = sources.map((item) => ({
+    label: item.label,
+    value: item.value,
+  }));
+
+  return <SourceFilter {...props} options={mappedSources} />;
 };
 
 SourceFilter.Event = EventSourceFilter;
+
+SourceFilter.File = FileSourceFilter;
