@@ -18,6 +18,7 @@ export default function RootList() {
   const { subAppPath } = useParams<{
     subAppPath: string;
   }>();
+  const [searchParams, setSearchParams] = useSearchParams('');
   const { error } = useEMPipelines();
 
   if (error) {
@@ -26,8 +27,6 @@ export default function RootList() {
     }
     return <UnknownErrorPage error={error} />;
   }
-
-  const [searchParams, setSearchParams] = useSearchParams('');
 
   return (
     <ListWrapper>
