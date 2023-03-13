@@ -1,5 +1,5 @@
 import { Checkbox, Flex } from '@cognite/cogs.js';
-import { Select, Input } from 'antd';
+import { Select } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 
 import { useTranslation } from 'common';
@@ -14,6 +14,7 @@ import { getAdvancedFilter } from 'utils';
 import { API, SourceType, SOURCE_TYPES } from 'types/api';
 import FileInfoTable from './FilesTable';
 import { DataSetSelect } from 'components/data-set-select';
+import SearchInput from 'components/search-input';
 
 const { Option } = Select;
 
@@ -97,8 +98,7 @@ export default function SourceSelectionTable({}: Props) {
             }}
             selected={sourceFilter.dataSetIds?.map((ds) => ds.id) || []}
           />
-          <Input.Search
-            style={{ width: 120 }}
+          <SearchInput
             disabled={allSources}
             value={query || ''}
             onChange={(e) => {
