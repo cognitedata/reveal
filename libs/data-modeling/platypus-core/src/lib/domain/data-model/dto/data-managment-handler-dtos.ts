@@ -108,10 +108,20 @@ export type CreateDataModelTransformationDTO = {
         instanceSpaceExternalId: string;
       }
     | {
-        type: 'instances';
-        viewSpaceExternalId: string;
-        viewExternalId: string;
-        viewVersion: string;
-        instanceSpaceExternalId: string;
+        type: 'nodes';
+        view: {
+          space: string;
+          externalId: string;
+          version: string;
+        };
+        instanceSpace: string;
+      }
+    | {
+        type: 'edges';
+        edgeType: {
+          space: string;
+          externalId: string;
+        };
+        instanceSpace: string;
       };
 };

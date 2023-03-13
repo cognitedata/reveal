@@ -7,7 +7,7 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from './types';
-import { groupTransformationsByTypes, parseModelName } from './utils';
+import { groupTransformationsByTypes } from './utils';
 
 const dataModelTypeDefsMock: DataModelTypeDefs = {
   types: [
@@ -164,6 +164,67 @@ describe('Data model services utils', () => {
   });
 });
 
+describe('getDestinationDisplayName', () => {
+  it('returns correctly for model name - v2', () => {
+    expect(
+      utils.getDestinationDisplayName({
+        destination: {
+          instanceSpaceExternalId: 'imdb',
+          modelExternalId: 'Movie_2',
+          spaceExternalId: 'imdb',
+          type: 'data_model_instances',
+        },
+        externalId: 't_imdb_movie_2_1',
+        id: 2,
+        name: 'IMDB Movie_2 1',
+      })
+    ).toBe('Movie');
+  });
+  it('returns correctly for relations name - v2', () => {
+    expect(
+      utils.getDestinationDisplayName({
+        destination: {
+          instanceSpaceExternalId: 'imdb',
+          modelExternalId: 'Movie_actors_2',
+          spaceExternalId: 'imdb',
+          type: 'data_model_instances',
+        },
+        externalId: 't_imdb_movie_2_1',
+        id: 2,
+        name: 'IMDB Movie_2 1',
+      })
+    ).toBe('Movie.actors');
+  });
+  it('returns correctly for model name - v3', () => {
+    expect(
+      utils.getDestinationDisplayName({
+        destination: {
+          view: { space: 'imdb', externalId: 'Movie', version: '2' },
+          instanceSpace: 'imdb',
+          type: 'nodes',
+        },
+        externalId: 't_imdb_movie_2_1',
+        id: 2,
+        name: 'IMDB Movie_2 1',
+      })
+    ).toBe('Movie');
+  });
+  it('returns correctly for relations name - v3', () => {
+    expect(
+      utils.getDestinationDisplayName({
+        destination: {
+          edgeType: { space: 'imdb', externalId: 'Movie.actors' },
+          instanceSpace: 'imdb',
+          type: 'edges',
+        },
+        externalId: 't_imdb_movie_2_1',
+        id: 2,
+        name: 'IMDB Movie_2 1',
+      })
+    ).toBe('Movie.actors');
+  });
+});
+
 describe('groupTransformationsByTypes', () => {
   const mockTransformations: DataModelTransformation[] = [
     {
@@ -246,16 +307,6 @@ describe('groupTransformationsByTypes', () => {
           },
         ],
       },
-    });
-  });
-
-  describe('parseModelName', () => {
-    it('returns correctly for model name', () => {
-      expect(parseModelName('Movie_4')).toBe('Movie');
-    });
-
-    it('returns correctly for one-to-many model names', () => {
-      expect(parseModelName('Movie_actors_3')).toBe('Movie.actors');
     });
   });
 

@@ -87,7 +87,11 @@ export const CreateTransformationModal = ({
   const handleSubmit = () => {
     createTransformationMutation.mutate(
       {
-        destination: isFDMV3 ? 'instances' : 'data_model_instances',
+        destination: isFDMV3
+          ? selectedRelationship
+            ? 'edges'
+            : 'nodes'
+          : 'data_model_instances',
         space,
         oneToManyFieldName: selectedRelationship
           ? selectedRelationship.value

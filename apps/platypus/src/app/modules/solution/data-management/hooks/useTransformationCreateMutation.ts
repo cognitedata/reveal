@@ -20,7 +20,7 @@ type TransformationCreateMutationDTO = {
   transformationExternalId: string;
   typeName: string;
   version: string;
-  destination: 'data_model_instances' | 'instances';
+  destination: 'data_model_instances' | 'nodes' | 'edges';
 };
 
 export default function useTransformationCreateMutation() {
@@ -48,22 +48,36 @@ export default function useTransformationCreateMutation() {
         ? getOneToManyModelName(typeName, oneToManyFieldName, version)
         : getVersionedExternalId(typeName, version);
 
-      const createTransformationDTO: CreateDataModelTransformationDTO = {
-        destination:
-          destination === 'data_model_instances'
-            ? {
+      const getDestination =
+        (): CreateDataModelTransformationDTO['destination'] => {
+          switch (destination) {
+            case 'data_model_instances':
+              return {
                 instanceSpaceExternalId: space,
                 modelExternalId,
                 spaceExternalId: space,
                 type: 'data_model_instances',
-              }
-            : {
-                viewSpaceExternalId: space,
-                viewExternalId: typeName,
-                viewVersion: version,
-                instanceSpaceExternalId: space,
-                type: 'instances',
-              },
+              };
+            case 'nodes':
+              return {
+                view: { space, externalId: typeName, version: version },
+                instanceSpace: space,
+                type: 'nodes',
+              };
+            case 'edges':
+              return {
+                edgeType: {
+                  space,
+                  externalId: `${typeName}.${oneToManyFieldName}`,
+                },
+                instanceSpace: space,
+                type: 'edges',
+              };
+          }
+        };
+
+      const createTransformationDTO: CreateDataModelTransformationDTO = {
+        destination: getDestination(),
         externalId: transformationExternalId,
         name: transformationName,
       };

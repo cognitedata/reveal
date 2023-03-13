@@ -163,7 +163,7 @@ describe('CreateTransformationModal', () => {
   it('Calls transformation create mutation on submit', () => {
     window.open = jest.fn();
     const mockTransformation = {
-      destination: 'instances',
+      destination: 'edges',
       space: 'abc',
       oneToManyFieldName: 'actors',
       transformationExternalId: '123',

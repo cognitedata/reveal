@@ -631,13 +631,22 @@ export class FdmClient implements FlexibleDataModelingClient {
   getTransformations(
     dto: FetchDataModelTransformationsDTO
   ): Promise<DataModelTransformation[]> {
-    return this.transformationApiService.getTransformationsForType({
-      destination: 'instances',
-      space: dto.spaceExternalId,
-      instanceSpace: dto.instanceSpaceExternalId,
-      typeName: dto.typeName,
-      version: dto.version,
-    });
+    return Promise.all([
+      this.transformationApiService.getTransformationsForType({
+        destination: 'nodes',
+        space: dto.spaceExternalId,
+        instanceSpace: dto.instanceSpaceExternalId,
+        typeName: dto.typeName,
+        version: dto.version,
+      }),
+      this.transformationApiService.getTransformationsForType({
+        destination: 'edges',
+        space: dto.spaceExternalId,
+        instanceSpace: dto.instanceSpaceExternalId,
+        typeName: dto.typeName,
+        version: dto.version,
+      }),
+    ]).then((values) => values.flat());
   }
 
   createTransformation(

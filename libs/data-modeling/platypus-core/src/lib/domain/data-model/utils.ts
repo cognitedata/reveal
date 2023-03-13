@@ -51,15 +51,39 @@ export const getVersionedExternalId = (
 };
 
 const getDestinationId = (transformation: DataModelTransformation) => {
-  return transformation.destination.type === 'data_model_instances'
-    ? transformation.destination.modelExternalId
-    : `${transformation.destination.viewExternalId}_${transformation.destination.viewVersion}`;
+  switch (transformation.destination.type) {
+    case 'data_model_instances':
+      return transformation.destination.modelExternalId;
+    case 'nodes':
+      return transformation.destination.view.externalId;
+    case 'edges':
+      return transformation.destination.edgeType.externalId;
+  }
+};
+
+export const getDestinationDisplayName = (
+  transformation: DataModelTransformation
+) => {
+  switch (transformation.destination.type) {
+    case 'data_model_instances':
+      return transformation.destination.modelExternalId
+        .split('_')
+        .slice(0, -1)
+        .join('.');
+    case 'nodes':
+      return transformation.destination.view.externalId;
+    case 'edges':
+      return transformation.destination.edgeType.externalId;
+  }
 };
 
 export const groupTransformationsByTypes = (
   transformations: DataModelTransformation[]
 ) => {
-  const destinationIds = transformations.map(getDestinationId);
+  const destinations = transformations.map((transformation) => ({
+    id: getDestinationId(transformation),
+    displayName: getDestinationDisplayName(transformation),
+  }));
 
   const groups: {
     [key: string]: {
@@ -68,9 +92,9 @@ export const groupTransformationsByTypes = (
     };
   } = {};
 
-  destinationIds.forEach((id) => {
-    groups[id] = {
-      displayName: parseModelName(id),
+  destinations.forEach((item) => {
+    groups[item.id] = {
+      displayName: item.displayName,
       transformations: [],
     };
   });
@@ -84,17 +108,6 @@ export const groupTransformationsByTypes = (
   });
 
   return groups;
-};
-
-/*
-Parse a model name created by getVersionedExternalId or getOneToManyModelName
-and return a prettified version. For example:
-
-Movie_1 => Movie
-Movie_actors_3 => Movie.actors
-*/
-export const parseModelName = (modelName: string) => {
-  return modelName.split('_').slice(0, -1).join('.');
 };
 
 /*

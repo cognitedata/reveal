@@ -15,7 +15,7 @@ export class TransformationApiService {
     space,
     instanceSpace,
   }: {
-    destination: 'instances' | 'data_model_instances';
+    destination: 'nodes' | 'edges' | 'data_model_instances';
     typeName: string;
     space: string;
     instanceSpace: string;
@@ -38,22 +38,28 @@ export class TransformationApiService {
             const items = (
               response.data.items as DataModelTransformation[]
             ).filter(({ destination: transformationDest }) => {
-              if (destination === 'data_model_instances') {
+              if (transformationDest.type === 'data_model_instances') {
                 return (
                   transformationDest.type === 'data_model_instances' &&
                   transformationDest.modelExternalId.startsWith(typeName) &&
                   transformationDest?.modelExternalId.endsWith(`_${version}`) &&
                   transformationDest.spaceExternalId === space
                 );
-              } else {
+              } else if (transformationDest.type === 'edges') {
                 return (
-                  transformationDest.type === 'instances' &&
-                  transformationDest.viewExternalId === typeName &&
-                  transformationDest.viewVersion === version &&
-                  transformationDest.viewSpaceExternalId === space &&
-                  transformationDest.instanceSpaceExternalId === instanceSpace
+                  transformationDest.edgeType.space === space &&
+                  transformationDest.edgeType.externalId.startsWith(
+                    `${typeName}.`
+                  ) &&
+                  transformationDest.instanceSpace === instanceSpace
                 );
               }
+              return (
+                transformationDest.view.externalId === typeName &&
+                transformationDest.view.version === version &&
+                transformationDest.view.space === space &&
+                transformationDest.instanceSpace === instanceSpace
+              );
             });
             resolve(items);
           }
