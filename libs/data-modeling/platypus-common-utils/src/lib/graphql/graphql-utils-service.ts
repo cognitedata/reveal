@@ -43,6 +43,7 @@ import { ViewDirectiveValidator } from './validation/ViewDirectiveValidator';
 import { ContainerDirectiveValidator } from './validation/ContainerDirectiveValidator';
 import { getBuiltInTypesString } from './utils';
 import { RelationDirectiveValidator } from './validation/RelationDirectiveValidator';
+import { FieldNodeValidator } from './validation/FieldNodeValidator';
 
 const DIRECTIVE_ARGUMENTS_KIND_MAP: {
   [key: DirectiveProps['name']]: {
@@ -419,6 +420,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
     const customValidationRules = [
       NotSupportedFeaturesRule,
+      FieldNodeValidator,
     ] as ValidationRule[];
 
     if (options && options.useExtendedSdl) {
