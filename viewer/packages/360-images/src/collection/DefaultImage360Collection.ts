@@ -69,12 +69,22 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   /**
+   * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
+   * @param radius Only icons within the given radius will be made visible.
+   * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized.
+   */
+  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
+    this._icons.set360IconCullingRestrictions(radius, pointLimit);
+  }
+
+  /**
    * Unsubscribes from 360 image dataset event.
    * @param event The event type.
    * @param callback Callback function to be unsubscribed.
    */
   public off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
   public off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+
   /**
    * Unsubscribe to the 360 Image events
    * @param event `Image360Events` event
@@ -103,10 +113,6 @@ export class DefaultImage360Collection implements Image360Collection {
 
   public setCullingScheme(scheme: IconCullingScheme): void {
     this._icons.setCullingScheme(scheme);
-  }
-
-  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
-    this._icons.set360IconCullingRestrictions(radius, pointLimit);
   }
 
   public remove(entity: Image360Entity): void {

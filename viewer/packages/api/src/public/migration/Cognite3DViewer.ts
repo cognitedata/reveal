@@ -785,18 +785,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
-   * @param radius Only icons within the given radius will be made visible. Use 0 to to show all.
-   * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized. Use 0 to show all.
-   */
-  set360IconCullingRestrictions(radius: number, pointLimit: number): void {
-    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
-    }
-    this._image360ApiHelper.set360IconCullingRestrictions(radius, pointLimit);
-  }
-
-  /**
    * Removes a model that was previously added using {@link Cognite3DViewer.addModel},
    * {@link Cognite3DViewer.addCadModel} or {@link Cognite3DViewer.addPointCloudModel}
    * .

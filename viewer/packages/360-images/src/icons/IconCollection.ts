@@ -7,6 +7,7 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
+import { clamp } from 'lodash';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
@@ -24,7 +25,7 @@ export class IconCollection {
 
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
-  private _proximityRadius = 0;
+  private _proximityRadius = Infinity;
   private _proximityPointLimit = 50;
 
   get icons(): Image360Icon[] {
@@ -54,7 +55,7 @@ export class IconCollection {
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
     this._proximityRadius = Math.max(0, radius);
-    this._proximityPointLimit = Math.max(0, pointLimit);
+    this._proximityPointLimit = clamp(pointLimit, 0, this.icons.length);
   }
 
   constructor(
@@ -125,19 +126,17 @@ export class IconCollection {
   private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     return ({ camera }) => {
       const points =
-        this._proximityRadius > 0
-          ? octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
+        this._proximityRadius === Infinity
+          ? this._icons
+          : octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
               return pointContainer.data;
-            })
-          : this._icons;
+            });
 
-      let closestPoints = points.sort((a, b) => {
-        return a.position.distanceToSquared(camera.position) - b.position.distanceToSquared(camera.position);
-      });
-
-      if (this._proximityPointLimit > 0) {
-        closestPoints = closestPoints.slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
-      }
+      const closestPoints = points
+        .sort((a, b) => {
+          return a.position.distanceToSquared(camera.position) - b.position.distanceToSquared(camera.position);
+        })
+        .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
 
       this._icons.forEach(p => (p.visible = false));
       closestPoints.forEach(p => (p.visible = true));

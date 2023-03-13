@@ -125,11 +125,6 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
-  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
-    this._image360Facade.set360IconCullingRestrictions(radius, pointLimit);
-    this._requestRedraw();
-  }
-
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     if (this._interactionState.image360SelectedForEntry === image360Entity) {
       this._requestRedraw();

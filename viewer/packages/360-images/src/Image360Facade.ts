@@ -32,10 +32,6 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setCullingScheme(scheme));
   }
 
-  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
-    this._image360Collections.forEach(collection => collection.set360IconCullingRestrictions(radius, pointLimit));
-  }
-
   constructor(private readonly _entityFactory: Image360CollectionFactory<T>) {
     this._image360Collections = [];
     this._rayCaster = new THREE.Raycaster();

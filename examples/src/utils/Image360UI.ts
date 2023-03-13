@@ -3,12 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360 } from '@cognite/reveal';
+import { Cognite3DViewer, Image360, Image360Collection } from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
+    const sets: Image360Collection[] = [];
 
     const optionsFolder = gui.addFolder('Add Options');
 
@@ -30,7 +31,7 @@ export class Image360UI {
     };
 
     const iconCulling = {
-      radius: 0,
+      radius: Infinity,
       limit: 50
     };
 
@@ -64,14 +65,14 @@ export class Image360UI {
     });
 
     gui
-      .add(iconCulling, 'radius', 0, 100, 1)
+      .add(iconCulling, 'radius', 0, 10000, 1)
       .name('Culling radius')
       .onChange(() => {
         set360IconCullingRestrictions();
       });
 
     gui
-      .add(iconCulling, 'limit', 0, 100, 1)
+      .add(iconCulling, 'limit', 0, 10000, 1)
       .name('Number of points')
       .onChange(() => {
         set360IconCullingRestrictions();
@@ -91,16 +92,21 @@ export class Image360UI {
         { site_id: params.siteId },
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
+      sets.push(set);
       entities = entities.concat(set.image360Entities);
       viewer.requestRedraw();
     }
 
     async function set360IconCullingRestrictions() {
-      viewer.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit);
+      if (sets.length > 0) {
+        sets.forEach(p => (p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit)));
+        viewer.requestRedraw();
+      }
     }
 
     async function removeAll360Images() {
       await viewer.remove360Images(...entities);
+      sets.splice(0);
     }
   }
 }
