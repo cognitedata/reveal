@@ -1,4 +1,3 @@
-import Col from 'antd/lib/col';
 import Select from 'antd/lib/select';
 import { useEffect, useState } from 'react';
 import theme from 'styles/theme';
@@ -11,6 +10,7 @@ import { getContainer } from 'utils/shared';
 import { OidcCheck } from 'components/OidcCheck/OidcCheck';
 import { RawSection } from 'components/GetDataInPage/raw/RawSection';
 import { useTranslation } from 'common/i18n';
+import { Col } from 'utils';
 
 const { Option } = Select;
 
@@ -98,15 +98,16 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
 
   return (
     <Drawer
-      // title={<div>{t('document-data-extraction')}</div>}
+      title={t('document-data-extraction')}
       width="50%"
       onClose={() => props.closeModal()}
+      onCancel={() => props.closeModal()}
       visible={props.visible}
       okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
     >
-      <div>
+      <div id="getDataInPageContainer">
         <Col span={24}>
           <Col span={18}>
             <FieldLabel>{t('source_other')}</FieldLabel>

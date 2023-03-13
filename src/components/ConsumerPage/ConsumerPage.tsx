@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Col from 'antd/lib/col';
 import { Button, Colors, Title } from '@cognite/cogs.js';
 import { Consumer, DataSet } from 'utils/types';
 import Drawer from 'components/Drawer';
@@ -14,6 +13,7 @@ import {
   updateConsumerExternalLink,
 } from './consumerPageUtils';
 import { useTranslation } from 'common/i18n';
+import { Col } from 'utils';
 
 const Label = styled.label`
   margin-top: 0.7rem;
@@ -168,13 +168,15 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
 
   return (
     <Drawer
-      // title={<StyledTitle2>{t('document-consumers')}</StyledTitle2>}
+      title={t('document-consumers')}
       width="50%"
       onClose={() => props.closeModal()}
+      onCancel={() => props.closeModal()}
       visible={props.visible}
       okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
+      hideActions
     >
       <form>
         {Array.isArray(consumers) &&
@@ -222,6 +224,7 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
                     </IconWrapper>
                     <Button
                       type="secondary"
+                      size="medium"
                       onClick={() => removeConsumer(consumersIndex)}
                     >
                       {t('remove-consumer')}

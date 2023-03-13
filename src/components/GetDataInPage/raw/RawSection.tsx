@@ -14,11 +14,7 @@ import {
 } from 'utils/styledComponents';
 import RawSelector from 'components/RawSelector';
 import { RawTable } from 'utils/types';
-import { getContainer } from 'utils/shared';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import Input from 'antd/lib/input';
-import Modal from 'antd/lib/modal';
+
 import { notification } from 'antd';
 import { useRawList } from 'actions';
 import { useQueryClient } from 'react-query';
@@ -26,6 +22,8 @@ import Spin from 'antd/lib/spin';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';
+import { Modal, Input } from '@cognite/cogs.js';
+import { Col, Row } from 'utils';
 
 interface RawSectionProps {
   selectedDb: string;
@@ -115,13 +113,14 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
         visible={createVisible}
         onOk={() => createItem()}
         onCancel={() => setCreateVisible(false)}
-        getContainer={getContainer}
+        getContainer={document.getElementById('getDataInPageContainer')!}
       >
         <Row>
           <Col span={6}>{t('unique-name')}</Col>
           <Col span={16}>
             <Input
               autoFocus
+              fullWidth
               value={nameField}
               onChange={(e) => setNameField(e.currentTarget.value)}
               placeholder={t('raw-section-enter-database-name')}

@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 import theme from 'styles/theme';
-import Input from 'antd/lib/input';
 
-import { Button, Colors, Input as CogsInput, Table } from '@cognite/cogs.js';
+import {
+  Button,
+  Colors,
+  Input as CogsInput,
+  Table,
+  Menu,
+} from '@cognite/cogs.js';
 import Tag from 'antd/lib/tag';
 import Select from 'antd/lib/select';
-import Menu from 'antd/lib/menu';
 
 import zIndex from 'utils/zIndex';
 import { Card, Row } from './antdStyledComponents';
-
-const { Search } = Input;
 
 export const InputField = styled(CogsInput)`
   width: 600px;
@@ -220,7 +222,7 @@ export const SearchWrapper = styled.div`
   background: #f5f5f5;
 `;
 
-export const SearchField = styled(Search)`
+export const SearchField = styled(CogsInput).attrs({ type: 'search' })`
   border: 2px solid #e8e8e8;
   box-sizing: border-box;
 `;

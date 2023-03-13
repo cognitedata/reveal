@@ -129,6 +129,12 @@ a:hover {
   border-bottom: 1px solid var(--cogs-border-default);
 }
 
+/* Transformations table */
+.transformations-table .cogs-table tr > th:first-of-type, 
+.transformations-table .cogs-table tr > td:first-of-type {
+  width: 32px;
+}
+
 /* DRAWER */
 .cogs-drawer .cogs-drawer-content {
   padding: 0;
@@ -146,10 +152,10 @@ a:hover {
 }
 
 
-.cogs-drawer .cogs-drawer-header.primary-sidebar .cogs-drawer-header {
+.cogs-drawer.primary-sidebar .cogs-drawer-header .cogs-drawer-header {
   border-bottom: 0;
 }
-.cogs-drawer .cogs-drawer-header.primary-sidebar .cogs-drawer-title {
+.cogs-drawer.primary-sidebar .cogs-drawer-header .cogs-drawer-title {
   color: white;
   background: #4a67fb;
   
