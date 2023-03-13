@@ -70,6 +70,7 @@ export const SearchResults = ({
           }}
           allowEdit={allowEdit}
           onClick={(item) => onClick({ id: item.id, type: 'file' })}
+          {...commonProps}
         />
       );
     case 'sequence':
