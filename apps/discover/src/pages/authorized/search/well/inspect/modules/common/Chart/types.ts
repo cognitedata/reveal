@@ -12,6 +12,7 @@ export type ChartProps = {
   hovermode?: 'closest' | 'x' | 'y' | 'x unified' | 'y unified' | false;
   isTrajectory?: boolean;
   margin?: Partial<Plotly.Margin>;
+  alignAxesScales?: boolean;
   onExpand?: () => void;
   onCollapse?: () => void;
 };

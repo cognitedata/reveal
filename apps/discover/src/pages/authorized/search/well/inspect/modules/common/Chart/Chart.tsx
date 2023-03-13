@@ -33,6 +33,7 @@ const Chart = (props: ChartProps) => {
     isTrajectory = false,
     hovermode = 'closest',
     margin,
+    alignAxesScales,
     onExpand,
     onCollapse,
   } = props;
@@ -55,6 +56,7 @@ const Chart = (props: ChartProps) => {
       title: {
         text: axisNames?.x || 'x Axis',
       },
+      scaleanchor: alignAxesScales ? 'y' : undefined,
     },
     yaxis: {
       autorange: axisAutorange?.y,
@@ -62,6 +64,7 @@ const Chart = (props: ChartProps) => {
       title: {
         text: axisNames?.y || 'Y Axis',
       },
+      scaleanchor: alignAxesScales ? 'x' : undefined,
     },
     hovermode,
     margin,

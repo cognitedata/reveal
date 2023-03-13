@@ -22,7 +22,10 @@ export const TrajectoryChart: React.FC<
   const chartConfigs = useTrajectoryChartsConfig();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  const chartConfig = useMemo(() => chartConfigs[index], [chartConfigs, index]);
+  const { reverseXAxis, reverseYAxis, reverseZAxis, alignAxesScales } = useMemo(
+    () => chartConfigs[index],
+    [chartConfigs, index]
+  );
 
   const isLegend = useDeepCallback(
     (index: number) => chartConfigs[index].type === 'legend',
@@ -41,10 +44,11 @@ export const TrajectoryChart: React.FC<
           userPreferredUnit
         )}
         axisAutorange={{
-          x: chartConfig.reverseXAxis ? 'reversed' : undefined,
-          y: chartConfig.reverseYAxis ? 'reversed' : undefined,
-          z: chartConfig.reverseZAxis ? 'reversed' : undefined,
+          x: reverseXAxis ? 'reversed' : undefined,
+          y: reverseYAxis ? 'reversed' : undefined,
+          z: reverseZAxis ? 'reversed' : undefined,
         }}
+        alignAxesScales={alignAxesScales}
         margin={isLegend(index) ? { r: 250 } : undefined}
         {...chartProps}
       />
