@@ -1,6 +1,5 @@
 import {
   DataModelTypeDefsType,
-  PlatypusError,
   PlatypusValidationError,
   QueryFilter,
 } from '@platypus/platypus-core';

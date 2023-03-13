@@ -5,7 +5,6 @@ import {
   DataModelTypeDefsFieldType,
 } from '@platypus/platypus-core';
 import {
-  CodeActionEdit,
   CodeActionEditItem,
   CodeActionsOptions,
   CodeEditorRange,
