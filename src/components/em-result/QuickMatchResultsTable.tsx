@@ -38,14 +38,12 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         title: t('qm-result-score'),
         dataIndex: 'matches',
         key: 'matches',
-        width: '30%',
         render: (matches: any[]) => matches[0]?.score.toFixed(1) || '—',
       },
       {
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
-        width: '30%',
         render: (source: PredictionObject) =>
           formatPredictionObject(source) || '—',
       },
@@ -53,17 +51,15 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         title: t('qm-result-target'),
         dataIndex: 'matches',
         key: 'matches',
-        width: '30%',
         render: (matches: any[]) =>
           formatPredictionObject(matches[0]?.target) || '—',
       },
 
       {
-        title: 'Confidence',
+        title: t('confidence'),
         dataIndex: 'matches',
         key: 'matches',
         align: 'center',
-        width: '30%',
         render: (matches: any[]) => (
           <ConfidenceScore score={matches[0]?.score} />
         ),
@@ -73,7 +69,7 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         defaultSortOrder: 'descend',
       },
       {
-        title: 'Confirm',
+        title: t('confirm'),
         dataIndex: 'source',
         key: 'source',
         width: 10,

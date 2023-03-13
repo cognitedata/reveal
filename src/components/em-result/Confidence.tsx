@@ -7,7 +7,10 @@ type ConfidenceProps = {
 
 export default function Confidence(props: ConfidenceProps) {
   const { score } = props;
-  const percentage = score ? `${Math.round(score * 100)}%` : '0%';
+  const percentage =
+    score && Number.isFinite(score)
+      ? `${Math.round(score * 100).toFixed(1)}%`
+      : null;
   return <StyledConfidence>{percentage}</StyledConfidence>;
 }
 
