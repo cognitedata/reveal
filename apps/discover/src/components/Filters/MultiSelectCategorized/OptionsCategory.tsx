@@ -18,6 +18,8 @@ export const OptionsCategory: React.FC<
     renderCategoryHelpText,
     onValueChange,
     viewMode,
+    visibleCategory,
+    onHoverCategory,
   }) => {
     const handleChangeCategory = (isSelected: boolean) => {
       onValueChange({
@@ -59,6 +61,8 @@ export const OptionsCategory: React.FC<
           onChangeOption={handleChangeOption}
           onChangeCategory={handleChangeCategory}
           renderCategoryHelpText={renderCategoryHelpText}
+          visibleCategory={visibleCategory}
+          onHoverCategory={onHoverCategory}
         />
       );
     }

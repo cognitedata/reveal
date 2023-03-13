@@ -12,6 +12,11 @@ export const MultiSelectCategorizedWrapper = styled.span`
     props.width ? `${props.width}px` : '100%'};
 `;
 
+export const DropdownContentWrapper = styled.div`
+  padding-left: ${sizes.small};
+  margin-left: -${sizes.small};
+`;
+
 export const DropdownContent = styled(Menu)`
   margin-top: 2px;
   width: ${(props: { width?: number }) =>

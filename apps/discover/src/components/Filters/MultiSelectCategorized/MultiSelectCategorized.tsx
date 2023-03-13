@@ -60,6 +60,8 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
   >({});
 
+  const [visibleCategory, setVisibleCategory] = useState<string>();
+
   useEffect(() => {
     if (!selectedOptionsProp) {
       return;
@@ -78,6 +80,10 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
     setSelectedOptions(selectedOptions);
   }, [selectedOptionsProp]);
+
+  const resetVisibleCategory = () => {
+    setVisibleCategory(undefined);
+  };
 
   const options = useDeepMemo(() => {
     const adaptedData = getMultiSelectCategorizedOptions(data);
@@ -155,7 +161,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
       return null;
     }
     return (
-      <CategoryWrapper>
+      <CategoryWrapper onMouseEnter={resetVisibleCategory}>
         <Checkbox
           name={selectAllLabel}
           indeterminate={isAnySelected && !isAllSelected}
@@ -168,33 +174,25 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     );
   }, [selectedOptions]);
 
-  const OptionsContent = useMemo(
-    () => (
-      <>
-        {SelectAllOption}
-        {options.map(({ category, options }) => {
-          return (
-            <OptionsCategory
-              key={category}
-              category={category}
-              options={options}
-              viewMode={viewMode}
-              selectedOptions={selectedOptions[category]}
-              onValueChange={handleValueChange}
-              renderCategoryHelpText={renderCategoryHelpText}
-            />
-          );
-        })}
-      </>
-    ),
-    [
-      SelectAllOption,
-      handleValueChange,
-      options,
-      selectedOptions,
-      viewMode,
-      renderCategoryHelpText,
-    ]
+  const OptionsContent = (
+    <>
+      {SelectAllOption}
+      {options.map(({ category, options }) => {
+        return (
+          <OptionsCategory
+            key={category}
+            category={category}
+            options={options}
+            viewMode={viewMode}
+            selectedOptions={selectedOptions[category]}
+            onValueChange={handleValueChange}
+            renderCategoryHelpText={renderCategoryHelpText}
+            visibleCategory={visibleCategory}
+            onHoverCategory={() => setVisibleCategory(category)}
+          />
+        );
+      })}
+    </>
   );
 
   const NoOptionsContent = useMemo(
@@ -204,7 +202,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
   const dropdownContent = useMemo(
     () => (
-      <DropdownContent width={width}>
+      <DropdownContent width={width} onMouseLeave={resetVisibleCategory}>
         {optionsCount ? OptionsContent : NoOptionsContent}
       </DropdownContent>
     ),

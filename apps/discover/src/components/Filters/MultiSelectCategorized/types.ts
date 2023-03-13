@@ -50,6 +50,8 @@ export interface OptionsCategoryProps<ValueType>
     options,
   }: CategorizedOptionType<ValueType>) => void;
   viewMode?: MultiSelectCategorizedViewMode;
+  visibleCategory?: string;
+  onHoverCategory?: () => void;
 }
 
 export interface MultiSelectCategorizedOption {
