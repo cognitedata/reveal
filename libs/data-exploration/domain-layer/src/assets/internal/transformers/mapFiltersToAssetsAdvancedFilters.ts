@@ -1,10 +1,11 @@
-import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
+import { isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
   NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
 
+import { getSearchConfig } from '../../../utils';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -98,11 +99,13 @@ export const mapFiltersToAssetsAdvancedFilters = (
   if (query) {
     const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>();
 
-    if (searchConfigData.asset.name) {
+    const searchConfigData = getSearchConfig();
+
+    if (searchConfigData.asset.name.enabled) {
       searchQueryBuilder.search('name', query);
     }
 
-    if (searchConfigData.asset.description) {
+    if (searchConfigData.asset.description.enabled) {
       searchQueryBuilder.search('description', query);
     }
 
@@ -110,25 +113,25 @@ export const mapFiltersToAssetsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.asset.metadata) {
+    if (searchConfigData.asset.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.asset.id) {
+    if (isNumeric(query) && searchConfigData.asset.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.asset.externalId) {
+    if (searchConfigData.asset.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
-    if (searchConfigData.asset.source) {
+    if (searchConfigData.asset.source.enabled) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
       searchQueryBuilder.prefix('source', query);
     }
 
-    if (searchConfigData.asset.labels) {
+    if (searchConfigData.asset.labels.enabled) {
       searchQueryBuilder.containsAny('labels', [query]);
     }
 

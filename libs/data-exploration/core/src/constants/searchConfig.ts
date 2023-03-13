@@ -5,3 +5,4 @@ export const searchConfigCommonColumns = [
   'ID',
   'Metadata',
 ];
+export const SEARCH_CONFIG_LOCAL_STORAGE_KEY = 'SEARCH_CONFIG_KEY';

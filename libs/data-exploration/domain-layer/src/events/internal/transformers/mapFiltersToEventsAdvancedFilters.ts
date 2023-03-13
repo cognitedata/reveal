@@ -1,4 +1,4 @@
-import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
+import { isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -7,6 +7,7 @@ import {
 import isEmpty from 'lodash/isEmpty';
 import { InternalEventsFilters } from '../types';
 import isArray from 'lodash/isArray';
+import { getSearchConfig } from '../../../utils';
 
 export type EventsProperties = {
   assetIds: number[];
@@ -112,9 +113,11 @@ export const mapFiltersToEventsAdvancedFilters = (
   builder.and(filterBuilder);
 
   if (query) {
+    const searchConfigData = getSearchConfig();
+
     const searchQueryBuilder = new AdvancedFilterBuilder<EventsProperties>();
 
-    if (searchConfigData.event.description) {
+    if (searchConfigData.event.description.enabled) {
       searchQueryBuilder.search(
         'description',
         isEmpty(query) ? undefined : query
@@ -125,30 +128,30 @@ export const mapFiltersToEventsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.event.metadata) {
+    if (searchConfigData.event.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (searchConfigData.event.type) {
+    if (searchConfigData.event.type.enabled) {
       searchQueryBuilder.prefix('type', query);
     }
 
-    if (searchConfigData.event.subtype) {
+    if (searchConfigData.event.subtype.enabled) {
       searchQueryBuilder.prefix('subtype', query);
     }
 
-    if (searchConfigData.event.source) {
+    if (searchConfigData.event.source.enabled) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
       searchQueryBuilder.prefix('source', query);
     }
 
-    if (searchConfigData.event.id && isNumeric(query)) {
+    if (searchConfigData.event.id.enabled && isNumeric(query)) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.event.externalId) {
+    if (searchConfigData.event.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 

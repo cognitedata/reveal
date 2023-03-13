@@ -1,6 +1,7 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
 import { InternalDocumentFilter } from '../types';
-import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
+import { isNumeric } from '@data-exploration-lib/core';
+import { getSearchConfig } from '../../../utils';
 
 export type DocumentProperties = {
   'sourceFile|datasetId': number[];
@@ -73,37 +74,39 @@ export const mapFiltersToDocumentSearchFilters = (
   builder.and(filterBuilder);
 
   if (query) {
+    const searchConfigData = getSearchConfig();
+
     const searchQueryBuilder = new AdvancedFilterBuilder<DocumentProperties>();
 
-    if (searchConfigData.file['sourceFile|name']) {
+    if (searchConfigData.file['sourceFile|name']?.enabled) {
       /* eslint-disable @typescript-eslint/ban-ts-comment */
       // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
       searchQueryBuilder.search('sourceFile|name', query);
     }
-    if (searchConfigData.file.content) {
+    if (searchConfigData.file.content.enabled) {
       // @ts-ignore
       searchQueryBuilder.search('content', query);
     }
 
-    if (searchConfigData.file['sourceFile|metadata']) {
+    if (searchConfigData.file['sourceFile|metadata'].enabled) {
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|metadata', query);
     }
 
-    if (isNumeric(query) && searchConfigData.file.id) {
+    if (isNumeric(query) && searchConfigData.file.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.file.externalId) {
+    if (searchConfigData.file.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 
-    if (searchConfigData.file['sourceFile|source']) {
+    if (searchConfigData.file['sourceFile|source'].enabled) {
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|source', query);
     }
 
-    if (searchConfigData.file.labels) {
+    if (searchConfigData.file.labels.enabled) {
       // @ts-ignore
       searchQueryBuilder.containsAny('labels', [{ externalId: query }]);
     }

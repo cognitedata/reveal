@@ -2,10 +2,12 @@ import { Flex } from '@cognite/cogs.js';
 import { SearchConfigModal } from '@data-exploration/components';
 import {
   FilterIdType,
-  searchConfigData as mockData,
+  searchConfigData,
   SearchConfigDataType,
   SearchConfigResourceType,
+  SEARCH_CONFIG_LOCAL_STORAGE_KEY,
 } from '@data-exploration-lib/core';
+import useLocalStorageState from 'use-local-storage-state';
 import React from 'react';
 import { CommonColumn } from './CommonColumn';
 
@@ -14,20 +16,25 @@ import { ResourceColumns } from './ResourceColumns';
 type Props = {
   visible: boolean;
   onCancel: () => void;
-  onSave: (data: SearchConfigDataType) => void;
-  searchConfigData?: SearchConfigDataType;
+  onSave: () => void;
 };
 
 export const SearchConfig: React.FC<Props> = ({
   visible,
   onCancel,
   onSave,
-  searchConfigData = mockData,
 }: Props) => {
+  const [searchConfig, setSearchConfig] =
+    useLocalStorageState<SearchConfigDataType>(
+      SEARCH_CONFIG_LOCAL_STORAGE_KEY,
+      {
+        defaultValue: searchConfigData,
+      }
+    );
   const [configData, setConfigData] =
-    React.useState<SearchConfigDataType>(searchConfigData);
-  const resources = Object.keys(searchConfigData).map((resource) => resource);
-  const numOfResources = resources.length;
+    React.useState<SearchConfigDataType>(searchConfig);
+
+  const numOfResources = 5;
 
   const onChangeHandler = (
     enabled: boolean,
@@ -82,7 +89,10 @@ export const SearchConfig: React.FC<Props> = ({
         setConfigData(searchConfigData);
         onCancel();
       }}
-      onOk={() => onSave(configData)}
+      onOk={() => {
+        setSearchConfig(configData);
+        onSave();
+      }}
     >
       <Flex style={{ overflowY: 'hidden' }}>
         <CommonColumn

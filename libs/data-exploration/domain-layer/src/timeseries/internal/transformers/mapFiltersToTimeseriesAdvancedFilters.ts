@@ -1,4 +1,4 @@
-import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
+import { isNumeric } from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
   AdvancedFilter,
@@ -7,6 +7,7 @@ import {
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 
+import { getSearchConfig } from '../../../utils';
 import { InternalTimeseriesFilters } from '../types';
 
 export type TimeseriesProperties = {
@@ -91,10 +92,11 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     const searchQueryBuilder =
       new AdvancedFilterBuilder<TimeseriesProperties>();
 
-    if (searchConfigData.timeSeries.name) {
+    const searchConfigData = getSearchConfig();
+    if (searchConfigData.timeSeries.name.enabled) {
       searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
     }
-    if (searchConfigData.timeSeries.description) {
+    if (searchConfigData.timeSeries.description.enabled) {
       searchQueryBuilder.search(
         'description',
         isEmpty(query) ? undefined : query
@@ -105,19 +107,19 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.timeSeries.metadata) {
+    if (searchConfigData.timeSeries.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.timeSeries.id) {
+    if (isNumeric(query) && searchConfigData.timeSeries.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.timeSeries.unit) {
+    if (searchConfigData.timeSeries.unit.enabled) {
       searchQueryBuilder.prefix('unit', query);
     }
 
-    if (searchConfigData.timeSeries.externalId) {
+    if (searchConfigData.timeSeries.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 

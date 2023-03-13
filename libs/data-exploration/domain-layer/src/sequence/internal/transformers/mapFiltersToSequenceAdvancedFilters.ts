@@ -1,9 +1,10 @@
-import { isNumeric, searchConfigData } from '@data-exploration-lib/core';
+import { isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
+import { getSearchConfig } from '../../../utils';
 import { InternalSequenceFilters } from '../types';
 
 export type SequenceProperties = {
@@ -60,11 +61,12 @@ export const mapFiltersToSequenceAdvancedFilters = (
 
   if (query) {
     const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>();
+    const searchConfigData = getSearchConfig();
 
-    if (searchConfigData.sequence.name) {
+    if (searchConfigData.sequence.name.enabled) {
       searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
     }
-    if (searchConfigData.sequence.description) {
+    if (searchConfigData.sequence.description.enabled) {
       searchQueryBuilder.search(
         'description',
         isEmpty(query) ? undefined : query
@@ -75,14 +77,14 @@ export const mapFiltersToSequenceAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.sequence.metadata) {
+    if (searchConfigData.sequence.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.sequence.id) {
+    if (isNumeric(query) && searchConfigData.sequence.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
-    if (searchConfigData.sequence.externalId) {
+    if (searchConfigData.sequence.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 
