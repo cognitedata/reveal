@@ -2,10 +2,6 @@ import { ResourceType } from '@data-exploration-components/types';
 import styled from 'styled-components/macro';
 import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 import { Colors, TabProps, Tabs } from '@cognite/cogs.js';
-import {
-  getChipRightPropsForResourceCounter,
-  getTabCountLabel,
-} from '@data-exploration-components/utils';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -50,15 +46,11 @@ const ResourceTypeTab = ({
     api: query && query.length > 0 ? 'search' : 'list',
     type: currentResourceType as ResourceType,
   });
-  const chipRightProps = getChipRightPropsForResourceCounter(
-    getTabCountLabel(result.count),
-    result.isLoading
-  );
 
   return (
     <Tabs.Tab
       label={resourceTypeMap[currentResourceType as ResourceType]}
-      {...chipRightProps}
+      chipRight={{ label: result.count, size: 'x-small' }}
       {...rest}
     />
   );

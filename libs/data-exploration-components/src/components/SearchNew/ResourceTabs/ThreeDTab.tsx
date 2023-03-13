@@ -3,12 +3,9 @@ import {
   useInfinite3DModels,
 } from '@data-exploration-components/hooks';
 import { Model3D } from '@cognite/sdk';
-import { MORE_THAN_MAX_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
+
 import { CounterTab } from './elements';
-import {
-  getChipRightPropsForResourceCounter,
-  getTabCountLabel,
-} from '../../../utils';
+import { getChipRightPropsForResourceCounter } from '../../../utils';
 
 import { ResourceTabProps } from './types';
 
@@ -29,13 +26,8 @@ export const ThreeDTab = ({ query, ...rest }: ResourceTabProps) => {
     model.name.toLowerCase().includes(query?.toLowerCase() || '')
   );
 
-  const count =
-    filteredModels.length > 1000
-      ? MORE_THAN_MAX_RESULT_LIMIT
-      : filteredModels.length;
-
   const chipRightProps = getChipRightPropsForResourceCounter(
-    getTabCountLabel(count),
+    filteredModels.length,
     isLoading
   );
 

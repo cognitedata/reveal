@@ -1,10 +1,7 @@
 import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
 
 import { ResourceTabProps } from './types';
-import {
-  getChipRightPropsForResourceCounter,
-  getTabCountLabel,
-} from '../../../utils';
+import { getChipRightPropsForResourceCounter } from '../../../utils';
 import { CounterTab } from './elements';
 
 export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
@@ -14,7 +11,7 @@ export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   );
 
   const chipRightProps = getChipRightPropsForResourceCounter(
-    getTabCountLabel(data?.count || 0),
+    data?.count || 0,
     isLoading
   );
 

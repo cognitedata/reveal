@@ -1,9 +1,6 @@
 import { TabProps } from '@cognite/cogs.js';
 
-import {
-  getChipRightPropsForResourceCounter,
-  getTabCountLabel,
-} from '../../../utils';
+import { getChipRightPropsForResourceCounter } from '../../../utils';
 import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
 import { CounterTab } from './elements';
 
@@ -21,10 +18,7 @@ export const AssetsTab = ({ query, filter, ...rest }: Props) => {
     query,
   });
 
-  const chipRightProps = getChipRightPropsForResourceCounter(
-    getTabCountLabel(count),
-    isLoading
-  );
+  const chipRightProps = getChipRightPropsForResourceCounter(count, isLoading);
 
   return <CounterTab label="Assets" {...chipRightProps} {...rest} />;
 };

@@ -1,10 +1,7 @@
 import { CounterTab } from './elements';
 
 import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
-import {
-  getChipRightPropsForResourceCounter,
-  getTabCountLabel,
-} from '../../../utils';
+import { getChipRightPropsForResourceCounter } from '../../../utils';
 
 import { ResourceTabProps } from './types';
 
@@ -17,10 +14,7 @@ export const SequenceTab = ({ query, filter, ...rest }: ResourceTabProps) => {
     query,
   });
 
-  const chipRightProps = getChipRightPropsForResourceCounter(
-    getTabCountLabel(count),
-    isLoading
-  );
+  const chipRightProps = getChipRightPropsForResourceCounter(count, isLoading);
 
   return <CounterTab label="Sequence" {...chipRightProps} {...rest} />;
 };
