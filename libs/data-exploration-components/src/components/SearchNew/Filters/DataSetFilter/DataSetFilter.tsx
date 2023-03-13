@@ -1,13 +1,9 @@
 import React from 'react';
 import { OptionType, Tooltip } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
-import {
-  ResourceType,
-  convertResourceType,
-} from '@data-exploration-components/types';
+import { ResourceType } from '@data-exploration-components/types';
 import { DataSetWCount } from '@data-exploration-components/hooks/sdk';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { useResourceTypeDataSetAggregate } from '@data-exploration-lib/domain-layer';
+
+import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
 
 import { OptionValue } from '../types';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
@@ -29,32 +25,17 @@ export const DataSetFilterV2 = ({
   setValue,
 }: {
   resourceType?: ResourceType;
-  value?: number[];
+  value?: OptionValue<number>[];
   setValue: (newValue: OptionValue<number>[] | undefined) => void;
 }) => {
   const trackUsage = useMetrics();
-  const { data: currentDataSets } = useCdfItems<DataSet>(
-    'datasets',
-    (value || []).map((id) => ({ id })),
-    false,
-    {
-      enabled: value && value.length > 0,
-      keepPreviousData: true,
-    }
-  );
 
-  const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
-    resourceType ? convertResourceType(resourceType) : undefined
-  );
-  const selectedValues: OptionValue<number>[] = (currentDataSets || []).map(
-    (el) => ({
-      label: String(el.name),
-      value: el.id,
-    })
-  );
+  const { data: datasetOptions = [], isError } = useDatasetsListQuery({
+    filterArchivedItems: true,
+  });
 
   const options = React.useMemo(() => {
-    return datasetOptions?.map(formatOption);
+    return datasetOptions.map(formatOption);
   }, [datasetOptions]);
 
   return (
@@ -79,7 +60,7 @@ export const DataSetFilterV2 = ({
             resourceType,
           });
         }}
-        value={selectedValues}
+        value={value || []}
       />
     </Tooltip>
   );

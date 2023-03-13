@@ -1,4 +1,8 @@
-import { DocumentSortItem, IdEither } from '@cognite/sdk/dist/src';
+import {
+  DataSetFilter,
+  DocumentSortItem,
+  IdEither,
+} from '@cognite/sdk/dist/src';
 import { queryType } from 'graphql-extra';
 
 export const queryKeys = {
@@ -86,6 +90,8 @@ export const queryKeys = {
       revisionId,
     ] as const,
 
+  listDatasets: (filter?: DataSetFilter, limit?: number) =>
+    [...queryKeys.all, 'datasets', filter, limit] as const,
   // DOCUMENTS
   documents: () => [...queryKeys.all, 'documents'] as const,
   documentsSearch: (

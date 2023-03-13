@@ -38,7 +38,7 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
       <TempCommonMultiSelectFix>
         <DataSetFilterV2
           resourceType={resourceType}
-          value={commonFilter.dataSetIds?.map(({ value }) => value)}
+          value={commonFilter.dataSetIds}
           setValue={(newValue) => setCommonFilter({ dataSetIds: newValue })}
         />
         <ByAssetFilterV2

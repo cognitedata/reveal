@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ComponentStory } from '@storybook/react';
 import { DataSetFilterV2 } from './DataSetFilter';
 import { DataSetFilter } from '@data-exploration-components/components/Search/Filters';
+import { OptionValue } from '../types';
 
 export default {
   title: 'Search Results/Filters/DataSetFilterV2',
@@ -15,7 +16,9 @@ export default {
 };
 
 export const Example: ComponentStory<typeof DataSetFilter> = (args) => {
-  const [value, _setValue] = useState<number[] | undefined>(undefined);
+  const [value, _setValue] = useState<OptionValue<number>[] | undefined>(
+    undefined
+  );
   return <DataSetFilterV2 {...args} value={value} setValue={() => null} />;
 };
 
