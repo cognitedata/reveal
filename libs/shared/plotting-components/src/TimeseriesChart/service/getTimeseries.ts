@@ -6,16 +6,24 @@ import {
 
 import head from 'lodash/head';
 
+import { DEFAULT_DATAPOINTS_LIMIT } from '../constants';
 import { TimeseriesQuery } from '../types';
 import { calculateGranularity } from '../utils/calculateGranularity';
 
 export const getTimeseries = (
   sdk: CogniteClient,
-  { timeseriesId, start, end, limit = 20 }: TimeseriesQuery
+  {
+    timeseriesId,
+    start,
+    end,
+    limit = DEFAULT_DATAPOINTS_LIMIT,
+  }: TimeseriesQuery
 ): Promise<DatapointAggregate[]> => {
   return sdk.datapoints
     .retrieve({
       items: [{ id: timeseriesId }],
+      start,
+      end,
       granularity: calculateGranularity(
         [start?.valueOf(), end?.valueOf()] as number[],
         limit
@@ -30,5 +38,8 @@ export const getTimeseries = (
       }
 
       return datapoints;
+    })
+    .catch(() => {
+      return [];
     });
 };

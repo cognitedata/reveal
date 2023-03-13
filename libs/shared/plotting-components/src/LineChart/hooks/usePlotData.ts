@@ -7,6 +7,7 @@ import head from 'lodash/head';
 import { Data, Layout } from '../types';
 import { adaptToPlotlyPlotData } from '../utils/adaptToPlotlyPlotData';
 import { getHoveredChartData } from '../utils/getHoveredChartData';
+import { checkIsEmptyData } from '../utils/checkIsEmptyData';
 
 export interface Props {
   data: Data | Data[];
@@ -30,6 +31,10 @@ export const usePlotData = ({
     return adaptToPlotlyPlotData(data, showMarkers);
   }, [data, showMarkers]);
 
+  const isEmptyData = useMemo(() => {
+    return checkIsEmptyData(data);
+  }, [data]);
+
   useEffect(() => {
     setPlotData(initialPlotData);
   }, [initialPlotData]);
@@ -51,5 +56,9 @@ export const usePlotData = ({
     setPlotData(updatedData);
   }, [backgroundColor, initialPlotData, plotHoverEvent, showHoverMarker]);
 
-  return { plotData, dataRevision };
+  return {
+    plotData,
+    dataRevision,
+    isEmptyData,
+  };
 };

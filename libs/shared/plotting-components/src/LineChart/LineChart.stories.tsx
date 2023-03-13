@@ -5,6 +5,7 @@ import { Button, Select } from '@cognite/cogs.js';
 import { LineChart } from './LineChart';
 import { LineChartProps } from './types';
 import { data as mockData } from './__mocks/data';
+import get from 'lodash/get';
 
 export default {
   title: 'Shared/PlottingComponents/LineChart',
@@ -53,5 +54,5 @@ Basic.args = {
     </Button>,
   ],
   formatHoverLineInfo: ({ x, customData }) =>
-    `${String(x)}, ${customData?.timezone}`,
+    `${String(x)}, ${get(customData, 'timezone')}`,
 };

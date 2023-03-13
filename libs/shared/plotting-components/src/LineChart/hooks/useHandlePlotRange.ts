@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import isEqual from 'lodash/isEqual';
 import isUndefined from 'lodash/isUndefined';
@@ -30,6 +30,10 @@ export const useHandlePlotRange = (initialRange: Required<PlotRange>) => {
       y: [...initialRange.y],
     });
   }, [initialRange]);
+
+  useEffect(() => {
+    resetPlotRange();
+  }, [resetPlotRange]);
 
   return {
     range,

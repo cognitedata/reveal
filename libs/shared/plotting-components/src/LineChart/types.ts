@@ -11,6 +11,9 @@ export interface LineChartProps {
   layout?: Partial<Layout>;
   config?: Partial<Config>;
   style?: Style;
+  formatTooltipContent?: (
+    props: TooltipRendererProps
+  ) => Record<string, ValueType | undefined>;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
   renderFilters?: () => [JSX.Element, ...JSX.Element[]];
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
@@ -22,7 +25,7 @@ export interface Data {
   y: ValueType[];
   name?: string;
   color?: string;
-  customData?: CustomDataType;
+  customData?: CustomDataType | CustomDataType[];
 }
 
 export interface Layout {
@@ -81,7 +84,7 @@ export interface HoverLineData {
 
 export type ValueType = Datum;
 
-export type CustomDataType = Record<string, unknown>;
+export type CustomDataType = unknown;
 
 export type Variant = 'small' | 'medium' | 'large';
 

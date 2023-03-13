@@ -28,6 +28,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   layout: layoutProp = {},
   config: configProp = {},
   style: styleProp = {},
+  formatTooltipContent,
   renderTooltipContent,
   renderFilters,
   renderActions,
@@ -115,6 +116,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         plotHoverEvent={plotHoverEvent}
         referencePosition={isContinuousHover ? { x: cursorPosition?.x } : {}}
         showTooltip={showTooltip}
+        formatTooltipContent={formatTooltipContent}
         renderTooltipContent={renderTooltipContent}
       />
 

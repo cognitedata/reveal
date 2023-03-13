@@ -20,6 +20,8 @@ export const usePlotHoverEvent = ({
   const [isPlotHovered, setPlotHovered] = useState(false);
   const [preventClearEvent, setPreventClearEvent] = useState(false);
   const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
+  const [plotHoverEventBackup, setPlotHoverEventBackup] =
+    useState<PlotHoverEvent>();
 
   const updatePlotHoverEvent = (event: PlotHoverEvent) => {
     setPlotHoverEvent(event);
@@ -54,6 +56,21 @@ export const usePlotHoverEvent = ({
       return;
     }
   }, [isContinuousHover, preventClearEvent, isCursorOnPlot, isPlotHovered]);
+
+  useEffect(() => {
+    const plot = head(
+      chartRef.current?.getElementsByClassName('nsewdrag drag')
+    );
+
+    createEventListener(plot, 'mousedown', () => {
+      setPlotHoverEventBackup(plotHoverEvent);
+      setPlotHoverEvent(undefined);
+    });
+    createEventListener(plot, 'mouseup', () => {
+      setPlotHoverEvent(plotHoverEventBackup);
+      setPlotHoverEventBackup(undefined);
+    });
+  }, [chartRef, plotHoverEvent, plotHoverEventBackup]);
 
   return {
     plotHoverEvent,

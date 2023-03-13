@@ -4,14 +4,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { PlotHoverEvent } from 'plotly.js';
 
 import head from 'lodash/head';
-import get from 'lodash/get';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
-import { Coordinate, TooltipRendererProps } from '../../types';
+import { Coordinate, TooltipRendererProps, ValueType } from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
 import { TooltipDetail } from './TooltipDetail';
 import { TooltipContainer, TooltipWrapper } from './elements';
+import { getPointCustomData } from '../../utils/getPointCustomData';
 
 export interface TooltipProps {
   chartRef: React.RefObject<HTMLDivElement>;
@@ -21,6 +21,9 @@ export interface TooltipProps {
   backgroundColor?: string;
   referencePosition?: Coordinate;
   showTooltip: boolean;
+  formatTooltipContent?: (
+    props: TooltipRendererProps
+  ) => Record<string, ValueType | undefined>;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
 }
 
@@ -32,6 +35,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   backgroundColor = DEFAULT_BACKGROUND_COLOR,
   referencePosition,
   showTooltip,
+  formatTooltipContent,
   renderTooltipContent,
 }) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -68,14 +72,35 @@ export const Tooltip: React.FC<TooltipProps> = ({
       return null;
     }
 
+    const tooltipRendererProps: TooltipRendererProps = {
+      x: point.x,
+      y: point.y,
+      name: point.data.name,
+      color: String(point.data.line.color),
+      customData: getPointCustomData(point),
+    };
+
+    if (formatTooltipContent) {
+      const content = formatTooltipContent(tooltipRendererProps);
+
+      return (
+        <TooltipContainer>
+          {Object.entries(content).map(([label, value]) => {
+            return (
+              <TooltipDetail
+                key={label}
+                label={label}
+                value={value}
+                backgroundColor={backgroundColor}
+              />
+            );
+          })}
+        </TooltipContainer>
+      );
+    }
+
     if (renderTooltipContent) {
-      return renderTooltipContent({
-        x: point.x,
-        y: point.y,
-        name: point.data.name,
-        color: String(point.data.line.color),
-        customData: get(point.data, 'customData'),
-      });
+      return renderTooltipContent(tooltipRendererProps);
     }
 
     return (

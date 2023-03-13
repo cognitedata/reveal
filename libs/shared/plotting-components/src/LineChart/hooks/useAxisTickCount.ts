@@ -11,12 +11,19 @@ type TickCount = {
 
 export const useAxisTickCount = (props: TickCount) => {
   const [tickCount, setTickCount] = useState<TickCount>({
-    x: undefined,
-    y: undefined,
+    x: 0,
+    y: 0,
   });
 
-  const updateAxisTickCount = (graph: HTMLElement | null) => {
-    if (!graph) {
+  const updateAxisTickCount = (
+    graph: HTMLElement | null,
+    isEmptyData?: boolean
+  ) => {
+    if (!graph || isEmptyData) {
+      setTickCount({
+        x: 0,
+        y: 0,
+      });
       return;
     }
 

@@ -8,7 +8,7 @@ import { Tabs } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
   Loader,
-  TimeseriesChart as TimeseriesChartOld,
+  // TimeseriesChart as TimeseriesChartOld,
   Metadata,
   TimeseriesDetails,
 } from '@cognite/data-exploration';
@@ -21,10 +21,10 @@ import {
 import styled from 'styled-components';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import { TimeOptions } from '@data-exploration-components/containers/Timeseries/types';
+// import { TimeOptions } from '@data-exploration-components/containers/Timeseries/types';
 import { usePreviewDateRange } from '@data-exploration-app/hooks';
 
-// import { TimeseriesChart } from '@cognite/plotting-components';
+import { TimeseriesChart } from '@cognite/plotting-components';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -122,7 +122,7 @@ export const TimeseriesPreview = ({
             additionalTabs={[
               <Tabs.Tab label="Details" key="details" tabKey="details">
                 <DetailsTabWrapper>
-                  <TimeseriesChartWrapper>
+                  {/* <TimeseriesChartWrapper>
                     <TimeseriesChartOld
                       timeseriesId={timeseries.id}
                       showCustomRangePicker
@@ -134,12 +134,15 @@ export const TimeseriesPreview = ({
                         TimeOptions['1Y'],
                       ]}
                     />
-                  </TimeseriesChartWrapper>
-                  {/* <TimeseriesChart
+                  </TimeseriesChartWrapper> */}
+
+                  <TimeseriesChart
                     timeseriesId={timeseries.id}
+                    quickTimePeriodOptions={['1D', '1W', '1Y']}
                     dateRange={dateRange}
-                    style={{ height: 300 }}
-                  /> */}
+                    onChangeDateRange={setDateRange}
+                    height={300}
+                  />
                   <TimeseriesDetails timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />
                 </DetailsTabWrapper>
@@ -152,12 +155,12 @@ export const TimeseriesPreview = ({
   );
 };
 
-const TimeseriesChartWrapper = styled.div`
-  height: 300px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-`;
+// const TimeseriesChartWrapper = styled.div`
+//   height: 300px;
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+// `;
 
 const TimeseriesWrapper = styled.div`
   overflow: auto;

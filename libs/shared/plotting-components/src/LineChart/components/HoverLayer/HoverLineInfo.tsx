@@ -4,11 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { PlotHoverEvent } from 'plotly.js';
 
 import head from 'lodash/head';
-import get from 'lodash/get';
 
 import { Coordinate, HoverLineData } from '../../types';
 import { getLineInfoPosition } from '../../utils/getLineInfoPosition';
 import { LineInfo } from './elements';
+import { getPointCustomData } from '../../utils/getPointCustomData';
 
 export interface HoverLineInfoProps {
   chartRef: React.RefObject<HTMLDivElement>;
@@ -59,7 +59,7 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
         x: point.x,
         y: point.y,
         name: point.data.name,
-        customData: get(point.data, 'customData'),
+        customData: getPointCustomData(point),
       });
     }
 

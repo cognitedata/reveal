@@ -75,7 +75,7 @@ export const Plot = React.memo(
 
       const plotRef = useRef<HTMLDivElement>(null);
 
-      const { plotData, dataRevision } = usePlotData({
+      const { plotData, dataRevision, isEmptyData } = usePlotData({
         data,
         layout,
         plotHoverEvent,
@@ -116,13 +116,13 @@ export const Plot = React.memo(
       const plotLayout: Partial<PlotlyLayout> = {
         xaxis: {
           ...getCommonAxisLayoutProps(xAxis, layout),
-          nticks: tickCount.x,
+          nticks: isEmptyData ? 0 : tickCount.x,
           range: range.x,
           fixedrange: fixedRange.x,
         },
         yaxis: {
           ...getCommonAxisLayoutProps(yAxis, layout),
-          nticks: tickCount.y,
+          nticks: isEmptyData ? 0 : tickCount.y,
           range: range.y,
           fixedrange: fixedRange.y,
         },
@@ -148,7 +148,7 @@ export const Plot = React.memo(
 
       const handleRelayout = (_event: PlotRelayoutEvent) => {
         const graph = plotRef.current;
-        updateAxisTickCount(graph);
+        updateAxisTickCount(graph, isEmptyData);
         updateLayoutMargin(graph);
       };
 
