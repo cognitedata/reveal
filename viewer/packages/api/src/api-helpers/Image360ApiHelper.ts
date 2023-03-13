@@ -46,7 +46,6 @@ export class Image360ApiHelper {
 
   private readonly _debouncePreLoad = debounce(entity => this.startPreload(entity), 300, { leading: true });
   private readonly _requestRedraw: () => void;
-  private readonly _requestTransitionSafeRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
@@ -77,11 +76,6 @@ export class Image360ApiHelper {
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
     this._requestRedraw = requestRedraw;
-    this._requestTransitionSafeRedraw = () => {
-      if (!this._transitionInProgress) {
-        this._requestRedraw();
-      }
-    };
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
@@ -131,6 +125,24 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
+  private async startPreload(
+    image360Entity: Image360Entity,
+    lockDownload = false
+  ): Promise<{ loadFullResolution: () => Promise<void> } | undefined> {
+    const preload = this._image360Facade.preload(image360Entity, lockDownload);
+    preload.then(async callback => {
+      if (callback) {
+        callback
+          .loadFullResolution()
+          .then(() => {
+            if (!this._transitionInProgress) this._requestRedraw();
+          })
+          .catch(() => {});
+      }
+    });
+    return preload;
+  }
+
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     if (this._interactionState.image360SelectedForEntry === image360Entity) {
       this._requestRedraw();
@@ -139,6 +151,7 @@ export class Image360ApiHelper {
     this._interactionState.image360SelectedForEntry = image360Entity;
 
     await this.startPreload(image360Entity, true);
+    this._transitionInProgress = true;
 
     if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
@@ -155,7 +168,6 @@ export class Image360ApiHelper {
     this._image360Facade.allHoverIconsVisibility = false;
     image360Entity.icon.visible = false;
 
-    this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {
       await this.transition(lastEntered360ImageEntity, image360Entity);
       MetricsLogger.trackEvent('360ImageEntered', {});
@@ -320,15 +332,6 @@ export class Image360ApiHelper {
 
     this._image360Facade.dispose();
     this._image360Navigation.dispose();
-  }
-
-  private async startPreload(image360Entity: Image360Entity, lockDownload = false): Promise<void> {
-    return this._image360Facade.preload(image360Entity, lockDownload).then(async callback => {
-      if (callback) {
-        await callback.fullResolutionLoadedPromise.catch(() => {});
-        this._requestTransitionSafeRedraw();
-      }
-    });
   }
 
   private enter360ImageOnIntersect(event: PointerEventData): Promise<void> {

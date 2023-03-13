@@ -77,20 +77,8 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async getLowResolution360ImageFiles(
     image360FaceDescriptors: Image360FileDescriptor[]
   ): Promise<Image360Face[]> {
-    validateFileFormat();
     const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors));
     return this.createFaces(image360FaceDescriptors, lowResFileBuffers);
-
-    // Astrid-kg: This function can possibly be removed once
-    // https://github.com/cognitedata/ark/issues/6459 has been deployed.
-    function validateFileFormat() {
-      const validFormats = ['image/jpeg', 'image/png'];
-      image360FaceDescriptors.forEach(descriptor => {
-        if (!validFormats.includes(descriptor.mimeType)) {
-          throw new Error(`File format {${descriptor.mimeType}} not supported. Use image/jpeg or image/png instead`);
-        }
-      });
-    }
   }
 
   private getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
