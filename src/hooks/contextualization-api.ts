@@ -25,7 +25,7 @@ import {
 } from 'types/api';
 import { filterFieldsFromObjects } from 'utils';
 
-export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
+export const IN_PROGRESS_EM_STATES: JobStatus[] = ['Queued', 'Running'];
 
 export type JobStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 

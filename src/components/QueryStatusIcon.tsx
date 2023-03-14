@@ -10,7 +10,8 @@ export default function QueryStatusIcon({
 }) {
   switch (status) {
     case 'loading':
-    case 'Running': {
+    case 'Running':
+    case 'Queued': {
       return (
         <StyledIcon
           css={{ color: Colors['text-icon--status-neutral'] }}
@@ -36,8 +37,7 @@ export default function QueryStatusIcon({
         />
       );
     }
-    case 'idle':
-    case 'Queued': {
+    case 'idle': {
       return (
         <StyledIcon
           css={{ color: Colors['text-icon--on-contrast--strong'] }}
