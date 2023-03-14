@@ -359,10 +359,10 @@ export const SchemaVisualizer = React.memo(
                     <Popover
                       className="tippy-box cogs-tooltip"
                       style={{
-                        top: event.layerY,
-                        left: event.layerX,
+                        top: event.clientY + 20,
+                        left: event.clientX,
                         transform: 'translate(-50%,0)',
-                        position: 'absolute',
+                        position: 'fixed',
                       }}
                     >
                       <div className="tippy-content">
