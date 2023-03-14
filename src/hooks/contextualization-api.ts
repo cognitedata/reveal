@@ -27,6 +27,8 @@ import { filterFieldsFromObjects } from 'utils';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
+export type JobStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
+
 export type PredictionObject = {
   id: number;
   externalId?: string;
@@ -46,9 +48,14 @@ export type EntityMatchingPredictions = {
   createdTime: number;
   jobId: number;
   startTime: number;
-  status: 'Queued' | 'Running' | 'Completed' | 'Failed';
+  status: JobStatus;
   statusTime: number;
   items?: Prediction[];
+};
+
+// Type in SDK is not correct
+type EMModel = Omit<EntityMatchingModel, 'status'> & {
+  status: JobStatus;
 };
 
 const getEMModelsKey = (): QueryKey => ['em', 'models'];
@@ -56,7 +63,7 @@ export const useEMModels = (
   opts?: UseInfiniteQueryOptions<
     {
       nextCursor?: string;
-      items: EntityMatchingModel[];
+      items: EMModel[];
     },
     CogniteError
   >
@@ -64,6 +71,7 @@ export const useEMModels = (
   const sdk = useSDK();
   return useInfiniteQuery(
     getEMModelsKey(),
+    // @ts-ignore SDK Type incorrect
     ({ pageParam }) => sdk.entityMatching.list({ cursor: pageParam }),
     {
       getNextPageParam(lastPage) {
@@ -201,11 +209,12 @@ export const useCreatePipeline = (
 const getEMModelKey = (id: number): QueryKey => ['em', 'models', id];
 export const useEMModel = (
   id: number,
-  opts?: UseQueryOptions<EntityMatchingModel, CogniteError>
+  opts?: UseQueryOptions<EMModel, CogniteError>
 ) => {
   const sdk = useSDK();
   return useQuery(
     getEMModelKey(id),
+    // @ts-ignore SDK  type incorrect
     () => sdk.entityMatching.retrieve([{ id }]).then((r) => r[0]),
     opts
   );
@@ -262,14 +271,14 @@ export const useCreateEMModel = () => {
     async ({
       sourceType,
       sources,
-      targetsList,
+      targets,
       matchFields,
       featureType,
       supervisedMode,
     }: {
       sourceType: SourceType;
       sources: RawSource[];
-      targetsList: RawTarget[];
+      targets: RawTarget[];
       matchFields: ModelMapping;
       featureType: EMFeatureType;
       supervisedMode?: boolean;
@@ -308,7 +317,7 @@ export const useCreateEMModel = () => {
           .map(({ source }) => source as string),
       ]);
 
-      const filteredTargets = filterFieldsFromObjects(targetsList, [
+      const filteredTargets = filterFieldsFromObjects(targets, [
         'id',
         ...matchFields
           .filter((target) => !!target)
@@ -316,7 +325,7 @@ export const useCreateEMModel = () => {
       ]);
 
       return sdk
-        .post<EntityMatchingModel>(
+        .post<EMModel>(
           `/api/v1/projects/${sdk.project}/context/entitymatching`,
           {
             data: {
