@@ -83,8 +83,6 @@ export const useCSVUpload = ({
       return;
     }
 
-    console.log('csv-upload');
-
     try {
       PapaParse.parse<any>(file, {
         dynamicTyping: true,
