@@ -15,6 +15,13 @@ export interface Image360Collection {
   readonly image360Entities: Image360[];
 
   /**
+   * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
+   * @param radius Only icons within the given radius will be made visible.
+   * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized.
+   */
+  set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+
+  /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.

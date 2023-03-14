@@ -8,6 +8,7 @@ import { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
+import { IconCullingScheme } from './icons/IconCollection';
 import pullAll from 'lodash/pullAll';
 
 export class Image360Facade<T> {
@@ -25,6 +26,10 @@ export class Image360Facade<T> {
 
   set allHoverIconsVisibility(visible: boolean) {
     this._image360Collections.forEach(collection => collection.setSelectedVisibility(visible));
+  }
+
+  set allIconCullingScheme(scheme: IconCullingScheme) {
+    this._image360Collections.forEach(collection => collection.setCullingScheme(scheme));
   }
 
   constructor(private readonly _entityFactory: Image360CollectionFactory<T>) {
