@@ -1,5 +1,5 @@
 // if there's an error here, ensure you have installed `@cognite/fdm-client`
-import { FDMQueryClientBuilder, everything } from '@cognite/fdm-client';
+import { FDMQueryClientBuilder, everything } from './index';
 
 const client = FDMQueryClientBuilder.fromToken();
 

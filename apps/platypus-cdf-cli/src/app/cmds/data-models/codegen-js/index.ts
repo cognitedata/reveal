@@ -11,38 +11,44 @@ import { getProjectConfig } from '@cognite/platypus-cdf-cli/app/utils/config';
 import { generate } from '@genql/cli';
 import typescript from 'rollup-plugin-typescript2';
 import { rollup } from 'rollup';
-import { getMixerApiService } from '../utils';
+import { getFdmV3MixerApiService } from '../utils';
+import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { Kind, ObjectTypeDefinitionNode, parse, TypeNode } from 'graphql';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
 const DEBUG = _DEBUG.extend('solutions:generate');
 
 export type SolutionsGeneratePythonCommandArgs = BaseArgs & {
-  ['data-model']: string;
-  ['data-model-version']: string;
+  ['external-id']: string;
+  ['space']: string;
+  ['version']: string;
   ['output-directory']: string;
   ['include-sample']: boolean;
 };
 
 const commandArgs = [
   {
-    name: 'data-model',
-    description: 'The externalId of the data model',
-    required: true,
+    name: 'external-id',
+    description: 'The external id of the data model',
+    prompt: 'Enter data model external ID',
     type: CommandArgumentType.STRING,
-    alias: 'dm',
-    prompt: 'What is the externalId of the data model?',
-    help: 'The externalId of the data model',
-    example: '--data-model=schema-test',
+    required: true,
   },
   {
-    name: 'data-model-version',
-    description: 'The version of the data model',
-    required: true,
+    name: 'space',
+    description:
+      'Space id of the space the data model should belong to. Defaults to same as external-id.',
     type: CommandArgumentType.STRING,
-    alias: 'dm-version',
-    prompt: 'What is the version of the data model?',
-    help: 'The name of the data model',
-    example: '--data-model-version=1',
+    required: true,
+    prompt: 'Enter data model space ID',
+    promptDefaultValue: (commandArgs) => commandArgs['external-id'],
+  },
+  {
+    name: 'version',
+    description: 'Data model version',
+    type: CommandArgumentType.STRING,
+    prompt: 'Enter data model version',
+    required: true,
   },
   {
     name: 'output-directory',
@@ -50,8 +56,8 @@ const commandArgs = [
     required: false,
     type: CommandArgumentType.STRING,
     alias: 'output',
-    initial: 'node_modules/.cognite/fdm-client',
-    example: '--output-directory=node_modules/.cognite/fdm-client',
+    initial: 'generated/',
+    example: '--output-directory=generated/',
   },
   {
     name: 'include-sample',
@@ -87,7 +93,11 @@ class SolutionGenerateJSCommand extends CLICommand {
 
       const generatedPath = path.join(__dirname, 'generated');
       await generate({
-        endpoint: `https://${projectConfig.cluster}.cognitedata.com/api/v1/projects/${projectConfig.project}/schema/api/${args['data-model']}/${args['data-model-version']}/graphql`,
+        endpoint: getFdmV3MixerApiService().getDataModelEndpointUrl(
+          args['space'],
+          args['external-id'],
+          args['version']
+        ),
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -103,14 +113,21 @@ const BEARER_TOKEN="${token}"
 const CLUSTER="${projectConfig.cluster}"
 const PROJECT="${projectConfig.project}"
 const TENANT="${projectConfig.tenant}"
-const DM_NAME="${args['data-model']}"
-const DM_VERSION="${args['data-model-version']}"`
+const ENDPOINT="${getFdmV3MixerApiService().getDataModelEndpointUrl(
+          args['space'],
+          args['external-id'],
+          args['version']
+        )}"
+const DM_NAME="${args['external-id']}"
+const DM_VERSION="${args['version']}"
+const SPACE="${args['space']}"`
       );
 
       // Upsert stuff
-      const types = await getModelTypes(
-        args['data-model'],
-        Number(args['data-model-version'])
+      const { types } = await getModelTypes(
+        args['space'],
+        args['external-id'],
+        args['version']
       );
       const typesString = getTypeString(types);
       fs.appendFileSync(
@@ -123,27 +140,14 @@ const DM_VERSION="${args['data-model-version']}"`
         path.resolve(generatedPath, './schema.ts'),
         relationshipsString
       );
-
-      fs.renameSync(
-        path.resolve(generatedPath, 'index.d.ts'),
-        path.resolve(generatedPath, 'codegen.d.ts')
-      );
-      fs.copyFileSync(
-        path.resolve(generatedPath, 'codegen.d.ts'),
-        path.resolve(generatedPath, 'codegen.esm.d.ts')
-      );
-      fs.renameSync(
-        path.resolve(generatedPath, 'index.esm.js'),
-        path.resolve(generatedPath, 'codegen.esm.js')
-      );
-      fs.renameSync(
-        path.resolve(generatedPath, 'index.js'),
-        path.resolve(generatedPath, 'codegen.js')
+      fs.appendFileSync(
+        path.resolve(generatedPath, './index.ts'),
+        `export * from './FDMQueryClient';`
       );
 
-      //perform rollup
+      // perform rollup
       const bundle = await rollup({
-        input: path.resolve(generatedPath, 'FDMQueryClient.ts'),
+        input: path.resolve(generatedPath, 'index.ts'),
         plugins: [
           typescript({
             tsconfig: undefined,
@@ -161,7 +165,7 @@ const DM_VERSION="${args['data-model-version']}"`
       });
 
       await bundle.write({
-        file: path.resolve(generatedPath, 'FDMQueryClient.js'),
+        file: path.resolve(generatedPath, 'index.js'),
         format: 'cjs',
       });
       await fsExtra.copy(generatedPath, outputDirectory, {
@@ -189,41 +193,42 @@ const DM_VERSION="${args['data-model-version']}"`
 
 export default new SolutionGenerateJSCommand(command, describe, commandArgs);
 
-export const getModelTypes = async (dm: string, version: number) => {
-  const mixerApiService = getMixerApiService();
+export const getModelTypes = async (
+  space: string,
+  externalId: string,
+  version: string
+) => {
+  const mixerApiService = getFdmV3MixerApiService();
   DEBUG('mixerApiService initialized');
 
-  const [apisResponse] = await mixerApiService.getApisByIds(dm, true);
+  const apisResponse = await mixerApiService.getDataModelVersionsById(
+    space,
+    externalId
+  );
   if (!apisResponse) {
     throw new Error('Data model does not exist');
   }
 
-  const data = apisResponse.versions.find((el) => el.version === version);
+  const data = apisResponse.find((el) => el.version === version);
   if (!data) {
     throw new Error('Version does not exist');
   }
 
-  return parse(data.dataModel.graphqlRepresentation).definitions.filter(
-    (el) => el.kind === Kind.OBJECT_TYPE_DEFINITION
-  ) as ObjectTypeDefinitionNode[];
+  return new GraphQlUtilsService().parseSchema(data.graphQlDml);
 };
 
-const getTypeString = (types: ObjectTypeDefinitionNode[]) => {
-  const typeNames = types.map((el) => el.name.value);
-
-  return `import { NodeRef } from './FDMQueryClient';\nexport type ModelNodeMap = {\n ${types
-    .map((el) => {
-      const relationships = el.fields
-        .map((el) => ({
-          name: el.name.value,
-          ...getFieldType(el.type, typeNames),
-        }))
-        .filter((el) => el.relationship);
-      const singleRelationships = relationships.filter((el) => !el.list);
-      return `${el.name.value}: Omit<${
-        el.name.value
-        // first omit the __typename and spaceExternalId
-      }, "__typename"|"spaceExternalId"${
+const getTypeString = (types: DataModelTypeDefsType[]) => {
+  const typeItems: string[] = [];
+  const directRelations: string[] = [];
+  const typeProperties: string[] = [];
+  types.forEach((el) => {
+    const relationships = el.fields.filter((el) => el.type.custom);
+    const singleRelationships = relationships.filter((el) => !el.type.list);
+    typeItems.push(
+      `${el.name}: Omit<${
+        el.name
+        // first omit the __typename, space,
+      }, "__typename"|"space"|"createdTime"|"lastUpdatedTime"${
         // then omit all the relationships
         relationships.length > 0
           ? `|"${relationships.map((field) => `${field.name}`).join('"|"')}"`
@@ -232,26 +237,39 @@ const getTypeString = (types: ObjectTypeDefinitionNode[]) => {
         // then all direction relationships should be NodeRef
         singleRelationships.length > 0
           ? ` & {${singleRelationships
-              .map((el) => `"${el.name}"?: NodeRef`)
+              .map((el) => `"${el.name}"?: {externalId:string, space?:string}`)
               .join(';\n')} }`
           : ''
-      }`;
-    })
-    .join('\n')}\n};`;
+      }`
+    );
+    directRelations.push(
+      `${el.name}: ${JSON.stringify(singleRelationships.map((el) => el.name))}`
+    );
+    typeProperties.push(
+      `${el.name}: ${JSON.stringify(
+        el.fields.filter((el) => !el.type.custom).map((el) => el.name)
+      )}`
+    );
+  });
+  return `
+  export type ModelNodeMap = {
+    ${typeItems.join('\n')}
+  };
+  export const TypeProperties: { [key in string]: string[] } = {
+    ${typeProperties.join(',\n')}
+  };
+  export const DirectProperties: { [key in string]: string[] } = {
+    ${directRelations.join(',\n')}
+  };`;
 };
 
-const getRelationshipString = (types: ObjectTypeDefinitionNode[]) => {
-  const typeNames = types.map((el) => el.name.value);
-
+const getRelationshipString = (types: DataModelTypeDefsType[]) => {
   return `export const RelationshipMap = {\n ${types
     .map((el) => {
-      const multiRelationships = el.fields
-        .map((el) => ({
-          name: el.name.value,
-          ...getFieldType(el.type, typeNames),
-        }))
-        .filter((el) => el.list && el.relationship);
-      return { name: el.name.value, relationships: multiRelationships };
+      const multiRelationships = el.fields.filter(
+        (el) => el.type.custom && el.type.list
+      );
+      return { name: el.name, relationships: multiRelationships };
     })
     .filter(({ relationships }) => relationships.length !== 0)
     .map(({ name, relationships }) => {
@@ -260,27 +278,4 @@ const getRelationshipString = (types: ObjectTypeDefinitionNode[]) => {
         .join(',\n')}\n}`;
     })
     .join(',\n')}\n};`;
-};
-
-export const getFieldType = (
-  type: TypeNode,
-  types: string[]
-): {
-  type: string;
-  relationship?: boolean;
-  list?: boolean;
-  required?: boolean;
-} => {
-  switch (type.kind) {
-    case Kind.NAMED_TYPE: {
-      if (types.includes(type.name.value)) {
-        return { type: type.name.value, relationship: true };
-      }
-      return { type: type.name.value };
-    }
-    case Kind.LIST_TYPE:
-      return { ...getFieldType(type.type, types), list: true };
-    case Kind.NON_NULL_TYPE:
-      return { ...getFieldType(type.type, types), required: true };
-  }
 };
