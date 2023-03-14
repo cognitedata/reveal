@@ -19,6 +19,7 @@ import graphiqlStyles from 'graphiql/graphiql.min.css';
 
 import agGridStyles from 'ag-grid-community/dist/styles/ag-grid.css';
 import cogDataGridStyles from '@cognite/cog-data-grid-root/lib/cog-data-grid-styles.css';
+import styled from 'styled-components';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope.styleScope);
@@ -57,5 +58,12 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     return <Loader />;
   }
 
-  return <div className={styleScope.styleScope}>{props.children}</div>;
+  return <Wrapper className={styleScope.styleScope}>{props.children}</Wrapper>;
 }
+
+// Cogs fix
+const Wrapper = styled.div`
+  .cogs.cogs-modal--full-screen .cogs-modal__content {
+    height: 100%;
+  }
+`;

@@ -1,14 +1,14 @@
-import { Body, Graphic, Title } from '@cognite/cogs.js';
+import { Body, Title, Illustrations, IllustrationType } from '@cognite/cogs.js';
 import { PlaceholderWrapper } from './elements';
 
 export const FlexPlaceholder = ({
   title,
   description,
-  graphic = 'Search',
+  graphic = 'Analysis',
 }: {
   title: string;
   description: string;
-  graphic?: string;
+  graphic?: IllustrationType;
 }) => {
   return (
     <PlaceholderWrapper>
@@ -23,7 +23,7 @@ export const FlexPlaceholder = ({
           </div>
 
           <div className="placeholder-graphic">
-            <Graphic type={graphic} />
+            <Illustrations.Solo type={graphic} prominence="muted" />
           </div>
         </div>
       </div>

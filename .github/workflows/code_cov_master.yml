@@ -1,3 +1,5 @@
+## Mark for deletion? This is identical to "platypus-e2e-tests"
+
 name: Codecov on master
 on:
   push:
@@ -53,13 +55,14 @@ jobs:
           # Run the cypress tests
           command: yarn nx e2e platypus-e2e
 
-      - name: Combine CodeCov reports
-        run: |
-          yarn cpdir
-          yarn summarize-codecov
+      # Disabling codecov from here, to not interfere with nx_ci
+      # - name: Combine CodeCov reports
+      #   run: |
+      #     yarn cpdir
+      #     yarn summarize-codecov
 
-      - name: Upload CodeCov reports
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage-final.json,./coverage/cobertura-coverage.xml,./coverage/coverage-summary.json
+      # - name: Upload CodeCov reports
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: ./coverage/coverage-final.json,./coverage/cobertura-coverage.xml,./coverage/coverage-summary.json

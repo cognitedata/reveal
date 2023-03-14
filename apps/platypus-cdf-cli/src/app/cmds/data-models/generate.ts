@@ -9,7 +9,7 @@ import * as typescriptApolloAngularPlugin from '@graphql-codegen/typescript-apol
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
 import { cwd } from 'process';
 import { SupportedGraphQLGeneratorPlugins } from '../../constants';
-import { MixerApiService } from '@platypus/platypus-core';
+import { FdmMixerApiService } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import { CONSTANTS } from '../../constants';
 import {
@@ -29,8 +29,24 @@ const commandArgs = [
   {
     name: 'external-id',
     description: 'The external id of the data model',
-    prompt: 'Enter the data model external id',
+    prompt: 'Enter data model external ID',
     type: CommandArgumentType.STRING,
+    required: true,
+  },
+  {
+    name: 'space',
+    description:
+      'Space id of the space the data model should belong to. Defaults to same as external-id.',
+    type: CommandArgumentType.STRING,
+    required: true,
+    prompt: 'Enter data model space ID',
+    promptDefaultValue: (commandArgs) => commandArgs['external-id'],
+  },
+  {
+    name: 'version',
+    description: 'Data model version',
+    type: CommandArgumentType.STRING,
+    prompt: 'Enter data model version',
     required: true,
   },
   {
@@ -69,6 +85,8 @@ const commandArgs = [
 type DataModelGenerateCommandArgs = BaseArgs & {
   'external-id': string;
   plugins?: string[];
+  space: string;
+  version: string;
   'output-file'?: string;
   'operations-file'?: string;
 };
@@ -78,11 +96,12 @@ class GenerateCmd extends CLICommand {
     try {
       const client = getCogniteSDKClient();
       DEBUG('Initialize the Cognite SDK client');
-      const mixerApi = new MixerApiService(client);
+      const mixerApi = new FdmMixerApiService(client);
       DEBUG('Fetching the introspection query from the server');
       const response = await mixerApi.runQuery({
         dataModelId: args['external-id'],
-        schemaVersion: '1',
+        space: args['space'],
+        schemaVersion: args['version'],
         graphQlParams: {
           query: getIntrospectionQuery(),
           operationName: 'IntrospectionQuery',
@@ -137,7 +156,7 @@ class GenerateCmd extends CLICommand {
       await writeFile(join(cwd(), args['output-file']), generatedCode);
       DEBUG('Done');
       args.logger.success(
-        `Successfully generated types in ${args['output-file']}`
+        `Successfully generated types in ${args['output-file']}.`
       );
     } catch (error) {
       DEBUG(`got error: ${JSON.stringify(error)}`);
@@ -148,6 +167,6 @@ class GenerateCmd extends CLICommand {
 
 export default new GenerateCmd(
   'generate',
-  'Generate a GraphQL client code for the schema you provide by fetching the introspection query from the server',
+  'Generate a JavaScript GraphQL client for the data model. Powered by https://the-guild.dev/graphql/codegen.',
   commandArgs
 );

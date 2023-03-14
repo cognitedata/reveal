@@ -1,5 +1,17 @@
-export const ZIndex = {
-  Toolbar: 10,
-  ModalContent: 1,
-  Popup: 99,
-};
+import { createLayers } from '@cognite/z-index';
+
+const LAYERS = [
+  'MAXIMUM',
+  'POPUP',
+
+  'TOOLBAR',
+  'INDICATOR',
+  /** The default z-index for all components */
+  'DEFAULT',
+
+  'MODEL_CONTENT',
+  'MINIMUM',
+] as const;
+
+export const zIndex = createLayers(LAYERS);
+export default zIndex;

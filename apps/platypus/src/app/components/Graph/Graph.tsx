@@ -20,11 +20,20 @@ export type Node = SimulationNodeDatum & {
   id: string;
   title: string;
 };
-export type Link = { source: string; target: string };
+
+export type Link = { source: string; target: string; id?: string };
 
 const getMidPoint = (x = 0, y = 0) => (x + y) / 2;
 
-export const getLinkId = (link: SimulationLinkDatum<Node>) => {
+export const INITIAL_TRANSFORM = { k: 1, x: 0, y: 0 };
+const FULL_RENDER_LIMIT = 0.3;
+
+export const getLinkId = (
+  link: SimulationLinkDatum<Node> & { id?: string }
+) => {
+  if (link.id) {
+    return link.id;
+  }
   const fromId = (link.source as Node).id
     ? (link.source as Node).id
     : link.source;
@@ -35,37 +44,30 @@ export const getLinkId = (link: SimulationLinkDatum<Node>) => {
 };
 
 const HALF_PIN_WIDTH = 0;
-const MIN_ZOOM = 0.1;
-const MAX_ZOOM = 100;
+export const MIN_ZOOM = 0.1;
+export const MAX_ZOOM = 3;
+
+export type RenderNodeFunction<T> = (
+  item: Node & T,
+  fullRender: boolean
+) => React.ReactElement<{ id: string }>;
+
+export type RenderLinkFunction<T> = (
+  item: SimulationLinkDatum<Node & T>
+) => React.ReactElement<{ id: string }>;
 export interface GraphProps<T> {
-  renderNode: (
-    item: Node & T,
-    transform: { x: number; y: number; k: number },
-    nodes:
-      | (d3.SimulationNodeDatum & {
-          id: string;
-          title: string;
-        } & T)[]
-      | undefined
-  ) => React.ReactElement<{ id: string }>;
-  renderLink?: (
-    item: SimulationLinkDatum<Node & T>,
-    transform: { x: number; y: number; k: number },
-    nodes:
-      | (d3.SimulationNodeDatum & {
-          id: string;
-          title: string;
-        } & T)[]
-      | undefined
-  ) => React.ReactElement<{ id: string }>;
+  renderNode: RenderNodeFunction<T>;
+  renderLink?: RenderLinkFunction<T>;
   nodes: (Node & T)[];
   links: Link[];
   useCurve?: boolean;
   children?: React.ReactNode;
   initialZoom?: number;
   autoLayout?: boolean;
-  getOffset?: GetOffsetFunction<T>;
+  offset?: { top?: number; left?: number; right?: number; bottom?: number };
+  getLinkEndOffset?: GetLinkEndOffsetFn<T>;
   graphRef?: React.Ref<GraphFns>;
+  additionalSvgDefs?: React.ReactNode;
   onLinkEvent?: (
     type: 'mouseover' | 'mouseout' | 'click',
     data: SimulationLinkDatum<Node & T>,
@@ -74,7 +76,7 @@ export interface GraphProps<T> {
   onLoadingStatus?: (isLoaded: boolean) => void;
 }
 
-export type GetOffsetFunction<T> = (link: SimulationLinkDatum<Node & T>) => {
+export type GetLinkEndOffsetFn<T> = (link: SimulationLinkDatum<Node & T>) => {
   source: { x: number; y: number };
   target: { x: number; y: number };
 };
@@ -86,7 +88,7 @@ const defaultGetOffset = () => ({
 
 const defaultRenderLink = (el: SimulationLinkDatum<Node>) => {
   const id = getLinkId(el);
-  return <path className="line" key={id} id={id} />;
+  return <path key={id} id={id} />;
 };
 
 export type GraphFns = {
@@ -101,22 +103,23 @@ export const Graph = <T,>({
   nodes: propsNodes = [],
   links: propsLinks = [],
   useCurve = false,
-  initialZoom = 5,
   autoLayout = true,
-  getOffset = defaultGetOffset,
+  getLinkEndOffset = defaultGetOffset,
   onLinkEvent,
   children,
   graphRef: ref,
   onLoadingStatus,
+  additionalSvgDefs,
+  offset,
   ...htmlProps
 }: GraphProps<T> & HtmlElementProps<HTMLDivElement>) => {
-  // where the lines are drawn
+  // where the links are drawn
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   // where the nodes are drawn
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // where both the lines and nodes div live within (the container)
+  // where both the links and nodes div live within (the container)
   const mainWrapperRef = useRef<HTMLDivElement | null>(null);
 
   // broader d3 controller for behavior
@@ -129,18 +132,20 @@ export const Graph = <T,>({
     d3.Simulation<SimulationNodeDatum, undefined> | undefined
   >(undefined);
 
-  // all of the lines
+  // all of the links tied to D3
   const [d3Links, setD3Links] = useState<
     | d3.Selection<Element, SimulationLinkDatum<Node & T>, Element, any>
     | undefined
   >(undefined);
 
-  // all of the nodes
+  // all of the nodes tied to D3
   const [d3Nodes, setD3Nodes] = useState<
     d3.Selection<Element, Node & T, HTMLDivElement | null, unknown> | undefined
   >(undefined);
 
-  const [isFittingContent, setFittingContent] = useState<boolean>(true);
+  const [isFittingContent, setFittingContent] = useState<boolean>(
+    propsNodes.length === 0 ? false : true
+  );
   const [isAutoLayouting, setIsAutoLayouting] = useState<boolean>(false);
   const [nodes, setNodes] = useState<(Node & T)[]>([]);
 
@@ -148,7 +153,12 @@ export const Graph = <T,>({
     k: number;
     x: number;
     y: number;
-  }>({ k: 1, x: 0, y: 0 });
+  }>(INITIAL_TRANSFORM);
+
+  useEffect(() => {
+    setFittingContent(propsNodes.length === 0 ? false : true);
+    setTransform(INITIAL_TRANSFORM);
+  }, [propsNodes, propsLinks]);
 
   const isLoading = isFittingContent || isAutoLayouting;
 
@@ -165,15 +175,7 @@ export const Graph = <T,>({
       ...node,
     }));
     setNodes(nodesWithCachedLocation);
-    if (
-      autoLayout &&
-      nodesWithCachedLocation.length !== 0 &&
-      nodesWithCachedLocation.some((el) => !el.fx || !el.fy)
-    ) {
-      setIsAutoLayouting(true);
-    }
-    setFittingContent(true);
-  }, [propsNodes, autoLayout]);
+  }, [propsNodes]);
 
   const links: SimulationLinkDatum<Node & T>[] = useMemo(() => {
     // make lookups easy
@@ -188,6 +190,7 @@ export const Graph = <T,>({
       .map(
         (link) =>
           ({
+            ...link,
             source: nodeById[link.source],
             target: nodeById[link.target],
           } as SimulationLinkDatum<Node & T>)
@@ -196,19 +199,21 @@ export const Graph = <T,>({
     return newLinks;
   }, [nodes, propsLinks]);
 
+  const fullRender = transform.k > FULL_RENDER_LIMIT;
+
   const nodeChildren = useMemo(
     () =>
       nodes.map((el) => (
         <div className="node" key={el.id} id={el.id}>
-          {renderNode(el, transform, d3Nodes?.data())}
+          {renderNode(el, fullRender)}
         </div>
       )),
-    [d3Nodes, nodes, renderNode, transform]
+    [nodes, renderNode, fullRender]
   );
 
   const linksChildren = useMemo(
-    () => links.map((el) => renderLink(el, transform, d3Nodes?.data())),
-    [d3Nodes, links, renderLink, transform]
+    () => links.map((el) => renderLink(el)),
+    [links, renderLink]
   );
 
   useEffect(() => {
@@ -229,88 +234,167 @@ export const Graph = <T,>({
 
     setChart(initialChart);
     setSimulation(initialSimulation);
-  }, [initialZoom]);
+
+    return () => {
+      initialSimulation.stop();
+    };
+  }, []);
 
   // Setting location when ticked
   const ticked = useCallback(
     // global transform values
     ({ x, y, k }: { x: number; y: number; k: number } = transform) => {
-      // determine the amount to scale the node versus wrapper
-      // behavior: if zoomed out more than original, scale wrapper
-      // other wise, scale the distance between nodes
-      const nodeScale = Math.max(k, 1);
-      const wrapperScale = Math.min(k, 1);
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth;
+        const height = containerRef.current.clientHeight;
+        // determine the amount to scale the node versus wrapper
+        // behavior: if zoomed out more than original, scale wrapper
+        // other wise, scale the distance between nodes
+        const nodeScale = Math.max(k, 1);
+        const wrapperScale = Math.min(k, 1);
 
-      if (d3Links && d3Nodes) {
         // fns to get the transformed locations of source/targets
         const getSourceX = (d: SimulationLinkDatum<Node & T>) =>
           x / wrapperScale +
           nodeScale * (d.source as Node).x! +
-          getOffset(d).source.x;
+          getLinkEndOffset(d).source.x;
         const getSourceY = (d: SimulationLinkDatum<Node & T>) =>
           y / wrapperScale +
           nodeScale * (d.source as Node).y! +
-          getOffset(d).source.y;
+          getLinkEndOffset(d).source.y;
         const getTargetX = (d: SimulationLinkDatum<Node & T>) =>
           x / wrapperScale +
           nodeScale * (d.target as Node).x! +
-          getOffset(d).target.x;
+          getLinkEndOffset(d).target.x;
         const getTargetY = (d: SimulationLinkDatum<Node & T>) =>
           y / wrapperScale +
           nodeScale * (d.target as Node).y! +
-          getOffset(d).target.y;
+          getLinkEndOffset(d).target.y;
 
-        // transform the links (if its curve vs line)
-        d3Links.attr('d', (d: SimulationLinkDatum<Node & T>) => {
-          if (!d.source && !d.target) {
-            return '';
-          }
-          const midXY = {
-            x: getMidPoint(getTargetX(d), getSourceX(d)),
-            y: getMidPoint(getTargetY(d), getSourceY(d)),
+        if (d3Links && d3Nodes) {
+          const actualCanvasSize = {
+            left: 0 - (offset?.left || 0) / wrapperScale,
+            top: 0 - (offset?.top || 0) / wrapperScale,
+            right: (width + (offset?.right || 0)) / wrapperScale,
+            bottom: (height + (offset?.bottom || 0)) / wrapperScale,
           };
-          let curve: (string | number)[] = [
-            'M',
-            `${getSourceX(d)}, ${getSourceY(d)}`,
-            'L',
-            `${getTargetX(d)}, ${getTargetY(d)}`,
-          ];
-          if (useCurve) {
-            curve = [
-              'M',
-              (getTargetX(d) || 0) + HALF_PIN_WIDTH,
-              (getTargetY(d) || 0) + HALF_PIN_WIDTH,
-              'Q',
-              midXY.x + HALF_PIN_WIDTH,
-              (getTargetY(d) || 0) + HALF_PIN_WIDTH,
-              midXY.x + HALF_PIN_WIDTH,
-              midXY.y + HALF_PIN_WIDTH,
-              'Q',
-              midXY.x + HALF_PIN_WIDTH,
-              (getSourceY(d) || 0) + HALF_PIN_WIDTH,
-              (getSourceX(d) || 0) + HALF_PIN_WIDTH,
-              (getSourceY(d) || 0) + HALF_PIN_WIDTH,
-            ];
-          }
-          return curve.join(' ');
-        });
-        // transform the nodes
-        d3Nodes.attr('style', (d: any) => {
-          const nodeX = x / wrapperScale + nodeScale * d.x;
-          const nodeY = y / wrapperScale + nodeScale * d.y;
-          return `left: ${nodeX}px; top: ${nodeY}px`;
-        });
-        if (containerRef.current) {
-          const width = containerRef.current.clientWidth;
-          const height = containerRef.current.clientHeight;
-          // scale relative to the center to zoom around the x, y
-          const preTransform = `translate(-${width / 2}px,-${height / 2}px)`;
-          const postTransform = `translate(${width / 2}px,${height / 2}px)`;
-          containerRef.current!.style.transform = `${preTransform} scale(${wrapperScale}) ${postTransform}`;
+          // transform the nodes
+          const nodeLocationMap: {
+            [key in string]: { x: number; y: number; isVisible: boolean };
+          } = {};
+          d3Nodes.nodes().forEach((d: any) => {
+            const nodeX = x / wrapperScale + nodeScale * d.__data__.x;
+            const nodeY = y / wrapperScale + nodeScale * d.__data__.y;
+            // if visible
+            const isVisible =
+              // right side of box visible
+              nodeX + d.clientWidth * nodeScale > actualCanvasSize.left &&
+              // left side of box visible
+              nodeX < actualCanvasSize.right &&
+              // bottom side of box visible
+              nodeY + d.clientHeight * nodeScale > actualCanvasSize.top &&
+              // top side of box visible
+              nodeY < actualCanvasSize.bottom;
+            nodeLocationMap[d.id] = { x: nodeX, y: nodeY, isVisible };
+          });
+
+          const isLinkVisible = (d: SimulationLinkDatum<Node & T>) => {
+            // if links that starts or ends with visible nodes, show
+            const sourceLocation = nodeLocationMap[(d.source as Node).id];
+            const targetLocation = nodeLocationMap[(d.target as Node).id];
+            if (!!sourceLocation.isVisible || !!targetLocation.isVisible) {
+              return true;
+            }
+            // if link not in middle of screen, hide
+            if (
+              // both on left
+              (Math.min(sourceLocation.x, targetLocation.x) <
+                actualCanvasSize.left &&
+                Math.max(sourceLocation.x, targetLocation.x) <
+                  actualCanvasSize.left) ||
+              // both on right
+              (Math.min(sourceLocation.x, targetLocation.x) >
+                actualCanvasSize.right &&
+                Math.max(sourceLocation.x, targetLocation.x) >
+                  actualCanvasSize.right) ||
+              // both on top
+              (Math.min(sourceLocation.y, targetLocation.y) <
+                actualCanvasSize.top &&
+                Math.max(sourceLocation.y, targetLocation.y) <
+                  actualCanvasSize.top) ||
+              // both on bottom
+              (Math.min(sourceLocation.y, targetLocation.y) >
+                actualCanvasSize.bottom &&
+                Math.max(sourceLocation.y, targetLocation.y) >
+                  actualCanvasSize.bottom)
+            ) {
+              return false;
+            }
+            return true;
+          };
+
+          // transform the nodes
+          d3Nodes
+            .classed('invisible', true)
+            .filter((d) => nodeLocationMap[d.id].isVisible)
+            .classed('invisible', false)
+            .attr('style', (d: any) => {
+              const nodeX = x / wrapperScale + nodeScale * d.x;
+              const nodeY = y / wrapperScale + nodeScale * d.y;
+              return `left: ${nodeX}px; top: ${nodeY}px`;
+            });
+          d3Links
+            .classed('hidden', true)
+            .filter(isLinkVisible)
+            .classed('hidden', false)
+            .attr('d', (d: SimulationLinkDatum<Node & T>) => {
+              if (!d.source && !d.target) {
+                return '';
+              }
+              const midXY = {
+                x: getMidPoint(getTargetX(d), getSourceX(d)),
+                y: getMidPoint(getTargetY(d), getSourceY(d)),
+              };
+              const curve: (string | number)[] = useCurve
+                ? [
+                    'M',
+                    (getTargetX(d) || 0) + HALF_PIN_WIDTH,
+                    (getTargetY(d) || 0) + HALF_PIN_WIDTH,
+                    'Q',
+                    midXY.x + HALF_PIN_WIDTH,
+                    (getTargetY(d) || 0) + HALF_PIN_WIDTH,
+                    midXY.x + HALF_PIN_WIDTH,
+                    midXY.y + HALF_PIN_WIDTH,
+                    'Q',
+                    midXY.x + HALF_PIN_WIDTH,
+                    (getSourceY(d) || 0) + HALF_PIN_WIDTH,
+                    (getSourceX(d) || 0) + HALF_PIN_WIDTH,
+                    (getSourceY(d) || 0) + HALF_PIN_WIDTH,
+                  ]
+                : [
+                    'M',
+                    `${getSourceX(d)}, ${getSourceY(d)}`,
+                    'L',
+                    `${getTargetX(d)}, ${getTargetY(d)}`,
+                  ];
+              return curve.join(' ');
+            });
         }
+        // scale relative to the center to zoom around the x, y
+        const preTransform = `translate(-${width / 2}px,-${height / 2}px)`;
+        const postTransform = `translate(${width / 2}px,${height / 2}px)`;
+        containerRef.current!.style.transform = `${preTransform} scale(${wrapperScale}) ${postTransform}`;
       }
     },
-    [d3Nodes, d3Links, transform, useCurve, getOffset, containerRef]
+    [
+      d3Nodes,
+      d3Links,
+      transform,
+      useCurve,
+      getLinkEndOffset,
+      containerRef,
+      offset,
+    ]
   );
 
   useEffect(() => {
@@ -329,6 +413,31 @@ export const Graph = <T,>({
       setTransform(transformation);
     },
     []
+  );
+
+  const fitContent = useCallback(
+    (
+      nodesForFitting: d3.Selection<
+        Element,
+        Node & T,
+        HTMLDivElement | null,
+        unknown
+      >
+    ) => {
+      if (mainWrapperRef.current) {
+        setFittingContent(true);
+        const newZoom = getFitContentXYK<T>(
+          nodesForFitting,
+          mainWrapperRef.current.clientWidth,
+          mainWrapperRef.current.clientHeight
+        );
+        if (newZoom) {
+          onZoom(newZoom);
+        }
+        setFittingContent(false);
+      }
+    },
+    [onZoom]
   );
 
   // Zoom callbacks
@@ -362,11 +471,11 @@ export const Graph = <T,>({
 
   // Load data into d3 nodes
   useEffect(() => {
-    if (chart && mainWrapperRef.current) {
+    if (chart && mainWrapperRef.current && nodes.length !== 0) {
       // Create links
       const newD3Lines = chart
         .select('g.links')
-        .selectAll<Element, SimulationLinkDatum<Node & T>>('.line')
+        .selectAll<Element, SimulationLinkDatum<Node & T>>('path')
         .data(links, (_, index) => {
           if (links[index]) {
             return getLinkId(links[index]);
@@ -384,16 +493,26 @@ export const Graph = <T,>({
         .data(nodes, (_, index) => nodes[index].id);
 
       setD3Nodes(newD3Nodes);
+
+      // if autolayout is on and we do not have fixed position for everyone
+      if (autoLayout && nodes.some((el) => !el.fx)) {
+        setIsAutoLayouting(true);
+      } else {
+        fitContent(newD3Nodes);
+      }
     }
-  }, [chart, links, nodes, mainWrapperRef]);
+  }, [chart, links, nodes, mainWrapperRef, autoLayout, fitContent]);
 
   // Set up simulation with node and links
   useEffect(() => {
     if (simulation) {
       simulation.nodes(nodes);
       simulation.force('link', d3.forceLink(links));
+      if (autoLayout) {
+        simulation.alphaTarget(0).stop();
+      }
     }
-  }, [simulation, links, nodes]);
+  }, [simulation, links, nodes, autoLayout]);
 
   // Update tick function
   useEffect(() => {
@@ -413,12 +532,13 @@ export const Graph = <T,>({
       const drag = (event: { dx: any; dy: any }, d: any) => {
         d.fx += event.dx / transform.k;
         d.fy += event.dy / transform.k;
+
         // This is a work around, enforce a rerender for the nodesChildren, which watches transform.
         setTransform((oldTransform) => ({ ...oldTransform }));
       };
 
       const dragEnd = (event: { active: any }, d: any) => {
-        if (!event.active) simulation.alphaTarget(0);
+        if (!event.active) simulation.alphaTarget(0).stop();
         saveToCache(nodes, d.id, d.fx, d.fy);
       };
       d3Nodes.call(
@@ -429,20 +549,7 @@ export const Graph = <T,>({
           .on('end', dragEnd)
       );
     }
-  }, [nodes, d3Nodes, simulation, transform.k]);
-
-  const fitContent = useCallback(() => {
-    if (d3Nodes && mainWrapperRef.current) {
-      const newZoom = getFitContentXYK<T>(
-        d3Nodes,
-        mainWrapperRef.current.clientWidth,
-        mainWrapperRef.current.clientHeight
-      );
-      if (newZoom) {
-        onZoom(newZoom);
-      }
-    }
-  }, [d3Nodes, onZoom]);
+  }, [nodes, d3Nodes, simulation, transform.k, autoLayout]);
 
   useImperativeHandle(ref, () => ({
     zoomIn: (scaleFactor = 1.1) => {
@@ -459,7 +566,7 @@ export const Graph = <T,>({
         k: newScaleK > MIN_ZOOM ? newScaleK : MIN_ZOOM,
       });
     },
-    fitContent,
+    fitContent: () => fitContent(d3Nodes!),
     forceRerender: () => {
       ticked();
     },
@@ -469,40 +576,41 @@ export const Graph = <T,>({
   useEffect(() => {
     (async () => {
       if (isAutoLayouting && d3Nodes) {
-        const nodesForRendering = await getELKNodes(
+        // if the d3 nodes are not up to date, skip handling layouting
+        if (d3Nodes.nodes().length !== nodes.length) {
+          return;
+        }
+        const nodesWithAutolayoutLocation = await getELKNodes(
           d3Nodes.nodes() as (Element & { __data__: Node })[],
           propsLinks
         );
-        setNodes(
-          (prevNodes) =>
-            prevNodes.map((el) => {
-              return {
-                ...el,
-                ...nodesForRendering.find((n) => n.id === el.id),
-              };
-            }) as (Node & T)[]
-        );
+        setNodes((prevNodes) => {
+          const newNodes = prevNodes.map((el) => {
+            return {
+              ...el,
+              ...nodesWithAutolayoutLocation.find((n) => n.id === el.id),
+            };
+          }) as (Node & T)[];
+
+          const newD3Nodes = d3
+            .select(containerRef.current)
+            .selectAll<Element, Node & T>('div.node')
+            .data(newNodes, (_, index) => newNodes[index].id);
+
+          setD3Nodes(newD3Nodes);
+          fitContent(newD3Nodes);
+          return newNodes;
+        });
         setIsAutoLayouting(false);
-        setFittingContent(true);
       }
     })();
-  }, [isAutoLayouting, d3Nodes, propsLinks, onZoom]);
-
-  useEffect(() => {
-    if (!isAutoLayouting && isFittingContent) {
-      try {
-        fitContent();
-        setTimeout(() => setFittingContent(false), 300);
-      } catch {
-        // TODO sentry error
-      }
-    }
-  }, [isFittingContent, isAutoLayouting, fitContent]);
+  }, [isAutoLayouting, d3Nodes, nodes, propsLinks, fitContent]);
 
   return (
     <Wrapper {...htmlProps} ref={mainWrapperRef}>
       <div className="node-container" ref={containerRef}>
         <svg className="chart" ref={svgRef}>
+          {additionalSvgDefs}
           <g className="links">{linksChildren}</g>
         </svg>
         {nodeChildren}
@@ -515,11 +623,11 @@ export const Graph = <T,>({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
+  cursor: grab;
 
   svg,
   .node-container,
   .chart {
-    cursor: grab;
     width: 100%;
     height: 100%;
     position: relative;
@@ -530,13 +638,15 @@ const Wrapper = styled.div`
     cursor: pointer;
   }
 
-  .chart line {
-    stroke: var(--cogs-greyscale-grey6);
-    stroke-width: 1px;
-  }
   .chart path {
     stroke: var(--cogs-greyscale-grey6);
     fill: none;
     stroke-width: 1px;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .hidden {
+    display: none;
   }
 `;

@@ -76,7 +76,11 @@ export const SchemaTypeList = ({
         onOk={deleteSchemaType}
       />
       <Header>
-        <Title level={5} style={{ paddingLeft: 16, marginTop: 24 }}>
+        <Title
+          data-cy="ui-editor-list-title"
+          level={5}
+          style={{ paddingLeft: 16, marginTop: 24 }}
+        >
           {t('type_title', 'Types')}
         </Title>
       </Header>
@@ -100,22 +104,20 @@ export const SchemaTypeList = ({
                 {el.directives?.map((directive) => (
                   <Tag key={directive.name}>{directive.name}</Tag>
                 ))}
-                <div style={{ padding: 2 }}>
-                  {!disabled && (
-                    <EllipsisMenu
-                      disabled={disabled}
-                      typeName={el.name}
-                      onRename={openRenameModal}
-                      onDelete={openDeleteModal}
-                    />
-                  )}
-                  <ChevronButton
-                    type="ghost"
-                    icon="ArrowRight"
-                    style={{ paddingLeft: '5px', paddingRight: '5px' }}
-                    aria-label="Forward"
+                {!disabled && (
+                  <EllipsisMenu
+                    disabled={disabled}
+                    typeName={el.name}
+                    onRename={openRenameModal}
+                    onDelete={openDeleteModal}
                   />
-                </div>
+                )}
+                <ChevronButton
+                  type="ghost"
+                  icon="ArrowRight"
+                  style={{ paddingLeft: '5px', paddingRight: '5px' }}
+                  aria-label="Forward"
+                />
               </Flex>
             </ListItem>
           ))}
@@ -192,7 +194,7 @@ const ChevronButton = styled(Button)`
 const Tag = styled.span`
   padding: 2px 6px;
   background: rgba(110, 133, 252, 0.12);
-  color: #2b3a88;
+  color: var(--cogs-midblue-1);
   border-radius: 4px;
   font-weight: 500;
   font-size: 12px;

@@ -1,15 +1,7 @@
 import { Container } from '@cognite/react-container';
+import { PlatypusSidecarConfig } from '@platypus-app/utils/sidecar';
 import { Store } from 'redux';
 import { AuthContainer } from './AuthContainer';
-import { SidecarConfig } from '@cognite/sidecar';
-
-export interface PlatypusSidecarConfig extends SidecarConfig {
-  disableTranslations?: boolean;
-  disableLoopDetector?: boolean;
-  disableSentry?: boolean;
-  disableIntercom?: boolean;
-  disableReactQuery?: boolean;
-}
 
 type AppContainerProps = {
   sidecar?: PlatypusSidecarConfig;

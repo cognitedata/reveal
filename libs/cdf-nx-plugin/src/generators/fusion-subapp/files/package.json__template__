@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-<%= projectName %>",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev <%= projectName %>",
+    "build": "../../scripts/build.sh production <%= projectName %>",
+    "test": "../../scripts/test.sh <%= projectName %>",
+    "lint": "../../scripts/lint.sh <%= projectName %>",
+    "lint:fix": "../../scripts/lint.sh --fix <%= projectName %>"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

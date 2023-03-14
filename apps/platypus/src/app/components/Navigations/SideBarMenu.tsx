@@ -1,60 +1,66 @@
-import styled from 'styled-components/macro';
-import { useHistory, useParams } from 'react-router-dom';
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { useParams, useLocation } from 'react-router-dom';
+import { Icon, IconType, Tooltip } from '@cognite/cogs.js';
+import * as S from './elements';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import uniqueId from 'lodash/uniqueId';
+
+export type SideBarItem = {
+  icon: IconType;
+  slug: string;
+  disabled?: boolean;
+  tooltip?: string;
+  splitter?: boolean;
+};
 
 type SideBarProps = {
   items: Array<SideBarItem>;
 };
 
-export type SideBarItem = {
-  icon: JSX.Element;
-  page: string;
-  slug: string;
-  tooltip?: string;
-  splitter?: boolean;
-};
-
 export const SideBarMenu = ({ items }: SideBarProps) => {
-  const { dataModelExternalId, version, solutionPage } = useParams<{
+  const { dataModelExternalId, version, space } = useParams<{
     dataModelExternalId: string;
     version: string;
-    solutionPage: string;
+    space: string;
   }>();
 
-  const history = useHistory();
+  const { pathname } = useLocation();
 
-  const onRoute = (page: string, slug: string) => {
-    history.push(
-      `/data-models/${dataModelExternalId}/${version}/${page}/${slug}`
-    );
+  const navigate = useNavigate();
+
+  const baseNavigationRoute = `/${space}/${dataModelExternalId}/${version}`;
+
+  const getNextRoute = (slug: string) => {
+    return `${baseNavigationRoute}/${slug}`;
   };
 
-  const renderIcon = (item: SideBarItem, index: number) => {
+  const onRoute = (slug: string) => {
+    navigate(getNextRoute(slug));
+  };
+
+  const renderIcon = (item: SideBarItem) => {
+    const isActive =
+      pathname.endsWith(getNextRoute(item.slug)) ||
+      (pathname.endsWith(baseNavigationRoute) && !item.slug);
     return (
       <>
-        {item.splitter && <StyledSplitter />}
-        <StyledItem
-          type={
-            item.slug.startsWith(solutionPage) || (!index && !solutionPage)
-              ? 'secondary'
-              : 'ghost'
-          }
-          toggled={
-            item.slug.startsWith(solutionPage) || (!index && !solutionPage)
-          }
+        {item.splitter && <S.Splitter />}
+        <S.SideBarItem
+          type={isActive ? 'secondary' : 'ghost'}
+          toggled={isActive}
           key={item.slug}
-          onClick={() => onRoute(item.page, item.slug)}
+          disabled={item.disabled}
+          onClick={() => onRoute(item.slug)}
         >
-          {item.icon}
-        </StyledItem>
+          <Icon type={item.icon} />
+        </S.SideBarItem>
       </>
     );
   };
 
   return (
-    <StyledSideBarMenu>
+    <S.SideBarMenu>
       <div>
-        {items.map((item, index) => {
+        {items.map((item) => {
           if (item.tooltip) {
             return (
               <Tooltip
@@ -62,39 +68,15 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
                 content={item.tooltip}
                 arrow={false}
                 delay={250}
-                key={item.slug}
+                key={`${item.slug}-${uniqueId()}`}
               >
-                {renderIcon(item, index)}
+                {renderIcon(item)}
               </Tooltip>
             );
           }
-          return renderIcon(item, index);
+          return renderIcon(item);
         })}
       </div>
-    </StyledSideBarMenu>
+    </S.SideBarMenu>
   );
 };
-
-const StyledSideBarMenu = styled.div`
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center !important;
-  width: 56px; // fit to the navbar's 56px + 1px of border
-  padding: 10px;
-  border-right: solid 1px var(--cogs-greyscale-grey3);
-`;
-
-const StyledItem = styled(Button)`
-  margin-bottom: 8px !important;
-  width: 36px !important;
-  height: 36px !important;
-  padding: 10px !important;
-`;
-
-const StyledSplitter = styled.div`
-  border-top: solid 1px var(--cogs-greyscale-grey4);
-  height: 4px;
-  margin-bottom: 8px;
-`;

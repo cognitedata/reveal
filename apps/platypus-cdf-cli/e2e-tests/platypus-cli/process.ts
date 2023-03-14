@@ -13,8 +13,8 @@ export const Run = async (...arg: string[]): Promise<string> => {
   return new Promise((resolve, reject) => {
     let dataOut = '';
     let dataErr = '';
-    childProcess.stderr.once('data', (data) => {
-      dataErr += data;
+    childProcess.stderr.on('data', (data) => {
+      dataErr += data + '\n';
     });
 
     childProcess.on('error', reject);
@@ -30,7 +30,7 @@ export const Run = async (...arg: string[]): Promise<string> => {
     });
 
     childProcess.stdout.on('data', (d) => {
-      dataOut += d;
+      dataOut += d + '\n';
     });
   });
 };

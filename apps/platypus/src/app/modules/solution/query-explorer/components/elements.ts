@@ -5,6 +5,36 @@ export const QueryExplorerContainer = styled.div`
   width: 100%;
   height: 100%;
 
+  .graphiql-container,
+  .CodeMirror-info,
+  .CodeMirror-lint-tooltip,
+  reach-portal {
+    /* Copied from light theme. I couldn't fix without important */
+    --color-primary: 320, 95%, 43% !important;
+    --color-secondary: 242, 51%, 61% !important;
+    --color-tertiary: 188, 100%, 36% !important;
+    --color-info: 208, 100%, 46% !important;
+    --color-success: 158, 60%, 42% !important;
+    --color-warning: 36, 100%, 41% !important;
+    --color-error: 13, 93%, 58% !important;
+    --color-neutral: 219, 28%, 32% !important;
+    --color-base: 219, 28%, 100% !important;
+    --alpha-secondary: 0.76 !important;
+    --alpha-tertiary: 0.5 !important;
+    --alpha-background-heavy: 0.15 !important;
+    --alpha-background-medium: 0.1 !important;
+    --alpha-background-light: 0.07 !important;
+  }
+  /* Hide this buttons, they don't provide any value to us but rather introduce bugs with styling */
+  .graphiql-container .graphiql-sidebar .graphiql-sidebar-section:last-of-type {
+    display: none;
+  }
+  .graphiql-container .graphiql-execute-button,
+  .graphiql-container .graphiql-execute-button:focus {
+    background-color: var(--cogs-primary) !important;
+    outline: var(--cogs-primary) auto 1px;
+  }
+
   & > .docExplorerWrap {
     .doc-explorer-title-bar {
       display: flex;

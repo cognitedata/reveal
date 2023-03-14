@@ -1,0 +1,25 @@
+{
+  "name": "@cognite/cdf-solutions-ui",
+  "version": "0.2.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev platypus",
+    "build": "../../scripts/build.sh production platypus",
+    "test": "../../scripts/test.sh platypus",
+    "lint": "../../scripts/lint.sh platypus",
+    "lint:fix": "../../scripts/lint.sh platypus --fix"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

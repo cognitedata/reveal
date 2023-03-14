@@ -25,17 +25,32 @@ jobs:
       - name: Create .npmrc
         run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
 
-      - name: Install Dependency & Build
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Build cdf cli
+        run: yarn build production platypus-cdf-cli
+
+      - name: Start mock-server
+      # Start mock server and wait until port 4002 is open (mock server has started)
         run: |
-          yarn install --frozen-lockfile
-          rm .npmrc
-          yarn build production platypus-cdf-cli
-      - name: Run the E2E Tests
-        run: |
-          yarn nx run platypus-cdf-cli:e2e
+          yarn nx serve mock-server &
+          until nc -w 10 localhost 4002; do sleep 1; done
+
+      - name: Run tests
         env:
           PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
           TENANT: ${{ secrets.CLI_E2E_TENANT }}
           CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
           CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
+          TESTING_BASE_URL: http://localhost:4002
+        run: yarn nx run platypus-cdf-cli:e2e

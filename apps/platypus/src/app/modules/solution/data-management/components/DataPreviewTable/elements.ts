@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledCollapsablePanelContainer = styled.div`
+export const CollapsablePanelContainer = styled.div`
   height: 100%;
   .cp-right-panel .cp-panel-content {
     height: 100%;
@@ -10,6 +10,14 @@ export const StyledCollapsablePanelContainer = styled.div`
 export const StyledDataPreviewTable = styled.div`
   height: 100%;
   background-color: var(--cogs-surface--medium);
+
+  .ag-cell {
+    display: flex;
+    align-items: center;
+    .ag-cell-wrapper {
+      width: 100%;
+    }
+  }
   .ag-cell[col-id='_isDraftSelected'] {
     text-align: center;
     background: transparent !important;

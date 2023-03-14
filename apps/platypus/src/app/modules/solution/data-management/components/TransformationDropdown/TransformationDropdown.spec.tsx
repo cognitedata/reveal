@@ -44,6 +44,7 @@ const mockTransformations: DataModelTransformation[] = [
 
 const mockGetMissingPermissions = jest.fn();
 const mockSetIsTransformationModalOpen = jest.fn();
+const mockIsFDMv3 = jest.fn();
 
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useDataManagemenPageUI',
@@ -60,15 +61,20 @@ jest.mock(
   () => () => ({ data: mockTransformations })
 );
 
+jest.mock('@platypus-app/flags', () => ({
+  isFDMv3: () => mockIsFDMv3(),
+}));
+
 describe('TransformationDropdown', () => {
   beforeAll(() => {
     mockSetIsTransformationModalOpen.mockClear();
+    mockIsFDMv3.mockReturnValue(true);
   });
 
   it('Displays transformations for the type and its edges', () => {
     render(
       <TransformationDropdown
-        dataModelExternalId="imdb"
+        space="imdb"
         onAddClick={noop}
         typeName="Movie"
         version="2"
@@ -88,9 +94,10 @@ describe('TransformationDropdown', () => {
   });
 
   it('Opens transformation modal when clicking a transformation in the list', () => {
+    mockIsFDMv3.mockReturnValueOnce(false);
     render(
       <TransformationDropdown
-        dataModelExternalId="imdb"
+        space="imdb"
         onAddClick={noop}
         typeName="Movie"
         version="2"
@@ -101,5 +108,22 @@ describe('TransformationDropdown', () => {
     userEvent.click(screen.getByText('IMDB Movie_2 1'));
 
     expect(mockSetIsTransformationModalOpen).toHaveBeenCalledWith(true, 2);
+  });
+
+  it('Opens transformation in a new tab when clicking a transformation in the list', () => {
+    window.open = jest.fn();
+    render(
+      <TransformationDropdown
+        space="imdb"
+        onAddClick={noop}
+        typeName="Movie"
+        version="2"
+      />
+    );
+
+    userEvent.click(screen.getByText(/bulk population/i));
+    userEvent.click(screen.getByText('IMDB Movie_2 1'));
+
+    expect(window.open).toHaveBeenCalled();
   });
 });

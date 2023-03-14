@@ -1,4 +1,4 @@
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledBody, StyledBreakingChanges } from './elements';
 
@@ -13,14 +13,14 @@ export const BreakingChangesModal = (props: BreakingChangesModalProps) => {
   const { t } = useTranslation('SolutionBreakingChangesModal');
 
   return (
-    <ModalDialog
-      visible={true}
+    <Modal
+      visible
       title={t('breaking_changes_data_model', 'Breaking changes in data model')}
       onCancel={props.onCancel}
       onOk={props.onUpdate}
-      okButtonName={t('publish_new_version', 'Publish new version')}
-      okProgress={props.isUpdating}
-      okType="primary"
+      okText={t('publish_new_version', 'Publish new version')}
+      okDisabled={props.isUpdating}
+      icon={props.isUpdating ? 'Loader' : undefined}
     >
       <StyledBody>
         <div>
@@ -37,6 +37,6 @@ export const BreakingChangesModal = (props: BreakingChangesModalProps) => {
         </div>
       </StyledBody>
       <StyledBreakingChanges>{props.breakingChanges}</StyledBreakingChanges>
-    </ModalDialog>
+    </Modal>
   );
 };

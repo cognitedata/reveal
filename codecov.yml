@@ -1,25 +1,47 @@
 coverage:
-  precision: 2
-  round: down
-  range: '50...100'
-
   status:
     project:
-      default:
-        target: auto
-        threshold: 1%
-        base: auto
+      default: off
+      apps:
+        flags:
+          - data-exploration
+          - mock-server
+          - platypus
+          - platypus-cdf-cli
+          - platypus-e2e
+      libs:
+        flags:
+          - cog-data-grid
+          - data-exploration-core
+          - data-exploration-domain-layer
+          - data-exploration-components
+          - platypus-common-utils
+          - platypus-core
+      e2e:
+        flags:
+          - platypus-e2e
     patch: off
     changes: off
 
+# adding Flags to your `layout` configuration to show up in the PR comment
 comment:
-  layout: 'header, diff, files'
+  layout: 'reach, diff, flags, files'
   behavior: default
+  require_changes: false
+  require_base: yes
+  require_head: yes
+  branches: null
 
-codecov:
-  notify:
-    require_ci_to_pass: false
-    after_n_builds: 1 # send notifications and complete ci build after 1 upload
-
-fixes:
-  - '/::coverage/'
+flags:
+  apps:
+    paths: #note, accepts globs, not regexes
+      - apps/
+    carryforward: false
+  libs:
+    paths: #note, accepts globs, not regexes
+      - libs/
+    carryforward: false
+  e2e:
+    paths:
+      - apps/
+    carryforward: false

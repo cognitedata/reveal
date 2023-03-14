@@ -49,7 +49,7 @@ export const showInputWithDefault = (
   defaultValue: string
 ) => {
   return {
-    ...buildBasePrompt,
+    ...buildBasePrompt(commandArg),
     initial: defaultValue,
   };
 };

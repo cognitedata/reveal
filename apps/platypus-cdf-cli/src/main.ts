@@ -10,7 +10,10 @@ import logout from './app/cmds/logout';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
 import { getMixpanel } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
-import { PlatypusError } from '@platypus/platypus-core';
+import {
+  PlatypusDmlError,
+  PlatypusValidationError,
+} from '@platypus/platypus-core';
 import * as Sentry from '@sentry/node';
 import CONFIG from './app/config/config';
 
@@ -27,9 +30,9 @@ scriptName(CONSTANTS.APP_ID)
   .usage(
     `$0 <command>
 
-    The Cognite Data Fusion CLI (CDF CLI) currently supports managing data models. For feature requests, navigate to [Cognite Hub](https://hub.cognite.com/).
-
-    Check out the full documentation here: https://docs.cognite.com/cli
+    The Cognite Data Fusion CLI (CDF CLI) currently supports managing data models. 
+    See https://docs.cognite.com/cdf/cli/ for more details.
+    For feature requests, navigate to https://hub.cognite.com/.
   `
   )
   .middleware([init, authenticate])
@@ -53,18 +56,52 @@ scriptName(CONSTANTS.APP_ID)
   })
   .wrap(Math.min(120, yargs.terminalWidth()))
   .help(true)
-  .fail((msg, err, { argv, help }) => {
+  .fail((msg, err, { help }) => {
+    let printHelp = false;
     DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}`);
 
     let errorMessage =
       msg ||
       err.message ||
-      'Something went wrong, and we are unable to detect what please contact us for more info';
+      'Something went wrong, please contact us for more info';
 
-    if (err instanceof PlatypusError && (err as PlatypusError).errors?.length) {
+    if (
+      err instanceof PlatypusValidationError &&
+      (err as PlatypusValidationError).errors?.length
+    ) {
       errorMessage +=
         '\n' +
-        (err as PlatypusError).errors.map((error) => error.message).join('\n');
+        (err as PlatypusValidationError).errors
+          .map((error) => error.message)
+          .join('\n');
+    }
+
+    if (err instanceof PlatypusDmlError) {
+      errorMessage +=
+        '\n' +
+        (err as PlatypusDmlError).errors
+          .map((error) => {
+            const prefix = `[Line: ${error.location.start.line}]:`;
+            let msg = `${prefix} ${error.message}`;
+            if (error.hint) {
+              msg += `\n${' '.repeat(prefix.length + 1)}${error.hint}`;
+            }
+            return msg;
+          })
+          .join('\n');
+    }
+
+    if (
+      errorMessage === 'Not enough non-option arguments: got 0, need at least 1'
+    ) {
+      errorMessage =
+        'You need to enter a valid command. See the list of valid commands below.';
+      printHelp = true;
+    }
+    if (errorMessage.startsWith('Unknown argument')) {
+      errorMessage +=
+        '. You need to enter a valid command. See the list of valid commands below.';
+      printHelp = true;
     }
 
     console.error(chalk.red(errorMessage));
@@ -75,7 +112,9 @@ scriptName(CONSTANTS.APP_ID)
       message: msg || err.message,
     });
 
-    console.log('\nUsages:\n');
+    if (printHelp) {
+      console.log('\nUsages:\n');
+    }
     console.error(help());
     process.exit(1);
   })

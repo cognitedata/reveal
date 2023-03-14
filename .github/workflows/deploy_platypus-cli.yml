@@ -44,7 +44,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: ${{ steps.publish.outputs.version }}
+          automatic_release_tag: cdf-cli-${{ steps.publish.outputs.version }}
           title: Platypus CDF CLI Release ${{ steps.publish.outputs.version }}
           files: |
             ./dist/apps/platypus-cdf-cli/*.js*

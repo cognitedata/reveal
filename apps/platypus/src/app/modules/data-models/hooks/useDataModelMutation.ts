@@ -21,6 +21,10 @@ export function useDataModelMutation() {
       },
       {
         onSuccess: (result) => {
+          if (result.isFailure) {
+            return;
+          }
+
           const dataModel = result.getValue();
 
           // update cached list
@@ -39,6 +43,9 @@ export function useDataModelMutation() {
             QueryKeys.DATA_MODEL(dataModel.id),
             dataModel
           );
+
+          // invalidate space (in case a space was created)
+          queryClient.invalidateQueries(QueryKeys.SPACES_LIST);
         },
       }
     ),

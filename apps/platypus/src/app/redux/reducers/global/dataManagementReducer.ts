@@ -1,10 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { generateId } from '@platypus-app/utils/uuid';
-import {
-  DataModelTypeDefsField,
-  DataModelTypeDefsType,
-  KeyValueMap,
-} from '@platypus/platypus-core';
+import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface DraftRowData extends KeyValueMap {
@@ -36,14 +32,6 @@ const initialState = {
   isTransformationModalOpen: false,
   transformationId: null,
 } as IDataManagementState;
-
-const getDefaultCellValueForDraftRow = (field: DataModelTypeDefsField) => {
-  if (field.type.list) {
-    return [];
-  }
-
-  return null;
-};
 
 export const isDraftRowDataComplete = (
   draftRowData: DraftRowData,
@@ -121,7 +109,7 @@ const dataManagementSlice = createSlice({
         (rowObj, field) => {
           return {
             ...rowObj,
-            [field.name]: getDefaultCellValueForDraftRow(field),
+            [field.name]: null,
           };
         },
         {
@@ -167,10 +155,12 @@ const dataManagementSlice = createSlice({
     },
     deleteSelectedDraftRows: (state) => {
       const selectedTypeName = state.selectedType?.name as string;
+      const draftRows = state.draftRows[selectedTypeName];
 
-      state.draftRows[selectedTypeName] = state.draftRows[
-        selectedTypeName
-      ].filter((row) => !row._isDraftSelected);
+      state.draftRows[selectedTypeName] =
+        draftRows && draftRows.length
+          ? draftRows.filter((row) => !row._isDraftSelected)
+          : [];
     },
     removeDraftRows: (state, action: PayloadAction<{ rows: string[] }>) => {
       const { rows } = action.payload;
@@ -215,20 +205,20 @@ export const compatiblizeDraftRowsData = (
   dataModelType: DataModelTypeDefsType
 ): DraftRowData[] => {
   // omits fields not part of the type anymore and add newly added fields from the type
-  const compatibleDraftRows = draftRows.map((draftRowData: DraftRowData) => {
-    return dataModelType.fields.reduce((compatibleRowObj, field) => {
-      return {
-        ...compatibleRowObj,
-        externalId: draftRowData['externalId'],
-        _draftStatus: draftRowData['_draftStatus'],
-        _isDraftSelected: draftRowData['_isDraftSelected'] === true,
-        [field.name]:
-          field.name in draftRowData
-            ? draftRowData[field.name]
-            : getDefaultCellValueForDraftRow(field),
-      };
-    }, {} as DraftRowData);
-  });
+  const compatibleDraftRows = (draftRows || []).map(
+    (draftRowData: DraftRowData) => {
+      return dataModelType.fields.reduce((compatibleRowObj, field) => {
+        return {
+          ...compatibleRowObj,
+          externalId: draftRowData['externalId'],
+          _draftStatus: draftRowData['_draftStatus'],
+          _isDraftSelected: draftRowData['_isDraftSelected'] === true,
+          [field.name]:
+            field.name in draftRowData ? draftRowData[field.name] : null,
+        };
+      }, {} as DraftRowData);
+    }
+  );
 
   return compatibleDraftRows;
 };

@@ -1,0 +1,25 @@
+{
+  "name": "@cognite/cdf-data-exploration",
+  "version": "2.4.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev data-exploration",
+    "build": "../../scripts/build.sh production data-exploration",
+    "test": "../../scripts/test.sh data-exploration",
+    "lint": "../../scripts/lint.sh data-exploration",
+    "lint:fix": "../../scripts/lint.sh data-exploration --fix"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

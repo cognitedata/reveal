@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { LowdbSync } from 'lowdb';
-import { Api } from './middlewares/schema/types';
+import { Api } from './middlewares/data-modeling/types';
 
 export type FilterMode = 'list' | 'byids' | 'filter' | 'search';
 
@@ -60,14 +60,27 @@ export interface CdfApiEndpointConfig {
   filters?: {
     [filterName: string]: CdfApiEndpointFilterConfig;
   };
+  /** Use if you want to completley override the endpoint */
   handler?: EndpointHandler;
+  /** Use it to transform the request */
+  requestTransformer?: EndpointHandler;
 }
 
 export interface CdfApiConfig {
-  version: number;
+  /** Used to generate generic CDF Like Api handlers */
+  defaultApiEndpoints?: string[];
+  /** Used for templates/graphql APIs for types like timeseries...etc */
+  builtInTypes?: { [typeName: string]: string };
+  /** The default endpoint endings for CDF APIs ex: /list, /search, /byids...etc */
+  whitelistedEndpointEndings?: string[];
+  /** If url match this pattern the mock server will not process it and you can have custom handling */
+  ignoreUrlPatterns?: string[];
+  version?: number;
+  /** Used to map CDF API path to JSON Server */
   urlRewrites?: {
     [routePattern: string]: string;
   };
+  /** Custom handling for this routes */
   endpoints?: {
     [endpoint: string]: CdfApiEndpointConfig;
   };

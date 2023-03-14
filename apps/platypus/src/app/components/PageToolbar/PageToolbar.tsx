@@ -1,6 +1,6 @@
 import { Body, Button, Flex, Title } from '@cognite/cogs.js';
 import { HtmlElementProps } from '@platypus-app/types';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export enum Size {
   SMALL = 'SMALL',
@@ -19,11 +19,14 @@ export const PageToolbar = ({
   behindTitle,
   size = Size.LARGE,
 }: ToolbarProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const onBackRouteClick = () => {
-    history.push({
-      pathname: backPathname,
-    });
+    if (backPathname) {
+      navigate(backPathname);
+    } else {
+      // this is a react router dom's builtin constructor to go back in history.
+      navigate(-1);
+    }
   };
 
   return (

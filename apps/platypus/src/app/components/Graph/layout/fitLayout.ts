@@ -1,4 +1,4 @@
-import { Node } from '../Graph';
+import { INITIAL_TRANSFORM, MAX_ZOOM, MIN_ZOOM, Node } from '../Graph';
 
 export const getFitContentXYK = <T>(
   nodesForCalculation: d3.Selection<
@@ -8,32 +8,26 @@ export const getFitContentXYK = <T>(
     unknown
   >,
   containerWidth: number,
-  containerHeight: number
+  containerHeight: number,
+  minScale = 1 / MAX_ZOOM,
+  maxScale = 1 / MIN_ZOOM
 ) => {
   const initialNodes = (
     nodesForCalculation.nodes() as (Element & { __data__: Node & T })[]
   )
-    .filter(
-      (el) =>
-        el.__data__ &&
-        el.__data__.x !== undefined &&
-        el.__data__.y !== undefined
-    )
+    .filter((el) => el.__data__)
     .map((node) => ({
       id: node.id,
       width: node.clientWidth,
       height: node.clientHeight,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      x: node.__data__.x!,
+      x: node.__data__.fx || node.__data__.x || node.clientLeft,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      y: node.__data__.y!,
+      y: node.__data__.fy || node.__data__.y || node.clientTop,
     }));
 
-  if (initialNodes.length === 0) {
-    throw new Error('Unable to fit content');
-  }
-  if (initialNodes.length === 1) {
-    return { x: 0, y: 0, k: 1 };
+  if (initialNodes.length <= 1) {
+    return INITIAL_TRANSFORM;
   }
 
   const width = containerWidth;
@@ -61,10 +55,12 @@ export const getFitContentXYK = <T>(
   // take the max of the scales
   const scaleK = Math.max(scaleX, scaleY);
 
+  const scale = Math.max(minScale, Math.min(maxScale, scaleK));
+
   // set zoom
   return {
-    x: newX / scaleK,
-    y: newY / scaleK,
-    k: 1 / scaleK,
+    x: newX / scale,
+    y: newY / scale,
+    k: 1 / scale,
   };
 };

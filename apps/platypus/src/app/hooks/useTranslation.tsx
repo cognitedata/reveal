@@ -1,13 +1,14 @@
 /* eslint-disable  */
 
-// Dummy hook so we can use translate in our code
-// We will switch later to the react package
+import { useTranslateProvider } from '../../environments/useTranslateProvider';
+
+// Hook so we can use translate in our code
 export const useTranslation = (namespace: string) => {
-  const translate = (key: string, referenceValue: string, options = {}) => {
-    return referenceValue;
-  };
+  // for fusion, we are going to use real translation provider
+  // for mock, use dummy one
+  const { t } = useTranslateProvider(namespace);
 
   return {
-    t: translate,
+    t,
   };
 };

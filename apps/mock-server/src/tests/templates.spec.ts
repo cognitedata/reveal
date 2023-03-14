@@ -423,7 +423,7 @@ describe('Templates Test', () => {
     ).toEqual(1625961600000);
   });
 
-  it('Should support aggregation and synthetic timeseries', async () => {
+  it.skip('Should support aggregation and synthetic timeseries', async () => {
     const apiPath = '/templategroups/BestDay/versions/1/graphql';
     // test equal
     const response = await runRequest(

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { OptionType } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Modal, OptionType } from '@cognite/cogs.js';
 
 import {
   DataModelTypeDefsType,
@@ -20,23 +19,26 @@ import { generateId } from '@platypus-app/utils/uuid';
 import {
   getOneToManyModelName,
   getVersionedExternalId,
-} from '@platypus-core/domain/data-model/services/utils';
+} from '@platypus/platypus-core';
+import { isFDMv3 } from '@platypus-app/flags';
+import { createLink } from '@cognite/cdf-utilities';
 
 type Option = OptionType<any>;
 
 export interface CreateTransformationModalProps {
-  dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
   onRequestClose: () => void;
   version: string;
+  space: string;
 }
 
 export const CreateTransformationModal = ({
-  dataModelExternalId,
+  space,
   dataModelType,
   onRequestClose,
   version,
 }: CreateTransformationModalProps) => {
+  const isFDMV3 = isFDMv3();
   const { t } = useTranslation('CreateTransformationModal');
 
   const [selectedRelationship, setSelectedRelationship] = useState<Option>();
@@ -85,7 +87,12 @@ export const CreateTransformationModal = ({
   const handleSubmit = () => {
     createTransformationMutation.mutate(
       {
-        dataModelExternalId,
+        destination: isFDMV3
+          ? selectedRelationship
+            ? 'edges'
+            : 'nodes'
+          : 'data_model_instances',
+        space,
         oneToManyFieldName: selectedRelationship
           ? selectedRelationship.value
           : undefined,
@@ -97,23 +104,31 @@ export const CreateTransformationModal = ({
       {
         onSuccess: (transformation) => {
           onRequestClose();
-          setIsTransformationModalOpen(true, transformation.id);
+          if (isFDMV3) {
+            window.open(
+              createLink(`/transformations/${transformation.id}`),
+              '_blank'
+            );
+          } else {
+            setIsTransformationModalOpen(true, transformation.id);
+          }
         },
       }
     );
   };
 
   return (
-    <ModalDialog
+    <Modal
       visible
       title={t('create_transformation_modal_title', 'Create transformation')}
       onOk={handleSubmit}
       onCancel={onRequestClose}
-      okDisabled={!validationResult.valid}
-      okProgress={createTransformationMutation.isLoading}
-      okButtonName={t('create_transformation_modal_ok_button', 'Next')}
-      okType="primary"
-      width="620px"
+      okDisabled={
+        !validationResult.valid || createTransformationMutation.isLoading
+      }
+      icon={createTransformationMutation.isLoading ? 'Loader' : undefined}
+      okText={t('create_transformation_modal_ok_button', 'Next')}
+      size="large"
     >
       <CreateTransformationForm
         id={transformationExternalId}
@@ -124,6 +139,6 @@ export const CreateTransformationModal = ({
         selectedRelationship={selectedRelationship}
         transformationType={transformationType}
       />
-    </ModalDialog>
+    </Modal>
   );
 };

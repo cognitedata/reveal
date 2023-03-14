@@ -9,7 +9,7 @@ describe('EditableChip', () => {
   it("Renders placeholder state when there's no value", () => {
     render(<EditableChip isLocked={false} placeholder="lorem" />);
 
-    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.getByRole('button')).toBeTruthy();
     expect(screen.queryByTestId('icon-lock')).toBeNull();
     expect(screen.getByText('lorem')).toBeTruthy();
   });

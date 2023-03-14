@@ -14,12 +14,16 @@ export const FieldActionsCellRenderer = React.memo(
     if (props.disabled) {
       return null;
     }
+    if (props.data.name !== '' && props.context.isCreatingNewField) {
+      return null;
+    }
 
     return (
       <DeleteFieldButton
         icon="Delete"
         aria-label="Delete field"
         type="ghost"
+        data-cy="delete-field-btn"
         style={{ paddingLeft: 0, paddingRight: 0, width: '34px' }}
         onClick={(e) => {
           e.preventDefault();

@@ -1,4 +1,4 @@
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Tooltip } from '@cognite/cogs.js';
 import {
   StyledButton,
@@ -13,23 +13,26 @@ import {
 import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
 import { useState } from 'react';
 import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export const NavigationDataModel = () => {
-  const { dataModelExternalId } = useParams<{
-    dataModelExternalId: string;
-  }>();
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { dataModelExternalId, space } = useParams();
+  const { data: dataModel } = useDataModel(dataModelExternalId!, space!);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { t } = useTranslation('data-model-navigation');
 
   const renderTopBarRight = () => {
     return (
       <StyledTopBarRight>
-        <StyledButton
-          icon="Settings"
-          aria-label="Settings"
-          onClick={() => setIsSettingsModalVisible(true)}
-        />
+        <Tooltip content={t('tooltip-settings', 'Data model settings')}>
+          <StyledButton
+            icon="Settings"
+            aria-label="Settings"
+            onClick={() => setIsSettingsModalVisible(true)}
+          />
+        </Tooltip>
       </StyledTopBarRight>
     );
   };
@@ -38,13 +41,18 @@ export const NavigationDataModel = () => {
     return (
       <StyledTopBarLeft>
         <StyledFlex alignItems="center">
-          <Tooltip content="Go Back to data model list page">
+          <Tooltip
+            content={t(
+              'tooltip-header-back',
+              'Go back to data model list page'
+            )}
+          >
             <StyledTitleButton
               type="ghost"
               icon="ArrowLeft"
               iconPlacement="left"
               aria-label="Go Back to data model list page"
-              onClick={() => history.push('/data-models')}
+              onClick={() => navigate('/')}
               data-cy="back-to-all-models-btn"
             />
           </Tooltip>
@@ -65,6 +73,7 @@ export const NavigationDataModel = () => {
           {renderTopBarRight()}
           {isSettingsModalVisible && (
             <DataModelSettingsModal
+              visible
               dataModel={dataModel}
               onRequestClose={() => setIsSettingsModalVisible(false)}
             />

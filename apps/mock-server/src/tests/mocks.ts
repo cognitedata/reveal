@@ -76,6 +76,59 @@ type PageInfo {
   startCursor: String
   endCursor: String
 }
+input InstanceRef {
+  spaceExternalId: String!
+  externalId: String!
+}
+
+"""
+Specifies that a type is a view type.
+
+* space: Overrides the space, which by default is the same as the data model.
+* name: Overrides the name of the view, which by default is the same as the externalId.
+* version: Overrides the version of the view, which by default is the same as the data model version.
+"""
+directive @view(
+  space: String,
+  name: String,
+  version: String
+) on OBJECT | INTERFACE
+
+"""
+Overrides the mapping of a field. Can only be used in a view type and can not be used on derived fields.
+
+* space: Overrides the space, which by default is the same as the data model space.
+* container: Overrides the container externalId, which by default is the same as the externalId of the view postfixed with 'Container'.
+* property: Overrides the container property identifier being mapped.
+"""
+directive @mapping(
+  space: String,
+  container: String,
+  property: String
+) on FIELD_DEFINITION
+
+input _DirectRelationRef {
+  space: String!
+  externalId: String!
+}
+
+enum _RelationDirection {
+  INWARDS
+  OUTWARDS
+}
+
+"""
+Defines the relation field's details
+
+* name: Overrides the name property of the relation definition. This is merely metadata, and should not be confused with the property identifier!
+* direction: The direction to follow the edges filtered by 'type'.
+* type: Specifies the edge type, namespaced by 'space', where the 'externalId' corresponds to the edge type name.
+"""
+directive @relation(
+  type: _DirectRelationRef!
+  name: String
+  direction: _RelationDirection
+) on FIELD_DEFINITION
 
 type Post {
   externalId: ID!
@@ -131,7 +184,9 @@ input _PostSort {
   title: SortDirection
   views: SortDirection
 }
-
+type _PostAggregateCountResult {
+  externalId: Int!
+}
 type _PostAggregateFieldResult {
   views: Int!
 }
@@ -162,7 +217,9 @@ input _UserSort {
   externalId: SortDirection
   name: SortDirection
 }
-
+type _UserAggregateCountResult {
+  externalId: Int!
+}
 type _UserAggregateFieldResult {
   _empty: Int!
 }
@@ -196,7 +253,9 @@ input _CommentSort {
   body: SortDirection
   date: SortDirection
 }
-
+type _CommentAggregateCountResult {
+  externalId: Int!
+}
 type _CommentAggregateFieldResult {
   _empty: Int!
 }
@@ -228,7 +287,7 @@ type PostAggregateResult {
   avg: [_PostAggregateFieldResult]!
   min: [_PostAggregateFieldResult]!
   max: [_PostAggregateFieldResult]!
-  count: [_PostAggregateFieldResult]!
+  count: _PostAggregateCountResult!
   sum: [_PostAggregateFieldResult]!
 }
 
@@ -259,7 +318,7 @@ type UserAggregateResult {
   avg: [_UserAggregateFieldResult]!
   min: [_UserAggregateFieldResult]!
   max: [_UserAggregateFieldResult]!
-  count: [_UserAggregateFieldResult]!
+  count: _UserAggregateCountResult!
   sum: [_UserAggregateFieldResult]!
 }
 
@@ -290,7 +349,7 @@ type CommentAggregateResult {
   avg: [_CommentAggregateFieldResult]!
   min: [_CommentAggregateFieldResult]!
   max: [_CommentAggregateFieldResult]!
-  count: [_CommentAggregateFieldResult]!
+  count: _CommentAggregateCountResult!
   sum: [_CommentAggregateFieldResult]!
 }
 
@@ -310,6 +369,8 @@ type Query {
     after: String
     query: String!
   ): PostConnection
+
+  getPostById(instance: InstanceRef!): PostConnection
 
   aggregatePost(
     fields: [_SearchPostFields!]
@@ -337,6 +398,8 @@ type Query {
     query: String!
   ): UserConnection
 
+  getUserById(instance: InstanceRef!): UserConnection
+
   aggregateUser(
     fields: [_SearchUserFields!]
 
@@ -363,6 +426,8 @@ type Query {
     query: String!
   ): CommentConnection
 
+  getCommentById(instance: InstanceRef!): CommentConnection
+
   aggregateComment(
     fields: [_SearchCommentFields!]
 
@@ -379,6 +444,4 @@ type Query {
 schema {
   query: Query
 }
-
-
   `;

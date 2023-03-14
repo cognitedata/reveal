@@ -1,20 +1,29 @@
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useDataModelMutation } from './hooks/useDataModelMutation';
 import { DataUtils } from '@platypus/platypus-core';
-import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
+import {
+  DataModelDetailModal,
+  OptionType,
+} from '../../components/DataModelDetailModal/DataModelDetailModal';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
-export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
+export const CreateDataModel = ({
+  onCancel,
+  visible,
+}: {
+  onCancel: VoidFunction;
+  visible: boolean;
+}) => {
   const [dataModelName, setDataModelName] = useState('');
+  const [space, setSpace] = useState<OptionType<string>>();
   const [dataModelDescription, setDataModelDescription] = useState('');
-  const [inputError, setInputError] = useState(false);
   const [externalId, setExternalId] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation('CreateDataModelDialog');
   const { create } = useDataModelMutation();
 
@@ -28,11 +37,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
     setDataModelName(value);
 
     if (!isExternalIdDirty) {
-      setExternalId(DataUtils.convertToCamelCase(value));
-    }
-
-    if (inputError) {
-      setInputError(false);
+      setExternalId(DataUtils.convertToExternalId(value));
     }
   };
 
@@ -44,12 +49,26 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const handleSubmit = () => {
     create.mutate(
       {
+        space: space?.value,
         externalId,
         name: dataModelName.trim(),
         description: dataModelDescription,
       },
       {
-        onSuccess: (result) => {
+        onSettled: (result) => {
+          if (!result) {
+            return;
+          }
+
+          if (result.isFailure) {
+            Notification({
+              type: 'error',
+              message: result.error.message,
+            });
+
+            return;
+          }
+
           Notification({
             type: 'success',
             message: t(
@@ -57,16 +76,11 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
               'Data Model successfully created'
             ),
           });
-          history.push(
-            `data-models/${result.getValue().id}/${DEFAULT_VERSION_PATH}`
+          navigate(
+            `/${result.getValue().space}/${
+              result.getValue().id
+            }/${DEFAULT_VERSION_PATH}`
           );
-        },
-        onError: (error) => {
-          setInputError(true);
-          Notification({
-            type: 'error',
-            message: error.message,
-          });
         },
       }
     );
@@ -74,6 +88,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
 
   return (
     <DataModelDetailModal
+      visible={visible}
       dataSets={dataSets || []}
       description={dataModelDescription || ''}
       externalId={externalId}
@@ -81,12 +96,15 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       isDataSetsLoading={isDataSetsLoading}
       isLoading={create.isLoading}
       name={dataModelName}
+      okButtonName={t('data_model_create_modal_ok_button', 'Create')}
       onCancel={onCancel}
       onExternalIdChange={handleExternalIdChange}
       onDescriptionChange={(value) => setDataModelDescription(value)}
       onNameChange={handleNameChange}
       onSubmit={handleSubmit}
-      title={t('modal-title', 'Create Data Model')}
+      space={space}
+      onSpaceChange={setSpace}
+      title={t('data_model_create_modal_title', 'Create Data Model')}
     />
   );
 };

@@ -6,7 +6,8 @@ export default {
   fetcher: (
     graphQlParams: FetcherParams,
     dataModelId: string,
-    version: string
+    version: string,
+    space: string
   ): Promise<FetcherResult> => {
     const solutionSchemaHandler = rootInjector.get(
       TOKENS.dataModelVersionHandler
@@ -17,6 +18,7 @@ export default {
           graphQlParams,
           dataModelId,
           schemaVersion: version,
+          space,
         })
         .then((result) => {
           if (!result.isSuccess) {
@@ -26,7 +28,9 @@ export default {
           resolve(result.getValue().data);
         })
         .catch((error) => {
-          Notification({ type: 'error', message: error.message });
+          if (error.code !== 409) {
+            Notification({ type: 'error', message: error.message });
+          }
           reject(error);
         });
     });

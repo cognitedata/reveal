@@ -1,6 +1,10 @@
 import { SimulationLinkDatum } from 'd3';
-import { FieldDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
-import { GetOffsetFunction, Node } from '../Graph/Graph';
+import {
+  InterfaceTypeDefinitionNode,
+  Kind,
+  ObjectTypeDefinitionNode,
+} from 'graphql';
+import { Node } from '../Graph/Graph';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 
 export const NODE_WIDTH = 240;
@@ -8,16 +12,12 @@ export const NODE_ICON_WIDTH = 20;
 export const NODE_HEADER_HEIGHT = 40;
 export const NODE_PROPERTY_ITEM_HEIGHT = 28;
 
-type GetOffsetFnParams = Parameters<
-  GetOffsetFunction<Node & SchemaDefinitionNode>
->;
-
 export const getConnectorHeight = (index: number) =>
   (index > -1 ? (index + 1) * NODE_PROPERTY_ITEM_HEIGHT : 0) +
   NODE_HEADER_HEIGHT / 2;
 
-export const getOffset =
-  (d: GetOffsetFnParams[0]) =>
+export const getLinkEndOffset =
+  (d: SimulationLinkDatum<Node & SchemaDefinitionNode>) =>
   (showHeaderOnly = false) => {
     const sourceNode = d.source as SchemaDefinitionNode & Node;
     const targetNode = d.target as SchemaDefinitionNode & Node;
@@ -95,30 +95,13 @@ export const getNodeWidth = (_node: SchemaDefinitionNode & Node) => {
   return NODE_WIDTH;
 };
 
-export const doesNodeHaveDirective = (
-  node: SchemaDefinitionNode,
-  directiveName: string
-) =>
-  (node.kind === 'ObjectTypeDefinition' &&
-    node.fields?.some((field: FieldDefinitionNode) =>
-      doesFieldHaveDirective(field, directiveName)
-    )) ||
-  false;
-
-export const doesFieldHaveDirective = (
-  field: FieldDefinitionNode,
-  directiveName: string
-) =>
-  field.directives?.find((directive) => directive.name.value === directiveName);
-
-export const isTypeATemplate = (item: ObjectTypeDefinitionNode) => {
-  return item.directives?.some(
-    (el) => el.name.value.toLowerCase() === 'template'
-  );
-};
-
-export const getTypeDirective = (item: ObjectTypeDefinitionNode): string => {
+export const getTypeDirective = (
+  item: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode
+): string => {
   if (!item.directives || !item.directives.length) {
+    if (item.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+      return 'Interface';
+    }
     return 'Type';
   }
 
@@ -127,3 +110,9 @@ export const getTypeDirective = (item: ObjectTypeDefinitionNode): string => {
 
 export const capitalizeFirst = (text: string): string =>
   text.substring(0, 1).toUpperCase() + text.substring(1);
+
+export const getNodeId = (type: SchemaDefinitionNode) => {
+  return `${type.name.value}-${
+    type.kind === Kind.OBJECT_TYPE_DEFINITION ? type.fields?.length : ''
+  }`;
+};

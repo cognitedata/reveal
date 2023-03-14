@@ -1,11 +1,19 @@
-import { Flex, Body, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import {
+  Flex,
+  Body,
+  Dropdown,
+  Icon,
+  Menu,
+  Chip,
+  Tooltip,
+} from '@cognite/cogs.js';
 import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
 import { useState } from 'react';
 
-import { MenuItem, DropdownButton, LastTimeText, VersionTag } from './elements';
+import { DropdownButton, LastTimeText } from './elements';
 
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
@@ -26,10 +34,10 @@ const VersionType = ({
   return (
     <>
       {status === DataModelVersionStatus.PUBLISHED && isLatest && (
-        <VersionTag status={status}>Latest</VersionTag>
+        <Chip size="x-small" type="neutral" label="Latest" />
       )}
       {status === DataModelVersionStatus.DRAFT && (
-        <VersionTag status={status}>Local draft</VersionTag>
+        <Chip size="x-small" label="Local draft" />
       )}
     </>
   );
@@ -43,9 +51,10 @@ export function SchemaVersionDropdown({
   const [isOpen, setOpen] = useState(false);
   const dateUtils = useInjection(TOKENS.dateUtils);
 
-  const latestVersion =
-    versions.filter((v) => v.status === DataModelVersionStatus.PUBLISHED)[0]
-      ?.version || '999999';
+  const latest =
+    versions.filter((v) => v.status === DataModelVersionStatus.PUBLISHED)[0] ||
+    {};
+
   return (
     <div data-cy="schema-version-select">
       <Dropdown
@@ -55,15 +64,16 @@ export function SchemaVersionDropdown({
           <Menu
             style={{
               maxHeight: 192,
-              width: 300,
+              minWidth: 300,
               overflow: 'auto',
               display: 'block',
             }}
           >
             {versions.map((schemaObj) => (
-              <MenuItem
+              <Menu.Item
+                css={{}}
                 key={`${schemaObj.version}-${schemaObj.status}`}
-                selected={
+                toggled={
                   schemaObj.version === selectedVersion.version &&
                   schemaObj.status === selectedVersion.status
                 }
@@ -72,32 +82,37 @@ export function SchemaVersionDropdown({
                   setOpen(false);
                 }}
               >
-                <Flex alignItems="center" style={{ flex: '1 1 100px' }}>
-                  <Body
-                    level={2}
-                    style={{ width: 50, textAlign: 'left' }}
-                  >{`v. ${schemaObj.version}`}</Body>
-                  {dateUtils.isValid(schemaObj.lastUpdatedTime) ? (
+                <Flex alignItems="center">
+                  <Tooltip
+                    disabled={schemaObj.version.length < 12}
+                    content={`v. ${schemaObj.version}`}
+                  >
+                    <Body
+                      level={2}
+                      style={{
+                        marginRight: 8,
+                        textAlign: 'left',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        maxWidth: 100,
+                      }}
+                    >
+                      {`v. ${schemaObj.version}`}
+                    </Body>
+                  </Tooltip>
+                  {dateUtils.isValid(schemaObj.lastUpdatedTime as number) ? (
                     <LastTimeText level={2}>
-                      {dateUtils.toTimeDiffString(schemaObj.lastUpdatedTime)}
+                      {dateUtils.toTimeDiffString(
+                        schemaObj.lastUpdatedTime as number
+                      )}
                     </LastTimeText>
                   ) : null}
-                </Flex>
-                <Flex alignItems="center">
                   <VersionType
                     status={schemaObj.status}
-                    isLatest={schemaObj.version === latestVersion}
-                  />
-                  <Icon
-                    type="EllipsisVertical"
-                    style={{
-                      margin: 0,
-                      marginLeft: 12,
-                      marginRight: 12,
-                    }}
+                    isLatest={schemaObj.version === latest.version}
                   />
                 </Flex>
-              </MenuItem>
+              </Menu.Item>
             ))}
           </Menu>
         }
@@ -112,14 +127,23 @@ export function SchemaVersionDropdown({
             alignItems="center"
             style={{ width: '100%' }}
           >
-            <Body level="2"> v. {selectedVersion.version}</Body>
+            <Body
+              level="2"
+              style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+            >
+              v. {selectedVersion.version}
+            </Body>
             <Flex alignItems="center" style={{ margin: '0 10px' }}>
               <VersionType
                 status={selectedVersion.status}
-                isLatest={selectedVersion.version === latestVersion}
+                isLatest={selectedVersion.version === latest.version}
               />
             </Flex>
-            <Icon type="ChevronDown" />
+            {/* Ideally we would put the flexShrink style directly on the Icon but
+            typescript complains that Icon doesn't have a style prop. */}
+            <Flex alignItems="center" style={{ flexShrink: 0 }}>
+              <Icon type="ChevronDown" />
+            </Flex>
           </Flex>
         </DropdownButton>
       </Dropdown>

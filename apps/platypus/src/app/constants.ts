@@ -4,3 +4,5 @@ export const DOCS_LINKS = {
   POPULATION: 'https://docs.cognite.com/cdf/data_modeling/populate_dm/',
   QUERYING: 'https://docs.cognite.com/cdf/data_modeling/query_data_dm/',
 };
+
+export const NoNameDisplayName = '<no name>';

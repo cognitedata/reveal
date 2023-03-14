@@ -1,0 +1,21 @@
+import React from 'react';
+import { AuthContainerMock } from './AuthContainerMock';
+import '@cognite/cogs.js/dist/cogs.css';
+import App from '../../app/App';
+
+<% if (internationalization) { %>
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { translations } from '../../app/common/i18n';
+<% } %>
+
+export const AppWrapper = () => {
+  const projectName = "<%= projectName %>";
+
+  return (
+    <% if (internationalization) { %><I18nWrapper translations={translations} defaultNamespace={projectName}><% } %>
+    <AuthContainerMock>
+      <App />
+    </AuthContainerMock>
+    <% if (internationalization) { %></I18nWrapper><% } %>
+  );
+};

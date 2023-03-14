@@ -1,5 +1,4 @@
-import { Input, InputProps } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Input, InputProps, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   DataModelTypeDefsType,
@@ -82,13 +81,13 @@ export const TypeFormModal = ({
     }
   };
   return (
-    <ModalDialog
+    <Modal
       title={label}
-      okType="primary"
-      okButtonName={label}
+      okText={label}
       onOk={handleSubmit(onSubmit)}
       visible={visible}
       onCancel={closeModal}
+      okDisabled={!field.value || !!errors.typeName?.message}
     >
       <Input
         {...(field as Partial<InputProps>)}
@@ -106,6 +105,6 @@ export const TypeFormModal = ({
         }}
         placeholder={t('modal_name_input_placeholder', 'Enter name')}
       />
-    </ModalDialog>
+    </Modal>
   );
 };

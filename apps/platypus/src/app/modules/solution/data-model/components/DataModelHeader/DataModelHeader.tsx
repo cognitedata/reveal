@@ -5,11 +5,10 @@ import {
 } from '@platypus/platypus-core';
 import { DiscardButton, DocLinkWrapper, ReturnButton } from './elements';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { Button, Flex, Label, Tooltip } from '@cognite/cogs.js';
+import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
@@ -20,6 +19,7 @@ import { DOCS_LINKS } from '@platypus-app/constants';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
+  dataModelSpace: string;
   dataModelVersions: DataModelVersion[] | undefined;
   isSaving: boolean;
   isUpdating: boolean;
@@ -28,13 +28,13 @@ export interface DataModelHeaderProps {
   onDiscardClick: () => void;
   onPublishClick: () => void;
   onDataModelVersionSelect: (schema: DataModelVersion) => void;
-  onEndpointClick: () => void;
   selectedDataModelVersion: DataModelVersion;
   title: string;
 }
 
 export const DataModelHeader = ({
   dataModelExternalId,
+  dataModelSpace,
   dataModelVersions,
   isSaving,
   isUpdating,
@@ -43,7 +43,6 @@ export const DataModelHeader = ({
   onDiscardClick,
   onPublishClick,
   onDataModelVersionSelect,
-  onEndpointClick,
   selectedDataModelVersion,
   title,
 }: DataModelHeaderProps) => {
@@ -55,21 +54,20 @@ export const DataModelHeader = ({
 
   const { track } = useMixpanel();
 
-  const { editorMode, graphQlSchema, isDirty, typeFieldErrors } =
-    useSelector<DataModelState>((state) => state.dataModel);
+  const { editorMode, graphQlSchema, isDirty } = useSelector<DataModelState>(
+    (state) => state.dataModel
+  );
   const {
-    parseGraphQLSchema,
     setCurrentTypeName,
     setEditorMode,
-    setGraphQlSchema,
+    updateGraphQlSchema,
     setIsDirty,
     setSelectedDataModelVersion,
-    setSelectedVersionNumber,
     switchDataModelVersion,
   } = useDataModelState();
 
   const { getRemoteAndLocalSchemas, removeLocalDraft, setLocalDraft } =
-    useLocalDraft(dataModelExternalId);
+    useLocalDraft(dataModelExternalId, dataModelSpace, latestDataModelVersion);
 
   const getDataModelHeaderSchemas = () => {
     /*
@@ -83,7 +81,6 @@ export const DataModelHeader = ({
     }
   };
 
-  const isDraftSaved = isDirty && Object.keys(typeFieldErrors).length === 0;
   const isDraftOld =
     !!localDraft &&
     parseInt(latestDataModelVersion.version, 10) >
@@ -91,7 +88,7 @@ export const DataModelHeader = ({
 
   const handleEditClick = () => {
     if (localDraft) {
-      setGraphQlSchema(localDraft.schema);
+      updateGraphQlSchema(localDraft.schema);
     } else {
       setLocalDraft({
         ...selectedDataModelVersion,
@@ -112,7 +109,6 @@ export const DataModelHeader = ({
     }
     setIsDirty(false);
     setCurrentTypeName(null);
-    setSelectedVersionNumber(DEFAULT_VERSION_PATH);
     setSelectedDataModelVersion(latestDataModelVersion);
 
     track('Discard', {
@@ -128,7 +124,6 @@ export const DataModelHeader = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     switchDataModelVersion(dataModelVersion);
-    parseGraphQLSchema(dataModelVersion.schema);
     track('SelectDM', {
       dataModel: dataModelExternalId,
       version: dataModelVersion.version,
@@ -148,17 +143,19 @@ export const DataModelHeader = ({
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
           {isDraftOld && (
-            <Flex alignItems={'center'} style={{ marginRight: '8px' }}>
+            <Flex alignItems="center" style={{ marginRight: '8px' }}>
               <Tooltip
                 position="bottom"
                 content={`Version v. ${latestDataModelVersion.version} has been published by another user, and this draft is currently based on an outdated version.`}
               >
-                <Label size="medium" variant="warning">
-                  {t(
+                <Chip
+                  size="medium"
+                  type="warning"
+                  label={t(
                     'outdated_draft_version_warning',
                     `Your draft is based on an outdated version`
                   )}
-                </Label>
+                />
               </Tooltip>
             </Flex>
           )}
@@ -181,8 +178,7 @@ export const DataModelHeader = ({
             disabled={
               !isDirty ||
               !graphQlSchema ||
-              selectedDataModelVersion.schema === graphQlSchema ||
-              Object.keys(typeFieldErrors).length !== 0
+              selectedDataModelVersion.schema === graphQlSchema
             }
             style={{ marginRight: '8px' }}
           >
@@ -249,14 +245,6 @@ export const DataModelHeader = ({
             {t('edit_data_model', 'Edit data model')}
           </Button>
         </Tooltip>
-        <Button
-          style={{ marginRight: '8px' }}
-          icon="Link"
-          data-cy="btn-endpoint-modal"
-          onClick={onEndpointClick}
-        >
-          URL
-        </Button>
         {docLink}
       </Flex>
     );
@@ -266,7 +254,6 @@ export const DataModelHeader = ({
     <VersionSelectorToolbar
       title={title || ''}
       schemas={getDataModelHeaderSchemas()}
-      draftSaved={isDraftSaved}
       onDataModelVersionSelect={handleDataModelVersionSelect}
       selectedDataModelVersion={
         editorMode === SchemaEditorMode.Edit && localDraft

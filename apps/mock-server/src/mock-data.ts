@@ -10,7 +10,12 @@ import {
   filesMockData,
   groupsMockData,
   transformationsMockData,
-} from '@platypus/mock-data';
+  fdmSpacesMockData,
+  fdmContainersMockData,
+  fdmViewsMockData,
+  fdmInstancesMockData,
+  fdmDataModelsMockData,
+} from '@fusion/mock-data';
 
 export const mockDataSample = {
   assets: assetsMockData,
@@ -24,11 +29,12 @@ export const mockDataSample = {
   groups: groupsMockData,
   transformations: transformationsMockData,
   posts: [{ id: 1, title: 'json-server', author: 'typicode' }],
-  spaces: [{ externalId: 'blog' }],
+  spaces: [{ id: 'blog', externalId: 'blog' }],
   models: [
     {
       spaceExternalId: 'blog',
       externalId: 'PostTable',
+      id: 'PostTable',
       properties: {
         title: {
           type: 'text',
@@ -48,6 +54,7 @@ export const mockDataSample = {
     {
       spaceExternalId: 'blog',
       externalId: 'UserTable',
+      id: 'UserTable',
       properties: {
         name: {
           type: 'text',
@@ -57,6 +64,7 @@ export const mockDataSample = {
     },
     {
       spaceExternalId: 'blog',
+      id: 'CommentTable',
       externalId: 'CommentTable',
       properties: {
         body: {
@@ -74,21 +82,35 @@ export const mockDataSample = {
         },
       },
     },
+    {
+      spaceExternalId: 'blog',
+      externalId: 'TypeWithoutDataTable',
+      id: 'TypeWithoutDataTable',
+      properties: {
+        name: {
+          type: 'text',
+          nullable: false,
+        },
+      },
+    },
   ],
   nodes: [
     {
       model: 'UserTable',
       externalId: 'user_1',
+      id: 'user_1',
       name: 'John Doe',
     },
     {
       model: 'UserTable',
       externalId: 'user_2',
+      id: 'user_2',
       name: 'James Bond',
     },
     {
       model: 'PostTable',
       externalId: 'post_1',
+      id: 'post_1',
       title: 'Random post 1',
       views: 10,
       user: 'user_1',
@@ -96,6 +118,7 @@ export const mockDataSample = {
     {
       model: 'PostTable',
       externalId: 'post_2',
+      id: 'post_2',
       title: 'Random post 2',
       views: 12,
       user: 'user_2',
@@ -103,6 +126,7 @@ export const mockDataSample = {
     {
       model: 'CommentTable',
       externalId: 'comment_1',
+      id: 'comment_1',
       body: 'Random comment 1',
       date: 164744,
       post: 'post_1',
@@ -112,6 +136,7 @@ export const mockDataSample = {
   schema: [
     {
       externalId: 'blog',
+      id: 'blog',
       name: 'blog',
       description: 'blog',
       metadata: {},
@@ -187,7 +212,7 @@ export const mockDataSample = {
           ],
           dataModel: {
             graphqlRepresentation:
-              'type Post {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}',
+              'type Post {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}\n\ntype TypeWithoutData {\n  name: String!\n}',
             types: [],
           },
         },
@@ -199,16 +224,21 @@ export const mockDataSample = {
             externalId: '1',
             title: 'Lorem Ipsum',
             views: 254,
-            user: { id: 123 },
+            user: { externalId: '123' },
             tags: ['Lorem', 'Ipsum'],
-            comments: [{ id: 987 }, { id: 995 }, { id: 996 }, { id: 997 }],
+            comments: [
+              { externalId: '987' },
+              { externalId: '995' },
+              { externalId: '996' },
+              { externalId: '997' },
+            ],
           },
           {
             id: 2,
             externalId: '2',
             title: 'Sic Dolor amet',
             views: 65,
-            user: { id: 456 },
+            user: { externalId: '456' },
             tags: ['Sic', 'Dolor'],
             comments: [],
           },
@@ -217,41 +247,41 @@ export const mockDataSample = {
             externalId: '3',
             title: 'Lorem Sic Dolor amet',
             views: 100,
-            user: { id: 456 },
+            user: { externalId: '456' },
             tags: ['Dolor', 'Lorem'],
             comments: [],
           },
         ],
         User_1: [
-          { id: 123, externalId: 123, name: 'John Doe' },
-          { id: 456, externalId: 456, name: 'Jane Doe' },
+          { id: 123, externalId: '123', name: 'John Doe' },
+          { id: 456, externalId: '456', name: 'Jane Doe' },
         ],
         Comment_1: [
           {
             id: 987,
             externalId: '987',
-            post: { id: 1 },
+            post: { externalId: '1' },
             body: 'Consectetur adipiscing elit',
             date: 1651346026630,
           },
           {
             id: 995,
             externalId: '995',
-            post: { id: 1 },
+            post: { externalId: '1' },
             body: 'Nam molestie pellentesque dui',
             date: 1651346026630,
           },
           {
             id: 996,
             externalId: '996',
-            post: { id: 1 },
+            post: { externalId: '1' },
             body: 'Random comment 996',
             date: 1651346026630,
           },
           {
             id: 997,
             externalId: '997',
-            post: { id: 1 },
+            post: { externalId: '1' },
             body: 'Random comment 997',
             date: 1651346026630,
           },
@@ -259,4 +289,13 @@ export const mockDataSample = {
       },
     },
   ],
+
+  // dms v3 stuff
+  dmsV3Spaces: fdmSpacesMockData,
+  dmsV3Views: fdmViewsMockData,
+  dmsV3Containers: fdmContainersMockData,
+  containers: fdmContainersMockData,
+  views: fdmViewsMockData,
+  instances: fdmInstancesMockData,
+  datamodels: fdmDataModelsMockData,
 } as MockData;

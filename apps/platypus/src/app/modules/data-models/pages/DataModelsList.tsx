@@ -1,22 +1,18 @@
-import { Button, Flex, Title, Tooltip } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import config from '@platypus-app/config/config';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataModelCard } from '@platypus-app/modules/data-models/components/DataModelCard/DataModelCard';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { DataModel } from '@platypus/platypus-core';
-import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { AgGridReact } from 'ag-grid-react';
+import { useRef, useState } from 'react';
+import { DataModelsListHeader } from '../components/DataModelsListHeader/DataModelsListHeader';
+import { DataModelsTable } from '../components/DataModelsTable/DataModelsTable';
 import { CreateDataModel } from '../CreateDataModel';
 import { DeleteDataModel } from '../DeleteDataModel';
-import { StyledRow, StyledDataModelListWrapper } from '../elements';
+import { StyledDataModelListWrapper } from '../elements';
 
 export const DataModelsList = () => {
-  const history = useHistory();
   const { t } = useTranslation('data-models');
 
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -24,9 +20,12 @@ export const DataModelsList = () => {
     DataModel | undefined
   >(undefined);
 
-  const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
-    checkAll: true,
-  });
+  const gridRef = useRef<AgGridReact>(null);
+  // this state is needed to keep re-rendering if quickFilter changes
+  // since grid api lives under ref, and ref cannot force re-render
+  // this is intermediate state for keeping grid api -> getDisplayedRowCount and state in sync
+
+  const [filterCount, setFilterCount] = useState(0);
 
   const {
     data: dataModels,
@@ -60,32 +59,6 @@ export const DataModelsList = () => {
     );
   }
 
-  const renderList = () => {
-    return (
-      <StyledRow cols={3} gutter={20}>
-        {dataModels!.map((dataModel) => (
-          <DataModelCard
-            dataModel={dataModel}
-            onOpen={(openDataModel) => {
-              history.push({
-                pathname: `/data-models/${openDataModel.id}/${DEFAULT_VERSION_PATH}`,
-              });
-            }}
-            onEdit={(editDataModel) => {
-              history.push({
-                pathname: `/data-models/${editDataModel.id}/${DEFAULT_VERSION_PATH}`,
-              });
-            }}
-            onDelete={(deleteDataModel) =>
-              setDataModelToDelete(deleteDataModel)
-            }
-            key={dataModel.id}
-          />
-        ))}
-      </StyledRow>
-    );
-  };
-
   const renderEmptyList = () => {
     return (
       <div className="emptyList">
@@ -100,33 +73,32 @@ export const DataModelsList = () => {
       </div>
     );
   };
-
   return (
     <StyledDataModelListWrapper>
-      <Flex justifyContent="space-between" className="header">
-        <Title level={3} data-cy="data-models-title">
-          {t('data_models_title', 'Data Models')}
-        </Title>
-        <Tooltip
-          disabled={dataModelsWriteAcl.isAclSupported}
-          content={t(
-            'create_data_model_btn_disabled_text',
-            `Missing "${config.DATA_MODELS_ACL}.write" permission`
-          )}
-        >
-          <Button
-            type="primary"
-            disabled={!dataModelsWriteAcl.isAclSupported}
-            data-cy="create-data-model-btn"
-            onClick={() => setIsCreateModalVisible(true)}
-          >
-            {t('create_data_model_btn', 'Create Data Model')}
-          </Button>
-        </Tooltip>
-      </Flex>
-      {dataModels && dataModels.length ? renderList() : renderEmptyList()}
+      <DataModelsListHeader
+        dataModelsCount={filterCount || dataModels.length}
+        onCreateDataModelClick={() => setIsCreateModalVisible(true)}
+        onSearchChange={(newSearchText) => {
+          gridRef.current?.api.setQuickFilter(newSearchText);
+          setFilterCount(gridRef.current?.api.getDisplayedRowCount() as number);
+        }}
+      />
+
+      {dataModels && dataModels.length ? (
+        <DataModelsTable
+          filteredRowCount={filterCount || dataModels.length}
+          dataModels={dataModels}
+          ref={gridRef}
+          onDelete={(dataModel) => setDataModelToDelete(dataModel)}
+        />
+      ) : (
+        renderEmptyList()
+      )}
       {isCreateModalVisible && (
-        <CreateDataModel onCancel={() => setIsCreateModalVisible(false)} />
+        <CreateDataModel
+          onCancel={() => setIsCreateModalVisible(false)}
+          visible
+        />
       )}
       {dataModelToDelete && (
         <DeleteDataModel

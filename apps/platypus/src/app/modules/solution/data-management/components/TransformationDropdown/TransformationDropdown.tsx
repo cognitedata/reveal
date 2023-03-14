@@ -1,20 +1,22 @@
-import { Dropdown, Menu, Icon, Button } from '@cognite/cogs.js';
+import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Fragment } from 'react';
 import styled from 'styled-components';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import useTransformations from '../../hooks/useTransformations';
-import { groupTransformationsByTypes } from '@platypus-core/domain/transformation';
+import { groupTransformationsByTypes } from '@platypus/platypus-core';
+import { isFDMv3 } from '@platypus-app/flags';
+import { createLink } from '@cognite/cdf-utilities';
 
 type Props = {
-  dataModelExternalId: string;
+  space: string;
   onAddClick: () => void;
   typeName: string;
   version: string;
 };
 
 export function TransformationDropdown({
-  dataModelExternalId,
+  space,
   onAddClick,
   typeName,
   version,
@@ -22,8 +24,10 @@ export function TransformationDropdown({
   const { t } = useTranslation('BulkPopulation');
   const { setIsTransformationModalOpen } = useDataManagementPageUI();
 
+  const isFDMV3 = isFDMv3();
+
   const { data: transformations } = useTransformations({
-    dataModelExternalId,
+    space,
     isEnabled: true,
     typeName,
     version,
@@ -49,15 +53,30 @@ export function TransformationDropdown({
                   </Menu.Header>
                   {groupedTransformations[key].transformations.map(
                     (transformation) => (
-                      <StyledMenuItem
+                      <Menu.Item
+                        css={{}}
                         key={transformation.id}
                         onClick={() => {
-                          setIsTransformationModalOpen(true, transformation.id);
+                          if (isFDMV3) {
+                            window.open(
+                              createLink(
+                                `/transformations/${transformation.id}`
+                              ),
+                              '_blank'
+                            );
+                          } else {
+                            setIsTransformationModalOpen(
+                              true,
+                              transformation.id
+                            );
+                          }
                         }}
+                        icon={isFDMV3 ? 'Link' : 'ExternalLink'}
+                        iconPlacement="right"
+                        style={{ width: 240 }}
                       >
                         {transformation.name}
-                        <Icon type="ExternalLink" />
-                      </StyledMenuItem>
+                      </Menu.Item>
                     )
                   )}
                   <Menu.Divider />
@@ -81,13 +100,6 @@ export function TransformationDropdown({
     </Dropdown>
   );
 }
-
-const StyledMenuItem = styled(Menu.Item)`
-  && {
-    width: 246px;
-    justify-content: space-between;
-  }
-`;
 
 const AddNewButton = styled(Button)`
   && {

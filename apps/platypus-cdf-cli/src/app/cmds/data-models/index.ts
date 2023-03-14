@@ -9,8 +9,7 @@ import generateCmd from './generate';
 import listCmd from './list';
 
 export const command = 'data-models <command>';
-export const desc =
-  'Manage data models which allows you to store and retrieve data to your needs.';
+export const desc = 'Manage data models to store and retrieve data.';
 export const aliases = ['dm'];
 
 export const builder = (yargs: Argv) => {
@@ -24,6 +23,7 @@ export const builder = (yargs: Argv) => {
     .command(createCmd)
     .command(publishCmd)
     .command(listCmd)
+    .command(deleteCmd)
     .command(generateCmd)
     .command(codegenJs)
     .demandCommand(1)

@@ -41,7 +41,7 @@ export const Base = () => (
       <GroupTitle>Default</GroupTitle>
       <div style={{ height: '600px' }}>
         <QueryExplorer
-          solutionId="1"
+          dataModelExternalId="1"
           schemaVersion="1"
           defaultQuery={DEFAULT_QUERY}
         />

@@ -1,27 +1,46 @@
 @Library('jenkins-helpers') _
 
-// This is your FAS staging app id. Staging deployments are protected by Cognite
-// IAP, meaning they're only accessible to Cogniters.
-// static final String STAGING_APP_ID = 'platypus-staging'
+// This is all the applications in the monorepo. Register your application name here
+// in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
+static final String[] APPLICATIONS = [
+  'platypus',
+  'data-exploration',
+  'coding-conventions',
+]
 
-// This is your FAS production app id.
-// At this time, there is no production build for the demo app.
-static final String PRODUCTION_APP_ID = 'cdf-solutions-ui'
+// This is the Firebase site mapping.
+// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
+static final Map<String, String> FIREBASE_APP_SITES = [
+  'platypus': 'platypus',
+  'data-exploration': 'data-exploration',
+  'coding-conventions': 'coding-conventions',
+]
 
-// This is your FAS app identifier (repo) shared across both production and staging apps
-// in order to do a commit lookup (commits are shared between apps).
-static final String APPLICATION_REPO_ID = 'platypus'
+static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
+  'platypus': "@cognite/cdf-solutions-ui",
+  'data-exploration': "@cognite/cdf-data-exploration",
+  'coding-conventions': "@cognite/cdf-coding-conventions",
+]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME = 'platypus'
+static final Map<String, String> SENTRY_PROJECT_NAMES = [
+  'platypus': "platypus",
+  'data-exploration': "data-explorer",
+  'coding-conventions': "coding-conventions"
+]
+
+// Add apps/libs name to the list where you want the storybook preview to build.
+static final String[] PREVIEW_STORYBOOK = [
+  'platypus',
+  'data-exploration-components-old',
+  'shared-plotting-components'
+]
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
-//
-// If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = 'https://b37a75c7e26440009d63602ba2f02b9f@o124058.ingest.sentry.io/5996992'
+
 
 // Specify your locize.io project ID. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
@@ -54,24 +73,93 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 //    which are named release-[NNN].
 //
 // No other options are supported at this time.
-// static final String VERSIONING_STRATEGY = 'single-branch'
+static final Map<String, String> VERSIONING_STRATEGY = [
+  'platypus': 'multi-branch',
+  'coding-conventions': 'multi-branch',
+  'data-exploration': 'multi-branch',
+]
 
 // == End of customization. Everything below here is common. == \\
 
-static final String NODE_VERSION = 'node:14'
+static final String NODE_VERSION = 'node:18'
 
 static final String PR_COMMENT_MARKER = '[pr-server]\n'
 static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
 
+final boolean isMaster = env.BRANCH_NAME == 'master'
+final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
+final boolean isPullRequest = !!env.CHANGE_ID
+
+/**
+ * Get list of affected projects.
+ *
+ * @return Array List of affected items
+ */
+def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, boolean isRelease = false, String[] applications) {
+  if (isRelease) {
+    for (int i = 0; i < applications.size(); i++) {
+      if (env.BRANCH_NAME.contains(applications[i])) {
+        print "[AFFECTED]: Found release application: ${applications[i]}"
+        return applications[i].split() // splitting to turn a string into an array (e.g., 'platypus' -> [platypus])
+      }
+    }
+
+    print "[AFFECTED]: No matching applications found in release branch name, try either of: ${applications.join(', ')}"
+    return []
+  }
+
+  if (isPullRequest || isMaster) {
+    def target = 'build'
+    def select = 'tasks.target.project'
+
+    def affected
+
+    // Using the NX's affected tree to determine which applications were changed in the branch.
+    // The 'base' value is derived from the NX documentation, see: https://nx.dev/recipes/ci/monorepo-ci-jenkins
+    if (isPullRequest) {
+      affected = sh(script: "./node_modules/.bin/nx print-affected --base=origin/${env.CHANGE_TARGET} --plain --target=${target} --select=${select}", returnStdout: true)
+    }
+    if (isMaster) {
+      affected = sh(script: "./node_modules/.bin/nx print-affected --base=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
+    }
+
+    if (!affected) {
+      print "[AFFECTED:NX] No affected applications were found!"
+      return []
+    }
+
+    print "[AFFECTED:NX] Affected projects: ${affected}"
+
+    return affected.replaceAll('[\r\n]+', '').split(', ')
+  }
+
+  print "[AFFECTED]: Oh no! You reached an edge-case that should not have been met. Contact your friends in #frontend for help (branch name: ${env.BRANCH_NAME})"
+  return []
+}
+
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
-      fas.pod(
+      locizeApiKey = secretEnvVar(
+        key: 'LOCIZE_API_KEY',
+        secretName: 'fusion-locize-api-key',
+        secretKey: 'FUSION_LOCIZE_API_KEY'
+      )
+      appHosting.pod(
         nodeVersion: NODE_VERSION,
-        sentryProjectName: SENTRY_PROJECT_NAME,
-        sentryDsn: SENTRY_DSN,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
+        envVars: [
+          locizeApiKey,
+          envVar(
+            key: 'REACT_APP_LOCIZE_PROJECT_ID',
+            value: LOCIZE_PROJECT_ID
+          ),
+          envVar(
+            key: 'REACT_APP_MIXPANEL_TOKEN',
+            value: MIXPANEL_TOKEN
+          )
+        ]
       ) {
         codecov.pod {
           testcafe.pod() {
@@ -80,20 +168,6 @@ def pods = { body ->
             ])
 
             node(POD_LABEL) {
-              dir('main') {
-                stage('Checkout code') {
-                  checkout(scm)
-                }
-
-                stage('Delete comments') {
-                  deleteComments(PR_COMMENT_MARKER)
-                }
-
-                stage('Install dependencies') {
-                  yarn.setup()
-                }
-              }
-
               body()
             }
           }
@@ -104,74 +178,179 @@ def pods = { body ->
 }
 
 pods {
-  final boolean isRelease = env.BRANCH_NAME == 'master'
-  final boolean isPullRequest = !!env.CHANGE_ID
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
-    logErrors: isRelease
+    logErrors: isMaster || isRelease
   ) {
-    stageWithNotify('Build and deploy Storybook') {
-      dir('main') {
-        if (!isPullRequest) {
-          print 'No PR previews for release builds'
-          return
-        }
-        previewServer(
-          prefix: 'storybook',
-          commentPrefix: STORYBOOK_COMMENT_MARKER,
-          buildCommand: 'yarn build-storybook',
-          buildFolder: 'storybook-static',
-        )
+    dir('main') {
+      stage('Checkout code') {
+        echo sh(script: 'env|sort', returnStdout: true)
+        checkout(scm)
       }
-    }
-    parallel(
-      'Preview': {
-        dir('main') {
-          if (!isPullRequest) {
-            print 'No PR previews for release builds'
-            return
-          }
 
-          stageWithNotify('Build and deploy PR') {
-            def package_name = '@cognite/cdf-solutions-ui'
-            def prefix = jenkinsHelpersUtil.determineRepoName()
-            def domain = 'fusion-preview'
-            previewServer(
-              repo: domain,
-              prefix: prefix,
-              buildCommand: 'yarn build preview platypus',
-              buildFolder: 'build',
-            )
-            deleteComments('[FUSION_PREVIEW_URL]')
-            deleteComments('[pr-server]')
-            def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-            pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)")
+      stage('Delete comments') {
+        deleteComments(PR_COMMENT_MARKER)
+      }
+
+      stage('Install dependencies') {
+        yarn.setup()
+      }
+
+      stage('Git setup') {
+          // NX needs the references to the master in order to check affected projects.
+          withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
+            sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
+            if (isPullRequest) {
+              sh("git fetch origin ${env.CHANGE_TARGET}:refs/remotes/origin/${env.CHANGE_TARGET}")
+            } else {
+              // NOTE: I am suspecting that 'master' has to be changed with ${env.BRANCH_NAME} to work for release- branches
+              sh("git fetch origin master:refs/remotes/origin/master")
+            }
           }
+          // the apphosting container interacts with git when running npx commands.
+          // since the git checkout is done in a different container,
+          // the user permissions seem altered when git is executed from the node container,
+          // therefore we need to mark the folder as safe
+          container('apphosting') {
+            sh("git config --global --add safe.directory ${env.WORKSPACE}/main")
+          }
+      }
+
+      def projects;
+      stage('Get affected projects') {
+        container('apphosting') {
+          projects = getAffectedProjects(isPullRequest, isMaster, isRelease, APPLICATIONS)
         }
-      },
-      'Release': {
-        if (isRelease) {
-          dir('main') {
-            stage('Publish production build') {
-              fas.build(
-                appId: PRODUCTION_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build production',
-                shouldPublishSourceMap: false
-              )
+      }
+      
 
-              fas.publish(
-                shouldPublishSourceMap: false
-              )
+      parallel(
+        'Storybook': {
+          container('apphosting') {
+            if (!isPullRequest) {
+              print 'No storybook reviews for release builds'
+              return;
+            }
 
-              slack.send(
-                channel: SLACK_CHANNEL,
-                message: "Deployment of ${env.BRANCH_NAME} complete!"
-              )
+            for (int i = 0; i < projects.size(); i++) {
+              def project = projects[i];
+              if (!PREVIEW_STORYBOOK.contains(project)) {
+                continue;
+              }
+
+              stageWithNotify("Build and deploy Storybook for: ${project}") {
+                previewServer(
+                  prefix: "storybook-${project}",
+                  commentPrefix: "[storybook-server:${project}]\n",
+                  buildCommand: "yarn build-storybook ${project}",
+                  buildFolder: "storybook-static",
+                )
+              }
+            }
+          }
+        },
+
+        'Preview': {
+          container('apphosting') {
+            if (!isPullRequest) {
+              print 'No PR previews for release builds'
+              return
+            }
+
+            deleteComments('[FUSION_PREVIEW_URL]')
+
+            for (int i = 0; i < projects.size(); i++) {
+              def project = projects[i];
+              def packageName = PREVIEW_PACKAGE_NAMES[project]
+
+              if (packageName == null) {
+                print "No preview available for: ${project}"
+                continue
+              }
+
+              dir("apps/${project}") {
+                // Run the yarn install in the app in cases of local packages.json file
+                if (fileExists("yarn.lock")) {
+                  yarn.setup()
+                }
+              }
+
+              stageWithNotify("Build and deploy PR for: ${project}") {
+                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
+                def domain = 'fusion-preview'
+                previewServer(
+                  repo: domain,
+                  prefix: prefix,
+                  buildCommand: "yarn build preview ${project}",
+                  buildFolder: "build",
+                )
+                deleteComments(PR_COMMENT_MARKER)
+                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
+                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}")
+              }
+            }
+          }
+        },
+
+        'Release': {
+          container('apphosting') {
+            print "branch name: ${env.BRANCH_NAME}";
+            print "change id: ${env.CHANGE_ID}";
+            print "isMaster: ${isMaster}";
+            print "isRelease: ${isRelease}";
+
+            if (isPullRequest) {
+              print 'No deployment on PR branch'
+              return;
+            }
+
+            for (int i = 0; i < projects.size(); i++) {
+              def project = projects[i];
+              def firebaseSiteName = FIREBASE_APP_SITES[project];
+
+              if (firebaseSiteName == null) {
+                print "No release available for: ${project}"
+                continue;
+              }
+
+              final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
+              final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project] == 'single-branch';
+              final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
+
+              // Run the yarn install in the app in cases of local packages.json
+              dir("apps/${project}") {
+                if (fileExists("yarn.lock")) {
+                  yarn.setup()
+                }
+              }
+
+              stageWithNotify("Publish production build: ${project}") {
+                appHosting(
+                  appName: firebaseSiteName,
+                  environment: releaseToProd ? 'production' : 'staging',
+                  firebaseJson: 'build/firebase.json',
+                  buildCommand: "yarn build production ${project}",
+                  buildFolder: 'build',
+                )
+
+                slack.send(
+                  channel: SLACK_CHANNEL,
+                  message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+                )
+              }
+
+              if(project == "platypus"){
+                stageWithNotify('Save missing keys to locize') {
+                  sh("yarn i18n-push")
+                }
+                stageWithNotify('Remove deleted keys from locize') {
+                  sh("yarn i18n-remove-deleted")
+                }
+              }
             }
           }
         }
-      }
-    )
+      )
+    }
   }
 }

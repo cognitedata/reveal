@@ -5,14 +5,13 @@ import { AuthContainerMock } from './AuthContainerMock';
 import '@cognite/cogs.js/dist/cogs.css';
 
 type AppContainerProps = {
-  sidecar?: unknown;
   store: Store;
   children: React.ReactNode;
 };
-export const AppContainer = ({ children, store }: AppContainerProps) => {
+export function AppContainer({ children, store }: AppContainerProps) {
   return (
     <ReduxProvider store={store}>
       <AuthContainerMock>{children}</AuthContainerMock>
     </ReduxProvider>
   );
-};
+}

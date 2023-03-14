@@ -5,7 +5,7 @@ import { BaseArgs } from '../types';
 class LogoutCommand implements CommandModule {
   public readonly command = 'signout';
   public readonly aliases = ['logout'];
-  public readonly describe = 'Signout CDF User (globally)';
+  public readonly describe = 'Sign out current user.';
 
   builder(yargs: Argv) {
     return yargs.version(false);
@@ -13,7 +13,7 @@ class LogoutCommand implements CommandModule {
 
   handler(arg: Arguments<BaseArgs>) {
     logout();
-    arg.logger.success('You have been logged-out successfully!');
+    arg.logger.success('You have been signed out.');
   }
 }
 

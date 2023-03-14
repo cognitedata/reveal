@@ -40,7 +40,7 @@ export class CdfDatabaseService {
     if (obj) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resource = (this.cdfDb.get(this.storeKey) as any)
-        .updateById(object)
+        .updateById(obj.value().id, object)
         .value();
       this.cdfDb.write();
       return resource;

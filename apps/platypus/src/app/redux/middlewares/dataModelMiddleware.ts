@@ -27,10 +27,9 @@ export const graphQlSchemaLocalStorageMiddleware =
       prevState.dataModel.graphQlSchema !== state.dataModel.graphQlSchema &&
       state.dataModel.editorMode === SchemaEditorMode.Edit
     ) {
-      store.dispatch(actions.setIsDirty(true));
-
       const DRAFT_KEY = getLocalDraftKey(
-        state.dataModel.selectedDataModelVersion.externalId
+        state.dataModel.selectedDataModelVersion.externalId,
+        state.dataModel.selectedDataModelVersion.space
       );
 
       // get drafts from localStorage
@@ -56,9 +55,7 @@ export const graphQlSchemaLocalStorageMiddleware =
               ...localDrafts.slice(index + 1),
             ];
       localStorageProvider.setItem(DRAFT_KEY, appendedOrReplaced);
-    }
 
-    if (actions.switchDataModelVersion.match(action)) {
       store.dispatch(actions.setIsDirty(true));
     }
 

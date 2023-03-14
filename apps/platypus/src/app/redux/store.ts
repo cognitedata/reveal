@@ -13,7 +13,7 @@ import dataModelSlice from './reducers/global/dataModelReducer';
 import dataManagementSlice from './reducers/global/dataManagementReducer';
 import { draftRowsLocalStorageMiddleware } from './middlewares/dataManagementMiddleware';
 import { graphQlSchemaLocalStorageMiddleware } from './middlewares/dataModelMiddleware';
-import { environment } from '../../environments/environment';
+import { environment } from '@platypus-app/environment';
 
 const createReducer = (asyncReducers: any) => {
   return combineReducers({

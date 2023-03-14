@@ -5,7 +5,8 @@ import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import mixpanel, { Dict } from 'mixpanel-browser';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouteMatch } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { environment } from '../../environments/environment';
 
 export type TRACKING_TOKENS =
   | 'UIEditor'
@@ -37,6 +38,8 @@ export const useMixpanel = () => {
     getUserInformation,
     {
       staleTime: Infinity,
+      enabled:
+        environment.APP_ENV !== 'development' && environment.APP_ENV !== 'mock',
       onSuccess: (user) => {
         if (process.env.NODE_ENV !== 'production') {
           return;
@@ -70,11 +73,12 @@ export const useMixpanel = () => {
 
 export const useMixpanelPathTracking = () => {
   const { track } = useMixpanel();
-  const { path, params, url } = useRouteMatch();
+  const { pathname } = useLocation();
+  const params = useParams();
   useEffect(() => {
     track('PageView', {
-      path,
-      url,
+      pathname,
+      url: window.location.href,
       ...Object.entries(params).reduce(
         (prev, [key, value]) => ({
           ...prev,
@@ -83,5 +87,5 @@ export const useMixpanelPathTracking = () => {
         {} as { [key in string]: string }
       ),
     });
-  }, [path, params, url, track]);
+  }, [pathname, params, track]);
 };

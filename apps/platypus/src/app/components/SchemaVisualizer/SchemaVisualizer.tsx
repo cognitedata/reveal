@@ -1,10 +1,30 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled, { CSSProperties } from 'styled-components/macro';
 import { Body, Button, Colors, Flex, Modal, Title } from '@cognite/cogs.js';
 import { parse } from 'graphql';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Node, Link, Graph, GraphFns, getLinkId } from '../Graph/Graph';
-import { getLinkText, getNodeWidth, getOffset, NODE_WIDTH } from './utils';
+import {
+  Node,
+  Link,
+  Graph,
+  GraphFns,
+  getLinkId,
+  RenderNodeFunction,
+  RenderLinkFunction,
+} from '../Graph/Graph';
+import {
+  getLinkText,
+  getNodeId,
+  getNodeWidth,
+  getLinkEndOffset,
+  NODE_WIDTH,
+} from './utils';
 
 import {
   getInterfaceTypes,
@@ -14,32 +34,32 @@ import {
   SchemaDefinitionNode,
 } from '../../utils/graphql-utils';
 
-import { ZIndex } from '../../utils/zIndex';
+import zIndex from '../../utils/zIndex';
 import { SmallNode } from './nodes/SmallNode';
 import { FullNode } from './nodes/FullNode';
-import { InterfaceNode } from './nodes/InterfaceNode';
 import { UnionNode } from './nodes/UnionNode';
-import { connectorsGenerator } from './connectors';
 import { VisualizerToolbar } from './VisualizerToolbar';
 import { Spinner } from '../Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType } from '@platypus/platypus-core';
-import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
 
 export interface SchemaVisualizerConfig {
   /* Set known types to control which types and field directives will be rendered and their styling */
   knownTypes?: BuiltInType[];
 }
 
+const OFFSET_TOP = 2;
 export const SchemaVisualizer = React.memo(
   ({
     graphQLSchemaString,
     active,
     isVisualizerOn,
+    onNodeClick,
   }: {
     graphQLSchemaString?: string;
     active?: string;
     isVisualizerOn: boolean;
+    onNodeClick: (nodeName: string) => void;
     /* Customize the Visualizer rendering */
   }) => {
     const { t } = useTranslation('Schema Visualizer');
@@ -48,10 +68,7 @@ export const SchemaVisualizer = React.memo(
     const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
 
     // if set, then should render small node instead of full node.
-    const [showHeaderOnly, setShowHeaderOnly] = usePersistedState<boolean>(
-      false,
-      'SHOW_HEADER_ONLY'
-    );
+    const [showHeaderOnly, setShowHeaderOnly] = useState<boolean>(false);
     const [searchFilterValue, setSearchFilterValue] = useState('');
     const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -67,7 +84,12 @@ export const SchemaVisualizer = React.memo(
       }
 
       if (!isVisualizerOn) {
-        setErrorMessage('Data model preview is currently turned off');
+        setErrorMessage(
+          t(
+            'visualizer_preview_off',
+            'Data model preview is currently turned off'
+          )
+        );
         setIsLoaded(true);
         return [];
       }
@@ -77,7 +99,12 @@ export const SchemaVisualizer = React.memo(
         return definitions;
       } catch {
         // TODO: Add sentry
-        setErrorMessage('There’s a validation error in your data model.');
+        setErrorMessage(
+          t(
+            'visualizer_validation_error',
+            "There's a validation error in your data model."
+          )
+        );
         setIsLoaded(true);
         return [];
       }
@@ -104,7 +131,7 @@ export const SchemaVisualizer = React.memo(
         setNodes(
           filteredObjectTypes.map((type) => ({
             title: type.name.value,
-            id: type.name.value,
+            id: getNodeId(type),
             ...type,
           })) as (Node & SchemaDefinitionNode)[]
         );
@@ -114,13 +141,18 @@ export const SchemaVisualizer = React.memo(
               current.name.value,
               filteredObjectTypes
             );
-            prev.push(
-              ...linkedNodes.map((linkedNode) => ({
-                source: current.name.value,
-                target: linkedNode.name.value,
-              }))
+            const newLinks = linkedNodes.map((linkedNode) => ({
+              source: getNodeId(current),
+              target: getNodeId(linkedNode.type),
+              id: linkedNode.field
+                ? `${current.name.value}.${linkedNode.field}`
+                : `${current.name.value}-${linkedNode.type.name.value}`,
+            }));
+            return prev.concat(
+              newLinks.concat(
+                newLinks.map((el) => ({ ...el, id: `${el.id}-hover` }))
+              )
             );
-            return prev;
           }, [] as Link[])
         );
         rerenderHandler();
@@ -132,9 +164,114 @@ export const SchemaVisualizer = React.memo(
       setTimeout(() => graphRef.current?.forceRerender(), debounce);
     };
 
-    const renderConnectorsForNode = useMemo(
-      () => connectorsGenerator(nodes, links, showHeaderOnly),
-      [nodes, links, showHeaderOnly]
+    const renderNode = useCallback<RenderNodeFunction<SchemaDefinitionNode>>(
+      (item, fullRender) => {
+        const nodeWidth = getNodeWidth(item);
+        let content = <p>Loading&hellip;</p>;
+        switch (item.kind) {
+          case 'ObjectTypeDefinition': {
+            if (showHeaderOnly) {
+              content = <SmallNode key={item.name.value} item={item} />;
+            } else {
+              content = (
+                <FullNode
+                  key={item.name.value}
+                  item={item}
+                  fullRender={fullRender}
+                />
+              );
+            }
+            break;
+          }
+          case 'InterfaceTypeDefinition': {
+            if (showHeaderOnly) {
+              content = <SmallNode key={item.name.value} item={item} />;
+            } else {
+              content = (
+                <FullNode
+                  key={item.name.value}
+                  item={item}
+                  fullRender={fullRender}
+                  isInterface
+                />
+              );
+            }
+            break;
+          }
+          case 'UnionTypeDefinition': {
+            content = <UnionNode key={item.name.value} item={item} />;
+            break;
+          }
+        }
+        return (
+          <NodeWrapper
+            isActive={active === item.id}
+            width={nodeWidth}
+            id={item.id}
+            key={item.id}
+            title={item.title}
+            onClick={() => {
+              if (
+                item.kind === 'ObjectTypeDefinition' ||
+                item.kind === 'InterfaceTypeDefinition'
+              ) {
+                onNodeClick(item.title);
+              }
+            }}
+            onMouseEnter={() => {
+              // Highlight links when hovering a node
+              setHighlightedIds(
+                links
+                  .filter(
+                    (el) => el.source === item.id || el.target === item.id
+                  )
+                  .map((link) => getLinkId(link))
+              );
+            }}
+            onMouseLeave={() => {
+              setHighlightedIds([]);
+            }}
+          >
+            {content}
+          </NodeWrapper>
+        );
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [active, links, showHeaderOnly]
+    );
+
+    const renderLink = useCallback<RenderLinkFunction<SchemaDefinitionNode>>(
+      (item) => {
+        const id = getLinkId(item);
+        if (id.endsWith('-hover')) {
+          //hover item
+          return (
+            <path
+              style={{ strokeWidth: 40, stroke: 'transparent' }}
+              key={id}
+              id={id}
+            />
+          );
+        }
+        const style: CSSProperties = {
+          zIndex: zIndex.MAXIMUM,
+          strokeWidth: 1,
+          stroke: Colors['decorative--grayscale--500'],
+        };
+        if (highlightedIds.includes(id)) {
+          style.stroke = Colors['border--muted--inverted'];
+        }
+        return (
+          <path
+            markerStart="url(#indicator)"
+            markerEnd="url(#indicator)"
+            style={style}
+            key={id}
+            id={id}
+          />
+        );
+      },
+      [highlightedIds]
     );
 
     const renderGraph = () => (
@@ -187,7 +324,7 @@ export const SchemaVisualizer = React.memo(
             <Title level={5} style={{ textAlign: 'center', marginBottom: 16 }}>
               {t('failed_to_load', 'Unable to visualize the Data Model.')}
             </Title>
-            <i>{t('failed_to_load_description', errorMessage)}</i>
+            <i>{errorMessage}</i>
           </Flex>
         ) : (
           <Graph<SchemaDefinitionNode>
@@ -198,13 +335,16 @@ export const SchemaVisualizer = React.memo(
             style={{ flex: 1 }}
             onLoadingStatus={setIsLoaded}
             useCurve
-            getOffset={(...params) => getOffset(...params)(showHeaderOnly)}
+            offset={{ top: OFFSET_TOP }}
+            getLinkEndOffset={(...params) =>
+              getLinkEndOffset(...params)(showHeaderOnly)
+            }
             onLinkEvent={(type, data, event) => {
               switch (type) {
                 case 'mouseover': {
                   // Highlight link and its source and target on hover
                   setHighlightedIds([
-                    getLinkId(data),
+                    getLinkId(data).replace('-hover', ''),
                     (data.source as SchemaDefinitionNode).name.value,
                     (data.target as SchemaDefinitionNode).name.value,
                   ]);
@@ -212,9 +352,10 @@ export const SchemaVisualizer = React.memo(
                     <Popover
                       className="tippy-box cogs-tooltip"
                       style={{
-                        top: event.offsetY + 16,
-                        left: event.offsetX,
+                        top: event.layerY,
+                        left: event.layerX,
                         transform: 'translate(-50%,0)',
+                        position: 'absolute',
                       }}
                     >
                       <div className="tippy-content">
@@ -235,73 +376,27 @@ export const SchemaVisualizer = React.memo(
                 }
               }
             }}
-            renderLink={(item) => {
-              const id = getLinkId(item);
-              const style: CSSProperties = {
-                strokeWidth: 1,
-                stroke: Colors['greyscale-grey5'].hex(),
-              };
-              if (highlightedIds.includes(id)) {
-                style.stroke = Colors['border-inverted'].hex();
-              }
-              return <path className="line" key={id} id={id} style={style} />;
-            }}
-            renderNode={(item, _, displayedNodes) => {
-              const style: CSSProperties = {};
-              if (highlightedIds.includes(item.id)) {
-                style.borderColor = Colors['greyscale-grey7'].hex();
-              }
-              const nodeWidth = getNodeWidth(item);
-              let content = <p>Loading&hellip;</p>;
-              switch (item.kind) {
-                case 'ObjectTypeDefinition': {
-                  if (showHeaderOnly) {
-                    content = <SmallNode key={item.name.value} item={item} />;
-                  } else {
-                    content = <FullNode key={item.name.value} item={item} />;
-                  }
-                  break;
-                }
-                case 'InterfaceTypeDefinition': {
-                  content = <InterfaceNode key={item.name.value} item={item} />;
-                  break;
-                }
-                case 'UnionTypeDefinition': {
-                  content = <UnionNode key={item.name.value} item={item} />;
-                  break;
-                }
-              }
-              return (
-                <NodeWrapper
-                  isActive={active === item.id}
-                  width={nodeWidth}
-                  id={item.id}
-                  key={item.id}
-                  title={item.title}
-                  style={style}
-                  onMouseEnter={() => {
-                    // Highlight links when hovering a node
-                    setHighlightedIds(
-                      links
-                        .filter(
-                          (el) => el.source === item.id || el.target === item.id
-                        )
-                        .map(getLinkId)
-                    );
-                  }}
-                  onMouseLeave={() => {
-                    setHighlightedIds([]);
-                  }}
+            renderLink={renderLink}
+            renderNode={renderNode}
+            additionalSvgDefs={
+              <defs>
+                <marker
+                  id="indicator"
+                  viewBox="0 0 10 10"
+                  refX="5"
+                  refY="5"
+                  markerUnits="strokeWidth"
+                  markerWidth="10"
+                  markerHeight="10"
+                  orient="auto"
                 >
-                  {renderConnectorsForNode(item, displayedNodes)}
-                  {content}
-                </NodeWrapper>
-              );
-            }}
-          >
-            {debouncedPopover}
-          </Graph>
+                  <circle r="5" cx="5" cy="5" className="indicator" />
+                </marker>
+              </defs>
+            }
+          />
         )}
+        {debouncedPopover}
       </Wrapper>
     );
 
@@ -309,12 +404,14 @@ export const SchemaVisualizer = React.memo(
       <div id="visualizer-wrapper" style={{ height: '100%' }}>
         {isVisualizerExpanded ? (
           <StyledModal
-            appElement={
+            title={t('full_screen_title', 'Data model preview')}
+            getContainer={
               document.getElementById('visualizer-wrapper') || undefined
             }
             closable={false}
             visible={isVisualizerExpanded}
-            footer={null}
+            hideFooter
+            size="full-screen"
             onCancel={() => {
               setIsVisualizerExpanded(false);
             }}
@@ -343,14 +440,16 @@ const Wrapper = styled(Flex)`
 
   .toolbar {
     margin: 16px auto;
-    z-index: ${ZIndex.Toolbar};
+    z-index: ${zIndex.TOOLBAR};
+  }
+
+  .indicator {
+    fill: var(--cogs-purple-3);
+    z-index: ${zIndex.INDICATOR};
   }
 `;
 
 const StyledModal = styled(Modal)`
-  top: -20px;
-  width: 95% !important;
-  height: 90%;
   overflow: hidden;
   padding: 0;
 
@@ -379,6 +478,7 @@ export const NodeWrapper = styled.div<ITypeItem>`
     props.isActive ? 'var(--cogs-midblue-4)' : 'var(--cogs-greyscale-grey5)'};
   border-radius: 4px;
   box-shadow: 0px 0px 12px var(--cogs-greyscale-grey3);
+  z-index: ${zIndex.MINIMUM};
 
   &&:hover {
     border-color: var(--cogs-border-inverted);
@@ -396,5 +496,5 @@ const WrappedSpinner = styled.div`
   background: var(--cogs-bg-canvas);
   width: 100%;
   height: 100%;
-  z-index: ${ZIndex.Toolbar};
+  z-index: ${zIndex.TOOLBAR};
 `;

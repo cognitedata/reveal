@@ -44,7 +44,7 @@ export class GraphQlSchemaParser {
     let m;
     const regexTemplates =
       /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}@template[\s]{1,}\{/gm;
-    const regexSchema = /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}\{/gm;
+    const regexSchema = /(type|interface)\s\w+/gm;
     const regex =
       tableDirectiveName === 'template' ? regexTemplates : regexSchema;
 
@@ -57,10 +57,11 @@ export class GraphQlSchemaParser {
       }
 
       // The result can be accessed through the `m`-variable.
-      m.forEach((match, groupIndex) => {
+      m.forEach((match) => {
         templateTables.push(
           (match as string)
             .replace('type', '')
+            .replace('interface', '')
             .replace('@' + tableDirectiveName, '')
             .replace('{', '')
             .trim()
@@ -68,7 +69,7 @@ export class GraphQlSchemaParser {
       });
     }
 
-    return templateTables;
+    return templateTables.filter((tableName) => tableName);
   }
 
   camelize(str) {

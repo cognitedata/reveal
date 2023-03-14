@@ -1,18 +1,16 @@
 import { Flex } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { BuiltInType } from '@platypus/platypus-core';
 import { useTypeDefActions } from '../../hooks/useTypeDefActions';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
 import { TypeDefFields } from '../TypeDefFields/TypeDefFields';
 
 interface UIEditorProps {
-  builtInTypes: BuiltInType[];
   disabled: boolean;
 }
 
-export function UIEditor({ builtInTypes, disabled }: UIEditorProps) {
+export function UIEditor({ disabled }: UIEditorProps) {
   const { setCurrentTypeName } = useDataModelState();
   const {
     createType,
@@ -40,9 +38,8 @@ export function UIEditor({ builtInTypes, disabled }: UIEditorProps) {
           <Flex direction="column" gap={16}>
             {currentType && (
               <TypeDefFields
-                key={'TypeDefFields'}
+                key="TypeDefFields"
                 currentType={currentType}
-                builtInTypes={builtInTypes}
                 disabled={disabled}
                 customTypesNames={customTypesNames.filter((name) => name)}
                 onFieldCreated={createField}

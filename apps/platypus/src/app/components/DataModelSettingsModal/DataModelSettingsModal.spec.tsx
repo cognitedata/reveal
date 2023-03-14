@@ -35,13 +35,15 @@ describe('DataModelSettingsModal', () => {
       name: 'Test DataModel',
       owners: [],
       updatedTime: 1635936707155,
-      version: '',
+      version: '1',
+      space: 'testDataModel-1',
     };
-    const newName = 'New name';
+    const newName = 'New_Name';
     const newDescription = 'New description';
     const handleRequestClose = jest.fn();
     render(
       <DataModelSettingsModal
+        visible
         dataModel={dataModel}
         onRequestClose={handleRequestClose}
       />
@@ -58,7 +60,7 @@ describe('DataModelSettingsModal', () => {
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Confirm',
+        name: 'Update',
       })
     );
 
@@ -66,6 +68,8 @@ describe('DataModelSettingsModal', () => {
       description: newDescription,
       externalId: 'testDataModel',
       name: newName,
+      space: 'testDataModel-1',
+      version: '1',
     });
 
     expect(handleRequestClose).toHaveBeenCalledTimes(1);

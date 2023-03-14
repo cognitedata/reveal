@@ -11,9 +11,9 @@ jobs:
       - uses: andstor/copycat-action@v3
         with:
           src_path: ./apps/platypus-cdf-cli
-          file_filter: "*.md"
+          file_filter: '*.md'
           dst_path: /
           dst_owner: cognitedata
           dst_branch: docs
-          dst_repo_name: platypus
+          dst_repo_name: fusion
           personal_token: ${{ secrets.PERSONAL_TOKEN }}

@@ -6,7 +6,7 @@ import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const command = 'signin [project]';
 export const aliases = ['login'];
-export const desc = 'Sign in to Cognite Data Fusion';
+export const desc = 'Sign in to Cognite Data Fusion (CDF).';
 export const builder = (yargs: Argv<LoginArgs>) =>
   yargs
     .usage('$0 signin [project]')

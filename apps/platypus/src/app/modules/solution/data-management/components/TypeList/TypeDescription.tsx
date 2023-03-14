@@ -1,31 +1,34 @@
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import useSelector from '@platypus-app/hooks/useSelector';
 
-import { usePublishedRowsCount } from '../../hooks/usePublishedRowsCount';
-
 import { Detail } from '@cognite/cogs.js';
 import * as S from './elements';
+import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
 
 export type TypeDescriptionProps = {
   dataModelType: DataModelTypeDefsType;
-  dataModelExternalId: string;
+  publishedRowsCount: number;
+  isLoading: boolean;
 };
 
 export const TypeDescription: React.FC<TypeDescriptionProps> = ({
   dataModelType,
-  dataModelExternalId,
+  publishedRowsCount,
+  isLoading,
 }) => {
+  const { isEnabled: isManualPopulationEnabled } =
+    useManualPopulationFeatureFlag();
   const draftRowsData = useSelector(
     (state) => state.dataManagement.draftRows[dataModelType.name || ''] || []
   );
-  const { data: publishedRowsCount = 0, isLoading } = usePublishedRowsCount({
-    dataModelExternalId,
-    dataModelType,
-  });
 
   const description = `${publishedRowsCount} instance${
     publishedRowsCount > 1 ? 's' : ''
-  } / ${draftRowsData.length} draft${draftRowsData.length > 1 ? 's' : ''}`;
+  } ${
+    isManualPopulationEnabled
+      ? `/ ${draftRowsData.length} draft${draftRowsData.length > 1 ? 's' : ''}`
+      : ''
+  }`;
   return isLoading ? (
     <S.StyledSkeleton />
   ) : (

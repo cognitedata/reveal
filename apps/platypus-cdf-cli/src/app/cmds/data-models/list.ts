@@ -7,7 +7,7 @@ import { getDataModelsHandler } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:list');
 
-export class CreateCmd extends CLICommand {
+export class ListCmd extends CLICommand {
   builder<T>(yargs: Argv<T>): Argv {
     yargs.usage('List all data models in CDF');
 
@@ -38,4 +38,4 @@ export class CreateCmd extends CLICommand {
   }
 }
 
-export default new CreateCmd('list', 'List data models', []);
+export default new ListCmd('list', 'List data models.', []);

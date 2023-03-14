@@ -50,7 +50,14 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
           message: 'What cluster is it on?',
           limit: 10,
           initial: 2,
-          choices: ['greenfield', 'bluefield', 'api', 'westeurope-1', 'omv'],
+          choices: [
+            'greenfield',
+            'bluefield',
+            'api',
+            'westeurope-1',
+            'europe-west1-1',
+            'omv',
+          ],
         });
       }
 
@@ -58,7 +65,7 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
         questions.push({
           type: 'input',
           name: 'tenant',
-          message: 'What is your AzureAD tenant?',
+          message: 'What is your Azure AD tenant?',
         });
       }
 
@@ -66,9 +73,7 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
 
       arg = { ...arg, ...answers };
 
-      logger.info(
-        'Logging out the current user and clearing the config (if exists)'
-      );
+      logger.info('Signing out the current user...');
       logout();
 
       arg.authType = AUTH_TYPE.PKCE;
@@ -113,7 +118,9 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
 
     if (token === undefined) {
       DEBUG('Unable to fetch token from CDF (came back undefined');
-      throw new Error('Failed to authenticate against CDF.');
+      throw new Error(
+        'Failed to authenticate you, make sure you use correct credentials for the sign in.'
+      );
     }
 
     DEBUG('Finished fetching auth token from CDF');
@@ -133,7 +140,7 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
   } catch (error) {
     setProjectConfigItem(ROOT_CONFIG_KEY.AUTH, undefined);
     throw new Error(
-      'Failed to authenticate you, please make sure you use correct credentials for the login'
+      'Failed to authenticate you, make sure you use correct credentials for the sign in.'
     );
   }
 }

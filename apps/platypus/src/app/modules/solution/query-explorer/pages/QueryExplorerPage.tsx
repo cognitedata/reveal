@@ -6,40 +6,47 @@ import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentL
 import { QueryExplorer } from '../components/QueryExplorer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
-import { useHistory } from 'react-router-dom';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { Flex } from '@cognite/cogs.js';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { DOCS_LINKS } from '@platypus-app/constants';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useParams } from 'react-router-dom';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
+  space: string;
 }
 
 export const QueryExplorerPage = ({
   dataModelExternalId,
+  space,
 }: QueryExplorerPageProps) => {
   const { t } = useTranslation('SolutionMonitoring');
-  const history = useHistory();
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
+  const navigate = useNavigate();
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
   );
+  const { version } = useParams() as { version: string };
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
+
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
-    history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`
+    navigate(
+      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/query-explorer`,
+      { replace: true }
     );
   };
 
@@ -49,7 +56,6 @@ export const QueryExplorerPage = ({
         <VersionSelectorToolbar
           title={t('query_explorer_title', 'Query explorer')}
           schemas={dataModelVersions || []}
-          draftSaved={false}
           onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
         >
@@ -61,12 +67,14 @@ export const QueryExplorerPage = ({
       <PageContentLayout.Body>
         {selectedDataModelVersion.version ? (
           <QueryExplorer
-            solutionId={dataModelExternalId}
+            key={`${dataModelExternalId}_${selectedDataModelVersion.version}_${dataModel?.space}`}
+            dataModelExternalId={dataModelExternalId}
+            space={selectedDataModelVersion?.space || ''}
             schemaVersion={selectedDataModelVersion.version}
           />
         ) : (
           <BasicPlaceholder
-            type="Documents"
+            type="EmptyStateFolderSad"
             title="Query explorer is not available due to a data model is not found. Please publish one."
             size={300}
           />

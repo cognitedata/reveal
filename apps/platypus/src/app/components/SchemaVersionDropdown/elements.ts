@@ -17,16 +17,22 @@ export const DropdownButton = styled(Button)<{ open: boolean }>`
   border: ${(props) =>
     props.open ? '1px solid #4a67fb' : '1px solid #d9d9d9'} !important;
 `;
+
 export const MenuItem = styled(Menu.Item)<{ selected: boolean }>`
-  background: ${(props) => props.selected && 'rgba(74, 103, 251, 0.08)'};
-  display: flex;
-  justify-content: space-between;
-  height: 40px;
-  overflow: visible;
+  && {
+    background: ${(props) => props.selected && 'rgba(74, 103, 251, 0.08)'};
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    overflow: visible;
+  }
 `;
+
 export const VersionTag = styled.span<{ status: DataModelVersionStatus }>`
   color: ${(props) =>
-    props.status === DataModelVersionStatus.DRAFT ? '#595959' : '#2B3A88'};
+    props.status === DataModelVersionStatus.DRAFT
+      ? 'var(--cogs-greyscale-grey7)'
+      : 'var(--cogs-midblue-1)'};
   background: ${(props) =>
     props.status === DataModelVersionStatus.DRAFT
       ? 'rgba(102, 102, 102, 0.12)'
@@ -37,14 +43,13 @@ export const VersionTag = styled.span<{ status: DataModelVersionStatus }>`
   white-space: nowrap;
   border-radius: 4px;
   height: 20px;
-  width: ${(props) =>
-    props.status === DataModelVersionStatus.DRAFT ? '74px' : '48px'};
   padding: 2px 6px;
 `;
+
 export const LastTimeText = styled(Body)`
-  width: 50px;
   font-size: 12px;
   line-height: 16px;
   text-align: left;
   color: rgba(0, 0, 0, 0.55);
+  margin-right: 12px;
 `;

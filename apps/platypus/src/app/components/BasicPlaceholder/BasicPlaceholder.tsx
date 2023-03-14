@@ -1,5 +1,5 @@
-import { ReactChild } from 'react';
-import { Graphic } from '@cognite/cogs.js';
+import { Illustrations, IllustrationType } from '@cognite/cogs.js';
+import { ReactNode } from 'react';
 
 import {
   StyledContainer,
@@ -16,15 +16,15 @@ export const BasicPlaceholder = ({
   children,
   onClose,
 }: {
-  type: string;
+  type: IllustrationType;
   title?: string;
   size?: number;
   onClose?: () => void;
-  children?: ReactChild;
+  children?: ReactNode;
 }) => (
   <StyledContainer>
     <StyledGraphic>
-      <Graphic type={type} style={{ width: size }} />
+      <Illustrations.Solo type={type} style={{ width: size }} />
     </StyledGraphic>
     {onClose && (
       <CloseButton

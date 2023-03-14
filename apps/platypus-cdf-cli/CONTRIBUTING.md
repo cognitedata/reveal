@@ -19,3 +19,7 @@ To run the built version of the CLI, from the root of the repository, run:
 First build the library, then you can
 
 `yarn cdf --help`
+
+# E2E testing
+
+The end to end test can run also against the local mock server (this is the case right now in CI/CD) by specifying an env variable `TESTING_BASE_URL=http://localhost:4002`.

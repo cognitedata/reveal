@@ -9,6 +9,8 @@ module.exports = defineConfig({
   screenshotsFolder: '../../dist/cypress/apps/platypus-e2e/screenshots',
   chromeWebSecurity: false,
   screenshotOnRunFailure: false,
+  viewportHeight: 900, // macbook 15
+  viewportWidth: 1440,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
@@ -17,5 +19,6 @@ module.exports = defineConfig({
     },
     specPattern: './src/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: './src/support/index.ts',
+    experimentalRunAllSpecs: true,
   },
 });

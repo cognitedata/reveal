@@ -17,7 +17,7 @@ import { flattenObjAsArray, isObject } from './data-utils';
  * * contain asterisk(*) - /api/project/assets\/*\/someting
  */
 export const urlPatternToRegExp = (urlPattern: string): RegExp =>
-  new RegExp(urlPattern.replace('*', '.*'));
+  new RegExp(urlPattern.replace(/\*/g, '.*'));
 
 export const getConfigForUrl = (
   config: CdfApiConfig,

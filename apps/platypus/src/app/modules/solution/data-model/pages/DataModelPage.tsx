@@ -1,26 +1,28 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-
+import { useEffect, useState } from 'react';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Flex } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { Notification } from '@platypus-app/components/Notification/Notification';
+import {
+  formatValidationErrors,
+  Notification,
+} from '@platypus-app/components/Notification/Notification';
 import { TOKENS } from '@platypus-app/di';
 import {
   ErrorType,
-  DataModelVersionStatus,
   DataModelVersion,
   Result,
-  getDataModelEndpointUrl,
+  PlatypusError,
+  PlatypusValidationError,
+  ValidationError,
+  PlatypusDmlError,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useDataModelState } from '../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../types';
-import { BreakingChangesModal } from '../components/BreakingChangesModal';
 import { EditorPanel } from '../components/EditorPanel';
 import { DataModelHeader } from '../components/DataModelHeader';
 import {
@@ -28,67 +30,114 @@ import {
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { EndpointModal } from '../components/EndpointModal';
-import { getProject } from '@cognite/cdf-utilities';
-import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+import {
+  PublishVersionModal,
+  VersionType,
+} from '../components/PublishVersionModal';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
+import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
+import { useParams } from 'react-router-dom';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 
-export interface DataModelPageProps {
-  dataModelExternalId: string;
-}
+const formatDmlError = (error: PlatypusDmlError) => {
+  return (
+    <div
+      key="errors"
+      style={{
+        display: 'block',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        maxHeight: '150px',
+      }}
+    >
+      <ul style={{ paddingLeft: '16px' }}>
+        {error.errors.map((err) => {
+          const prefix = `[Line: ${err.location.start.line}]`;
+          let message = `${prefix} ${err.message}`;
+          if (err.hint) {
+            message += `\n${' '.repeat(prefix.length + 1)}${err.hint}`;
+          }
 
-export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
-  const history = useHistory();
+          return (
+            <li style={{ whiteSpace: 'pre-wrap' }} key={message}>
+              {message}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
+
+export const DataModelPage = () => {
+  const navigate = useNavigate();
+  const { dataModelExternalId, space, version } = useParams() as {
+    dataModelExternalId: string;
+    space: string;
+    version: string;
+  };
 
   const { t } = useTranslation('SolutionDataModel');
 
   const { track } = useMixpanel();
 
   const { data: dataModelVersions, refetch: refetchDataModelVersions } =
-    useDataModelVersions(dataModelExternalId);
+    useDataModelVersions(dataModelExternalId, space);
   const queryClient = useQueryClient();
+  const { currentTypeName, editorMode, graphQlSchema, typeDefs } =
+    useSelector<DataModelState>((state) => state.dataModel);
   const {
-    currentTypeName,
-    editorMode,
-    graphQlSchema,
-    selectedVersionNumber,
-    typeDefs,
-  } = useSelector<DataModelState>((state) => state.dataModel);
-  const { setEditorMode, setGraphQlSchema, setIsDirty, parseGraphQLSchema } =
-    useDataModelState();
-  const { removeLocalDraft, getLocalDraft } =
-    useLocalDraft(dataModelExternalId);
+    dataModelPublished,
+    setEditorMode,
+    updateGraphQlSchema,
+    setCurrentTypeName,
+    switchDataModelVersion,
+  } = useDataModelState();
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    space
   );
   const latestDataModelVersion = useSelectedDataModelVersion(
     DEFAULT_VERSION_PATH,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    space
   );
+  const { removeLocalDraft, getLocalDraft } = useLocalDraft(
+    dataModelExternalId,
+    space,
+    latestDataModelVersion
+  );
+
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
-  const [showEndpointModal, setShowEndpointModal] = useState(false);
+  const [publishModalVersionType, setPublishModalVersionType] =
+    useState<VersionType | null>(null);
+  const [errorsByGroup, setErrorsByGroup] = useState<ErrorsByGroup>({
+    DmlError: [],
+  });
 
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
@@ -106,50 +155,126 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-    history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data`
+    navigate(
+      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}`,
+      { replace: true }
     );
   };
 
   const [isVisualizerOn, setIsVisualizerOn] = usePersistedState(
     true,
-    `${dataModelExternalId}::isVisualizerOn`
+    getKeyForDataModel(
+      dataModel?.space || '',
+      dataModelExternalId,
+      'isVisualizerOn'
+    )
   );
 
-  // Use this hook as init livecycle
+  // Use this effect as init lifecycle
   useEffect(() => {
-    if (localDraft) {
-      setGraphQlSchema(localDraft.schema);
-      parseGraphQLSchema(localDraft.schema);
-      setEditorMode(SchemaEditorMode.Edit);
-      setIsDirty(true);
-    }
+    switchDataModelVersion(localDraft || selectedDataModelVersion);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSaveOrPublish = async () => {
+  const handleClickPublish = async () => {
+    setUpdating(true);
+
     try {
-      const publishNewVersion =
-        breakingChanges || !dataModelVersions || dataModelVersions.length === 0;
-      let version = selectedDataModelVersion?.version;
-      const draftVersion = version;
+      const dataModelValidationResult = await dataModelVersionHandler.validate({
+        ...selectedDataModelVersion,
+        space: dataModelExternalId,
+        schema: graphQlSchema,
+        version: selectedDataModelVersion?.version,
+      });
+      const versionType: VersionType =
+        dataModelVersions && dataModelVersions?.length > 0
+          ? 'SUBSEQUENT'
+          : 'FIRST';
+
+      if (dataModelValidationResult.isFailure) {
+        const error = PlatypusError.fromDataModelValidationError(
+          dataModelValidationResult.errorValue()
+        );
+
+        if ((error?.type as ErrorType) === 'BREAKING_CHANGE') {
+          setBreakingChanges(error.message);
+          setPublishModalVersionType(versionType);
+        } else if (error instanceof PlatypusValidationError) {
+          Notification({
+            type: 'error',
+            title: 'Error: could not validate data model',
+            message: error.message,
+            extra: formatValidationErrors(error.errors),
+          });
+        }
+      } else {
+        setPublishModalVersionType(versionType);
+      }
+    } catch (error) {
+      Notification({
+        type: 'error',
+        title: 'Error: could not validate data model',
+        message: t(
+          'schema_validation_error',
+          `Validation of the data model failed. ${error}`
+        ),
+      });
+    }
+
+    setUpdating(false);
+  };
+
+  const getSuggestedVersion = () => {
+    if (publishModalVersionType === 'FIRST') return '1';
+
+    const publishedVersions =
+      dataModelVersions?.map((ver) => ver.version) || [];
+    const currentVersion = parseInt(selectedDataModelVersion.version, 10);
+
+    let suggestedVersion =
+      !isNaN(currentVersion) &&
+      !publishedVersions.includes(`${currentVersion + 1}`)
+        ? currentVersion + 1
+        : publishedVersions.length + 1;
+
+    while (publishedVersions.includes(`${suggestedVersion}`))
+      suggestedVersion += 1;
+
+    return `${suggestedVersion}`;
+  };
+
+  const handleSaveOrPublish = async (newVersion: string) => {
+    try {
+      // Clear old errors
+      setErrorsByGroup({ DmlError: [] });
+
+      // need to get draftVersion from selected data model;
+      // if we get it from the url params then it might be "latest"
+      const draftVersion = selectedDataModelVersion.version;
       let result: Result<DataModelVersion>;
+      const publishNewVersion =
+        breakingChanges ||
+        !dataModelVersions ||
+        dataModelVersions.length === 0 ||
+        newVersion !== version;
 
       if (publishNewVersion) {
         setUpdating(true);
-        version = dataModelVersions?.length
-          ? (parseInt(selectedDataModelVersion?.version) + 1).toString()
-          : '1';
         result = await dataModelVersionHandler.publish(
           {
             ...selectedDataModelVersion,
             externalId: dataModelExternalId,
             schema: graphQlSchema,
-            version: version,
+            version: newVersion,
           },
           'NEW_VERSION'
         );
-        setBreakingChanges('');
+
+        if (breakingChanges) {
+          track('BreakingChanges', {
+            dataModel: dataModelExternalId,
+          });
+        }
       } else {
         setSaving(true);
         result = await dataModelVersionHandler.publish(
@@ -157,20 +282,36 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             ...selectedDataModelVersion,
             externalId: dataModelExternalId,
             schema: graphQlSchema,
-            version: version,
+            version: newVersion,
           },
           'PATCH'
         );
       }
 
-      if ((result.error?.type as ErrorType) === 'BREAKING_CHANGE') {
-        setBreakingChanges(result.error.message);
-      } else if (result.error?.type as ErrorType) {
+      if (result.error?.type as ErrorType) {
+        if (result.error instanceof PlatypusDmlError) {
+          setErrorsByGroup({
+            DmlError: result.error.errors.map((err) => ({
+              severity: 8,
+              message: err.message + (err.hint ? '\n' + err.hint : ''),
+              startLineNumber: err.location.start.line,
+              startColumn: err.location.start.column,
+              endColumn: err.location.end?.column || 1000,
+              endLineNumber: err.location.end?.line || err.location.start.line,
+            })),
+          });
+        }
+
         Notification({
           type: 'error',
           title: 'Error: could not update data model',
           message: result.error.message,
-          validationErrors: result.error.errors || [],
+          extra:
+            result.error instanceof PlatypusDmlError
+              ? formatDmlError(result.error)
+              : formatValidationErrors(
+                  result.error.errors as ValidationError[]
+                ),
         });
       }
 
@@ -179,7 +320,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           dataModel: dataModelExternalId,
         });
         removeLocalDraft(draftVersion);
-        setIsDirty(false);
+        dataModelPublished();
 
         if (publishNewVersion) {
           // add new version to react-query cache and then refetch
@@ -191,8 +332,9 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           );
 
           refetchDataModelVersions();
-          history.replace(
-            `/data-models/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`
+          navigate(
+            `/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`,
+            { replace: true }
           );
         } else {
           // update version in react-query cache and then refetch
@@ -217,7 +359,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             }_toast_title`,
             `Data model ${publishNewVersion ? 'published' : 'updated'}`
           ),
-          message: `${t('version', 'Version')} ${version} ${t(
+          message: `${t('version', 'Version')} ${newVersion} ${t(
             'of_your_data_model_was_successfully',
             'of your data model was successfully'
           )} ${
@@ -226,9 +368,6 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
               : t('updated', 'updated')
           }.`,
         });
-        // Must be located here for fetching versions correctly and updating schema version selector.
-        //
-        setEditorMode(SchemaEditorMode.View);
       }
     } catch (error) {
       Notification({
@@ -243,11 +382,13 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     // Must be located here to work correctly with Promt.
     setUpdating(false);
     setSaving(false);
+    setPublishModalVersionType(null);
+    setBreakingChanges('');
   };
 
   const handleDiscardClick = () => {
     dataModelTypeDefsBuilder.clear();
-    setGraphQlSchema(latestDataModelVersion.schema);
+    updateGraphQlSchema(latestDataModelVersion.schema);
   };
 
   return (
@@ -256,14 +397,14 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         <PageContentLayout.Header>
           <DataModelHeader
             dataModelExternalId={dataModelExternalId}
+            dataModelSpace={dataModel?.space || ''}
             dataModelVersions={dataModelVersions}
             isSaving={saving}
             isUpdating={updating}
             latestDataModelVersion={latestDataModelVersion}
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
-            onPublishClick={handleSaveOrPublish}
-            onEndpointClick={() => setShowEndpointModal(true)}
+            onPublishClick={handleClickPublish}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
             selectedDataModelVersion={selectedDataModelVersion}
@@ -275,8 +416,12 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
               <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                 <EditorPanel
                   editorMode={editorMode}
+                  space={dataModel?.space || ''}
+                  version={selectedDataModelVersion.version}
                   externalId={dataModelExternalId}
                   isPublishing={saving || updating}
+                  errorsByGroup={errorsByGroup}
+                  setErrorsByGroup={setErrorsByGroup}
                 />
               </ErrorBoundary>
             }
@@ -303,6 +448,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
                   <SchemaVisualizer
                     active={currentTypeName || undefined}
                     graphQLSchemaString={graphQlSchema}
+                    onNodeClick={(nodeName) => setCurrentTypeName(nodeName)}
                     isVisualizerOn={
                       typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
                       isVisualizerOn
@@ -312,33 +458,23 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
               </Flex>
             }
           />
-          )
         </PageContentLayout.Body>
       </PageContentLayout>
 
-      {showEndpointModal && (
-        <EndpointModal
-          endpoint={getDataModelEndpointUrl(
-            getProject(),
-            selectedDataModelVersion.externalId,
-            selectedDataModelVersion.version,
-            getCogniteSDKClient().getBaseUrl()
-          )}
-          onRequestClose={() => setShowEndpointModal(false)}
-        />
-      )}
-
-      {breakingChanges && (
-        <BreakingChangesModal
+      {publishModalVersionType && (
+        <PublishVersionModal
+          versionType={publishModalVersionType}
+          suggestedVersion={getSuggestedVersion()}
+          currentVersion={`${selectedDataModelVersion.version || '1'}`}
+          publishedVersions={dataModelVersions?.map((ver) => ver.version) || []}
           breakingChanges={breakingChanges}
-          onCancel={() => setBreakingChanges('')}
-          onUpdate={() => {
-            handleSaveOrPublish();
-            track('BreakingChanges', {
-              dataModel: dataModelExternalId,
-            });
+          onCancel={() => {
+            setBreakingChanges('');
+            setPublishModalVersionType(null);
           }}
+          onUpdate={handleSaveOrPublish}
           isUpdating={updating}
+          isSaving={saving}
         />
       )}
     </>

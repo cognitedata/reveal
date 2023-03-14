@@ -4,43 +4,71 @@ on:
     paths:
       - 'apps/platypus/**'
       - 'apps/mock-server/**'
+      - 'apps/platypus-e2e/**'
       - 'libs/platypus-core/**'
       - 'libs/platypus-common-utils/**'
       - 'yarn.lock'
 jobs:
-  platypus-tests:
+  install-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
 
       - name: Set NPMKEY variable
         run: |
-          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_READONLY_TOKEN }}")
           echo "::set-output name=NPMKEY::$NPMKEY"
         id: npm_auth_key
 
       - name: Create .npmrc
         run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
 
-      - name: Install Dependency & Build
-        run: |
-          yarn install --frozen-lockfile
-          rm .npmrc
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - name: Run lint
-        run: |
-          yarn lint
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
 
-      - name: Run unit tests
-        run: |
-          yarn test
+  platypus-tests:
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    strategy:
+      matrix:
+        configuration: ['mockV2', 'mockV3']
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Cypress run
-        uses: cypress-io/github-action@v4.2.0
+        uses: cypress-io/github-action@v4.2.2
         # let's give this action an ID so we can refer
         # to its output values later
         id: cypress
@@ -58,15 +86,17 @@ jobs:
           # wait for 1 minute for the server to respond
           wait-on-timeout: 60
           # Run the cypress tests
-          command: yarn nx e2e platypus-e2e
+          command: yarn nx run platypus-e2e:e2e:${{ matrix.configuration }}
 
-      - name: Combine CodeCov reports
-        run: |
-          yarn cpdir
-          yarn summarize-codecov
+      # Disabling codecov from here, to not interfere with nx_ci
+      # - name: Combine CodeCov reports
+      #   run: |
+      #     yarn cpdir
+      #     yarn summarize-codecov
 
-      - name: Upload CodeCov reports
-        uses: codecov/codecov-action@v2
+      - name: Upload CodeCov reports for Platypus E2E
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage-final.json,./coverage/cobertura-coverage.xml,./coverage/coverage-summary.json
+          flags: platypus-e2e-${{ matrix.configuration }}
+          files: ./apps/platypus-e2e/coverage/coverage-final.json,./apps/platypus-e2e/coverage/clover.xml,./apps/platypus-e2e/coverage/coverage-summary.json

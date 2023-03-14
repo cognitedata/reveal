@@ -12,7 +12,7 @@ const BasicPlaceholderTemplate: Story<typeof BasicPlaceholder> = (
   args: any
 ) => (
   <BasicPlaceholder
-    type="Timeseries"
+    type="Analysis"
     title="Timeseries is not found."
     size={250}
     {...args}

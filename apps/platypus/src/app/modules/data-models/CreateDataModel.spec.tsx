@@ -1,10 +1,27 @@
-import { getByLabelText, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
 import { CreateDataModel } from './CreateDataModel';
 import noop from 'lodash/noop';
+
+jest.mock('@platypus-app/hooks/useSpaces', () => {
+  return {
+    useSpaces: () => ({
+      data: [
+        {
+          space: 'My_Space_1',
+          name: 'My_Space_1',
+          createdTime: 12345678,
+          lastUpdatedTime: 12345678,
+        },
+      ],
+      isLoading: true,
+      isError: false,
+    }),
+  };
+});
 
 jest.mock('../../hooks/useDataSets', () => {
   return {
@@ -33,7 +50,7 @@ describe('CreateDataModel', () => {
   });
 
   it('Fills in external ID value when user types in name', () => {
-    render(<CreateDataModel onCancel={noop} />);
+    render(<CreateDataModel onCancel={noop} visible />);
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
@@ -41,12 +58,12 @@ describe('CreateDataModel', () => {
     );
 
     expect(screen.getByTestId('external-id-field')).toHaveTextContent(
-      'myDataModel'
+      'My_Data_Model'
     );
   });
 
   it('Does not auto update external ID after user has altered it', () => {
-    render(<CreateDataModel onCancel={noop} />);
+    render(<CreateDataModel onCancel={noop} visible />);
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
@@ -56,40 +73,43 @@ describe('CreateDataModel', () => {
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),
-      'my-data-model{enter}'
+      'My_Data_Model{enter}'
     );
     userEvent.type(screen.getByLabelText('Name', { exact: false }), ' etc');
 
     expect(screen.getByTestId('external-id-field')).toHaveTextContent(
-      'my-data-model'
+      'My_Data_Model'
     );
   });
 
   it('Sends auto-generated external ID when creating data model', () => {
-    render(<CreateDataModel onCancel={noop} />);
-    const dataModelName = 'My Data Model';
+    render(<CreateDataModel onCancel={noop} visible />);
+    const dataModelName = 'My_Data_Model';
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
       dataModelName
     );
+    userEvent.click(screen.getByText('Select space'));
+    userEvent.click(screen.getByText('My_Space_1'));
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Confirm',
+        name: 'Create',
       })
     );
 
     expect(mockMutate.mock.calls[0][0]).toEqual({
-      externalId: 'myDataModel',
+      externalId: 'My_Data_Model',
       name: dataModelName,
       description: '',
+      space: 'My_Space_1',
     });
   });
 
   it('Sends custom external ID when creating data model', () => {
-    render(<CreateDataModel onCancel={noop} />);
-    const dataModelName = 'My Data Model';
+    render(<CreateDataModel onCancel={noop} visible />);
+    const dataModelName = 'My_Data_Model';
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
@@ -99,19 +119,22 @@ describe('CreateDataModel', () => {
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),
-      'my-data-model{enter}'
+      'My_Data_Model{enter}'
     );
+    userEvent.click(screen.getByText('Select space'));
+    userEvent.click(screen.getByText('My_Space_1'));
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Confirm',
+        name: 'Create',
       })
     );
 
     expect(mockMutate.mock.calls[0][0]).toEqual({
-      externalId: 'my-data-model',
+      externalId: 'My_Data_Model',
       name: dataModelName,
       description: '',
+      space: 'My_Space_1',
     });
   });
 });

@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import {
-  BuiltInType,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
@@ -18,13 +16,10 @@ export interface DataModelReducerState {
   editorMode: SchemaEditorMode;
   graphQlSchema: string;
   isDirty: boolean;
-  selectedVersionNumber: string;
   typeDefs: DataModelTypeDefs;
   selectedDataModelVersion?: DataModelVersion;
-  typeFieldErrors: { [key: string]: string };
   hasError: boolean;
   customTypesNames: string[];
-  builtInTypes: BuiltInType[];
 }
 const getTypeDefsBuilder = () =>
   rootInjector.get(TOKENS.dataModelTypeDefsBuilderService);
@@ -34,12 +29,9 @@ export const initialState = {
   editorMode: SchemaEditorMode.View,
   graphQlSchema: '',
   isDirty: false,
-  selectedVersionNumber: DEFAULT_VERSION_PATH,
   typeDefs: { types: [] } as DataModelTypeDefs,
-  typeFieldErrors: {} as { [key: string]: string },
   hasError: false,
   customTypesNames: [] as string[],
-  builtInTypes: getTypeDefsBuilder().getBuiltinTypes(),
 } as DataModelReducerState;
 
 const updateDataModelState = (
@@ -50,10 +42,7 @@ const updateDataModelState = (
   state.graphQlSchema = updatedGqlSchema;
   state.customTypesNames = typeDefsBuilder.getCustomTypesNames(state.typeDefs);
 
-  const validationErrors = typeDefsBuilder.validate(
-    updatedGqlSchema,
-    state.builtInTypes
-  );
+  const validationErrors = typeDefsBuilder.validate(updatedGqlSchema);
 
   state.hasError = validationErrors.length > 0;
 
@@ -68,9 +57,7 @@ const clearState = (state: DataModelReducerState): DataModelReducerState => {
   state.typeDefs = { types: [] };
   state.currentTypeName = null;
   state.hasError = false;
-  state.typeFieldErrors = {};
   state.customTypesNames = [];
-  state.builtInTypes = typeDefsBuilder.getBuiltinTypes();
   state.editorMode = SchemaEditorMode.View;
   delete state.selectedDataModelVersion;
   return state;
@@ -92,52 +79,28 @@ const dataModelSlice = createSlice({
     setEditorMode: (state, action: PayloadAction<SchemaEditorMode>) => {
       state.editorMode = action.payload;
     },
-    setSelectedVersionNumber: (state, action: PayloadAction<string>) => {
-      state.selectedVersionNumber = action.payload;
-    },
     setSelectedDataModelVersion: (
       state,
       action: PayloadAction<DataModelVersion>
     ) => {
       state.selectedDataModelVersion = action.payload;
     },
-    setTypeFieldErrors: (
-      state,
-      action: PayloadAction<{ fieldName: string; error: string }>
-    ) => {
-      if (action.payload.error === '') {
-        delete state.typeFieldErrors[action.payload.fieldName];
-      } else {
-        state.typeFieldErrors[action.payload.fieldName] = action.payload.error;
-      }
-    },
     parseGraphQlSchema: (state, action: PayloadAction<string>) => {
       const graphQlSchemaString = action.payload;
       const typeDefsBuilder = getTypeDefsBuilder();
-      const validationErrors = typeDefsBuilder.validate(
-        graphQlSchemaString,
-        state.builtInTypes
-      );
+      const validationErrors = typeDefsBuilder.validate(graphQlSchemaString);
 
       const hasError = validationErrors.length > 0;
       state.hasError = hasError;
-      if (graphQlSchemaString !== '') {
-        try {
-          const parsedTypeDefs =
-            typeDefsBuilder.parseSchema(graphQlSchemaString);
-          state.typeDefs = parsedTypeDefs;
-          state.customTypesNames =
-            typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
-        } catch (err) {
-          state.hasError = !!err;
-        }
-      } else {
-        clearState(state);
+
+      try {
+        const parsedTypeDefs = typeDefsBuilder.parseSchema(graphQlSchemaString);
+        state.typeDefs = parsedTypeDefs;
+        state.customTypesNames =
+          typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
+      } catch (err) {
+        state.hasError = !!err;
       }
-    },
-    // Remove action
-    setBuiltInTypes: (state, action: PayloadAction<BuiltInType[]>) => {
-      state.builtInTypes = action.payload;
     },
     createTypeDefsType: (state, action: PayloadAction<string>) => {
       const typeDefsBuilder = getTypeDefsBuilder();
@@ -231,15 +194,43 @@ const dataModelSlice = createSlice({
       state,
       action: PayloadAction<DataModelVersion>
     ) => {
+      // START copy pasted from the parseGraphQlSchema reducer
+      // should be refactored to DRY this up and use redux action/reducer better
+      const graphQlSchemaString = action.payload.schema;
+      const typeDefsBuilder = getTypeDefsBuilder();
+
+      // this line not copy-pasted
+      typeDefsBuilder.clear();
+
+      const validationErrors = typeDefsBuilder.validate(graphQlSchemaString);
+
+      const hasError = validationErrors.length > 0;
+      state.hasError = hasError;
+
+      try {
+        const parsedTypeDefs = typeDefsBuilder.parseSchema(graphQlSchemaString);
+        state.typeDefs = parsedTypeDefs;
+        state.customTypesNames =
+          typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
+      } catch (err) {
+        state.customTypesNames = [];
+        state.hasError = !!err;
+      }
+      // END copy pasted from the parseGraphQlSchema reducer
+
       state.graphQlSchema = action.payload.schema;
-      state.isDirty = false;
+      state.isDirty = action.payload.status === DataModelVersionStatus.DRAFT;
       state.currentTypeName = null;
-      state.selectedVersionNumber = action.payload.version;
       state.selectedDataModelVersion = action.payload;
       state.editorMode =
         action.payload.status === DataModelVersionStatus.DRAFT
           ? SchemaEditorMode.Edit
           : SchemaEditorMode.View;
+    },
+    dataModelPublished: (state) => {
+      state.isDirty = false;
+      state.currentTypeName = null;
+      state.editorMode = SchemaEditorMode.View;
     },
     clearState,
   },

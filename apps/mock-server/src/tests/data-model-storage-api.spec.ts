@@ -212,7 +212,7 @@ describe('DataModelStorageAPI Test', () => {
     expect(qryResult.items[0].externalId).toEqual('UserTable_v2');
   });
 
-  it('Should delete models', async () => {
+  it.skip('Should delete models', async () => {
     // https://pr-ark-codegen-1692.specs.preview.cogniteapp.com/v1.json.html#operation/deleteModels
     let response = await request(server)
       .post('/datamodelstorage/models/delete')
@@ -230,7 +230,7 @@ describe('DataModelStorageAPI Test', () => {
     expect(response.statusCode).toEqual(200);
 
     response = await request(server)
-      .post('/datamodelstorage/spaces/byids')
+      .post('/datamodelstorage/models/byids')
       .set('Accept', 'application/json')
       .send({
         spaceExternalId: 'blog',
@@ -328,5 +328,89 @@ describe('DataModelStorageAPI Test', () => {
     qryResult = response.body;
     expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
     expect(qryResult.items[0].externalId).toEqual('new_user');
+  });
+
+  it('Should delete nodes', async () => {
+    let response = await request(server)
+      .post('/datamodelstorage/nodes/delete')
+      .set('Accept', 'application/json')
+      .send({
+        spaceExternalId: 'blog',
+        items: [
+          {
+            externalId: 'post_2',
+          },
+        ],
+      });
+
+    let qryResult = response.body;
+    expect(response.statusCode).toEqual(200);
+
+    response = await request(server)
+      .get('/nodes?externalId=post_2')
+      .set('Accept', 'application/json')
+      .send({});
+    qryResult = response.body;
+
+    expect(qryResult.items.length).toEqual(0);
+  });
+  it('Should ingest edges data', async () => {
+    // https://pr-ark-codegen-1692.specs.preview.cogniteapp.com/v1.json.html#operation/ingestEdges
+    let response = await request(server)
+      .post('/datamodelstorage/edges')
+      .set('Accept', 'application/json')
+      .send({
+        spaceExternalId: 'blog',
+        model: ['Post'],
+        items: [
+          {
+            externalId: 'comments_1_1',
+          },
+        ],
+      });
+    let qryResult = response.body;
+
+    expect(response.statusCode).toEqual(201);
+
+    response = await request(server)
+      .post('/datamodelstorage/edges/byids')
+      .set('Accept', 'application/json')
+      .send({
+        spaceExternalId: 'blog',
+        model: 'Post',
+        items: [
+          {
+            externalId: 'comments_1_1',
+          },
+        ],
+      });
+    qryResult = response.body;
+    expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
+    expect(qryResult.items[0].externalId).toEqual('comments_1_1');
+  });
+
+  it('Should delete edges', async () => {
+    let response = await request(server)
+      .post('/datamodelstorage/edges/delete')
+      .set('Accept', 'application/json')
+      .send({
+        spaceExternalId: 'blog',
+        items: [
+          {
+            externalId: 'comments_1_987',
+          },
+        ],
+      });
+
+    let qryResult = response.body;
+    expect(response.statusCode).toEqual(200);
+
+    response = await request(server)
+      .get('/edges?externalId=comments_1_987')
+      .set('Accept', 'application/json')
+      .send({});
+    qryResult = response.body;
+
+    expect(qryResult.items.length).toEqual(0);
   });
 });

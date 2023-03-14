@@ -7,6 +7,7 @@ import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailMod
 export type DataModelSettingsModalProps = {
   dataModel: DataModel;
   onRequestClose: () => void;
+  visible: boolean;
 };
 
 export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
@@ -22,6 +23,8 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
         description: description,
         externalId: props.dataModel.id,
         name: name || '',
+        space: props.dataModel.space,
+        version: props.dataModel.version,
       },
       {
         onSuccess: () => {
@@ -33,17 +36,24 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
 
   return (
     <DataModelDetailModal
+      visible={props.visible}
       dataSets={[]}
       description={description || ''}
       externalId={props.dataModel.id}
       isExternalIdLocked
       isLoading={update.isLoading}
+      isSpaceDisabled
       name={name || ''}
+      okButtonName={t('data_model_settings_modal_ok_button', 'Update')}
       onCancel={props.onRequestClose}
       onDescriptionChange={(value) => setDescription(value)}
       onNameChange={(value) => setName(value)}
       onSubmit={handleSubmit}
-      title={t('modal-title', 'Settings')}
+      space={{
+        label: props.dataModel.space,
+        value: props.dataModel.space,
+      }}
+      title={t('data_model_settings_modal_title', 'Settings')}
     />
   );
 };

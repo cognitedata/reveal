@@ -17,8 +17,8 @@ export const Base = () => {
   return (
     <div style={{ width: '600px', border: '1px solid gray', padding: '36px' }}>
       <CreateTransformationForm
-        id={'exampleTransformation'}
-        name={'Example Transformation'}
+        id="exampleTransformation"
+        name="Example Transformation"
         onRelationshipChange={noop}
         onTransformationTypeChange={noop}
         transformationType={TransformationType.Data}
@@ -40,8 +40,8 @@ export const WithRelationships = () => {
   return (
     <div style={{ width: '600px', border: '1px solid gray', padding: '36px' }}>
       <CreateTransformationForm
-        id={'exampleTransformation'}
-        name={'Example Transformation'}
+        id="exampleTransformation"
+        name="Example Transformation"
         onRelationshipChange={setSelectedRelationship}
         onTransformationTypeChange={setTransformationType}
         relationships={relationships}

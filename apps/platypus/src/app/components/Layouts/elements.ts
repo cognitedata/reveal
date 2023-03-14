@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+import zIndex from '../../utils/zIndex';
 
 export const StyledPageContentLayout = styled.div`
   display: flex;
@@ -70,7 +71,7 @@ export const SplitPanel = styled.div`
     display: flex;
     align-items: center;
     padding-right: 10px;
-    z-index: 1;
+    z-index: ${zIndex.MINIMUM};
   }
 
   .divider {

@@ -25,7 +25,15 @@ Base.args = {
   onNameChange: noop,
   onSubmit: noop,
   title: 'Settings',
+  visible: true,
 };
 
 export const LockedExternalId = Template.bind({});
-LockedExternalId.args = { ...Base.args, isExternalIdLocked: true };
+LockedExternalId.args = {
+  ...Base.args,
+  isExternalIdLocked: true,
+  visible: true,
+};
+
+export const SpacesDisabled = Template.bind({});
+SpacesDisabled.args = { ...Base.args, isSpaceDisabled: true, visible: true };

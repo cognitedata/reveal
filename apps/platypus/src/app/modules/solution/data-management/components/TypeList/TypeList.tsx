@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { TypeDescription } from './TypeDescription';
 import * as S from './elements';
+import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
 
 export type TypeListProps = {
   items?: DataModelTypeDefsType[];
@@ -11,6 +12,7 @@ export type TypeListProps = {
   placeholder?: string;
   onClick: (item: DataModelTypeDefsType) => void;
   dataModelExternalId: string;
+  space: string;
 };
 
 export const TypeList = ({
@@ -19,8 +21,16 @@ export const TypeList = ({
   onClick,
   selectedTypeName,
   dataModelExternalId,
+  space,
 }: TypeListProps) => {
   const [filter, setFilter] = useState('');
+
+  const { data: publishedRowsCountMap, isLoading } =
+    usePublishedRowsCountMapByType({
+      dataModelExternalId,
+      dataModelTypes: items || [],
+      space,
+    });
 
   return (
     <S.TypeList data-cy="types-list-panel">
@@ -59,7 +69,10 @@ export const TypeList = ({
               </Body>
               <TypeDescription
                 dataModelType={dataModelType}
-                dataModelExternalId={dataModelExternalId}
+                publishedRowsCount={
+                  publishedRowsCountMap?.[dataModelType.name] || 0
+                }
+                isLoading={isLoading}
               />
             </S.Item>
           ))}

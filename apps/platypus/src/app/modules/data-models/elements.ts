@@ -1,6 +1,5 @@
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import styled from 'styled-components/macro';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { Row } from '@cognite/cogs.js';
 
 const dataModelListWidth = 1020;
@@ -22,16 +21,12 @@ export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
     margin: 100px auto;
     text-align: center;
   }
-`;
 
-export const StyledModalDialog = styled(ModalDialog)`
-  .confirmDelete {
-    margin: 15px 0 0 0;
+  #delete-button {
+    opacity: 0;
   }
-
-  .confirmDeleteText,
-  .cogs-checkbox {
-    cursor: pointer;
+  .ag-row-hover #delete-button {
+    opacity: 1;
   }
 `;
 

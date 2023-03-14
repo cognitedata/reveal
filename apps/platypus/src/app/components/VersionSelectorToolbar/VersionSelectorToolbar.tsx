@@ -1,5 +1,4 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SchemaVersionDropdown } from '@platypus-app/components/SchemaVersionDropdown/SchemaVersionDropdown';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { SelectorWrapper } from './elements';
@@ -10,12 +9,9 @@ export interface VersionSelectorToolbarProps {
   onDataModelVersionSelect: (schema: DataModelVersion) => void;
   schemas: DataModelVersion[];
   children?: React.ReactNode;
-  draftSaved: boolean;
 }
 
 export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
-  const { t } = useTranslation('VersionSelectorToolbar');
-
   return (
     <div>
       <PageToolbar
@@ -30,14 +26,6 @@ export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
                 selectedVersion={props.selectedDataModelVersion}
                 versions={props.schemas}
               />
-            ) : null}
-            {props.draftSaved ? (
-              <span
-                data-cy="changes-saved-status-text"
-                style={{ marginLeft: 15 }}
-              >
-                {t('all_changes_saved', 'All changes saved')}
-              </span>
             ) : null}
           </SelectorWrapper>
         }

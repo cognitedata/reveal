@@ -1,20 +1,22 @@
-import React, { lazy, Suspense, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { lazy, Suspense, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPage } from '../data-model/pages/elements';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { Flex } from '@cognite/cogs.js';
 import { DOCS_LINKS } from '@platypus-app/constants';
+import { useDraftRows } from './hooks/useDraftRows';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -24,74 +26,58 @@ const PreviewPage = lazy<any>(() =>
   }))
 );
 
-const PipelinesPage = lazy<any>(() =>
-  import('./pages/Pipelines').then((module) => ({
-    default: module.Pipelines,
-  }))
-);
-
-const DataQualityPage = lazy<any>(() =>
-  import('./pages/DataQuality').then((module) => ({
-    default: module.DataQuality,
-  }))
-);
-
 export interface DataManagementPageProps {
   dataModelExternalId: string;
+  space: string;
 }
 
 export const DataManagementPage = ({
   dataModelExternalId,
+  space,
 }: DataManagementPageProps) => {
   const { t } = useTranslation('SolutionDataPreview');
 
-  const { subSolutionPage } = useParams<{
+  const { subSolutionPage, version } = useParams() as {
     subSolutionPage: string;
-  }>();
+    version: string;
+  };
 
   const initialPage: TabType = (subSolutionPage as TabType) || 'preview';
   const [tab] = useState<TabType>(initialPage);
 
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
-
-  const history = useHistory();
-
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
   );
+
+  const navigate = useNavigate();
+
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
 
+  const selectedTypeName = useSelector<string>(
+    (state) => state.dataManagement.selectedType?.name || ''
+  );
+
+  const { clearState } = useDraftRows();
+
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
-    history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview`
+    navigate(
+      `/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data-management/preview?type=${selectedTypeName}`
     );
+    clearState();
   };
 
   const Preview = (
     <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
       <Suspense fallback={<Spinner />}>
-        <PreviewPage dataModelExternalId={dataModelExternalId} />
-      </Suspense>
-    </StyledPage>
-  );
-
-  const Pipelines = (
-    <StyledPage style={tab !== 'pipelines' ? { display: 'none' } : {}}>
-      <Suspense fallback={<Spinner />}>
-        <PipelinesPage />
-      </Suspense>
-    </StyledPage>
-  );
-
-  const DataQuality = (
-    <StyledPage style={tab !== 'data-quality' ? { display: 'none' } : {}}>
-      <Suspense fallback={<Spinner />}>
-        <DataQualityPage />
+        <PreviewPage dataModelExternalId={dataModelExternalId} space={space} />
       </Suspense>
     </StyledPage>
   );
@@ -102,7 +88,6 @@ export const DataManagementPage = ({
         <VersionSelectorToolbar
           title={t('data_management_title', 'Data management')}
           schemas={dataModelVersions || []}
-          draftSaved={false}
           onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
         >
@@ -112,11 +97,7 @@ export const DataManagementPage = ({
         </VersionSelectorToolbar>
       </PageContentLayout.Header>
 
-      <PageContentLayout.Body>
-        {Preview}
-        {Pipelines}
-        {DataQuality}
-      </PageContentLayout.Body>
+      <PageContentLayout.Body>{Preview}</PageContentLayout.Body>
     </PageContentLayout>
   );
 };

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import config from '../config/config';
-import { environment } from '../../environments/environment';
+import { environment } from '@platypus-app/environment';
 
 if (
   config.SENTRY_DSN &&

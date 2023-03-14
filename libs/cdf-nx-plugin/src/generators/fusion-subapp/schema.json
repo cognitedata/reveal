@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "FusionSubapp",
+  "title": "Create a Fusion SubApp",
+  "description": "Create a React application ready to be integrated into Fusion platform.",
+  "examples": [
+    {
+      "command": "nx g app myapp --directory=myorg",
+      "description": "Generate `apps/myorg/myapp` and `apps/myorg/myapp-e2e`"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the application.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use for the application?",
+      "pattern": "^[a-zA-Z].*$"
+    },
+    "routing": {
+      "type": "boolean",
+      "description": "Generate application with routes.",
+      "x-prompt": "Would you like to add React Router to this application?",
+      "default": true
+    },
+    "internationalization": {
+      "type": "boolean",
+      "description": "Generate application with internationalization support using Locize.",
+      "x-prompt": "Would you like to add an internationalization support with Locize?",
+      "default": true
+    },
+    "createMockEnvironment": {
+      "type": "boolean",
+      "description": "Generate mock environment and run your application locally using mock server.",
+      "x-prompt": "Would you like to generate mock environment and run your application locally using mock server?",
+      "default": true
+    },
+    "e2eTestRunner": {
+      "type": "string",
+      "enum": ["cypress", "none"],
+      "description": "Test runner to use for end to end (E2E) tests.",
+      "default": "cypress"
+    },
+    "directory": {
+      "description": "The directory of the new application.",
+      "type": "string",
+      "alias": "dir"
+    },
+    "tags": {
+      "type": "string",
+      "description": "Add tags to the project (used for linting)",
+      "alias": "t"
+    }
+  },
+  "required": ["name"]
+}

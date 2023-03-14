@@ -4,22 +4,23 @@ import { TOKENS } from '@platypus-app/di';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 export default function useTransformations({
-  dataModelExternalId,
+  space,
   isEnabled,
   typeName,
   version,
 }: {
-  dataModelExternalId: string;
+  space: string;
   isEnabled: boolean;
   typeName: string;
   version: string;
 }) {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const query = useQuery(
-    QueryKeys.TRANSFORMATION(dataModelExternalId, typeName, version),
+    QueryKeys.TRANSFORMATION(space, typeName, version),
     async () => {
       return dataManagementHandler.getTransformations({
-        dataModelExternalId,
+        spaceExternalId: space,
+        instanceSpaceExternalId: space,
         typeName,
         version,
       });

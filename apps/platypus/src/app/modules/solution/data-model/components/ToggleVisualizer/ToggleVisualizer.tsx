@@ -1,4 +1,4 @@
-import { Button, Label } from '@cognite/cogs.js';
+import { Button, Chip, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Dispatch } from 'react';
 import styled from 'styled-components';
@@ -15,36 +15,31 @@ export function ToggleVisualizer({
   const { t } = useTranslation('toggle-visualizer');
 
   return (
-    <StyledLabel variant="warning">
-      <span>
-        {t(
+    <Flex gap={4} style={{ overflow: 'hidden' }}>
+      <StyledLabel
+        type="warning"
+        size="small"
+        label={t(
           'toggle-visualizer-toolbar-label-text',
           'The preview might be slow due to size of data model.'
         )}
-      </span>
-      <StyledButton
+      />
+      <Button
         data-cy="schema-visualizer-toggle-btn"
         size="small"
         onClick={() => setIsVisualizerOn(!isVisualizerOn)}
       >
         {isVisualizerOn
-          ? t('toggle-visualizer-btn-text', 'Turn off preview')
-          : t('toggle-visualizer-btn-text', 'Turn on preview')}
-      </StyledButton>
-    </StyledLabel>
+          ? t('toggle-visualizer-btn-off', 'Turn off preview')
+          : t('toggle-visualizer-btn-on', 'Turn on preview')}
+      </Button>
+    </Flex>
   );
 }
 
-const StyledLabel = styled(Label)`
-  display: flex;
-  flex-grow: 1;
-  justify-content: space-between;
-  margin-left: 16px;
-  padding: 0 0 0 10px;
-  height: auto;
-  line-height: 20px;
-`;
-
-const StyledButton = styled(Button)`
-  background-color: rgba(83, 88, 127, 0.08);
+const StyledLabel = styled(Chip)`
+  && {
+    flex: 1;
+    max-width: none;
+  }
 `;

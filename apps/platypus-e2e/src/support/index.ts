@@ -14,7 +14,13 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands';
+import './code-editor';
+import './data-model-page';
+import './data-model-list';
+import './general';
+import './query-explorer';
+import './ui-editor';
+import './data-model-visualizer';
 import '@cypress/code-coverage/support';
 
 // https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded

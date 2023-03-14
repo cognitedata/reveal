@@ -1,10 +1,10 @@
 import { getQueryParameter } from '@cognite/cdf-utilities';
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Modal } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
+
 import {
+  useDataModel,
   useDataModelTypeDefs,
   useDataModelVersions,
   useSelectedDataModelVersion,
@@ -12,9 +12,13 @@ import {
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { useEffect, useRef } from 'react';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import {
+  useLocation,
+  Navigate,
+  useSearchParams,
+  useParams,
+} from 'react-router-dom';
 import {
   DataPreviewTable,
   DataPreviewTableRef,
@@ -25,29 +29,39 @@ import { useDraftRows } from '../hooks/useDraftRows';
 import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
 
 export interface PreviewProps {
   dataModelExternalId: string;
+  space: string;
 }
 
-export const Preview = ({ dataModelExternalId }: PreviewProps) => {
-  const history = useHistory();
+export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
   const dataPreviewTableRef = useRef<DataPreviewTableRef>(null);
+  const { version } = useParams() as { version: string };
+  const [, setSearchParams] = useSearchParams();
+  const newQueryParameters: URLSearchParams = new URLSearchParams();
 
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
+
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
   );
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    space
   );
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
-    selectedVersionNumber
+    version,
+    space
   );
   const selectedTypeNameFromQuery = getQueryParameter('type');
   const { selectedType, isTransformationModalOpen, transformationId } =
@@ -60,12 +74,9 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     return () => {
       clearState();
     };
-  }, []);
+  }, [clearState]);
 
   const { t } = useTranslation('DataPreview');
-  const doesSupportRead = useCapabilities('transformationsAcl', [
-    'READ',
-  ]).isAclSupported;
 
   if (selectedTypeNameFromQuery && !selectedType) {
     const typeFromQuery = dataModelTypeDefs.types.find(
@@ -78,6 +89,12 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
         typeFromQuery
       );
     }
+    if (!typeFromQuery && dataModelTypeDefs.types.length > 0) {
+      const firstAvailableType = dataModelTypeDefs.types[0];
+      navigate(
+        `/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data-management/preview?type=${firstAvailableType.name}`
+      );
+    }
   }
 
   if (!selectedTypeNameFromQuery && dataModelTypeDefs.types.length > 0) {
@@ -86,7 +103,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     params.set('type', dataModelTypeDefs.types[0].name);
 
     return (
-      <Redirect
+      <Navigate
         to={{
           ...location,
           search: params.toString(),
@@ -98,13 +115,13 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
   return (
     <div>
       {selectedType && (
-        <ModalDialog
+        <Modal
           visible={isTransformationModalOpen}
           title="Transformations"
           onOk={() => {
             // refetch aggregate count
             queryClient.refetchQueries(
-              QueryKeys.PUBLISHED_ROW_COUNT(
+              QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
                 dataModelExternalId,
                 selectedType.name
               )
@@ -119,14 +136,12 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           onCancel={() => {
             setIsTransformationModalOpen(false, null);
           }}
-          okType="primary"
-          width="90%"
-          height="86%"
+          size="full-screen"
         >
-          <div style={{ flex: 1 }}>
+          <div style={{ height: '100%' }}>
             <TransformationIframe transformationId={transformationId} />
           </div>
-        </ModalDialog>
+        </Modal>
       )}
       <SplitPanelLayout
         sidebarMinWidth={250}
@@ -134,33 +149,43 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           <TypeList
             placeholder="Filter"
             dataModelExternalId={dataModelExternalId}
-            items={dataModelTypeDefs.types.filter(
-              (type) => !type.directives?.length // if it has directive, that means that it is inline types
-            )}
+            // if it has directive, that means that it is inline types
+            items={dataModelTypeDefs.types.filter((type) => {
+              return (
+                !type.directives?.length ||
+                (type.directives?.length &&
+                  !type.directives.some(
+                    (typeDirective) =>
+                      typeDirective.name === mixerApiInlineTypeDirectiveName
+                  ))
+              );
+            })}
             selectedTypeName={selectedType?.name}
             onClick={(item) => {
-              history.push({
-                search: `type=${item.name}`,
-              });
+              newQueryParameters.set('type', item.name);
+              setSearchParams(newQueryParameters);
+
               setSelectedType(
                 dataModelExternalId,
                 selectedDataModelVersion.version,
                 item
               );
             }}
+            space={space}
           />
         }
         content={
           selectedType ? (
             <Flex direction="column" style={{ flex: 1 }}>
               <DataPreviewTable
-                key={`data-preview-table-key`}
+                key={selectedType?.name}
                 dataModelType={selectedType}
                 dataModelTypeDefs={dataModelTypeDefs}
                 dataModelExternalId={dataModelExternalId}
                 ref={dataPreviewTableRef}
                 // ensure we pass real version number and not "latest" here
                 version={selectedDataModelVersion.version}
+                space={selectedDataModelVersion.space}
               />
             </Flex>
           ) : (

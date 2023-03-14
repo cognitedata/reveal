@@ -1,8 +1,11 @@
+import { getUrl } from '../../utils/url';
+
 describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit('/platypus/data-models/blog/latest/data/data-management/preview');
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
+    cy.ensurePageFinishedLoading();
   });
 
   it('should create draft row in table and publish it', () => {
@@ -10,7 +13,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
     cy.get('div[role="gridcell"][col-id="name"]')
       .first()
       .click()
@@ -21,6 +23,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       .should('be.visible')
       .and('contain', 'Instance added');
     cy.reload();
+    cy.ensurePageFinishedLoading();
     cy.get('[data-testid="User"]').click();
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible');
@@ -31,14 +34,13 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"]').click();
     cy.get('[data-testid="User"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
-    cy.intercept('POST', 'api/v1/projects/mock/datamodelstorage/nodes').as(
+    cy.intercept('POST', 'api/v1/projects/platypus/datamodelstorage/nodes').as(
       'ingestNodes'
     );
     cy.get('div[role="gridcell"][col-id="name"]')
       .should('be.visible')
       .should('contain', 'John Doe')
       .first()
-      .focus()
       .click()
       .type('{enter}Not John Doe{enter}');
 
@@ -49,19 +51,24 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       );
     });
   });
+
   it('should update, remove, and then insert direct relationships', () => {
     cy.get('[data-testid="Post"]').click();
     cy.get('[data-testid="Post"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
-    cy.intercept('POST', 'api/v1/projects/mock/datamodelstorage/nodes').as(
+    cy.intercept('POST', 'api/v1/projects/platypus/datamodelstorage/nodes').as(
       'ingestNodes'
     );
+
+    // first make sure table is rendered fully (all 3 rows)
     cy.get('div[role="gridcell"][col-id="user"]')
-      .should('be.visible')
       .should('contain', '123')
+      .should('contain', '456');
+
+    cy.get('div[role="gridcell"][col-id="user"]')
       .first()
-      .focus()
       .dblclick()
+      .should('have.class', 'ag-cell-inline-editing')
       .type('321{enter}');
 
     cy.wait('@ingestNodes').then((interception) => {
@@ -95,6 +102,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       expect(interception.response.body.items[0].user[1]).to.equal('123');
     });
   });
+
   it('should handle row revert on server update error', () => {
     cy.get('[data-testid="User"]').click();
     cy.get('[data-testid="User"]').should('have.class', 'active');
@@ -111,7 +119,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       .should('contain', 'John Doe')
       .first()
       .focus()
-      .click()
+      .click({ force: true })
       .type('{enter} Not John Doe{enter}');
 
     cy.get('div[role="gridcell"][col-id="name"]')
@@ -121,78 +129,36 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   });
 
   it('should delete published rows', () => {
-    cy.get('[data-testid="User"]').click();
-    cy.get('[data-testid="User"]').should('have.class', 'active');
+    cy.get('[data-testid="Comment"]').click();
+    cy.get('[data-testid="Comment"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
 
-    cy.intercept(
-      'POST',
-      'api/v1/projects/mock/datamodelstorage/nodes/delete'
-    ).as('deleteNodes');
-
-    // Wait for row to be rendered
-    cy.get('div[role="gridcell"][col-id="name"]')
+    // Wait for *all* row to be rendered
+    cy.get('div[role="gridcell"][col-id="body"]')
       .should('be.visible')
-      .should('contain', 'John Doe');
+      .should('contain', 'Consectetur adipiscing elit')
+      .should('contain', 'Random comment 996')
+      .should('contain', 'Random comment 997');
 
     cy.get('div[role="gridcell"][col-id="_isDraftSelected"]')
       .first()
       .should('be.visible')
       .click();
-    const response = {
-      data: {
-        listUser: {
-          items: [{ externalId: 456, name: 'Jane Doe' }],
-        },
-        aggregateUser: {
-          items: [
-            {
-              count: {
-                externalId: 1,
-              },
-            },
-          ],
-        },
-      },
-    };
 
-    cy.intercept(
-      'POST',
-      '/api/v1/projects/mock/schema/api/blog/1/graphql',
-      response
-    );
-    cy.on('window:confirm', () => true);
     cy.getBySel('btn-pagetoolbar-delete').click();
     cy.getBySel('data-row-confirm-deletion-checkbox').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get(
+      '.cogs-modal-footer-buttons > .cogs-button--type-destructive'
+    ).click();
 
-    cy.wait('@deleteNodes').then((interception) => {
-      expect(interception.response.statusCode).to.equal(200);
-    });
-    cy.get('div[role="gridcell"][col-id="name"]')
+    cy.get('div[role="gridcell"][col-id="body"]')
       .should('be.visible')
-      .should('not.contain', 'John Doe');
-    cy.get('[data-testid="User"] .cogs-detail').should('contain', '1 instance');
-  });
+      .should('not.contain', 'Consectetur adipiscing elit');
 
-  it('should delete single draft row in table', () => {
-    cy.get('[data-testid="User"]').click();
-    cy.get('[data-testid="User"]').should('have.class', 'active');
-    cy.getBySel('data-preview-table').should('be.visible');
-    cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
-    cy.get('[data-testid="User"] .cogs-detail').should('contain', '1 draft');
-    cy.get('div[role="gridcell"][col-id="name"]')
-      .first()
-      .click()
-      .type('TestName{enter}');
-
-    cy.getBySel('draft-row-selection-checkbox').first().click();
-    cy.getBySel('btn-pagetoolbar-delete').first().click();
-    cy.getBySel('data-row-confirm-deletion-checkbox').first().click();
-    cy.getBySel('modal-ok-button').first().click();
-    cy.getBySel('draft-row').should('not.exist');
-    cy.get('[data-testid="User"] .cogs-detail').should('contain', '0 draft');
+    cy.get('[data-testid="Comment"] .cogs-detail').should(
+      'contain',
+      '3 instances'
+    );
   });
 
   it('should delete multiple draft rows in table', () => {
@@ -200,7 +166,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
     cy.get('div[role="gridcell"][col-id="name"]')
       .first()
       .click()
@@ -209,7 +174,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.getBySel('draft-row-selection-checkbox').first().click();
 
     cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
     cy.get('div[role="gridcell"][col-id="name"]')
       .first()
       .click()
@@ -219,25 +183,28 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
 
     cy.getBySel('btn-pagetoolbar-delete').first().click();
     cy.getBySel('data-row-confirm-deletion-checkbox').first().click();
-    cy.getBySel('modal-ok-button').first().click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-destructive')
+      .first()
+      .click();
     cy.getBySel('draft-row').should('not.exist');
   });
 
   it('should add 0 as an input to numeric cells in data preview table', () => {
-    cy.visit('/platypus/data-models/blog/latest');
+    cy.visit(getUrl('/blog/blog/latest'));
+    cy.ensurePageFinishedLoading();
 
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.getBySel('type-list-item-Post').should('be.visible').click();
+    cy.enableEditMode();
+    cy.goToUIEditorType('Post');
 
-    cy.addDataModelTypeField('Post', 'intField', 'Int');
-    cy.addDataModelTypeField('Post', 'floatField', 'Float');
+    cy.addFieldViaUIEditor('intField', 'Int');
+    cy.addFieldViaUIEditor('floatField', 'Float');
 
-    cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('toast-title').should('have.text', 'Data model updated');
+    cy.publishSchema();
 
-    cy.visit(
-      '/platypus/data-models/blog/latest/data/data-management/preview?type=Post'
-    );
+    cy.getBySel('toast-title').should('have.text', 'Data model published');
+
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview?type=Post'));
+    cy.ensurePageFinishedLoading();
 
     cy.getBySel('create-new-row-btn').click({ force: true });
 
@@ -262,21 +229,22 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   });
 
   it('should clear non-required cells in data preview table', () => {
-    cy.visit('/platypus/data-models/blog/latest');
+    cy.visit(getUrl('/blog/blog/latest'));
+    cy.ensurePageFinishedLoading();
 
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.getBySel('type-list-item-Post').should('be.visible').click();
+    cy.enableEditMode();
+    cy.goToUIEditorType('Post');
 
-    cy.addDataModelTypeField('Post', 'strField', 'String');
-    cy.addDataModelTypeField('Post', 'intField', 'Int');
-    cy.addDataModelTypeField('Post', 'floatField', 'Float');
+    cy.addFieldViaUIEditor('strField', 'String');
+    cy.addFieldViaUIEditor('intField', 'Int');
+    cy.addFieldViaUIEditor('floatField', 'Float');
 
-    cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('toast-title').should('have.text', 'Data model updated');
+    cy.publishSchema();
 
-    cy.visit(
-      '/platypus/data-models/blog/latest/data/data-management/preview?type=Post'
-    );
+    cy.getBySel('toast-title').should('have.text', 'Data model published');
+
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview?type=Post'));
+    cy.ensurePageFinishedLoading();
 
     cy.getBySel('create-new-row-btn').click({ force: true });
 

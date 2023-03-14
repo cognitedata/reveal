@@ -2,13 +2,18 @@ import { CONSTANTS } from '@cognite/platypus-cdf-cli/app/constants';
 import { Run } from './process';
 
 const runCommand = async (...args) => {
-  return await Run(CONSTANTS.APP_ID, ...args);
+  try {
+    return await Run(CONSTANTS.APP_ID, ...args);
+  } catch (error) {
+    console.log('Command failed with args', args);
+  }
 };
 
 export async function dataModelsPublish(
   externalId: string,
   file: string,
-  allowBreakingChange = false
+  version: string,
+  space: string
 ) {
   return await runCommand(
     'data-models',
@@ -17,8 +22,11 @@ export async function dataModelsPublish(
     externalId,
     '--file',
     file,
-    '--allow-breaking-change',
-    allowBreakingChange
+    '--space',
+    space,
+    '--version',
+    version,
+    '--verbose'
   );
 }
 
@@ -28,27 +36,19 @@ export async function dataModelsList() {
 
 export async function dataModelsCreate(
   name: string,
-  externalId?: string,
-  dataSetId?: string
+  externalId: string,
+  space: string
 ) {
   const args = ['data-models', 'create', name];
 
-  if (externalId) {
-    args.push('--external-id', externalId);
-  }
-  if (dataSetId) {
-    args.push('--data-set-id', dataSetId);
-  }
+  args.push('--external-id', externalId);
+  args.push('--space', space);
 
-  return await runCommand(...args);
+  return await runCommand(...args, '--verbose');
 }
 
-export async function dataModelsDelete(externalId: string) {
-  return await runCommand('data-models', 'delete', '--external-id', externalId);
-}
-
-export function login() {
-  return runCommand(
+export async function login() {
+  return await runCommand(
     'login',
     process.env.PROJECT,
     '--cluster',
@@ -58,10 +58,11 @@ export function login() {
     '--client-id',
     process.env.CLIENT_ID,
     '--client-secret',
-    process.env.CLIENT_SECRET
+    process.env.CLIENT_SECRET,
+    '--verbose'
   );
 }
 
 export async function logout() {
-  return runCommand('logout');
+  return await runCommand('logout', '--verbose');
 }

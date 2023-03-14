@@ -47,14 +47,14 @@ const mockType: DataModelTypeDefsType = {
       name: 'actors',
       id: 'actors',
       nonNull: false,
-      type: { list: true, name: 'Actor', nonNull: false },
+      type: { list: true, name: 'Actor', nonNull: false, custom: true },
     },
     {
       description: undefined,
       name: 'name',
       id: 'name',
       nonNull: false,
-      type: { list: false, name: 'String', nonNull: false },
+      type: { list: false, name: 'String', nonNull: false, custom: false },
     },
   ],
   name: 'Movie',
@@ -64,7 +64,7 @@ describe('CreateTransformationModal', () => {
   it('Passes correct relationships to transformation dropdown', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -83,7 +83,7 @@ describe('CreateTransformationModal', () => {
   it('Disables submit button if no relationship selected', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -97,13 +97,13 @@ describe('CreateTransformationModal', () => {
 
     expect(
       screen.getByRole('button', { name: 'Next', hidden: true })
-    ).toHaveAttribute('disabled');
+    ).toHaveClass('cogs-button--disabled');
   });
 
   it('Enables submit button if a relationship is selected', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -119,13 +119,13 @@ describe('CreateTransformationModal', () => {
 
     expect(
       screen.getByRole('button', { name: 'Next', hidden: true })
-    ).not.toHaveAttribute('disabled');
+    ).not.toHaveClass('cogs-button--disabled');
   });
 
   it('Sets transformation name for loading data', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -141,7 +141,7 @@ describe('CreateTransformationModal', () => {
   it('Sets transformation name for loading relationship', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -161,8 +161,10 @@ describe('CreateTransformationModal', () => {
   });
 
   it('Calls transformation create mutation on submit', () => {
+    window.open = jest.fn();
     const mockTransformation = {
-      dataModelExternalId: 'abc',
+      destination: 'edges',
+      space: 'abc',
       oneToManyFieldName: 'actors',
       transformationExternalId: '123',
       transformationName: 'Movie_actors_1',
@@ -172,7 +174,7 @@ describe('CreateTransformationModal', () => {
 
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -188,6 +190,6 @@ describe('CreateTransformationModal', () => {
     userEvent.click(screen.getByRole('button', { name: 'Next', hidden: true }));
 
     expect(mockMutate.mock.calls[0][0]).toEqual(mockTransformation);
-    expect(mockSetIsTransformationModalOpen).toHaveBeenCalledWith(true, '123');
+    expect(window.open).toHaveBeenCalled();
   });
 });

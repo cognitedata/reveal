@@ -1,23 +1,31 @@
-import { toast, ToastProps } from '@cognite/cogs.js';
+import { Button, toast, ToastProps } from '@cognite/cogs.js';
 import { ValidationError } from '@platypus/platypus-core';
+import styled from 'styled-components';
 
 export const Notification = ({
   type,
   title = '',
   message,
-  validationErrors = [],
+  errors,
+  extra = undefined,
   options = {
     autoClose: 5000,
     position: 'bottom-right',
+    style: {
+      userSelect: 'all',
+      wordBreak: 'break-all',
+    },
   },
 }: {
   type: 'info' | 'success' | 'error' | 'warning';
   message: string;
   title?: string;
-  validationErrors?: ValidationError[];
+  extra?: JSX.Element | null;
+  errors?: string | string[];
   options?: ToastProps;
 }) => {
   const toastBody: JSX.Element[] = [];
+
   if (title) {
     toastBody.push(
       <h3 key="title" data-cy="toast-title">
@@ -27,29 +35,19 @@ export const Notification = ({
   }
 
   toastBody.push(
-    <p key="message" data-cy="toast-body">
+    <p
+      key="message"
+      data-cy="toast-body"
+      style={{
+        whiteSpace: 'pre-line',
+      }}
+    >
       {message}
     </p>
   );
 
-  if (validationErrors && validationErrors.length) {
-    toastBody.push(
-      <div
-        key="errors"
-        style={{
-          display: 'block',
-          overflowX: 'hidden',
-          overflowY: 'auto',
-          maxHeight: '150px',
-        }}
-      >
-        <ul>
-          {validationErrors.map((err, idx) => (
-            <li key={idx}>{err.message}</li>
-          ))}
-        </ul>
-      </div>
-    );
+  if (extra) {
+    toastBody.push(extra);
   }
 
   if (type === 'info') {
@@ -62,11 +60,66 @@ export const Notification = ({
 
   if (type === 'error') {
     // eslint-disable-next-line no-console
-    console.error(toastBody, validationErrors);
-    toast.error(<div>{toastBody}</div>, options);
+    console.error(toastBody);
+    toast.error(
+      <ErrorWrapper>
+        {toastBody}
+        <Button
+          id="error-copy"
+          icon="Copy"
+          aria-label="Copy error"
+          size="small"
+          type="secondary"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            navigator.clipboard.writeText(
+              JSON.stringify({ title, message, extra, errors }, null, 2)
+            );
+          }}
+        />
+      </ErrorWrapper>,
+      { autoClose: 7000, closeOnClick: false, ...options }
+    );
   }
 
   if (type === 'warning') {
     toast.warning(<div>{toastBody}</div>, options);
   }
 };
+
+export const formatValidationErrors = (
+  validationErrors?: ValidationError[]
+) => {
+  if (validationErrors && validationErrors.length) {
+    return (
+      <div
+        key="errors"
+        style={{
+          display: 'block',
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          maxHeight: '150px',
+        }}
+      >
+        <ul>
+          {validationErrors.map((err) => (
+            <li key={err.message}>{err.message}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  } else {
+    return null;
+  }
+};
+
+const ErrorWrapper = styled.div`
+  && #error-copy i {
+    margin: initial;
+  }
+  && #error-copy svg {
+    width: initial;
+    height: initial;
+  }
+`;

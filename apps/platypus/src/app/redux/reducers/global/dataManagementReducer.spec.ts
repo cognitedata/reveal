@@ -135,8 +135,8 @@ describe('DataManagement reducer', () => {
   it('should populate null for the custom field', () => {
     expect(mockSliceInstance.draftRows['Person'][0].job).toBe(null);
   });
-  it('should populate an array for the list field by default', () => {
-    expect(mockSliceInstance.draftRows['Person'][0].children).toEqual([]);
+  it('should use null as default value for list field', () => {
+    expect(mockSliceInstance.draftRows['Person'][0].children).toEqual(null);
   });
   it('should populate null for the custom field', () => {
     expect(mockSliceInstance.draftRows['Person'][0].age).toBe(null);
