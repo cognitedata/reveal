@@ -13,7 +13,7 @@ export type IconCullingScheme = 'clustered' | 'proximity';
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 64;
+  private readonly MAX_PIXEL_SIZE = 256;
   private readonly _sceneHandler: SceneHandler;
   private readonly _hoverIconTexture: CanvasTexture;
   private readonly _sharedTexture: Texture;
@@ -22,6 +22,7 @@ export class IconCollection {
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
+  private readonly _iconRadius = 0.3;
 
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingScheme: IconCullingScheme;
@@ -64,7 +65,7 @@ export class IconCollection {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const sharedTexture = this.createOuterRingsTexture();
-    const iconSpriteRadius = 0.5;
+    const iconSpriteRadius = this._iconRadius;
     const iconsSprites = new InstancedIconSprite(
       points.length,
       sharedTexture,
@@ -157,6 +158,7 @@ export class IconCollection {
           sceneHandler,
           this.MIN_PIXEL_SIZE,
           this.MAX_PIXEL_SIZE,
+          this._iconRadius,
           onBeforeSceneRendered
         )
     );
