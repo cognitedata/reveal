@@ -6,11 +6,11 @@ This repo hosts the document classifiers frontend for the Unstructured Search AP
 
 Configure your environment as described on [this Confluence page](https://cognitedata.atlassian.net/wiki/spaces/COG/pages/711950382/Nvm+npm+node+setup). This will give you the `nvm`, `npm` and `yarn` commands.
 
-We currently use node version `12.19.0`. Ensure you are using this version by doing:
+We currently use node version `14.21.3`. Ensure you are using this version by doing:
 
 ```
-nvm install 12.19.0
-nvm use 12.19.0
+nvm install 14
+nvm use 14
 ```
 
 ## Useful commands
