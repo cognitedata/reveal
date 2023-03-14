@@ -11,7 +11,7 @@ import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
-  load360Image: Promise<{ loadFullResolution: () => Promise<void> } | undefined>;
+  load360Image: Promise<void>;
   abort: () => void;
 };
 
@@ -35,15 +35,12 @@ export class Image360LoadingCache {
     return inProgressDownload;
   }
 
-  constructor(private readonly _imageCacheSize = 10, private readonly _downloadCacheSize = 10) {
+  constructor(private readonly _imageCacheSize = 10, private readonly _downloadCacheSize = 3) {
     this._loaded360Images = [];
     this._inProgressDownloads = [];
   }
 
-  public async cachedPreload(
-    entity: Image360Entity,
-    lockDownload = false
-  ): Promise<{ loadFullResolution: () => Promise<void> } | undefined> {
+  public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void> {
     if (this._loaded360Images.includes(entity)) {
       return undefined;
     }

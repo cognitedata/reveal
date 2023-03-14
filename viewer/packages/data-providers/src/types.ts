@@ -42,6 +42,11 @@ export type Image360Face = {
   data: ArrayBuffer;
 };
 
+export type Image360Texture = {
+  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  texture: THREE.Texture;
+};
+
 export type Image360FileDescriptor = {
   fileId: number;
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
