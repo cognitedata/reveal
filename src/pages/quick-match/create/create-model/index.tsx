@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Infobox } from '@cognite/cogs.js';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
@@ -18,10 +18,13 @@ import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 
 const CreateModel = (): JSX.Element => {
-  const { subAppPath } = useParams<{
+  const { subAppPath, modelId: modelIdStr } = useParams<{
     subAppPath: string;
+    modelId?: string;
   }>();
+  const modelId = !!modelIdStr ? parseInt(modelIdStr, 10) : undefined;
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     sourceType,
     allSources,
@@ -37,10 +40,12 @@ const CreateModel = (): JSX.Element => {
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
 
-  const [modelId, setModelId] = useState<number>();
-  const [jobId, setJobId] = useState<number>();
-
-  const { mutateAsync: buildModel, isLoading } = useCreateEMModel();
+  const {
+    mutateAsync: buildModel,
+    isLoading,
+    isError,
+    status: createModelStatus,
+  } = useCreateEMModel();
 
   const advancedFilter = useMemo(
     () => getAdvancedFilter({ api: sourceType, excludeMatched: unmatchedOnly }),
@@ -48,7 +53,6 @@ const CreateModel = (): JSX.Element => {
   );
 
   // fetch sources if "select all" option is applied
-
   const {
     data: sourcePages,
     isFetchingNextPage: isFetchingNextSourcePage,
@@ -82,7 +86,7 @@ const CreateModel = (): JSX.Element => {
     }
   }, [hasNextSourcePage, isFetchingNextSourcePage, fetchNextSourcePage]);
 
-  const sources = useMemo((): any[] => {
+  const sourcePageFlattened = useMemo((): any[] => {
     let stuff: any[] = [];
     sourcePages?.pages?.forEach((i) => {
       stuff = stuff.concat(i.items);
@@ -125,7 +129,7 @@ const CreateModel = (): JSX.Element => {
     }
   }, [hasNextTargetPage, isFetchingNextTargetPage, fetchNextTargetPage]);
 
-  const targets = useMemo((): any[] => {
+  const targetPagesFlattened = useMemo((): any[] => {
     let stuff: any[] = [];
     targetPages?.pages?.forEach((i) => {
       stuff = stuff.concat(i.items);
@@ -133,44 +137,53 @@ const CreateModel = (): JSX.Element => {
     return stuff;
   }, [targetPages?.pages]);
 
+  const sources = allSources ? sourcePageFlattened : sourcesList;
+  const targets = allTargets ? targetPagesFlattened : targetsList;
+
   useEffect(() => {
     if (
       !modelId &&
+      !isError &&
       !isLoading &&
       sourceStatus === 'success' &&
-      targetStatus === 'success'
+      targetStatus === 'success' &&
+      sources.length > 0 &&
+      targets.length > 0
     ) {
       buildModel({
         sourceType,
-        sources: allSources ? sources : sourcesList,
-        targetsList: allTargets ? targets : targetsList,
+        sources,
+        targets,
         featureType,
         matchFields,
         supervisedMode,
       }).then((model) => {
-        setModelId(model.id);
+        navigate(
+          createLink(
+            `/${subAppPath}/quick-match/create/create-model/${model.id}`
+          ),
+          { replace: true }
+        );
       });
     }
   }, [
-    sources,
-    modelId,
-    isLoading,
-    allSources,
     buildModel,
     featureType,
+    isError,
+    isLoading,
     matchFields,
-    setModelId,
-    sourcesList,
-    supervisedMode,
-    allTargets,
-    targetsList,
-    targets,
-    targetStatus,
+    modelId,
+    navigate,
     sourceStatus,
     sourceType,
+    sources,
+    subAppPath,
+    supervisedMode,
+    targetStatus,
+    targets,
   ]);
 
-  const { data: model, status: createModelStatus } = useEMModel(modelId!, {
+  const { data: model } = useEMModel(modelId!, {
     enabled: !!modelId,
     refetchInterval: modelRefetchInt,
   });
@@ -178,7 +191,12 @@ const CreateModel = (): JSX.Element => {
   const { mutate: createPredictJob, status: createPredictStatus } =
     useCreateEMPredictionJob({
       onSuccess(job) {
-        setJobId(job.jobId);
+        navigate(
+          createLink(`/${subAppPath}/quick-match/results/${job.jobId}`),
+          {
+            replace: true,
+          }
+        );
       },
     });
 
@@ -204,15 +222,6 @@ const CreateModel = (): JSX.Element => {
     }
   }, [createPredictJob, model?.id, modelStatus]);
 
-  if (createPredictStatus === 'success') {
-    return (
-      <Navigate
-        replace
-        to={createLink(`/${subAppPath}/quick-match/results/${jobId}`)}
-      />
-    );
-  }
-
   return (
     <Flex direction="column" gap={8}>
       <QuickMatchTitle step="create-model" />
@@ -229,10 +238,19 @@ const CreateModel = (): JSX.Element => {
             <Body level={2}>{t(`target-data-fetch-${targetStatus}`)}</Body>
           </Flex>
         )}
-        <Flex alignItems="center" gap={8}>
-          <QueryStatusIcon status={createModelStatus} />
-          <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
-        </Flex>
+        {!model && (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={createModelStatus} />
+            <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
+          </Flex>
+        )}
+        {model?.status && (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={model.status} />
+            <Body level={2}>{t(`create-model-${model.status}`)}</Body>
+          </Flex>
+        )}
+
         <Flex alignItems="center" gap={8}>
           <QueryStatusIcon status={createPredictStatus} />
           <Body level={2}>
