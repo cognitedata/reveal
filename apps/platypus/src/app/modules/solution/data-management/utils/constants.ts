@@ -15,9 +15,12 @@ export const COL_TYPES_MAP: { [key: string]: string } = {
   Float: ColumnDataType.Decimal,
   Int: ColumnDataType.Number,
   Int64: ColumnDataType.Number,
+  Float32: ColumnDataType.Number,
+  Float64: ColumnDataType.Number,
   JSONObject: ColumnDataType.Json,
   String: ColumnDataType.Text,
   Timestamp: ColumnDataType.DateTime,
+  Date: ColumnDataType.DateTime,
 };
 
 export const FILTER_OPTIONS_WITHOUT_INPUT = ['Is empty', 'Is not empty'];

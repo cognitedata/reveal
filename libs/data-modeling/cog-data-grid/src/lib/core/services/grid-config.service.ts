@@ -101,12 +101,11 @@ export class GridConfigService {
             cellEditorParams: {
               options: [
                 { label: 'Select value', value: null },
-                { label: 'True', value: true },
-                { label: 'False', value: false },
+                { label: 'true', value: true },
+                { label: 'false', value: false },
               ],
             },
             cellEditorPopup: true,
-            cellStyle: { textTransform: 'capitalize' },
           },
           customColType: {
             cellRenderer: 'customRendererComponent',

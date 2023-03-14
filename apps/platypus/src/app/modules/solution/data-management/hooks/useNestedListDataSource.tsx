@@ -102,7 +102,7 @@ export const useNestedListDataSource = ({
               )
             : listData;
           const callbackData = results.map((el: PrimitiveTypes) => ({
-            value: el,
+            value: String(el),
           }));
           params.successCallback(
             callbackData,
