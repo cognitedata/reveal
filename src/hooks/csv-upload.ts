@@ -111,7 +111,7 @@ export const useCSVUpload = ({
             }));
           } catch (e) {
             notification.error({
-              message: t('file-upload-no-rows-error'),
+              message: t('file-upload-primary-key-empty-cells'),
               key: 'file-upload',
             });
             setUploadStatus('error');
@@ -140,7 +140,7 @@ export const useCSVUpload = ({
 
           if (items.length === 0) {
             notification.error({
-              message: t('file-upload-primary-key-empty-cells'),
+              message: t('file-upload-no-rows-error'),
               key: 'file-upload',
             });
             setUploadStatus('error');
