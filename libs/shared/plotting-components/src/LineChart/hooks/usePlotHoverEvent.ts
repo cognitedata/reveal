@@ -10,12 +10,14 @@ export interface Props {
   chartRef: React.RefObject<HTMLDivElement>;
   isCursorOnPlot: boolean;
   isContinuousHover: boolean;
+  isPlotSelecting: boolean;
 }
 
 export const usePlotHoverEvent = ({
   chartRef,
   isCursorOnPlot,
   isContinuousHover,
+  isPlotSelecting,
 }: Props) => {
   const [isPlotHovered, setPlotHovered] = useState(false);
   const [preventClearEvent, setPreventClearEvent] = useState(false);
@@ -58,19 +60,15 @@ export const usePlotHoverEvent = ({
   }, [isContinuousHover, preventClearEvent, isCursorOnPlot, isPlotHovered]);
 
   useEffect(() => {
-    const plot = head(
-      chartRef.current?.getElementsByClassName('nsewdrag drag')
-    );
-
-    createEventListener(plot, 'mousedown', () => {
+    if (isPlotSelecting) {
       setPlotHoverEventBackup(plotHoverEvent);
       setPlotHoverEvent(undefined);
-    });
-    createEventListener(plot, 'mouseup', () => {
+    } else {
       setPlotHoverEvent(plotHoverEventBackup);
       setPlotHoverEventBackup(undefined);
-    });
-  }, [chartRef, plotHoverEvent, plotHoverEventBackup]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlotSelecting]);
 
   return {
     plotHoverEvent,

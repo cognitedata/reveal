@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { LineChartWrapper } from './elements';
 import { LineChartProps } from './types';
@@ -37,6 +37,8 @@ export const LineChart: React.FC<LineChartProps> = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
 
+  const [isPlotSelecting, setPlotSelecting] = useState(false);
+
   const layout = getLayout(layoutProp, variant);
   const config = getConfig(configProp);
   const style = getStyleProperties(styleProp, variant);
@@ -62,6 +64,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       chartRef,
       isCursorOnPlot,
       isContinuousHover,
+      isPlotSelecting,
     });
 
   const markerPosition = getMarkerPosition(plotHoverEvent);
@@ -98,6 +101,8 @@ export const LineChart: React.FC<LineChartProps> = ({
         backgroundColor={backgroundColor}
         onHover={updatePlotHoverEvent}
         onUnhover={setPlotUnhovered}
+        onSelecting={() => setPlotSelecting(true)}
+        onSelected={() => setPlotSelecting(false)}
       />
 
       <HoverLayer

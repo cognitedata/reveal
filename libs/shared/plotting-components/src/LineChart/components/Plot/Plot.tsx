@@ -48,6 +48,8 @@ export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   backgroundColor?: string;
   onHover?: (event: PlotHoverEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
+  onSelecting?: (event: PlotSelectionEvent) => void;
+  onSelected?: (event?: PlotSelectionEvent) => void;
   onInitialized?: (figure: Figure, graph: HTMLElement) => void;
 }
 
@@ -67,6 +69,8 @@ export const Plot = React.memo(
         backgroundColor = DEFAULT_BACKGROUND_COLOR,
         onHover,
         onUnhover,
+        onSelecting,
+        onSelected,
       },
       ref
     ) => {
@@ -75,7 +79,7 @@ export const Plot = React.memo(
 
       const plotRef = useRef<HTMLDivElement>(null);
 
-      const { plotData, dataRevision, isEmptyData } = usePlotData({
+      const { plotData, isEmptyData } = usePlotData({
         data,
         layout,
         plotHoverEvent,
@@ -129,7 +133,6 @@ export const Plot = React.memo(
         ...fixedRangeLayoutConfig,
         margin,
         hovermode: getPlotlyHoverMode(config.hoverMode),
-        datarevision: dataRevision,
       };
 
       const plotConfig: Partial<PlotlyConfig> = {
@@ -153,6 +156,7 @@ export const Plot = React.memo(
       };
 
       const handleSelected = (event?: PlotSelectionEvent) => {
+        onSelected?.(event);
         setPlotRange({
           x: event?.range?.x as AxisRange | undefined,
           y: event?.range?.y as AxisRange | undefined,
@@ -172,6 +176,7 @@ export const Plot = React.memo(
             onUnhover={onUnhover}
             onUpdate={handleUpdate}
             onRelayout={handleRelayout}
+            onSelecting={onSelecting}
             onSelected={handleSelected}
             onDeselect={resetPlotRange}
             onDoubleClick={resetPlotRange}

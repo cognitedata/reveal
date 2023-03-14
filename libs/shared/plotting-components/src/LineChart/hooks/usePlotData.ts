@@ -25,7 +25,6 @@ export const usePlotData = ({
   const { showMarkers, showHoverMarker } = layout;
 
   const [plotData, setPlotData] = useState<Partial<PlotData>[]>([]);
-  const [dataRevision, setDataRevision] = useState(1);
 
   const initialPlotData = useMemo(() => {
     return adaptToPlotlyPlotData(data, showMarkers);
@@ -40,10 +39,6 @@ export const usePlotData = ({
   }, [initialPlotData]);
 
   useEffect(() => {
-    setDataRevision((currentDataRevision) => currentDataRevision + 1);
-  }, [plotData]);
-
-  useEffect(() => {
     if (!showHoverMarker) {
       return;
     }
@@ -56,9 +51,5 @@ export const usePlotData = ({
     setPlotData(updatedData);
   }, [backgroundColor, initialPlotData, plotHoverEvent, showHoverMarker]);
 
-  return {
-    plotData,
-    dataRevision,
-    isEmptyData,
-  };
+  return { plotData, isEmptyData };
 };
