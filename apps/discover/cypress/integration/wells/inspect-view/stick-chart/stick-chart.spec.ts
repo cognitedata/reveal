@@ -9,7 +9,7 @@ const DATA_AVAILABILITY_CASINGS = 'Casings';
 const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
 const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 const SEE_GRAPH_BUTTON_TEXT = 'See graph';
-const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs ED';
+const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs HD';
 const DETAIL_PAGE_BUTTON_TEXT = 'Detail page';
 
 const CASING_ASSEMBLY_DIAMETER_UNIT = 'in';

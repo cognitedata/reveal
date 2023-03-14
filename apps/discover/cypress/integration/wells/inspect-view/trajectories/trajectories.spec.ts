@@ -34,7 +34,7 @@ describe('Wells: Trajectories', () => {
     cy.findAllByText('NS vs EW').should('be.visible');
     cy.findAllByText('TVD vs NS').should('be.visible');
     cy.findAllByText('TVD vs EW').should('be.visible');
-    cy.findAllByText('TVD vs ED').should('be.visible');
+    cy.findAllByText('TVD vs HD').should('be.visible');
     cy.findAllByText('TVD 3D view').should('be.visible');
 
     cy.log('click on expand graph option');
@@ -43,7 +43,7 @@ describe('Wells: Trajectories', () => {
     cy.log('other graph titles should not visible');
     cy.findAllByText('TVD vs NS').should('not.be.visible');
     cy.findAllByText('TVD vs EW').should('not.be.visible');
-    cy.findAllByText('TVD vs ED').should('not.be.visible');
+    cy.findAllByText('TVD vs HD').should('not.be.visible');
     cy.findAllByText('TVD 3D view').should('not.be.visible');
   });
 
@@ -88,7 +88,7 @@ describe('Wells: Trajectories', () => {
     cy.log('other graph titles should be visible');
     cy.findAllByText('TVD vs NS').should('be.visible');
     cy.findAllByText('TVD vs EW').should('be.visible');
-    cy.findAllByText('TVD vs ED').should('be.visible');
+    cy.findAllByText('TVD vs HD').should('be.visible');
     cy.findAllByText('TVD 3D view').should('be.visible');
   });
 

@@ -79,7 +79,7 @@ export const getMockTrajectoryChartConfig =
           x: 'Equivalent Departure (<%= unit %>)',
           y: 'True Vertical Depth (<%= unit %>)',
         },
-        title: 'TVD vs ED',
+        title: 'TVD vs HD',
       },
     },
     {
