@@ -1,12 +1,16 @@
 import * as React from 'react';
 
-import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../../constants';
+import {
+  MUD_LINE_COLOR,
+  DATUM_TYPE_COLOR,
+  SEA_LEVEL_COLOR,
+} from '../../constants';
 import { HeaderText, LegendIndicator, LegendWrapper } from '../elements';
 
 const LEGEND_CONFIG: LegendItemProps[] = [
   {
-    label: 'RKB',
-    color: RKB_COLOR,
+    label: 'Datum Type',
+    color: DATUM_TYPE_COLOR,
   },
   {
     label: 'Sea Level',

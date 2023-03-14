@@ -34,7 +34,7 @@ export interface WellboreData
   wellName: string;
   wellboreName: string;
   wellboreColor: string;
-  rkbLevel: WellboreInternal['datum'];
+  datum: WellboreInternal['datum'];
 }
 
 export interface WellboreStickChartData {

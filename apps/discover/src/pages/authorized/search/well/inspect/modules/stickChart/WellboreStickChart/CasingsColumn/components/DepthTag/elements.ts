@@ -70,7 +70,3 @@ export const DepthLimitMarker = styled(DepthEndMarker)`
   float: left;
   margin-left: -${sizes.normal};
 `;
-
-export const TotalDepthWrapper = styled.div`
-  margin-top: -${DEPTH_SCALE_LABEL_HEIGHT}px;
-`;

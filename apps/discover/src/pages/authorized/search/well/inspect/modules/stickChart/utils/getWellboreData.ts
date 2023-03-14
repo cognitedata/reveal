@@ -1,4 +1,3 @@
-import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { WellboreData } from '../types';
@@ -11,6 +10,7 @@ export const getWellboreData = (wellbore: WellboreInternal): WellboreData => {
     color,
     wellWaterDepth,
     uniqueWellboreIdentifier,
+    datum,
   } = wellbore;
 
   return {
@@ -18,7 +18,7 @@ export const getWellboreData = (wellbore: WellboreInternal): WellboreData => {
     wellName,
     wellboreName: name,
     wellboreColor: color,
-    rkbLevel: getRkbLevel(wellbore),
+    datum,
     wellWaterDepth,
     uniqueWellboreIdentifier,
   };

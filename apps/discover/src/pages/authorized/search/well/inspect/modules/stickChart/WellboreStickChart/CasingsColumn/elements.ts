@@ -4,7 +4,11 @@ import layers from 'utils/zindex';
 import { Center, Flex, FlexRow, sizes } from 'styles/layout';
 
 import { SCALE_BLOCK_HEIGHT } from '../../../common/Events/constants';
-import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../constants';
+import {
+  MUD_LINE_COLOR,
+  DATUM_TYPE_COLOR,
+  SEA_LEVEL_COLOR,
+} from '../constants';
 
 export const CasingsColumnContentWrapper = styled(FlexRow)`
   height: 100%;
@@ -56,9 +60,9 @@ export const DepthBlock = styled(Flex)`
   `};
 `;
 
-export const RkbLevel = styled(DepthBlock)`
+export const DatumTypeLevel = styled(DepthBlock)`
   background: var(--cogs-bg-default);
-  border-top: 1px dashed ${RKB_COLOR};
+  border-top: 1px dashed ${DATUM_TYPE_COLOR};
 `;
 
 export const WaterDepth = styled(DepthBlock)`

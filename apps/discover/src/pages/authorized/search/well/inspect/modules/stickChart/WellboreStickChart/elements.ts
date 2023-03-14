@@ -50,7 +50,7 @@ export const ContentWrapper = styled(Flex)`
 
 export const ColumnHeaderWrapper = styled(DefaultColumnHeaderWrapper)`
   ${ColumnOptionsSelectorContainer} {
-    width: 75px;
+    width: 80px;
   }
 `;
 

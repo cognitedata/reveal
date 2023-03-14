@@ -29,6 +29,7 @@ import {
 import { ColumnHeaderWrapper } from '../elements';
 import { HoleSectionsColumn } from '../HoleSectionsColumn';
 
+import { DatumType } from './components/DatumType';
 import { DepthIndicators } from './components/DepthIndicators';
 import { DepthLimits } from './components/DepthLimits';
 import { Legend } from './components/Legend';
@@ -41,7 +42,7 @@ export interface CasingsColumnProps extends ColumnVisibilityProps {
   holeSections?: HoleSectionView[];
   mudWeightData?: DepthMeasurementWithData[];
   scaleBlocks: number[];
-  rkbLevel: WellboreInternal['datum'];
+  datum: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
   maxDepth?: MaxDepthData;
   depthMeasurementType: DepthMeasurementUnit;
@@ -56,7 +57,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       isLoading,
       holeSections,
       mudWeightData,
-      rkbLevel,
+      datum,
       wellWaterDepth,
       maxDepth,
       scaleBlocks,
@@ -80,16 +81,12 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
                 <DepthScaleLines scaleBlocks={scaleBlocks} />
 
                 <TopContent
-                  rkbLevel={rkbLevel}
+                  datum={datum}
                   waterDepth={wellWaterDepth}
                   scaleBlocks={scaleBlocks}
                 />
 
-                <DepthLimits
-                  scaleBlocks={scaleBlocks}
-                  maxDepth={maxDepth}
-                  depthMeasurementType={depthMeasurementType}
-                />
+                <DatumType datum={datum} scaleBlocks={scaleBlocks} />
 
                 <HoleSectionsColumn
                   data={holeSections}
@@ -102,6 +99,12 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
                   casingAssemblies={data}
                   scaleBlocks={scaleBlocks}
                   showBothSides={showBothSides}
+                  depthMeasurementType={depthMeasurementType}
+                />
+
+                <DepthLimits
+                  scaleBlocks={scaleBlocks}
+                  maxDepth={maxDepth}
                   depthMeasurementType={depthMeasurementType}
                 />
               </BodyColumnBody>

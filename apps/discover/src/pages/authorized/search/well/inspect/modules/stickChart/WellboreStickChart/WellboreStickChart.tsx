@@ -61,7 +61,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   wellboreName,
   wellboreColor,
   wellboreMatchingId,
-  rkbLevel,
+  datum,
   wellWaterDepth,
   uniqueWellboreIdentifier,
   /**
@@ -157,7 +157,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
         {...getCommonProps(ChartColumn.CASINGS)}
         holeSections={holeSectionsData.data}
         mudWeightData={mudWeightData.data}
-        rkbLevel={rkbLevel}
+        datum={datum}
         wellWaterDepth={wellWaterDepth}
         maxDepth={maxDepth}
         onClickDetailsButton={() => setShowCasingsDetailView(true)}

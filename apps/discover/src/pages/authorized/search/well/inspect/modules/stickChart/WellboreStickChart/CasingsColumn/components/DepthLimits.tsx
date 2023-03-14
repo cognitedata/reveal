@@ -9,7 +9,6 @@ import { getDepthTagDisplayDepth } from '../../../utils/getDepthTagDisplayDepth'
 import { TopContentWrapper } from '../elements';
 
 import { DepthLimitTag } from './DepthTag';
-import { TotalDepthWrapper } from './DepthTag/elements';
 
 export interface DepthLimitsProps {
   scaleBlocks: number[];
@@ -35,19 +34,12 @@ export const DepthLimits: React.FC<DepthLimitsProps> = ({
         : maxDepth.maxTrueVerticalDepth;
 
     return (
-      <TotalDepthWrapper>
-        <DepthLimitTag
-          content={`TD: ${getDepthTagDisplayDepth(totalDepth)}`}
-          scaledDepth={getScaledDepth(totalDepth)}
-        />
-      </TotalDepthWrapper>
+      <DepthLimitTag
+        content={`TD: ${getDepthTagDisplayDepth(totalDepth)}`}
+        scaledDepth={getScaledDepth(totalDepth)}
+      />
     );
   };
 
-  return (
-    <TopContentWrapper>
-      <DepthLimitTag content={0} />
-      {renderTotalDepthTag()}
-    </TopContentWrapper>
-  );
+  return <TopContentWrapper>{renderTotalDepthTag()}</TopContentWrapper>;
 };

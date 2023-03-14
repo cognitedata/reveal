@@ -7,12 +7,12 @@ import { Tooltip } from 'components/PopperTooltip';
 import { useScaledDepth } from '../../../hooks/useScaledDepth';
 import {
   DEPTH_BLOCK_LABEL_MINIMUM_HEIGHT,
-  RKB_LEVEL_LABEL,
+  DATUM_TYPE_LABEL,
   WATER_DEPTH_LABEL,
 } from '../../constants';
 import {
   DepthLabel,
-  RkbLevel,
+  DatumTypeLevel,
   TopContentWrapper,
   WaterDepth,
 } from '../elements';
@@ -29,7 +29,7 @@ interface TopContentAreaProps {
 
 interface TopContentProps {
   scaleBlocks: number[];
-  rkbLevel: WellboreInternal['datum'];
+  datum: WellboreInternal['datum'];
   waterDepth: WellboreInternal['wellWaterDepth'];
 }
 
@@ -65,7 +65,7 @@ export const TopContentArea: React.FC<TopContentAreaProps> = ({
 };
 
 export const TopContent: React.FC<TopContentProps> = ({
-  rkbLevel,
+  datum,
   waterDepth,
   scaleBlocks,
 }) => {
@@ -73,13 +73,13 @@ export const TopContent: React.FC<TopContentProps> = ({
 
   return (
     <TopContentWrapper>
-      {rkbLevel && (
+      {datum && (
         <TopContentArea
-          label={RKB_LEVEL_LABEL}
-          value={rkbLevel.value}
-          unit={rkbLevel.unit}
-          Wrapper={RkbLevel}
-          height={getScaledDepth(rkbLevel.value)}
+          label={DATUM_TYPE_LABEL}
+          value={datum.value}
+          unit={datum.unit}
+          Wrapper={DatumTypeLevel}
+          height={getScaledDepth(datum.value)}
         />
       )}
 
