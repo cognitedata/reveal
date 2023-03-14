@@ -1,6 +1,5 @@
 import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
 import {
@@ -49,7 +48,6 @@ export const GraphqlCodeEditor = React.memo(
     code,
     currentTypeName,
     typeDefs,
-    externalId,
     disabled = false,
     errorsByGroup,
     setErrorsByGroup,
@@ -59,8 +57,6 @@ export const GraphqlCodeEditor = React.memo(
     const langProviders = useRef<any>(null);
     const [editorRef, setEditorRef] =
       useState<MonacoEditor.IStandaloneCodeEditor | null>(null);
-
-    const { track } = useMixpanel();
 
     const editorWillMount = (monacoInstance: Monaco) => {
       langProviders.current = setupGraphql(monacoInstance, {
@@ -108,10 +104,6 @@ export const GraphqlCodeEditor = React.memo(
     useEffect(() => {
       setEditorValue(code);
     }, [code]);
-
-    useEffect(() => {
-      track('CodeEditor', { dataModel: externalId });
-    }, [track, externalId]);
 
     useEffect(() => {
       // Destroy lang services when component is unmounted

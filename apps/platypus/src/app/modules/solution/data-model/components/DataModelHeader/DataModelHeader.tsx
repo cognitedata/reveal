@@ -111,7 +111,7 @@ export const DataModelHeader = ({
     setCurrentTypeName(null);
     setSelectedDataModelVersion(latestDataModelVersion);
 
-    track('Discard', {
+    track('DataModel.Draft.Delete', {
       dataModel: dataModelExternalId,
     });
 
@@ -124,11 +124,6 @@ export const DataModelHeader = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     switchDataModelVersion(dataModelVersion);
-    track('SelectDM', {
-      dataModel: dataModelExternalId,
-      version: dataModelVersion.version,
-    });
-
     onDataModelVersionSelect(dataModelVersion);
   };
 

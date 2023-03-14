@@ -17,6 +17,7 @@ import React from 'react';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 const RESULTS_PER_PAGE = 25;
 
@@ -45,6 +46,8 @@ export const DataModelsTable = React.forwardRef(
     // eslint-disable-next-line
     const gridOptions = useMemo(() => getGridOptions(), []);
 
+    const { track } = useMixpanel();
+
     const dataModelsWithDrafts = useMemo(() => {
       const modelsWithDrafts = localStorageProvider
         .getKeys()
@@ -69,6 +72,7 @@ export const DataModelsTable = React.forwardRef(
 
     const handleRowClicked = useCallback((event: RowClickedEvent) => {
       const dataModel = event.data as DataModel;
+      track('DataModel.Select');
       navigate(`/${dataModel.space}/${dataModel.id}/${DEFAULT_VERSION_PATH}`);
       // eslint-disable-next-line
     }, []);

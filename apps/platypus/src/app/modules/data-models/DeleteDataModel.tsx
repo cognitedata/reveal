@@ -12,6 +12,7 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { NoNameDisplayName } from '@platypus-app/constants';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export const DeleteDataModel = ({
   dataModel,
@@ -23,6 +24,9 @@ export const DeleteDataModel = ({
   onAfterDeleting: VoidFunction;
 }) => {
   const { t } = useTranslation('dataModelsDeleteDialog');
+
+  const { track } = useMixpanel();
+
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
@@ -36,6 +40,9 @@ export const DeleteDataModel = ({
     dataModelsHandler
       .delete({ externalId: dataModelExternalId, space: dataModel.space })
       .then((result) => {
+        track('DataModel.Delete', {
+          deletedViews: result.getValue().referencedViews?.length,
+        });
         if (result.error) {
           Notification({
             type: 'error',

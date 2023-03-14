@@ -2,6 +2,7 @@ import { useExplorerPlugin } from '@graphiql/plugin-explorer';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StorageProviderType } from '@platypus/platypus-core';
 import GraphiQL from 'graphiql';
@@ -48,6 +49,7 @@ export const QueryExplorer = ({
   const [isReady, setIsReady] = useState<boolean>(false);
   const [explorerQuery, handleEditQuery] = useState(defaultQuery);
   const [explorerVariables, handleEditVariables] = useState('{}');
+  const { track } = useMixpanel();
 
   const explorerPlugin = useExplorerPlugin({
     schema: gqlSchema,
@@ -96,6 +98,10 @@ export const QueryExplorer = ({
         fetcher={(graphQlParams) => {
           return graphQlQueryFetcher
             .fetcher(graphQlParams, dataModelExternalId, schemaVersion, space)
+            .then((data) => {
+              track('DataModel.GraphIQL.Run');
+              return data;
+            })
             .catch((e) => {
               // there are other places that handles errors.
               // need to remove this when fully migrated to V3

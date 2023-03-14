@@ -270,11 +270,9 @@ export const DataModelPage = () => {
           'NEW_VERSION'
         );
 
-        if (breakingChanges) {
-          track('BreakingChanges', {
-            dataModel: dataModelExternalId,
-          });
-        }
+        track('DataModel.Edit', {
+          dataModel: dataModelExternalId,
+        });
       } else {
         setSaving(true);
         result = await dataModelVersionHandler.publish(
@@ -316,8 +314,9 @@ export const DataModelPage = () => {
       }
 
       if (result.isSuccess) {
-        track('Publishing', {
+        track('DataModel.Publish', {
           dataModel: dataModelExternalId,
+          version: newVersion,
         });
         removeLocalDraft(draftVersion);
         dataModelPublished();
@@ -387,6 +386,7 @@ export const DataModelPage = () => {
   };
 
   const handleDiscardClick = () => {
+    track('DataModel.Draft.Delete');
     dataModelTypeDefsBuilder.clear();
     updateGraphQlSchema(latestDataModelVersion.schema);
   };

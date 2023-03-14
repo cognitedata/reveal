@@ -6,6 +6,7 @@ import {
   useDataModelVersions,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
 import { useState } from 'react';
@@ -27,6 +28,8 @@ export const DocLinkButtonGroup = ({
     space: string;
     version: string;
   };
+
+  const { track } = useMixpanel();
 
   const { data: dataModelVersions } = useDataModelVersions(
     dataModelExternalId,
@@ -56,7 +59,10 @@ export const DocLinkButtonGroup = ({
             icon="Link"
             type="ghost"
             data-cy="btn-endpoint-modal"
-            onClick={() => setShowEndpointModal(true)}
+            onClick={() => {
+              track('DataModel.Links.GraphQL');
+              setShowEndpointModal(true);
+            }}
           >
             URL
           </Button>
@@ -67,6 +73,9 @@ export const DocLinkButtonGroup = ({
           <a href={cliLink} target="_blank" rel="noreferrer">
             <Button
               aria-label={t('btn_link_cli_docs', 'CLI docs')}
+              onClick={() => {
+                track('DataModel.Links.CLI');
+              }}
               type="ghost"
               icon="CLI"
             />
@@ -79,6 +88,9 @@ export const DocLinkButtonGroup = ({
             aria-label={t('btn_link_docs', 'Visit docs page')}
             type="ghost"
             icon="Documentation"
+            onClick={() => {
+              track('DataModel.Links.Documentation');
+            }}
           />
         </Tooltip>
       </a>

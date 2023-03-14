@@ -11,12 +11,13 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DropdownButton, LastTimeText } from './elements';
 
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 type Props = {
   selectedVersion: DataModelVersion;
@@ -50,6 +51,13 @@ export function SchemaVersionDropdown({
 }: Props) {
   const [isOpen, setOpen] = useState(false);
   const dateUtils = useInjection(TOKENS.dateUtils);
+  const { track } = useMixpanel();
+
+  useEffect(() => {
+    if (isOpen) {
+      track('DataModel.Versions.List');
+    }
+  }, [isOpen, track]);
 
   const latest =
     versions.filter((v) => v.status === DataModelVersionStatus.PUBLISHED)[0] ||

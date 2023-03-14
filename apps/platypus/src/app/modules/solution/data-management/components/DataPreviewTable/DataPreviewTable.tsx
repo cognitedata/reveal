@@ -61,6 +61,7 @@ import {
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useListDataSource } from '../../hooks/useListDataSource';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 const pageSizeLimit = 100;
 
@@ -92,6 +93,7 @@ export const DataPreviewTable = forwardRef<
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
     const gridRef = useRef<AgGridReact>(null);
+    const { track } = useMixpanel();
     const { isEnabled: isManualPopulationEnabled } =
       useManualPopulationFeatureFlag();
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
@@ -199,6 +201,10 @@ export const DataPreviewTable = forwardRef<
         });
     };
 
+    useEffect(() => {
+      track('DataModel.Data.View', { version, type: dataModelType.name });
+    }, [track, dataModelType, version]);
+
     const handleSuggestionsClose = async (selectedColumn?: string) => {
       gridRef.current?.api.refreshInfiniteCache();
       setIsSuggestionsModalVisible(false);
@@ -298,7 +304,8 @@ export const DataPreviewTable = forwardRef<
 
     useEffect(() => {
       gridRef.current?.api.onFilterChanged();
-    }, [searchTerm]);
+      track('DataModel.Data.Search', { version, type: dataModelType.name });
+    }, [searchTerm, track, dataModelType.name, version]);
 
     const debouncedHandleSearchInputValueChange = debounce((value) => {
       setSearchTerm(value);
@@ -646,6 +653,18 @@ export const DataPreviewTable = forwardRef<
           >
             <CogDataGrid
               ref={gridRef}
+              onSortChanged={() => {
+                track('DataModel.Data.Sort', {
+                  version,
+                  type: dataModelType.name,
+                });
+              }}
+              onFilterChanged={() => {
+                track('DataModel.Data.Filter', {
+                  version,
+                  type: dataModelType.name,
+                });
+              }}
               gridOptions={{
                 alwaysMultiSort: false,
                 readOnlyEdit: !isManualPopulationEnabled,

@@ -7,6 +7,7 @@ import useTransformations from '../../hooks/useTransformations';
 import { groupTransformationsByTypes } from '@platypus/platypus-core';
 import { isFDMv3 } from '@platypus-app/flags';
 import { createLink } from '@cognite/cdf-utilities';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 type Props = {
   space: string;
@@ -23,7 +24,7 @@ export function TransformationDropdown({
 }: Props) {
   const { t } = useTranslation('BulkPopulation');
   const { setIsTransformationModalOpen } = useDataManagementPageUI();
-
+  const { track } = useMixpanel();
   const isFDMV3 = isFDMv3();
 
   const { data: transformations } = useTransformations({
@@ -57,6 +58,10 @@ export function TransformationDropdown({
                         css={{}}
                         key={transformation.id}
                         onClick={() => {
+                          track('DataModel.Transformations.Open', {
+                            target: groupedTransformations[key].displayName,
+                            version,
+                          });
                           if (isFDMV3) {
                             window.open(
                               createLink(
