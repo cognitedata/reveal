@@ -21,8 +21,6 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"dbaeumer.vscode-eslint",
-		"rust-lang.rust",
-		"cadenas.vscode-glsllint",
 		"mhutchie.git-graph",
 		"eamodio.gitlens"
 	],
