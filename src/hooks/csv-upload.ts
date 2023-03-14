@@ -83,6 +83,8 @@ export const useCSVUpload = ({
       return;
     }
 
+    console.log('csv-upload');
+
     try {
       PapaParse.parse<any>(file, {
         dynamicTyping: true,
@@ -111,14 +113,14 @@ export const useCSVUpload = ({
             }));
           } catch (e) {
             notification.error({
-              message: t('file-upload-primary-key-empty-cells'),
+              message: t('file-upload-no-rows-error'),
               key: 'file-upload',
             });
             setUploadStatus('error');
             throw e;
           }
 
-          if (items.length) {
+          if (items.length > 0) {
             sdk.raw
               .insertRows(database, table, items)
               .then(() => {
@@ -136,6 +138,14 @@ export const useCSVUpload = ({
                 setUploadStatus('error');
                 throw e;
               });
+          }
+
+          if (items.length === 0) {
+            notification.error({
+              message: t('file-upload-primary-key-empty-cells'),
+              key: 'file-upload',
+            });
+            setUploadStatus('error');
           }
         },
       });
