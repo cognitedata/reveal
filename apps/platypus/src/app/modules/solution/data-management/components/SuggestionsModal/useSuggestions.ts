@@ -28,6 +28,7 @@ export const useSuggestions = ({
           space,
           model: [dataModelExternalId, `${dataModelType.name}_${version}`],
           items: data,
+          version,
           dataModelExternalId,
           dataModelType,
           dataModelTypeDefs,

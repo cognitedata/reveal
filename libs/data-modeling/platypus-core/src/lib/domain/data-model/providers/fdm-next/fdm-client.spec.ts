@@ -1,5 +1,9 @@
 import { PlatypusError } from '@platypus-core/boundaries/types';
-import { PublishDataModelVersionDTO } from '../../dto';
+import {
+  DeleteInstancesDTO,
+  IngestInstancesDTO,
+  PublishDataModelVersionDTO,
+} from '../../dto';
 import {
   DataModelTypeDefsType,
   DataModelVersionStatus,
@@ -130,6 +134,19 @@ const dataModelsApiMock = {
   },
 } as any;
 
+const instancesApiMock = {
+  working: {
+    upsert: jest.fn((dto: IngestInstancesDTO) =>
+      Promise.resolve({
+        items: dto.items,
+      })
+    ),
+    delete: jest.fn((dto: DeleteInstancesDTO[]) =>
+      Promise.resolve({ items: dto })
+    ),
+  },
+} as any;
+
 const viewsApiMock = {
   working: {
     delete: jest.fn((dto: SpaceDTO[]) => Promise.resolve({ items: dto })),
@@ -219,7 +236,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       await fdmClient.createDataModel({
@@ -249,7 +267,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       const dto = {
@@ -285,7 +304,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       await fdmClient.listDataModels();
@@ -306,7 +326,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       fdmClient.validateDataModel({
@@ -337,7 +358,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       const dto: PublishDataModelVersionDTO = {
@@ -373,7 +395,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       const dto: PublishDataModelVersionDTO = {
@@ -411,7 +434,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       const dto = {
@@ -442,7 +466,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       await fdmClient.fetchData({
@@ -488,7 +513,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       const spaces = await fdmClient.getSpaces({});
@@ -513,7 +539,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApi,
         graphqlService,
-        transformationsService
+        transformationsService,
+        instancesApiMock.working
       );
 
       const newSpace = await fdmClient.createSpace({
@@ -543,7 +570,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApiMock.working,
         graphqlServiceMock.working,
-        transformationApiMock.working
+        transformationApiMock.working,
+        instancesApiMock.working
       );
 
       const response = await fdmClient.deleteDataModel({
@@ -576,7 +604,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApiMock.working,
         graphqlServiceMock.working,
-        transformationApiMock.working
+        transformationApiMock.working,
+        instancesApiMock.working
       );
 
       const response = await fdmClient.deleteDataModel({
@@ -619,7 +648,8 @@ describe('FDM v3 Client', () => {
         dataModelsApiMock.working,
         mixerApiMock.working,
         graphqlServiceMock.working,
-        transformationApiMock.working
+        transformationApiMock.working,
+        instancesApiMock.working
       );
 
       dataModelsApiMock.working.list.mockImplementation(async () =>

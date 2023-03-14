@@ -1,3 +1,4 @@
+import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelsHandler,
@@ -47,7 +48,8 @@ export const getFlexibleDataModelingClient = () => {
     new DataModelsApiService(getCogniteSDKClient()),
     getFdmV3MixerApiService(),
     new GraphQlUtilsService(),
-    getTransformationsApiService()
+    getTransformationsApiService(),
+    new InstancesApiService(getCogniteSDKClient())
   );
 };
 

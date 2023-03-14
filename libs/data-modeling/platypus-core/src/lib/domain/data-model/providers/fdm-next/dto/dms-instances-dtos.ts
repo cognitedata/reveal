@@ -1,22 +1,12 @@
-import { ContainerReference } from './dms-container-dtos';
 import { ViewReference } from './dms-view-dtos';
 
 export interface NodeViewWrite {
   instanceType: 'node';
   space: string;
+  existingVersion?: number;
   externalId: string;
-  views: Array<{
-    view: ViewReference;
-    properties: any;
-  }>;
-}
-
-export interface NodeContainerWrite {
-  instanceType: 'node';
-  space: string;
-  externalId: string;
-  containers: Array<{
-    container: ContainerReference & { type: 'container' };
+  sources: Array<{
+    source: { type: 'view' } & ViewReference;
     properties: any;
   }>;
 }
@@ -26,12 +16,11 @@ export interface EdgeViewWrite {
   type: DirectRelationReference;
   space: string;
   externalId: string;
-  autoCreateStartNodes: boolean;
-  autoCreateEndNodes: boolean;
+  existingVersion?: number;
   startNode: DirectRelationReference;
   endNode: DirectRelationReference;
-  views: Array<{
-    view: ViewReference;
+  sources?: Array<{
+    source: { type: 'view' } & ViewReference;
     properties: any;
   }>;
 }
@@ -41,33 +30,16 @@ export interface DirectRelationReference {
   externalId: string;
 }
 
-export interface EdgeContainerWrite {
-  instanceType?: 'edge';
-  type: DirectRelationReference;
-  space: string;
-  externalId: string;
-  autoCreateStartNodes: boolean;
-  autoCreateEndNodes: boolean;
-  startNode: DirectRelationReference;
-  endNode: DirectRelationReference;
-  containers: Array<{
-    view: ContainerReference;
-    properties: any;
-  }>;
-}
-
 export interface IngestRequestDTO {
-  items: (
-    | NodeViewWrite
-    | NodeContainerWrite
-    | EdgeViewWrite
-    | EdgeContainerWrite
-  )[];
+  items: (NodeViewWrite | EdgeViewWrite)[];
+  autoCreateStartNodes?: boolean;
+  autoCreateEndNodes?: boolean;
   replace?: boolean;
+  skipOnVersionConflict?: boolean;
 }
 export interface DeleteRequestDTO {
   items: {
-    type: 'node' | 'edge';
+    instanceType: 'node' | 'edge';
     externalId: string;
     space: string;
   }[];

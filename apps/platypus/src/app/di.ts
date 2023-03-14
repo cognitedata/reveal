@@ -29,6 +29,7 @@ import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
 import { isFDMv3 } from './flags';
+import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 
 // First define the Tokens
 export const TOKENS = {
@@ -71,7 +72,8 @@ rootInjector
         new DataModelsApiService(sdkClient),
         new FdmMixerApiService(sdkClient),
         new GraphQlUtilsService(),
-        new TransformationApiService(sdkClient)
+        new TransformationApiService(sdkClient),
+        new InstancesApiService(sdkClient)
       );
     } else {
       return new FdmV2Client(

@@ -7,15 +7,17 @@ export type CellEditorWrapperProps = {
   visible: boolean;
   children: ReactElement;
   errorMessage?: string;
+  style?: React.CSSProperties;
 };
 
 export const CellEditorWrapper: React.FC<CellEditorWrapperProps> = ({
   visible,
   children,
+  style,
   errorMessage = 'This field is required',
 }) => {
   return (
-    <S.CellEditorWrapper>
+    <S.CellEditorWrapper style={style}>
       <Tooltip
         className="cell-editor-tooltip"
         visible={visible}

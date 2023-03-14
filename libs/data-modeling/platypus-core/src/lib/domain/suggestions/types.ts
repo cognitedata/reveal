@@ -14,5 +14,4 @@ export interface SuggestionsMatch {
   sourceExternalId: string;
   targetExternalId: string;
   score: number;
-  relativeScore: number;
 }

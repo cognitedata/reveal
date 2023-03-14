@@ -20,12 +20,14 @@ import {
   UpdateDataModelDTO,
   GetByExternalIdDTO,
   DeleteDataModelOutput,
+  IngestInstanceDTO,
 } from '../../dto';
 
 import {
   CdfResourceInstance,
   DataModel,
   DataModelTransformation,
+  DataModelTypeDefsType,
   DataModelValidationError,
   DataModelVersion,
   PaginatedResponse,
@@ -57,6 +59,7 @@ import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import { compareDataModelVersions } from '../../utils';
 import { ItemsWithCursor } from './dto/dms-common-dtos';
 import { chunk, uniqBy } from 'lodash';
+import { InstancesApiService } from './services/data-modeling-api/instances-api.service';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private dataModelDataMapper: DataModelDataMapper;
@@ -72,7 +75,8 @@ export class FdmClient implements FlexibleDataModelingClient {
     private dataModelsApi: DataModelsApiService,
     private mixerApiService: FdmMixerApiService,
     private graphqlService: IGraphQlUtilsService,
-    private transformationApiService: TransformationApiService
+    private transformationApiService: TransformationApiService,
+    private instancesApiService: InstancesApiService
   ) {
     this.spacesApi = spacesApi;
     this.mixerApiService = mixerApiService;
@@ -284,7 +288,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    */
   publishDataModelVersion(
     dto: PublishDataModelVersionDTO,
-    conflictMode: ConflictMode
+    _conflictMode: ConflictMode
   ): Promise<DataModelVersion> {
     const createDTO = {
       space: dto.space,
@@ -434,7 +438,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param validateBreakingChanges
    */
   async validateDataModel(
-    dto: PublishDataModelVersionDTO
+    _dto: PublishDataModelVersionDTO
   ): Promise<DataModelValidationError[]> {
     // TODO skipping validation while we integrate with V3 Mixer API
     // test needs updating too when this is fixed
@@ -613,7 +617,56 @@ export class FdmClient implements FlexibleDataModelingClient {
   ingestInstances(
     dto: IngestInstancesDTO
   ): Promise<IngestInstancesResponseDTO> {
-    throw 'Not implemented';
+    if (dto.type === 'node') {
+      return this.instancesApiService
+        .ingest({
+          replace: true,
+          items: dto.items.map((item) => ({
+            instanceType: 'node',
+            space: dto.space,
+            externalId: (item as { externalId: string }).externalId,
+            sources: [
+              {
+                source: {
+                  type: 'view',
+                  space: dto.space,
+                  externalId: dto.dataModelType.name,
+                  version: dto.version,
+                },
+                properties: normalizeIngestionItem(
+                  item,
+                  dto.space,
+                  dto.dataModelType
+                ),
+              },
+            ],
+          })),
+        })
+        .then(() => ({ items: dto.items }));
+    } else {
+      return this.instancesApiService
+        .ingest({
+          autoCreateEndNodes: true,
+          autoCreateStartNodes: true,
+          items: dto.items.map((item) => ({
+            space: dto.space,
+            externalId: item.externalId,
+            type: {
+              space: dto.space,
+              externalId: `${dto.dataModelType.name}.${dto.property}`,
+            },
+            startNode: {
+              space: dto.space,
+              externalId: item.startNode,
+            },
+            endNode: {
+              space: dto.space,
+              externalId: item.endNode,
+            },
+          })),
+        })
+        .then(() => ({ items: dto.items }));
+    }
   }
 
   /**
@@ -621,7 +674,20 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto
    */
   deleteInstances(dto: DeleteInstancesDTO): Promise<boolean> {
-    throw 'Not implemented';
+    return this.instancesApiService
+      .delete({
+        items: dto.items.map((el) => ({
+          externalId: el.externalId,
+          instanceType: dto.type,
+          space: dto.space,
+        })),
+      })
+      .then(({ items }) => {
+        if (items.length !== dto.items.length) {
+          throw `Only ${items.length}/${dto.items.length} of the selected rows are deleted.`;
+        }
+        return Promise.resolve(true);
+      });
   }
 
   /**
@@ -742,4 +808,43 @@ const autoPageToArray = async <T>(
     return items.concat(await autoPageToArray(fn, nextCursor));
   }
   return items;
+};
+
+/*
+Replace relationships with correct ingestion format.
+Must be on the format {space, externalId} or null instead of {externalId} or null
+*/
+const normalizeIngestionItem = (
+  item: IngestInstanceDTO,
+  space: string,
+  dataModelType: DataModelTypeDefsType
+) => {
+  return Object.fromEntries(
+    Object.entries(item)
+      .map(([key, value]) => {
+        const fieldType = dataModelType.fields.find(
+          (field) => field.name === key
+        );
+        if (key === 'externalId') {
+          // remove if external id
+          return [key, undefined];
+        }
+        if (fieldType?.type.custom) {
+          if (fieldType?.type.list) {
+            // remove if list, its a non-direct relationship
+            return [key, undefined];
+          } else if (value !== null && typeof value === 'object') {
+            const externalId = (value as { externalId: string }).externalId;
+            if (!externalId) {
+              // remove if externalId is empty
+              return [key, null];
+            } else {
+              return [key, { space, externalId }];
+            }
+          }
+        }
+        return [key, value];
+      })
+      .filter(([_key, val]) => val !== undefined)
+  );
 };

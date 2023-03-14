@@ -11,7 +11,7 @@ export class InstancesApiService extends BaseApiService {
     return this.sendPostRequest('instances', requestDto);
   }
 
-  delete(requestDto: DeleteRequestDTO): Promise<''> {
+  delete(requestDto: DeleteRequestDTO): Promise<ItemList<SlimNodeOrEdge>> {
     return this.sendPostRequest('instances/delete', requestDto);
   }
 }

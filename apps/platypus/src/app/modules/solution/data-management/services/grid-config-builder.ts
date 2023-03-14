@@ -87,12 +87,16 @@ export const buildGridConfig = (
       defaultValue: '',
       dataType: ColumnDataType.Id,
       colDef: {
-        editable: false,
+        editable: (row) =>
+          row.data._draftStatus ? isManualPopulationEnabled : false,
         sortable: false,
         suppressMovable: true,
         cellRenderer: IdCellRenderer,
         filter: getColFilter(INSTANCE_TYPE_DEFS_FIELD),
         cellRendererParams: {
+          onRowAdd,
+        },
+        cellEditorParams: {
           onRowAdd,
         },
       },
@@ -117,10 +121,7 @@ export const buildGridConfig = (
           // Mixer API supports sorting only on primitives (not array and not custom types)
           sortable: !field.type.custom && !isList,
           filter: getColFilter(field),
-          editable:
-            isManualPopulationEnabled &&
-            !isList &&
-            dataType !== ColumnDataType.Json,
+          editable: isManualPopulationEnabled && !isList,
           cellEditorParams: {
             isRequired: field.nonNull || field.type.nonNull,
           },

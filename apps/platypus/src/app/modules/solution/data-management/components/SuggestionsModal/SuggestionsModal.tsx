@@ -28,7 +28,6 @@ export type SuggestionsTableData = {
   source: { externalId: string } & KeyValueMap;
   target: { externalId: string } & KeyValueMap;
   score: number;
-  relativeScore: number;
   isSelected?: boolean;
   isApproved?: boolean;
 };

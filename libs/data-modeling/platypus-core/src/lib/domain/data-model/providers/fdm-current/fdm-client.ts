@@ -642,14 +642,14 @@ const normalizeIngestionItem = (
           (field) => field.name === key
         );
         if (fieldType?.type.custom && fieldType?.type.list) {
-          return [key, undefined];
+          return [key, null];
         } else if (
           fieldType?.type.custom &&
           !fieldType?.type.list &&
           value !== null &&
           typeof value === 'object'
         ) {
-          const externalId = value.externalId;
+          const externalId = (value as { externalId: string }).externalId;
           if (externalId === '') {
             return [key, null];
           } else {

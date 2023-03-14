@@ -24,6 +24,7 @@ export const useSuggestionsResult = ({
       dataModelInfo.dataModelExternalId,
       dataModelInfo.space,
       dataModelInfo.version,
+      1000,
       dataModelInfo.dataModelType,
       dataModelInfo.dataModelTypeDefs
     );
@@ -32,6 +33,7 @@ export const useSuggestionsResult = ({
       dataModelInfo.dataModelExternalId,
       dataModelInfo.space,
       dataModelInfo.version,
+      100_000,
       targetTypeDef,
       dataModelInfo.dataModelTypeDefs
     );
@@ -77,7 +79,6 @@ export const useSuggestionsResult = ({
             source: sourceRecord as { externalId: string },
             target: targetRecord as { externalId: string },
             score: Math.round(match.score * 10000) / 10000,
-            relativeScore: Math.round(match.relativeScore * 10000) / 10000,
           });
         }
       });

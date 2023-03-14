@@ -87,7 +87,10 @@ export class DataManagementHandler {
   ingestEdges(
     dto: Omit<IngestInstancesDTO, 'type'> & { items: IngestEdgeDTO[] }
   ) {
-    return this.fdmClient.ingestInstances({ ...dto, type: 'edge' });
+    return this.fdmClient.ingestInstances({
+      ...dto,
+      type: 'edge',
+    });
   }
 
   deleteEdges(dto: Omit<DeleteInstancesDTO, 'type'>) {

@@ -1,5 +1,6 @@
 import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import { ChangeEvent, Component, createRef } from 'react';
+import { ColumnDataType } from '../core/types';
 import { CellEditorWrapper } from './ui';
 
 interface TextCellEditorState {
@@ -9,18 +10,21 @@ interface TextCellEditorState {
 }
 
 export class TextCellEditor
-  extends Component<ICellEditorParams, TextCellEditorState>
+  extends Component<
+    ICellEditorParams & { dataType: ColumnDataType },
+    TextCellEditorState
+  >
   implements ICellEditor
 {
   private inputRef: any;
 
-  constructor(props: ICellEditorParams) {
+  constructor(props: ICellEditorParams & { dataType: ColumnDataType }) {
     super(props);
 
     this.inputRef = createRef();
 
     this.state = {
-      value: String(props.value || ''),
+      value: printValue(props.value || '', props.dataType),
       hasError: false,
       errorMessage: '',
     };
@@ -48,7 +52,7 @@ export class TextCellEditor
   /* Component Editor Lifecycle methods */
   // the final value to send to the grid, on completion of editing
   getValue() {
-    return this.state.value;
+    return processValue(this.state.value, this.props.dataType);
   }
 
   // Gets called once before editing starts, to give editor a chance to
@@ -84,6 +88,18 @@ export class TextCellEditor
         errorMessage: `Field ${this.props.colDef.headerName} is required`,
       };
     }
+    if (
+      !validateValue(
+        value,
+        this.props.colDef.cellEditorParams.isRequired,
+        this.props.dataType
+      )
+    ) {
+      return {
+        hasError: true,
+        errorMessage: `Field ${this.props.colDef.headerName} has unallowed values`,
+      };
+    }
     return {
       hasError: false,
       errorMessage: '',
@@ -109,3 +125,68 @@ export class TextCellEditor
     );
   }
 }
+
+const validateValue = (
+  value: string,
+  isRequired: boolean,
+  type: ColumnDataType
+) => {
+  if (!isRequired && value.trim().length === 0) {
+    return true;
+  }
+  switch (type) {
+    case ColumnDataType.Json:
+      try {
+        JSON.parse(value);
+        return true;
+      } catch {
+        return false;
+      }
+    case ColumnDataType.Date:
+    case ColumnDataType.DateTime:
+    case ColumnDataType.Time:
+      return !Number.isNaN(new Date(value));
+    default:
+      return value.trim().length > 0;
+  }
+};
+const processValue = (value: any, type: ColumnDataType) => {
+  if (!value) {
+    return null;
+  }
+  switch (type) {
+    case ColumnDataType.Custom:
+      return { externalId: value.trim() };
+    case ColumnDataType.Date:
+      return new Date(value).toISOString().split('T')[0];
+    case ColumnDataType.DateTime:
+      return new Date(value).toISOString();
+    case ColumnDataType.Time:
+      return new Date(value).toISOString();
+    case ColumnDataType.Json:
+      return JSON.parse(value);
+    default:
+      return value.trim();
+  }
+};
+
+const printValue = (value: any, type: ColumnDataType) => {
+  switch (type) {
+    case ColumnDataType.Custom:
+      return value ? value.externalId : undefined;
+    case ColumnDataType.Json:
+      if (value) {
+        if (typeof value !== 'string') {
+          return JSON.stringify(value);
+        }
+        try {
+          return JSON.stringify(JSON.parse(value));
+        } catch {
+          return value;
+        }
+      }
+      return undefined;
+    default:
+      return value;
+  }
+};

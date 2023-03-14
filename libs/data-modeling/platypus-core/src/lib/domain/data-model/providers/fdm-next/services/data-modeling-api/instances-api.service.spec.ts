@@ -40,9 +40,10 @@ describe('DMS v3 - Instances', () => {
           instanceType: 'node',
           space: 'space-id',
           externalId: 'external-id',
-          views: [
+          sources: [
             {
-              view: {
+              source: {
+                type: 'view',
                 space: 'space-id',
                 externalId: 'external-id-1',
                 version: '1',
@@ -92,7 +93,7 @@ describe('DMS v3 - Instances', () => {
     const deletePayload = {
       items: [
         {
-          type: 'node' as const,
+          instanceType: 'node' as const,
           externalId: 'external-id',
           space: 'space-id',
         },

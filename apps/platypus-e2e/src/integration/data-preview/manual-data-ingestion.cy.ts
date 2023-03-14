@@ -13,7 +13,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
     cy.get('div[role="gridcell"][col-id="name"]')
       .first()
       .click()
@@ -167,7 +166,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
     cy.get('div[role="gridcell"][col-id="name"]')
       .first()
       .click()
@@ -176,7 +174,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.getBySel('draft-row-selection-checkbox').first().click();
 
     cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
     cy.get('div[role="gridcell"][col-id="name"]')
       .first()
       .click()

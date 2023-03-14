@@ -52,7 +52,13 @@ export interface PublishedRowsCountMap {
 
 export interface IngestInstanceDTO {
   // The value can also be a { externalId } or null for direction relatiobships.
-  [key: string]: string | number | boolean | { externalId: string } | null;
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | object
+    | { externalId: string }
+    | null;
 }
 
 export interface IngestEdgeDTO extends IngestInstanceDTO {
@@ -67,6 +73,9 @@ export type IngestInstancesDTO = {
   space: string;
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  // allow v3
+  version: string;
+  property?: string;
   // v2 optional
   model?: string[];
   overwrite?: boolean;
@@ -77,7 +86,13 @@ export type IngestInstancesDTO = {
 
 export type IngestInstancesResponseDTO = {
   items: {
-    [key: string]: string | number | boolean;
+    [key: string]:
+      | string
+      | number
+      | boolean
+      | object
+      | { externalId: string }
+      | null;
   }[];
 };
 

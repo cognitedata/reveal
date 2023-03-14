@@ -85,7 +85,6 @@ export const DataPreviewTable = forwardRef<
     ref
   ) => {
     const instanceIdCol = 'externalId';
-
     const { t } = useTranslation('DataPreviewTable');
     const [searchTerm, setSearchTerm] = useState('');
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
@@ -182,7 +181,8 @@ export const DataPreviewTable = forwardRef<
         .ingestNodes({
           space,
           model: [dataModelExternalId, `${dataModelType.name}_${version}`],
-          items: [sanitizeRow(row)],
+          version,
+          items: [sanitizeRow(row) as { externalId: string }],
           dataModelExternalId,
           dataModelType,
           dataModelTypeDefs,
@@ -344,14 +344,10 @@ export const DataPreviewTable = forwardRef<
       }
     };
 
-    const handleCellDoubleClicked = useCallback(
-      (event: CellDoubleClickedEvent) => {
-        if (!event.colDef.field) {
-          return;
-        }
-
+    const toggleSidebar = useCallback(
+      (field: string, externalId: string, currValue?: any) => {
         const fieldType = dataModelType.fields.find(
-          (field) => field.name === event.colDef.field
+          (item) => item.name === field
         );
 
         // externalID for example is not in the dataModelType.fields
@@ -359,53 +355,55 @@ export const DataPreviewTable = forwardRef<
           return;
         }
 
-        if ((fieldType.type.list && event.value.length === 0) || !event.value) {
+        if ((fieldType.type.list && currValue.length === 0) || !currValue) {
           setSidebarData(undefined);
           return;
         }
 
-        const handleColumnVisibility = () => {
-          // 400ms is animation time of side panel opening
-          window.setTimeout(() => {
-            event.colDef.field &&
-              event.api.ensureColumnVisible(event.colDef.field);
-          }, 400);
-        };
-
         if (fieldType.type.list) {
           setSidebarData({
-            externalId: event.data.externalId,
-            fieldName: event.colDef.field,
+            externalId,
+            fieldName: field,
             type: 'list',
           });
-
-          handleColumnVisibility();
         } else if (fieldType.type.name === 'JSONObject') {
           setSidebarData({
-            fieldName: event.colDef.field,
-            json: event.value,
+            fieldName: field,
+            json: currValue,
             type: 'json',
           });
-
-          handleColumnVisibility();
         } else if (fieldType.type.custom) {
           const targetFieldType = dataModelTypeDefs.types.find(
             (type) => type.name === fieldType.type.name
           );
           if (targetFieldType) {
             setSidebarData({
-              externalId: event.value,
-              fieldName: event.colDef.field,
+              externalId: currValue.externalId,
+              fieldName: field,
               fieldType: targetFieldType,
               type: 'custom',
             });
           }
-          handleColumnVisibility();
         } else {
           setSidebarData(undefined);
         }
       },
       [dataModelType, dataModelTypeDefs.types]
+    );
+
+    const handleCellDoubleClicked = useCallback(
+      (event: CellDoubleClickedEvent) => {
+        if (!event.colDef.field) {
+          return;
+        }
+        toggleSidebar(event.colDef.field, event.data.externalId, event.value);
+        // 400ms is animation time of side panel opening
+        window.setTimeout(() => {
+          event.colDef.field &&
+            event.api.ensureColumnVisible(event.colDef.field);
+        }, 400);
+      },
+      [toggleSidebar]
     );
     /*
   We use this value-setter to handle editing of pinned draft rows and published rows.
@@ -426,17 +424,7 @@ export const DataPreviewTable = forwardRef<
         return false;
       }
 
-      let newValue = e.newValue;
-      if (
-        // if is a relationship and value not null
-        dataModelType.fields.some(
-          (el) => el.name === e.colDef.field && el.type.custom
-        ) &&
-        e.newValue !== null
-      ) {
-        // Set to null if externalId is set to empty string
-        newValue = e.newValue === '' ? null : { externalId: e.newValue.trim() };
-      }
+      const newValue = e.newValue;
 
       if (e.node?.rowPinned === 'top') {
         // if draft row, update redux store and return true
@@ -466,6 +454,7 @@ export const DataPreviewTable = forwardRef<
           space,
           model: [dataModelExternalId, `${dataModelType.name}_${version}`],
           items: [updatedRowData],
+          version,
           dataModelExternalId,
           dataModelType,
           dataModelTypeDefs,
@@ -474,6 +463,7 @@ export const DataPreviewTable = forwardRef<
           gridRef.current?.api.refreshCells();
           if (e.colDef.field) {
             e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
+            toggleSidebar(e.colDef.field, e.data.externalId, newValue);
           }
           const data: KeyValueMap[] = [];
           gridRef.current?.api.forEachNode((el) => data.push(el.data));

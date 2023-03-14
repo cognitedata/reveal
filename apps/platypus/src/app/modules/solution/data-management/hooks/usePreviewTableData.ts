@@ -17,6 +17,7 @@ export const usePreviewTableData = (
   dataModelExternalId: string,
   space: string,
   version: string,
+  maxNumberOfRecords: number,
   dataModelType?: DataModelTypeDefsType,
   dataModelTypeDefs?: DataModelTypeDefs
 ) => {
@@ -41,21 +42,37 @@ export const usePreviewTableData = (
       version
     ),
     async () => {
+      const records: DMSRecord[] = [];
       if (!dataModelType || !dataModelTypeDefs) {
-        return Promise.resolve([]);
+        return Promise.resolve(records);
       }
-      return await dataManagementHandler
-        .fetchData({
-          cursor: '',
+
+      let cursor = '';
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const response = await dataManagementHandler.fetchData({
+          cursor,
           dataModelType,
           dataModelTypeDefs,
           dataModelVersion: selectedDataModelVersion,
-          limit: 1000, // currently just assume taking the first 1000 items
+          limit: 1000,
           nestedLimit: 2,
-        })
-        .then((response) => {
-          return response.getValue().items as DMSRecord[];
         });
+
+        if (response.isFailure) {
+          return Promise.reject(response.error);
+        }
+        const value = response.getValue();
+        records.push(...value.items);
+        if (records.length > maxNumberOfRecords) {
+          return Promise.reject('Exceeding max number of records');
+        }
+        if (!value.pageInfo.hasNextPage) {
+          break;
+        }
+        cursor = value.pageInfo.cursor;
+      }
+      return Promise.resolve(records);
     },
     {
       enabled: !!dataModelType && !!dataModelTypeDefs,

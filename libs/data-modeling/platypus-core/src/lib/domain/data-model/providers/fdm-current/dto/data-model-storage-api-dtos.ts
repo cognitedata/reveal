@@ -161,7 +161,7 @@ export interface DmsIngestNodesRequestDTO extends BaseDmsIngestNodesRequestDTO {
 }
 export interface DmsIngestNodesItemDTO {
   // The value can also be a [spaceExternalId, externalId] pair or null for direction relatiobships.
-  [key: string]: string | number | boolean | [string, string] | null;
+  [key: string]: string | number | boolean | [string, string] | object | null;
 }
 
 export interface DmsIngestEdgesItemDTO {

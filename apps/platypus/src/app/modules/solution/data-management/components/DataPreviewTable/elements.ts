@@ -10,6 +10,14 @@ export const CollapsablePanelContainer = styled.div`
 export const StyledDataPreviewTable = styled.div`
   height: 100%;
   background-color: var(--cogs-surface--medium);
+
+  .ag-cell {
+    display: flex;
+    align-items: center;
+    .ag-cell-wrapper {
+      width: 100%;
+    }
+  }
   .ag-cell[col-id='_isDraftSelected'] {
     text-align: center;
     background: transparent !important;

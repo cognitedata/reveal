@@ -49,7 +49,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
     {
       dataModelExternalId,
       dataModelType: columnType!,
-      externalId: props.value,
+      externalId: props.value?.externalId,
       nestedLimit: 0,
       limitFields: nonListAndRelationshipValues
         .slice(0, PROPERTY_TO_SHOW)
@@ -70,7 +70,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
     }, DEBOUNCE_HOVER_TIME);
   };
 
-  if (!props.value) {
+  if (!props.value || !props.value.externalId) {
     return null;
   }
 
@@ -116,8 +116,8 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
       onHide={() => setIsHovered(false)}
     >
       <Flex gap={4} alignItems="center">
-        {props.value && <Icon type="Link" />}
-        <span>{props.value}</span>
+        {props.value.externalId && <Icon type="Link" />}
+        <span>{props.value.externalId}</span>
       </Flex>
     </Tooltip>
   );

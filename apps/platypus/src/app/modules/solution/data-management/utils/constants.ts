@@ -20,7 +20,7 @@ export const COL_TYPES_MAP: { [key: string]: string } = {
   JSONObject: ColumnDataType.Json,
   String: ColumnDataType.Text,
   Timestamp: ColumnDataType.DateTime,
-  Date: ColumnDataType.DateTime,
+  Date: ColumnDataType.Date,
 };
 
 export const FILTER_OPTIONS_WITHOUT_INPUT = ['Is empty', 'Is not empty'];

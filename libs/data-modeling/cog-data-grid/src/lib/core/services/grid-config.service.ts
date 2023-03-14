@@ -109,20 +109,6 @@ export class GridConfigService {
           },
           customColType: {
             cellRenderer: 'customRendererComponent',
-            valueGetter: (params: ValueGetterParams) => {
-              if (
-                params.data === undefined ||
-                params.colDef.field === undefined
-              ) {
-                return '';
-              }
-              const value = params.data[params.colDef.field];
-              if (value === null) {
-                return '';
-              } else {
-                return value.externalId || value._externalId;
-              }
-            },
             ...this.getColTypeProps(ColumnDataType.Custom, 'Link', theme),
           },
           idColType: {
@@ -130,6 +116,7 @@ export class GridConfigService {
           },
           jsonColType: {
             cellRenderer: 'jsonCellRenderer',
+            cellEditor: 'textCellEditor',
             ...this.getColTypeProps(ColumnDataType.Json, 'Code', theme),
           },
           textColType: {
@@ -201,6 +188,10 @@ export class GridConfigService {
             cellEditor: 'textCellEditor',
             ...this.getColTypeProps(ColumnDataType.DateTime, 'Calendar', theme),
           },
+          dateColType: {
+            cellEditor: 'textCellEditor',
+            ...this.getColTypeProps(ColumnDataType.Date, 'Calendar', theme),
+          },
           // default no auto header or cell editor
           defaultColType: {},
         },
@@ -231,7 +222,7 @@ export class GridConfigService {
         }
 
         const userProvidedColDef = columnConfig.colDef || {};
-        const colDef = Object.assign(
+        const colDef = merge(
           {
             field: columnConfig.property,
             headerName: columnConfig.label,
@@ -249,6 +240,9 @@ export class GridConfigService {
               ).includes('listColType')
                 ? columnConfig.dataType
                 : ColumnDataType.Text,
+            },
+            cellEditorParams: {
+              dataType: columnConfig.dataType,
             },
           },
           userProvidedColDef
@@ -287,6 +281,10 @@ export class GridConfigService {
       }
       case ColumnDataType.DateTime: {
         dataTypeName = 'dateTime';
+        break;
+      }
+      case ColumnDataType.Date: {
+        dataTypeName = 'date';
         break;
       }
       case ColumnDataType.Text: {
