@@ -211,7 +211,8 @@ const SecondaryModelDropdown = ({
   const handleSecondaryModelScroll = (e: any) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     const offset = numOfModelToDisplay + SECONDARY_MODEL_DISPLAY_LIMIT;
-    if (scrollTop + clientHeight >= scrollHeight) {
+    // Get next data when 90% of scroll height is reached.
+    if (scrollTop + clientHeight >= scrollHeight * 0.9) {
       if (offset < filteredModels.length) {
         setNumOfModelToDisplay(offset);
       }
@@ -221,7 +222,8 @@ const SecondaryModelDropdown = ({
   const handleImages360Scroll = (e: any) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     const offset = numOfImages360ToDisplay + SECONDARY_MODEL_DISPLAY_LIMIT;
-    if (scrollTop + clientHeight >= scrollHeight) {
+    // Get next data when 90% of scroll height is reached.
+    if (scrollTop + clientHeight >= scrollHeight * 0.9) {
       if (offset < filteredImages360SiteIds.length) {
         setNumOfImages360ToDisplay(offset);
       }
