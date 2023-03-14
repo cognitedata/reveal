@@ -41,7 +41,10 @@ const QuickMatchCreate = (): JSX.Element => {
         <Route path="/select-sources" element={<SelectSources />} />
         <Route path="/select-targets" element={<SelectTargets />} />
         <Route path="/configure-model" element={<ConfigureModel />} />
-        <Route path="/create-model/:modelId?" element={<CreateModel />} />
+        <Route
+          path="/create-model/:modelId?/:jobId?"
+          element={<CreateModel />}
+        />
       </Routes>
     </Page>
   );

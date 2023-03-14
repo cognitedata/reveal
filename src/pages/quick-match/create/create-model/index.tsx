@@ -12,17 +12,24 @@ import {
   useCreateEMModel,
   useCreateEMPredictionJob,
   useEMModel,
+  useEMModelPredictResults,
 } from 'hooks/contextualization-api';
 import { useInfiniteList } from 'hooks/infiniteList';
 import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 
 const CreateModel = (): JSX.Element => {
-  const { subAppPath, modelId: modelIdStr } = useParams<{
+  const {
+    subAppPath,
+    modelId: modelIdStr,
+    jobId: jobIdStr,
+  } = useParams<{
     subAppPath: string;
     modelId?: string;
+    jobId?: string;
   }>();
   const modelId = !!modelIdStr ? parseInt(modelIdStr, 10) : undefined;
+  const jobId = !!jobIdStr ? parseInt(jobIdStr, 10) : undefined;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
@@ -39,6 +46,17 @@ const CreateModel = (): JSX.Element => {
     targetFilter,
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
+  const [jobRefetchInt, setJobRefetchInt] = useState<number | undefined>();
+
+  const { data: model } = useEMModel(modelId!, {
+    enabled: !!modelId,
+    refetchInterval: modelRefetchInt,
+  });
+
+  const { data: prediction } = useEMModelPredictResults(jobId!, {
+    enabled: !!jobId,
+    refetchInterval: jobRefetchInt,
+  });
 
   const {
     mutateAsync: buildModel,
@@ -183,24 +201,20 @@ const CreateModel = (): JSX.Element => {
     targets,
   ]);
 
-  const { data: model } = useEMModel(modelId!, {
-    enabled: !!modelId,
-    refetchInterval: modelRefetchInt,
-  });
-
   const { mutate: createPredictJob, status: createPredictStatus } =
     useCreateEMPredictionJob({
       onSuccess(job) {
         navigate(
-          createLink(`/${subAppPath}/quick-match/results/${job.jobId}`),
-          {
-            replace: true,
-          }
+          createLink(
+            `/${subAppPath}/quick-match/create/create-model/${modelId}/${job.jobId}`
+          ),
+          { replace: true }
         );
       },
     });
 
-  const modelStatus = model?.status.toLowerCase();
+  const modelStatus = model?.status;
+  const jobStatus = prediction?.status;
 
   useEffect(() => {
     if (!modelStatus) {
@@ -217,10 +231,26 @@ const CreateModel = (): JSX.Element => {
     if (!modelStatus || !model?.id) {
       return;
     }
-    if (!IN_PROGRESS_EM_STATES.includes(modelStatus)) {
+    if (modelStatus === 'Completed') {
       createPredictJob(model?.id);
     }
   }, [createPredictJob, model?.id, modelStatus]);
+
+  useEffect(() => {
+    if (jobStatus && IN_PROGRESS_EM_STATES.includes(jobStatus)) {
+      setJobRefetchInt(1000);
+    } else {
+      setJobRefetchInt(undefined);
+    }
+  }, [jobStatus]);
+
+  useEffect(() => {
+    if (jobStatus === 'Completed') {
+      navigate(createLink(`/${subAppPath}/quick-match/results/${jobId}`), {
+        replace: true,
+      });
+    }
+  }, [jobId, jobStatus, navigate, subAppPath]);
 
   return (
     <Flex direction="column" gap={8}>
@@ -238,25 +268,32 @@ const CreateModel = (): JSX.Element => {
             <Body level={2}>{t(`target-data-fetch-${targetStatus}`)}</Body>
           </Flex>
         )}
-        {!model && (
+        {!model ? (
           <Flex alignItems="center" gap={8}>
             <QueryStatusIcon status={createModelStatus} />
             <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
           </Flex>
-        )}
-        {model?.status && (
+        ) : (
           <Flex alignItems="center" gap={8}>
             <QueryStatusIcon status={model.status} />
             <Body level={2}>{t(`create-model-${model.status}`)}</Body>
           </Flex>
         )}
-
-        <Flex alignItems="center" gap={8}>
-          <QueryStatusIcon status={createPredictStatus} />
-          <Body level={2}>
-            {t(`create-prediction-job-${createPredictStatus}`)}
-          </Body>
-        </Flex>
+        {prediction ? (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={prediction.status} />
+            <Body level={2}>
+              {t(`create-prediction-job-${prediction.status}`)}
+            </Body>
+          </Flex>
+        ) : (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={createPredictStatus} />
+            <Body level={2}>
+              {t(`create-prediction-job-${createPredictStatus}`)}
+            </Body>
+          </Flex>
+        )}
       </Infobox>
     </Flex>
   );
