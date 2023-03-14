@@ -7,6 +7,9 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
+import clamp from 'lodash/clamp';
+
+export type IconCullingScheme = 'clustered' | 'proximity';
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
@@ -17,10 +20,42 @@ export class IconCollection {
   private readonly _icons: Image360Icon[];
   private readonly _iconsSprite: InstancedIconSprite;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
+  private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
+
+  private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
+  private _iconCullingScheme: IconCullingScheme;
+  private _proximityRadius = Infinity;
+  private _proximityPointLimit = 50;
 
   get icons(): Image360Icon[] {
     return this._icons;
+  }
+
+  public setCullingScheme(scheme: IconCullingScheme): void {
+    if (this._iconCullingScheme === scheme) return;
+
+    this._iconCullingScheme = scheme;
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
+
+    switch (this._iconCullingScheme) {
+      case 'clustered': {
+        this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
+        break;
+      }
+      case 'proximity': {
+        this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
+        break;
+      }
+      default:
+        break;
+    }
+    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+  }
+
+  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
+    this._proximityRadius = Math.max(0, radius);
+    this._proximityPointLimit = clamp(pointLimit, 0, this.icons.length);
   }
 
   constructor(
@@ -46,8 +81,11 @@ export class IconCollection {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
+    this._iconCullingScheme = 'clustered';
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
-    onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
+    this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
+    this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
+    onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
 
     this._sceneHandler = sceneHandler;
     this._iconsSprite = iconsSprites;
@@ -85,6 +123,27 @@ export class IconCollection {
     };
   }
 
+  private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+    return ({ camera }) => {
+      const points =
+        this._proximityRadius === Infinity
+          ? this._icons
+          : octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
+              return pointContainer.data;
+            });
+
+      const closestPoints = points
+        .sort((a, b) => {
+          return a.position.distanceToSquared(camera.position) - b.position.distanceToSquared(camera.position);
+        })
+        .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
+
+      this._icons.forEach(p => (p.visible = false));
+      closestPoints.forEach(p => (p.visible = true));
+      iconSprites.setPoints(closestPoints.reverse().map(p => p.position));
+    };
+  }
+
   private initializeImage360Icons(
     points: Vector3[],
     sceneHandler: SceneHandler,
@@ -104,7 +163,7 @@ export class IconCollection {
   }
 
   public dispose(): void {
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._computeClustersEventHandler);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._iconsSprite.dispose();
     this._sharedTexture.dispose();
