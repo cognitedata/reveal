@@ -30,6 +30,7 @@
     "@visx/tooltip": "^3.0.0",
     "allotment": "^1.15.0",
     "antd": "^4.22.4",
+    "detect-file-encoding-and-language": "^2.3.2",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
     "papaparse": "^5.3.1",

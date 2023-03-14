@@ -12,6 +12,7 @@ import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
 
 import { RAWUploadStatus, renderUploadError, UseUploadOptions } from './upload';
+import languageEncoding from 'detect-file-encoding-and-language';
 
 export const useCSVUpload = ({
   file,
@@ -29,6 +30,7 @@ export const useCSVUpload = ({
   const [parser, setParser] = useState<PapaParse.Parser | undefined>();
   const [parsedCursor, setParsedCursor] = useState(0);
   const [uploadedCursor, setUploadedCursor] = useState(0);
+  const [fileEncoding, setFileEncoding] = useState('');
 
   const [uploadStatus, setUploadStatus] = useState<RAWUploadStatus>(undefined);
 
@@ -73,6 +75,14 @@ export const useCSVUpload = ({
         setColumns(result.data as string[]);
         setUploadStatus('ready');
         _parser.abort();
+        // setFileEncoding();
+        // console.log(file);
+        // console.log(
+        //   (result.data as string[]).find((value) => value.includes('�'))
+        // );
+        languageEncoding(file).then((fileInfo) =>
+          setFileEncoding(fileInfo.encoding as string)
+        );
       },
       complete: () => {},
     });
@@ -88,6 +98,7 @@ export const useCSVUpload = ({
         dynamicTyping: true,
         skipEmptyLines: true,
         header: true,
+        encoding: fileEncoding,
         error: (e) => {
           notification.error({
             message: t('file-upload-error', { name: file.name }),
@@ -119,6 +130,7 @@ export const useCSVUpload = ({
           }
 
           if (items.length) {
+            console.log(fileEncoding);
             sdk.raw
               .insertRows(database, table, items)
               .then(() => {
