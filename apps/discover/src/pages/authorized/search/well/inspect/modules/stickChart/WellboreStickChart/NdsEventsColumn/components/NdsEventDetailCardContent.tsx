@@ -76,13 +76,13 @@ export const NdsEventDetailCardContent: React.FC<
 
       <FlexRowFullWidth>
         <DetailCardBlock
-          title={`Hole Top Depth ${depthMeasurementType} ${getDisplayUnit(
+          title={`Top Depth ${depthMeasurementType} ${getDisplayUnit(
             holeTopDepth?.unit
           )}`}
           value={holeTopDepth?.value}
         />
         <DetailCardBlock
-          title={`Hole Base Depth ${depthMeasurementType} ${getDisplayUnit(
+          title={`Base Depth ${depthMeasurementType} ${getDisplayUnit(
             holeBaseDepth?.unit
           )}`}
           value={holeBaseDepth?.value}
