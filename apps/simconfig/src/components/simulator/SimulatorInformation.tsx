@@ -7,8 +7,8 @@ import { Collapse, Skeleton } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
 
+import { useSimulatorConfig } from 'hooks/useSimulatorConfig';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
-import { isValidSimulator } from 'utils/simulatorUtils';
 
 import { SimulatorInformationList } from './elements';
 
@@ -26,7 +26,10 @@ export function SimulatorInformation({
   },
 }: SimulatorDetailsProps) {
   const project = useSelector(selectProject);
-  const simulatorType = isValidSimulator(simulator) ? simulator : 'UNKNOWN';
+
+  const selectedSimualtorConfig = useSimulatorConfig({ simulator, project });
+
+  const simulatorType = selectedSimualtorConfig?.key ?? '';
 
   const { data: simulatorDetails, isFetching: isFetchingSimulatorDetails } =
     useGetSimulatorDetailsQuery(
@@ -35,7 +38,7 @@ export function SimulatorInformation({
         simulatorType,
         connectorName,
       },
-      { skip: !connectorName }
+      { skip: !connectorName || simulatorType === '' }
     );
 
   return (

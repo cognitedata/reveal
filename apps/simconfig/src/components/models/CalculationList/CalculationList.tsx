@@ -519,6 +519,18 @@ export function CalculationList({
       )}
       {nonConfiguredCalculations
         .sort((a: CalculationType, b: CalculationType) => a.localeCompare(b))
+        .filter((calcConfig: CalculationType) => {
+          // For PROSPER, the show all the predefined calcuations
+          if (simulator === 'PROSPER') {
+            return true;
+          }
+          // For ProcessSim, the show only "Rate by Nodal Analysis"
+          if (simulator === 'ProcessSim' && calcConfig === 'IPR/VLP') {
+            return true;
+          }
+          // For all other simualtors, we show only user defined routines and not any predefined calcuations
+          return calcConfig === 'UserDefined';
+        })
         .map((calculationType) => (
           <React.Fragment key={calculationType}>
             <Link

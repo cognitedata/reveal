@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import formatISO9075 from 'date-fns/formatISO9075';
@@ -13,6 +12,7 @@ import {
   useGetModelFileQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { useSimulatorConfig } from 'hooks/useSimulatorConfig';
 import {
   selectAuthHeaders,
   selectBaseUrl,
@@ -23,8 +23,6 @@ import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
 import { BoundaryConditionTable } from './BoundaryConditionTable';
-
-import type { AppLocationGenerics } from 'routes';
 
 interface ModelVersionDetailsProps {
   modelFile: ModelFile;
@@ -44,19 +42,10 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     setIsAdditionMetaInfoTooltipEnabled,
   ] = useState(false);
 
-  const {
-    data: { definitions },
-  } = useMatch<AppLocationGenerics>();
-
   const { metadata } = modelFile;
   const { simulator, modelName, version } = metadata;
 
-  const simulatorConfigDetails = useMemo(() => {
-    const data = definitions?.simulatorsConfig?.filter(
-      ({ key }) => key === simulator
-    );
-    return data?.[0];
-  }, [definitions?.simulatorsConfig, simulator]);
+  const simulatorConfigDetails = useSimulatorConfig({ simulator, project });
 
   const pollingOptions = {
     pollingInterval: !isProcessingReady
@@ -185,18 +174,21 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
             </div>
           </div>
           <div className="actions">
-            <div className="charts-link">
-              <Button
-                disabled={!boundaryConditions?.chartsUrl}
-                href={boundaryConditions?.chartsUrl}
-                icon="LineChart"
-                size="small"
-                target="_blank"
-                type="link"
-              >
-                View in Charts
-              </Button>
-            </div>
+            {simulatorConfigDetails?.isBoundaryConditionsEnabled ? (
+              <div className="charts-link">
+                <Button
+                  disabled={!boundaryConditions?.chartsUrl}
+                  href={boundaryConditions?.chartsUrl}
+                  icon="LineChart"
+                  size="small"
+                  target="_blank"
+                  type="link"
+                >
+                  View in Charts
+                </Button>
+              </div>
+            ) : null}
+
             <div className="download-link">
               <Button
                 disabled={isModelFileDownloading}

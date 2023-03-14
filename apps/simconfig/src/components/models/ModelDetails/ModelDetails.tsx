@@ -18,12 +18,12 @@ import {
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,
-  useGetMetadataResourceQuery,
   useGetModelFileQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
+import { useSimulatorConfig } from 'hooks/useSimulatorConfig';
 import { useTitle } from 'hooks/useTitle';
 import {
   selectIsDeleteEnabled,
@@ -73,12 +73,7 @@ export function ModelDetails({
       { skip: simulator === 'UNKNOWN', refetchOnMountOrArgChange: true }
     );
 
-  const simulatorConfigDetails = useMemo(() => {
-    const selectedSimulatorConfig = definitions?.simulatorsConfig?.filter(
-      ({ key }) => key === simulator
-    );
-    return selectedSimulatorConfig?.[0];
-  }, [definitions?.simulatorsConfig, simulator]);
+  const simulatorConfigDetails = useSimulatorConfig({ simulator, project });
 
   const [deleteModelFile, { isSuccess: isDeleteModelSuccess }] =
     useDeleteModelFileMutation();

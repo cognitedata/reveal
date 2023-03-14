@@ -1,9 +1,4 @@
-import type { DefinitionMap, Simulator } from '@cognite/simconfig-api-sdk/rtk';
-
-export const isValidSimulator = (simulator?: string): simulator is Simulator =>
-  simulator === 'PROSPER' ||
-  simulator === 'UNKNOWN' ||
-  simulator === 'ProcessSim';
+import type { DefinitionMap } from '@cognite/simconfig-api-sdk/rtk';
 
 export const excludeUnknownSimulator = (
   simulators?: DefinitionMap['type']['simulator']
