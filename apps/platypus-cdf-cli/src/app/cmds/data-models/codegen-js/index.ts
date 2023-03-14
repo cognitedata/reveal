@@ -76,12 +76,7 @@ const describe =
 class SolutionGenerateJSCommand extends CLICommand {
   async execute(args: Arguments<SolutionsGeneratePythonCommandArgs>) {
     try {
-      args.logger.info(
-        "Don't forget to install @cognite/fdm-client in your solution!"
-      );
-      args.logger.info(
-        '"yarn add @cognite/fdm-client" or "npm i @cognite/fdm-client"'
-      );
+      args.logger.info('Generating...');
       const projectConfig = getProjectConfig();
       const token = await getAuthToken({ ...projectConfig, ...args })();
       const outputDirectory = path.resolve(args['output-directory']);
