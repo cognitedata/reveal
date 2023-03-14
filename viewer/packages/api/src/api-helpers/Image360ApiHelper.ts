@@ -151,12 +151,12 @@ export class Image360ApiHelper {
     this._interactionState.image360SelectedForEntry = image360Entity;
 
     await this.startPreload(image360Entity, true);
-    this._transitionInProgress = true;
 
     if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
     }
 
+    this._transitionInProgress = true;
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
 
