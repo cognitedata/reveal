@@ -52,6 +52,9 @@ export class FDMQueryClient {
             properties: DirectProperties[key].reduce(
               (prev, curKey) => {
                 const key = curKey as keyof typeof item;
+                if (!item[key]) {
+                  return prev;
+                }
                 return {
                   ...prev,
                   [curKey]: { space: SPACE, ...item[key] },
@@ -59,6 +62,9 @@ export class FDMQueryClient {
               },
               TypeProperties[key].reduce((prev, curKey) => {
                 const key = curKey as keyof typeof item;
+                if (!item[key]) {
+                  return prev;
+                }
                 return { ...prev, [curKey]: item[key] };
               }, {} as any) as any
             ),
@@ -83,7 +89,7 @@ export class FDMQueryClient {
     return res.data.items;
   }
 
-  public async upsertRelationships<
+  public async upsertEdges<
     I extends {
       startNode: { externalId: string; space?: string };
       endNode: { externalId: string; space?: string };
@@ -159,7 +165,7 @@ export class FDMQueryClient {
     return res.data;
   }
 
-  public async deleteRelationships<K extends keyof typeof RelationshipMap>(
+  public async deleteEdges<K extends keyof typeof RelationshipMap>(
     _: K,
     _2: keyof (typeof RelationshipMap)[K],
     items: (
