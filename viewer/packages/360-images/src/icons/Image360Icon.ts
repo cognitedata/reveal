@@ -63,7 +63,7 @@ export class Image360Icon {
   }
 
   public intersect(ray: Ray): Vector3 | null {
-    const sphere = new Sphere(this._position, this._iconRadius * this._adaptiveScale);
+    const sphere = new Sphere(this._position, this._adaptiveScale);
     return ray.intersectSphere(sphere, new Vector3());
   }
 
@@ -88,8 +88,10 @@ export class Image360Icon {
         this._minPixelSize,
         this._iconRadius
       );
-      const scale = this._adaptiveScale * 2 * this._iconRadius; //???
-      this._hoverSprite.scale.set(scale, scale, 1.0);
+
+      // Points: glPointSize specifies the rasterized diameter of points.
+      // To calcualte the correct scale/diameter we multiply the adaptive radius with 2.
+      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1.0);
     };
 
     function computeAdaptiveScaling(
@@ -112,7 +114,7 @@ export class Image360Icon {
         minHeight * resolutionDownSampleFactor,
         maxHeight * resolutionDownSampleFactor
       );
-      return clampedSize / pointSize;
+      return (clampedSize / pointSize) * iconRadius;
     }
   }
 
