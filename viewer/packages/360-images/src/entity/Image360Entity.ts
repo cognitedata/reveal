@@ -62,10 +62,10 @@ export class Image360Entity implements Image360 {
 
   /**
    * Loads the 360 image (6 faces) into the visualization object.
-   * This will start the download of both low and full resolution images, and return once the first of these are completed.
-   * If the low resolution images are completed first the function will return a promise for when the full resolutions images are ready.
    *
-   * @returns A promise for when the full resolution images are ready. undefined if full resolution has already been applied.
+   * This will start the download of both low and full resolution images, and return once the first of these are completed.
+   * If the low resolution images are completed first, full resolution download and texture loading will continue in the background
+   * and applyFullResolution can be used to apply full resolution textures at a desired time.
    */
   public async load360Image(abortSignal?: AbortSignal): Promise<void> {
     const lowResolutionFaces = this._imageProvider
@@ -94,6 +94,9 @@ export class Image360Entity implements Image360 {
     }
   }
 
+  /**
+   * Apply full resolution textures to the image360VisualzationBox. This has no effect if full resolution has already been applied.
+   */
   public async applyFullResolution(): Promise<void> {
     if (this._getFullResolutionTextures) {
       const textures = await this._getFullResolutionTextures.catch(() => {});
