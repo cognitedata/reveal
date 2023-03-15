@@ -23,7 +23,7 @@ describe(Image360LoadingCache.name, () => {
     expect(entityLoadingCache.getDownloadInProgress(entityMock1)).not.toBe(undefined);
     expect(entityLoadingCache.cachedEntities.includes(entityMock1)).toBeFalsy();
 
-    deferredPromise.resolve(undefined);
+    deferredPromise.resolve();
     await deferredPromise;
 
     expect(entityLoadingCache.getDownloadInProgress(entityMock1)).toBe(undefined);
@@ -58,7 +58,7 @@ describe(Image360LoadingCache.name, () => {
 
     const preLoad1 = entityLoadingCache.cachedPreload(entityMock1);
 
-    deferredPromise1.resolve(undefined);
+    deferredPromise1.resolve();
     await preLoad1;
 
     const preLoad2 = entityLoadingCache.cachedPreload(entityMock2);
@@ -66,7 +66,7 @@ describe(Image360LoadingCache.name, () => {
     expect(entityLoadingCache.getDownloadInProgress(entityMock2)).not.toBe(undefined);
     expect(entityLoadingCache.cachedEntities.includes(entityMock1)).toBeTruthy();
 
-    deferredPromise2.resolve(undefined);
+    deferredPromise2.resolve();
     await preLoad2;
 
     expect(entityLoadingCache.currentlyLoadingEntities.length).toBe(0);
@@ -113,12 +113,12 @@ describe(Image360LoadingCache.name, () => {
     const preLoad1 = entityLoadingCache.cachedPreload(entityMock1);
     const preLoad2 = entityLoadingCache.cachedPreload(entityMock2);
 
-    deferredPromise1.resolve(undefined);
-    deferredPromise2.resolve(undefined);
+    deferredPromise1.resolve();
+    deferredPromise2.resolve();
     await Promise.all([preLoad1, preLoad2]);
 
     const preLoad3 = entityLoadingCache.cachedPreload(entityMock3);
-    deferredPromise3.resolve(undefined);
+    deferredPromise3.resolve();
     await preLoad3;
 
     expect(entityLoadingCache.cachedEntities.length).toBe(2);
@@ -155,7 +155,7 @@ describe(Image360LoadingCache.name, () => {
     expect(loadingCache.currentlyLoadingEntities.length).toBe(3);
 
     promiseToReject.reject('Aborted');
-    promiseToResolve.resolve(undefined);
+    promiseToResolve.resolve();
 
     await expect(downloadToReject).resolves.not.toThrow();
     await expect(downloadToResolve).resolves.not.toThrow();
@@ -200,9 +200,9 @@ describe(Image360LoadingCache.name, () => {
     expect(loadingCache.getDownloadInProgress(image360Mock2)).not.toBe(undefined);
     expect(loadingCache.getDownloadInProgress(image360Mock3)).not.toBe(undefined);
 
-    deferredPromise1.resolve(undefined);
-    deferredPromise2.resolve(undefined);
-    deferredPromise3.resolve(undefined);
+    deferredPromise1.resolve();
+    deferredPromise2.resolve();
+    deferredPromise3.resolve();
 
     await download1;
     await download2;
