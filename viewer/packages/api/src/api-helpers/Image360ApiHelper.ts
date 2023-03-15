@@ -138,7 +138,6 @@ export class Image360ApiHelper {
       return;
     }
 
-    this._transitionInProgress = true;
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
 
@@ -151,6 +150,7 @@ export class Image360ApiHelper {
     this._image360Facade.allHoverIconsVisibility = false;
     image360Entity.icon.visible = false;
 
+    this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {
       await this.transition(lastEntered360ImageEntity, image360Entity);
       MetricsLogger.trackEvent('360ImageEntered', {});
@@ -170,7 +170,6 @@ export class Image360ApiHelper {
       this._requestRedraw();
     });
 
-    this._requestRedraw();
     this._image360Facade.collections
       .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
       .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
