@@ -84,17 +84,23 @@ export class Image360Entity implements Image360 {
     await this._image360VisualzationBox.loadImages(faces);
 
     if (!isFullResolution) {
-      this._getFullResolutionTextures = fullResolutionFaces.then(result => {
-        return this._image360VisualzationBox.loadFaceTextures(result.faces);
-      });
+      this._getFullResolutionTextures = fullResolutionFaces
+        .then(result => {
+          return this._image360VisualzationBox.loadFaceTextures(result.faces);
+        })
+        .catch(() => {
+          throw new Error();
+        });
     }
   }
 
   public async applyFullResolution(): Promise<void> {
     if (this._getFullResolutionTextures) {
-      const textures = await this._getFullResolutionTextures;
-      this._image360VisualzationBox.updateFaceMaterials(textures);
-      this._getFullResolutionTextures = undefined;
+      const textures = await this._getFullResolutionTextures.catch(() => {});
+      if (textures) {
+        this._image360VisualzationBox.updateFaceMaterials(textures);
+        this._getFullResolutionTextures = undefined;
+      }
     }
   }
 

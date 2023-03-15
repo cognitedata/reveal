@@ -42,7 +42,7 @@ export class Image360LoadingCache {
 
   public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void> {
     if (this._loaded360Images.includes(entity)) {
-      return undefined;
+      return;
     }
 
     if (lockDownload) {
