@@ -76,9 +76,7 @@ export class Image360LoadingCache {
           }
           this._loaded360Images.unshift(entity);
         },
-        () => {
-          return undefined;
-        }
+        () => {}
       )
       .finally(() => {
         if (this._lockedDownload === entity) {
