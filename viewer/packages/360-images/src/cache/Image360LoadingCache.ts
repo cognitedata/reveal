@@ -70,12 +70,11 @@ export class Image360LoadingCache {
         return Promise.reject();
       })
       .then(
-        result => {
+        () => {
           if (this._loaded360Images.length === this._imageCacheSize) {
             this.purgeLastRecentlyUsedInvisibleEntity();
           }
           this._loaded360Images.unshift(entity);
-          return result;
         },
         () => {
           return undefined;
@@ -91,8 +90,7 @@ export class Image360LoadingCache {
       });
 
     this._inProgressDownloads.push({ entity, load360Image, abort });
-    const callback = await load360Image;
-    return callback;
+    await load360Image;
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
