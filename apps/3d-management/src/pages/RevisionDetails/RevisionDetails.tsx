@@ -104,15 +104,10 @@ export default function RevisionDetails() {
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
 
   const modelsQuery = useModels();
-  const revisionsQuery = useRevisions(modelId);
-  const revision = (revisionsQuery.data || []).find(
-    (el) => el.id === revisionId
-  );
 
   const revisionLogsQuery = useRevisionLogs({
     modelId,
     revisionId,
-    status: revision?.status,
   });
 
   const { mutate: updateRevisionMutation, isLoading: updateInProgress } =
@@ -120,6 +115,12 @@ export default function RevisionDetails() {
 
   const { mutate: deleteRevisionMutation, isLoading: deletionInProgress } =
     useDeleteRevisionMutation();
+
+  const revisionsQuery = useRevisions(modelId);
+
+  const revision = (revisionsQuery.data || []).find(
+    (el) => el.id === revisionId
+  );
 
   const model = (modelsQuery.data || []).find(
     (el) => el.id === Number(modelId)

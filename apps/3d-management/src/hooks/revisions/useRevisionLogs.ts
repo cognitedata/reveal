@@ -26,13 +26,14 @@ export function useRevisionLogs(args: RevisionIds) {
     [QUERY_KEY.REVISIONS, args],
     fetchLogs(args),
     {
+      refetchOnMount: true,
       onError: (error) => {
         fireErrorNotification({
           error,
           message: 'Could not fetch revision logs',
         });
       },
-      enabled: !!args.revisionId && !!args.modelId && args.status !== 'Failed',
+      enabled: !!args.revisionId && !!args.modelId,
       retryDelay: (attempt) =>
         Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000), // exponential backoff if query fails
       refetchInterval: (data: RevisionLog3D[] | undefined) => {
@@ -45,7 +46,7 @@ export function useRevisionLogs(args: RevisionIds) {
             revisionLogCategory.some(
               (revisionLog) =>
                 revisionLog.type.toLowerCase() === 'success' ||
-                revisionLog.type.toLowerCase() === 'failed'
+                revisionLog.type.toLowerCase() === 'failure'
             )
         );
         if (data?.length && processCompleted) {

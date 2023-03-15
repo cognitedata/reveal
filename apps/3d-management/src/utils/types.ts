@@ -1,5 +1,3 @@
-import { Revision3DStatus } from '@cognite/sdk';
-
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
@@ -65,7 +63,6 @@ export interface SectionProps {
 export type RevisionIds = {
   modelId: number;
   revisionId: number;
-  status?: Revision3DStatus;
 };
 
 export type OrganizedRevisionLog = {
