@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Infobox } from '@cognite/cogs.js';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
@@ -12,16 +12,26 @@ import {
   useCreateEMModel,
   useCreateEMPredictionJob,
   useEMModel,
+  useEMModelPredictResults,
 } from 'hooks/contextualization-api';
 import { useInfiniteList } from 'hooks/infiniteList';
 import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 
 const CreateModel = (): JSX.Element => {
-  const { subAppPath } = useParams<{
+  const {
+    subAppPath,
+    modelId: modelIdStr,
+    jobId: jobIdStr,
+  } = useParams<{
     subAppPath: string;
+    modelId?: string;
+    jobId?: string;
   }>();
+  const modelId = !!modelIdStr ? parseInt(modelIdStr, 10) : undefined;
+  const jobId = !!jobIdStr ? parseInt(jobIdStr, 10) : undefined;
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     sourceType,
     allSources,
@@ -36,11 +46,24 @@ const CreateModel = (): JSX.Element => {
     targetFilter,
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
+  const [jobRefetchInt, setJobRefetchInt] = useState<number | undefined>();
 
-  const [modelId, setModelId] = useState<number>();
-  const [jobId, setJobId] = useState<number>();
+  const { data: model } = useEMModel(modelId!, {
+    enabled: !!modelId,
+    refetchInterval: modelRefetchInt,
+  });
 
-  const { mutateAsync: buildModel, isLoading } = useCreateEMModel();
+  const { data: prediction } = useEMModelPredictResults(jobId!, {
+    enabled: !!jobId,
+    refetchInterval: jobRefetchInt,
+  });
+
+  const {
+    mutateAsync: buildModel,
+    isLoading,
+    isError,
+    status: createModelStatus,
+  } = useCreateEMModel();
 
   const advancedFilter = useMemo(
     () => getAdvancedFilter({ api: sourceType, excludeMatched: unmatchedOnly }),
@@ -48,7 +71,6 @@ const CreateModel = (): JSX.Element => {
   );
 
   // fetch sources if "select all" option is applied
-
   const {
     data: sourcePages,
     isFetchingNextPage: isFetchingNextSourcePage,
@@ -82,7 +104,7 @@ const CreateModel = (): JSX.Element => {
     }
   }, [hasNextSourcePage, isFetchingNextSourcePage, fetchNextSourcePage]);
 
-  const sources = useMemo((): any[] => {
+  const sourcePageFlattened = useMemo((): any[] => {
     let stuff: any[] = [];
     sourcePages?.pages?.forEach((i) => {
       stuff = stuff.concat(i.items);
@@ -125,7 +147,7 @@ const CreateModel = (): JSX.Element => {
     }
   }, [hasNextTargetPage, isFetchingNextTargetPage, fetchNextTargetPage]);
 
-  const targets = useMemo((): any[] => {
+  const targetPagesFlattened = useMemo((): any[] => {
     let stuff: any[] = [];
     targetPages?.pages?.forEach((i) => {
       stuff = stuff.concat(i.items);
@@ -133,56 +155,66 @@ const CreateModel = (): JSX.Element => {
     return stuff;
   }, [targetPages?.pages]);
 
+  const sources = allSources ? sourcePageFlattened : sourcesList;
+  const targets = allTargets ? targetPagesFlattened : targetsList;
+
   useEffect(() => {
     if (
       !modelId &&
+      !isError &&
       !isLoading &&
       sourceStatus === 'success' &&
-      targetStatus === 'success'
+      targetStatus === 'success' &&
+      sources.length > 0 &&
+      targets.length > 0
     ) {
       buildModel({
         sourceType,
-        sources: allSources ? sources : sourcesList,
-        targetsList: allTargets ? targets : targetsList,
+        sources,
+        targets,
         featureType,
         matchFields,
         supervisedMode,
       }).then((model) => {
-        setModelId(model.id);
+        navigate(
+          createLink(
+            `/${subAppPath}/quick-match/create/create-model/${model.id}`
+          ),
+          { replace: true }
+        );
       });
     }
   }, [
-    sources,
-    modelId,
-    isLoading,
-    allSources,
     buildModel,
     featureType,
+    isError,
+    isLoading,
     matchFields,
-    setModelId,
-    sourcesList,
-    supervisedMode,
-    allTargets,
-    targetsList,
-    targets,
-    targetStatus,
+    modelId,
+    navigate,
     sourceStatus,
     sourceType,
+    sources,
+    subAppPath,
+    supervisedMode,
+    targetStatus,
+    targets,
   ]);
-
-  const { data: model, status: createModelStatus } = useEMModel(modelId!, {
-    enabled: !!modelId,
-    refetchInterval: modelRefetchInt,
-  });
 
   const { mutate: createPredictJob, status: createPredictStatus } =
     useCreateEMPredictionJob({
       onSuccess(job) {
-        setJobId(job.jobId);
+        navigate(
+          createLink(
+            `/${subAppPath}/quick-match/create/create-model/${modelId}/${job.jobId}`
+          ),
+          { replace: true }
+        );
       },
     });
 
-  const modelStatus = model?.status.toLowerCase();
+  const modelStatus = model?.status;
+  const jobStatus = prediction?.status;
 
   useEffect(() => {
     if (!modelStatus) {
@@ -199,19 +231,26 @@ const CreateModel = (): JSX.Element => {
     if (!modelStatus || !model?.id) {
       return;
     }
-    if (!IN_PROGRESS_EM_STATES.includes(modelStatus)) {
+    if (modelStatus === 'Completed') {
       createPredictJob(model?.id);
     }
   }, [createPredictJob, model?.id, modelStatus]);
 
-  if (createPredictStatus === 'success') {
-    return (
-      <Navigate
-        replace
-        to={createLink(`/${subAppPath}/quick-match/results/${jobId}`)}
-      />
-    );
-  }
+  useEffect(() => {
+    if (jobStatus && IN_PROGRESS_EM_STATES.includes(jobStatus)) {
+      setJobRefetchInt(1000);
+    } else {
+      setJobRefetchInt(undefined);
+    }
+  }, [jobStatus]);
+
+  useEffect(() => {
+    if (jobStatus === 'Completed') {
+      navigate(createLink(`/${subAppPath}/quick-match/results/${jobId}`), {
+        replace: true,
+      });
+    }
+  }, [jobId, jobStatus, navigate, subAppPath]);
 
   return (
     <Flex direction="column" gap={8}>
@@ -229,16 +268,32 @@ const CreateModel = (): JSX.Element => {
             <Body level={2}>{t(`target-data-fetch-${targetStatus}`)}</Body>
           </Flex>
         )}
-        <Flex alignItems="center" gap={8}>
-          <QueryStatusIcon status={createModelStatus} />
-          <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
-        </Flex>
-        <Flex alignItems="center" gap={8}>
-          <QueryStatusIcon status={createPredictStatus} />
-          <Body level={2}>
-            {t(`create-prediction-job-${createPredictStatus}`)}
-          </Body>
-        </Flex>
+        {!model ? (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={createModelStatus} />
+            <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
+          </Flex>
+        ) : (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={model.status} />
+            <Body level={2}>{t(`create-model-${model.status}`)}</Body>
+          </Flex>
+        )}
+        {prediction ? (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={prediction.status} />
+            <Body level={2}>
+              {t(`create-prediction-job-${prediction.status}`)}
+            </Body>
+          </Flex>
+        ) : (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={createPredictStatus} />
+            <Body level={2}>
+              {t(`create-prediction-job-${createPredictStatus}`)}
+            </Body>
+          </Flex>
+        )}
       </Infobox>
     </Flex>
   );
