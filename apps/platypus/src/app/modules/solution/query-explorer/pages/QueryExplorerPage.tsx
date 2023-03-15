@@ -8,8 +8,8 @@ import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/Basi
 import {
   useDataModel,
   useDataModelVersions,
-  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { Flex } from '@cognite/cogs.js';
@@ -36,12 +36,12 @@ export const QueryExplorerPage = ({
   const { version } = useParams() as { version: string };
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(
+      version,
+      dataModelExternalId,
+      dataModel?.space || ''
+    );
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     navigate(

@@ -1,12 +1,9 @@
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { DOCS_LINKS } from '@platypus-app/constants';
 import { TOKENS } from '@platypus-app/di';
-import {
-  useSelectedDataModelVersion,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
 import { useState } from 'react';
@@ -31,16 +28,8 @@ export const DocLinkButtonGroup = ({
 
   const { track } = useMixpanel();
 
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    space
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
   const { t } = useTranslation('DataModelHeader');
   const [showEndpointModal, setShowEndpointModal] = useState(false);
 

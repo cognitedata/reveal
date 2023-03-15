@@ -7,11 +7,8 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { DMSRecord } from '@platypus-core/domain/suggestions';
-import {
-  useDataModel,
-  useDataModelVersions,
-  useSelectedDataModelVersion,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 
 export const usePreviewTableData = (
   dataModelExternalId: string,
@@ -24,17 +21,13 @@ export const usePreviewTableData = (
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(
+      version,
+      dataModelExternalId,
+      dataModel?.space || ''
+    );
   return useQuery<DMSRecord[]>(
     QueryKeys.PREVIEW_TABLE_DATA(
       dataModelExternalId,

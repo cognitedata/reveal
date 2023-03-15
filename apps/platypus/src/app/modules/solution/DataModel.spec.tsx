@@ -6,8 +6,8 @@ import { mockSchemas, mockSolutions } from '@platypus-app/tests/mockData';
 import {
   useDataModel,
   useDataModelVersions,
-  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import {
   DataModelReducerState,
   initialState,
@@ -26,6 +26,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('@platypus-app/hooks/useDataModelActions');
+jest.mock('@platypus-app/hooks/useSelectedDataModelVersion');
 
 const solutionReduxMock = {
   ...initialState,
@@ -60,7 +61,7 @@ describe('DataModelPage Test', () => {
 
     (useSelectedDataModelVersion as any).mockImplementation(() => {
       return {
-        data: mockSchema,
+        dataModelVersion: mockSchema,
         isLoading: false,
         isError: false,
         isSuccess: true,
@@ -89,12 +90,11 @@ describe('DataModelPage Test', () => {
         isSuccess: true,
       };
     });
-    (useDataModelVersions as any).mockImplementation(() => {
+    (useSelectedDataModelVersion as any).mockImplementation(() => {
       return {
-        data: mockSchemas,
+        data: undefined,
         isLoading: true,
         isError: false,
-        isSuccess: true,
       };
     });
 
@@ -110,11 +110,9 @@ describe('DataModelPage Test', () => {
   });
 
   it('Should render no data model not found', async () => {
-    (useDataModelVersions as any).mockImplementation(() => {
+    (useSelectedDataModelVersion as any).mockImplementation(() => {
       return {
         isLoading: false,
-        isError: true,
-        isSuccess: false,
         error: {
           message: 'data model cant be found',
         },
@@ -133,13 +131,12 @@ describe('DataModelPage Test', () => {
       'data model'
     );
   });
+
   it('Should render no data model placeholder if it is not loaded', async () => {
-    (useDataModelVersions as any).mockImplementation(() => {
+    (useSelectedDataModelVersion as any).mockImplementation(() => {
       return {
-        data: mockSchemas,
+        dataModelVersion: undefined,
         isLoading: false,
-        isError: true,
-        isSuccess: false,
         error: {
           message: 'space cant be found',
         },

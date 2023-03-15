@@ -71,7 +71,6 @@ describe('DataModel reducer', () => {
     });
 
     expect(newState.typeDefs).toEqual(parsedTypeDefsMock);
-    expect(newState.customTypesNames).toEqual(['Person', 'Job']);
   });
 
   it('should create new type in TypeDefs', () => {
@@ -79,7 +78,6 @@ describe('DataModel reducer', () => {
       {
         ...initialState,
         typeDefs: parsedTypeDefsMock,
-        customTypesNames: ['Person', 'Job'],
       },
       {
         type: dataModelReducer.actions.createTypeDefsType,
@@ -91,7 +89,6 @@ describe('DataModel reducer', () => {
     expect(
       newState.typeDefs.types.find((type) => type.name === 'Team')
     ).toEqual(expect.objectContaining({ name: 'Team' }));
-    expect(newState.customTypesNames).toEqual(['Person', 'Job', 'Team']);
   });
 
   it('should update TypeDefs field', () => {
@@ -99,7 +96,6 @@ describe('DataModel reducer', () => {
       {
         ...initialState,
         typeDefs: parsedTypeDefsMock,
-        customTypesNames: ['Person', 'Job'],
       },
       {
         type: dataModelReducer.actions.updateTypeDefField,
@@ -125,7 +121,6 @@ describe('DataModel reducer', () => {
         ...initialState,
         typeDefs: parsedTypeDefsMock,
         currentTypeName: 'Job',
-        customTypesNames: ['Person', 'Job'],
       },
       {
         type: dataModelReducer.actions.createTypeDefField,
@@ -151,7 +146,6 @@ describe('DataModel reducer', () => {
         ...initialState,
         typeDefs: parsedTypeDefsMock,
         currentTypeName: 'Person',
-        customTypesNames: ['Person', 'Job'],
       },
       {
         type: dataModelReducer.actions.parseGraphQlSchema,
@@ -179,7 +173,6 @@ describe('DataModel reducer', () => {
         ...initialState,
         typeDefs: parsedTypeDefsMock,
         currentTypeName: 'Person',
-        customTypesNames: ['Person', 'Job'],
       },
       {
         type: dataModelReducer.actions.parseGraphQlSchema,
@@ -208,7 +201,6 @@ describe('DataModel reducer', () => {
         typeDefs: parsedTypeDefsMock,
         graphQlSchema: `type Person { name: String job: Job } type Job { name: String } `,
         currentTypeName: 'Person',
-        customTypesNames: ['Person', 'Job'],
       },
       {
         type: dataModelReducer.actions.clearState,

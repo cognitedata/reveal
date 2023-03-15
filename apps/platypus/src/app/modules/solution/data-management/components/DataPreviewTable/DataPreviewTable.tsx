@@ -56,10 +56,7 @@ import {
   DataPreviewSidebarData,
 } from './collapsible-panel-container';
 import debounce from 'lodash/debounce';
-import {
-  useDataModelVersions,
-  useSelectedDataModelVersion,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
@@ -99,16 +96,8 @@ export const DataPreviewTable = forwardRef<
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
     const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
-    const { data: dataModelVersions } = useDataModelVersions(
-      dataModelExternalId,
-      space
-    );
-    const selectedDataModelVersion = useSelectedDataModelVersion(
-      version,
-      dataModelVersions || [],
-      dataModelExternalId,
-      space
-    );
+    const { dataModelVersion: selectedDataModelVersion } =
+      useSelectedDataModelVersion(version, dataModelExternalId, space);
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
@@ -597,9 +586,10 @@ export const DataPreviewTable = forwardRef<
         )}
         {isTransformationModalVisible && (
           <CreateTransformationModal
-            space={space}
+            dataModelExternalId={dataModelExternalId}
             dataModelType={dataModelType}
             onRequestClose={() => setIsTransformationModalVisible(false)}
+            space={space}
             version={version}
           />
         )}

@@ -2,10 +2,7 @@ import { Body } from '@cognite/cogs.js';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import {
-  useDataModelVersions,
-  useSelectedDataModelVersion,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { lazy } from 'react';
 import { Route, Routes, useParams } from 'react-router-dom';
@@ -19,22 +16,27 @@ const DataPage = lazy(() =>
 export const DataModel = () => {
   const { t } = useTranslation('DataModel');
 
-  const { dataModelExternalId, space, version } = useParams();
+  const { dataModelExternalId, space, version } = useParams() as {
+    dataModelExternalId: string;
+    space: string;
+    version: string;
+  };
 
   const {
-    data: dataModelVersions,
-    isLoading: areDataModelVersionsLoading,
-    error: dataModelError,
-  } = useDataModelVersions(dataModelExternalId!, space!);
+    dataModelVersion: selectedDataModelVersion,
+    isLoading,
+    error,
+  } = useSelectedDataModelVersion(version, dataModelExternalId, space);
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version || '',
-    dataModelVersions || [],
-    dataModelExternalId || '',
-    space || ''
-  );
+  if (isLoading) {
+    return (
+      <div data-testid="data_model_loader">
+        <Spinner />
+      </div>
+    );
+  }
 
-  if (dataModelError || !selectedDataModelVersion) {
+  if (error || !selectedDataModelVersion) {
     return (
       <div data-testid="data_model_not_found">
         <BasicPlaceholder
@@ -45,8 +47,8 @@ export const DataModel = () => {
           )}
         >
           <Body level={5}>
-            {dataModelError
-              ? dataModelError.message.includes('space')
+            {error
+              ? error.message.includes('space')
                 ? t(
                     'space_not_found_details',
                     'Are you sure you have access to the space?'
@@ -61,14 +63,6 @@ export const DataModel = () => {
                 )}
           </Body>
         </BasicPlaceholder>
-      </div>
-    );
-  }
-
-  if (areDataModelVersionsLoading) {
-    return (
-      <div data-testid="data_model_loader">
-        <Spinner />
       </div>
     );
   }

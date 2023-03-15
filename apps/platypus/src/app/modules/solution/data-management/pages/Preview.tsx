@@ -6,9 +6,8 @@ import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceh
 import {
   useDataModel,
   useDataModelTypeDefs,
-  useDataModelVersions,
-  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
@@ -48,16 +47,8 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
 
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    space
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
     version,
