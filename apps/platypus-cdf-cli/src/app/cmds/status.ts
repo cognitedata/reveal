@@ -1,5 +1,5 @@
 import { Arguments, CommandModule } from 'yargs';
-import Table from 'cli-table';
+import Table from 'cli-table3';
 import { green } from 'chalk';
 import { BaseArgs } from '../types';
 import { getConfig } from '../utils/config';

@@ -70,7 +70,7 @@
     "brandi-react": "^4.0.2",
     "chalk": "4.1.2",
     "chromatic": "^6.17.0",
-    "cli-table": "^0.3.11",
+    "cli-table3": "^0.6.3",
     "conf": "^10.0.3",
     "configstore": "5.0.1",
     "copy-to-clipboard": "^3.3.3",
