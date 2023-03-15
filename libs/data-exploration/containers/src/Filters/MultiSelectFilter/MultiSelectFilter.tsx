@@ -9,7 +9,6 @@ import isEmpty from 'lodash/isEmpty';
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
 import { formatValue, isNilOption } from './utils';
-
 import {
   FilterLabel,
   MultiSelect,

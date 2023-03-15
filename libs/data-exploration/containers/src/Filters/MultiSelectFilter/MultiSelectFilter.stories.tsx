@@ -4,7 +4,7 @@ import { ComponentStory } from '@storybook/react';
 import { MultiSelectFilter } from './MultiSelectFilter';
 
 export default {
-  title: 'Search Results/Filters/MultiSelectFilter',
+  title: 'Filters/MultiSelectFilter',
   component: MultiSelectFilter,
 };
 

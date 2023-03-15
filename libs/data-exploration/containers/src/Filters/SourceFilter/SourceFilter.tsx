@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InternalAssetFilters,
   InternalDocumentFilter,
@@ -8,27 +6,21 @@ import {
   useDocumentAggregateSourceQuery,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter } from '../types';
 
+import { MultiSelectFilter } from '../MultiSelectFilter';
+import { BaseMultiSelectFilterProps } from '../types';
 import { OptionType } from '@cognite/cogs.js';
 
-interface BaseSourceFilterProps<TFilter> extends BaseFilter<TFilter> {
-  value?: OptionType<string>[];
-  onChange?: (newSources: OptionType<string>[]) => void;
-  addNilOption?: boolean;
-}
-
 export interface SourceFilterProps<TFilter>
-  extends BaseSourceFilterProps<TFilter> {
+  extends BaseMultiSelectFilterProps<TFilter> {
   options: OptionType<string>[];
 }
 
-export function SourceFilter<TFilter>({
+export const SourceFilter = <TFilter,>({
   options,
   onChange,
   ...rest
-}: SourceFilterProps<TFilter>) {
+}: SourceFilterProps<TFilter>) => {
   return (
     <MultiSelectFilter<string>
       addNilOption
@@ -38,10 +30,10 @@ export function SourceFilter<TFilter>({
       onChange={(_, newSources) => onChange?.(newSources)}
     />
   );
-}
+};
 
 const AssetSourceFilter = (
-  props: BaseSourceFilterProps<InternalAssetFilters>
+  props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
   const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
 
@@ -53,10 +45,8 @@ const AssetSourceFilter = (
   return <SourceFilter {...props} options={mappedSources} />;
 };
 
-SourceFilter.Asset = AssetSourceFilter;
-
 const EventSourceFilter = (
-  props: BaseSourceFilterProps<InternalEventsFilters>
+  props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
   const { data: sources = [] } = useEventsUniqueValuesByProperty('source');
 
@@ -69,7 +59,7 @@ const EventSourceFilter = (
 };
 
 export const FileSourceFilter = (
-  props: BaseSourceFilterProps<InternalDocumentFilter>
+  props: BaseMultiSelectFilterProps<InternalDocumentFilter>
 ) => {
   const { data: sources = [] } = useDocumentAggregateSourceQuery();
   const mappedSources = sources.map((item) => ({
@@ -79,6 +69,8 @@ export const FileSourceFilter = (
 
   return <SourceFilter {...props} options={mappedSources} />;
 };
+
+SourceFilter.Asset = AssetSourceFilter;
 
 SourceFilter.Event = EventSourceFilter;
 
