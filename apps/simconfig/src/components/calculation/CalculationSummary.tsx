@@ -5,7 +5,10 @@ import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
 import { Label } from '@cognite/cogs.js';
-import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
+import type {
+  CalculationTemplate,
+  DefinitionMap,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationScheduleIndicator } from 'components/models/CalculationList/CalculationScheduleIndicator';
 import { getScheduleRepeat } from 'pages/CalculationConfiguration/utils';
@@ -20,6 +23,22 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
+
+  const displayUnit = (
+    unit: string,
+    unitType: keyof DefinitionMap['map']['unitType']
+  ): string => {
+    // Check if unitType is already defined on DefinitionMap['map']['unitType']
+    // New simualtors (apart from PROSPER & ProcessSim) might not have unitType defined under DefinitionMap['map']['unitType']
+    if (
+      definitions?.map.unitType &&
+      unitType in definitions.map.unitType &&
+      unit in definitions.map.unitType
+    ) {
+      return definitions.map.unitType[unitType][unit];
+    }
+    return unit;
+  };
 
   return (
     <CalculationSummaryContainer>
@@ -366,10 +385,8 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   )
                 </div>
                 <div>
-                  <NullableValue
-                    value={definitions?.map.unitType[unitType][unit ?? '']}
-                  />{' '}
-                  (<NullableValue value={unitType} />)
+                  <NullableValue value={displayUnit(unit ?? '', unitType)} /> (
+                  <NullableValue value={unitType} />)
                 </div>
                 <div>
                   <NullableValue value={sensorExternalId} />
@@ -410,10 +427,8 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   )
                 </div>
                 <div>
-                  <NullableValue
-                    value={definitions?.map.unitType[unitType][unit ?? '']}
-                  />{' '}
-                  (<NullableValue value={unitType} />)
+                  <NullableValue value={displayUnit(unit ?? '', unitType)} /> (
+                  <NullableValue value={unitType} />)
                 </div>
                 <div>{externalId}</div>
               </React.Fragment>

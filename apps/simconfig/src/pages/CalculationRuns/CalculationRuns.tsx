@@ -55,13 +55,14 @@ export function CalculationRuns() {
     {
       ...initialDateRange,
       project,
-      simulator: searchFilters.simulator ?? 'PROSPER',
+      simulator: searchFilters.simulator ?? '',
       ...(nextCursor !== '' && { nextCursor }),
       ...searchFilters,
     },
     {
       refetchOnMountOrArgChange: true,
       pollingInterval: shouldPollCalculations ? POLLING_INTERVAL : undefined,
+      skip: !searchFilters.simulator,
     }
   );
 
@@ -167,7 +168,7 @@ export function CalculationRuns() {
         </div>
 
         <Filter
-          currentValue={searchFilters.simulator ?? 'PROSPER'}
+          currentValue={searchFilters.simulator}
           filterKey="simulator"
           isClearable={false}
           label="Simulator"
