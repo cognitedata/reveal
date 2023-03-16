@@ -14,16 +14,10 @@ import {
   useEMModel,
   useEMModelPredictResults,
 } from 'hooks/contextualization-api';
-import { useInfiniteList } from 'hooks/infiniteList';
+import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
 import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 import { useInfinite3dNodes } from 'hooks/threeD';
-
-const INFINITE_Q_OPTIONS = {
-  staleTime: Infinity,
-  refetchOnWindowFocus: false,
-  refetchOnReconnect: false,
-};
 
 const CreateModel = (): JSX.Element => {
   const {
@@ -62,11 +56,13 @@ const CreateModel = (): JSX.Element => {
   const { data: model } = useEMModel(modelId!, {
     enabled: !!modelId,
     refetchInterval: modelRefetchInt,
+    ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
   });
 
   const { data: prediction } = useEMModelPredictResults(jobId!, {
     enabled: !!jobId,
     refetchInterval: jobRefetchInt,
+    ...INFINITE_Q_OPTIONS,
   });
 
   const {
