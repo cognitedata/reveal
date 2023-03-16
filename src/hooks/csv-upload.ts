@@ -29,8 +29,6 @@ export const useCSVUpload = ({
   const [parser, setParser] = useState<PapaParse.Parser | undefined>();
   const [parsedCursor, setParsedCursor] = useState(0);
   const [uploadedCursor, setUploadedCursor] = useState(0);
-  const [fileEncoding, setFileEncoding] = useState('');
-
   const [uploadStatus, setUploadStatus] = useState<RAWUploadStatus>(undefined);
   const [isChunkUploadComplete, setIsChunkUploadComplete] = useState(false);
 
@@ -95,7 +93,6 @@ export const useCSVUpload = ({
         dynamicTyping: true,
         skipEmptyLines: true,
         header: true,
-        encoding: fileEncoding,
 
         error: (e) => {
           notification.error({
