@@ -1,14 +1,17 @@
 import { Colors, Icon } from '@cognite/cogs.js';
 import { MutationStatus } from '@tanstack/react-query';
+import { JobStatus } from 'hooks/contextualization-api';
 import styled from 'styled-components';
 
 export default function QueryStatusIcon({
   status,
 }: {
-  status?: MutationStatus;
+  status?: MutationStatus | JobStatus;
 }) {
   switch (status) {
-    case 'loading': {
+    case 'loading':
+    case 'Running':
+    case 'Queued': {
       return (
         <StyledIcon
           css={{ color: Colors['text-icon--status-neutral'] }}
@@ -16,7 +19,8 @@ export default function QueryStatusIcon({
         />
       );
     }
-    case 'success': {
+    case 'success':
+    case 'Completed': {
       return (
         <StyledIcon
           css={{ color: Colors['text-icon--on-contrast--strong'] }}
@@ -24,7 +28,8 @@ export default function QueryStatusIcon({
         />
       );
     }
-    case 'error': {
+    case 'error':
+    case 'Failed': {
       return (
         <StyledIcon
           css={{ color: Colors['text-icon--status-critical'] }}
