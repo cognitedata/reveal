@@ -9,15 +9,6 @@ import UnknownErrorPage from 'components/error-pages/UnknownError';
 import { useEMPipelines } from 'hooks/contextualization-api';
 
 const QuickMatch = (): JSX.Element => {
-  const { error } = useEMPipelines();
-
-  if (error) {
-    if (error?.status === 403) {
-      return <NoAccessPage />;
-    }
-    return <UnknownErrorPage error={error} />;
-  }
-
   return (
     <Routes>
       <Route
