@@ -18,7 +18,7 @@ const NoAccessPage = () => {
         <span>{t('no-access-title')}</span>
       </Warning>
       <Instructions>{t('no-access-detail')}</Instructions>
-      <InfoWrapper className="z-4">
+      <InfoWrapper>
         <ErrorInfo>
           <p>
             <Trans i18nKey="no-access-info-prerequisite" />

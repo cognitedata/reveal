@@ -1,4 +1,4 @@
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Elevations } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const ErrorPageContent = styled.div`
@@ -14,7 +14,7 @@ export const InfoWrapper = styled.div`
   padding: 14px;
   margin: 14px;
   border-radius: 4px;
-  box-shadow: Elevations[ 'elevation--surface--non-interactive'];
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
 `;
 
 export const ErrorInfo = styled.div`
