@@ -10,7 +10,7 @@ export const Instructions = styled.div`
 `;
 
 export const InfoWrapper = styled.div`
-  background-color: white;
+  background-color: ${Colors['surface--muted']};
   padding: 14px;
   margin: 14px;
   border-radius: 4px;
