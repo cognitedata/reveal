@@ -52,7 +52,7 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
       },
     ],
   };
-  const date = format(new Date(Number(alert.startTime)), 'dd/MM/yyyy HH:MM');
+  const date = format(new Date(Number(alert.startTime)), 'dd/MM/yyyy HH:mm');
   const duration =
     alert.startTime &&
     alert.lastTriggeredTime &&
