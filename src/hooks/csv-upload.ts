@@ -31,16 +31,22 @@ export const useCSVUpload = ({
   const [uploadedCursor, setUploadedCursor] = useState(0);
 
   const [uploadStatus, setUploadStatus] = useState<RAWUploadStatus>(undefined);
+  const [isChunkUploadComplete, setIsChunkUploadComplete] = useState(false);
 
   const parsePercentage =
     !file || !uploadStatus || uploadStatus === 'ready'
       ? 0
       : Math.ceil((parsedCursor / file.size) * 100);
 
-  const uploadPercentage =
-    !file || !uploadStatus || uploadStatus === 'ready'
-      ? 0
-      : Math.ceil((uploadedCursor / file.size) * 100);
+  let uploadPercentage = 0;
+
+  if (!file || !uploadStatus || uploadStatus === 'ready') {
+    uploadPercentage = 0;
+  } else if (isChunkUploadComplete) {
+    uploadPercentage = 100;
+  } else {
+    Math.ceil((uploadedCursor / file.size) * 100);
+  }
 
   const selectedColumn =
     selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
@@ -96,7 +102,9 @@ export const useCSVUpload = ({
           });
           setUploadStatus('error');
         },
-        complete: () => {},
+        complete: () => {
+          setIsChunkUploadComplete(true);
+        },
         chunk(results, _parser) {
           setParser(_parser);
           _parser.pause();
