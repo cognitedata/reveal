@@ -76,7 +76,7 @@ export class Image360LoadingCache {
           if (signal.aborted || reason === 'Aborted') {
             Log.info('360 Image download aborted: ' + reason);
           } else {
-            throw new Error(entity.temp() + 'Failed to load 360 image: ' + reason);
+            throw new Error('Failed to load 360 image: ' + reason);
           }
         }
       );
