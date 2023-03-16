@@ -1,10 +1,13 @@
 import styled from 'styled-components/macro';
 
 import { LABEL_COLOR, TICK_COLOR } from '../../constants';
+import { Variant } from '../../types';
 
 interface PlotWrapperProps {
   showticks: boolean;
   cursor: string;
+  variant?: Variant;
+  showyticklabels?: boolean;
 }
 
 export const PlotWrapper = styled.div`
@@ -24,20 +27,25 @@ export const PlotWrapper = styled.div`
       fill: ${LABEL_COLOR} !important;
       font-family: Inter !important;
       font-weight: 400 !important;
-      font-size: 11px !important;
+      font-size: ${({ variant }: PlotWrapperProps) =>
+        variant === 'small' ? 9.5 : 11}px !important;
       line-height: 16px !important;
       font-feature-settings: 'ss04' on !important;
     }
   }
 
-  > * .xtick:first-child {
-    display: none;
-  }
+  ${({ showyticklabels }: PlotWrapperProps) =>
+    showyticklabels &&
+    `
+    > * .xtick:first-child {
+      display: none;
+    }
+  `}
 
   > * .crisp {
     stroke: ${TICK_COLOR} !important;
-    ${(props: PlotWrapperProps) =>
-      !props.showticks &&
+    ${({ showticks }: PlotWrapperProps) =>
+      !showticks &&
       `
       display: none;
     `}
@@ -48,7 +56,7 @@ export const PlotWrapper = styled.div`
   }
 
   > * .nsewdrag {
-    cursor: ${(props: PlotWrapperProps) => props.cursor} !important;
+    cursor: ${({ cursor }: PlotWrapperProps) => cursor} !important;
   }
 
   > * .xtitle,
@@ -56,7 +64,8 @@ export const PlotWrapper = styled.div`
     fill: ${LABEL_COLOR} !important;
     font-family: Inter !important;
     font-weight: 500 !important;
-    font-size: 12px !important;
+    font-size: ${({ variant }: PlotWrapperProps) =>
+      variant === 'small' ? 10.5 : 12}px !important;
     line-height: 16px !important;
     font-feature-settings: 'ss04' on !important;
   }

@@ -1,5 +1,6 @@
 import { DatapointAggregate } from '@cognite/sdk';
-import { TooltipRendererProps } from '../../LineChart';
+
+import { TooltipRendererProps } from '../../../../LineChart';
 
 export const formatTooltipContent = ({ customData }: TooltipRendererProps) => {
   const datapoint = customData as DatapointAggregate;

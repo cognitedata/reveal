@@ -20,6 +20,7 @@ import { isContinuousHoverEnabled } from './utils/isContinuousHoverEnabled';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
+  isLoading,
   xAxis,
   yAxis,
   title,
@@ -40,7 +41,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   const [isPlotSelecting, setPlotSelecting] = useState(false);
 
   const layout = getLayout(layoutProp, variant);
-  const config = getConfig(configProp);
+  const config = getConfig(configProp, variant);
   const style = getStyleProperties(styleProp, variant);
 
   const {
@@ -90,6 +91,8 @@ export const LineChart: React.FC<LineChartProps> = ({
       <Plot
         ref={plotRef}
         data={data}
+        isLoading={isLoading}
+        variant={variant}
         xAxis={xAxis}
         yAxis={yAxis}
         layout={layout}
@@ -115,6 +118,7 @@ export const LineChart: React.FC<LineChartProps> = ({
 
       <Tooltip
         chartRef={chartRef}
+        variant={variant}
         xAxisName={xAxis?.name}
         yAxisName={yAxis?.name}
         backgroundColor={backgroundColor}

@@ -5,13 +5,13 @@ import { OptionType, Select } from '@cognite/cogs.js';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { DateRange, TimePeriod, UpdateDateRangeProps } from '../../types';
+import { DateRange, TimePeriod, UpdateTimePeriodProps } from '../../types';
 import { getDateRangeForTimePeriod } from '../../utils/getDateRangeForTimePeriod';
 
 export interface TimePeriodSelectProps {
   options: TimePeriod[];
   value?: TimePeriod;
-  onChange: (props: UpdateDateRangeProps) => void;
+  onChange: (props: UpdateTimePeriodProps) => void;
 }
 
 export const TimePeriodSelect: React.FC<TimePeriodSelectProps> = ({

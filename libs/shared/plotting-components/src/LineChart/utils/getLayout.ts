@@ -1,4 +1,4 @@
-import { DEAULT_LAYOUT, LAYOUT_BY_VARIANT } from '../constants';
+import { DEAULT_LAYOUT, LAYOUT_BY_VARIANT } from '../layout';
 import { Layout, Variant } from '../types';
 
 export const getLayout = (

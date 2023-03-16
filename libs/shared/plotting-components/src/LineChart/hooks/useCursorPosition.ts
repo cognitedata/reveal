@@ -7,6 +7,7 @@ import { Coordinate } from '../types';
 import { createEventListener } from '../utils/createEventListener';
 import head from 'lodash/head';
 import { checkIsClientOnElementt } from '../utils/checkIsClientOnElementt';
+import { PLOT_CLASSNAME } from '../constants';
 
 const CURSOR_ADJUSTMENT = 2;
 
@@ -21,7 +22,7 @@ export const useCursorPosition = (
       const chartBounds = chartRef.current?.getBoundingClientRect();
 
       const plotBounds = head(
-        chartRef.current?.getElementsByClassName('nsewdrag drag')
+        chartRef.current?.getElementsByClassName(PLOT_CLASSNAME)
       )?.getBoundingClientRect();
 
       if (!chartBounds) {

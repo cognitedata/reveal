@@ -9,7 +9,7 @@ import {
   TableProps,
 } from '@data-exploration-components/components/Table/Table';
 import { TIME_SELECT } from '@data-exploration-components/containers';
-import { TimeseriesChart } from '..';
+// import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
@@ -20,8 +20,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-import noop from 'lodash/noop';
-import { EMPTY_ARRAY } from '@data-exploration-lib/core';
+// import noop from 'lodash/noop';
+// import { EMPTY_ARRAY } from '@data-exploration-lib/core';
+
+import { TimeseriesChart } from '@cognite/plotting-components';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -67,23 +69,32 @@ export const TimeseriesTable = ({
         if (timeseries.isString) {
           return <Body level={2}>N/A for string time series</Body>;
         }
+        // return (
+        //   <TimeseriesChart
+        //     height={50}
+        //     showSmallerTicks
+        //     timeseriesId={timeseries.id}
+        //     numberOfPoints={100}
+        //     showAxis="horizontal"
+        //     timeOptions={EMPTY_ARRAY}
+        //     showContextGraph={false}
+        //     showPoints={false}
+        //     enableTooltip={false}
+        //     showGridLine="none"
+        //     minRowTicks={2}
+        //     enableTooltipPreview
+        //     dateRange={dateRange}
+        //     margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
+        //     onDateRangeChange={noop}
+        //   />
+        // );
         return (
           <TimeseriesChart
-            height={50}
-            showSmallerTicks
             timeseriesId={timeseries.id}
-            numberOfPoints={100}
-            showAxis="horizontal"
-            timeOptions={EMPTY_ARRAY}
-            showContextGraph={false}
-            showPoints={false}
-            enableTooltip={false}
-            showGridLine="none"
-            minRowTicks={2}
-            enableTooltipPreview
+            variant="small"
             dateRange={dateRange}
-            margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
-            onDateRangeChange={noop}
+            numberOfPoints={100}
+            height={50}
           />
         );
       },

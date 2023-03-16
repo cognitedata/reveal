@@ -1,9 +1,23 @@
 import styled from 'styled-components/macro';
+import { Variant } from '../../types';
 
 export const TooltipWrapper = styled.div`
   position: absolute;
   transform: translateY(-50%);
   transition: opacity 0.4s ease;
+
+  ${({ variant }: { variant?: Variant }) =>
+    variant === 'small' &&
+    `
+    ${TooltipContainer} {
+      padding: 4px;
+      gap: 4px;
+    }
+    ${TooltipDetailWrapper} {
+      padding: 4px;
+      border-radius: 4px;
+    }
+  `};
 `;
 
 export const TooltipContainer = styled.div`

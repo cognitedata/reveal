@@ -2,6 +2,7 @@ import { Datum } from 'plotly.js';
 
 export interface LineChartProps {
   data: Data | Data[];
+  isLoading?: boolean;
   xAxis?: Axis;
   yAxis?: Axis;
   title?: string;
@@ -33,9 +34,9 @@ export interface Layout {
   showTitle: boolean;
   showSubtitle: boolean;
   showLegend: boolean;
-  showAxisNames: boolean;
+  showAxisNames: AxisDirection | false;
   showTicks: boolean;
-  showTickLabels: boolean;
+  showTickLabels: AxisDirection | false;
   showFilters: boolean;
   showActions: boolean;
   showMarkers: boolean;

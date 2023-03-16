@@ -19,6 +19,7 @@ import {
   Layout,
   LineChartProps,
   PlotRange,
+  Variant,
 } from '../../types';
 import { useAxisTickCount } from '../../hooks/useAxisTickCount';
 import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
@@ -30,6 +31,7 @@ import { getPlotlyHoverMode } from '../../utils/getPlotlyHoverMode';
 import { PlotWrapper } from './elements';
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 import { usePlotData } from '../../hooks/usePlotData';
+import { Loader } from '../Loader';
 
 export interface PlotElement {
   getPlotRange: () => PlotRange;
@@ -39,6 +41,8 @@ export interface PlotElement {
 
 export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   data: Data | Data[];
+  isLoading?: boolean;
+  variant?: Variant;
   layout: Layout;
   config: Config;
   plotHoverEvent?: PlotHoverEvent;
@@ -58,6 +62,8 @@ export const Plot = React.memo(
     (
       {
         data,
+        isLoading,
+        variant,
         xAxis,
         yAxis,
         layout,
@@ -75,7 +81,7 @@ export const Plot = React.memo(
       ref
     ) => {
       const { showTicks, showMarkers } = layout;
-      const { responsive } = config;
+      const { responsive, scrollZoom, pan } = config;
 
       const plotRef = useRef<HTMLDivElement>(null);
 
@@ -119,14 +125,14 @@ export const Plot = React.memo(
 
       const plotLayout: Partial<PlotlyLayout> = {
         xaxis: {
-          ...getCommonAxisLayoutProps(xAxis, layout),
-          nticks: isEmptyData ? 0 : tickCount.x,
+          ...getCommonAxisLayoutProps('x', xAxis, layout),
+          nticks: tickCount.x,
           range: range.x,
           fixedrange: fixedRange.x,
         },
         yaxis: {
-          ...getCommonAxisLayoutProps(yAxis, layout),
-          nticks: isEmptyData ? 0 : tickCount.y,
+          ...getCommonAxisLayoutProps('y', yAxis, layout),
+          nticks: tickCount.y,
           range: range.y,
           fixedrange: fixedRange.y,
         },
@@ -136,8 +142,8 @@ export const Plot = React.memo(
       };
 
       const plotConfig: Partial<PlotlyConfig> = {
-        scrollZoom: Boolean(config.scrollZoom) && isCursorOnPlot,
-        showAxisDragHandles: true,
+        scrollZoom: Boolean(scrollZoom) && isCursorOnPlot,
+        showAxisDragHandles: Boolean(pan),
         displayModeBar: false,
       };
 
@@ -150,9 +156,8 @@ export const Plot = React.memo(
       };
 
       const handleRelayout = (_event: PlotRelayoutEvent) => {
-        const graph = plotRef.current;
-        updateAxisTickCount(graph, isEmptyData);
-        updateLayoutMargin(graph);
+        updateAxisTickCount(plotRef.current, isEmptyData);
+        updateLayoutMargin(plotRef.current);
       };
 
       const handleSelected = (event?: PlotSelectionEvent) => {
@@ -163,8 +168,18 @@ export const Plot = React.memo(
         });
       };
 
+      if (isLoading) {
+        return <Loader variant={variant} style={{ height, width }} />;
+      }
+
       return (
-        <PlotWrapper ref={plotRef} showticks={showTicks} cursor={cursor}>
+        <PlotWrapper
+          ref={plotRef}
+          showticks={showTicks}
+          cursor={cursor}
+          variant={variant}
+          showyticklabels={plotLayout.yaxis?.showticklabels}
+        >
           <PlotlyPlot
             data={plotData}
             layout={plotLayout}

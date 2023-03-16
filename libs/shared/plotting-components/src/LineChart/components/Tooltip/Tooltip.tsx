@@ -6,7 +6,12 @@ import { PlotHoverEvent } from 'plotly.js';
 import head from 'lodash/head';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
-import { Coordinate, TooltipRendererProps, ValueType } from '../../types';
+import {
+  Coordinate,
+  TooltipRendererProps,
+  ValueType,
+  Variant,
+} from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
 import { TooltipDetail } from './TooltipDetail';
@@ -15,6 +20,7 @@ import { getPointCustomData } from '../../utils/getPointCustomData';
 
 export interface TooltipProps {
   chartRef: React.RefObject<HTMLDivElement>;
+  variant?: Variant;
   plotHoverEvent?: PlotHoverEvent;
   xAxisName?: string;
   yAxisName?: string;
@@ -29,6 +35,7 @@ export interface TooltipProps {
 
 export const Tooltip: React.FC<TooltipProps> = ({
   chartRef,
+  variant,
   plotHoverEvent,
   xAxisName = 'X',
   yAxisName = 'Y',
@@ -129,6 +136,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     <TooltipWrapper
       ref={tooltipRef}
       className="tooltip"
+      variant={variant}
       style={{
         top: y,
         left: x,
