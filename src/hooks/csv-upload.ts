@@ -12,7 +12,6 @@ import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
 
 import { RAWUploadStatus, renderUploadError, UseUploadOptions } from './upload';
-import languageEncoding from 'detect-file-encoding-and-language';
 
 export const useCSVUpload = ({
   file,
@@ -33,16 +32,22 @@ export const useCSVUpload = ({
   const [fileEncoding, setFileEncoding] = useState('');
 
   const [uploadStatus, setUploadStatus] = useState<RAWUploadStatus>(undefined);
+  const [isChunkUploadComplete, setIsChunkUploadComplete] = useState(false);
 
   const parsePercentage =
     !file || !uploadStatus || uploadStatus === 'ready'
       ? 0
       : Math.ceil((parsedCursor / file.size) * 100);
 
-  const uploadPercentage =
-    !file || !uploadStatus || uploadStatus === 'ready'
-      ? 0
-      : Math.ceil((uploadedCursor / file.size) * 100);
+  let uploadPercentage = 0;
+
+  if (!file || !uploadStatus || uploadStatus === 'ready') {
+    uploadPercentage = 0;
+  } else if (isChunkUploadComplete) {
+    uploadPercentage = 100;
+  } else {
+    Math.ceil((uploadedCursor / file.size) * 100);
+  }
 
   const selectedColumn =
     selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
@@ -75,14 +80,6 @@ export const useCSVUpload = ({
         setColumns(result.data as string[]);
         setUploadStatus('ready');
         _parser.abort();
-        // setFileEncoding();
-        // console.log(file);
-        // console.log(
-        //   (result.data as string[]).find((value) => value.includes('�'))
-        // );
-        languageEncoding(file).then((fileInfo) =>
-          setFileEncoding(fileInfo.encoding as string)
-        );
       },
       complete: () => {},
     });
@@ -99,6 +96,7 @@ export const useCSVUpload = ({
         skipEmptyLines: true,
         header: true,
         encoding: fileEncoding,
+
         error: (e) => {
           notification.error({
             message: t('file-upload-error', { name: file.name }),
@@ -107,7 +105,10 @@ export const useCSVUpload = ({
           });
           setUploadStatus('error');
         },
-        complete: () => {},
+        // complete: () => {},
+        complete: () => {
+          setIsChunkUploadComplete(true);
+        },
         chunk(results, _parser) {
           setParser(_parser);
           _parser.pause();
@@ -130,7 +131,6 @@ export const useCSVUpload = ({
           }
 
           if (items.length) {
-            console.log(fileEncoding);
             sdk.raw
               .insertRows(database, table, items)
               .then(() => {
