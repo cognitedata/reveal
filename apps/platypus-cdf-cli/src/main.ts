@@ -9,7 +9,7 @@ import status from './app/cmds/status';
 import logout from './app/cmds/logout';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
-import { getMixpanel } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
+import { track } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
 import {
   PlatypusDmlError,
   PlatypusValidationError,
@@ -108,7 +108,7 @@ scriptName(CONSTANTS.APP_ID)
 
     Sentry.captureException(err);
 
-    getMixpanel()?.track('failed command', {
+    track('CLI.DataModel.ErrorMessage', {
       message: msg || err.message,
     });
 

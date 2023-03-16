@@ -3,10 +3,10 @@ import updateNotifier from 'update-notifier';
 
 import { BaseArgs } from '../types';
 import { getConfig } from '../utils/config';
-import { AUTH_TYPE, CONSTANTS, ROOT_CONFIG_KEY } from '../constants';
+import { CONSTANTS, ROOT_CONFIG_KEY } from '../constants';
 import { Log } from '../utils/logger';
 import { enable } from 'debug';
-import { getMixpanel } from '../utils/mixpanel';
+import { track } from '../utils/mixpanel';
 import { getCompleteCommandString } from '../utils/yargs-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -32,19 +32,14 @@ export async function init(args: Arguments<BaseArgs>) {
     enable(`${CONSTANTS.APP_ID}*`);
   }
 
-  const authConfig = globalConfig.get(ROOT_CONFIG_KEY.AUTH);
-
   // set logger
   args.logger = new Log();
 
   // setup mixpanel if telemetry enabled
   if (globalConfig.get(ROOT_CONFIG_KEY.TELEMETRY_DISABLED) === false) {
-    args.mixpanel = getMixpanel();
-
     // track command
-    args.mixpanel?.track(getCompleteCommandString(args), {
-      project: authConfig?.project,
-      cluster: authConfig?.cluster,
+    track('CLI.Command', {
+      command: getCompleteCommandString(args),
     });
   }
 }

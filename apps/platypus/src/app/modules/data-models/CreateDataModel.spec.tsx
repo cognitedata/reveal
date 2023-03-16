@@ -6,6 +6,8 @@ import userEvent from '@testing-library/user-event';
 import { CreateDataModel } from './CreateDataModel';
 import noop from 'lodash/noop';
 
+jest.mock('@platypus-app/hooks/useMixpanel');
+
 jest.mock('@platypus-app/hooks/useSpaces', () => {
   return {
     useSpaces: () => ({

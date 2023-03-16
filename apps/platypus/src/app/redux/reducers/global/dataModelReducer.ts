@@ -19,7 +19,6 @@ export interface DataModelReducerState {
   typeDefs: DataModelTypeDefs;
   selectedDataModelVersion?: DataModelVersion;
   hasError: boolean;
-  customTypesNames: string[];
 }
 const getTypeDefsBuilder = () =>
   rootInjector.get(TOKENS.dataModelTypeDefsBuilderService);
@@ -31,7 +30,6 @@ export const initialState = {
   isDirty: false,
   typeDefs: { types: [] } as DataModelTypeDefs,
   hasError: false,
-  customTypesNames: [] as string[],
 } as DataModelReducerState;
 
 const updateDataModelState = (
@@ -40,7 +38,6 @@ const updateDataModelState = (
   const typeDefsBuilder = getTypeDefsBuilder();
   const updatedGqlSchema = typeDefsBuilder.buildSchemaString();
   state.graphQlSchema = updatedGqlSchema;
-  state.customTypesNames = typeDefsBuilder.getCustomTypesNames(state.typeDefs);
 
   const validationErrors = typeDefsBuilder.validate(updatedGqlSchema);
 
@@ -57,7 +54,6 @@ const clearState = (state: DataModelReducerState): DataModelReducerState => {
   state.typeDefs = { types: [] };
   state.currentTypeName = null;
   state.hasError = false;
-  state.customTypesNames = [];
   state.editorMode = SchemaEditorMode.View;
   delete state.selectedDataModelVersion;
   return state;
@@ -96,8 +92,6 @@ const dataModelSlice = createSlice({
       try {
         const parsedTypeDefs = typeDefsBuilder.parseSchema(graphQlSchemaString);
         state.typeDefs = parsedTypeDefs;
-        state.customTypesNames =
-          typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
       } catch (err) {
         state.hasError = !!err;
       }
@@ -210,10 +204,7 @@ const dataModelSlice = createSlice({
       try {
         const parsedTypeDefs = typeDefsBuilder.parseSchema(graphQlSchemaString);
         state.typeDefs = parsedTypeDefs;
-        state.customTypesNames =
-          typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
       } catch (err) {
-        state.customTypesNames = [];
         state.hasError = !!err;
       }
       // END copy pasted from the parseGraphQlSchema reducer

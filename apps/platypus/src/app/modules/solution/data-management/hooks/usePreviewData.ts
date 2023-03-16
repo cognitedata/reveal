@@ -11,9 +11,8 @@ import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import {
   useDataModel,
   useDataModelTypeDefs,
-  useDataModelVersions,
-  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useParams } from 'react-router-dom';
 
 export const usePreviewData = (
@@ -48,17 +47,13 @@ export const usePreviewData = (
   );
 
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(
+      version,
+      dataModelExternalId,
+      dataModel?.space || ''
+    );
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   return useQuery<KeyValueMap | null>(

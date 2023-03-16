@@ -1,7 +1,13 @@
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 import config from '@platypus-app/config/config';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useEffect } from 'react';
 const NoAccessPage = (): JSX.Element => {
+  const { track } = useMixpanel();
+  useEffect(() => {
+    track('DataModel.NoPermission');
+  }, [track]);
   return (
     <NoAccessContent>
       <Warning>

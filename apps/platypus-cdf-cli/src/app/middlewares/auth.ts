@@ -65,7 +65,8 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
         questions.push({
           type: 'input',
           name: 'tenant',
-          message: 'What is your Azure AD tenant?',
+          message:
+            'What is your tenant domain? (e.g. yourcompany.onmicrosoft.com)',
         });
       }
 

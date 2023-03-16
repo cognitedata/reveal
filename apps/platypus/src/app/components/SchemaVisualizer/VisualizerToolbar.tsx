@@ -52,6 +52,7 @@ export const VisualizerToolbar = ({
         buttonGroup={[
           {
             icon: 'EyeShow',
+            'aria-label': 'filter',
             description: 'Filter',
             dropdownContent: filterDropdownMenu,
           },
@@ -61,16 +62,19 @@ export const VisualizerToolbar = ({
         buttonGroup={[
           {
             icon: 'ZoomIn',
+            'aria-label': 'zoom in',
             description: 'Zoom in',
             onClick: () => zoomInHandler(),
           },
           {
             icon: 'ZoomOut',
+            'aria-label': 'zoom out',
             description: 'Zoom out',
             onClick: () => zoomOutHandler(),
           },
           {
             icon: 'FullScreen',
+            'aria-label': 'fullscreen',
             description: 'Fit to screen',
             onClick: () => fitHandler(),
           },
@@ -81,6 +85,7 @@ export const VisualizerToolbar = ({
           buttonGroup={[
             {
               icon: 'Expand',
+              'aria-label': 'expand',
               description: 'Expand to full screen',
               onClick: () => setIsVisualizerExpanded(!isVisualizerExpanded),
             },

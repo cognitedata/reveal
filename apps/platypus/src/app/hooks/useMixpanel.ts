@@ -8,28 +8,35 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocation, useParams } from 'react-router-dom';
 import { environment } from '../../environments/environment';
 
+// https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3929277073/User+Metrics+-+Mixpanel
 export type TRACKING_TOKENS =
+  | 'DataModel.NoPermission'
+  | 'DataModel.List'
+  | 'DataModel.Select'
+  | 'DataModel.Create'
+  | 'DataModel.Delete'
+  | 'DataModel.Move'
+  | 'DataModel.Visualize'
+  | 'DataModel.Edit'
+  | 'DataModel.Publish'
+  | 'DataModel.Draft.Delete'
+  | 'DataModel.Versions.List'
+  | 'DataModel.Versions.Select'
+  | 'DataModel.Data.View'
+  | 'DataModel.Data.Search'
+  | 'DataModel.Data.Filter'
+  | 'DataModel.Data.Sort'
+  | 'DataModel.Transformations.Create'
+  | 'DataModel.Transformations.Open'
+  | 'DataModel.GraphIQL.Run'
+  | 'DataModel.ErrorMessage'
+  | 'DataModel.Links.GraphQL'
+  | 'DataModel.Links.CLI'
+  | 'DataModel.Links.Documentation'
+  // extra path tracking
   | 'UIEditor'
-  | 'BreakingChanges'
-  | 'CodeEditor'
-  | 'Publishing'
-  | 'VersionSelection'
-  | 'PageView'
-  | 'Transformations'
-  | 'Discard'
-  | 'SelectDM';
+  | 'Navigate';
 
-const TRACKING_TOKENS_MAP: { [key in TRACKING_TOKENS]: string } = {
-  UIEditor: 'UI Editor used',
-  BreakingChanges: 'Applied breaking changes',
-  CodeEditor: 'Code Editor used',
-  Publishing: 'Publishing data model',
-  VersionSelection: 'Version selection',
-  PageView: 'Page view',
-  Transformations: 'Created transformation via platypus',
-  Discard: 'Discarded data model',
-  SelectDM: 'Selected data model',
-};
 mixpanel.init(config.MIXPANEL_TOKEN);
 
 export const useMixpanel = () => {
@@ -60,7 +67,7 @@ export const useMixpanel = () => {
           return;
         }
         mixpanel.identify(user?.id);
-        mixpanel.track(TRACKING_TOKENS_MAP[eventName], {
+        mixpanel.track(eventName, {
           cluster: getCluster(),
           project: getProject(),
           ...properties,
@@ -76,7 +83,7 @@ export const useMixpanelPathTracking = () => {
   const { pathname } = useLocation();
   const params = useParams();
   useEffect(() => {
-    track('PageView', {
+    track('Navigate', {
       pathname,
       url: window.location.href,
       ...Object.entries(params).reduce(

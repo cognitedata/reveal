@@ -13,6 +13,7 @@ import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useErrorLogger } from './useErrorLogger';
 import { useMemo } from 'react';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useSelectedDataModelVersion } from './useSelectedDataModelVersion';
 
 async function dataModelHandlerFuncWrapper<T>(
   callableFn: () => Promise<Result<T>>
@@ -66,44 +67,6 @@ export const useDataModelVersions = (
   );
 };
 
-/*
-Given an array of data model versions, return a data model version based on the given
-version number which could be a number or an alias like "latest". If no versions exist,
-return a default.
-*/
-export const useSelectedDataModelVersion = (
-  selectedVersionNumber: string,
-  dataModelVersions: DataModelVersion[],
-  dataModelExternalId: string,
-  space: string
-): DataModelVersion => {
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
-  // if no published versions, return a default
-  if (!dataModelVersions?.length) {
-    return {
-      schema: '',
-      space,
-      externalId: dataModelExternalId,
-      status: DataModelVersionStatus.DRAFT,
-      version: '1',
-      name: dataModel?.name,
-      description: dataModel?.description,
-      createdTime: Date.now(),
-      lastUpdatedTime: Date.now(),
-    };
-  }
-
-  // if version number is "latest"
-  if (selectedVersionNumber === DEFAULT_VERSION_PATH) {
-    return dataModelVersions[0];
-  } else {
-    // else find matching version number
-    return dataModelVersions.find(
-      (schema) => schema.version === selectedVersionNumber
-    ) as DataModelVersion;
-  }
-};
-
 export const useDataModelTypeDefs = (
   dataModelExternalId: string,
   selectedVersionNumber: string,
@@ -113,18 +76,14 @@ export const useDataModelTypeDefs = (
     TOKENS.dataModelTypeDefsBuilderService
   );
   const errorLogger = useErrorLogger();
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
-    dataModelVersions || [],
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(
+      selectedVersionNumber,
+      dataModelExternalId,
+      dataModel?.space || ''
+    );
 
   const memoizedDataModelTypeDefs = useMemo(() => {
     try {
@@ -144,4 +103,21 @@ export const useDataModelTypeDefs = (
   }, [selectedDataModelVersion.schema]);
 
   return memoizedDataModelTypeDefs;
+};
+
+export const useCustomTypeNames = (
+  dataModelExternalId: string,
+  selectedVersionNumber: string,
+  space: string
+) => {
+  const dataModelTypeDefsBuilder = useInjection(
+    TOKENS.dataModelTypeDefsBuilderService
+  );
+  const dataModelTypeDefs = useDataModelTypeDefs(
+    dataModelExternalId,
+    selectedVersionNumber,
+    space
+  );
+
+  return dataModelTypeDefsBuilder.getCustomTypesNames(dataModelTypeDefs);
 };

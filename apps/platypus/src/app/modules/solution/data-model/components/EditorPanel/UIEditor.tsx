@@ -1,6 +1,8 @@
 import { Flex } from '@cognite/cogs.js';
+import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+import { useParams } from 'react-router-dom';
 import { useTypeDefActions } from '../../hooks/useTypeDefActions';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
@@ -11,6 +13,11 @@ interface UIEditorProps {
 }
 
 export function UIEditor({ disabled }: UIEditorProps) {
+  const { dataModelExternalId, space, version } = useParams() as {
+    dataModelExternalId: string;
+    space: string;
+    version: string;
+  };
   const { setCurrentTypeName } = useDataModelState();
   const {
     createType,
@@ -20,8 +27,11 @@ export function UIEditor({ disabled }: UIEditorProps) {
     updateField,
     removeField,
   } = useTypeDefActions();
-  const { currentTypeName, customTypesNames, typeDefs } = useSelector(
-    (state) => state.dataModel
+  const { currentTypeName, typeDefs } = useSelector((state) => state.dataModel);
+  const customTypesNames = useCustomTypeNames(
+    dataModelExternalId,
+    version,
+    space
   );
 
   const currentType = typeDefs.types.find(

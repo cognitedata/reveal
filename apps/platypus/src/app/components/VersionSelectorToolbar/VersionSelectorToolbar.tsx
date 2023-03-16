@@ -1,5 +1,6 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVersionDropdown } from '@platypus-app/components/SchemaVersionDropdown/SchemaVersionDropdown';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { SelectorWrapper } from './elements';
 
@@ -12,6 +13,7 @@ export interface VersionSelectorToolbarProps {
 }
 
 export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
+  const { track } = useMixpanel();
   return (
     <div>
       <PageToolbar
@@ -21,6 +23,9 @@ export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
             {props.selectedDataModelVersion ? (
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
+                  track('DataModel.Versions.Select', {
+                    version: solutionSchema.version,
+                  });
                   props.onDataModelVersionSelect(solutionSchema);
                 }}
                 selectedVersion={props.selectedDataModelVersion}

@@ -14,7 +14,6 @@ import {
 } from '../CreateTransformationForm';
 import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
-import useSelector from '@platypus-app/hooks/useSelector';
 import { generateId } from '@platypus-app/utils/uuid';
 import {
   getOneToManyModelName,
@@ -22,10 +21,12 @@ import {
 } from '@platypus/platypus-core';
 import { isFDMv3 } from '@platypus-app/flags';
 import { createLink } from '@cognite/cdf-utilities';
+import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
 
 type Option = OptionType<any>;
 
 export interface CreateTransformationModalProps {
+  dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
   onRequestClose: () => void;
   version: string;
@@ -33,9 +34,10 @@ export interface CreateTransformationModalProps {
 }
 
 export const CreateTransformationModal = ({
-  space,
+  dataModelExternalId,
   dataModelType,
   onRequestClose,
+  space,
   version,
 }: CreateTransformationModalProps) => {
   const isFDMV3 = isFDMv3();
@@ -46,7 +48,12 @@ export const CreateTransformationModal = ({
     TransformationType.Data
   );
   const { setIsTransformationModalOpen } = useDataManagementPageUI();
-  const { customTypesNames } = useSelector((state) => state.dataModel);
+
+  const customTypesNames = useCustomTypeNames(
+    dataModelExternalId,
+    version,
+    space
+  );
 
   const createTransformationMutation = useTransformationCreateMutation();
 

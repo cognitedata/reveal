@@ -19,13 +19,18 @@ export const useSearchResults = ({
   file: FileInfo | undefined;
   query: string;
   enabled: boolean;
-}): { searchResults: SearchResult[] } => {
-  const { data } = usePnIdRawOCRResultQuery(
+}): SearchResult[] | null => {
+  const ocrResult = usePnIdRawOCRResultQuery(
     file,
     enabled && file !== undefined
   );
 
   const searchResults = useMemo(() => {
+    if (ocrResult.isError) {
+      return null;
+    }
+    const data = ocrResult.data;
+
     if (query === '' || file === undefined || data === undefined) {
       return [];
     }
@@ -44,11 +49,9 @@ export const useSearchResults = ({
         containerId
       ).map((annotation) => ({ page: pageIndex + 1, annotation }));
     });
-  }, [file, data, query]);
+  }, [file, ocrResult.data, ocrResult.isError, query]);
 
-  return {
-    searchResults,
-  };
+  return searchResults;
 };
 
 const getSanitizedQueryPartials = (query: string): string[] => {

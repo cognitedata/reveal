@@ -37,8 +37,8 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import {
   useDataModel,
   useDataModelVersions,
-  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
@@ -111,18 +111,14 @@ export const DataModelPage = () => {
   } = useDataModelState();
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    space
-  );
-  const latestDataModelVersion = useSelectedDataModelVersion(
-    DEFAULT_VERSION_PATH,
-    dataModelVersions || [],
-    dataModelExternalId,
-    space
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
+  const { dataModelVersion: latestDataModelVersion } =
+    useSelectedDataModelVersion(
+      DEFAULT_VERSION_PATH,
+      dataModelExternalId,
+      space
+    );
   const { removeLocalDraft, getLocalDraft } = useLocalDraft(
     dataModelExternalId,
     space,
@@ -270,11 +266,9 @@ export const DataModelPage = () => {
           'NEW_VERSION'
         );
 
-        if (breakingChanges) {
-          track('BreakingChanges', {
-            dataModel: dataModelExternalId,
-          });
-        }
+        track('DataModel.Edit', {
+          dataModel: dataModelExternalId,
+        });
       } else {
         setSaving(true);
         result = await dataModelVersionHandler.publish(
@@ -316,8 +310,9 @@ export const DataModelPage = () => {
       }
 
       if (result.isSuccess) {
-        track('Publishing', {
+        track('DataModel.Publish', {
           dataModel: dataModelExternalId,
+          version: newVersion,
         });
         removeLocalDraft(draftVersion);
         dataModelPublished();
@@ -387,6 +382,7 @@ export const DataModelPage = () => {
   };
 
   const handleDiscardClick = () => {
+    track('DataModel.Draft.Delete');
     dataModelTypeDefsBuilder.clear();
     updateGraphQlSchema(latestDataModelVersion.schema);
   };

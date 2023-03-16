@@ -1,6 +1,6 @@
 import { SearchConfigDataType } from '../types';
 
-export const searchConfigData: SearchConfigDataType = {
+export const getMockSearchConfig = (): SearchConfigDataType => ({
   asset: {
     name: {
       label: 'Name',
@@ -91,4 +91,4 @@ export const searchConfigData: SearchConfigDataType = {
     id: { label: 'ID', enabled: true },
     metadata: { label: 'Metadata', enabled: true },
   },
-};
+});

@@ -10,6 +10,7 @@ import {
   OptionType,
 } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export const CreateDataModel = ({
   onCancel,
@@ -26,6 +27,7 @@ export const CreateDataModel = ({
   const navigate = useNavigate();
   const { t } = useTranslation('CreateDataModelDialog');
   const { create } = useDataModelMutation();
+  const { track } = useMixpanel();
 
   const {
     data: dataSets,
@@ -68,6 +70,8 @@ export const CreateDataModel = ({
 
             return;
           }
+
+          track('DataModel.Create');
 
           Notification({
             type: 'success',

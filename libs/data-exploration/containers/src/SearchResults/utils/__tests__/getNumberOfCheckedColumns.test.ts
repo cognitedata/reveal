@@ -1,6 +1,7 @@
-import { searchConfigData } from '@data-exploration-lib/core';
+import { getMockSearchConfig } from '@data-exploration-lib/core';
 import { getNumberOfCheckedColumns } from '../getNumberOfCheckedColumns';
 
+const searchConfigData = getMockSearchConfig();
 describe('getNumberOfCheckedColumns', () => {
   it('should return length 5', () => {
     expect(getNumberOfCheckedColumns(searchConfigData, 0)).toEqual(5);

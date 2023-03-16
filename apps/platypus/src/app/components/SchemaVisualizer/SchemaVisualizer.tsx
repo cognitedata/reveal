@@ -42,6 +42,7 @@ import { VisualizerToolbar } from './VisualizerToolbar';
 import { Spinner } from '../Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType } from '@platypus/platypus-core';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export interface SchemaVisualizerConfig {
   /* Set known types to control which types and field directives will be rendered and their styling */
@@ -75,6 +76,12 @@ export const SchemaVisualizer = React.memo(
     const [isLoaded, setIsLoaded] = useState(false);
 
     const graphRef = useRef<GraphFns | null>(null);
+
+    const { track } = useMixpanel();
+
+    useEffect(() => {
+      track('DataModel.Visualize', { isOpen: isVisualizerExpanded });
+    }, [isVisualizerExpanded, track]);
 
     const schemaTypes = useMemo(() => {
       setErrorMessage('');
@@ -352,10 +359,10 @@ export const SchemaVisualizer = React.memo(
                     <Popover
                       className="tippy-box cogs-tooltip"
                       style={{
-                        top: event.layerY,
-                        left: event.layerX,
+                        top: event.clientY + 20,
+                        left: event.clientX,
                         transform: 'translate(-50%,0)',
-                        position: 'absolute',
+                        position: 'fixed',
                       }}
                     >
                       <div className="tippy-content">

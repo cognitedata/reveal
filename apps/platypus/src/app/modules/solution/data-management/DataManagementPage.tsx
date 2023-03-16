@@ -7,8 +7,8 @@ import { StyledPage } from '../data-model/pages/elements';
 import {
   useDataModel,
   useDataModelVersions,
-  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
@@ -54,12 +54,12 @@ export const DataManagementPage = ({
 
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(
+      version,
+      dataModelExternalId,
+      dataModel?.space || ''
+    );
 
   const selectedTypeName = useSelector<string>(
     (state) => state.dataManagement.selectedType?.name || ''

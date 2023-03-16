@@ -56,6 +56,8 @@ jest.mock(
   })
 );
 
+jest.mock('@platypus-app/hooks/useMixpanel');
+
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useTransformations',
   () => () => ({ data: mockTransformations })

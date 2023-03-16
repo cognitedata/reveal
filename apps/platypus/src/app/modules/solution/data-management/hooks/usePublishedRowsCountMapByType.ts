@@ -9,11 +9,8 @@ import {
   formatValidationErrors,
   Notification,
 } from '@platypus-app/components/Notification/Notification';
-import {
-  useDataModel,
-  useDataModelVersions,
-  useSelectedDataModelVersion,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useParams } from 'react-router-dom';
 
@@ -29,16 +26,12 @@ export const usePublishedRowsCountMapByType = ({
   const { version } = useParams() as { version: string };
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
-  const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
-    dataModelVersions || [],
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(
+      version,
+      dataModelExternalId,
+      dataModel?.space || ''
+    );
   const dto: FetchPublishedRowsCountDTO = {
     dataModelId: dataModelExternalId,
     dataModelTypes,

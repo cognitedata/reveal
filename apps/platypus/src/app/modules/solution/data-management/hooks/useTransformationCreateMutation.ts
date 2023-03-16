@@ -87,7 +87,10 @@ export default function useTransformationCreateMutation() {
       );
     },
     {
-      onSuccess: (transformation, { space, typeName, version }) => {
+      onSuccess: (
+        transformation,
+        { space, typeName, version, oneToManyFieldName }
+      ) => {
         const queryKey = QueryKeys.TRANSFORMATION(space, typeName, version);
 
         queryClient.cancelQueries(queryKey);
@@ -101,9 +104,9 @@ export default function useTransformationCreateMutation() {
         );
         queryClient.refetchQueries(queryKey);
 
-        track('Transformations', {
-          space,
+        track('DataModel.Transformations.Create', {
           typeName,
+          property: oneToManyFieldName,
           version,
         });
       },
