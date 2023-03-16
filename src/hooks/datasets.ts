@@ -60,7 +60,8 @@ export const useDataSets = (
               id: parseInt(i.values?.[0] as string, 10),
             })) || [];
 
-        const datasets = await sdk.datasets.retrieve(dataSetIds);
+        const datasets =
+          dataSetIds.length > 0 ? await sdk.datasets.retrieve(dataSetIds) : [];
         return datasets.map(
           (ds): DatasetWithResourceCount => ({
             ...ds,
