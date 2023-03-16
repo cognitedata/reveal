@@ -17,7 +17,7 @@ export default function Confidence(props: ConfidenceProps) {
 const StyledConfidence = styled.div`
   background-color: ${Colors['surface--misc-canvas']};
   border-radius: 4px;
-  padding: 8px 29px;
+  padding: 8px 10px;
   width: 100px;
   font-weight: 500;
 `;
