@@ -15,6 +15,7 @@ import { API, SourceType, SOURCE_TYPES } from 'types/api';
 import FileInfoTable from './FilesTable';
 import { DataSetSelect } from 'components/data-set-select';
 import SearchInput from 'components/search-input';
+import ThreeDTable from './Three3Table';
 
 const { Option } = Select;
 
@@ -25,6 +26,16 @@ const supportsAdvancedFilter: Record<API, boolean> = {
   assets: true,
   events: true,
   sequences: true,
+  threeD: false,
+};
+
+const supportsBasicFilter: Record<API, boolean> = {
+  files: true,
+  timeseries: true,
+  assets: true,
+  events: true,
+  sequences: true,
+  threeD: false,
 };
 
 export default function SourceSelectionTable({}: Props) {
@@ -46,6 +57,7 @@ export default function SourceSelectionTable({}: Props) {
     { value: 'events', label: t('resource-type-events', { count: 0 }) },
     { value: 'files', label: t('resource-type-files', { count: 0 }) },
     { value: 'sequences', label: t('resource-type-sequences', { count: 0 }) },
+    { value: 'threeD', label: t('resource-type-3d-model', { count: 0 }) },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -83,29 +95,33 @@ export default function SourceSelectionTable({}: Props) {
               </Option>
             ))}
           </Select>
-          <DataSetSelect
-            api={sourceType}
-            onChange={(e: number[]) => {
-              setSourceFilter({
-                ...sourceFilter,
-                dataSetIds:
-                  e.length > 0
-                    ? e.map((id) => ({
-                        id,
-                      }))
-                    : undefined,
-              });
-            }}
-            selected={sourceFilter.dataSetIds?.map((ds) => ds.id) || []}
-          />
-          <SearchInput
-            disabled={allSources}
-            value={query || ''}
-            onChange={(e) => {
-              searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
-              setSearchParams(searchParams);
-            }}
-          />
+          {supportsBasicFilter[sourceType] && (
+            <>
+              <DataSetSelect
+                api={sourceType}
+                onChange={(e: number[]) => {
+                  setSourceFilter({
+                    ...sourceFilter,
+                    dataSetIds:
+                      e.length > 0
+                        ? e.map((id) => ({
+                            id,
+                          }))
+                        : undefined,
+                  });
+                }}
+                selected={sourceFilter.dataSetIds?.map((ds) => ds.id) || []}
+              />
+              <SearchInput
+                disabled={allSources}
+                value={query || ''}
+                onChange={(e) => {
+                  searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
+                  setSearchParams(searchParams);
+                }}
+              />
+            </>
+          )}
           {supportsAdvancedFilter[sourceType] && (
             <Checkbox
               onChange={(e) => setUnmatchedOnly(e.target.checked)}
@@ -114,20 +130,24 @@ export default function SourceSelectionTable({}: Props) {
             />
           )}
         </Flex>
-        <Flex alignItems="center" gap={12}>
-          <ResourceCount
-            type={sourceType}
-            filter={sourceFilter}
-            advancedFilter={advancedFilter}
-          />
+        {supportsBasicFilter[sourceType] && (
+          <Flex alignItems="center" gap={12}>
+            {sourceType !== 'threeD' && (
+              <ResourceCount
+                type={sourceType}
+                filter={sourceFilter}
+                advancedFilter={advancedFilter}
+              />
+            )}
 
-          <Checkbox
-            checked={!query && allSources}
-            disabled={!!query}
-            onChange={(e) => setAllSources(e.target.checked)}
-            label="Select all"
-          />
-        </Flex>
+            <Checkbox
+              checked={!query && allSources}
+              disabled={!!query}
+              onChange={(e) => setAllSources(e.target.checked)}
+              label="Select all"
+            />
+          </Flex>
+        )}
       </Flex>
 
       {sourceType === 'timeseries' && (
@@ -167,6 +187,7 @@ export default function SourceSelectionTable({}: Props) {
           allSources={allSources}
         />
       )}
+      {sourceType === 'threeD' && <ThreeDTable />}
     </Flex>
   );
 }

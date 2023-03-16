@@ -1,10 +1,10 @@
 import ResourceTypei18n from 'components/resource-type-i18n';
 
 import { useAggregate } from 'hooks/aggregates';
-import { Filter, SourceType, TargetType } from 'types/api';
+import { API, Filter } from 'types/api';
 
 type Props = {
-  type: SourceType | TargetType;
+  type: Exclude<API, 'threeD'>;
   filter?: Filter;
   advancedFilter?: any;
 };
