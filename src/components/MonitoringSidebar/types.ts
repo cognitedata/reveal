@@ -1,5 +1,6 @@
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
 import { AlertResponse } from 'components/MonitoringAlert/types';
+import { ChartTimeSeries } from 'models/chart/types';
 
 export type MonitoringChannel = {
   name: string;
@@ -61,7 +62,7 @@ export type CreateMonitoringJobPayload = {
 
 export type CreateMonitoringJobFormData = {
   name: string;
-  source: undefined | { label: string; value: string };
+  source: ChartTimeSeries | undefined;
   alertThreshold: number;
   alertThresholdType:
     | undefined

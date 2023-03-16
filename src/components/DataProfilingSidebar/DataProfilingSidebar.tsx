@@ -5,7 +5,7 @@
 import styled from 'styled-components/macro';
 import { FunctionComponent, useState, useMemo } from 'react';
 import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { Chart } from 'models/chart/types';
 import { makeDefaultTranslations } from 'utils/translations';
 import { StatusStatusEnum } from '@cognite/calculation-backend';
 import {
@@ -18,12 +18,14 @@ import {
   SidebarFormLabel,
   SourceSelect,
 } from 'components/Common/SidebarElements';
+import { SourceList, Source } from 'domain/chart/types';
 import { convertMillisecondsToSeconds } from './helpers';
 import Boxplot from './Boxplot';
 import Metrics from './Metrics';
 import Histogram from './Histogram';
 import Calculations from './Calculations';
 import { useDataProfiling } from './hooks';
+import { SourceSelector } from '../Common/SourceSelector';
 
 type Props = {
   visible: boolean;
@@ -113,20 +115,12 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               ...chart?.workflowCollection?.find((flow) => flow.id === x.id),
             }),
       }))
-      .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
+      .filter(Boolean) as SourceList;
   }, [
     chart.sourceCollection,
     chart.timeSeriesCollection,
     chart.workflowCollection,
   ]);
-
-  const sourceOptions: (ChartTimeSeries | ChartWorkflow)[] = sources.map(
-    (item) => ({
-      value: item.id,
-      label: item.name,
-      ...item,
-    })
-  );
 
   const distributionOptions: DistributionOptionType[] = [
     {
@@ -139,23 +133,9 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
     },
   ];
 
-  const [selectedSource, setSelectedSource] = useState<
-    null | ChartTimeSeries | ChartWorkflow
-  >(null);
+  const [selectedSource, setSelectedSource] = useState<Source | undefined>();
   const [selectedDistribution, setselectedDistribution] =
     useState<DistributionOptionType>(distributionOptions[0]);
-
-  let selectedSourceIcon;
-  if (selectedSource) {
-    selectedSourceIcon =
-      selectedSource.type === 'timeseries' ? 'Timeseries' : 'Function';
-  } else {
-    selectedSourceIcon = '';
-  }
-
-  const onSelectSource = (source: ChartTimeSeries | ChartWorkflow) => {
-    setSelectedSource(source);
-  };
 
   const onSelectDistribution = (distribution: DistributionOptionType) => {
     setselectedDistribution(distribution);
@@ -217,18 +197,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
           <SidebarFormLabel>
             <b>{t.Source}</b>
           </SidebarFormLabel>
-          <SourceSelect
-            icon={selectedSourceIcon}
-            options={sourceOptions}
-            iconBg={selectedSource?.color || '#ccc'}
-            onChange={(source: ChartTimeSeries | ChartWorkflow) =>
-              onSelectSource(source)
-            }
-            value={{
-              value: selectedSource?.id || 'not-selected',
-              label: selectedSource?.name || t['Please select'],
-            }}
-          />
+          <SourceSelector onChange={setSelectedSource} value={selectedSource} />
 
           {/* Show data profiling loading status */}
           <BlockSpacer>

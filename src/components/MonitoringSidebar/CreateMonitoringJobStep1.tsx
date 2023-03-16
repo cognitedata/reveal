@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
@@ -14,6 +14,12 @@ import {
   updateChartThresholdUpperLimit,
 } from 'models/chart/updates-threshold';
 import { ChartThreshold } from 'models/chart/types';
+import {
+  SCHEDULE_MINUTE_OPTIONS,
+  SCHEDULE_HOUR_OPTIONS,
+  MONITORING_THRESHOLD_ID,
+  MINIMUM_DURATION_LIMIT,
+} from 'domain/monitoring/constants';
 import {
   FieldHelperText,
   NotificationBox,
@@ -47,33 +53,6 @@ const defaultTranslations = makeDefaultTranslations(
   'Schedule is required',
   'Cancel',
   'Next'
-);
-
-const MONITORING_THRESHOLD_ID = 'monitoring-threshold';
-const MINIMUM_DURATION_LIMIT = 60;
-const ONE_MINUTE = 60 * 1000;
-const ONE_HOUR = 60 * ONE_MINUTE;
-
-const SCHEDULE_MINUTE_OPTIONS_MAP = {
-  1: 1 * ONE_MINUTE,
-  5: 5 * ONE_MINUTE,
-  20: 20 * ONE_MINUTE,
-  30: 30 * ONE_MINUTE,
-  45: 45 * ONE_MINUTE,
-};
-
-const SCHEDULE_HOUR_OPTIONS_MAP = {
-  1: ONE_HOUR,
-  12: 12 * ONE_HOUR,
-  24: 24 * ONE_HOUR,
-};
-
-const SCHEDULE_MINUTE_OPTIONS = Object.entries(SCHEDULE_MINUTE_OPTIONS_MAP).map(
-  (entry) => ({ label: entry[0], value: entry[1] })
-);
-
-const SCHEDULE_HOUR_OPTIONS = Object.entries(SCHEDULE_HOUR_OPTIONS_MAP).map(
-  (entry) => ({ label: entry[0], value: entry[1] })
 );
 
 type Props = {
@@ -154,7 +133,7 @@ const CreateMonitoringJobStep1 = ({
 
   useEffect(() => {
     const tsSource = timeseries.find((ts) => {
-      return ts.tsExternalId === formValues.source?.value;
+      return ts.tsExternalId === formValues.source?.tsExternalId;
     });
     if (tsSource) {
       setChart((oldChart) =>
@@ -165,7 +144,7 @@ const CreateMonitoringJobStep1 = ({
         )
       );
     }
-  }, [formValues.source?.value, timeseries]);
+  }, [formValues.source?.tsExternalId, timeseries]);
 
   useEffect(() => {
     if (scheduleDurationType?.value === 'm') {
@@ -192,11 +171,6 @@ const CreateMonitoringJobStep1 = ({
         control={control}
         type="timeseries"
         name="source"
-        options={timeseries.map((ts) => ({
-          label: ts.name,
-          value: ts.tsExternalId,
-          color: ts.color,
-        }))}
         required={t['Source is required']}
       />
 

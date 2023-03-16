@@ -1,12 +1,7 @@
 import { Checkbox, Radio } from '@cognite/cogs.js';
-import React from 'react';
 import { Controller } from 'react-hook-form';
-import {
-  FormInput,
-  FormInputNumber,
-  FormSelect,
-  FormSelectColor,
-} from './elements';
+import { FormInput, FormInputNumber, FormSelect } from './elements';
+import { SourceSelector } from '../Common/SourceSelector';
 
 const FormInputWithController = ({
   control,
@@ -60,14 +55,12 @@ any) => (
           )}
           {type === 'timeseries' && (
             <>
-              <FormSelectColor
-                icon="Timeseries"
-                iconBg={value?.color || '#ccc'}
+              <SourceSelector
                 ref={ref}
                 onBlur={onBlur} // notify when input is touched
                 onChange={onChange} // send value to hook form
                 value={value}
-                options={options}
+                onlyTimeseries
               />
             </>
           )}

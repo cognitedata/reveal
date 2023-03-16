@@ -5,7 +5,6 @@ import {
   Flex,
   IconType,
   Input,
-  OptionsType,
   Popconfirm,
   Select,
 } from '@cognite/cogs.js';
@@ -89,7 +88,7 @@ const typeOptions: OptionType[] = [
   },
 ];
 
-const filterLengthOptions: OptionsType[] = [
+const filterLengthOptions: OptionType[] = [
   {
     value: 'seconds',
     label: 's',

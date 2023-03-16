@@ -13,8 +13,6 @@ import {
 } from '@cognite/cogs.js';
 import { Input as AntdInput } from 'antd';
 
-import { SourceSelect } from 'components/Common/SidebarElements';
-
 export const SidebarChip = styled(Label)`
   margin-left: 1em;
   font-size: 12px;
@@ -104,12 +102,6 @@ export const FormInput = styled(Input)`
 `;
 
 export const FormSelect = styled(Select)`
-  &&& {
-    margin-bottom: 1em;
-  }
-`;
-
-export const FormSelectColor = styled(SourceSelect)`
   &&& {
     margin-bottom: 1em;
   }
