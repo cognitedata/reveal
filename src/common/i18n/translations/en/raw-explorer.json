@@ -101,6 +101,7 @@
   "file-upload-modal-button-ok": "OK",
   "file-upload-modal-title": "Add new data",
   "file-upload-notification_cancel": "File upload was canceled.",
+  "file-upload-no-rows-error": "The selected file to be uploaded does not contain any rows.",
   "file-upload-success": "{{name}} is uploaded!",
   "first-time-user-detail-analyze-inspect": "Discover, analyze, and understand critical patterns in your data.",
   "first-time-user-detail-get-started": "Create databases to store and organize raw data in tables.",

@@ -126,7 +126,7 @@ export const useCSVUpload = ({
             throw e;
           }
 
-          if (items.length) {
+          if (items.length > 0) {
             sdk.raw
               .insertRows(database, table, items)
               .then(() => {
@@ -144,6 +144,14 @@ export const useCSVUpload = ({
                 setUploadStatus('error');
                 throw e;
               });
+          }
+
+          if (items.length === 0) {
+            notification.error({
+              message: t('file-upload-no-rows-error'),
+              key: 'file-upload',
+            });
+            setUploadStatus('error');
           }
         },
       });
