@@ -15,7 +15,7 @@ export class Image360Entity implements Image360 {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _getFullResolutionTextures: undefined | Promise<Image360Texture[]>;
+  private _getFullResolutionTextures: undefined | Promise<Image360Texture[] | undefined>;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -67,31 +67,35 @@ export class Image360Entity implements Image360 {
    * If the low resolution images are completed first, full resolution download and texture loading will continue in the background
    * and applyFullResolution can be used to apply full resolution textures at a desired time.
    */
-  public async load360Image(abortSignal?: AbortSignal): Promise<void> {
+  public async load360Image(abortSignal?: AbortSignal): Promise<{ allCompleted: Promise<void> }> {
     const lowResolutionFaces = this._imageProvider
-      .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors)
+      .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal)
       .then(faces => {
-        return { faces, isFullResolution: false };
+        return { faces, isLowResolution: true };
       });
 
     const fullResolutionFaces = this._imageProvider
       .get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal)
       .then(faces => {
-        return { faces, isFullResolution: true };
+        return { faces, isLowResolution: false };
       });
 
-    const { faces, isFullResolution } = await Promise.any([lowResolutionFaces, fullResolutionFaces]);
+    const { faces, isLowResolution } = await Promise.any([lowResolutionFaces, fullResolutionFaces]);
     await this._image360VisualzationBox.loadImages(faces);
 
-    if (!isFullResolution) {
+    if (isLowResolution) {
       this._getFullResolutionTextures = fullResolutionFaces
-        .then(result => {
-          return this._image360VisualzationBox.loadFaceTextures(result.faces);
-        })
         .catch(() => {
-          throw new Error();
+          return undefined;
+        })
+        .then(result => {
+          if (result) return this._image360VisualzationBox.loadFaceTextures(result.faces);
         });
     }
+
+    return {
+      allCompleted: Promise.allSettled([lowResolutionFaces, fullResolutionFaces]).then(() => {})
+    };
   }
 
   /**
@@ -99,7 +103,7 @@ export class Image360Entity implements Image360 {
    */
   public async applyFullResolution(): Promise<void> {
     if (this._getFullResolutionTextures) {
-      const textures = await this._getFullResolutionTextures.catch(() => {});
+      const textures = await this._getFullResolutionTextures;
       if (textures) {
         this._image360VisualzationBox.updateFaceMaterials(textures);
         this._getFullResolutionTextures = undefined;

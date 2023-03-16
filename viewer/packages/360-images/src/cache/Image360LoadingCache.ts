@@ -11,7 +11,8 @@ import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
-  load360Image: Promise<void>;
+  firstCompleted: Promise<void>;
+  allCompleted: Promise<void>;
   abort: () => void;
 };
 
@@ -51,7 +52,7 @@ export class Image360LoadingCache {
 
     const inProgressDownload = this.getDownloadInProgress(entity);
     if (inProgressDownload !== undefined) {
-      return inProgressDownload.load360Image;
+      return inProgressDownload.firstCompleted;
     }
 
     if (this._inProgressDownloads.length === this._downloadCacheSize) {
@@ -59,15 +60,39 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const load360Image = entity
-      .load360Image(signal)
+    const load360Image = entity.load360Image(signal);
+
+    const firstCompleted = load360Image
       .catch(e => {
-        if (signal.aborted || e === 'Aborted') {
-          Log.info('Abort warning: ' + e);
-        } else {
-          Log.warn('Failed to load 360 image: ' + e);
+        return Promise.reject(e);
+      })
+      .then(
+        () => {
+          return Promise.resolve();
+        },
+        reason => {
+          removeDownlaod(this._lockedDownload, this._inProgressDownloads);
+
+          if (signal.aborted || reason === 'Aborted') {
+            Log.info('360 Image download aborted: ' + reason);
+          } else {
+            throw new Error(entity.temp() + 'Failed to load 360 image: ' + reason);
+          }
         }
-        return Promise.reject();
+      );
+
+    const allCompleted = load360Image.then(
+      callback => {
+        return callback.allCompleted;
+      },
+      reason => {
+        return Promise.reject(reason);
+      }
+    );
+
+    allCompleted
+      .catch(e => {
+        return Promise.reject(e);
       })
       .then(
         () => {
@@ -76,25 +101,37 @@ export class Image360LoadingCache {
           }
           this._loaded360Images.unshift(entity);
         },
-        () => {}
+        () => {
+          return Promise.resolve();
+        }
       )
       .finally(() => {
-        if (this._lockedDownload === entity) {
-          this._lockedDownload = undefined;
-        }
-        remove(this._inProgressDownloads, download => {
-          return download.entity === entity;
-        });
+        removeDownlaod(this._lockedDownload, this._inProgressDownloads);
       });
 
-    this._inProgressDownloads.push({ entity, load360Image, abort });
-    await load360Image;
+    this._inProgressDownloads.push({
+      entity,
+      firstCompleted,
+      allCompleted,
+      abort
+    });
+
+    await firstCompleted;
+
+    function removeDownlaod(_lockedDownload: Image360Entity | undefined, _inProgressDownloads: DownloadRequest[]) {
+      if (_lockedDownload === entity) {
+        _lockedDownload = undefined;
+      }
+      remove(_inProgressDownloads, download => {
+        return download.entity === entity;
+      });
+    }
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
     const inFlightDownload = this.getDownloadInProgress(entity);
     if (inFlightDownload) {
-      await inFlightDownload.load360Image;
+      await inFlightDownload.allCompleted;
     }
     pull(this._loaded360Images, entity);
   }

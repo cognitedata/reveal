@@ -16,8 +16,8 @@ import {
   EventFilter,
   FileFilterProps,
   FileInfo,
-  HttpError,
-  HttpResponseType,
+  FileLink,
+  IdEither,
   Metadata
 } from '@cognite/sdk';
 import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
@@ -75,9 +75,10 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   public async getLowResolution360ImageFiles(
-    image360FaceDescriptors: Image360FileDescriptor[]
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors));
+    const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
     return this.createFaces(image360FaceDescriptors, lowResFileBuffers);
   }
 
@@ -191,7 +192,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
-    const fileLinks = await this._client.files.getDownloadUrls(fileIds);
+    const fileLinks = await this.getDownloadUrls(fileIds, abortSignal);
     if (abortSignal?.aborted) throw new Error('Request aborted before fetch.');
     return Promise.all(
       fileLinks
@@ -200,28 +201,46 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     );
   }
 
-  public async getIconBuffers(fileIds: { id: number }[]): Promise<ArrayBuffer[]> {
-    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon`;
+  public async getIconBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon?id=`;
     const headers = {
       ...this._client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
 
-    return Promise.all(
-      fileIds.map(async fileId => {
-        const response = await this._client.get<ArrayBuffer>(url, {
-          params: fileId,
-          headers,
-          responseType: HttpResponseType.ArrayBuffer
-        });
+    const options: RequestInit = {
+      headers,
+      signal: abortSignal,
+      method: 'GET'
+    };
 
-        if (response.status === 200) {
-          return response.data;
-        } else {
-          throw new HttpError(response.status, response.data, response.headers);
-        }
-      })
+    return Promise.all(
+      fileIds.map(fileId => fetch(url + fileId.id, options)).map(async response => (await response).arrayBuffer())
     );
+  }
+
+  private async getDownloadUrls(
+    fileIds: { id: number }[],
+    abortSignal?: AbortSignal
+  ): Promise<(FileLink & IdEither)[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/downloadlink`;
+    const headers: HeadersInit = {
+      ...this._client.getDefaultRequestHeaders(),
+      Accept: 'application/json',
+      'Content-type': 'application/json'
+    };
+
+    const options: RequestInit = {
+      headers,
+      signal: abortSignal,
+      method: 'POST',
+      body: JSON.stringify({
+        items: fileIds
+      })
+    };
+
+    const result = await (await fetch(url, options)).json();
+    return result.items;
   }
 
   private parseEventMetadata(eventMetadata: Event360Metadata, preMultipliedRotation: boolean): Image360EventDescriptor {
