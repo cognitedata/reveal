@@ -66,6 +66,8 @@ export class Image360Entity implements Image360 {
    * This will start the download of both low and full resolution images, and return once the first of these are completed.
    * If the low resolution images are completed first, full resolution download and texture loading will continue in the background
    * and applyFullResolution can be used to apply full resolution textures at a desired time.
+   *
+   * @returns A promise for when both low and full resolution are completed. Note that this will resolve even if both downloads fail.
    */
   public async load360Image(abortSignal?: AbortSignal): Promise<{ allCompleted: Promise<void> }> {
     const lowResolutionFaces = this._imageProvider
