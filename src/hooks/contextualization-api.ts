@@ -103,7 +103,7 @@ export const useEMPipelines = (
 ) => {
   const sdk = useSDK();
   const qc = useQueryClient();
-  return useQuery(
+  return useQuery<Pipeline[], CogniteError>(
     getEMPipelinesKey(),
     ({ pageParam }) =>
       sdk
@@ -127,7 +127,7 @@ export const useEMPipeline = (
   opts?: UseQueryOptions<Pipeline, CogniteError>
 ) => {
   const sdk = useSDK();
-  return useQuery(
+  return useQuery<Pipeline, CogniteError>(
     getEMPipelineKey(id),
     () =>
       sdk
