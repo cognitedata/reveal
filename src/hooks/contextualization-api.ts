@@ -153,6 +153,51 @@ export const useDeleteEMPipeline = (
   );
 };
 
+type PipelineCreateParams = Partial<Pick<Pipeline, 'name' | 'description'>>;
+export const useCreatePipeline = (
+  options?: UseMutationOptions<Pipeline, CogniteError, PipelineCreateParams>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<Pipeline, CogniteError, PipelineCreateParams>(
+    async ({ name, description }) => {
+      return sdk
+        .post<Pipeline>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines`,
+          {
+            data: {
+              name,
+              description,
+              sources: {
+                dataSetIds: [],
+                resource: 'time_series',
+              },
+              targets: {
+                dataSetIds: [],
+                resource: 'assets',
+              },
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        });
+    },
+    {
+      ...options,
+      onSuccess: (...params) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        options?.onSuccess?.(...params);
+      },
+    }
+  );
+};
+
 const getEMModelKey = (id: number): QueryKey => ['em', 'models', id];
 export const useEMModel = (
   id: number,
