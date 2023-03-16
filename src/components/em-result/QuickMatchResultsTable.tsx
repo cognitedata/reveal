@@ -35,12 +35,6 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
   const columns: ResultsTableRecordCT[] = useMemo(
     () => [
       {
-        title: t('qm-result-score'),
-        dataIndex: 'matches',
-        key: 'matches',
-        render: (matches: any[]) => matches[0]?.score.toFixed(1) || '—',
-      },
-      {
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
