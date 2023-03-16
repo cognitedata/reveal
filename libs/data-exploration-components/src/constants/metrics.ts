@@ -46,8 +46,9 @@ const INPUT = {
 };
 
 const FILE_PREVIEW = {
-  SEARCH_IN_CONTAINER_OPEN: `${DATA_EXPLORATION}.FilePreview.SearchInPageOpen`,
-  SEARCH_IN_PAGE_SEARCH_VALUE_CHANGE: `${DATA_EXPLORATION}.FilePreview.SearchInPageQueryValueChange`,
+  FIND_IN_DOCUMENT_OPEN: `${DATA_EXPLORATION}.FilePreview.FindInDocumentOpen`,
+  FIND_IN_DOCUMENT_VALUE_CHANGE: `${DATA_EXPLORATION}.FilePreview.FindInDocumentValueChange`,
+  FIND_IN_DOCUMENT_NEXT_RESULT: `${DATA_EXPLORATION}.FilePreview.FindInDocumentNextResult`,
 };
 
 export const DATA_EXPLORATION_COMPONENT = {

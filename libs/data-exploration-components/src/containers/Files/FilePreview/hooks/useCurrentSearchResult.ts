@@ -6,6 +6,8 @@ import {
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import usePrevious from './usePrevious';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 type UseCurrentSearchResultProps = {
   searchResults: SearchResult[];
@@ -100,6 +102,14 @@ export const useCurrentSearchResult = ({
       currentSearchResultIndex >= searchResults.length
         ? 1
         : currentSearchResultIndex + 1;
+
+    trackUsage(
+      DATA_EXPLORATION_COMPONENT.FILE_PREVIEW.FIND_IN_DOCUMENT_NEXT_RESULT,
+      {
+        nextIndex: nextIndex,
+        searchResultLength: searchResults.length,
+      }
+    );
 
     setCurrentSearchResultIndex(nextIndex);
   };

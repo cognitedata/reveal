@@ -48,6 +48,7 @@ import { useNumPages } from './hooks/useNumPages';
 import { useCurrentSearchResult } from './hooks/useCurrentSearchResult';
 import { useSearchBarState } from './hooks/useSearchBarState';
 import noop from 'lodash/noop';
+import usePrevious from './hooks/usePrevious';
 
 type FilePreviewProps = {
   id: string;
@@ -132,6 +133,8 @@ export const FilePreview = ({
     setSearchBarInputRef,
   } = useSearchBarState({ file });
 
+  const previousSearchQuery = usePrevious(searchQuery);
+
   useEffect(() => {
     if (selectedAnnotations.length === 1) {
       const [annotation] = selectedAnnotations;
@@ -203,41 +206,52 @@ export const FilePreview = ({
     onMouseOut: onAnnotationMouseOut,
   });
 
-  const { searchResults } = useSearchResults({
+  const searchResults = useSearchResults({
     file,
     query: searchQuery,
     enabled: showControls,
   });
 
   const { currentSearchResultIndex, onNextResult, onPreviousResult } =
-    useCurrentSearchResult({ searchResults, page, setPage, unifiedViewerRef });
+    useCurrentSearchResult({
+      searchResults: searchResults ?? [],
+      page,
+      setPage,
+      unifiedViewerRef,
+    });
 
   useEffect(() => {
-    if (searchQuery === '') {
+    if (searchQuery === '' || searchQuery === previousSearchQuery) {
       return;
     }
 
     const fileMimeType = file?.mimeType;
     trackUsage(
-      DATA_EXPLORATION_COMPONENT.FILE_PREVIEW
-        .SEARCH_IN_PAGE_SEARCH_VALUE_CHANGE,
+      DATA_EXPLORATION_COMPONENT.FILE_PREVIEW.FIND_IN_DOCUMENT_VALUE_CHANGE,
       {
         fileId,
         // For privacy reasons not tracking actual search query or results
         searchQueryLength: searchQuery.length,
-        searchResultLength: searchResults.length,
+        searchResultLength: searchResults?.length,
+        hasNoOcrData: searchResults === null,
         mimeType:
           fileMimeType === undefined
             ? fileMimeType
             : getCanonicalMimeType(fileMimeType),
       }
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trackUsage, searchResults]);
+  }, [
+    trackUsage,
+    searchResults,
+    searchQuery,
+    previousSearchQuery,
+    file,
+    fileId,
+  ]);
 
   const displayedAnnotations = useMemo((): Annotation[] => {
     // We first highlight the current search result and then filter the annotations by page
-    const filteredAnnotations = searchResults
+    const filteredAnnotations = (searchResults ?? [])
       .map((searchResult, index): SearchResult => {
         // NOTE: The currentSearchResultIndex is 1-based, while the index is 0-based
         const isHighlighted = currentSearchResultIndex - 1 === index;
@@ -409,7 +423,7 @@ export const FilePreview = ({
           onSearchClose={onSearchClose}
           setSearchBarInputRef={setSearchBarInputRef}
           currentSearchResultIndex={currentSearchResultIndex}
-          numberOfSearchResults={searchResults.length}
+          numberOfSearchResults={searchResults?.length ?? 0}
           onNextResult={onNextResult}
           onPreviousResult={onPreviousResult}
           enableDownload={showDownload}

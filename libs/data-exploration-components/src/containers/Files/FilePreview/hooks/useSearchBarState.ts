@@ -53,16 +53,13 @@ export const useSearchBarState = ({
     }
 
     const fileMimeType = file.mimeType;
-    trackUsage(
-      DATA_EXPLORATION_COMPONENT.FILE_PREVIEW.SEARCH_IN_CONTAINER_OPEN,
-      {
-        fileId: file.id,
-        mimeType:
-          fileMimeType === undefined
-            ? fileMimeType
-            : getCanonicalMimeType(fileMimeType),
-      }
-    );
+    trackUsage(DATA_EXPLORATION_COMPONENT.FILE_PREVIEW.FIND_IN_DOCUMENT_OPEN, {
+      fileId: file.id,
+      mimeType:
+        fileMimeType === undefined
+          ? fileMimeType
+          : getCanonicalMimeType(fileMimeType),
+    });
     onSearchOpen();
   };
 
