@@ -26,7 +26,7 @@ const UnknownErrorPage = ({ error }: UnknownErrorPageProps) => {
         <div>{error.message}</div>
         <div>{t('unknown-error-detail')}</div>
       </Instructions>
-      <InfoWrapper className="z-4">
+      <InfoWrapper>
         <ErrorInfo>
           <p>
             <strong>{t('unknown-error-request-id')} </strong>

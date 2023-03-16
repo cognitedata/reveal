@@ -14,6 +14,7 @@ export const InfoWrapper = styled.div`
   padding: 14px;
   margin: 14px;
   border-radius: 4px;
+  box-shadow: Elevations[ 'elevation--surface--non-interactive'];
 `;
 
 export const ErrorInfo = styled.div`
