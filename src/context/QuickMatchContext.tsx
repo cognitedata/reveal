@@ -40,12 +40,20 @@ export type ModelMapping = { source?: TimeseriesKeys; target?: AssetKeys }[];
 
 export type Scope = 'all' | 'unmatched';
 
+type Selected3dModel = {
+  modelId: number;
+  revisionId: number;
+};
+
 type QuickMatchContext = {
   featureType: EMFeatureType;
   setFeatureType: Dispatch<SetStateAction<EMFeatureType>>;
 
   supervisedMode: boolean;
   setSupervisedMode: Dispatch<SetStateAction<boolean>>;
+
+  threeDModel?: Selected3dModel;
+  setThreeDModel: Dispatch<SetStateAction<Selected3dModel | undefined>>;
 
   scope: Scope;
   setScope: Dispatch<SetStateAction<Scope>>;
@@ -145,6 +153,12 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setScope: function (_: SetStateAction<Scope>): void {
     throw new Error('Function not implemented.');
   },
+  threeDModel: undefined,
+  setThreeDModel: function (
+    _: SetStateAction<Selected3dModel | undefined>
+  ): void {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const useQuickMatchContext = () => useContext(QuickMatchContext);
@@ -198,6 +212,10 @@ export const QuickMatchContextProvider = ({
     'targetFilter'
   );
 
+  const [threeDModel, setThreeDModel] = useContextState<
+    Selected3dModel | undefined
+  >(undefined, 'threeDModel');
+
   const [modelFieldMapping, setModelFieldMapping] =
     useContextState<ModelMapping>([{ source: 'name', target: 'name' }]);
   const [sourceType, setSourceType] = useContextState<SourceType>(
@@ -205,7 +223,7 @@ export const QuickMatchContextProvider = ({
     'sourceType'
   );
 
-  const hasSources = allSources || sourcesList.length > 0;
+  const hasSources = allSources || sourcesList.length > 0 || !!threeDModel;
   const hasTargets = allTargets || targetsList.length > 0;
 
   useEffect(() => {
@@ -231,7 +249,14 @@ export const QuickMatchContextProvider = ({
   const stepDone = () => {
     switch (step) {
       case 'select-sources': {
-        return hasSources;
+        switch (sourceType) {
+          case 'threeD': {
+            return !!threeDModel;
+          }
+          default: {
+            return hasSources;
+          }
+        }
       }
       case 'select-targets': {
         return hasTargets;
@@ -305,6 +330,8 @@ export const QuickMatchContextProvider = ({
         setFeatureType,
         scope,
         setScope,
+        threeDModel,
+        setThreeDModel,
       }}
     >
       {children}

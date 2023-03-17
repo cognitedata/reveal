@@ -14,9 +14,10 @@ import {
   useEMModel,
   useEMModelPredictResults,
 } from 'hooks/contextualization-api';
-import { useInfiniteList } from 'hooks/infiniteList';
+import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
 import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
+import { useInfinite3dNodes } from 'hooks/threeD';
 
 const CreateModel = (): JSX.Element => {
   const {
@@ -34,6 +35,7 @@ const CreateModel = (): JSX.Element => {
   const navigate = useNavigate();
   const {
     sourceType,
+
     allSources,
     sourceFilter,
     sourcesList,
@@ -44,18 +46,23 @@ const CreateModel = (): JSX.Element => {
     unmatchedOnly,
     allTargets,
     targetFilter,
+    threeDModel,
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
   const [jobRefetchInt, setJobRefetchInt] = useState<number | undefined>();
 
+  const is3d = sourceType === 'threeD';
+
   const { data: model } = useEMModel(modelId!, {
     enabled: !!modelId,
     refetchInterval: modelRefetchInt,
+    ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
   });
 
   const { data: prediction } = useEMModelPredictResults(jobId!, {
     enabled: !!jobId,
     refetchInterval: jobRefetchInt,
+    ...INFINITE_Q_OPTIONS,
   });
 
   const {
@@ -70,25 +77,50 @@ const CreateModel = (): JSX.Element => {
     [unmatchedOnly, sourceType]
   );
 
+  const {
+    data: threeDPages,
+    isFetchingNextPage: isFetchingNext3DPage,
+    fetchNextPage: fetchNext3DPage,
+    hasNextPage: hasNext3DPage,
+    isFetching: isFetching3D,
+    isError: is3DError,
+  } = useInfinite3dNodes(
+    {
+      modelId: threeDModel?.modelId!,
+      revisionId: threeDModel?.revisionId!,
+    },
+    {
+      enabled: is3d && !!threeDModel,
+      ...INFINITE_Q_OPTIONS,
+    }
+  );
+
   // fetch sources if "select all" option is applied
   const {
-    data: sourcePages,
-    isFetchingNextPage: isFetchingNextSourcePage,
-    fetchNextPage: fetchNextSourcePage,
-    hasNextPage: hasNextSourcePage,
-    isFetching: isFetchingSource,
-    isError: isSourceError,
+    data: plainSourcePages,
+    isFetchingNextPage: isFetchingNextPlainSourcePage,
+    fetchNextPage: fetchNextPlainSourcePage,
+    hasNextPage: hasNextPlainSourcePage,
+    isFetching: isFetchingPlainSource,
+    isError: isPlainSourceError,
   } = useInfiniteList(
     sourceType,
     10,
     { advancedFilter, filter: sourceFilter, limit: 10000 },
     {
-      enabled: allSources,
-      staleTime: Infinity,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
+      enabled: !is3d && allSources,
+      ...INFINITE_Q_OPTIONS,
     }
   );
+
+  const sourcePages = is3d ? threeDPages : plainSourcePages;
+  const isFetchingNextSourcePage = is3d
+    ? isFetchingNext3DPage
+    : isFetchingNextPlainSourcePage;
+  const fetchNextSourcePage = is3d ? fetchNext3DPage : fetchNextPlainSourcePage;
+  const hasNextSourcePage = is3d ? hasNext3DPage : hasNextPlainSourcePage;
+  const isFetchingSource = is3d ? isFetching3D : isFetchingPlainSource;
+  const isSourceError = is3d ? is3DError : isPlainSourceError;
 
   const sourceStatus = allSources
     ? bulkDownloadStatus({
@@ -122,7 +154,7 @@ const CreateModel = (): JSX.Element => {
     isFetching: isFetchingTarget,
     isError: isTargetError,
   } = useInfiniteList(
-    sourceType,
+    'assets',
     10,
     { advancedFilter, filter: targetFilter, limit: 10000 },
     {
@@ -259,13 +291,19 @@ const CreateModel = (): JSX.Element => {
         {sourceStatus && (
           <Flex alignItems="center" gap={8}>
             <QueryStatusIcon status={sourceStatus} />
-            <Body level={2}>{t(`source-data-fetch-${sourceStatus}`)}</Body>
+            <Body level={2}>
+              {t(`source-data-fetch-${sourceStatus}`)}{' '}
+              {sources?.length && `(${sources.length})`}
+            </Body>
           </Flex>
         )}
         {targetStatus && (
           <Flex alignItems="center" gap={8}>
             <QueryStatusIcon status={targetStatus} />
-            <Body level={2}>{t(`target-data-fetch-${targetStatus}`)}</Body>
+            <Body level={2}>
+              {t(`target-data-fetch-${targetStatus}`)}{' '}
+              {targets?.length && `(${targets.length})`}
+            </Body>
           </Flex>
         )}
         {!model ? (

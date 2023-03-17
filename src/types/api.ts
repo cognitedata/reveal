@@ -54,6 +54,7 @@ export const SOURCE_TYPES = [
   'events',
   'files',
   'sequences',
+  'threeD',
 ] as const;
 
 export type SourceType = (typeof SOURCE_TYPES)[number];

@@ -9,9 +9,9 @@ import {
 } from '@tanstack/react-query';
 import { PropertyAggregate } from 'common/types';
 
-import { Filter, SourceType, TargetType } from 'types/api';
+import { API, Filter } from 'types/api';
 
-type T = SourceType | TargetType;
+type T = API;
 
 const AGGREGATE_BASE_KEY = ['aggregate'];
 
@@ -27,6 +27,7 @@ const topLevelProperties: Record<T, string[]> = {
   events: ['type', 'subtype', 'description', 'source'],
   files: ['name', 'directory', 'source', 'mimeType'],
   sequences: ['name', 'description'],
+  threeD: ['name', 'depth', 'parentId'],
 };
 
 export const useAggregateProperties = (
@@ -37,6 +38,11 @@ export const useAggregateProperties = (
   return useQuery(
     aggregatePropertyQueryKey(api),
     () => {
+      if (api === 'threeD') {
+        return topLevelProperties.threeD.map((v) => ({
+          values: [{ property: [v] }],
+        }));
+      }
       return sdk
         .post<{
           items: PropertyAggregate[];
