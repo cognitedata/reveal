@@ -1,12 +1,12 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Link } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
-import { TooltipContainer } from '@data-exploration-components/containers/Files/Canvas/TooltipContainer';
+import { TooltipContainer } from '../TooltipContainer';
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,
   isAssetAnnotation,
-} from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
+} from '@cognite/data-exploration';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import styled from 'styled-components';
 
@@ -17,7 +17,7 @@ const AssetLabel = styled.div`
   margin-right: 4px;
 `;
 
-const useCanvasAssetTooltips = (
+const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined
 ) => {
   return useMemo(() => {
@@ -54,4 +54,4 @@ const useCanvasAssetTooltips = (
   }, [selectedAnnotation]);
 };
 
-export default useCanvasAssetTooltips;
+export default useIndustryCanvasAssetTooltips;

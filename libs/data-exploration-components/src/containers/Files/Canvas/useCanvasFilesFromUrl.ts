@@ -53,7 +53,7 @@ export const useCanvasFilesFromUrl = (): UseCanvasFilesFromUrlReturn => {
   );
 
   // Note: We pass a full file descriptor (id + page) here rather than just the id since
-  // a file could exist multiple times in the same workspace
+  //       a file could exist multiple times in the same workspace
   const removeFile = useCallback(
     (file: PagedFileReference) => {
       setFiles(

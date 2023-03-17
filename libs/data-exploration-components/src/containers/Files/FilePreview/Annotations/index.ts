@@ -1,2 +1,2 @@
-export { default as getAnnotationsFromAnnotationsApi } from './getExtendedAnnotationsFromAnnotationsApi';
+export { default as getExtendedAnnotationsFromAnnotationsApi } from './getExtendedAnnotationsFromAnnotationsApi';
 export * from './utils';
