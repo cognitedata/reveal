@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CogniteClient } from '@cognite/sdk';
 import {
   FieldsSelection,
@@ -5,7 +6,12 @@ import {
   linkTypeMap,
 } from './runtime';
 import type { ModelNodeMap, Query, QueryGenqlSelection } from './schema';
-import { RelationshipMap, TypeProperties, DirectProperties } from './schema';
+import {
+  RelationshipMap,
+  TypeProperties,
+  DirectProperties,
+  DateProperties,
+} from './schema';
 
 import types from './types';
 const typeMap = linkTypeMap(types as any);
@@ -33,8 +39,13 @@ export class FDMQueryClient {
   };
 
   public async upsertNodes<T extends keyof ModelNodeMap>(
-    key: T,
-    items: ModelNodeMap[T][]
+    type: T,
+    items: ModelNodeMap[T][],
+    options: {
+      replace: boolean;
+      autoCreateStartNodes: boolean;
+      autoCreateEndNodes: boolean;
+    } = { replace: false, autoCreateEndNodes: true, autoCreateStartNodes: true }
   ): Promise<ModelNodeMap[T][]> {
     const data = {
       items: items.map((item) => ({
@@ -46,34 +57,52 @@ export class FDMQueryClient {
             source: {
               type: 'view',
               space: SPACE,
-              externalId: key,
+              externalId: type,
               version: DM_VERSION,
             },
-            properties: DirectProperties[key].reduce(
+            properties: DateProperties[type].reduce(
               (prev, curKey) => {
                 const key = curKey as keyof typeof item;
                 if (!item[key]) {
                   return prev;
                 }
+                if (Array.isArray(item[key])) {
+                  return {
+                    ...prev,
+                    [curKey]: item[key].map(
+                      (item) => (item as Date).toISOString().split('T')[0]
+                    ),
+                  };
+                }
                 return {
                   ...prev,
-                  [curKey]: { space: SPACE, ...item[key] },
+                  [curKey]: (item[key] as Date).toISOString().split('T')[0],
                 };
               },
-              TypeProperties[key].reduce((prev, curKey) => {
-                const key = curKey as keyof typeof item;
-                if (!item[key]) {
-                  return prev;
-                }
-                return { ...prev, [curKey]: item[key] };
-              }, {} as any) as any
+              DirectProperties[type].reduce(
+                (prev, curKey) => {
+                  const key = curKey as keyof typeof item;
+                  if (!item[key]) {
+                    return prev;
+                  }
+                  return {
+                    ...prev,
+                    [curKey]: { space: SPACE, ...item[key] },
+                  };
+                },
+                TypeProperties[type].reduce((prev, curKey) => {
+                  const key = curKey as keyof typeof item;
+                  if (!item[key]) {
+                    return prev;
+                  }
+                  return { ...prev, [curKey]: item[key] };
+                }, {} as any) as any
+              )
             ),
           },
         ],
       })),
-      replace: true,
-      autoCreateStartNodes: true,
-      autoCreateEndNodes: true,
+      ...options,
     };
 
     const res = await this._client.post<{ items: ModelNodeMap[T][] }>(
@@ -99,7 +128,12 @@ export class FDMQueryClient {
   >(
     type: K,
     property: keyof (typeof RelationshipMap)[K],
-    items: I[]
+    items: I[],
+    options: {
+      replace: boolean;
+      autoCreateStartNodes: boolean;
+      autoCreateEndNodes: boolean;
+    } = { replace: false, autoCreateEndNodes: true, autoCreateStartNodes: true }
   ): Promise<I[]> {
     const relationshipKey = getRelationshipKey(
       type,
@@ -123,9 +157,7 @@ export class FDMQueryClient {
           el.externalId ||
           `${el.startNode.externalId}_${el.endNode.externalId}`,
       })),
-      replace: true,
-      autoCreateStartNodes: true,
-      autoCreateEndNodes: true,
+      ...options,
     };
 
     const res = await this._client.post<{ items: I[] }>(

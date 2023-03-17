@@ -13,8 +13,10 @@ import typescript from 'rollup-plugin-typescript2';
 import { rollup } from 'rollup';
 import { getFdmV3MixerApiService } from '../utils';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
-import { Kind, ObjectTypeDefinitionNode, parse, TypeNode } from 'graphql';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import {
+  DataModelTypeDefsType,
+  mixerApiBuiltInTypes,
+} from '@platypus/platypus-core';
 
 const DEBUG = _DEBUG.extend('solutions:generate');
 
@@ -23,7 +25,7 @@ export type SolutionsGeneratePythonCommandArgs = BaseArgs & {
   ['space']: string;
   ['version']: string;
   ['output-directory']: string;
-  ['include-sample']: boolean;
+  ['skip-sample']: boolean;
 };
 
 const commandArgs = [
@@ -60,13 +62,13 @@ const commandArgs = [
     example: '--output-directory=generated/',
   },
   {
-    name: 'include-sample',
+    name: 'skip-sample',
     description: 'Create a sample.ts in /generated',
     required: false,
     type: CommandArgumentType.BOOLEAN,
     alias: 'sample',
-    initial: true,
-    example: '--include-sample=true',
+    initial: false,
+    example: '--skip-sample=false',
   },
 ] as CommandArgument[];
 
@@ -99,8 +101,19 @@ class SolutionGenerateJSCommand extends CLICommand {
         useGet: true,
         output: generatedPath,
         verbose: args['verbose'],
+        scalarTypes: mixerApiBuiltInTypes
+          .filter((el) => el.tsType && el.type === 'SCALAR')
+          .reduce((prev, curr) => {
+            return {
+              ...prev,
+              [curr.name]: curr.tsType,
+            };
+          }, {} as { [key in string]: string }),
       });
-      await fsExtra.copy(path.resolve(__dirname, './js'), generatedPath);
+      await fs.copyFileSync(
+        path.resolve(__dirname, './js/FDMQueryClient.ts'),
+        path.resolve(generatedPath, './FDMQueryClient.ts')
+      );
       fs.appendFileSync(
         path.resolve(generatedPath, './FDMQueryClient.ts'),
         `
@@ -167,18 +180,23 @@ const SPACE="${args['space']}"`
         recursive: true,
         overwrite: true,
       });
-      if (args['include-sample']) {
+
+      if (!args['skip-sample']) {
         if (!fs.existsSync(join(cwd(), 'generated'))) {
           fs.mkdirSync(join(cwd(), 'generated'), { recursive: true });
         }
-        args.logger.success(
-          `Successfully generated "@cognite/fdm-client", feel free to start using FDMQueryClientBuilder (check generated/sample.ts for example!)`
-        );
         fs.copyFileSync(
           path.resolve(__dirname, './js/sample.ts'),
           join(cwd(), 'generated/', 'sample.ts')
         );
       }
+      args.logger.success(
+        `Successfully generated in "${
+          args['output-directory']
+        }", feel free to start using FDMQueryClientBuilder${
+          args['skip-sample'] ? '' : ' (check generated/sample.ts for example!)'
+        }`
+      );
     } catch (error) {
       DEBUG(`got error: ${JSON.stringify(error)}`);
       args.logger.error(error);
@@ -216,8 +234,10 @@ const getTypeString = (types: DataModelTypeDefsType[]) => {
   const typeItems: string[] = [];
   const directRelations: string[] = [];
   const typeProperties: string[] = [];
+  const dateProperties: string[] = [];
   types.forEach((el) => {
     const relationships = el.fields.filter((el) => el.type.custom);
+    const dates = el.fields.filter((el) => el.type.name === 'Date');
     const singleRelationships = relationships.filter((el) => !el.type.list);
     typeItems.push(
       `${el.name}: Omit<${
@@ -240,6 +260,9 @@ const getTypeString = (types: DataModelTypeDefsType[]) => {
     directRelations.push(
       `${el.name}: ${JSON.stringify(singleRelationships.map((el) => el.name))}`
     );
+    dateProperties.push(
+      `${el.name}: ${JSON.stringify(dates.map((el) => el.name))}`
+    );
     typeProperties.push(
       `${el.name}: ${JSON.stringify(
         el.fields.filter((el) => !el.type.custom).map((el) => el.name)
@@ -255,6 +278,9 @@ const getTypeString = (types: DataModelTypeDefsType[]) => {
   };
   export const DirectProperties: { [key in string]: string[] } = {
     ${directRelations.join(',\n')}
+  };
+  export const DateProperties: { [key in string]: string[] } = {
+    ${dateProperties.join(',\n')}
   };`;
 };
 
