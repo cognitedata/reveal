@@ -11,7 +11,7 @@ import { ContainerReference } from '../types';
 
 type useContainerAnnotationsParams = {
   containerReferences: ContainerReference[];
-  selectedAnnotation: ExtendedAnnotation | undefined;
+  selectedAnnotationId: string | undefined;
   hoverId: string | undefined;
   onMouseOver?: (annotation: ExtendedAnnotation) => void;
   onMouseOut?: (annotation: ExtendedAnnotation) => void;
@@ -20,7 +20,7 @@ type useContainerAnnotationsParams = {
 
 export const useContainerAnnotations = ({
   containerReferences,
-  selectedAnnotation,
+  selectedAnnotationId,
   hoverId,
   onClick,
   onMouseOver,
@@ -51,7 +51,7 @@ export const useContainerAnnotations = ({
       )
       .filter(isNotUndefined)
       .map((annotation) => {
-        const isSelected = selectedAnnotation?.id === annotation.id;
+        const isSelected = selectedAnnotationId === annotation.id;
         const isOnHover = hoverId === String(annotation.id);
         return getStyledAnnotationFromAnnotation(
           annotation,
@@ -90,7 +90,7 @@ export const useContainerAnnotations = ({
     onClick,
     onMouseOver,
     onMouseOut,
-    selectedAnnotation,
+    selectedAnnotationId,
     hoverId,
     annotationsApiAnnotations,
     containerReferences,

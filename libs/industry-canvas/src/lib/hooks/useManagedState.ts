@@ -7,7 +7,6 @@ import {
 } from 'react';
 
 import {
-  Annotation,
   ContainerType,
   ContainerConfig,
   UnifiedViewerEventListenerMap,
@@ -119,49 +118,55 @@ const useManagedState = (initialState: {
   const [container, setContainer] = useState<ContainerConfig>(
     initialState.container
   );
-  const [canvasAnnotations, setCanvasAnnotations] = useState<Annotation[]>([]);
+  const [canvasAnnotations, setCanvasAnnotations] = useState<
+    CanvasAnnotation[]
+  >([]);
   const [containerReferences, setContainerReferences] = useState<
     ContainerReference[]
   >([]);
 
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
-      setContainer((prevContainer) => {
-        const containerWithNewContainersIfNecessary = addNewContainers(
-          prevContainer,
-          updatedContainers
-        );
-        // Update the existing container(s) if necessary
-        const updatedContainer = transformRecursive(
-          containerWithNewContainersIfNecessary,
-          (container) => mergeIfMatchById(updatedContainers, container)
-        );
+      if (updatedContainers.length > 0) {
+        setContainer((prevContainer) => {
+          const containerWithNewContainersIfNecessary = addNewContainers(
+            prevContainer,
+            updatedContainers
+          );
+          // Update the existing container(s) if necessary
+          const updatedContainer = transformRecursive(
+            containerWithNewContainersIfNecessary,
+            (container) => mergeIfMatchById(updatedContainers, container)
+          );
 
-        setContainerReferences(
-          getContainerReferencesWithUpdatedDimensions(
-            containerReferences,
-            updatedContainer
-          )
-        );
-
-        return updatedContainer;
-      });
-
-      setCanvasAnnotations((annotations) => {
-        const annotationsToAdd = updatedAnnotations.filter(
-          (updatedAnnotation) =>
-            !annotations.some(
-              (annotation) => annotation.id === updatedAnnotation.id
+          setContainerReferences(
+            getContainerReferencesWithUpdatedDimensions(
+              containerReferences,
+              updatedContainer
             )
-        );
+          );
 
-        return [
-          ...annotations.map((annotation) =>
-            mergeIfMatchById(updatedAnnotations, annotation)
-          ),
-          ...annotationsToAdd,
-        ];
-      });
+          return updatedContainer;
+        });
+      }
+
+      if (updatedAnnotations.length > 0) {
+        setCanvasAnnotations((annotations) => {
+          const annotationsToAdd = updatedAnnotations.filter(
+            (updatedAnnotation) =>
+              !annotations.some(
+                (annotation) => annotation.id === updatedAnnotation.id
+              )
+          );
+
+          return [
+            ...annotations.map((annotation) =>
+              mergeIfMatchById(updatedAnnotations, annotation)
+            ),
+            ...annotationsToAdd,
+          ];
+        });
+      }
     },
     [
       setContainer,

@@ -1,12 +1,26 @@
-import { useCallback, useState } from 'react';
-import { ToolType } from '@cognite/unified-file-viewer';
+import { useCallback, useMemo, useState } from 'react';
+import { RectangleAnnotation, ToolType } from '@cognite/unified-file-viewer';
+import { CanvasAnnotation, ShapeAnnotationColor } from '../types';
+import { UseManagedStateReturnType } from './useManagedState';
+import {
+  fillShapeAnnotationColorToHex,
+  strokeShapeAnnotationColorToHex,
+} from '../utils/colorUtils';
+
+export type ShapeAnnotationStyle = {
+  fill: ShapeAnnotationColor;
+  stroke: ShapeAnnotationColor;
+};
+export type OnUpdateShapeAnnotationStyle = (
+  updateShapeAnnotationStyle: Partial<ShapeAnnotationStyle>
+) => void;
 
 type ToolOptions = Record<string, any>;
 
 const DEFAULT_STYLE = {
   fill: 'rgba(0, 179, 230, 0.5)',
   stroke: '#000000',
-  strokeWidth: 5,
+  strokeWidth: 3,
   isWorkspaceAnnotation: true,
 };
 
@@ -15,7 +29,6 @@ const DEFAULT_TOOL_OPTIONS: Record<ToolType, ToolOptions> = {
   [ToolType.ELLIPSE]: DEFAULT_STYLE,
   [ToolType.POLYLINE]: DEFAULT_STYLE,
   [ToolType.TEXT]: {
-    fontSize: 16,
     strokeWidth: 0,
     fill: '#000000',
     stroke: '#000000',
@@ -31,13 +44,20 @@ type ToolState = {
   optionsByToolType: Record<ToolType, ToolOptions>;
 };
 
-const useManagedTools = (
-  initialTool: ToolType
-): {
+const useManagedTools = ({
+  initialTool,
+  selectedCanvasAnnotation,
+  onUpdateRequest,
+}: {
+  initialTool: ToolType;
+  selectedCanvasAnnotation: CanvasAnnotation | undefined;
+  onUpdateRequest: UseManagedStateReturnType['onUpdateRequest'];
+}): {
   tool: ToolType;
   toolOptions: ToolOptions;
-  toolsOptions: Record<ToolType, ToolOptions>;
   setTool: (nextTool: ToolType, options?: ToolOptions) => void;
+  shapeAnnotationStyle: ShapeAnnotationStyle;
+  onUpdateShapeAnnotationStyle: OnUpdateShapeAnnotationStyle;
 } => {
   const [{ tool, optionsByToolType }, setToolState] = useState<ToolState>({
     tool: initialTool,
@@ -57,11 +77,69 @@ const useManagedTools = (
     }));
   }, []);
 
+  const [shapeAnnotationStyle, setShapeAnnotationStyle] =
+    useState<ShapeAnnotationStyle>({
+      fill: ShapeAnnotationColor.BLUE,
+      stroke: ShapeAnnotationColor.BLUE,
+    });
+
+  const onUpdateShapeAnnotationStyle: OnUpdateShapeAnnotationStyle =
+    useCallback(
+      (updateShapeAnnotationStyle) => {
+        setShapeAnnotationStyle((prevShapeAnnotationOption) => {
+          const nextShapeAnnotationOptions = {
+            ...prevShapeAnnotationOption,
+            ...updateShapeAnnotationStyle,
+          };
+
+          if (selectedCanvasAnnotation) {
+            onUpdateRequest({
+              containers: [],
+              annotations: [
+                {
+                  ...selectedCanvasAnnotation,
+                  style: {
+                    ...selectedCanvasAnnotation.style,
+                    fill: fillShapeAnnotationColorToHex(
+                      nextShapeAnnotationOptions.fill
+                    ),
+                    stroke: strokeShapeAnnotationColorToHex(
+                      nextShapeAnnotationOptions.stroke
+                    ),
+                  },
+                } as RectangleAnnotation, // TODO: Fix typing
+              ],
+            });
+          }
+          return nextShapeAnnotationOptions;
+        });
+      },
+      [selectedCanvasAnnotation, onUpdateRequest, setShapeAnnotationStyle]
+    );
+
+  const toolOptions = useMemo(() => {
+    if (tool === ToolType.SELECT || tool === ToolType.PAN) {
+      return optionsByToolType[tool];
+    }
+
+    if (tool === ToolType.RECTANGLE) {
+      const { fill, stroke } = shapeAnnotationStyle;
+      return {
+        ...optionsByToolType[tool],
+        fill: fillShapeAnnotationColorToHex(fill),
+        stroke: strokeShapeAnnotationColorToHex(stroke),
+      };
+    }
+
+    throw new Error('Unsupported tool type: ' + tool);
+  }, [tool, shapeAnnotationStyle, optionsByToolType]);
+
   return {
     tool,
-    toolOptions: optionsByToolType[tool],
-    toolsOptions: optionsByToolType,
+    toolOptions,
     setTool,
+    shapeAnnotationStyle,
+    onUpdateShapeAnnotationStyle,
   };
 };
 

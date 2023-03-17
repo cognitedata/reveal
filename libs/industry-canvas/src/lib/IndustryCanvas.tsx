@@ -18,12 +18,16 @@ import { useContainerAnnotations } from './hooks/useContainerAnnotations';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
-import ToolbarComponent from './components/ToolbarComponent/ToolbarComponent';
+import ToolbarComponent from './components/ToolbarComponent';
 import {
   DEFAULT_TIMESERIES_HEIGHT,
   DEFAULT_TIMESERIES_WIDTH,
 } from './utils/addDimensionsToContainerReferences';
-import { ContainerReference, ContainerReferenceType } from './types';
+import {
+  CanvasAnnotation,
+  ContainerReference,
+  ContainerReferenceType,
+} from './types';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -56,54 +60,67 @@ export const IndustryCanvas = ({
   onAddContainerReferences,
   onRef,
 }: IndustryCanvasProps) => {
-  const { tool, toolsOptions, setTool } = useManagedTools(ToolType.PAN);
-
   const [
-    { hoverId, clickedContainer, selectedAnnotation },
+    { hoverId, clickedContainer, selectedAnnotationId },
     setInteractionState,
   ] = useState<{
     hoverId: string | undefined;
     clickedContainer: ContainerReference | undefined;
-    selectedAnnotation: ExtendedAnnotation | undefined;
+    selectedAnnotationId: string | undefined;
   }>({
     hoverId: undefined,
     clickedContainer: undefined,
-    selectedAnnotation: undefined,
+    selectedAnnotationId: undefined,
+  });
+
+  const selectedCanvasAnnotation = useMemo(
+    () =>
+      selectedAnnotationId
+        ? canvasAnnotations.find(
+            (annotation) => annotation.id === selectedAnnotationId
+          )
+        : undefined,
+    [canvasAnnotations, selectedAnnotationId]
+  );
+
+  const {
+    tool,
+    toolOptions,
+    setTool,
+    shapeAnnotationStyle,
+    onUpdateShapeAnnotationStyle,
+  } = useManagedTools({
+    initialTool: ToolType.PAN,
+    selectedCanvasAnnotation,
+    onUpdateRequest,
   });
 
   const sdk = useSDK();
 
-  useEffect(
-    () =>
-      setInteractionState({
-        hoverId: undefined,
-        clickedContainer: undefined,
-        selectedAnnotation: undefined,
-      }),
-    [containerReferences]
-  );
-
-  const onClickAnnotation = useCallback(
+  const onClickContainerAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
       setInteractionState((prevInteractionState) => ({
         clickedContainer: undefined,
         hoverId: undefined,
-        selectedAnnotation:
-          prevInteractionState.selectedAnnotation === annotation
+        selectedAnnotationId:
+          prevInteractionState.selectedAnnotationId === annotation.id
             ? undefined
-            : annotation,
+            : annotation.id,
       })),
     []
   );
 
-  const onAnnotationMouseOver = useCallback((annotation: Annotation) => {
-    setInteractionState((prevInteractionState) => ({
-      ...prevInteractionState,
-      hoverId: annotation.id,
-    }));
-  }, []);
+  const onMouseOverContainerAnnotation = useCallback(
+    (annotation: Annotation) => {
+      setInteractionState((prevInteractionState) => ({
+        ...prevInteractionState,
+        hoverId: annotation.id,
+      }));
+    },
+    []
+  );
 
-  const onAnnotationMouseOut = useCallback(() => {
+  const onMouseOutContainerAnnotation = useCallback(() => {
     setInteractionState((prevInteractionState) => ({
       ...prevInteractionState,
       hoverId: undefined,
@@ -112,12 +129,20 @@ export const IndustryCanvas = ({
 
   const containerAnnotations = useContainerAnnotations({
     containerReferences,
-    selectedAnnotation,
+    selectedAnnotationId,
     hoverId,
-    onClick: onClickAnnotation,
-    onMouseOver: onAnnotationMouseOver,
-    onMouseOut: onAnnotationMouseOut,
+    onClick: onClickContainerAnnotation,
+    onMouseOver: onMouseOverContainerAnnotation,
+    onMouseOut: onMouseOutContainerAnnotation,
   });
+
+  const selectedContainerAnnotation = useMemo(
+    () =>
+      containerAnnotations.find(
+        (annotation) => annotation.id === selectedAnnotationId
+      ),
+    [containerAnnotations, selectedAnnotationId]
+  );
 
   useEffect(() => {
     (async () => {
@@ -128,7 +153,7 @@ export const IndustryCanvas = ({
             setInteractionState({
               hoverId: undefined,
               clickedContainer: containerReference,
-              selectedAnnotation: undefined,
+              selectedAnnotationId: undefined,
             });
           };
 
@@ -194,23 +219,58 @@ export const IndustryCanvas = ({
     })();
   }, [setContainer, sdk, containerReferences]);
 
+  const onDeleteSelectedCanvasAnnotation = useCallback(() => {
+    setInteractionState({
+      clickedContainer: undefined,
+      hoverId: undefined,
+      selectedAnnotationId: undefined,
+    });
+    onDeleteRequest({
+      annotationIds:
+        selectedCanvasAnnotation === undefined
+          ? []
+          : [selectedCanvasAnnotation.id],
+      containerIds: [],
+    });
+  }, [selectedCanvasAnnotation, onDeleteRequest]);
+
   const tooltips = useIndustryCanvasTooltips({
-    annotations: containerAnnotations,
-    selectedAnnotation,
+    containerAnnotations,
+    selectedContainerAnnotation,
+    selectedCanvasAnnotation,
     clickedContainer,
     onAddContainerReferences,
     containerReferences,
     removeContainerReference,
+    onDeleteSelectedCanvasAnnotation,
+    shapeAnnotationStyle,
+    onUpdateShapeAnnotationStyle,
     updateContainerReference,
   });
 
   const onStageClick = useCallback(() => {
     setInteractionState({
-      selectedAnnotation: undefined,
+      selectedAnnotationId: undefined,
       clickedContainer: undefined,
       hoverId: undefined,
     });
   }, [setInteractionState]);
+
+  const canvasAnnotationWithEventHandlers = useMemo(
+    () =>
+      canvasAnnotations.map((canvasAnnotation) => ({
+        ...canvasAnnotation,
+        onClick: (e: any, annotation: CanvasAnnotation) => {
+          e.cancelBubble = true;
+          setInteractionState({
+            clickedContainer: undefined,
+            hoverId: undefined,
+            selectedAnnotationId: annotation.id,
+          });
+        },
+      })),
+    [canvasAnnotations]
+  );
 
   const enhancedAnnotations: Annotation[] = useMemo(
     () => [
@@ -222,9 +282,14 @@ export const IndustryCanvas = ({
         annotations: containerAnnotations,
       }),
       ...containerAnnotations,
-      ...canvasAnnotations,
+      ...canvasAnnotationWithEventHandlers,
     ],
-    [containerReferences, containerAnnotations, hoverId, canvasAnnotations]
+    [
+      containerReferences,
+      containerAnnotations,
+      hoverId,
+      canvasAnnotationWithEventHandlers,
+    ]
   );
 
   return (
@@ -240,7 +305,7 @@ export const IndustryCanvas = ({
           shouldShowZoomControls
           setRef={onRef}
           tool={tool}
-          toolOptions={toolsOptions[tool]}
+          toolOptions={toolOptions}
           onDeleteRequest={onDeleteRequest}
           onUpdateRequest={onUpdateRequest}
           initialViewport={{

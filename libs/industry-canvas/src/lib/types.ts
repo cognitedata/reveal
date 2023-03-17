@@ -48,3 +48,11 @@ export type CanvasState = {
   containerReferences: ContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
 };
+
+export enum ShapeAnnotationColor {
+  BLUE = 'blue',
+  GREEN = 'green',
+  ORANGE = 'orange',
+  RED = 'red',
+  YELLOW = 'yellow',
+}

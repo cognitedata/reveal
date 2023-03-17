@@ -5,13 +5,17 @@ import { useMemo } from 'react';
 import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
 import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
 import {
+  CanvasAnnotation,
   ContainerReference,
   ContainerReferenceWithoutDimensions,
 } from '../types';
+import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
+import { ShapeAnnotationTooltipProps } from '../components/ShapeAnnotationTooltip';
 
 export type UseTooltipsParams = {
-  annotations: ExtendedAnnotation[];
-  selectedAnnotation: ExtendedAnnotation | undefined;
+  containerAnnotations: ExtendedAnnotation[];
+  selectedContainerAnnotation: ExtendedAnnotation | undefined;
+  selectedCanvasAnnotation: CanvasAnnotation | undefined;
   clickedContainer: ContainerReference | undefined;
   onAddContainerReferences: OnAddContainerReferences;
   removeContainerReference: (containerReference: ContainerReference) => void;
@@ -19,23 +23,35 @@ export type UseTooltipsParams = {
   updateContainerReference: (
     containerReference: ContainerReferenceWithoutDimensions
   ) => void;
-};
+} & ShapeAnnotationTooltipProps;
 
 const useIndustryCanvasTooltips = ({
-  annotations,
-  selectedAnnotation,
+  containerAnnotations,
+  selectedContainerAnnotation,
+  selectedCanvasAnnotation,
   clickedContainer,
   onAddContainerReferences,
   removeContainerReference,
   containerReferences,
+  onDeleteSelectedCanvasAnnotation,
+  shapeAnnotationStyle,
+  onUpdateShapeAnnotationStyle,
   updateContainerReference,
 }: UseTooltipsParams) => {
-  const hoverTooltips = useIndustryCanvasAssetTooltips(selectedAnnotation);
+  const assetTooltips = useIndustryCanvasAssetTooltips(
+    selectedContainerAnnotation
+  );
   const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
-    annotations,
-    selectedAnnotation,
+    annotations: containerAnnotations,
+    selectedAnnotation: selectedContainerAnnotation,
     onAddContainerReferences,
     containerReferences,
+  });
+  const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
+    selectedCanvasAnnotation,
+    onDeleteSelectedCanvasAnnotation,
+    shapeAnnotationStyle,
+    onUpdateShapeAnnotationStyle,
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     clickedContainer,
@@ -44,8 +60,18 @@ const useIndustryCanvasTooltips = ({
   });
 
   return useMemo(() => {
-    return [...hoverTooltips, ...fileLinkTooltips, ...containerTooltips];
-  }, [hoverTooltips, fileLinkTooltips, containerTooltips]);
+    return [
+      ...assetTooltips,
+      ...canvasAnnotationTooltips,
+      ...fileLinkTooltips,
+      ...containerTooltips,
+    ];
+  }, [
+    assetTooltips,
+    canvasAnnotationTooltips,
+    fileLinkTooltips,
+    containerTooltips,
+  ]);
 };
 
 export default useIndustryCanvasTooltips;
