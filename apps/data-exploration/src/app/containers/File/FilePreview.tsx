@@ -55,7 +55,11 @@ export const FilePreview = ({
   );
   const { flow } = getFlow();
   const { data: filesAcl } = usePermissions(flow as any, 'filesAcl', 'WRITE');
-  const { data: annotationsAcl } = usePermissions(flow as any, 'annotationsAcl', 'WRITE');
+  const { data: annotationsAcl } = usePermissions(
+    flow as any,
+    'annotationsAcl',
+    'WRITE'
+  );
   const writeAccess = filesAcl && annotationsAcl;
 
   const { resourceType } = useParams<{

@@ -25,7 +25,7 @@ export const SourceFilter = <TFilter,>({
     <MultiSelectFilter<string>
       addNilOption
       {...rest}
-      title="Source"
+      label="Source"
       options={options}
       onChange={(_, newSources) => onChange?.(newSources)}
     />
@@ -37,12 +37,12 @@ const AssetSourceFilter = (
 ) => {
   const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
 
-  const mappedSources = sources.map((item) => ({
+  const options = sources.map((item) => ({
     label: `${item.value}`,
-    value: String(item.value),
+    value: `${item.value}`,
   }));
 
-  return <SourceFilter {...props} options={mappedSources} />;
+  return <SourceFilter {...props} options={options} />;
 };
 
 const EventSourceFilter = (
@@ -50,24 +50,24 @@ const EventSourceFilter = (
 ) => {
   const { data: sources = [] } = useEventsUniqueValuesByProperty('source');
 
-  const mappedSources = sources.map((item) => ({
+  const options = sources.map((item) => ({
     label: `${item.value}`,
-    value: String(item.value),
+    value: `${item.value}`,
   }));
 
-  return <SourceFilter {...props} options={mappedSources} />;
+  return <SourceFilter {...props} options={options} />;
 };
 
 export const FileSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalDocumentFilter>
 ) => {
   const { data: sources = [] } = useDocumentAggregateSourceQuery();
-  const mappedSources = sources.map((item) => ({
+  const options = sources.map((item) => ({
     label: item.label,
     value: item.value,
   }));
 
-  return <SourceFilter {...props} options={mappedSources} />;
+  return <SourceFilter {...props} options={options} />;
 };
 
 SourceFilter.Asset = AssetSourceFilter;
