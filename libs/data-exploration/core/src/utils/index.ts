@@ -1,4 +1,3 @@
-export * from './extract';
 export * from './localStorage';
 export * from './number';
 export * from './object';
