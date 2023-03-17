@@ -11,6 +11,7 @@ import { Popover } from 'antd';
 import {
   isFilePreviewable,
   fileIconMapper,
+  mapMimeTypeToDocumentType,
 } from '@data-exploration-components/utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
@@ -64,7 +65,7 @@ export const FileNamePreview = ({
     <Flex gap={4} alignItems="center">
       <DocumentIconWrapper>
         {file?.mimeType && (
-          <DocumentIcon file={fileIconMapper[file.mimeType]} />
+          <DocumentIcon file={mapMimeTypeToDocumentType(file.mimeType)} />
         )}
       </DocumentIconWrapper>
       <HighlightCell text={fileName} query={query} />
