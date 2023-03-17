@@ -120,7 +120,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <TooltipWrapper
       ref={tooltipRef}
-      className="tooltip"
       variant={variant}
       style={{
         top: y,

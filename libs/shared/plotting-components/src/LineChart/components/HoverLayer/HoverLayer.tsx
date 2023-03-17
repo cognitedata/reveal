@@ -51,7 +51,6 @@ export const HoverLayer: React.FC<HoverLayerProps> = ({
 
   return (
     <HoverLayerWrapper
-      className="hover-layer"
       style={{
         display: plotHoverEvent ? 'initial' : 'none',
       }}

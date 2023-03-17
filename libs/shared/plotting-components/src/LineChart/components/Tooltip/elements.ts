@@ -5,6 +5,7 @@ export const TooltipWrapper = styled.div`
   position: absolute;
   transform: translateY(-50%);
   transition: opacity 0.4s ease;
+  pointer-events: none;
 
   ${({ variant }: { variant?: Variant }) =>
     variant === 'small' &&

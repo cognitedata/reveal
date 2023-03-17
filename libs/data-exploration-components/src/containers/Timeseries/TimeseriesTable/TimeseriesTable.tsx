@@ -94,7 +94,8 @@ export const TimeseriesTable = ({
             variant="small"
             dateRange={dateRange}
             numberOfPoints={100}
-            height={55}
+            backgroundColor="transparent"
+            height={50}
           />
         );
       },
