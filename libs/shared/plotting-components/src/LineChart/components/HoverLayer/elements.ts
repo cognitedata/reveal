@@ -4,6 +4,13 @@ import {
   HOVER_MARKER_BORDER_WIDTH,
   MARKER_SIZE,
 } from '../../constants';
+import { LINE_INFO_POINTER_SIZE } from './HoverLineInfo';
+
+const HOVER_LINE_INFO_BACKGROUND_COLOR = 'var(--cogs-greyscale-grey10)';
+
+export const HoverLayerWrapper = styled.div`
+  pointer-events: none;
+`;
 
 export const Line = styled.div`
   position: absolute;
@@ -19,28 +26,30 @@ export const LineMarker = styled.div`
   outline: ${HOVER_MARKER_BORDER_WIDTH}px solid ${DEFAULT_BACKGROUND_COLOR};
 `;
 
+export const LineInfoWrapper = styled.div`
+  transition: opacity 0.4s ease;
+`;
+
+export const LineInfoPointer = styled.div`
+  position: absolute;
+  bottom: 100%;
+  border-width: ${LINE_INFO_POINTER_SIZE}px;
+  border-style: solid;
+  border-color: transparent transparent ${HOVER_LINE_INFO_BACKGROUND_COLOR}
+    transparent;
+  transform: translateX(-50%);
+`;
+
 export const LineInfo = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
   white-space: nowrap;
   color: #ffffff;
-  background: #262626;
+  background: ${HOVER_LINE_INFO_BACKGROUND_COLOR};
   border-radius: 6px;
   padding: 8px;
   font-size: 12px;
   transform: translateX(-50%);
   margin-top: 6px;
-  transition: opacity 0.4s ease;
-
-  ::after {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: ${(props: { offset: number }) => `calc(50% + ${props.offset}px)`};
-    margin-left: -6px;
-    border-width: 6px;
-    border-style: solid;
-    border-color: transparent transparent #262626 transparent;
-  }
 `;

@@ -9,8 +9,6 @@ import head from 'lodash/head';
 import { checkIsClientOnElementt } from '../utils/checkIsClientOnElementt';
 import { PLOT_CLASSNAME } from '../constants';
 
-const CURSOR_ADJUSTMENT = 2;
-
 export const useCursorPosition = (
   chartRef: React.RefObject<HTMLDivElement>
 ) => {
@@ -32,8 +30,8 @@ export const useCursorPosition = (
       const clientX = get(event, 'clientX', 0);
       const clientY = get(event, 'clientY', 0);
 
-      const x = clientX - chartBounds.left + CURSOR_ADJUSTMENT;
-      const y = clientY - chartBounds.top + CURSOR_ADJUSTMENT;
+      const x = clientX - chartBounds.left;
+      const y = clientY - chartBounds.top;
 
       setCursorPosition({ x, y });
 

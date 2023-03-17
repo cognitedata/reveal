@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
@@ -25,14 +25,14 @@ export const usePlotHoverEvent = ({
   const [plotHoverEventBackup, setPlotHoverEventBackup] =
     useState<PlotHoverEvent>();
 
-  const updatePlotHoverEvent = (event: PlotHoverEvent) => {
+  const updatePlotHoverEvent = useCallback((event: PlotHoverEvent) => {
     setPlotHoverEvent(event);
     setPlotHovered(true);
-  };
+  }, []);
 
-  const setPlotUnhovered = () => {
+  const setPlotUnhovered = useCallback(() => {
     setPlotHovered(false);
-  };
+  }, []);
 
   useEffect(() => {
     ['hover-layer', 'tooltip'].forEach((className) => {
@@ -44,6 +44,10 @@ export const usePlotHoverEvent = ({
       createEventListener(element, 'mouseleave', () => {
         setPreventClearEvent(false);
       });
+    });
+
+    createEventListener(chartRef.current, 'wheel', () => {
+      setPlotHoverEvent(undefined);
     });
   }, [chartRef]);
 

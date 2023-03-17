@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
@@ -67,7 +67,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     updateTooltipWidth();
   }, [updateTooltipWidth]);
 
-  const getTooltipContent = () => {
+  const TooltipContent = useMemo(() => {
     if (!point) {
       return null;
     }
@@ -108,13 +108,14 @@ export const Tooltip: React.FC<TooltipProps> = ({
         />
       </TooltipContainer>
     );
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [point?.curveNumber, point?.pointNumber]);
 
   if (!showTooltip) {
     return null;
   }
 
-  const isTooltipVisible = tooltipWidth && plotHoverEvent;
+  const isTooltipVisible = tooltipWidth && Boolean(plotHoverEvent);
 
   return (
     <TooltipWrapper
@@ -128,7 +129,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         opacity: isTooltipVisible ? 1 : 0,
       }}
     >
-      {getTooltipContent()}
+      {TooltipContent}
     </TooltipWrapper>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
@@ -7,8 +7,11 @@ import head from 'lodash/head';
 
 import { Coordinate, HoverLineData } from '../../types';
 import { getLineInfoPosition } from '../../utils/getLineInfoPosition';
-import { LineInfo } from './elements';
+import { LineInfo, LineInfoPointer, LineInfoWrapper } from './elements';
 import { getPointCustomData } from '../../utils/getPointCustomData';
+import isUndefined from 'lodash/isUndefined';
+
+export const LINE_INFO_POINTER_SIZE = 9;
 
 export interface HoverLineInfoProps {
   chartRef: React.RefObject<HTMLDivElement>;
@@ -40,12 +43,8 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
     updateLineInfoWidth();
   }, [updateLineInfoWidth]);
 
-  if (!plotHoverEvent) {
-    return null;
-  }
-
   const { offsetTop, height } = plotStyleData;
-  const { lineInfoLeft, lineInfoOffset } = getLineInfoPosition(
+  const lineInfoLeft = getLineInfoPosition(
     chartRef.current,
     position?.x,
     lineInfoWidth
@@ -53,7 +52,7 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
 
   const point = head(plotHoverEvent?.points);
 
-  const getLineInfoText = () => {
+  const lineInfoText = useMemo(() => {
     if (!point) {
       return null;
     }
@@ -68,20 +67,36 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
     }
 
     return String(point.x);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [point?.curveNumber, point?.pointNumber]);
+
+  if (!plotHoverEvent) {
+    return null;
+  }
 
   return (
-    <LineInfo
-      ref={lineInfoRef}
+    <LineInfoWrapper
       style={{
-        left: lineInfoLeft,
-        top: offsetTop + height,
         opacity: isVisible ? 1 : 0,
         display: isVisible ? 'initial' : 'none',
+        visibility: isUndefined(lineInfoLeft) ? 'hidden' : 'visible',
       }}
-      offset={lineInfoOffset}
     >
-      {getLineInfoText()}
-    </LineInfo>
+      <LineInfoPointer
+        style={{
+          left: position?.x,
+          top: offsetTop + height - LINE_INFO_POINTER_SIZE,
+        }}
+      />
+      <LineInfo
+        ref={lineInfoRef}
+        style={{
+          left: lineInfoLeft,
+          top: offsetTop + height,
+        }}
+      >
+        {lineInfoText}
+      </LineInfo>
+    </LineInfoWrapper>
   );
 };

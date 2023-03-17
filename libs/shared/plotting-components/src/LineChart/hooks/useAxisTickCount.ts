@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 
@@ -17,25 +17,25 @@ const INITIAL_TICK_COUNT: TickCount = {
 export const useAxisTickCount = (props: TickCount) => {
   const [tickCount, setTickCount] = useState<TickCount>(INITIAL_TICK_COUNT);
 
-  const updateAxisTickCount = (
-    graph: HTMLElement | null,
-    isEmptyData?: boolean
-  ) => {
-    if (!graph || isEmptyData) {
-      setTickCount(INITIAL_TICK_COUNT);
-      return;
-    }
+  const updateAxisTickCount = useCallback(
+    (graph: HTMLElement | null, isEmptyData?: boolean) => {
+      if (!graph || isEmptyData) {
+        setTickCount(INITIAL_TICK_COUNT);
+        return;
+      }
 
-    const xAxisTickCountProp = props.x;
-    const yAxisTickCountProp = props.y;
+      const xAxisTickCountProp = props.x;
+      const yAxisTickCountProp = props.y;
 
-    const { nticksX, nticksY } = calculateAxisTickCount(graph);
+      const { nticksX, nticksY } = calculateAxisTickCount(graph);
 
-    setTickCount({
-      x: isUndefined(xAxisTickCountProp) ? nticksX : xAxisTickCountProp,
-      y: isUndefined(yAxisTickCountProp) ? nticksY : yAxisTickCountProp,
-    });
-  };
+      setTickCount({
+        x: isUndefined(xAxisTickCountProp) ? nticksX : xAxisTickCountProp,
+        y: isUndefined(yAxisTickCountProp) ? nticksY : yAxisTickCountProp,
+      });
+    },
+    [props.x, props.y]
+  );
 
   return {
     tickCount,

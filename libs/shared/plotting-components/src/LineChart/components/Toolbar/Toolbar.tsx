@@ -15,24 +15,26 @@ export interface ToolbarProps
   showActions: boolean;
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({
-  plotRef,
-  zoomDirectionConfig,
-  showFilters,
-  showActions,
-  renderFilters,
-  renderActions,
-}) => {
-  return (
-    <ToolbarWrapper>
-      <Filters showFilters={showFilters} renderFilters={renderFilters} />
+export const Toolbar: React.FC<ToolbarProps> = React.memo(
+  ({
+    plotRef,
+    zoomDirectionConfig,
+    showFilters,
+    showActions,
+    renderFilters,
+    renderActions,
+  }) => {
+    return (
+      <ToolbarWrapper>
+        <Filters showFilters={showFilters} renderFilters={renderFilters} />
 
-      <Actions
-        plotRef={plotRef}
-        zoomDirectionConfig={zoomDirectionConfig}
-        showActions={showActions}
-        renderActions={renderActions}
-      />
-    </ToolbarWrapper>
-  );
-};
+        <Actions
+          plotRef={plotRef}
+          zoomDirectionConfig={zoomDirectionConfig}
+          showActions={showActions}
+          renderActions={renderActions}
+        />
+      </ToolbarWrapper>
+    );
+  }
+);

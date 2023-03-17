@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { LineChartWrapper } from './elements';
 import { LineChartProps } from './types';
@@ -15,7 +15,6 @@ import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
 import { getConfig } from './utils/getConfig';
 import { getStyleProperties } from './utils/getStyleProperties';
 import { useCursorPosition } from './hooks/useCursorPosition';
-import { getMarkerPosition } from './utils/getMarkerPosition';
 import { isContinuousHoverEnabled } from './utils/isContinuousHoverEnabled';
 
 export const LineChart: React.FC<LineChartProps> = ({
@@ -68,7 +67,13 @@ export const LineChart: React.FC<LineChartProps> = ({
       isPlotSelecting,
     });
 
-  const markerPosition = getMarkerPosition(plotHoverEvent);
+  const handlePlotSelecting = useCallback(() => {
+    setPlotSelecting(true);
+  }, []);
+
+  const handlePlotSelected = useCallback(() => {
+    setPlotSelecting(false);
+  }, []);
 
   return (
     <LineChartWrapper ref={chartRef} style={style}>
@@ -97,15 +102,13 @@ export const LineChart: React.FC<LineChartProps> = ({
         yAxis={yAxis}
         layout={layout}
         config={config}
-        plotHoverEvent={plotHoverEvent}
         isCursorOnPlot={isCursorOnPlot}
         height={styleProp?.height}
         width={styleProp?.width}
-        backgroundColor={backgroundColor}
         onHover={updatePlotHoverEvent}
         onUnhover={setPlotUnhovered}
-        onSelecting={() => setPlotSelecting(true)}
-        onSelected={() => setPlotSelecting(false)}
+        onSelecting={handlePlotSelecting}
+        onSelected={handlePlotSelected}
       />
 
       <HoverLayer
@@ -113,8 +116,9 @@ export const LineChart: React.FC<LineChartProps> = ({
         layout={layout}
         variant={variant}
         plotHoverEvent={plotHoverEvent}
-        position={isContinuousHover ? cursorPosition : markerPosition}
+        cursorPosition={cursorPosition}
         backgroundColor={backgroundColor}
+        isContinuousHover={isContinuousHover}
         formatHoverLineInfo={formatHoverLineInfo}
       />
 
