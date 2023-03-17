@@ -63,13 +63,15 @@ export class Image360Entity implements Image360 {
   /**
    * Loads the 360 image (6 faces) into the visualization object.
    *
-   * This will start the download of both low and full resolution images, and return once the first of these are completed.
-   * If the low resolution images are completed first, full resolution download and texture loading will continue in the background
-   * and applyFullResolution can be used to apply full resolution textures at a desired time.
+   * This will start the download of both low and full resolution images and return one promise for when the first image set is ready
+   * and one promise for when both downloads are completed. If the low resolution images are completed first the full resolution
+   * download and texture loading will continue in the background, and applyFullResolution can be used to apply full resolution textures
+   * to the image360VisualzationBox at a desired time.
    *
-   * @returns A promise for when both low and full resolution are completed. Note that this will resolve even if both downloads fail.
+   * @returns firstCompleted A promise for when the first set om images has been loaded and applied to the image360VisualzationBox.
+   * @returns allCompleted A promise for when both low and fullresolution are done. If both downloads fail the promise is rejected.
    */
-  public async load360Image(abortSignal?: AbortSignal): Promise<{ allCompleted: Promise<void> }> {
+  public load360Image(abortSignal?: AbortSignal): { firstCompleted: Promise<void>; allCompleted: Promise<void> } {
     const lowResolutionFaces = this._imageProvider
       .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal)
       .then(faces => {
@@ -82,22 +84,30 @@ export class Image360Entity implements Image360 {
         return { faces, isLowResolution: false };
       });
 
-    const { faces, isLowResolution } = await Promise.any([lowResolutionFaces, fullResolutionFaces]);
-    await this._image360VisualzationBox.loadImages(faces);
+    const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
+      async ({ faces, isLowResolution }) => {
+        await this._image360VisualzationBox.loadImages(faces);
 
-    if (isLowResolution) {
-      this._getFullResolutionTextures = fullResolutionFaces
-        .catch(() => {
-          return undefined;
-        })
-        .then(result => {
-          if (result) return this._image360VisualzationBox.loadFaceTextures(result.faces);
-        });
-    }
+        if (isLowResolution) {
+          this._getFullResolutionTextures = fullResolutionFaces
+            .catch(() => {
+              return undefined;
+            })
+            .then(result => {
+              if (result) return this._image360VisualzationBox.loadFaceTextures(result.faces);
+            });
+        }
+      }
+    );
 
-    return {
-      allCompleted: Promise.allSettled([lowResolutionFaces, fullResolutionFaces]).then(() => {})
-    };
+    const allCompleted = Promise.allSettled([lowResolutionFaces, fullResolutionFaces]).then(result => {
+      if (result.some(promise => promise.status === 'fulfilled')) {
+        return Promise.resolve();
+      }
+      return Promise.reject();
+    });
+
+    return { firstCompleted, allCompleted };
   }
 
   /**

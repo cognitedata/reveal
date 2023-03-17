@@ -55,40 +55,19 @@ export class Image360LoadingCache {
       return inProgressDownload.firstCompleted;
     }
 
-    if (this._inProgressDownloads.length === this._downloadCacheSize) {
+    if (this._inProgressDownloads.length > this._downloadCacheSize) {
       this.abortLastRecentlyReqestedEntity();
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const load360Image = entity.load360Image(signal);
+    const { firstCompleted, allCompleted } = entity.load360Image(signal);
 
-    const firstCompleted = load360Image
-      .catch(e => {
-        return Promise.reject(e);
-      })
-      .then(
-        () => {
-          return Promise.resolve();
-        },
-        reason => {
-          removeDownlaod(this._lockedDownload, this._inProgressDownloads);
-
-          if (signal.aborted || reason === 'Aborted') {
-            Log.info('360 Image download aborted: ' + reason);
-          } else {
-            throw new Error('Failed to load 360 image: ' + reason);
-          }
-        }
-      );
-
-    const allCompleted = load360Image.then(
-      callback => {
-        return callback.allCompleted;
-      },
-      reason => {
-        return Promise.reject(reason);
-      }
-    );
+    this._inProgressDownloads.push({
+      entity,
+      firstCompleted,
+      allCompleted,
+      abort
+    });
 
     allCompleted
       .catch(e => {
@@ -109,14 +88,26 @@ export class Image360LoadingCache {
         removeDownlaod(this._lockedDownload, this._inProgressDownloads);
       });
 
-    this._inProgressDownloads.push({
-      entity,
-      firstCompleted,
-      allCompleted,
-      abort
-    });
+    await firstCompleted
+      .catch(e => {
+        return Promise.reject(e);
+      })
+      .then(
+        () => {
+          return Promise.resolve();
+        },
+        reason => {
+          removeDownlaod(this._lockedDownload, this._inProgressDownloads);
 
-    await firstCompleted;
+          if (signal.aborted || reason === 'Aborted') {
+            Log.info('360 Image download aborted: ' + reason);
+          } else {
+            throw new Error('Failed to load 360 image: ' + reason);
+          }
+        }
+      );
+
+    return firstCompleted;
 
     function removeDownlaod(_lockedDownload: Image360Entity | undefined, _inProgressDownloads: DownloadRequest[]) {
       if (_lockedDownload === entity) {
