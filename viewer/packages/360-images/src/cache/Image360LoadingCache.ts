@@ -55,7 +55,7 @@ export class Image360LoadingCache {
       return inProgressDownload.firstCompleted;
     }
 
-    if (this._inProgressDownloads.length > this._downloadCacheSize) {
+    if (this._inProgressDownloads.length >= this._downloadCacheSize) {
       this.abortLastRecentlyReqestedEntity();
     }
 
@@ -88,7 +88,7 @@ export class Image360LoadingCache {
         removeDownlaod(this._lockedDownload, this._inProgressDownloads);
       });
 
-    await firstCompleted
+    const visualzationBoxReady = await firstCompleted
       .catch(e => {
         return Promise.reject(e);
       })
@@ -98,7 +98,6 @@ export class Image360LoadingCache {
         },
         reason => {
           removeDownlaod(this._lockedDownload, this._inProgressDownloads);
-
           if (signal.aborted || reason === 'Aborted') {
             Log.info('360 Image download aborted: ' + reason);
           } else {
@@ -107,7 +106,7 @@ export class Image360LoadingCache {
         }
       );
 
-    return firstCompleted;
+    return visualzationBoxReady;
 
     function removeDownlaod(_lockedDownload: Image360Entity | undefined, _inProgressDownloads: DownloadRequest[]) {
       if (_lockedDownload === entity) {

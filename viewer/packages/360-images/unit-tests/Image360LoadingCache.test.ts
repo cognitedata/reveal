@@ -25,7 +25,7 @@ describe(Image360LoadingCache.name, () => {
     expect(entityLoadingCache.cachedEntities.includes(entityMock1)).toBeFalsy();
 
     deferredPromise.allCompleted.resolve();
-    await deferredPromise;
+    await deferredPromise.allCompleted;
 
     expect(entityLoadingCache.getDownloadInProgress(entityMock1)).toBe(undefined);
     expect(entityLoadingCache.cachedEntities.includes(entityMock1)).toBeTruthy();
@@ -59,6 +59,7 @@ describe(Image360LoadingCache.name, () => {
 
     const preLoad1 = entityLoadingCache.cachedPreload(entityMock1);
 
+    deferredPromise1.firstCompleted.resolve();
     deferredPromise1.allCompleted.resolve();
     await preLoad1;
 
@@ -67,6 +68,7 @@ describe(Image360LoadingCache.name, () => {
     expect(entityLoadingCache.getDownloadInProgress(entityMock2)).not.toBe(undefined);
     expect(entityLoadingCache.cachedEntities.includes(entityMock1)).toBeTruthy();
 
+    deferredPromise2.firstCompleted.resolve();
     deferredPromise2.allCompleted.resolve();
     await preLoad2;
 
@@ -106,7 +108,7 @@ describe(Image360LoadingCache.name, () => {
     const deferredPromise3 = { firstCompleted: new DeferredPromise<void>(), allCompleted: new DeferredPromise<void>() };
     const entityMock3 = new Mock<Image360Entity>()
       .setup(p => p.load360Image(It.IsAny()))
-      .returns(deferredPromise2)
+      .returns(deferredPromise3)
       .setup(p => p.dispose())
       .returns()
       .object();
@@ -115,11 +117,15 @@ describe(Image360LoadingCache.name, () => {
     const preLoad2 = entityLoadingCache.cachedPreload(entityMock2);
 
     deferredPromise1.allCompleted.resolve();
+    deferredPromise1.firstCompleted.resolve();
+
     deferredPromise2.allCompleted.resolve();
+    deferredPromise2.firstCompleted.resolve();
     await Promise.all([preLoad1, preLoad2]);
 
     const preLoad3 = entityLoadingCache.cachedPreload(entityMock3);
     deferredPromise3.allCompleted.resolve();
+    deferredPromise3.firstCompleted.resolve();
     await preLoad3;
 
     expect(entityLoadingCache.cachedEntities.length).toBe(2);
@@ -132,10 +138,16 @@ describe(Image360LoadingCache.name, () => {
     const cacheSize = 3;
     const loadingCache = new Image360LoadingCache(cacheSize, cacheSize);
 
-    const promiseToReject = { firstCompleted: new DeferredPromise<void>(), allCompleted: new DeferredPromise<void>() };
-    const image360MockToReject = new Mock<Image360Entity>()
+    const promiseToFail = { firstCompleted: new DeferredPromise<void>(), allCompleted: new DeferredPromise<void>() };
+    const image360MockToFail = new Mock<Image360Entity>()
       .setup(p => p.load360Image(It.IsAny()))
-      .returns(promiseToReject)
+      .returns(promiseToFail)
+      .object();
+
+    const promiseToAbort = { firstCompleted: new DeferredPromise<void>(), allCompleted: new DeferredPromise<void>() };
+    const image360MockToAbort = new Mock<Image360Entity>()
+      .setup(p => p.load360Image(It.IsAny()))
+      .returns(promiseToAbort)
       .object();
 
     const promiseToResolve = { firstCompleted: new DeferredPromise<void>(), allCompleted: new DeferredPromise<void>() };
@@ -144,23 +156,24 @@ describe(Image360LoadingCache.name, () => {
       .returns(promiseToResolve)
       .object();
 
-    const image360MockToThrow = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
-      .throwsAsync('Aborted')
-      .object();
-
-    const downloadToReject = loadingCache.cachedPreload(image360MockToReject);
+    const downloadToFail = loadingCache.cachedPreload(image360MockToFail);
+    const downloadToAbort = loadingCache.cachedPreload(image360MockToAbort);
     const downloadToResolve = loadingCache.cachedPreload(image360MockToResolve);
-    const downloadToThrow = loadingCache.cachedPreload(image360MockToThrow);
 
     expect(loadingCache.currentlyLoadingEntities.length).toBe(3);
 
-    promiseToReject.firstCompleted.reject('Aborted');
+    promiseToFail.firstCompleted.reject('Some other error');
+    promiseToFail.allCompleted.reject();
+
+    promiseToAbort.firstCompleted.reject('Aborted');
+    promiseToAbort.allCompleted.reject();
+
+    promiseToResolve.firstCompleted.resolve();
     promiseToResolve.allCompleted.resolve();
 
-    await expect(downloadToReject).resolves.not.toThrow();
+    await expect(downloadToFail).rejects.toThrow();
+    await expect(downloadToAbort).resolves.not.toThrow();
     await expect(downloadToResolve).resolves.not.toThrow();
-    await expect(downloadToThrow).resolves.not.toThrow();
 
     expect(loadingCache.cachedEntities.length).toBe(1);
     expect(loadingCache.cachedEntities[0]).toBe(image360MockToResolve);
@@ -204,8 +217,13 @@ describe(Image360LoadingCache.name, () => {
     expect(loadingCache.getDownloadInProgress(image360Mock2)).not.toBe(undefined);
     expect(loadingCache.getDownloadInProgress(image360Mock3)).not.toBe(undefined);
 
+    deferredPromise1.firstCompleted.resolve();
     deferredPromise1.allCompleted.resolve();
+
+    deferredPromise2.firstCompleted.resolve();
     deferredPromise2.allCompleted.resolve();
+
+    deferredPromise3.firstCompleted.resolve();
     deferredPromise3.allCompleted.resolve();
 
     await download1;
@@ -213,7 +231,7 @@ describe(Image360LoadingCache.name, () => {
     await download3;
 
     expect(loadingCache.currentlyLoadingEntities.length).toBe(0);
-    expect(loadingCache.cachedEntities.length).toBe(2);
+    expect(loadingCache.cachedEntities.length).toBe(cacheSize);
     expect(loadingCache.cachedEntities[0]).toBe(image360Mock3);
     expect(loadingCache.cachedEntities[1]).toBe(image360Mock2);
   });
