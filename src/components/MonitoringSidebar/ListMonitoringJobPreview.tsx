@@ -305,6 +305,9 @@ export const ShowAllButton = styled(Button)`
 export const MonitoringJobTitle = styled.div`
   margin-top: 0.3em;
   font-weight: bold;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
 `;
 
 export const MonitoringJobPreview = styled.div`
