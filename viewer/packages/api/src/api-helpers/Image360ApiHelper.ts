@@ -24,7 +24,6 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { Log } from '@reveal/logger';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -45,7 +44,7 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity).catch(() => {}), 300, {
+  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, {
     leading: true
   });
   private readonly _requestRedraw: () => void;
@@ -135,17 +134,9 @@ export class Image360ApiHelper {
     }
     this._interactionState.image360SelectedForEntry = image360Entity;
 
-    const fatalDownloadError = await this._image360Facade.preload(image360Entity, true).catch(e => {
-      return e;
-    });
+    await this._image360Facade.preload(image360Entity, true);
 
     if (this._interactionState.image360SelectedForEntry !== image360Entity) {
-      return;
-    }
-
-    if (fatalDownloadError) {
-      this._interactionState.image360SelectedForEntry = undefined;
-      Log.error(fatalDownloadError);
       return;
     }
 

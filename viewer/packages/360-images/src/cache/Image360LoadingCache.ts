@@ -85,7 +85,7 @@ export class Image360LoadingCache {
         }
       )
       .finally(() => {
-        removeDownlaod(this._lockedDownload, this._inProgressDownloads);
+        removeDownload(this._lockedDownload, this._inProgressDownloads);
       });
 
     const visualzationBoxReady = await firstCompleted
@@ -93,22 +93,22 @@ export class Image360LoadingCache {
         return Promise.reject(e);
       })
       .then(
-        () => {
-          return Promise.resolve();
-        },
+        () => {},
         reason => {
-          removeDownlaod(this._lockedDownload, this._inProgressDownloads);
+          removeDownload(this._lockedDownload, this._inProgressDownloads);
+
           if (signal.aborted || reason === 'Aborted') {
             Log.info('360 Image download aborted: ' + reason);
           } else {
-            throw new Error('Failed to load 360 image: ' + reason);
+            Log.error('Failed to load 360 image: ' + reason);
           }
+          return Promise.resolve();
         }
       );
 
     return visualzationBoxReady;
 
-    function removeDownlaod(_lockedDownload: Image360Entity | undefined, _inProgressDownloads: DownloadRequest[]) {
+    function removeDownload(_lockedDownload: Image360Entity | undefined, _inProgressDownloads: DownloadRequest[]) {
       if (_lockedDownload === entity) {
         _lockedDownload = undefined;
       }
