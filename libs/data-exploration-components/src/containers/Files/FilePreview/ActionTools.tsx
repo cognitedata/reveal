@@ -30,7 +30,7 @@ export const ActionTools = ({
   setShowResourcePreviewSidebar = noop,
   setEditMode = noop,
   filesAcl = false,
-  eventsAcl = false,
+  annotationsAcl = false,
 }: {
   file: FileInfo;
   fileViewerRef?: UnifiedViewer;
@@ -44,7 +44,7 @@ export const ActionTools = ({
   setShowResourcePreviewSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
   setEditMode?: () => void;
   filesAcl: boolean;
-  eventsAcl: boolean;
+  annotationsAcl: boolean;
 } & UseSearchBarState &
   Pick<
     SearchBarProps,
@@ -92,7 +92,7 @@ export const ActionTools = ({
               isActive={editMode}
               onClick={setEditMode}
               filesAcl={filesAcl}
-              eventsAcl={eventsAcl}
+              annotationsAcl={annotationsAcl}
             />
           </ToolBar>
         )}

@@ -64,7 +64,7 @@ type FilePreviewProps = {
   enableZoomToAnnotation?: boolean;
   enableToolTips?: boolean;
   filesAcl?: boolean;
-  eventsAcl?: boolean;
+  annotationsAcl?: boolean;
   setEditMode?: () => void;
 };
 
@@ -95,7 +95,7 @@ export const FilePreview = ({
   enableZoomToAnnotation = true,
   enableToolTips = true,
   filesAcl = false,
-  eventsAcl = false,
+  annotationsAcl = false,
   setEditMode = noop,
 }: FilePreviewProps) => {
   const trackUsage = useDebouncedMetrics();
@@ -434,7 +434,7 @@ export const FilePreview = ({
           editMode={creatable}
           setEditMode={setEditMode}
           filesAcl={filesAcl}
-          eventsAcl={eventsAcl}
+          annotationsAcl={annotationsAcl}
         />
       </UFVWrapper>
       {showSideBar && showResourcePreviewSidebar && (
