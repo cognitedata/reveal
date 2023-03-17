@@ -18,9 +18,10 @@ import {
 } from '..';
 
 import {
+  InternalTimeseriesData,
   InternalTimeseriesFilters,
   useTimeseriesAggregateCountQuery,
-  useTimeseriesWithDatapointsAvailabliity,
+  useTimeseriesWithAvailableDatapointsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
@@ -62,8 +63,16 @@ export const TimeseriesSearchResults = ({
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & DateRangeProps) => {
   const api = convertResourceType('timeSeries');
+
   const { canFetchMore, fetchMore, isFetched, items } =
-    useResourceResults<Timeseries>(api, query, filter);
+    useResourceResults<InternalTimeseriesData>(
+      api,
+      query,
+      filter,
+      undefined,
+      dateRange
+    );
+
   const { count: itemCount } = useResultCount({
     type: 'timeSeries',
     filter,
@@ -74,7 +83,7 @@ export const TimeseriesSearchResults = ({
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [hideEmptyData, setHideEmptyData] = useState(false);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useTimeseriesWithDatapointsAvailabliity(
+    useTimeseriesWithAvailableDatapointsQuery(
       {
         query,
         filter,
@@ -97,7 +106,7 @@ export const TimeseriesSearchResults = ({
     : itemCount;
   const timeseries = enableAdvancedFilters ? data : items;
 
-  const filteredTimeseries = data.filter((item) => item.hasDatapoints);
+  const filteredTimeseries = timeseries.filter((item) => item.hasDatapoints);
 
   const timeseriesData = hideEmptyData ? filteredTimeseries : timeseries;
 

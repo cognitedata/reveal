@@ -13,22 +13,25 @@ import { TIME_SELECT } from '@data-exploration-components/containers';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
+import { ResourceTableColumns, TimeDisplay } from '../../../components';
 import {
   InternalTimeseriesDataWithMatchingLabels,
   useTimeseriesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 // import noop from 'lodash/noop';
 // import { EMPTY_ARRAY } from '@data-exploration-lib/core';
 
 import { TimeseriesChart } from '@cognite/plotting-components';
 
-export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
+export type TimeseriesWithRelationshipLabels =
+  InternalTimeseriesDataWithMatchingLabels & RelationshipLabels;
 
 export interface TimeseriesTableProps
-  extends Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'>,
+  extends Omit<
+      TableProps<TimeseriesWithRelationshipLabels | Timeseries>,
+      'columns'
+    >,
     RelationshipLabels,
     DateRangeProps {
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
@@ -117,7 +120,10 @@ export const TimeseriesTable = ({
         header: 'Last reading',
         accessorKey: 'lastReading',
         cell: ({ row }) => {
-          return <TimeseriesLastReading timeseriesId={row.original.id} />;
+          const lastReadingDate = row.original.latestDatapointDate
+            ? new Date(row.original.latestDatapointDate)
+            : undefined;
+          return <TimeDisplay value={lastReadingDate} relative withTooltip />;
         },
         enableSorting: false,
       },
@@ -141,7 +147,7 @@ export const TimeseriesTable = ({
       Table.Columns.rootAsset(onRootAssetClick),
       Table.Columns.assets(onRootAssetClick),
       ...metadataColumns,
-    ] as ColumnDef<Timeseries>[];
+    ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metadataColumns, dateRange]);
 

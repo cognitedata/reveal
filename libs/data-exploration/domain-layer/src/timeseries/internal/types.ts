@@ -14,6 +14,8 @@ export interface InternalTimeseriesData {
   assetId?: number;
   dataSetId?: CogniteInternalId;
   securityCategories?: number[];
+  latestDatapointDate?: Date;
+  hasDatapoints?: Boolean;
 }
 
 export interface InternalTimeseriesDataWithMatchingLabels
