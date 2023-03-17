@@ -40,6 +40,10 @@ export const HoverLineInfo: React.FC<HoverLineInfoProps> = ({
     updateLineInfoWidth();
   }, [updateLineInfoWidth]);
 
+  if (!plotHoverEvent) {
+    return null;
+  }
+
   const { offsetTop, height } = plotStyleData;
   const { lineInfoLeft, lineInfoOffset } = getLineInfoPosition(
     chartRef.current,

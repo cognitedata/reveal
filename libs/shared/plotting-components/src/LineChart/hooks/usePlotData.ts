@@ -4,7 +4,7 @@ import { PlotData, PlotHoverEvent } from 'plotly.js';
 
 import head from 'lodash/head';
 
-import { Data, Layout } from '../types';
+import { Data, Layout, Variant } from '../types';
 import { adaptToPlotlyPlotData } from '../utils/adaptToPlotlyPlotData';
 import { getHoveredChartData } from '../utils/getHoveredChartData';
 import { checkIsEmptyData } from '../utils/checkIsEmptyData';
@@ -14,6 +14,7 @@ export interface Props {
   layout: Layout;
   plotHoverEvent?: PlotHoverEvent;
   backgroundColor?: string;
+  variant?: Variant;
 }
 
 export const usePlotData = ({
@@ -21,14 +22,15 @@ export const usePlotData = ({
   layout,
   plotHoverEvent,
   backgroundColor,
+  variant,
 }: Props) => {
   const { showMarkers, showHoverMarker } = layout;
 
   const [plotData, setPlotData] = useState<Partial<PlotData>[]>([]);
 
   const initialPlotData = useMemo(() => {
-    return adaptToPlotlyPlotData(data, showMarkers);
-  }, [data, showMarkers]);
+    return adaptToPlotlyPlotData(data, showMarkers, variant);
+  }, [data, showMarkers, variant]);
 
   const isEmptyData = useMemo(() => {
     return checkIsEmptyData(data);

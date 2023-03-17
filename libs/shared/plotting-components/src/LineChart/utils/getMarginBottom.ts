@@ -11,7 +11,7 @@ export const getMarginBottom = (layout: Layout, hasAxisLabel: boolean) => {
   }
 
   if ((!hasAxisLabel || !showAxisNames) && showXAxisTickLabels) {
-    return 18;
+    return 22;
   }
 
   if (hasAxisLabel && showAxisNames && !showXAxisTickLabels) {

@@ -9,7 +9,6 @@ export const LoaderWrapper = styled.div`
   display: flex;
   align-items: center;
   color: ${Colors['decorative--grayscale--400']};
-  margin-top: -6px;
 
   svg {
     width: 100%;

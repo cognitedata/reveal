@@ -1,5 +1,7 @@
 import { Datum } from 'plotly.js';
 
+import { TooltipDetailProps } from './components/Tooltip';
+
 export interface LineChartProps {
   data: Data | Data[];
   isLoading?: boolean;
@@ -12,9 +14,7 @@ export interface LineChartProps {
   layout?: Partial<Layout>;
   config?: Partial<Config>;
   style?: Style;
-  formatTooltipContent?: (
-    props: TooltipRendererProps
-  ) => Record<string, ValueType | undefined>;
+  formatTooltipContent?: (props: TooltipRendererProps) => TooltipDetailProps[];
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
   renderFilters?: () => [JSX.Element, ...JSX.Element[]];
   renderActions?: () => [JSX.Element, ...JSX.Element[]];

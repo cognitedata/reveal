@@ -1,15 +1,15 @@
 import { DatapointAggregate } from '@cognite/sdk';
 
-import dayjs from 'dayjs';
-
 import { TooltipRendererProps } from '../../../../LineChart';
+import { getFormattedDateWithTimezone } from '../../../utils/getFormattedDateWithTimezone';
+import { getTooltipNumericValue } from '../../../utils/getTooltipNumericValue';
 
 export const formatTooltipContent = ({ customData }: TooltipRendererProps) => {
   const datapoint = customData as DatapointAggregate;
   const { average, timestamp } = datapoint;
 
-  return {
-    Average: average?.toFixed(3),
-    Date: dayjs(timestamp).format('DD.MM.YYYY'),
-  };
+  return [
+    { label: 'Average', value: getTooltipNumericValue(average) },
+    { label: 'Date', value: getFormattedDateWithTimezone(timestamp) },
+  ];
 };

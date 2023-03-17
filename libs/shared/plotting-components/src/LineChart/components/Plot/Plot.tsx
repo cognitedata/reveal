@@ -90,6 +90,7 @@ export const Plot = React.memo(
         layout,
         plotHoverEvent,
         backgroundColor,
+        variant,
       });
 
       const { tickCount, updateAxisTickCount } = useAxisTickCount({

@@ -11,13 +11,13 @@ export const TITLE_COLOR = '#000000';
 export const SUBTITLE_COLOR = '#00000075';
 
 export const DEFAULT_PADDING = 16;
-export const SMALL_VARIANT_PADDING = '2px 8px';
+export const SMALL_VARIANT_PADDING = '4px 8px';
 
 export const DEFAULT_MARGIN = 1;
 
 export const LINE_WIDTH = 1.4;
 export const MARKER_SIZE = 8;
-export const HOVER_MARKER_BORDER_WIDTH = 2;
+export const HOVER_MARKER_BORDER_WIDTH = 4;
 export const DEFAULT_LINE_COLOR = '#4A67FB';
 export const DEFAULT_LINE_NAME = 'Line';
 

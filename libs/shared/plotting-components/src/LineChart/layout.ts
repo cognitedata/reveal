@@ -29,6 +29,7 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Layout> = {
     showFilters: false,
     showActions: false,
     showMarkers: false,
+    showHoverMarker: true,
     showHoverLineInfo: false,
   },
   medium: {

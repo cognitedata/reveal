@@ -11,6 +11,9 @@ interface PlotWrapperProps {
 }
 
 export const PlotWrapper = styled.div`
+  overflow: hidden;
+  margin-bottom: -4px;
+
   > * .main-svg {
     background: transparent !important;
   }
@@ -32,6 +35,14 @@ export const PlotWrapper = styled.div`
       line-height: 16px !important;
       font-feature-settings: 'ss04' on !important;
     }
+  }
+
+  > * .xtick {
+    transform: translateY(4px) !important;
+  }
+
+  > * .ytick {
+    transform: translateX(-4px) !important;
   }
 
   ${({ showyticklabels }: PlotWrapperProps) =>

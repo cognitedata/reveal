@@ -12,6 +12,8 @@ export const TooltipWrapper = styled.div`
     ${TooltipContainer} {
       padding: 4px;
       gap: 4px;
+      font-size: 10px;
+      line-height: 14px;
     }
     ${TooltipDetailWrapper} {
       padding: 4px;
@@ -30,13 +32,13 @@ export const TooltipContainer = styled.div`
   box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
     0px 2px 12px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+  font-size: 12px;
+  line-height: 16px;
 `;
 
 export const TooltipDetailWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  font-size: 12px;
-  line-height: 16px;
   padding: 8px 12px;
   border-radius: 8px;
 `;

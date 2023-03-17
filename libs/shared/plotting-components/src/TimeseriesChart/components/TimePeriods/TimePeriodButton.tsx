@@ -16,14 +16,17 @@ export const TimePeriodButton: React.FC<TimePeriodButtonProps> = ({
   isSelected = false,
   onClick,
 }) => {
-  const dateRange = getDateRangeForTimePeriod(timePeriod);
+  const handleClick = () => {
+    const dateRange = getDateRangeForTimePeriod(timePeriod);
+    onClick({ timePeriod, dateRange });
+  };
 
   return (
     <Button
       type="secondary"
       size="medium"
       toggled={isSelected}
-      onClick={() => onClick({ timePeriod, dateRange })}
+      onClick={handleClick}
       style={{
         padding: 8,
       }}

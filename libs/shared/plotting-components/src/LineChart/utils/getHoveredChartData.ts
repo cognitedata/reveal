@@ -1,5 +1,7 @@
 import { PlotData, PlotDatum } from 'plotly.js';
 
+import head from 'lodash/head';
+
 import { HOVER_MARKER_BORDER_WIDTH, MARKER_SIZE } from '../constants';
 
 export const getHoveredChartData = (
@@ -19,7 +21,11 @@ export const getHoveredChartData = (
     ...((curveData.marker?.line?.color || []) as string[]),
   ];
 
-  markerSizes[pointNumber] = MARKER_SIZE + HOVER_MARKER_BORDER_WIDTH;
+  const markerSize = head(markerSizes) || MARKER_SIZE;
+  const markerOutlineWidth =
+    (curveData.marker?.line?.width as number) || HOVER_MARKER_BORDER_WIDTH;
+
+  markerSizes[pointNumber] = markerSize + markerOutlineWidth;
   markerLineColors[pointNumber] = hoveredMarkerBorderColor;
 
   const updatedCurveData: Partial<PlotData> = {

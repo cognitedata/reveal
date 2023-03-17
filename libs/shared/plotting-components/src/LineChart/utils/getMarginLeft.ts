@@ -22,7 +22,7 @@ export const getMarginLeft = (
   }
 
   if ((!hasAxisLabel || !showAxisNames) && showYAxisTickLabels) {
-    return maxYTickLength + 24;
+    return maxYTickLength + 12;
   }
 
   if (hasAxisLabel && showAxisNames && !showYAxisTickLabels) {

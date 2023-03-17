@@ -5,7 +5,7 @@ import { OptionType, Select } from '@cognite/cogs.js';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { DateRange, TimePeriod, UpdateTimePeriodProps } from '../../types';
+import { TimePeriod, UpdateTimePeriodProps } from '../../types';
 import { getDateRangeForTimePeriod } from '../../utils/getDateRangeForTimePeriod';
 
 export interface TimePeriodSelectProps {
@@ -22,15 +22,16 @@ export const TimePeriodSelect: React.FC<TimePeriodSelectProps> = ({
   const adaptedOptions = useMemo(() => {
     return options.map((timePeriod) => ({
       label: timePeriod,
-      value: getDateRangeForTimePeriod(timePeriod),
+      value: timePeriod,
     }));
   }, [options]);
 
-  const handleChange = ({ label, value }: OptionType<DateRange>) => {
-    onChange({
-      timePeriod: label as TimePeriod,
-      dateRange: value as DateRange,
-    });
+  const handleChange = ({ value: timePeriod }: OptionType<TimePeriod>) => {
+    if (!timePeriod) {
+      return;
+    }
+    const dateRange = getDateRangeForTimePeriod(timePeriod);
+    onChange({ timePeriod, dateRange });
   };
 
   if (isEmpty(options)) {

@@ -43,6 +43,10 @@ export const useCursorPosition = (
       );
       setCursorOnPlot(isCursorOnPlot);
     });
+
+    createEventListener(chartRef.current, 'mouseleave', () => {
+      setCursorOnPlot(false);
+    });
   }, [chartRef]);
 
   return { cursorPosition, isCursorOnPlot };

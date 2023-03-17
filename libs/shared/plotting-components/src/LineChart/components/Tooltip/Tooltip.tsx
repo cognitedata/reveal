@@ -6,15 +6,10 @@ import { PlotHoverEvent } from 'plotly.js';
 import head from 'lodash/head';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
-import {
-  Coordinate,
-  TooltipRendererProps,
-  ValueType,
-  Variant,
-} from '../../types';
+import { Coordinate, TooltipRendererProps, Variant } from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
-import { TooltipDetail } from './TooltipDetail';
+import { TooltipDetail, TooltipDetailProps } from './TooltipDetail';
 import { TooltipContainer, TooltipWrapper } from './elements';
 import { getPointCustomData } from '../../utils/getPointCustomData';
 
@@ -27,9 +22,7 @@ export interface TooltipProps {
   backgroundColor?: string;
   referencePosition?: Coordinate;
   showTooltip: boolean;
-  formatTooltipContent?: (
-    props: TooltipRendererProps
-  ) => Record<string, ValueType | undefined>;
+  formatTooltipContent?: (props: TooltipRendererProps) => TooltipDetailProps[];
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
 }
 
@@ -88,19 +81,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
     };
 
     if (formatTooltipContent) {
-      const content = formatTooltipContent(tooltipRendererProps);
-
       return (
         <TooltipContainer>
-          {Object.entries(content).map(([label, value]) => {
-            return (
-              <TooltipDetail
-                key={label}
-                label={label}
-                value={value}
-                backgroundColor={backgroundColor}
-              />
-            );
+          {formatTooltipContent(tooltipRendererProps).map((props) => {
+            return <TooltipDetail key={props.label} {...props} />;
           })}
         </TooltipContainer>
       );

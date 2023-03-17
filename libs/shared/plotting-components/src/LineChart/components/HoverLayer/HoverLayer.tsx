@@ -2,34 +2,40 @@ import * as React from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-import { HoverLayerWrapper } from './elements';
-import { Coordinate, HoverLineData, Layout } from '../../types';
+import { Coordinate, HoverLineData, Layout, Variant } from '../../types';
 
 import { HoverLine } from './HoverLine';
 import { HoverLineInfo } from './HoverLineInfo';
 import { getPlotStyleData } from '../../utils/getPlotStyleData';
+import { HoverMarker } from './HoverMarker';
+import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 
 export interface HoverLayerProps {
   chartRef: React.RefObject<HTMLDivElement>;
   layout: Layout;
+  variant?: Variant;
   plotHoverEvent?: PlotHoverEvent;
   position?: Coordinate;
+  backgroundColor?: string;
   formatHoverLineInfo?: (props: HoverLineData) => string;
 }
 
 export const HoverLayer: React.FC<HoverLayerProps> = ({
   chartRef,
   layout,
+  variant,
   plotHoverEvent,
   position,
+  backgroundColor = DEFAULT_BACKGROUND_COLOR,
   formatHoverLineInfo,
 }) => {
-  const { showHoverLine, showHoverLineInfo } = layout;
+  const { showHoverLine, showHoverLineInfo, showHoverMarker, showMarkers } =
+    layout;
 
   const plotStyleData = getPlotStyleData(chartRef.current);
 
   return (
-    <HoverLayerWrapper
+    <div
       className="hover-layer"
       style={{
         display: plotHoverEvent ? 'initial' : 'none',
@@ -43,14 +49,20 @@ export const HoverLayer: React.FC<HoverLayerProps> = ({
 
       <HoverLineInfo
         chartRef={chartRef}
-        isVisible={
-          showHoverLine && showHoverLineInfo && Boolean(plotHoverEvent)
-        }
+        isVisible={showHoverLine && showHoverLineInfo}
         position={position}
         plotStyleData={plotStyleData}
         plotHoverEvent={plotHoverEvent}
         formatHoverLineInfo={formatHoverLineInfo}
       />
-    </HoverLayerWrapper>
+
+      <HoverMarker
+        isVisible={!showMarkers && showHoverMarker}
+        position={position}
+        variant={variant}
+        plotHoverEvent={plotHoverEvent}
+        borderColor={backgroundColor}
+      />
+    </div>
   );
 };
