@@ -7,8 +7,8 @@ import { getDatasetsList } from '../network';
 export const useDatasetsListQuery = (
   {
     filter,
-    filterArchivedItems,
     limit,
+    filterArchivedItems,
   }: {
     filter?: DataSetFilter;
     limit?: number;
