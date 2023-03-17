@@ -2,6 +2,9 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Title, Flex } from '@cognite/cogs.js';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
+import NoAccessPage from 'components/error-pages/NoAccess';
+import UnknownErrorPage from 'components/error-pages/UnknownError';
+import { useEMPipelines } from 'hooks/contextualization-api';
 
 import { useTranslation } from 'common';
 import { CreatePipelineButton } from 'components/create-pipeline-button/CreatePipelineButton';
@@ -15,8 +18,15 @@ export default function RootList() {
   const { subAppPath } = useParams<{
     subAppPath: string;
   }>();
-
   const [searchParams, setSearchParams] = useSearchParams('');
+  const { error } = useEMPipelines();
+
+  if (error) {
+    if (error?.status === 403) {
+      return <NoAccessPage />;
+    }
+    return <UnknownErrorPage error={error} />;
+  }
 
   return (
     <ListWrapper>
