@@ -38,7 +38,8 @@ const JobCondition = ({ job, translations }: Props) => {
   return (
     <>
       {t.Condition} : {`[is ${thresholdCondition} ${threshold}]`}
-      {`[every > ${alertEvery}]`}
+      {`[every ${alertEvery}]`}
+      {`[for > ${job.channel.alertRules.deduplication.activationInterval}]`}
     </>
   );
 };

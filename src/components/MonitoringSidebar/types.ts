@@ -91,6 +91,21 @@ export type MonitoringJob = {
     upperThreshold?: number;
     lowerThreshold?: number;
   };
+  channel: {
+    id: number;
+    parentId: number;
+    externalId: string;
+    parentExternalId: string;
+    name: string;
+    description: string;
+    metadata: { [key: string]: string };
+    alertRules: {
+      deduplication: {
+        mergeInterval: string;
+        activationInterval: string;
+      };
+    };
+  };
   alertCount: number;
   subscribed: boolean;
 };
