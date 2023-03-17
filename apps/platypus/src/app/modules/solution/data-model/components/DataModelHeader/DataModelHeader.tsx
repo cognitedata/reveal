@@ -49,7 +49,8 @@ export const DataModelHeader = ({
   const { t } = useTranslation('DataModelHeader');
 
   const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
-    externalId: dataModelExternalId,
+    space: dataModelSpace,
+    checkAll: false,
   });
 
   const { track } = useMixpanel();

@@ -46,7 +46,7 @@ export const checkPermissions = <T extends KeysOfSCC>(
   capability: CombinedSCC[], // User token's capabilities
   userGroups: CombinedSCC[], // Groups' capabilities
   permission?: CombinedSCC[T]['actions'][0],
-  externalId?: string, // i.e. string of the data model
+  space?: string, // i.e. the space of the data model
   checkAll?: boolean // should we check if "all" is allowed, useful for deciding write action
 ) => {
   // check wether user has the required capabilities in his current groups of his token
@@ -59,17 +59,17 @@ export const checkPermissions = <T extends KeysOfSCC>(
     if (capabilities.length > 0) {
       return capabilities.some((capabilities) => {
         if (diff([permission], capabilities[name].actions).length === 0) {
-          if (externalId) {
+          if (space) {
             return (
               'all' in capabilities[name].scope ||
               // check if external id is present in the scope
               (
                 (
                   capabilities[name].scope as {
-                    dataModelScope?: { externalIds: string[] };
+                    spaceIdScope?: { spaceIds: string[] };
                   }
-                ).dataModelScope || { externalIds: [] }
-              ).externalIds.includes(externalId)
+                ).spaceIdScope || { spaceIds: [] }
+              ).spaceIds.includes(space)
             );
           }
           return checkAll ? 'all' in capabilities[name].scope : true;

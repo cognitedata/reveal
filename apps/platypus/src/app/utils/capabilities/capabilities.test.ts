@@ -106,7 +106,7 @@ const scopedTokenMock = [
     dataModelsAcl: {
       actions: ['READ'],
       scope: {
-        dataModelScope: { externalIds: ['foobar'] },
+        spaceIdScope: { spaceIds: ['foobar'] },
       },
       version: 1,
     },
@@ -118,7 +118,7 @@ const scopedTokenMock = [
     dataModelsAcl: {
       actions: ['WRITE'],
       scope: {
-        dataModelScope: { externalIds: ['foobar2'] },
+        spaceIdScope: { spaceIds: ['foobar2'] },
       },
       version: 1,
     },
@@ -130,7 +130,7 @@ const scopedTokenMock = [
     dataModelInstancesAcl: {
       actions: ['READ', 'WRITE'],
       scope: {
-        dataModelScope: { externalIds: ['foobar3'] },
+        spaceIdScope: { spaceIds: ['foobar3'] },
       },
       version: 1,
     },

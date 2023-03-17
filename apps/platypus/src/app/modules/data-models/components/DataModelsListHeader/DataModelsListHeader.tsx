@@ -18,7 +18,7 @@ export const DataModelsListHeader = (props: DataModelsListHeaderProps) => {
   const isFDMV3 = isFDMv3();
 
   const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
-    checkAll: true,
+    checkAll: false,
   });
 
   return (
