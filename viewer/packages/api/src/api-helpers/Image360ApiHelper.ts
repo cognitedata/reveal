@@ -139,13 +139,13 @@ export class Image360ApiHelper {
       return e;
     });
 
-    if (fatalDownloadError) {
-      this._interactionState.image360SelectedForEntry = undefined;
-      Log.error(fatalDownloadError);
+    if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
     }
 
-    if (this._interactionState.image360SelectedForEntry !== image360Entity) {
+    if (fatalDownloadError) {
+      this._interactionState.image360SelectedForEntry = undefined;
+      Log.error(fatalDownloadError);
       return;
     }
 
