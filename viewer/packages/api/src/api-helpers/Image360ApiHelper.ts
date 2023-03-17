@@ -44,7 +44,7 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, {
+  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity).catch(() => {}), 300, {
     leading: true
   });
   private readonly _requestRedraw: () => void;
@@ -134,9 +134,16 @@ export class Image360ApiHelper {
     }
     this._interactionState.image360SelectedForEntry = image360Entity;
 
-    await this._image360Facade.preload(image360Entity, true);
+    const fatalDownloadError = await this._image360Facade.preload(image360Entity, true).catch(e => {
+      return e;
+    });
 
     if (this._interactionState.image360SelectedForEntry !== image360Entity) {
+      return;
+    }
+
+    if (fatalDownloadError) {
+      this._interactionState.image360SelectedForEntry = undefined;
       return;
     }
 
