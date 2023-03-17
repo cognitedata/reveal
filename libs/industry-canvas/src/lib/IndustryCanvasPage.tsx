@@ -70,7 +70,7 @@ export const IndustryCanvasPage = () => {
 
   const onAddResourcePress = () => {
     openResourceSelector({
-      resourceTypes: ['file', 'timeSeries'],
+      resourceTypes: ['file', 'timeSeries', 'asset'],
       selectionMode: 'multiple',
       onSelect: () => {
         // It's a required prop, but we don't really want to do anything on
@@ -139,11 +139,22 @@ export const IndustryCanvasPage = () => {
               };
             }
 
-            return {
-              type: ContainerReferenceType.FILE,
-              id: supportedResourceItem.id,
-              page: 1,
-            };
+            if (supportedResourceItem.type === 'file') {
+              return {
+                type: ContainerReferenceType.FILE,
+                id: supportedResourceItem.id,
+                page: 1,
+              };
+            }
+
+            if (supportedResourceItem.type === 'asset') {
+              return {
+                type: ContainerReferenceType.ASSET,
+                id: supportedResourceItem.id,
+              };
+            }
+
+            throw new Error('Unsupported resource type');
           });
 
         onAddContainerReferences(containerReferencesToAdd);

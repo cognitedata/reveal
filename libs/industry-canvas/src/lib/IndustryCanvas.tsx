@@ -1,25 +1,26 @@
 import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
+  getAssetTableContainerConfig,
   getContainerConfigFromFileInfo,
+  getTimeseriesContainerConfig,
+  ToolType,
   UnifiedViewer,
   UnifiedViewerMouseEvent,
-  ToolType,
-  getTimeseriesContainerConfig,
 } from '@cognite/unified-file-viewer';
-import { OnAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
-import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
-import { getContainerId } from './utils/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
+import { OnAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
 import {
+  DEFAULT_ASSET_HEIGHT,
+  DEFAULT_ASSET_WIDTH,
   DEFAULT_TIMESERIES_HEIGHT,
   DEFAULT_TIMESERIES_WIDTH,
 } from './utils/addDimensionsToContainerReferences';
@@ -28,6 +29,8 @@ import {
   ContainerReference,
   ContainerReferenceType,
 } from './types';
+import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
+import { getContainerId } from './utils/utils';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -205,6 +208,32 @@ export const IndustryCanvas = ({
               },
               {
                 timeseriesId: containerReference.id,
+              }
+            );
+          }
+
+          if (containerReference.type === ContainerReferenceType.ASSET) {
+            const asset = await sdk.assets.retrieve([
+              { id: containerReference.id },
+            ]);
+
+            if (asset.length !== 1) {
+              throw new Error('Expected to find exactly one asset');
+            }
+
+            return getAssetTableContainerConfig(
+              sdk as any,
+              {
+                id: getContainerId(containerReference),
+                label: asset[0].name ?? asset[0].externalId,
+                onClick: clickHandler,
+                x: containerReference.x,
+                y: containerReference.y,
+                width: containerReference.width ?? DEFAULT_ASSET_WIDTH,
+                height: containerReference.height ?? DEFAULT_ASSET_HEIGHT,
+              },
+              {
+                assetId: containerReference.id,
               }
             );
           }

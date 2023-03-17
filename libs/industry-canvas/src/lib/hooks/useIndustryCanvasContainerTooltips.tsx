@@ -27,6 +27,28 @@ const useIndustryCanvasContainerTooltips = ({
       return [];
     }
 
+    if (clickedContainer.type === ContainerReferenceType.ASSET) {
+      return [
+        {
+          targetId: getContainerId(clickedContainer),
+          content: (
+            <TooltipContainer>
+              <Link
+                href={createLink(`/explore/asset/${clickedContainer.id}`)}
+                target="_blank"
+              />
+              <Button
+                icon="Close"
+                onClick={() => removeContainerReference(clickedContainer)}
+                type="ghost"
+              />
+            </TooltipContainer>
+          ),
+          anchorTo: TooltipAnchorPosition.TOP_RIGHT,
+        },
+      ];
+    }
+
     if (clickedContainer.type === ContainerReferenceType.TIMESERIES) {
       return [
         {

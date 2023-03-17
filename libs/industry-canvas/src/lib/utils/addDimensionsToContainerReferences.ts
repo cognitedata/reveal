@@ -1,17 +1,20 @@
-import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { isNotUndefined } from '@cognite/data-exploration';
+import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { max } from 'lodash';
-import assertNever from './assertNever';
 import {
   ContainerReference,
   ContainerReferenceType,
   ContainerReferenceWithoutDimensions,
   Dimensions,
 } from '../types';
+import assertNever from './assertNever';
 
 const INITIAL_CONTAINER_MARGIN = 100;
 export const DEFAULT_TIMESERIES_HEIGHT = 700;
 export const DEFAULT_TIMESERIES_WIDTH = 1000;
+
+export const DEFAULT_ASSET_WIDTH = 600;
+export const DEFAULT_ASSET_HEIGHT = 500;
 
 const getInitialContainerReferenceDimensions = (
   currentMaxX: number,
@@ -33,6 +36,15 @@ const getInitialContainerReferenceDimensions = (
       y: 0,
       width: DEFAULT_TIMESERIES_WIDTH,
       height: DEFAULT_TIMESERIES_HEIGHT,
+    };
+  }
+
+  if (containerReferenceType === ContainerReferenceType.ASSET) {
+    return {
+      x: currentMaxX + INITIAL_CONTAINER_MARGIN,
+      y: 0,
+      width: DEFAULT_ASSET_WIDTH,
+      height: DEFAULT_ASSET_HEIGHT,
     };
   }
 

@@ -1,32 +1,12 @@
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { AnnotationModel } from '@cognite/sdk';
+import { ContainerReference, ContainerReferenceType } from '../types';
 
 const queryKey = (containerReferences: ContainerReference[]) => [
   'industry-canvas-annotations',
   containerReferences,
 ];
-
-// TODO: Dedupe these types when we extract everything to a package
-enum ContainerReferenceType {
-  FILE = 'file',
-  TIMESERIES = 'timeseries',
-}
-
-type FileContainerReference = {
-  type: ContainerReferenceType.FILE;
-  id: number;
-  page: number | undefined;
-};
-
-type TimeseriesContainerReference = {
-  type: ContainerReferenceType.TIMESERIES;
-  id: number;
-  startDate: Date;
-  endDate: Date;
-};
-
-type ContainerReference = FileContainerReference | TimeseriesContainerReference;
 
 export const useAnnotationsMultiple = (
   containerReferences: ContainerReference[]
@@ -38,7 +18,7 @@ export const useAnnotationsMultiple = (
     (): Promise<AnnotationModel[][]> =>
       Promise.all(
         containerReferences.map(async (containerReference) => {
-          if (containerReference.type === ContainerReferenceType.TIMESERIES) {
+          if (containerReference.type !== ContainerReferenceType.FILE) {
             return [];
           }
 

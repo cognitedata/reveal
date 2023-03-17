@@ -3,6 +3,7 @@ import { Annotation } from '@cognite/unified-file-viewer';
 export enum ContainerReferenceType {
   FILE = 'file',
   TIMESERIES = 'timeseries',
+  ASSET = 'asset',
 }
 
 export type Dimensions = {
@@ -20,6 +21,11 @@ export type FileContainerReferenceWithoutDimensions = {
   page: number;
 };
 
+export type AssetContaienrReferenceWithoutDimensions = {
+  type: ContainerReferenceType.ASSET;
+  id: number;
+};
+
 export type FileContainerReference = FileContainerReferenceWithoutDimensions &
   Dimensions;
 
@@ -33,13 +39,18 @@ export type TimeseriesContainerReferenceWithoutDimensions = {
 export type TimeseriesContainerReference =
   TimeseriesContainerReferenceWithoutDimensions & Dimensions;
 
+export type AssetContainerReference = AssetContaienrReferenceWithoutDimensions &
+  Dimensions;
+
 export type ContainerReferenceWithoutDimensions =
   | FileContainerReferenceWithoutDimensions
-  | TimeseriesContainerReferenceWithoutDimensions;
+  | TimeseriesContainerReferenceWithoutDimensions
+  | AssetContaienrReferenceWithoutDimensions;
 
 export type ContainerReference =
   | FileContainerReference
-  | TimeseriesContainerReference;
+  | TimeseriesContainerReference
+  | AssetContainerReference;
 
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;

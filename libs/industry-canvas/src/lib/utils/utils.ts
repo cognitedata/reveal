@@ -4,6 +4,7 @@ import {
   ContainerReference,
   ContainerReferenceType,
 } from '../types';
+import assertNever from './assertNever';
 
 export const getContainerId = (
   containerReference: ContainerReference
@@ -16,7 +17,11 @@ export const getContainerId = (
     return `${containerReference.id}`;
   }
 
-  throw new Error('Unknown container reference type');
+  if (containerReference.type === ContainerReferenceType.ASSET) {
+    return `${containerReference.id}`;
+  }
+
+  assertNever(containerReference, 'Unsupported container reference type');
 };
 
 export const getContainerReferencesWithUpdatedDimensions = (
