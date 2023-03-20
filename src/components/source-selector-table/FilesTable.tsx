@@ -127,6 +127,7 @@ export default function FileInfoTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
+      pagination={{ defaultPageSize: 25 }}
     />
   );
 }

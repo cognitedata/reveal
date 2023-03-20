@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Checkbox, Flex, Overline } from '@cognite/cogs.js';
 import { useSearchParams } from 'react-router-dom';
 import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
 import AssetTable from 'components/source-selector-table/AssetTable';
@@ -8,6 +8,8 @@ import { useMemo } from 'react';
 import ResourceCount from 'components/resource-count';
 import { DataSetSelect } from 'components/data-set-select';
 import SearchInput from 'components/search-input';
+import { useTranslation } from 'common';
+import RootAssetSelect from 'components/root-asset-select';
 
 type Props = {};
 
@@ -20,7 +22,7 @@ export default function TargetSelectionTable({}: Props) {
     allTargets,
     setAllTargets,
   } = useQuickMatchContext();
-
+  const { t } = useTranslation();
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
 
@@ -33,25 +35,30 @@ export default function TargetSelectionTable({}: Props) {
   return (
     <Flex direction="column">
       <Flex justifyContent="space-between">
-        <Flex gap={12}>
+        <Flex gap={12} alignItems="center">
+          <Overline>{t('filter', { count: 0 })}</Overline>
           <DataSetSelect
             api="assets"
-            onChange={(e: number[]) => {
+            onChange={(id?: number) => {
               setTargetFilter({
                 ...targetFilter,
-                dataSetIds:
-                  e.length > 0
-                    ? e.map((id) => ({
-                        id,
-                      }))
-                    : undefined,
+                dataSetIds: !!id ? [{ id }] : undefined,
               });
             }}
-            selected={targetFilter.dataSetIds?.map((ds) => ds.id) || []}
+            selected={targetFilter.dataSetIds?.[0]?.id}
+          />
+          <RootAssetSelect
+            onChange={(id) => {
+              setTargetFilter({
+                ...targetFilter,
+                assetSubtreeIds: !!id ? [{ id }] : undefined,
+              });
+            }}
           />
           <SearchInput
             disabled={allTargets}
             value={query || ''}
+            placeholder={t('search-placeholder')}
             onChange={(e) => {
               searchParams.set(TARGET_TABLE_QUERY_KEY, e.target.value);
               setSearchParams(searchParams);

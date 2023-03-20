@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Checkbox, Flex, Overline } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 
@@ -83,9 +83,10 @@ export default function SourceSelectionTable({}: Props) {
   return (
     <Flex direction="column">
       <Flex justifyContent="space-between">
-        <Flex direction="row" gap={12}>
+        <Flex direction="row" gap={12} alignItems="center">
+          <Overline>{t('resource-type')}</Overline>
           <Select
-            style={{ width: 120 }}
+            style={{ width: 220 }}
             defaultValue="timeseries"
             onChange={handleSelectSourceType}
           >
@@ -97,24 +98,22 @@ export default function SourceSelectionTable({}: Props) {
           </Select>
           {supportsBasicFilter[sourceType] && (
             <>
+              <Overline>{t('filter', { count: 0 })}</Overline>
               <DataSetSelect
                 api={sourceType}
-                onChange={(e: number[]) => {
+                onChange={(id?: number) => {
                   setSourceFilter({
                     ...sourceFilter,
                     dataSetIds:
-                      e.length > 0
-                        ? e.map((id) => ({
-                            id,
-                          }))
-                        : undefined,
+                      id && Number.isFinite(id) ? [{ id }] : undefined,
                   });
                 }}
-                selected={sourceFilter.dataSetIds?.map((ds) => ds.id) || []}
+                selected={sourceFilter.dataSetIds?.[0]?.id}
               />
               <SearchInput
                 disabled={allSources}
                 value={query || ''}
+                placeholder={t('search-placeholder')}
                 onChange={(e) => {
                   searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
                   setSearchParams(searchParams);

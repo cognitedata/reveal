@@ -47,6 +47,8 @@ export type RawTarget = RawAsset;
 
 export type Filter = {
   dataSetIds?: InternalId[];
+  assetSubtreeIds?: InternalId[];
+  root?: boolean;
 };
 
 export const SOURCE_TYPES = [

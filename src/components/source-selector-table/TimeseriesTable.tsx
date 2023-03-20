@@ -107,6 +107,7 @@ export default function TimeseriesTable({
       rowSelection={rowSelection}
       dataSource={dataSource || []}
       appendTooltipTo={undefined}
+      pagination={{ defaultPageSize: 25 }}
     />
   );
 }
