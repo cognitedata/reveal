@@ -61,6 +61,8 @@ export class MixerQueryBuilder {
     )}${paramString} {
       items {
         externalId
+        lastUpdatedTime
+        createdTime
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>

@@ -52,3 +52,31 @@ export const getSuggestionsAvailable = ({
   };
   return directRelations() > 0;
 };
+
+export const getColumnsInitialOrder = (
+  dataModelType: DataModelTypeDefsType,
+  instanceIdCol: string
+) => {
+  return [
+    {
+      label: instanceIdCol,
+      value: instanceIdCol,
+      visible: true,
+    },
+    ...dataModelType.fields.map((el) => ({
+      label: el.name,
+      value: el.name,
+      visible: true,
+    })),
+    {
+      label: 'lastUpdatedTime',
+      value: 'lastUpdatedTime',
+      visible: true,
+    },
+    {
+      label: 'createdTime',
+      value: 'createdTime',
+      visible: true,
+    },
+  ];
+};

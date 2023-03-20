@@ -6,7 +6,7 @@ import {
 } from '@platypus/platypus-core';
 import { ISimpleFilterModelType } from 'ag-grid-community/dist/lib/filter/provided/simpleFilter';
 
-import { INSTANCE_TYPE_DEFS_FIELD } from './constants';
+import { INSTANCE_TYPE_DEFS_FIELDS } from './constants';
 
 export const convertFilterToDataType = (
   itemValue: undefined | null | string | number | object | boolean,
@@ -24,7 +24,7 @@ export const convertFilterToDataType = (
     return itemValue.toString().toLowerCase() === 'true';
   }
 
-  if (['Int', 'Int64', 'Float'].includes(dataType)) {
+  if (['Int', 'Int64', 'Float', 'Float64', 'Float32'].includes(dataType)) {
     return +itemValue.toString().trim();
   }
 
@@ -90,7 +90,7 @@ export const convertToGraphQlFilters = (
     const { filterType, filterTo, type } = agGridFilter;
 
     const dataModelField = [
-      INSTANCE_TYPE_DEFS_FIELD,
+      ...INSTANCE_TYPE_DEFS_FIELDS,
       ...dataModelTypeFields,
     ].find((field) => field.name === key);
 
