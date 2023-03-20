@@ -6,7 +6,7 @@ import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 import QuickMatchTitle from 'components/quick-match-title';
 import { Pipeline, useUpdatePipeline } from 'hooks/contextualization-api';
-import { SourceType } from 'types/api';
+import { PipelineSourceType } from 'types/api';
 
 const { Option } = Select;
 
@@ -21,8 +21,8 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
 
   const { mutateAsync } = useUpdatePipeline();
 
-  const sourceTypeOptions: { value: SourceType; label: string }[] = [
-    { value: 'timeseries', label: t('resource-type-ts') },
+  const sourceTypeOptions: { value: PipelineSourceType; label: string }[] = [
+    { value: 'time_series', label: t('resource-type-ts') },
     { value: 'events', label: t('resource-type-events', { count: 0 }) },
     { value: 'files', label: t('resource-type-files', { count: 0 }) },
     { value: 'sequences', label: t('resource-type-sequences', { count: 0 }) },
