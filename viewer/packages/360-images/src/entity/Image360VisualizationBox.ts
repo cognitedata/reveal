@@ -81,13 +81,19 @@ export class Image360VisualizationBox implements Image360Visualization {
     };
   }
 
-  public async loadImages(faces: Image360Face[]): Promise<void> {
-    const faceTextures = await this.loadFaceTextures(faces);
+  public async loadImages(textures: Image360Texture[]): Promise<void> {
+    if (this._visualizationMesh) {
+      this._faceMaterialOrder.forEach((face, index) => {
+        this._faceMaterials[index].map = getFaceTexture(face);
+      });
+      return Promise.resolve();
+    }
+
     this._faceMaterials = this._faceMaterialOrder.map(
       face =>
         new THREE.MeshBasicMaterial({
           side: THREE.BackSide,
-          map: this.getFaceTexture(faceTextures, face),
+          map: getFaceTexture(face),
           depthTest: false,
           opacity: this._visualizationState.opacity,
           transparent: true
@@ -103,13 +109,12 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
     return Promise.resolve();
-  }
 
-  public updateFaceMaterials(textures: Image360Texture[]): void {
-    assert(this._faceMaterialOrder.length === this._faceMaterials.length);
-    this._faceMaterialOrder.forEach((face, index) => {
-      this._faceMaterials[index].map = this.getFaceTexture(textures, face);
-    });
+    function getFaceTexture(face: Image360Face['face']) {
+      const texture = textures.find(p => p.face === face);
+      assert(texture !== undefined);
+      return texture.texture;
+    }
   }
 
   public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
@@ -124,12 +129,6 @@ export class Image360VisualizationBox implements Image360Visualization {
         return { face: image360Face.face, texture: faceTexture };
       })
     );
-  }
-
-  private getFaceTexture(textures: Image360Texture[], face: Image360Face['face']) {
-    const texture = textures.find(p => p.face === face);
-    assert(texture !== undefined);
-    return texture.texture;
   }
 
   public unloadImages(): void {
