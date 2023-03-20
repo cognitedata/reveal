@@ -1,7 +1,7 @@
 import noop from 'lodash/noop';
 
 export const createEventListener = <EventType = Event>(
-  element: Document | Element | null | undefined,
+  element: Window | Document | Element | null | undefined,
   type: string,
   listener: (event: EventType) => void
 ) => {
