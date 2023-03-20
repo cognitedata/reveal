@@ -46,7 +46,7 @@ export const ZoomActions: React.FC<ZoomActionsProps> = ({
       <Button
         icon="Restore"
         aria-label="zoom-reset"
-        onClick={plotRef.current?.resetPlotRange}
+        onClick={() => plotRef.current?.resetPlotRange()}
       />
 
       <Button
