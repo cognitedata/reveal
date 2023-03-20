@@ -92,6 +92,7 @@ export default function AssetTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource}
+      pagination={{ defaultPageSize: 25 }}
     />
   );
 }

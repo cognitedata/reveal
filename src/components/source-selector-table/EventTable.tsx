@@ -108,6 +108,7 @@ export default function EventTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
+      pagination={{ defaultPageSize: 25 }}
     />
   );
 }

@@ -98,6 +98,7 @@ export default function SequenceTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
+      pagination={{ defaultPageSize: 25 }}
     />
   );
 }

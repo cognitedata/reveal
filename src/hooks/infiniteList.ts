@@ -34,6 +34,13 @@ type Opts = {
   staleTime?: number;
 };
 
+// Avoid refetching large amounts of data
+export const INFINITE_Q_OPTIONS = {
+  staleTime: Infinity,
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+};
+
 export function useInfiniteList(
   api: 'events',
   partitions: PartitionCount,

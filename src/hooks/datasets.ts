@@ -38,37 +38,43 @@ export const useDataSets = (
     async () => {
       // Aggregate call does not work for Files
       try {
-        const aggregate = await fetchAggregate(
-          sdk,
-          queryClient,
-          {
-            type: api,
-            aggregate: 'uniqueValues',
-            properties: [{ property: ['dataSetId'] }],
-          },
-          { retry: false }
-        );
+        if (api === 'threeD') {
+          throw new Error('3D not supported');
+        } else {
+          const aggregate = await fetchAggregate(
+            sdk,
+            queryClient,
+            {
+              type: api,
+              aggregate: 'uniqueValues',
+              properties: [{ property: ['dataSetId'] }],
+            },
+            { retry: false }
+          );
 
-        const dataSetIds: InternalId[] =
-          aggregate
-            ?.filter(
-              (i) =>
-                !!i.values?.[0] &&
-                Number.isFinite(parseInt(`${i.values?.[0]}`, 10))
-            )
-            .map((i) => ({
-              id: parseInt(i.values?.[0] as string, 10),
-            })) || [];
+          const dataSetIds: InternalId[] =
+            aggregate
+              ?.filter(
+                (i) =>
+                  !!i.values?.[0] &&
+                  Number.isFinite(parseInt(`${i.values?.[0]}`, 10))
+              )
+              .map((i) => ({
+                id: parseInt(i.values?.[0] as string, 10),
+              })) || [];
 
-        const datasets =
-          dataSetIds.length > 0 ? await sdk.datasets.retrieve(dataSetIds) : [];
-        return datasets.map(
-          (ds): DatasetWithResourceCount => ({
-            ...ds,
-            count: aggregate?.find((a) => `${a.values?.[0]}` === `${ds.id}`)
-              ?.count,
-          })
-        );
+          const datasets =
+            dataSetIds.length > 0
+              ? await sdk.datasets.retrieve(dataSetIds)
+              : [];
+          return datasets.map(
+            (ds): DatasetWithResourceCount => ({
+              ...ds,
+              count: aggregate?.find((a) => `${a.values?.[0]}` === `${ds.id}`)
+                ?.count,
+            })
+          );
+        }
       } catch {
         return queryClient.fetchQuery(
           allDataSetsKey(),
