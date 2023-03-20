@@ -4,6 +4,7 @@
   "scripts": {
     "lint": "eslint src",
     "tsc": "tsc --noEmit",
-    "tsc:watch": "tsc --noEmit --watch"
+    "tsc:watch": "tsc --noEmit --watch",
+    "storybook": "start-storybook -p 9009 -s public"
   }
 }
