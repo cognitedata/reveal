@@ -8,7 +8,6 @@ export interface HoverMarkerProps {
   position?: Coordinate;
   variant?: Variant;
   markerColor: string;
-  borderColor: string;
 }
 
 export const HoverMarker: React.FC<HoverMarkerProps> = ({
@@ -16,7 +15,6 @@ export const HoverMarker: React.FC<HoverMarkerProps> = ({
   position,
   variant,
   markerColor,
-  borderColor,
 }) => {
   const scale = variant === 'small' ? 0.5 : 1;
 
@@ -26,7 +24,6 @@ export const HoverMarker: React.FC<HoverMarkerProps> = ({
         left: position?.x,
         top: position?.y,
         backgroundColor: markerColor,
-        outlineColor: borderColor,
         transform: `translate(-50%, -50%) scale(${scale})`,
         opacity: isVisible ? 1 : 0,
         display: isVisible ? 'initial' : 'none',

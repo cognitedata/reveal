@@ -117,7 +117,6 @@ export const LineChart: React.FC<LineChartProps> = ({
         variant={variant}
         plotHoverEvent={plotHoverEvent}
         cursorPosition={cursorPosition}
-        backgroundColor={backgroundColor}
         isContinuousHover={isContinuousHover}
         formatHoverLineInfo={formatHoverLineInfo}
       />

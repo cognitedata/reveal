@@ -26,12 +26,11 @@ export const TooltipWrapper = styled.div`
 export const TooltipContainer = styled.div`
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: var(--cogs-surface--muted);
   box-sizing: border-box;
   padding: 8px;
   gap: 8px;
-  box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
-    0px 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--cogs-elevation--surface--interactive--hover);
   border-radius: 8px;
   font-size: 12px;
   line-height: 16px;

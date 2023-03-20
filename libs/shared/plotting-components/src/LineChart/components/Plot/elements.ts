@@ -55,6 +55,7 @@ export const PlotWrapper = styled.div`
 
   > * .crisp {
     stroke: ${TICK_COLOR} !important;
+    opacity: 0.5;
     ${({ showticks }: PlotWrapperProps) =>
       !showticks &&
       `

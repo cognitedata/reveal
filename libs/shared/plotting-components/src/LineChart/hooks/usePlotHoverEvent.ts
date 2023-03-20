@@ -8,7 +8,7 @@ export interface Props {
   chartRef: React.RefObject<HTMLDivElement>;
   isCursorOnPlot: boolean;
   isContinuousHover: boolean;
-  isPlotSelecting: boolean;
+  isPlotSelecting?: boolean;
 }
 
 export const usePlotHoverEvent = ({
@@ -19,8 +19,6 @@ export const usePlotHoverEvent = ({
 }: Props) => {
   const [isPlotHovered, setPlotHovered] = useState(false);
   const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
-  const [plotHoverEventBackup, setPlotHoverEventBackup] =
-    useState<PlotHoverEvent>();
 
   const updatePlotHoverEvent = useCallback((event: PlotHoverEvent) => {
     setPlotHoverEvent(event);
@@ -32,10 +30,8 @@ export const usePlotHoverEvent = ({
   }, []);
 
   useEffect(() => {
-    createEventListener(chartRef.current, 'wheel', () => {
-      setPlotHoverEvent(undefined);
-    });
-  }, [chartRef]);
+    setPlotHoverEvent(undefined);
+  }, [isPlotSelecting]);
 
   useEffect(() => {
     if (!isCursorOnPlot || (!isContinuousHover && !isPlotHovered)) {
@@ -44,15 +40,10 @@ export const usePlotHoverEvent = ({
   }, [isContinuousHover, isCursorOnPlot, isPlotHovered]);
 
   useEffect(() => {
-    if (isPlotSelecting) {
-      setPlotHoverEventBackup(plotHoverEvent);
+    return createEventListener(chartRef.current, 'wheel', () => {
       setPlotHoverEvent(undefined);
-    } else {
-      setPlotHoverEvent(plotHoverEventBackup);
-      setPlotHoverEventBackup(undefined);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlotSelecting]);
+    });
+  }, [chartRef]);
 
   return {
     plotHoverEvent,

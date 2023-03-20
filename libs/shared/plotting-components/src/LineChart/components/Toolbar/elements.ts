@@ -4,7 +4,7 @@ export const ToolbarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   :empty {
     display: none;
   }
@@ -35,7 +35,7 @@ export const ActionWrapper = styled.div`
     top: 10px;
     right: 1px;
     height: 16px;
-    border-right: 2px solid #d9d9d9;
+    border-right: 2px solid var(--cogs-border--muted);
   }
   :last-child::after {
     border: none;

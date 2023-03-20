@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useImperativeHandle, useRef, useMemo, useCallback } from 'react';
 
-import PlotlyPlot, { Figure } from 'react-plotly.js';
+import PlotlyPlot from 'react-plotly.js';
 import {
   Layout as PlotlyLayout,
   Config as PlotlyConfig,
@@ -49,9 +49,8 @@ export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   height?: number;
   onHover?: (event: PlotHoverEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
-  onSelecting?: (event: PlotSelectionEvent) => void;
+  onSelecting?: (event?: PlotSelectionEvent) => void;
   onSelected?: (event?: PlotSelectionEvent) => void;
-  onInitialized?: (figure: Figure, graph: HTMLElement) => void;
 }
 
 export const Plot = React.memo(
@@ -159,17 +158,6 @@ export const Plot = React.memo(
         [height, width]
       );
 
-      const handleUpdate = useCallback(
-        (figure: Figure, _graph: HTMLElement) => {
-          const { xaxis, yaxis } = figure.layout;
-          setPlotRange({
-            x: xaxis?.range as AxisRange | undefined,
-            y: yaxis?.range as AxisRange | undefined,
-          });
-        },
-        [setPlotRange]
-      );
-
       const handleRelayout = useCallback(
         (_event: PlotRelayoutEvent) => {
           updateAxisTickCount(plotRef.current, isEmptyData);
@@ -210,7 +198,6 @@ export const Plot = React.memo(
             onInitialized={resetPlotRange}
             onHover={onHover}
             onUnhover={onUnhover}
-            onUpdate={handleUpdate}
             onRelayout={handleRelayout}
             onSelecting={onSelecting}
             onSelected={handleSelected}

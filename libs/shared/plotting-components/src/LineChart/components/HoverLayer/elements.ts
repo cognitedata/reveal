@@ -1,12 +1,8 @@
 import styled from 'styled-components/macro';
-import {
-  DEFAULT_BACKGROUND_COLOR,
-  HOVER_MARKER_BORDER_WIDTH,
-  MARKER_SIZE,
-} from '../../constants';
+import { HOVER_MARKER_BORDER_WIDTH, MARKER_SIZE } from '../../constants';
 import { LINE_INFO_POINTER_SIZE } from './HoverLineInfo';
 
-const HOVER_LINE_INFO_BACKGROUND_COLOR = 'var(--cogs-greyscale-grey10)';
+const HOVER_LINE_INFO_BACKGROUND_COLOR = 'var(--cogs-surface--muted--inverted)';
 
 export const HoverLayerWrapper = styled.div`
   pointer-events: none;
@@ -14,7 +10,7 @@ export const HoverLayerWrapper = styled.div`
 
 export const Line = styled.div`
   position: absolute;
-  border-left: 1px solid #000000;
+  border-left: 1px solid var(--cogs-decorative--grayscale--black);
   transition: opacity 0.4s ease;
 `;
 
@@ -23,7 +19,7 @@ export const LineMarker = styled.div`
   height: ${MARKER_SIZE}px;
   width: ${MARKER_SIZE}px;
   border-radius: 50%;
-  outline: ${HOVER_MARKER_BORDER_WIDTH}px solid ${DEFAULT_BACKGROUND_COLOR};
+  outline: ${HOVER_MARKER_BORDER_WIDTH}px solid var(--cogs-surface--muted);
 `;
 
 export const LineInfoWrapper = styled.div`
@@ -45,7 +41,7 @@ export const LineInfo = styled.div`
   align-items: center;
   position: absolute;
   white-space: nowrap;
-  color: #ffffff;
+  color: var(--cogs-text-icon--on-contrast--strong);
   background: ${HOVER_LINE_INFO_BACKGROUND_COLOR};
   border-radius: 6px;
   padding: 8px;

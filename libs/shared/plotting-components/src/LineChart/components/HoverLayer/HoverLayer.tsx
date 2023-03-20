@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 import { Coordinate, HoverLineData, Layout, Variant } from '../../types';
 import { useHoveredDatapoint } from '../../hooks/useHoveredDatapoint';
 import { getPlotStyleData } from '../../utils/getPlotStyleData';
@@ -18,7 +17,6 @@ export interface HoverLayerProps {
   variant?: Variant;
   plotHoverEvent?: PlotHoverEvent;
   cursorPosition?: Coordinate;
-  backgroundColor?: string;
   isContinuousHover: boolean;
   formatHoverLineInfo?: (props: HoverLineData) => string;
 }
@@ -29,7 +27,6 @@ export const HoverLayer: React.FC<HoverLayerProps> = ({
   variant,
   plotHoverEvent,
   cursorPosition,
-  backgroundColor = DEFAULT_BACKGROUND_COLOR,
   isContinuousHover,
   formatHoverLineInfo,
 }) => {
@@ -75,7 +72,6 @@ export const HoverLayer: React.FC<HoverLayerProps> = ({
         position={hoverMarkerPosition}
         variant={variant}
         markerColor={datapoint.color}
-        borderColor={backgroundColor}
       />
     </HoverLayerWrapper>
   );
