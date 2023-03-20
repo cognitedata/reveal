@@ -12,16 +12,13 @@
 /tools/                           @cognitedata/fusion-maintainers
 /*                                @cognitedata/fusion-maintainers
 
-# Team platypus
-apps/mock-server                  @cognitedata/development-experiences
-apps/platypus                     @cognitedata/development-experiences
-apps/platypus-cdf-cli             @cognitedata/development-experiences
-apps/platypus-e2e                 @cognitedata/development-experiences
+# Platypus
+apps/mock-server                  @cognitedata/cdf-user-experience
+apps/platypus                     @cognitedata/cdf-user-experience
+apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
+apps/platypus-e2e                 @cognitedata/cdf-user-experience
 
-libs/cog-data-grid                @cognitedata/development-experiences
-libs/mock-data                    @cognitedata/development-experiences
-libs/platypus-common-utils        @cognitedata/development-experiences
-libs/platypus-core                @cognitedata/development-experiences
+libs/data-modeling                @cognitedata/cdf-user-experience
 
 # Team data-explorer
 apps/data-exploration             @cognitedata/explorers
