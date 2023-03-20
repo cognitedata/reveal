@@ -4,6 +4,8 @@ import { useTranslation } from 'common';
 import { Prediction, PredictionObject } from 'hooks/contextualization-api';
 import { PredictionsTableTypes } from 'types/types';
 import { formatPredictionObject } from 'utils';
+import ConfidenceScore from './Confidence';
+import { Checkbox, Flex } from '@cognite/cogs.js';
 
 type Predictions = {
   predictions: Prediction[];
@@ -33,12 +35,6 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
   const columns: ResultsTableRecordCT[] = useMemo(
     () => [
       {
-        title: t('qm-result-score'),
-        dataIndex: 'matches',
-        key: 'matches',
-        render: (matches: any[]) => matches[0]?.score.toFixed(1) || '—',
-      },
-      {
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
@@ -51,6 +47,33 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         key: 'matches',
         render: (matches: any[]) =>
           formatPredictionObject(matches[0]?.target) || '—',
+      },
+
+      {
+        title: t('confidence'),
+        dataIndex: 'matches',
+        key: 'matches',
+        align: 'center',
+        render: (matches: any[]) => (
+          <ConfidenceScore score={matches[0]?.score} />
+        ),
+        sorter: (a: Prediction, b: Prediction) =>
+          (a.matches[0]?.score ?? 0) - (b.matches[0]?.score ?? 0),
+        sortDirections: ['descend', 'ascend'],
+        defaultSortOrder: 'descend',
+      },
+      {
+        title: t('confirm'),
+        dataIndex: 'source',
+        key: 'source',
+        width: 10,
+        render: (source: PredictionObject) => {
+          return (
+            <Flex justifyContent="center">
+              <Checkbox name={`checkbox-${source.id}`} />
+            </Flex>
+          );
+        },
       },
     ],
     [t]
