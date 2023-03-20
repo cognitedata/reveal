@@ -1,4 +1,4 @@
-import { Flex, InputNew } from '@cognite/cogs.js';
+import { Flex, InputNew, toast } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { mutate } = useUpdatePipeline();
+  const { mutateAsync } = useUpdatePipeline();
 
   const sourceTypeOptions: { value: SourceType; label: string }[] = [
     { value: 'timeseries', label: t('resource-type-ts') },
@@ -31,12 +31,22 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
   const query = searchParams.get(SOURCE_TABLE_QUERY_KEY);
 
   const handleChangeSelectSourceType = (selectedSourceType: string): void => {
-    mutate({
+    mutateAsync({
       id: pipeline.id,
       sources: {
         dataSetIds: [],
         resource: selectedSourceType,
       },
+    }).catch((error) => {
+      toast.error(
+        t('cannot-select-resource-type-as-source', {
+          error: error.message,
+          resourceType: selectedSourceType,
+        }),
+        {
+          toastId: `cannot-select-resource-type-as-source-${pipeline.id}`,
+        }
+      );
     });
   };
 

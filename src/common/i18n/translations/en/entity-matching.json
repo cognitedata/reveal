@@ -131,5 +131,6 @@
   "validation-error-field-required": "You must enter a value in this field",
   "name": "Name",
   "description": "Description",
-  "pipeline": "Pipeline"
+  "pipeline": "Pipeline",
+  "cannot-select-resource-type-as-source": "Cannot select {{resourceType}} as source: {{error}}"
 }
