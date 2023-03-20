@@ -3,9 +3,7 @@
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
-// deploySpinnakerPipelineConfigs {}
-static final String APP_ID = 'cdf-document-search-ui'
-static final String APPLICATION_REPO_ID = 'cdf-ui-document-search'
+static final String FIREBASE_APP_SITE = 'document-search'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
@@ -16,7 +14,7 @@ static final String LOCIZE_PROJECT_ID = "0774e318-387b-4e68-94cc-7b270321bbf1" /
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
-      fas.pod(
+      appHosting.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
         sentryDsn: SENTRY_DSN,
@@ -75,7 +73,6 @@ pods {
   def gitCommit
   def gitAuthor
   def getTitle
-  def isPullRequest = !!env.CHANGE_ID
   def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME.startsWith('release-')
   def bucketBundles = "cdf-hub-bundles"
   def projectProduction = "cognitedata-production"
@@ -87,7 +84,6 @@ pods {
     def context_test = "continuous-integration/jenkins/test"
     def context_unitTests = "continuous-integration/jenkins/unit-tests"
     def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
-    def context_build_fas = "continuous-integration/jenkins/build-fas"
     def context_build = "continuous-integration/jenkins/build"
     def context_deploy_app = "continuous-integration/jenkins/deploy-app"
     def context_publishRelease = "continuous-integration/jenkins/publish-release"
@@ -112,25 +108,25 @@ pods {
     threadPool(
       tasks: [
         'Lint': {
-          container('fas') {
+          container('apphosting') {
             stageWithNotify('Lint') {
               sh("yarn lint")
             }
           }
         },
         'Test': {
-          container('fas') {
+          container('apphosting') {
             stageWithNotify('Unit tests') {
               sh("yarn test")
             }
           }
         },
         'Preview': {
-          if(!isPullRequest) {
+          if (isRelease) {
             print "No PR previews for release builds"
             return;
           }
-          stageWithNotify('Build and deploy PR') {
+          stageWithNotify('Build and deploy') {
             previewServer(
               buildCommand: 'yarn build:preview',
               prefix: 'pr',
@@ -140,29 +136,22 @@ pods {
           }
         },
         'Build': {
-          if(isPullRequest) {
+          if (!isRelease) {
             print "No builds for prs"
             return;
           }
-          stageWithNotify('Build for FAS') {
-              fas.build(
-              appId: APP_ID,
-              repo: APPLICATION_REPO_ID,
+          stageWithNotify('Build and deploy') {
+            appHosting(
+              appName: FIREBASE_APP_SITE,
+              environment: 'production',
+              firebaseJson: 'firebase.json',
               buildCommand: 'yarn build',
-              shouldPublishSourceMap: false
-              )
+              buildFolder: 'build'
+            )
           }
         }
       ],
       workers: 2,
     )
-
-    if (isRelease) {
-      stageWithNotify('Deploy to FAS') {
-        fas.publish(
-          shouldPublishSourceMap: false
-        )
-      }
-    }
   }
 }
