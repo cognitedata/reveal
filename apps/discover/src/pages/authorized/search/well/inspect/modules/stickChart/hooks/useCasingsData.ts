@@ -49,8 +49,7 @@ export const useCasingsData = () => {
     const groupedData = groupByWellbore(adaptedData);
 
     const casingsData = wellInspectWellboreIds.reduce((result, wellboreId) => {
-      const parentIds = parentWellboreIds[wellboreId];
-
+      const parentIds = parentWellboreIds[wellboreId] || EMPTY_ARRAY;
       const casingAssemblies = groupedData[wellboreId] || EMPTY_ARRAY;
 
       const parentCasingAssemblies = parentIds.flatMap((parentId) => {
