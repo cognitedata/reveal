@@ -19,7 +19,6 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
 import { ErrorsByGroup } from '../GraphqlCodeEditor/Model';
-import type { editor as MonacoEditor } from 'monaco-editor';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -33,6 +32,7 @@ export interface EditorPanelProps {
   isPublishing: boolean;
   errorsByGroup: ErrorsByGroup;
   setErrorsByGroup: (errors: ErrorsByGroup) => void;
+  setEditorHasError: (hasError: boolean) => void;
   space: string;
   version: string;
 }
@@ -44,6 +44,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   isPublishing,
   errorsByGroup,
   setErrorsByGroup,
+  setEditorHasError,
 }) => {
   const { t } = useTranslation('EditorPanel');
   const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
@@ -111,6 +112,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             onChange={updateGraphQlSchema}
             errorsByGroup={errorsByGroup}
             setErrorsByGroup={setErrorsByGroup}
+            setEditorHasError={setEditorHasError}
           />
         </Suspense>
       ) : (

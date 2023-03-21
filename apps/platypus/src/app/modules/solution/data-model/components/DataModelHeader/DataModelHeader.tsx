@@ -23,6 +23,7 @@ export interface DataModelHeaderProps {
   dataModelVersions: DataModelVersion[] | undefined;
   isSaving: boolean;
   isUpdating: boolean;
+  editorHasError: boolean;
   latestDataModelVersion: DataModelVersion;
   localDraft: DataModelVersion | null | undefined;
   onDiscardClick: () => void;
@@ -45,6 +46,7 @@ export const DataModelHeader = ({
   onDataModelVersionSelect,
   selectedDataModelVersion,
   title,
+  editorHasError,
 }: DataModelHeaderProps) => {
   const { t } = useTranslation('DataModelHeader');
 
@@ -54,7 +56,6 @@ export const DataModelHeader = ({
   });
 
   const { track } = useMixpanel();
-
   const { editorMode, graphQlSchema, isDirty } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
@@ -174,7 +175,8 @@ export const DataModelHeader = ({
             disabled={
               !isDirty ||
               !graphQlSchema ||
-              selectedDataModelVersion.schema === graphQlSchema
+              selectedDataModelVersion.schema === graphQlSchema ||
+              editorHasError
             }
             style={{ marginRight: '8px' }}
           >
