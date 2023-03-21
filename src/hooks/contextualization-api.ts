@@ -228,23 +228,33 @@ const getEMModelPredictionKey = (id: number): QueryKey => [
 ];
 export const useEMModelPredictResults = (
   id: number,
+  token: string,
   opts?: UseQueryOptions<EntityMatchingPredictions, CogniteError>
 ) => {
   const sdk = useSDK();
   return useQuery(
     getEMModelPredictionKey(id),
-    () =>
-      sdk
-        .get<EntityMatchingPredictions>(
-          `/api/v1/projects/${sdk.project}/context/entitymatching/jobs/${id}`
-        )
-        .then((r) => {
-          if (r.status === 200) {
-            return r.data;
-          } else {
-            return Promise.reject(r);
-          }
-        }),
+    async () => {
+      if (!token) {
+        return Promise.reject('Contextualization job token not found');
+      }
+      const r = await fetch(
+        `${sdk.getBaseUrl()}/api/v1/projects/${
+          sdk.project
+        }/context/entitymatching/jobs/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const body = await r.json();
+      if (r.status === 200) {
+        return body;
+      } else {
+        return Promise.reject(body.error);
+      }
+    },
     opts
   );
 };
@@ -380,18 +390,36 @@ export const useDuplicateEMPipeline = () => {
   );
 };
 
+type PredictResponse = EntityMatchingPredictResponse & {
+  jobToken?: string;
+};
 export const useCreateEMPredictionJob = (
-  options?: UseMutationOptions<
-    EntityMatchingPredictResponse,
-    CogniteError,
-    number
-  >
+  options?: UseMutationOptions<PredictResponse, CogniteError, number>
 ) => {
   const sdk = useSDK();
   return useMutation(
     ['create-em-prediction'],
-    (id: number) => {
-      return sdk.entityMatching.predict({ id });
+    async (id: number) => {
+      return sdk
+        .post<EntityMatchingPredictResponse>(
+          `/api/v1/projects/${sdk.project}/context/entitymatching/predict`,
+          {
+            data: { id },
+          }
+        )
+        .then(async (r): Promise<PredictResponse> => {
+          if (r.status === 200) {
+            // Can't read the header at the moment because of CORS header settings, matchmakers will
+            // look into that
+            const jobToken = r.headers['x-job-token'];
+            return Promise.resolve({
+              ...r.data,
+              jobToken,
+            });
+          } else {
+            return Promise.reject(r);
+          }
+        });
     },
     options
   );
