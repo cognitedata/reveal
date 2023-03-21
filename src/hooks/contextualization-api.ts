@@ -26,6 +26,7 @@ import {
   TargetType,
 } from 'types/api';
 import { filterFieldsFromObjects } from 'utils';
+import { toast } from '@cognite/cogs.js';
 
 export const IN_PROGRESS_EM_STATES: JobStatus[] = ['Queued', 'Running'];
 
@@ -272,13 +273,16 @@ export const useUpdatePipeline = (
 
         return { previous: previousPipeline };
       },
-      onError: (_, variables, context) => {
+      onError: (error, variables, context) => {
         if (context?.previous) {
           queryClient.setQueryData(
             getEMPipelineKey(variables.id),
             context.previous
           );
         }
+        toast.error(error.message, {
+          toastId: `pipeline-update-error-${variables.id}`,
+        });
       },
       onSettled: (_, __, variables) => {
         queryClient.invalidateQueries(getEMPipelineKey(variables.id));
