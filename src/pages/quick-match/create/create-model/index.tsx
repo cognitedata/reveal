@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Infobox } from '@cognite/cogs.js';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
@@ -276,13 +276,16 @@ const CreateModel = (): JSX.Element => {
     }
   }, [jobStatus]);
 
-  useEffect(() => {
-    if (jobStatus === 'Completed') {
-      navigate(createLink(`/${subAppPath}/quick-match/results/${jobId}`), {
-        replace: true,
-      });
-    }
-  }, [jobId, jobStatus, navigate, subAppPath]);
+  if (jobStatus === 'Completed') {
+    return (
+      <Navigate
+        to={createLink(
+          `/${subAppPath}/quick-match/results/${jobId}/${sourceType}`
+        )}
+        replace={true}
+      />
+    );
+  }
 
   return (
     <Flex direction="column" gap={8}>
