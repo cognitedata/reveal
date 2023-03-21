@@ -74,7 +74,6 @@ pods {
   def gitAuthor
   def getTitle
   def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME.startsWith('release-')
-  def bucketBundles = "cdf-hub-bundles"
   def projectProduction = "cognitedata-production"
 
   def context_checkout = "continuous-integration/jenkins/checkout"
