@@ -6,8 +6,8 @@ import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { StringFilterV2 } from './StringFilter/StringFilter';
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalFilesFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import { InternalFilesFilters } from '@data-exploration-lib/core';
 
 export const FileFilters = ({
   filter,

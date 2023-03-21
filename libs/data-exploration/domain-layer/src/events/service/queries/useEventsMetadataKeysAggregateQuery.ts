@@ -1,13 +1,16 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import { InternalEventsFilters, OldEventsFilters } from '../../internal';
 import {
   getEventsMetadataKeysAggregate,
   queryKeys,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
 import { EventsMetadataAggregateResponse } from '../types';
+import {
+  InternalEventsFilters,
+  OldEventsFilters,
+} from '@data-exploration-lib/core';
 
 export const useEventsMetadataKeysAggregateQuery = (
   filter?: InternalEventsFilters | OldEventsFilters,

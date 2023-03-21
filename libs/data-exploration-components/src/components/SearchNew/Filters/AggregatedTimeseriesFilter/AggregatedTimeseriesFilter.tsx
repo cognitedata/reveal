@@ -6,7 +6,6 @@ import {
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import {
-  InternalTimeseriesFilters,
   TimeseriesProperty,
   useTimeseriesUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
@@ -14,6 +13,7 @@ import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const AggregatedTimeseriesFilterV2 = ({
   field,

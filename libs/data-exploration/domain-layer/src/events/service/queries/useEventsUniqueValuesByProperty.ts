@@ -4,11 +4,13 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   EventProperty,
   getEventsUniqueValuesByProperty,
-  InternalEventsFilters,
-  OldEventsFilters,
   queryKeys,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
+import {
+  InternalEventsFilters,
+  OldEventsFilters,
+} from '@data-exploration-lib/core';
 
 export const useEventsUniqueValuesByProperty = (
   property: EventProperty,

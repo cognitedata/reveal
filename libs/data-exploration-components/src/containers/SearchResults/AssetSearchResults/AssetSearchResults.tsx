@@ -18,12 +18,12 @@ import styled from 'styled-components';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import {
-  InternalAssetFilters,
   useAssetsSearchResultWithLabelsQuery,
   useAssetsSearchAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export type AssetViewMode = 'list' | 'tree';
 

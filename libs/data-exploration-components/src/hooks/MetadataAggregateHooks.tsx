@@ -4,7 +4,7 @@ import { AggregateResponse } from '@cognite/sdk';
 import {
   InternalAssetFilters,
   OldAssetFilters,
-} from '@data-exploration-lib/domain-layer';
+} from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const useAssetMetadataKeys = (

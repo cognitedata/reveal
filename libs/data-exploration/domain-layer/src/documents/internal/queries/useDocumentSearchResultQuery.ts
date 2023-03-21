@@ -7,13 +7,13 @@ import {
 
 import { DocumentSearchItem } from '@cognite/sdk';
 
-import {
-  InternalDocumentFilter,
-  TableSortBy,
-} from '@data-exploration-lib/domain-layer';
+import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { useDocumentSearchQuery } from '../../service';
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  InternalDocumentFilter,
+} from '@data-exploration-lib/core';
 
 export const useDocumentSearchResultQuery = (
   {

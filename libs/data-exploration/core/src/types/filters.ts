@@ -1,4 +1,3 @@
-import { OptionType } from '@cognite/cogs.js';
 import {
   DateRange,
   FileFilterProps,
@@ -10,7 +9,6 @@ import { ResourceType } from './resource';
 
 export type FilterResourceType = ResourceType | 'document' | 'common';
 
-// **!
 export interface FilterState {
   common: InternalCommonFilters;
   asset: InternalAssetFilters;
@@ -56,11 +54,9 @@ export interface OldEventsFilters
 }
 
 export interface InternalAssetFilters extends InternalCommonFilters {
-  // labels?: { label?: string; value: string }[]; // !!
-  labels?: OptionType<string>[]; // !!
+  labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string }[];
-  // sources?: { label?: string; value: string }[];
-  sources?: OptionType<string>[];
+  sources?: { label?: string; value: string }[];
 }
 
 export interface OldAssetFilters

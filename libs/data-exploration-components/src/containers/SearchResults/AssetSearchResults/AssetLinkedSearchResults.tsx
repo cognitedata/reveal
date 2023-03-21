@@ -5,17 +5,17 @@ import { AppliedFiltersTags } from '@data-exploration-components/components/Appl
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AssetTable } from '@data-exploration-components/containers/Assets';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-import {
-  InternalAssetFilters,
-  useAssetsSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import { useAssetsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
 import { useDebounce } from 'use-debounce';
 import { convertResourceType } from '@data-exploration-components/types';
 import { useResourceResults } from '../SearchResultLoader';
+import {
+  InternalAssetFilters,
+  InternalCommonFilters,
+} from '@data-exploration-lib/core';
 
 interface Props {
   enableAdvancedFilter?: boolean;

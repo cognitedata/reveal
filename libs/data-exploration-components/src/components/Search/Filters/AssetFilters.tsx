@@ -10,10 +10,10 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldAssetFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 import head from 'lodash/head';
+import { OldAssetFilters } from '@data-exploration-lib/core';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({

@@ -4,12 +4,14 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import {
   getTimeseriesMetadataKeysAggregate,
-  InternalTimeseriesFilters,
-  OldTimeseriesFilters,
   queryKeys,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
 import { TimeseriesMetadataAggregateResponse } from '../types';
+import {
+  InternalTimeseriesFilters,
+  OldTimeseriesFilters,
+} from '@data-exploration-lib/core';
 
 export const useTimeseriesMetadataKeysAggregateQuery = (
   filter?: InternalTimeseriesFilters | OldTimeseriesFilters,

@@ -1,4 +1,4 @@
-import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
+import { InternalCommonFilters } from '@data-exploration-lib/core';
 import { selector, useRecoilState, useResetRecoilState } from 'recoil';
 
 import { globalFilterAtom } from '../atoms';

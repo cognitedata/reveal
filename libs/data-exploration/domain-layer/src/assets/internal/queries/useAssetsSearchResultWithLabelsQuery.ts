@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDeepMemo } from '@data-exploration-lib/core';
+import { InternalAssetFilters, useDeepMemo } from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
@@ -8,7 +8,6 @@ import {
   MatchingLabelPropertyType,
 } from '../../../utils/extractMatchingLabels';
 import { extractMatchingLabelsFromCogniteLabels } from '../../../utils/extractMatchingLabelsFromCogniteLabels';
-import { InternalAssetFilters } from '../types';
 import { useAssetsSearchResultQuery } from './useAssetsSearchResultQuery';
 
 export const useAssetsSearchResultWithLabelsQuery = (

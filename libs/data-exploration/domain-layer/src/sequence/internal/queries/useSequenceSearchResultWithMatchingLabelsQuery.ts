@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { EMPTY_OBJECT, useDeepMemo } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  InternalSequenceFilters,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
@@ -7,7 +11,6 @@ import {
   extractMatchingLabels,
   MatchingLabelPropertyType,
 } from '../../../utils/extractMatchingLabels';
-import { InternalSequenceFilters } from '../types';
 import { useSequenceSearchResultQuery } from './useSequenceSearchResultQuery';
 
 export const useSequenceSearchResultWithMatchingLabelsQuery = (

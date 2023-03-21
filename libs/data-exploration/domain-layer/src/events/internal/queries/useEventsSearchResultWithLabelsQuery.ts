@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { TableSortBy } from '../../../types';
-import { InternalEventsFilters } from '../types';
 import { useEventsSearchResultQuery } from './useEventsSearchResultQuery';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { useDeepMemo } from '@data-exploration-lib/core';
+import { InternalEventsFilters, useDeepMemo } from '@data-exploration-lib/core';
 import {
   extractMatchingLabels,
   MatchingLabelPropertyType,

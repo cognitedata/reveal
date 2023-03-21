@@ -9,7 +9,6 @@ import { DocumentsTable } from '@data-exploration-components/containers/Document
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
   InternalDocument,
-  InternalDocumentFilter,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { Asset, FileInfo } from '@cognite/sdk';
@@ -25,6 +24,7 @@ import { VerticalDivider } from '@data-exploration-components/components/Divider
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { ResourceTypes } from '@data-exploration-components/types';
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 export interface DocumentSearchResultsProps {
   query?: string;

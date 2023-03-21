@@ -1,4 +1,4 @@
-import { InternalCommonFilters } from './types';
+import { InternalCommonFilters } from '@data-exploration-lib/core';
 
 export const MAX_METADATA_KEYS = 200;
 

@@ -1,5 +1,5 @@
 import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
-import { InternalCommonFilters, MatchingLabels } from '../../types';
+import { MatchingLabels } from '../../types';
 
 export interface InternalAssetData {
   id: number;
@@ -26,15 +26,4 @@ export interface InternalAssetTreeData
   extends InternalAssetDataWithMatchingLabels {
   children?: InternalAssetTreeData[];
   shouldShowMoreAssetsRow?: boolean;
-}
-
-export interface InternalAssetFilters extends InternalCommonFilters {
-  labels?: { label?: string; value: string }[];
-  metadata?: { key: string; value: string }[];
-  sources?: { label?: string; value: string }[];
-}
-
-export interface OldAssetFilters
-  extends Omit<InternalAssetFilters, 'metadata'> {
-  metadata?: Metadata;
 }

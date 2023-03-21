@@ -2,7 +2,6 @@ import { Asset, Sequence } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
-  InternalSequenceFilters,
   useSequenceSearchResultWithMatchingLabelsQuery,
   InternalSequenceDataWithMatchingLabels,
   useSequencesMetadataKeys,
@@ -17,7 +16,10 @@ import React, { useMemo } from 'react';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  InternalSequenceFilters,
+} from '@data-exploration-lib/core';
 
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
