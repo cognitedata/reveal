@@ -3,22 +3,23 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 
+export type MatchingLabelPropertyType =
+  | string
+  | {
+      key: string;
+      label?: string;
+      useSubstringMatch?: boolean; // INFO: if you want to check for substring instead of prefix
+      customMatcher?: (
+        value: any,
+        query: string,
+        matchers: MatchingLabels
+      ) => void;
+    };
+
 export const extractMatchingLabels = (
   data: Record<string, any>,
   query: string,
-  properties: (
-    | string
-    | {
-        key: string;
-        label?: string;
-        useSubstringMatch?: boolean; // INFO: if you want to check for substring instead of prefix
-        customMatcher?: (
-          value: any,
-          query: string,
-          matchers: MatchingLabels
-        ) => void;
-      }
-  )[],
+  properties: MatchingLabelPropertyType[],
   fallbackFuzzyMatch?: string
 ): MatchingLabels => {
   const matchers: MatchingLabels = {
