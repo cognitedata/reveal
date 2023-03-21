@@ -4,9 +4,9 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
-import QuickMatchTitle from 'components/quick-match-title';
 import { Pipeline, useUpdatePipeline } from 'hooks/contextualization-api';
 import { PipelineSourceType } from 'types/api';
+import Step from 'components/step';
 
 const { Option } = Select;
 
@@ -51,8 +51,10 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
   };
 
   return (
-    <Flex direction="column" gap={8}>
-      <QuickMatchTitle step="select-sources" />
+    <Step
+      subtitle={t('select-source-step-subtitle')}
+      title={t('select-source-step-title', { step: 1 })}
+    >
       <Flex gap={12}>
         <Select
           defaultValue="timeseries"
@@ -76,7 +78,7 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
           value={query}
         />
       </Flex>
-    </Flex>
+    </Step>
   );
 };
 

@@ -132,5 +132,7 @@
   "name": "Name",
   "description": "Description",
   "pipeline": "Pipeline",
-  "cannot-select-resource-type-as-source": "Cannot select {{resourceType}} as source: {{error}}"
+  "cannot-select-resource-type-as-source": "Cannot select {{resourceType}} as source: {{error}}",
+  "select-source-step-title": "{{step}}. Select source",
+  "select-source-step-subtitle": "Select the resources you want to match with assets"
 }
