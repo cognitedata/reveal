@@ -86,17 +86,12 @@ export const IndustryCanvas = ({
     [canvasAnnotations, selectedAnnotationId]
   );
 
-  const {
-    tool,
-    toolOptions,
-    setTool,
-    shapeAnnotationStyle,
-    onUpdateShapeAnnotationStyle,
-  } = useManagedTools({
-    initialTool: ToolType.PAN,
-    selectedCanvasAnnotation,
-    onUpdateRequest,
-  });
+  const { tool, toolOptions, setTool, onUpdateAnnotationStyleByType } =
+    useManagedTools({
+      initialTool: ToolType.PAN,
+      selectedCanvasAnnotation,
+      onUpdateRequest,
+    });
 
   const sdk = useSDK();
 
@@ -272,8 +267,7 @@ export const IndustryCanvas = ({
     containerReferences,
     removeContainerReference,
     onDeleteSelectedCanvasAnnotation,
-    shapeAnnotationStyle,
-    onUpdateShapeAnnotationStyle,
+    onUpdateAnnotationStyleByType,
     updateContainerReference,
   });
 

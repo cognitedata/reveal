@@ -1,25 +1,100 @@
 import { useCallback, useMemo, useState } from 'react';
-import { RectangleAnnotation, ToolType } from '@cognite/unified-file-viewer';
-import { CanvasAnnotation, ShapeAnnotationColor } from '../types';
+import { AnnotationType, ToolType } from '@cognite/unified-file-viewer';
+import { CanvasAnnotation } from '../types';
 import { UseManagedStateReturnType } from './useManagedState';
+import { ExactlyOneKey } from '../utils/ExactlyOneKey';
+import { FONT_SIZE, LINE_STROKE_WIDTH } from '../constants';
+import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
 import {
-  fillShapeAnnotationColorToHex,
-  strokeShapeAnnotationColorToHex,
-} from '../utils/colorUtils';
+  SHAPE_ANNOTATION_FILL_COLOR_MAP,
+  SHAPE_ANNOTATION_STROKE_COLOR_MAP,
+  TEXT_ANNOTATION_COLOR_MAP,
+} from '../colors';
 
-export type ShapeAnnotationStyle = {
-  fill: ShapeAnnotationColor;
-  stroke: ShapeAnnotationColor;
+type ShapeAnnotationStyle = {
+  fill?: string;
+  stroke?: string;
 };
-export type OnUpdateShapeAnnotationStyle = (
-  updateShapeAnnotationStyle: Partial<ShapeAnnotationStyle>
+
+type TextAnnotationStyle = {
+  fontSize?: string;
+  fill?: string;
+};
+
+type LineAnnotationStyle = {
+  stroke?: string;
+  strokeWidth?: number;
+};
+
+const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
+  annotation: T,
+  updatedAnnotationStyle: ExactlyOneKey<AnnotationStyleByType>
+): T => {
+  switch (annotation.type) {
+    case AnnotationType.RECTANGLE: {
+      if (updatedAnnotationStyle.shape === undefined) {
+        throw new Error(
+          'Incorrect annotation style for annotation type. This should not happen.'
+        );
+      }
+      return {
+        ...annotation,
+        style: {
+          ...annotation.style,
+          ...updatedAnnotationStyle.shape,
+        },
+      };
+    }
+    case AnnotationType.TEXT: {
+      if (updatedAnnotationStyle.text === undefined) {
+        throw new Error(
+          'Incorrect annotation style for annotation type. This should not happen.'
+        );
+      }
+      return {
+        ...annotation,
+        style: {
+          ...annotation.style,
+          ...updatedAnnotationStyle.text,
+        },
+      };
+    }
+    case AnnotationType.POLYLINE: {
+      if (updatedAnnotationStyle.line === undefined) {
+        throw new Error(
+          'Incorrect annotation style for annotation type. This should not happen.'
+        );
+      }
+      return {
+        ...annotation,
+        style: {
+          ...annotation.style,
+          ...updatedAnnotationStyle.line,
+        },
+      };
+    }
+    default:
+      throw new Error(
+        'Unsupported annotation type for updating style' + annotation.type
+      );
+  }
+};
+
+type AnnotationStyleByType = {
+  shape: ShapeAnnotationStyle;
+  text: TextAnnotationStyle;
+  line: LineAnnotationStyle;
+};
+
+export type OnUpdateAnnotationStyleByType = (
+  updateAnnotationStyle: ExactlyOneKey<AnnotationStyleByType>
 ) => void;
 
 type ToolOptions = Record<string, any>;
 
 const DEFAULT_STYLE = {
-  fill: 'rgba(0, 179, 230, 0.5)',
-  stroke: '#000000',
+  fill: SHAPE_ANNOTATION_FILL_COLOR_MAP.BLUE,
+  stroke: SHAPE_ANNOTATION_STROKE_COLOR_MAP.BLUE,
   strokeWidth: 3,
   isWorkspaceAnnotation: true,
 };
@@ -27,21 +102,20 @@ const DEFAULT_STYLE = {
 const DEFAULT_TOOL_OPTIONS: Record<ToolType, ToolOptions> = {
   [ToolType.RECTANGLE]: DEFAULT_STYLE,
   [ToolType.ELLIPSE]: DEFAULT_STYLE,
-  [ToolType.POLYLINE]: DEFAULT_STYLE,
+  [ToolType.POLYLINE]: {
+    stroke: TEXT_ANNOTATION_COLOR_MAP.BLUE,
+    strokeWidth: LINE_STROKE_WIDTH.MEDIUM,
+    isWorkspaceAnnotation: true,
+  },
   [ToolType.TEXT]: {
-    strokeWidth: 0,
-    fill: '#000000',
-    stroke: '#000000',
+    fontSize: FONT_SIZE['18px'],
+    fill: TEXT_ANNOTATION_COLOR_MAP.BLACK,
+    isWorkspaceAnnotation: true,
   },
   [ToolType.SELECT]: DEFAULT_STYLE,
   [ToolType.LINE]: DEFAULT_STYLE,
   [ToolType.IMAGE]: {},
   [ToolType.PAN]: {},
-};
-
-type ToolState = {
-  tool: ToolType;
-  optionsByToolType: Record<ToolType, ToolOptions>;
 };
 
 const useManagedTools = ({
@@ -56,90 +130,95 @@ const useManagedTools = ({
   tool: ToolType;
   toolOptions: ToolOptions;
   setTool: (nextTool: ToolType, options?: ToolOptions) => void;
-  shapeAnnotationStyle: ShapeAnnotationStyle;
-  onUpdateShapeAnnotationStyle: OnUpdateShapeAnnotationStyle;
+  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
 } => {
-  const [{ tool, optionsByToolType }, setToolState] = useState<ToolState>({
-    tool: initialTool,
-    optionsByToolType: DEFAULT_TOOL_OPTIONS,
-  });
+  const [tool, setTool] = useState<ToolType>(initialTool);
 
-  const setTool = useCallback((nextTool: ToolType, options?: ToolOptions) => {
-    setToolState((prevState) => ({
-      tool: nextTool,
-      optionsByToolType: {
-        ...prevState.optionsByToolType,
-        [nextTool]:
-          options === undefined
-            ? prevState.optionsByToolType[nextTool]
-            : options,
+  const [activeAnnotationStyleByType, setActiveAnnotationStyleByType] =
+    useState<AnnotationStyleByType>({
+      shape: {
+        fill: undefined,
+        stroke: undefined,
       },
-    }));
-  }, []);
-
-  const [shapeAnnotationStyle, setShapeAnnotationStyle] =
-    useState<ShapeAnnotationStyle>({
-      fill: ShapeAnnotationColor.BLUE,
-      stroke: ShapeAnnotationColor.BLUE,
+      text: {
+        fontSize: undefined,
+      },
+      line: {
+        stroke: undefined,
+        strokeWidth: undefined,
+      },
     });
 
-  const onUpdateShapeAnnotationStyle: OnUpdateShapeAnnotationStyle =
+  const onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType =
     useCallback(
-      (updateShapeAnnotationStyle) => {
-        setShapeAnnotationStyle((prevShapeAnnotationOption) => {
-          const nextShapeAnnotationOptions = {
-            ...prevShapeAnnotationOption,
-            ...updateShapeAnnotationStyle,
+      (updateAnnotationStyle) => {
+        setActiveAnnotationStyleByType((prevAnnotationStyle) => {
+          const annotationType = Object.keys(
+            updateAnnotationStyle
+          )[0] as keyof AnnotationStyleByType;
+          const nextAnnotationStyleByType = {
+            ...prevAnnotationStyle,
+            [annotationType]: {
+              ...prevAnnotationStyle[annotationType],
+              ...updateAnnotationStyle[annotationType],
+            },
           };
 
           if (selectedCanvasAnnotation) {
             onUpdateRequest({
               containers: [],
               annotations: [
-                {
-                  ...selectedCanvasAnnotation,
-                  style: {
-                    ...selectedCanvasAnnotation.style,
-                    fill: fillShapeAnnotationColorToHex(
-                      nextShapeAnnotationOptions.fill
-                    ),
-                    stroke: strokeShapeAnnotationColorToHex(
-                      nextShapeAnnotationOptions.stroke
-                    ),
-                  },
-                } as RectangleAnnotation, // TODO: Fix typing
+                getAnnotationWithUpdatedStyle(
+                  selectedCanvasAnnotation,
+                  updateAnnotationStyle
+                ),
               ],
             });
           }
-          return nextShapeAnnotationOptions;
+          return nextAnnotationStyleByType;
         });
       },
-      [selectedCanvasAnnotation, onUpdateRequest, setShapeAnnotationStyle]
+      [
+        selectedCanvasAnnotation,
+        onUpdateRequest,
+        setActiveAnnotationStyleByType,
+      ]
     );
 
   const toolOptions = useMemo(() => {
     if (tool === ToolType.SELECT || tool === ToolType.PAN) {
-      return optionsByToolType[tool];
+      return DEFAULT_TOOL_OPTIONS[tool];
     }
 
     if (tool === ToolType.RECTANGLE) {
-      const { fill, stroke } = shapeAnnotationStyle;
       return {
-        ...optionsByToolType[tool],
-        fill: fillShapeAnnotationColorToHex(fill),
-        stroke: strokeShapeAnnotationColorToHex(stroke),
+        ...DEFAULT_TOOL_OPTIONS[tool],
+        ...filterNotUndefinedValues(activeAnnotationStyleByType.shape),
+      };
+    }
+
+    if (tool === ToolType.TEXT) {
+      return {
+        ...DEFAULT_TOOL_OPTIONS[tool],
+        ...filterNotUndefinedValues(activeAnnotationStyleByType.text),
+      };
+    }
+
+    if (tool === ToolType.LINE) {
+      return {
+        ...DEFAULT_TOOL_OPTIONS[tool],
+        ...filterNotUndefinedValues(activeAnnotationStyleByType.line),
       };
     }
 
     throw new Error('Unsupported tool type: ' + tool);
-  }, [tool, shapeAnnotationStyle, optionsByToolType]);
+  }, [tool, activeAnnotationStyleByType]);
 
   return {
     tool,
     toolOptions,
     setTool,
-    shapeAnnotationStyle,
-    onUpdateShapeAnnotationStyle,
+    onUpdateAnnotationStyleByType,
   };
 };
 

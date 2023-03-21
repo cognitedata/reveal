@@ -10,7 +10,7 @@ import {
   ContainerReferenceWithoutDimensions,
 } from '../types';
 import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
-import { ShapeAnnotationTooltipProps } from '../components/ShapeAnnotationTooltip';
+import { OnUpdateAnnotationStyleByType } from './useManagedTools';
 
 export type UseTooltipsParams = {
   containerAnnotations: ExtendedAnnotation[];
@@ -23,7 +23,9 @@ export type UseTooltipsParams = {
   updateContainerReference: (
     containerReference: ContainerReferenceWithoutDimensions
   ) => void;
-} & ShapeAnnotationTooltipProps;
+  onDeleteSelectedCanvasAnnotation: () => void;
+  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
+};
 
 const useIndustryCanvasTooltips = ({
   containerAnnotations,
@@ -34,8 +36,7 @@ const useIndustryCanvasTooltips = ({
   removeContainerReference,
   containerReferences,
   onDeleteSelectedCanvasAnnotation,
-  shapeAnnotationStyle,
-  onUpdateShapeAnnotationStyle,
+  onUpdateAnnotationStyleByType,
   updateContainerReference,
 }: UseTooltipsParams) => {
   const assetTooltips = useIndustryCanvasAssetTooltips(
@@ -50,8 +51,7 @@ const useIndustryCanvasTooltips = ({
   const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
     selectedCanvasAnnotation,
     onDeleteSelectedCanvasAnnotation,
-    shapeAnnotationStyle,
-    onUpdateShapeAnnotationStyle,
+    onUpdateAnnotationStyleByType,
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     clickedContainer,
