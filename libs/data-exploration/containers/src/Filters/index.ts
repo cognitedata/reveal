@@ -1,5 +1,7 @@
 export * from './MultiSelectFilter';
 export * from './SourceFilter';
+export * from './IsStepFilter';
+export * from './IsStringFilter';
 export * from './AssetSelectFilter';
 export * from './DataSetFilter';
 export * from './SubtypeFilter';

@@ -18,6 +18,7 @@ import {
   TIME_PERIOD_OPTIONS,
 } from './constants';
 import { TimePeriodSelect } from './components/TimePeriodSelect';
+import { OpenInChartsButton } from './components/OpenInChartsButton';
 import { getChartByVariant } from './utils/getChartByVariant';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
@@ -75,6 +76,12 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
           options={timePeriodSelectOptions}
           value={selectedTimePeriod}
           onChange={updateDateRange}
+        />,
+      ]}
+      renderActions={() => [
+        <OpenInChartsButton
+          timeseriesId={timeseriesId}
+          dateRange={dateRange}
         />,
       ]}
     />

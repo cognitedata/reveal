@@ -61,6 +61,9 @@ export const TimeseriesTable = ({
     );
   }, [metadataKeys]);
 
+  const startTime = dateRange[0].getTime();
+  const endTime = dateRange[1].getTime();
+
   const columns = useMemo(() => {
     const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
       header: 'Preview',
@@ -149,7 +152,7 @@ export const TimeseriesTable = ({
       ...metadataColumns,
     ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metadataColumns, dateRange]);
+  }, [metadataColumns, startTime, endTime]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

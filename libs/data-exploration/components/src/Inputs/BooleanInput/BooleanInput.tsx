@@ -2,15 +2,13 @@ import { useMemo } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import { FilterLabel } from '../../Labels/FilterLabel';
 
-export const BooleanInput = ({
-  label,
-  value,
-  onChange,
-}: {
+export interface BooleanInputProps {
   label?: string;
   value?: boolean | undefined;
   onChange?: (newValue: boolean | undefined) => void;
-}) => {
+}
+
+export const BooleanInput = ({ label, value, onChange }: BooleanInputProps) => {
   const currentKey = useMemo(() => {
     if (value === undefined) {
       return 'unset';

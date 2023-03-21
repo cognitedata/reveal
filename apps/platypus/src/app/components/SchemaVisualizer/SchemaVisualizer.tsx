@@ -85,7 +85,7 @@ export const SchemaVisualizer = React.memo(
 
     const schemaTypes = useMemo(() => {
       setErrorMessage('');
-      if (!graphQLSchemaString) {
+      if (!graphQLSchemaString || graphQLSchemaString.trim() === '') {
         setIsLoaded(true);
         return [];
       }

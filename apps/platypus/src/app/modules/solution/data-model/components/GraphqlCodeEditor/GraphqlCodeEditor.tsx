@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import {
   Environment as MonacoEditorEnvironment,
   editor as MonacoEditor,
+  MarkerSeverity,
 } from 'monaco-editor';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ErrorsByGroup } from './Model';
@@ -40,6 +41,7 @@ type Props = {
   disabled?: boolean;
   errorsByGroup: ErrorsByGroup;
   setErrorsByGroup: (errors: ErrorsByGroup) => void;
+  setEditorHasError: (hasError: boolean) => void;
   onChange: (code: string) => void;
 };
 
@@ -52,6 +54,7 @@ export const GraphqlCodeEditor = React.memo(
     errorsByGroup,
     setErrorsByGroup,
     onChange,
+    setEditorHasError,
   }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
     const langProviders = useRef<any>(null);
@@ -143,6 +146,15 @@ export const GraphqlCodeEditor = React.memo(
           beforeMount={editorWillMount}
           onMount={handleEditorDidMount}
           defaultLanguage="graphql"
+          onValidate={(markers) => {
+            setEditorHasError(
+              markers.some(
+                (marker) =>
+                  marker.severity === MarkerSeverity.Error &&
+                  marker.owner === 'graphql'
+              )
+            );
+          }}
           onChange={(value) => {
             const editCode = value || '';
             debouncedOnChange(editCode);
