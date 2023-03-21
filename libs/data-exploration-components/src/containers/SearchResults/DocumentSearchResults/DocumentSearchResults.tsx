@@ -14,7 +14,6 @@ import {
 import { Asset, FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
-import { v4 as uuid } from 'uuid';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-components/context/AppContext';
@@ -133,7 +132,7 @@ export const DocumentSearchResults = ({
       />
       {modalVisible && (
         <DocumentUploaderModal
-          key={uuid()}
+          key="document-uploader-modal"
           visible={modalVisible}
           onFileSelected={(file) => {
             if (onFileClicked) {

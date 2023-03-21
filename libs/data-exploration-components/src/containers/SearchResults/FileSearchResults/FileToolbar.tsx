@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
@@ -63,7 +62,7 @@ export const FileToolbar = ({
         )}
       </SearchResultToolbar>
       <FileUploaderModal
-        key={uuid()}
+        key="file-uploader-modal"
         visible={modalVisible}
         onFileSelected={(file) => {
           if (onFileClicked) {
