@@ -260,7 +260,9 @@ export const ColumnToggle = ({
         icon="SplitView"
         aria-label="Column Selection"
         data-cy="column-select"
-      />
+      >
+        Columns
+      </Button>
     </Dropdown>
   );
 };
