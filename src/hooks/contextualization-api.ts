@@ -16,12 +16,14 @@ import {
 } from '@tanstack/react-query';
 import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
 import {
+  PipelineSourceType,
   RawCogniteEvent,
   RawFileInfo,
   RawSource,
   RawTarget,
   RawTimeseries,
   SourceType,
+  TargetType,
 } from 'types/api';
 import { filterFieldsFromObjects } from 'utils';
 
@@ -89,12 +91,12 @@ export type Pipeline = {
   owner: string;
   run: string;
   sources: {
-    dataSetIds: [{ id: number }];
-    resource: string;
+    dataSetIds: { id: number }[];
+    resource: PipelineSourceType;
   };
   targets: {
-    dataSetIds: [{ id: number }];
-    resource: string;
+    dataSetIds: { id: number }[];
+    resource: TargetType;
   };
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
@@ -185,6 +187,53 @@ export const useCreatePipeline = (
                 dataSetIds: [],
                 resource: 'assets',
               },
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        });
+    },
+    {
+      ...options,
+      onSuccess: (...params) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        options?.onSuccess?.(...params);
+      },
+    }
+  );
+};
+
+type PipelineUpdateParams = Required<Pick<Pipeline, 'id'>> &
+  Partial<Omit<Pipeline, 'id'>>;
+export const useUpdatePipeline = (
+  options?: UseMutationOptions<Pipeline, CogniteError, PipelineUpdateParams>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<Pipeline, CogniteError, PipelineUpdateParams>(
+    async (params) => {
+      const { id, ...rest } = params;
+      const update = Object.entries(rest).reduce((acc, [key, value]) => {
+        acc[key] = { set: value };
+        return acc;
+      }, {} as Record<string, unknown>);
+      return sdk
+        .post<Pipeline>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/update`,
+          {
+            data: {
+              items: [
+                {
+                  id,
+                  update,
+                },
+              ],
             },
           }
         )

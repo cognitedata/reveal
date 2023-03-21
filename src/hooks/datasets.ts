@@ -13,8 +13,8 @@ const getAllDatasets = (sdk: CogniteClient) =>
   sdk.datasets.list({ limit: 1000 }).autoPagingToArray({ limit: -1 });
 
 const allDataSetsKey = (api?: API): QueryKey => ['datasets', api];
-export const useAllDataSets = <T>(
-  options?: UseQueryOptions<DataSet[], CogniteError, T>
+export const useAllDataSets = (
+  options?: UseQueryOptions<DataSet[], CogniteError, DataSet[]>
 ) => {
   const sdk = useSDK();
 
@@ -49,7 +49,7 @@ export const useDataSets = (
               aggregate: 'uniqueValues',
               properties: [{ property: ['dataSetId'] }],
             },
-            { retry: false }
+            { retry: false, staleTime: 60000 }
           );
 
           const dataSetIds: InternalId[] =
