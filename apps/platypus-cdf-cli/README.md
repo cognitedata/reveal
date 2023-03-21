@@ -81,7 +81,7 @@ This functionality creates a `FDMQueryClient` that is **auto-generated** from th
 This tool **reduces boilerplate**. And you can easily use it along side React Query (demo coming soon).
 
 ```js
-import { FDMQueryClientBuilder } from '@cognite/fdm-client';
+import { FDMQueryClientBuilder } from './generated'; // you can change the output via the --output-directory when running `generate-js-sdk`
 
 const client = FDMQueryClientBuilder.fromClient(/**Your CogniteClient Here**/);
 ```
@@ -97,8 +97,6 @@ To run these queries, use the `runQuery` command and it will autocomplete all of
 #### Basic query with no variables
 
 ```js
-import { everything } from '@cognite/fdm-client';
-
 client
   .runQuery({
     searchMovie: {
