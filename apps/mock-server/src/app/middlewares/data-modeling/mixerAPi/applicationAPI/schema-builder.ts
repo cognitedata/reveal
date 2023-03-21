@@ -180,7 +180,9 @@ ${mixerApiV3CustomDirectives}
             extendedSchema = extendedSchema.replace(
               match,
               `${match}
-        externalId: ID!`
+              externalId: ID!
+              lastUpdatedTime: Timestamp!
+              createdTime: Timestamp!`
             );
           }
         });

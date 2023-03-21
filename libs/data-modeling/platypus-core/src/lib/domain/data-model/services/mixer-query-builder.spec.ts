@@ -148,6 +148,8 @@ describe('MixerApiQueryBuilderServiceTest', () => {
       listPerson(filter: $filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          lastUpdatedTime
+          createdTime
           name
 posts (first: 2) { items { externalId } }
 user { name }
@@ -183,6 +185,8 @@ user { name }
       listPerson(filter: $filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          lastUpdatedTime
+          createdTime
           name
 posts (first: 2) { items { externalId } }
 user { name }
@@ -217,6 +221,8 @@ user { name }
       listPerson(filter: $filter, first: ${limit}, after: "${cursor}", sort: {title: ASC}) {
         items {
           externalId
+          lastUpdatedTime
+          createdTime
           name
 posts (first:2) { items { externalId } }
 user { name }
@@ -249,6 +255,8 @@ user { name }
         searchPerson(first: $first, query: $query, filter:$filter) {
           items {
             externalId
+            lastUpdatedTime
+            createdTime
             name
             posts (first: 2){ items { externalId } }
             user { name }
@@ -293,6 +301,8 @@ user { name }
       listPerson(filter:$filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          lastUpdatedTime
+          createdTime
           myTimeSeries { externalId }
         }
         pageInfo {
@@ -353,6 +363,8 @@ user { name }
       listDemo(filter:$filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          lastUpdatedTime
+          createdTime
           ts { externalId }
           tsList { externalId }
         }
@@ -405,6 +417,8 @@ user { name }
       listPerson(filter:$filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          lastUpdatedTime
+          createdTime
         }
         pageInfo {
           startCursor

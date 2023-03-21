@@ -222,6 +222,8 @@ export const mockDataSample = {
           {
             id: 1,
             externalId: '1',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             title: 'Lorem Ipsum',
             views: 254,
             user: { externalId: '123' },
@@ -236,6 +238,8 @@ export const mockDataSample = {
           {
             id: 2,
             externalId: '2',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             title: 'Sic Dolor amet',
             views: 65,
             user: { externalId: '456' },
@@ -253,13 +257,27 @@ export const mockDataSample = {
           },
         ],
         User_1: [
-          { id: 123, externalId: '123', name: 'John Doe' },
-          { id: 456, externalId: '456', name: 'Jane Doe' },
+          {
+            id: 123,
+            externalId: '123',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
+            name: 'John Doe',
+          },
+          {
+            id: 456,
+            externalId: '456',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
+            name: 'Jane Doe',
+          },
         ],
         Comment_1: [
           {
             id: 987,
             externalId: '987',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             post: { externalId: '1' },
             body: 'Consectetur adipiscing elit',
             date: 1651346026630,
@@ -267,6 +285,8 @@ export const mockDataSample = {
           {
             id: 995,
             externalId: '995',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             post: { externalId: '1' },
             body: 'Nam molestie pellentesque dui',
             date: 1651346026630,
@@ -274,6 +294,8 @@ export const mockDataSample = {
           {
             id: 996,
             externalId: '996',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             post: { externalId: '1' },
             body: 'Random comment 996',
             date: 1651346026630,
@@ -281,6 +303,8 @@ export const mockDataSample = {
           {
             id: 997,
             externalId: '997',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             post: { externalId: '1' },
             body: 'Random comment 997',
             date: 1651346026630,

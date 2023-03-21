@@ -128,14 +128,19 @@ export const ColumnToggle = ({
       }}
       content={
         <Suspense fallback="...loading">
-          <StyledMenu>
+          <StyledMenu data-cy="column-select-dropdown">
             <SegmentedControl
               fullWidth
               onButtonClicked={handleTabClick}
               currentKey={tab}
             >
-              <StyledSegmentedButton key="All">All</StyledSegmentedButton>
-              <StyledSegmentedButton key="Selected">
+              <StyledSegmentedButton key="All" data-cy="all-columns">
+                All
+              </StyledSegmentedButton>
+              <StyledSegmentedButton
+                key="Selected"
+                data-cy="selected-columns-only"
+              >
                 Selected
                 <StyledCountLabel
                   size="small"
@@ -161,6 +166,7 @@ export const ColumnToggle = ({
             <Flex gap={6}>
               <Button
                 size="small"
+                data-cy="select-all"
                 key="select-all"
                 onClick={() => {
                   setColumns((columns) =>
@@ -174,6 +180,7 @@ export const ColumnToggle = ({
               </Button>
               <Button
                 size="small"
+                data-cy="deselect-all"
                 key="deselect-all"
                 onClick={() => {
                   setColumns((columns) =>
@@ -249,7 +256,11 @@ export const ColumnToggle = ({
         </Suspense>
       }
     >
-      <Button icon="SplitView" aria-label="Column Selection" />
+      <Button
+        icon="SplitView"
+        aria-label="Column Selection"
+        data-cy="column-select"
+      />
     </Dropdown>
   );
 };

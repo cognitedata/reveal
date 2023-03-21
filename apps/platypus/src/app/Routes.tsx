@@ -15,6 +15,7 @@ import { useInjection } from './hooks/useInjection';
 import { TOKENS } from './di';
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration-components/components/DragDropContainer/constants';
 import { getContainer } from './GlobalStyles';
+import zIndex from './utils/zIndex';
 
 const DataModelSubRoutes = () => (
   <ReactRoutes>
@@ -57,7 +58,9 @@ const Routes = () => {
   useEffect(() => {
     const dragDropPortal: HTMLElement = document.createElement('div');
     dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);
-    getContainer().appendChild(dragDropPortal);
+    dragDropPortal.style.zIndex = `${zIndex.MAXIMUM}`;
+    dragDropPortal.style.position = 'absolute';
+    (getContainer() || document.body).appendChild(dragDropPortal);
   }, []);
 
   return (

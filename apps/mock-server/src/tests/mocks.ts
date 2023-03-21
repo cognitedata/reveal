@@ -132,6 +132,8 @@ directive @relation(
 
 type Post {
   externalId: ID!
+  lastUpdatedTime: Timestamp!
+  createdTime: Timestamp!
   title: String!
   views: Int!
   user: User
@@ -145,11 +147,15 @@ type Post {
 
 type User {
   externalId: ID!
+  lastUpdatedTime: Timestamp!
+  createdTime: Timestamp!
   name: String!
 }
 
 type Comment {
   externalId: ID!
+  lastUpdatedTime: Timestamp!
+  createdTime: Timestamp!
   body: String!
   date: Timestamp!
   post: Post
