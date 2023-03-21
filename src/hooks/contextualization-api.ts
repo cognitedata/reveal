@@ -16,12 +16,14 @@ import {
 } from '@tanstack/react-query';
 import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
 import {
+  PipelineSourceType,
   RawCogniteEvent,
   RawFileInfo,
   RawSource,
   RawTarget,
   RawTimeseries,
   SourceType,
+  TargetType,
 } from 'types/api';
 import { filterFieldsFromObjects } from 'utils';
 
@@ -90,11 +92,11 @@ export type Pipeline = {
   run: string;
   sources: {
     dataSetIds: { id: number }[];
-    resource: string;
+    resource: PipelineSourceType;
   };
   targets: {
     dataSetIds: { id: number }[];
-    resource: string;
+    resource: TargetType;
   };
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];

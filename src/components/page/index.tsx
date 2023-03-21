@@ -42,7 +42,7 @@ const Content = styled.div<{ $hasFooter?: boolean }>`
           ? FOOTER_HEIGHT + SECONDARY_TOPBAR_HEIGHT
           : SECONDARY_TOPBAR_HEIGHT}px
   );
-  padding: 12px;
+  padding: 24px;
   overflow-y: auto;
 `;
 
