@@ -18,7 +18,7 @@ import {
   mixerApiBuiltInTypes,
 } from '@platypus/platypus-core';
 
-const DEBUG = _DEBUG.extend('solutions:generate');
+const DEBUG = _DEBUG.extend('js-sdk:generate');
 
 export type SolutionsGeneratePythonCommandArgs = BaseArgs & {
   ['external-id']: string;
@@ -74,7 +74,7 @@ const commandArgs = [
 
 const command = 'generate-js-sdk';
 const describe =
-  'Create a JavaScript (TypeScript) SDK for interacting with FDM';
+  'Create a JavaScript (TypeScript) SDK from a data model to query and populate data, with code completion, type checks, and more.';
 class SolutionGenerateJSCommand extends CLICommand {
   async execute(args: Arguments<SolutionsGeneratePythonCommandArgs>) {
     try {
