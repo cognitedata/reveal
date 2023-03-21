@@ -809,7 +809,7 @@ __metadata:
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
     gl: 6.0.2
-    glob: 9.2.1
+    glob: 9.3.0
     glslify: 7.1.1
     glslify-import: 3.1.0
     glslify-loader: 2.0.0
@@ -5747,15 +5747,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:9.2.1, glob@npm:^9.2.0":
-  version: 9.2.1
-  resolution: "glob@npm:9.2.1"
+"glob@npm:9.3.0":
+  version: 9.3.0
+  resolution: "glob@npm:9.3.0"
   dependencies:
     fs.realpath: ^1.0.0
     minimatch: ^7.4.1
     minipass: ^4.2.4
     path-scurry: ^1.6.1
-  checksum: ef9b1c32491e6b532bdd0d2abcc3c9f48e83446609e11285869156982fc5a756dfbaa6f59f797712343bd1e22500ac15708692806633653fde4ef67c85e2aab7
+  checksum: 9beb4f1cdc9585412efd991a9786c1ee6816dfd0537494fd552c333fa3d4b041fce5681bce21d14651e41479f60866e10a35a2ce2571fd40b7cf73842ea12192
   languageName: node
   linkType: hard
 
@@ -5797,6 +5797,18 @@ __metadata:
     minimatch: ^5.0.1
     once: ^1.3.0
   checksum: 50bcdea19d8e79d8de5f460b1939ffc2b3299eac28deb502093fdca22a78efebc03e66bf54f0abc3d3d07d8134d19a32850288b7440d77e072aa55f9d33b18c5
+  languageName: node
+  linkType: hard
+
+"glob@npm:^9.2.0":
+  version: 9.2.1
+  resolution: "glob@npm:9.2.1"
+  dependencies:
+    fs.realpath: ^1.0.0
+    minimatch: ^7.4.1
+    minipass: ^4.2.4
+    path-scurry: ^1.6.1
+  checksum: ef9b1c32491e6b532bdd0d2abcc3c9f48e83446609e11285869156982fc5a756dfbaa6f59f797712343bd1e22500ac15708692806633653fde4ef67c85e2aab7
   languageName: node
   linkType: hard
 
