@@ -2,20 +2,34 @@ import { PlotData } from 'plotly.js';
 
 import times from 'lodash/times';
 
-import { DEFAULT_LINE_COLOR, LINE_WIDTH, MARKER_SIZE } from '../constants';
-import { LineChartProps } from '../types';
+import {
+  DEFAULT_LINE_COLOR,
+  HOVER_MARKER_BORDER_WIDTH,
+  LINE_WIDTH,
+  MARKER_SIZE,
+} from '../constants';
+import { LineChartProps, Variant } from '../types';
 import { getDataAsArray } from './getDataAsArray';
 import { getLineName } from './getLineName';
 
 export const adaptToPlotlyPlotData = (
   data: LineChartProps['data'],
-  showMarkers: boolean
+  showMarkers: boolean,
+  variant?: Variant
 ): Partial<PlotData>[] => {
+  const mode = showMarkers ? 'lines+markers' : 'lines';
+
+  let markerSize = showMarkers ? MARKER_SIZE : 0;
+  let markerOutlineWidth = HOVER_MARKER_BORDER_WIDTH;
+
+  if (variant === 'small') {
+    markerSize /= 2;
+    markerOutlineWidth /= 2;
+  }
+
   return getDataAsArray(data).map(
     ({ x, y, color, name, customData }, index) => {
-      const mode = showMarkers ? 'lines+markers' : 'lines';
       const lineColor = color || DEFAULT_LINE_COLOR;
-      const markerSize = showMarkers ? MARKER_SIZE : 0;
       const markerSizes = times(x.length).map(() => markerSize);
       const markerLineColors = times(x.length).map(() => 'transparent');
 
@@ -31,7 +45,7 @@ export const adaptToPlotlyPlotData = (
           size: markerSizes,
           opacity: 1,
           line: {
-            width: 2,
+            width: markerOutlineWidth,
             color: markerLineColors,
           },
         },

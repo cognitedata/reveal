@@ -1,61 +1,71 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import difference from 'lodash/difference';
 
-import { LineChart } from '../LineChart';
 import { TimePeriods } from './components/TimePeriods';
 
 import { useTimerseriesQuery } from './hooks/useTimerseriesQuery';
 import {
+  DateRange,
   TimePeriod,
   TimeseriesChartProps,
-  UpdateDateRangeProps,
+  UpdateTimePeriodProps,
 } from './types';
-import { formatTooltipContent } from './utils/formatTooltipContent';
-import { CONFIG, EMPTY_DATA, LAYOUT, TIME_PERIOD_OPTIONS } from './constants';
-import { formatHoverLineInfo } from './utils/formatHoverLineInfo';
+import {
+  DEFAULT_DATAPOINTS_LIMIT,
+  EMPTY_DATA,
+  TIME_PERIOD_OPTIONS,
+} from './constants';
 import { TimePeriodSelect } from './components/TimePeriodSelect';
+import { OpenInChartsButton } from './components/OpenInChartsButton';
+import { getChartByVariant } from './utils/getChartByVariant';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   timeseriesId,
+  variant = 'large',
+  numberOfPoints = DEFAULT_DATAPOINTS_LIMIT,
   quickTimePeriodOptions = [],
-  dateRange,
-  onChangeDateRange,
+  dateRange: dateRangeProp,
+  backgroundColor,
   height,
+  onChangeTimePeriod,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
-  const [[start, end], setDateRange] = useState(
-    dateRange || [undefined, undefined]
-  );
+  const [dateRange, setDateRange] = useState<DateRange>();
 
-  const { data } = useTimerseriesQuery({
+  const { data, isLoading } = useTimerseriesQuery({
     timeseriesId,
-    start,
-    end,
+    start: dateRange?.[0],
+    end: dateRange?.[1],
+    limit: numberOfPoints,
   });
 
   const timePeriodSelectOptions = useMemo(() => {
     return difference(TIME_PERIOD_OPTIONS, quickTimePeriodOptions);
   }, [quickTimePeriodOptions]);
 
-  const updateDateRange = ({
-    timePeriod: newTimePeriod,
-    dateRange: newDateRange,
-  }: UpdateDateRangeProps) => {
-    setSelectedTimePeriod(newTimePeriod);
-    setDateRange(newDateRange);
-    onChangeDateRange?.(newDateRange);
+  const updateDateRange = (props: UpdateTimePeriodProps) => {
+    setSelectedTimePeriod(props.timePeriod);
+    setDateRange(props.dateRange);
+
+    onChangeTimePeriod?.(props);
   };
 
+  useEffect(() => {
+    if (dateRangeProp) {
+      setSelectedTimePeriod(undefined);
+      setDateRange(dateRangeProp);
+    }
+  }, [dateRangeProp]);
+
+  const Chart = getChartByVariant(variant);
+
   return (
-    <LineChart
+    <Chart
       data={data || EMPTY_DATA}
-      layout={LAYOUT}
-      config={CONFIG}
-      style={{ height }}
-      formatTooltipContent={formatTooltipContent}
-      formatHoverLineInfo={formatHoverLineInfo}
+      isLoading={isLoading}
+      style={{ backgroundColor, height }}
       renderFilters={() => [
         <TimePeriods
           options={quickTimePeriodOptions}
@@ -66,6 +76,12 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
           options={timePeriodSelectOptions}
           value={selectedTimePeriod}
           onChange={updateDateRange}
+        />,
+      ]}
+      renderActions={() => [
+        <OpenInChartsButton
+          timeseriesId={timeseriesId}
+          dateRange={dateRange}
         />,
       ]}
     />

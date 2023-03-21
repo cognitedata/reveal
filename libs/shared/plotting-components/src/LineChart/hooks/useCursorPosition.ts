@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import get from 'lodash/get';
-
 import { Coordinate } from '../types';
 import { createEventListener } from '../utils/createEventListener';
-import head from 'lodash/head';
-import { checkIsClientOnElementt } from '../utils/checkIsClientOnElementt';
 
-const CURSOR_ADJUSTMENT = 2;
+import { checkIsCursorOnPlot } from '../utils/checkIsCursorOnPlot';
+import { getCursorPosition } from '../utils/getCursorPosition';
 
 export const useCursorPosition = (
   chartRef: React.RefObject<HTMLDivElement>
@@ -17,31 +14,28 @@ export const useCursorPosition = (
   const [isCursorOnPlot, setCursorOnPlot] = useState(false);
 
   useEffect(() => {
-    createEventListener(chartRef.current, 'mousemove', (event) => {
-      const chartBounds = chartRef.current?.getBoundingClientRect();
+    return createEventListener<MouseEvent>(
+      chartRef.current,
+      'mousemove',
+      (event) => {
+        const cursorPosition = getCursorPosition(chartRef, event);
+        setCursorPosition(cursorPosition);
 
-      const plotBounds = head(
-        chartRef.current?.getElementsByClassName('nsewdrag drag')
-      )?.getBoundingClientRect();
-
-      if (!chartBounds) {
-        return;
+        const isCursorOnPlot = checkIsCursorOnPlot(chartRef, event);
+        setCursorOnPlot(isCursorOnPlot);
       }
+    );
+  }, [chartRef]);
 
-      const clientX = get(event, 'clientX', 0);
-      const clientY = get(event, 'clientY', 0);
-
-      const x = clientX - chartBounds.left + CURSOR_ADJUSTMENT;
-      const y = clientY - chartBounds.top + CURSOR_ADJUSTMENT;
-
-      setCursorPosition({ x, y });
-
-      const isCursorOnPlot = checkIsClientOnElementt(
-        { x: clientX, y: clientY },
-        plotBounds
-      );
-      setCursorOnPlot(isCursorOnPlot);
-    });
+  useEffect(() => {
+    return createEventListener<MouseEvent>(
+      chartRef.current,
+      'mouseleave',
+      (event) => {
+        const isCursorOnPlot = checkIsCursorOnPlot(chartRef, event);
+        setCursorOnPlot(isCursorOnPlot);
+      }
+    );
   }, [chartRef]);
 
   return { cursorPosition, isCursorOnPlot };

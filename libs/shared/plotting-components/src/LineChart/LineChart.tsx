@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { LineChartWrapper } from './elements';
 import { LineChartProps } from './types';
@@ -15,11 +15,11 @@ import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
 import { getConfig } from './utils/getConfig';
 import { getStyleProperties } from './utils/getStyleProperties';
 import { useCursorPosition } from './hooks/useCursorPosition';
-import { getMarkerPosition } from './utils/getMarkerPosition';
 import { isContinuousHoverEnabled } from './utils/isContinuousHoverEnabled';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
+  isLoading,
   xAxis,
   yAxis,
   title,
@@ -40,7 +40,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   const [isPlotSelecting, setPlotSelecting] = useState(false);
 
   const layout = getLayout(layoutProp, variant);
-  const config = getConfig(configProp);
+  const config = getConfig(configProp, variant);
   const style = getStyleProperties(styleProp, variant);
 
   const {
@@ -67,7 +67,13 @@ export const LineChart: React.FC<LineChartProps> = ({
       isPlotSelecting,
     });
 
-  const markerPosition = getMarkerPosition(plotHoverEvent);
+  const handlePlotSelecting = useCallback(() => {
+    setPlotSelecting(true);
+  }, []);
+
+  const handlePlotSelected = useCallback(() => {
+    setPlotSelecting(false);
+  }, []);
 
   return (
     <LineChartWrapper ref={chartRef} style={style}>
@@ -90,31 +96,34 @@ export const LineChart: React.FC<LineChartProps> = ({
       <Plot
         ref={plotRef}
         data={data}
+        isLoading={isLoading}
+        variant={variant}
         xAxis={xAxis}
         yAxis={yAxis}
         layout={layout}
         config={config}
-        plotHoverEvent={plotHoverEvent}
         isCursorOnPlot={isCursorOnPlot}
         height={styleProp?.height}
         width={styleProp?.width}
-        backgroundColor={backgroundColor}
         onHover={updatePlotHoverEvent}
         onUnhover={setPlotUnhovered}
-        onSelecting={() => setPlotSelecting(true)}
-        onSelected={() => setPlotSelecting(false)}
+        onSelecting={handlePlotSelecting}
+        onSelected={handlePlotSelected}
       />
 
       <HoverLayer
         chartRef={chartRef}
         layout={layout}
+        variant={variant}
         plotHoverEvent={plotHoverEvent}
-        position={isContinuousHover ? cursorPosition : markerPosition}
+        cursorPosition={cursorPosition}
+        isContinuousHover={isContinuousHover}
         formatHoverLineInfo={formatHoverLineInfo}
       />
 
       <Tooltip
         chartRef={chartRef}
+        variant={variant}
         xAxisName={xAxis?.name}
         yAxisName={yAxis?.name}
         backgroundColor={backgroundColor}

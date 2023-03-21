@@ -474,6 +474,7 @@ const locationTypesMap = {
     kind: 'field',
   },
 } as LocationTypesMap;
+
 describe('HoverProviderService Test', () => {
   const hoverProvider = new HoverProviderService();
   it('provides primitive field information', () => {
@@ -537,7 +538,8 @@ describe('HoverProviderService Test', () => {
     );
 
     const expected = `### View and Container mappings
-    | View | Container|
+    &nbsp;
+    | Property | Container.property|
     | --- | --- |
     |id |**Person.id**: ID, not nullable|
     |name |**UserName.name**: String, not nullable|
@@ -546,8 +548,7 @@ describe('HoverProviderService Test', () => {
     |mappedField |**Test.field**: String|
     |ownedField |**Person.ownedField**: Int|
     |posts |**Person.posts**: [Post]|
-    | | |
-    
+    &nbsp;
     Documentation:
     ${DOCUMENTATION_LINK}`;
 

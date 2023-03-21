@@ -3,6 +3,9 @@ import '@testing-library/jest-dom';
 import { configure } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'regenerator-runtime/runtime';
+import noop from 'lodash/noop';
+
+window.URL.createObjectURL = noop;
 
 configure({ adapter: new Adapter() });
 

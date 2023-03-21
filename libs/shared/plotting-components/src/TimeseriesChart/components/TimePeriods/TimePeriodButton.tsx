@@ -2,13 +2,13 @@ import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
-import { TimePeriod, UpdateDateRangeProps } from '../../types';
+import { TimePeriod, UpdateTimePeriodProps } from '../../types';
 import { getDateRangeForTimePeriod } from '../../utils/getDateRangeForTimePeriod';
 
 export interface TimePeriodButtonProps {
   timePeriod: TimePeriod;
   isSelected?: boolean;
-  onClick: (props: UpdateDateRangeProps) => void;
+  onClick: (props: UpdateTimePeriodProps) => void;
 }
 
 export const TimePeriodButton: React.FC<TimePeriodButtonProps> = ({
@@ -16,14 +16,17 @@ export const TimePeriodButton: React.FC<TimePeriodButtonProps> = ({
   isSelected = false,
   onClick,
 }) => {
-  const dateRange = getDateRangeForTimePeriod(timePeriod);
+  const handleClick = () => {
+    const dateRange = getDateRangeForTimePeriod(timePeriod);
+    onClick({ timePeriod, dateRange });
+  };
 
   return (
     <Button
       type="secondary"
       size="medium"
       toggled={isSelected}
-      onClick={() => onClick({ timePeriod, dateRange })}
+      onClick={handleClick}
       style={{
         padding: 8,
       }}

@@ -99,6 +99,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
           ...location,
           search: params.toString(),
         }}
+        replace
       />
     );
   }

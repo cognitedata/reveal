@@ -128,6 +128,7 @@ export const DataModelPage = () => {
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [editorHasError, setEditorHasError] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [publishModalVersionType, setPublishModalVersionType] =
     useState<VersionType | null>(null);
@@ -386,7 +387,6 @@ export const DataModelPage = () => {
     dataModelTypeDefsBuilder.clear();
     updateGraphQlSchema(latestDataModelVersion.schema);
   };
-
   return (
     <>
       <PageContentLayout>
@@ -397,6 +397,7 @@ export const DataModelPage = () => {
             dataModelVersions={dataModelVersions}
             isSaving={saving}
             isUpdating={updating}
+            editorHasError={editorHasError}
             latestDataModelVersion={latestDataModelVersion}
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
@@ -412,6 +413,7 @@ export const DataModelPage = () => {
               <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                 <EditorPanel
                   editorMode={editorMode}
+                  setEditorHasError={setEditorHasError}
                   space={dataModel?.space || ''}
                   version={selectedDataModelVersion.version}
                   externalId={dataModelExternalId}

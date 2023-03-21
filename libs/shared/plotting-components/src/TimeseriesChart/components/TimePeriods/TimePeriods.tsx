@@ -2,14 +2,14 @@ import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { TimePeriod, UpdateDateRangeProps } from '../../types';
+import { TimePeriod, UpdateTimePeriodProps } from '../../types';
 import { TimePeriodsWrapper } from './elements';
 import { TimePeriodButton } from './TimePeriodButton';
 
 export interface TimePeriodsProps {
   options: TimePeriod[];
   value?: TimePeriod;
-  onChange: (props: UpdateDateRangeProps) => void;
+  onChange: (props: UpdateTimePeriodProps) => void;
 }
 
 export const TimePeriods: React.FC<TimePeriodsProps> = ({

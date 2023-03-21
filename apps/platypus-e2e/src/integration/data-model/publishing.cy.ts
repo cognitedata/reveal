@@ -24,20 +24,18 @@ describe('Data model page - Publishing', () => {
     cy.ensureLatestVersionIs(version);
   });
 
-  it('should validate unsuported features when publishing', () => {
+  it('should validate unsupported features when publishing', () => {
     cy.enableEditMode();
     if (getFDMVersion() === 'V2') {
       cy.openCodeEditorTab();
     }
     cy.setCodeEditorText('enum Role { Admin, User }');
 
-    cy.publishSchema(undefined, false);
-    // breaking changes dialog should be displayed even before publishing
-    cy.getBySelLike('toast-title').contains(
-      'Error: could not validate data model'
-    );
-    cy.getBySelLike('toast-body').contains(
-      'Your Data Model GraphQL schema contains errors.'
+    // since enums are not supported ensure that publish schema is disabled
+    cy.getBySelLike('publish-schema-btn').should(
+      'have.attr',
+      'aria-disabled',
+      'true'
     );
   });
 

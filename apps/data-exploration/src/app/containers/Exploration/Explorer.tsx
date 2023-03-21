@@ -1,4 +1,3 @@
-import { IndustryCanvasPage } from '@fusion/industry-canvas';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ResourceSelectorProvider } from '@cognite/data-exploration';
@@ -15,6 +14,7 @@ import { EventPage } from '@data-exploration-app/containers/Event/EventPage';
 import { SequencePage } from '@data-exploration-app/containers/Sequence/SequencePage';
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
 import { routes } from '@data-exploration-app/containers/App';
+import { IndustryCanvasPage } from '@fusion/industry-canvas';
 
 export const Explorer = () => {
   React.useEffect(() => {

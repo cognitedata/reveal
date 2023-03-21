@@ -55,8 +55,12 @@ export const FilePreview = ({
   );
   const { flow } = getFlow();
   const { data: filesAcl } = usePermissions(flow as any, 'filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions(flow as any, 'eventsAcl', 'WRITE');
-  const writeAccess = filesAcl && eventsAcl;
+  const { data: annotationsAcl } = usePermissions(
+    flow as any,
+    'annotationsAcl',
+    'WRITE'
+  );
+  const writeAccess = filesAcl && annotationsAcl;
 
   const { resourceType } = useParams<{
     resourceType: ResourceType;
@@ -171,7 +175,7 @@ export const FilePreview = ({
                 }
                 setEditMode={() => setEditMode((mode) => !mode)}
                 filesAcl={filesAcl}
-                eventsAcl={eventsAcl}
+                annotationsAcl={annotationsAcl}
               />
             </PreviewTabWrapper>
           </Tabs.Tab>,

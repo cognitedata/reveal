@@ -14,9 +14,9 @@ import { QueryKeys } from '@platypus-app/utils/queryKeys';
 export function useCapabilities<T extends KeysOfSCC>(
   aclName?: T,
   permissions?: CombinedSCC[T]['actions'],
-  options?: { externalId?: string; checkAll?: boolean }
+  options?: { space?: string; checkAll?: boolean }
 ) {
-  const { externalId, checkAll } = options || {};
+  const { space, checkAll } = options || {};
   const tenant = getTenant();
   const cdfClient = getCogniteSDKClient();
   const {
@@ -53,7 +53,7 @@ export function useCapabilities<T extends KeysOfSCC>(
       platypusUserCapabilities,
       userGroupCapabilities,
       el as CombinedSCC[T]['actions'][0],
-      externalId,
+      space,
       checkAll
     )
   );

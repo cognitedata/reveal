@@ -126,7 +126,7 @@ export const Canvas = ({
         }));
       }
     })();
-  }, [fileInfos, sdk]);
+  }, [fileInfos, sdk, files]);
 
   const onClickAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
@@ -209,7 +209,7 @@ export const Canvas = ({
     [files, annotations, hoverId]
   );
 
-  // TOOD: How to handle unsupported files
+  // TODO: How to handle unsupported files
   // Story: User is looking at a file and then tries to add another file which is of an unsupported type
   if (fileInfos?.some((file) => !isSupportedFileInfo(file))) {
     return (

@@ -7,7 +7,7 @@ export const HeaderWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 `;
 
 export const ChartTitle = styled.div`

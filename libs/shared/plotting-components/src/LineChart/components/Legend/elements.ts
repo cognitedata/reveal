@@ -15,7 +15,7 @@ export const LegendItemWrapper = styled.div`
   align-items: center;
   justify-content: center;
 
-  border-right: 2px solid #d9d9d9;
+  border-right: 2px solid var(--cogs-border--muted);
   padding-right: 16px;
   :last-child {
     border-right: none;

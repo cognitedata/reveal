@@ -10,7 +10,7 @@ import {
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import styled from 'styled-components';
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 const AssetLabel = styled.div`
   padding: 8px;

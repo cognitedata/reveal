@@ -26,6 +26,7 @@ export const DataModelsList = () => {
   // this is intermediate state for keeping grid api -> getDisplayedRowCount and state in sync
 
   const [filterCount, setFilterCount] = useState(0);
+  const [searchText, setSearchText] = useState('');
 
   const {
     data: dataModels,
@@ -73,20 +74,25 @@ export const DataModelsList = () => {
       </div>
     );
   };
+
+  const dataModelsCount = searchText ? filterCount : dataModels.length;
+
   return (
     <StyledDataModelListWrapper>
       <DataModelsListHeader
-        dataModelsCount={filterCount || dataModels.length}
+        dataModelsCount={dataModelsCount}
         onCreateDataModelClick={() => setIsCreateModalVisible(true)}
         onSearchChange={(newSearchText) => {
+          setSearchText(newSearchText);
           gridRef.current?.api.setQuickFilter(newSearchText);
           setFilterCount(gridRef.current?.api.getDisplayedRowCount() as number);
         }}
+        searchText={searchText}
       />
 
       {dataModels && dataModels.length ? (
         <DataModelsTable
-          filteredRowCount={filterCount || dataModels.length}
+          filteredRowCount={dataModelsCount}
           dataModels={dataModels}
           ref={gridRef}
           onDelete={(dataModel) => setDataModelToDelete(dataModel)}

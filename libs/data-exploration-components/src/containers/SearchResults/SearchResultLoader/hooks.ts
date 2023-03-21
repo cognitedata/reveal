@@ -13,7 +13,11 @@ import {
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
 
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  transformNewFilterToOldFilter,
+  useTimeseriesWithDatapointsQuery,
+} from '@data-exploration-lib/domain-layer';
+import { isDateInDateRange } from '@data-exploration-lib/core';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -25,9 +29,8 @@ export const useResourceResults = <T extends ResourceType>(
   api: SdkResourceType,
   query?: string,
   filter?: any,
-  limit: number = PAGE_SIZE
-  // dateRange: [Date, Date] | undefined = TIME_SELECT['2Y'].getTime(),
-  // hideEmptyData?: boolean
+  limit: number = PAGE_SIZE,
+  dateRange?: [Date, Date]
 ) => {
   const searchEnabled = !!query && query.length > 0;
 
@@ -77,7 +80,9 @@ export const useResourceResults = <T extends ResourceType>(
     : listIsFetchingMore;
   const canFetchMore = searchEnabled ? searchCanFetchMore : listCanFetchMore;
 
-  const items = searchEnabled ? searchItems : listItems || [];
+  const fetchedItems = searchEnabled ? searchItems : listItems || [];
+  // INFO: This is to add 2 additional fields(hasDatapoints, latestDatapointDate) to the timeseries data.
+  const items = useTimeseriesWithDatapoints(api, fetchedItems, dateRange);
 
   const result = {
     canFetchMore,
@@ -91,4 +96,40 @@ export const useResourceResults = <T extends ResourceType>(
   };
 
   return result;
+};
+
+const useTimeseriesWithDatapoints = <T extends ResourceType>(
+  api: SdkResourceType,
+  timeseries: T[],
+  dateRange?: [Date, Date]
+) => {
+  const isTimeseries = api === 'timeseries';
+
+  // We need end date from dateRange to see if the range has any datapoints.
+  const { data: timeseriesWithDataPointMap } = useTimeseriesWithDatapointsQuery(
+    timeseries.map((item) => item.id),
+    dateRange ? dateRange[1] : undefined,
+    isTimeseries
+  );
+
+  // We do not care about the dateRange to show the date of latest datapoints since backend uses 'now' as default before date.
+  const { data: timeseriesWithLatestDataPointMap } =
+    useTimeseriesWithDatapointsQuery(
+      timeseries.map((item) => item.id),
+      undefined,
+      isTimeseries
+    );
+
+  if (isTimeseries) {
+    return timeseries.map((item) => ({
+      ...item,
+      hasDatapoints: isDateInDateRange(
+        timeseriesWithDataPointMap[item.id],
+        dateRange
+      ),
+      latestDatapointDate: timeseriesWithLatestDataPointMap[item.id],
+    }));
+  }
+
+  return timeseries;
 };

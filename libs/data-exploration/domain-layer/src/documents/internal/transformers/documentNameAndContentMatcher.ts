@@ -1,5 +1,6 @@
 import { DocumentHighlight } from '@cognite/sdk';
 import { MatchingLabels } from '../../../types';
+import { getSearchConfig } from '../../../utils';
 import {
   isExactMatch,
   isPartialMatch,
@@ -10,7 +11,9 @@ export const documentNameAndContentMatcher = (
   query: string,
   matchers: MatchingLabels
 ) => {
-  if (value.name.length) {
+  const documentSearchConfig = getSearchConfig().file;
+
+  if (value.name.length && documentSearchConfig['sourceFile|name']?.enabled) {
     const hasExactMatch = value.name.some((name) => {
       return isExactMatch(
         name.replaceAll('<em>', '').replaceAll('</em>', ''),
@@ -35,7 +38,7 @@ export const documentNameAndContentMatcher = (
     }
   }
 
-  if (value.content.length) {
+  if (value.content.length && documentSearchConfig.content.enabled) {
     const hasExactMatch = value.content.some((name) => {
       return isExactMatch(
         name.replaceAll('<em>', '').replaceAll('</em>', ''),

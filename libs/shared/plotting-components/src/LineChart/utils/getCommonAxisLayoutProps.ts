@@ -1,19 +1,22 @@
 import { LayoutAxis } from 'plotly.js';
 import isUndefined from 'lodash/isUndefined';
 
-import { Axis, Layout } from '../types';
+import { Axis, AxisIdentifier, Layout } from '../types';
+import { getBooleanFromAxisDirection } from './getBooleanFromAxisDirection';
 
 export const getCommonAxisLayoutProps = (
+  id: AxisIdentifier,
   axis: Axis | undefined,
   layout: Layout
 ): Partial<LayoutAxis> => {
   const { showAxisNames, showTickLabels } = layout;
+  const showAxisName = getBooleanFromAxisDirection(showAxisNames, id);
 
   return {
-    title: showAxisNames ? { text: axis?.name } : undefined,
+    title: showAxisName ? { text: axis?.name } : undefined,
+    showticklabels: getBooleanFromAxisDirection(showTickLabels, id),
     dtick: axis?.tickDistance,
     tickangle: isUndefined(axis?.tickCount) ? 0 : undefined,
-    showticklabels: showTickLabels,
     zeroline: false,
     showline: true,
     mirror: true,

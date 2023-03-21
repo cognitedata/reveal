@@ -2,8 +2,8 @@ import {
   DataSetFilter,
   DocumentSortItem,
   IdEither,
+  LatestDataBeforeRequest,
 } from '@cognite/sdk/dist/src';
-import { queryType } from 'graphql-extra';
 
 export const queryKeys = {
   all: ['cdf'] as const,
@@ -45,6 +45,11 @@ export const queryKeys = {
 
   timeseriesDatapoints: (items: IdEither[], filter?: any) =>
     [...queryKeys.timeseries(), 'datapoints', items, filter] as const,
+  timeseriesLatestDatapoints: (
+    items: LatestDataBeforeRequest[],
+    filter?: any
+  ) =>
+    [...queryKeys.timeseries(), 'latest', 'datapoints', items, filter] as const,
 
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,

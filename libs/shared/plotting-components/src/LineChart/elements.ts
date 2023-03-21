@@ -5,4 +5,5 @@ export const LineChartWrapper = styled.div`
   font-family: Inter;
   padding: 16px;
   border-radius: 8px;
+  cursor: auto;
 `;

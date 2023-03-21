@@ -2124,10 +2124,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@8.16.0":
-  version "8.16.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-8.16.0.tgz#b53498d9b8e1648c4ac786c350c540ec90bf7a49"
-  integrity sha512-rRDocNSbY9uJeVAMpSKnE23Y21SKyou8LlzsgyP+H1gP7cgzAcxgCcV09kPyuLBBuw9YOu3k9NwrkSF80uNpAQ==
+"@cognite/unified-file-viewer@^8.21.1":
+  version "8.21.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-8.21.1.tgz#0ed0d2d111375e9caa72fc6c8e299af52097cff6"
+  integrity sha512-+kwA2O7w4SN1iOFTGlAktY+W6BklIgUuG0rIXVQL9u0ww/x4W6IP5qek+BIu4fwiWAHGHqx78y644W8K+jsGqA==
   dependencies:
     "@cognite/cogs.js" "^7.14.7"
     "@cognite/sdk" "^7.13.0"
@@ -2145,12 +2145,12 @@
     chroma-js "^2.4.2"
     d3-time "^3.1.0"
     dayjs "^1.11.7"
+    html2canvas "^1.4.1"
     konva "^8.3.14"
     lodash "^4.17.21"
     mixpanel-browser "^2.45.0"
     pdf-lib "^1.17.1"
     pdfjs-dist "3.3.122"
-    react-query "^3.39.3"
     styled-components "^5.3.5"
     uuid "^9.0.0"
 
@@ -7527,6 +7527,11 @@
     "@types/keyv" "^3.1.4"
     "@types/node" "*"
     "@types/responselike" "^1.0.0"
+
+"@types/chroma-js@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@types/chroma-js/-/chroma-js-2.4.0.tgz#476a16ae848c77478079d6749236fdb98837b92c"
+  integrity sha512-JklMxityrwjBTjGY2anH8JaTx3yjRU3/sEHSblLH1ba5lqcSh1LnImXJZO5peJfXyqKYWjHTGy4s5Wz++hARrw==
 
 "@types/cli-table@^0.3.0":
   version "0.3.1"
@@ -26321,15 +26326,6 @@ react-query@3.39.0:
   version "3.39.0"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.39.0.tgz#0caca7b0da98e65008bbcd4df0d25618c2100050"
   integrity sha512-Od0IkSuS79WJOhzWBx/ys0x13+7wFqgnn64vBqqAAnZ9whocVhl/y1padD5uuZ6EIkXbFbInax0qvY7zGM0thA==
-  dependencies:
-    "@babel/runtime" "^7.5.5"
-    broadcast-channel "^3.4.1"
-    match-sorter "^6.0.2"
-
-react-query@^3.39.3:
-  version "3.39.3"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.39.3.tgz#4cea7127c6c26bdea2de5fb63e51044330b03f35"
-  integrity sha512-nLfLz7GiohKTJDuT4us4X3h/8unOh+00MLb2yJoGTPjxKs2bc1iDhkNx2bd5MKklXnOD3NrVZ+J2UXujA5In4g==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"

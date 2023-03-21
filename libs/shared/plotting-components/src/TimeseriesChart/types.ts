@@ -1,11 +1,15 @@
 import { Timestamp } from '@cognite/sdk';
+import { Variant } from '../LineChart';
 
 export interface TimeseriesChartProps {
   timeseriesId: number;
+  variant?: Variant;
+  numberOfPoints?: number;
   quickTimePeriodOptions?: TimePeriod[];
   dateRange?: DateRange;
-  onChangeDateRange?: (dateRange: DateRange) => void;
+  backgroundColor?: string;
   height?: number;
+  onChangeTimePeriod?: (props: UpdateTimePeriodProps) => void;
 }
 
 export type DateRange = [Date, Date];
@@ -21,7 +25,7 @@ export type TimeseriesQuery = {
 export type TimePeriodType = 'Y' | 'M' | 'W' | 'D' | 'H' | 'Min';
 export type TimePeriod = `${number}${TimePeriodType}`;
 
-export interface UpdateDateRangeProps {
+export interface UpdateTimePeriodProps {
   timePeriod: TimePeriod;
   dateRange: DateRange;
 }

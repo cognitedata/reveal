@@ -6,7 +6,7 @@ import {
   useCanvasFilesFromUrl,
 } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { TooltipContainer } from './TooltipContainer';
 
 const useCanvasFileContainerTooltips = (
@@ -41,7 +41,7 @@ const useCanvasFileContainerTooltips = (
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
       },
     ];
-  }, [clickedContainer]);
+  }, [clickedContainer, removeFile]);
 };
 
 export default useCanvasFileContainerTooltips;

@@ -1,4 +1,4 @@
-import dayjs, { ManipulateType } from 'dayjs';
+import dayjs, { ManipulateType, OpUnitType } from 'dayjs';
 
 import { DateRange, TimePeriod, TimePeriodType } from '../types';
 import { getTimePeriodData } from './getTimePeriodData';
@@ -16,12 +16,21 @@ export const getDateRangeForTimePeriod = (
   timePeriod: TimePeriod
 ): DateRange => {
   const { time, period } = getTimePeriodData(timePeriod);
+  const dateRangeUnit = getDateRangeUnit(period);
 
-  const end = dayjs().toDate();
-
-  const start = dayjs(end)
+  const start = dayjs()
+    .startOf(dateRangeUnit)
     .subtract(time, TIME_PERIOD_TYPE_MAP[period])
     .toDate();
 
+  const end = dayjs().startOf(dateRangeUnit).toDate();
+
   return [start, end];
+};
+
+export const getDateRangeUnit = (period: TimePeriodType): OpUnitType => {
+  if (period === 'H' || period === 'Min') {
+    return 'minute';
+  }
+  return 'day';
 };

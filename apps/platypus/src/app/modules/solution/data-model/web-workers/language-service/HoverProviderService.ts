@@ -118,7 +118,8 @@ export class HoverProviderService {
     type: DataModelTypeDefsType
   ) {
     this.append(content, '### View and Container mappings\n');
-    this.append(content, '| View | Container|\n| --- | --- |\n');
+    this.append(content, '&nbsp;\n');
+    this.append(content, '| Property | Container.property|\n| --- | --- |\n');
 
     const typeFieldsMap = {} as Record<string, string>;
     // We need to figure out where and how the fields are being mapped
@@ -151,8 +152,8 @@ export class HoverProviderService {
       this.append(content, `|${fieldName} |${typeFieldsMap[fieldName]}|\n`)
     );
 
-    // Add one empty row and horizontal line
-    this.append(content, '| | |\n\n');
+    // Add empty line
+    this.append(content, '\n&nbsp;\n\n');
 
     if (type.description) {
       this.append(content, '\n' + type.description);

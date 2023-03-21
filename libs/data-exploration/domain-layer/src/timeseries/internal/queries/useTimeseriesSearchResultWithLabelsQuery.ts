@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useDeepMemo } from '@data-exploration-lib/core';
 import {
   InternalTimeseriesFilters,
@@ -5,7 +6,11 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
-import { extractMatchingLabels } from '../../../utils/extractMatchingLabels';
+import { getSearchConfig } from '../../../utils';
+import {
+  extractMatchingLabels,
+  MatchingLabelPropertyType,
+} from '../../../utils/extractMatchingLabels';
 
 export const useTimeseriesSearchResultWithLabelsQuery = (
   {
@@ -24,31 +29,54 @@ export const useTimeseriesSearchResultWithLabelsQuery = (
     options
   );
 
+  const timeseriesSearchConfig = getSearchConfig().timeSeries;
+
+  const properties = React.useMemo(() => {
+    const arr: MatchingLabelPropertyType[] = [];
+
+    if (timeseriesSearchConfig.id.enabled) {
+      arr.push({
+        key: 'id',
+        label: 'ID',
+      });
+    }
+
+    if (timeseriesSearchConfig.description.enabled) {
+      arr.push({
+        key: 'description',
+        useSubstringMatch: true,
+      });
+    }
+
+    if (timeseriesSearchConfig.externalId.enabled) {
+      arr.push({
+        key: 'externalId',
+        label: 'External ID',
+      });
+    }
+
+    if (timeseriesSearchConfig.name.enabled) {
+      arr.push({
+        key: 'name',
+        useSubstringMatch: true,
+      });
+    }
+    if (timeseriesSearchConfig.metadata.enabled) {
+      arr.push('metadata');
+    }
+    if (timeseriesSearchConfig.unit.enabled) {
+      arr.push('unit');
+    }
+
+    return arr;
+  }, [timeseriesSearchConfig]);
+
   const mappedData = useDeepMemo(() => {
     if (data && query) {
       return data.map((timeseries) => {
         return {
           ...timeseries,
-          matchingLabels: extractMatchingLabels(timeseries, query, [
-            {
-              key: 'id',
-              label: 'ID',
-            },
-            {
-              key: 'name',
-              useSubstringMatch: true,
-            },
-            {
-              key: 'description',
-              useSubstringMatch: true,
-            },
-            'metadata',
-            'unit',
-            {
-              key: 'externalId',
-              label: 'External ID',
-            },
-          ]),
+          matchingLabels: extractMatchingLabels(timeseries, query, properties),
         };
       });
     }

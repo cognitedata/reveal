@@ -1,5 +1,5 @@
-export * from './useTimeseriesSearchResultQuery';
 export * from './useTimeseriesSearchAggregateQuery';
+export * from './useTimeseriesSearchResultQuery';
 export * from './useTimeseriesSearchResultWithLabelsQuery';
-export * from './useTimeseriesWithDatapointsAvailabliity ';
-export * from './useTimeseriesDatapointsMap';
+export * from './useTimeseriesWithDatapointsQuery';
+export * from './useTimeseriesWithAvailableDatapointsQuery';

@@ -1,34 +1,34 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
 import head from 'lodash/head';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
-import { Coordinate, TooltipRendererProps, ValueType } from '../../types';
+import { Coordinate, TooltipRendererProps, Variant } from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
-import { TooltipDetail } from './TooltipDetail';
+import { TooltipDetail, TooltipDetailProps } from './TooltipDetail';
 import { TooltipContainer, TooltipWrapper } from './elements';
 import { getPointCustomData } from '../../utils/getPointCustomData';
 
 export interface TooltipProps {
   chartRef: React.RefObject<HTMLDivElement>;
+  variant?: Variant;
   plotHoverEvent?: PlotHoverEvent;
   xAxisName?: string;
   yAxisName?: string;
   backgroundColor?: string;
   referencePosition?: Coordinate;
   showTooltip: boolean;
-  formatTooltipContent?: (
-    props: TooltipRendererProps
-  ) => Record<string, ValueType | undefined>;
+  formatTooltipContent?: (props: TooltipRendererProps) => TooltipDetailProps[];
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({
   chartRef,
+  variant,
   plotHoverEvent,
   xAxisName = 'X',
   yAxisName = 'Y',
@@ -67,7 +67,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     updateTooltipWidth();
   }, [updateTooltipWidth]);
 
-  const getTooltipContent = () => {
+  const TooltipContent = useMemo(() => {
     if (!point) {
       return null;
     }
@@ -81,19 +81,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
     };
 
     if (formatTooltipContent) {
-      const content = formatTooltipContent(tooltipRendererProps);
-
       return (
         <TooltipContainer>
-          {Object.entries(content).map(([label, value]) => {
-            return (
-              <TooltipDetail
-                key={label}
-                label={label}
-                value={value}
-                backgroundColor={backgroundColor}
-              />
-            );
+          {formatTooltipContent(tooltipRendererProps).map((props) => {
+            return <TooltipDetail key={props.label} {...props} />;
           })}
         </TooltipContainer>
       );
@@ -117,18 +108,19 @@ export const Tooltip: React.FC<TooltipProps> = ({
         />
       </TooltipContainer>
     );
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [point?.curveNumber, point?.pointNumber]);
 
   if (!showTooltip) {
     return null;
   }
 
-  const isTooltipVisible = tooltipWidth && plotHoverEvent;
+  const isTooltipVisible = tooltipWidth && Boolean(plotHoverEvent);
 
   return (
     <TooltipWrapper
       ref={tooltipRef}
-      className="tooltip"
+      variant={variant}
       style={{
         top: y,
         left: x,
@@ -136,7 +128,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         opacity: isTooltipVisible ? 1 : 0,
       }}
     >
-      {getTooltipContent()}
+      {TooltipContent}
     </TooltipWrapper>
   );
 };

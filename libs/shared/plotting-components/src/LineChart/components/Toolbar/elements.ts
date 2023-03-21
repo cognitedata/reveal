@@ -4,27 +4,38 @@ export const ToolbarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  :empty {
+    display: none;
+  }
 `;
 
 export const FiltersWrapper = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
+  margin-bottom: auto;
   gap: 8px;
 `;
 
 export const ActionsWrapper = styled(FiltersWrapper)`
   justify-content: flex-end !important;
+  overflow: hidden;
 `;
 
 export const ActionWrapper = styled.div`
   display: flex;
+  position: relative;
+  padding-right: 10px;
+  margin-right: -10px;
+  margin-left: 8px;
   ::after {
     content: '';
-    margin-left: 8px;
-    margin-top: 10px;
+    position: absolute;
+    top: 10px;
+    right: 1px;
     height: 16px;
-    border-right: 2px solid #d9d9d9;
+    border-right: 2px solid var(--cogs-border--muted);
   }
   :last-child::after {
     border: none;

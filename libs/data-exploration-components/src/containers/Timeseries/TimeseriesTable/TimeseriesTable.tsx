@@ -9,24 +9,29 @@ import {
   TableProps,
 } from '@data-exploration-components/components/Table/Table';
 import { TIME_SELECT } from '@data-exploration-components/containers';
-import { TimeseriesChart } from '..';
+// import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
+import { ResourceTableColumns, TimeDisplay } from '../../../components';
 import {
   InternalTimeseriesDataWithMatchingLabels,
   useTimeseriesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-import noop from 'lodash/noop';
-import { EMPTY_ARRAY } from '@data-exploration-lib/core';
+// import noop from 'lodash/noop';
+// import { EMPTY_ARRAY } from '@data-exploration-lib/core';
 
-export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
+import { TimeseriesChart } from '@cognite/plotting-components';
+
+export type TimeseriesWithRelationshipLabels =
+  InternalTimeseriesDataWithMatchingLabels & RelationshipLabels;
 
 export interface TimeseriesTableProps
-  extends Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'>,
+  extends Omit<
+      TableProps<TimeseriesWithRelationshipLabels | Timeseries>,
+      'columns'
+    >,
     RelationshipLabels,
     DateRangeProps {
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
@@ -56,6 +61,9 @@ export const TimeseriesTable = ({
     );
   }, [metadataKeys]);
 
+  const startTime = dateRange[0].getTime();
+  const endTime = dateRange[1].getTime();
+
   const columns = useMemo(() => {
     const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
       header: 'Preview',
@@ -67,23 +75,33 @@ export const TimeseriesTable = ({
         if (timeseries.isString) {
           return <Body level={2}>N/A for string time series</Body>;
         }
+        // return (
+        //   <TimeseriesChart
+        //     height={50}
+        //     showSmallerTicks
+        //     timeseriesId={timeseries.id}
+        //     numberOfPoints={100}
+        //     showAxis="horizontal"
+        //     timeOptions={EMPTY_ARRAY}
+        //     showContextGraph={false}
+        //     showPoints={false}
+        //     enableTooltip={false}
+        //     showGridLine="none"
+        //     minRowTicks={2}
+        //     enableTooltipPreview
+        //     dateRange={dateRange}
+        //     margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
+        //     onDateRangeChange={noop}
+        //   />
+        // );
         return (
           <TimeseriesChart
-            height={50}
-            showSmallerTicks
             timeseriesId={timeseries.id}
-            numberOfPoints={100}
-            showAxis="horizontal"
-            timeOptions={EMPTY_ARRAY}
-            showContextGraph={false}
-            showPoints={false}
-            enableTooltip={false}
-            showGridLine="none"
-            minRowTicks={2}
-            enableTooltipPreview
+            variant="small"
             dateRange={dateRange}
-            margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
-            onDateRangeChange={noop}
+            numberOfPoints={100}
+            backgroundColor="transparent"
+            height={50}
           />
         );
       },
@@ -105,7 +123,10 @@ export const TimeseriesTable = ({
         header: 'Last reading',
         accessorKey: 'lastReading',
         cell: ({ row }) => {
-          return <TimeseriesLastReading timeseriesId={row.original.id} />;
+          const lastReadingDate = row.original.latestDatapointDate
+            ? new Date(row.original.latestDatapointDate)
+            : undefined;
+          return <TimeDisplay value={lastReadingDate} relative withTooltip />;
         },
         enableSorting: false,
       },
@@ -129,9 +150,9 @@ export const TimeseriesTable = ({
       Table.Columns.rootAsset(onRootAssetClick),
       Table.Columns.assets(onRootAssetClick),
       ...metadataColumns,
-    ] as ColumnDef<Timeseries>[];
+    ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metadataColumns, dateRange]);
+  }, [metadataColumns, startTime, endTime]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

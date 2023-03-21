@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import { PlotMouseEvent } from 'plotly.js';
 import { Coordinate } from '../types';
 import { getMarkerPosition } from './getMarkerPosition';
@@ -20,13 +19,7 @@ export const getTooltipPosition = (
     };
   }
 
-  const chartWidth = get(
-    plotMouseEvent.event.target,
-    'viewportElement.clientWidth',
-    0
-  );
-
-  const { offsetTop, height } = getPlotStyleData(chartRef.current);
+  const { offsetTop, height, width } = getPlotStyleData(chartRef.current);
 
   const { x = 0, y = 0 } = {
     ...getMarkerPosition(plotMouseEvent),
@@ -34,7 +27,7 @@ export const getTooltipPosition = (
   };
 
   return {
-    x: calculateTooltipPositionX(x, tooltipWidth, chartWidth),
+    x: calculateTooltipPositionX(x, tooltipWidth, width),
     y: calculateTooltipPositionY(y, tooltipHeight, offsetTop, height),
   };
 };
@@ -42,12 +35,12 @@ export const getTooltipPosition = (
 export const calculateTooltipPositionX = (
   markerX: number,
   tooltipWidth: number,
-  chartWidth: number
+  gridWidth: number
 ) => {
-  let x = markerX + TOOLTIP_HORIZONTAL_MARGIN;
+  const x = markerX + TOOLTIP_HORIZONTAL_MARGIN;
 
-  if (chartWidth - x < tooltipWidth) {
-    x = markerX - tooltipWidth - TOOLTIP_HORIZONTAL_MARGIN;
+  if (gridWidth - x < tooltipWidth) {
+    return markerX - tooltipWidth - TOOLTIP_HORIZONTAL_MARGIN;
   }
 
   return x;
@@ -70,7 +63,8 @@ export const calculateTooltipPositionY = (
   const offsetBottom = referenceMax - markerY;
 
   if (offsetBottom < tooltipHeightHalf) {
-    return markerY - (tooltipHeightHalf - offsetBottom);
+    const position = markerY - (tooltipHeightHalf - offsetBottom);
+    return Math.max(position, referenceMin);
   }
 
   return markerY;

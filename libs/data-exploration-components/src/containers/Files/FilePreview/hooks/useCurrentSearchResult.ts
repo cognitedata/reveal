@@ -7,7 +7,7 @@ import {
 } from '@cognite/unified-file-viewer';
 import usePrevious from './usePrevious';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 
 type UseCurrentSearchResultProps = {
   searchResults: SearchResult[];
@@ -31,6 +31,7 @@ export const useCurrentSearchResult = ({
   const [currentSearchResultIndex, setCurrentSearchResultIndex] = useState(0);
   const prevSearchResults = usePrevious(searchResults);
   const prevCurrentSearchResultIndex = usePrevious(currentSearchResultIndex);
+  const trackUsage = useMetrics();
 
   const zoomToAnnotationIfNotInViewport = useCallback(
     (searchResult: SearchResult) => {
