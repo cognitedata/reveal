@@ -19,6 +19,7 @@ import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import { useAlertsResolveCreate } from 'components/MonitoringAlert/hooks';
 import { useChartAtom } from 'models/chart/atom';
 import JobCondition from 'components/MonitoringSidebar/JobCondition';
+import { trackUsage } from 'services/metrics';
 import {
   AlertContainer,
   JobContainer,
@@ -77,10 +78,10 @@ const MonitoringJobWithAlerts = ({
   const onCloseDropdown = () => setIsMenuOpen(false);
   const onOpenDropdown = () => setIsMenuOpen(true);
 
-  const onMarkAsResolved = () => setIsConfirmModalOpen(true);
   const onCloseModal = () => setIsConfirmModalOpen(false);
   const addTimeseries = useAddRemoveTimeseries();
-  const onMarkAllAlertsResolved = () => {
+
+  const handleMarkAllAlertsResolved = () => {
     resolveAlerts({
       items:
         alerts?.map((item) => ({
@@ -88,6 +89,9 @@ const MonitoringJobWithAlerts = ({
         })) || [],
     });
     onCloseModal();
+    trackUsage('Sidebar.Alerting.MarkAllResolved', {
+      monitoringJob: job.externalId,
+    });
   };
 
   const { data: timeseriesDef } = useCdfItems<Timeseries>(
@@ -96,16 +100,22 @@ const MonitoringJobWithAlerts = ({
     false
   );
 
-  const onClickShowAll = () => {
+  const handleShowAll = () => {
     setMonitoringShowAlerts('true');
     setMonitoringJobIdParam(`${job.id}`);
     setNavFromAlerts('true');
     onViewMonitoringJobs();
+    trackUsage('Sidebar.Alerting.ShowAllAlerts', {
+      monitoringJob: job.externalId,
+    });
   };
 
-  const onAddSourceToChart = () => {
+  const handleAddSourceToChart = () => {
     if (timeseriesDef) {
       addTimeseries(timeseriesDef[0]);
+      trackUsage('Sidebar.Alerting.AddSource', {
+        source: timeseriesDef?.[0]?.externalId,
+      });
     }
   };
 
@@ -122,7 +132,7 @@ const MonitoringJobWithAlerts = ({
         isConfirmModalOpen={isConfirmModalOpen}
         onCloseModal={onCloseModal}
         translations={translations}
-        onMarkAllAlertsResolved={onMarkAllAlertsResolved}
+        onMarkAllAlertsResolved={handleMarkAllAlertsResolved}
       />
       <ConditionContainer key={job.id}>
         <JobCondition job={job} />
@@ -147,7 +157,7 @@ const MonitoringJobWithAlerts = ({
                     {!chartHasTimeseries && (
                       <DropdownMenuItem
                         key="mt-row-action-add-source"
-                        onClick={onAddSourceToChart}
+                        onClick={handleAddSourceToChart}
                       >
                         <Icon type="Plus" />
                         {t['Add source to chart']}
@@ -155,7 +165,7 @@ const MonitoringJobWithAlerts = ({
                     )}
                     <DropdownMenuItem
                       key="mt-row-action-mark-all-resolved"
-                      onClick={onMarkAsResolved}
+                      onClick={() => setIsConfirmModalOpen(true)}
                     >
                       <Icon type="CheckmarkAlternative" />
                       {t['Mark all alerts as resolved']}
@@ -184,7 +194,7 @@ const MonitoringJobWithAlerts = ({
           );
         })
       )}
-      <MonitoringSidebarBlueButton onClick={() => onClickShowAll()}>
+      <MonitoringSidebarBlueButton onClick={handleShowAll}>
         {t['Show all']}
         <Icon type="ArrowRight" size={12} />
       </MonitoringSidebarBlueButton>

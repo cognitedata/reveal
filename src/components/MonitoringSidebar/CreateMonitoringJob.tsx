@@ -10,6 +10,7 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { CogniteError } from '@cognite/sdk';
 import { useSearchParam } from 'hooks/navigation';
 import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from 'utils/constants';
+import { trackUsage, stopTimer } from 'services/metrics';
 import { FormTitle } from './elements';
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
 import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';
@@ -104,6 +105,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
     // Save the data from the corresponding step when the user goes back
     setSteppedFormValues(data);
     setStep(step - 1);
+    trackUsage('Sidebar.Monitoring.BackToForm');
   };
 
   const onStartMonitoring = (formData: any) => {
@@ -133,13 +135,18 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
     setSteppedFormValues(formData);
     if (step === 1) {
       setStep(step + 1);
+      trackUsage('Sidebar.Monitoring.CompleteForm');
     } else if (step === 2) {
       onStartMonitoring(formData);
+      stopTimer('Sidebar.Monitoring.CreateJob', {
+        monitoringJobFormData: formData,
+      });
     }
   };
 
   const onViewMonitoringJob = () => {
     onCancel();
+    trackUsage('Sidebar.Monitoring.ViewMonitoringJob');
   };
 
   const transformName = (name: string) => {

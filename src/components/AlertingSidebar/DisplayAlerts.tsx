@@ -8,6 +8,7 @@ import {
 } from 'components/Common/SidebarElements';
 import EmptyState from 'components/AlertingSidebar/EmptyState';
 import { Col, Row } from 'antd';
+import { trackUsage } from 'services/metrics';
 import { SidebarCollapseAlert } from './elements';
 import MonitoringJobWithAlerts from './MonitoringJobWithAlerts';
 
@@ -28,7 +29,9 @@ export const DisplayAlerts = ({
 
   const handleToggleAccordian = (key: any) => {
     setActiveKeys(key);
+    trackUsage('Sidebar.Alerting.ToggleAlert', { alert: key });
   };
+
   if (activeKeys.length === 0 && isFetching) {
     return <LoadingRow lines={30} />;
   }

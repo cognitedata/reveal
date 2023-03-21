@@ -5,6 +5,7 @@ import { debounce, head } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { makeDefaultTranslations } from 'utils/translations';
+import { trackUsage } from 'services/metrics';
 import CreateMonitoringJobFormError from './CreateMonitoringJobFormError';
 import {
   ClientCredentialsWrapper,
@@ -108,6 +109,9 @@ const CreateMonitoringJobStep2 = ({
       setValue('clientId', '');
       setValue('clientSecret', '');
     }
+    trackUsage('Sidebar.Monitoring.LoginMethod', {
+      useCdfCredentials,
+    });
   }, [useCdfCredentials]);
 
   useEffect(() => {

@@ -15,9 +15,10 @@ import { useQueryClient } from 'react-query';
 import {
   JobAndAlertsFilter,
   FilterOption,
-  FILTER_OPTIONS,
+  ALERTING_FILTER_OPTIONS,
 } from 'components/MonitoringSidebar/JobAndAlertsFilter';
 import { useChartAtom } from 'models/chart/atom';
+import { trackUsage } from 'services/metrics';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
 import { getTsIds } from '../../domain/timeseries/internal/transformers/getTsIds';
 import { DisplayAlerts } from './DisplayAlerts';
@@ -47,8 +48,15 @@ export const AlertingSidebar = ({
   const [chart] = useChartAtom();
 
   const [filterOption, setFilterOption] = useState<FilterOption>(
-    FILTER_OPTIONS[0]
+    ALERTING_FILTER_OPTIONS[0]
   );
+
+  const handleFilterOptionChange = (updatedFilterOption: FilterOption) => {
+    setFilterOption(updatedFilterOption);
+    trackUsage('Sidebar.Alerting.FilterOptionChanged', {
+      filter: updatedFilterOption.value,
+    });
+  };
 
   const userAuthId = userInfo.data?.id;
 
@@ -105,7 +113,11 @@ export const AlertingSidebar = ({
         </TopContainerAside>
       </TopContainer>
       <JobsWithAlertsContainer>
-        <JobAndAlertsFilter onChange={setFilterOption} value={filterOption} />
+        <JobAndAlertsFilter
+          mode="alerting"
+          onChange={handleFilterOptionChange}
+          value={filterOption}
+        />
         <DisplayAlerts
           jobs={allJobs}
           isFetching={isFetching}

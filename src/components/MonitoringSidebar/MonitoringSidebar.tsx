@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
 import { makeDefaultTranslations } from 'utils/translations';
+
 import { useTranslations } from 'hooks/translations';
 import {
   ContentContainer,
@@ -19,6 +20,7 @@ import {
   MONITORING_SIDEBAR_SELECTED_FOLDER,
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from 'utils/constants';
+import { startTimer, trackUsage } from 'services/metrics';
 import CreateMonitoringJob from './CreateMonitoringJob';
 import ListMonitoringJobs from './ListMonitoringJobs';
 import ListMonitoringJobAlerts from './ListMonitoringJobAlerts';
@@ -61,7 +63,7 @@ export const MonitoringSidebar = memo(
       MONITORING_SIDEBAR_SHOW_ALERTS
     );
 
-    const onCancel = () => {
+    const handleCancel = () => {
       setShowMonitoringJobForm(false);
     };
 
@@ -96,7 +98,7 @@ export const MonitoringSidebar = memo(
         <ContentOverflowWrapper>
           <ContentContainer>
             {showMonitoringJobForm && (
-              <CreateMonitoringJob onCancel={onCancel} />
+              <CreateMonitoringJob onCancel={handleCancel} />
             )}
             {!showMonitoringJobForm && monitoringShowAlerts !== 'true' && (
               <>
@@ -109,6 +111,8 @@ export const MonitoringSidebar = memo(
                       aria-label="Add monitoring task"
                       onClick={() => {
                         setShowMonitoringJobForm(true);
+                        trackUsage('Sidebar.Monitoring.CreateClicked');
+                        startTimer('Sidebar.Monitoring.CreateJob');
                       }}
                     >
                       {t.Create}
@@ -132,6 +136,7 @@ export const MonitoringSidebar = memo(
                       }
                       setShowAlerts(undefined);
                       setMonitoringJobIdParam(undefined);
+                      trackUsage('Sidebar.Monitoring.AlertHistoryBack');
                     }}
                   >
                     {t.Back}

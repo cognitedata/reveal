@@ -463,12 +463,14 @@ const ChartViewPage = () => {
   const handleCloseMonitoringSidebar = useCallback(() => {
     setShowMonitoringSidebar(false);
     setActiveSidebarQuery('');
+    trackUsage('Sidebar.Monitoring.Close');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
   const handleCloseAlertingSidebar = useCallback(() => {
     setShowAlertingSidebar(false);
     setActiveSidebarQuery('');
+    trackUsage('Sidebar.Alerting.Close');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -966,7 +968,17 @@ const ChartViewPage = () => {
                   icon="Bell"
                   aria-label="Toggle alerting sidebar"
                   toggled={showAlertingSidebar}
-                  onClick={() => handleAlertingSidebarToggle()}
+                  onClick={() => {
+                    trackUsage(
+                      `Sidebar.Alerting.${
+                        showAlertingSidebar ? 'Close' : 'Open'
+                      }`,
+                      {
+                        accessible: isAlertingAccessible,
+                      }
+                    );
+                    handleAlertingSidebarToggle();
+                  }}
                   disabled={!isAlertingAccessible}
                 />
                 <NotificationIndicator />
@@ -1015,7 +1027,17 @@ const ChartViewPage = () => {
                 icon="Alarm"
                 aria-label="Toggle monitoring sidebar"
                 toggled={showMonitoringSidebar}
-                onClick={() => handleMonitoringSidebarToggle()}
+                onClick={() => {
+                  trackUsage(
+                    `Sidebar.Monitoring.${
+                      showMonitoringSidebar ? 'Close' : 'Open'
+                    }`,
+                    {
+                      accessible: isMonitoringAccessible,
+                    }
+                  );
+                  handleMonitoringSidebarToggle();
+                }}
                 disabled={!isMonitoringAccessible}
               />
             </Tooltip>

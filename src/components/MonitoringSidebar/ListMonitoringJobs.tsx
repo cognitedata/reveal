@@ -14,6 +14,7 @@ import {
 } from 'utils/constants';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useChartAtom } from 'models/chart/atom';
+import { trackUsage } from 'services/metrics';
 import { SidebarChip, SidebarCollapseWrapped } from './elements';
 import { MonitoringFolderJobs, MonitoringJob } from './types';
 import { useMonitoringFoldersWithJobs } from './hooks';
@@ -23,7 +24,7 @@ import EmptyState from './EmptyState';
 import {
   JobAndAlertsFilter,
   FilterOption,
-  FILTER_OPTIONS,
+  MONITORING_FILTER_OPTIONS,
 } from './JobAndAlertsFilter';
 
 const ListMonitoringJobs = memo(() => {
@@ -41,11 +42,21 @@ const ListMonitoringJobs = memo(() => {
     monitoringFolderParam ? [monitoringFolderParam] : []
   );
   const [filterOption, setFilterOption] = useState<FilterOption>(
-    FILTER_OPTIONS[0]
+    MONITORING_FILTER_OPTIONS[0]
   );
 
   const handleToggleAccordian = (key: any) => {
+    trackUsage('Sidebar.Monitoring.ToggleJob', {
+      monitoringJob: key,
+    });
     setActiveKeys(key);
+  };
+
+  const handleFilterOptionChange = (updatedFilterOption: FilterOption) => {
+    trackUsage('Sidebar.Monitoring.FilterOptionChanged', {
+      filter: updatedFilterOption.value,
+    });
+    setFilterOption(updatedFilterOption);
   };
 
   useEffect(() => {
@@ -82,7 +93,11 @@ const ListMonitoringJobs = memo(() => {
 
   return (
     <>
-      <JobAndAlertsFilter onChange={setFilterOption} value={filterOption} />
+      <JobAndAlertsFilter
+        mode="monitoring"
+        onChange={handleFilterOptionChange}
+        value={filterOption}
+      />
       {folders?.length ? (
         <SidebarCollapseWrapped
           activeKey={activeKeys}

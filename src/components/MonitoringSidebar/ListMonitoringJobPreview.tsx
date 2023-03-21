@@ -11,6 +11,7 @@ import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from 'utils/constants';
+import { trackUsage } from 'services/metrics';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { head } from 'lodash';
 import { Timeseries } from '@cognite/sdk';
@@ -155,8 +156,9 @@ const ListMonitoringJobPreview = ({
     false || (subscriptionResponse && subscriptionResponse[monitoringJob.id]);
 
   const name = timeseriesName || (timeseriesDef && head(timeseriesDef)?.name);
+  const { id, externalId } = monitoringJob;
 
-  const onSubscribe = () => {
+  const handleSubscribe = () => {
     if (!notificationEmail) {
       toast.error(t['Email not found']);
     } else if (!userAuthId) {
@@ -168,10 +170,13 @@ const ListMonitoringJobPreview = ({
         userEmail: notificationEmail,
         subscriptionExternalId: nanoid(15),
       });
+      trackUsage('Sidebar.Monitoring.Subscribe', {
+        monitoringJob: externalId,
+      });
     }
   };
 
-  const onUnsubscribe = () => {
+  const handleUnsubscribe = () => {
     if (!notificationEmail) {
       toast.error(t['Email not found']);
     } else if (!userAuthId) {
@@ -182,17 +187,22 @@ const ListMonitoringJobPreview = ({
         channelID: monitoringJob.channelId,
         userEmail: notificationEmail || '',
       });
+      trackUsage('Sidebar.Monitoring.Unsubscribe', {
+        monitoringJob: externalId,
+      });
     }
   };
 
-  const { id, externalId } = monitoringJob;
   const [isOpen, setIsOpen] = useState(false);
   const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
   const isHighlighted =
     showHighlightedBorder && Number(monitoringJobIdParam || 0) === id;
-  const onClickAlerts = (jobId: number) => {
+  const handleClickAlerts = () => {
     setShowAlerts('true');
-    setMonitoringJobIdParam(`${jobId}`);
+    setMonitoringJobIdParam(`${id}`);
+    trackUsage('Sidebar.Monitoring.AlertHistory', {
+      monitoringJob: externalId,
+    });
   };
 
   const lastAlert = head(alerts?.slice(0, 1));
@@ -223,9 +233,9 @@ const ListMonitoringJobPreview = ({
           ) : (
             <>
               {isSubscribed ? (
-                <ActionIcon type="BellFilled" onClick={onUnsubscribe} />
+                <ActionIcon type="BellFilled" onClick={handleUnsubscribe} />
               ) : (
-                <ActionIcon type="Bell" onClick={onSubscribe} />
+                <ActionIcon type="Bell" onClick={handleSubscribe} />
               )}
             </>
           )}
@@ -238,6 +248,9 @@ const ListMonitoringJobPreview = ({
                 label: 'Delete',
                 onClick: () => {
                   deleteMonitoringJob(`${id}`);
+                  trackUsage('Sidebar.Monitoring.Delete', {
+                    monitoringJob: monitoringJob.externalId,
+                  });
                 },
                 icon: 'Delete',
               },
@@ -270,7 +283,7 @@ const ListMonitoringJobPreview = ({
               : null}
           </Col>
           <Col span={7}>
-            <ShowAllButton onClick={() => onClickAlerts(id)}>
+            <ShowAllButton onClick={handleClickAlerts}>
               {t.History}
               <Icon type="ArrowRight" size={10} />
             </ShowAllButton>

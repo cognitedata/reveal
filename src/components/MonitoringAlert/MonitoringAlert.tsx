@@ -4,6 +4,7 @@ import { makeDefaultTranslations } from 'utils/translations';
 import { format, formatDistance } from 'date-fns';
 import styled from 'styled-components';
 import { durationFormatter } from 'utils/date';
+import { trackUsage } from 'services/metrics';
 import { AlertResponse } from './types';
 import { useAlertsResolveCreate } from './hooks';
 import {
@@ -18,6 +19,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Mark as resolved',
   'Active',
   'Inactive',
+  'Resolved',
   'Change status to resolved',
   'You want to change status of alert. You cannot undo this action and it will affect all subscribers.'
 );
@@ -39,9 +41,6 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
 
   const onCloseDropdown = () => setIsMenuOpen(false);
   const onOpenDropdown = () => setIsMenuOpen(true);
-  const onMarkAsResolved = () => {
-    setIsModalVisible(true);
-  };
   const popperOptions = {
     modifiers: [
       {
@@ -83,7 +82,7 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
                     <Menu.Item
                       key="alert-row-inactive"
                       onClick={() => {
-                        onMarkAsResolved();
+                        setIsModalVisible(true);
                       }}
                     >
                       <Icon type="CheckmarkAlternative" />
@@ -99,7 +98,7 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
               </AlertAction>
             </Dropdown>
           ) : (
-            <ResolvedText>Resolved</ResolvedText>
+            <ResolvedText>{t.Resolved}</ResolvedText>
           )}
         </ResolverContainer>
       </Col>
@@ -117,6 +116,7 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
             ],
           });
           setIsModalVisible(false);
+          trackUsage('Sidebar.Alerting.ResolveAlert', { alert: alert.id });
         }}
         onCancel={() => {
           setIsModalVisible(false);

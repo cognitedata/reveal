@@ -20,6 +20,7 @@ import {
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
 } from 'domain/monitoring/constants';
+import { trackUsage } from 'services/metrics';
 import {
   FieldHelperText,
   NotificationBox,
@@ -95,6 +96,11 @@ const CreateMonitoringJobStep1 = ({
       (threshold) => threshold.id === MONITORING_THRESHOLD_ID
     )
   );
+
+  const handleCancel = () => {
+    trackUsage('Sidebar.Monitoring.CancelCreate');
+    onCancel();
+  };
 
   useEffect(() => {
     const thresholdData = {
@@ -296,7 +302,7 @@ const CreateMonitoringJobStep1 = ({
       <PortalWait elementId="monitoring-job-stepper">
         <Row>
           <Col span={8}>
-            <Button onClick={onCancel}>{t.Cancel}</Button>
+            <Button onClick={handleCancel}>{t.Cancel}</Button>
           </Col>
           <Col span={16}>
             <FullWidthButton
