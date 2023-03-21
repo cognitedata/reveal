@@ -6,6 +6,7 @@ import { WorkflowState } from 'models/calculation-results/types';
 import { selectedEventsAtom } from 'models/event-results/atom';
 import { useRecoilValue } from 'recoil';
 import { ChartEventResults } from 'models/event-results/types';
+import { InteractionData } from 'models/interactions/types';
 import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
@@ -23,6 +24,7 @@ type Props = {
   timeseriesData: TimeseriesEntry[];
   calculationsData: WorkflowState[];
   eventData?: ChartEventResults[];
+  interactionData?: InteractionData;
 };
 
 const ChartPlotContainer = ({
@@ -36,6 +38,7 @@ const ChartPlotContainer = ({
   timeseriesData = [],
   calculationsData = [],
   eventData = [],
+  interactionData,
 }: Props) => {
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
 
@@ -109,6 +112,7 @@ const ChartPlotContainer = ({
     stackedMode,
     mergeUnits,
     dragmode,
+    interactionData,
     onPlotNavigation: handleChartNavigation,
   };
 

@@ -85,6 +85,7 @@ import { eventResultsAtom } from 'models/event-results/atom';
 import { EventResultEffects } from 'effects/events';
 import { MonitoringSidebar } from 'components/MonitoringSidebar/MonitoringSidebar';
 import { AlertingSidebar } from 'components/AlertingSidebar/AlertingSidebar';
+import interactionsAtom from 'models/interactions/atom';
 import NotificationIndicator from './NotificationIndicator';
 import {
   BottomPaneWrapper,
@@ -184,6 +185,7 @@ const ChartViewPage = () => {
   const timeseriesData = useRecoilValue(timeseriesAtom);
   const calculationData = useRecoilValue(availableWorkflows);
   const eventData = useRecoilValue(eventResultsAtom);
+  const interactionData = useRecoilValue(interactionsAtom);
 
   /**
    * Method for updating storage value of chart
@@ -834,6 +836,7 @@ const ChartViewPage = () => {
                     timeseriesData={timeseriesData}
                     calculationsData={calculationData}
                     eventData={eventData}
+                    interactionData={interactionData}
                   />
                 </ChartWrapper>
                 <ChartActionButton

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
@@ -13,13 +13,14 @@ import {
   updateChartThresholdSelectedSource,
   updateChartThresholdUpperLimit,
 } from 'models/chart/updates-threshold';
-import { ChartThreshold } from 'models/chart/types';
+import { ChartThreshold, ChartTimeSeries } from 'models/chart/types';
 import {
   SCHEDULE_MINUTE_OPTIONS,
   SCHEDULE_HOUR_OPTIONS,
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
 } from 'domain/monitoring/constants';
+import { useChartInteractionsAtom } from 'models/interactions/atom';
 import { trackUsage } from 'services/metrics';
 import {
   FieldHelperText,
@@ -80,6 +81,7 @@ const CreateMonitoringJobStep1 = ({
   const { isDirty, isValid, errors } = formState;
 
   const [chart, setChart] = useChartAtom();
+  const [, setInteractionsState] = useChartInteractionsAtom();
   const timeseries = (chart && chart?.timeSeriesCollection) || [];
 
   const userInfo = useUserInfo();
@@ -124,6 +126,9 @@ const CreateMonitoringJobStep1 = ({
           removeChartThreshold(oldChart!, MONITORING_THRESHOLD_ID)
         );
       }, 200);
+      setInteractionsState({
+        highlightedTimeseriesId: undefined,
+      });
     };
   }, []);
 
@@ -137,7 +142,7 @@ const CreateMonitoringJobStep1 = ({
     );
   }, [formValues.alertThreshold]);
 
-  useEffect(() => {
+  useMemo(() => {
     const tsSource = timeseries.find((ts) => {
       return ts.tsExternalId === formValues.source?.tsExternalId;
     });
@@ -149,8 +154,19 @@ const CreateMonitoringJobStep1 = ({
           tsSource?.id || ''
         )
       );
+      const selectedTs = chart?.timeSeriesCollection?.find(
+        (currentTs: ChartTimeSeries) => {
+          return currentTs.tsExternalId === formValues.source?.tsExternalId;
+        }
+      );
+      setInteractionsState({
+        highlightedTimeseriesId: selectedTs?.id,
+      });
     }
-  }, [formValues.source?.tsExternalId, timeseries]);
+  }, [
+    formValues.source?.tsExternalId,
+    JSON.stringify(timeseries.map((ts) => ts.tsExternalId)),
+  ]);
 
   useEffect(() => {
     if (scheduleDurationType?.value === 'm') {

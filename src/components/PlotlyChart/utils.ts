@@ -271,11 +271,22 @@ export function calculateMaxRange(series: SeriesData[]): number[] {
 
 export function formatPlotlyData(
   seriesData: SeriesData[],
-  hideMinMax: boolean
+  hideMinMax: boolean,
+  highlightedTimeseriesId: string | undefined
 ): Plotly.Data[] {
   const groupedAggregateTraces = seriesData.map(({ series, unit }, index) =>
     series.map(
-      ({ name, color, mode, shape, width, dash, datapoints, outdatedData }) => {
+      ({
+        id,
+        name,
+        color,
+        mode,
+        shape,
+        width,
+        dash,
+        datapoints,
+        outdatedData,
+      }) => {
         /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
     In addition, should min value be less than avg value? */
         const firstDatapoint = (
@@ -318,7 +329,7 @@ export function formatPlotlyData(
 
         const unitLabel = unit ? ` ${unit}` : '';
 
-        const average = {
+        const average: any = {
           type: 'scatter',
           mode: mode || 'lines',
           opacity: outdatedData ? 0.5 : 1,
@@ -329,7 +340,11 @@ export function formatPlotlyData(
           fill: 'none',
           line: {
             shape,
-            color,
+            color:
+              highlightedTimeseriesId !== undefined &&
+              highlightedTimeseriesId !== id
+                ? hexToRGBA(color, 0.3) || color
+                : color,
             width: width || 1,
             dash: dash || 'solid',
           },
@@ -489,6 +504,7 @@ export function generateLayout({
   dateFrom,
   dateTo,
   dragmode,
+  highlightedTimeseriesId,
 }: any): any {
   const horizontalMargin = isPreview ? 0 : 20;
   const verticallMargin = isPreview ? 0 : 30;
@@ -531,9 +547,12 @@ export function generateLayout({
     type: 'linear', // IMPORTANT! missing causes more renders
     fixedrange: yAxisLocked,
   };
-
   seriesData.forEach(({ unit, range, series, thresholds }: any, index: any) => {
-    const { color } = series[0];
+    const { color: originalColor, id } = series[0];
+    let color = originalColor;
+    if (highlightedTimeseriesId && id !== highlightedTimeseriesId) {
+      color = hexToRGBA(color, 0.3);
+    }
     const datapoints = series.reduce(
       (acc: (Datapoints | DatapointAggregate)[], s: SeriesInfo) =>
         acc.concat(s.datapoints),

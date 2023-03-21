@@ -13,6 +13,7 @@ import {
   ChartEventResults,
   EventsCollection,
 } from 'models/event-results/types';
+import { InteractionData } from 'models/interactions/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,
@@ -65,6 +66,7 @@ type Props = {
   dragmode?: 'zoom' | 'pan';
   onPlotNavigation?: (update: PlotNavigationUpdate) => void;
   plotlyProps?: ((prev: PlotParams) => PlotParams) | PlotParams;
+  interactionData?: InteractionData;
 };
 
 const PlotlyChart = ({
@@ -88,6 +90,7 @@ const PlotlyChart = ({
   dragmode = 'pan',
   onPlotNavigation = () => {},
   plotlyProps = (prev) => prev,
+  interactionData,
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -149,8 +152,13 @@ const PlotlyChart = ({
   ]);
 
   const data: Plotly.Data[] = useMemo(
-    () => formatPlotlyData(seriesData, !isMinMaxShown),
-    [seriesData, isMinMaxShown]
+    () =>
+      formatPlotlyData(
+        seriesData,
+        !isMinMaxShown,
+        interactionData?.highlightedTimeseriesId
+      ),
+    [seriesData, isMinMaxShown, interactionData?.highlightedTimeseriesId]
   );
 
   const layout = useMemo(() => {
@@ -167,6 +175,7 @@ const PlotlyChart = ({
       dateFrom,
       dateTo,
       dragmode,
+      highlightedTimeseriesId: interactionData?.highlightedTimeseriesId,
     });
   }, [
     isPreview,
@@ -181,6 +190,7 @@ const PlotlyChart = ({
     dateFrom,
     dateTo,
     dragmode,
+    interactionData?.highlightedTimeseriesId,
   ]);
 
   const config = useMemo(() => {
