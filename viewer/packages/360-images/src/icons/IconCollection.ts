@@ -59,6 +59,15 @@ export class IconCollection {
     this._proximityPointLimit = clamp(pointLimit, 0, this.icons.length);
   }
 
+  public disableCullingScheme(disable: boolean): void {
+    if (disable) {
+      this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
+      this._iconsSprite.setPoints([]);
+    } else {
+      this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+    }
+  }
+
   constructor(
     points: Vector3[],
     sceneHandler: SceneHandler,

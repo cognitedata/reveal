@@ -22,6 +22,12 @@ export interface Image360Collection {
   set360IconCullingRestrictions(radius: number, pointLimit: number): void;
 
   /**
+   * Toggle visibility of all 360 image icons.
+   * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
+   */
+  setAll360IconsVisibility(visible: boolean): void;
+
+  /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.

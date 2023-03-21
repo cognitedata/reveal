@@ -59,6 +59,7 @@ export class Image360Icon {
   }
 
   set hoverSpriteVisible(visible: boolean) {
+    if (visible && !this._visible) return;
     this._hoverSprite.visible = visible;
   }
 
