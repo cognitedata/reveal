@@ -210,13 +210,24 @@ export const useCreatePipeline = (
 
 type PipelineUpdateParams = Required<Pick<Pipeline, 'id'>> &
   Partial<Omit<Pipeline, 'id'>>;
+type PipelineUpdateContext = { previous?: PipelineUpdateParams };
 export const useUpdatePipeline = (
-  options?: UseMutationOptions<Pipeline, CogniteError, PipelineUpdateParams>
+  options?: UseMutationOptions<
+    Pipeline,
+    CogniteError,
+    PipelineUpdateParams,
+    PipelineUpdateContext
+  >
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  return useMutation<Pipeline, CogniteError, PipelineUpdateParams>(
+  return useMutation<
+    Pipeline,
+    CogniteError,
+    PipelineUpdateParams,
+    PipelineUpdateContext
+  >(
     async (params) => {
       const { id, ...rest } = params;
       const update = Object.entries(rest).reduce((acc, [key, value]) => {
@@ -247,9 +258,30 @@ export const useUpdatePipeline = (
     },
     {
       ...options,
-      onSuccess: (...params) => {
-        queryClient.invalidateQueries(getEMPipelinesKey());
-        options?.onSuccess?.(...params);
+      onMutate: async (variables) => {
+        await queryClient.cancelQueries({
+          queryKey: getEMPipelineKey(variables.id),
+        });
+
+        const previousPipeline = queryClient.getQueryData<Pipeline | undefined>(
+          getEMPipelineKey(variables.id)
+        );
+
+        const nextPipeline = { ...previousPipeline, ...variables };
+        queryClient.setQueryData(getEMPipelineKey(variables.id), nextPipeline);
+
+        return { previous: previousPipeline };
+      },
+      onError: (_, variables, context) => {
+        if (context?.previous) {
+          queryClient.setQueryData(
+            getEMPipelineKey(variables.id),
+            context.previous
+          );
+        }
+      },
+      onSettled: (_, __, variables) => {
+        queryClient.invalidateQueries(getEMPipelineKey(variables.id));
       },
     }
   );
