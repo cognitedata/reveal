@@ -35,6 +35,7 @@ export const LabelFilter = <TFilter,>({
     >
       <>
         <MultiSelectFilter<string>
+          label="Labels"
           options={options}
           onChange={(_, newValue) => handleChange(newValue)}
           value={value}
