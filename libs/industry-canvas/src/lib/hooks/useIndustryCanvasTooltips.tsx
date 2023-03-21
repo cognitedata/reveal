@@ -40,7 +40,8 @@ const useIndustryCanvasTooltips = ({
   updateContainerReference,
 }: UseTooltipsParams) => {
   const assetTooltips = useIndustryCanvasAssetTooltips(
-    selectedContainerAnnotation
+    selectedContainerAnnotation,
+    onAddContainerReferences
   );
   const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
     annotations: containerAnnotations,
