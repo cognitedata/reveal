@@ -62,3 +62,9 @@ export const SOURCE_TYPES = [
 export type SourceType = (typeof SOURCE_TYPES)[number];
 export type TargetType = 'assets';
 export type API = SourceType | TargetType;
+
+// time series should be referred as time_series instead of timeseries for
+// pipeline API
+export type PipelineSourceType =
+  | Exclude<SourceType, 'timeseries'>
+  | 'time_series';
