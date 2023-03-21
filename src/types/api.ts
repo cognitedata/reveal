@@ -66,5 +66,5 @@ export type API = SourceType | TargetType;
 // time series should be referred as time_series instead of timeseries for
 // pipeline API
 export type PipelineSourceType =
-  | Exclude<SourceType, 'timeseries'>
+  | Exclude<SourceType, 'timeseries' | 'threeD'>
   | 'time_series';

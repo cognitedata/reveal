@@ -94,7 +94,7 @@ const aggregateQueryKey = ({
   properties,
 ];
 
-type Aggregate = {
+export type Aggregate = {
   count: number;
   values?: (string | number)[];
 };
