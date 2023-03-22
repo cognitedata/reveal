@@ -32,7 +32,8 @@ export class Image360UI {
 
     const iconCulling = {
       radius: Infinity,
-      limit: 50
+      limit: 50,
+      hideAll: false
     };
 
     const params = {
@@ -78,6 +79,17 @@ export class Image360UI {
         set360IconCullingRestrictions();
       });
 
+    gui
+      .add(iconCulling, 'hideAll')
+      .name('Hide all 360 images')
+      .onChange(() => {
+        if (sets.length > 0) {
+          sets.forEach(p => p.setIconsVisibility(!iconCulling.hideAll));
+          viewer.requestRedraw();
+        } else {
+          iconCulling.hideAll = !iconCulling.hideAll;
+        }
+      });
     gui.add(params, 'remove').name('Remove all 360 images');
 
     async function add360ImageSet() {
