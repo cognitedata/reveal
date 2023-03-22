@@ -25,7 +25,7 @@ import zIndex from './utils/zIndex';
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope.styleScope);
   const el = els.item(0)! as HTMLElement;
-  return el;
+  return el || document.body;
 };
 
 // This will override the appendTo prop on all Tooltips used from cogs
