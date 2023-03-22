@@ -95,7 +95,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
       await facade.preload(entity);
       entity.image360Visualization.visible = true;
-      entity.icon.visible = false;
+      entity.icon.setVisibility(false);
 
       if (lastClicked !== undefined) {
         this.transition360Image(lastClicked, entity, camera, cameraControls);
