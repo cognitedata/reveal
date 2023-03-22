@@ -1,25 +1,49 @@
 import { useTranslation } from 'common';
 import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
-import { useEMModelPredictResults } from 'hooks/contextualization-api';
+import {
+  useEMModelPredictResults,
+  useRulesResults,
+} from 'hooks/contextualization-api';
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
 import { Navigate, useParams } from 'react-router-dom';
 import { SourceType } from 'types/api';
-import { sessionStoragePredictJobKey } from 'utils';
+import { sessionStoragePredictJobKey, sessionStorageRulesJobKey } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
-  const { subAppPath, jobId, sourceType } = useParams<{
+  const {
+    subAppPath,
+    predictJobId: predictJobIdStr,
+    rulesJobId: rulesJobIdStr,
+    sourceType,
+  } = useParams<{
     subAppPath: string;
-    jobId: string;
+    predictJobId: string;
+    rulesJobId: string;
     sourceType: SourceType;
   }>();
 
   const { t } = useTranslation();
-  const id = parseInt(jobId ?? '', 10);
-  const jobToken = sessionStorage.getItem(sessionStoragePredictJobKey(id));
+  const predictJobId = parseInt(predictJobIdStr ?? '', 10);
+  const rulesJobId = parseInt(rulesJobIdStr ?? '', 10);
+  const predictJobToken = sessionStorage.getItem(
+    sessionStoragePredictJobKey(predictJobId)
+  );
+  const rulesJobToken = sessionStorage.getItem(
+    sessionStorageRulesJobKey(rulesJobId)
+  );
 
-  const { data: predictions } = useEMModelPredictResults(id, jobToken, {
-    enabled: !!jobId,
+  const { data: predictions } = useEMModelPredictResults(
+    predictJobId,
+    predictJobToken,
+    {
+      enabled: !!predictJobId,
+      ...INFINITE_Q_OPTIONS,
+    }
+  );
+
+  const { data: rules } = useRulesResults(rulesJobId, rulesJobToken, {
+    enabled: !!rulesJobId,
     ...INFINITE_Q_OPTIONS,
   });
 
@@ -33,6 +57,7 @@ const QuickMatchResults = (): JSX.Element => {
         <EntityMatchingResult
           sourceType={sourceType}
           predictions={predictions.items}
+          rules={rules?.rules}
         />
       )}
     </Page>

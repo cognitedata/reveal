@@ -11,36 +11,43 @@ import {
   IN_PROGRESS_EM_STATES,
   useCreateEMModel,
   useCreateEMPredictionJob,
+  useCreateRulesJob,
   useEMModel,
   useEMModelPredictResults,
+  useRulesResults,
 } from 'hooks/contextualization-api';
 import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
 import {
   bulkDownloadStatus,
+  filterFieldsFromObjects,
   getAdvancedFilter,
   sessionStoragePredictJobKey,
+  sessionStorageRulesJobKey,
 } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 import { useInfinite3dNodes } from 'hooks/threeD';
-import { getToken } from '@cognite/cdf-sdk-singleton';
 
 const CreateModel = (): JSX.Element => {
   const {
     subAppPath,
     modelId: modelIdStr,
-    jobId: jobIdStr,
+    predictJobId: predictJobIdStr,
+    rulesJobId: rulesJobIdStr,
   } = useParams<{
     subAppPath: string;
     modelId?: string;
-    jobId?: string;
+    predictJobId?: string;
+    rulesJobId?: string;
   }>();
   const modelId = !!modelIdStr ? parseInt(modelIdStr, 10) : undefined;
-  const jobId = !!jobIdStr ? parseInt(jobIdStr, 10) : undefined;
+  const predictJobId = !!predictJobIdStr
+    ? parseInt(predictJobIdStr, 10)
+    : undefined;
+  const rulesJobId = !!rulesJobIdStr ? parseInt(rulesJobIdStr, 10) : undefined;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
     sourceType,
-
     allSources,
     sourceFilter,
     sourcesList,
@@ -53,20 +60,44 @@ const CreateModel = (): JSX.Element => {
     targetFilter,
     threeDModel,
   } = useQuickMatchContext();
-  const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
-  const [jobRefetchInt, setJobRefetchInt] = useState<number | undefined>();
+  const [modelRefetchInterval, setModelRefetchInterval] = useState<
+    number | undefined
+  >();
+  const [predictRefetchInterval, setPredictRefetchInterval] = useState<
+    number | undefined
+  >();
+  const [rulesRefetchInterval, setRulesRefetchInterval] = useState<
+    number | undefined
+  >();
 
   const is3d = sourceType === 'threeD';
 
+  const predictJobToken = sessionStorage.getItem(
+    sessionStoragePredictJobKey(predictJobId!)
+  );
+  const rulesJobToken = sessionStorage.getItem(
+    sessionStorageRulesJobKey(rulesJobId!)
+  );
+
   const { data: model } = useEMModel(modelId!, {
     enabled: !!modelId,
-    refetchInterval: modelRefetchInt,
+    refetchInterval: modelRefetchInterval,
     ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
   });
-  const jobToken = sessionStorage.getItem(sessionStoragePredictJobKey(jobId!));
-  const { data: prediction } = useEMModelPredictResults(jobId!, jobToken, {
-    enabled: !!jobId,
-    refetchInterval: jobRefetchInt,
+
+  const { data: prediction } = useEMModelPredictResults(
+    predictJobId!,
+    predictJobToken,
+    {
+      enabled: !!predictJobId,
+      refetchInterval: predictRefetchInterval,
+      ...INFINITE_Q_OPTIONS,
+    }
+  );
+
+  const { data: rules } = useRulesResults(rulesJobId!, rulesJobToken, {
+    enabled: !!rulesJobId,
+    refetchInterval: rulesRefetchInterval,
     ...INFINITE_Q_OPTIONS,
   });
 
@@ -256,42 +287,105 @@ const CreateModel = (): JSX.Element => {
       },
     });
 
-  const modelStatus = model?.status;
-  const jobStatus = prediction?.status;
+  const { mutate: createRulesJob, status: createRulesStatus } =
+    useCreateRulesJob({
+      async onSuccess(job) {
+        if (job.jobToken) {
+          sessionStorage.setItem(
+            sessionStorageRulesJobKey(job.jobId),
+            job.jobToken
+          );
+        }
+        navigate(
+          createLink(
+            `/${subAppPath}/quick-match/create/create-model/${modelId}/${predictJobId}/${job.jobId}`
+          ),
+          { replace: true }
+        );
+      },
+    });
 
   useEffect(() => {
-    if (!modelStatus) {
+    if (!model?.status) {
       return;
     }
-    if (IN_PROGRESS_EM_STATES.includes(modelStatus)) {
-      setModelRefetchInt(1000);
+    if (IN_PROGRESS_EM_STATES.includes(model?.status)) {
+      setModelRefetchInterval(1000);
     } else {
-      setModelRefetchInt(undefined);
+      setModelRefetchInterval(undefined);
     }
-  }, [modelStatus, modelRefetchInt]);
+  }, [model?.status, modelRefetchInterval]);
 
   useEffect(() => {
-    if (!modelStatus || !model?.id) {
+    if (!model?.status || !model?.id) {
       return;
     }
-    if (modelStatus === 'Completed') {
+    if (model?.status === 'Completed') {
       createPredictJob(model?.id);
     }
-  }, [createPredictJob, model?.id, modelStatus]);
+  }, [createPredictJob, model?.id, model?.status]);
 
   useEffect(() => {
-    if (jobStatus && IN_PROGRESS_EM_STATES.includes(jobStatus)) {
-      setJobRefetchInt(1000);
-    } else {
-      setJobRefetchInt(undefined);
-    }
-  }, [jobStatus]);
+    if (prediction?.status === 'Completed') {
+      const matches =
+        prediction?.items
+          ?.filter((i) => i.matches.length > 0)
+          .map((i) => ({
+            sourceId: i.source.id,
+            targetId: i.matches[0]?.target.id,
+          })) || [];
+      const filteredSources = filterFieldsFromObjects(sources, [
+        'id',
+        ...matchFields
+          .filter((source) => !!source)
+          .map(({ source }) => source as string),
+      ]);
 
-  if (jobStatus === 'Completed') {
+      const filteredTargets = filterFieldsFromObjects(targets, [
+        'id',
+        ...matchFields
+          .filter((target) => !!target)
+          .map(({ target }) => target as string),
+      ]);
+      createRulesJob({
+        sources: filteredSources,
+        targets: filteredTargets,
+        matches,
+      });
+    }
+  }, [
+    createRulesJob,
+    prediction?.items,
+    prediction?.status,
+    sources,
+    targets,
+    matchFields,
+  ]);
+
+  useEffect(() => {
+    if (
+      prediction?.status &&
+      IN_PROGRESS_EM_STATES.includes(prediction?.status)
+    ) {
+      setPredictRefetchInterval(1000);
+    } else {
+      setPredictRefetchInterval(undefined);
+    }
+  }, [prediction?.status]);
+
+  useEffect(() => {
+    if (rules?.status && IN_PROGRESS_EM_STATES.includes(rules?.status)) {
+      setRulesRefetchInterval(1000);
+    } else {
+      setRulesRefetchInterval(undefined);
+    }
+  }, [rules?.status]);
+
+  if (rules?.status === 'Completed') {
     return (
       <Navigate
         to={createLink(
-          `/${subAppPath}/quick-match/results/${jobId}/${sourceType}`
+          `/${subAppPath}/quick-match/results/${predictJobId}/${rulesJobId}/${sourceType}`
         )}
         replace={true}
       />
@@ -344,6 +438,17 @@ const CreateModel = (): JSX.Element => {
             <Body level={2}>
               {t(`create-prediction-job-${createPredictStatus}`)}
             </Body>
+          </Flex>
+        )}
+        {rules ? (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={rules.status} />
+            <Body level={2}>{t(`create-rules-job-${rules.status}`)}</Body>
+          </Flex>
+        ) : (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={createRulesStatus} />
+            <Body level={2}>{t(`create-rules-job-${createRulesStatus}`)}</Body>
           </Flex>
         )}
       </Infobox>
