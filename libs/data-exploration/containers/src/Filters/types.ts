@@ -1,3 +1,5 @@
+import { OptionSelection } from '@data-exploration/components';
+
 export interface BaseFilter<TFilter> {
   // TODO: Investigate which properties are needed here to make dynamic filter work.
   // All the filter (e.g., SourceFilter, etc...) should manage the dynamic filter
@@ -6,13 +8,22 @@ export interface BaseFilter<TFilter> {
   filter?: TFilter;
 }
 
+interface CommonFilterProps {
+  error?: boolean;
+  loading?: boolean;
+}
+
 export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
-  extends BaseFilter<TFilter> {
+  extends BaseFilter<TFilter>,
+    CommonFilterProps {
   value?: { label?: string; value: TValue }[];
   onChange?: (
     newSources: { label?: string; value: TValue }[] | undefined
   ) => void;
   addNilOption?: boolean;
-  error?: boolean;
-  loading?: boolean;
+}
+export interface BaseNestedFilterProps<TFilter>
+  extends BaseFilter<TFilter>,
+    CommonFilterProps {
+  onChange?: (selection: OptionSelection) => void;
 }

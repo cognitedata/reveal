@@ -1,3 +1,4 @@
+export * from './MetadataFilter';
 export * from './MultiSelectFilter';
 export * from './SourceFilter';
 export * from './IsStepFilter';

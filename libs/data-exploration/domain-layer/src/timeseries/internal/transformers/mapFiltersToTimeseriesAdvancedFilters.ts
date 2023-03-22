@@ -95,6 +95,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       new AdvancedFilterBuilder<TimeseriesProperties>();
 
     const searchConfigData = getSearchConfig();
+
     if (searchConfigData.timeSeries.name.enabled) {
       searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
     }

@@ -47,6 +47,7 @@ export interface AssetsAggregateUniqueValuesResponse extends AggregateResponse {
 }
 
 export interface AssetsMetadataAggregateResponse extends AggregateResponse {
+  // @deprecated use 'values'
   value: string;
   values: string[];
 }

@@ -7,3 +7,5 @@ export * from './Labels';
 export * from './Icons';
 export * from './Modals';
 export * from './Select';
+export * from './CheckboxSelect';
+export * from './__test-utils';
