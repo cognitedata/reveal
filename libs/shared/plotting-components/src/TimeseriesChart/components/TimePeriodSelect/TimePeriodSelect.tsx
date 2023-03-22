@@ -42,6 +42,7 @@ export const TimePeriodSelect: React.FC<TimePeriodSelectProps> = ({
     <Select
       title="Other:"
       width={160}
+      theme="grey"
       options={adaptedOptions}
       value={selectedTimePeriod && { label: selectedTimePeriod }}
       onChange={handleChange}
