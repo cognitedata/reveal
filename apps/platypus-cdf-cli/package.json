@@ -7,9 +7,6 @@
     "url": "https://github.com/cognitedata/platypus.git",
     "directory": "apps/platypus-cdf-cli"
   },
-  "files": [
-    "**/*"
-  ],
   "author": "Cognite",
   "license": "Apache-2.0",
   "main": "./main.js",
@@ -26,6 +23,6 @@
     "lowercase-keys": "^3.0.0"
   },
   "resolutions": {
-    "graphql": "^16.5.0"
+    "graphql": "^15.6.1"
   }
 }

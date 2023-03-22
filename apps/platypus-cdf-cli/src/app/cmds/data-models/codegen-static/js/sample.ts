@@ -1,5 +1,6 @@
 // if there's an error here, ensure you have installed `@cognite/fdm-client`
-import { FDMQueryClientBuilder, everything } from './index';
+// @ts-nocheck
+import { FDMQueryClientBuilder } from './index';
 
 const client = FDMQueryClientBuilder.fromToken();
 
@@ -8,7 +9,7 @@ client
   .runQuery({
     // listXXX: {
     //   items: {
-    //     ...everything
+    //     __scalar:true
     //   },
     // },
   })

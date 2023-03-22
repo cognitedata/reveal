@@ -12,13 +12,6 @@ module.exports = (config, context) => {
   console.log('Loading custom webpack config - ', nodeEnv);
   return {
     ...config,
-    entry: {
-      ...config.entry,
-    },
-    output: {
-      ...config.output,
-      filename: '[name].js',
-    },
     mode: process.env.NODE_ENV || 'production',
     plugins: [
       ...config.plugins,
