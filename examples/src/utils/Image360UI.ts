@@ -90,6 +90,7 @@ export class Image360UI {
           iconCulling.hideAll = !iconCulling.hideAll;
         }
       });
+
     gui.add(params, 'remove').name('Remove all 360 images');
 
     async function add360ImageSet() {
