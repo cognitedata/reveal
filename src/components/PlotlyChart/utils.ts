@@ -345,7 +345,7 @@ export function formatPlotlyData(
               highlightedTimeseriesId !== id
                 ? hexToRGBA(color, 0.3) || color
                 : color,
-            width: width || 1,
+            width: highlightedTimeseriesId === id ? 2 : width || 1,
             dash: dash || 'solid',
           },
           yaxis: `y${index !== 0 ? index + 1 : ''}`,
