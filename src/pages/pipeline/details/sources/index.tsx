@@ -5,7 +5,7 @@ import {
   Flex,
   Icon,
   IconType,
-  InputNew,
+  InputExp,
   Switch,
   toast,
 } from '@cognite/cogs.js';
@@ -206,7 +206,7 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
                 </Option>
               ))}
             </Select>
-            <InputNew
+            <InputExp
               icon="Search"
               onChange={(e) => {
                 searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
