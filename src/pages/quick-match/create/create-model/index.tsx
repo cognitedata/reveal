@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Infobox } from '@cognite/cogs.js';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
@@ -15,9 +15,14 @@ import {
   useEMModelPredictResults,
 } from 'hooks/contextualization-api';
 import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
-import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
+import {
+  bulkDownloadStatus,
+  getAdvancedFilter,
+  sessionStorageKey,
+} from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 import { useInfinite3dNodes } from 'hooks/threeD';
+import { getToken } from '@cognite/cdf-sdk-singleton';
 
 const CreateModel = (): JSX.Element => {
   const {
@@ -58,8 +63,8 @@ const CreateModel = (): JSX.Element => {
     refetchInterval: modelRefetchInt,
     ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
   });
-
-  const { data: prediction } = useEMModelPredictResults(jobId!, {
+  const token = sessionStorage.getItem(sessionStorageKey(jobId!));
+  const { data: prediction } = useEMModelPredictResults(jobId!, token!, {
     enabled: !!jobId,
     refetchInterval: jobRefetchInt,
     ...INFINITE_Q_OPTIONS,
@@ -235,7 +240,11 @@ const CreateModel = (): JSX.Element => {
 
   const { mutate: createPredictJob, status: createPredictStatus } =
     useCreateEMPredictionJob({
-      onSuccess(job) {
+      async onSuccess(job) {
+        sessionStorage.setItem(
+          sessionStorageKey(job.jobId),
+          job.jobToken || (await getToken())
+        );
         navigate(
           createLink(
             `/${subAppPath}/quick-match/create/create-model/${modelId}/${job.jobId}`
@@ -276,13 +285,16 @@ const CreateModel = (): JSX.Element => {
     }
   }, [jobStatus]);
 
-  useEffect(() => {
-    if (jobStatus === 'Completed') {
-      navigate(createLink(`/${subAppPath}/quick-match/results/${jobId}`), {
-        replace: true,
-      });
-    }
-  }, [jobId, jobStatus, navigate, subAppPath]);
+  if (jobStatus === 'Completed') {
+    return (
+      <Navigate
+        to={createLink(
+          `/${subAppPath}/quick-match/results/${jobId}/${sourceType}`
+        )}
+        replace={true}
+      />
+    );
+  }
 
   return (
     <Flex direction="column" gap={8}>
