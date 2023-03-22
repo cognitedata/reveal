@@ -305,7 +305,14 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
     }
   }
 
-  return data;
+  return data.map(
+    (el) =>
+      ({
+        ...el,
+        lastUpdatedTime: Number(el._metadata_lastUpdatedTime || new Date()),
+        createdTime: Number(el._metadata_lastUpdatedTime || new Date()),
+      } as CdfResourceObject)
+  );
 }
 
 export const getDataModelStorageExternalId = (binding: DmsBinding) => {

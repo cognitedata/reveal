@@ -18,7 +18,6 @@ import { DropdownButton, LastTimeText } from './elements';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { getContainer } from '@platypus-app/GlobalStyles';
 
 type Props = {
   selectedVersion: DataModelVersion;
@@ -71,6 +70,7 @@ export function SchemaVersionDropdown({
         visible={isOpen}
         content={
           <Menu
+            data-cy="schema-version-select-menu"
             style={{
               maxHeight: 192,
               minWidth: 300,
