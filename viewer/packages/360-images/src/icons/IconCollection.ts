@@ -34,6 +34,8 @@ export class IconCollection {
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
+    if (this._iconCullingScheme === scheme) return;
+
     this._iconCullingScheme = scheme;
     this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
 
