@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { InternalEventsFilters, OldEventsFilters } from '../../internal';
 import {
   getEventsMetadataValuesAggregate,
   EventsMetadataAggregateResponse,
@@ -9,6 +8,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import {
+  InternalEventsFilters,
+  OldEventsFilters,
+} from '@data-exploration-lib/core';
 
 export const useEventsMetadataValuesAggregateQuery = (
   metadataKey?: string | null,

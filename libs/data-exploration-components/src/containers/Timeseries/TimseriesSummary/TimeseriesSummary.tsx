@@ -14,12 +14,12 @@ import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastRe
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
   useTimeseriesMetadataKeys,
-  InternalTimeseriesFilters,
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const TimeseriesSummary = ({
   query = '',

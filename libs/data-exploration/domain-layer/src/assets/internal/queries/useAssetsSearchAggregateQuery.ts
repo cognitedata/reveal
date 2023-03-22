@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import {
-  InternalAssetFilters,
   mapFiltersToAssetsAdvancedFilters,
   mapInternalFilterToAssetFilter,
   useAssetsAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export const useAssetsSearchAggregateQuery = (
   {

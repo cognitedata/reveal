@@ -9,13 +9,11 @@ import { DocumentsTable } from '@data-exploration-components/containers/Document
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
   InternalDocument,
-  InternalDocumentFilter,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
-import { v4 as uuid } from 'uuid';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-components/context/AppContext';
@@ -25,6 +23,7 @@ import { VerticalDivider } from '@data-exploration-components/components/Divider
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { ResourceTypes } from '@data-exploration-components/types';
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -133,7 +132,7 @@ export const DocumentSearchResults = ({
       />
       {modalVisible && (
         <DocumentUploaderModal
-          key={uuid()}
+          key="document-uploader-modal"
           visible={modalVisible}
           onFileSelected={(file) => {
             if (onFileClicked) {

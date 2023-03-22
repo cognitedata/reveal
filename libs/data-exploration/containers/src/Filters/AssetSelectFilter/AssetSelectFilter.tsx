@@ -31,9 +31,14 @@ export const AssetSelectFilter = <TFilter,>({
   error,
   loading,
 }: ByAssetFilterProps<TFilter>) => {
-  const handleChange = (newValue: OptionType<number>[]) => {
+  const handleChange = (
+    newValue: {
+      label: string;
+      value: number;
+    }[]
+  ) => {
     const newFilters = newValue && newValue.length > 0 ? newValue : undefined;
-    onChange?.(newFilters as OptionType<number>[]);
+    onChange?.(newFilters);
   };
 
   const handleInputChange = (query: string) => {

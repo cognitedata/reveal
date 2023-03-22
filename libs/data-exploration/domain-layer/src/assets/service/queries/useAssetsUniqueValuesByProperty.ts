@@ -4,11 +4,13 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   AssetProperty,
   getAssetsUniqueValuesByProperty,
-  InternalAssetFilters,
-  OldAssetFilters,
   queryKeys,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
+import {
+  InternalAssetFilters,
+  OldAssetFilters,
+} from '@data-exploration-lib/core';
 
 export const useAssetsUniqueValuesByProperty = (
   property: AssetProperty,

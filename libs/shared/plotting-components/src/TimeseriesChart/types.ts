@@ -10,6 +10,7 @@ export interface TimeseriesChartProps {
   backgroundColor?: string;
   height?: number;
   onChangeTimePeriod?: (props: UpdateTimePeriodProps) => void;
+  onChangeDateRange?: (dateRange: DateRange) => void;
 }
 
 export type DateRange = [Date, Date];

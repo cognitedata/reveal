@@ -4,7 +4,6 @@ import { useQuery } from 'react-query';
 import { queryKeys } from '../../../queryKeys';
 import {
   InternalAssetTreeData,
-  InternalAssetFilters,
   useAssetsSearchResultWithLabelsQuery,
 } from '../../internal';
 import keyBy from 'lodash/keyBy';
@@ -12,6 +11,7 @@ import isEmpty from 'lodash/isEmpty';
 import { buildTree } from '../utils/buildTree';
 import { concatParents } from '../utils/concatParents';
 import { TableSortBy } from '../../../types';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export const useSearchAssetTree = ({
   query,

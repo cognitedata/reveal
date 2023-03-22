@@ -1,4 +1,4 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import { InternalAssetFilters, isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -6,7 +6,6 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { getSearchConfig } from '../../../utils';
-import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
   assetSubtreeIds: number[];

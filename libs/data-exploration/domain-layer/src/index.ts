@@ -5,7 +5,6 @@ export * from './constants';
 export * from './dataSets';
 export * from './documents';
 export * from './events';
-export * from './files';
 export * from './filters';
 export * from './pnids';
 export * from './queryKeys';

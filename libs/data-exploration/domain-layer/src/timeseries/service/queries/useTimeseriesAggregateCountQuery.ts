@@ -1,13 +1,13 @@
 import { useSDK } from '@cognite/sdk-provider';
 import {
   getTimeseriesAggregateCount,
-  InternalTimeseriesFilters,
   mapFiltersToTimeseriesAdvancedFilters,
   mapInternalFilterToTimeseriesFilter,
   queryKeys,
 } from '@data-exploration-lib/domain-layer';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useMemo } from 'react';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const useTimeseriesAggregateCountQuery = (
   {

@@ -8,14 +8,12 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import {
-  OldTimeseriesFilters,
-  useTimeseriesList,
-} from '@data-exploration-lib/domain-layer';
+import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 import { AggregatedMultiselectFilter } from '@data-exploration-components/components/SearchNew';
 import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
 import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
+import { OldTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const TimeseriesFilters = ({
   filter,

@@ -48,7 +48,7 @@ export const TimeseriesPreview = ({
 
   const tabChange = useOnPreviewTabChange(tabType, 'timeseries');
 
-  const [dateRange, _setDateRange] = usePreviewDateRange();
+  const [dateRange, setDateRange] = usePreviewDateRange();
 
   const [, openPreview] = useCurrentResourceId();
 
@@ -138,9 +138,10 @@ export const TimeseriesPreview = ({
 
                   <TimeseriesChart
                     timeseriesId={timeseries.id}
+                    height={300}
                     quickTimePeriodOptions={['1D', '1W', '1Y']}
                     dateRange={dateRange}
-                    height={300}
+                    onChangeDateRange={setDateRange}
                   />
                   <TimeseriesDetails timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />

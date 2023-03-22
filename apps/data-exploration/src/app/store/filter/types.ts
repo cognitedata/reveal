@@ -1,12 +1,12 @@
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 import {
-  InternalAssetFilters,
   InternalCommonFilters,
   InternalDocumentFilter,
   InternalEventsFilters,
   InternalFilesFilters,
   InternalSequenceFilters,
   InternalTimeseriesFilters,
-} from '@data-exploration-lib/domain-layer';
+} from '@data-exploration-lib/core';
 
 export type Filters = {
   asset: InternalAssetFilters;

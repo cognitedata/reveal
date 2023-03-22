@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import {
-  InternalSequenceFilters,
   mapFiltersToSequenceAdvancedFilters,
   mapInternalFilterToSequenceFilter,
   useSequenceAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
 
 export const useSequenceSearchAggregateQuery = (
   {

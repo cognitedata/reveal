@@ -1,9 +1,11 @@
 import { TableSortBy } from '../../../types';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { InternalTimeseriesFilters } from '../types';
 import { useTimeseriesSearchResultWithLabelsQuery } from './useTimeseriesSearchResultWithLabelsQuery';
 import { useTimeseriesWithDatapointsQuery } from './useTimeseriesWithDatapointsQuery';
-import { isDateInDateRange } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  isDateInDateRange,
+} from '@data-exploration-lib/core';
 
 export const useTimeseriesWithAvailableDatapointsQuery = (
   {

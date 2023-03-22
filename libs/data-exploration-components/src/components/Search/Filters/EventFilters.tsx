@@ -10,10 +10,10 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldEventsFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 import head from 'lodash/head';
+import { OldEventsFilters } from '@data-exploration-lib/core';
 
 export const EventFilters = ({
   filter,

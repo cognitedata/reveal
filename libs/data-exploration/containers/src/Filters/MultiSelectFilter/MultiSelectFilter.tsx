@@ -18,11 +18,17 @@ import {
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {
   label?: string;
-  value?: ValueType[] | OptionType<ValueType>[];
-  options: OptionType<ValueType>[];
+  value?:
+    | ValueType[]
+    | OptionType<ValueType>[]
+    | { label?: string; value: ValueType }[];
+  options: OptionType<ValueType>[] | { label?: string; value: ValueType }[];
   onChange: (
     selectedValues: ValueType[],
-    selectedOptions: OptionType<ValueType>[]
+    selectedOptions: {
+      label: string;
+      value: ValueType;
+    }[]
   ) => void;
 }
 
@@ -30,10 +36,11 @@ export const MultiSelectFilter = <ValueType,>({
   label,
   value,
   onChange,
+  options: defaultOptions,
   ...rest
 }: MultiSelectFilterProps<ValueType>) => {
-  const handleChange = (options: OptionType<ValueType>[]) => {
-    const selectedOptions = options.map((option) => ({
+  const handleChange = (newOptions: OptionType<ValueType | undefined>[]) => {
+    const selectedOptions = newOptions.map((option) => ({
       label: isNilOption(option) ? NIL_FILTER_LABEL : option.label,
       value: option.value as ValueType,
     }));
@@ -43,12 +50,21 @@ export const MultiSelectFilter = <ValueType,>({
     onChange(selectedValues, selectedOptions);
   };
 
+  const options = defaultOptions.map((item) => {
+    return {
+      ...item,
+      label: item.label || String(item.value),
+      value: item.value,
+    };
+  });
+
   return (
     <>
       {!isEmpty(label) && <FilterLabel>{label}</FilterLabel>}
 
-      <MultiSelect
+      <MultiSelect<ValueType | undefined>
         {...rest}
+        options={options}
         data-testid="multi-select-filter"
         value={formatValue(value)}
         onChange={handleChange}

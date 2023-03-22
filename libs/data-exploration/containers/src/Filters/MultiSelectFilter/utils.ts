@@ -15,7 +15,10 @@ export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
 
 // TODO: Add unit tests
 export const formatValue = <ValueType>(
-  value?: ValueType[] | OptionType<ValueType>[]
+  value?:
+    | ValueType[]
+    | OptionType<ValueType>[]
+    | { label?: string; value: ValueType }[]
 ): OptionType<ValueType>[] | undefined => {
   return value?.map((el) => {
     if (has(el, 'value')) {

@@ -1,4 +1,8 @@
-import { EMPTY_OBJECT, useDeepMemo } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  InternalDocumentFilter,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
 import * as React from 'react';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
@@ -9,7 +13,6 @@ import {
 } from '../../../utils/extractMatchingLabels';
 import { extractMatchingLabelsFromCogniteLabels } from '../../../utils/extractMatchingLabelsFromCogniteLabels';
 import { documentNameAndContentMatcher } from '../transformers/documentNameAndContentMatcher';
-import { InternalDocumentFilter } from '../types';
 import { useDocumentSearchResultQuery } from './useDocumentSearchResultQuery';
 
 export const useDocumentSearchResultWithMatchingLabelsQuery = (

@@ -24,7 +24,7 @@ import {
   OldEventsFilters,
   OldTimeseriesFilters,
   OldSequenceFilters,
-} from '@data-exploration-lib/domain-layer';
+} from '@data-exploration-lib/core';
 import zIndex from '../../../utils/zIndex';
 
 const Drawer = styled.div<{ visible: boolean }>`

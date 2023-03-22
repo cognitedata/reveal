@@ -3,12 +3,14 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   getTimeseriesUniqueValuesByProperty,
-  InternalTimeseriesFilters,
-  OldTimeseriesFilters,
   queryKeys,
   TimeseriesProperty,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
+import {
+  InternalTimeseriesFilters,
+  OldTimeseriesFilters,
+} from '@data-exploration-lib/core';
 
 export const useTimeseriesUniqueValuesByProperty = (
   property: TimeseriesProperty,

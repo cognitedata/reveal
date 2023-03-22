@@ -13,13 +13,13 @@ import { SequenceTable } from '@data-exploration-components/containers/Sequences
 import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 import { useResourceResults } from '../SearchResultLoader';
 import {
-  InternalSequenceFilters,
   useSequenceSearchAggregateQuery,
   useSequenceSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { useResultCount } from '@data-exploration-components/components';
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
 
 export const SequenceSearchResults = ({
   query = '',

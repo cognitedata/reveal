@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import {
-  InternalTimeseriesFilters,
   mapFiltersToTimeseriesAdvancedFilters,
   mapInternalFilterToTimeseriesFilter,
   useTimeseriesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const useTimeseriesSearchAggregateQuery = (
   {

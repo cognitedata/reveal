@@ -1,5 +1,3 @@
-import { OptionType } from '@cognite/cogs.js';
-
 export interface BaseFilter<TFilter> {
   // TODO: Investigate which properties are needed here to make dynamic filter work.
   // All the filter (e.g., SourceFilter, etc...) should manage the dynamic filter
@@ -10,8 +8,10 @@ export interface BaseFilter<TFilter> {
 
 export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
   extends BaseFilter<TFilter> {
-  value?: OptionType<TValue>[];
-  onChange?: (newSources: OptionType<TValue>[] | undefined) => void;
+  value?: { label?: string; value: TValue }[];
+  onChange?: (
+    newSources: { label?: string; value: TValue }[] | undefined
+  ) => void;
   addNilOption?: boolean;
   error?: boolean;
   loading?: boolean;

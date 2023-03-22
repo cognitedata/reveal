@@ -1,7 +1,4 @@
 import {
-  InternalAssetFilters,
-  InternalDocumentFilter,
-  InternalEventsFilters,
   useAssetsUniqueValuesByProperty,
   useDocumentAggregateSourceQuery,
   useEventsUniqueValuesByProperty,
@@ -10,6 +7,11 @@ import {
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseMultiSelectFilterProps } from '../types';
 import { OptionType } from '@cognite/cogs.js';
+import {
+  InternalAssetFilters,
+  InternalDocumentFilter,
+  InternalEventsFilters,
+} from '@data-exploration-lib/core';
 
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {

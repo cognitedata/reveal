@@ -374,7 +374,7 @@ export const isRejectedAnnotation = (annotation: ExtendedAnnotation) => {
   return isRejectedTaggedAnnotation(annotation.metadata);
 };
 
-export const isAssetAnnotation = (annotation: ExtendedAnnotation) => {
+export const isAssetAnnotation = (annotation: ExtendedAnnotation): boolean => {
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)

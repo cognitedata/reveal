@@ -1,6 +1,6 @@
 import { EventFilter } from '@cognite/sdk/dist/src';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 import isEmpty from 'lodash/isEmpty';
-import { InternalEventsFilters } from '../types';
 
 export const mapInternalFilterToEventsFilter = ({
   assetSubtreeIds,

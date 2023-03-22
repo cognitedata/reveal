@@ -4,9 +4,9 @@ import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { useEventsListQuery } from '../../service';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import { mapTableSortByToEventSortFields } from '../transformers';
-import { InternalEventsFilters } from '../types';
 import { mapInternalFilterToEventsFilter } from '../transformers';
 import { UseInfiniteQueryOptions } from 'react-query';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 export const useEventsSearchResultQuery = (
   {

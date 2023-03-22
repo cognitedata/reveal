@@ -19,7 +19,6 @@ import {
 
 import {
   InternalTimeseriesData,
-  InternalTimeseriesFilters,
   useTimeseriesAggregateCountQuery,
   useTimeseriesWithAvailableDatapointsQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -31,6 +30,7 @@ import {
 } from '@data-exploration-components/components';
 import styled from 'styled-components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const TimeseriesSearchResults = ({
   query = '',

@@ -10,13 +10,11 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import { useResourceResults } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
 import { Asset, FileInfo } from '@cognite/sdk';
-import {
-  InternalFilesFilters,
-  useDocumentsMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
+import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { FileNamePreview } from '../FileTable/FileNamePreview';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { InternalFilesFilters } from '@data-exploration-lib/core';
 
 export const FileSummary = ({
   query = '',

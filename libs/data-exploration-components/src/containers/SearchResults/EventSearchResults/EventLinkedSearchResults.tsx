@@ -10,17 +10,17 @@ import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-laye
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
 import { useDebounce } from 'use-debounce';
-import {
-  InternalEventsFilters,
-  useEventsSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import {
   EventTable,
   useResourceResults,
 } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
+import {
+  InternalCommonFilters,
+  InternalEventsFilters,
+} from '@data-exploration-lib/core';
 
 interface Props {
   enableAdvancedFilter?: boolean;

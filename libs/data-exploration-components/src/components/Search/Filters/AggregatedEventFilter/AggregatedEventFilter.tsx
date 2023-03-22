@@ -9,7 +9,7 @@ import { Select } from '@data-exploration-components/components';
 import {
   InternalEventsFilters,
   OldEventsFilters,
-} from '@data-exploration-lib/domain-layer';
+} from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';

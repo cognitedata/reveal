@@ -10,7 +10,6 @@ import React, { useMemo } from 'react';
 
 import {
   useEventsMetadataKeys,
-  InternalEventsFilters,
   useEventsSearchResultWithLabelsQuery,
   InternalEventDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
@@ -19,6 +18,7 @@ import noop from 'lodash/noop';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 export const EventSummary = ({
   query = '',

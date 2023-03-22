@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-import {
-  InternalTimeseriesFilters,
-  useTimeseriesUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
+import { useTimeseriesUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter } from '../types';
 
 import { OptionType } from '@cognite/cogs.js';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 interface BaseUnitFilterProps<TFilter> extends BaseFilter<TFilter> {
   value?: OptionType<string>[];

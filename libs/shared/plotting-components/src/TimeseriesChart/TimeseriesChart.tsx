@@ -20,6 +20,7 @@ import {
 import { TimePeriodSelect } from './components/TimePeriodSelect';
 import { OpenInChartsButton } from './components/OpenInChartsButton';
 import { getChartByVariant } from './utils/getChartByVariant';
+import { DateRangePicker } from './components/DateRangePicker';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   timeseriesId,
@@ -30,6 +31,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   backgroundColor,
   height,
   onChangeTimePeriod,
+  onChangeDateRange,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
   const [dateRange, setDateRange] = useState<DateRange>();
@@ -45,11 +47,16 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     return difference(TIME_PERIOD_OPTIONS, quickTimePeriodOptions);
   }, [quickTimePeriodOptions]);
 
-  const updateDateRange = (props: UpdateTimePeriodProps) => {
+  const handleChangeTimePeriod = (props: UpdateTimePeriodProps) => {
     setSelectedTimePeriod(props.timePeriod);
     setDateRange(props.dateRange);
-
     onChangeTimePeriod?.(props);
+  };
+
+  const handleChangeDateRange = (newDateRange: DateRange) => {
+    setSelectedTimePeriod(undefined);
+    setDateRange(newDateRange);
+    onChangeDateRange?.(newDateRange);
   };
 
   useEffect(() => {
@@ -70,13 +77,14 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
         <TimePeriods
           options={quickTimePeriodOptions}
           value={selectedTimePeriod}
-          onChange={updateDateRange}
+          onChange={handleChangeTimePeriod}
         />,
         <TimePeriodSelect
           options={timePeriodSelectOptions}
           value={selectedTimePeriod}
-          onChange={updateDateRange}
+          onChange={handleChangeTimePeriod}
         />,
+        <DateRangePicker value={dateRange} onChange={handleChangeDateRange} />,
       ]}
       renderActions={() => [
         <OpenInChartsButton

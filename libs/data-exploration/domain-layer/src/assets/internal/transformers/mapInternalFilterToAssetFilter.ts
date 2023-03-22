@@ -1,7 +1,6 @@
 import { AssetFilterProps } from '@cognite/sdk';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 import isEmpty from 'lodash/isEmpty';
-
-import { InternalAssetFilters } from '../types';
 
 // Here put the fields that are not existing/available in advanced filters!?
 export const mapInternalFilterToAssetFilter = ({
