@@ -333,7 +333,10 @@ export const useEMModelPredictResults = (
         )
         .then((r) => {
           if (r.status === 200) {
-            return r.data;
+            return {
+              ...r.data,
+              items: r.data.items?.filter((i) => i.matches.length > 0),
+            };
           } else {
             return Promise.reject(r);
           }
