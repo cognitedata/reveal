@@ -1,11 +1,10 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import { InternalSequenceFilters, isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import { getSearchConfig } from '../../../utils';
-import { InternalSequenceFilters } from '../types';
 
 export type SequenceProperties = {
   assetIds: number[];

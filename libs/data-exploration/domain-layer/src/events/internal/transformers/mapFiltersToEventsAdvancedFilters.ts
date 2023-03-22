@@ -1,11 +1,10 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import { InternalEventsFilters, isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
   NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
-import { InternalEventsFilters } from '../types';
 import isArray from 'lodash/isArray';
 import { getSearchConfig } from '../../../utils';
 

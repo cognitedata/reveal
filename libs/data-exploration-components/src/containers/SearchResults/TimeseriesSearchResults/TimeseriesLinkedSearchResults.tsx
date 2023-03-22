@@ -10,17 +10,17 @@ import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
-import {
-  InternalTimeseriesFilters,
-  useTimeseriesSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import { useTimeseriesSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import {
   TimeseriesTable,
   useResourceResults,
 } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
 import { useDebounce } from 'use-debounce';
+import {
+  InternalCommonFilters,
+  InternalTimeseriesFilters,
+} from '@data-exploration-lib/core';
 
 interface Props {
   enableAdvancedFilter?: boolean;

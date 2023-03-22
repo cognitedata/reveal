@@ -1,13 +1,15 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { DocumentsAggregateAllUniqueValuesRequest } from '@cognite/sdk/dist/src';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
-import { InternalDocumentFilter } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import { useQuery } from 'react-query';
 import { getDocumentAggregates } from '../../network/getDocumentAggregates';
 import { useMemo } from 'react';
 import { mapFiltersToDocumentSearchFilters } from '@data-exploration-lib/domain-layer';
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  InternalDocumentFilter,
+} from '@data-exploration-lib/core';
 
 export const useDocumentFilteredAggregates = (
   aggregates: DocumentsAggregateAllUniqueValuesRequest['properties'],

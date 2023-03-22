@@ -6,7 +6,6 @@ import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import {
   EventProperty,
-  InternalEventsFilters,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
@@ -14,6 +13,7 @@ import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constan
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import { useMemo } from 'react';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 export const AggregatedEventFilterV2 = ({
   field,

@@ -1,7 +1,6 @@
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
-  InternalDocumentFilter,
   InternalDocumentWithMatchingLabels,
   useDocumentSearchResultWithMatchingLabelsQuery,
   useDocumentsMetadataKeys,
@@ -29,6 +28,7 @@ import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Asset } from '@cognite/sdk';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 export const DocumentSummary = ({
   query = '',

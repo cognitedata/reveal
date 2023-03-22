@@ -6,11 +6,11 @@ import {
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import {
-  InternalEventsFilters,
   mapFiltersToEventsAdvancedFilters,
   mapInternalFilterToEventsFilter,
 } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 export const useEventsAggregateCountQuery = (
   {

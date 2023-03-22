@@ -6,9 +6,9 @@ import {
   mapInternalFilterToAssetFilter,
   mapTableSortByToAssetSortFields,
 } from '../transformers';
-import { InternalAssetFilters } from '../types';
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export const useAssetsSearchResultQuery = (
   {

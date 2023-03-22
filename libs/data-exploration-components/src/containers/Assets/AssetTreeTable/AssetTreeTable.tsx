@@ -25,12 +25,12 @@ import { DASH } from '../../../utils';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import {
-  InternalAssetFilters,
   InternalAssetTreeData,
   useAssetsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 const visibleColumns = ['name', 'rootId'];
 

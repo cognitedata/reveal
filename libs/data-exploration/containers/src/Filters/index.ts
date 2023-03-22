@@ -7,3 +7,4 @@ export * from './DataSetFilter';
 export * from './SubtypeFilter';
 export * from './TypeFilter';
 export * from './UnitFilter';
+export * from './LabelFilter';

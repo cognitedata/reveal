@@ -3,13 +3,13 @@ import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
 
 import {
-  InternalSequenceFilters,
   mapFiltersToSequenceAdvancedFilters,
   mapInternalFilterToSequenceFilter,
   mapTableSortByToSequenceSortFields,
   useSequenceListQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
 
 export const useSequenceSearchResultQuery = (
   {

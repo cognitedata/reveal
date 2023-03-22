@@ -11,7 +11,6 @@ import {
   useDocumentAggregateSourceQuery,
   useDocumentSearchResultQuery,
   useDocumentAggregateFileTypeQuery,
-  InternalDocumentFilter,
   useDocumentsMetadataKeysAggregateQuery,
   useDocumentsMetadataValuesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -21,6 +20,7 @@ import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();

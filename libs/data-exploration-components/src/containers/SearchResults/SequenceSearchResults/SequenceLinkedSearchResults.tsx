@@ -10,11 +10,7 @@ import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-laye
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
-import {
-  InternalSequenceFilters,
-  useSequenceSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import { useSequenceSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import {
   SequenceTable,
   SequenceWithRelationshipLabels,
@@ -22,6 +18,10 @@ import {
 } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
 import { useDebounce } from 'use-debounce';
+import {
+  InternalCommonFilters,
+  InternalSequenceFilters,
+} from '@data-exploration-lib/core';
 
 interface Props {
   enableAdvancedFilter?: boolean;

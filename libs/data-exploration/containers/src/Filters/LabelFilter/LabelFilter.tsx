@@ -1,13 +1,11 @@
-import { OptionType, Tooltip } from '@cognite/cogs.js';
-import {
-  InternalAssetFilters,
-  useAssetsUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
+import { Tooltip } from '@cognite/cogs.js';
+import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { BaseMultiSelectFilterProps } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
-  options: OptionType<string>[];
+  options: { label?: string; value: string }[];
 }
 
 export const LabelFilter = <TFilter,>({
@@ -18,7 +16,12 @@ export const LabelFilter = <TFilter,>({
   error,
   loading,
 }: Props<TFilter>) => {
-  const handleChange = (newValue: OptionType<string>[]) => {
+  const handleChange = (
+    newValue: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
     const newFilters = newValue && newValue.length > 0 ? newValue : undefined;
     onChange?.(newFilters);
   };
@@ -35,6 +38,7 @@ export const LabelFilter = <TFilter,>({
     >
       <>
         <MultiSelectFilter<string>
+          label="Labels"
           options={options}
           onChange={(_, newValue) => handleChange(newValue)}
           value={value}

@@ -5,11 +5,13 @@ import {
   TimeseriesMetadataAggregateResponse,
   queryKeys,
   transformNewFilterToOldFilter,
-  InternalTimeseriesFilters,
-  OldTimeseriesFilters,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import {
+  InternalTimeseriesFilters,
+  OldTimeseriesFilters,
+} from '@data-exploration-lib/core';
 
 export const useTimeseriesMetadataValuesAggregateQuery = (
   metadataKey?: string | null,

@@ -2,6 +2,8 @@ import { OptionType } from '@cognite/cogs.js';
 import {
   InternalDocumentFilter,
   InternalEventsFilters,
+} from '@data-exploration-lib/core';
+import {
   useDocumentAggregateFileTypeQuery,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';

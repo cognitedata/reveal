@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useDeepMemo } from '@data-exploration-lib/core';
 import {
   InternalTimeseriesFilters,
-  useTimeseriesSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+  useDeepMemo,
+} from '@data-exploration-lib/core';
+import { useTimeseriesSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';

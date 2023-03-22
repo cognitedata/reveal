@@ -1,5 +1,4 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { InternalSequenceFilters, OldSequenceFilters } from '../../internal';
 import { SequencesMetadataAggregateResponse } from '../types';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { queryKeys } from '../../../queryKeys';
@@ -7,6 +6,10 @@ import { getSequencesMetadataValuesAggregate } from '../network/getSequencesMeta
 import { transformNewFilterToOldFilter } from '../../../transformers';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import {
+  InternalSequenceFilters,
+  OldSequenceFilters,
+} from '@data-exploration-lib/core';
 
 export const useSequencesMetadataValuesAggregateQuery = (
   metadataKey?: string | null,

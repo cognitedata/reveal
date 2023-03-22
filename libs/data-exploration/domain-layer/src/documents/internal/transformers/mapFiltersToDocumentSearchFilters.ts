@@ -1,6 +1,5 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
-import { InternalDocumentFilter } from '../types';
-import { isNumeric } from '@data-exploration-lib/core';
+import { InternalDocumentFilter, isNumeric } from '@data-exploration-lib/core';
 import { getSearchConfig } from '../../../utils';
 
 export type DocumentProperties = {

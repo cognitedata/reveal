@@ -1,5 +1,6 @@
 export * from './Buttons';
 export * from './Checkboxes';
+export * from './Collapse';
 export * from './Ellipsis';
 export * from './Inputs';
 export * from './Labels';

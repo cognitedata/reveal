@@ -1,4 +1,7 @@
-import { isNumeric } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  isNumeric,
+} from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
   AdvancedFilter,
@@ -8,7 +11,6 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 
 import { getSearchConfig } from '../../../utils';
-import { InternalTimeseriesFilters } from '../types';
 
 export type TimeseriesProperties = {
   assetIds: number[];

@@ -9,9 +9,9 @@ import { EmptyState } from '@data-exploration-components/components/EmpyState/Em
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 
-import { InternalFilesFilters } from '@data-exploration-lib/domain-layer';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '@data-exploration-components/components';
+import { InternalFilesFilters } from '@data-exploration-lib/core';
 
 export const FileSearchResults = ({
   query = '',

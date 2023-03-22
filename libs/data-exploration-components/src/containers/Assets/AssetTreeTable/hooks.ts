@@ -7,10 +7,10 @@ import {
   listKey,
   listApi,
 } from '@cognite/sdk-react-query-hooks';
-import { InternalAssetFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 import { InternalAssetData } from '@data-exploration-lib/domain-layer';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export type ConstructedTreeAssetChildren =
   | ConstructedTreeAsset

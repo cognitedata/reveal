@@ -6,12 +6,12 @@ import {
 } from '@data-exploration-components/types';
 import { Metadata, IdEither, DateRange } from '@cognite/sdk';
 import {
-  InternalAssetFilters,
   InternalEventsFilters,
   InternalFilesFilters,
   InternalSequenceFilters,
-} from '@data-exploration-lib/domain-layer';
+} from '@data-exploration-lib/core';
 import get from 'lodash/get';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export type FiltersWithResourceType = Required<ResourceFilterProps> & {
   resourceType: ResourceType;

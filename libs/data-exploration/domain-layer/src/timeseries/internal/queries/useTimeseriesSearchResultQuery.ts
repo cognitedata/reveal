@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import {
-  InternalTimeseriesFilters,
   mapFiltersToTimeseriesAdvancedFilters,
   mapInternalFilterToTimeseriesFilter,
   mapTableSortByToTimeseriesSortFields,
   useTimeseriesListQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const useTimeseriesSearchResultQuery = (
   {

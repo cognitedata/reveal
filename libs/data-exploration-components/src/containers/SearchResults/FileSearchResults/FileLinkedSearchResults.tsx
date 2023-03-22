@@ -11,9 +11,7 @@ import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-laye
 
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
 import { useDebounce } from 'use-debounce';
-import { InternalFilesFilters } from '@data-exploration-lib/domain-layer';
 import { convertResourceType } from '@data-exploration-components/types';
 import { useResourceResults } from '../SearchResultLoader';
 import { FileTable } from '@data-exploration-components/containers/Files';
@@ -24,6 +22,10 @@ import {
   GroupingTableWrapper,
 } from './elements';
 import { FileViewSwitcher } from './FileViewSwitcher';
+import {
+  InternalCommonFilters,
+  InternalFilesFilters,
+} from '@data-exploration-lib/core';
 
 interface Props {
   defaultFilter: InternalCommonFilters;

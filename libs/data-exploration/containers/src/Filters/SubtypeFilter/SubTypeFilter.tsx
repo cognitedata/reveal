@@ -1,8 +1,6 @@
 import { OptionType } from '@cognite/cogs.js';
-import {
-  InternalEventsFilters,
-  useEventsUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
+import { useEventsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter } from '../types';
 

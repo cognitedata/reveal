@@ -3,7 +3,6 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import {
   InternalAssetDataWithMatchingLabels,
-  InternalSequenceFilters,
   useAssetsMetadataKeys,
   useAssetsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -22,6 +21,7 @@ import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
 
 export const AssetSummary = ({
   query = '',

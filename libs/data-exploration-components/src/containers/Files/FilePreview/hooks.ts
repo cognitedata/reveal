@@ -41,13 +41,7 @@ export const useUnifiedFileViewerAnnotations = ({
   onMouseOver,
   onMouseOut,
 }: useUnifiedFileViewerAnnotationsProps): ExtendedAnnotation[] => {
-  // NOTE: We are filtering out annotations originating from the migratin script.
-  // When we remove support for the Events API, we can remove this filter.
-  const annotationsApiAnnotations = useAnnotations(fileId).data.filter(
-    (annotation) =>
-      annotation.creatingApp !==
-      'annotation-migration-migrate-event-annotations'
-  );
+  const annotationsApiAnnotations = useAnnotations(fileId).data;
   return useMemo(
     () =>
       [
