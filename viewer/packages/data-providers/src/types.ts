@@ -20,6 +20,11 @@ export interface Image360FileProvider {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]>;
+
+  getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]>;
 }
 
 export type Image360Descriptor = Image360EventDescriptor & {
@@ -38,6 +43,11 @@ export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
+};
+
+export type Image360Texture = {
+  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  texture: THREE.Texture;
 };
 
 export type Image360FileDescriptor = {

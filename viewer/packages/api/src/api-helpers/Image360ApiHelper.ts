@@ -44,7 +44,9 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
+  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity).catch(() => {}), 300, {
+    leading: true
+  });
   private readonly _requestRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
@@ -132,9 +134,16 @@ export class Image360ApiHelper {
     }
     this._interactionState.image360SelectedForEntry = image360Entity;
 
-    await this._image360Facade.preload(image360Entity, true);
+    const fatalDownloadError = await this._image360Facade.preload(image360Entity, true).catch(e => {
+      return e;
+    });
 
     if (this._interactionState.image360SelectedForEntry !== image360Entity) {
+      return;
+    }
+
+    if (fatalDownloadError) {
+      this._interactionState.image360SelectedForEntry = undefined;
       return;
     }
 
@@ -166,7 +175,10 @@ export class Image360ApiHelper {
     this._transitionInProgress = false;
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
 
-    this._requestRedraw();
+    image360Entity.applyFullResolution().then(() => {
+      this._requestRedraw();
+    });
+
     this._image360Facade.collections
       .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
       .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
