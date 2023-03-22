@@ -18,7 +18,7 @@ import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
 import {
   bulkDownloadStatus,
   getAdvancedFilter,
-  sessionStorageKey,
+  sessionStoragePredictJobKey,
 } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 import { useInfinite3dNodes } from 'hooks/threeD';
@@ -63,7 +63,7 @@ const CreateModel = (): JSX.Element => {
     refetchInterval: modelRefetchInt,
     ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
   });
-  const jobToken = sessionStorage.getItem(sessionStorageKey(jobId!));
+  const jobToken = sessionStorage.getItem(sessionStoragePredictJobKey(jobId!));
   const { data: prediction } = useEMModelPredictResults(jobId!, jobToken, {
     enabled: !!jobId,
     refetchInterval: jobRefetchInt,
@@ -242,7 +242,10 @@ const CreateModel = (): JSX.Element => {
     useCreateEMPredictionJob({
       async onSuccess(job) {
         if (job.jobToken) {
-          sessionStorage.setItem(sessionStorageKey(job.jobId), job.jobToken);
+          sessionStorage.setItem(
+            sessionStoragePredictJobKey(job.jobId),
+            job.jobToken
+          );
         }
         navigate(
           createLink(

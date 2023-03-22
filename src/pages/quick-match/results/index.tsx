@@ -5,7 +5,7 @@ import { useEMModelPredictResults } from 'hooks/contextualization-api';
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
 import { Navigate, useParams } from 'react-router-dom';
 import { SourceType } from 'types/api';
-import { sessionStorageKey } from 'utils';
+import { sessionStoragePredictJobKey } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
   const { subAppPath, jobId, sourceType } = useParams<{
@@ -16,7 +16,7 @@ const QuickMatchResults = (): JSX.Element => {
 
   const { t } = useTranslation();
   const id = parseInt(jobId ?? '', 10);
-  const jobToken = sessionStorage.getItem(sessionStorageKey(id));
+  const jobToken = sessionStorage.getItem(sessionStoragePredictJobKey(id));
 
   const { data: predictions } = useEMModelPredictResults(id, jobToken, {
     enabled: !!jobId,
