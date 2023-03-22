@@ -2,10 +2,12 @@ import { Route, Routes, useParams } from 'react-router-dom';
 
 import Page from 'components/page';
 
-import Sources from './sources';
 import NoAccessPage from 'components/error-pages/NoAccess';
 import UnknownErrorPage from 'components/error-pages/UnknownError';
 import { useEMPipeline } from 'hooks/entity-matching-pipelines';
+
+import Sources from './sources';
+import Targets from './targets';
 
 const PipelineDetails = (): JSX.Element => {
   const { pipelineId } = useParams<{
@@ -31,6 +33,7 @@ const PipelineDetails = (): JSX.Element => {
       >
         <Routes>
           <Route path="/sources" element={<Sources pipeline={pipeline} />} />
+          <Route path="/targets" element={<Targets pipeline={pipeline} />} />
         </Routes>
       </Page>
     );
