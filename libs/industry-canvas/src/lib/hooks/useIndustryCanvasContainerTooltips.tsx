@@ -1,6 +1,7 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Link } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+import dayjs from 'dayjs';
 import DateRangePrompt from '../components/DateRangePrompt';
 import { getContainerId } from '../utils/utils';
 import { useMemo } from 'react';
@@ -60,14 +61,25 @@ const useIndustryCanvasContainerTooltips = ({
                   startDate: clickedContainer.startDate,
                   endDate: clickedContainer.endDate,
                 }}
-                onComplete={(dateRange) =>
+                onComplete={(dateRange) => {
+                  console.log({
+                    id: clickedContainer.id,
+                    type: ContainerReferenceType.TIMESERIES,
+                    startDate: dayjs(dateRange.startDate)
+                      .startOf('day')
+                      .toDate(),
+                    endDate: dayjs(dateRange.endDate).startOf('day').toDate(),
+                  });
+
                   updateContainerReference({
                     id: clickedContainer.id,
                     type: ContainerReferenceType.TIMESERIES,
-                    startDate: dateRange.startDate,
-                    endDate: dateRange.endDate,
-                  })
-                }
+                    startDate: dayjs(dateRange.startDate)
+                      .startOf('day')
+                      .toDate(),
+                    endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
+                  });
+                }}
               />
               <Link
                 href={createLink(`/explore/timeSeries/${clickedContainer.id}`)}

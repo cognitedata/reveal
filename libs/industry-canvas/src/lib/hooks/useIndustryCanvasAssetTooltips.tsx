@@ -4,6 +4,7 @@ import {
   isAssetAnnotation,
 } from '@cognite/data-exploration';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import dayjs from 'dayjs';
 
 import { useMemo } from 'react';
 import AssetTooltip from '../components/AssetTooltip';
@@ -29,8 +30,11 @@ const useIndustryCanvasAssetTooltips = (
         {
           type: ContainerReferenceType.TIMESERIES,
           id: timeseriesId,
-          startDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-          endDate: new Date(),
+          startDate: dayjs(new Date())
+            .subtract(6, 'months')
+            .startOf('day')
+            .toDate(),
+          endDate: dayjs(new Date()).endOf('day').toDate(),
         },
       ]);
     };
