@@ -84,8 +84,10 @@ export class DefaultImage360Collection implements Image360Collection {
   public setAll360IconsVisibility(visible: boolean): void {
     this._icons.enableCullingScheme(visible);
 
-    this.setSelectedVisibility(visible);
-    this.setIconsVisibility(visible);
+    if (!visible) {
+      this.setSelectedVisibility(false);
+      this.setIconsVisibility(false);
+    }
   }
 
   /**

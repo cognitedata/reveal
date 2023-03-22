@@ -25,6 +25,7 @@ export class IconCollection {
   private readonly _iconRadius = 0.3;
 
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
+  private _isCullingSchemeEnabled: boolean;
   private _iconCullingScheme: IconCullingScheme;
   private _proximityRadius = Infinity;
   private _proximityPointLimit = 50;
@@ -34,8 +35,6 @@ export class IconCollection {
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
-    if (this._iconCullingScheme === scheme) return;
-
     this._iconCullingScheme = scheme;
     this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
 
@@ -51,7 +50,9 @@ export class IconCollection {
       default:
         break;
     }
-    this.enableCullingScheme(true);
+
+    if (!this._isCullingSchemeEnabled) return;
+    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
@@ -60,7 +61,9 @@ export class IconCollection {
   }
 
   public enableCullingScheme(enable: boolean): void {
-    if (enable) {
+    this._isCullingSchemeEnabled = enable;
+
+    if (this._isCullingSchemeEnabled) {
       this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
     } else {
       this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
@@ -91,6 +94,7 @@ export class IconCollection {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
+    this._isCullingSchemeEnabled = true;
     this._iconCullingScheme = 'clustered';
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
