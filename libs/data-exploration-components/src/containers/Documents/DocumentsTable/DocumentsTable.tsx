@@ -26,6 +26,7 @@ import {
   ResourceTableColumns,
 } from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
+import { DocumentSummaryPreview } from './DocumentSummaryPreview';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -76,6 +77,14 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           header: 'Content',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <DocumentContentPreview document={row.original} query="" />;
+          },
+          enableSorting: false,
+        },
+        {
+          accessorKey: 'summary',
+          header: 'Summary',
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
+            return <DocumentSummaryPreview document={row.original} query="" />;
           },
           enableSorting: false,
         },
