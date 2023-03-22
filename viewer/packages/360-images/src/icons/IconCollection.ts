@@ -51,7 +51,7 @@ export class IconCollection {
       default:
         break;
     }
-    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+    this.enableCullingScheme(true);
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
@@ -59,12 +59,12 @@ export class IconCollection {
     this._proximityPointLimit = clamp(pointLimit, 0, this.icons.length);
   }
 
-  public disableCullingScheme(disable: boolean): void {
-    if (disable) {
+  public enableCullingScheme(enable: boolean): void {
+    if (enable) {
+      this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
+    } else {
       this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
       this._iconsSprite.setPoints([]);
-    } else {
-      this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
     }
   }
 
