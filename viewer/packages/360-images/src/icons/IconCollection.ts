@@ -49,7 +49,6 @@ export class IconCollection {
       default:
         break;
     }
-
     this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
   }
 
