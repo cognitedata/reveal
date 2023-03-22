@@ -63,8 +63,8 @@ const CreateModel = (): JSX.Element => {
     refetchInterval: modelRefetchInt,
     ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
   });
-  const token = sessionStorage.getItem(sessionStorageKey(jobId!));
-  const { data: prediction } = useEMModelPredictResults(jobId!, token!, {
+  const jobToken = sessionStorage.getItem(sessionStorageKey(jobId!));
+  const { data: prediction } = useEMModelPredictResults(jobId!, jobToken, {
     enabled: !!jobId,
     refetchInterval: jobRefetchInt,
     ...INFINITE_Q_OPTIONS,
@@ -241,10 +241,9 @@ const CreateModel = (): JSX.Element => {
   const { mutate: createPredictJob, status: createPredictStatus } =
     useCreateEMPredictionJob({
       async onSuccess(job) {
-        sessionStorage.setItem(
-          sessionStorageKey(job.jobId),
-          job.jobToken || (await getToken())
-        );
+        if (job.jobToken) {
+          sessionStorage.setItem(sessionStorageKey(job.jobId), job.jobToken);
+        }
         navigate(
           createLink(
             `/${subAppPath}/quick-match/create/create-model/${modelId}/${job.jobId}`

@@ -16,8 +16,9 @@ const QuickMatchResults = (): JSX.Element => {
 
   const { t } = useTranslation();
   const id = parseInt(jobId ?? '', 10);
-  const token = sessionStorage.getItem(sessionStorageKey(id));
-  const { data: predictions } = useEMModelPredictResults(id, token!, {
+  const jobToken = sessionStorage.getItem(sessionStorageKey(id));
+
+  const { data: predictions } = useEMModelPredictResults(id, jobToken, {
     enabled: !!jobId,
     ...INFINITE_Q_OPTIONS,
   });
