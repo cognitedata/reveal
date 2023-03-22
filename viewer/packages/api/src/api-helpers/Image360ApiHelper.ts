@@ -148,7 +148,7 @@ export class Image360ApiHelper {
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allIconsVisibility = true;
     this._image360Facade.allHoverIconsVisibility = false;
-    image360Entity.icon.visible = false;
+    image360Entity.icon.setVisibility(false);
 
     this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {

@@ -25,7 +25,6 @@ export class IconCollection {
   private readonly _iconRadius = 0.3;
 
   private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
-  private _isCullingSchemeEnabled: boolean;
   private _iconCullingScheme: IconCullingScheme;
   private _proximityRadius = Infinity;
   private _proximityPointLimit = 50;
@@ -51,24 +50,12 @@ export class IconCollection {
         break;
     }
 
-    if (!this._isCullingSchemeEnabled) return;
     this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
     this._proximityRadius = Math.max(0, radius);
     this._proximityPointLimit = clamp(pointLimit, 0, this.icons.length);
-  }
-
-  public enableCullingScheme(enable: boolean): void {
-    this._isCullingSchemeEnabled = enable;
-
-    if (this._isCullingSchemeEnabled) {
-      this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
-    } else {
-      this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
-      this._iconsSprite.setPoints([]);
-    }
   }
 
   constructor(
@@ -94,7 +81,6 @@ export class IconCollection {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
-    this._isCullingSchemeEnabled = true;
     this._iconCullingScheme = 'clustered';
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
@@ -129,11 +115,11 @@ export class IconCollection {
 
           return node.data.data;
         })
-        .filter(point => frustum.containsPoint(point.position));
+        .filter(icon => frustum.containsPoint(icon.position));
 
-      this._icons.forEach(icon => (icon.visible = false));
-      selectedIcons.forEach(icon => (icon.visible = true));
-      iconSprites.setPoints(selectedIcons.map(icon => icon.position));
+      this._icons.forEach(icon => icon.setCulled(true));
+      selectedIcons.forEach(icon => icon.setCulled(false));
+      iconSprites.setPoints(selectedIcons.filter(icon => icon.isVisible()).map(icon => icon.position));
     };
   }
 
@@ -152,9 +138,14 @@ export class IconCollection {
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
 
-      this._icons.forEach(p => (p.visible = false));
-      closestPoints.forEach(p => (p.visible = true));
-      iconSprites.setPoints(closestPoints.reverse().map(p => p.position));
+      this._icons.forEach(icon => icon.setCulled(true));
+      closestPoints.forEach(icon => icon.setCulled(false));
+      iconSprites.setPoints(
+        closestPoints
+          .filter(icon => icon.isVisible())
+          .reverse()
+          .map(p => p.position)
+      );
     };
   }
 
