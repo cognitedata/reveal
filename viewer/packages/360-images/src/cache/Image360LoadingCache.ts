@@ -136,7 +136,8 @@ export class Image360LoadingCache {
 
   private addEntityToCache(entity: Image360Entity, isFullResolution: boolean) {
     const cachedImage = this._loaded360Images.find(image => image.entity === entity);
-    if (cachedImage && cachedImage.isFullResolution && !isFullResolution) {
+    if (cachedImage && cachedImage.isFullResolution) {
+      // Image is already cached with full resolution. Discard attempts to add lower quality image.
       return;
     }
 
