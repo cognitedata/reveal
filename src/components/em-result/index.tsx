@@ -4,10 +4,12 @@ import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/contextualization-api';
 import { useUpdateTimeseries } from 'hooks/timeseries';
 import styled from 'styled-components';
+import { SourceType } from 'types/api';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 
 type Props = {
   predictions: Prediction[];
+  sourceType: SourceType;
 };
 export default function EntityMatchingResult({ predictions }: Props) {
   const { mutate, isLoading, status } = useUpdateTimeseries();
