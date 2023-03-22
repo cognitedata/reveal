@@ -94,7 +94,7 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
             >
               <AlertAction onClick={onOpenDropdown}>
                 {t.Active}
-                <Icon type="ChevronDown" />
+                <Icon type="ChevronDownSmall" />
               </AlertAction>
             </Dropdown>
           ) : (

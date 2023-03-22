@@ -12,10 +12,9 @@ import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
 } from 'utils/constants';
-import { useUserInfo } from 'hooks/useUserInfo';
 import { useChartAtom } from 'models/chart/atom';
 import { trackUsage } from 'services/metrics';
-import { SidebarChip, SidebarCollapseWrapped } from './elements';
+import { SidebarChip, SidebarCollapseWrapped, ExpandTitle } from './elements';
 import { MonitoringFolderJobs, MonitoringJob } from './types';
 import { useMonitoringFoldersWithJobs } from './hooks';
 import ListMonitoringJobPreview from './ListMonitoringJobPreview';
@@ -28,10 +27,8 @@ import {
 } from './JobAndAlertsFilter';
 
 const ListMonitoringJobs = memo(() => {
-  const userInfo = useUserInfo();
   const [chart] = useChartAtom();
 
-  const userAuthId = userInfo.data?.id;
   const [monitoringFolderParam, setMonitoringFolderParam] = useSearchParam(
     MONITORING_SIDEBAR_SELECTED_FOLDER
   );
@@ -65,11 +62,11 @@ const ListMonitoringJobs = memo(() => {
 
   const { data: folders, isFetching } = useMonitoringFoldersWithJobs(
     'monitoring-sidebar',
-    userAuthId,
     {
       subscribed: filterOption.value === 'subscribed',
       timeseriesIds:
         filterOption.value === 'current' ? getTsIds(chart) : undefined,
+      currentChart: filterOption.value === 'current',
     }
   );
 
@@ -103,7 +100,7 @@ const ListMonitoringJobs = memo(() => {
           activeKey={activeKeys}
           onChange={handleToggleAccordian}
           expandIcon={({ isActive }) => (
-            <ExpandIcon $active={Boolean(isActive)} type="ChevronDownLarge" />
+            <ExpandIcon $active={Boolean(isActive)} type="ChevronDownSmall" />
           )}
         >
           {folders
@@ -129,11 +126,13 @@ const ListMonitoringJobs = memo(() => {
                     <CollapsePanelTitle>
                       <Row align="middle" wrap={false}>
                         <Col>
-                          {folder.folderExtID.replace('charts-folder-', '')}
+                          <ExpandTitle level={2} strong>
+                            {folder.folderExtID.replace('charts-folder-', '')}
+                          </ExpandTitle>
                         </Col>
                         <Col>
                           <SidebarChip icon="Alarm" size="medium">
-                            {folder.count}
+                            <div>{folder.count}</div>
                           </SidebarChip>
                         </Col>
                       </Row>

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { getFromLocalStorage } from '@cognite/storage';
 import { MonitoringJob } from 'components/MonitoringSidebar/types';
 import { NotificationDot } from '@cognite/cogs.js';
-import { useUserInfo } from 'hooks/useUserInfo';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from 'utils/constants';
 
 export const jobsToAlerts = (taskData: any): number => {
@@ -19,14 +18,7 @@ export const jobsToAlerts = (taskData: any): number => {
   );
 };
 const NotificationIndicator = () => {
-  const userInfo = useUserInfo();
-
-  const userAuthId = userInfo.data?.id;
-
-  const { data: taskData } = useMonitoringFoldersWithJobs(
-    'indicator',
-    userAuthId
-  );
+  const { data: taskData } = useMonitoringFoldersWithJobs('indicator');
   const [showIndicator, setShowIndicator] = useState(false);
 
   const alertCountFromAPI = jobsToAlerts(taskData);

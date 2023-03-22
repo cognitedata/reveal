@@ -126,7 +126,7 @@ export const MonitoringSidebar = memo(
               <>
                 <SidebarHeaderActions>
                   <Button
-                    icon="ArrowLeft"
+                    icon="ChevronLeftSmall"
                     size="small"
                     aria-label="Back"
                     onClick={() => {

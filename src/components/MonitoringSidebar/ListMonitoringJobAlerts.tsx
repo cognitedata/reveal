@@ -20,11 +20,7 @@ const ListMonitoringJobAlerts = () => {
   const [monitoringJobIdParam] = useSearchParam(
     MONITORING_SIDEBAR_HIGHLIGHTED_JOB
   );
-  const {
-    data: folders,
-    // isFetched,
-    // isFetching,
-  } = useMonitoringFoldersWithJobs();
+  const { data: folders } = useMonitoringFoldersWithJobs('monitoring-sidebar');
 
   const [showAll, setShowAll] = useState(false);
   const onShowAllAlerts = () => {

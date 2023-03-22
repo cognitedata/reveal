@@ -139,11 +139,10 @@ export const MonitoringSidebarEllipsis = styled(Icon)`
   &&& {
     color: var(--cogs-text-icon--status-neutral);
     background: var(--cogs-surface--status-neutral--muted--default);
-    padding: 5px 0px;
-    border-radius: 4px;
+    padding: 5px;
+    border-radius: 5px;
     cursor: pointer;
-    position: relative;
-    top: -5px;
+    top: 0px;
   }
 `;
 

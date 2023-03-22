@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { EMPTY_ARRAY } from '../../domain/constants';
 import {
   AlertResponsePayload,
@@ -98,17 +99,21 @@ export const useCreateMonitoringJob = () => {
  * @returns UseQueryResult                             - Returns UseQueryResult
  */
 export const useMonitoringFoldersWithJobs = (
-  hookId?: string,
-  userAuthId?: string,
+  hookId: string,
   filters?: {
     timeseriesIds?: number[];
     subscribed?: boolean;
+    currentChart?: boolean;
   }
 ) => {
   const sdk = useSDK();
-  const { subscribed, timeseriesIds } = filters || {};
+  const userInfo = useUserInfo();
+  const userAuthId = userInfo.data?.id;
+  const { subscribed, timeseriesIds, currentChart } = filters || {};
   const hookConfig: any = {
-    enabled: userAuthId !== undefined,
+    enabled:
+      userAuthId !== undefined &&
+      (!currentChart || Boolean(timeseriesIds?.length)),
   };
   if (hookId === 'indicator') {
     hookConfig.refetchInterval = 10000;
@@ -118,6 +123,7 @@ export const useMonitoringFoldersWithJobs = (
     [
       `monitoring-folders-jobs-${hookId}`,
       Boolean(subscribed),
+      Boolean(currentChart),
       timeseriesIds || EMPTY_ARRAY,
     ],
     () =>

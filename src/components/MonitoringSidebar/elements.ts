@@ -16,11 +16,23 @@ import { Input as AntdInput } from 'antd';
 export const SidebarChip = styled(Label)`
   margin-left: 1em;
   font-size: 12px;
+  line-height: 16px;
   font-weight: 500;
+  height: 20px;
+  padding: 2px 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 
   &.cogs-label--variant-default {
     color: var(--cogs-text-icon--status-undefined);
     background: rgba(102, 102, 102, 0.1);
+  }
+  &&& {
+    .cogs-label--icon {
+      margin-right: 0px;
+    }
   }
 `;
 
@@ -29,14 +41,14 @@ export const SidebarCollapseWrapped = styled(Collapse)`
     background-color: white;
 
     .rc-collapse-item {
-      margin: 0 0 1rem;
+      margin: 0 0 4px;
       border: 0;
       .rc-collapse-header {
         position: relative;
         background-color: #f5f5f5;
         border-radius: 4px;
         font-weight: bold;
-        i.cogs-icon-ChevronDownLarge {
+        i.cogs-icon-ChevronDownSmall {
           position: absolute;
           right: 10px;
         }
@@ -51,9 +63,14 @@ export const SidebarCollapseWrapped = styled(Collapse)`
     }
 
     .rc-collapse-content-box {
-      margin-bottom: 15px;
+      margin-top: 4px;
+      margin-bottom: 16px;
     }
   }
+`;
+
+export const ExpandTitle = styled(Body)`
+  line-height: 20px;
 `;
 
 export const FormTitle = styled.h2`
@@ -167,7 +184,7 @@ export const InfoBoxHeadingContainer = styled.div`
 `;
 
 export const InfoBoxHeadingIcon = styled(Icon)`
-  postion: relative;
+  position: relative;
   top: -10px;
   color: #fff;
   border-radius: 50%;

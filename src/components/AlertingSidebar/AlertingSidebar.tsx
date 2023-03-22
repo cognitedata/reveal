@@ -9,7 +9,6 @@ import { makeDefaultTranslations } from 'utils/translations';
 import { useMonitoringFoldersWithJobs } from 'components/MonitoringSidebar/hooks';
 import { saveToLocalStorage } from '@cognite/storage';
 import { jobsToAlerts } from 'pages/ChartViewPage/NotificationIndicator';
-import { useUserInfo } from 'hooks/useUserInfo';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from 'utils/constants';
 import { useQueryClient } from 'react-query';
 import {
@@ -44,7 +43,6 @@ export const AlertingSidebar = ({
     ...defaultTranslations,
     ...translations,
   };
-  const userInfo = useUserInfo();
   const [chart] = useChartAtom();
 
   const [filterOption, setFilterOption] = useState<FilterOption>(
@@ -58,16 +56,15 @@ export const AlertingSidebar = ({
     });
   };
 
-  const userAuthId = userInfo.data?.id;
-
   const {
     isError,
     isFetching,
     data: taskData,
-  } = useMonitoringFoldersWithJobs('alerting-sidebar', userAuthId, {
+  } = useMonitoringFoldersWithJobs('alerting-sidebar', {
     subscribed: filterOption.value === 'subscribed',
     timeseriesIds:
       filterOption.value === 'current' ? getTsIds(chart) : undefined,
+    currentChart: filterOption.value === 'current',
   });
 
   const cache = useQueryClient();

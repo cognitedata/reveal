@@ -139,7 +139,7 @@ const MonitoringJobWithAlerts = ({
       </ConditionContainer>
       <TimeseriesContainer>
         <Row>
-          <Col span={22}>
+          <Col span={21}>
             <div style={{ display: 'flex', overflow: 'hidden' }}>
               <Icon type="Timeseries" />
               <span style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -147,7 +147,7 @@ const MonitoringJobWithAlerts = ({
               </span>
             </div>
           </Col>
-          <Col span={2}>
+          <Col span={3}>
             <DropdownActionAlerts
               visible={isMenuOpen}
               onClickOutside={onCloseDropdown}
@@ -175,6 +175,7 @@ const MonitoringJobWithAlerts = ({
               }
             >
               <MonitoringSidebarEllipsis
+                size={22}
                 type="EllipsisVertical"
                 onClick={onOpenDropdown}
               />

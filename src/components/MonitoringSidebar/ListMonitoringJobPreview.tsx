@@ -35,6 +35,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Unable to subscribe',
   'Unable to unsubscribe',
   'History',
+  'Show All',
   'Last alert:',
   'None',
   'Email not found',
@@ -284,7 +285,7 @@ const ListMonitoringJobPreview = ({
           </Col>
           <Col span={7}>
             <ShowAllButton onClick={handleClickAlerts}>
-              {t.History}
+              {t['Show All']}
               <Icon type="ArrowRight" size={10} />
             </ShowAllButton>
           </Col>
@@ -328,7 +329,7 @@ export const MonitoringJobPreview = styled.div`
   background: var(--cogs-greyscale-grey1);
   padding: 0.5em;
   border-radius: 8px;
-  margin-top: 1em;
+  margin-top: 4px;
 `;
 
 export const HeaderRow = styled(Row)`
