@@ -246,7 +246,7 @@ const CreateMonitoringJobStep1 = ({
             required={t['Minimum duration is required']}
             validate={{
               minDuration: (value: string) =>
-                Number(value) > MINIMUM_DURATION_LIMIT
+                Number(value) >= MINIMUM_DURATION_LIMIT
                   ? 'Minimum duration must be less than 60'
                   : true,
             }}
