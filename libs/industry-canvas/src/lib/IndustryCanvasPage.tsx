@@ -18,6 +18,7 @@ import {
   ContainerType,
   isSupportedFileInfo,
   UnifiedViewer,
+  UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -29,7 +30,7 @@ import {
   ContainerReferenceType,
   ContainerReferenceWithoutDimensions,
 } from './types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useManagedState from './hooks/useManagedState';
 import { clearCanvasState } from './utils/utils';
 
@@ -39,6 +40,7 @@ export const IndustryCanvasPage = () => {
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
+  const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
 
   const {
     container,
@@ -67,6 +69,17 @@ export const IndustryCanvasPage = () => {
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
   };
+
+  useEffect(() => {
+    if (unifiedViewerRef === null) {
+      return;
+    }
+    setCurrentZoomScale(unifiedViewerRef.getScale());
+    unifiedViewerRef.addEventListener(
+      UnifiedViewerEventType.ON_ZOOM_CHANGE,
+      setCurrentZoomScale
+    );
+  }, [unifiedViewerRef]);
 
   const onAddResourcePress = () => {
     openResourceSelector({
@@ -199,6 +212,8 @@ export const IndustryCanvasPage = () => {
       <PreviewTabWrapper>
         <IndustryCanvas
           id={APPLICATION_ID_INDUSTRY_CANVAS}
+          currentZoomScale={currentZoomScale}
+          viewerRef={unifiedViewerRef}
           applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
           onAddContainerReferences={onAddContainerReferences}
           onDeleteRequest={onDeleteRequest}

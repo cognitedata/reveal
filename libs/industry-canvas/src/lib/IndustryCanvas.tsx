@@ -7,6 +7,7 @@ import ReactUnifiedViewer, {
   ToolType,
   UnifiedViewer,
   UnifiedViewerMouseEvent,
+  ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -31,12 +32,16 @@ import {
 } from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import { getContainerId } from './utils/utils';
+import ZoomControls from './components/ZoomControls';
+import { ZOOM_TO_FIT_MARGIN } from './constants';
 
 export type IndustryCanvasProps = {
   id: string;
   applicationId: string;
+  currentZoomScale: number;
   onAddContainerReferences: OnAddContainerReferences;
   onRef?: (ref: UnifiedViewer | null) => void;
+  viewerRef: UnifiedViewer | null;
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -55,6 +60,7 @@ export const IndustryCanvas = ({
   container,
   setContainer,
   canvasAnnotations,
+  currentZoomScale,
   onDeleteRequest,
   onUpdateRequest,
   containerReferences,
@@ -62,6 +68,7 @@ export const IndustryCanvas = ({
   removeContainerReference,
   onAddContainerReferences,
   onRef,
+  viewerRef,
 }: IndustryCanvasProps) => {
   const [
     { hoverId, clickedContainer, selectedAnnotationId },
@@ -325,7 +332,7 @@ export const IndustryCanvas = ({
           annotations={enhancedAnnotations}
           tooltips={tooltips}
           onClick={onStageClick}
-          shouldShowZoomControls
+          shouldShowZoomControls={false}
           setRef={onRef}
           tool={tool}
           toolOptions={toolOptions}
@@ -341,6 +348,21 @@ export const IndustryCanvas = ({
         <ToolbarWrapper>
           <ToolbarComponent activeTool={tool} onToolChange={setTool} />
         </ToolbarWrapper>
+        <ZoomControlsWrapper>
+          <ZoomControls
+            currentZoomScale={currentZoomScale}
+            zoomIn={viewerRef?.zoomIn}
+            zoomOut={viewerRef?.zoomOut}
+            zoomToFit={() => {
+              viewerRef?.zoomToFit(ZoomToFitMode.DEFAULT, {
+                relativeMargin: ZOOM_TO_FIT_MARGIN,
+              });
+            }}
+            setZoomScale={(value: number) => {
+              viewerRef?.setScale(value);
+            }}
+          />
+        </ZoomControlsWrapper>
       </FullHeightWrapper>
     </FullHeightWrapper>
   );
@@ -353,8 +375,17 @@ const FullHeightWrapper = styled.div`
   position: relative;
 `;
 
+const BOTTOM_MARGIN = 20;
+const SIDE_MARGIN = 20;
+
+const ZoomControlsWrapper = styled.div`
+  position: absolute;
+  bottom: ${BOTTOM_MARGIN}px;
+  right: ${SIDE_MARGIN}px;
+`;
+
 const ToolbarWrapper = styled.div`
   position: absolute;
-  bottom: 50px;
-  left: 50px;
+  bottom: ${BOTTOM_MARGIN}px;
+  left: ${SIDE_MARGIN}px;
 `;
