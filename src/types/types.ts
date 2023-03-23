@@ -9,8 +9,6 @@ export type PipelineTableTypes =
   | 'owner'
   | 'run';
 
-export type PredictionsTableTypes = 'source' | 'matches';
-
 type TablePropsBase = {
   query?: string | null;
   advancedFilter?: any;

@@ -1,6 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "local>cognitedata/renovate-config"
-  ]
+  "prConcurrentLimit": 2,
+  "extends": ["local>cognitedata/renovate-config"]
 }

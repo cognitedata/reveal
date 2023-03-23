@@ -4,24 +4,29 @@ import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
 import { useEMModelPredictResults } from 'hooks/contextualization-api';
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams, useState } from 'react-router-dom';
+import { SourceType } from 'types/api';
+import { sessionStorageKey } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
   const [sourceIds, setSourceIds] = useState<number[]>([]);
-  const { jobId } = useParams<{
+  const { subAppPath, jobId, sourceType } = useParams<{
+    subAppPath: string;
     jobId: string;
+    sourceType: SourceType;
   }>();
 
   const { t } = useTranslation();
+  const id = parseInt(jobId ?? '', 10);
+  const token = sessionStorage.getItem(sessionStorageKey(id));
+  const { data: predictions } = useEMModelPredictResults(id, token!, {
+    enabled: !!jobId,
+    ...INFINITE_Q_OPTIONS,
+  });
 
-  const { data: predictions } = useEMModelPredictResults(
-    parseInt(jobId ?? ''),
-    {
-      enabled: !!jobId,
-      ...INFINITE_Q_OPTIONS,
-    }
-  );
+  if (!sourceType) {
+    return <Navigate to={`/${subAppPath}/quick-match/}`} replace={true} />;
+  }
 
   return (
     <>
@@ -40,6 +45,7 @@ const QuickMatchResults = (): JSX.Element => {
         >
           {predictions?.status === 'Completed' && (
             <EntityMatchingResult
+              sourceType={sourceType}
               predictions={predictions.items}
               sourceIdsSecondaryTopBar={sourceIds}
               setSourceIdsSecondaryTopBar={setSourceIds}
