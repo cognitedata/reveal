@@ -13,6 +13,7 @@ import {
   bulkDownloadStatus,
   filterFieldsFromObjects,
   getAdvancedFilter,
+  sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
   sessionStorageRulesJobKey,
 } from 'utils';
@@ -24,6 +25,8 @@ import {
   useEMModelPredictResults,
 } from 'hooks/entity-matching-predictions';
 import {
+  useApplyRulesJob,
+  useApplyRulesResults,
   useCreateRulesJob,
   useRulesResults,
 } from 'hooks/entity-matching-rules';
@@ -35,17 +38,22 @@ const CreateModel = (): JSX.Element => {
     modelId: modelIdStr,
     predictJobId: predictJobIdStr,
     rulesJobId: rulesJobIdStr,
+    applyRulesJobId: applyRulesJobIdStr,
   } = useParams<{
     subAppPath: string;
     modelId?: string;
     predictJobId?: string;
     rulesJobId?: string;
+    applyRulesJobId?: string;
   }>();
   const modelId = !!modelIdStr ? parseInt(modelIdStr, 10) : undefined;
   const predictJobId = !!predictJobIdStr
     ? parseInt(predictJobIdStr, 10)
     : undefined;
   const rulesJobId = !!rulesJobIdStr ? parseInt(rulesJobIdStr, 10) : undefined;
+  const applyRulesJobId = !!applyRulesJobIdStr
+    ? parseInt(applyRulesJobIdStr, 10)
+    : undefined;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
@@ -71,6 +79,9 @@ const CreateModel = (): JSX.Element => {
   const [rulesRefetchInterval, setRulesRefetchInterval] = useState<
     number | undefined
   >();
+  const [applyRulesRefetchInterval, setApplyRulesRefetchInterval] = useState<
+    number | undefined
+  >();
 
   const is3d = sourceType === 'threeD';
 
@@ -79,6 +90,9 @@ const CreateModel = (): JSX.Element => {
   );
   const rulesJobToken = sessionStorage.getItem(
     sessionStorageRulesJobKey(rulesJobId!)
+  );
+  const applyRulesJobToken = sessionStorage.getItem(
+    sessionStorageApplyRulesJobKey(applyRulesJobId!)
   );
 
   const { data: model } = useEMModel(modelId!, {
@@ -102,6 +116,16 @@ const CreateModel = (): JSX.Element => {
     refetchInterval: rulesRefetchInterval,
     ...INFINITE_Q_OPTIONS,
   });
+
+  const { data: applyRulesResult } = useApplyRulesResults(
+    applyRulesJobId!,
+    applyRulesJobToken,
+    {
+      enabled: !!applyRulesJobId,
+      refetchInterval: applyRulesRefetchInterval,
+      ...INFINITE_Q_OPTIONS,
+    }
+  );
 
   const {
     mutateAsync: buildModel,
@@ -307,6 +331,23 @@ const CreateModel = (): JSX.Element => {
       },
     });
 
+  const { mutate: applyRules, status: applyRulesStatus } = useApplyRulesJob({
+    async onSuccess(job) {
+      if (job.jobToken) {
+        sessionStorage.setItem(
+          sessionStorageApplyRulesJobKey(job.jobId),
+          job.jobToken
+        );
+      }
+      navigate(
+        createLink(
+          `/${subAppPath}/quick-match/create/create-model/${modelId}/${predictJobId}/${rulesJobId}/${job.jobId}`
+        ),
+        { replace: true }
+      );
+    },
+  });
+
   useEffect(() => {
     if (!model?.status) {
       return;
@@ -327,6 +368,28 @@ const CreateModel = (): JSX.Element => {
     }
   }, [createPredictJob, model?.id, model?.status]);
 
+  const filteredSources = useMemo(
+    () =>
+      filterFieldsFromObjects(sources, [
+        'id',
+        ...matchFields
+          .filter((source) => !!source)
+          .map(({ source }) => source as string),
+      ]),
+    [sources, matchFields]
+  );
+
+  const filteredTargets = useMemo(
+    () =>
+      filterFieldsFromObjects(targets, [
+        'id',
+        ...matchFields
+          .filter((target) => !!target)
+          .map(({ target }) => target as string),
+      ]),
+    [targets, matchFields]
+  );
+
   useEffect(() => {
     if (prediction?.status === 'Completed') {
       const matches =
@@ -334,19 +397,7 @@ const CreateModel = (): JSX.Element => {
           sourceId: i.source.id,
           targetId: i.match.target.id,
         })) || [];
-      const filteredSources = filterFieldsFromObjects(sources, [
-        'id',
-        ...matchFields
-          .filter((source) => !!source)
-          .map(({ source }) => source as string),
-      ]);
 
-      const filteredTargets = filterFieldsFromObjects(targets, [
-        'id',
-        ...matchFields
-          .filter((target) => !!target)
-          .map(({ target }) => target as string),
-      ]);
       createRulesJob({
         sources: filteredSources,
         targets: filteredTargets,
@@ -357,9 +408,25 @@ const CreateModel = (): JSX.Element => {
     createRulesJob,
     prediction?.items,
     prediction?.status,
-    sources,
-    targets,
+    filteredSources,
+    filteredTargets,
     matchFields,
+  ]);
+
+  useEffect(() => {
+    if (rules?.status === 'Completed') {
+      applyRules({
+        sources: filteredSources,
+        targets: filteredTargets,
+        rules: rules?.rules,
+      });
+    }
+  }, [
+    applyRules,
+    filteredSources,
+    filteredTargets,
+    rules?.rules,
+    rules?.status,
   ]);
 
   useEffect(() => {
@@ -381,11 +448,22 @@ const CreateModel = (): JSX.Element => {
     }
   }, [rules?.status]);
 
-  if (rules?.status === 'Completed') {
+  useEffect(() => {
+    if (
+      applyRulesResult?.status &&
+      IN_PROGRESS_EM_STATES.includes(applyRulesResult?.status)
+    ) {
+      setApplyRulesRefetchInterval(1000);
+    } else {
+      setApplyRulesRefetchInterval(undefined);
+    }
+  }, [applyRulesResult?.status]);
+
+  if (applyRulesResult?.status === 'Completed') {
     return (
       <Navigate
         to={createLink(
-          `/${subAppPath}/quick-match/results/${predictJobId}/${rulesJobId}/${sourceType}`
+          `/${subAppPath}/quick-match/results/${predictJobId}/${rulesJobId}/${applyRulesJobId}/${sourceType}`
         )}
         replace={true}
       />
@@ -449,6 +527,21 @@ const CreateModel = (): JSX.Element => {
           <Flex alignItems="center" gap={8}>
             <QueryStatusIcon status={createRulesStatus} />
             <Body level={2}>{t(`create-rules-job-${createRulesStatus}`)}</Body>
+          </Flex>
+        )}
+        {applyRulesResult ? (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={applyRulesResult.status} />
+            <Body level={2}>
+              {t(`create-apply-rules-job-${applyRulesResult.status}`)}
+            </Body>
+          </Flex>
+        ) : (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={applyRulesStatus} />
+            <Body level={2}>
+              {t(`create-apply-rules-job-${applyRulesStatus}`)}
+            </Body>
           </Flex>
         )}
       </Infobox>

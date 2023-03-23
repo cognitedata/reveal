@@ -2,7 +2,7 @@ import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/entity-matching-predictions';
-import { Rule } from 'hooks/entity-matching-rules';
+import { AppliedRules, Rule } from 'hooks/entity-matching-rules';
 
 import { useUpdateTimeseries } from 'hooks/timeseries';
 import styled from 'styled-components';
@@ -13,6 +13,7 @@ type Props = {
   predictions: Prediction[];
   sourceType: SourceType;
   rules?: Rule[];
+  appliedRules?: AppliedRules[];
 };
 export default function EntityMatchingResult({ predictions }: Props) {
   const { mutate, isLoading, status } = useUpdateTimeseries();

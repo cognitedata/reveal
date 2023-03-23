@@ -194,3 +194,5 @@ export const sessionStoragePredictJobKey = (jobId: number) =>
   `predict-job-token-${jobId}`;
 export const sessionStorageRulesJobKey = (jobId: number) =>
   `rules-job-token-${jobId}`;
+export const sessionStorageApplyRulesJobKey = (jobId: number) =>
+  `apply-rules-job-token-${jobId}`;
