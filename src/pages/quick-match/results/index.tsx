@@ -4,7 +4,8 @@ import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
 import { useEMModelPredictResults } from 'hooks/contextualization-api';
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
-import { Navigate, useParams, useState } from 'react-router-dom';
+import { useState } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
 import { SourceType } from 'types/api';
 import { sessionStorageKey } from 'utils';
 
