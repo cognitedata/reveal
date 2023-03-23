@@ -26,8 +26,8 @@ const QuickMatchResults = (): JSX.Element => {
   } = useParams<{
     subAppPath: string;
     predictJobId: string;
-    rulesJobId: string;
-    applyRulesJobId: string;
+    rulesJobId?: string;
+    applyRulesJobId?: string;
     sourceType: SourceType;
   }>();
 

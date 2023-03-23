@@ -398,11 +398,13 @@ const CreateModel = (): JSX.Element => {
           targetId: i.match.target.id,
         })) || [];
 
-      createRulesJob({
-        sources: filteredSources,
-        targets: filteredTargets,
-        matches,
-      });
+      if (matches.length > 0) {
+        createRulesJob({
+          sources: filteredSources,
+          targets: filteredTargets,
+          matches,
+        });
+      }
     }
   }, [
     createRulesJob,
@@ -414,7 +416,11 @@ const CreateModel = (): JSX.Element => {
   ]);
 
   useEffect(() => {
-    if (rules?.status === 'Completed') {
+    if (
+      rules?.status === 'Completed' &&
+      rules?.rules &&
+      rules.rules.length > 0
+    ) {
       applyRules({
         sources: filteredSources,
         targets: filteredTargets,
@@ -463,7 +469,31 @@ const CreateModel = (): JSX.Element => {
     return (
       <Navigate
         to={createLink(
-          `/${subAppPath}/quick-match/results/${predictJobId}/${rulesJobId}/${applyRulesJobId}/${sourceType}`
+          `/${subAppPath}/quick-match/results/${predictJobId}/${sourceType}/${rulesJobId}/${applyRulesJobId}`
+        )}
+        replace={true}
+      />
+    );
+  }
+
+  // No predictions means there ar no rules generatioon to wait for
+  if (prediction?.status === 'Completed' && prediction?.items.length === 0) {
+    return (
+      <Navigate
+        to={createLink(
+          `/${subAppPath}/quick-match/results/${predictJobId}/${sourceType}`
+        )}
+        replace={true}
+      />
+    );
+  }
+
+  // No rules means there are no apply-rules-job to wait for
+  if (rules?.status === 'Completed' && rules?.rules.length === 0) {
+    return (
+      <Navigate
+        to={createLink(
+          `/${subAppPath}/quick-match/results/${predictJobId}/${sourceType}`
         )}
         replace={true}
       />
