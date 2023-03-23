@@ -1,4 +1,4 @@
-import { Flex, InputNew } from '@cognite/cogs.js';
+import { Flex, InputExp } from '@cognite/cogs.js';
 import { FormikProps } from 'formik';
 
 import { useTranslation } from 'common';
@@ -21,7 +21,7 @@ const PipelineDetailsForm = ({
 
   return (
     <Flex direction="column" gap={12}>
-      <InputNew
+      <InputExp
         status={errors.name ? 'critical' : undefined}
         statusText={errors.name}
         fullWidth
@@ -34,7 +34,7 @@ const PipelineDetailsForm = ({
         onChange={(e) => setFieldValue('name', e.target.value)}
         value={values.name}
       />
-      <InputNew
+      <InputExp
         fullWidth
         label={{
           info: '',
