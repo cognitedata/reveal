@@ -1,14 +1,17 @@
-import { Flex } from '@cognite/cogs.js';
-
-import QuickMatchTitle from 'components/quick-match-title';
+import { useTranslation } from 'common';
+import Step from 'components/step';
 import TargetSelectionTable from 'components/target-selector-table';
 
 const SelectTargets = (): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
-    <Flex direction="column" gap={8}>
-      <QuickMatchTitle step="select-targets" />
+    <Step
+      subtitle={t('select-target-step-subtitle')}
+      title={t('select-target-step-title', { step: 2 })}
+    >
       <TargetSelectionTable />
-    </Flex>
+    </Step>
   );
 };
 

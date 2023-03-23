@@ -8,7 +8,7 @@ type StepProps = {
   children: React.ReactNode;
   isCentered?: boolean;
   subtitle?: string;
-  title: string;
+  title?: string;
 };
 
 const Step = ({
@@ -20,10 +20,14 @@ const Step = ({
   return (
     <Container $isCentered={isCentered}>
       <Content $isCentered={isCentered} direction="column" gap={16}>
-        <Flex direction="column">
-          <Title level={4}>{title}</Title>
-          <Subtitle>{subtitle}</Subtitle>
-        </Flex>
+        {title || subtitle ? (
+          <Flex direction="column">
+            {title && <Title level={4}>{title}</Title>}
+            {subtitle && <Subtitle>{subtitle}</Subtitle>}
+          </Flex>
+        ) : (
+          <></>
+        )}
         <div>{children}</div>
       </Content>
     </Container>
