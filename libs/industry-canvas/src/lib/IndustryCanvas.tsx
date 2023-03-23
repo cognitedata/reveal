@@ -83,7 +83,7 @@ export const IndustryCanvas = ({
 
   const { tool, toolOptions, setTool, onUpdateAnnotationStyleByType } =
     useManagedTools({
-      initialTool: ToolType.PAN,
+      initialTool: ToolType.SELECT,
       selectedCanvasAnnotation,
       onUpdateRequest,
     });
