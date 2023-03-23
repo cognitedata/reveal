@@ -3,28 +3,18 @@ import ApplySelectedMatchesButton from 'components/apply-selected-matches-button
 import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
 import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
-import {
-  useApplyRulesResults,
-  useRulesResults,
-} from 'hooks/entity-matching-rules';
 
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { SourceType } from 'types/api';
-import {
-  sessionStorageApplyRulesJobKey,
-  sessionStoragePredictJobKey,
-  sessionStorageRulesJobKey,
-} from 'utils';
+import { sessionStoragePredictJobKey } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
   const [sourceIds, setSourceIds] = useState<number[]>([]);
   const {
     subAppPath,
     predictJobId: predictJobIdStr,
-    rulesJobId: rulesJobIdStr,
-    applyRulesJobId: applyRulesJobIdStr,
     sourceType,
   } = useParams<{
     subAppPath: string;
@@ -36,17 +26,9 @@ const QuickMatchResults = (): JSX.Element => {
 
   const { t } = useTranslation();
   const predictJobId = parseInt(predictJobIdStr ?? '', 10);
-  const rulesJobId = parseInt(rulesJobIdStr ?? '', 10);
-  const applyRulesJobId = parseInt(applyRulesJobIdStr ?? '', 10);
 
   const predictJobToken = sessionStorage.getItem(
     sessionStoragePredictJobKey(predictJobId)
-  );
-  const rulesJobToken = sessionStorage.getItem(
-    sessionStorageRulesJobKey(rulesJobId)
-  );
-  const applyRulesJobToken = sessionStorage.getItem(
-    sessionStorageApplyRulesJobKey(applyRulesJobId)
   );
 
   const { data: predictions } = useEMModelPredictResults(
@@ -54,20 +36,6 @@ const QuickMatchResults = (): JSX.Element => {
     predictJobToken,
     {
       enabled: !!predictJobId,
-      ...INFINITE_Q_OPTIONS,
-    }
-  );
-
-  const { data: rules } = useRulesResults(rulesJobId, rulesJobToken, {
-    enabled: !!rulesJobId,
-    ...INFINITE_Q_OPTIONS,
-  });
-
-  const { data: appliedRules } = useApplyRulesResults(
-    applyRulesJobId,
-    applyRulesJobToken,
-    {
-      enabled: !!applyRulesJobId,
       ...INFINITE_Q_OPTIONS,
     }
   );
@@ -83,8 +51,6 @@ const QuickMatchResults = (): JSX.Element => {
           subtitle={t('results')}
           title={t('quick-match')}
           predictions={predictions.items}
-          rules={rules?.rules}
-          appliedRules={appliedRules?.items}
           sourceIds={sourceIds}
           extraContent={
             <ApplySelectedMatchesButton

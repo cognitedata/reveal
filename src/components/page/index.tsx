@@ -3,7 +3,7 @@ import React from 'react';
 import { SecondaryTopbar } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Prediction } from 'hooks/contextualization-api';
+import { Prediction } from 'hooks/entity-matching-predictions';
 
 const SECONDARY_TOPBAR_HEIGHT = 56;
 const FOOTER_HEIGHT = 53;

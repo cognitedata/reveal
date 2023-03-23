@@ -1,7 +1,7 @@
 import { notification } from '@cognite/cdf-utilities';
 import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
-import { Prediction } from 'hooks/contextualization-api';
+import { Prediction } from 'hooks/entity-matching-predictions';
 import { useUpdateTimeseries } from 'hooks/timeseries';
 import styled from 'styled-components';
 
@@ -24,10 +24,10 @@ const ApplySelectedMatchesButton = ({
   const applySelected = () => {
     if (selectedPredictions) {
       mutate(
-        selectedPredictions?.map(({ source, matches }) => ({
+        selectedPredictions?.map(({ source, match }) => ({
           id: source.id,
           update: {
-            assetId: { set: matches[0].target.id },
+            assetId: { set: match.target.id },
           },
         })),
         {
