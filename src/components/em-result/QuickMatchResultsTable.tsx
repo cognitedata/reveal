@@ -6,6 +6,7 @@ import { formatPredictionObject } from 'utils';
 import ConfidenceScore from './Confidence';
 import { Checkbox, Flex } from '@cognite/cogs.js';
 import {
+  Match,
   Prediction,
   PredictionObject,
 } from 'hooks/entity-matching-predictions';
@@ -53,9 +54,11 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
       },
       {
         title: t('qm-result-target'),
-        dataIndex: 'matches',
-        key: 'matches',
-        render: (match) => formatPredictionObject(match.target) || '—',
+        dataIndex: 'match',
+        key: 'match',
+        render: (match: Match) => {
+          return formatPredictionObject(match.target) || '—';
+        },
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.match.target).localeCompare(
             formatPredictionObject(b.match.target)

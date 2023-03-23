@@ -16,20 +16,19 @@ export type PredictionObject = {
   description?: string;
 };
 
+export type Match = {
+  score: number;
+  target: PredictionObject;
+};
+
 export type RawPrediction = {
   source: PredictionObject;
-  matches: {
-    score: number;
-    target: PredictionObject;
-  }[];
+  matches: Match[];
 };
 
 export type Prediction = {
   source: PredictionObject;
-  match: {
-    score: number;
-    target: PredictionObject;
-  };
+  match: Match;
 };
 
 export type EntityMatchingPredictions = {
