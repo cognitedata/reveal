@@ -181,14 +181,14 @@ const NumberOrMissingTd = ({
   children,
 }: {
   dataType: ProfileRowDataType;
-  columnType?: ColumnProfile['type'] | 'Key' | 'Unknown';
+  columnType?: ColumnProfile['type'] | 'key' | 'Unknown';
   value?: number;
   children?: React.ReactNode;
 }) => {
   const { t } = useTranslation();
   const getIsDataAvailable = (): boolean => {
     if (!columnType) return false;
-    if (columnType === 'Key') return true;
+    if (columnType === 'key') return true;
     return availableDataTypes[columnType].includes(dataType);
   };
   const isDataAvailable = getIsDataAvailable();

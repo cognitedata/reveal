@@ -352,7 +352,7 @@ export const useColumnType = (
 ) => {
   const { getColumn, isFetched } = useColumn(database, table, limit);
   const getColumnType = (dataKey: string | undefined) => {
-    if (dataKey === PRIMARY_KEY_DATAKEY) return 'Key';
+    if (dataKey === PRIMARY_KEY_DATAKEY) return 'key';
     const column = getColumn(dataKey);
     return column?.type || 'Unknown';
   };
