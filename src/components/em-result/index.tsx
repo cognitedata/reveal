@@ -3,14 +3,22 @@ import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/contextualization-api';
 import { useUpdateTimeseries } from 'hooks/timeseries';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 
 type Props = {
   predictions: Prediction[];
+  sourceIdsSecondaryTopBar: number[];
+  setSourceIdsSecondaryTopBar: Dispatch<SetStateAction<number[]>>;
 };
-export default function EntityMatchingResult({ predictions }: Props) {
+export default function EntityMatchingResult({
+  predictions,
+  sourceIdsSecondaryTopBar,
+  setSourceIdsSecondaryTopBar,
+}: Props) {
   const { mutate, isLoading, status } = useUpdateTimeseries();
+  const [sourceIds, setSourceIds] = useState<number[]>([]);
   const { t } = useTranslation();
   const applyAll = () => {
     mutate(
@@ -22,6 +30,12 @@ export default function EntityMatchingResult({ predictions }: Props) {
       }))
     );
   };
+
+  useEffect(
+    () => setSourceIdsSecondaryTopBar(sourceIds),
+    [sourceIds, setSourceIdsSecondaryTopBar, sourceIdsSecondaryTopBar]
+  );
+
   return (
     <StyledFlex direction="column">
       <Flex justifyContent="flex-end">
@@ -33,7 +47,11 @@ export default function EntityMatchingResult({ predictions }: Props) {
           {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
         </StyledButton>
       </Flex>
-      <QuickMatchResultsTable predictions={predictions} />
+      <QuickMatchResultsTable
+        predictions={predictions}
+        sourceIds={sourceIds}
+        setSourceIds={setSourceIds}
+      />
     </StyledFlex>
   );
 }

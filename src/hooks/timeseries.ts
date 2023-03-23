@@ -24,7 +24,11 @@ export type RawTimeseries = Omit<
 export const TS_BASE_QUERY_KEY = ['timeseries'];
 
 export const useUpdateTimeseries = (
-  options?: UseMutationOptions<Timeseries[], CogniteError, TimeSeriesUpdate[]>
+  options?: UseMutationOptions<
+    Timeseries[],
+    CogniteError,
+    TimeSeriesUpdate[] | undefined
+  >
 ) => {
   const sdk = useSDK();
 
