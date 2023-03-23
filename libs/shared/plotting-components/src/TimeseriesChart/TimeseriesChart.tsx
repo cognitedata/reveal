@@ -28,7 +28,6 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   numberOfPoints = DEFAULT_DATAPOINTS_LIMIT,
   quickTimePeriodOptions = [],
   dateRange: dateRangeProp,
-  backgroundColor,
   height,
   onChangeTimePeriod,
   onChangeDateRange,
@@ -72,7 +71,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     <Chart
       data={data || EMPTY_DATA}
       isLoading={isLoading}
-      style={{ backgroundColor, height }}
+      style={{ height }}
       renderFilters={() => [
         <TimePeriods
           options={quickTimePeriodOptions}

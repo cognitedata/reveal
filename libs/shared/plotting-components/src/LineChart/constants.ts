@@ -23,6 +23,9 @@ export const DEFAULT_LINE_NAME = 'Line';
 
 export const BUTTON_ZOOM_STEP_SIZE = 5; // Percentage
 
+export const AXIS_TITLE_MARGIN = 24;
+export const TICK_LABEL_PADDING = 10;
+
 export const DEFAULT_STYLE_PROPERTIES: CSSProperties = {
   backgroundColor: DEFAULT_BACKGROUND_COLOR,
   padding: DEFAULT_PADDING,

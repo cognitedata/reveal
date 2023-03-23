@@ -7,7 +7,6 @@ export interface TimeseriesChartProps {
   numberOfPoints?: number;
   quickTimePeriodOptions?: TimePeriod[];
   dateRange?: DateRange;
-  backgroundColor?: string;
   height?: number;
   onChangeTimePeriod?: (props: UpdateTimePeriodProps) => void;
   onChangeDateRange?: (dateRange: DateRange) => void;

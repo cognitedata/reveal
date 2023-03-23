@@ -7,7 +7,6 @@ interface PlotWrapperProps {
   showticks: boolean;
   cursor: string;
   variant?: Variant;
-  showyticklabels?: boolean;
 }
 
 export const PlotWrapper = styled.div`
@@ -44,14 +43,6 @@ export const PlotWrapper = styled.div`
   > * .ytick {
     transform: translateX(-4px) !important;
   }
-
-  ${({ showyticklabels }: PlotWrapperProps) =>
-    showyticklabels &&
-    `
-    > * .xtick:first-child {
-      display: none;
-    }
-  `}
 
   > * .crisp {
     stroke: ${TICK_COLOR} !important;

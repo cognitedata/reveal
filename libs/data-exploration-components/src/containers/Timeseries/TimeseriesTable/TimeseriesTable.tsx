@@ -100,8 +100,7 @@ export const TimeseriesTable = ({
             variant="small"
             dateRange={dateRange}
             numberOfPoints={100}
-            backgroundColor="transparent"
-            height={50}
+            height={55}
           />
         );
       },

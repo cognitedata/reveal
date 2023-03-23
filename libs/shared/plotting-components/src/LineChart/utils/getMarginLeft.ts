@@ -1,9 +1,11 @@
-import last from 'lodash/last';
-
-import { DEFAULT_MARGIN } from '../constants';
+import {
+  AXIS_TITLE_MARGIN,
+  DEFAULT_MARGIN,
+  TICK_LABEL_PADDING,
+} from '../constants';
 import { Layout } from '../types';
 import { getBooleanFromAxisDirection } from './getBooleanFromAxisDirection';
-import { getTickTextWidth } from './getTickTextWidth';
+import { getMaxYTickLength } from './getMaxYTickLength';
 
 export const getMarginLeft = (
   layout: Layout,
@@ -11,22 +13,23 @@ export const getMarginLeft = (
   hasAxisLabel: boolean
 ) => {
   const { showAxisNames, showTickLabels } = layout;
+
+  const showAxisTitle = hasAxisLabel && showAxisNames;
   const showYAxisTickLabels = getBooleanFromAxisDirection(showTickLabels, 'y');
 
-  const yticks = graph?.getElementsByClassName('ytick');
-  const yTickWithMaxWidth = last(yticks);
-  const maxYTickLength = getTickTextWidth(yTickWithMaxWidth?.textContent);
+  const maxYTickLength = getMaxYTickLength(graph);
+  const tickMargin = Math.ceil(maxYTickLength);
 
-  if (hasAxisLabel && showAxisNames && showYAxisTickLabels) {
-    return maxYTickLength + 32;
+  if (showAxisTitle && showYAxisTickLabels) {
+    return AXIS_TITLE_MARGIN + TICK_LABEL_PADDING + tickMargin;
   }
 
-  if ((!hasAxisLabel || !showAxisNames) && showYAxisTickLabels) {
-    return maxYTickLength + 12;
+  if (!showAxisTitle && showYAxisTickLabels) {
+    return TICK_LABEL_PADDING + tickMargin;
   }
 
-  if (hasAxisLabel && showAxisNames && !showYAxisTickLabels) {
-    return 24;
+  if (showAxisTitle && !showYAxisTickLabels) {
+    return AXIS_TITLE_MARGIN;
   }
 
   return DEFAULT_MARGIN;
