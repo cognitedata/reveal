@@ -33,7 +33,7 @@ export const TimeseriesContainer = styled.div`
 
 export const ConditionContainer = styled.div`
   position: relative;
-  top: -2em;
+  top: -1.25em;
   font-size: 90%;
   font-weight: normal;
 `;
