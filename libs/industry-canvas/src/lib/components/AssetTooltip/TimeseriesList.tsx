@@ -37,6 +37,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
             inverted
             icon="Plus"
             size="medium"
+            aria-label="Add timeseries"
             onClick={() => onAddTimeseries(ts.id)}
           />
         </TimeseriesRow>

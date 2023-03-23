@@ -30,6 +30,7 @@ import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanva
 import { getContainerId } from './utils/utils';
 import ZoomControls from './components/ZoomControls';
 import { ZOOM_TO_FIT_MARGIN } from './constants';
+import { isDevelopment } from '@cognite/cdf-utilities';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -370,7 +371,7 @@ const FullHeightWrapper = styled.div`
 `;
 
 const BOTTOM_MARGIN = 20;
-const SIDE_MARGIN = 20;
+const SIDE_MARGIN = isDevelopment() ? 70 : 20;
 
 const ZoomControlsWrapper = styled.div`
   position: absolute;

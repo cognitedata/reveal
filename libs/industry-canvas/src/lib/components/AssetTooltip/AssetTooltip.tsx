@@ -38,7 +38,13 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({ id, onAddTimeseries }) => {
           <Label level={5}>{asset.name ?? asset.externalId}</Label>
         </InnerHeaderWrapper>
 
-        <Button type="ghost" inverted icon="EllipsisHorizontal" size="medium" />
+        <Button
+          type="ghost"
+          inverted
+          icon="EllipsisHorizontal"
+          size="medium"
+          aria-label="Asset tooltip menu"
+        />
       </Header>
 
       <AssetType level={3}>Asset</AssetType>
