@@ -31,14 +31,12 @@ export default function ModelConfiguration() {
           subtitle={t('model-configuration-fields-body')}
           title={t('model-configuration-fields-header')}
         />
-        <Flex>
-          <FieldMapping
-            sourceType={sourceType}
-            targetType="assets"
-            modelFieldMapping={modelFieldMapping}
-            setModelFieldMapping={setModelFieldMapping}
-          />
-        </Flex>
+        <FieldMapping
+          sourceType={sourceType}
+          targetType="assets"
+          modelFieldMapping={modelFieldMapping}
+          setModelFieldMapping={setModelFieldMapping}
+        />
       </Step.Section>
       <Step.Section>
         <Step.SectionHeader
