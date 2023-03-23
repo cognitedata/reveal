@@ -2,7 +2,7 @@
 import React, { useMemo, useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import noop from 'lodash/noop';
-import { Divider } from '@data-exploration-components/components';
+
 import {
   Dropdown,
   Button,
@@ -12,7 +12,7 @@ import {
   DateRange,
   Flex,
 } from '@cognite/cogs.js';
-import { TIME_SELECT } from '@data-exploration-components/containers';
+
 import { PivotRangePicker } from './PivotRangePicker';
 import {
   PivotRange,
@@ -22,6 +22,8 @@ import {
 } from './Common';
 
 import styled from 'styled-components';
+import { Divider } from '../Common';
+import { TIME_SELECT } from '@data-exploration-lib/core';
 
 export type RangePickerProps = {
   initialRange?: [Date, Date];
