@@ -2,6 +2,8 @@ precision highp float;
 precision highp int;
 
 #pragma glslify: import('../base/pointSizeRelativeToScreen.glsl');
+#pragma glslify: import('../color/rgb2hsv.glsl');
+#pragma glslify: import('../color/hsv2rgb.glsl');
 
 #define max_clip_boxes 30
 
@@ -354,7 +356,13 @@ void main() {
         }
 #if !defined(color_type_point_index)
         if (any(greaterThan(styleColor, vec3(0.0)))) {
-                vColor = 0.5 * (styleColor + vColor);
+                vec3 vColorHSV = rgb2hsv(vColor);
+								vec3 styleColorHSV = rgb2hsv(styleColor);
+
+								vColorHSV.xy = styleColorHSV.xy;
+								vColorHSV.z = (vColorHSV.z * (styleColorHSV.z * 0.8 + 0.2));
+
+								vColor = hsv2rgb(vColorHSV);
         }
 #endif
 }
