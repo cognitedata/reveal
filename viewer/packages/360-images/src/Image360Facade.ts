@@ -3,13 +3,13 @@
  */
 import * as THREE from 'three';
 import first from 'lodash/first';
+import pull from 'lodash/pull';
 
 import { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import { IconCullingScheme } from './icons/IconCollection';
-import pullAll from 'lodash/pullAll';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -50,21 +50,26 @@ export class Image360Facade<T> {
 
   public async delete(entity: Image360Entity): Promise<void> {
     await this._image360Cache.purge(entity);
-    const collectionContainingEntity = this._image360Collections.filter(collection =>
-      collection.image360Entities.includes(entity)
-    );
-    collectionContainingEntity.forEach(collection => {
-      collection.remove(entity);
-    });
-    const disposeableCollections = collectionContainingEntity.filter(
-      collection => collection.image360Entities.length === 0
-    );
-    disposeableCollections.forEach(collection => collection.dispose());
-    pullAll(this._image360Collections, disposeableCollections);
+    const collection = this.getCollectionContainingEntity(entity);
+    collection.remove(entity);
+    if (collection.image360Entities.length === 0) {
+      collection.dispose();
+      pull(this._image360Collections, collection);
+    }
   }
 
   public preload(entity: Image360Entity, lockDownload?: boolean): Promise<void> {
     return this._image360Cache.cachedPreload(entity, lockDownload);
+  }
+
+  public getCollectionContainingEntity(entity: Image360Entity): DefaultImage360Collection {
+    const imageCollection = this._image360Collections.filter(collection =>
+      collection.image360Entities.includes(entity)
+    );
+    if (imageCollection.length !== 1) {
+      throw new Error(`360Image entity contained in invalid number of collections: {${imageCollection.length}}`);
+    }
+    return imageCollection[0];
   }
 
   public intersect(

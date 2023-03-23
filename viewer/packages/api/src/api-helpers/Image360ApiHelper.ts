@@ -152,12 +152,14 @@ export class Image360ApiHelper {
 
     this.set360CameraManager();
 
+    const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
+    lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
+    image360Entity.icon.setVisibility(false);
+
     const image360Visualization = image360Entity.image360Visualization;
     image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
-    lastEntered360ImageEntity?.icon.setVisibility(true);
     this._image360Facade.allHoverIconsVisibility = false;
-    image360Entity.icon.setVisibility(false);
 
     this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {
@@ -179,9 +181,7 @@ export class Image360ApiHelper {
       this._requestRedraw();
     });
 
-    this._image360Facade.collections
-      .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
-      .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
+    imageCollection.events.image360Entered.fire(image360Entity);
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -294,14 +294,14 @@ export class Image360ApiHelper {
   }
 
   public exit360Image(): void {
-    this._interactionState.currentImage360Entered?.icon.setVisibility(true);
     this._image360Facade.allIconCullingScheme = 'clustered';
     if (this._interactionState.currentImage360Entered !== undefined) {
-      this._image360Facade.collections
-        .filter(imageCollection =>
-          imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)
-        )
-        .forEach(imageCollection => imageCollection.events.image360Exited.fire());
+      const imageCollection = this._image360Facade.getCollectionContainingEntity(
+        this._interactionState.currentImage360Entered
+      );
+      this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
+      imageCollection.events.image360Exited.fire();
+
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.image360SelectedForEntry = undefined;

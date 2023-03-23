@@ -25,7 +25,7 @@ export interface Image360Collection {
    * Set visibility of all 360 image icons.
    * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
    */
-  setIconsVisibility(visible: boolean): void;
+  set360CollectionVisibility(visible: boolean): void;
 
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
