@@ -2,8 +2,6 @@ precision highp float;
 precision highp int;
 
 #pragma glslify: import('../base/pointSizeRelativeToScreen.glsl');
-#pragma glslify: import('../color/rgb2hsv.glsl');
-#pragma glslify: import('../color/hsv2rgb.glsl');
 
 #define max_clip_boxes 30
 
