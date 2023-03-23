@@ -105,7 +105,7 @@ export class Image360UI {
         { site_id: params.siteId },
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
-      collection.set360CollectionVisibility(!iconCulling.hideAll)
+      collection.set360CollectionVisibility(!iconCulling.hideAll);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
       viewer.requestRedraw();
