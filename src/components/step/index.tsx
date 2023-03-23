@@ -39,7 +39,7 @@ const Subtitle = styled(Detail)`
   color: ${Colors['text-icon--muted']};
 `;
 
-const Section = styled(Flex).attrs({ gap: 16, direction: 'column' })`
+const Section = styled(Flex).attrs({ gap: 8, direction: 'column' })`
   &:not(:first-child) {
     border-top: 1px solid ${Colors['border--interactive--default']};
     margin-top: 16px;
