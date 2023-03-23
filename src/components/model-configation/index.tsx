@@ -2,7 +2,6 @@ import { Button, Flex } from '@cognite/cogs.js';
 import { Collapse } from 'antd';
 
 import { useTranslation } from 'common';
-import { QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH } from 'common/constants';
 import FieldMapping from 'components/field-mapping';
 import Radio from 'components/radio';
 import RadioBox from 'components/radio-box';
@@ -155,9 +154,7 @@ export default function ModelConfiguration() {
   );
 }
 
-const Container = styled(Flex).attrs({ direction: 'column' })`
-  width: ${QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH}px;
-`;
+const Container = styled(Flex).attrs({ direction: 'column' })``;
 
 const RadioCollapse = styled(Collapse)`
   && {

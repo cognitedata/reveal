@@ -5,7 +5,6 @@ import { Select } from 'antd';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH } from 'common/constants';
 import ResourceTypei18n from 'components/resource-type-i18n';
 import { ModelMapping } from 'context/QuickMatchContext';
 import { useAggregateProperties } from 'hooks/aggregates';
@@ -138,7 +137,7 @@ export default function FieldMapping({
 }
 
 const Container = styled(Flex).attrs({ direction: 'column', gap: 6 })`
-  width: ${QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH}px;
+  width: 100%;
 `;
 
 const IconContainer = styled(Flex).attrs({ justifyContent: 'center' })`

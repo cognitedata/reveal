@@ -7,7 +7,7 @@ const ConfigureModel = (): JSX.Element => {
   const { t } = useTranslation();
 
   return (
-    <Step title={t('configure-model-step-title', { step: 3 })}>
+    <Step isCentered title={t('configure-model-step-title', { step: 3 })}>
       <ModelConfiguration />
     </Step>
   );
