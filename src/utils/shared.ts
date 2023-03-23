@@ -1,7 +1,7 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+import { PredictionObject } from 'hooks/entity-matching-predictions';
 
-import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
   SetStateAction,
@@ -190,4 +190,9 @@ export const filterFieldsFromObjects = (
   });
 };
 
-export const sessionStorageKey = (jobId: number) => `job-token-${jobId}`;
+export const sessionStoragePredictJobKey = (jobId: number) =>
+  `predict-job-token-${jobId}`;
+export const sessionStorageRulesJobKey = (jobId: number) =>
+  `rules-job-token-${jobId}`;
+export const sessionStorageApplyRulesJobKey = (jobId: number) =>
+  `apply-rules-job-token-${jobId}`;

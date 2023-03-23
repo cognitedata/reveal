@@ -1,11 +1,11 @@
 import { Route, Routes, useParams } from 'react-router-dom';
 
 import Page from 'components/page';
-import { useEMPipeline } from 'hooks/contextualization-api';
 
 import Sources from './sources';
 import NoAccessPage from 'components/error-pages/NoAccess';
 import UnknownErrorPage from 'components/error-pages/UnknownError';
+import { useEMPipeline } from 'hooks/entity-matching-pipelines';
 
 const PipelineDetails = (): JSX.Element => {
   const { pipelineId } = useParams<{

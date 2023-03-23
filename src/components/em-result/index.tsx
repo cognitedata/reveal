@@ -1,7 +1,9 @@
 import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
-import { Prediction } from 'hooks/contextualization-api';
+import { Prediction } from 'hooks/entity-matching-predictions';
+import { AppliedRules, Rule } from 'hooks/entity-matching-rules';
+
 import { useUpdateTimeseries } from 'hooks/timeseries';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -13,6 +15,8 @@ type Props = {
   sourceIdsSecondaryTopBar: number[];
   setSourceIdsSecondaryTopBar: Dispatch<SetStateAction<number[]>>;
   sourceType: SourceType;
+  rules?: Rule[];
+  appliedRules?: AppliedRules[];
 };
 export default function EntityMatchingResult({
   predictions,
@@ -24,10 +28,10 @@ export default function EntityMatchingResult({
   const { t } = useTranslation();
   const applyAll = () => {
     mutate(
-      predictions.map(({ source, matches }) => ({
+      predictions.map(({ source, match }) => ({
         id: source.id,
         update: {
-          assetId: { set: matches[0].target.id },
+          assetId: { set: match.target.id },
         },
       }))
     );
