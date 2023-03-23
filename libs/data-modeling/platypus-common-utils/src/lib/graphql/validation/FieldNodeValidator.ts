@@ -16,7 +16,9 @@ export function FieldNodeValidator(context: ValidationContext): ASTVisitor {
     const result = validator.validate('field', node.name.value);
 
     if (!result.valid) {
-      context.reportError(new GraphQLError(result.errors.field, node));
+      context.reportError(
+        new GraphQLError(result.errors.field, { nodes: [node] })
+      );
     }
   }
 }
