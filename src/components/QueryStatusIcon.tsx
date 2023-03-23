@@ -1,6 +1,7 @@
 import { Colors, Icon } from '@cognite/cogs.js';
 import { MutationStatus } from '@tanstack/react-query';
-import { JobStatus } from 'hooks/contextualization-api';
+import { JobStatus } from 'hooks/types';
+
 import styled from 'styled-components';
 
 export default function QueryStatusIcon({

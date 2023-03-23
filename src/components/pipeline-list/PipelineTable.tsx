@@ -9,12 +9,7 @@ import { Button, Dropdown, Loader } from '@cognite/cogs.js';
 import PipelineName from 'components/pipeline-name/PipelineName';
 import { stringSorter } from 'common/utils';
 import { useTranslation } from 'common';
-import {
-  Pipeline,
-  useDeleteEMPipeline,
-  useDuplicateEMPipeline,
-  useEMPipelines,
-} from 'hooks/contextualization-api';
+
 import { PipelineTableTypes } from 'types/types';
 import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
 
@@ -22,6 +17,12 @@ import { stringContains } from 'utils/shared';
 
 import { useSearchParams } from 'react-router-dom';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
+import {
+  Pipeline,
+  useDeleteEMPipeline,
+  useDuplicateEMPipeline,
+  useEMPipelines,
+} from 'hooks/entity-matching-pipelines';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
