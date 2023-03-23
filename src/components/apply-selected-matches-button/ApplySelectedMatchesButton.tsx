@@ -22,7 +22,7 @@ const ApplySelectedMatchesButton = ({
   );
 
   const applySelected = () => {
-    selectedPredictions &&
+    if (selectedPredictions) {
       mutate(
         selectedPredictions?.map(({ source, matches }) => ({
           id: source.id,
@@ -45,6 +45,7 @@ const ApplySelectedMatchesButton = ({
           },
         }
       );
+    }
   };
 
   return (
