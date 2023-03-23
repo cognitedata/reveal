@@ -166,6 +166,7 @@
   "select-source-step-subtitle": "Select the resources you want to match with assets",
   "select-target-step-title": "{{step}}. Select target assets",
   "select-target-step-subtitle": "Select the assets you want to match with the selected resources",
+  "configure-pipeline-step-title": "{{step}}. Configure pipeline",
   "only-data-sets-containing-time_series": "Only data sets containing time series",
   "only-data-sets-containing-events": "Only data sets containing events",
   "only-data-sets-containing-files": "Only data sets containing files",
