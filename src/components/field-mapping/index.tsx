@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import { Body, Button, IconType, Flex, Icon } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import styled from 'styled-components';
@@ -25,7 +23,7 @@ type Props = {
   sourceType: SourceType;
   targetType: TargetType;
   modelFieldMapping: ModelMapping;
-  setModelFieldMapping: Dispatch<SetStateAction<ModelMapping>>;
+  setModelFieldMapping: (mapping: ModelMapping) => void;
 };
 export default function FieldMapping({
   sourceType,
@@ -64,11 +62,9 @@ export default function FieldMapping({
               style={{ flex: 1 }}
               value={from}
               onChange={(e) => {
-                setModelFieldMapping((prevState) => {
-                  const nextState = [...prevState];
-                  nextState[i].source = e;
-                  return nextState;
-                });
+                const nextState = [...modelFieldMapping];
+                nextState[i].source = e;
+                setModelFieldMapping(nextState);
               }}
             >
               {sourceProps?.map((s) => (
@@ -88,11 +84,9 @@ export default function FieldMapping({
               loading={targetsLoading}
               value={to}
               onChange={(e) => {
-                setModelFieldMapping((prevState) => {
-                  const nextState = [...prevState];
-                  nextState[i].target = e;
-                  return nextState;
-                });
+                const nextState = [...modelFieldMapping];
+                nextState[i].target = e;
+                setModelFieldMapping(nextState);
               }}
             >
               {targetProps?.map((s) => (

@@ -8,7 +8,7 @@ import { useEMPipeline } from 'hooks/entity-matching-pipelines';
 
 import Sources from './sources';
 import Targets from './targets';
-import Configure from './configure';
+import ConfigurePipeline from './configure-pipeline';
 
 const PipelineDetails = (): JSX.Element => {
   const { pipelineId } = useParams<{
@@ -36,8 +36,8 @@ const PipelineDetails = (): JSX.Element => {
           <Route path="/sources" element={<Sources pipeline={pipeline} />} />
           <Route path="/targets" element={<Targets pipeline={pipeline} />} />
           <Route
-            path="/configure"
-            element={<Configure pipeline={pipeline} />}
+            path="/configure-pipeline"
+            element={<ConfigurePipeline pipeline={pipeline} />}
           />
         </Routes>
       </Page>
