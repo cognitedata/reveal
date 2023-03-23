@@ -1,10 +1,15 @@
 import { useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
-import { Prediction, PredictionObject } from 'hooks/contextualization-api';
+
 import { formatPredictionObject } from 'utils';
 import ConfidenceScore from './Confidence';
 import { Checkbox, Flex } from '@cognite/cogs.js';
+import {
+  Match,
+  Prediction,
+  PredictionObject,
+} from 'hooks/entity-matching-predictions';
 
 type Predictions = {
   predictions: Prediction[];
@@ -25,13 +30,11 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
 
   const dataSource = useMemo(
     () =>
-      predictions
-        ?.filter((prediction) => prediction.matches.length > 0)
-        .map((a) => ({
-          ...a,
-          key: a.source.id.toString(),
-          score: a.matches[0]?.score,
-        })) || [],
+      predictions.map((a) => ({
+        ...a,
+        key: a.source.id.toString(),
+        score: a.match.score,
+      })) || [],
     [predictions]
   );
 
@@ -51,13 +54,14 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
       },
       {
         title: t('qm-result-target'),
-        dataIndex: 'matches',
-        key: 'matches',
-        render: (matches: any[]) =>
-          formatPredictionObject(matches[0]?.target) || '—',
+        dataIndex: 'match',
+        key: 'match',
+        render: (match: Match) => {
+          return formatPredictionObject(match.target) || '—';
+        },
         sorter: (a: Prediction, b: Prediction) =>
-          formatPredictionObject(a.matches[0]?.target).localeCompare(
-            formatPredictionObject(b.matches[0]?.target)
+          formatPredictionObject(a.match.target).localeCompare(
+            formatPredictionObject(b.match.target)
           ),
       },
 
@@ -70,7 +74,7 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
           <ConfidenceScore score={score} />
         ),
         sorter: (a: Prediction, b: Prediction) =>
-          (a.matches[0]?.score ?? 0) - (b.matches[0]?.score ?? 0),
+          (a.match.score ?? 0) - (b.match.score ?? 0),
         sortDirections: ['descend', 'ascend'],
         defaultSortOrder: 'descend',
         width: 100,

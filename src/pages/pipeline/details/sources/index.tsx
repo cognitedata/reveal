@@ -15,13 +15,13 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
-import { Pipeline, useUpdatePipeline } from 'hooks/contextualization-api';
 import { API, PipelineSourceType } from 'types/api';
 import Step from 'components/step';
 import { useMemo, useState } from 'react';
 import { ColumnType, Table, Timestamp } from '@cognite/cdf-utilities';
 import { DataSet } from '@cognite/sdk';
 import { useAllDataSets, useDataSets } from 'hooks/datasets';
+import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
 
 const { Option } = Select;
 
