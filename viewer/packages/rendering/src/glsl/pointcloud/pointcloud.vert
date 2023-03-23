@@ -360,9 +360,12 @@ void main() {
 								vec3 styleColorHSV = rgb2hsv(styleColor);
 
 								vColorHSV.xy = styleColorHSV.xy;
+								// Add 20% brightness from original point & 80% from styled.
 								vColorHSV.z = (vColorHSV.z * (styleColorHSV.z * 0.8 + 0.2));
 
-								vColor = hsv2rgb(vColorHSV);
+								vec3 vColorRGB = hsv2rgb(vColorHSV);
+								// Mix 30% color from original point & 70% from styled.
+								vColor = (vColor * 0.3) + (vColorRGB * 0.7);
         }
 #endif
 }
