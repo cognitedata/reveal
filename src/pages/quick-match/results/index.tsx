@@ -77,6 +77,7 @@ const QuickMatchResults = (): JSX.Element => {
     <Page subtitle={t('results')} title={t('quick-match')}>
       {predictions?.status === 'Completed' && !!predictions?.items && (
         <EntityMatchingResult
+          predictJobId={predictJobId}
           sourceType={sourceType}
           predictions={predictions.items}
           rules={rules?.rules}

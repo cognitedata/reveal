@@ -10,16 +10,21 @@ import { SourceType } from 'types/api';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 
 type Props = {
+  predictJobId: number;
   predictions: Prediction[];
   sourceType: SourceType;
   rules?: Rule[];
   appliedRules?: AppliedRules[];
 };
 export default function EntityMatchingResult({
+  predictJobId,
   predictions,
   sourceType,
 }: Props) {
-  const { mutate, isLoading, status } = useUpdateAssetIds(sourceType);
+  const { mutate, isLoading, status } = useUpdateAssetIds(
+    sourceType,
+    predictJobId
+  );
 
   const { t } = useTranslation();
   const applyAll = () => {

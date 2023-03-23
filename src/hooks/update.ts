@@ -10,7 +10,9 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query';
+import { Selected3dModel } from 'context/QuickMatchContext';
 import { API } from 'types/api';
+import { sessionStorage3dDetailsKey } from 'utils';
 import { AssetIdUpdate } from './types';
 
 export type TSParams = {
@@ -29,13 +31,14 @@ export type RawTimeseries = Omit<
 
 export const useUpdateAssetIds = (
   api: API,
+  predictionJobId: number,
   options?: UseMutationOptions<InternalId[], CogniteError, AssetIdUpdate[]>
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
   return useMutation(
-    ['update', api],
+    ['update', api, predictionJobId],
     (changes) => {
       switch (api) {
         case 'events': {
@@ -59,6 +62,28 @@ export const useUpdateAssetIds = (
         }
         case 'sequences': {
           return sdk.sequences.update(changes);
+        }
+        case 'threeD': {
+          const threeDDetailsStr = sessionStorage.getItem(
+            sessionStorage3dDetailsKey(predictionJobId)
+          );
+          const threeDDetails = threeDDetailsStr
+            ? (JSON.parse(threeDDetailsStr) as Selected3dModel)
+            : undefined;
+          if (!threeDDetails) {
+            return Promise.reject('3D details not found in session storage');
+          }
+
+          return sdk.assetMappings3D
+            .create(
+              threeDDetails.modelId,
+              threeDDetails.revisionId,
+              changes.map((c) => ({
+                nodeId: c.id,
+                assetId: c.update.assetId.set,
+              }))
+            )
+            .then((r) => r.map((i) => ({ id: i.nodeId })));
         }
         default: {
           return Promise.reject('API not supported');

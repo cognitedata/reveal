@@ -13,6 +13,7 @@ import {
   bulkDownloadStatus,
   filterFieldsFromObjects,
   getAdvancedFilter,
+  sessionStorage3dDetailsKey,
   sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
   sessionStorageRulesJobKey,
@@ -304,6 +305,13 @@ const CreateModel = (): JSX.Element => {
             job.jobToken
           );
         }
+        if (is3d) {
+          sessionStorage.setItem(
+            sessionStorage3dDetailsKey(job.jobId),
+            JSON.stringify(threeDModel)
+          );
+        }
+
         navigate(
           createLink(
             `/${subAppPath}/quick-match/create/create-model/${modelId}/${job.jobId}`
