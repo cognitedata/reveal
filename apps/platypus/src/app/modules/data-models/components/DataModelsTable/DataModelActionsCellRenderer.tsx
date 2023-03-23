@@ -15,6 +15,7 @@ export const DataModelActionsCellRenderer = React.memo(
             e.stopPropagation();
           };
         }}
+        className="delete-button"
         type="ghost-destructive"
         size="small"
         icon="Delete"
