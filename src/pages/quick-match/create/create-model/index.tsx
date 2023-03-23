@@ -328,12 +328,10 @@ const CreateModel = (): JSX.Element => {
   useEffect(() => {
     if (prediction?.status === 'Completed') {
       const matches =
-        prediction?.items
-          ?.filter((i) => i.matches.length > 0)
-          .map((i) => ({
-            sourceId: i.source.id,
-            targetId: i.matches[0]?.target.id,
-          })) || [];
+        prediction?.items.map((i) => ({
+          sourceId: i.source.id,
+          targetId: i.match.target.id,
+        })) || [];
       const filteredSources = filterFieldsFromObjects(sources, [
         'id',
         ...matchFields

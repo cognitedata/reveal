@@ -39,12 +39,20 @@ export type PredictionObject = {
   description?: string;
 };
 
-export type Prediction = {
+export type RawPrediction = {
   source: PredictionObject;
   matches: {
     score: number;
     target: PredictionObject;
   }[];
+};
+
+export type Prediction = {
+  source: PredictionObject;
+  match: {
+    score: number;
+    target: PredictionObject;
+  };
 };
 
 export type EntityMatchingPredictions = {
@@ -53,7 +61,7 @@ export type EntityMatchingPredictions = {
   startTime: number;
   status: JobStatus;
   statusTime: number;
-  items?: Prediction[];
+  items: Prediction[];
 };
 
 // Type in SDK is not correct
@@ -319,28 +327,33 @@ export const useEMModelPredictResults = (
   const sdk = useSDK();
   return useQuery(
     getEMModelPredictionKey(id),
-    async () =>
-      sdk
-        .get<EntityMatchingPredictions>(
-          `/api/v1/projects/${sdk.project}/context/entitymatching/jobs/${id}`,
-          {
-            headers: jobToken
-              ? {
-                  'X-Job-Token': jobToken,
-                }
-              : undefined,
-          }
-        )
-        .then((r) => {
-          if (r.status === 200) {
-            return {
-              ...r.data,
-              items: r.data.items?.filter((i) => i.matches.length > 0),
-            };
-          } else {
-            return Promise.reject(r);
-          }
-        }),
+    async () => {
+      const r = await sdk.get<
+        Omit<EntityMatchingPredictions, 'items'> & {
+          items?: RawPrediction[];
+        }
+      >(`/api/v1/projects/${sdk.project}/context/entitymatching/jobs/${id}`, {
+        headers: jobToken
+          ? {
+              'X-Job-Token': jobToken,
+            }
+          : undefined,
+      });
+
+      if (r.status === 200) {
+        const items =
+          r.data.items
+            ?.filter((p) => p.matches.length > 0)
+            .map((p) => ({
+              source: p.source,
+              match: p.matches[0],
+            })) || [];
+
+        return { ...r.data, items };
+      } else {
+        return Promise.reject(r.data);
+      }
+    },
     opts
   );
 };

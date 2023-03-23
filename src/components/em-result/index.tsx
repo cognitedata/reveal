@@ -17,10 +17,10 @@ export default function EntityMatchingResult({ predictions }: Props) {
   const { t } = useTranslation();
   const applyAll = () => {
     mutate(
-      predictions.map(({ source, matches }) => ({
+      predictions.map(({ source, match }) => ({
         id: source.id,
         update: {
-          assetId: { set: matches[0].target.id },
+          assetId: { set: match.target.id },
         },
       }))
     );
