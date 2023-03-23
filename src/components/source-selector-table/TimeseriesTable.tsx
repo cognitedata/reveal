@@ -3,10 +3,10 @@ import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { RawTimeseries } from 'hooks/timeseries';
 
 import { useList } from 'hooks/list';
 import { SourceTableProps } from 'types/types';
+import { RawTimeseries } from 'types/api';
 
 type TimeseriesListTableRecord = {
   key: string;
