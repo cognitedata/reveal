@@ -5,11 +5,9 @@ import { Notification } from '@platypus-app/components/Notification/Notification
 import {
   DataModel,
   DataModelVersion,
-  DataModelVersionStatus,
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useErrorLogger } from './useErrorLogger';
 import { useMemo } from 'react';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
@@ -38,7 +36,7 @@ export const useDataModel = (dataModelExternalId: string, space: string) => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
 
   return useQuery(
-    QueryKeys.DATA_MODEL(dataModelExternalId),
+    QueryKeys.DATA_MODEL(space, dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModel>(() =>
         dataModelsHandler.fetch({
@@ -56,7 +54,7 @@ export const useDataModelVersions = (
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
   return useQuery<DataModelVersion[], PlatypusError>(
-    QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
+    QueryKeys.DATA_MODEL_VERSION_LIST(space, dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>
         dataModelVersionHandler.versions({
@@ -76,13 +74,12 @@ export const useDataModelTypeDefs = (
     TOKENS.dataModelTypeDefsBuilderService
   );
   const errorLogger = useErrorLogger();
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const { dataModelVersion: selectedDataModelVersion } =
     useSelectedDataModelVersion(
       selectedVersionNumber,
       dataModelExternalId,
-      dataModel?.space || ''
+      space
     );
 
   const memoizedDataModelTypeDefs = useMemo(() => {

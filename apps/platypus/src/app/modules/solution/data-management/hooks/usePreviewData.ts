@@ -8,10 +8,7 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { KeyValueMap } from '@cognite/cog-data-grid';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import {
-  useDataModel,
-  useDataModelTypeDefs,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useParams } from 'react-router-dom';
 
@@ -46,18 +43,13 @@ export const usePreviewData = (
     space
   );
 
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
-
   const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(
-      version,
-      dataModelExternalId,
-      dataModel?.space || ''
-    );
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   return useQuery<KeyValueMap | null>(
     QueryKeys.PREVIEW_DATA(
+      space,
       dataModelExternalId,
       dataModelType?.name,
       selectedDataModelVersion.version,

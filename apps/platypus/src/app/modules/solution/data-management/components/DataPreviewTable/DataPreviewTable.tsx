@@ -163,6 +163,7 @@ export const DataPreviewTable = forwardRef<
     const deleteRowsMutation = useNodesDeleteMutation({
       dataModelExternalId,
       dataModelType,
+      space,
     });
 
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
