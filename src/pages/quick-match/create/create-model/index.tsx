@@ -305,7 +305,7 @@ const CreateModel = (): JSX.Element => {
             <QueryStatusIcon status={sourceStatus} />
             <Body level={2}>
               {t(`source-data-fetch-${sourceStatus}`)}{' '}
-              {sources?.length && `(${sources.length})`}
+              {sources?.length && `(${sources.length.toLocaleString()})`}
             </Body>
           </Flex>
         )}
@@ -314,7 +314,7 @@ const CreateModel = (): JSX.Element => {
             <QueryStatusIcon status={targetStatus} />
             <Body level={2}>
               {t(`target-data-fetch-${targetStatus}`)}{' '}
-              {targets?.length && `(${targets.length})`}
+              {targets?.length && `(${targets.length.toLocaleString()})`}
             </Body>
           </Flex>
         )}
