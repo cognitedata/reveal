@@ -1,5 +1,9 @@
 import { Body, Colors, Flex } from '@cognite/cogs.js';
-import { Radio as AntdRadio, RadioProps as AntdRadioProps } from 'antd';
+import {
+  Collapse,
+  Radio as AntdRadio,
+  RadioProps as AntdRadioProps,
+} from 'antd';
 import styled from 'styled-components';
 
 type RadioProps = Omit<AntdRadioProps, 'children'> & {
@@ -37,6 +41,19 @@ const MutedBody = styled(Body)`
   color: ${Colors['text-icon--muted']};
 `;
 
+const RadioCollapse = styled(Collapse)`
+  && {
+    .ant-collapse-header {
+      padding: 0;
+    }
+
+    .ant-collapse-content-box {
+      padding: 0;
+    }
+  }
+`;
+
 Radio.Group = AntdRadio.Group;
+Radio.Collapse = RadioCollapse;
 
 export default Radio;

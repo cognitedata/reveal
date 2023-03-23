@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { Button, Flex } from '@cognite/cogs.js';
 import { Collapse } from 'antd';
-import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import FieldMapping from 'components/field-mapping';
@@ -61,7 +60,7 @@ const ConfigureModel = (): JSX.Element => {
                 subtitle={t('model-simple-subtitle')}
                 description={t('model-simple-description')}
               />
-              <RadioCollapse
+              <Radio.Collapse
                 activeKey={shouldShowAdvancedOptions ? 'content' : undefined}
                 expandIcon={() => <></>}
                 ghost
@@ -98,7 +97,7 @@ const ConfigureModel = (): JSX.Element => {
                     />
                   </Flex>
                 </Collapse.Panel>
-              </RadioCollapse>
+              </Radio.Collapse>
               <div>
                 <Button
                   icon={shouldShowAdvancedOptions ? 'ChevronUp' : 'ChevronDown'}
@@ -157,17 +156,5 @@ const ConfigureModel = (): JSX.Element => {
     </Step>
   );
 };
-
-const RadioCollapse = styled(Collapse)`
-  && {
-    .ant-collapse-header {
-      padding: 0;
-    }
-
-    .ant-collapse-content-box {
-      padding: 0;
-    }
-  }
-`;
 
 export default ConfigureModel;
