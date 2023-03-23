@@ -127,7 +127,7 @@ const ConfigureModel = (): JSX.Element => {
             onChange={(e) => setSupervisedMode(e.target.value === 'supervised')}
             value={supervisedMode ? 'supervised' : 'unsupervised'}
           >
-            <Flex gap={8}>
+            <Flex>
               <RadioBox checked={!supervisedMode} value="unsupervised">
                 {t('unsupervised-model')}
               </RadioBox>
@@ -143,7 +143,7 @@ const ConfigureModel = (): JSX.Element => {
             title={t('model-configuration-scope-header')}
           />
           <Radio.Group onChange={(e) => setScope(e.target.value)} value={scope}>
-            <Flex gap={8}>
+            <Flex>
               <RadioBox checked={scope === 'all'} value="all">
                 {t('model-configuration-scope-all')}
               </RadioBox>
