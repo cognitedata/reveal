@@ -22,28 +22,29 @@ const ApplySelectedMatchesButton = ({
   );
 
   const applySelected = () => {
-    mutate(
-      selectedPredictions?.map(({ source, matches }) => ({
-        id: source.id,
-        update: {
-          assetId: { set: matches[0].target.id },
-        },
-      })),
-      {
-        onSuccess: () => {
-          notification.success({
-            message: t('notification-success'),
-            description: t('save-to-cdf-success'),
-          });
-        },
-        onError: () => {
-          notification.error({
-            message: t('error'),
-            description: t('save-to-cdf-error'),
-          });
-        },
-      }
-    );
+    selectedPredictions &&
+      mutate(
+        selectedPredictions?.map(({ source, matches }) => ({
+          id: source.id,
+          update: {
+            assetId: { set: matches[0].target.id },
+          },
+        })),
+        {
+          onSuccess: () => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('save-to-cdf-success'),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('save-to-cdf-error'),
+            });
+          },
+        }
+      );
   };
 
   return (
