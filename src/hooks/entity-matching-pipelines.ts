@@ -31,6 +31,7 @@ export type Pipeline = {
     featureType?: EMFeatureType;
     matchFields?: ModelMapping;
   };
+  generateRules?: boolean;
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (

@@ -4,6 +4,7 @@ import { Collapse } from 'antd';
 import { useTranslation } from 'common';
 import FieldMapping from 'components/field-mapping';
 import Radio from 'components/radio';
+import RadioBox from 'components/radio-box';
 import Step from 'components/step';
 import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
 import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
@@ -46,6 +47,13 @@ const ConfigurePipeline = ({
         featureType,
         matchFields: pipeline.modelParameters?.matchFields,
       },
+    });
+  };
+
+  const handleUpdateGenerateRules = (shouldGenerateRules: boolean): void => {
+    mutate({
+      id: pipeline.id,
+      generateRules: shouldGenerateRules,
     });
   };
 
@@ -138,6 +146,30 @@ const ConfigurePipeline = ({
                   )}
                 </Button>
               </div>
+            </Flex>
+          </Radio.Group>
+        </Step.Section>
+        <Step.Section>
+          <Step.SectionHeader
+            subtitle={t('model-configuration-generate-rules-subtitle')}
+            title={t('model-configuration-generate-rules-title')}
+          />
+          <Radio.Group
+            onChange={(e) =>
+              handleUpdateGenerateRules(e.target.value === 'generate')
+            }
+            value={pipeline.generateRules ? 'generate' : 'do-not-generate'}
+          >
+            <Flex>
+              <RadioBox checked={pipeline.generateRules} value="generate">
+                {t('generate-rules')}
+              </RadioBox>
+              <RadioBox
+                checked={!pipeline.generateRules}
+                value="do-not-generate"
+              >
+                {t('do-not-generate-rules')}
+              </RadioBox>
             </Flex>
           </Radio.Group>
         </Step.Section>
