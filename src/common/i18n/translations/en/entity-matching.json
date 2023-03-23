@@ -1,4 +1,5 @@
 {
+  "apply-selected-matches": "Apply selected matches",
   "cancel": "Cancel",
   "confidence": "Confidence",
   "confirm": "Confirm",
@@ -86,7 +87,6 @@
   "resource-type-events_other": "Events",
   "resource-type-ts": "Time series",
   "run-model": "Run model",
-  "apply-selected-matches": "Apply selected matches",
   "save-to-cdf-success": "Changes successfully applied",
   "save-to-cdf-error": "An error occurred while trying to apply the selected matches",
   "select-data-tooltip": "Select resource you want to match to assets",
