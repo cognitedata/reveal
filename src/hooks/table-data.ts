@@ -22,7 +22,7 @@ export const LAST_UPDATED_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_LAST_UPDATED';
 
 const COLUMNS_IGNORE = [LAST_UPDATED_DATAKEY];
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
-  [PRIMARY_KEY_DATAKEY]: 'Key',
+  [PRIMARY_KEY_DATAKEY]: 'key',
 };
 const INDEX_COLUMN: ColumnType = {
   key: 'column-index',
