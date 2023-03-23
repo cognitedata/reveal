@@ -114,6 +114,7 @@ export default function FieldMapping({
                   ...modelFieldMapping.splice(i + 1),
                 ]);
               }}
+              type="ghost"
             />
           </Flex>
         ))}
@@ -126,6 +127,7 @@ export default function FieldMapping({
                 { source: undefined, target: undefined },
               ]);
             }}
+            type="ghost-accent"
           >
             {t('add-connection')}
           </Button>
@@ -135,7 +137,7 @@ export default function FieldMapping({
   );
 }
 
-const Container = styled(Flex).attrs({ direction: 'column', gap: 4 })`
+const Container = styled(Flex).attrs({ direction: 'column', gap: 6 })`
   width: ${QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH}px;
 `;
 
