@@ -189,3 +189,5 @@ export const filterFieldsFromObjects = (
     return filteredItem;
   });
 };
+
+export const sessionStorageKey = (jobId: number) => `job-token-${jobId}`;

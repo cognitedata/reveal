@@ -16,7 +16,10 @@ const QuickMatch = (): JSX.Element => {
           </QuickMatchContextProvider>
         }
       />
-      <Route path="/results/:jobId" element={<QuickMatchResults />} />
+      <Route
+        path="/results/:jobId/:sourceType"
+        element={<QuickMatchResults />}
+      />
     </Routes>
   );
 };

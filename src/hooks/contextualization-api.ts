@@ -16,14 +16,17 @@ import {
 } from '@tanstack/react-query';
 import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
 import {
+  PipelineSourceType,
   RawCogniteEvent,
   RawFileInfo,
   RawSource,
   RawTarget,
   RawTimeseries,
   SourceType,
+  TargetType,
 } from 'types/api';
 import { filterFieldsFromObjects } from 'utils';
+import { toast } from '@cognite/cogs.js';
 
 export const IN_PROGRESS_EM_STATES: JobStatus[] = ['Queued', 'Running'];
 
@@ -89,12 +92,12 @@ export type Pipeline = {
   owner: string;
   run: string;
   sources: {
-    dataSetIds: [{ id: number }];
-    resource: string;
+    dataSetIds: { id: number }[];
+    resource: PipelineSourceType;
   };
   targets: {
-    dataSetIds: [{ id: number }];
-    resource: string;
+    dataSetIds: { id: number }[];
+    resource: TargetType;
   };
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
@@ -206,6 +209,88 @@ export const useCreatePipeline = (
   );
 };
 
+type PipelineUpdateParams = Required<Pick<Pipeline, 'id'>> &
+  Partial<Omit<Pipeline, 'id'>>;
+type PipelineUpdateContext = { previous?: PipelineUpdateParams };
+export const useUpdatePipeline = (
+  options?: UseMutationOptions<
+    Pipeline,
+    CogniteError,
+    PipelineUpdateParams,
+    PipelineUpdateContext
+  >
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Pipeline,
+    CogniteError,
+    PipelineUpdateParams,
+    PipelineUpdateContext
+  >(
+    async (params) => {
+      const { id, ...rest } = params;
+      const update = Object.entries(rest).reduce((acc, [key, value]) => {
+        acc[key] = { set: value };
+        return acc;
+      }, {} as Record<string, unknown>);
+      return sdk
+        .post<Pipeline>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/update`,
+          {
+            data: {
+              items: [
+                {
+                  id,
+                  update,
+                },
+              ],
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        });
+    },
+    {
+      ...options,
+      onMutate: async (variables) => {
+        await queryClient.cancelQueries({
+          queryKey: getEMPipelineKey(variables.id),
+        });
+
+        const previousPipeline = queryClient.getQueryData<Pipeline | undefined>(
+          getEMPipelineKey(variables.id)
+        );
+
+        const nextPipeline = { ...previousPipeline, ...variables };
+        queryClient.setQueryData(getEMPipelineKey(variables.id), nextPipeline);
+
+        return { previous: previousPipeline };
+      },
+      onError: (error, variables, context) => {
+        if (context?.previous) {
+          queryClient.setQueryData(
+            getEMPipelineKey(variables.id),
+            context.previous
+          );
+        }
+        toast.error(error.message, {
+          toastId: `pipeline-update-error-${variables.id}`,
+        });
+      },
+      onSettled: (_, __, variables) => {
+        queryClient.invalidateQueries(getEMPipelineKey(variables.id));
+      },
+    }
+  );
+};
+
 const getEMModelKey = (id: number): QueryKey => ['em', 'models', id];
 export const useEMModel = (
   id: number,
@@ -228,23 +313,33 @@ const getEMModelPredictionKey = (id: number): QueryKey => [
 ];
 export const useEMModelPredictResults = (
   id: number,
+  token: string,
   opts?: UseQueryOptions<EntityMatchingPredictions, CogniteError>
 ) => {
   const sdk = useSDK();
   return useQuery(
     getEMModelPredictionKey(id),
-    () =>
-      sdk
-        .get<EntityMatchingPredictions>(
-          `/api/v1/projects/${sdk.project}/context/entitymatching/jobs/${id}`
-        )
-        .then((r) => {
-          if (r.status === 200) {
-            return r.data;
-          } else {
-            return Promise.reject(r);
-          }
-        }),
+    async () => {
+      if (!token) {
+        return Promise.reject('Contextualization job token not found');
+      }
+      const r = await fetch(
+        `${sdk.getBaseUrl()}/api/v1/projects/${
+          sdk.project
+        }/context/entitymatching/jobs/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const body = await r.json();
+      if (r.status === 200) {
+        return body;
+      } else {
+        return Promise.reject(body.error);
+      }
+    },
     opts
   );
 };
@@ -380,18 +475,36 @@ export const useDuplicateEMPipeline = () => {
   );
 };
 
+type PredictResponse = EntityMatchingPredictResponse & {
+  jobToken?: string;
+};
 export const useCreateEMPredictionJob = (
-  options?: UseMutationOptions<
-    EntityMatchingPredictResponse,
-    CogniteError,
-    number
-  >
+  options?: UseMutationOptions<PredictResponse, CogniteError, number>
 ) => {
   const sdk = useSDK();
   return useMutation(
     ['create-em-prediction'],
-    (id: number) => {
-      return sdk.entityMatching.predict({ id });
+    async (id: number) => {
+      return sdk
+        .post<EntityMatchingPredictResponse>(
+          `/api/v1/projects/${sdk.project}/context/entitymatching/predict`,
+          {
+            data: { id },
+          }
+        )
+        .then(async (r): Promise<PredictResponse> => {
+          if (r.status === 200) {
+            // Can't read the header at the moment because of CORS header settings, matchmakers will
+            // look into that
+            const jobToken = r.headers['x-job-token'];
+            return Promise.resolve({
+              ...r.data,
+              jobToken,
+            });
+          } else {
+            return Promise.reject(r);
+          }
+        });
     },
     options
   );

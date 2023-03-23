@@ -23,13 +23,20 @@ const PipelineDetails = (): JSX.Element => {
     return <UnknownErrorPage error={error} />;
   }
 
-  return (
-    <Page subtitle={pipeline?.description ?? '-'} title={pipeline?.name ?? ''}>
-      <Routes>
-        <Route path="/sources" element={<Sources />} />
-      </Routes>
-    </Page>
-  );
+  if (pipeline) {
+    return (
+      <Page
+        subtitle={pipeline?.description ?? '-'}
+        title={pipeline?.name ?? ''}
+      >
+        <Routes>
+          <Route path="/sources" element={<Sources pipeline={pipeline} />} />
+        </Routes>
+      </Page>
+    );
+  }
+
+  return <></>;
 };
 
 export default PipelineDetails;
