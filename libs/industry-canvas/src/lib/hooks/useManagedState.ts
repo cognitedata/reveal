@@ -24,6 +24,12 @@ import {
   ContainerReferenceWithoutDimensions,
 } from '../types';
 
+export type InteractionState = {
+  hoverId: string | undefined;
+  clickedContainer: ContainerReference | undefined;
+  selectedAnnotationId: string | undefined;
+};
+
 type UpdateHandlerFn =
   UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_UPDATE_REQUEST];
 
@@ -43,6 +49,8 @@ export type UseManagedStateReturnType = {
   removeContainerReference: (containerReference: ContainerReference) => void;
   onUpdateRequest: UpdateHandlerFn;
   onDeleteRequest: DeleteHandlerFn;
+  interactionState: InteractionState;
+  setInteractionState: Dispatch<SetStateAction<InteractionState>>;
 };
 
 const transformRecursive = (
@@ -125,6 +133,12 @@ const useManagedState = (initialState: {
     ContainerReference[]
   >([]);
 
+  const [interactionState, setInteractionState] = useState<InteractionState>({
+    hoverId: undefined,
+    clickedContainer: undefined,
+    selectedAnnotationId: undefined,
+  });
+
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
       if (updatedContainers.length > 0) {
@@ -158,6 +172,14 @@ const useManagedState = (initialState: {
                 (annotation) => annotation.id === updatedAnnotation.id
               )
           );
+
+          if (annotationsToAdd.length === 1) {
+            setInteractionState({
+              clickedContainer: undefined,
+              hoverId: undefined,
+              selectedAnnotationId: annotationsToAdd[0].id,
+            });
+          }
 
           return [
             ...annotations.map((annotation) =>
@@ -275,6 +297,8 @@ const useManagedState = (initialState: {
     removeContainerReference,
     onUpdateRequest,
     onDeleteRequest,
+    interactionState,
+    setInteractionState,
   };
 };
 

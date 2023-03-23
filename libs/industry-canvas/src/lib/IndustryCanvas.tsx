@@ -10,7 +10,7 @@ import ReactUnifiedViewer, {
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
@@ -25,11 +25,7 @@ import {
   DEFAULT_TIMESERIES_HEIGHT,
   DEFAULT_TIMESERIES_WIDTH,
 } from './utils/addDimensionsToContainerReferences';
-import {
-  CanvasAnnotation,
-  ContainerReference,
-  ContainerReferenceType,
-} from './types';
+import { CanvasAnnotation, ContainerReferenceType } from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import { getContainerId } from './utils/utils';
 import ZoomControls from './components/ZoomControls';
@@ -52,6 +48,8 @@ export type IndustryCanvasProps = {
   | 'containerReferences'
   | 'updateContainerReference'
   | 'removeContainerReference'
+  | 'interactionState'
+  | 'setInteractionState'
 >;
 
 export const IndustryCanvas = ({
@@ -66,31 +64,21 @@ export const IndustryCanvas = ({
   containerReferences,
   updateContainerReference,
   removeContainerReference,
+  interactionState,
+  setInteractionState,
   onAddContainerReferences,
   onRef,
   viewerRef,
 }: IndustryCanvasProps) => {
-  const [
-    { hoverId, clickedContainer, selectedAnnotationId },
-    setInteractionState,
-  ] = useState<{
-    hoverId: string | undefined;
-    clickedContainer: ContainerReference | undefined;
-    selectedAnnotationId: string | undefined;
-  }>({
-    hoverId: undefined,
-    clickedContainer: undefined,
-    selectedAnnotationId: undefined,
-  });
-
   const selectedCanvasAnnotation = useMemo(
     () =>
-      selectedAnnotationId
+      interactionState.selectedAnnotationId
         ? canvasAnnotations.find(
-            (annotation) => annotation.id === selectedAnnotationId
+            (annotation) =>
+              annotation.id === interactionState.selectedAnnotationId
           )
         : undefined,
-    [canvasAnnotations, selectedAnnotationId]
+    [canvasAnnotations, interactionState.selectedAnnotationId]
   );
 
   const { tool, toolOptions, setTool, onUpdateAnnotationStyleByType } =
@@ -112,7 +100,7 @@ export const IndustryCanvas = ({
             ? undefined
             : annotation.id,
       })),
-    []
+    [setInteractionState]
   );
 
   const onMouseOverContainerAnnotation = useCallback(
@@ -122,7 +110,7 @@ export const IndustryCanvas = ({
         hoverId: annotation.id,
       }));
     },
-    []
+    [setInteractionState]
   );
 
   const onMouseOutContainerAnnotation = useCallback(() => {
@@ -130,12 +118,12 @@ export const IndustryCanvas = ({
       ...prevInteractionState,
       hoverId: undefined,
     }));
-  }, []);
+  }, [setInteractionState]);
 
   const containerAnnotations = useContainerAnnotations({
     containerReferences,
-    selectedAnnotationId,
-    hoverId,
+    selectedAnnotationId: interactionState.selectedAnnotationId,
+    hoverId: interactionState.hoverId,
     onClick: onClickContainerAnnotation,
     onMouseOver: onMouseOverContainerAnnotation,
     onMouseOut: onMouseOutContainerAnnotation,
@@ -144,9 +132,9 @@ export const IndustryCanvas = ({
   const selectedContainerAnnotation = useMemo(
     () =>
       containerAnnotations.find(
-        (annotation) => annotation.id === selectedAnnotationId
+        (annotation) => annotation.id === interactionState.selectedAnnotationId
       ),
-    [containerAnnotations, selectedAnnotationId]
+    [containerAnnotations, interactionState.selectedAnnotationId]
   );
 
   useEffect(() => {
@@ -248,7 +236,7 @@ export const IndustryCanvas = ({
         children,
       }));
     })();
-  }, [setContainer, sdk, containerReferences]);
+  }, [setContainer, sdk, containerReferences, setInteractionState]);
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({
@@ -263,13 +251,13 @@ export const IndustryCanvas = ({
           : [selectedCanvasAnnotation.id],
       containerIds: [],
     });
-  }, [selectedCanvasAnnotation, onDeleteRequest]);
+  }, [selectedCanvasAnnotation, onDeleteRequest, setInteractionState]);
 
   const tooltips = useIndustryCanvasTooltips({
     containerAnnotations,
     selectedContainerAnnotation,
     selectedCanvasAnnotation,
-    clickedContainer,
+    clickedContainer: interactionState.clickedContainer,
     onAddContainerReferences,
     containerReferences,
     removeContainerReference,
@@ -279,12 +267,18 @@ export const IndustryCanvas = ({
   });
 
   const onStageClick = useCallback(() => {
+    // Sometimes the stage click event is fired when the user creates a line annotation.
+    // We want the tooltip to stay open in this case.
+    // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-507
+    if (tool === ToolType.LINE) {
+      return;
+    }
     setInteractionState({
       selectedAnnotationId: undefined,
       clickedContainer: undefined,
       hoverId: undefined,
     });
-  }, [setInteractionState]);
+  }, [setInteractionState, tool]);
 
   const canvasAnnotationWithEventHandlers = useMemo(
     () =>
@@ -299,7 +293,7 @@ export const IndustryCanvas = ({
           });
         },
       })),
-    [canvasAnnotations]
+    [canvasAnnotations, setInteractionState]
   );
 
   const enhancedAnnotations: Annotation[] = useMemo(
@@ -308,7 +302,7 @@ export const IndustryCanvas = ({
       // ...getClickedContainerOutlineAnnotation(clickedContainer),
       ...getIndustryCanvasConnectionAnnotations({
         containerReferences,
-        hoverId,
+        hoverId: interactionState.hoverId,
         annotations: containerAnnotations,
       }),
       ...containerAnnotations,
@@ -317,7 +311,7 @@ export const IndustryCanvas = ({
     [
       containerReferences,
       containerAnnotations,
-      hoverId,
+      interactionState.hoverId,
       canvasAnnotationWithEventHandlers,
     ]
   );

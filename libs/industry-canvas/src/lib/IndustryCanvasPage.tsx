@@ -52,6 +52,8 @@ export const IndustryCanvasPage = () => {
     removeContainerReference,
     onDeleteRequest,
     onUpdateRequest,
+    interactionState,
+    setInteractionState,
   } = useManagedState({
     container: {
       id: 'flexible-layout-container',
@@ -218,6 +220,8 @@ export const IndustryCanvasPage = () => {
           onAddContainerReferences={onAddContainerReferences}
           onDeleteRequest={onDeleteRequest}
           onUpdateRequest={onUpdateRequest}
+          interactionState={interactionState}
+          setInteractionState={setInteractionState}
           container={container}
           setContainer={setContainer}
           updateContainerReference={updateContainerReference}
