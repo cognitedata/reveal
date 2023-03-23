@@ -16,7 +16,7 @@
   "model-configuration-fields-body-p1": "By default, the model uses the similarity between name and description when it searches for matches.",
   "model-configuration-fields-body-p2": "Create new connections between name, description, and available metadata fields with Add fields. Note: You can rerun the model later.",
   "model-configuration-fields-body": "By default, the model uses the similarity between name and description when it searches for matches. You can create new connections between name, description, and available metadata fields with Add fields.",
-  "model-configuration-fields-header": "Select the fields for matching entities",
+  "model-configuration-fields-header": "Fields to compare",
   "model-configuration-header": "Configure model",
   "model-configuration-model-score-bigram": "Bigram (Calculates a similarity score influenced by the order of the terms in the name in the fields defined above. This is a slower option.)",
   "model-configuration-model-score-bigram-extra-tokenizers": "Bigram with extra tokenizers (Similar to bigram, but able to learn that case sensitivity does not matter, and leading zeros and spaces should be ignored in matching.)",

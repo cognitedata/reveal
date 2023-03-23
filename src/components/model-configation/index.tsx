@@ -1,16 +1,9 @@
-import {
-  Body,
-  Flex,
-  Title,
-  Checkbox,
-  RadioGroup,
-  Radio,
-  Colors,
-} from '@cognite/cogs.js';
+import { Flex, Checkbox, RadioGroup, Radio } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
 import { QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH } from 'common/constants';
 import FieldMapping from 'components/field-mapping';
+import Step from 'components/step';
 import {
   EMFeatureType,
   Scope,
@@ -33,11 +26,11 @@ export default function ModelConfiguration() {
   } = useQuickMatchContext();
   return (
     <Container>
-      <Section>
-        <SectionTitle level={5}>
-          {t('model-configuration-fields-header')}
-        </SectionTitle>
-        <SectionBody>{t('model-configuration-fields-body')}</SectionBody>
+      <Step.Section>
+        <Step.SectionHeader
+          subtitle={t('model-configuration-fields-body')}
+          title={t('model-configuration-fields-header')}
+        />
         <Flex>
           <FieldMapping
             sourceType={sourceType}
@@ -46,23 +39,23 @@ export default function ModelConfiguration() {
             setModelFieldMapping={setModelFieldMapping}
           />
         </Flex>
-      </Section>
-      <Section>
-        <SectionTitle>
-          {t('model-configuration-model-type-header')}
-        </SectionTitle>
-        <SectionBody>{t('model-configuration-model-type-body')}</SectionBody>
+      </Step.Section>
+      <Step.Section>
+        <Step.SectionHeader
+          subtitle={t('model-configuration-model-type-body')}
+          title={t('model-configuration-model-type-header')}
+        />
         <Checkbox
           checked={supervisedMode}
           onChange={(e) => setSupervisedMode(e.target.checked)}
           label={t('model-configuration-supervised-mode')}
         />
-      </Section>
-      <Section>
-        <SectionTitle>
-          {t('model-configuration-model-score-header')}
-        </SectionTitle>
-        <SectionBody>{t('model-configuration-model-score-body')}</SectionBody>
+      </Step.Section>
+      <Step.Section>
+        <Step.SectionHeader
+          subtitle={t('model-configuration-model-score-body')}
+          title={t('model-configuration-model-score-header')}
+        />
         <RadioGroup
           name="featureType"
           value={featureType}
@@ -94,10 +87,12 @@ export default function ModelConfiguration() {
             label={t('model-configuration-model-score-combined')}
           />
         </RadioGroup>
-      </Section>
-      <Section>
-        <SectionTitle>{t('model-configuration-scope-header')}</SectionTitle>
-        <SectionBody>{t('model-configuration-scope-desc')}</SectionBody>
+      </Step.Section>
+      <Step.Section>
+        <Step.SectionHeader
+          subtitle={t('model-configuration-scope-desc')}
+          title={t('model-configuration-scope-header')}
+        />
         <RadioGroup
           direction="horizontal"
           name="scope"
@@ -115,25 +110,11 @@ export default function ModelConfiguration() {
             label={t('model-configuration-scope-unmatched-only')}
           />
         </RadioGroup>
-      </Section>
+      </Step.Section>
     </Container>
   );
 }
 
-const Section = styled(Flex).attrs({ gap: 8, direction: 'column' })``;
-
-const SectionTitle = styled(Title).attrs({ level: 5 })`
-  color: ${Colors['text-icon--status-neutral']};
-`;
-
-const SectionBody = styled(Body).attrs({ level: 2 })``;
-
 const Container = styled(Flex).attrs({ direction: 'column' })`
   width: ${QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH}px;
-
-  ${Section}:not(:first-child) {
-    border-top: 1px solid ${Colors['border--interactive--default']};
-    margin-top: 16px;
-    padding-top: 16px;
-  }
 `;
