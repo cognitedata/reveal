@@ -1,4 +1,5 @@
-import { Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
+import { Collapse } from 'antd';
 
 import { useTranslation } from 'common';
 import { QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH } from 'common/constants';
@@ -7,6 +8,7 @@ import Radio from 'components/radio';
 import RadioBox from 'components/radio-box';
 import Step from 'components/step';
 import { EMFeatureType, useQuickMatchContext } from 'context/QuickMatchContext';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 export default function ModelConfiguration() {
@@ -22,6 +24,10 @@ export default function ModelConfiguration() {
     scope,
     setScope,
   } = useQuickMatchContext();
+
+  const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] =
+    useState(false);
+
   return (
     <Container>
       <Step.Section>
@@ -53,30 +59,60 @@ export default function ModelConfiguration() {
               subtitle={t('model-simple-subtitle')}
               description={t('model-simple-description')}
             />
-            <Radio
-              value="bigram"
-              name="bigram"
-              title={t('model-bigram-title')}
-              description={t('model-bigram-description')}
-            />
-            <Radio
-              value="fwb"
-              name="fwb"
-              title={t('model-frequency-weighted-bigram-title')}
-              description={t('model-frequency-weighted-bigram-description')}
-            />
-            <Radio
-              value="bigramextratokenizers"
-              name="bigramextratokenizers"
-              title={t('model-bigram-with-extra-tokenizers-title')}
-              description={t('model-bigram-with-extra-tokenizers-description')}
-            />
-            <Radio
-              value="bigramcombo"
-              name="bigramcombo"
-              title={t('model-combined-title')}
-              description={t('model-combined-description')}
-            />
+            <RadioCollapse
+              activeKey={shouldShowAdvancedOptions ? 'content' : undefined}
+              expandIcon={() => <></>}
+              ghost
+            >
+              <Collapse.Panel header={<></>} key="content">
+                <Flex direction="column" gap={4}>
+                  <Radio
+                    value="bigram"
+                    name="bigram"
+                    title={t('model-bigram-title')}
+                    description={t('model-bigram-description')}
+                  />
+                  <Radio
+                    value="fwb"
+                    name="fwb"
+                    title={t('model-frequency-weighted-bigram-title')}
+                    description={t(
+                      'model-frequency-weighted-bigram-description'
+                    )}
+                  />
+                  <Radio
+                    value="bigramextratokenizers"
+                    name="bigramextratokenizers"
+                    title={t('model-bigram-with-extra-tokenizers-title')}
+                    description={t(
+                      'model-bigram-with-extra-tokenizers-description'
+                    )}
+                  />
+                  <Radio
+                    value="bigramcombo"
+                    name="bigramcombo"
+                    title={t('model-combined-title')}
+                    description={t('model-combined-description')}
+                  />
+                </Flex>
+              </Collapse.Panel>
+            </RadioCollapse>
+            <div>
+              <Button
+                icon={shouldShowAdvancedOptions ? 'ChevronUp' : 'ChevronDown'}
+                iconPlacement="right"
+                onClick={() =>
+                  setShouldShowAdvancedOptions((prevState) => !prevState)
+                }
+                type="ghost-accent"
+              >
+                {t(
+                  shouldShowAdvancedOptions
+                    ? 'hide-advanced-options'
+                    : 'show-advanced-options'
+                )}
+              </Button>
+            </div>
           </Flex>
         </Radio.Group>
       </Step.Section>
@@ -121,4 +157,16 @@ export default function ModelConfiguration() {
 
 const Container = styled(Flex).attrs({ direction: 'column' })`
   width: ${QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH}px;
+`;
+
+const RadioCollapse = styled(Collapse)`
+  && {
+    .ant-collapse-header {
+      padding: 0;
+    }
+
+    .ant-collapse-content-box {
+      padding: 0;
+    }
+  }
 `;

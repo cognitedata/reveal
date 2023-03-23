@@ -177,5 +177,7 @@
   "sequences-with-count_other": "{{count}} sequences",
   "assets-with-count_one": "1 asset",
   "assets-with-count_other": "{{count}} assets",
-  "resource-selected-with-count": "{{resourceWithCount}} selected"
+  "resource-selected-with-count": "{{resourceWithCount}} selected",
+  "show-advanced-options": "Show advanced options",
+  "hide-advanced-options": "Hide advanced options"
 }
