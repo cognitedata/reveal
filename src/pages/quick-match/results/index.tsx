@@ -1,10 +1,9 @@
 import { useTranslation } from 'common';
 import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
-import {
-  useEMModelPredictResults,
-  useRulesResults,
-} from 'hooks/contextualization-api';
+import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
+import { useRulesResults } from 'hooks/entity-matching-rules';
+
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
 import { Navigate, useParams } from 'react-router-dom';
 import { SourceType } from 'types/api';

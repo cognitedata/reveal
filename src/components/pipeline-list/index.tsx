@@ -1,7 +1,8 @@
 import { Flex, Icon, Colors } from '@cognite/cogs.js';
-import { useEMPipelines } from 'hooks/contextualization-api';
+
 import PipelineTable from './PipelineTable';
 import PipelineListEmpty from './PipelineListEmpty';
+import { useEMPipelines } from 'hooks/entity-matching-pipelines';
 
 export default function PipelineList() {
   const { data, isInitialLoading } = useEMPipelines();

@@ -1,7 +1,9 @@
 import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
-import { Prediction, Rule } from 'hooks/contextualization-api';
+import { Prediction } from 'hooks/entity-matching-predictions';
+import { Rule } from 'hooks/entity-matching-rules';
+
 import { useUpdateTimeseries } from 'hooks/timeseries';
 import styled from 'styled-components';
 import { SourceType } from 'types/api';

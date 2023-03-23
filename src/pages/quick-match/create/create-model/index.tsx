@@ -7,15 +7,7 @@ import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
-import {
-  IN_PROGRESS_EM_STATES,
-  useCreateEMModel,
-  useCreateEMPredictionJob,
-  useCreateRulesJob,
-  useEMModel,
-  useEMModelPredictResults,
-  useRulesResults,
-} from 'hooks/contextualization-api';
+
 import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
 import {
   bulkDownloadStatus,
@@ -26,6 +18,16 @@ import {
 } from 'utils';
 import QuickMatchTitle from 'components/quick-match-title';
 import { useInfinite3dNodes } from 'hooks/threeD';
+import { useCreateEMModel, useEMModel } from 'hooks/entity-matching-models';
+import {
+  useCreateEMPredictionJob,
+  useEMModelPredictResults,
+} from 'hooks/entity-matching-predictions';
+import {
+  useCreateRulesJob,
+  useRulesResults,
+} from 'hooks/entity-matching-rules';
+import { IN_PROGRESS_EM_STATES } from 'hooks/types';
 
 const CreateModel = (): JSX.Element => {
   const {

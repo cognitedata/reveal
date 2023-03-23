@@ -4,7 +4,6 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import NoAccessPage from 'components/error-pages/NoAccess';
 import UnknownErrorPage from 'components/error-pages/UnknownError';
-import { useEMPipelines } from 'hooks/contextualization-api';
 
 import { useTranslation } from 'common';
 import { CreatePipelineButton } from 'components/create-pipeline-button/CreatePipelineButton';
@@ -12,6 +11,7 @@ import PipelineList from 'components/pipeline-list';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 import NoWrapButton from 'components/no-wrap-button';
 import SearchInput from 'components/search-input';
+import { useEMPipelines } from 'hooks/entity-matching-pipelines';
 
 export default function RootList() {
   const { t } = useTranslation();

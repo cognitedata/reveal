@@ -1,7 +1,7 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+import { PredictionObject } from 'hooks/entity-matching-predictions';
 
-import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
   SetStateAction,

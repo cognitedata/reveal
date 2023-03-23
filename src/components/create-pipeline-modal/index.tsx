@@ -7,7 +7,7 @@ import { useTranslation } from 'common';
 import PipelineDetailsForm, {
   PipelineDetailsFormValues,
 } from 'components/pipeline-details-form';
-import { useCreatePipeline } from 'hooks/contextualization-api';
+import { useCreatePipeline } from 'hooks/entity-matching-pipelines';
 
 type CreatePipelineModalProps = Pick<ModalProps, 'onCancel' | 'visible'> & {};
 

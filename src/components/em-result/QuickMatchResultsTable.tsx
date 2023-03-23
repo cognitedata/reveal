@@ -1,10 +1,14 @@
 import { useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
-import { Prediction, PredictionObject } from 'hooks/contextualization-api';
+
 import { formatPredictionObject } from 'utils';
 import ConfidenceScore from './Confidence';
 import { Checkbox, Flex } from '@cognite/cogs.js';
+import {
+  Prediction,
+  PredictionObject,
+} from 'hooks/entity-matching-predictions';
 
 type Predictions = {
   predictions: Prediction[];

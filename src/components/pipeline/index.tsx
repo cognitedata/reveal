@@ -1,6 +1,6 @@
 import { Icon } from '@cognite/cogs.js';
 import { SecondaryTopbar } from '@cognite/cdf-utilities';
-import { useEMPipeline } from 'hooks/contextualization-api';
+import { useEMPipeline } from 'hooks/entity-matching-pipelines';
 
 type Props = { id: number };
 export default function Pipeline({ id }: Props) {
