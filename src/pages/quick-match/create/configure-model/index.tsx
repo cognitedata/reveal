@@ -1,14 +1,15 @@
-import { Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 
 import ModelConfiguration from 'components/model-configation';
-import QuickMatchTitle from 'components/quick-match-title';
+import Step from 'components/step';
 
 const ConfigureModel = (): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
-    <Flex direction="column" gap={8}>
-      <QuickMatchTitle step="configure-model" />
+    <Step title={t('configure-model-step-title', { step: 3 })}>
       <ModelConfiguration />
-    </Flex>
+    </Step>
   );
 };
 

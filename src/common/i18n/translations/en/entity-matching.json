@@ -89,7 +89,7 @@
   "select-data-tooltip": "Select resource you want to match to assets",
   "sources_one": "Source {{count}}",
   "sources_other": "Sources {{count}}",
-  "title-configure-model": "Configure model",
+  "configure-model-step-title": "{{step}}. Configure model",
   "title-create-model": "Create model",
   "title-create-pipeline": "Create pipeline",
   "unknown-error-detail": "If you need, you can contact support with the following details:",
