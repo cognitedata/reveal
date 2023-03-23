@@ -4,6 +4,7 @@ import {
   isAssetAnnotation,
 } from '@cognite/data-exploration';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 
 import { useMemo } from 'react';
@@ -29,7 +30,8 @@ const useIndustryCanvasAssetTooltips = (
       onAddContainerReferences([
         {
           type: ContainerReferenceType.TIMESERIES,
-          id: timeseriesId,
+          resourceId: timeseriesId,
+          id: uuid(),
           startDate: dayjs(new Date())
             .subtract(6, 'months')
             .startOf('day')
@@ -60,7 +62,7 @@ const useIndustryCanvasAssetTooltips = (
         shouldPositionStrictly: true,
       },
     ];
-  }, [selectedAnnotation]);
+  }, [selectedAnnotation, onAddContainerReferences]);
 };
 
 export default useIndustryCanvasAssetTooltips;

@@ -152,7 +152,7 @@ export const IndustryCanvas = ({
 
           if (containerReference.type === ContainerReferenceType.FILE) {
             const fileInfos = await sdk.files.retrieve([
-              { id: containerReference.id },
+              { id: containerReference.resourceId },
             ]);
 
             if (fileInfos.length !== 1) {
@@ -176,7 +176,7 @@ export const IndustryCanvas = ({
 
           if (containerReference.type === ContainerReferenceType.TIMESERIES) {
             const timeseries = await sdk.timeseries.retrieve([
-              { id: containerReference.id },
+              { id: containerReference.resourceId },
             ]);
 
             if (timeseries.length !== 1) {
@@ -197,14 +197,14 @@ export const IndustryCanvas = ({
                 height: containerReference.height ?? DEFAULT_TIMESERIES_HEIGHT,
               },
               {
-                timeseriesId: containerReference.id,
+                timeseriesId: containerReference.resourceId,
               }
             );
           }
 
           if (containerReference.type === ContainerReferenceType.ASSET) {
             const asset = await sdk.assets.retrieve([
-              { id: containerReference.id },
+              { id: containerReference.resourceId },
             ]);
 
             if (asset.length !== 1) {
@@ -223,7 +223,7 @@ export const IndustryCanvas = ({
                 height: containerReference.height ?? DEFAULT_ASSET_HEIGHT,
               },
               {
-                assetId: containerReference.id,
+                assetId: containerReference.resourceId,
               }
             );
           }

@@ -19,7 +19,7 @@ type AssetTooltipProps = {
 };
 
 const AssetTooltip: React.FC<AssetTooltipProps> = ({ id, onAddTimeseries }) => {
-  const { data: asset, isLoading: isLoading } = useAsset(id);
+  const { data: asset, isLoading } = useAsset(id);
 
   if (isLoading) {
     return <Icon type="Loader" />;

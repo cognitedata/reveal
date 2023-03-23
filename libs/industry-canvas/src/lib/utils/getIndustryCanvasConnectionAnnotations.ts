@@ -69,7 +69,9 @@ export const getIndustryCanvasConnectionAnnotations = ({
   // We are using the pagedFileReferences here since we could have the same document
   // multiple times in the same canvas (for different pages).
   return containerReferences
-    .filter((containerReference) => containerReference.id === linkedFileId)
+    .filter(
+      (containerReference) => containerReference.resourceId === linkedFileId
+    )
     .flatMap<Annotation>((containerReference) => {
       const isSelfReferentialFileLink = annotatedFileId === linkedFileId;
 

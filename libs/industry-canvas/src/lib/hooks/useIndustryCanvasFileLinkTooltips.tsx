@@ -68,7 +68,8 @@ const useIndustryCanvasFileLinkTooltips = ({
 
     if (
       containerReferences.some(
-        (containerReference) => containerReference.id === additionalFileId
+        (containerReference) =>
+          containerReference.resourceId === additionalFileId
       )
     ) {
       return [];
@@ -86,7 +87,8 @@ const useIndustryCanvasFileLinkTooltips = ({
                 onAddContainerReferences([
                   {
                     type: ContainerReferenceType.FILE,
-                    id: resourceId,
+                    resourceId: resourceId,
+                    id: resourceId.toString(),
                     page: 1,
                   },
                 ]);

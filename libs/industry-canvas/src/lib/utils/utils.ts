@@ -10,15 +10,15 @@ export const getContainerId = (
   containerReference: ContainerReference
 ): string => {
   if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.id}-${containerReference.page}`;
+    return `${containerReference.resourceId}-${containerReference.page}`;
   }
 
   if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-    return `${containerReference.id}`;
+    return `${containerReference.resourceId}-${containerReference.id}`;
   }
 
   if (containerReference.type === ContainerReferenceType.ASSET) {
-    return `${containerReference.id}`;
+    return `${containerReference.resourceId}`;
   }
 
   assertNever(containerReference, 'Unsupported container reference type');

@@ -35,7 +35,9 @@ const useIndustryCanvasContainerTooltips = ({
           content: (
             <TooltipContainer>
               <Link
-                href={createLink(`/explore/asset/${clickedContainer.id}`)}
+                href={createLink(
+                  `/explore/asset/${clickedContainer.resourceId}`
+                )}
                 target="_blank"
               />
               <Button
@@ -63,7 +65,7 @@ const useIndustryCanvasContainerTooltips = ({
                 }}
                 onComplete={(dateRange) => {
                   console.log({
-                    id: clickedContainer.id,
+                    id: clickedContainer.resourceId,
                     type: ContainerReferenceType.TIMESERIES,
                     startDate: dayjs(dateRange.startDate)
                       .startOf('day')
@@ -72,6 +74,7 @@ const useIndustryCanvasContainerTooltips = ({
                   });
 
                   updateContainerReference({
+                    resourceId: clickedContainer.resourceId,
                     id: clickedContainer.id,
                     type: ContainerReferenceType.TIMESERIES,
                     startDate: dayjs(dateRange.startDate)
@@ -82,7 +85,9 @@ const useIndustryCanvasContainerTooltips = ({
                 }}
               />
               <Link
-                href={createLink(`/explore/timeSeries/${clickedContainer.id}`)}
+                href={createLink(
+                  `/explore/timeSeries/${clickedContainer.resourceId}`
+                )}
                 target="_blank"
               />
               <Button
@@ -104,7 +109,9 @@ const useIndustryCanvasContainerTooltips = ({
           content: (
             <TooltipContainer>
               <Link
-                href={createLink(`/explore/file/${clickedContainer.id}`)}
+                href={createLink(
+                  `/explore/file/${clickedContainer.resourceId}`
+                )}
                 target="_blank"
               />
               <Button

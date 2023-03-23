@@ -27,7 +27,7 @@ export const useAnnotationsMultiple = (
               .list({
                 filter: {
                   annotatedResourceType: 'file',
-                  annotatedResourceIds: [{ id: containerReference.id }],
+                  annotatedResourceIds: [{ id: containerReference.resourceId }],
                 },
                 limit: 1000,
               })

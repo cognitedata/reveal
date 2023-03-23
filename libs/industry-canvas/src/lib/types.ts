@@ -17,13 +17,15 @@ export type Dimensions = {
 
 export type FileContainerReferenceWithoutDimensions = {
   type: ContainerReferenceType.FILE;
-  id: number;
+  id: string;
+  resourceId: number;
   page: number;
 };
 
 export type AssetContaienrReferenceWithoutDimensions = {
   type: ContainerReferenceType.ASSET;
-  id: number;
+  id: string;
+  resourceId: number;
 };
 
 export type FileContainerReference = FileContainerReferenceWithoutDimensions &
@@ -31,7 +33,8 @@ export type FileContainerReference = FileContainerReferenceWithoutDimensions &
 
 export type TimeseriesContainerReferenceWithoutDimensions = {
   type: ContainerReferenceType.TIMESERIES;
-  id: number;
+  id: string;
+  resourceId: number;
   startDate: Date;
   endDate: Date;
 };

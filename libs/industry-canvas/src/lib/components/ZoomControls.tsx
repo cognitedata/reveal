@@ -33,6 +33,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({
           <Menu>
             {Object.entries(PERCENTAGE_VALUES).map(([key, value]) => (
               <Menu.Item
+                key={`item-percentage-key-${key}`}
                 onClick={() => {
                   if (setZoomScale !== undefined) {
                     setZoomScale(value);

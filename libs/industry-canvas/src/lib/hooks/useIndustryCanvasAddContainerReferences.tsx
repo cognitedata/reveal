@@ -36,7 +36,7 @@ export const useIndustryCanvasAddContainerReferences = ({
         </div>,
         {
           toastId: `canvas-file-added-${containerReferences
-            .map((f) => f.id)
+            .map((f) => f.resourceId)
             .join('-')}`,
           position: TOAST_POSITION,
         }

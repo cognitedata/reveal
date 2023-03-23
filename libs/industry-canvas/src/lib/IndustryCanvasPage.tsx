@@ -21,6 +21,7 @@ import {
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
+import { v4 as uuid } from 'uuid';
 
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
@@ -146,7 +147,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'timeSeries') {
               return {
                 type: ContainerReferenceType.TIMESERIES,
-                id: supportedResourceItem.id,
+                id: uuid(),
+                resourceId: supportedResourceItem.id,
                 startDate: new Date(
                   new Date().setMonth(new Date().getMonth() - 6)
                 ),
@@ -157,7 +159,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'file') {
               return {
                 type: ContainerReferenceType.FILE,
-                id: supportedResourceItem.id,
+                id: supportedResourceItem.id.toString(),
+                resourceId: supportedResourceItem.id,
                 page: 1,
               };
             }
@@ -165,7 +168,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'asset') {
               return {
                 type: ContainerReferenceType.ASSET,
-                id: supportedResourceItem.id,
+                id: supportedResourceItem.id.toString(),
+                resourceId: supportedResourceItem.id,
               };
             }
 
