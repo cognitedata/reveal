@@ -356,16 +356,8 @@ void main() {
         }
 #if !defined(color_type_point_index)
         if (any(greaterThan(styleColor, vec3(0.0)))) {
-                vec3 vColorHSV = rgb2hsv(vColor);
-								vec3 styleColorHSV = rgb2hsv(styleColor);
-
-								vColorHSV.xy = styleColorHSV.xy;
-								// Add 20% brightness from original point & 80% from styled.
-								vColorHSV.z = (vColorHSV.z * (styleColorHSV.z * 0.8 + 0.2));
-
-								vec3 vColorRGB = hsv2rgb(vColorHSV);
-								// Mix 30% color from original point & 70% from styled.
-								vColor = (vColor * 0.3) + (vColorRGB * 0.7);
+					// Mix 20% color from original color & 80% from style color.
+					vColor = (styleColor * 0.8 + vColor * 0.2);
         }
 #endif
 }
