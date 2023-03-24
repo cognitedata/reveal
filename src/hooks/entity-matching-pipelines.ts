@@ -256,3 +256,52 @@ export const useDuplicateEMPipeline = () => {
     }
   );
 };
+
+type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
+
+type EMPipelineRun = {
+  status: EMPipelineRunStatus;
+  createdTime: number;
+  startTime: number;
+  statusTime: number;
+  jobId: number;
+};
+
+type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;
+
+export const useRunEMPipeline = (
+  options?: UseMutationOptions<
+    EMPipelineRun,
+    CogniteError,
+    RunEMPipelineMutationVariables
+  >
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    EMPipelineRun,
+    CogniteError,
+    RunEMPipelineMutationVariables
+  >(
+    async (variables: RunEMPipelineMutationVariables) =>
+      sdk
+        .post<EMPipelineRun>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run`,
+          {
+            data: {
+              id: variables.id,
+            },
+          }
+        )
+        .then((r) => r.data),
+
+    {
+      ...options,
+      onSuccess: (...args) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        options?.onSuccess?.(...args);
+      },
+    }
+  );
+};
