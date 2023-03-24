@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
@@ -13,6 +13,8 @@ import {
 
 type Predictions = {
   predictions: Prediction[];
+  sourceIds: number[];
+  setSourceIds: Dispatch<SetStateAction<number[]>>;
 };
 
 type PredictionsTableRecord = {
@@ -25,7 +27,11 @@ type ResultsTableRecordCT = ColumnType<PredictionsTableRecord> & {
   score?: number;
 };
 
-const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
+const QuickMatchResultsTable = ({
+  predictions,
+  sourceIds,
+  setSourceIds,
+}: Predictions): JSX.Element => {
   const { t } = useTranslation();
 
   const dataSource = useMemo(
@@ -87,13 +93,25 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         render: (source: PredictionObject) => {
           return (
             <Flex justifyContent="center">
-              <Checkbox name={`checkbox-${source.id}`} />
+              <Checkbox
+                name={`checkbox-${source.id}`}
+                checked={sourceIds.includes(source.id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSourceIds((prevState) => [...prevState, source.id]);
+                  } else {
+                    setSourceIds((prevState) =>
+                      prevState.filter((sourceId) => sourceId !== source.id)
+                    );
+                  }
+                }}
+              />
             </Flex>
           );
         },
       },
     ],
-    [t]
+    [t, setSourceIds, sourceIds]
   );
 
   return (

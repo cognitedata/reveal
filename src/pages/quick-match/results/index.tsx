@@ -1,4 +1,5 @@
 import { useTranslation } from 'common';
+import ApplySelectedMatchesButton from 'components/apply-selected-matches-button/ApplySelectedMatchesButton';
 import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
 import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
@@ -8,6 +9,7 @@ import {
 } from 'hooks/entity-matching-rules';
 
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
+import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { SourceType } from 'types/api';
 import {
@@ -17,6 +19,7 @@ import {
 } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
+  const [sourceIds, setSourceIds] = useState<number[]>([]);
   const {
     subAppPath,
     predictJobId: predictJobIdStr,
@@ -39,6 +42,7 @@ const QuickMatchResults = (): JSX.Element => {
   const predictJobToken = sessionStorage.getItem(
     sessionStoragePredictJobKey(predictJobId)
   );
+
   const rulesJobToken = sessionStorage.getItem(
     sessionStorageRulesJobKey(rulesJobId)
   );
@@ -74,17 +78,34 @@ const QuickMatchResults = (): JSX.Element => {
   }
 
   return (
-    <Page subtitle={t('results')} title={t('quick-match')}>
-      {predictions?.status === 'Completed' && !!predictions?.items && (
-        <EntityMatchingResult
-          predictJobId={predictJobId}
-          sourceType={sourceType}
-          predictions={predictions.items}
-          rules={rules?.rules}
-          appliedRules={appliedRules?.items}
-        />
+    <>
+      {!!predictions?.items && (
+        <Page
+          subtitle={t('results')}
+          title={t('quick-match')}
+          extraContent={
+            <ApplySelectedMatchesButton
+              predictions={predictions.items}
+              sourceIds={sourceIds}
+              predictionJobId={predictJobId}
+              sourceType={sourceType}
+            />
+          }
+        >
+          {predictions?.status === 'Completed' && (
+            <EntityMatchingResult
+              predictJobId={predictJobId}
+              sourceType={sourceType}
+              predictions={predictions.items}
+              sourceIdsSecondaryTopBar={sourceIds}
+              setSourceIdsSecondaryTopBar={setSourceIds}
+              rules={rules?.rules}
+              appliedRules={appliedRules?.items}
+            />
+          )}
+        </Page>
       )}
-    </Page>
+    </>
   );
 };
 

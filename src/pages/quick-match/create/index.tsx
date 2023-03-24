@@ -1,6 +1,5 @@
-import { Body as _Body, Button, Colors, Flex } from '@cognite/cogs.js';
+import { Body as _Body, Button, Flex } from '@cognite/cogs.js';
 import { Route, Routes } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import Page from 'components/page';
@@ -10,19 +9,22 @@ import SelectSources from './select-sources';
 import CreateModel from './create-model';
 import ConfigureModel from './configure-model';
 import SelectTargets from './select-targets';
-
 const QuickMatchCreate = (): JSX.Element => {
   const { t } = useTranslation();
   const { hasNextStep, hasPrevStep, popStep, pushStep } =
     useQuickMatchContext();
 
+  const configureModel = window.location.href.indexOf('configure-model') !== -1;
+
   return (
     <Page
-      footer={
-        <BottomRow justifyContent="space-between">
-          <Button disabled={!hasPrevStep()} onClick={() => popStep()}>
-            {t('navigate-back')}
-          </Button>
+      extraContent={
+        <Flex gap={8}>
+          {hasPrevStep() && (
+            <Button disabled={!hasPrevStep()} onClick={() => popStep()}>
+              {t('navigate-back')}
+            </Button>
+          )}
           <Button
             disabled={!hasNextStep()}
             onClick={() => {
@@ -30,9 +32,9 @@ const QuickMatchCreate = (): JSX.Element => {
             }}
             type="primary"
           >
-            {t('navigate-next')}
+            {configureModel ? t('run-model') : t('navigate-next')}
           </Button>
-        </BottomRow>
+        </Flex>
       }
       subtitle={t('create')}
       title={t('quick-match')}
@@ -49,13 +51,5 @@ const QuickMatchCreate = (): JSX.Element => {
     </Page>
   );
 };
-
-const BottomRow = styled(Flex)`
-  border-top: 1px solid ${Colors['border--muted']};
-  bottom: 0;
-  position: absolute;
-  padding: 8px;
-  width: 100%;
-`;
 
 export default QuickMatchCreate;

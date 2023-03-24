@@ -12,6 +12,7 @@ type PageProps = {
   footer?: React.ReactNode;
   subtitle?: string;
   title: string;
+  extraContent?: React.ReactNode;
 };
 
 const Page = ({
@@ -19,10 +20,15 @@ const Page = ({
   footer,
   subtitle,
   title,
+  extraContent,
 }: PageProps): JSX.Element => {
   return (
     <Container>
-      <SecondaryTopbar subtitle={subtitle} title={title} />
+      <SecondaryTopbar
+        subtitle={subtitle}
+        title={title}
+        extraContent={extraContent}
+      />
       <Content $hasFooter={!!footer}>{children}</Content>
       {footer && <Footer>{footer}</Footer>}
     </Container>
