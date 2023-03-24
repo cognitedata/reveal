@@ -8,6 +8,7 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { JobStatus } from './types';
+import { INFINITE_Q_OPTIONS } from './infiniteList';
 
 export type PredictionObject = {
   id: number;
@@ -81,7 +82,7 @@ export const useEMModelPredictResults = (
         return Promise.reject(r.data);
       }
     },
-    opts
+    { ...opts, ...INFINITE_Q_OPTIONS }
   );
 };
 

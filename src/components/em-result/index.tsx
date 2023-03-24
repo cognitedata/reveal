@@ -2,7 +2,7 @@ import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/entity-matching-predictions';
-import { AppliedRules, Rule } from 'hooks/entity-matching-rules';
+import { AppliedRules } from 'hooks/entity-matching-rules';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { AssetIdUpdate } from 'hooks/types';
 import { useUpdateAssetIds } from 'hooks/update';
@@ -16,7 +16,6 @@ type Props = {
   sourceIdsSecondaryTopBar: number[];
   setSourceIdsSecondaryTopBar: Dispatch<SetStateAction<number[]>>;
   sourceType: SourceType;
-  rules?: Rule[];
   appliedRules?: AppliedRules[];
 };
 export default function EntityMatchingResult({
