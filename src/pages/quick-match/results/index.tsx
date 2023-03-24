@@ -83,8 +83,6 @@ const QuickMatchResults = (): JSX.Element => {
         <Page
           subtitle={t('results')}
           title={t('quick-match')}
-          predictions={predictions.items}
-          sourceIds={sourceIds}
           extraContent={
             <ApplySelectedMatchesButton
               predictions={predictions.items}
