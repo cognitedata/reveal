@@ -12,24 +12,46 @@ import ConfigurePipeline from './configure-pipeline';
 import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { createLink } from '@cognite/cdf-utilities';
+import Run from './run';
 
-const PIPELINE_STEPS = ['sources', 'targets', 'configure-pipeline'] as const;
+const PIPELINE_STEPS = [
+  'sources',
+  'targets',
+  'configure-pipeline',
+  'run',
+] as const;
 type PipelineStep = (typeof PIPELINE_STEPS)[number];
 
-const getNextStep = (current?: PipelineStep): PipelineStep | undefined => {
-  const index = PIPELINE_STEPS.findIndex((item) => item === current);
-  if (index < PIPELINE_STEPS.length - 1) {
-    return PIPELINE_STEPS[index + 1];
+const getNextStep = (current?: string): PipelineStep | undefined => {
+  const step = PIPELINE_STEPS.find((item) => current?.includes(item));
+  switch (step) {
+    case 'sources':
+      return 'targets';
+    case 'targets':
+      return 'configure-pipeline';
+    case 'configure-pipeline':
+      return 'run';
+    case 'run':
+      return undefined;
+    default:
+      return undefined;
   }
-  return undefined;
 };
 
-const getPrevStep = (current?: PipelineStep): PipelineStep | undefined => {
-  const index = PIPELINE_STEPS.findIndex((item) => item === current);
-  if (index > 0) {
-    return PIPELINE_STEPS[index - 1];
+const getPrevStep = (current?: string): PipelineStep | undefined => {
+  const step = PIPELINE_STEPS.find((item) => current?.includes(item));
+  switch (step) {
+    case 'run':
+      return undefined;
+    case 'configure-pipeline':
+      return 'targets';
+    case 'targets':
+      return 'sources';
+    case 'sources':
+      return undefined;
+    default:
+      return undefined;
   }
-  return undefined;
 };
 
 const PipelineDetails = (): JSX.Element => {
@@ -49,8 +71,8 @@ const PipelineDetails = (): JSX.Element => {
     enabled: !!pipelineId,
   });
 
-  const nextStep = getNextStep(step as PipelineStep | undefined);
-  const prevStep = getPrevStep(step as PipelineStep | undefined);
+  const nextStep = getNextStep(step);
+  const prevStep = getPrevStep(step);
 
   const navigate = useNavigate();
 
@@ -104,6 +126,7 @@ const PipelineDetails = (): JSX.Element => {
             path="/configure-pipeline"
             element={<ConfigurePipeline pipeline={pipeline} />}
           />
+          <Route path="/run/:jobId?" element={<Run pipeline={pipeline} />} />
         </Routes>
       </Page>
     );
