@@ -26,6 +26,7 @@ export class DefaultImage360Collection implements Image360Collection {
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
+  private _isCollectionVisible: boolean;
 
   /**
    * The events from the image collection.
@@ -37,9 +38,14 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._events;
   }
 
+  get isCollectionVisible(): boolean {
+    return this._isCollectionVisible;
+  }
+
   constructor(entities: Image360Entity[], icons: IconCollection) {
     this.image360Entities = entities;
     this._icons = icons;
+    this._isCollectionVisible = true;
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -78,6 +84,15 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   /**
+   * Set visibility of all 360 image icons.
+   * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
+   */
+  public setIconsVisibility(visible: boolean): void {
+    this._isCollectionVisible = visible;
+    this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
+  }
+
+  /**
    * Unsubscribes from 360 image dataset event.
    * @param event The event type.
    * @param callback Callback function to be unsubscribed.
@@ -101,10 +116,6 @@ export class DefaultImage360Collection implements Image360Collection {
       default:
         assertNever(event, `Unsupported event: '${event}'`);
     }
-  }
-
-  public setIconsVisibility(visible: boolean): void {
-    this.image360Entities.forEach(entity => (entity.icon.visible = visible));
   }
 
   public setSelectedVisibility(visible: boolean): void {

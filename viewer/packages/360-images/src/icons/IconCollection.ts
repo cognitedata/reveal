@@ -116,11 +116,11 @@ export class IconCollection {
 
           return node.data.data;
         })
-        .filter(point => frustum.containsPoint(point.position));
+        .filter(icon => frustum.containsPoint(icon.position));
 
-      this._icons.forEach(icon => (icon.visible = false));
-      selectedIcons.forEach(icon => (icon.visible = true));
-      iconSprites.setPoints(selectedIcons.map(icon => icon.position));
+      this._icons.forEach(icon => icon.setCulled(true));
+      selectedIcons.forEach(icon => icon.setCulled(false));
+      iconSprites.setPoints(selectedIcons.filter(icon => icon.isVisible()).map(icon => icon.position));
     };
   }
 
@@ -139,9 +139,14 @@ export class IconCollection {
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
 
-      this._icons.forEach(p => (p.visible = false));
-      closestPoints.forEach(p => (p.visible = true));
-      iconSprites.setPoints(closestPoints.reverse().map(p => p.position));
+      this._icons.forEach(icon => icon.setCulled(true));
+      closestPoints.forEach(icon => icon.setCulled(false));
+      iconSprites.setPoints(
+        closestPoints
+          .filter(icon => icon.isVisible())
+          .reverse()
+          .map(p => p.position)
+      );
     };
   }
 

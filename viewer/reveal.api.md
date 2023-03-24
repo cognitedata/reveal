@@ -788,6 +788,7 @@ export interface Image360Collection {
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setIconsVisibility(visible: boolean): void;
 }
 
 // @public

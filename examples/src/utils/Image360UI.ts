@@ -9,7 +9,7 @@ import * as dat from 'dat.gui';
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
-    const sets: Image360Collection[] = [];
+    let collections: Image360Collection[] = [];
 
     const optionsFolder = gui.addFolder('Add Options');
 
@@ -32,7 +32,8 @@ export class Image360UI {
 
     const iconCulling = {
       radius: Infinity,
-      limit: 50
+      limit: 50,
+      hideAll: false
     };
 
     const params = {
@@ -78,35 +79,49 @@ export class Image360UI {
         set360IconCullingRestrictions();
       });
 
+    gui
+      .add(iconCulling, 'hideAll')
+      .name('Hide all 360 images')
+      .onChange(() => {
+        if (collections.length > 0) {
+          collections.forEach(p => p.setIconsVisibility(!iconCulling.hideAll));
+          viewer.requestRedraw();
+        }
+      });
+
     gui.add(params, 'remove').name('Remove all 360 images');
 
     async function add360ImageSet() {
+      if (params.siteId.length === 0) return;
+
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(
         new THREE.Vector3(rotation.x, rotation.y, rotation.z),
         rotation.radians
       );
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
       const collectionTransform = translationMatrix.multiply(rotationMatrix);
-      const set = await viewer.add360ImageSet(
+      const collection = await viewer.add360ImageSet(
         'events',
         { site_id: params.siteId },
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
-      sets.push(set);
-      entities = entities.concat(set.image360Entities);
+      collection.setIconsVisibility(!iconCulling.hideAll);
+      collections.push(collection);
+      entities = entities.concat(collection.image360Entities);
       viewer.requestRedraw();
     }
 
     async function set360IconCullingRestrictions() {
-      if (sets.length > 0) {
-        sets.forEach(p => p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit));
+      if (collections.length > 0) {
+        collections.forEach(p => p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit));
         viewer.requestRedraw();
       }
     }
 
     async function removeAll360Images() {
       await viewer.remove360Images(...entities);
-      sets.splice(0);
+      entities = [];
+      collections = [];
     }
   }
 }
