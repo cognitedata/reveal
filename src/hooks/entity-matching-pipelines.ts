@@ -265,6 +265,7 @@ type EMPipelineRun = {
   startTime: number;
   statusTime: number;
   jobId: number;
+  pipelineId?: number;
 };
 
 type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;
@@ -303,5 +304,31 @@ export const useRunEMPipeline = (
         options?.onSuccess?.(...args);
       },
     }
+  );
+};
+
+const geEMPipelineRunKey = (pipelineId: number, jobId?: number): QueryKey => [
+  'em',
+  'pipeline',
+  pipelineId,
+  'run',
+  jobId,
+];
+export const useEMPipelineRun = (
+  pipelineId: number,
+  jobId?: number,
+  options?: UseQueryOptions<EMPipelineRun, CogniteError, EMPipelineRun>
+) => {
+  const sdk = useSDK();
+
+  return useQuery<EMPipelineRun, CogniteError, EMPipelineRun>(
+    geEMPipelineRunKey(pipelineId, jobId),
+    async () =>
+      sdk
+        .get<EMPipelineRun>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/${jobId}`
+        )
+        .then((r) => r.data),
+    options
   );
 };
