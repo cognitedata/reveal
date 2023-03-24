@@ -75,10 +75,10 @@ export default function EntityMatchingResult({
         </StyledFlex>
       </Step>
       <QuickMatchActionBar
-          selectedRows={sourceIds}
-          sourceType={sourceType}
-          onClose={onClose}
-       />
+        selectedRows={sourceIds}
+        sourceType={sourceType}
+        onClose={onClose}
+      />
     </>
   );
 }
