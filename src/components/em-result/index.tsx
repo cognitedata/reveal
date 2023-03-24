@@ -3,31 +3,41 @@ import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRules, Rule } from 'hooks/entity-matching-rules';
-
-import { useUpdateTimeseries } from 'hooks/timeseries';
+import { AssetIdUpdate } from 'hooks/types';
+import { useUpdateAssetIds } from 'hooks/update';
 import styled from 'styled-components';
 import { SourceType } from 'types/api';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 
 type Props = {
+  predictJobId: number;
   predictions: Prediction[];
   sourceType: SourceType;
   rules?: Rule[];
   appliedRules?: AppliedRules[];
 };
-export default function EntityMatchingResult({ predictions }: Props) {
-  const { mutate, isLoading, status } = useUpdateTimeseries();
+export default function EntityMatchingResult({
+  predictJobId,
+  predictions,
+  sourceType,
+}: Props) {
+  const { mutate, isLoading, status } = useUpdateAssetIds(
+    sourceType,
+    predictJobId
+  );
+
   const { t } = useTranslation();
   const applyAll = () => {
-    mutate(
-      predictions.map(({ source, match }) => ({
-        id: source.id,
-        update: {
-          assetId: { set: match.target.id },
-        },
-      }))
-    );
+    const updates: AssetIdUpdate[] = predictions.map(({ source, match }) => ({
+      id: source.id,
+      update: {
+        assetId: { set: match.target.id },
+      },
+    }));
+
+    mutate(updates);
   };
+
   return (
     <StyledFlex direction="column">
       <Flex justifyContent="flex-end">

@@ -40,7 +40,7 @@ export type ModelMapping = { source?: TimeseriesKeys; target?: AssetKeys }[];
 
 export type Scope = 'all' | 'unmatched';
 
-type Selected3dModel = {
+export type Selected3dModel = {
   modelId: number;
   revisionId: number;
 };

@@ -26,8 +26,8 @@ const QuickMatchResults = (): JSX.Element => {
   } = useParams<{
     subAppPath: string;
     predictJobId: string;
-    rulesJobId: string;
-    applyRulesJobId: string;
+    rulesJobId?: string;
+    applyRulesJobId?: string;
     sourceType: SourceType;
   }>();
 
@@ -77,6 +77,7 @@ const QuickMatchResults = (): JSX.Element => {
     <Page subtitle={t('results')} title={t('quick-match')}>
       {predictions?.status === 'Completed' && !!predictions?.items && (
         <EntityMatchingResult
+          predictJobId={predictJobId}
           sourceType={sourceType}
           predictions={predictions.items}
           rules={rules?.rules}
