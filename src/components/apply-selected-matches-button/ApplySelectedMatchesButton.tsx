@@ -2,20 +2,25 @@ import { notification } from '@cognite/cdf-utilities';
 import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
 import { Prediction } from 'hooks/entity-matching-predictions';
-import { useUpdateTimeseries } from 'hooks/timeseries';
+import { useUpdateAssetIds } from 'hooks/update';
 import styled from 'styled-components';
+import { SourceType } from 'types/api';
 
 type Props = {
+  predictionJobId: number;
   predictions: Prediction[] | undefined;
   sourceIds: number[] | undefined;
+  sourceType: SourceType;
 };
 
 const ApplySelectedMatchesButton = ({
+  predictionJobId,
   predictions,
   sourceIds,
+  sourceType,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
-  const { mutate, isLoading } = useUpdateTimeseries();
+  const { mutate, isLoading } = useUpdateAssetIds(sourceType, predictionJobId);
 
   const selectedPredictions = predictions?.filter((prediction) =>
     sourceIds?.includes(prediction.source.id)
