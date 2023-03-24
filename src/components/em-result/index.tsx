@@ -9,6 +9,7 @@ import { useUpdateAssetIds } from 'hooks/update';
 import styled from 'styled-components';
 import { SourceType } from 'types/api';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
+import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 
 type Props = {
   predictJobId: number;
@@ -48,23 +49,33 @@ export default function EntityMatchingResult({
     [sourceIds, setSourceIdsSecondaryTopBar, sourceIdsSecondaryTopBar]
   );
 
+  const onClose = () => setSourceIds([]);
+
   return (
-    <StyledFlex direction="column">
-      <Flex justifyContent="flex-end">
-        <StyledButton
-          type="primary"
-          disabled={isLoading}
-          onClick={() => applyAll()}
-        >
-          {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
-        </StyledButton>
-      </Flex>
-      <QuickMatchResultsTable
-        predictions={predictions}
-        sourceIds={sourceIds}
-        setSourceIds={setSourceIds}
+    <>
+      <StyledFlex direction="column">
+        <Flex justifyContent="flex-end">
+          <StyledButton
+            type="primary"
+            disabled={isLoading}
+            onClick={() => applyAll()}
+          >
+            {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
+          </StyledButton>
+        </Flex>
+        <QuickMatchResultsTable
+          predictions={predictions}
+          sourceIds={sourceIds}
+          setSourceIds={setSourceIds}
+        />
+      </StyledFlex>
+
+      <QuickMatchActionBar
+        selectedRows={sourceIds}
+        sourceType={sourceType}
+        onClose={onClose}
       />
-    </StyledFlex>
+    </>
   );
 }
 

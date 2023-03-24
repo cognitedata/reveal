@@ -1,6 +1,8 @@
 {
   "apply-selected-matches": "Apply selected matches",
   "cancel": "Cancel",
+  "clear-selection": "Clear selection",
+  "close": "Close",
   "confidence": "Confidence",
   "confirm": "Confirm",
   "create-pipeline": "Create pipeline",
@@ -40,6 +42,7 @@
   "model-configuration-scope-unmatched-only": "Unmatched only",
   "supervised-model": "Supervised model",
   "unsupervised-model": "Unsupervised model",
+  "n-source-type-selected_one": "{{count}} {{sourceType}} selected",
   "navigate-back": "Back",
   "navigate-next": "Next step",
   "no-access-detail": "Check the required access rights below and contact the person responsible for access management in your organization.",
