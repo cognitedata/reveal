@@ -84,7 +84,7 @@ export class Image360UI {
       .name('Hide all 360 images')
       .onChange(() => {
         if (collections.length > 0) {
-          collections.forEach(p => p.set360CollectionVisibility(!iconCulling.hideAll));
+          collections.forEach(p => p.setIconsVisibility(!iconCulling.hideAll));
           viewer.requestRedraw();
         }
       });
@@ -105,7 +105,7 @@ export class Image360UI {
         { site_id: params.siteId },
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
-      collection.set360CollectionVisibility(!iconCulling.hideAll);
+      collection.setIconsVisibility(!iconCulling.hideAll);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
       viewer.requestRedraw();

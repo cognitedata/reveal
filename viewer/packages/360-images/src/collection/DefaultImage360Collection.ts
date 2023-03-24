@@ -87,9 +87,9 @@ export class DefaultImage360Collection implements Image360Collection {
    * Set visibility of all 360 image icons.
    * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
    */
-  public set360CollectionVisibility(visible: boolean): void {
+  public setIconsVisibility(visible: boolean): void {
     this._isCollectionVisible = visible;
-    this.setIconsVisibility(visible);
+    this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
   }
 
   /**
@@ -116,10 +116,6 @@ export class DefaultImage360Collection implements Image360Collection {
       default:
         assertNever(event, `Unsupported event: '${event}'`);
     }
-  }
-
-  public setIconsVisibility(visible: boolean): void {
-    this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
   }
 
   public setSelectedVisibility(visible: boolean): void {
