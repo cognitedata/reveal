@@ -13,13 +13,14 @@ export const AlertText = styled(Col)`
 
 export const AlertAction = styled(Button)`
   &&& {
+    height: 28px;
     background-color: var(--cogs-surface--status-warning--muted--default);
     border: 0;
     padding: 0;
     color: var(--cogs-text-icon--status-warning);
-    padding: 0em 10px;
+    padding: 0px 5px 0px 10px;
     i {
-      margin-left: 5px;
+      margin-left: 3px;
     }
   }
 `;

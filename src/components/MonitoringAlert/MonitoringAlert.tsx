@@ -123,9 +123,12 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
 const ResolvedText = styled.div`
   position: relative;
   top: 8px;
+  left: 1.5px;
   margin-right: 7px;
-  letter-spacing: 0.1rem;
+  font-weight: 500;
+  line-height: 1;
   margin-bottom: 1em;
+  color: var(--cogs-text-icon--status-undefined);
 `;
 
 const ResolverContainer = styled.div`
