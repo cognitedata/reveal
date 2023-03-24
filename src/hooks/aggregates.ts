@@ -27,7 +27,7 @@ const topLevelProperties: Record<T, string[]> = {
   events: ['type', 'subtype', 'description', 'source'],
   files: ['name', 'directory', 'source', 'mimeType'],
   sequences: ['name', 'description'],
-  threeD: ['name', 'depth', 'parentId'],
+  threeD: ['name'],
 };
 
 export const useAggregateProperties = (
