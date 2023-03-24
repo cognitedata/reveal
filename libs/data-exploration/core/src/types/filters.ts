@@ -31,7 +31,6 @@ export interface FilterProps {
 export type InternalCommonFilters = {
   assetSubtreeIds?: { label?: string; value: number }[];
   dataSetIds?: { label?: string; value: number }[];
-  // metadata?: Metadata;
   createdTime?: DateRange;
   lastUpdatedTime?: DateRange;
   externalIdPrefix?: string;

@@ -2,17 +2,19 @@ import { Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { FilterLabel } from '../../Labels/FilterLabel';
 
+export interface NumberInputProps {
+  label?: string;
+  placeholder?: string;
+  value?: number | undefined;
+  onChange?: (newValue: number | undefined) => void;
+}
+
 export const NumberInput = ({
   value,
   onChange,
   label,
   placeholder = 'Enter exact match...',
-}: {
-  label?: string;
-  placeholder?: string;
-  value?: number | undefined;
-  onChange?: (newValue: number | undefined) => void;
-}) => {
+}: NumberInputProps) => {
   const handleValueChange = (newValue: string | undefined) => {
     onChange?.(Number(newValue));
   };

@@ -1,17 +1,19 @@
 import { Input } from '@cognite/cogs.js';
 import { FilterLabel } from '../../Labels/FilterLabel';
 
+export interface StringInputProps {
+  label?: string;
+  placeholder?: string;
+  value?: string | undefined;
+  onChange?: (newValue: string | undefined) => void;
+}
+
 export const StringInput = ({
   value,
   onChange,
   label,
   placeholder = 'Starts with...',
-}: {
-  label?: string;
-  placeholder?: string;
-  value?: string | undefined;
-  onChange?: (newValue: string | undefined) => void;
-}) => {
+}: StringInputProps) => {
   const handleOnChange = (newValue: string | undefined) => {
     onChange?.(newValue && newValue.length > 0 ? newValue : undefined);
   };
