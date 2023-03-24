@@ -14,7 +14,7 @@ const QuickMatchCreate = (): JSX.Element => {
   const { hasNextStep, hasPrevStep, popStep, pushStep } =
     useQuickMatchContext();
 
-  const configureModel = window.location.href.indexOf('configure-model') === -1;
+  const configureModel = window.location.href.indexOf('configure-model') !== -1;
 
   return (
     <Page
@@ -32,7 +32,7 @@ const QuickMatchCreate = (): JSX.Element => {
             }}
             type="primary"
           >
-            {configureModel ? t('navigate-next') : t('run-model')}
+            {configureModel ? t('run-model') : t('navigate-next')}
           </Button>
         </Flex>
       }
