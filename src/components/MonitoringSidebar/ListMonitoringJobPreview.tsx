@@ -34,7 +34,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Monitoring Job deleted succesfully',
   'Unable to subscribe',
   'Unable to unsubscribe',
-  'Show All',
+  'History',
   'Last alert:',
   'None',
   'Email not found',
@@ -288,7 +288,7 @@ const ListMonitoringJobPreview = ({
           {alerts?.length ? (
             <Col span={7}>
               <ShowAllButton onClick={handleClickAlerts}>
-                {t['Show All']}
+                {t.History}
                 <Icon type="ArrowRight" size={10} />
               </ShowAllButton>
             </Col>
