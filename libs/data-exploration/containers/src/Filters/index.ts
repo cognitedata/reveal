@@ -7,6 +7,7 @@ export * from './AssetSelectFilter';
 export * from './DataSetFilter';
 export * from './SubtypeFilter';
 export * from './TypeFilter';
+export * from './AuthorFilter';
 export * from './UnitFilter';
 export * from './LabelFilter';
 export * from './utils';
