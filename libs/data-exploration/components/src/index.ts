@@ -10,4 +10,5 @@ export * from './Select';
 export * from './DatePicker';
 export * from './CheckboxSelect';
 export * from './__test-utils';
+export * from './ExplorationFilterToggle';
 export * from './Common';
