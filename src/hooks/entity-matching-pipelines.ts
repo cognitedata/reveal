@@ -10,6 +10,8 @@ import {
 } from '@tanstack/react-query';
 import { PipelineSourceType, TargetType } from 'types/api';
 import { toast } from '@cognite/cogs.js';
+import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
+import { DEFAULT_MODEL_FEATURE_TYPE } from 'common/constants';
 
 export type Pipeline = {
   id: number;
@@ -25,6 +27,11 @@ export type Pipeline = {
     dataSetIds: { id: number }[];
     resource: TargetType;
   };
+  modelParameters?: {
+    featureType?: EMFeatureType;
+    matchFields?: ModelMapping;
+  };
+  generateRules?: boolean;
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (
@@ -113,6 +120,10 @@ export const useCreatePipeline = (
               targets: {
                 dataSetIds: [],
                 resource: 'assets',
+              },
+              modelParameters: {
+                featureType: DEFAULT_MODEL_FEATURE_TYPE,
+                matchFields: [{ source: 'name', target: 'name' }],
               },
             },
           }

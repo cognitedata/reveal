@@ -31,7 +31,10 @@ type PipelineSourceTableColumnType = ColumnType<PipelineSourceTableRecord> & {
   key: string;
 };
 
-const pipelineSourceToAPIType: Record<PipelineSourceType, API> = {
+export const pipelineSourceToAPIType: Record<
+  PipelineSourceType,
+  Exclude<API, 'assets' | 'threeD'>
+> = {
   events: 'events',
   files: 'files',
   sequences: 'sequences',

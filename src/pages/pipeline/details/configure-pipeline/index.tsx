@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Button, Flex } from '@cognite/cogs.js';
 import { Collapse } from 'antd';
 
@@ -8,28 +6,59 @@ import FieldMapping from 'components/field-mapping';
 import Radio from 'components/radio';
 import RadioBox from 'components/radio-box';
 import Step from 'components/step';
-import { EMFeatureType, useQuickMatchContext } from 'context/QuickMatchContext';
+import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
+import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
+import { useState } from 'react';
+import { pipelineSourceToAPIType } from '../sources';
 
-const ConfigureModel = (): JSX.Element => {
+type ConfigurePipelineProps = {
+  pipeline: Pipeline;
+};
+
+const ConfigurePipeline = ({
+  pipeline,
+}: ConfigurePipelineProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] =
-    useState(false);
+  const { mutate } = useUpdatePipeline();
 
-  const {
-    sourceType,
-    matchFields: modelFieldMapping,
-    setModelFieldMapping,
-    supervisedMode,
-    setSupervisedMode,
-    featureType,
-    setFeatureType,
-    scope,
-    setScope,
-  } = useQuickMatchContext();
+  const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
+    !!pipeline.modelParameters?.featureType &&
+      pipeline.modelParameters?.featureType !== 'simple'
+  );
+
+  const handleUpdateMatchFields = (modelMapping: ModelMapping): void => {
+    mutate({
+      id: pipeline.id,
+      modelParameters: {
+        featureType: pipeline.modelParameters?.featureType,
+        matchFields: modelMapping.map(({ source, target }) => ({
+          source: source === undefined ? '' : source,
+          target: target === undefined ? '' : target,
+        })),
+      },
+    });
+  };
+
+  const handleUpdateFeatureType = (featureType: EMFeatureType): void => {
+    mutate({
+      id: pipeline.id,
+      modelParameters: {
+        featureType,
+        matchFields: pipeline.modelParameters?.matchFields,
+      },
+    });
+  };
+
+  const handleUpdateGenerateRules = (shouldGenerateRules: boolean): void => {
+    mutate({
+      id: pipeline.id,
+      generateRules: shouldGenerateRules,
+    });
+  };
 
   return (
-    <Step isCentered title={t('configure-model-step-title', { step: 3 })}>
+    <Step isCentered title={t('configure-pipeline-step-title', { step: 3 })}>
       <Flex direction="column">
         <Step.Section>
           <Step.SectionHeader
@@ -37,20 +66,23 @@ const ConfigureModel = (): JSX.Element => {
             title={t('model-configuration-fields-header')}
           />
           <FieldMapping
-            sourceType={sourceType}
+            sourceType={pipelineSourceToAPIType[pipeline.sources.resource]}
             targetType="assets"
-            modelFieldMapping={modelFieldMapping}
-            setModelFieldMapping={setModelFieldMapping}
+            modelFieldMapping={pipeline.modelParameters?.matchFields ?? []}
+            setModelFieldMapping={handleUpdateMatchFields}
           />
         </Step.Section>
+
         <Step.Section>
           <Step.SectionHeader
             subtitle={t('model-configuration-model-score-body')}
             title={t('model-configuration-model-score-header')}
           />
           <Radio.Group
-            value={featureType}
-            onChange={(e) => setFeatureType(e.target.value as EMFeatureType)}
+            value={pipeline.modelParameters?.featureType}
+            onChange={(e) =>
+              handleUpdateFeatureType(e.target.value as EMFeatureType)
+            }
           >
             <Flex direction="column" gap={4}>
               <Radio
@@ -119,35 +151,24 @@ const ConfigureModel = (): JSX.Element => {
         </Step.Section>
         <Step.Section>
           <Step.SectionHeader
-            subtitle={t('model-configuration-model-type-body')}
-            title={t('model-configuration-model-type-header')}
+            subtitle={t('model-configuration-generate-rules-subtitle')}
+            title={t('model-configuration-generate-rules-title')}
           />
           <Radio.Group
-            onChange={(e) => setSupervisedMode(e.target.value === 'supervised')}
-            value={supervisedMode ? 'supervised' : 'unsupervised'}
+            onChange={(e) =>
+              handleUpdateGenerateRules(e.target.value === 'generate')
+            }
+            value={pipeline.generateRules ? 'generate' : 'do-not-generate'}
           >
             <Flex>
-              <RadioBox checked={!supervisedMode} value="unsupervised">
-                {t('unsupervised-model')}
+              <RadioBox checked={pipeline.generateRules} value="generate">
+                {t('generate-rules')}
               </RadioBox>
-              <RadioBox checked={supervisedMode} value="supervised">
-                {t('supervised-model')}
-              </RadioBox>
-            </Flex>
-          </Radio.Group>
-        </Step.Section>
-        <Step.Section>
-          <Step.SectionHeader
-            subtitle={t('model-configuration-scope-desc')}
-            title={t('model-configuration-scope-header')}
-          />
-          <Radio.Group onChange={(e) => setScope(e.target.value)} value={scope}>
-            <Flex>
-              <RadioBox checked={scope === 'all'} value="all">
-                {t('model-configuration-scope-all')}
-              </RadioBox>
-              <RadioBox checked={scope === 'unmatched'} value="unmatched">
-                {t('model-configuration-scope-unmatched-only')}
+              <RadioBox
+                checked={!pipeline.generateRules}
+                value="do-not-generate"
+              >
+                {t('do-not-generate-rules')}
               </RadioBox>
             </Flex>
           </Radio.Group>
@@ -157,4 +178,4 @@ const ConfigureModel = (): JSX.Element => {
   );
 };
 
-export default ConfigureModel;
+export default ConfigurePipeline;

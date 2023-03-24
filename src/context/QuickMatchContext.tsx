@@ -36,7 +36,10 @@ export type EMFeatureType =
 type TimeseriesKeys = keyof Pick<Timeseries, 'unit' | 'name' | 'description'>;
 type AssetKeys = keyof Pick<Asset, 'name' | 'description'>;
 
-export type ModelMapping = { source?: TimeseriesKeys; target?: AssetKeys }[];
+export type ModelMapping = {
+  source?: TimeseriesKeys | '';
+  target?: AssetKeys | '';
+}[];
 
 export type Scope = 'all' | 'unmatched';
 
