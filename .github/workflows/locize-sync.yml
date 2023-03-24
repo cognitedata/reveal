@@ -1,8 +1,8 @@
 name: Sync added and deleted keys to locize
 on:
-  pull_request:
+  push:
     branches:
-      - '*'
+      - master
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
