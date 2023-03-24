@@ -24,13 +24,6 @@ export const AlertAction = styled(Button)`
   }
 `;
 
-export const AlertActionTitle = styled.div`
-  &&& {
-    font-size: 80%;
-    margin-bottom: 0.5em;
-  }
-`;
-
 export const ModalBody = styled.div`
   &&& {
     margin: 1em 0em;

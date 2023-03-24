@@ -19,6 +19,7 @@ import {
   MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
   MONITORING_SIDEBAR_SHOW_ALERTS,
+  MONITORING_FILTER,
 } from 'utils/constants';
 import { startTimer, trackUsage } from 'services/metrics';
 import CreateMonitoringJob from './CreateMonitoringJob';
@@ -54,6 +55,8 @@ export const MonitoringSidebar = memo(
       MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR
     );
 
+    const [, setMonitoringFilter] = useSearchParam(MONITORING_FILTER);
+
     const t = {
       ...defaultTranslation,
       ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar')
@@ -73,6 +76,7 @@ export const MonitoringSidebar = memo(
         setMonitoringJobIdParam(undefined);
         setMonitoringFolder(undefined);
         setMonitoringShowAlerts(undefined);
+        setMonitoringFilter();
       };
     }, []);
 

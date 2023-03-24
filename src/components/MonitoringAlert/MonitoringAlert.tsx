@@ -7,12 +7,7 @@ import { durationFormatter } from 'utils/date';
 import { trackUsage } from 'services/metrics';
 import { AlertResponse } from './types';
 import { useAlertsResolveCreate } from './hooks';
-import {
-  AlertAction,
-  AlertActionTitle,
-  AlertText,
-  ModalBody,
-} from './elements';
+import { AlertAction, AlertText, ModalBody } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
   'Change Status',
@@ -41,16 +36,6 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
 
   const onCloseDropdown = () => setIsMenuOpen(false);
   const onOpenDropdown = () => setIsMenuOpen(true);
-  const popperOptions = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, -110],
-        },
-      },
-    ],
-  };
   const date = format(new Date(Number(alert.startTime)), 'dd/MM/yyyy HH:mm');
   const duration =
     alert.startTime &&
@@ -71,13 +56,12 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
         <ResolverContainer>
           {!alert.closed ? (
             <Dropdown
-              popperOptions={popperOptions}
               visible={isMenuOpen}
               onClickOutside={onCloseDropdown}
               content={
                 <div>
                   <Menu onClick={onCloseDropdown} style={{ width: '14rem' }}>
-                    <AlertActionTitle>{t['Change Status']}</AlertActionTitle>
+                    <Menu.Header>{t['Change Status']}</Menu.Header>
 
                     <Menu.Item
                       key="alert-row-inactive"

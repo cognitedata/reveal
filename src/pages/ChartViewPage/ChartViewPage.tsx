@@ -27,6 +27,7 @@ import {
   MONITORING_SIDEBAR_KEY,
   ALERTING_SIDEBAR_KEY,
   THRESHOLD_SIDEBAR_KEY,
+  ALERTING_FILTER,
 } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
@@ -142,6 +143,7 @@ const ChartViewPage = () => {
   );
   const [activeSidebar = '', setActiveSidebarQuery] =
     useSearchParam(ACTIVE_SIDEBAR_KEY);
+  const [, setAlertingFilter] = useSearchParam(ALERTING_FILTER);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showDataProfilingSidebar, setShowDataProfilingSidebar] =
     useState(false);
@@ -470,6 +472,7 @@ const ChartViewPage = () => {
   }, []);
 
   const handleCloseAlertingSidebar = useCallback(() => {
+    setAlertingFilter();
     setShowAlertingSidebar(false);
     setActiveSidebarQuery('');
     trackUsage('Sidebar.Alerting.Close');
@@ -980,6 +983,9 @@ const ChartViewPage = () => {
                         accessible: isAlertingAccessible,
                       }
                     );
+                    if (showAlertingSidebar) {
+                      setAlertingFilter();
+                    }
                     handleAlertingSidebarToggle();
                   }}
                   disabled={!isAlertingAccessible}

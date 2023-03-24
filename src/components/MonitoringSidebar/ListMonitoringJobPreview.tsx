@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
 import styled from 'styled-components';
 import Dropdown from 'components/Dropdown/Dropdown';
-import { Button, Icon, toast } from '@cognite/cogs.js';
+import { Button, Icon, toast, Body } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { nanoid } from 'nanoid';
@@ -34,7 +34,6 @@ const defaultTranslations = makeDefaultTranslations(
   'Monitoring Job deleted succesfully',
   'Unable to subscribe',
   'Unable to unsubscribe',
-  'History',
   'Show All',
   'Last alert:',
   'None',
@@ -268,7 +267,9 @@ const ListMonitoringJobPreview = ({
         </Col>
       </HeaderRow>
       <Row>
-        <MonitoringJobTitle>{externalId}</MonitoringJobTitle>
+        <MonitoringJobTitle level={2} strong>
+          {externalId}
+        </MonitoringJobTitle>
       </Row>
       <ConditionRow>
         <JobCondition job={monitoringJob} />
@@ -283,12 +284,15 @@ const ListMonitoringJobPreview = ({
               ? lastAlertdate === undefined && t.None
               : null}
           </Col>
-          <Col span={7}>
-            <ShowAllButton onClick={handleClickAlerts}>
-              {t['Show All']}
-              <Icon type="ArrowRight" size={10} />
-            </ShowAllButton>
-          </Col>
+
+          {alerts?.length ? (
+            <Col span={7}>
+              <ShowAllButton onClick={handleClickAlerts}>
+                {t['Show All']}
+                <Icon type="ArrowRight" size={10} />
+              </ShowAllButton>
+            </Col>
+          ) : null}
         </FooterRow>
       )}
     </MonitoringJobPreview>
@@ -316,9 +320,8 @@ export const ShowAllButton = styled(Button)`
   }
 `;
 
-export const MonitoringJobTitle = styled.div`
+export const MonitoringJobTitle = styled(Body)`
   margin-top: 0.3em;
-  font-weight: bold;
   text-overflow: ellipsis;
   width: 100%;
   overflow: hidden;

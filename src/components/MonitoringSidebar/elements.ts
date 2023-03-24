@@ -47,7 +47,6 @@ export const SidebarCollapseWrapped = styled(Collapse)`
         position: relative;
         background-color: #f5f5f5;
         border-radius: 4px;
-        font-weight: bold;
         i.cogs-icon-ChevronDownSmall {
           position: absolute;
           right: 10px;

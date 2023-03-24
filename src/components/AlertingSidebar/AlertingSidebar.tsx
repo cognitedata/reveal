@@ -4,7 +4,7 @@ import {
   TopContainerAside,
   TopContainerTitle,
 } from 'components/Common/SidebarElements';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useMonitoringFoldersWithJobs } from 'components/MonitoringSidebar/hooks';
 import { saveToLocalStorage } from '@cognite/storage';
@@ -18,9 +18,11 @@ import {
 } from 'components/MonitoringSidebar/JobAndAlertsFilter';
 import { useChartAtom } from 'models/chart/atom';
 import { trackUsage } from 'services/metrics';
+import { useSearchParam } from 'hooks/navigation';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
 import { getTsIds } from '../../domain/timeseries/internal/transformers/getTsIds';
 import { DisplayAlerts } from './DisplayAlerts';
+import { ALERTING_FILTER } from '../../utils/constants';
 
 const defaultTranslations = makeDefaultTranslations(
   'Alerts',
@@ -44,13 +46,11 @@ export const AlertingSidebar = ({
     ...translations,
   };
   const [chart] = useChartAtom();
-
-  const [filterOption, setFilterOption] = useState<FilterOption>(
-    ALERTING_FILTER_OPTIONS[0]
-  );
+  const [filterOption = ALERTING_FILTER_OPTIONS[0].value, setFilterOption] =
+    useSearchParam(ALERTING_FILTER);
 
   const handleFilterOptionChange = (updatedFilterOption: FilterOption) => {
-    setFilterOption(updatedFilterOption);
+    setFilterOption(updatedFilterOption.value);
     trackUsage('Sidebar.Alerting.FilterOptionChanged', {
       filter: updatedFilterOption.value,
     });
@@ -61,10 +61,9 @@ export const AlertingSidebar = ({
     isFetching,
     data: taskData,
   } = useMonitoringFoldersWithJobs('alerting-sidebar', {
-    subscribed: filterOption.value === 'subscribed',
-    timeseriesIds:
-      filterOption.value === 'current' ? getTsIds(chart) : undefined,
-    currentChart: filterOption.value === 'current',
+    subscribed: filterOption === 'subscribed',
+    timeseriesIds: filterOption === 'current' ? getTsIds(chart) : undefined,
+    currentChart: filterOption === 'current',
   });
 
   const cache = useQueryClient();
@@ -113,7 +112,11 @@ export const AlertingSidebar = ({
         <JobAndAlertsFilter
           mode="alerting"
           onChange={handleFilterOptionChange}
-          value={filterOption}
+          value={
+            ALERTING_FILTER_OPTIONS.find(
+              (option) => option.value === filterOption
+            )!
+          }
         />
         <DisplayAlerts
           jobs={allJobs}

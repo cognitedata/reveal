@@ -1,4 +1,12 @@
-import { Button, Col, Dropdown, Icon, Menu, Title } from '@cognite/cogs.js';
+import {
+  Button,
+  Col,
+  Dropdown,
+  Icon,
+  Menu,
+  Title,
+  Body,
+} from '@cognite/cogs.js';
 import { SidebarCollapseWrapped } from 'components/MonitoringSidebar/elements';
 import { Sidebar } from 'components/Common/SidebarElements';
 import styled from 'styled-components';
@@ -10,9 +18,8 @@ export const DividerLine = styled.div`
 `;
 
 export const JobContainer = styled.div`
-  padding: 0em 1em;
+  padding: 8px;
   background: var(--cogs-surface--strong);
-  padding-bottom: 1em;
 `;
 
 export const AlertContainer = styled.div`
@@ -21,9 +28,8 @@ export const AlertContainer = styled.div`
 `;
 
 export const TimeseriesContainer = styled.div`
-  position: relative;
-  top: -1.2em;
   font-size: 90%;
+  margin-top: 12px;
   i {
     position: relative;
     top: 3px;
@@ -31,11 +37,10 @@ export const TimeseriesContainer = styled.div`
   }
 `;
 
-export const ConditionContainer = styled.div`
-  position: relative;
-  top: -1.25em;
-  font-size: 90%;
-  font-weight: normal;
+export const ConditionContainer = styled(Body)`
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 16px;
 `;
 
 export const EmptyStateContainer = styled.div`
@@ -93,13 +98,6 @@ export const AlertAction = styled(Button)`
   }
 `;
 
-export const AlertActionTitle = styled.div`
-  &&& {
-    font-size: 80%;
-    margin-bottom: 0.5em;
-  }
-`;
-
 export const ModalBody = styled.div`
   &&& {
     margin: 1em 0em;
@@ -123,6 +121,7 @@ export const DropdownMenuItemDelete = styled(DropdownMenuItem)`
 export const MonitoringSidebarBlueButton = styled(Button)`
   &&& {
     margin-top: 1em;
+    margin-bottom: 1rem;
     color: var(--cogs-text-icon--status-neutral);
     background: var(--cogs-surface--status-neutral--muted--default);
     font-size: 0.9em;
@@ -156,6 +155,9 @@ export const SidebarCollapseAlert = styled(SidebarCollapseWrapped)`
       position: relative;
       background-color: #f5f5f5;
       border-radius: 4px;
+      .rc-collapse-header {
+        padding: 8px;
+      }
     }
   }
 `;

@@ -1,4 +1,4 @@
-import { Collapse } from '@cognite/cogs.js';
+import { Collapse, Flex, Body } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { MonitoringJob } from 'components/MonitoringSidebar/types';
 import {
@@ -7,10 +7,11 @@ import {
   LoadingRow,
 } from 'components/Common/SidebarElements';
 import EmptyState from 'components/AlertingSidebar/EmptyState';
-import { Col, Row } from 'antd';
 import { trackUsage } from 'services/metrics';
-import { SidebarCollapseAlert } from './elements';
+import JobCondition from 'components/MonitoringSidebar/JobCondition';
+import { SidebarCollapseAlert, ConditionContainer } from './elements';
 import MonitoringJobWithAlerts from './MonitoringJobWithAlerts';
+import { AlertsList } from './AlertsList';
 
 type DisplayAlertsProps = {
   isFetching: boolean;
@@ -44,21 +45,31 @@ export const DisplayAlerts = ({
         activeKey={activeKeys}
         onChange={handleToggleAccordian}
         expandIcon={({ isActive }) => (
-          <ExpandIcon $active={Boolean(isActive)} type="ChevronDownSmall" />
+          <ExpandIcon
+            $active={Boolean(isActive)}
+            type="ChevronDownSmall"
+            style={{ top: '14px' }}
+          />
         )}
       >
         {jobs?.map((job: MonitoringJob) => (
           <Collapse.Panel
             key={job.externalId}
             header={
-              <CollapsePanelTitle>
-                <Row align="middle" wrap={false}>
-                  <Col>{job.externalId}</Col>
-                </Row>
-              </CollapsePanelTitle>
+              <Flex direction="column">
+                <CollapsePanelTitle>
+                  <Body level={2} strong style={{ height: '16px' }}>
+                    {job.externalId}
+                  </Body>
+                </CollapsePanelTitle>
+                <ConditionContainer level={3}>
+                  <JobCondition job={job} />
+                </ConditionContainer>
+                <MonitoringJobWithAlerts job={job} key={job.id} />
+              </Flex>
             }
           >
-            <MonitoringJobWithAlerts
+            <AlertsList
               job={job}
               key={job.id}
               onViewMonitoringJobs={onViewMonitoringJobs}

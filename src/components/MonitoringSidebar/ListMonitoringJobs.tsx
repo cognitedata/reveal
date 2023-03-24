@@ -11,6 +11,7 @@ import { useSearchParam } from 'hooks/navigation';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
+  MONITORING_FILTER,
 } from 'utils/constants';
 import { useChartAtom } from 'models/chart/atom';
 import { trackUsage } from 'services/metrics';
@@ -35,11 +36,12 @@ const ListMonitoringJobs = memo(() => {
   const [monitoringJobIdParam] = useSearchParam(
     MONITORING_SIDEBAR_HIGHLIGHTED_JOB
   );
+  const [
+    filterOption = MONITORING_FILTER_OPTIONS[0].value,
+    setMonitoringFilter,
+  ] = useSearchParam(MONITORING_FILTER);
   const [activeKeys, setActiveKeys] = useState(
     monitoringFolderParam ? [monitoringFolderParam] : []
-  );
-  const [filterOption, setFilterOption] = useState<FilterOption>(
-    MONITORING_FILTER_OPTIONS[0]
   );
 
   const handleToggleAccordian = (key: any) => {
@@ -53,7 +55,7 @@ const ListMonitoringJobs = memo(() => {
     trackUsage('Sidebar.Monitoring.FilterOptionChanged', {
       filter: updatedFilterOption.value,
     });
-    setFilterOption(updatedFilterOption);
+    setMonitoringFilter(updatedFilterOption.value);
   };
 
   useEffect(() => {
@@ -63,10 +65,9 @@ const ListMonitoringJobs = memo(() => {
   const { data: folders, isFetching } = useMonitoringFoldersWithJobs(
     'monitoring-sidebar',
     {
-      subscribed: filterOption.value === 'subscribed',
-      timeseriesIds:
-        filterOption.value === 'current' ? getTsIds(chart) : undefined,
-      currentChart: filterOption.value === 'current',
+      subscribed: filterOption === 'subscribed',
+      timeseriesIds: filterOption === 'current' ? getTsIds(chart) : undefined,
+      currentChart: filterOption === 'current',
     }
   );
 
@@ -93,7 +94,11 @@ const ListMonitoringJobs = memo(() => {
       <JobAndAlertsFilter
         mode="monitoring"
         onChange={handleFilterOptionChange}
-        value={filterOption}
+        value={
+          MONITORING_FILTER_OPTIONS.find(
+            (option) => option.value === filterOption
+          )!
+        }
       />
       {folders?.length ? (
         <SidebarCollapseWrapped
