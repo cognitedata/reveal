@@ -143,7 +143,7 @@ const BoundaryConditionsTableContainer = styled.div`
   }
 `;
 
-const ProcessingStatus = styled(Label)`
+export const ProcessingStatus = styled(Label)`
   display: flex;
   align-items: center;
   justify-content: center;

@@ -6,7 +6,10 @@ import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
 import { Button, Icon, Skeleton, Tooltip, toast } from '@cognite/cogs.js';
-import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
+import type {
+  CogniteApiError,
+  ModelFile,
+} from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelBoundaryConditionListQuery,
   useGetModelFileQuery,
@@ -22,10 +25,18 @@ import { downloadModelFile } from 'utils/fileDownload';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
-import { BoundaryConditionTable } from './BoundaryConditionTable';
+import {
+  BoundaryConditionTable,
+  ProcessingStatus,
+} from './BoundaryConditionTable';
 
 interface ModelVersionDetailsProps {
   modelFile: ModelFile;
+}
+interface InteralError {
+  status?: number;
+  data?: { error?: CogniteApiError };
+  error?: CogniteApiError;
 }
 
 const PROCESSING_POLLING_INTERVAL = 2000; // 2 seconds
@@ -56,6 +67,8 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     data: boundaryConditions,
     isFetching: isFetchingBoundaryConditions,
     isSuccess: isSuccessBoundaryConditions,
+    isError: isErrorBoundaryConditions,
+    error: errorMessageBoundaryConditions,
   } = useGetModelBoundaryConditionListQuery(
     {
       project,
@@ -84,10 +97,14 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     const hasCalculationFailed =
       modelFileItem?.metadata.errorMessage !== undefined;
 
-    if (hasBoundaryConditions || hasCalculationFailed) {
+    if (
+      hasBoundaryConditions ||
+      hasCalculationFailed ||
+      !isErrorBoundaryConditions
+    ) {
       setIsProcessingReady(true);
     }
-  }, [boundaryConditions, modelFileItem]);
+  }, [boundaryConditions, modelFileItem, isErrorBoundaryConditions]);
 
   useEffect(() => {
     if (isProcessingReady) {
@@ -125,6 +142,14 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
 
   if (isFetchingBoundaryConditions && !isSuccessBoundaryConditions) {
     return <Skeleton.List lines={2} />;
+  }
+
+  if (isErrorBoundaryConditions) {
+    return (
+      <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
+        {(errorMessageBoundaryConditions as InteralError).data?.error?.message}
+      </ProcessingStatus>
+    );
   }
 
   const onDownloadClicked = async () => {
