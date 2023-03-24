@@ -52,7 +52,13 @@ import { Spinner } from '../../utilities/Spinner';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager } from '@reveal/camera-manager';
+import {
+  DefaultCameraManager,
+  CameraManager,
+  CameraChangeDelegate,
+  ProxyCameraManager,
+  CameraStopDelegate
+} from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
@@ -68,7 +74,14 @@ import { Image360Collection, Image360Entity, Image360 } from '@reveal/360-images
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 
-type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
+type Cognite3DViewerEvents =
+  | 'click'
+  | 'hover'
+  | 'cameraChange'
+  | 'cameraStop'
+  | 'beforeSceneRendered'
+  | 'sceneRendered'
+  | 'disposed';
 
 /**
  * @example
@@ -126,6 +139,7 @@ export class Cognite3DViewer {
 
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
+    cameraStop: new EventTrigger<CameraStopDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),
     hover: new EventTrigger<PointerEventDelegate>(),
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -253,6 +267,10 @@ export class Cognite3DViewer {
 
     this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
+    });
+
+    this._activeCameraManager.on('cameraStop', () => {
+      this._events.cameraStop.fire();
     });
 
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
@@ -447,6 +465,15 @@ export class Cognite3DViewer {
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
+   * @example
+   * ```js
+   * viewer.on('cameraStop', () => {
+   *   console.log('Camera stopped');
+   * });
+   * ```
+   */
+  on(event: 'cameraStop', callback: CameraStopDelegate): void;
+  /**
    * Event that is triggered immediately before the scene is rendered.
    * @param event Metadata about the rendering frame.
    * @param callback Callback to trigger when event occurs.
@@ -469,6 +496,7 @@ export class Cognite3DViewer {
     callback:
       | PointerEventDelegate
       | CameraChangeDelegate
+      | CameraStopDelegate
       | BeforeSceneRenderedDelegate
       | SceneRenderedDelegate
       | DisposedDelegate
@@ -484,6 +512,10 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'cameraStop':
+        this._events.cameraStop.subscribe(callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -518,6 +550,13 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
+   * @example
+   * ```js
+   * viewer.off('cameraStop', onCameraStop);
+   * ```
+   */
+  off(event: 'cameraStop', callback: CameraStopDelegate): void;
+  /**
    * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
@@ -547,6 +586,7 @@ export class Cognite3DViewer {
     callback:
       | PointerEventDelegate
       | CameraChangeDelegate
+      | CameraStopDelegate
       | BeforeSceneRenderedDelegate
       | SceneRenderedDelegate
       | DisposedDelegate
@@ -562,6 +602,10 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'cameraStop':
+        this._events.cameraStop.unsubscribe(callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
