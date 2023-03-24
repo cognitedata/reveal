@@ -2,7 +2,7 @@ import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/entity-matching-predictions';
-import { AppliedRules, Rule } from 'hooks/entity-matching-rules';
+import { AppliedRules } from 'hooks/entity-matching-rules';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { AssetIdUpdate } from 'hooks/types';
 import { useUpdateAssetIds } from 'hooks/update';
@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { SourceType } from 'types/api';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
+import Step from 'components/step';
 
 type Props = {
   predictJobId: number;
@@ -17,7 +18,6 @@ type Props = {
   sourceIdsSecondaryTopBar: number[];
   setSourceIdsSecondaryTopBar: Dispatch<SetStateAction<number[]>>;
   sourceType: SourceType;
-  rules?: Rule[];
   appliedRules?: AppliedRules[];
 };
 export default function EntityMatchingResult({
@@ -53,28 +53,32 @@ export default function EntityMatchingResult({
 
   return (
     <>
-      <StyledFlex direction="column">
-        <Flex justifyContent="flex-end">
-          <StyledButton
-            type="primary"
-            disabled={isLoading}
-            onClick={() => applyAll()}
-          >
-            {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
-          </StyledButton>
-        </Flex>
-        <QuickMatchResultsTable
-          predictions={predictions}
-          sourceIds={sourceIds}
-          setSourceIds={setSourceIds}
-        />
-      </StyledFlex>
-
+      <Step
+        title={t('result-step-title', { step: 4 })}
+        subtitle={t('result-step-subtitle')}
+      >
+        <StyledFlex direction="column">
+          <Flex justifyContent="flex-end">
+            <StyledButton
+              type="primary"
+              disabled={isLoading}
+              onClick={() => applyAll()}
+            >
+              {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
+            </StyledButton>
+          </Flex>
+          <QuickMatchResultsTable
+            predictions={predictions}
+            sourceIds={sourceIds}
+            setSourceIds={setSourceIds}
+          />
+        </StyledFlex>
+      </Step>
       <QuickMatchActionBar
-        selectedRows={sourceIds}
-        sourceType={sourceType}
-        onClose={onClose}
-      />
+          selectedRows={sourceIds}
+          sourceType={sourceType}
+          onClose={onClose}
+       />
     </>
   );
 }

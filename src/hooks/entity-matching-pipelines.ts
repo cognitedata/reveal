@@ -10,6 +10,8 @@ import {
 } from '@tanstack/react-query';
 import { PipelineSourceType, TargetType } from 'types/api';
 import { toast } from '@cognite/cogs.js';
+import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
+import { DEFAULT_MODEL_FEATURE_TYPE } from 'common/constants';
 
 export type Pipeline = {
   id: number;
@@ -25,6 +27,11 @@ export type Pipeline = {
     dataSetIds: { id: number }[];
     resource: TargetType;
   };
+  modelParameters?: {
+    featureType?: EMFeatureType;
+    matchFields?: ModelMapping;
+  };
+  generateRules?: boolean;
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (
@@ -113,6 +120,10 @@ export const useCreatePipeline = (
               targets: {
                 dataSetIds: [],
                 resource: 'assets',
+              },
+              modelParameters: {
+                featureType: DEFAULT_MODEL_FEATURE_TYPE,
+                matchFields: [{ source: 'name', target: 'name' }],
               },
             },
           }
@@ -243,5 +254,81 @@ export const useDuplicateEMPipeline = () => {
         queryClient.invalidateQueries(getEMPipelinesKey());
       },
     }
+  );
+};
+
+type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
+
+type EMPipelineRun = {
+  status: EMPipelineRunStatus;
+  createdTime: number;
+  startTime: number;
+  statusTime: number;
+  jobId: number;
+  pipelineId?: number;
+};
+
+type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;
+
+export const useRunEMPipeline = (
+  options?: UseMutationOptions<
+    EMPipelineRun,
+    CogniteError,
+    RunEMPipelineMutationVariables
+  >
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    EMPipelineRun,
+    CogniteError,
+    RunEMPipelineMutationVariables
+  >(
+    async (variables: RunEMPipelineMutationVariables) =>
+      sdk
+        .post<EMPipelineRun>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run`,
+          {
+            data: {
+              id: variables.id,
+            },
+          }
+        )
+        .then((r) => r.data),
+
+    {
+      ...options,
+      onSuccess: (...args) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        options?.onSuccess?.(...args);
+      },
+    }
+  );
+};
+
+const geEMPipelineRunKey = (pipelineId: number, jobId?: number): QueryKey => [
+  'em',
+  'pipeline',
+  pipelineId,
+  'run',
+  jobId,
+];
+export const useEMPipelineRun = (
+  pipelineId: number,
+  jobId?: number,
+  options?: UseQueryOptions<EMPipelineRun, CogniteError, EMPipelineRun>
+) => {
+  const sdk = useSDK();
+
+  return useQuery<EMPipelineRun, CogniteError, EMPipelineRun>(
+    geEMPipelineRunKey(pipelineId, jobId),
+    async () =>
+      sdk
+        .get<EMPipelineRun>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/${jobId}`
+        )
+        .then((r) => r.data),
+    options
   );
 };

@@ -67,7 +67,7 @@ const App = () => {
                         element={<QuickMatch />}
                       />
                       <Route
-                        path="/:projectName/:subAppPath/pipeline*"
+                        path="/:projectName/:subAppPath/pipeline/:pipelineId*"
                         element={<Pipeline />}
                       />
                       <Route
