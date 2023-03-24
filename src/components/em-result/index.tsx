@@ -9,6 +9,7 @@ import { useUpdateAssetIds } from 'hooks/update';
 import styled from 'styled-components';
 import { SourceType } from 'types/api';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
+import Step from 'components/step';
 
 type Props = {
   predictJobId: number;
@@ -49,22 +50,27 @@ export default function EntityMatchingResult({
   );
 
   return (
-    <StyledFlex direction="column">
-      <Flex justifyContent="flex-end">
-        <StyledButton
-          type="primary"
-          disabled={isLoading}
-          onClick={() => applyAll()}
-        >
-          {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
-        </StyledButton>
-      </Flex>
-      <QuickMatchResultsTable
-        predictions={predictions}
-        sourceIds={sourceIds}
-        setSourceIds={setSourceIds}
-      />
-    </StyledFlex>
+    <Step
+      title={t('result-step-title', { step: 4 })}
+      subtitle={t('result-step-subtitle')}
+    >
+      <StyledFlex direction="column">
+        <Flex justifyContent="flex-end">
+          <StyledButton
+            type="primary"
+            disabled={isLoading}
+            onClick={() => applyAll()}
+          >
+            {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
+          </StyledButton>
+        </Flex>
+        <QuickMatchResultsTable
+          predictions={predictions}
+          sourceIds={sourceIds}
+          setSourceIds={setSourceIds}
+        />
+      </StyledFlex>
+    </Step>
   );
 }
 

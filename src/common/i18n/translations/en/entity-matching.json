@@ -163,6 +163,8 @@
   "pipeline": "Pipeline",
   "cannot-select-resource-type-as-source": "Cannot select {{resourceType}} as source: {{error}}",
   "select-source-step-title": "{{step}}. Select source",
+  "result-step-title": "{{step}}. Review results",
+  "result-step-subtitle": "Select the matches you want to apply and save to CDF.",
   "select-source-step-subtitle": "Select the resources you want to match with assets",
   "select-target-step-title": "{{step}}. Select target assets",
   "select-target-step-subtitle": "Select the assets you want to match with the selected resources",
