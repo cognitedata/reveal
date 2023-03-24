@@ -2,8 +2,6 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import { MutationStatus } from '@tanstack/react-query';
 import { JobStatus } from 'hooks/types';
 
-import styled from 'styled-components';
-
 export default function QueryStatusIcon({
   status,
 }: {
@@ -14,7 +12,7 @@ export default function QueryStatusIcon({
     case 'Running':
     case 'Queued': {
       return (
-        <StyledIcon
+        <Icon
           css={{ color: Colors['text-icon--status-neutral'] }}
           type="Loader"
         />
@@ -23,16 +21,16 @@ export default function QueryStatusIcon({
     case 'success':
     case 'Completed': {
       return (
-        <StyledIcon
-          css={{ color: Colors['text-icon--on-contrast--strong'] }}
-          type="Checkmark"
+        <Icon
+          css={{ color: Colors['text-icon--status-neutral'] }}
+          type="CheckmarkFilled"
         />
       );
     }
     case 'error':
     case 'Failed': {
       return (
-        <StyledIcon
+        <Icon
           css={{ color: Colors['text-icon--status-critical'] }}
           type="Error"
         />
@@ -40,18 +38,19 @@ export default function QueryStatusIcon({
     }
     case 'idle': {
       return (
-        <StyledIcon
-          css={{ color: Colors['text-icon--on-contrast--strong'] }}
+        <Icon
+          css={{ color: Colors['text-icon--status-undefined'] }}
           type="Pause"
         />
       );
     }
     default: {
-      return null;
+      return (
+        <Icon
+          css={{ color: Colors['text-icon--status-undefined'] }}
+          type="Remove"
+        />
+      );
     }
   }
 }
-
-const StyledIcon = styled(Icon)`
-  margin-left: 0.5rem;
-`;

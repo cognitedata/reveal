@@ -1,12 +1,10 @@
+import { Loader } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import ApplySelectedMatchesButton from 'components/apply-selected-matches-button/ApplySelectedMatchesButton';
 import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
 import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
-import {
-  useApplyRulesResults,
-  useRulesResults,
-} from 'hooks/entity-matching-rules';
+import { useApplyRulesResults } from 'hooks/entity-matching-rules';
 
 import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
 import { useState } from 'react';
@@ -15,7 +13,6 @@ import { SourceType } from 'types/api';
 import {
   sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
-  sessionStorageRulesJobKey,
 } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
@@ -23,7 +20,6 @@ const QuickMatchResults = (): JSX.Element => {
   const {
     subAppPath,
     predictJobId: predictJobIdStr,
-    rulesJobId: rulesJobIdStr,
     applyRulesJobId: applyRulesJobIdStr,
     sourceType,
   } = useParams<{
@@ -36,45 +32,34 @@ const QuickMatchResults = (): JSX.Element => {
 
   const { t } = useTranslation();
   const predictJobId = parseInt(predictJobIdStr ?? '', 10);
-  const rulesJobId = parseInt(rulesJobIdStr ?? '', 10);
   const applyRulesJobId = parseInt(applyRulesJobIdStr ?? '', 10);
 
   const predictJobToken = sessionStorage.getItem(
     sessionStoragePredictJobKey(predictJobId)
   );
 
-  const rulesJobToken = sessionStorage.getItem(
-    sessionStorageRulesJobKey(rulesJobId)
-  );
   const applyRulesJobToken = sessionStorage.getItem(
     sessionStorageApplyRulesJobKey(applyRulesJobId)
   );
 
-  const { data: predictions } = useEMModelPredictResults(
-    predictJobId,
-    predictJobToken,
-    {
+  const { data: predictions, isInitialLoading: loadingPredictions } =
+    useEMModelPredictResults(predictJobId, predictJobToken, {
       enabled: !!predictJobId,
       ...INFINITE_Q_OPTIONS,
-    }
-  );
+    });
 
-  const { data: rules } = useRulesResults(rulesJobId, rulesJobToken, {
-    enabled: !!rulesJobId,
-    ...INFINITE_Q_OPTIONS,
-  });
-
-  const { data: appliedRules } = useApplyRulesResults(
-    applyRulesJobId,
-    applyRulesJobToken,
-    {
+  const { data: appliedRules, isInitialLoading: loadingAppliedRules } =
+    useApplyRulesResults(applyRulesJobId, applyRulesJobToken, {
       enabled: !!applyRulesJobId,
       ...INFINITE_Q_OPTIONS,
-    }
-  );
+    });
 
   if (!sourceType) {
     return <Navigate to={`/${subAppPath}/quick-match/}`} replace={true} />;
+  }
+
+  if (loadingPredictions || loadingAppliedRules) {
+    return <Loader />;
   }
 
   return (
@@ -99,7 +84,6 @@ const QuickMatchResults = (): JSX.Element => {
               predictions={predictions.items}
               sourceIdsSecondaryTopBar={sourceIds}
               setSourceIdsSecondaryTopBar={setSourceIds}
-              rules={rules?.rules}
               appliedRules={appliedRules?.items}
             />
           )}

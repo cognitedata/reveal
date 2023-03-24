@@ -1,4 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
+import { INFINITE_Q_OPTIONS } from './infiniteList';
 import { CogniteError } from '@cognite/sdk';
 import {
   QueryKey,
@@ -118,7 +119,7 @@ export const useRulesResults = (
             return Promise.reject(r);
           }
         }),
-    opts
+    { ...opts, ...INFINITE_Q_OPTIONS }
   );
 };
 
@@ -189,6 +190,6 @@ export const useApplyRulesResults = (
             return Promise.reject(r);
           }
         }),
-    opts
+    { ...opts, ...INFINITE_Q_OPTIONS }
   );
 };

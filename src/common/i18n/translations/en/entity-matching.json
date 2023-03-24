@@ -153,7 +153,8 @@
   "create-apply-rules-job-loading": "Creating the apply rules job",
   "create-apply-rules-job-success": "Created the apply rules job",
 
-  "do-not-leave-the-page-quick-match": "Creating the job, please do not leave the page",
+  "do-not-leave-the-page-quick-match": "Running the model, please do not leave the page",
+  "do-not-leave-the-page-pipeline": "Running the pipeline, please do not leave the page",
   "results": "Results",
   "revision-title": "Revision #{{i}}",
   "create": "Create",
@@ -190,5 +191,14 @@
   "model-configuration-generate-rules-title": "Generate rules",
   "model-configuration-generate-rules-subtitle": "On top of matching resources, the model also generates rules to demonstrate similarities between matches and group matches based on the patterns. You can uncheck this option if you don't need the rules or want to review results quicker.",
   "generate-rules": "Generate rules",
-  "do-not-generate-rules": "Do not generate rules"
+  "do-not-generate-rules": "Do not generate rules",
+  "create-job-error": "Failed to create job",
+  "create-job-idle": "Waiting to create job",
+  "create-job-loading": "Creating job",
+  "create-job-success": "Created job",
+  "running-job-Completed": "Job is completed",
+  "running-job-Failed": "Job is failed",
+  "running-job-Queued": "Job is queued",
+  "running-job-Running": "Job is running",
+  "running-job-undefined": "Waiting for job to be created"
 }
