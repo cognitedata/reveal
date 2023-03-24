@@ -1,7 +1,10 @@
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 
-import Page from 'components/page';
+import { Button, Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
+import { createLink } from '@cognite/cdf-utilities';
 
+import Page from 'components/page';
 import NoAccessPage from 'components/error-pages/NoAccess';
 import UnknownErrorPage from 'components/error-pages/UnknownError';
 import { useEMPipeline } from 'hooks/entity-matching-pipelines';
@@ -9,9 +12,6 @@ import { useEMPipeline } from 'hooks/entity-matching-pipelines';
 import Sources from './sources';
 import Targets from './targets';
 import ConfigurePipeline from './configure-pipeline';
-import { Button, Flex } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import { createLink } from '@cognite/cdf-utilities';
 import Run from './run';
 
 const PIPELINE_STEPS = [
@@ -78,7 +78,7 @@ const PipelineDetails = (): JSX.Element => {
 
   const handleGoNextStep = () => {
     navigate(
-      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/${nextStep}`),
+      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/details/${nextStep}`),
       {
         replace: true,
       }
@@ -87,7 +87,7 @@ const PipelineDetails = (): JSX.Element => {
 
   const handleGoPrevStep = () => {
     navigate(
-      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/${prevStep}`),
+      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/details/${prevStep}`),
       {
         replace: true,
       }

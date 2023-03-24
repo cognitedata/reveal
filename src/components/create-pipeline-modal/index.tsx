@@ -42,7 +42,7 @@ const CreatePipelineModal = ({
         description: values.description,
       }).then(({ id }) => {
         onCancel?.();
-        navigate(createLink(`/${subAppPath}/pipeline/${id}/sources`));
+        navigate(createLink(`/${subAppPath}/pipeline/${id}/details/sources`));
       });
     },
     validate: handleValidate,

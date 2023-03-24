@@ -9,7 +9,9 @@ import {
 } from 'hooks/entity-matching-pipelines';
 import { createLink } from '@cognite/cdf-utilities';
 import { IN_PROGRESS_EM_STATES } from 'hooks/types';
-import { Icon } from '@cognite/cogs.js';
+import { Flex, Infobox } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
+import QueryStatusIcon from 'components/QueryStatusIcon';
 
 type RunProps = {
   pipeline: Pipeline;
@@ -21,9 +23,12 @@ const Run = ({ pipeline }: RunProps): JSX.Element => {
     jobId?: string;
   }>();
 
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
-  const { mutateAsync: runEMPipeline } = useRunEMPipeline();
+  const { mutateAsync: runEMPipeline, status: runEMPipelineStatus } =
+    useRunEMPipeline();
 
   const [emPipelineRunRefetchInterval, setEmPipelineRunRefetchInterval] =
     useState<number | undefined>();
@@ -33,11 +38,15 @@ const Run = ({ pipeline }: RunProps): JSX.Element => {
     refetchInterval: emPipelineRunRefetchInterval,
   });
 
+  const createJobStatus = jobId ? 'success' : runEMPipelineStatus;
+
   useEffect(() => {
     if (!jobId) {
       runEMPipeline({ id: pipeline.id }).then(({ jobId: jId }) => {
         navigate(
-          createLink(`/${subAppPath}/pipeline/${pipeline?.id}/run/${jId}`),
+          createLink(
+            `/${subAppPath}/pipeline/${pipeline?.id}/details/run/${jId}`
+          ),
           { replace: true }
         );
       });
@@ -55,9 +64,36 @@ const Run = ({ pipeline }: RunProps): JSX.Element => {
     }
   }, [emPipelineRun, emPipelineRunRefetchInterval, jobId]);
 
+  useEffect(() => {
+    if (
+      emPipelineRun?.status &&
+      !IN_PROGRESS_EM_STATES.includes(emPipelineRun?.status)
+    ) {
+      navigate(
+        createLink(
+          `/${subAppPath}/pipeline/${pipeline?.id}/results/${emPipelineRun.jobId}`
+        ),
+        { replace: true }
+      );
+    }
+  }, [emPipelineRun, navigate, pipeline.id, subAppPath]);
+
   return (
     <Step isCentered>
-      <Icon type="Loader" />
+      <Infobox
+        showIcon={false}
+        type="neutral"
+        title={t('do-not-leave-the-page-pipeline')}
+      >
+        <Flex alignItems="center" gap={8}>
+          <QueryStatusIcon status={createJobStatus} />
+          {t(`create-job-${jobId ? 'success' : createJobStatus}`)}
+        </Flex>
+        <Flex alignItems="center" gap={8}>
+          <QueryStatusIcon status={emPipelineRun?.status} />
+          {t(`running-job-${emPipelineRun?.status}`)}
+        </Flex>
+      </Infobox>
     </Step>
   );
 };
