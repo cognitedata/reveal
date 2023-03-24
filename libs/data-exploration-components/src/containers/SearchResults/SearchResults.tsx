@@ -82,12 +82,7 @@ export const SearchResults = ({
       return (
         <TimeseriesSearchResults
           onClick={(item) => onClick({ id: item.id, type: 'timeSeries' })}
-          filter={{
-            ...timeseriesFilter,
-            metadata: Object.entries(timeseriesFilter?.metadata || {}).map(
-              ([key, value]) => ({ key, value })
-            ),
-          }}
+          filter={timeseriesFilter}
           {...commonProps}
         />
       );
@@ -95,12 +90,7 @@ export const SearchResults = ({
       return (
         <EventSearchResults
           onClick={(item) => onClick({ id: item.id, type: 'event' })}
-          filter={{
-            ...eventFilter,
-            metadata: Object.entries(eventFilter?.metadata || {}).map(
-              ([key, value]) => ({ key, value })
-            ),
-          }}
+          filter={eventFilter}
           {...commonProps}
         />
       );

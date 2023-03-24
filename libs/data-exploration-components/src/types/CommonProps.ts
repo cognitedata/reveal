@@ -50,9 +50,9 @@ export type InitialResourceFilterProps = {
 
 export type InitialOldResourceFilterProps = {
   initialAssetFilter?: InternalAssetFilters;
-  initialTimeseriesFilter?: OldTimeseriesFilters;
+  initialTimeseriesFilter?: InternalTimeseriesFilters;
   initialFileFilter?: InternalFilesFilters;
-  initialEventFilter?: OldEventsFilters;
+  initialEventFilter?: InternalEventsFilters;
   initialSequenceFilter?: OldSequenceFilters;
 };
 
@@ -81,9 +81,9 @@ export type ResourceFilterProps = {
 
 export type OldResourceFilterProps = {
   assetFilter?: InternalAssetFilters;
-  timeseriesFilter?: OldTimeseriesFilters;
+  timeseriesFilter?: InternalTimeseriesFilters;
   fileFilter?: InternalFilesFilters;
-  eventFilter?: OldEventsFilters;
+  eventFilter?: InternalEventsFilters;
   sequenceFilter?: OldSequenceFilters;
 };
 
@@ -102,10 +102,10 @@ export type SetResourceFilterProps = {
 export type SetOldResourceFilterProps = {
   setAssetFilter: React.Dispatch<React.SetStateAction<InternalAssetFilters>>;
   setTimeseriesFilter: React.Dispatch<
-    React.SetStateAction<OldTimeseriesFilters>
+    React.SetStateAction<InternalTimeseriesFilters>
   >;
   setFileFilter: React.Dispatch<React.SetStateAction<InternalFilesFilters>>;
-  setEventFilter: React.Dispatch<React.SetStateAction<OldEventsFilters>>;
+  setEventFilter: React.Dispatch<React.SetStateAction<InternalEventsFilters>>;
   setSequenceFilter: React.Dispatch<React.SetStateAction<OldSequenceFilters>>;
 };
 

@@ -20,11 +20,11 @@ import {
 
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
 import {
-  OldEventsFilters,
-  OldTimeseriesFilters,
+  InternalEventsFilters,
   OldSequenceFilters,
   InternalAssetFilters,
   InternalFilesFilters,
+  InternalTimeseriesFilters,
 } from '@data-exploration-lib/core';
 import zIndex from '@data-exploration-components/utils/zIndex';
 import { ExplorationFilterToggle } from '@data-exploration/components';
@@ -105,11 +105,11 @@ export const ResourceSelectionSidebar = ({
     initialAssetFilter || {}
   );
   const [timeseriesFilter, setTimeseriesFilter] =
-    useState<OldTimeseriesFilters>(initialTimeseriesFilter || {});
+    useState<InternalTimeseriesFilters>(initialTimeseriesFilter || {});
   const [fileFilter, setFileFilter] = useState<InternalFilesFilters>(
     initialFileFilter || {}
   );
-  const [eventFilter, setEventFilter] = useState<OldEventsFilters>(
+  const [eventFilter, setEventFilter] = useState<InternalEventsFilters>(
     initialEventFilter || {}
   );
   const [sequenceFilter, setSequenceFilter] = useState<OldSequenceFilters>(
@@ -179,7 +179,7 @@ export const ResourceSelectionSidebar = ({
                   <TabsContainer>
                     <ResourceTypeTabs
                       query={query}
-                      resourceTypes={['file', 'asset']}
+                      resourceTypes={resourceTypes}
                       currentResourceType={activeKey}
                       setCurrentResourceType={(tab) => {
                         setActiveKey(tab as ResourceType);
@@ -220,13 +220,13 @@ export const ResourceSelectionSidebar = ({
               {selectionMode !== 'none' && (
                 <>
                   <Divider.Horizontal />
-                  <SpacedRow>
+                  <StyledSpacedRow>
                     <Button onClick={() => onClose(false)}>Cancel</Button>
                     <div className="spacer" />
                     <Button type="primary" onClick={() => onClose(true)}>
                       Select Resources
                     </Button>
-                  </SpacedRow>
+                  </StyledSpacedRow>
                 </>
               )}
             </SidebarWrapper>
@@ -251,6 +251,9 @@ const SearchInputContainer = styled(Flex)`
   gap: 8px;
 `;
 
+const StyledSpacedRow = styled(SpacedRow)`
+  padding: 0 12px;
+`;
 const MainSearchContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -274,6 +277,7 @@ const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
 
 const ResourcePreviewSidebarWrapper = styled.div`
   width: 360px;
+  margin: 12px;
   flex: 1;
   border-left: 1px solid var(--cogs-border--muted);
 `;
