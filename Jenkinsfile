@@ -52,6 +52,11 @@ pods {
   def isPullRequest = !!env.CHANGE_ID
   def isRelease = env.BRANCH_NAME == 'master'
 
+  if (!isPullRequest) {
+    print "No PR previews for release builds"
+    return;
+  }
+
   dir('main') {
     stage("Checkout code") {
       checkout(scm)
@@ -65,10 +70,6 @@ pods {
     }
 
     stage('Preview') {
-      if(!isPullRequest) {
-        print "No PR previews for release builds"
-        return;
-      }
       container('fas') {
         stageWithNotify('Build and deploy PR') {
           def package_name = "@cognite/cdf-ui-entity-matching";
@@ -83,17 +84,6 @@ pods {
           deleteComments("[FUSION_PREVIEW_URL]")
           def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
           pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
-        }
-      }
-    }
-
-    if (isRelease) {
-      container('fas') {
-        stageWithNotify('Save missing keys to locize') {
-          sh("yarn save-missing")
-        }
-        stageWithNotify('Remove deleted keys from locize') {
-          sh("yarn remove-deleted")
         }
       }
     }
