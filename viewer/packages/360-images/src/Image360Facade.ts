@@ -67,7 +67,9 @@ export class Image360Facade<T> {
       collection.image360Entities.includes(entity)
     );
     if (imageCollection.length !== 1) {
-      throw new Error(`360Image entity contained in invalid number of collections: {${imageCollection.length}}`);
+      throw new Error(
+        `Failed to get Collection for Image360Entity. The entity is present in ${imageCollection.length} collections.`
+      );
     }
     return imageCollection[0];
   }
