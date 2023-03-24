@@ -27,6 +27,12 @@ describe('withThousandSeparatorStringExtended', () => {
   it('should return value as is if it is a preformatted string', () => {
     expect(withThousandSeparatorStringExtended('1000+')).toEqual('1000+');
   });
+
+  it('should', () => {
+    expect(withThousandSeparatorStringExtended(1000000)).toEqual(
+      `1${SPACE}000${SPACE}000`
+    );
+  });
 });
 
 describe('formatBigNumbersWithSuffix', () => {
@@ -53,5 +59,9 @@ describe('formatBigNumbersWithSuffix', () => {
 describe('formatBigNumbersWithSuffixStringExtended', () => {
   it('should return value as is if it is a preformatted string', () => {
     expect(formatBigNumbersWithSuffixStringExtended('1K+')).toEqual('1K+');
+  });
+
+  it('should return formatted result with bigger number', () => {
+    expect(formatBigNumbersWithSuffixStringExtended(100000)).toEqual('100K+');
   });
 });

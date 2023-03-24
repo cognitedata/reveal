@@ -18,18 +18,6 @@ export const PREVIEWABLE_FILE_TYPES = [
   'csv',
 ];
 
-export const readablePreviewableFileTypes = () =>
-  PREVIEWABLE_FILE_TYPES.reduce((acc, current, i) => {
-    const fileType = current.toUpperCase();
-    if (i === 0) {
-      return `${fileType}`;
-    }
-    if (i !== PREVIEWABLE_FILE_TYPES.length - 1) {
-      return `${acc}, ${fileType}`;
-    }
-    return `${acc} or ${fileType}`;
-  }, '');
-
 export const isDocument = (
   item: InternalDocument | FileInfo
 ): item is InternalDocument => {
@@ -83,9 +71,9 @@ export async function fetchFilePreviewURL(
   });
 }
 
-const APPLICATION = 'application';
-const TEXT = 'text';
-const IMAGE = 'image';
+export const APPLICATION = 'application';
+export const TEXT = 'text';
+export const IMAGE = 'image';
 
 export const mapFileType = (mimeType: string) => {
   if (mimeType.startsWith(APPLICATION) || mimeType.startsWith(TEXT)) {
@@ -96,20 +84,22 @@ export const mapFileType = (mimeType: string) => {
         return 'PDF';
       case 'msword':
         return 'Word Document';
-      case 'vnd.ms-excel' ||
-        'vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+      case 'vnd.ms-excel':
+      case 'vnd.openxmlformats-officedocument.spreadsheetml.sheet':
         return 'Excel Sheet';
       case 'xml':
         return 'XML';
-      case 'zip' || '7z' || 'vnd.rar' || 'x-tar':
+      case 'zip':
+      case '7z':
+      case 'vnd.rar':
+      case 'x-tar':
         return 'Archive';
-      case 'plain':
-        return 'Text';
       case 'json':
         return 'JSON';
       case 'octet-stream':
         return 'Binary';
       case 'txt':
+      case 'plain':
         return 'Text';
       case 'csv':
         return 'CSV';
@@ -128,7 +118,8 @@ export const mapFileType = (mimeType: string) => {
         return 'DWG';
       case 'x-dfx':
         return 'vnd.dgn';
-      case 'svg' || 'svg+xml':
+      case 'svg':
+      case 'svg+xml':
         return 'SVG';
       default:
         return 'Image';
