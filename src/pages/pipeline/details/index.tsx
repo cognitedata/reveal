@@ -1,4 +1,4 @@
-import { Route, Routes, useParams } from 'react-router-dom';
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 
 import Page from 'components/page';
 
@@ -9,15 +9,68 @@ import { useEMPipeline } from 'hooks/entity-matching-pipelines';
 import Sources from './sources';
 import Targets from './targets';
 import ConfigurePipeline from './configure-pipeline';
+import { Button, Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
+import { createLink } from '@cognite/cdf-utilities';
+
+const PIPELINE_STEPS = ['sources', 'targets', 'configure-pipeline'] as const;
+type PipelineStep = (typeof PIPELINE_STEPS)[number];
+
+const getNextStep = (current?: PipelineStep): PipelineStep | undefined => {
+  const index = PIPELINE_STEPS.findIndex((item) => item === current);
+  if (index < PIPELINE_STEPS.length - 1) {
+    return PIPELINE_STEPS[index + 1];
+  }
+  return undefined;
+};
+
+const getPrevStep = (current?: PipelineStep): PipelineStep | undefined => {
+  const index = PIPELINE_STEPS.findIndex((item) => item === current);
+  if (index > 0) {
+    return PIPELINE_STEPS[index - 1];
+  }
+  return undefined;
+};
 
 const PipelineDetails = (): JSX.Element => {
-  const { pipelineId } = useParams<{
+  const {
+    '*': step,
+    pipelineId,
+    subAppPath,
+  } = useParams<{
+    '*': string;
     pipelineId: string;
+    subAppPath: string;
   }>();
+
+  const { t } = useTranslation();
 
   const { data: pipeline, error } = useEMPipeline(parseInt(pipelineId ?? ''), {
     enabled: !!pipelineId,
   });
+
+  const nextStep = getNextStep(step as PipelineStep | undefined);
+  const prevStep = getPrevStep(step as PipelineStep | undefined);
+
+  const navigate = useNavigate();
+
+  const handleGoNextStep = () => {
+    navigate(
+      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/${nextStep}`),
+      {
+        replace: true,
+      }
+    );
+  };
+
+  const handleGoPrevStep = () => {
+    navigate(
+      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/${prevStep}`),
+      {
+        replace: true,
+      }
+    );
+  };
 
   if (error) {
     if (error?.status === 403) {
@@ -29,6 +82,18 @@ const PipelineDetails = (): JSX.Element => {
   if (pipeline) {
     return (
       <Page
+        extraContent={
+          <Flex gap={8}>
+            {prevStep && (
+              <Button onClick={handleGoPrevStep}>{t('navigate-back')}</Button>
+            )}
+            {nextStep && (
+              <Button onClick={handleGoNextStep} type="primary">
+                {t('navigate-next')}
+              </Button>
+            )}
+          </Flex>
+        }
         subtitle={pipeline?.description ?? '-'}
         title={pipeline?.name ?? ''}
       >
