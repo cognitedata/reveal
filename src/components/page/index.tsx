@@ -30,6 +30,7 @@ const Page = ({
 };
 
 const Container = styled.div`
+  background-color: ${Colors['surface--strong']};
   height: 100%;
 `;
 
@@ -42,7 +43,6 @@ const Content = styled.div<{ $hasFooter?: boolean }>`
           ? FOOTER_HEIGHT + SECONDARY_TOPBAR_HEIGHT
           : SECONDARY_TOPBAR_HEIGHT}px
   );
-  padding: 24px;
   overflow-y: auto;
 `;
 

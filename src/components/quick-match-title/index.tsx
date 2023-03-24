@@ -4,7 +4,7 @@ import { useTranslation } from 'common';
 import { QuickMatchStep } from 'context/QuickMatchContext';
 
 type QuickMatchTitleProps = {
-  step: QuickMatchStep;
+  step: Exclude<QuickMatchStep, 'configure-model'>;
 };
 
 export default function QuickMatchTitle({ step }: QuickMatchTitleProps) {

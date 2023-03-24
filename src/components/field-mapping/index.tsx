@@ -1,17 +1,25 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { Button, Colors, Flex, Icon, Overline } from '@cognite/cogs.js';
+import { Body, Button, IconType, Flex, Icon } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH } from 'common/constants';
 import ResourceTypei18n from 'components/resource-type-i18n';
 import { ModelMapping } from 'context/QuickMatchContext';
 import { useAggregateProperties } from 'hooks/aggregates';
 import { SourceType, TargetType } from 'types/api';
 
 const { Option } = Select;
+
+const resourceTypeToIconType: Record<SourceType | TargetType, IconType> = {
+  assets: 'Assets',
+  events: 'Events',
+  files: 'Documents',
+  sequences: 'Sequences',
+  threeD: 'Cube',
+  timeseries: 'Timeseries',
+};
 
 type Props = {
   sourceType: SourceType;
@@ -35,12 +43,18 @@ export default function FieldMapping({
   return (
     <Container>
       <Flex gap={8}>
-        <ResourceTypeTitle style={{ flex: 1 }}>
-          <ResourceTypei18n t={sourceType} />
-        </ResourceTypeTitle>
-        <ResourceTypeTitle style={{ flex: 1 }}>
-          <ResourceTypei18n t={targetType} />
-        </ResourceTypeTitle>
+        <Flex alignItems="center" gap={4} style={{ flex: 1 }}>
+          <Icon type={resourceTypeToIconType[sourceType]} />
+          <ResourceTypeTitle>
+            <ResourceTypei18n t={sourceType} />
+          </ResourceTypeTitle>
+        </Flex>
+        <Flex alignItems="center" gap={4} style={{ flex: 1 }}>
+          <Icon type={resourceTypeToIconType[targetType]} />
+          <ResourceTypeTitle>
+            <ResourceTypei18n t={targetType} />
+          </ResourceTypeTitle>
+        </Flex>
       </Flex>
       <Flex gap={8} direction="column">
         {modelFieldMapping.map(({ source: from, target: to }, i) => (
@@ -99,6 +113,7 @@ export default function FieldMapping({
                   ...modelFieldMapping.splice(i + 1),
                 ]);
               }}
+              type="ghost"
             />
           </Flex>
         ))}
@@ -111,6 +126,7 @@ export default function FieldMapping({
                 { source: undefined, target: undefined },
               ]);
             }}
+            type="ghost-accent"
           >
             {t('add-connection')}
           </Button>
@@ -120,14 +136,12 @@ export default function FieldMapping({
   );
 }
 
-const Container = styled(Flex).attrs({ direction: 'column', gap: 4 })`
-  width: ${QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH}px;
+const Container = styled(Flex).attrs({ direction: 'column', gap: 6 })`
+  width: 100%;
 `;
 
 const IconContainer = styled(Flex).attrs({ justifyContent: 'center' })`
   width: 36px;
 `;
 
-const ResourceTypeTitle = styled(Overline).attrs({ level: 2 })`
-  color: ${Colors['text-icon--status-undefined']};
-`;
+const ResourceTypeTitle = styled(Body).attrs({ level: 2, strong: true })``;
