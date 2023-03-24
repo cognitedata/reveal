@@ -21,15 +21,6 @@ export const ExplorationSearchBar = () => {
     return () => debouncedSetUrlQuery.cancel();
   }, [debouncedSetUrlQuery, localQuery, urlQuery]);
 
-  useEffect(() => {
-    if (localQuery !== urlQuery) {
-      setLocalQuery(urlQuery);
-    }
-    // Disabeling react-hooks/exhaustive-deps because this should /not/ be
-    // triggered when localQuery changes.
-    // eslint-disable-next-line
-  }, [urlQuery, setLocalQuery]);
-
   const track = debounce((value: string) => {
     trackUsage(EXPLORATION.SEARCH.GLOBAL, { query: value });
   }, 500);
