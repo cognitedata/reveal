@@ -52,7 +52,13 @@ import { Spinner } from '../../utilities/Spinner';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager, CameraStopDelegate } from '@reveal/camera-manager';
+import {
+  DefaultCameraManager,
+  CameraManager,
+  CameraChangeDelegate,
+  ProxyCameraManager,
+  CameraStopDelegate
+} from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
@@ -68,7 +74,14 @@ import { Image360Collection, Image360Entity, Image360 } from '@reveal/360-images
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 
-type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'cameraStop' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
+type Cognite3DViewerEvents =
+  | 'click'
+  | 'hover'
+  | 'cameraChange'
+  | 'cameraStop'
+  | 'beforeSceneRendered'
+  | 'sceneRendered'
+  | 'disposed';
 
 /**
  * @example
