@@ -17,7 +17,7 @@ const QuickMatch = (): JSX.Element => {
         }
       />
       <Route
-        path="/results/:predictJobId/:rulesJobId/:applyRulesJobId/:sourceType"
+        path="/results/:predictJobId/:sourceType/:rulesJobId?/:applyRulesJobId?"
         element={<QuickMatchResults />}
       />
     </Routes>

@@ -196,3 +196,5 @@ export const sessionStorageRulesJobKey = (jobId: number) =>
   `rules-job-token-${jobId}`;
 export const sessionStorageApplyRulesJobKey = (jobId: number) =>
   `apply-rules-job-token-${jobId}`;
+export const sessionStorage3dDetailsKey = (jobId: number) =>
+  `3d-details-${jobId}`;
