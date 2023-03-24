@@ -18,7 +18,6 @@ import {
   sessionStoragePredictJobKey,
   sessionStorageRulesJobKey,
 } from 'utils';
-import QuickMatchTitle from 'components/quick-match-title';
 import { useInfinite3dNodes } from 'hooks/threeD';
 import { useCreateEMModel, useEMModel } from 'hooks/entity-matching-models';
 import {
@@ -32,6 +31,7 @@ import {
   useRulesResults,
 } from 'hooks/entity-matching-rules';
 import { IN_PROGRESS_EM_STATES } from 'hooks/types';
+import Step from 'components/step';
 
 const CreateModel = (): JSX.Element => {
   const {
@@ -509,81 +509,84 @@ const CreateModel = (): JSX.Element => {
   }
 
   return (
-    <Flex direction="column" gap={8}>
-      <QuickMatchTitle step="create-model" />
-      <Infobox type="neutral" title={t('do-not-leave-the-page-quick-match')}>
-        {sourceStatus && (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={sourceStatus} />
-            <Body level={2}>
-              {t(`source-data-fetch-${sourceStatus}`)}{' '}
-              {sources?.length && `(${sources.length.toLocaleString()})`}
-            </Body>
-          </Flex>
-        )}
-        {targetStatus && (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={targetStatus} />
-            <Body level={2}>
-              {t(`target-data-fetch-${targetStatus}`)}{' '}
-              {targets?.length && `(${targets.length.toLocaleString()})`}
-            </Body>
-          </Flex>
-        )}
-        {!model ? (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={createModelStatus} />
-            <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
-          </Flex>
-        ) : (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={model.status} />
-            <Body level={2}>{t(`create-model-${model.status}`)}</Body>
-          </Flex>
-        )}
-        {prediction ? (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={prediction.status} />
-            <Body level={2}>
-              {t(`create-prediction-job-${prediction.status}`)}
-            </Body>
-          </Flex>
-        ) : (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={createPredictStatus} />
-            <Body level={2}>
-              {t(`create-prediction-job-${createPredictStatus}`)}
-            </Body>
-          </Flex>
-        )}
-        {rules ? (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={rules.status} />
-            <Body level={2}>{t(`create-rules-job-${rules.status}`)}</Body>
-          </Flex>
-        ) : (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={createRulesStatus} />
-            <Body level={2}>{t(`create-rules-job-${createRulesStatus}`)}</Body>
-          </Flex>
-        )}
-        {applyRulesResult ? (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={applyRulesResult.status} />
-            <Body level={2}>
-              {t(`create-apply-rules-job-${applyRulesResult.status}`)}
-            </Body>
-          </Flex>
-        ) : (
-          <Flex alignItems="center" gap={8}>
-            <QueryStatusIcon status={applyRulesStatus} />
-            <Body level={2}>
-              {t(`create-apply-rules-job-${applyRulesStatus}`)}
-            </Body>
-          </Flex>
-        )}
-      </Infobox>
-    </Flex>
+    <Step isCentered>
+      <Flex direction="column" gap={8}>
+        <Infobox type="neutral" title={t('do-not-leave-the-page-quick-match')}>
+          {sourceStatus && (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={sourceStatus} />
+              <Body level={2}>
+                {t(`source-data-fetch-${sourceStatus}`)}{' '}
+                {sources?.length && `(${sources.length.toLocaleString()})`}
+              </Body>
+            </Flex>
+          )}
+          {targetStatus && (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={targetStatus} />
+              <Body level={2}>
+                {t(`target-data-fetch-${targetStatus}`)}{' '}
+                {targets?.length && `(${targets.length.toLocaleString()})`}
+              </Body>
+            </Flex>
+          )}
+          {!model ? (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={createModelStatus} />
+              <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
+            </Flex>
+          ) : (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={model.status} />
+              <Body level={2}>{t(`create-model-${model.status}`)}</Body>
+            </Flex>
+          )}
+          {prediction ? (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={prediction.status} />
+              <Body level={2}>
+                {t(`create-prediction-job-${prediction.status}`)}
+              </Body>
+            </Flex>
+          ) : (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={createPredictStatus} />
+              <Body level={2}>
+                {t(`create-prediction-job-${createPredictStatus}`)}
+              </Body>
+            </Flex>
+          )}
+          {rules ? (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={rules.status} />
+              <Body level={2}>{t(`create-rules-job-${rules.status}`)}</Body>
+            </Flex>
+          ) : (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={createRulesStatus} />
+              <Body level={2}>
+                {t(`create-rules-job-${createRulesStatus}`)}
+              </Body>
+            </Flex>
+          )}
+          {applyRulesResult ? (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={applyRulesResult.status} />
+              <Body level={2}>
+                {t(`create-apply-rules-job-${applyRulesResult.status}`)}
+              </Body>
+            </Flex>
+          ) : (
+            <Flex alignItems="center" gap={8}>
+              <QueryStatusIcon status={applyRulesStatus} />
+              <Body level={2}>
+                {t(`create-apply-rules-job-${applyRulesStatus}`)}
+              </Body>
+            </Flex>
+          )}
+        </Infobox>
+      </Flex>
+    </Step>
   );
 };
 
