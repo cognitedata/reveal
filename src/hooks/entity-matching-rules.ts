@@ -55,7 +55,7 @@ export type Rule = {
   extractors: Extractor[];
 };
 
-export type AppliedRules = {
+export type AppliedRule = {
   numberOfMatches: number;
   matches: { source: any; target: any }[];
   rule: Rule;
@@ -163,17 +163,14 @@ const getApplyRulesKey = (id: number): QueryKey => [
 export const useApplyRulesResults = (
   id: number,
   jobToken?: string | null,
-  opts?: UseQueryOptions<
-    RulesResponse & { items: AppliedRules[] },
-    CogniteError
-  >
+  opts?: UseQueryOptions<RulesResponse & { items: AppliedRule[] }, CogniteError>
 ) => {
   const sdk = useSDK();
   return useQuery(
     getApplyRulesKey(id),
     async () =>
       sdk
-        .get<RulesResponse & { items: AppliedRules[] }>(
+        .get<RulesResponse & { items: AppliedRule[] }>(
           `/api/playground/projects/${sdk.project}/context/matchrules/apply/${id}`,
           {
             headers: jobToken
