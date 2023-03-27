@@ -101,9 +101,7 @@ const BasicResultsTable = ({
     () =>
       run.matches?.map((match) => ({
         ...match,
-        key: `${JSON.stringify(match.source)} - ${JSON.stringify(
-          match.target
-        )}`,
+        key: `${JSON.stringify(match.source)}-${JSON.stringify(match.target)}`,
       })) ?? [],
     [run.matches]
   );

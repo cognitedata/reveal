@@ -323,7 +323,7 @@ type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
 
 type EMPipelineRegexExtractorExtractorType = 'regex';
 
-type EMPipelineRegexExtractor = {
+export type EMPipelineRegexExtractor = {
   entitySet: EMPipelineRegexExtractorEntitySetType;
   extractorType: EMPipelineRegexExtractorExtractorType;
   field: string;
@@ -339,7 +339,7 @@ type EMPipelineMatchCondition = {
 
 type EMPipelineGeneratedRuleMatch = EMPipelineRunMatch;
 
-type EMPipelineGeneratedRule = {
+export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
   conditions?: EMPipelineMatchCondition[];
   matches?: EMPipelineGeneratedRuleMatch[];
