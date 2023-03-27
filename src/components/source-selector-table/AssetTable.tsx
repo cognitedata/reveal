@@ -6,6 +6,7 @@ import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawAsset } from 'types/api';
 import { TargetTableProps } from 'types/types';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type AssetListTableRecord = { key: string } & RawAsset;
 type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
@@ -92,7 +93,7 @@ export default function AssetTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource}
-      pagination={{ defaultPageSize: 25 }}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 }

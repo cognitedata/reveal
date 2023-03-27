@@ -14,7 +14,7 @@ import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
+import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 import { API, PipelineSourceType } from 'types/api';
 import Step from 'components/step';
 import { useMemo, useState } from 'react';
@@ -251,7 +251,7 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
         appendTooltipTo={undefined}
         rowSelection={rowSelection}
         dataSource={dataSource}
-        pagination={{ defaultPageSize: 10 }}
+        pagination={PAGINATION_SETTINGS}
       />
     </Step>
   );
