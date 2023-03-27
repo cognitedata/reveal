@@ -21,7 +21,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:209](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L209)
+[packages/api/src/public/migration/Cognite3DViewer.ts:212](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L212)
 
 ## Accessors
 
@@ -38,7 +38,7 @@ budget is shared between all added CAD models and not a per-model budget.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:163](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L163)
+[packages/api/src/public/migration/Cognite3DViewer.ts:166](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L166)
 
 • `set` **cadBudget**(`budget`): `void`
 
@@ -57,7 +57,7 @@ budget is shared between all added CAD models and not a per-model budget.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:173](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L173)
+[packages/api/src/public/migration/Cognite3DViewer.ts:176](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L176)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:557](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L557)
+[packages/api/src/public/migration/Cognite3DViewer.ts:584](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L584)
 
 ___
 
@@ -87,7 +87,7 @@ Returns the rendering canvas, the DOM element where the renderer draws its outpu
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:90](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L90)
+[packages/api/src/public/migration/Cognite3DViewer.ts:90](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L90)
 
 ___
 
@@ -106,7 +106,7 @@ The DOM element cannot be changed after the viewer has been created.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:100](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L100)
+[packages/api/src/public/migration/Cognite3DViewer.ts:100](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L100)
 
 ___
 
@@ -122,7 +122,7 @@ Gets a list of models currently added to the viewer.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:198](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L198)
+[packages/api/src/public/migration/Cognite3DViewer.ts:201](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L201)
 
 ___
 
@@ -139,7 +139,7 @@ point cloud models.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:183](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L183)
+[packages/api/src/public/migration/Cognite3DViewer.ts:186](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L186)
 
 • `set` **pointCloudBudget**(`budget`): `void`
 
@@ -158,7 +158,7 @@ point cloud models.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:191](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L191)
+[packages/api/src/public/migration/Cognite3DViewer.ts:194](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L194)
 
 ## Methods
 
@@ -189,7 +189,7 @@ await viewer.add360ImageSet('events', eventFilter);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:697](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L697)
+[packages/api/src/public/migration/Cognite3DViewer.ts:724](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L724)
 
 ___
 
@@ -224,7 +224,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:643](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L643)
+[packages/api/src/public/migration/Cognite3DViewer.ts:670](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L670)
 
 ___
 
@@ -259,7 +259,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:610](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L610)
+[packages/api/src/public/migration/Cognite3DViewer.ts:637](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L637)
 
 ___
 
@@ -291,7 +291,7 @@ viewer.addObject3D(sphere);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:851](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L851)
+[packages/api/src/public/migration/Cognite3DViewer.ts:886](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L886)
 
 ___
 
@@ -326,7 +326,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:671](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L671)
+[packages/api/src/public/migration/Cognite3DViewer.ts:698](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L698)
 
 ___
 
@@ -370,7 +370,7 @@ Empty string if type is not supported.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:818](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L818)
+[packages/api/src/public/migration/Cognite3DViewer.ts:853](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L853)
 
 ___
 
@@ -394,7 +394,7 @@ viewer.dispose();
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:366](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L366)
+[packages/api/src/public/migration/Cognite3DViewer.ts:390](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L390)
 
 ___
 
@@ -416,7 +416,7 @@ Enter visualization of a 360 image.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:737](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L737)
+[packages/api/src/public/migration/Cognite3DViewer.ts:771](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L771)
 
 ___
 
@@ -432,7 +432,7 @@ Exit visualization of the 360 image.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:747](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L747)
+[packages/api/src/public/migration/Cognite3DViewer.ts:781](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L781)
 
 ___
 
@@ -471,7 +471,7 @@ viewer.fitCameraToBoundingBox(boundingBox, 500, 2);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:1029](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1029)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1076](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1076)
 
 ___
 
@@ -510,7 +510,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:984](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L984)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1031](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1031)
 
 ___
 
@@ -534,7 +534,7 @@ Move camera to a place where a set of 3D models are visible.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:995](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L995)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1042](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1042)
 
 ___
 
@@ -542,7 +542,11 @@ ___
 
 ▸ **getClippingPlanes**(): `Plane`[]
 
-Returns the current active clipping planes.
+Returns the current active global clipping planes.
+
+**`Deprecated`**
+
+Use [getGlobalClippingPlanes](cognite_reveal.Cognite3DViewer.md#getglobalclippingplanes) instead.
 
 #### Returns
 
@@ -550,7 +554,23 @@ Returns the current active clipping planes.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:942](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L942)
+[packages/api/src/public/migration/Cognite3DViewer.ts:982](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L982)
+
+___
+
+### getGlobalClippingPlanes
+
+▸ **getGlobalClippingPlanes**(): `Plane`[]
+
+Returns the current active global clipping planes.
+
+#### Returns
+
+`Plane`[]
+
+#### Defined in
+
+[packages/api/src/public/migration/Cognite3DViewer.ts:989](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L989)
 
 ___
 
@@ -562,7 +582,7 @@ Raycasting model(s) for finding where the ray intersects with the model.
 
 **`See`**
 
-[https://en.wikipedia.org/wiki/Ray_casting](https://en.wikipedia.org/wiki/Ray_casting).
+[https://en.wikipedia.org/wiki/Ray_casting](https://en.wikipedia.org/wiki/Ray_casting) For more details on Ray casting.
 
 **`Example`**
 
@@ -610,7 +630,7 @@ returns `null` if there were no intersections.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:1213](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1213)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1298](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1298)
 
 ___
 
@@ -643,7 +663,7 @@ document.body.appendChild(image);
 | :------ | :------ | :------ | :------ |
 | `width` | `number` | `undefined` | Width of the final image. Default is current canvas size. |
 | `height` | `number` | `undefined` | Height of the final image. Default is current canvas size. |
-| `includeUI` | `boolean` | `true` | If false the screenshot will include only the rendered 3D. |
+| `includeUI` | `boolean` | `true` | If false the screenshot will include only the rendered 3D. Default is true. |
 
 #### Returns
 
@@ -653,7 +673,7 @@ A [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Da
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:1121](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1121)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1168](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1168)
 
 ___
 
@@ -669,7 +689,7 @@ Returns reveal version installed.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:339](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L339)
+[packages/api/src/public/migration/Cognite3DViewer.ts:363](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L363)
 
 ___
 
@@ -687,7 +707,7 @@ JSON object containing viewer state.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:574](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L574)
+[packages/api/src/public/migration/Cognite3DViewer.ts:601](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L601)
 
 ___
 
@@ -715,7 +735,7 @@ is used as a fallback.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:956](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L956)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1003](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1003)
 
 ___
 
@@ -742,7 +762,7 @@ viewer.off('click', onClick);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:485](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L485)
+[packages/api/src/public/migration/Cognite3DViewer.ts:512](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L512)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -765,7 +785,7 @@ viewer.off('cameraChange', onCameraChange);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:492](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L492)
+[packages/api/src/public/migration/Cognite3DViewer.ts:519](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L519)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -784,7 +804,7 @@ Unsubscribe the 'beforeSceneRendered'-event previously subscribed with [on](cogn
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:496](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L496)
+[packages/api/src/public/migration/Cognite3DViewer.ts:523](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L523)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -807,7 +827,7 @@ viewer.off('sceneRendered', updateStats);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:503](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L503)
+[packages/api/src/public/migration/Cognite3DViewer.ts:530](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L530)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -830,7 +850,7 @@ viewer.off('disposed', clearAll);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:510](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L510)
+[packages/api/src/public/migration/Cognite3DViewer.ts:537](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L537)
 
 ___
 
@@ -854,7 +874,7 @@ resources held and remove the reference to the viewer.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:403](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L403)
+[packages/api/src/public/migration/Cognite3DViewer.ts:430](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L430)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -878,7 +898,7 @@ viewer.on('click', onClick);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:412](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L412)
+[packages/api/src/public/migration/Cognite3DViewer.ts:439](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L439)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -903,7 +923,7 @@ viewer.on('cameraChange', (position, target) => {
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:421](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L421)
+[packages/api/src/public/migration/Cognite3DViewer.ts:448](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L448)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -922,7 +942,7 @@ Event that is triggered immediately before the scene is rendered.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:427](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L427)
+[packages/api/src/public/migration/Cognite3DViewer.ts:454](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L454)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -941,13 +961,13 @@ Event that is triggered immediately after the scene has been rendered.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:433](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L433)
+[packages/api/src/public/migration/Cognite3DViewer.ts:460](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L460)
 
 ___
 
 ### remove360Images
 
-▸ **remove360Images**(...`image360Entities`): `Promise`<`void`\>
+▸ **remove360Images**(`...image360Entities`): `Promise`<`void`\>
 
 Remove a set of 360 images.
 
@@ -963,7 +983,7 @@ Remove a set of 360 images.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:726](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L726)
+[packages/api/src/public/migration/Cognite3DViewer.ts:760](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L760)
 
 ___
 
@@ -987,7 +1007,7 @@ Removes a model that was previously added using [addModel](cognite_reveal.Cognit
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:760](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L760)
+[packages/api/src/public/migration/Cognite3DViewer.ts:794](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L794)
 
 ___
 
@@ -1017,7 +1037,7 @@ viewer.removeObject3D(sphere);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:872](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L872)
+[packages/api/src/public/migration/Cognite3DViewer.ts:906](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L906)
 
 ___
 
@@ -1033,7 +1053,7 @@ Typically used when you perform some changes and can't see them unless you move 
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:1036](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1036)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1083](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1083)
 
 ___
 
@@ -1057,7 +1077,7 @@ Sets the color used as the clear color of the renderer.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:891](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L891)
+[packages/api/src/public/migration/Cognite3DViewer.ts:921](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L921)
 
 ___
 
@@ -1079,7 +1099,7 @@ Sets the active camera manager instance for current Cognite3Dviewer.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:565](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L565)
+[packages/api/src/public/migration/Cognite3DViewer.ts:592](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L592)
 
 ___
 
@@ -1089,32 +1109,58 @@ ___
 
 Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
 
+**`Deprecated`**
+
+Use [setGlobalClippingPlanes](cognite_reveal.Cognite3DViewer.md#setglobalclippingplanes) instead.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `clippingPlanes` | `Plane`[] |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/api/src/public/migration/Cognite3DViewer.ts:974](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L974)
+
+___
+
+### setGlobalClippingPlanes
+
+▸ **setGlobalClippingPlanes**(`clippingPlanes`): `void`
+
+Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+
 **`Example`**
 
 ```js
 // Hide pixels with values less than 0 in the x direction
 const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-viewer.setClippingPlanes([plane]);
+viewer.setGlobalClippingPlanes([plane]);
 ```
 ```js
 // Hide pixels with values greater than 20 in the x direction
  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-viewer.setClippingPlanes([plane]);
+viewer.setGlobalClippingPlanes([plane]);
 ```
 ```js
 // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
 const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
 const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-viewer.setClippingPlanes([xPlane, yPlane]);
+viewer.setGlobalClippingPlanes([xPlane, yPlane]);
 ```
 ```js
 // Hide pixels behind an arbitrary, non axis-aligned plane
  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-viewer.setClippingPlanes([plane]);
+viewer.setGlobalClippingPlanes([plane]);
 ```
 ```js
 // Disable clipping planes
- viewer.setClippingPlanes([]);
+ viewer.setGlobalClippingPlanes([]);
 ```
 
 #### Parameters
@@ -1129,7 +1175,7 @@ viewer.setClippingPlanes([plane]);
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:934](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L934)
+[packages/api/src/public/migration/Cognite3DViewer.ts:964](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L964)
 
 ___
 
@@ -1144,7 +1190,7 @@ Defaults to 'none' (which is identical to 'silent').
 
 | Name | Type |
 | :------ | :------ |
-| `level` | ``"error"`` \| ``"debug"`` \| ``"trace"`` \| ``"info"`` \| ``"warn"`` \| ``"silent"`` \| ``"none"`` |
+| `level` | ``"error"`` \| ``"debug"`` \| ``"none"`` \| ``"trace"`` \| ``"info"`` \| ``"warn"`` \| ``"silent"`` |
 
 #### Returns
 
@@ -1152,7 +1198,30 @@ Defaults to 'none' (which is identical to 'silent').
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:348](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L348)
+[packages/api/src/public/migration/Cognite3DViewer.ts:372](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L372)
+
+___
+
+### setResolutionOptions
+
+▸ **setResolutionOptions**(`options`): `void`
+
+Set options to control resolution of the viewer. This includes
+settings for max resolution and limiting resolution when moving the camera.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options` | [`ResolutionOptions`](../modules/cognite_reveal.md#resolutionoptions) | Options to apply. |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/api/src/public/migration/Cognite3DViewer.ts:350](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L350)
 
 ___
 
@@ -1175,7 +1244,7 @@ node collections and applies the `state` object.
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:584](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L584)
+[packages/api/src/public/migration/Cognite3DViewer.ts:611](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L611)
 
 ___
 
@@ -1187,7 +1256,7 @@ Convert a point in world space to its coordinates in the canvas. This can be use
 
 **`See`**
 
-[https://www.w3schools.com/graphics/canvas_coordinates.asp](https://www.w3schools.com/graphics/canvas_coordinates.asp).
+[https://www.w3schools.com/graphics/canvas_coordinates.asp](https://www.w3schools.com/graphics/canvas_coordinates.asp) For details on HTML Canvas Coordinates.
 
 **`Example`**
 
@@ -1233,4 +1302,4 @@ Returns 2D coordinates if the point is visible on screen, or `null` if object is
 
 #### Defined in
 
-[packages/api/src/public/migration/Cognite3DViewer.ts:1074](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1074)
+[packages/api/src/public/migration/Cognite3DViewer.ts:1121](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1121)

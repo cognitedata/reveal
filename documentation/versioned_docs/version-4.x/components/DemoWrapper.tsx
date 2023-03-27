@@ -18,9 +18,10 @@ const DemoContainer = styled.div`
 // any component that has client-side only code couldn't be imported directly (it fails SSR)
 const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
 
-const ViewerComponent: ComponentType<DemoProps> = React.lazy(() =>
+const Cognite3DViewerDemo: ComponentType<DemoProps> = React.lazy(() =>
   import('./Cognite3DViewerDemo')
 );
+
 
 // demo wrapper just wraps the demo. don't pass modelId/revisionId to it, they defined in demos
 // different demos might have different ids, e.g. pointcloud/cad
@@ -33,7 +34,7 @@ export function DemoWrapper({
   ids?: { modelId: number; revisionId: number };
   modelType?: string;
   [key: string]: any; // any other props that might be bypassed to specific Demo
-}) {
+  }) {
   if (typeof window === 'undefined') {
     return <div />;
   }
@@ -47,7 +48,7 @@ export function DemoWrapper({
         <Suspense fallback={<div>Loading demo...</div>}>
           <DemoLoginCover>
             {(client: CogniteClient) => (
-              <ViewerComponent
+              <Cognite3DViewerDemo
                 client={client}
                 {...rest}
                 modelId={modelAndRevisionIds.modelId}

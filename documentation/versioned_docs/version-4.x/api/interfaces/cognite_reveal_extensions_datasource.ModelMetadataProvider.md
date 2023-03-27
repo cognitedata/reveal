@@ -27,7 +27,7 @@ Provides metadata for 3D models.
 
 #### Defined in
 
-[packages/data-providers/src/ModelMetadataProvider.ts:14](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L14)
+[packages/data-providers/src/ModelMetadataProvider.ts:14](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L14)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/data-providers/src/ModelMetadataProvider.ts:15](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L15)
+[packages/data-providers/src/ModelMetadataProvider.ts:15](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L15)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[packages/data-providers/src/ModelMetadataProvider.ts:12](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L12)
+[packages/data-providers/src/ModelMetadataProvider.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L12)
 
 ___
 
@@ -89,4 +89,4 @@ ___
 
 #### Defined in
 
-[packages/data-providers/src/ModelMetadataProvider.ts:13](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L13)
+[packages/data-providers/src/ModelMetadataProvider.ts:13](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelMetadataProvider.ts#L13)
