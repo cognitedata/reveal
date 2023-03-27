@@ -1,15 +1,15 @@
 import { Body, Flex } from '@cognite/cogs.js';
 import { EMPipelineRegexExtractor } from 'hooks/entity-matching-pipelines';
 
-type PatternProps = {
+type ExtractorProps = {
   extractors: EMPipelineRegexExtractor[];
   entitySetToRender: EMPipelineRegexExtractor['entitySet'];
 };
 
-const Pattern = ({
+const Extractor = ({
   extractors,
   entitySetToRender,
-}: PatternProps): JSX.Element => {
+}: ExtractorProps): JSX.Element => {
   const extractor = extractors.find(
     ({ entitySet }) => entitySet === entitySetToRender
   );
@@ -28,4 +28,4 @@ const Pattern = ({
   return <></>;
 };
 
-export default Pattern;
+export default Extractor;

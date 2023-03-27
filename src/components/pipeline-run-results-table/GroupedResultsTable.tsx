@@ -9,7 +9,7 @@ import {
   Pipeline,
 } from 'hooks/entity-matching-pipelines';
 
-import Pattern from './Pattern';
+import Extractor from './Extractor';
 
 type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
 
@@ -34,7 +34,7 @@ const GroupedResultsTable = ({
         dataIndex: 'extractors',
         key: 'source',
         render: (extractors) => (
-          <Pattern extractors={extractors} entitySetToRender="sources" />
+          <Extractor extractors={extractors} entitySetToRender="sources" />
         ),
       },
       {
@@ -42,7 +42,7 @@ const GroupedResultsTable = ({
         dataIndex: 'extractors',
         key: 'target',
         render: (extractors) => (
-          <Pattern extractors={extractors} entitySetToRender="targets" />
+          <Extractor extractors={extractors} entitySetToRender="targets" />
         ),
       },
     ],
