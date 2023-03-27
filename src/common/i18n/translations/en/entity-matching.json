@@ -206,5 +206,8 @@
   "unknown-error-title": "An error occurred",
   "unsupervised-model": "Unsupervised model",
   "validation-error-field-required": "You must enter a value in this field",
-  "last-run": "Last run"
+  "last-run": "Last run",
+  "group-by-pattern": "Group by pattern",
+  "external-id": "External ID",
+  "id": "ID"
 }
