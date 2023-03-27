@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Key, useMemo, useState } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
@@ -24,6 +24,8 @@ type ExpandedRuleProps = {
 
 const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const columns: ExpandedRuleTableColumnType[] = useMemo(
     () => [
@@ -56,6 +58,10 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
     [rule.matches]
   );
 
+  const handleSelectRow = (selectedRowKeys: Key[]) => {
+    setSelectedRowKeys(selectedRowKeys);
+  };
+
   return (
     <Container>
       <Table<ExpandedRuleTableRecord>
@@ -63,6 +69,11 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         dataSource={dataSource}
         emptyContent={undefined}
         appendTooltipTo={undefined}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: handleSelectRow,
+          columnWidth: 36,
+        }}
       />
     </Container>
   );
