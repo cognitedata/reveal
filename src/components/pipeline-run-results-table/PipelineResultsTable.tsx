@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Key, useMemo, useState } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
@@ -32,6 +32,7 @@ const PipelineResultsTable = ({
   const { t } = useTranslation();
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const handleClickExpandButton = (clickedRowKey: string) => {
     setExpandedRowKeys((prevState) =>
@@ -39,6 +40,10 @@ const PipelineResultsTable = ({
         ? prevState.filter((key) => key !== clickedRowKey)
         : prevState.concat(clickedRowKey)
     );
+  };
+
+  const handleSelectRow = (selectedRowKeys: Key[]) => {
+    setSelectedRowKeys(selectedRowKeys);
   };
 
   const columns: PipelineResultsTableColumnType[] = useMemo(
@@ -104,6 +109,11 @@ const PipelineResultsTable = ({
           <ExpandedMatch match={record} pipeline={pipeline} />
         ),
         indentSize: 64,
+      }}
+      rowSelection={{
+        selectedRowKeys,
+        onChange: handleSelectRow,
+        columnWidth: 36,
       }}
     />
   );
