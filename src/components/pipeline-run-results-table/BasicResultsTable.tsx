@@ -15,21 +15,21 @@ import ResourceName from './ResourceName';
 import ExpandedMatch from './ExpandedMatch';
 import Confidence from 'components/em-result/Confidence';
 
-type PipelineResultsTableRecord = EMPipelineRunMatch & { key: string };
+type BasicResultsTableRecord = EMPipelineRunMatch & { key: string };
 
-type PipelineResultsTableColumnType = ColumnType<PipelineResultsTableRecord> & {
+type BasicResultsTableColumnType = ColumnType<BasicResultsTableRecord> & {
   title: string;
 };
 
-type PipelineResultsTableProps = {
+type BasicResultsTableProps = {
   pipeline: Pipeline;
   run: EMPipelineRun;
 };
 
-const PipelineResultsTable = ({
+const BasicResultsTable = ({
   pipeline,
   run,
-}: PipelineResultsTableProps): JSX.Element => {
+}: BasicResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
@@ -47,7 +47,7 @@ const PipelineResultsTable = ({
     setSelectedRowKeys(selectedRowKeys);
   };
 
-  const columns: PipelineResultsTableColumnType[] = useMemo(
+  const columns: BasicResultsTableColumnType[] = useMemo(
     () => [
       {
         title: t('qm-result-source'),
@@ -109,7 +109,7 @@ const PipelineResultsTable = ({
   );
 
   return (
-    <Table<PipelineResultsTableRecord>
+    <Table<BasicResultsTableRecord>
       columns={columns}
       dataSource={dataSource}
       emptyContent={undefined}
@@ -144,4 +144,4 @@ const ExpandButton = styled.button`
   width: 36px;
 `;
 
-export default PipelineResultsTable;
+export default BasicResultsTable;

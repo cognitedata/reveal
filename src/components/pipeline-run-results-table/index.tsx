@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { EMPipelineRun, Pipeline } from 'hooks/entity-matching-pipelines';
 import { Checkbox, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
-import PipelineResultsTable from './PipelineResultsTable';
+import BasicResultsTable from './BasicResultsTable';
 
 type PipelineRunResultsTableProps = {
   pipeline: Pipeline;
@@ -28,7 +28,7 @@ const PipelineRunResultsTable = ({
           onChange={(e) => setShouldGroupByPattern(e.target.checked)}
         />
       </Flex>
-      <PipelineResultsTable pipeline={pipeline} run={run} />
+      <BasicResultsTable pipeline={pipeline} run={run} />
     </Flex>
   );
 };
