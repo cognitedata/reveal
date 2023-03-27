@@ -91,8 +91,6 @@ const QuickMatchResults = (): JSX.Element => {
         >
           {predictions?.status === 'Completed' && (
             <EntityMatchingResult
-              predictJobId={predictJobId}
-              sourceType={sourceType}
               predictions={predictions.items}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}
