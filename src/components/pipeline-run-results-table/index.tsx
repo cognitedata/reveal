@@ -1,15 +1,17 @@
 import { useState } from 'react';
 
-import { EMPipelineRun } from 'hooks/entity-matching-pipelines';
+import { EMPipelineRun, Pipeline } from 'hooks/entity-matching-pipelines';
 import { Checkbox, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import PipelineResultsTable from './PipelineResultsTable';
 
 type PipelineRunResultsTableProps = {
+  pipeline: Pipeline;
   run: EMPipelineRun;
 };
 
 const PipelineRunResultsTable = ({
+  pipeline,
   run,
 }: PipelineRunResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
@@ -26,7 +28,7 @@ const PipelineRunResultsTable = ({
           onChange={(e) => setShouldGroupByPattern(e.target.checked)}
         />
       </Flex>
-      <PipelineResultsTable run={run} />
+      <PipelineResultsTable pipeline={pipeline} run={run} />
     </Flex>
   );
 };

@@ -53,7 +53,7 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
         title={pipeline?.name ?? ''}
       >
         <Step>
-          <PipelineRunResultsTable run={emPipelineRun} />
+          <PipelineRunResultsTable pipeline={pipeline} run={emPipelineRun} />
         </Step>
       </Page>
     );
