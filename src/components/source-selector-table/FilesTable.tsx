@@ -7,6 +7,7 @@ import { useList } from 'hooks/list';
 import { RawFileInfo } from 'types/api';
 import { SourceTableProps } from 'types/types';
 import { useSearch } from 'hooks/search';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type FileInfoListTableRecord = { key: string } & RawFileInfo;
 type FileInfoListTableRecordCT = ColumnType<FileInfoListTableRecord> & {
@@ -127,7 +128,7 @@ export default function FileInfoTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
-      pagination={{ defaultPageSize: 25 }}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 }

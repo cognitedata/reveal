@@ -6,6 +6,7 @@ import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawSequence } from 'types/api';
 import { SourceTableProps } from 'types/types';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type SequenceListTableRecord = { key: string } & RawSequence;
 type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
@@ -98,7 +99,7 @@ export default function SequenceTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
-      pagination={{ defaultPageSize: 25 }}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 }
