@@ -8,5 +8,3 @@ export const PAGINATION_SETTINGS = {
   defaultPageSize: 25,
   hideOnSinglePage: true,
 };
-export const RESULTS_TABLE_EXPAND_COLUMN_WIDTH = 200;
-export const RESULTS_TABLE_RESOURCE_COLUMN_WIDTH = 200;
