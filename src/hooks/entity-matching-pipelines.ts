@@ -322,13 +322,58 @@ export const useDuplicateEMPipeline = () => {
 
 type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
+type EMPipelineMatchType =
+  | 'previously_mapped'
+  | 'model'
+  | 'rule_rule_input_pattern->rule_predict_pattern';
+
+type EMPipelineRunMatch = {
+  matchType?: EMPipelineMatchType;
+  score?: number;
+  source?: Record<string, unknown>;
+  target?: Record<string, unknown>;
+};
+
+type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
+
+type EMPipelineRegexExtractorExtractorType = 'regex';
+
+type EMPipelineRegexExtractor = {
+  entitySet: EMPipelineRegexExtractorEntitySetType;
+  extractorType: EMPipelineRegexExtractorExtractorType;
+  field: string;
+  pattern: string;
+};
+
+type EMPipelineMatchConditionType = 'equals';
+
+type EMPipelineMatchConditionSynonymEntry = {
+  sources?: string[];
+  targets?: string[];
+};
+
+type EMPipelineMatchCondition = {
+  conditionType: EMPipelineMatchConditionType;
+  arguments: number[][];
+  config?: {
+    synonyms?: EMPipelineMatchConditionSynonymEntry[];
+  };
+};
+
 type EMPipelineRun = {
   status: EMPipelineRunStatus;
   createdTime: number;
-  startTime: number;
+  startTime: number | null;
   statusTime: number;
   jobId: number;
   pipelineId?: number;
+  matches?: EMPipelineRunMatch[];
+  suggestedRules?: {
+    extractors: EMPipelineRegexExtractor[];
+    conditions: EMPipelineMatchCondition[];
+    priority?: number;
+    numMatches?: number;
+  };
 };
 
 type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;
