@@ -33,6 +33,11 @@ export type Pipeline = {
   };
   generateRules?: boolean;
 };
+
+export type PipelineWithLatestRun = Pipeline & {
+  latestRun?: EMPipelineRun;
+};
+
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (
   opts?: UseQueryOptions<Pipeline[], CogniteError>
@@ -41,17 +46,60 @@ export const useEMPipelines = (
   const qc = useQueryClient();
   return useQuery<Pipeline[], CogniteError>(
     getEMPipelinesKey(),
-    ({ pageParam }) =>
+    () =>
       sdk
         .post<{ items: Pipeline[] }>(
           `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/list`,
-          { params: { nextCursor: pageParam }, data: { limit: 1000 } }
+          { data: { limit: 1000 } }
         )
         .then((r) => r.data.items),
     {
       onSuccess(items) {
         items.forEach((i) => qc.setQueryData(getEMPipelineKey(i.id), i));
       },
+      ...opts,
+    }
+  );
+};
+
+const getEMPipelinesWithLatestRunsKey = (): QueryKey => [
+  ...getEMPipelinesKey(),
+  'latest-runs',
+];
+export const useEMPipelinesWithLatestRuns = (
+  opts: UseQueryOptions<PipelineWithLatestRun[], CogniteError> = {
+    enabled: true,
+  }
+) => {
+  const sdk = useSDK();
+
+  const { data: emPipelines } = useEMPipelines(opts);
+
+  return useQuery(
+    getEMPipelinesWithLatestRunsKey(),
+    async () => {
+      const latestRuns = await sdk
+        .post<{ items: EMPipelineRun[] }>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/latest`,
+          {
+            data: {
+              items: emPipelines?.map(({ id }) => ({ id })),
+            },
+          }
+        )
+        .then((r) => r.data.items);
+
+      return (
+        emPipelines?.map((pipeline) => ({
+          ...pipeline,
+          latestRun: latestRuns.find(
+            ({ pipelineId }) => pipelineId === pipeline.id
+          ),
+        })) ?? []
+      );
+    },
+    {
+      enabled: !!emPipelines && opts?.enabled,
       ...opts,
     }
   );
