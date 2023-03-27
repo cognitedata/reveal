@@ -17,7 +17,9 @@ const LatestRunCell = ({ latestRun }: LatestRunCellProps): JSX.Element => {
         <QueryStatusIcon status={latestRun.status} />
         <Body level={2} strong>
           <Link
-            to={createInternalLink(`pipeline/${latestRun.pipelineId}/results`)}
+            to={createInternalLink(
+              `pipeline/${latestRun.pipelineId}/results/${latestRun.jobId}`
+            )}
           >
             <Timestamp timestamp={latestRun.createdTime} />
           </Link>
