@@ -40,7 +40,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:20](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L20)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:20](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L20)
 
 ## Accessors
 
@@ -58,7 +58,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -76,7 +76,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
 
 ## Methods
 
@@ -96,7 +96,7 @@ Clears the node collection and interrupts any ongoing operations.
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
 
 ___
 
@@ -118,7 +118,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -186,7 +186,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -204,4 +204,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:46](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeCollection.ts#L46)
+[packages/cad-styling/src/NodeCollection.ts:46](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L46)
