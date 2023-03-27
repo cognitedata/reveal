@@ -21,6 +21,7 @@ import {
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
+import dayjs from 'dayjs';
 import { v4 as uuid } from 'uuid';
 
 import { IndustryCanvas } from './IndustryCanvas';
@@ -149,9 +150,10 @@ export const IndustryCanvasPage = () => {
                 type: ContainerReferenceType.TIMESERIES,
                 id: uuid(),
                 resourceId: supportedResourceItem.id,
-                startDate: new Date(
-                  new Date().setMonth(new Date().getMonth() - 6)
-                ),
+                startDate: dayjs(new Date())
+                  .subtract(2, 'years')
+                  .startOf('day')
+                  .toDate(),
                 endDate: new Date(),
               };
             }

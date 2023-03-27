@@ -33,7 +33,7 @@ const useIndustryCanvasAssetTooltips = (
           resourceId: timeseriesId,
           id: uuid(),
           startDate: dayjs(new Date())
-            .subtract(6, 'months')
+            .subtract(2, 'years')
             .startOf('day')
             .toDate(),
           endDate: dayjs(new Date()).endOf('day').toDate(),
