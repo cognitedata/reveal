@@ -1,3 +1,5 @@
+import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
+import { noop } from 'lodash';
 import React from 'react';
 import {
   Icon,
@@ -13,12 +15,65 @@ import TimeseriesList from './TimeseriesList';
 
 type AssetTooltipProps = {
   id: number;
+  onAddThreeD: ({
+    modelId,
+    revisionId,
+    initialAssetId,
+  }: {
+    modelId: number;
+    revisionId: number;
+    initialAssetId?: number;
+  }) => void;
   onAddTimeseries: (timeseriesId: number) => void;
   onAddAsset: () => void;
   onViewAsset: () => void;
 };
 
-const AssetTooltip: React.FC<AssetTooltipProps> = ({ id, onAddTimeseries }) => {
+type ThreeDButtonProps = {
+  assetId: number;
+  onAddThreeD: ({
+    modelId,
+    revisionId,
+    initialAssetId,
+  }: {
+    modelId: number;
+    revisionId: number;
+    initialAssetId: number;
+  }) => void;
+};
+
+const ThreeDButton: React.FC<ThreeDButtonProps> = ({
+  assetId,
+  onAddThreeD,
+}) => {
+  const { data: mappings, isLoading } =
+    useDetailedMappingsByAssetIdQuery(assetId);
+
+  if (isLoading) {
+    return <Button icon="Loader" inverted onClick={noop} />;
+  }
+
+  if (mappings === undefined || mappings.length === 0) {
+    return null;
+  }
+
+  const onClick = async () => {
+    const mapping = mappings[0];
+    onAddThreeD({
+      modelId: mapping.modelId,
+      revisionId: mapping.revisionId,
+      initialAssetId: assetId,
+    });
+  };
+
+  return <Button icon="Cube" onClick={onClick} inverted />;
+};
+
+const AssetTooltip: React.FC<AssetTooltipProps> = ({
+  id,
+  onAddThreeD,
+  onAddTimeseries,
+}) => {
   const { data: asset, isLoading } = useAsset(id);
 
   if (isLoading) {
@@ -38,12 +93,10 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({ id, onAddTimeseries }) => {
           <Label level={5}>{asset.name ?? asset.externalId}</Label>
         </InnerHeaderWrapper>
 
-        <Button
-          type="ghost"
-          inverted
-          icon="EllipsisHorizontal"
-          size="medium"
-          aria-label="Asset tooltip menu"
+        <ThreeDButton
+          assetId={asset.id}
+          onAddThreeD={onAddThreeD}
+          aria-label="Add 3D Model to Canvas"
         />
       </Header>
 

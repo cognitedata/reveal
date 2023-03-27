@@ -21,6 +21,10 @@ export const getContainerId = (
     return `${containerReference.resourceId}`;
   }
 
+  if (containerReference.type === ContainerReferenceType.THREE_D) {
+    return `${containerReference.id}`;
+  }
+
   assertNever(containerReference, 'Unsupported container reference type');
 };
 

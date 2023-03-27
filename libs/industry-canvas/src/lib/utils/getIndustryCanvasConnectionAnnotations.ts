@@ -1,16 +1,16 @@
 import {
-  Annotation,
-  AnnotationType,
-  LineType,
-} from '@cognite/unified-file-viewer';
-import { getContainerId } from './utils';
-import {
   getFileIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
+import {
+  Annotation,
+  AnnotationType,
+  LineType,
+} from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { ContainerReference } from '../types';
+import { ContainerReference, ContainerReferenceType } from '../types';
+import { getContainerId } from './utils';
 
 const numFileLinksBetweenFiles = (
   fromFileId: number,
@@ -70,7 +70,9 @@ export const getIndustryCanvasConnectionAnnotations = ({
   // multiple times in the same canvas (for different pages).
   return containerReferences
     .filter(
-      (containerReference) => containerReference.resourceId === linkedFileId
+      (containerReference) =>
+        containerReference.type === ContainerReferenceType.FILE &&
+        containerReference.resourceId === linkedFileId
     )
     .flatMap<Annotation>((containerReference) => {
       const isSelfReferentialFileLink = annotatedFileId === linkedFileId;

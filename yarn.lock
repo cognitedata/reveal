@@ -2124,12 +2124,13 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@8.22.1":
-  version "8.22.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-8.22.1.tgz#587bec562e8fe37aa6c5d1151c341151407003c9"
-  integrity sha512-mJ27NFGYhfvBcQXyMLnGlSOtJLF5s9t9D6wMnzgG7QSculDLiTFJB7sVfM8H60Z9QZarJmHaMp4KeIzPpYAVIA==
+"@cognite/unified-file-viewer@^8.23.0":
+  version "8.23.0"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-8.23.0.tgz#19eecb97342c9f22bf8038c16da224807756afa5"
+  integrity sha512-+4xDDB9DlXxkKiN1t67qNUpuH81WxuGy9Dx1T/q14BcgDSTWmJ1WVJWsD+7oYswBcsun5snmgoXyx2OO0C6sSQ==
   dependencies:
     "@cognite/cogs.js" "^7.14.7"
+    "@cognite/reveal" "^4.1.2"
     "@cognite/sdk" "^7.13.0"
     "@mathigon/euclid" "^1.1.6"
     "@visx/axis" "^2.14.0"
@@ -2152,6 +2153,7 @@
     pdf-lib "^1.17.1"
     pdfjs-dist "3.3.122"
     styled-components "^5.3.5"
+    three "0.148.0"
     uuid "^9.0.0"
 
 "@cognite/z-index@^0.2.3":
@@ -29407,7 +29409,7 @@ three-stdlib@2.21.1:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three@^0.148.0:
+three@0.148.0, three@^0.148.0:
   version "0.148.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.148.0.tgz#b6f62f9c84227f8d51c151bf17b67984ded8e4d7"
   integrity sha512-8uzVV+qhTPi0bOFs/3te3RW6hb3urL8jYEl6irjCWo/l6sr8MPNMcClFev/MMYeIxr0gmDcoXTy/8LXh/LXkfw==

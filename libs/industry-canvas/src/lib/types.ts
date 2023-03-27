@@ -4,6 +4,7 @@ export enum ContainerReferenceType {
   FILE = 'file',
   TIMESERIES = 'timeseries',
   ASSET = 'asset',
+  THREE_D = 'threeD',
 }
 
 export type Dimensions = {
@@ -28,6 +29,26 @@ export type AssetContaienrReferenceWithoutDimensions = {
   resourceId: number;
 };
 
+export type ThreeDContainerReferenceWithoutDimensions = {
+  id: string;
+  type: ContainerReferenceType.THREE_D;
+  modelId: number;
+  revisionId: number;
+  initialAssetId?: number;
+  camera?: {
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    target: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
+};
+
 export type FileContainerReference = FileContainerReferenceWithoutDimensions &
   Dimensions;
 
@@ -45,15 +66,20 @@ export type TimeseriesContainerReference =
 export type AssetContainerReference = AssetContaienrReferenceWithoutDimensions &
   Dimensions;
 
+export type ThreeDContainerReference =
+  ThreeDContainerReferenceWithoutDimensions & Dimensions;
+
 export type ContainerReferenceWithoutDimensions =
   | FileContainerReferenceWithoutDimensions
   | TimeseriesContainerReferenceWithoutDimensions
-  | AssetContaienrReferenceWithoutDimensions;
+  | AssetContaienrReferenceWithoutDimensions
+  | ThreeDContainerReferenceWithoutDimensions;
 
 export type ContainerReference =
   | FileContainerReference
   | TimeseriesContainerReference
-  | AssetContainerReference;
+  | AssetContainerReference
+  | ThreeDContainerReference;
 
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;

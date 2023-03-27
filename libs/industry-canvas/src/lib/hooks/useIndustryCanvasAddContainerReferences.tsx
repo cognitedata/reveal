@@ -3,6 +3,7 @@ import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { useCallback } from 'react';
 import { TOAST_POSITION } from '../constants';
 import addDimensionsToContainerReferences from '../utils/addDimensionsToContainerReferences';
+import { v4 as uuid } from 'uuid';
 import {
   ContainerReference,
   ContainerReferenceWithoutDimensions,
@@ -35,9 +36,7 @@ export const useIndustryCanvasAddContainerReferences = ({
           <h4>Resource(s) added to your canvas</h4>
         </div>,
         {
-          toastId: `canvas-file-added-${containerReferences
-            .map((f) => f.resourceId)
-            .join('-')}`,
+          toastId: `canvas-file-added-${uuid()}`,
           position: TOAST_POSITION,
         }
       );

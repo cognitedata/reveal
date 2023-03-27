@@ -26,6 +26,26 @@ const useIndustryCanvasAssetTooltips = (
       return [];
     }
 
+    const onAddThreeD = ({
+      modelId,
+      revisionId,
+      initialAssetId,
+    }: {
+      modelId: number;
+      revisionId: number;
+      initialAssetId?: number;
+    }) => {
+      onAddContainerReferences([
+        {
+          type: ContainerReferenceType.THREE_D,
+          id: `${modelId}-${revisionId}`,
+          modelId,
+          revisionId,
+          initialAssetId,
+        },
+      ]);
+    };
+
     const onAddTimeseries = (timeseriesId: number) => {
       onAddContainerReferences([
         {
@@ -47,6 +67,7 @@ const useIndustryCanvasAssetTooltips = (
         content: (
           <AssetTooltip
             id={resourceId}
+            onAddThreeD={onAddThreeD}
             onAddTimeseries={onAddTimeseries}
             onAddAsset={() => {
               // To be implemented

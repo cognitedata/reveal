@@ -1,11 +1,11 @@
 import { Button } from '@cognite/cogs.js';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import {
   getFileIdFromExtendedAnnotation,
   getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
 import { TooltipContainer } from '../TooltipContainer';
@@ -69,6 +69,7 @@ const useIndustryCanvasFileLinkTooltips = ({
     if (
       containerReferences.some(
         (containerReference) =>
+          containerReference.type === ContainerReferenceType.FILE &&
           containerReference.resourceId === additionalFileId
       )
     ) {
