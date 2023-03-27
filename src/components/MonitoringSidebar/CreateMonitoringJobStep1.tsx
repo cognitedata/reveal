@@ -291,7 +291,6 @@ const CreateMonitoringJobStep1 = ({
                 label: 'minutes',
                 value: 'm',
               },
-              { label: 'hours', value: 'h' },
             ]}
           />
         </Col>
