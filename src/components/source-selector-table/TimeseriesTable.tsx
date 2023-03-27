@@ -7,6 +7,7 @@ import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { SourceTableProps } from 'types/types';
 import { RawTimeseries } from 'types/api';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type TimeseriesListTableRecord = {
   key: string;
@@ -107,7 +108,7 @@ export default function TimeseriesTable({
       rowSelection={rowSelection}
       dataSource={dataSource || []}
       appendTooltipTo={undefined}
-      pagination={{ defaultPageSize: 25 }}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 }

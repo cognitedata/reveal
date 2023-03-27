@@ -16,7 +16,7 @@ import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineAction
 import { stringContains } from 'utils/shared';
 
 import { useSearchParams } from 'react-router-dom';
-import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
+import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 import {
   Pipeline,
   useDeleteEMPipeline,
@@ -191,6 +191,7 @@ const PipelineTable = (): JSX.Element => {
         appendTooltipTo={undefined}
         dataSource={pipelinesList}
         rowSelection={rowSelection}
+        pagination={PAGINATION_SETTINGS}
       />
     </>
   );

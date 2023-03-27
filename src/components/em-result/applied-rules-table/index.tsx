@@ -1,6 +1,7 @@
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Flex, Icon } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
+import { PAGINATION_SETTINGS } from 'common/constants';
 import { AppliedRule } from 'hooks/entity-matching-rules';
 import { useMemo } from 'react';
 import { SourceType } from 'types/api';
@@ -100,10 +101,7 @@ export default function AppliedRulesTable({
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={appliedRulesList}
-      pagination={{
-        defaultPageSize: 25,
-        hideOnSinglePage: true,
-      }}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 }

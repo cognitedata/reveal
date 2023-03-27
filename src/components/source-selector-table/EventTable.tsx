@@ -6,6 +6,7 @@ import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawCogniteEvent } from 'types/api';
 import { SourceTableProps } from 'types/types';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type EventListTableRecord = { key: string } & RawCogniteEvent;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
@@ -108,7 +109,7 @@ export default function EventTable({
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource || []}
-      pagination={{ defaultPageSize: 25 }}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 }

@@ -10,6 +10,7 @@ import {
   Prediction,
   PredictionObject,
 } from 'hooks/entity-matching-predictions';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type Predictions = {
   predictions: Prediction[];
@@ -120,6 +121,7 @@ const QuickMatchResultsTable = ({
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={dataSource}
+      pagination={PAGINATION_SETTINGS}
     />
   );
 };
