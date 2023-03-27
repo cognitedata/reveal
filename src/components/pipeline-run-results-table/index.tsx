@@ -17,7 +17,7 @@ const PipelineRunResultsTable = ({
 }: PipelineRunResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const [shouldGroupByPattern, setShouldGroupByPattern] = useState(true);
+  const [shouldGroupByPattern, setShouldGroupByPattern] = useState(false);
 
   return (
     <Flex direction="column" gap={16}>
