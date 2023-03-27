@@ -1978,15 +1978,14 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.1.2.tgz#eb8bb9bd5ea90ffbb973f6886c5783dc1a80728f"
-  integrity sha512-ccHnHUpRyVEiB3eHYU9Up40LuMP1vWlgaChpuBH0+xcF2crCPsf19JNu4RfLzhiATcMPtWzhAciJ0Kq/tFff/w==
+"@cognite/reveal@^4.1.2", "@cognite/reveal@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
+  integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
     async-mutex "0.4.0"
-    comlink "4.3.1"
     glslify "7.1.1"
     glslify-import "3.1.0"
     html2canvas "^1.4.1"
@@ -1996,7 +1995,8 @@
     path-browserify "1.0.1"
     rxjs "7.8.0"
     skmeans "0.11.3"
-    three-stdlib "2.21.1"
+    sparse-octree "7.1.6"
+    three-stdlib "2.21.8"
 
 "@cognite/sdk-core@4.1.1":
   version "4.1.1"
@@ -8437,10 +8437,10 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/three@0.148.0":
-  version "0.148.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.148.0.tgz#bf7f0f6f12a9b318eebb7dc3813ae69824e13ae6"
-  integrity sha512-1GiErjt1pJMadO8EhaxNrtULzdn+f3BbM3YTukiiXBVeRvvx4CXc2rpYdEuEBU/ouCX7Rc95j1HoVG9kFQXQJw==
+"@types/three@0.149.0":
+  version "0.149.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.149.0.tgz#f48c03ffcf35b2d196f3532b51bc845e96f6090e"
+  integrity sha512-fgNBm9LWc65ER/W0cvoXdC0iMy7Ke9e2CONmEr6Jt8sDSY3sw4DgOubZfmdZ747dkPhbQrgRQAWwDEr2S/7IEg==
   dependencies:
     "@types/webxr" "*"
 
@@ -12298,11 +12298,6 @@ combined-stream@^1.0.6, combined-stream@^1.0.8, combined-stream@~1.0.6:
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
   dependencies:
     delayed-stream "~1.0.0"
-
-comlink@4.3.1:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.1.tgz#0c6b9d69bcd293715c907c33fe8fc45aecad13c5"
-  integrity sha512-+YbhUdNrpBZggBAHWcgQMLPLH1KDF3wJpeqrCKieWQ8RL7atmgsgTQko1XEBK6PsecfopWNntopJ+ByYG1lRaA==
 
 comma-separated-tokens@^1.0.0:
   version "1.0.8"
@@ -28218,6 +28213,11 @@ spark-md5@^3.0.0:
   resolved "https://registry.yarnpkg.com/spark-md5/-/spark-md5-3.0.2.tgz#7952c4a30784347abcee73268e473b9c0167e3fc"
   integrity sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==
 
+sparse-octree@7.1.6:
+  version "7.1.6"
+  resolved "https://registry.yarnpkg.com/sparse-octree/-/sparse-octree-7.1.6.tgz#bad013c12b14ec78a514fc713d844bfae02e360e"
+  integrity sha512-2fnurm+xGOkhQLoPDqv2kbVXN+xLdTArIt3SCyU47GGVJaUf9AQbKl13KNKYKRxivGLEcscNJtqfvxY2zCGT6Q==
+
 spawn-error-forwarder@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/spawn-error-forwarder/-/spawn-error-forwarder-1.0.0.tgz#1afd94738e999b0346d7b9fc373be55e07577029"
@@ -29392,10 +29392,10 @@ text-table@^0.2.0, text-table@~0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-three-stdlib@2.21.1:
-  version "2.21.1"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.1.tgz#023deb85adf25d3a47ab54d5fc4887e4df148d33"
-  integrity sha512-E4q7nKuM5PFGX6/13MUsXQDRgtQkMPD6aQggqdKRewbNV/sWY+6EVW3YVVe5xhkl+rV8khOf0xPSqkl5UDabMQ==
+three-stdlib@2.21.8:
+  version "2.21.8"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.8.tgz#37b11b7f62d07b10742c212153b14db21433b3c6"
+  integrity sha512-kqisiKvO4mSy59v5vWqBQSH8famLxp7Z51LxpMJI9GwDxqODaW02rhIwmjYDEzZWNFpjZpoDHVGbdpeHf8h3SA==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
@@ -29409,10 +29409,15 @@ three-stdlib@2.21.1:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three@0.148.0, three@^0.148.0:
+three@0.148.0:
   version "0.148.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.148.0.tgz#b6f62f9c84227f8d51c151bf17b67984ded8e4d7"
   integrity sha512-8uzVV+qhTPi0bOFs/3te3RW6hb3urL8jYEl6irjCWo/l6sr8MPNMcClFev/MMYeIxr0gmDcoXTy/8LXh/LXkfw==
+
+three@^0.149.0:
+  version "0.149.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.149.0.tgz#a9cf78b17d02f063ffe6dfca1e300eff2eab2927"
+  integrity sha512-tohpUxPDht0qExRLDTM8sjRLc5d9STURNrdnK3w9A+V4pxaTBfKWWT/IqtiLfg23Vfc3Z+ImNfvRw1/0CtxrkQ==
 
 throat@^6.0.1:
   version "6.0.2"
