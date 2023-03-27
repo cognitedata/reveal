@@ -327,7 +327,7 @@ type EMPipelineMatchType =
   | 'model'
   | 'rule_rule_input_pattern->rule_predict_pattern';
 
-type EMPipelineRunMatch = {
+export type EMPipelineRunMatch = {
   matchType?: EMPipelineMatchType;
   score?: number;
   source?: Record<string, unknown>;
@@ -347,20 +347,20 @@ type EMPipelineRegexExtractor = {
 
 type EMPipelineMatchConditionType = 'equals';
 
-type EMPipelineMatchConditionSynonymEntry = {
-  sources?: string[];
-  targets?: string[];
-};
-
 type EMPipelineMatchCondition = {
   conditionType: EMPipelineMatchConditionType;
   arguments: number[][];
-  config?: {
-    synonyms?: EMPipelineMatchConditionSynonymEntry[];
-  };
 };
 
-type EMPipelineRun = {
+type EMPipelineGeneratedRuleMatch = EMPipelineRunMatch;
+
+type EMPipelineGeneratedRule = {
+  extractors?: EMPipelineRegexExtractor[];
+  conditions?: EMPipelineMatchCondition[];
+  matches?: EMPipelineGeneratedRuleMatch[];
+};
+
+export type EMPipelineRun = {
   status: EMPipelineRunStatus;
   createdTime: number;
   startTime: number | null;
@@ -368,12 +368,7 @@ type EMPipelineRun = {
   jobId: number;
   pipelineId?: number;
   matches?: EMPipelineRunMatch[];
-  suggestedRules?: {
-    extractors: EMPipelineRegexExtractor[];
-    conditions: EMPipelineMatchCondition[];
-    priority?: number;
-    numMatches?: number;
-  };
+  generatedRules?: EMPipelineGeneratedRule[];
 };
 
 type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;
