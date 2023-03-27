@@ -9,21 +9,21 @@ import { SourceType } from 'types/api';
 type Props = {
   predictionJobId: number;
   predictions: Prediction[] | undefined;
-  sourceIds: number[] | undefined;
+  confirmedPredictions: number[] | undefined;
   sourceType: SourceType;
 };
 
 const ApplySelectedMatchesButton = ({
   predictionJobId,
   predictions,
-  sourceIds,
+  confirmedPredictions,
   sourceType,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
   const { mutate, isLoading } = useUpdateAssetIds(sourceType, predictionJobId);
 
   const selectedPredictions = predictions?.filter((prediction) =>
-    sourceIds?.includes(prediction.source.id)
+    confirmedPredictions?.includes(prediction.source.id)
   );
 
   const applySelected = () => {
@@ -59,7 +59,7 @@ const ApplySelectedMatchesButton = ({
         type="primary"
         onClick={applySelected}
         loading={isLoading}
-        disabled={!sourceIds?.length}
+        disabled={!confirmedPredictions?.length}
       >
         {t('apply-selected-matches')}
       </StyledButton>
