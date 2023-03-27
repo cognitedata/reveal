@@ -13,6 +13,7 @@ import {
 
 import ResourceName from './ResourceName';
 import ExpandedMatch from './ExpandedMatch';
+import Confidence from 'components/em-result/Confidence';
 
 type PipelineResultsTableRecord = EMPipelineRunMatch & { key: string };
 
@@ -63,6 +64,17 @@ const PipelineResultsTable = ({
         render: (target: EMPipelineRunMatch['target']) => (
           <ResourceName resource={target} />
         ),
+      },
+      {
+        title: t('confidence'),
+        dataIndex: 'score',
+        key: 'score',
+        render: (score: EMPipelineRunMatch['score']) => (
+          <Confidence score={score} />
+        ),
+        sorter: (rowA: EMPipelineRunMatch, rowB: EMPipelineRunMatch) =>
+          (rowA.score ?? 0) - (rowB.score ?? 0),
+        width: 64,
       },
       {
         title: '',
