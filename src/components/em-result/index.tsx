@@ -52,7 +52,7 @@ export default function EntityMatchingResult({
   const onClose = () => setSourceIds([]);
 
   return (
-    <>
+    <Container $isActionBarVisible={!!sourceIds.length}>
       <Step
         title={t('result-step-title', { step: 4 })}
         subtitle={t('result-step-subtitle')}
@@ -79,7 +79,7 @@ export default function EntityMatchingResult({
         sourceType={sourceType}
         onClose={onClose}
       />
-    </>
+    </Container>
   );
 }
 
@@ -90,4 +90,10 @@ const StyledButton = styled(Button)`
 
 const StyledFlex = styled(Flex)`
   padding: 20px;
+`;
+
+const Container = styled.div<{ $isActionBarVisible?: boolean }>`
+  overflow-y: auto;
+  padding-bottom: ${({ $isActionBarVisible }) =>
+    $isActionBarVisible ? 56 : 0}px;
 `;
