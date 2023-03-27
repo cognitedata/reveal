@@ -16,7 +16,9 @@ import {
 } from 'utils';
 
 const QuickMatchResults = (): JSX.Element => {
-  const [sourceIds, setSourceIds] = useState<number[]>([]);
+  const [confirmedPredictions, setConfirmedPredictions] = useState<number[]>(
+    []
+  );
   const {
     subAppPath,
     predictJobId: predictJobIdStr,
@@ -71,7 +73,7 @@ const QuickMatchResults = (): JSX.Element => {
           extraContent={
             <ApplySelectedMatchesButton
               predictions={predictions.items}
-              sourceIds={sourceIds}
+              confirmedPredictions={confirmedPredictions}
               predictionJobId={predictJobId}
               sourceType={sourceType}
             />
@@ -82,8 +84,8 @@ const QuickMatchResults = (): JSX.Element => {
               predictJobId={predictJobId}
               sourceType={sourceType}
               predictions={predictions.items}
-              sourceIdsSecondaryTopBar={sourceIds}
-              setSourceIdsSecondaryTopBar={setSourceIds}
+              confirmedPredictions={confirmedPredictions}
+              setConfirmedPredictions={setConfirmedPredictions}
               appliedRules={appliedRules?.items}
             />
           )}
