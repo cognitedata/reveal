@@ -1,9 +1,12 @@
 import { DatapointAggregate } from '@cognite/sdk';
+
 import isUndefined from 'lodash/isUndefined';
 
-import { Data } from '../../LineChart';
+import { ValueType } from '../../../../LineChart';
 
-export const adaptToChartData = (data: DatapointAggregate[]): Data => {
+export const adaptDatapointAggregatesToChartData = (
+  data: DatapointAggregate[]
+) => {
   return data.reduce(
     (result, datapoint) => {
       const { timestamp, average } = datapoint;
@@ -19,8 +22,8 @@ export const adaptToChartData = (data: DatapointAggregate[]): Data => {
       };
     },
     {
-      x: [] as Date[],
-      y: [] as number[],
+      x: [] as ValueType[],
+      y: [] as ValueType[],
       customData: [] as DatapointAggregate[],
     }
   );

@@ -10,7 +10,6 @@ import {
 } from '@data-exploration-components/components/Table/Table';
 import { TIME_SELECT } from '@data-exploration-components/containers';
 // import { TimeseriesChart } from '..';
-import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns, TimeDisplay } from '../../../components';
@@ -72,9 +71,7 @@ export const TimeseriesTable = ({
       enableSorting: false,
       cell: ({ row }) => {
         const timeseries = row.original;
-        if (timeseries.isString) {
-          return <Body level={2}>N/A for string time series</Body>;
-        }
+
         // return (
         //   <TimeseriesChart
         //     height={50}
@@ -97,6 +94,7 @@ export const TimeseriesTable = ({
         return (
           <TimeseriesChart
             timeseriesId={timeseries.id}
+            isString={timeseries.isString}
             variant="small"
             dateRange={dateRange}
             numberOfPoints={100}

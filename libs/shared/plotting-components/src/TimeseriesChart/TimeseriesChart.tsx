@@ -5,27 +5,24 @@ import difference from 'lodash/difference';
 
 import { TimePeriods } from './components/TimePeriods';
 
-import { useTimerseriesQuery } from './hooks/useTimerseriesQuery';
 import {
   DateRange,
   TimePeriod,
   TimeseriesChartProps,
   UpdateTimePeriodProps,
 } from './types';
-import {
-  DEFAULT_DATAPOINTS_LIMIT,
-  EMPTY_DATA,
-  TIME_PERIOD_OPTIONS,
-} from './constants';
+import { DEFAULT_DATAPOINTS_LIMIT, TIME_PERIOD_OPTIONS } from './constants';
 import { TimePeriodSelect } from './components/TimePeriodSelect';
 import { OpenInChartsButton } from './components/OpenInChartsButton';
-import { getChartByVariant } from './utils/getChartByVariant';
 import { DateRangePicker } from './components/DateRangePicker';
+import { getChartByVariant } from './utils/getChartByVariant';
+import { useTimeseriesChartData } from './domain/internal/hooks/useTimeseriesChartData';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   timeseriesId,
   variant = 'large',
   numberOfPoints = DEFAULT_DATAPOINTS_LIMIT,
+  isString = false,
   quickTimePeriodOptions = [],
   dateRange: dateRangeProp,
   height,
@@ -35,11 +32,11 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
   const [dateRange, setDateRange] = useState<DateRange>();
 
-  const { data, isLoading } = useTimerseriesQuery({
+  const { data, isLoading } = useTimeseriesChartData({
     timeseriesId,
-    start: dateRange?.[0],
-    end: dateRange?.[1],
-    limit: numberOfPoints,
+    dateRange,
+    numberOfPoints,
+    isString,
   });
 
   const timePeriodSelectOptions = useMemo(() => {
@@ -69,7 +66,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
 
   return (
     <Chart
-      data={data || EMPTY_DATA}
+      data={data}
       isLoading={isLoading}
       style={{ height }}
       renderFilters={() => [
