@@ -337,7 +337,14 @@ type EMPipelineMatchCondition = {
   arguments: number[][];
 };
 
-type EMPipelineGeneratedRuleMatch = EMPipelineRunMatch;
+type EMPipelineGeneratedRuleExistingMatchType = 'model';
+
+export type EMPipelineGeneratedRuleMatch = {
+  consistentMatch?: boolean;
+  existingMatchType?: EMPipelineGeneratedRuleExistingMatchType;
+  source: Record<string, unknown>;
+  target: Record<string, unknown>;
+};
 
 export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
