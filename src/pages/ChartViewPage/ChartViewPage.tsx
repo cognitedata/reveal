@@ -425,6 +425,8 @@ const ChartViewPage = () => {
       setShowThresholdSidebar(false);
       setShowDataProfilingSidebar(false);
       setShowEventSidebar(false);
+      setShowMonitoringSidebar(false);
+      setShowAlertingSidebar(false);
       setShowErrorSidebar(showMenu);
 
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
