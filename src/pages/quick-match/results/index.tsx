@@ -3,6 +3,7 @@ import { useTranslation } from 'common';
 import ApplySelectedMatchesButton from 'components/apply-selected-matches-button/ApplySelectedMatchesButton';
 import EntityMatchingResult from 'components/em-result';
 import Page from 'components/page';
+import Step from 'components/step';
 import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
 import { useApplyRulesResults } from 'hooks/entity-matching-rules';
 
@@ -59,7 +60,16 @@ const QuickMatchResults = (): JSX.Element => {
   }
 
   if (loadingPredictions || loadingAppliedRules) {
-    return <Loader />;
+    return (
+      <Page subtitle={t('results')} title={t('quick-match')}>
+        <Step
+          title={t('download-result-step-title', { step: 4 })}
+          subtitle={t('download-result-step-subtitle')}
+        >
+          <Loader />
+        </Step>
+      </Page>
+    );
   }
 
   return (
