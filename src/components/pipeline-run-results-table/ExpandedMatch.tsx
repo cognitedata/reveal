@@ -56,7 +56,7 @@ const ExpandedMatch = ({
 };
 
 const Container = styled(Flex).attrs({ direction: 'column', gap: 8 })`
-  padding-left: 64px;
+  padding-left: 36px;
 `;
 
 const MatchFieldContainer = styled(Flex).attrs({ direction: 'column' })`
