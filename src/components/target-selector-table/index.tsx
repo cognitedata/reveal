@@ -12,6 +12,7 @@ import { useTranslation } from 'common';
 import RootAssetSelect from 'components/root-asset-select';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 import { SourceType, SOURCE_TYPES } from 'types/api';
+import styled from 'styled-components';
 
 type Props = {};
 
@@ -45,7 +46,7 @@ export default function TargetSelectionTable({}: Props) {
   const onClose = () => setTargetsList([]);
 
   return (
-    <>
+    <Container $isActionBarVisible={!!targetsList.length}>
       <Flex direction="column">
         <Flex justifyContent="space-between">
           <Flex gap={12} alignItems="center">
@@ -106,6 +107,12 @@ export default function TargetSelectionTable({}: Props) {
         sourceType={sourceType}
         onClose={onClose}
       />
-    </>
+    </Container>
   );
 }
+
+const Container = styled.div<{ $isActionBarVisible?: boolean }>`
+  overflow-y: auto;
+  padding-bottom: ${({ $isActionBarVisible }) =>
+    $isActionBarVisible ? 56 : 0}px;
+`;
