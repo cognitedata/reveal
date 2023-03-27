@@ -1,4 +1,4 @@
-import { CogniteClient, DocumentFilter } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import {
   EventsAggregateUniqueValuesResponse,
   EventsMetadataAggregateResponse,
@@ -7,8 +7,7 @@ import { getDocumentsAggregate } from './getDocumentsAggregate';
 
 export const getDocumentsMetadataValuesAggregate = (
   sdk: CogniteClient,
-  metadataKey: string,
-  filter?: DocumentFilter
+  metadataKey: string
 ): Promise<EventsMetadataAggregateResponse[]> => {
   return getDocumentsAggregate<EventsAggregateUniqueValuesResponse>(sdk, {
     aggregate: 'uniqueValues',
@@ -17,7 +16,6 @@ export const getDocumentsMetadataValuesAggregate = (
         property: ['sourceFile', 'metadata', metadataKey],
       },
     ],
-    filter,
   }).then(({ items }) => {
     return items.map((item) => {
       return {

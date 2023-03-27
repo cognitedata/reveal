@@ -1,4 +1,8 @@
-import { InternalAssetFilters, isNumeric } from '@data-exploration-lib/core';
+import {
+  InternalAssetFilters,
+  isNumeric,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -89,7 +93,11 @@ export const mapFiltersToAssetsAdvancedFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        filterBuilder.exists(`metadata|${key}`);
+      } else {
+        filterBuilder.equals(`metadata|${key}`, value);
+      }
     }
   }
 

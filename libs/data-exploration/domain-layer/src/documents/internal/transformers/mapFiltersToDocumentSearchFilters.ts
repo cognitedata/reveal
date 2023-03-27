@@ -1,5 +1,9 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
-import { InternalDocumentFilter, isNumeric } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  isNumeric,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import { getSearchConfig } from '../../../utils';
 
 export type DocumentProperties = {
@@ -66,7 +70,11 @@ export const mapFiltersToDocumentSearchFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`sourceFile|metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        filterBuilder.exists(`sourceFile|metadata|${key}`);
+      } else {
+        filterBuilder.equals(`sourceFile|metadata|${key}`, value);
+      }
     }
   }
 

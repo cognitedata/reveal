@@ -116,16 +116,10 @@ export const queryKeys = {
   documentsFilteredAggregates: (filters: any, aggregates: any) =>
     [...queryKeys.documentsAggregate(), filters, aggregates] as const,
 
-  documentsMetadata: (filter: any) =>
-    [...queryKeys.documents(), 'metadata', 'keys', filter] as const,
-  documentsMetadataValues: (metadataKey: string, filter: any) =>
-    [
-      ...queryKeys.documents(),
-      'metadata',
-      metadataKey,
-      'values',
-      filter,
-    ] as const,
+  documentsMetadata: () =>
+    [...queryKeys.documents(), 'metadata', 'keys'] as const,
+  documentsMetadataValues: (metadataKey: string) =>
+    [...queryKeys.documents(), 'metadata', metadataKey, 'values'] as const,
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,

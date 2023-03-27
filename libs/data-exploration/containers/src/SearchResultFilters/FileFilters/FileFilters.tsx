@@ -5,7 +5,12 @@ import {
 } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
-import { AuthorFilter, SourceFilter, TypeFilter } from '../../../src/Filters';
+import {
+  AuthorFilter,
+  MetadataFilter,
+  SourceFilter,
+  TypeFilter,
+} from '../../Filters';
 
 // INFO: FileFilters is for documents.
 export const FileFilters: React.FC<FilterProps> = ({
@@ -46,18 +51,14 @@ export const FileFilters: React.FC<FilterProps> = ({
           }
         />
 
-        {/* ///////////////// */}
-        {/* <MetadataFilterV2
-          items={items}
-          keys={metadataKeys}
-          value={filter.asset.metadata}
-          setValue={(newMetadata) =>
-            onFilterChange('asset', {
+        <MetadataFilter.Files
+          values={filter.document.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('document', {
               metadata: newMetadata,
-            })
-          }
-          useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
-        /> */}
+            });
+          }}
+        />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );

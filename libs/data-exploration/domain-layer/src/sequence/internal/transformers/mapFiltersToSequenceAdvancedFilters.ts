@@ -1,4 +1,8 @@
-import { InternalSequenceFilters, isNumeric } from '@data-exploration-lib/core';
+import {
+  InternalSequenceFilters,
+  isNumeric,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -52,7 +56,11 @@ export const mapFiltersToSequenceAdvancedFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        filterBuilder.exists(`metadata|${key}`);
+      } else {
+        filterBuilder.equals(`metadata|${key}`, value);
+      }
     }
   }
 

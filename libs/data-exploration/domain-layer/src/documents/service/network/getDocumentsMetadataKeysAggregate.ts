@@ -1,4 +1,4 @@
-import { CogniteClient, DocumentFilter } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import {
   DocumentsAggregateUniquePropertiesResponse,
   DocumentsMetadataAggregateResponse,
@@ -7,14 +7,12 @@ import {
 import { getDocumentsAggregate } from './getDocumentsAggregate';
 
 export const getDocumentsMetadataKeysAggregate = (
-  sdk: CogniteClient,
-  filter?: DocumentFilter
+  sdk: CogniteClient
 ): Promise<DocumentsMetadataAggregateResponse[]> => {
   return getDocumentsAggregate<DocumentsAggregateUniquePropertiesResponse>(
     sdk,
     {
       aggregate: 'uniqueProperties',
-      filter,
       properties: [
         {
           property: ['sourceFile', 'metadata'],

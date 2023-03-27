@@ -5,7 +5,12 @@ import {
 } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
-import { IsStepFilter, IsStringFilter, UnitFilter } from '../../../src/Filters';
+import {
+  IsStepFilter,
+  IsStringFilter,
+  MetadataFilter,
+  UnitFilter,
+} from '../../Filters';
 
 export const TimeseriesFilters: React.FC<FilterProps> = ({
   filter,
@@ -43,18 +48,14 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
           }
         />
 
-        {/* ///////////////// */}
-        {/* <MetadataFilterV2
-          items={items}
-          keys={metadataKeys}
-          value={filter.asset.metadata}
-          setValue={(newMetadata) =>
-            onFilterChange('asset', {
+        <MetadataFilter.Timeseries
+          values={filter.timeseries.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('timeSeries', {
               metadata: newMetadata,
-            })
-          }
-          useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
-        /> */}
+            });
+          }}
+        />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );

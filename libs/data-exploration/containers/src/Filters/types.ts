@@ -25,5 +25,6 @@ export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
 export interface BaseNestedFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {
-  onChange?: (selection: OptionSelection) => void;
+  values?: { key: string; value: string }[];
+  onChange?: (selection: { key: string; value: string }[]) => void;
 }

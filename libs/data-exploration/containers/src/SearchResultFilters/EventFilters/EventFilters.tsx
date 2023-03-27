@@ -5,7 +5,12 @@ import {
 } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
-import { SourceFilter, SubTypeFilter, TypeFilter } from '../../../src/Filters';
+import {
+  MetadataFilter,
+  SourceFilter,
+  SubTypeFilter,
+  TypeFilter,
+} from '../../Filters';
 
 export const EventFilters: React.FC<FilterProps> = ({
   filter,
@@ -45,6 +50,14 @@ export const EventFilters: React.FC<FilterProps> = ({
               sources: newSources,
             })
           }
+        />
+        <MetadataFilter.Events
+          values={filter.event.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('event', {
+              metadata: newMetadata,
+            });
+          }}
         />
 
         {/* ///////////////// */}

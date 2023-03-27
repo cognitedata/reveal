@@ -23,25 +23,38 @@ import {
   CustomMetadataValue,
 } from '@data-exploration/components';
 import { BaseNestedFilterProps } from '../types';
-import { transformMetadataKeysToOptions } from './utils';
+import {
+  transformMetadataKeysToOptions,
+  transformMetadataSelectionChange,
+  transformMetadataValues,
+} from './utils';
 
 export interface MetadataFilterProps<TFilter>
   extends BaseNestedFilterProps<TFilter> {
+  values?: { key: string; value: string }[];
   options: OptionType[];
   useCustomMetadataValuesQuery?: CustomMetadataValue;
 }
 
 export const MetadataFilter = <TFilter,>({
+  values,
   options,
   useCustomMetadataValuesQuery,
   onChange,
 }: MetadataFilterProps<TFilter>) => {
+  const selection = transformMetadataValues(values);
+
   return (
     <CheckboxSelect
       width="100%"
+      selection={selection}
+      label="Metadata"
       options={options}
-      onClickApply={(selection) => {
-        onChange?.(selection);
+      onClickApply={(newSelection) => {
+        const transformedSelection =
+          transformMetadataSelectionChange(newSelection);
+
+        onChange?.(transformedSelection);
       }}
       useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
     />
@@ -51,15 +64,13 @@ export const MetadataFilter = <TFilter,>({
 const AssetsMetadataFilter = (
   props: BaseNestedFilterProps<InternalAssetFilters>
 ) => {
-  const { data } = useAssetsMetadataKeysAggregateQuery(props.filter);
+  const { data } = useAssetsMetadataKeysAggregateQuery();
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
-      useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery(
-        props.filter
-      )}
+      useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery()}
       {...props}
     />
   );
@@ -68,16 +79,14 @@ const AssetsMetadataFilter = (
 const EventsMetadataFilter = (
   props: BaseNestedFilterProps<InternalEventsFilters>
 ) => {
-  const { data } = useEventsMetadataKeysAggregateQuery(props.filter);
+  const { data } = useEventsMetadataKeysAggregateQuery();
 
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
-      useCustomMetadataValuesQuery={useEventsMetadataValuesOptionsQuery(
-        props.filter
-      )}
+      useCustomMetadataValuesQuery={useEventsMetadataValuesOptionsQuery()}
       {...props}
     />
   );
@@ -104,16 +113,14 @@ const TimeseriesMetadataFilter = (
 const FilesMetadataFilter = (
   props: BaseNestedFilterProps<InternalDocumentFilter>
 ) => {
-  const { data } = useDocumentsMetadataKeysAggregateQuery(props.filter);
+  const { data } = useDocumentsMetadataKeysAggregateQuery();
 
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
-      useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery(
-        props.filter
-      )}
+      useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery()}
       {...props}
     />
   );

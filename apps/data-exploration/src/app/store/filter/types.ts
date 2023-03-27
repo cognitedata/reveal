@@ -1,5 +1,5 @@
-import { InternalAssetFilters } from '@data-exploration-lib/core';
 import {
+  InternalAssetFilters,
   InternalCommonFilters,
   InternalDocumentFilter,
   InternalEventsFilters,

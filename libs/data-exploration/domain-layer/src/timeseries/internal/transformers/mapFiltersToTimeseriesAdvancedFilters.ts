@@ -1,6 +1,7 @@
 import {
   InternalTimeseriesFilters,
   isNumeric,
+  METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
@@ -84,7 +85,11 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        filterBuilder.exists(`metadata|${key}`);
+      } else {
+        filterBuilder.equals(`metadata|${key}`, value);
+      }
     }
   }
 

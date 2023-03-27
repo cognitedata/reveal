@@ -61,6 +61,7 @@ export const Option: React.FC<OptionProps> = ({
           data-testid="count"
           label={`${formatBigNumbersWithSuffix(count)}`}
           type="neutral"
+          size="x-small"
         />
       )}
 

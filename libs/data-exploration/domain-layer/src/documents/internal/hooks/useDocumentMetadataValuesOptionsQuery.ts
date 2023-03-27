@@ -8,7 +8,6 @@ export const useDocumentMetadataValuesOptionsQuery =
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data, isLoading } = useDocumentsMetadataValuesAggregateQuery(
       metadataKeys,
-      filter,
       options
     );
 

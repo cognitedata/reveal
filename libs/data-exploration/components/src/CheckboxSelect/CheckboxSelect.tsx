@@ -2,9 +2,7 @@ import * as React from 'react';
 
 import { Button, Dropdown } from '@cognite/cogs.js';
 
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
-
-import isEmpty from 'lodash/isEmpty';
+import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
 
 import { FilterButtonText } from './elements';
 import {
@@ -16,9 +14,12 @@ import {
 import { OptionsMenu } from './components/OptionsMenu';
 import { ApplyButton } from './components/ApplyButton';
 import { getFilterButtonText } from './utils/getFilterButtonText';
+import { FilterLabel } from '../Labels';
 
 export type CheckboxSelectProps = {
+  selection?: OptionSelection;
   options: Array<OptionType>;
+  label?: string;
   onChange?: (selection: OptionSelection) => void;
   onClickApply?: (selection: OptionSelection) => void;
   enableSorting?: boolean;
@@ -26,15 +27,24 @@ export type CheckboxSelectProps = {
 } & WidthProps;
 
 export const CheckboxSelect = ({
+  selection: customSelection,
   options,
+  label,
   onChange,
   onClickApply,
   useCustomMetadataValuesQuery,
   enableSorting = false,
   width,
 }: CheckboxSelectProps) => {
-  const [selection, setSelection] =
-    React.useState<OptionSelection>(EMPTY_OBJECT);
+  const [selection, setSelection] = React.useState<OptionSelection>(
+    customSelection || EMPTY_OBJECT
+  );
+
+  // Trigger local state when the metadata filter selection is
+  // changed from "outside sources" (e.g., filter tag, url, etc...)
+  useDeepEffect(() => {
+    setSelection(customSelection || EMPTY_OBJECT);
+  }, [customSelection]);
 
   const handleChange = (newSelection: OptionSelection) => {
     setSelection(newSelection);
@@ -52,7 +62,7 @@ export const CheckboxSelect = ({
           footer={
             onClickApply && (
               <ApplyButton
-                disabled={isEmpty(selection)}
+                // disabled={isEmpty(selection)}
                 onClick={() => onClickApply(selection)}
               />
             )
@@ -61,11 +71,14 @@ export const CheckboxSelect = ({
         />
       }
     >
-      <Button icon="ChevronDown" iconPlacement="right" style={{ width }}>
-        <FilterButtonText data-testid="filter-button">
-          {getFilterButtonText(selection)}
-        </FilterButtonText>
-      </Button>
+      <>
+        {label && <FilterLabel>{label}</FilterLabel>}
+        <Button icon="ChevronDown" iconPlacement="right" style={{ width }}>
+          <FilterButtonText data-testid="filter-button">
+            {getFilterButtonText(selection)}
+          </FilterButtonText>
+        </Button>
+      </>
     </Dropdown>
   );
 };
