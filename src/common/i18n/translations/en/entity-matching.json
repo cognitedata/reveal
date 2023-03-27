@@ -211,5 +211,6 @@
   "last-run": "Last run",
   "group-by-pattern": "Group by pattern",
   "external-id": "External ID",
-  "id": "ID"
+  "id": "ID",
+  "connected-fields": "Connected fields"
 }
