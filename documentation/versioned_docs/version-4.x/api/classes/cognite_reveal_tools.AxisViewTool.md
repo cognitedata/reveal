@@ -34,7 +34,7 @@ Base class for tools attaching to a Cognite3DViewer.
 
 #### Defined in
 
-[packages/tools/src/AxisView/AxisViewTool.ts:42](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L42)
+[packages/tools/src/AxisView/AxisViewTool.ts:45](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L45)
 
 ## Methods
 
@@ -55,7 +55,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/AxisView/AxisViewTool.ts:66](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L66)
+[packages/tools/src/AxisView/AxisViewTool.ts:69](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L69)
 
 ___
 
@@ -82,4 +82,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
