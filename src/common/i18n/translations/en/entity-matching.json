@@ -289,5 +289,6 @@
   "id": "ID",
   "connected-fields": "Connected fields",
   "source": "Source",
-  "target": "Target"
+  "target": "Target",
+  "type": "Type"
 }

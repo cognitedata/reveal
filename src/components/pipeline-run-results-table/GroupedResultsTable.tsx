@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Key, useMemo, useState } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
@@ -31,6 +31,7 @@ const GroupedResultsTable = ({
   const { t } = useTranslation();
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const handleClickExpandButton = (clickedRowKey: string) => {
     setExpandedRowKeys((prevState) =>
@@ -38,6 +39,10 @@ const GroupedResultsTable = ({
         ? prevState.filter((key) => key !== clickedRowKey)
         : prevState.concat(clickedRowKey)
     );
+  };
+
+  const handleSelectRow = (selectedRowKeys: Key[]) => {
+    setSelectedRowKeys(selectedRowKeys);
   };
 
   const columns: GroupedResultsTableColumnType[] = useMemo(
@@ -99,6 +104,11 @@ const GroupedResultsTable = ({
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) => <ExpandedRule rule={record} />,
         indentSize: 64,
+      }}
+      rowSelection={{
+        selectedRowKeys,
+        onChange: handleSelectRow,
+        columnWidth: 36,
       }}
     />
   );
