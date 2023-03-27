@@ -1,6 +1,9 @@
 {
   "add-connection": "Add connection",
   "apply-selected-matches": "Apply selected matches",
+  "apply-selected-matches_one": "Apply selected match",
+  "apply-selected-matches_other": "Apply {{count}} selected matches",
+  "apply-selected-matches_zero": "Apply selected matches",
   "assets-with-count_one": "1 asset",
   "assets-with-count_other": "{{count}} assets",
   "cancel": "Cancel",

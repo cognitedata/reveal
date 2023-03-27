@@ -61,7 +61,9 @@ const ApplySelectedMatchesButton = ({
         loading={isLoading}
         disabled={!confirmedPredictions?.length}
       >
-        {t('apply-selected-matches')}
+        {t('apply-selected-matches', {
+          count: confirmedPredictions?.length || 0,
+        })}
       </StyledButton>
     </Flex>
   );
@@ -70,7 +72,6 @@ const ApplySelectedMatchesButton = ({
 const StyledButton = styled(Button)`
   white-space: nowrap;
   padding: 10px 10px;
-  width: 200px;
 `;
 
 export default ApplySelectedMatchesButton;
