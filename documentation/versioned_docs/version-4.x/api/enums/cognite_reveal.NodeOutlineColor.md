@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:10](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L10)
+[packages/cad-styling/src/NodeAppearance.ts:10](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L10)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:12](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L12)
+[packages/cad-styling/src/NodeAppearance.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L12)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:11](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L11)
+[packages/cad-styling/src/NodeAppearance.ts:11](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L11)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:13](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L13)
+[packages/cad-styling/src/NodeAppearance.ts:13](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L13)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:8](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L8)
+[packages/cad-styling/src/NodeAppearance.ts:8](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L8)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:15](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L15)
+[packages/cad-styling/src/NodeAppearance.ts:15](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L15)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:14](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L14)
+[packages/cad-styling/src/NodeAppearance.ts:14](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L14)
 
 ___
 
@@ -85,4 +85,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:9](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/cad-styling/src/NodeAppearance.ts#L9)
+[packages/cad-styling/src/NodeAppearance.ts:9](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L9)

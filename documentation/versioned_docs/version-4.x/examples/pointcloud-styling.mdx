@@ -89,3 +89,9 @@ This example removes all style on stylable object collections and makes sure the
 model.removeAllStyledObjectCollections();
 model.setDefaultPointCloudAppearance({ visible: true });
 ```
+
+## Point cloud shapes
+
+Currently, the only supported shapes that constitute point cloud objects are cylinders and boxes. The specification for how this data is stored, can be found in the [API documentation for Retrieve Annotation](https://docs.cognite.com/api/v1/#tag/Annotations/operation/annotationsGet) under Responses -> 200 Successful retrieval -> `data` -> `pointcloud.BoundingVolume`.
+
+Note that Reveal will visualize the shapes with a somewhat larger size than how they are stored, as to make sure that all points that lie on the surface of the objects also are included as parts of it.
