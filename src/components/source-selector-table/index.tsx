@@ -17,6 +17,7 @@ import { DataSetSelect } from 'components/data-set-select';
 import SearchInput from 'components/search-input';
 import ThreeDTable from './Three3Table';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
+import styled from 'styled-components';
 
 const { Option } = Select;
 
@@ -84,7 +85,7 @@ export default function SourceSelectionTable({}: Props) {
   const onClose = () => setSourcesList([]);
 
   return (
-    <>
+    <Container $isActionBarVisible={!!sourcesList.length}>
       <Flex direction="column">
         <Flex justifyContent="space-between">
           <Flex direction="row" gap={12} alignItems="center">
@@ -197,6 +198,12 @@ export default function SourceSelectionTable({}: Props) {
         sourceType={sourceType}
         onClose={onClose}
       />
-    </>
+    </Container>
   );
 }
+
+const Container = styled.div<{ $isActionBarVisible?: boolean }>`
+  overflow-y: auto;
+  padding-bottom: ${({ $isActionBarVisible }) =>
+    $isActionBarVisible ? 56 : 0}px;
+`;
