@@ -3,6 +3,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -23,6 +24,11 @@ import {
   ContainerReference,
   ContainerReferenceWithoutDimensions,
 } from '../types';
+import { useShamefullySyncContainerFromContainerReferences } from './useShamefullySyncContainerFromContainerReferences';
+import {
+  useHistory,
+  UseCanvasStateHistoryReturnType,
+} from './useCanvasStateHistory';
 
 export type InteractionState = {
   hoverId: string | undefined;
@@ -38,9 +44,7 @@ type DeleteHandlerFn =
 
 export type UseManagedStateReturnType = {
   container: ContainerConfig;
-  setContainer: Dispatch<SetStateAction<ContainerConfig>>;
   canvasAnnotations: CanvasAnnotation[];
-  setCanvasAnnotations: Dispatch<SetStateAction<CanvasAnnotation[]>>;
   containerReferences: ContainerReference[];
   addContainerReferences: (containerReference: ContainerReference[]) => void;
   updateContainerReference: (
@@ -51,6 +55,8 @@ export type UseManagedStateReturnType = {
   onDeleteRequest: DeleteHandlerFn;
   interactionState: InteractionState;
   setInteractionState: Dispatch<SetStateAction<InteractionState>>;
+  redo: UseCanvasStateHistoryReturnType['redo'];
+  undo: UseCanvasStateHistoryReturnType['undo'];
 };
 
 const transformRecursive = (
@@ -98,6 +104,22 @@ const mergeIfMatchById = <T extends { id?: string }>(
   };
 };
 
+const getNextUpdatedContainer = (
+  container: ContainerConfig,
+  updatedContainers: ContainerConfig[]
+): ContainerConfig => {
+  const containerWithNewContainersIfNecessary = addNewContainers(
+    container,
+    updatedContainers
+  );
+
+  // Update the existing container(s) if necessary
+  return transformRecursive(
+    containerWithNewContainersIfNecessary,
+    (container) => mergeIfMatchById(updatedContainers, container)
+  );
+};
+
 // NOTE: We assume that the root container is a flexible layout since UFV only
 //       supports updating flexible layouts.
 const addNewContainers = (
@@ -126,12 +148,6 @@ const useManagedState = (initialState: {
   const [container, setContainer] = useState<ContainerConfig>(
     initialState.container
   );
-  const [canvasAnnotations, setCanvasAnnotations] = useState<
-    CanvasAnnotation[]
-  >([]);
-  const [containerReferences, setContainerReferences] = useState<
-    ContainerReference[]
-  >([]);
 
   const [interactionState, setInteractionState] = useState<InteractionState>({
     hoverId: undefined,
@@ -139,122 +155,19 @@ const useManagedState = (initialState: {
     selectedAnnotationId: undefined,
   });
 
-  const onUpdateRequest: UpdateHandlerFn = useCallback(
-    ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
-      if (updatedContainers.length > 0) {
-        setContainer((prevContainer) => {
-          const containerWithNewContainersIfNecessary = addNewContainers(
-            prevContainer,
-            updatedContainers
-          );
-          // Update the existing container(s) if necessary
-          const updatedContainer = transformRecursive(
-            containerWithNewContainersIfNecessary,
-            (container) => mergeIfMatchById(updatedContainers, container)
-          );
+  const { undo, redo, pushState, replaceState, historyState } = useHistory({
+    saveState: saveCanvasState,
+  });
 
-          setContainerReferences(
-            getContainerReferencesWithUpdatedDimensions(
-              containerReferences,
-              updatedContainer
-            )
-          );
+  const canvasState = useMemo(() => {
+    return historyState.history[historyState.index];
+  }, [historyState]);
 
-          return updatedContainer;
-        });
-      }
-
-      if (updatedAnnotations.length > 0) {
-        setCanvasAnnotations((annotations) => {
-          const annotationsToAdd = updatedAnnotations.filter(
-            (updatedAnnotation) =>
-              !annotations.some(
-                (annotation) => annotation.id === updatedAnnotation.id
-              )
-          );
-
-          if (annotationsToAdd.length === 1) {
-            setInteractionState({
-              clickedContainer: undefined,
-              hoverId: undefined,
-              selectedAnnotationId: annotationsToAdd[0].id,
-            });
-          }
-
-          return [
-            ...annotations.map((annotation) =>
-              mergeIfMatchById(updatedAnnotations, annotation)
-            ),
-            ...annotationsToAdd,
-          ];
-        });
-      }
-    },
-    [
-      setContainer,
-      setContainerReferences,
-      containerReferences,
-      setCanvasAnnotations,
-    ]
-  );
-
-  const onDeleteRequest: DeleteHandlerFn = useCallback(
-    ({ annotationIds, containerIds }) => {
-      setCanvasAnnotations((annotations) =>
-        annotations.filter(
-          (annotation) =>
-            !annotationIds.includes(annotation.id) &&
-            containerIds.every(
-              (containerId) =>
-                !('containerId' in annotation) ||
-                annotation?.containerId !== containerId
-            )
-        )
-      );
-      setContainer((prevContainer) => {
-        const updatedContainer = removeRecursive(prevContainer, (container) => {
-          return (
-            container.id !== undefined && containerIds.includes(container.id)
-          );
-        });
-
-        const containerReferencesRemoveOld = containerReferences.filter(
-          (cr) => !containerIds.includes(getContainerId(cr))
-        );
-        setContainerReferences(
-          getContainerReferencesWithUpdatedDimensions(
-            containerReferencesRemoveOld,
-            updatedContainer
-          )
-        );
-
-        return updatedContainer;
-      });
-    },
-    [setContainer, setContainerReferences, containerReferences]
-  );
-
-  const removeContainerReference = (containerReference: ContainerReference) => {
-    setContainerReferences((prevContainerReferences) =>
-      prevContainerReferences.filter((cr) => cr.id !== containerReference.id)
-    );
-  };
-
-  const updateContainerReference = (
-    containerReferenceUpdate: ContainerReferenceWithoutDimensions
-  ) => {
-    setContainerReferences((prevContainerReferences) =>
-      prevContainerReferences.map((containerReference) => {
-        if (containerReference.id === containerReferenceUpdate.id) {
-          return {
-            ...containerReference,
-            ...containerReferenceUpdate,
-          } as ContainerReference;
-        }
-        return containerReference;
-      })
-    );
-  };
+  useShamefullySyncContainerFromContainerReferences({
+    containerReferences: canvasState.containerReferences,
+    setContainer,
+    setInteractionState,
+  });
 
   // Initializing the state from local storage when the component mounts
   useEffect(() => {
@@ -262,43 +175,150 @@ const useManagedState = (initialState: {
     if (canvasState === null) {
       return;
     }
+    replaceState(canvasState);
+  }, [replaceState]);
 
-    setCanvasAnnotations((prevCanvasAnnotations) => [
-      ...prevCanvasAnnotations,
-      ...canvasState.canvasAnnotations,
-    ]);
+  const onUpdateRequest: UpdateHandlerFn = useCallback(
+    ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
+      const { containerReferences, canvasAnnotations } = canvasState;
+      const nextContainer = getNextUpdatedContainer(
+        container,
+        updatedContainers
+      );
+      const nextContainerReferences =
+        getContainerReferencesWithUpdatedDimensions(
+          containerReferences,
+          nextContainer
+        );
+      const nextCanvasAnnotations = [
+        ...canvasAnnotations.map((annotation) =>
+          mergeIfMatchById(updatedAnnotations, annotation)
+        ),
+        ...updatedAnnotations.filter(
+          (updatedAnnotation) =>
+            !canvasAnnotations.some(
+              (annotation) => annotation.id === updatedAnnotation.id
+            )
+        ),
+      ];
 
-    setContainerReferences((prevContainerReferences) => [
-      ...prevContainerReferences,
-      ...canvasState.containerReferences,
-    ]);
-  }, [setCanvasAnnotations, setContainerReferences]);
+      // We want the tooltip to show when creating an annotation
+      if (updatedAnnotations.length === 1) {
+        setInteractionState({
+          clickedContainer: undefined,
+          hoverId: undefined,
+          selectedAnnotationId: updatedAnnotations[0].id,
+        });
+      }
 
-  useEffect(() => {
-    saveCanvasState({
-      containerReferences,
+      setContainer(nextContainer);
+      pushState({
+        containerReferences: nextContainerReferences,
+        canvasAnnotations: nextCanvasAnnotations,
+      });
+    },
+    [canvasState, container, pushState]
+  );
+
+  const onDeleteRequest: DeleteHandlerFn = useCallback(
+    ({ annotationIds, containerIds }) => {
+      const { containerReferences, canvasAnnotations } = canvasState;
+
+      const nextCanvasAnnotations = canvasAnnotations.filter(
+        (annotation) =>
+          !annotationIds.includes(annotation.id) &&
+          containerIds.every(
+            (containerId) =>
+              !('containerId' in annotation) ||
+              annotation?.containerId !== containerId
+          )
+      );
+
+      const nextContainer = removeRecursive(container, (container) => {
+        return (
+          container.id !== undefined && containerIds.includes(container.id)
+        );
+      });
+
+      const nextContainerReferences =
+        getContainerReferencesWithUpdatedDimensions(
+          containerReferences.filter(
+            (cr) => !containerIds.includes(getContainerId(cr))
+          ),
+          nextContainer
+        );
+
+      setContainer(nextContainer);
+      pushState({
+        containerReferences: nextContainerReferences,
+        canvasAnnotations: nextCanvasAnnotations,
+      });
+    },
+    [setContainer, container, pushState, canvasState]
+  );
+
+  const removeContainerReference = (containerReference: ContainerReference) => {
+    const { containerReferences, canvasAnnotations } = canvasState;
+    const nextContainerReferences = containerReferences.filter(
+      (cr) => cr.id !== containerReference.id
+    );
+    pushState({
+      containerReferences: nextContainerReferences,
       canvasAnnotations,
     });
-  }, [containerReferences, canvasAnnotations]);
+  };
+
+  const addContainerReferences = (
+    containerReferences: ContainerReference[]
+  ) => {
+    const { containerReferences: prevContainerReferences, canvasAnnotations } =
+      canvasState;
+    const nextContainerReferences = [
+      ...prevContainerReferences,
+      ...containerReferences,
+    ];
+    pushState({
+      containerReferences: nextContainerReferences,
+      canvasAnnotations,
+    });
+  };
+
+  const updateContainerReference = (
+    containerReferenceUpdate: ContainerReferenceWithoutDimensions
+  ) => {
+    const { containerReferences, canvasAnnotations } = canvasState;
+
+    const nextContainerReferences = containerReferences.map(
+      (containerReference) => {
+        if (containerReference.id === containerReferenceUpdate.id) {
+          return {
+            ...containerReference,
+            ...containerReferenceUpdate,
+          } as ContainerReference;
+        }
+        return containerReference;
+      }
+    );
+
+    pushState({
+      containerReferences: nextContainerReferences,
+      canvasAnnotations,
+    });
+  };
 
   return {
     container,
-    setContainer,
-    canvasAnnotations,
-    setCanvasAnnotations,
-    containerReferences,
-    addContainerReferences: (containerReferences) => {
-      setContainerReferences((prevContainerReferences) => [
-        ...prevContainerReferences,
-        ...containerReferences,
-      ]);
-    },
+    canvasAnnotations: canvasState.canvasAnnotations,
+    containerReferences: canvasState.containerReferences,
+    addContainerReferences,
     updateContainerReference,
     removeContainerReference,
     onUpdateRequest,
     onDeleteRequest,
     interactionState,
     setInteractionState,
+    undo,
+    redo,
   };
 };
 

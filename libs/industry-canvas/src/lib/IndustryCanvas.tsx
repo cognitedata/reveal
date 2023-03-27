@@ -1,19 +1,11 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk/dist/src/index';
 import ReactUnifiedViewer, {
   Annotation,
-  ContainerConfig,
-  ContainerType,
-  getAssetTableContainerConfig,
-  getContainerConfigFromFileInfo,
-  getTimeseriesContainerConfig,
   ToolType,
   UnifiedViewer,
-  UnifiedViewerMouseEvent,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
@@ -22,33 +14,12 @@ import { UseManagedStateReturnType } from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
-import {
-  DEFAULT_ASSET_HEIGHT,
-  DEFAULT_ASSET_WIDTH,
-  DEFAULT_THREE_D_HEIGHT,
-  DEFAULT_THREE_D_WIDTH,
-  DEFAULT_TIMESERIES_HEIGHT,
-  DEFAULT_TIMESERIES_WIDTH,
-} from './utils/addDimensionsToContainerReferences';
-import { CanvasAnnotation, ContainerReferenceType } from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
-import { getContainerId } from './utils/utils';
 import ZoomControls from './components/ZoomControls';
 import { ZOOM_TO_FIT_MARGIN } from './constants';
 import { isDevelopment } from '@cognite/cdf-utilities';
-
-const getAssetLabelById = async (
-  sdk: CogniteClient,
-  assetId: number
-): Promise<string> => {
-  const asset = await sdk.assets.retrieve([{ id: assetId }]);
-
-  if (asset.length !== 1) {
-    throw new Error('Expected to find exactly one asset');
-  }
-
-  return asset[0].name ?? asset[0].externalId;
-};
+import { CanvasAnnotation } from './types';
+import { useSDK } from '@cognite/sdk-provider';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -60,7 +31,6 @@ export type IndustryCanvasProps = {
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
-  | 'setContainer'
   | 'canvasAnnotations'
   | 'onDeleteRequest'
   | 'onUpdateRequest'
@@ -75,7 +45,6 @@ export const IndustryCanvas = ({
   id,
   applicationId,
   container,
-  setContainer,
   canvasAnnotations,
   currentZoomScale,
   onDeleteRequest,
@@ -89,6 +58,8 @@ export const IndustryCanvas = ({
   onRef,
   viewerRef,
 }: IndustryCanvasProps) => {
+  const sdk = useSDK();
+
   const selectedCanvasAnnotation = useMemo(
     () =>
       interactionState.selectedAnnotationId
@@ -106,8 +77,6 @@ export const IndustryCanvas = ({
       selectedCanvasAnnotation,
       onUpdateRequest,
     });
-
-  const sdk = useSDK();
 
   const onClickContainerAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
@@ -155,145 +124,6 @@ export const IndustryCanvas = ({
       ),
     [containerAnnotations, interactionState.selectedAnnotationId]
   );
-
-  useEffect(() => {
-    (async () => {
-      const children = await Promise.all(
-        containerReferences.map(
-          async (containerReference): Promise<ContainerConfig> => {
-            const clickHandler = (e: UnifiedViewerMouseEvent) => {
-              e.cancelBubble = true;
-              setInteractionState({
-                hoverId: undefined,
-                clickedContainer: containerReference,
-                selectedAnnotationId: undefined,
-              });
-            };
-
-            if (containerReference.type === ContainerReferenceType.FILE) {
-              const fileInfos = await sdk.files.retrieve([
-                { id: containerReference.resourceId },
-              ]);
-
-              if (fileInfos.length !== 1) {
-                throw new Error('Expected to find exactly one file');
-              }
-              const fileInfo = fileInfos[0];
-              return getContainerConfigFromFileInfo(sdk as any, fileInfo, {
-                id: getContainerId(containerReference),
-                label: fileInfo.name ?? fileInfo.externalId,
-                page: containerReference.page,
-                x: containerReference.x,
-                y: containerReference.y,
-                width: containerReference.width,
-                height: containerReference.height,
-                maxWidth: containerReference.maxWidth,
-                maxHeight: containerReference.maxHeight,
-                fontSize: 24,
-                onClick: clickHandler,
-              });
-            }
-
-            if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-              const timeseries = await sdk.timeseries.retrieve([
-                { id: containerReference.resourceId },
-              ]);
-
-              if (timeseries.length !== 1) {
-                throw new Error('Expected to find exactly one timeseries');
-              }
-
-              return getTimeseriesContainerConfig(
-                sdk as any,
-                {
-                  id: getContainerId(containerReference),
-                  label: timeseries[0].name ?? timeseries[0].externalId,
-                  onClick: clickHandler,
-                  startDate: containerReference.startDate,
-                  endDate: containerReference.endDate,
-                  x: containerReference.x,
-                  y: containerReference.y,
-                  width: containerReference.width ?? DEFAULT_TIMESERIES_WIDTH,
-                  height:
-                    containerReference.height ?? DEFAULT_TIMESERIES_HEIGHT,
-                },
-                {
-                  timeseriesId: containerReference.resourceId,
-                }
-              );
-            }
-
-            if (containerReference.type === ContainerReferenceType.ASSET) {
-              const asset = await sdk.assets.retrieve([
-                { id: containerReference.resourceId },
-              ]);
-
-              if (asset.length !== 1) {
-                throw new Error('Expected to find exactly one asset');
-              }
-
-              return getAssetTableContainerConfig(
-                sdk as any,
-                {
-                  id: getContainerId(containerReference),
-                  label: asset[0].name ?? asset[0].externalId,
-                  onClick: clickHandler,
-                  x: containerReference.x,
-                  y: containerReference.y,
-                  width: containerReference.width ?? DEFAULT_ASSET_WIDTH,
-                  height: containerReference.height ?? DEFAULT_ASSET_HEIGHT,
-                },
-                {
-                  assetId: containerReference.resourceId,
-                }
-              );
-            }
-
-            if (containerReference.type === ContainerReferenceType.THREE_D) {
-              const model = await sdk.models3D.retrieve(
-                containerReference.modelId
-              );
-
-              const maybeAssetName =
-                containerReference.initialAssetId !== undefined
-                  ? await getAssetLabelById(
-                      sdk,
-                      containerReference.initialAssetId
-                    )
-                  : undefined;
-
-              const modelLabel = model.name ?? model.id;
-
-              const label = maybeAssetName
-                ? `${modelLabel} - ${maybeAssetName}`
-                : modelLabel;
-
-              return {
-                type: ContainerType.REVEAL,
-                id: getContainerId(containerReference),
-                onClick: clickHandler,
-                label,
-                modelId: containerReference.modelId,
-                revisionId: containerReference.revisionId,
-                initialAssetId: containerReference.initialAssetId,
-                camera: containerReference.camera,
-                x: containerReference.x,
-                y: containerReference.y,
-                width: containerReference.width ?? DEFAULT_THREE_D_WIDTH,
-                height: containerReference.height ?? DEFAULT_THREE_D_HEIGHT,
-              };
-            }
-
-            throw new Error('Unsupported container reference type');
-          }
-        )
-      );
-      setContainer((prevState) => ({
-        ...prevState,
-        children,
-      }));
-    })();
-  }, [setContainer, sdk, containerReferences, setInteractionState]);
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({

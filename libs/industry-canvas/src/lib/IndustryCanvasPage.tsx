@@ -32,7 +32,7 @@ import {
   ContainerReferenceType,
   ContainerReferenceWithoutDimensions,
 } from './types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, KeyboardEventHandler } from 'react';
 import useManagedState from './hooks/useManagedState';
 import { clearCanvasState } from './utils/utils';
 
@@ -44,9 +44,10 @@ export const IndustryCanvasPage = () => {
   const { openResourceSelector } = useResourceSelector();
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
 
+  const sdk = useSDK();
+
   const {
     container,
-    setContainer,
     canvasAnnotations,
     containerReferences,
     addContainerReferences,
@@ -54,6 +55,8 @@ export const IndustryCanvasPage = () => {
     removeContainerReference,
     onDeleteRequest,
     onUpdateRequest,
+    undo,
+    redo,
     interactionState,
     setInteractionState,
   } = useManagedState({
@@ -68,7 +71,6 @@ export const IndustryCanvasPage = () => {
     unifiedViewer: unifiedViewerRef,
     addContainerReferences,
   });
-  const sdk = useSDK();
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
@@ -188,6 +190,17 @@ export const IndustryCanvasPage = () => {
     window.location.reload();
   };
 
+  const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      if (event.shiftKey) {
+        redo.fn();
+        return;
+      }
+      undo.fn();
+      return;
+    }
+  };
+
   return (
     <>
       <PageTitle title="Industry Canvas" />
@@ -204,6 +217,25 @@ export const IndustryCanvasPage = () => {
             <Icon type="Delete" /> Clear local storage
           </Button>
 
+          <Tooltip content="Undo">
+            <Button
+              type="ghost"
+              icon="Restore"
+              onClick={undo.fn}
+              disabled={undo.isDisabled}
+              aria-label="Undo"
+            />
+          </Tooltip>
+          <Tooltip content="Redo">
+            <Button
+              type="ghost"
+              icon="Refresh"
+              onClick={redo.fn}
+              disabled={redo.isDisabled}
+              aria-label="Redo"
+            />
+          </Tooltip>
+
           <Button onClick={onAddResourcePress}>
             <Icon type="Plus" /> Add resources...
           </Button>
@@ -217,7 +249,7 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
-      <PreviewTabWrapper>
+      <PreviewTabWrapper onKeyDown={onKeyDown}>
         <IndustryCanvas
           id={APPLICATION_ID_INDUSTRY_CANVAS}
           currentZoomScale={currentZoomScale}
@@ -229,7 +261,6 @@ export const IndustryCanvasPage = () => {
           interactionState={interactionState}
           setInteractionState={setInteractionState}
           container={container}
-          setContainer={setContainer}
           updateContainerReference={updateContainerReference}
           containerReferences={containerReferences}
           canvasAnnotations={canvasAnnotations}

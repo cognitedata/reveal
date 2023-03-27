@@ -84,7 +84,8 @@ export type ContainerReference =
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;
 
-export type CanvasState = {
+// NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
+export type IndustryCanvasState = {
   containerReferences: ContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
 };
