@@ -89,6 +89,9 @@ export const DataPreviewTable = forwardRef<
       useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
+    const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
+      null
+    );
     const gridRef = useRef<AgGridReact>(null);
     const { track } = useMixpanel();
     const { isEnabled: isManualPopulationEnabled } =
@@ -623,6 +626,7 @@ export const DataPreviewTable = forwardRef<
           onPublishedRowsCountClick={toggleShouldShowPublishedRows}
           onSearchInputValueChange={debouncedHandleSearchInputValueChange}
           publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
+          filteredRowCount={filteredRowCount}
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           title={dataModelType.name}
@@ -644,6 +648,9 @@ export const DataPreviewTable = forwardRef<
           >
             <CogDataGrid
               ref={gridRef}
+              onModelUpdated={(event) => {
+                setFilteredRowCount(event.api.getDisplayedRowCount());
+              }}
               onSortChanged={() => {
                 track('DataModel.Data.Sort', {
                   version,
