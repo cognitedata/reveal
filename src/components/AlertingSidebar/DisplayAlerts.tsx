@@ -36,7 +36,7 @@ export const DisplayAlerts = ({
   if (activeKeys.length === 0 && isFetching) {
     return <LoadingRow lines={30} />;
   }
-  if (isError === true || jobs?.length === 0) {
+  if (isError === true || jobs?.length === 0 || !jobs) {
     return <EmptyState onViewMonitoringJobs={onViewMonitoringJobs} />;
   }
   return (

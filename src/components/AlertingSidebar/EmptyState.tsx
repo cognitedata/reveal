@@ -10,7 +10,7 @@ import {
 } from './elements';
 
 const defaultTranslation = makeDefaultTranslations(
-  'No unresolved alerts',
+  'No alerts',
   'To create a new monitoring job or view existing jobs click on the button below',
   'Go to monitoring jobs'
 );
@@ -27,7 +27,7 @@ const EmptyState = ({ onViewMonitoringJobs }: Props) => {
     <>
       <EmptyStateContainer>
         <NoAlerts />
-        <EmptyStateHeader>{t['No unresolved alerts']}</EmptyStateHeader>
+        <EmptyStateHeader>{t['No alerts']}</EmptyStateHeader>
         <EmptyStateText>
           {
             t[

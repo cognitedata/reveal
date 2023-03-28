@@ -25,3 +25,13 @@ export const SCHEDULE_HOUR_OPTIONS = Object.entries(
 
 export const MONITORING_THRESHOLD_ID = 'monitoring-threshold';
 export const MINIMUM_DURATION_LIMIT = 60;
+
+export const MONITORING_CAPABILITIES = [
+  'monitoringTaskApiExperiment',
+  'dataPipelinesApiExperiment',
+];
+
+export const ALERTING_CAPABILITIES = [
+  'alertsApiExperiment',
+  'dataPipelinesApiExperiment',
+];

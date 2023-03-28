@@ -51,6 +51,10 @@ import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import { getEntryColor } from 'utils/colors';
+import {
+  MONITORING_CAPABILITIES,
+  ALERTING_CAPABILITIES,
+} from 'domain/monitoring/constants';
 
 import { v4 as uuidv4 } from 'uuid';
 import { Elements } from 'react-flow-renderer';
@@ -87,6 +91,7 @@ import { EventResultEffects } from 'effects/events';
 import { MonitoringSidebar } from 'components/MonitoringSidebar/MonitoringSidebar';
 import { AlertingSidebar } from 'components/AlertingSidebar/AlertingSidebar';
 import interactionsAtom from 'models/interactions/atom';
+import { AccessDeniedModal } from 'components/AccessDeniedModal/AccessDeniedModal';
 import NotificationIndicator from './NotificationIndicator';
 import {
   BottomPaneWrapper,
@@ -122,18 +127,19 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
-  const { isEnabled: isMonitoringEnabled } = useFlag('CHARTS_UI_MONITORING', {
-    fallback: false,
-    forceRerender: true,
-  });
-  const isMonitoringAccessible = useExperimentalCapabilitiesCheck([
-    'monitoringTaskApiExperiment',
-    'dataPipelinesApiExperiment',
-  ]);
-  const isAlertingAccessible = useExperimentalCapabilitiesCheck([
-    'alertsApiExperiment',
-    'dataPipelinesApiExperiment',
-  ]);
+  const { isEnabled: isMonitoringFeatureEnabled } = useFlag(
+    'CHARTS_UI_MONITORING',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
+  const isMonitoringAccessible = useExperimentalCapabilitiesCheck(
+    MONITORING_CAPABILITIES
+  );
+  const isAlertingAccessible = useExperimentalCapabilitiesCheck(
+    ALERTING_CAPABILITIES
+  );
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -145,6 +151,9 @@ const ChartViewPage = () => {
     useSearchParam(ACTIVE_SIDEBAR_KEY);
   const [, setAlertingFilter] = useSearchParam(ALERTING_FILTER);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [accessDeniedModal, setAccessDeniedModal] = useState<
+    'monitoring' | 'alerting' | undefined
+  >();
   const [showDataProfilingSidebar, setShowDataProfilingSidebar] =
     useState(false);
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(
@@ -337,6 +346,15 @@ const ChartViewPage = () => {
     setWorkspaceMode('editor');
     startTimer('NodeEditor.ViewTime');
   }, []);
+
+  const handleAccessDeniedModalClose = () => {
+    trackUsage(
+      `Sidebar.${
+        accessDeniedModal === 'alerting' ? 'Alerting' : 'Monitoring'
+      }.CloseAccessDenied`
+    );
+    setAccessDeniedModal(undefined);
+  };
 
   const handleCloseEditor = useCallback(() => {
     setWorkspaceMode('workspace');
@@ -809,6 +827,16 @@ const ChartViewPage = () => {
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
       <EventResultEffects />
+      <AccessDeniedModal
+        visible={accessDeniedModal === 'monitoring'}
+        capabilities={MONITORING_CAPABILITIES}
+        onOk={handleAccessDeniedModalClose}
+      />
+      <AccessDeniedModal
+        visible={accessDeniedModal === 'alerting'}
+        capabilities={ALERTING_CAPABILITIES}
+        onOk={handleAccessDeniedModalClose}
+      />
       <ChartViewPageAppBar allChartsLabel={t['All charts']} />
       <ChartViewPageSecondaryAppBar
         handleDateChange={handleDateChange}
@@ -960,41 +988,31 @@ const ChartViewPage = () => {
         )}
 
         <Toolbar>
-          {isMonitoringEnabled && (
-            <Tooltip
-              content={
-                isAlertingAccessible
-                  ? t.Alerting
-                  : t[
-                      'Enable "alertsApiExperiment" & "dataPipelinesApiExperiment" capabilities to access Alerting'
-                    ]
-              }
-              position="left"
-            >
-              <>
-                <Button
-                  icon="Bell"
-                  aria-label="Toggle alerting sidebar"
-                  toggled={showAlertingSidebar}
-                  onClick={() => {
+          {isMonitoringFeatureEnabled && (
+            <div>
+              <Button
+                icon="Bell"
+                aria-label="Toggle alerting sidebar"
+                toggled={showAlertingSidebar}
+                onClick={() => {
+                  if (isAlertingAccessible) {
                     trackUsage(
                       `Sidebar.Alerting.${
                         showAlertingSidebar ? 'Close' : 'Open'
-                      }`,
-                      {
-                        accessible: isAlertingAccessible,
-                      }
+                      }`
                     );
                     if (showAlertingSidebar) {
                       setAlertingFilter();
                     }
                     handleAlertingSidebarToggle();
-                  }}
-                  disabled={!isAlertingAccessible}
-                />
-                <NotificationIndicator />
-              </>
-            </Tooltip>
+                  } else {
+                    trackUsage('Sidebar.Alerting.AccessDenied');
+                    setAccessDeniedModal('alerting');
+                  }
+                }}
+              />
+              <NotificationIndicator />
+            </div>
           )}
           {isDataProfilingEnabled && (
             <Tooltip content={t['Data Profiling']} position="left">
@@ -1022,23 +1040,14 @@ const ChartViewPage = () => {
               onClick={() => handleThresholdSidebarToggle()}
             />
           </Tooltip>
-          {isMonitoringEnabled && (
-            <Tooltip
-              content={
-                isMonitoringAccessible
-                  ? t.Monitoring
-                  : t[
-                      'Enable "monitoringTaskApiExperiment" & "dataPipelinesApiExperiment" capabilities to access Monitoring'
-                    ]
-              }
-              position="left"
-            >
-              <Button
-                // @ts-ignore
-                icon="Alarm"
-                aria-label="Toggle monitoring sidebar"
-                toggled={showMonitoringSidebar}
-                onClick={() => {
+          {isMonitoringFeatureEnabled && (
+            <Button
+              // @ts-ignore
+              icon="Alarm"
+              aria-label="Toggle monitoring sidebar"
+              toggled={showMonitoringSidebar}
+              onClick={() => {
+                if (isMonitoringAccessible) {
                   trackUsage(
                     `Sidebar.Monitoring.${
                       showMonitoringSidebar ? 'Close' : 'Open'
@@ -1048,10 +1057,12 @@ const ChartViewPage = () => {
                     }
                   );
                   handleMonitoringSidebarToggle();
-                }}
-                disabled={!isMonitoringAccessible}
-              />
-            </Tooltip>
+                } else {
+                  trackUsage('Sidebar.Monitoring.AccessDenied');
+                  setAccessDeniedModal('monitoring');
+                }
+              }}
+            />
           )}
         </Toolbar>
       </ChartViewContainer>
