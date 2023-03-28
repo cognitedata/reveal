@@ -1,8 +1,11 @@
 import { useState } from 'react';
 
-import { EMPipelineRun, Pipeline } from 'hooks/entity-matching-pipelines';
 import { Checkbox, Flex } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
+
+import { EMPipelineRun, Pipeline } from 'hooks/entity-matching-pipelines';
 import { useTranslation } from 'common';
+
 import BasicResultsTable from './BasicResultsTable';
 import GroupedResultsTable from './GroupedResultsTable';
 
@@ -19,6 +22,10 @@ const PipelineRunResultsTable = ({
 
   const [shouldGroupByPattern, setShouldGroupByPattern] = useState(false);
 
+  const [selectedSourceIds, setSelectedSourceIds] = useState<
+    CogniteInternalId[]
+  >([]);
+
   return (
     <Flex direction="column" gap={16}>
       <Flex>
@@ -30,9 +37,19 @@ const PipelineRunResultsTable = ({
         />
       </Flex>
       {shouldGroupByPattern ? (
-        <GroupedResultsTable pipeline={pipeline} run={run} />
+        <GroupedResultsTable
+          pipeline={pipeline}
+          run={run}
+          selectedSourceIds={selectedSourceIds}
+          setSelectedSourceIds={setSelectedSourceIds}
+        />
       ) : (
-        <BasicResultsTable pipeline={pipeline} run={run} />
+        <BasicResultsTable
+          pipeline={pipeline}
+          run={run}
+          selectedSourceIds={selectedSourceIds}
+          setSelectedSourceIds={setSelectedSourceIds}
+        />
       )}
     </Flex>
   );

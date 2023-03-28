@@ -1,6 +1,8 @@
-import { Key, useMemo, useState } from 'react';
+import { Dispatch, Key, SetStateAction, useMemo } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Colors } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
@@ -10,7 +12,6 @@ import {
 } from 'hooks/entity-matching-pipelines';
 
 import ResourceName from './ResourceName';
-import { Colors } from '@cognite/cogs.js';
 
 type ExpandedRuleTableRecord = EMPipelineGeneratedRuleMatch & { key: number };
 
@@ -20,12 +21,16 @@ type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
 
 type ExpandedRuleProps = {
   rule: EMPipelineGeneratedRule;
+  selectedSourceIds: CogniteInternalId[];
+  setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
-const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
+const ExpandedRule = ({
+  rule,
+  selectedSourceIds,
+  setSelectedSourceIds,
+}: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const columns: ExpandedRuleTableColumnType[] = useMemo(
     () => [
@@ -61,8 +66,12 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
     [rule.matches]
   );
 
-  const handleSelectRow = (selectedRowKeys: Key[]) => {
-    setSelectedRowKeys(selectedRowKeys);
+  const handleSelectRow = (rowKeys: Key[]) => {
+    setSelectedSourceIds(
+      rowKeys.map((rowKey: Key) =>
+        typeof rowKey === 'string' ? parseInt(rowKey) : rowKey
+      )
+    );
   };
 
   return (
@@ -73,7 +82,7 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         emptyContent={undefined}
         appendTooltipTo={undefined}
         rowSelection={{
-          selectedRowKeys,
+          selectedRowKeys: selectedSourceIds,
           onChange: handleSelectRow,
           columnWidth: 36,
         }}
