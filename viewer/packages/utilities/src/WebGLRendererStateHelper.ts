@@ -7,7 +7,7 @@ import { Vector4 } from 'three';
 type WebGLRendererState = {
   autoClear?: boolean;
   autoClearDepth?: boolean;
-  clearColor?: THREE.Color | string | number;
+  clearColor?: THREE.Color | number;
   clearAlpha?: number;
   size?: THREE.Vector2;
   localClippingEnabled?: boolean;
@@ -55,7 +55,7 @@ export class WebGLRendererStateHelper {
     this._renderer.setScissorTest(enabled);
   }
 
-  setClearColor(color: THREE.Color | number | string, alpha?: number): void {
+  setClearColor(color: THREE.Color | number, alpha?: number): void {
     this._originalState = {
       clearColor: this._renderer.getClearColor(new THREE.Color()),
       clearAlpha: this._renderer.getClearAlpha(),

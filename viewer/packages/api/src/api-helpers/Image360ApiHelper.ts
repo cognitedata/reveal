@@ -347,7 +347,7 @@ export class Image360ApiHelper {
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
-      { x: ndcCoordinates.x, y: ndcCoordinates.y },
+      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
     return entity;
@@ -361,7 +361,7 @@ export class Image360ApiHelper {
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
-      { x: ndcCoordinates.x, y: ndcCoordinates.y },
+      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
 
