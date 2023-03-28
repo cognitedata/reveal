@@ -75,10 +75,7 @@ export class Image360Facade<T> {
   }
 
   public intersect(
-    coords: {
-      x: number;
-      y: number;
-    },
+    coords: THREE.Vector2,
     camera: THREE.Camera
   ): Image360Entity | undefined {
     this._rayCaster.setFromCamera(coords, camera);

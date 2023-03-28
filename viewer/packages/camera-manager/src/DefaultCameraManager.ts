@@ -486,7 +486,7 @@ export class DefaultCameraManager implements CameraManager {
    * @param cursorPosition.y
    */
   private calculateNewTargetWithoutModel(
-    cursorPosition: { x: number; y: number },
+    cursorPosition: THREE.Vector2,
     modelsBoundingBox: THREE.Box3
   ): THREE.Vector3 {
     const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
@@ -521,7 +521,7 @@ export class DefaultCameraManager implements CameraManager {
 
     const newTarget =
       modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
+      this.calculateNewTargetWithoutModel(new THREE.Vector2(x, y), modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }
