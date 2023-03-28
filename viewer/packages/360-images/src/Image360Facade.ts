@@ -74,10 +74,7 @@ export class Image360Facade<T> {
     return imageCollection[0];
   }
 
-  public intersect(
-    coords: THREE.Vector2,
-    camera: THREE.Camera
-  ): Image360Entity | undefined {
+  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity | undefined {
     this._rayCaster.setFromCamera(coords, camera);
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
