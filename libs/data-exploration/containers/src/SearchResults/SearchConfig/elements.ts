@@ -1,10 +1,18 @@
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Switch } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BaseCheckbox } from '@data-exploration/components';
 
 export const ModalCheckbox = styled(BaseCheckbox)`
   padding: 8px;
   height: 36px;
+  white-space: nowrap;
+`;
+
+export const ModalSwitch = styled(Switch).attrs({ size: 'tiny' })`
+  padding: 8px;
+  height: 36px;
+  margin-left: auto;
+  transform: translateY(2px);
 `;
 
 export const ColumnHeader = styled.div`

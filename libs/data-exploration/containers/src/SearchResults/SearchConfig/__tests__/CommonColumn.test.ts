@@ -11,11 +11,13 @@ import { renderComponent } from '@data-exploration/components';
 const mockData = getMockSearchConfig();
 describe('CommonColumn', () => {
   const onChange = jest.fn();
+  const onToggleFuzzySearch = jest.fn();
 
   const initTest = (searchConfigData: SearchConfigDataType = mockData) => {
     renderComponent(CommonColumn, {
       searchConfigData,
       onChange,
+      onToggleFuzzySearch,
     });
   };
 

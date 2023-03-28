@@ -29,8 +29,10 @@ export const SearchConfig: React.FC<Props> = ({
       SEARCH_CONFIG_LOCAL_STORAGE_KEY,
       {
         defaultValue: searchConfigData,
+        storageSync: true,
       }
     );
+
   const [configData, setConfigData] =
     React.useState<SearchConfigDataType>(searchConfig);
 
@@ -80,6 +82,33 @@ export const SearchConfig: React.FC<Props> = ({
       );
     });
   };
+
+  const handleToggleFuzzySearch = (enabled: boolean, index: number) => {
+    return setConfigData((prevState) => {
+      return (Object.keys(prevState) as Array<SearchConfigResourceType>).reduce(
+        (array: SearchConfigDataType, currentResource) => {
+          const filterId = Object.keys(prevState[currentResource])[
+            index
+          ] as FilterIdType;
+
+          return {
+            ...array,
+            [currentResource]: {
+              ...prevState[currentResource],
+              [filterId]: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore Property does not exist on type
+                ...prevState[currentResource][filterId],
+                enabledFuzzySearch: enabled,
+              },
+            },
+          };
+        },
+        {} as SearchConfigDataType
+      );
+    });
+  };
+
   return (
     <SearchConfigModal
       visible={visible}
@@ -92,10 +121,11 @@ export const SearchConfig: React.FC<Props> = ({
         onSave();
       }}
     >
-      <Flex style={{ overflowY: 'hidden' }}>
+      <Flex style={{ overflow: 'hidden' }}>
         <CommonColumn
           searchConfigData={configData}
           onChange={onChangeCommonHandler}
+          onToggleFuzzySearch={handleToggleFuzzySearch}
         />
         <ResourceColumns
           searchConfigData={configData}

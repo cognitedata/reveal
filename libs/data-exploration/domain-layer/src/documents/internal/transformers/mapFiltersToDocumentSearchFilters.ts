@@ -5,6 +5,7 @@ import {
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
 import { getSearchConfig } from '../../../utils';
+import isEmpty from 'lodash/isEmpty';
 
 export type DocumentProperties = {
   'sourceFile|datasetId': number[];
@@ -80,7 +81,7 @@ export const mapFiltersToDocumentSearchFilters = (
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchConfigData = getSearchConfig();
 
     const searchQueryBuilder = new AdvancedFilterBuilder<DocumentProperties>();
@@ -88,11 +89,24 @@ export const mapFiltersToDocumentSearchFilters = (
     if (searchConfigData.file['sourceFile|name']?.enabled) {
       /* eslint-disable @typescript-eslint/ban-ts-comment */
       // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
-      searchQueryBuilder.search('sourceFile|name', query);
+      searchQueryBuilder.equals('sourceFile|name', query);
+
+      /* eslint-disable @typescript-eslint/ban-ts-comment */
+      // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+      searchQueryBuilder.prefix('sourceFile|name', query);
+
+      if (searchConfigData.file['sourceFile|name']?.enabledFuzzySearch) {
+        /* eslint-disable @typescript-eslint/ban-ts-comment */
+        // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+        searchQueryBuilder.search('sourceFile|name', query);
+      }
     }
+
     if (searchConfigData.file.content.enabled) {
-      // @ts-ignore
-      searchQueryBuilder.search('content', query);
+      if (searchConfigData.file.content.enabledFuzzySearch) {
+        // @ts-ignore
+        searchQueryBuilder.search('content', query);
+      }
     }
 
     if (searchConfigData.file['sourceFile|metadata'].enabled) {

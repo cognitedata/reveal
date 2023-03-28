@@ -1,12 +1,5 @@
 import { SearchConfigDataType } from '../types';
 
-export const searchConfigCommonColumns = [
-  'Name',
-  'Description / Content',
-  'External Id',
-  'ID',
-  'Metadata',
-];
 export const SEARCH_CONFIG_LOCAL_STORAGE_KEY = 'SEARCH_CONFIG_KEY';
 
 export const SEARCH_CONFIG_TITLE = 'Search Parameters';
@@ -15,6 +8,19 @@ export const SEARCH_CONFIG_SUBTITLE =
 export const SAVE = 'Save';
 
 export const COMMON_COLUMN_HEADER = 'Common';
+
+export const searchConfigCommonColumns = [
+  'Name',
+  'Description / Content',
+  'External Id',
+  'ID',
+  'Metadata',
+] as const;
+
+export const fuzzySearchToggleColumns: Array<
+  (typeof searchConfigCommonColumns)[number]
+> = ['Name', 'Description / Content'];
+
 export const searchConfigData: SearchConfigDataType = {
   asset: {
     name: {

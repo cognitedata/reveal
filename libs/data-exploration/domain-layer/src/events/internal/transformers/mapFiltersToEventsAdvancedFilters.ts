@@ -119,16 +119,18 @@ export const mapFiltersToEventsAdvancedFilters = (
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchConfigData = getSearchConfig();
 
     const searchQueryBuilder = new AdvancedFilterBuilder<EventsProperties>();
 
     if (searchConfigData.event.description.enabled) {
-      searchQueryBuilder.search(
-        'description',
-        isEmpty(query) ? undefined : query
-      );
+      searchQueryBuilder.equals('description', query);
+      searchQueryBuilder.prefix('description', query);
+
+      if (searchConfigData.event.description.enabledFuzzySearch) {
+        searchQueryBuilder.search('description', query);
+      }
     }
 
     /**
@@ -140,7 +142,12 @@ export const mapFiltersToEventsAdvancedFilters = (
     }
 
     if (searchConfigData.event.type.enabled) {
+      searchQueryBuilder.equals('type', query);
       searchQueryBuilder.prefix('type', query);
+
+      if (searchConfigData.event.type.enabledFuzzySearch) {
+        searchQueryBuilder.search('type', query);
+      }
     }
 
     if (searchConfigData.event.subtype.enabled) {

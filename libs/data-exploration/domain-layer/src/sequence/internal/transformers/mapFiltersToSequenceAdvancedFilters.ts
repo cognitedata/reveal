@@ -66,18 +66,26 @@ export const mapFiltersToSequenceAdvancedFilters = (
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>();
     const searchConfigData = getSearchConfig();
 
     if (searchConfigData.sequence.name.enabled) {
-      searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
+      searchQueryBuilder.equals('name', query);
+      searchQueryBuilder.prefix('name', query);
+
+      if (searchConfigData.sequence.name.enabledFuzzySearch) {
+        searchQueryBuilder.search('name', query);
+      }
     }
+
     if (searchConfigData.sequence.description.enabled) {
-      searchQueryBuilder.search(
-        'description',
-        isEmpty(query) ? undefined : query
-      );
+      searchQueryBuilder.equals('description', query);
+      searchQueryBuilder.prefix('description', query);
+
+      if (searchConfigData.sequence.description.enabledFuzzySearch) {
+        searchQueryBuilder.search('description', query);
+      }
     }
 
     /**

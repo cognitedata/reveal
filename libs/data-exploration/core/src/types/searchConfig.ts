@@ -7,7 +7,11 @@ export type FilterIdType =
 
 export type SearchConfigResourceType = keyof SearchConfigDataType;
 
-export type SearchConfig = { label: string; enabled: boolean };
+export type SearchConfig = {
+  label: string;
+  enabled: boolean;
+  enabledFuzzySearch?: boolean;
+};
 
 type CommonKeys = {
   externalId: SearchConfig;

@@ -8,6 +8,7 @@ import {
   AdvancedFilterBuilder,
   NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
+import isEmpty from 'lodash/isEmpty';
 
 import { getSearchConfig } from '../../../utils';
 
@@ -103,17 +104,27 @@ export const mapFiltersToAssetsAdvancedFilters = (
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>();
 
     const searchConfigData = getSearchConfig();
 
     if (searchConfigData.asset.name.enabled) {
-      searchQueryBuilder.search('name', query);
+      searchQueryBuilder.equals('name', query);
+      searchQueryBuilder.prefix('name', query);
+
+      if (searchConfigData.asset.name.enabledFuzzySearch) {
+        searchQueryBuilder.search('name', query);
+      }
     }
 
     if (searchConfigData.asset.description.enabled) {
-      searchQueryBuilder.search('description', query);
+      searchQueryBuilder.equals('description', query);
+      searchQueryBuilder.prefix('description', query);
+
+      if (searchConfigData.asset.description.enabledFuzzySearch) {
+        searchQueryBuilder.search('description', query);
+      }
     }
 
     /**
