@@ -322,13 +322,53 @@ export const useDuplicateEMPipeline = () => {
 
 type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
-type EMPipelineRun = {
+type EMPipelineMatchType =
+  | 'previously_mapped'
+  | 'model'
+  | 'rule_rule_input_pattern->rule_predict_pattern';
+
+export type EMPipelineRunMatch = {
+  matchType?: EMPipelineMatchType;
+  score?: number;
+  source?: Record<string, unknown>;
+  target?: Record<string, unknown>;
+};
+
+type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
+
+type EMPipelineRegexExtractorExtractorType = 'regex';
+
+type EMPipelineRegexExtractor = {
+  entitySet: EMPipelineRegexExtractorEntitySetType;
+  extractorType: EMPipelineRegexExtractorExtractorType;
+  field: string;
+  pattern: string;
+};
+
+type EMPipelineMatchConditionType = 'equals';
+
+type EMPipelineMatchCondition = {
+  conditionType: EMPipelineMatchConditionType;
+  arguments: number[][];
+};
+
+type EMPipelineGeneratedRuleMatch = EMPipelineRunMatch;
+
+type EMPipelineGeneratedRule = {
+  extractors?: EMPipelineRegexExtractor[];
+  conditions?: EMPipelineMatchCondition[];
+  matches?: EMPipelineGeneratedRuleMatch[];
+};
+
+export type EMPipelineRun = {
   status: EMPipelineRunStatus;
   createdTime: number;
-  startTime: number;
+  startTime: number | null;
   statusTime: number;
   jobId: number;
   pipelineId?: number;
+  matches?: EMPipelineRunMatch[];
+  generatedRules?: EMPipelineGeneratedRule[];
 };
 
 type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;
