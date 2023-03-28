@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { CogniteError } from '@cognite/sdk';
+import { CogniteClient, CogniteError } from '@cognite/sdk';
 import {
   QueryKey,
   useQuery,
@@ -7,6 +7,8 @@ import {
   UseQueryOptions,
   useMutation,
   UseMutationOptions,
+  QueryClient,
+  FetchQueryOptions,
 } from '@tanstack/react-query';
 import { PipelineSourceType, TargetType } from 'types/api';
 import { toast } from '@cognite/cogs.js';
@@ -39,6 +41,27 @@ export type PipelineWithLatestRun = Pipeline & {
 };
 
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
+
+const getPipelines = (sdk: CogniteClient) =>
+  sdk
+    .post<{ items: Pipeline[] }>(
+      `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/list`,
+      { data: { limit: 1000 } }
+    )
+    .then((r) => r.data.items);
+
+const fetchPipelines = (
+  sdk: CogniteClient,
+  queryClient: QueryClient,
+  options?: FetchQueryOptions<Pipeline[], CogniteClient>
+) => {
+  return queryClient.fetchQuery(
+    getEMPipelinesKey(),
+    () => getPipelines(sdk),
+    options
+  );
+};
+
 export const useEMPipelines = (
   opts?: UseQueryOptions<Pipeline[], CogniteError>
 ) => {
@@ -46,13 +69,7 @@ export const useEMPipelines = (
   const qc = useQueryClient();
   return useQuery<Pipeline[], CogniteError>(
     getEMPipelinesKey(),
-    () =>
-      sdk
-        .post<{ items: Pipeline[] }>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/list`,
-          { data: { limit: 1000 } }
-        )
-        .then((r) => r.data.items),
+    () => getPipelines(sdk),
     {
       onSuccess(items) {
         items.forEach((i) => qc.setQueryData(getEMPipelineKey(i.id), i));
@@ -72,12 +89,13 @@ export const useEMPipelinesWithLatestRuns = (
   }
 ) => {
   const sdk = useSDK();
-
-  const { data: emPipelines } = useEMPipelines(opts);
+  const queryClient = useQueryClient();
 
   return useQuery(
     getEMPipelinesWithLatestRunsKey(),
     async () => {
+      const emPipelines = await fetchPipelines(sdk, queryClient);
+
       const latestRuns = await sdk
         .post<{ items: EMPipelineRun[] }>(
           `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/latest`,
@@ -98,10 +116,7 @@ export const useEMPipelinesWithLatestRuns = (
         })) ?? []
       );
     },
-    {
-      enabled: !!emPipelines && opts?.enabled,
-      ...opts,
-    }
+    opts
   );
 };
 

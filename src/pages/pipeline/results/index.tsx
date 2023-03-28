@@ -1,4 +1,4 @@
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Loader } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 
 import NoAccessPage from 'components/error-pages/NoAccess';
@@ -9,11 +9,14 @@ import {
   useEMPipeline,
   useEMPipelineRun,
 } from 'hooks/entity-matching-pipelines';
+import { useTranslation } from 'common';
 import PipelineRunResultsTable from 'components/pipeline-run-results-table';
 
 type PipelineResultsProps = {};
 
 const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
+  const { t } = useTranslation();
+
   const { jobId, pipelineId } = useParams<{
     pipelineId: string;
     jobId: string;
@@ -23,10 +26,13 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
     enabled: !!pipelineId,
   });
 
-  const { data: emPipelineRun, isFetched: didFetchPipelineRun } =
-    useEMPipelineRun(parseInt(pipelineId ?? ''), parseInt(jobId ?? ''), {
+  const { data: emPipelineRun, isInitialLoading } = useEMPipelineRun(
+    parseInt(pipelineId ?? ''),
+    parseInt(jobId ?? ''),
+    {
       enabled: !!pipelineId && !!jobId,
-    });
+    }
+  );
 
   if (error) {
     if (error?.status === 403) {
@@ -35,11 +41,27 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
     return <UnknownErrorPage error={error} />;
   }
 
+  if (isInitialLoading) {
+    return (
+      <Page subtitle={pipeline?.description} title={pipeline?.name ?? ''}>
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
+          <Loader />
+        </Step>
+      </Page>
+    );
+  }
+
   if (!emPipelineRun) {
     return (
       <Page subtitle={pipeline?.description} title={pipeline?.name ?? ''}>
-        <Step>
-          {didFetchPipelineRun ? 'run not found' : <Icon type="Loader" />}
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
+          run not found (TODO)
         </Step>
       </Page>
     );
@@ -52,7 +74,10 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
         subtitle={pipeline?.description}
         title={pipeline?.name ?? ''}
       >
-        <Step>
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
           <PipelineRunResultsTable pipeline={pipeline} run={emPipelineRun} />
         </Step>
       </Page>

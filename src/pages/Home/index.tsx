@@ -23,7 +23,12 @@ export default function RootList() {
 
   if (error) {
     if (error?.status === 403) {
-      return <NoAccessPage />;
+      return (
+        <ListWrapper>
+          <Title level={3}>{t('entity-matching-pipelines')}</Title>
+          <NoAccessPage />
+        </ListWrapper>
+      );
     }
     return <UnknownErrorPage error={error} />;
   }

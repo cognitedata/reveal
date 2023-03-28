@@ -21,10 +21,7 @@ const NoAccessPage = () => {
       <InfoWrapper>
         <ErrorInfo>
           <p>
-            <Trans i18nKey="no-access-info-prerequisite" />
-          </p>
-          <p>
-            <Trans i18nKey="no-access-info-transformations" />
+            <Trans i18nKey="no-access-info-entity-matching" />
           </p>
         </ErrorInfo>
       </InfoWrapper>
