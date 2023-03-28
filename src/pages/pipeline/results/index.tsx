@@ -9,10 +9,13 @@ import {
   useEMPipeline,
   useEMPipelineRun,
 } from 'hooks/entity-matching-pipelines';
+import { useTranslation } from 'common';
 
 type PipelineResultsProps = {};
 
 const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
+  const { t } = useTranslation();
+
   const { jobId, pipelineId } = useParams<{
     pipelineId: string;
     jobId: string;
@@ -37,7 +40,10 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
   if (!emPipelineRun) {
     return (
       <Page subtitle={pipeline?.description} title={pipeline?.name ?? ''}>
-        <Step>
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
           {didFetchPipelineRun ? 'run not found' : <Icon type="Loader" />}
         </Step>
       </Page>
@@ -51,7 +57,12 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
         subtitle={pipeline?.description}
         title={pipeline?.name ?? ''}
       >
-        <Step>results</Step>
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
+          results
+        </Step>
       </Page>
     );
   }
