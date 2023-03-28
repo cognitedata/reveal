@@ -4,23 +4,18 @@ import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-import { SourceType } from 'types/api';
 import AppliedRulesTable from './applied-rules-table';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 import Step from 'components/step';
 
 type Props = {
-  predictJobId: number;
-  sourceType: SourceType;
   predictions: Prediction[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
   appliedRules?: AppliedRule[];
 };
 export default function EntityMatchingResult({
-  predictJobId,
   predictions,
-  sourceType,
   confirmedPredictions,
   setConfirmedPredictions,
   appliedRules,
@@ -46,8 +41,8 @@ export default function EntityMatchingResult({
         {rulesView ? (
           <AppliedRulesTable
             appliedRules={appliedRules}
-            sourceType={sourceType}
-            predictJobId={predictJobId}
+            predictions={predictions}
+            setConfirmedPredictions={setConfirmedPredictions}
           />
         ) : (
           <QuickMatchResultsTable

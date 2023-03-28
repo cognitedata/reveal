@@ -1,36 +1,41 @@
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Flex, Icon } from '@cognite/cogs.js';
+import { TableRowSelection } from 'antd/lib/table/interface';
 import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
-import { useMemo } from 'react';
-import { SourceType } from 'types/api';
-import ApplyButton from './ApplyButton';
+import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import MatchInfoButton from './MatchInfoButton';
 
 type Props = {
-  predictJobId: number;
-  sourceType: SourceType;
   appliedRules?: AppliedRule[];
+  predictions: Prediction[];
+  setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
-type AppliedRuleTableRecord = { key: string } & AppliedRule;
+type AppliedRuleTableRecord = { key: number } & AppliedRule;
 type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
   title: string;
-  key: 'pattern' | 'fields' | 'numberOfMatches' | 'matches' | 'apply';
+  key: 'pattern' | 'fields' | 'numberOfMatches' | 'matches';
 };
 
 export default function AppliedRulesTable({
   appliedRules,
-  sourceType,
-  predictJobId,
+  setConfirmedPredictions,
 }: Props) {
+  useEffect(() => {}, []);
+
   const { t } = useTranslation();
   const columns: AppliedRuleTableRecordCT[] = useMemo(
     () => [
       {
         title: t('rules-pattern'),
         key: 'pattern',
+        sorter: (a: AppliedRule, b: AppliedRule) =>
+          (a.rule.extractors[0]?.pattern || '').localeCompare(
+            b.rule.extractors[1]?.pattern || ''
+          ),
         render: (rule: AppliedRule) => {
           return (
             <Flex alignItems="center" gap={12}>
@@ -44,6 +49,10 @@ export default function AppliedRulesTable({
       {
         title: t('rules-fields'),
         key: 'fields',
+        sorter: (a: AppliedRule, b: AppliedRule) =>
+          `${a.rule.extractors[0]?.field} ${a.rule.extractors[1]?.field}`.localeCompare(
+            `${b.rule.extractors[0]?.field} ${b.rule.extractors[1]?.field}`
+          ),
         render: (rule: AppliedRule) => {
           return (
             <Flex alignItems="center" gap={12}>
@@ -58,7 +67,8 @@ export default function AppliedRulesTable({
         title: t('rules-matches'),
         key: 'numberOfMatches',
         width: 100,
-
+        sorter: (a: AppliedRule, b: AppliedRule) =>
+          a.numberOfMatches - b.numberOfMatches,
         render: (rule: AppliedRule) => (
           <Flex alignItems="center" gap={12}>
             <>{rule.numberOfMatches.toLocaleString()}</>
@@ -66,30 +76,32 @@ export default function AppliedRulesTable({
           </Flex>
         ),
       },
-      {
-        title: '',
-        key: 'apply',
-        width: 150,
-        align: 'center',
-        render: (rule: AppliedRule) => (
-          <ApplyButton
-            rule={rule}
-            predictJobId={predictJobId}
-            sourceType={sourceType}
-          />
-        ),
-      },
     ],
-    [predictJobId, sourceType, t]
+    [t]
   );
+
   const appliedRulesList = useMemo(
     () =>
       appliedRules?.map((r, i) => ({
         ...r,
-        key: `${i}`,
+        key: i,
       })) || [],
     [appliedRules]
   );
+
+  const rowSelection: TableRowSelection<AppliedRuleTableRecord> = {
+    hideSelectAll: true,
+    onChange(selectedKeys) {
+      const confirmed = (selectedKeys as number[]).reduce(
+        (accl: number[], i) => [
+          ...accl,
+          ...(appliedRules?.[i]?.matches.map((m) => m.source.id) || []),
+        ],
+        []
+      );
+      setConfirmedPredictions(confirmed);
+    },
+  };
 
   if (!appliedRules || appliedRules.length === 0) {
     return <>NOPE</>;
@@ -102,6 +114,7 @@ export default function AppliedRulesTable({
       appendTooltipTo={undefined}
       dataSource={appliedRulesList}
       pagination={PAGINATION_SETTINGS}
+      rowSelection={rowSelection}
     />
   );
 }
