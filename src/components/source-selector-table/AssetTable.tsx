@@ -1,17 +1,20 @@
 import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon } from '@cognite/cogs.js';
+import { Body, Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawAsset } from 'types/api';
 import { TargetTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { stringSorter } from 'utils';
+import { useDataSets } from 'hooks/datasets';
+import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 
 type AssetListTableRecord = { key: string } & RawAsset;
 type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
   title: string;
-  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
+  key: 'name' | 'id' | 'description' | 'dataSet' | 'lastUpdatedTime';
 };
 
 export default function AssetTable({
@@ -26,6 +29,20 @@ export default function AssetTable({
     filter,
     advancedFilter,
   });
+  const { data: datasets = [] } = useDataSets('assets');
+
+  const items = useMemo(
+    () =>
+      datasets.map((ds) => ({
+        ...ds,
+        key: ds.id.toString(),
+        label: `${ds.name || ds.id.toString()} ${
+          Number.isFinite(ds.count) ? `(${ds.count})` : ''
+        }`,
+        value: ds.id,
+      })),
+    [datasets]
+  );
 
   const dataSource = useMemo(
     () =>
@@ -43,11 +60,37 @@ export default function AssetTable({
         title: t('resource-table-column-name'),
         dataIndex: 'name',
         key: 'name',
+        sorter: (a, b) => stringSorter(a?.name, b?.name),
       },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
+        render: (description: string) => description || '—',
+        sorter: (a: any, b: any) =>
+          stringSorter(a?.description, b?.description),
+      },
+      {
+        title: t('data-set'),
+        dataIndex: 'dataSetId',
+        key: 'dataSet',
+        render: (value) =>
+          !!value && (
+            <Body level={2} strong>
+              <QuickMatchDataSet dataSetId={value} />
+            </Body>
+          ),
+        sorter: (a, b) => {
+          const dataSetA = items.find(
+            ({ id: testId }) => a?.dataSetId === testId
+          );
+          const identifierA = dataSetA?.name ?? dataSetA?.externalId ?? '';
+          const dataSetB = items.find(
+            ({ id: testId }) => b?.dataSetId === testId
+          );
+          const identifierB = dataSetB?.name ?? dataSetB?.externalId ?? '';
+          return identifierA.localeCompare(identifierB);
+        },
       },
       {
         title: t('resource-table-column-lastUpdated'),
@@ -56,7 +99,7 @@ export default function AssetTable({
         render: (value: number) => new Date(value).toLocaleString(),
       },
     ],
-    [t]
+    [t, items]
   );
 
   const rowSelection = {
@@ -92,7 +135,7 @@ export default function AssetTable({
       emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      dataSource={dataSource}
+      dataSource={dataSource || items}
       pagination={PAGINATION_SETTINGS}
     />
   );

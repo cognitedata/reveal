@@ -33,9 +33,7 @@ export function DataSetSelect({ api, onChange, selected }: Props) {
     <Select
       showSearch
       allowClear
-      placeholder={t('resource-type-datasets', {
-        count: 0,
-      })}
+      placeholder={t('resource-type-datasets')}
       style={{ width: 220 }}
       loading={isInitialLoading}
       optionFilterProp="label"
