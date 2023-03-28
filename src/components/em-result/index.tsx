@@ -4,7 +4,6 @@ import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-import { SourceType } from 'types/api';
 import AppliedRulesTable from './applied-rules-table';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
@@ -12,17 +11,13 @@ import Step from 'components/step';
 import styled from 'styled-components';
 
 type Props = {
-  predictJobId: number;
-  sourceType: SourceType;
   predictions: Prediction[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
   appliedRules?: AppliedRule[];
 };
 export default function EntityMatchingResult({
-  predictJobId,
   predictions,
-  sourceType,
   confirmedPredictions,
   setConfirmedPredictions,
   appliedRules,
