@@ -10,6 +10,7 @@ import {
   useEMPipelineRun,
 } from 'hooks/entity-matching-pipelines';
 import { useTranslation } from 'common';
+import PipelineRunResultsTable from 'components/pipeline-run-results-table';
 
 type PipelineResultsProps = {};
 
@@ -77,7 +78,7 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
           title={t('result-step-title', { step: 4 })}
           subtitle={t('result-step-subtitle')}
         >
-          results
+          <PipelineRunResultsTable pipeline={pipeline} run={emPipelineRun} />
         </Step>
       </Page>
     );

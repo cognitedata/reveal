@@ -1297,10 +1297,10 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^9.11.0":
-  version "9.11.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.11.0.tgz#41242ad1addbbf1d4325e000ebcfa007aec468f4"
-  integrity sha512-+ylUucVTGXJwQDqVBPdB80byLRollkMd1yJf9bvhu9RIdprr73meqBZyixN6ll7+yS/faESseM7G2XfTq392kQ==
+"@cognite/cogs.js@^9.13.0":
+  version "9.13.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.13.0.tgz#7d199f0984a6f249605744133161460e8524edbf"
+  integrity sha512-b1OU8sOL/5hVx1wNNgfYt8bGmXCwmBUWdsKfEGp4hVDE5sDWyYdcHo7C9FQL7TBg3m0qhcWec+tHReLkKrQSpQ==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
