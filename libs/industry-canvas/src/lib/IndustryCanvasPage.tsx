@@ -214,7 +214,7 @@ export const IndustryCanvasPage = () => {
 
         <StyledGoBackWrapper>
           <Button onClick={onClearLocalStorage}>
-            <Icon type="Delete" /> Clear local storage
+            <Icon type="Delete" /> Clear Canvas
           </Button>
 
           <Tooltip content="Undo">

@@ -41,7 +41,7 @@ const useIndustryCanvasContainerTooltips = ({
                 target="_blank"
               />
               <Button
-                icon="Close"
+                icon="Delete"
                 onClick={() => removeContainerReference(clickedContainer)}
                 type="ghost"
               />
@@ -82,7 +82,7 @@ const useIndustryCanvasContainerTooltips = ({
                 target="_blank"
               />
               <Button
-                icon="Close"
+                icon="Delete"
                 onClick={() => removeContainerReference(clickedContainer)}
                 type="ghost"
               />
@@ -104,7 +104,7 @@ const useIndustryCanvasContainerTooltips = ({
                 target="_blank"
               />
               <Button
-                icon="Close"
+                icon="Delete"
                 onClick={() => removeContainerReference(clickedContainer)}
                 type="ghost"
               />
@@ -128,7 +128,7 @@ const useIndustryCanvasContainerTooltips = ({
                 target="_blank"
               />
               <Button
-                icon="Close"
+                icon="Delete"
                 onClick={() => removeContainerReference(clickedContainer)}
                 type="ghost"
               />
