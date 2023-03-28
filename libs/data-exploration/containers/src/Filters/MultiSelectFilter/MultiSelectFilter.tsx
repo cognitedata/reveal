@@ -14,6 +14,7 @@ import {
   MultiSelect,
   MultiSelectProps,
 } from '@data-exploration/components';
+import { InputActionMeta } from 'react-select';
 
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {
@@ -23,6 +24,7 @@ export interface MultiSelectFilterProps<ValueType>
     | OptionType<ValueType>[]
     | { label?: string; value: ValueType }[];
   options: OptionType<ValueType>[] | { label?: string; value: ValueType }[];
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   onChange: (
     selectedValues: ValueType[],
     selectedOptions: {

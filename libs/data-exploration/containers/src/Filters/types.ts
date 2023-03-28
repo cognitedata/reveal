@@ -1,4 +1,5 @@
 import { OptionSelection } from '@data-exploration/components';
+import { InputActionMeta } from 'react-select';
 
 export interface BaseFilter<TFilter> {
   // TODO: Investigate which properties are needed here to make dynamic filter work.
@@ -20,6 +21,7 @@ export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
   onChange?: (
     newSources: { label?: string; value: TValue }[] | undefined
   ) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
 }
 export interface BaseNestedFilterProps<TFilter>

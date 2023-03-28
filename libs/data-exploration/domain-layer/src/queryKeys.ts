@@ -76,8 +76,8 @@ export const queryKeys = {
   aggregateAssets: (input?: any[]) =>
     [...queryKeys.assets(), ...(input || []), 'aggregate'] as const,
   retrieveAsset: (id: number) => [...queryKeys.assets(), 'asset', id] as const,
-  assetsUniqueValues: (property: string, filter?: any) =>
-    [...queryKeys.assets(), 'unique-values', property, filter] as const,
+  assetsUniqueValues: (property: string, query?: string) =>
+    [...queryKeys.assets(), 'unique-values', property, query] as const,
   assetsMetadata: (filter?: any) =>
     [...queryKeys.assets(), 'metadata', 'keys', filter] as const,
   assetsMetadataValues: (metadataKey: string, filter?: any) =>

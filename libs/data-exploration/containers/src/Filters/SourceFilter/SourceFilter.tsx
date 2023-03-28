@@ -13,6 +13,7 @@ import {
   InternalEventsFilters,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
+import { useState } from 'react';
 
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {
@@ -68,14 +69,25 @@ export const BaseFileSourceFilter = <TFilter,>({
 const AssetSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
+  const [query, setQuery] = useState<string | undefined>(undefined);
+
+  const { data: sources = [] } = useAssetsUniqueValuesByProperty(
+    'source',
+    query
+  );
 
   const options = sources.map((item) => ({
     label: `${item.value}`,
     value: `${item.value}`,
   }));
 
-  return <SourceFilter {...props} options={options} />;
+  return (
+    <SourceFilter
+      {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
+      options={options}
+    />
+  );
 };
 
 const EventSourceFilter = (

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { components, NamedProps } from 'react-select';
+import { components, InputActionMeta, NamedProps } from 'react-select';
 
 import {
   OptionType,
@@ -22,6 +22,7 @@ export interface BaseSelectProps<ValueType>
   creatable?: boolean;
   cogsTheme?: Theme;
   addNilOption?: boolean;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
 }
 
 const Option = ({ data, isSelected, ...props }: any) => {

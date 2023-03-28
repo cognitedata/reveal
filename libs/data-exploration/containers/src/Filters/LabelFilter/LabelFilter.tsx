@@ -3,6 +3,7 @@ import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-la
 import { BaseMultiSelectFilterProps } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { InternalAssetFilters } from '@data-exploration-lib/core';
+import { useState } from 'react';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
   options: { label?: string; value: string }[];
@@ -13,6 +14,7 @@ export const LabelFilter = <TFilter,>({
   onChange,
   value,
   addNilOption,
+  onInputChange,
   error,
   loading,
 }: Props<TFilter>) => {
@@ -42,6 +44,7 @@ export const LabelFilter = <TFilter,>({
           options={options}
           onChange={(_, newValue) => handleChange(newValue)}
           value={value}
+          onInputChange={onInputChange}
           isMulti
           isSearchable
           isClearable
@@ -55,11 +58,13 @@ export const LabelFilter = <TFilter,>({
 const AssetLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
+  const [query, setQuery] = useState<string | undefined>(undefined);
+
   const {
     data: labels = [],
     isLoading,
     isError,
-  } = useAssetsUniqueValuesByProperty('labels');
+  } = useAssetsUniqueValuesByProperty('labels', query);
 
   const options = labels.map((label) => ({
     label: String(label.value),
@@ -69,6 +74,7 @@ const AssetLabelFilter = (
   return (
     <LabelFilter
       {...props}
+      onInputChange={(value) => setQuery(value)}
       error={isError}
       loading={isLoading}
       options={options}
