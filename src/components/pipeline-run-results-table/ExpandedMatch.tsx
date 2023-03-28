@@ -23,7 +23,9 @@ const ExpandedMatch = ({
         ({ source: sourcePropertyName, target: targetPropertyName }) => (
           <Flex key={`${sourcePropertyName}-${targetPropertyName}`}>
             <MatchFieldContainer>
-              <Body level={3}>{sourcePropertyName}</Body>
+              <Body level={3} muted>
+                {sourcePropertyName}
+              </Body>
               <Body level={2}>
                 {sourcePropertyName &&
                 typeof match.source?.[sourcePropertyName] === 'string' ? (
@@ -34,7 +36,9 @@ const ExpandedMatch = ({
               </Body>
             </MatchFieldContainer>
             <MatchFieldContainer>
-              <Body level={3}>{targetPropertyName}</Body>
+              <Body level={3} muted>
+                {targetPropertyName}
+              </Body>
               <Body level={2}>
                 {targetPropertyName &&
                 typeof match.target?.[targetPropertyName] === 'string' ? (

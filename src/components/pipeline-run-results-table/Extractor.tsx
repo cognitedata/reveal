@@ -17,7 +17,9 @@ const Extractor = ({
   if (extractor) {
     return (
       <Flex direction="column">
-        <Body level={3}>{extractor.field}</Body>
+        <Body level={3} muted>
+          {extractor.field}
+        </Body>
         <Body level={2}>{extractor.pattern}</Body>
       </Flex>
     );
