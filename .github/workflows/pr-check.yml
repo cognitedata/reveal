@@ -22,6 +22,15 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
+      - name: Ensure i18n order
+        run: |
+          yarn sort-keys
+          if  [[ $(git diff --stat) != '' ]]; then
+          git status;
+          echo "i18n not in order";
+          exit 1;
+          fi
+
       - name: Build
         run: yarn build
 
