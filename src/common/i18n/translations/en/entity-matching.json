@@ -91,8 +91,6 @@
   "model-configuration-scope-desc": "Match only resources without an asset ID, or match all resources.",
   "model-configuration-scope-header": "Scope",
   "model-configuration-scope-unmatched-only": "Unmatched only",
-  "supervised-model": "Supervised model",
-  "unsupervised-model": "Unsupervised model",
   "model-frequency-weighted-bigram-description": "Calculates a similarity score based on the sequence of the terms in the resource name, giving higher weights to less commonly occuring tokens.",
   "model-frequency-weighted-bigram-title": "Frequency weighted bigram",
   "model-simple-description": "Calculates a similarity score based on each part of the name in the fields defined above. This is the fast option.",

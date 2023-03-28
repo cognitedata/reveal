@@ -9,6 +9,7 @@ import AppliedRulesTable from './applied-rules-table';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 import Step from 'components/step';
+import styled from 'styled-components';
 
 type Props = {
   predictJobId: number;
@@ -30,10 +31,10 @@ export default function EntityMatchingResult({
 
   const { t } = useTranslation();
 
-  const onClose = () => setSourceIds([]);
+  const onClose = () => setConfirmedPredictions([]);
 
   return (
-    <Container $isActionBarVisible={!!sourceIds.length}>
+    <Container $isActionBarVisible={!!confirmedPredictions.length}>
       <Step
         title={t('result-step-title', { step: 4 })}
         subtitle={t('result-step-subtitle')}
@@ -46,15 +47,6 @@ export default function EntityMatchingResult({
               checked={rulesView}
               onChange={(e) => setRulesView(e.target.checked)}
             />
-            {!rulesView && (
-              <StyledButton
-                type="primary"
-                disabled={isLoading}
-                onClick={() => applyAll()}
-              >
-                {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
-              </StyledButton>
-            )}
           </Flex>
           {rulesView ? (
             <AppliedRulesTable
@@ -65,25 +57,20 @@ export default function EntityMatchingResult({
           ) : (
             <QuickMatchResultsTable
               predictions={predictions}
-              sourceIds={sourceIds}
-              setSourceIds={setSourceIds}
+              confirmedPredictions={confirmedPredictions}
+              setConfirmedPredictions={setConfirmedPredictions}
             />
           )}
         </StyledFlex>
       </Step>
       <QuickMatchActionBar
-        selectedRows={sourceIds}
+        selectedRows={confirmedPredictions}
         sourceType={sourceType}
         onClose={onClose}
       />
     </Container>
   );
 }
-
-const StyledButton = styled(Button)`
-  width: 150px;
-  padding: 10px;
-`;
 
 const StyledFlex = styled(Flex)`
   padding: 20px;
