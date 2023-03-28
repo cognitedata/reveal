@@ -27,13 +27,14 @@ export class Image360Entity implements Image360 {
     image360Metadata: Historical360ImageSet,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
+    transform: THREE.Matrix4,
     icon: Image360Icon
   ) {
     this._image360Icon = icon;
     this._activeRevisionId = 0;
 
     this._revisions = image360Metadata.imageRevisions.map((descriptor, revision) => {
-      return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, image360Metadata.transform, revision);
+      return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform, revision);
     });
   }
 

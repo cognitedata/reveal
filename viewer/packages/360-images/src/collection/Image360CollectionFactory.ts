@@ -44,7 +44,13 @@ export class Image360CollectionFactory<T> {
     const entities = zip(historicalDescriptors, icons)
       .filter(isDefined)
       .map(([descriptor, icon]) => {
-        return new Image360Entity(descriptor, this._sceneHandler, this._image360DataProvider, icon!);
+        return new Image360Entity(
+          descriptor,
+          this._sceneHandler,
+          this._image360DataProvider,
+          descriptor.transform,
+          icon!
+        );
       });
 
     return new DefaultImage360Collection(entities, collectionIcons);

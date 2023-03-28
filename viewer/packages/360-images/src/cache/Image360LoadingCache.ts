@@ -49,7 +49,7 @@ export class Image360LoadingCache {
     this._inProgressDownloads = [];
   }
 
-  public async cachedPreload(entity: Image360Entity, revisionId: number, lockDownload = false): Promise<void> {
+  public async cachedPreload(entity: Image360Entity, revisionId = 0, lockDownload = false): Promise<void> {
     const revision = entity.getRevision(revisionId);
 
     if (this._loaded360Images.find(image => image.revision === revision)?.isFullResolution) {

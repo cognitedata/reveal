@@ -4,21 +4,27 @@
 
 import * as THREE from 'three';
 
-import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
+import { Image360Provider } from '@reveal/data-providers';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from '../src/icons/Image360Icon';
+import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 
 describe(Image360Entity.name, () => {
   test('transformation should be respected', () => {
-    const image360Descriptor: Image360Descriptor = {
+    const image360Descriptor: Historical360ImageSet = {
       id: '0',
       label: 'testEntity',
       collectionId: '0',
       collectionLabel: 'test_collection',
       transform: new THREE.Matrix4(),
-      faceDescriptors: []
+      imageRevisions: [
+        {
+          timestamp: undefined,
+          faceDescriptors: []
+        }
+      ]
     };
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
@@ -31,10 +37,10 @@ describe(Image360Entity.name, () => {
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
-      testTranslation.clone(),
+      testTranslation,
       mock360ImageIcon
     );
 
-    expect(entity.transform.equals(testTranslation)).toBeTrue();
+    expect(entity.getRevision(0).transform.equals(testTranslation)).toBeTrue();
   });
 });
