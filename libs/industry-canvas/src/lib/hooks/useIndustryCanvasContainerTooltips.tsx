@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button, Link } from '@cognite/cogs.js';
+import { Button, Link, Tooltip } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
@@ -34,17 +34,21 @@ const useIndustryCanvasContainerTooltips = ({
           targetId: getContainerId(clickedContainer),
           content: (
             <TooltipContainer>
-              <Link
-                href={createLink(
-                  `/explore/asset/${clickedContainer.resourceId}`
-                )}
-                target="_blank"
-              />
-              <Button
-                icon="Delete"
-                onClick={() => removeContainerReference(clickedContainer)}
-                type="ghost"
-              />
+              <Tooltip content="Open asset in Data Explorer">
+                <Link
+                  href={createLink(
+                    `/explore/asset/${clickedContainer.resourceId}`
+                  )}
+                  target="_blank"
+                />
+              </Tooltip>
+              <Tooltip content="Remove asset from canvas">
+                <Button
+                  icon="Delete"
+                  onClick={() => removeContainerReference(clickedContainer)}
+                  type="ghost"
+                />
+              </Tooltip>
             </TooltipContainer>
           ),
           anchorTo: TooltipAnchorPosition.TOP_RIGHT,
@@ -75,17 +79,21 @@ const useIndustryCanvasContainerTooltips = ({
                   })
                 }
               />
-              <Link
-                href={createLink(
-                  `/explore/timeSeries/${clickedContainer.resourceId}`
-                )}
-                target="_blank"
-              />
-              <Button
-                icon="Delete"
-                onClick={() => removeContainerReference(clickedContainer)}
-                type="ghost"
-              />
+              <Tooltip content="Open time series in Data Explorer">
+                <Link
+                  href={createLink(
+                    `/explore/timeSeries/${clickedContainer.resourceId}`
+                  )}
+                  target="_blank"
+                />
+              </Tooltip>
+              <Tooltip content="Remove time series from canvas">
+                <Button
+                  icon="Delete"
+                  onClick={() => removeContainerReference(clickedContainer)}
+                  type="ghost"
+                />
+              </Tooltip>
             </TooltipContainer>
           ),
           anchorTo: TooltipAnchorPosition.TOP_RIGHT,
@@ -99,15 +107,19 @@ const useIndustryCanvasContainerTooltips = ({
           targetId: getContainerId(clickedContainer),
           content: (
             <TooltipContainer>
-              <Link
-                href={createLink(`/explore/threeD/${clickedContainer.id}`)}
-                target="_blank"
-              />
-              <Button
-                icon="Delete"
-                onClick={() => removeContainerReference(clickedContainer)}
-                type="ghost"
-              />
+              <Tooltip content="Open 3D-model in Data Explorer">
+                <Link
+                  href={createLink(`/explore/threeD/${clickedContainer.id}`)}
+                  target="_blank"
+                />
+              </Tooltip>
+              <Tooltip content="Remove 3D-model from canvas">
+                <Button
+                  icon="Delete"
+                  onClick={() => removeContainerReference(clickedContainer)}
+                  type="ghost"
+                />
+              </Tooltip>
             </TooltipContainer>
           ),
           anchorTo: TooltipAnchorPosition.TOP_RIGHT,
@@ -121,17 +133,22 @@ const useIndustryCanvasContainerTooltips = ({
           targetId: getContainerId(clickedContainer),
           content: (
             <TooltipContainer>
-              <Link
-                href={createLink(
-                  `/explore/file/${clickedContainer.resourceId}`
-                )}
-                target="_blank"
-              />
-              <Button
-                icon="Delete"
-                onClick={() => removeContainerReference(clickedContainer)}
-                type="ghost"
-              />
+              <Tooltip content="Open file in Data Explorer">
+                <Link
+                  href={createLink(
+                    `/explore/file/${clickedContainer.resourceId}`
+                  )}
+                  target="_blank"
+                />
+              </Tooltip>
+
+              <Tooltip content="Remove file from canvas">
+                <Button
+                  icon="Delete"
+                  onClick={() => removeContainerReference(clickedContainer)}
+                  type="ghost"
+                />
+              </Tooltip>
             </TooltipContainer>
           ),
           anchorTo: TooltipAnchorPosition.TOP_RIGHT,

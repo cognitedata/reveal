@@ -8,6 +8,7 @@ import {
   Body,
   Elevations,
   Button,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { useAsset } from '../../hooks/useAsset';
 import styled from 'styled-components';
@@ -66,7 +67,11 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
     });
   };
 
-  return <Button icon="Cube" onClick={onClick} inverted />;
+  return (
+    <Tooltip content="Add asset 3D-model to canvas">
+      <Button icon="Cube" onClick={onClick} inverted />
+    </Tooltip>
+  );
 };
 
 const AssetTooltip: React.FC<AssetTooltipProps> = ({

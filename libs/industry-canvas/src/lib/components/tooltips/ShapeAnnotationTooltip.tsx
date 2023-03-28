@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ToolBar } from '@cognite/cogs.js';
+import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { RectangleAnnotation } from '@cognite/unified-file-viewer';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { FillAndStrokeColorPalette } from '../color-palettes/FillAndStrokeColorPalette';
@@ -45,20 +45,26 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
         </RightAlignedColorPalettePosition>
       )}
       <ToolBar direction="horizontal">
-        <Button
-          icon="ColorPalette"
-          type={isInEditMode ? 'secondary' : 'ghost'}
-          aria-label="Edit color"
-          onClick={() => {
-            setIsInEditMode((prev) => !prev);
-          }}
-        />
-        <Button
-          icon="Delete"
-          type="ghost"
-          aria-label="Delete annotation"
-          onClick={onDeleteSelectedCanvasAnnotation}
-        />
+        <Tooltip
+          content={isInEditMode ? 'Close color palette' : 'Change color'}
+        >
+          <Button
+            icon="ColorPalette"
+            type={isInEditMode ? 'secondary' : 'ghost'}
+            aria-label={isInEditMode ? 'Close color palette' : 'Change color'}
+            onClick={() => {
+              setIsInEditMode((prev) => !prev);
+            }}
+          />
+        </Tooltip>
+        <Tooltip content="Delete annotation">
+          <Button
+            icon="Delete"
+            type="ghost"
+            aria-label="Delete annotation"
+            onClick={onDeleteSelectedCanvasAnnotation}
+          />
+        </Tooltip>
       </ToolBar>
     </>
   );
