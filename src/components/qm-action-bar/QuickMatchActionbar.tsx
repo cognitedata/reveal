@@ -52,7 +52,7 @@ export default QuickMatchActionBar;
 
 const StyledActionBarContainer = styled(Flex)`
   position: fixed;
-  inset: auto 40px 24px;
+  inset: auto 40px 23px;
   height: 56px;
   padding: 0px 16px;
   background-color: rgba(0, 0, 0, 0.9);
