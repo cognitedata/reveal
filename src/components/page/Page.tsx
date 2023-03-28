@@ -43,7 +43,6 @@ const Content = styled.section`
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
 `;
 
 interface Props {
