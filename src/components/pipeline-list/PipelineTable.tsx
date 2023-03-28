@@ -19,13 +19,15 @@ import { useSearchParams } from 'react-router-dom';
 import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 import {
   Pipeline,
+  PipelineWithLatestRun,
   useDeleteEMPipeline,
   useDuplicateEMPipeline,
-  useEMPipelines,
+  useEMPipelinesWithLatestRuns,
 } from 'hooks/entity-matching-pipelines';
+import LatestRunCell from 'components/latest-run-cell';
 
 type PipelineListTableRecord = { key: string } & Pick<
-  Pipeline,
+  PipelineWithLatestRun,
   PipelineTableTypes
 >;
 type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
@@ -36,7 +38,7 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
 const PipelineTable = (): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [searchParams] = useSearchParams('');
-  const { data, isInitialLoading } = useEMPipelines();
+  const { data, isInitialLoading } = useEMPipelinesWithLatestRuns();
   const { mutate: deletePipeline } = useDeleteEMPipeline();
   const { mutate: duplicatePipeline } = useDuplicateEMPipeline();
   const { t } = useTranslation();
@@ -138,6 +140,20 @@ const PipelineTable = (): JSX.Element => {
         dataIndex: 'owner',
         key: 'owner',
         sorter: (a: any, b: any) => stringSorter(a?.owner, b?.owner, 'owner'),
+      },
+      {
+        title: t('last-run'),
+        dataIndex: 'latestRun',
+        key: 'latestRun',
+        render: (value: PipelineWithLatestRun['latestRun']) => (
+          <LatestRunCell latestRun={value} />
+        ),
+        sorter: (
+          rowA: PipelineListTableRecord,
+          rowB: PipelineListTableRecord
+        ) =>
+          (rowA?.latestRun?.createdTime ?? 0) -
+          (rowB?.latestRun?.createdTime ?? 0),
       },
       {
         title: '',
