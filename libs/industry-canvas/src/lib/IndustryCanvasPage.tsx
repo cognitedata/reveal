@@ -237,7 +237,7 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
 
           <Button onClick={onAddResourcePress}>
-            <Icon type="Plus" /> Add resources...
+            <Icon type="Plus" /> Add data...
           </Button>
 
           <Tooltip content="Download canvas as PDF">
