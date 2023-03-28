@@ -25,16 +25,32 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
     enabled: !!pipelineId,
   });
 
-  const { data: emPipelineRun, isFetched: didFetchPipelineRun } =
-    useEMPipelineRun(parseInt(pipelineId ?? ''), parseInt(jobId ?? ''), {
+  const { data: emPipelineRun, isInitialLoading } = useEMPipelineRun(
+    parseInt(pipelineId ?? ''),
+    parseInt(jobId ?? ''),
+    {
       enabled: !!pipelineId && !!jobId,
-    });
+    }
+  );
 
   if (error) {
     if (error?.status === 403) {
       return <NoAccessPage />;
     }
     return <UnknownErrorPage error={error} />;
+  }
+
+  if (isInitialLoading) {
+    return (
+      <Page subtitle={pipeline?.description} title={pipeline?.name ?? ''}>
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
+          <Loader />
+        </Step>
+      </Page>
+    );
   }
 
   if (!emPipelineRun) {
@@ -44,7 +60,7 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
           title={t('result-step-title', { step: 4 })}
           subtitle={t('result-step-subtitle')}
         >
-          {didFetchPipelineRun ? 'run not found' : <Loader />}
+          run not found (TODO)
         </Step>
       </Page>
     );
