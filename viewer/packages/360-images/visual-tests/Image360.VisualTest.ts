@@ -86,7 +86,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         renderer.domElement.clientWidth,
         renderer.domElement.clientHeight
       );
-      const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
+      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
       if (entity === undefined) {
         this.render();
@@ -178,7 +178,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         renderer.domElement.clientWidth,
         renderer.domElement.clientHeight
       );
-      const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
+      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
       if (entity === undefined) {
         this.render();
         return;
