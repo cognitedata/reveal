@@ -15,7 +15,7 @@ import ResourceIdentifier from './ResourceIdentifier';
 import ExpandedMatch from './ExpandedMatch';
 import Confidence from 'components/em-result/Confidence';
 
-type BasicResultsTableRecord = EMPipelineRunMatch & { key: string };
+type BasicResultsTableRecord = EMPipelineRunMatch & { key: number };
 
 type BasicResultsTableColumnType = ColumnType<BasicResultsTableRecord> & {
   title: string;
@@ -32,10 +32,10 @@ const BasicResultsTable = ({
 }: BasicResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
-  const handleClickExpandButton = (clickedRowKey: string) => {
+  const handleClickExpandButton = (clickedRowKey: number) => {
     setExpandedRowKeys((prevState) =>
       prevState.includes(clickedRowKey)
         ? prevState.filter((key) => key !== clickedRowKey)
@@ -44,7 +44,11 @@ const BasicResultsTable = ({
   };
 
   const handleSelectRow = (selectedRowKeys: Key[]) => {
-    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRowKeys(
+      selectedRowKeys.map((rowKey: Key) =>
+        typeof rowKey === 'string' ? parseInt(rowKey) : rowKey
+      )
+    );
   };
 
   const columns: BasicResultsTableColumnType[] = useMemo(
@@ -101,9 +105,10 @@ const BasicResultsTable = ({
     () =>
       run.matches?.map((match) => ({
         ...match,
-        key: `${JSON.stringify(match.source)} - ${JSON.stringify(
-          match.target
-        )}`,
+        key:
+          match.source?.id && typeof match.source.id === 'number'
+            ? match.source.id
+            : -1,
       })) ?? [],
     [run.matches]
   );
