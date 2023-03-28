@@ -1,12 +1,9 @@
-import { Button, Checkbox, Flex } from '@cognite/cogs.js';
+import { Checkbox, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
-import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
-import { AssetIdUpdate } from 'hooks/types';
-import { useUpdateAssetIds } from 'hooks/update';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { Dispatch, SetStateAction, useState } from 'react';
+
 import { SourceType } from 'types/api';
 import AppliedRulesTable from './applied-rules-table';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
@@ -17,41 +14,21 @@ type Props = {
   predictJobId: number;
   sourceType: SourceType;
   predictions: Prediction[];
-  sourceIdsSecondaryTopBar: number[];
-  setSourceIdsSecondaryTopBar: Dispatch<SetStateAction<number[]>>;
+  confirmedPredictions: number[];
+  setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
   appliedRules?: AppliedRule[];
 };
 export default function EntityMatchingResult({
   predictJobId,
   predictions,
   sourceType,
-  sourceIdsSecondaryTopBar,
-  setSourceIdsSecondaryTopBar,
+  confirmedPredictions,
+  setConfirmedPredictions,
   appliedRules,
 }: Props) {
-  const [sourceIds, setSourceIds] = useState<number[]>([]);
-  const { mutate, isLoading, status } = useUpdateAssetIds(
-    sourceType,
-    predictJobId
-  );
   const [rulesView, setRulesView] = useState(false);
 
   const { t } = useTranslation();
-  const applyAll = () => {
-    const updates: AssetIdUpdate[] = predictions.map(({ source, match }) => ({
-      id: source.id,
-      update: {
-        assetId: { set: match.target.id },
-      },
-    }));
-
-    mutate(updates);
-  };
-
-  useEffect(
-    () => setSourceIdsSecondaryTopBar(sourceIds),
-    [sourceIds, setSourceIdsSecondaryTopBar, sourceIdsSecondaryTopBar]
-  );
 
   const onClose = () => setSourceIds([]);
 
