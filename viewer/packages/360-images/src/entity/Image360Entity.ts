@@ -2,31 +2,17 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
-import { Image360Descriptor, Image360FileProvider, Image360Texture } from '@reveal/data-providers';
+import { Image360FileProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
-import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { Image360 } from './Image360';
+import { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import { Image360RevisionEntity } from './Image360RevisionEntity';
 
 export class Image360Entity implements Image360 {
-  private readonly _imageProvider: Image360FileProvider;
-  private readonly _image360Metadata: Image360Descriptor;
-  private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
-  private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _getFullResolutionTextures:
-    | undefined
-    | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>;
-
-  /**
-   * Get a copy of the model-to-world transformation matrix
-   * of the given 360 image.
-   * @returns model-to-world transform of the 360 Image
-   */
-  get transform(): THREE.Matrix4 {
-    return this._transform.clone();
-  }
+  private readonly _revisions: Image360RevisionEntity[];
+  private _activeRevisionId: number;
 
   /**
    * Get the icon that represents the 360
@@ -37,111 +23,95 @@ export class Image360Entity implements Image360 {
     return this._image360Icon;
   }
 
-  /**
-   * The object containing the unit cube with the 360 images.
-   * @returns Image360Visualization
-   */
-  get image360Visualization(): Image360VisualizationBox {
-    return this._image360VisualzationBox;
-  }
-
   constructor(
-    image360Metadata: Image360Descriptor,
+    image360Metadata: Historical360ImageSet,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
-    transform: THREE.Matrix4,
     icon: Image360Icon
   ) {
-    this._imageProvider = imageProvider;
-    this._image360Metadata = image360Metadata;
-
-    this._transform = transform;
     this._image360Icon = icon;
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
-    this._image360VisualzationBox.visible = false;
-    this._getFullResolutionTextures = undefined;
+    this._activeRevisionId = 0;
+
+    this._revisions = image360Metadata.imageRevisions.map((descriptor, revision) => {
+      return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, image360Metadata.transform, revision);
+    });
   }
 
   /**
-   * Loads the 360 image (6 faces) into the visualization object.
-   *
-   * This will start the download of both low and full resolution images and return one promise for when the first image set is ready
-   * and one promise for when both downloads are completed. If the low resolution images are completed first the full resolution
-   * download and texture loading will continue in the background, and applyFullResolution can be used to apply full resolution textures
-   * to the image360VisualzationBox at a desired time.
-   *
-   * @returns firstCompleted A promise for when the first set om images has been loaded and applied to the image360VisualzationBox.
-   * @returns fullResolutionCompleted A promise for when full resolution images are done loading.
+   * Set the opacity of all images in this entity.
    */
-  public load360Image(abortSignal?: AbortSignal): {
-    firstCompleted: Promise<void>;
-    fullResolutionCompleted: Promise<void>;
-  } {
-    const lowResolutionFaces = this._imageProvider
-      .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal)
-      .then(async faces => {
-        return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: true };
-      });
+  public setOpacity(alpha: number): void {
+    this._revisions.forEach(revision => (revision.image360Visualization.opacity = alpha));
+  }
 
-    const fullResolutionFaces = this._imageProvider
-      .get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal)
-      .then(async faces => {
-        return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
-      });
+  /**
+   * List the ids and dates for all available revisions. If a revison is undated, the date will be undefined.
+   * @returns A list of id and date pairs, sorted with the most recent date first.
+   * */
+  public list360ImageRevisions(): { id: number; date?: Date }[] {
+    return this._revisions.map(revision => {
+      return { id: revision.revisionId, date: revision.date };
+    });
+  }
 
-    const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
-      async ({ textures, isLowResolution }) => {
-        await this._image360VisualzationBox.loadImages(await textures);
+  /**
+   * Get the revision that is currently loaded for this entry.
+   * @returns Returns the active revision.
+   */
+  public getActiveRevision(): Image360RevisionEntity {
+    return this.getRevision(this._activeRevisionId);
+  }
 
-        if (isLowResolution) {
-          this._getFullResolutionTextures = fullResolutionFaces;
+  /**
+   * Set the revision to be loaded for this entity.
+   * If there are no revisions with the provided id, the most recent revision wil be set as active.
+   */
+  public setActiveRevision(revisionId: number): Image360RevisionEntity {
+    const revision = this.getRevision(revisionId);
+    this._activeRevisionId = revision.revisionId;
+    return revision;
+  }
+
+  /**
+   * Returns the revision with the provided id.
+   * If there are no revisions with this id, the most recent revision will be returned
+   */
+  public getRevision(revisionId: number): Image360RevisionEntity {
+    const revision = this._revisions.find(revision => revisionId === revision.revisionId);
+    return revision ? revision : this.getMostRecentRevision();
+  }
+
+  /**
+   * Revisions are sorted by date. Returns the first element of the array.
+   */
+  public getMostRecentRevision(): Image360RevisionEntity {
+    return this._revisions[0];
+  }
+
+  /**
+   * Get the id of the revision closest to the provided date.
+   * If all revisions are undated the first available revison is returned.
+   */
+  public getRevisionClosestToDate(date: Date): number {
+    const dateAsNumber = date.getTime();
+    const closest = this._revisions.reduce(
+      (closest, revision) => {
+        if (revision.date) {
+          const difference = Math.abs(revision.date.getTime() - dateAsNumber);
+          if (difference < closest.difference) return { id: revision.revisionId, difference };
         }
-      }
+        return closest;
+      },
+      { id: 0, difference: Number.POSITIVE_INFINITY }
     );
-
-    const fullResolutionCompleted = fullResolutionFaces
-      .catch(e => {
-        return Promise.reject(e);
-      })
-      .then(
-        () => {
-          return Promise.resolve();
-        },
-        reason => {
-          return Promise.reject(reason);
-        }
-      );
-
-    return { firstCompleted, fullResolutionCompleted };
-  }
-
-  /**
-   * Apply full resolution textures to the image360VisualzationBox. This has no effect if full resolution has already been applied.
-   */
-  public async applyFullResolution(): Promise<void> {
-    if (this._getFullResolutionTextures) {
-      const result = await this._getFullResolutionTextures.catch(() => {});
-      if (result) {
-        this._image360VisualzationBox.loadImages(await result.textures);
-        this._getFullResolutionTextures = undefined;
-      }
-    }
-  }
-
-  /**
-   * Drops the GPU resources for the 360 image
-   * the icon will be preserved.
-   */
-  public unload360Image(): void {
-    this._getFullResolutionTextures = undefined;
-    this._image360VisualzationBox.unloadImages();
+    return closest.id;
   }
 
   /**
    * @obvious
    */
   public dispose(): void {
-    this.unload360Image();
+    this._revisions.forEach(revision => revision.unload360Image());
     this._image360Icon.dispose();
   }
 }

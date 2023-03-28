@@ -8,7 +8,6 @@ import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
-import head from 'lodash/head';
 
 import {
   CogniteClient,
@@ -20,7 +19,7 @@ import {
   IdEither,
   Metadata
 } from '@cognite/sdk';
-import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
+import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
 
@@ -48,13 +47,16 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageDescriptors(
     metadataFilter: Metadata,
     preMultipliedRotation: boolean
-  ): Promise<Image360Descriptor[]> {
+  ): Promise<Historical360ImageSet[]> {
     const [events, files] = await Promise.all([
       this.listEvents({ metadata: metadataFilter }),
       this.listFiles({ metadata: metadataFilter, uploaded: true })
     ]);
 
     const image360Descriptors = this.mergeDescriptors(files, events, preMultipliedRotation);
+    if (image360Descriptors.length < 1) {
+      return Promise.reject(`Error: Could not find any 360 images to load for the site_id "${metadataFilter.site_id}"`);
+    }
 
     if (events.length !== image360Descriptors.length) {
       Log.warn(
@@ -102,7 +104,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     files: Map<string, FileInfo[]>,
     events: CogniteEvent[],
     preMultipliedRotation: boolean
-  ): Image360Descriptor[] {
+  ): Historical360ImageSet[] {
     const eventDescriptors = events
       .map(event => event.metadata)
       .filter((metadata): metadata is Event360Metadata => !!metadata)
@@ -115,22 +117,29 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         const stationFileInfos = files.get(eventDescriptor.id);
 
         if (stationFileInfos === undefined || stationFileInfos.length < 6) {
-          return { ...eventDescriptor, faceDescriptors: [] };
+          return { ...eventDescriptor, imageRevisions: [] };
         }
 
-        const fileInfoSet = this.getNewestFileInfoSet(stationFileInfos);
+        const sortedFileInfoSet = this.sortFileInfoSetByNewest(stationFileInfos);
 
-        const faceDescriptors = fileInfoSet.map(fileInfo => {
-          return {
-            face: fileInfo.metadata!.face,
-            mimeType: fileInfo.mimeType!,
-            fileId: fileInfo.id
-          } as Image360FileDescriptor;
-        });
-
-        return { ...eventDescriptor, faceDescriptors };
+        const imageRevisions = sortedFileInfoSet
+          .filter(imageSetInfo => imageSetInfo.length === 6)
+          .map(imageSetInfo => {
+            const timestamp = imageSetInfo[0].metadata?.timestamp;
+            return {
+              timestamp: timestamp ? Number(timestamp) : undefined,
+              faceDescriptors: imageSetInfo.map(imageInfo => {
+                return {
+                  face: imageInfo.metadata!.face,
+                  mimeType: imageInfo.mimeType!,
+                  fileId: imageInfo.id
+                } as Image360FileDescriptor;
+              })
+            };
+          });
+        return { ...eventDescriptor, imageRevisions };
       })
-      .filter(image360Descriptor => image360Descriptor.faceDescriptors.length === 6);
+      .filter(historicalImages => historicalImages.imageRevisions.length > 0);
   }
 
   private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
@@ -169,25 +178,24 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  private getNewestFileInfoSet(fileInfos: FileInfo[]) {
+  private sortFileInfoSetByNewest(fileInfos: FileInfo[]): FileInfo[][] {
     if (hasTimestamp()) {
-      return getNewestTimestamp();
+      return sortedByAge();
     }
 
-    return fileInfos;
+    return [fileInfos];
 
     function hasTimestamp() {
       return fileInfos[0].metadata?.timestamp !== undefined;
     }
 
-    function getNewestTimestamp() {
+    function sortedByAge() {
       const sets = groupBy(fileInfos, fileInfo => fileInfo.metadata!.timestamp);
 
       const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc')
         .map(timeStampSets => timeStampSets[1])
         .filter(fileInfoSets => fileInfoSets.length === 6);
-
-      return head(ordered) ?? [];
+      return ordered;
     }
   }
 

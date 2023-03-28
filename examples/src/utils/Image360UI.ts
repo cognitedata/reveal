@@ -3,15 +3,23 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection } from '@cognite/reveal';
+import { Cognite3DViewer, Image360, Image360Collection, Image360EnteredDelegate } from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
     const sets: Image360Collection[] = [];
+    let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
+
+    const onImageEntered: Image360EnteredDelegate = entity => {
+      selectedEntity = entity;
+      const date = selectedEntity.getActiveRevision().date;
+      console.log('Entered: ' + date);
+      selectedEntity.list360ImageRevisions().forEach(revision => console.log(revision.id + ': ' + revision.date));
+    };
 
     const translation = {
       x: 0,
@@ -33,6 +41,10 @@ export class Image360UI {
     const iconCulling = {
       radius: Infinity,
       limit: 50
+    };
+
+    const imageRevisions = {
+      id: '0'
     };
 
     const params = {
@@ -60,7 +72,7 @@ export class Image360UI {
     gui.add(params, 'add').name('Add image set');
 
     gui.add(opacity, 'alpha', 0, 1, 0.01).onChange(() => {
-      entities.forEach(p => (p.image360Visualization.opacity = opacity.alpha));
+      entities.forEach(p => p.setOpacity(opacity.alpha));
       viewer.requestRedraw();
     });
 
@@ -76,6 +88,13 @@ export class Image360UI {
       .name('Number of points')
       .onChange(() => {
         set360IconCullingRestrictions();
+      });
+
+    gui
+      .add(imageRevisions, 'id')
+      .name('Current image revision')
+      .onChange(() => {
+        viewer.setCurrent360ImageRevision(Number(imageRevisions.id));
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');
@@ -94,6 +113,7 @@ export class Image360UI {
       );
       sets.push(set);
       entities = entities.concat(set.image360Entities);
+      set.on('image360Entered', onImageEntered);
       viewer.requestRedraw();
     }
 

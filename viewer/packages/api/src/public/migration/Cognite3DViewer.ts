@@ -786,6 +786,29 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Change revison on the currently entered 360 image.
+   * @param revisonId The id of the revision to load.
+   */
+  setCurrent360ImageRevision(revisonId: number): void {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`360 image sets are only supported when connecting to Cognite Data Fusion`);
+    }
+    this._image360ApiHelper.setCurrent360ImageRevision(revisonId);
+  }
+
+  /**
+   * Set a date to determine revisions of 360 images.
+   * Images with dated revisions will load the revision with the date closest to the override date.
+   * @param date If undefined the most recent revision will be loaded when entering new images.
+   */
+  override360ImageRevisionDate(date?: Date): void {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`360 image sets are only supported when connecting to Cognite Data Fusion`);
+    }
+    this._image360ApiHelper.override360ImageRevisionDate(date);
+  }
+
+  /**
    * Removes a model that was previously added using {@link Cognite3DViewer.addModel},
    * {@link Cognite3DViewer.addCadModel} or {@link Cognite3DViewer.addPointCloudModel}
    * .

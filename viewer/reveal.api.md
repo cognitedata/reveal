@@ -370,6 +370,7 @@ export class Cognite3DViewer {
     on(event: 'cameraChange', callback: CameraChangeDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+    override360ImageRevisionDate(date?: Date): void;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
     remove360Images(...image360Entities: Image360[]): Promise<void>;
@@ -383,6 +384,7 @@ export class Cognite3DViewer {
     setCameraManager(cameraManager: CameraManager): void;
     // @deprecated
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
+    setCurrent360ImageRevision(revisonId: number): void;
     setGlobalClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
@@ -774,8 +776,12 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
-    readonly image360Visualization: Image360Visualization;
-    readonly transform: THREE.Matrix4;
+    getActiveRevision(): Image360Revision;
+    list360ImageRevisions(): {
+        id: number;
+        date?: Date;
+    }[];
+    setOpacity(alpha: number): void;
 }
 
 // @public
@@ -795,6 +801,13 @@ export type Image360EnteredDelegate = (image360: Image360) => void;
 
 // @public
 export type Image360ExitedDelegate = () => void;
+
+// @public (undocumented)
+export interface Image360Revision {
+    readonly date: Date | undefined;
+    readonly image360Visualization: Image360Visualization;
+    readonly transform: THREE.Matrix4;
+}
 
 // @public
 export interface Image360Visualization {
