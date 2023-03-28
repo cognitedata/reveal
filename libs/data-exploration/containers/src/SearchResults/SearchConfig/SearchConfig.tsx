@@ -34,8 +34,6 @@ export const SearchConfig: React.FC<Props> = ({
   const [configData, setConfigData] =
     React.useState<SearchConfigDataType>(searchConfig);
 
-  const numOfResources = 5;
-
   const onChangeHandler = (
     enabled: boolean,
     currentResource: SearchConfigResourceType,
@@ -97,7 +95,6 @@ export const SearchConfig: React.FC<Props> = ({
       <Flex style={{ overflowY: 'hidden' }}>
         <CommonColumn
           searchConfigData={configData}
-          resourcesLength={numOfResources}
           onChange={onChangeCommonHandler}
         />
         <ResourceColumns

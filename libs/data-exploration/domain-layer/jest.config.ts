@@ -9,5 +9,6 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../coverage/libs/data-exploration/domain-layer',
   collectCoverage: true,
+  setupFilesAfterEnv: ['./src/setupTests.js'],
   collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
 };

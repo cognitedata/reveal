@@ -1,4 +1,5 @@
 import {
+  COMMON_COLUMN_HEADER,
   searchConfigCommonColumns,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
@@ -12,15 +13,12 @@ import {
 
 type Props = {
   searchConfigData: SearchConfigDataType;
-  resourcesLength: number;
   onChange: (enabled: boolean, index: number) => void;
 };
 
-export const CommonColumn = ({
-  searchConfigData,
-  resourcesLength,
-  onChange,
-}: Props) => {
+export const CommonColumn = ({ searchConfigData, onChange }: Props) => {
+  const resourcesLength = Object.keys(searchConfigData).length;
+
   const isOptionIndeterminate = (checkedColumnsLength: number) => {
     return checkedColumnsLength > 0 && checkedColumnsLength < resourcesLength;
   };
@@ -35,7 +33,7 @@ export const CommonColumn = ({
   return (
     <CommonColumnWrapper>
       <CommonWrapper direction="column">
-        <ColumnHeader>Common</ColumnHeader>
+        <ColumnHeader>{COMMON_COLUMN_HEADER}</ColumnHeader>
         {searchConfigCommonColumns.map((column, index) => {
           const checkedColumnsLength = getNumberOfCheckedColumns(
             searchConfigData,
@@ -47,6 +45,7 @@ export const CommonColumn = ({
               onChange={(_, isChecked) => onChange(!!isChecked, index)}
               indeterminate={isOptionIndeterminate(checkedColumnsLength)}
               checked={isOptionChecked(checkedColumnsLength)}
+              data-testid={`common-column-checkbox-${column}`}
             >
               {column}
             </ModalCheckbox>
