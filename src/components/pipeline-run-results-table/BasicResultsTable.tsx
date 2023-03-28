@@ -11,7 +11,7 @@ import {
   Pipeline,
 } from 'hooks/entity-matching-pipelines';
 
-import ResourceName from './ResourceName';
+import ResourceIdentifier from './ResourceIdentifier';
 import ExpandedMatch from './ExpandedMatch';
 import Confidence from 'components/em-result/Confidence';
 
@@ -54,7 +54,7 @@ const BasicResultsTable = ({
         dataIndex: 'source',
         key: 'source',
         render: (source: EMPipelineRunMatch['source']) => (
-          <ResourceName resource={source} />
+          <ResourceIdentifier resource={source} />
         ),
       },
       {
@@ -62,7 +62,7 @@ const BasicResultsTable = ({
         dataIndex: 'target',
         key: 'target',
         render: (target: EMPipelineRunMatch['target']) => (
-          <ResourceName resource={target} />
+          <ResourceIdentifier resource={target} />
         ),
       },
       {

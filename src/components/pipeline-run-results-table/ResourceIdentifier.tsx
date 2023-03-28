@@ -2,11 +2,13 @@ import { Body, Flex } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
 
-type ResourceNameProps = {
+type ResourceIdentifierProps = {
   resource?: Record<string, unknown>;
 };
 
-const ResourceName = ({ resource }: ResourceNameProps): JSX.Element => {
+const ResourceIdentifier = ({
+  resource,
+}: ResourceIdentifierProps): JSX.Element => {
   const { t } = useTranslation();
 
   if (!!resource?.name && typeof resource.name === 'string') {
@@ -45,4 +47,4 @@ const ResourceName = ({ resource }: ResourceNameProps): JSX.Element => {
   return <>-</>;
 };
 
-export default ResourceName;
+export default ResourceIdentifier;
