@@ -16,12 +16,12 @@
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace entity-matching",
     "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace entity-matching",
     "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace entity-matching",
-    "sort-keys": "cdf-i18n-utils-cli sort-keys --namespace entity-matching"
+    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace entity-matching"
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.6.0",
     "@cognite/cdf-utilities": "^3.0.0",
-    "@cognite/cogs.js": "^9.11.0",
+    "@cognite/cogs.js": "^9.13.0",
     "@cognite/metrics": "^2.0.0",
     "@cognite/react-feature-flags": "^1.0.0",
     "@cognite/sdk": "^7.0.0",

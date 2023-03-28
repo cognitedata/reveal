@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { CogniteError } from '@cognite/sdk';
+import { CogniteClient, CogniteError } from '@cognite/sdk';
 import {
   QueryKey,
   useQuery,
@@ -7,6 +7,8 @@ import {
   UseQueryOptions,
   useMutation,
   UseMutationOptions,
+  QueryClient,
+  FetchQueryOptions,
 } from '@tanstack/react-query';
 import { PipelineSourceType, TargetType } from 'types/api';
 import { toast } from '@cognite/cogs.js';
@@ -33,7 +35,33 @@ export type Pipeline = {
   };
   generateRules?: boolean;
 };
+
+export type PipelineWithLatestRun = Pipeline & {
+  latestRun?: EMPipelineRun;
+};
+
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
+
+const getPipelines = (sdk: CogniteClient) =>
+  sdk
+    .post<{ items: Pipeline[] }>(
+      `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/list`,
+      { data: { limit: 1000 } }
+    )
+    .then((r) => r.data.items);
+
+const fetchPipelines = (
+  sdk: CogniteClient,
+  queryClient: QueryClient,
+  options?: FetchQueryOptions<Pipeline[], CogniteClient>
+) => {
+  return queryClient.fetchQuery(
+    getEMPipelinesKey(),
+    () => getPipelines(sdk),
+    options
+  );
+};
+
 export const useEMPipelines = (
   opts?: UseQueryOptions<Pipeline[], CogniteError>
 ) => {
@@ -41,19 +69,54 @@ export const useEMPipelines = (
   const qc = useQueryClient();
   return useQuery<Pipeline[], CogniteError>(
     getEMPipelinesKey(),
-    ({ pageParam }) =>
-      sdk
-        .post<{ items: Pipeline[] }>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/list`,
-          { params: { nextCursor: pageParam }, data: { limit: 1000 } }
-        )
-        .then((r) => r.data.items),
+    () => getPipelines(sdk),
     {
       onSuccess(items) {
         items.forEach((i) => qc.setQueryData(getEMPipelineKey(i.id), i));
       },
       ...opts,
     }
+  );
+};
+
+const getEMPipelinesWithLatestRunsKey = (): QueryKey => [
+  ...getEMPipelinesKey(),
+  'latest-runs',
+];
+export const useEMPipelinesWithLatestRuns = (
+  opts: UseQueryOptions<PipelineWithLatestRun[], CogniteError> = {
+    enabled: true,
+  }
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useQuery(
+    getEMPipelinesWithLatestRunsKey(),
+    async () => {
+      const emPipelines = await fetchPipelines(sdk, queryClient);
+
+      const latestRuns = await sdk
+        .post<{ items: EMPipelineRun[] }>(
+          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/latest`,
+          {
+            data: {
+              items: emPipelines?.map(({ id }) => ({ id })),
+            },
+          }
+        )
+        .then((r) => r.data.items);
+
+      return (
+        emPipelines?.map((pipeline) => ({
+          ...pipeline,
+          latestRun: latestRuns.find(
+            ({ pipelineId }) => pipelineId === pipeline.id
+          ),
+        })) ?? []
+      );
+    },
+    opts
   );
 };
 
@@ -259,13 +322,60 @@ export const useDuplicateEMPipeline = () => {
 
 type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
-type EMPipelineRun = {
+type EMPipelineMatchType =
+  | 'previously_mapped'
+  | 'model'
+  | 'rule_rule_input_pattern->rule_predict_pattern';
+
+export type EMPipelineRunMatch = {
+  matchType?: EMPipelineMatchType;
+  score?: number;
+  source?: Record<string, unknown>;
+  target?: Record<string, unknown>;
+};
+
+type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
+
+type EMPipelineRegexExtractorExtractorType = 'regex';
+
+export type EMPipelineRegexExtractor = {
+  entitySet: EMPipelineRegexExtractorEntitySetType;
+  extractorType: EMPipelineRegexExtractorExtractorType;
+  field: string;
+  pattern: string;
+};
+
+type EMPipelineMatchConditionType = 'equals';
+
+type EMPipelineMatchCondition = {
+  conditionType: EMPipelineMatchConditionType;
+  arguments: number[][];
+};
+
+type EMPipelineGeneratedRuleExistingMatchType = 'model';
+
+export type EMPipelineGeneratedRuleMatch = {
+  consistentMatch?: boolean;
+  existingMatchType?: EMPipelineGeneratedRuleExistingMatchType;
+  source: Record<string, unknown>;
+  target: Record<string, unknown>;
+};
+
+export type EMPipelineGeneratedRule = {
+  extractors?: EMPipelineRegexExtractor[];
+  conditions?: EMPipelineMatchCondition[];
+  matches?: EMPipelineGeneratedRuleMatch[];
+};
+
+export type EMPipelineRun = {
   status: EMPipelineRunStatus;
   createdTime: number;
-  startTime: number;
+  startTime: number | null;
   statusTime: number;
   jobId: number;
   pipelineId?: number;
+  matches?: EMPipelineRunMatch[];
+  generatedRules?: EMPipelineGeneratedRule[];
 };
 
 type RunEMPipelineMutationVariables = Pick<Pipeline, 'id'>;

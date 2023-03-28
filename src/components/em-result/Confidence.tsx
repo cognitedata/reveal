@@ -1,5 +1,4 @@
-import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 
 type ConfidenceProps = {
   score?: number;
@@ -11,13 +10,9 @@ export default function Confidence(props: ConfidenceProps) {
     score && Number.isFinite(score)
       ? `${Math.round(score * 100).toFixed(1)}%`
       : null;
-  return <StyledConfidence>{percentage}</StyledConfidence>;
-}
+  if (percentage) {
+    return <Chip label={percentage} size="x-small" />;
+  }
 
-const StyledConfidence = styled.div`
-  background-color: ${Colors['surface--misc-canvas']};
-  border-radius: 4px;
-  padding: 8px 10px;
-  width: 100px;
-  font-weight: 500;
-`;
+  return <></>;
+}

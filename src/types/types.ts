@@ -7,6 +7,7 @@ export type PipelineTableTypes =
   | 'name'
   | 'description'
   | 'owner'
+  | 'latestRun'
   | 'run';
 
 type TablePropsBase = {
