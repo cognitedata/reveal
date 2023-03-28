@@ -32,6 +32,10 @@ export default function AppliedRulesTable({
       {
         title: t('rules-pattern'),
         key: 'pattern',
+        sorter: (a: AppliedRule, b: AppliedRule) =>
+          (a.rule.extractors[0]?.pattern || '').localeCompare(
+            b.rule.extractors[1]?.pattern || ''
+          ),
         render: (rule: AppliedRule) => {
           return (
             <Flex alignItems="center" gap={12}>
@@ -45,6 +49,10 @@ export default function AppliedRulesTable({
       {
         title: t('rules-fields'),
         key: 'fields',
+        sorter: (a: AppliedRule, b: AppliedRule) =>
+          `${a.rule.extractors[0]?.field} ${a.rule.extractors[1]?.field}`.localeCompare(
+            `${b.rule.extractors[0]?.field} ${b.rule.extractors[1]?.field}`
+          ),
         render: (rule: AppliedRule) => {
           return (
             <Flex alignItems="center" gap={12}>
@@ -59,7 +67,8 @@ export default function AppliedRulesTable({
         title: t('rules-matches'),
         key: 'numberOfMatches',
         width: 100,
-
+        sorter: (a: AppliedRule, b: AppliedRule) =>
+          a.numberOfMatches - b.numberOfMatches,
         render: (rule: AppliedRule) => (
           <Flex alignItems="center" gap={12}>
             <>{rule.numberOfMatches.toLocaleString()}</>
