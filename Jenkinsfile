@@ -330,7 +330,7 @@ pods {
                   environment: releaseToProd ? 'production' : 'staging',
                   firebaseJson: 'build/firebase.json',
                   buildCommand: "yarn build production ${project}",
-                  buildFolder: 'dist/apps/${project}',
+                  buildFolder: "dist/apps/${project}",
                 )
 
                 slack.send(
