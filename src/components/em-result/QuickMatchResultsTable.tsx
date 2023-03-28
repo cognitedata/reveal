@@ -4,22 +4,22 @@ import { useTranslation } from 'common';
 
 import { formatPredictionObject } from 'utils';
 import ConfidenceScore from './Confidence';
-import { Checkbox, Flex } from '@cognite/cogs.js';
 import {
   Match,
   Prediction,
   PredictionObject,
 } from 'hooks/entity-matching-predictions';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type Predictions = {
   predictions: Prediction[];
-  sourceIds: number[];
-  setSourceIds: Dispatch<SetStateAction<number[]>>;
+  confirmedPredictions: number[];
+  setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
 type PredictionsTableRecord = {
-  key: string;
+  key: number;
   score?: number;
 } & Prediction;
 
@@ -30,8 +30,8 @@ type ResultsTableRecordCT = ColumnType<PredictionsTableRecord> & {
 
 const QuickMatchResultsTable = ({
   predictions,
-  sourceIds,
-  setSourceIds,
+  confirmedPredictions,
+  setConfirmedPredictions,
 }: Predictions): JSX.Element => {
   const { t } = useTranslation();
 
@@ -39,11 +39,27 @@ const QuickMatchResultsTable = ({
     () =>
       predictions.map((a) => ({
         ...a,
-        key: a.source.id.toString(),
+        key: a.source.id,
         score: a.match.score,
       })) || [],
     [predictions]
   );
+
+  const rowSelection: TableRowSelection<PredictionsTableRecord> = {
+    selectedRowKeys: confirmedPredictions,
+    onSelectAll(all) {
+      if (all) {
+        setConfirmedPredictions(predictions.map((p) => p.source.id));
+      } else {
+        setConfirmedPredictions([]);
+      }
+    },
+    onChange(_, selectedRows, info) {
+      if (info.type === 'single') {
+        setConfirmedPredictions(selectedRows.map((s) => s.key));
+      }
+    },
+  };
 
   const columns: ResultsTableRecordCT[] = useMemo(
     () => [
@@ -86,37 +102,16 @@ const QuickMatchResultsTable = ({
         defaultSortOrder: 'descend',
         width: 100,
       },
-      {
-        title: t('confirm'),
-        dataIndex: 'source',
-        key: 'source',
-        width: 100,
-        render: (source: PredictionObject) => {
-          return (
-            <Flex justifyContent="center">
-              <Checkbox
-                name={`checkbox-${source.id}`}
-                checked={sourceIds.includes(source.id)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSourceIds((prevState) => [...prevState, source.id]);
-                  } else {
-                    setSourceIds((prevState) =>
-                      prevState.filter((sourceId) => sourceId !== source.id)
-                    );
-                  }
-                }}
-              />
-            </Flex>
-          );
-        },
-      },
     ],
-    [t, setSourceIds, sourceIds]
+    [t]
   );
 
   return (
     <Table<PredictionsTableRecord>
+      rowSelection={{
+        type: 'checkbox',
+        ...rowSelection,
+      }}
       columns={columns}
       emptyContent={undefined}
       appendTooltipTo={undefined}
