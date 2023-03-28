@@ -1,6 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  CogniteCadModel,
+  CognitePointCloudModel,
+} from '@cognite/reveal';
 import { useQueries, useQueryClient, UseQueryOptions } from 'react-query';
 
 import {
@@ -13,11 +17,17 @@ import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/T
 type LoadSecondaryModelsProps = {
   secondaryModels: SecondaryModelOptions[];
   viewer: Cognite3DViewer;
+  loadedSecondaryModels: (CogniteCadModel | CognitePointCloudModel)[];
+  setLoadedSecondaryModels: Dispatch<
+    SetStateAction<(CogniteCadModel | CognitePointCloudModel)[]>
+  >;
 };
 
 const LoadSecondaryModels = ({
   secondaryModels,
   viewer,
+  loadedSecondaryModels,
+  setLoadedSecondaryModels,
 }: LoadSecondaryModelsProps): JSX.Element => {
   const queryClient = useQueryClient();
   useQueries<
@@ -39,6 +49,8 @@ const LoadSecondaryModels = ({
         viewer,
         modelId,
         revisionId,
+        loadedSecondaryModels,
+        setLoadedSecondaryModels,
         applied
       ),
     }))

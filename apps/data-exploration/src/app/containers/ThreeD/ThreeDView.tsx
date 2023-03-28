@@ -30,6 +30,7 @@ import {
   highlightAsset,
   highlightAssetMappedNodes,
   isCadIntersection,
+  removeAllPointCloudStyles,
   removeAllStyles,
 } from './utils';
 
@@ -116,6 +117,10 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   >([]);
 
   const [is360ImagesMode, setIs360ImagesMode] = useState<boolean>(false);
+
+  const [loadedSecondaryModels, setLoadedSecondaryModels] = useState<
+    (CogniteCadModel | CognitePointCloudModel)[]
+  >([]);
 
   useEffect(() => {
     if (viewer && setViewState) {
@@ -204,10 +209,23 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     }
 
     removeAllStyles(threeDModel);
+    viewer.models.forEach((model) => {
+      if (model instanceof CogniteCadModel) {
+        removeAllStyles(model);
+      } else {
+        removeAllPointCloudStyles(model);
+      }
+    });
 
     if (selectedAssetId) {
       if (assetDetailsExpanded) {
-        ghostAsset(sdk, threeDModel, selectedAssetId, queryClient);
+        ghostAsset(
+          sdk,
+          threeDModel,
+          selectedAssetId,
+          queryClient,
+          loadedSecondaryModels
+        );
         overlayTool.visible = false;
       } else {
         overlayTool.visible = labelsVisibility;
@@ -234,6 +252,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     viewer,
     overlayTool,
     labelsVisibility,
+    loadedSecondaryModels,
   ]);
 
   useEffect(() => {
@@ -277,6 +296,8 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                 <LoadSecondaryModels
                   secondaryModels={secondaryModels}
                   viewer={revealViewer}
+                  loadedSecondaryModels={loadedSecondaryModels}
+                  setLoadedSecondaryModels={setLoadedSecondaryModels}
                 />
                 <LoadImages360
                   images360={images360}

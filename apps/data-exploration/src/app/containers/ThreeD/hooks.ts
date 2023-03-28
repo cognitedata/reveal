@@ -530,10 +530,18 @@ export const getSecondaryModelQueryFn =
     viewer: Cognite3DViewer,
     modelId: number,
     revisionId: number,
+    loadedSecondaryModels?: (CogniteCadModel | CognitePointCloudModel)[],
+    setLoadedSecondaryModels?: (
+      models: (CogniteCadModel | CognitePointCloudModel)[]
+    ) => void,
     applied?: boolean
   ) =>
   async () => {
-    if (applied === undefined) {
+    if (
+      applied === undefined ||
+      setLoadedSecondaryModels === undefined ||
+      loadedSecondaryModels === undefined
+    ) {
       return undefined;
     }
 
@@ -550,6 +558,7 @@ export const getSecondaryModelQueryFn =
 
     if (applied && !hasAdded) {
       await viewer.addModel({ modelId, revisionId });
+      setLoadedSecondaryModels(viewer.models.slice(1));
     } else if (!applied && hasAdded) {
       const modelToRemove = (
         viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
@@ -558,6 +567,14 @@ export const getSecondaryModelQueryFn =
           modelId === tmId && revisionId === trId
       );
       if (modelToRemove) {
+        loadedSecondaryModels.splice(
+          loadedSecondaryModels.findIndex(
+            (modelToRemoveFromSecondaryModel) =>
+              modelToRemoveFromSecondaryModel.modelId === modelToRemove.modelId
+          ),
+          1
+        );
+        setLoadedSecondaryModels(loadedSecondaryModels);
         viewer.removeModel(modelToRemove);
       }
     }
