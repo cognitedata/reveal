@@ -338,7 +338,7 @@ type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
 
 type EMPipelineRegexExtractorExtractorType = 'regex';
 
-type EMPipelineRegexExtractor = {
+export type EMPipelineRegexExtractor = {
   entitySet: EMPipelineRegexExtractorEntitySetType;
   extractorType: EMPipelineRegexExtractorExtractorType;
   field: string;
@@ -352,9 +352,16 @@ type EMPipelineMatchCondition = {
   arguments: number[][];
 };
 
-type EMPipelineGeneratedRuleMatch = EMPipelineRunMatch;
+type EMPipelineGeneratedRuleExistingMatchType = 'model';
 
-type EMPipelineGeneratedRule = {
+export type EMPipelineGeneratedRuleMatch = {
+  consistentMatch?: boolean;
+  existingMatchType?: EMPipelineGeneratedRuleExistingMatchType;
+  source: Record<string, unknown>;
+  target: Record<string, unknown>;
+};
+
+export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
   conditions?: EMPipelineMatchCondition[];
   matches?: EMPipelineGeneratedRuleMatch[];
