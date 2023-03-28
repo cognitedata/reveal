@@ -165,10 +165,19 @@ const CreatedTimeFilter = (props: DateFilterProps) => {
   return <DateFilter {...props} label="Created Time" />;
 };
 
-DateFilter.Created = CreatedTimeFilter;
-
 const UpdatedTimeFilter = (props: DateFilterProps) => {
   return <DateFilter {...props} label="Updated Time" />;
 };
 
+const StartTimeFilter = (props: DateFilterProps) => {
+  return <DateFilter {...props} label="Start time" />;
+};
+
+DateFilter.StartTime = StartTimeFilter;
+const EndTimeFilter = (props: DateFilterProps) => {
+  return <DateFilter {...props} label="End time" />;
+};
+
+DateFilter.Created = CreatedTimeFilter;
+DateFilter.EndTime = EndTimeFilter;
 DateFilter.Updated = UpdatedTimeFilter;

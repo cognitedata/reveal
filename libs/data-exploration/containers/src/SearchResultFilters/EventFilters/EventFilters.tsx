@@ -6,6 +6,7 @@ import {
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
+  DateFilter,
   MetadataFilter,
   SourceFilter,
   SubTypeFilter,
@@ -34,7 +35,25 @@ export const EventFilters: React.FC<FilterProps> = ({
           }
         />
 
-        {/* TODO: Add date filters here! */}
+        <DateFilter.StartTime
+          value={filter.event.startTime}
+          onChange={(newFilters) =>
+            onFilterChange('event', { startTime: newFilters || undefined })
+          }
+        />
+        <DateFilter.EndTime
+          value={
+            filter.event.endTime && 'isNull' in filter.event.endTime
+              ? null
+              : filter.event.endTime
+          }
+          onChange={(newDate) =>
+            onFilterChange('event', {
+              endTime:
+                newDate === null ? { isNull: true } : newDate || undefined,
+            })
+          }
+        />
 
         <SubTypeFilter.Event
           value={filter.event.subtype}
@@ -59,19 +78,6 @@ export const EventFilters: React.FC<FilterProps> = ({
             });
           }}
         />
-
-        {/* ///////////////// */}
-        {/* <MetadataFilterV2
-          items={items}
-          keys={metadataKeys}
-          value={filter.asset.metadata}
-          setValue={(newMetadata) =>
-            onFilterChange('asset', {
-              metadata: newMetadata,
-            })
-          }
-          useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
-        /> */}
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );
