@@ -1421,10 +1421,10 @@ export class Cognite3DViewer {
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const normalizedCoords = {
-      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-    };
+    const normalizedCoords = new THREE.Vector2(
+      (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+      (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+    );
 
     const input: IntersectInput = {
       normalizedCoords,

@@ -22,10 +22,7 @@ describe(PickingHandler.name, () => {
   const renderer = new THREE.WebGLRenderer({ context });
 
   const input: IntersectInput = {
-    normalizedCoords: {
-      x: 0.5,
-      y: 0.5
-    },
+    normalizedCoords: new THREE.Vector2(0.5, 0.5),
     renderer,
     camera,
     clippingPlanes: [],
