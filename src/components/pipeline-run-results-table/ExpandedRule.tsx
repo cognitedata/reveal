@@ -12,7 +12,7 @@ import {
 import ResourceName from './ResourceName';
 import { Colors } from '@cognite/cogs.js';
 
-type ExpandedRuleTableRecord = EMPipelineGeneratedRuleMatch & { key: string };
+type ExpandedRuleTableRecord = EMPipelineGeneratedRuleMatch & { key: number };
 
 type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
   title: string;
@@ -53,7 +53,10 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
     () =>
       rule.matches?.map((match) => ({
         ...match,
-        key: `${JSON.stringify(match.source)}-${JSON.stringify(match.target)}`,
+        key:
+          match.source?.id && typeof match.source.id === 'number'
+            ? match.source.id
+            : -1,
       })),
     [rule.matches]
   );
