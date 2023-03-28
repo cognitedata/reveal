@@ -1,4 +1,4 @@
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Loader } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 
 import NoAccessPage from 'components/error-pages/NoAccess';
@@ -44,7 +44,7 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
           title={t('result-step-title', { step: 4 })}
           subtitle={t('result-step-subtitle')}
         >
-          {didFetchPipelineRun ? 'run not found' : <Icon type="Loader" />}
+          {didFetchPipelineRun ? 'run not found' : <Loader />}
         </Step>
       </Page>
     );
