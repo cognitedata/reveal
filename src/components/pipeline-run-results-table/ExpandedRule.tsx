@@ -1,5 +1,4 @@
-import { Key, useMemo, useState } from 'react';
-
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 
@@ -8,6 +7,7 @@ import { useTranslation } from 'common';
 import ResourceName from './ResourceName';
 import { Colors } from '@cognite/cogs.js';
 import { RuleMatch } from 'hooks/entity-matching-rules';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
@@ -17,12 +17,16 @@ type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
 
 type ExpandedRuleProps = {
   matches: RuleMatch[];
+  confirmedPredictions: number[];
+  setConfirmedPredictions?: Dispatch<SetStateAction<number[]>>;
 };
 
-const ExpandedRule = ({ matches }: ExpandedRuleProps): JSX.Element => {
+const ExpandedRule = ({
+  matches,
+  confirmedPredictions,
+  setConfirmedPredictions,
+}: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const columns: ExpandedRuleTableColumnType[] = useMemo(
     () => [
@@ -58,8 +62,25 @@ const ExpandedRule = ({ matches }: ExpandedRuleProps): JSX.Element => {
     [matches]
   );
 
-  const handleSelectRow = (selectedRowKeys: Key[]) => {
-    setSelectedRowKeys(selectedRowKeys);
+  const rowSelection: TableRowSelection<ExpandedRuleTableRecord> = {
+    selectedRowKeys: confirmedPredictions,
+    onSelectAll(all) {
+      if (setConfirmedPredictions) {
+        if (all) {
+          setConfirmedPredictions(matches.map((p) => p.source.id));
+        } else {
+          setConfirmedPredictions([]);
+        }
+      }
+    },
+    onChange(keys, _, info) {
+      if (info.type === 'single') {
+        if (setConfirmedPredictions) {
+          setConfirmedPredictions(keys as number[]);
+        }
+      }
+    },
+    columnWidth: 36,
   };
 
   return (
@@ -69,11 +90,7 @@ const ExpandedRule = ({ matches }: ExpandedRuleProps): JSX.Element => {
         dataSource={dataSource}
         emptyContent={undefined}
         appendTooltipTo={undefined}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: handleSelectRow,
-          columnWidth: 36,
-        }}
+        rowSelection={rowSelection}
       />
     </Container>
   );

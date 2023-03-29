@@ -10,8 +10,9 @@ import { AppliedRule } from 'hooks/entity-matching-rules';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 type Props = {
-  appliedRules?: AppliedRule[];
   predictions: Prediction[];
+  appliedRules?: AppliedRule[];
+  confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
@@ -23,6 +24,7 @@ type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
 
 export default function AppliedRulesTable({
   appliedRules,
+  confirmedPredictions,
   setConfirmedPredictions,
 }: Props) {
   const { t } = useTranslation();
@@ -112,6 +114,7 @@ export default function AppliedRulesTable({
 
   const rowSelection: TableRowSelection<AppliedRuleTableRecord> = {
     hideSelectAll: true,
+
     onChange(selectedKeys) {
       const confirmed = (selectedKeys as number[]).reduce(
         (accl: number[], i) => [
@@ -140,7 +143,15 @@ export default function AppliedRulesTable({
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) =>
-          !!record.matches ? <ExpandedRule matches={record.matches} /> : false,
+          !!record.matches ? (
+            <ExpandedRule
+              matches={record.matches}
+              confirmedPredictions={confirmedPredictions}
+              setConfirmedPredictions={setConfirmedPredictions}
+            />
+          ) : (
+            false
+          ),
         indentSize: 64,
       }}
     />
