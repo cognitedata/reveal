@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import { Button, Loader } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 
 import NoAccessPage from 'components/error-pages/NoAccess';
@@ -11,6 +14,9 @@ import {
 } from 'hooks/entity-matching-pipelines';
 import { useTranslation } from 'common';
 import PipelineRunResultsTable from 'components/pipeline-run-results-table';
+import { useUpdateAssetIds } from 'hooks/update';
+import { pipelineSourceToAPIType } from '../details/sources';
+import { notification } from '@cognite/cdf-utilities';
 
 type PipelineResultsProps = {};
 
@@ -33,6 +39,55 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
       enabled: !!pipelineId && !!jobId,
     }
   );
+
+  const [selectedSourceIds, setSelectedSourceIds] = useState<
+    CogniteInternalId[]
+  >([]);
+
+  const { mutate, isLoading } = useUpdateAssetIds();
+
+  const handleApplySelectedMatches = (): void => {
+    if (emPipelineRun && pipeline && selectedSourceIds) {
+      const selectedSourceIdSet = new Set();
+      selectedSourceIds.forEach((sourceId) => {
+        selectedSourceIdSet.add(sourceId);
+      });
+
+      const selectedMatches =
+        emPipelineRun.matches?.filter(
+          ({ source, target }) =>
+            typeof source?.id === 'number' &&
+            selectedSourceIdSet.has(source.id) &&
+            typeof target?.id === 'number'
+        ) ?? [];
+
+      mutate(
+        {
+          api: pipelineSourceToAPIType[pipeline.sources.resource],
+          changes: selectedMatches?.map(({ source, target }) => ({
+            id: source?.id as number,
+            update: {
+              assetId: { set: target?.id as number },
+            },
+          })),
+        },
+        {
+          onSuccess: () => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('save-to-cdf-success'),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('save-to-cdf-error'),
+            });
+          },
+        }
+      );
+    }
+  };
 
   if (error) {
     if (error?.status === 403) {
@@ -70,7 +125,16 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
   if (pipeline) {
     return (
       <Page
-        extraContent={<Button type="primary">Apply (TODO)</Button>}
+        extraContent={
+          <Button
+            disabled={selectedSourceIds.length === 0}
+            loading={isLoading}
+            onClick={handleApplySelectedMatches}
+            type="primary"
+          >
+            {t('apply-selected-matches', { count: selectedSourceIds.length })}
+          </Button>
+        }
         subtitle={pipeline?.description}
         title={pipeline?.name ?? ''}
       >
@@ -78,7 +142,12 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
           title={t('result-step-title', { step: 4 })}
           subtitle={t('result-step-subtitle')}
         >
-          <PipelineRunResultsTable pipeline={pipeline} run={emPipelineRun} />
+          <PipelineRunResultsTable
+            pipeline={pipeline}
+            run={emPipelineRun}
+            selectedSourceIds={selectedSourceIds}
+            setSelectedSourceIds={setSelectedSourceIds}
+          />
         </Step>
       </Page>
     );

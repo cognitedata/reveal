@@ -1,31 +1,34 @@
-import { Key, useMemo, useState } from 'react';
-
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Colors } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
+import { TableRowSelection } from 'antd/lib/table/interface';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import {
-  EMPipelineGeneratedRule,
-  EMPipelineGeneratedRuleMatch,
-} from 'hooks/entity-matching-pipelines';
+import { PAGINATION_SETTINGS } from 'common/constants';
+import { RuleMatch } from 'hooks/entity-matching-rules';
 
 import ResourceName from './ResourceName';
-import { Colors } from '@cognite/cogs.js';
 
-type ExpandedRuleTableRecord = EMPipelineGeneratedRuleMatch & { key: number };
+type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
 type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
   title: string;
 };
 
 type ExpandedRuleProps = {
-  rule: EMPipelineGeneratedRule;
+  matches: RuleMatch[];
+  selectedSourceIds: CogniteInternalId[];
+  setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
-const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
+const ExpandedRule = ({
+  matches,
+  selectedSourceIds,
+  setSelectedSourceIds,
+}: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const columns: ExpandedRuleTableColumnType[] = useMemo(
     () => [
@@ -33,7 +36,7 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
-        render: (source: EMPipelineGeneratedRuleMatch['source']) => (
+        render: (source: RuleMatch['source']) => (
           <ResourceName resource={source} />
         ),
       },
@@ -41,7 +44,7 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         title: t('qm-result-target'),
         dataIndex: 'target',
         key: 'target',
-        render: (target: EMPipelineGeneratedRuleMatch['target']) => (
+        render: (target: RuleMatch['target']) => (
           <ResourceName resource={target} />
         ),
       },
@@ -51,18 +54,31 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
 
   const dataSource = useMemo(
     () =>
-      rule.matches?.map((match) => ({
+      matches?.map((match) => ({
         ...match,
         key:
           match.source?.id && typeof match.source.id === 'number'
             ? match.source.id
             : -1,
       })),
-    [rule.matches]
+    [matches]
   );
 
-  const handleSelectRow = (selectedRowKeys: Key[]) => {
-    setSelectedRowKeys(selectedRowKeys);
+  const rowSelection: TableRowSelection<ExpandedRuleTableRecord> = {
+    selectedRowKeys: selectedSourceIds,
+    onSelectAll: (all) => {
+      if (all) {
+        setSelectedSourceIds(matches.map((p) => p.source.id));
+      } else {
+        setSelectedSourceIds([]);
+      }
+    },
+    onChange: (keys, _, info) => {
+      if (info.type === 'single') {
+        setSelectedSourceIds(keys as number[]);
+      }
+    },
+    columnWidth: 36,
   };
 
   return (
@@ -72,11 +88,8 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         dataSource={dataSource}
         emptyContent={undefined}
         appendTooltipTo={undefined}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: handleSelectRow,
-          columnWidth: 36,
-        }}
+        rowSelection={rowSelection}
+        pagination={PAGINATION_SETTINGS}
       />
     </Container>
   );
