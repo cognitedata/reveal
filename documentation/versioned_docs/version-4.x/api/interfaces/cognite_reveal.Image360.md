@@ -17,7 +17,7 @@ The object containing the unit cube with the 360 images.
 
 #### Defined in
 
-[packages/360-images/src/Image360.ts:19](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/360-images/src/Image360.ts#L19)
+[packages/360-images/src/entity/Image360.ts:19](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/entity/Image360.ts#L19)
 
 ___
 
@@ -30,4 +30,4 @@ of the given 360 image.
 
 #### Defined in
 
-[packages/360-images/src/Image360.ts:13](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/360-images/src/Image360.ts#L13)
+[packages/360-images/src/entity/Image360.ts:13](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/entity/Image360.ts#L13)

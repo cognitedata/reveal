@@ -185,11 +185,12 @@ export class Image360ApiHelper {
 
     this.set360CameraManager();
 
+    const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
+    lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
+    image360Entity.icon.setVisibility(false);
     revisionToEnter.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
-    this._image360Facade.allIconsVisibility = true;
     this._image360Facade.allHoverIconsVisibility = false;
-    image360Entity.icon.visible = false;
 
     this._transitionInProgress = true;
     if (fromImageRevision !== undefined) {
@@ -211,9 +212,7 @@ export class Image360ApiHelper {
       this._requestRedraw();
     });
 
-    this._image360Facade.collections
-      .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
-      .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
+    imageCollection.events.image360Entered.fire(image360Entity);
   }
 
   public async override360ImageRevisionDate(date?: Date): Promise<void> {
@@ -334,14 +333,14 @@ export class Image360ApiHelper {
   }
 
   public exit360Image(): void {
-    this._image360Facade.allIconsVisibility = true;
     this._image360Facade.allIconCullingScheme = 'clustered';
     if (this._interactionState.currentImage360Entered !== undefined) {
-      this._image360Facade.collections
-        .filter(imageCollection =>
-          imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)
-        )
-        .forEach(imageCollection => imageCollection.events.image360Exited.fire());
+      const imageCollection = this._image360Facade.getCollectionContainingEntity(
+        this._interactionState.currentImage360Entered
+      );
+      this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
+      imageCollection.events.image360Exited.fire();
+
       this._interactionState.currentImage360Entered.getActiveRevision().image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
@@ -391,7 +390,7 @@ export class Image360ApiHelper {
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
-      { x: ndcCoordinates.x, y: ndcCoordinates.y },
+      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
     return entity;
@@ -405,7 +404,7 @@ export class Image360ApiHelper {
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
-      { x: ndcCoordinates.x, y: ndcCoordinates.y },
+      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
 

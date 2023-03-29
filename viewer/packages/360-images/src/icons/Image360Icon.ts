@@ -18,6 +18,7 @@ export class Image360Icon {
   private readonly _onRenderTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
   private _adaptiveScale = 1;
   private _visible = true;
+  private _culled = false;
 
   constructor(
     position: THREE.Vector3,
@@ -46,12 +47,16 @@ export class Image360Icon {
     this._onRenderTrigger = onRenderTrigger;
   }
 
-  set visible(visible: boolean) {
+  public setVisibility(visible: boolean): void {
     this._visible = visible;
   }
 
-  get visible(): boolean {
-    return this._visible;
+  public setCulled(culled: boolean): void {
+    this._culled = culled;
+  }
+
+  public isVisible(): boolean {
+    return this._visible && !this._culled;
   }
 
   get position(): Vector3 {
@@ -78,7 +83,7 @@ export class Image360Icon {
     const ndcPosition = new THREE.Vector4();
     const renderSize = new THREE.Vector2();
     return ({ renderer, camera }) => {
-      if (!this.visible) {
+      if (!this.isVisible()) {
         return;
       }
       this._adaptiveScale = computeAdaptiveScaling(

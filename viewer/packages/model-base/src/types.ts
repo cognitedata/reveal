@@ -5,10 +5,7 @@
 import * as THREE from 'three';
 
 export interface IntersectInput {
-  normalizedCoords: {
-    x: number;
-    y: number;
-  };
+  normalizedCoords: THREE.Vector2;
   camera: THREE.PerspectiveCamera;
   clippingPlanes: THREE.Plane[];
   renderer: THREE.WebGLRenderer;
