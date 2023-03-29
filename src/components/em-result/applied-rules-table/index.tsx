@@ -91,8 +91,8 @@ export default function AppliedRulesTable({
             <Icon
               type={
                 expandedRowKeys.includes(record.key)
-                  ? 'ChevronDown'
-                  : 'ChevronRight'
+                  ? 'ChevronUp'
+                  : 'ChevronDown'
               }
             />
           </ExpandButton>
@@ -146,8 +146,8 @@ export default function AppliedRulesTable({
           !!record.matches ? (
             <ExpandedRule
               matches={record.matches}
-              confirmedPredictions={confirmedPredictions}
-              setConfirmedPredictions={setConfirmedPredictions}
+              selectedSourceIds={confirmedPredictions}
+              setSelectedSourceIds={setConfirmedPredictions}
             />
           ) : (
             false

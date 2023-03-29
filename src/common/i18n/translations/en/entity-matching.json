@@ -1,5 +1,6 @@
 {
   "add-connection": "Add connection",
+  "all": "All",
   "apply-selected-matches": "Apply selected matches",
   "apply-selected-matches_one": "Apply selected match",
   "apply-selected-matches_other": "Apply {{count}} selected matches",
@@ -55,6 +56,7 @@
   "create-rules-job-success": "Created the rules job",
   "dataset-error-body": "An error occurred while retrieving data sets: '{{error}}'",
   "description": "Description",
+  "different-recommendation": "Different recommendation",
   "do-not-generate-rules": "Do not generate rules",
   "do-not-leave-the-page-pipeline": "Running the pipeline, please do not leave the page",
   "do-not-leave-the-page-quick-match": "Running the model, please do not leave the page",
@@ -78,6 +80,9 @@
   "hide-advanced-options": "Hide advanced options",
   "id": "ID",
   "last-run": "Last run",
+  "matched": "Matched",
+  "matches-with-count_one": "{{count}} match selected",
+  "matches-with-count_other": "{{count}} matches selected",
   "model-bigram-description": "Calculates a similarity score influenced by the order of the terms in the name in the fields defined above. This is a slower option.",
   "model-bigram-title": "Bigram",
   "model-bigram-with-extra-tokenizers-description": "Similar to bigram, but able to learn that case sensitivity does not matter, and leading zeros and spaces should be ignored in matching.",
@@ -132,6 +137,7 @@
   "pipeline-notification-delete-success": "The pipeline {{name}} was deleted.",
   "pipeline-notification-duplicate-error": "Something went wrong. Failed to duplicate pipeline.",
   "pipeline-notification-duplicate-success": "The pipeline {{name}} was duplicated.",
+  "previously-confirmed": "Previously confirmed",
   "qm-result-score": "Score",
   "qm-result-source": "Does this resource match",
   "qm-result-target": "... this target?",
@@ -188,6 +194,7 @@
   "save-to-cdf-success": "Changes successfully applied",
   "search-data-sets": "Search data sets",
   "search-placeholder": "Search",
+  "select-all-matches": "Select all matches",
   "select-data-tooltip": "Select resource you want to match to assets",
   "select-source-step-subtitle": "Select the resources you want to match with assets",
   "select-source-step-title": "{{step}}. Select source",
@@ -219,6 +226,7 @@
   "unknown-error-request-id": "Request ID:",
   "unknown-error-timestamp": "Timestamp:",
   "unknown-error-title": "An error occurred",
+  "unmatched": "Unmatched",
   "unsupervised-model": "Unsupervised model",
   "validation-error-field-required": "You must enter a value in this field"
 }
