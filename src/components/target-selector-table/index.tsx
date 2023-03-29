@@ -11,7 +11,6 @@ import SearchInput from 'components/search-input';
 import { useTranslation } from 'common';
 import RootAssetSelect from 'components/root-asset-select';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
-import { SourceType, SOURCE_TYPES } from 'types/api';
 import styled from 'styled-components';
 
 type Props = {};
@@ -19,7 +18,6 @@ type Props = {};
 export default function TargetSelectionTable({}: Props) {
   const {
     sourceType,
-    setSourceType,
     targetsList,
     setTargetsList,
     targetFilter,
@@ -30,12 +28,6 @@ export default function TargetSelectionTable({}: Props) {
   const { t } = useTranslation();
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
-
-  const handleSelectTargetType = (selectedTargetType: string) => {
-    if (SOURCE_TYPES.some((type) => type === selectedTargetType)) {
-      setSourceType(selectedTargetType as SourceType);
-    }
-  };
 
   const query = searchParams.get(TARGET_TABLE_QUERY_KEY);
   const advancedFilter = useMemo(
@@ -58,7 +50,6 @@ export default function TargetSelectionTable({}: Props) {
                   ...targetFilter,
                   dataSetIds: !!id ? [{ id }] : undefined,
                 });
-                handleSelectTargetType;
               }}
               selected={targetFilter.dataSetIds?.[0]?.id}
             />
