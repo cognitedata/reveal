@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
-import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
 import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
@@ -28,7 +27,6 @@ export const FileDetails = ({
   onReview: () => void;
 }) => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState('1');
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, fileId)
@@ -83,7 +81,7 @@ export const FileDetails = ({
   return (
     <Container>
       <CloseButtonRow>
-        <CloseButton
+        <Button
           icon="Close"
           type="ghost"
           onClick={handleClose}
@@ -97,14 +95,16 @@ export const FileDetails = ({
           </Title>
         </TitleRow>
         <DetailsContainer>
-          <StyledTabs activeKey={activeTab} onChange={setActiveTab}>
-            <Tabs.TabPane tab="Annotations" key="1">
-              <FileDetailsAnnotationsPreview
-                fileInfo={fileDetails}
-                onReviewClick={onReview}
-              />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="File Details" key="2">
+          <Tabs>
+            <Tabs.Tab tabKey="1" label="Annotations">
+              <FileDetailsContent>
+                <FileDetailsAnnotationsPreview
+                  fileInfo={fileDetails}
+                  onReviewClick={onReview}
+                />
+              </FileDetailsContent>
+            </Tabs.Tab>
+            <Tabs.Tab tabKey="2" label="File Details">
               <FileDetailsContent>
                 <FileDetailsContainer
                   info={fileDetails}
@@ -127,8 +127,8 @@ export const FileDetails = ({
                   }
                 />
               </FileDetailsContent>
-            </Tabs.TabPane>
-          </StyledTabs>
+            </Tabs.Tab>
+          </Tabs>
         </DetailsContainer>
       </Content>
     </Container>
@@ -155,7 +155,7 @@ const Content = styled.div`
 `;
 
 const FileDetailsContent = styled.div`
-  height: 100%;
+  height: calc(100vh - 230px);
   width: 100%;
   padding-right: 10px;
   padding-left: 2px;
@@ -180,11 +180,6 @@ const CloseButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-
-const CloseButton = styled(Button)`
-  color: black;
-`;
-
 const IconContainer = styled.div`
   height: 100%;
   width: 100%;

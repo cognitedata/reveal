@@ -37,7 +37,7 @@ const GetUploadControls = (
         </Button>
       );
       RemoveAllButton = (
-        <Button type="ghost-danger" onClick={onRemoveFiles} disabled>
+        <Button type="ghost-destructive" onClick={onRemoveFiles} disabled>
           Remove all
         </Button>
       );
@@ -55,7 +55,7 @@ const GetUploadControls = (
       );
       RemoveAllButton = (
         <Button
-          type="ghost-danger"
+          type="ghost-destructive"
           onClick={onRemoveFiles}
           disabled={disableRemoveAll}
         >
@@ -70,12 +70,12 @@ const GetUploadControls = (
         </Button>
       );
       CancelButton = (
-        <Button type="danger" icon="CloseLarge" onClick={onUploadStop}>
+        <Button type="destructive" icon="CloseLarge" onClick={onUploadStop}>
           Cancel upload
         </Button>
       );
       RemoveAllButton = (
-        <Button type="ghost-danger" onClick={onRemoveFiles} disabled>
+        <Button type="ghost-destructive" onClick={onRemoveFiles} disabled>
           Remove all
         </Button>
       );
@@ -97,7 +97,7 @@ const GetUploadControls = (
         </Title>
       );
       RemoveAllButton = (
-        <Button type="ghost-danger" onClick={onRemoveFiles} disabled>
+        <Button type="ghost-destructive" onClick={onRemoveFiles} disabled>
           Remove all
         </Button>
       );

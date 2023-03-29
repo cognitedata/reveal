@@ -155,7 +155,7 @@ export const Shapes = ({
                     icon="Delete"
                     onClick={() => deleteUnsavedShape(shape.shapeName)}
                     size="small"
-                    type="ghost-danger"
+                    type="ghost-destructive"
                     aria-label="deleteButton"
                   />
                 )}
@@ -199,7 +199,7 @@ export const Shapes = ({
               icon="Delete"
               onClick={() => deleteShape(key)}
               size="small"
-              type="ghost-danger"
+              type="ghost-destructive"
               aria-label="deleteButton"
             />
           </ShapeWrapper>

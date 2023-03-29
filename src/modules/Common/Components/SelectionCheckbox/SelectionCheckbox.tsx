@@ -26,7 +26,7 @@ export const SelectionCheckbox = ({
     <Checkbox
       name="ckbGridItem"
       checked={selected}
-      onChange={(nextState) => handleItemSelect(dataItem, nextState)}
+      onChange={(_event, next) => handleItemSelect(dataItem, next as boolean)}
     />
   </CheckboxContainer>
 );

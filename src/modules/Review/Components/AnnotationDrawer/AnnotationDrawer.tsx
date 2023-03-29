@@ -55,7 +55,7 @@ export const AnnotationDrawer = (props: {
                 Create
               </Button>
               <DrawerDeleteButton
-                type="danger"
+                type="destructive"
                 icon="Delete"
                 onClick={props.onDelete}
                 disabled={props.disableFooterButtons}

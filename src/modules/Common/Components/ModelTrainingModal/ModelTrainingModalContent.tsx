@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Title, Graphic, Body, Tooltip } from '@cognite/cogs.js';
+import { Button, Title, Body, Tooltip } from '@cognite/cogs.js';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 import { AutoMLModelType } from 'src/api/vision/autoML/types';
@@ -12,6 +12,7 @@ import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annota
 import { ModelTrainingSettings } from './ModelTrainingSettings';
 import { ModelTrainingFileTable } from './ModelTrainingFileTable';
 import { validateDataset } from './datasetValidators';
+import { Graphic, GraphicOptions } from 'src/assets/Graphics/Graphic';
 
 export type ModelTrainingModalContentProps = {
   selectedFiles: VisionFile[];
@@ -84,7 +85,7 @@ export const ModelTrainingModalContent = ({
 
   return jobCreated ? (
     <GraphicContainer>
-      <Graphic type="Search" style={{ width: '291px' }} />
+      <Graphic type={GraphicOptions.Search} />
       <Title level={3} as="h1">
         Job created!
       </Title>

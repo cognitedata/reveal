@@ -3,6 +3,7 @@ import { Icon, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { SKIP_MENU_CLOSE_ID } from 'src/constants/ContextMenuConstants';
+import styled from 'styled-components';
 
 export interface ActionMenuProps {
   showExifIcon?: boolean;
@@ -30,16 +31,19 @@ export const MenuContent = ({
     onClick={handleClick}
   >
     <Menu.Item onClick={handleFileDetails}>
-      <Icon type="Document" style={{ marginRight: '17px' }} />
-      File details
-      {showExifIcon && (
-        <Tooltip content="Geolocated">
-          <ExifIcon>
-            <img src={exifIcon} alt="exifIcon" />
-          </ExifIcon>
-        </Tooltip>
-      )}
+      <MenuContainer>
+        <Icon type="Document" style={{ marginRight: '17px' }} />
+        File details
+        {showExifIcon && (
+          <Tooltip content="Geolocated">
+            <ExifIcon>
+              <img src={exifIcon} alt="exifIcon" />
+            </ExifIcon>
+          </Tooltip>
+        )}
+      </MenuContainer>
     </Menu.Item>
+
     {handleReview && (
       <Menu.Item onClick={handleReview} disabled={reviewDisabled}>
         <Icon type="Edit" style={{ marginRight: '17px' }} />
@@ -59,3 +63,8 @@ export const MenuContent = ({
     </Popconfirm>
   </Menu>
 );
+
+const MenuContainer = styled.div`
+  display: flex;
+  height: 21px;
+`;

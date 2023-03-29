@@ -5,7 +5,6 @@ import React, { ReactText, useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
@@ -130,21 +129,25 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
         <RightPanelContainer>
           <StyledTitle level={4}>{file?.name}</StyledTitle>
           <TabsContainer>
-            <StyledTabs
-              activeKey={isVideo(file) ? '2' : currentTab}
-              onChange={tabChange}
+            <Tabs
+              defaultActiveKey={isVideo(file) ? '2' : currentTab}
+              onTabClick={tabChange}
             >
-              <Tabs.TabPane tab="Annotations" key="1" disabled={isVideo(file)}>
-                <AnnotationDetailPanel file={file} showEditOptions />
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="File details" key="2">
+              <Tabs.Tab label="Annotations" tabKey="1" disabled={isVideo(file)}>
+                <FileDetailsContent>
+                  <AnnotationDetailPanel file={file} showEditOptions />
+                </FileDetailsContent>
+              </Tabs.Tab>
+              <Tabs.Tab label="File details" tabKey="2">
                 {file && (
                   <QueryClientProvider client={queryClient}>
-                    <FileDetailsReview fileObj={file} />
+                    <FileDetailsContent>
+                      <FileDetailsReview fileObj={file} />
+                    </FileDetailsContent>
                   </QueryClientProvider>
                 )}
-              </Tabs.TabPane>
-            </StyledTabs>
+              </Tabs.Tab>
+            </Tabs>
           </TabsContainer>
         </RightPanelContainer>
         <div aria-hidden="true" className="confirm-delete-modal-anchor" />
@@ -224,4 +227,13 @@ const PreviewWrapper = styled.div<{ isFileProcessing: boolean }>`
   height: 100%;
   width: 100%;
   pointer-events: ${(props) => (props.isFileProcessing ? 'none' : 'all')};
+`;
+
+const FileDetailsContent = styled.div`
+  height: calc(100vh - 210px);
+  width: 100%;
+  padding-right: 10px;
+  padding-left: 2px;
+  padding-bottom: 10px;
+  overflow-y: auto;
 `;

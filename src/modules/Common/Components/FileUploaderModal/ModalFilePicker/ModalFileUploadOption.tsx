@@ -36,7 +36,7 @@ export function ModalFileUploadOption({
         <DatasetOptionContainer>
           <DataSetSelect
             disabled={isDisabled}
-            style={{ width: '208px' }}
+            style={{ width: '208px', marginRight: '30px' }}
             onSelectionChange={(value) => {
               dispatch(setDataSetIds(value));
             }}
@@ -47,18 +47,18 @@ export function ModalFileUploadOption({
             name="exif-option"
             disabled={isDisabled}
             checked={extractExif}
-            onChange={(value) => {
-              dispatch(setExtractExif(value));
+            onChange={(_event, next) => {
+              dispatch(setExtractExif(next as boolean));
             }}
           >
             Extract Exif-data from files
-            <Tooltip
-              wrapped
-              content="Exif is the format for storing camera-generated metadata. When this metadata exists, you can extract it, and include it with metadata on your image files."
-            >
-              <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-            </Tooltip>
           </Checkbox>
+          <Tooltip
+            // wrapped
+            content="Exif is the format for storing camera-generated metadata. When this metadata exists, you can extract it, and include it with metadata on your image files."
+          >
+            <Icon type="HelpFilled" />
+          </Tooltip>
         </DatasetOptionContainer>
       </QueryClientProvider>
     </OptionContainer>
@@ -80,7 +80,7 @@ const DatasetTextContainer = styled.div`
 
 const DatasetOptionContainer = styled.div`
   display: flex;
-  gap: 32px;
+  gap: 2px;
 
   .ant-select-selector {
     background: white;

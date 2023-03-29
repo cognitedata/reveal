@@ -34,7 +34,12 @@ describe('MetadataTableToolBar', () => {
     const store = getMockedStore();
     testRenderer(TestComponent, store, props);
     expect(screen.getByText('Add row').closest('button')).not.toBeDisabled();
-    expect(screen.getByText('Edit table').closest('button')).toBeDisabled();
+    expect(
+      screen
+        .getByText('Edit table')
+        .closest('button')
+        ?.getAttribute('aria-disabled')
+    ).toBe('true');
   });
 
   it('should dispatch action of type `fileDetailsSlice/fileMetaDataAddRow` when clicking on "Add row"', async () => {

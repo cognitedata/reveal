@@ -15,7 +15,6 @@ import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { lightGrey } from 'src/utils/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
@@ -154,7 +153,7 @@ const Explorer = () => {
             {!showFilter ? (
               <div
                 style={{
-                  borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+                  borderRight: `1px solid ${Colors['border--muted']}`,
                   padding: '10px',
                   zIndex: 1,
                 }}
@@ -225,7 +224,7 @@ const FilterPanel = styled.div`
   display: flex;
   flex: 0 1 318px;
   flex-direction: column;
-  border-right: 1px solid ${lightGrey};
+  border-right: 1px solid ${Colors['border--muted']};
   z-index: 1;
 `;
 
@@ -241,7 +240,7 @@ const TablePanel = styled.div<tablePanelProps>`
     `calc(100% - ${
       (props.showDrawer ? 400 : 0) + (props.showFilter ? 318 : 0)
     }px)`};
-  border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-right: 1px solid ${Colors['border--muted']};
   height: 100%;
   overflow-x: auto;
 `;

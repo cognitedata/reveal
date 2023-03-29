@@ -219,7 +219,7 @@ export const Keypoints = ({
                           )
                         }
                         size="small"
-                        type="ghost-danger"
+                        type="ghost-destructive"
                         aria-label="deleteButton"
                       />
                     )}
@@ -288,7 +288,7 @@ export const Keypoints = ({
                       icon="Delete"
                       onClick={() => setNewKeypoints(undefined)}
                       size="small"
-                      type="ghost-danger"
+                      type="ghost-destructive"
                       aria-label="deleteButton"
                     />
                   </PanelHeaderActionContainer>
@@ -326,7 +326,7 @@ export const Keypoints = ({
                       icon="Delete"
                       onClick={() => onDeleteKeypoint(index)}
                       size="small"
-                      type="ghost-danger"
+                      type="ghost-destructive"
                       aria-label="deleteButton"
                     />
                   </Row>

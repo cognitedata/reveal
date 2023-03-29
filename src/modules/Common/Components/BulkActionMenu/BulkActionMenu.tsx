@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Badge,
+  Chip,
   Button,
   Detail,
   Dropdown,
@@ -8,7 +8,6 @@ import {
   Menu,
   Popconfirm,
   Tooltip,
-  Colors,
 } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -61,9 +60,12 @@ export const BulkActionMenu = ({
       wrapped
       content="This feature is in alpha and in limited availability"
     >
-      <Badge
-        text="alpha"
-        background={Colors['text-icon--status-warning--inverted']}
+      <Chip
+        type="warning"
+        label="alpha"
+        size="x-small"
+        style={{ marginLeft: '5px' }}
+        hideTooltip
       />
     </Tooltip>
   );
@@ -166,7 +168,6 @@ export const BulkActionMenu = ({
         <Button
           type="primary"
           icon="ChevronDownSmall"
-          aria-label="dropdown button"
           disabled={!count || bulkActionInProgress}
           iconPlacement="right"
           style={{ marginLeft: 14 }}

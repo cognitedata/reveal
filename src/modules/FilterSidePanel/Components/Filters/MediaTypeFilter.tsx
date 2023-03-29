@@ -10,11 +10,14 @@ export const MediaTypeFilter = ({
   filter,
   setFilter,
 }: VisionFilterItemProps) => {
-  const handleChange = (isChecked: boolean, value?: string) => {
-    if (value && isChecked) {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    next?: string | boolean | undefined
+  ) => {
+    if (next) {
       setFilter({
         ...filter,
-        mediaType: value as MediaTypeOption,
+        mediaType: next as MediaTypeOption,
       });
     }
   };
@@ -38,8 +41,8 @@ export const MediaTypeFilter = ({
   }) => {
     return (
       <Radio
-        name={option}
         value={option}
+        label={option}
         checked={getCheckedState(option, value)}
         onChange={handleChange}
         key={option}

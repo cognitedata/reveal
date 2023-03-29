@@ -109,7 +109,6 @@ export const FileGridPreview = ({
 
         <MenuContainer>
           <ActionMenu
-            buttonType="primary"
             showExifIcon={item?.geoLocation !== undefined}
             reviewDisabled={reviewDisabled}
             actionDisabled={actionDisabled}

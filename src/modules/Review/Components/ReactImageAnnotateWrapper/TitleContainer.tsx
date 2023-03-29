@@ -16,7 +16,7 @@ export const PopupUIElementContainer = ({
           {title}
         </Body>
       </div>
-      <div style={{ width: '100%' }}>{children}</div>
+      <StyleWrapper>{children}</StyleWrapper>
     </Container>
   );
 };
@@ -25,4 +25,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+`;
+const StyleWrapper = styled.div`
+  width: 100%;
+  marginleft: 12px;
 `;

@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Button,
-  Col,
-  OptionType,
-  Popconfirm,
-  Row,
   Title,
+  Button,
+  Popconfirm,
+  OptionType,
+  Row,
+  Col,
 } from '@cognite/cogs.js';
 import { clearTemporaryRegion } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
@@ -352,7 +352,7 @@ const FooterContainer = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: 100%;
-  padding-top: 30px;
+  padding-top: 10px;
 `;
 
 const FooterRightButtonContainer = styled.div`

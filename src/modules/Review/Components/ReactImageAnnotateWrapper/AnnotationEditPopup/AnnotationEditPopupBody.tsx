@@ -3,7 +3,6 @@ import {
   Col,
   Row,
   Icon,
-  Label,
   OptionType,
   Title,
   Button,
@@ -66,12 +65,12 @@ export const AnnotationEditPopupBody = ({
         <>
           <Col span={2}>
             <PopupUIElementContainer title="Collection">
-              <StyledLabel>{labelOption.label}</StyledLabel>
+              {labelOption.label}
             </PopupUIElementContainer>
           </Col>
           <Col span={3}>
-            <PopupUIElementContainer title="Label">
-              <StyledLabel>{keypointLabel}</StyledLabel>
+            <PopupUIElementContainer title="Annotation">
+              {keypointLabel}
             </PopupUIElementContainer>
           </Col>
         </>
@@ -117,10 +116,6 @@ export const AnnotationEditPopupBody = ({
   }
   return <Col span={5}>{renderEmptyAnnotationMessage()}</Col>;
 };
-
-const StyledLabel = styled(Label)`
-  width: 100%;
-`;
 
 const StyledCol = styled(Col)`
   padding: 5px 5px 5px 14px;

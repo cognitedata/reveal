@@ -33,7 +33,7 @@ const DeleteButton = (props: {
       content="Are you sure you want to permanently delete this file?"
     >
       <Button
-        type="ghost-danger"
+        type="ghost-destructive"
         loading={props.isDeleteInProgress}
         icon="Delete"
       >

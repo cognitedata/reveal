@@ -39,7 +39,7 @@ export const LoadingBar = ({
           {Math.ceil(percentageScanned)}% of files scanned{' '}
         </LoadingText>
         <Spin indicator={antIcon} style={{ alignSelf: 'center' }} />
-        <Button onClick={onStop} type="ghost-danger">
+        <Button onClick={onStop} type="ghost-destructive">
           Stop
         </Button>
       </Container>

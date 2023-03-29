@@ -18,7 +18,7 @@ export const AutoMLModelNameBadge = (props: {
     >
       <Button
         icon="Scan"
-        size={props.small ? 'small' : 'default'}
+        size={props.small ? 'small' : undefined}
         style={{
           backgroundColor: ColorsObjectDetection.backgroundColor,
           color: ColorsObjectDetection.color,

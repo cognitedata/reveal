@@ -3,7 +3,6 @@
  */
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { lightGrey } from 'src/utils/Colors';
 
 // todo: remove hardcoded BaseTable class prefixes since they can change on classPrefix of BaseTable
 const TableWrapperInner = styled.div`
@@ -301,27 +300,26 @@ export const TableWrapper = styled(TableWrapperInner)(
     overflow: hidden;
     .row {
       transition: 0.3s all;
-      border-bottom: 1px solid ${lightGrey};
+      border-bottom: 1px solid ${Colors['border--muted']};
     }
     .BaseTable__header-cell {
-      background: ${Colors['greyscale-grey2'].hex()};
       overflow: visible !important;
     }
     .BaseTable__header-row {
-      border-bottom: 1px solid ${lightGrey};
+      border-bottom: 1px solid ${Colors['border--muted']};
     }
     .row:not(.previewing):hover,
     .BaseTable__row--hovered:not(.previewing) {
-      background: ${Colors['greyscale-grey1'].hex()};
+      background: ${Colors['surface--status-neutral--muted--hover']};
     }
     .clickable {
       cursor: pointer;
     }
     &&& .BaseTable__row.active {
-      background: ${Colors['midblue-6'].hex()};
+      background: ${Colors['surface--status-neutral--muted--pressed']};
     }
     &&& .BaseTable__row.selected:not(.active) {
-      background: ${Colors['midblue-8'].hex()};
+      background: ${Colors['surface--status-neutral--muted--pressed']};
     }
 
     ${props.disableScroll &&

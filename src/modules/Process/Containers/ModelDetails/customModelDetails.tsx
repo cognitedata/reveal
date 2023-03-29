@@ -44,7 +44,7 @@ export const badge = ({
   hideText?: boolean;
   disabled?: boolean;
 }) => {
-  return disabled ? (
+  return !disabled ? (
     <>
       <Tooltip placement="bottom" content="Model is not configured correctly">
         <Button icon="Scan" size="small" aria-label="ScanIconDisabled" disabled>
@@ -166,14 +166,18 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                   </td>
                   <th>
                     <>
-                      <AutoMLModelSelectFilter
-                        closeMenuOnSelect
-                        isMulti={false}
-                        placeholder="Search model job"
-                        onJobSelected={onModelJobChange}
-                        models={customModels}
-                        selectedModelId={params.modelJobId}
-                      />
+                      <SelectContainer>
+                        <>
+                          <AutoMLModelSelectFilter
+                            closeMenuOnSelect
+                            isMulti={false}
+                            placeholder="Search model job"
+                            onJobSelected={onModelJobChange}
+                            models={customModels}
+                            selectedModelId={params.modelJobId}
+                          />
+                        </>
+                      </SelectContainer>
                       {showLoadingMessage && (
                         <ModelSelectContainer>
                           <Icon
@@ -263,4 +267,9 @@ const ModelSelectContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const SelectContainer = styled.div`
+  width: 200px;
+  height: 62px;
 `;

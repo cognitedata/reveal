@@ -13,8 +13,7 @@ export const ClearButton = ({
 }) => (
   <StyledButton
     size="small"
-    variant="default"
-    type="link"
+    type="ghost-accent"
     onClick={(evt: any) => {
       evt.stopPropagation();
       clear();
@@ -26,9 +25,6 @@ export const ClearButton = ({
 );
 
 const StyledButton = styled(Button)`
-  font-size: 13px;
+  margin-left: 5px;
   background: none;
-  &:hover {
-    background: none;
-  }
 `;

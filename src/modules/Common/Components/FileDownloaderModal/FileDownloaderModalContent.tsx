@@ -245,47 +245,40 @@ export const FileDownloaderModalContent = ({
 
   const AnnotationRadio = () => {
     return (
-      <>
+      <RadioContainer>
         <Radio
-          id="1"
-          name="annotationSelection"
           value={AnnotationChoice.VerifiedAndUnreviewed}
+          label={AnnotationChoice.VerifiedAndUnreviewed}
           checked={
             currentAnnotationChoice === AnnotationChoice.VerifiedAndUnreviewed
           }
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked: any, e: string) =>
-            handleAnnotationRadioButton(e)
-          }
-          style={{ paddingTop: '10px' }}
-        >
-          {AnnotationChoice.VerifiedAndUnreviewed}
-        </Radio>
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement>,
+            next?: string | boolean | undefined
+          ) => handleAnnotationRadioButton(next as string)}
+        />
         <Radio
-          id="2"
-          name="annotationSelection"
           value={AnnotationChoice.OnlyRejected}
+          label={AnnotationChoice.OnlyRejected}
           checked={currentAnnotationChoice === AnnotationChoice.OnlyRejected}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked: any, e: string) =>
-            handleAnnotationRadioButton(e)
-          }
-        >
-          {AnnotationChoice.OnlyRejected}
-        </Radio>
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement>,
+            next?: string | boolean | undefined
+          ) => handleAnnotationRadioButton(next as string)}
+        />
         <Radio
-          id="3"
-          name="annotationSelection"
           value={AnnotationChoice.All}
+          label={AnnotationChoice.All}
           checked={currentAnnotationChoice === AnnotationChoice.All}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked: any, e: string) =>
-            handleAnnotationRadioButton(e)
-          }
-        >
-          {AnnotationChoice.All}
-        </Radio>
-      </>
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement>,
+            next?: string | boolean | undefined
+          ) => handleAnnotationRadioButton(next as string)}
+        />
+      </RadioContainer>
     );
   };
 
@@ -298,38 +291,39 @@ export const FileDownloaderModalContent = ({
         <Text level={2} style={{ paddingTop: '17px', paddingBottom: '17px' }}>
           {fileIds.length} files selected for download
         </Text>
-        <Title level={5}>Download files </Title>
-        <SelectContainer>
-          <Select
-            value={{
-              label: `Files: ${currentFileChoice}`,
-              text: currentFileChoice,
-            }}
-            onChange={onFileOptionChange}
-            options={fileSelectOptions}
-            closeMenuOnSelect
-            disableTyping
-            isMulti={false}
-          />
-        </SelectContainer>
-
-        <Title level={5} style={{ paddingTop: '17px' }}>
-          Download annotations
-        </Title>
-        <SelectContainer>
-          <Select
-            value={{
-              label: `As: ${currentAnnotationFileFormat}`,
-              text: currentAnnotationFileFormat,
-            }}
-            onChange={onAnnotationOptionChange}
-            options={annotationSelectOptions}
-            isMulti={false}
-            closeMenuOnSelect
-            disableTyping
-            disabled={currentFileChoice === DownloadChoice.Files}
-          />
-        </SelectContainer>
+        <RowContainer>
+          <Title level={5}>Download files </Title>
+          <SelectContainer>
+            <Select
+              value={{
+                label: `Files: ${currentFileChoice}`,
+                text: currentFileChoice,
+              }}
+              onChange={onFileOptionChange}
+              options={fileSelectOptions}
+              closeMenuOnSelect
+              disableTyping
+              isMulti={false}
+            />
+          </SelectContainer>
+        </RowContainer>
+        <RowContainer>
+          <Title level={5}>Download annotations</Title>
+          <SelectContainer>
+            <Select
+              value={{
+                label: `As: ${currentAnnotationFileFormat}`,
+                text: currentAnnotationFileFormat,
+              }}
+              onChange={onAnnotationOptionChange}
+              options={annotationSelectOptions}
+              isMulti={false}
+              closeMenuOnSelect
+              disableTyping
+              disabled={currentFileChoice === DownloadChoice.Files}
+            />
+          </SelectContainer>
+        </RowContainer>
         <AnnotationRadio />
         <Footer>
           {CancelButton}
@@ -343,15 +337,27 @@ export const FileDownloaderModalContent = ({
 const DownloadContainer = styled.div`
   display: grid;
   grid-template-rows: repeat(1fr, 9);
-  gap: 8px;
+  gap: 20px;
 `;
 
 const Text = styled(Body)`
   color: #8c8c8c;
 `;
 
+const RowContainer = styled.div`
+  display: grid;
+  grid-gap: 6px;
+  height: 62px;
+`;
+
 const SelectContainer = styled.div`
   width: 400px;
+`;
+
+const RadioContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `;
 
 const Footer = styled.div`

@@ -43,7 +43,7 @@ export class ToastUtils {
     const toastContent = (props: { closeToast: () => void }) => {
       const btn = (
         <Button
-          type="danger"
+          type="destructive"
           size="small"
           onClick={() => {
             onConfirm();

@@ -5,8 +5,7 @@ import {
   useInfiniteList,
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
-import styled from 'styled-components';
-import { A, Body, Colors } from '@cognite/cogs.js';
+import { Body, A } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 
@@ -108,7 +107,7 @@ export const DataSetSelect = ({
   }
   return (
     <Spin spinning={!!isLoading} size="small">
-      <DataSetSelector
+      <Select
         showSearch
         style={style}
         disabled={disabled}
@@ -139,13 +138,7 @@ export const DataSetSelect = ({
             {dataset.name}
           </Select.Option>
         ))}
-      </DataSetSelector>
+      </Select>
     </Spin>
   );
 };
-
-const DataSetSelector = styled(Select)`
-  li.ant-select-selection__choice {
-    border: 1px solid ${Colors['greyscale-grey7'].hex()};
-  }
-`;

@@ -56,7 +56,7 @@ export const AutoMLModelPage = (props: {
       );
     }
     return (
-      <Menu>
+      <Menu style={{ width: '200px', transform: 'translateY(80px)' }}>
         {getMenuItem(AutoMLExportFormat.tflite)}
         {getMenuItem(AutoMLExportFormat.protobuf)}
       </Menu>
@@ -75,12 +75,12 @@ export const AutoMLModelPage = (props: {
           setHideDropDown(true);
         }}
       >
-        <div style={{ display: 'flex' }}>
+        <>
           <Icon type="Scan" style={{ marginRight: 17 }} />
           <Detail strong style={{ color: 'inherit' }}>
             Quick test
           </Detail>
-        </div>
+        </>
       </Menu.Item>
       <Menu.Submenu content={modelDownloadContent()}>
         <>

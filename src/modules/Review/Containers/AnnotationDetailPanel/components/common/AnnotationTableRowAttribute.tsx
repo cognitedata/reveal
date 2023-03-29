@@ -1,5 +1,5 @@
-import { Detail } from '@cognite/cogs.js';
 import React from 'react';
+import { Detail } from '@cognite/cogs.js';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
 
@@ -13,16 +13,16 @@ export const AnnotationTableRowAttribute = ({
   return (
     <AttributesContainer>
       {reviewAnnotation.annotation.confidence !== undefined && (
-        <StyledDetail>
+        <Detail>
           confidence: {reviewAnnotation.annotation.confidence.toFixed(2)}
-        </StyledDetail>
+        </Detail>
       )}
 
       {Object.entries(reviewAnnotation.annotation.attributes || []).map(
         ([key, value]) => (
-          <StyledDetail key={key}>
+          <Detail key={key}>
             {key}: {value.value}
-          </StyledDetail>
+          </Detail>
         )
       )}
     </AttributesContainer>
@@ -32,8 +32,4 @@ export const AnnotationTableRowAttribute = ({
 const AttributesContainer = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const StyledDetail = styled(Detail)`
-  color: white;
 `;

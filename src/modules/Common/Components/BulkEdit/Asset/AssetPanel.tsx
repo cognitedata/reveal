@@ -37,19 +37,21 @@ const AssetEditPanel = ({
       return (
         <InputContainer>
           <Body level={2}>Add asset</Body>
-          <AssetSelect
-            isMulti
-            selectedAssetIds={bulkEditUnsaved.assetIds?.addedAssetIds}
-            onAssetSelected={(selectedItems) => {
-              setBulkEditUnsaved({
-                ...bulkEditUnsaved,
-                assetIds: {
-                  ...bulkEditUnsaved.assetIds,
-                  addedAssetIds: selectedItems,
-                },
-              });
-            }}
-          />
+          <AssetSelectContainer>
+            <AssetSelect
+              isMulti
+              selectedAssetIds={bulkEditUnsaved.assetIds?.addedAssetIds}
+              onAssetSelected={(selectedItems) => {
+                setBulkEditUnsaved({
+                  ...bulkEditUnsaved,
+                  assetIds: {
+                    ...bulkEditUnsaved.assetIds,
+                    addedAssetIds: selectedItems,
+                  },
+                });
+              }}
+            />
+          </AssetSelectContainer>
           {unsavedAssetsHasOverlaps({ bulkEditUnsaved }) && (
             <Alert
               message="Same asset(s) selected for both add and remove."
@@ -64,19 +66,21 @@ const AssetEditPanel = ({
       return (
         <InputContainer>
           <Body level={2}>Find asset</Body>
-          <AssetSelect
-            isMulti
-            selectedAssetIds={bulkEditUnsaved.assetIds?.removedAssetIds}
-            onAssetSelected={(selectedItems) => {
-              setBulkEditUnsaved({
-                ...bulkEditUnsaved,
-                assetIds: {
-                  ...bulkEditUnsaved.assetIds,
-                  removedAssetIds: selectedItems,
-                },
-              });
-            }}
-          />
+          <AssetSelectContainer>
+            <AssetSelect
+              isMulti
+              selectedAssetIds={bulkEditUnsaved.assetIds?.removedAssetIds}
+              onAssetSelected={(selectedItems) => {
+                setBulkEditUnsaved({
+                  ...bulkEditUnsaved,
+                  assetIds: {
+                    ...bulkEditUnsaved.assetIds,
+                    removedAssetIds: selectedItems,
+                  },
+                });
+              }}
+            />
+          </AssetSelectContainer>
         </InputContainer>
       );
   }
@@ -90,15 +94,17 @@ export const AssetPanel = ({
 
   return (
     <PanelContainer>
-      <SelectContainer>
+      <TaskWrapper>
         <Body level={2}>Task</Body>
-        <Select
-          value={task}
-          onChange={setTask}
-          options={taskSelectorOptions}
-          closeMenuOnSelect
-        />
-      </SelectContainer>
+        <SelectContainer>
+          <Select
+            value={task}
+            onChange={setTask}
+            options={taskSelectorOptions}
+            closeMenuOnSelect
+          />
+        </SelectContainer>
+      </TaskWrapper>
       <AssetEditPanel
         task={task}
         bulkEditUnsaved={bulkEditUnsaved}
@@ -112,16 +118,22 @@ const PanelContainer = styled.div`
   display: grid;
   grid-auto-flow: column;
   justify-content: left;
-  align-items: start;
+  align-items: end;
   grid-gap: 8px;
 `;
-const SelectContainer = styled.div`
+const TaskWrapper = styled.div`
   display: grid;
   grid-gap: 6px;
-  width: 217px;
+  height: 62px;
+`;
+const SelectContainer = styled.div`
+  width: 218px;
 `;
 const InputContainer = styled.div`
   display: grid;
   grid-gap: 6px;
+  height: 62px;
+`;
+const AssetSelectContainer = styled.div`
   width: 400px;
 `;

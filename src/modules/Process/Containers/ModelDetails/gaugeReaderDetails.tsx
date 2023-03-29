@@ -21,6 +21,7 @@ import {
   StyledCol,
   TableContainer,
 } from './modelDetailsStyles';
+import styled from 'styled-components';
 
 export const description = () => {
   return (
@@ -98,13 +99,17 @@ export const Content = (modelIndex: number) => {
                     </Tooltip>
                   </td>
                   <th>
-                    <Select
-                      value={getOption(params.gaugeType)}
-                      onChange={onGaugeTypeChange}
-                      options={selectOptions}
-                      closeMenuOnSelect
-                      isMulti={false}
-                    />
+                    <SelectContainer>
+                      <>
+                        <Select
+                          value={getOption(params.gaugeType)}
+                          onChange={onGaugeTypeChange}
+                          options={selectOptions}
+                          closeMenuOnSelect
+                          isMulti={false}
+                        />
+                      </>
+                    </SelectContainer>
                   </th>
                 </tr>
 
@@ -137,3 +142,8 @@ export const Content = (modelIndex: number) => {
 };
 
 export const content = Content;
+
+const SelectContainer = styled.div`
+  width: 200px;
+  height: 62px;
+`;

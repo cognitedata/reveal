@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 
 const CopiedIconContainer = styled.div`
-  color: ${Colors.success.hex()};
+  color: ${Colors['text-icon--status-success']};
   margin-left: 9px;
   padding: 2px 0;
   height: 22px;
@@ -36,13 +36,13 @@ const CopyButtonContainer = (props: {
   return (
     <CopyButton
       onClick={props.onClick}
-      size="default"
-      variant="default"
-      type="link"
+      type="ghost-accent"
       icon="Copy"
       iconPlacement="right"
       aria-label="copy button"
-      style={{ color: props.copyIconColor || Colors['midblue-3'].hex() }}
+      style={{
+        color: props.copyIconColor || Colors['text-icon--interactive--default'],
+      }}
     />
   );
 };
