@@ -24,8 +24,6 @@ export default function AppliedRulesTable({
   appliedRules,
   setConfirmedPredictions,
 }: Props) {
-  useEffect(() => {}, []);
-
   const { t } = useTranslation();
   const columns: AppliedRuleTableRecordCT[] = useMemo(
     () => [
