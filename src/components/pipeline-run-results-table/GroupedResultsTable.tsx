@@ -13,6 +13,7 @@ import {
 import Extractor from './Extractor';
 import { Icon } from '@cognite/cogs.js';
 import ExpandedRule from './ExpandedRule';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
 
@@ -99,10 +100,22 @@ const GroupedResultsTable = ({
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}
+      pagination={PAGINATION_SETTINGS}
       expandable={{
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
-        expandedRowRender: (record) => <ExpandedRule rule={record} />,
+        expandedRowRender: (record) =>
+          !!record.matches ? (
+            <ExpandedRule
+              matches={record.matches}
+              confirmedPredictions={[]}
+              setConfirmedPredictions={(keys) =>
+                alert(`TODO ${JSON.stringify(keys)}`)
+              }
+            />
+          ) : (
+            false
+          ),
         indentSize: 64,
       }}
       rowSelection={{
@@ -114,7 +127,7 @@ const GroupedResultsTable = ({
   );
 };
 
-const ExpandButton = styled.button`
+export const ExpandButton = styled.button`
   align-items: center;
   background: none;
   border: none;

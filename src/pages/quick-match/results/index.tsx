@@ -1,7 +1,9 @@
-import { Loader } from '@cognite/cogs.js';
+import { Body, Flex, Loader, Title } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import ApplySelectedMatchesButton from 'components/apply-selected-matches-button/ApplySelectedMatchesButton';
 import EntityMatchingResult from 'components/em-result';
+import NoAccessPage from 'components/error-pages/NoAccess';
+import { Container, Graphic } from 'components/InfoBox';
 import Page from 'components/page';
 import Step from 'components/step';
 import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
@@ -45,17 +47,23 @@ const QuickMatchResults = (): JSX.Element => {
     sessionStorageApplyRulesJobKey(applyRulesJobId)
   );
 
-  const { data: predictions, isInitialLoading: loadingPredictions } =
-    useEMModelPredictResults(predictJobId, predictJobToken, {
-      enabled: !!predictJobId,
-      ...INFINITE_Q_OPTIONS,
-    });
+  const {
+    data: predictions,
+    isInitialLoading: loadingPredictions,
+    error: predictJobError,
+  } = useEMModelPredictResults(predictJobId, predictJobToken, {
+    enabled: !!predictJobId,
+    ...INFINITE_Q_OPTIONS,
+  });
 
-  const { data: appliedRules, isInitialLoading: loadingAppliedRules } =
-    useApplyRulesResults(applyRulesJobId, applyRulesJobToken, {
-      enabled: !!applyRulesJobId,
-      ...INFINITE_Q_OPTIONS,
-    });
+  const {
+    data: appliedRules,
+    isInitialLoading: loadingAppliedRules,
+    error: appliedRulesError,
+  } = useApplyRulesResults(applyRulesJobId, applyRulesJobToken, {
+    enabled: !!applyRulesJobId,
+    ...INFINITE_Q_OPTIONS,
+  });
 
   if (!sourceType) {
     return <Navigate to={`/${subAppPath}/quick-match/}`} replace={true} />;
@@ -69,6 +77,56 @@ const QuickMatchResults = (): JSX.Element => {
           subtitle={t('download-result-step-subtitle')}
         >
           <Loader />
+        </Step>
+      </Page>
+    );
+  }
+
+  if (predictJobError || appliedRulesError) {
+    if (predictJobError?.status === 403 || appliedRulesError?.status === 403) {
+      return (
+        <Page subtitle={t('results')} title={t('quick-match')}>
+          <Step>
+            <NoAccessPage />
+          </Step>
+        </Page>
+      );
+    } else {
+      return (
+        <Page subtitle={t('results')} title={t('quick-match')}>
+          <Step>
+            <Container direction="row" justifyContent="space-between">
+              <Flex direction="column" alignItems="flex-start">
+                <Title level={4}>{t('unknown-error-title')}</Title>
+                {predictJobError && (
+                  <Body level={1}>{predictJobError.message}</Body>
+                )}
+                {appliedRulesError && (
+                  <Body level={1}>{appliedRulesError.message}</Body>
+                )}
+              </Flex>
+              <Graphic />
+            </Container>
+          </Step>
+        </Page>
+      );
+    }
+  }
+
+  if (predictions?.items.length === 0) {
+    return (
+      <Page subtitle={t('results')} title={t('quick-match')}>
+        <Step
+          title={t('result-step-title', { step: 4 })}
+          subtitle={t('result-step-subtitle')}
+        >
+          <Container direction="row" justifyContent="space-between">
+            <Flex direction="column" alignItems="flex-start">
+              <Title level={4}>{t('result-empty-title')}</Title>
+              <Body level={1}>{t('result-empty-body')}</Body>
+            </Flex>
+            <Graphic />
+          </Container>
         </Step>
       </Page>
     );

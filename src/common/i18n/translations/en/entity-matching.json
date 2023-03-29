@@ -166,6 +166,8 @@
   "resource-type-sequences_one": "Sequence",
   "resource-type-sequences_other": "Sequences",
   "resource-type-ts": "Time series",
+  "result-empty-body": "No matched where found here",
+  "result-empty-title": "No matches found",
   "result-step-subtitle": "Select the matches you want to apply and save to CDF.",
   "result-step-title": "{{step}}. Review results",
   "results": "Results",

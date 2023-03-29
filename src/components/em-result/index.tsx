@@ -49,6 +49,7 @@ export default function EntityMatchingResult({
             <AppliedRulesTable
               appliedRules={appliedRules}
               predictions={predictions}
+              confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}
             />
           ) : (

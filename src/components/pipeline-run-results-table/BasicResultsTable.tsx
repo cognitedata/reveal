@@ -14,6 +14,7 @@ import {
 import ResourceIdentifier from './ResourceIdentifier';
 import ExpandedMatch from './ExpandedMatch';
 import Confidence from 'components/em-result/Confidence';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type BasicResultsTableRecord = EMPipelineRunMatch & { key: number };
 
@@ -119,6 +120,7 @@ const BasicResultsTable = ({
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}
+      pagination={PAGINATION_SETTINGS}
       expandable={{
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
