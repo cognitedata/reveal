@@ -91,8 +91,8 @@ export default function AppliedRulesTable({
             <Icon
               type={
                 expandedRowKeys.includes(record.key)
-                  ? 'ChevronDown'
-                  : 'ChevronRight'
+                  ? 'ChevronUp'
+                  : 'ChevronDown'
               }
             />
           </ExpandButton>

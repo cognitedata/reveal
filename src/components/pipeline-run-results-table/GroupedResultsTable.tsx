@@ -110,8 +110,8 @@ const GroupedResultsTable = ({
             <Icon
               type={
                 expandedRowKeys.includes(record.key)
-                  ? 'ChevronDown'
-                  : 'ChevronRight'
+                  ? 'ChevronUp'
+                  : 'ChevronDown'
               }
             />
           </ExpandButton>
