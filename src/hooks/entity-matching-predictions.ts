@@ -75,7 +75,8 @@ export const useEMModelPredictResults = (
             .map((p) => ({
               source: p.source,
               match: p.matches[0],
-            })) || [];
+            }))
+            .sort((a, b) => b.match.score - a.match.score) || [];
 
         return { ...r.data, items };
       } else {
