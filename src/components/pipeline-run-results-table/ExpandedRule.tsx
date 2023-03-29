@@ -8,6 +8,7 @@ import ResourceName from './ResourceName';
 import { Colors } from '@cognite/cogs.js';
 import { RuleMatch } from 'hooks/entity-matching-rules';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
@@ -87,6 +88,7 @@ const ExpandedRule = ({
         emptyContent={undefined}
         appendTooltipTo={undefined}
         rowSelection={rowSelection}
+        pagination={PAGINATION_SETTINGS}
       />
     </Container>
   );
