@@ -7,6 +7,7 @@ import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
   AuthorFilter,
+  LabelFilter,
   MetadataFilter,
   SourceFilter,
   TypeFilter,
@@ -28,6 +29,13 @@ export const FileFilters: React.FC<FilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
+        <LabelFilter.File
+          value={filter.document.labels}
+          onChange={(newFilters) =>
+            onFilterChange('document', { labels: newFilters })
+          }
+        />
+
         <TypeFilter.File
           value={filter.document.type}
           onChange={(newFilters) =>

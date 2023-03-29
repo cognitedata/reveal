@@ -71,6 +71,7 @@ export interface InternalDocumentFilter extends InternalCommonFilters {
   source?: string[];
   type?: string[];
   metadata?: { key: string; value: string }[];
+  labels?: { label?: string; value: string }[];
 }
 
 export interface InternalTimeseriesFilters extends InternalCommonFilters {
