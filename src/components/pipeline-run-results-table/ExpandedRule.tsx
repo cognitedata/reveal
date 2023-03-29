@@ -1,14 +1,15 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Colors } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
+import { TableRowSelection } from 'antd/lib/table/interface';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
+import { PAGINATION_SETTINGS } from 'common/constants';
+import { RuleMatch } from 'hooks/entity-matching-rules';
 
 import ResourceName from './ResourceName';
-import { Colors } from '@cognite/cogs.js';
-import { RuleMatch } from 'hooks/entity-matching-rules';
-import { TableRowSelection } from 'antd/lib/table/interface';
-import { PAGINATION_SETTINGS } from 'common/constants';
 
 type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
@@ -18,14 +19,14 @@ type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
 
 type ExpandedRuleProps = {
   matches: RuleMatch[];
-  confirmedPredictions: number[];
-  setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
+  selectedSourceIds: CogniteInternalId[];
+  setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
 const ExpandedRule = ({
   matches,
-  confirmedPredictions,
-  setConfirmedPredictions,
+  selectedSourceIds,
+  setSelectedSourceIds,
 }: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -64,17 +65,17 @@ const ExpandedRule = ({
   );
 
   const rowSelection: TableRowSelection<ExpandedRuleTableRecord> = {
-    selectedRowKeys: confirmedPredictions,
-    onSelectAll(all) {
+    selectedRowKeys: selectedSourceIds,
+    onSelectAll: (all) => {
       if (all) {
-        setConfirmedPredictions(matches.map((p) => p.source.id));
+        setSelectedSourceIds(matches.map((p) => p.source.id));
       } else {
-        setConfirmedPredictions([]);
+        setSelectedSourceIds([]);
       }
     },
-    onChange(keys, _, info) {
+    onChange: (keys, _, info) => {
       if (info.type === 'single') {
-        setConfirmedPredictions(keys as number[]);
+        setSelectedSourceIds(keys as number[]);
       }
     },
     columnWidth: 36,

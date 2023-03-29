@@ -146,8 +146,8 @@ export default function AppliedRulesTable({
           !!record.matches ? (
             <ExpandedRule
               matches={record.matches}
-              confirmedPredictions={confirmedPredictions}
-              setConfirmedPredictions={setConfirmedPredictions}
+              selectedSourceIds={confirmedPredictions}
+              setSelectedSourceIds={setConfirmedPredictions}
             />
           ) : (
             false
