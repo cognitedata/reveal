@@ -353,15 +353,6 @@ type EMPipelineMatchCondition = {
   arguments: number[][];
 };
 
-type EMPipelineGeneratedRuleExistingMatchType = 'model';
-
-type EMPipelineGeneratedRuleMatch = {
-  consistentMatch?: boolean;
-  existingMatchType?: EMPipelineGeneratedRuleExistingMatchType;
-  source: { id: number } & Record<string, unknown>;
-  target: { id: number } & Record<string, unknown>;
-};
-
 export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
   conditions?: EMPipelineMatchCondition[];

@@ -115,7 +115,7 @@ const GroupedResultsTable = ({
   );
 };
 
-const ExpandButton = styled.button`
+export const ExpandButton = styled.button`
   align-items: center;
   background: none;
   border: none;
