@@ -1,8 +1,14 @@
 import { Tooltip } from '@cognite/cogs.js';
-import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
+import {
+  useAssetsUniqueValuesByProperty,
+  useDocumentsLabelAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
 import { BaseMultiSelectFilterProps } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  InternalAssetFilters,
+  InternalDocumentFilter,
+} from '@data-exploration-lib/core';
 import { useState } from 'react';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
@@ -82,4 +88,18 @@ const AssetLabelFilter = (
   );
 };
 
+export const DocumentLabelFilter = (
+  props: BaseMultiSelectFilterProps<InternalDocumentFilter>
+) => {
+  const { data: labels, isLoading } = useDocumentsLabelAggregateQuery();
+
+  const options = (labels || []).map((item) => ({
+    label: `${item.value}`,
+    value: `${item.value}`,
+  }));
+
+  return <LabelFilter {...props} options={options} loading={isLoading} />;
+};
+
 LabelFilter.Asset = AssetLabelFilter;
+LabelFilter.File = DocumentLabelFilter;
