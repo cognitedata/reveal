@@ -14,6 +14,9 @@ import {
 } from 'hooks/entity-matching-pipelines';
 import { useTranslation } from 'common';
 import PipelineRunResultsTable from 'components/pipeline-run-results-table';
+import { useUpdateAssetIds } from 'hooks/update';
+import { pipelineSourceToAPIType } from '../details/sources';
+import { notification } from '@cognite/cdf-utilities';
 
 type PipelineResultsProps = {};
 
@@ -40,6 +43,51 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
   const [selectedSourceIds, setSelectedSourceIds] = useState<
     CogniteInternalId[]
   >([]);
+
+  const { mutate, isLoading } = useUpdateAssetIds();
+
+  const handleApplySelectedMatches = (): void => {
+    if (emPipelineRun && pipeline && selectedSourceIds) {
+      const selectedSourceIdSet = new Set();
+      selectedSourceIds.forEach((sourceId) => {
+        selectedSourceIdSet.add(sourceId);
+      });
+
+      const selectedMatches =
+        emPipelineRun.matches?.filter(
+          ({ source, target }) =>
+            typeof source?.id === 'number' &&
+            selectedSourceIdSet.has(source.id) &&
+            typeof target?.id === 'number'
+        ) ?? [];
+
+      mutate(
+        {
+          api: pipelineSourceToAPIType[pipeline.sources.resource],
+          changes: selectedMatches?.map(({ source, target }) => ({
+            id: source?.id as number,
+            update: {
+              assetId: { set: target?.id as number },
+            },
+          })),
+        },
+        {
+          onSuccess: () => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('save-to-cdf-success'),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('save-to-cdf-error'),
+            });
+          },
+        }
+      );
+    }
+  };
 
   if (error) {
     if (error?.status === 403) {
@@ -78,7 +126,12 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
     return (
       <Page
         extraContent={
-          <Button disabled={selectedSourceIds.length === 0} type="primary">
+          <Button
+            disabled={selectedSourceIds.length === 0}
+            loading={isLoading}
+            onClick={handleApplySelectedMatches}
+            type="primary"
+          >
             {t('apply-selected-matches', { count: selectedSourceIds.length })}
           </Button>
         }
