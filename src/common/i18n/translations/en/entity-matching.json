@@ -86,6 +86,8 @@
   "model-configuration-fields-body-p1": "By default, the model uses the similarity between name and description when it searches for matches.",
   "model-configuration-fields-body-p2": "Create new connections between name, description, and available metadata fields with Add fields. Note: You can rerun the model later.",
   "model-configuration-fields-header": "Fields to compare",
+  "model-configuration-generate-rule-desc": "Discover rules among matches, this can take a long time for large jobs.",
+  "model-configuration-generate-rule-header": "Match rules",
   "model-configuration-generate-rules-subtitle": "On top of matching resources, the model also generates rules to demonstrate similarities between matches and group matches based on the patterns. You can uncheck this option if you don't need the rules or want to review results quicker.",
   "model-configuration-generate-rules-title": "Generate rules",
   "model-configuration-header": "Configure model",
