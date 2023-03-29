@@ -1,7 +1,10 @@
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
 import { useDocumentAggregateAuthorQuery } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter } from '../types';
+import { BaseFilter, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 
 interface BaseAuthorFilterProps<TFilter> extends BaseFilter<TFilter> {
@@ -12,7 +15,7 @@ interface BaseAuthorFilterProps<TFilter> extends BaseFilter<TFilter> {
 
 export interface AuthorFilterProps<TFilter>
   extends BaseAuthorFilterProps<TFilter> {
-  options: string[];
+  options: MultiSelectOptionType<string>[];
   title?: string;
 }
 
@@ -28,7 +31,7 @@ export function AuthorFilter<TFilter>({
       {...rest}
       label={title}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
-      options={transformOptionsForMultiselectFilter(options)}
+      options={options}
       onChange={(_, authors) =>
         onChange?.(authors.map((author) => author.value))
       }
@@ -40,8 +43,17 @@ export function AuthorFilter<TFilter>({
 const AuthorFilterFile = (
   props: BaseAuthorFilterProps<InternalDocumentFilter>
 ) => {
-  const { data: fileTypeItems } = useDocumentAggregateAuthorQuery();
-  const options = fileTypeItems.map((item) => `${item.value}`);
+  const { data = [] } = useDocumentAggregateAuthorQuery();
+
+  const options = useDeepMemo(
+    () =>
+      data.map((item) => ({
+        label: String(item.value),
+        value: String(item.value),
+        count: item.count,
+      })),
+    [data]
+  );
   return <AuthorFilter {...props} options={options} />;
 };
 

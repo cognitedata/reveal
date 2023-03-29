@@ -5,19 +5,23 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter, BaseMultiSelectFilterProps } from '../types';
-import { OptionType } from '@cognite/cogs.js';
+import {
+  BaseFilter,
+  BaseMultiSelectFilterProps,
+  MultiSelectOptionType,
+} from '../types';
 import {
   InternalAssetFilters,
   InternalDocumentFilter,
   InternalEventsFilters,
+  useDeepMemo,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
 import { useState } from 'react';
 
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {
-  options: OptionType<string>[];
+  options: MultiSelectOptionType<string>[];
 }
 
 interface BaseFileSourceFilterProps<TFilter> extends BaseFilter<TFilter> {
@@ -27,7 +31,7 @@ interface BaseFileSourceFilterProps<TFilter> extends BaseFilter<TFilter> {
 }
 export interface FileSourceFilterProps<TFilter>
   extends BaseFileSourceFilterProps<TFilter> {
-  options: string[];
+  options: MultiSelectOptionType<string>[];
 }
 
 export const SourceFilter = <TFilter,>({
@@ -58,7 +62,7 @@ export const BaseFileSourceFilter = <TFilter,>({
       addNilOption
       label="Source"
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
-      options={transformOptionsForMultiselectFilter(options)}
+      options={options}
       onChange={(_, newSources) =>
         onChange?.(newSources.map((source) => source.value))
       }
@@ -76,10 +80,15 @@ const AssetSourceFilter = (
     query
   );
 
-  const options = sources.map((item) => ({
-    label: `${item.value}`,
-    value: `${item.value}`,
-  }));
+  const options = useDeepMemo(
+    () =>
+      sources.map((item) => ({
+        label: `${item.value}`,
+        value: `${item.value}`,
+        count: item.count,
+      })),
+    [sources]
+  );
 
   return (
     <SourceFilter
@@ -95,10 +104,15 @@ const EventSourceFilter = (
 ) => {
   const { data: sources = [] } = useEventsUniqueValuesByProperty('source');
 
-  const options = sources.map((item) => ({
-    label: `${item.value}`,
-    value: `${item.value}`,
-  }));
+  const options = useDeepMemo(
+    () =>
+      sources.map((item) => ({
+        label: `${item.value}`,
+        value: `${item.value}`,
+        count: item.count,
+      })),
+    [sources]
+  );
 
   return <SourceFilter {...props} options={options} />;
 };
@@ -108,7 +122,15 @@ export const FileSourceFilter = (
 ) => {
   const { data: sources = [] } = useDocumentAggregateSourceQuery();
 
-  const options = sources.map((item) => `${item.value}`);
+  const options = useDeepMemo(
+    () =>
+      sources.map((item) => ({
+        label: `${item.value}`,
+        value: `${item.value}`,
+        count: item.count,
+      })),
+    [sources]
+  );
 
   return <BaseFileSourceFilter {...props} options={options} />;
 };

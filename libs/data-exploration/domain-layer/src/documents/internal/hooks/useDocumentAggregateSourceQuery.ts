@@ -1,7 +1,7 @@
 import { mapAggregatesToFilters } from '../../service';
 import { useDocumentTotalAggregates } from '../../service';
 
-type SourceDataType = { label: string; value: string };
+type SourceDataType = { label: string; count: number; value: string };
 
 export const useDocumentAggregateSourceQuery = () => {
   const { data, ...rest } = useDocumentTotalAggregates([

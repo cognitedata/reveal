@@ -26,9 +26,12 @@ export interface BaseSelectProps<ValueType>
 }
 
 const Option = ({ data, isSelected, ...props }: any) => {
+  const optionValue = data.count
+    ? `${data.label} (${data.count})`
+    : `${data.label}`;
   return (
     <components.Option {...props} data={data} isSelected={isSelected}>
-      <Ellipsis value={data.label} />
+      <Ellipsis value={optionValue} />
     </components.Option>
   );
 };

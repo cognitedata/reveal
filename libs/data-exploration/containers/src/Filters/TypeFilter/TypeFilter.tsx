@@ -1,13 +1,14 @@
 import {
   InternalDocumentFilter,
   InternalEventsFilters,
+  useDeepMemo,
 } from '@data-exploration-lib/core';
 import {
   useDocumentAggregateFileTypeQuery,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter } from '../types';
+import { BaseFilter, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 
 interface BaseTypeFilterProps<TFilter> extends BaseFilter<TFilter> {
@@ -17,7 +18,7 @@ interface BaseTypeFilterProps<TFilter> extends BaseFilter<TFilter> {
 }
 
 export interface TypeFilterProps<TFilter> extends BaseTypeFilterProps<TFilter> {
-  options: string | string[];
+  options: MultiSelectOptionType<string>[];
   title?: string;
 }
 
@@ -33,7 +34,7 @@ export function TypeFilter<TFilter>({
       {...rest}
       label={title}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
-      options={transformOptionsForMultiselectFilter(options)}
+      options={options}
       onChange={(_, type) => onChange?.(type.map((t) => t.value))}
       isMulti
     />
@@ -41,14 +42,33 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
-  const { data: fileTypeItems } = useDocumentAggregateFileTypeQuery();
-  const options = fileTypeItems.map((item) => `${item.value}`);
+  const { data: fileTypeItems = [] } = useDocumentAggregateFileTypeQuery();
+
+  const options = useDeepMemo(
+    () =>
+      fileTypeItems.map((item) => ({
+        label: String(item.value),
+        value: String(item.value),
+        count: item.count,
+      })),
+    [fileTypeItems]
+  );
+
   return <TypeFilter {...props} options={options} title="File type" />;
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
   const { data = [] } = useEventsUniqueValuesByProperty('type', props.filter);
-  const options = data.map((item) => `${item.value}`);
+
+  const options = useDeepMemo(
+    () =>
+      data.map((item) => ({
+        label: String(item.value),
+        value: String(item.value),
+        count: item.count,
+      })),
+    [data]
+  );
 
   return <TypeFilter {...props} options={options} />;
 };

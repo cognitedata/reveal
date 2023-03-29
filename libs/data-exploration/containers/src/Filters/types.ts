@@ -1,4 +1,3 @@
-import { OptionSelection } from '@data-exploration/components';
 import { InputActionMeta } from 'react-select';
 
 export interface BaseFilter<TFilter> {
@@ -29,4 +28,10 @@ export interface BaseNestedFilterProps<TFilter>
     CommonFilterProps {
   values?: { key: string; value: string }[];
   onChange?: (selection: { key: string; value: string }[]) => void;
+}
+
+export interface MultiSelectOptionType<TValue> {
+  label?: string;
+  count?: number;
+  value: TValue;
 }

@@ -3,16 +3,17 @@ import {
   useAssetsUniqueValuesByProperty,
   useDocumentsLabelAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-import { BaseMultiSelectFilterProps } from '../types';
+import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import {
   InternalAssetFilters,
   InternalDocumentFilter,
+  useDeepMemo,
 } from '@data-exploration-lib/core';
 import { useState } from 'react';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
-  options: { label?: string; value: string }[];
+  options: MultiSelectOptionType<string>[];
 }
 
 export const LabelFilter = <TFilter,>({
@@ -72,10 +73,15 @@ const AssetLabelFilter = (
     isError,
   } = useAssetsUniqueValuesByProperty('labels', query);
 
-  const options = labels.map((label) => ({
-    label: String(label.value),
-    value: String(label.value),
-  }));
+  const options = useDeepMemo(
+    () =>
+      labels.map((label) => ({
+        label: String(label.value),
+        value: String(label.value),
+        count: label.count,
+      })),
+    [labels]
+  );
 
   return (
     <LabelFilter

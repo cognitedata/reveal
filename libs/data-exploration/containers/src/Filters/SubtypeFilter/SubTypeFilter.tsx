@@ -1,7 +1,7 @@
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+import { InternalEventsFilters, useDeepMemo } from '@data-exploration-lib/core';
 import { useEventsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter } from '../types';
+import { BaseFilter, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 
 interface BaseSubTypeFilterProps<TFilter> extends BaseFilter<TFilter> {
@@ -12,7 +12,7 @@ interface BaseSubTypeFilterProps<TFilter> extends BaseFilter<TFilter> {
 
 export interface SubTypeFilterProps<TFilter>
   extends BaseSubTypeFilterProps<TFilter> {
-  options: string | string[];
+  options: MultiSelectOptionType<string>[];
 }
 
 export function SubTypeFilter<TFilter>({
@@ -26,7 +26,7 @@ export function SubTypeFilter<TFilter>({
       {...rest}
       label="Sub Type"
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
-      options={transformOptionsForMultiselectFilter(options)}
+      options={options}
       onChange={(_, subtype) => onChange?.(subtype.map((s) => s.value))}
     />
   );
@@ -39,7 +39,16 @@ const EventSubTypeFilter = (
     'subtype',
     props.filter
   );
-  const options = data.map((item) => `${item.value}`);
+
+  const options = useDeepMemo(
+    () =>
+      data.map((item) => ({
+        label: String(item.value),
+        value: String(item.value),
+        count: item.count,
+      })),
+    [data]
+  );
 
   return <SubTypeFilter {...props} options={options} />;
 };
