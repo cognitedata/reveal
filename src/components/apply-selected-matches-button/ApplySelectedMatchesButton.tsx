@@ -20,7 +20,7 @@ const ApplySelectedMatchesButton = ({
   sourceType,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
-  const { mutate, isLoading } = useUpdateAssetIds(sourceType, predictionJobId);
+  const { mutate, isLoading } = useUpdateAssetIds(predictionJobId);
 
   const selectedPredictions = predictions?.filter((prediction) =>
     confirmedPredictions?.includes(prediction.source.id)
@@ -29,12 +29,15 @@ const ApplySelectedMatchesButton = ({
   const applySelected = () => {
     if (selectedPredictions) {
       mutate(
-        selectedPredictions?.map(({ source, match }) => ({
-          id: source.id,
-          update: {
-            assetId: { set: match.target.id },
-          },
-        })),
+        {
+          api: sourceType,
+          changes: selectedPredictions.map(({ source, match }) => ({
+            id: source.id,
+            update: {
+              assetId: { set: match.target.id },
+            },
+          })),
+        },
         {
           onSuccess: () => {
             notification.success({
