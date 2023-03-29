@@ -1,5 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+import { EMPipelineSource } from 'hooks/entity-matching-pipelines';
 import { PredictionObject } from 'hooks/entity-matching-predictions';
 
 import {
@@ -198,3 +199,17 @@ export const sessionStorageApplyRulesJobKey = (jobId: number) =>
   `apply-rules-job-token-${jobId}`;
 export const sessionStorage3dDetailsKey = (jobId: number) =>
   `3d-details-${jobId}`;
+
+export const getMatchedAssetIds = (source?: EMPipelineSource): number[] => {
+  if (source?.assetIds && Array.isArray(source?.assetIds)) {
+    return source.assetIds.filter(
+      (id) => typeof id === 'number'
+    ) satisfies number[];
+  }
+
+  if (source?.assetId && typeof source?.assetId === 'number') {
+    return [source?.assetId] satisfies number[];
+  }
+
+  return [];
+};

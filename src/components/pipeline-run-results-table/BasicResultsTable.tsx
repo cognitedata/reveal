@@ -6,11 +6,7 @@ import { CogniteInternalId } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import {
-  EMPipelineRun,
-  EMPipelineRunMatch,
-  Pipeline,
-} from 'hooks/entity-matching-pipelines';
+import { EMPipelineRunMatch, Pipeline } from 'hooks/entity-matching-pipelines';
 
 import ResourceIdentifier from './ResourceIdentifier';
 import ExpandedMatch from './ExpandedMatch';
@@ -23,15 +19,15 @@ type BasicResultsTableColumnType = ColumnType<BasicResultsTableRecord> & {
 };
 
 type BasicResultsTableProps = {
+  matches?: EMPipelineRunMatch[];
   pipeline: Pipeline;
-  run: EMPipelineRun;
   selectedSourceIds: CogniteInternalId[];
   setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
 const BasicResultsTable = ({
+  matches,
   pipeline,
-  run,
   selectedSourceIds,
   setSelectedSourceIds,
 }: BasicResultsTableProps): JSX.Element => {
@@ -107,14 +103,14 @@ const BasicResultsTable = ({
 
   const dataSource = useMemo(
     () =>
-      run.matches?.map((match) => ({
+      matches?.map((match) => ({
         ...match,
         key:
           match.source?.id && typeof match.source.id === 'number'
             ? match.source.id
             : -1,
       })) ?? [],
-    [run.matches]
+    [matches]
   );
 
   return (

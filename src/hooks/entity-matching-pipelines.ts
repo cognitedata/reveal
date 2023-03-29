@@ -327,11 +327,15 @@ type EMPipelineMatchType =
   | 'model'
   | 'rule_rule_input_pattern->rule_predict_pattern';
 
+export type EMPipelineResource = Record<string, unknown>;
+export type EMPipelineSource = EMPipelineResource;
+export type EMPipelineTarget = EMPipelineResource;
+
 export type EMPipelineRunMatch = {
   matchType?: EMPipelineMatchType;
   score?: number;
-  source?: Record<string, unknown>;
-  target?: Record<string, unknown>;
+  source?: EMPipelineSource;
+  target?: EMPipelineTarget;
 };
 
 type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';

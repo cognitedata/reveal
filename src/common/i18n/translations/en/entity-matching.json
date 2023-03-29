@@ -214,5 +214,10 @@
   "unknown-error-timestamp": "Timestamp:",
   "unknown-error-title": "An error occurred",
   "unsupervised-model": "Unsupervised model",
-  "validation-error-field-required": "You must enter a value in this field"
+  "validation-error-field-required": "You must enter a value in this field",
+  "unmatched": "Unmatched",
+  "matched": "Matched",
+  "previously-confirmed": "Previously confirmed",
+  "different-recommendation": "Different recommendation",
+  "all": "All"
 }
