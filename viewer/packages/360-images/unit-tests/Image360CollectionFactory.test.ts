@@ -21,7 +21,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         },
         {
           id: '1',
@@ -29,7 +33,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         },
         {
           id: '2',
@@ -37,7 +45,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         }
       ]);
 
@@ -48,7 +60,7 @@ describe(Image360CollectionFactory.name, () => {
       mockSceneHandler.object(),
       new EventTrigger<BeforeSceneRenderedDelegate>()
     );
-    const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);
+    const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true, It.IsAny());
 
     expect(collection.image360Entities.length).toBe(3);
   });

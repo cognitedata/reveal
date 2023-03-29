@@ -38,9 +38,10 @@ describe(Image360Entity.name, () => {
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
       testTranslation,
-      mock360ImageIcon
+      mock360ImageIcon,
+      It.IsAny()
     );
 
-    expect(entity.getRevision(0).transform.equals(testTranslation)).toBeTrue();
+    expect(entity.getRevision(0)!.transform.equals(testTranslation)).toBeTrue();
   });
 });
