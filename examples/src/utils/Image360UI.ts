@@ -137,9 +137,9 @@ export class Image360UI {
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
+      collection.on('image360Entered', onImageEntered);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
-      set.on('image360Entered', onImageEntered);
       viewer.requestRedraw();
     }
 
