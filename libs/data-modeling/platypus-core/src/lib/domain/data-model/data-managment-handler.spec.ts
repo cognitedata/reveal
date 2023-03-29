@@ -126,15 +126,12 @@ describe('DataManagementHandlerTest', () => {
     });
 
     const response = await service.getDataById({
+      dataModelExternalId: 'testExternalId',
       dataModelType: mockType,
       dataModelTypeDefs: { types: [mockType] },
-      dataModelVersion: {
-        externalId: 'testExternalId',
-        version: '1',
-        space: 'testSpace',
-        schema: '',
-        status: DataModelVersionStatus.PUBLISHED,
-      },
+      dataModelSpace: 'testSpace',
+      instanceSpace: 'testSpace',
+      version: '1',
       nestedLimit: 100,
       externalId: 'foo',
     });

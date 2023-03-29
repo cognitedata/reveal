@@ -29,7 +29,8 @@ describe('SchemaServiceGraphqlApiBuilder Test', () => {
     const graphQlSchema = schemaBuilder.buildSchema(
       modifiedSchema,
       parsedSchema,
-      templateTables
+      templateTables,
+      false
     );
 
     // console.log(graphQlSchema);

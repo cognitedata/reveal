@@ -2,15 +2,16 @@ export const fdmInstancesMockData = [
   {
     id: `blog_Post_1`,
     externalId: '1',
+    space: 'blog',
     title: 'Lorem Ipsum',
     views: 254,
     user: { externalId: '123' },
     tags: ['Lorem', 'Ipsum'],
     comments: [
-      { externalId: '987' },
-      { externalId: '995' },
-      { externalId: '996' },
-      { externalId: '997' },
+      { externalId: '987', space: 'blog' },
+      { externalId: '995', space: 'blog' },
+      { externalId: '996', space: 'blog' },
+      { externalId: '997', space: 'blog' },
     ],
 
     _metadata_type: 'node',
@@ -23,9 +24,10 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Post_2',
     externalId: '2',
+    space: 'blog',
     title: 'Sic Dolor amet',
     views: 65,
-    user: { externalId: '456' },
+    user: { externalId: '456', space: 'blog' },
     tags: ['Sic', 'Dolor'],
     comments: [],
 
@@ -39,9 +41,10 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Post_3',
     externalId: '3',
+    space: 'blog',
     title: 'Lorem Sic Dolor amet',
     views: 100,
-    user: { externalId: '456' },
+    user: { externalId: '456', space: 'blog' },
     tags: ['Dolor', 'Lorem'],
     comments: [],
 
@@ -55,6 +58,7 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_User_123',
     externalId: '123',
+    space: 'blog',
     name: 'John Doe',
 
     _metadata_type: 'node',
@@ -67,6 +71,7 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_User_456',
     externalId: '456',
+    space: 'blog',
     name: 'Jane Doe',
 
     _metadata_type: 'node',
@@ -79,7 +84,8 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_987',
     externalId: '987',
-    post: { externalId: '1' },
+    space: 'blog',
+    post: { externalId: '1', space: 'blog' },
     body: 'Consectetur adipiscing elit',
     date: 1651346026630,
 
@@ -93,7 +99,8 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_995',
     externalId: '995',
-    post: { externalId: '1' },
+    space: 'blog',
+    post: { externalId: '1', space: 'blog' },
     body: 'Nam molestie pellentesque dui',
     date: 1651346026630,
 
@@ -107,7 +114,8 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_996',
     externalId: '996',
-    post: { externalId: '1' },
+    space: 'blog',
+    post: { externalId: '1', space: 'blog' },
     body: 'Random comment 996',
     date: 1651346026630,
 
@@ -121,7 +129,8 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_997',
     externalId: '997',
-    post: { externalId: '1' },
+    space: 'blog',
+    post: { externalId: '1', space: 'blog' },
     body: 'Random comment 997',
     date: 1651346026630,
 

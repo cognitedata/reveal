@@ -20,11 +20,13 @@ export type DataPreviewSidebarData =
       externalId: string;
       fieldName: string;
       fieldType: DataModelTypeDefsType;
+      instanceSpace: string;
     }
   | {
       type: 'list';
       externalId: string;
       fieldName: string;
+      instanceSpace: string;
     }
   | {
       type: 'json';
@@ -64,6 +66,7 @@ export const CollapsiblePanelContainer: React.FC<
           dataModelType={dataModelType}
           dataModelTypeDefs={dataModelTypeDefs}
           dataModelVersion={dataModelVersion}
+          instanceSpace={data.instanceSpace}
         />
       );
     } else if (data.type === 'json') {
@@ -78,7 +81,8 @@ export const CollapsiblePanelContainer: React.FC<
           externalId={data.externalId}
           dataModelType={data.fieldType}
           dataModelExternalId={dataModelVersion.externalId}
-          space={dataModelVersion.space}
+          dataModelSpace={dataModelVersion.space}
+          instanceSpace={data.instanceSpace}
         />
       );
     }

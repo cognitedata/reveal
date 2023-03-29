@@ -26,10 +26,12 @@ export interface SearchDataDTO extends DataQueryingBaseDTO {
 }
 
 export interface GetByExternalIdDTO {
+  dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
-  dataModelVersion: DataModelVersion;
+  dataModelSpace: string;
   externalId: string;
+  instanceSpace: string;
   nestedLimit: number;
   nestedCursors?: { [key in string]: string };
   nestedFilters?: { [key in string]: QueryFilter };
@@ -37,6 +39,7 @@ export interface GetByExternalIdDTO {
    * What fields to include for query (if specified only these fields will be queried)
    */
   limitFields?: string[];
+  version: string;
 }
 
 export interface FetchPublishedRowsCountDTO {
