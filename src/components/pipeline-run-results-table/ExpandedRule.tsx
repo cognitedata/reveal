@@ -11,6 +11,7 @@ import {
 
 import ResourceName from './ResourceName';
 import { Colors } from '@cognite/cogs.js';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type ExpandedRuleTableRecord = EMPipelineGeneratedRuleMatch & { key: number };
 
@@ -72,6 +73,7 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         dataSource={dataSource}
         emptyContent={undefined}
         appendTooltipTo={undefined}
+        pagination={PAGINATION_SETTINGS}
         rowSelection={{
           selectedRowKeys,
           onChange: handleSelectRow,

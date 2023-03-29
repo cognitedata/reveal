@@ -13,6 +13,7 @@ import {
 import Extractor from './Extractor';
 import { Icon } from '@cognite/cogs.js';
 import ExpandedRule from './ExpandedRule';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
 
@@ -99,6 +100,7 @@ const GroupedResultsTable = ({
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}
+      pagination={PAGINATION_SETTINGS}
       expandable={{
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
