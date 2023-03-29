@@ -16,6 +16,8 @@ import FileInfoTable from './FilesTable';
 import { DataSetSelect } from 'components/data-set-select';
 import SearchInput from 'components/search-input';
 import ThreeDTable from './Three3Table';
+import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
+import styled from 'styled-components';
 
 const { Option } = Select;
 
@@ -80,113 +82,128 @@ export default function SourceSelectionTable({}: Props) {
     [unmatchedOnly, sourceType, query]
   );
 
+  const onClose = () => setSourcesList([]);
+
   return (
-    <Flex direction="column">
-      <Flex justifyContent="space-between">
-        <Flex direction="row" gap={12} alignItems="center">
-          <Overline>{t('resource-type')}</Overline>
-          <Select
-            style={{ width: 220 }}
-            defaultValue="timeseries"
-            onChange={handleSelectSourceType}
-          >
-            {sourceTypeOptions.map(({ value, label }) => (
-              <Option key={value} value={value}>
-                {label}
-              </Option>
-            ))}
-          </Select>
-          {supportsBasicFilter[sourceType] && (
-            <>
-              <Overline>{t('filter', { count: 0 })}</Overline>
-              <DataSetSelect
-                api={sourceType}
-                onChange={(id?: number) => {
-                  setSourceFilter({
-                    ...sourceFilter,
-                    dataSetIds:
-                      id && Number.isFinite(id) ? [{ id }] : undefined,
-                  });
-                }}
-                selected={sourceFilter.dataSetIds?.[0]?.id}
-              />
-              <SearchInput
-                disabled={allSources}
-                value={query || ''}
-                placeholder={t('filter-by-name-placeholder')}
-                onChange={(e) => {
-                  searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
-                  setSearchParams(searchParams);
-                }}
-              />
-            </>
-          )}
-          {supportsAdvancedFilter[sourceType] && (
-            <Checkbox
-              onChange={(e) => setUnmatchedOnly(e.target.checked)}
-              checked={unmatchedOnly}
-              label={t('filter-only-unmatched-items')}
-            />
-          )}
-        </Flex>
-        {supportsBasicFilter[sourceType] && (
-          <Flex alignItems="center" gap={12}>
-            {sourceType !== 'threeD' && (
-              <ResourceCount
-                type={sourceType}
-                filter={sourceFilter}
-                advancedFilter={advancedFilter}
+    <Container $isActionBarVisible={!!sourcesList.length}>
+      <Flex direction="column">
+        <Flex justifyContent="space-between">
+          <Flex direction="row" gap={12} alignItems="center">
+            <Overline>{t('resource-type')}</Overline>
+            <Select
+              style={{ width: 220 }}
+              defaultValue="timeseries"
+              onChange={handleSelectSourceType}
+            >
+              {sourceTypeOptions.map(({ value, label }) => (
+                <Option key={value} value={value}>
+                  {label}
+                </Option>
+              ))}
+            </Select>
+            {supportsBasicFilter[sourceType] && (
+              <>
+                <Overline>{t('filter', { count: 0 })}</Overline>
+                <DataSetSelect
+                  api={sourceType}
+                  onChange={(id?: number) => {
+                    setSourceFilter({
+                      ...sourceFilter,
+                      dataSetIds:
+                        id && Number.isFinite(id) ? [{ id }] : undefined,
+                    });
+                  }}
+                  selected={sourceFilter.dataSetIds?.[0]?.id}
+                />
+                <SearchInput
+                  disabled={allSources}
+                  value={query || ''}
+                  placeholder={t('filter-by-name-placeholder')}
+                  onChange={(e) => {
+                    searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
+                    setSearchParams(searchParams);
+                  }}
+                />
+              </>
+            )}
+            {supportsAdvancedFilter[sourceType] && (
+              <Checkbox
+                onChange={(e) => setUnmatchedOnly(e.target.checked)}
+                checked={unmatchedOnly}
+                label={t('filter-only-unmatched-items')}
               />
             )}
-
-            <Checkbox
-              checked={!query && allSources}
-              disabled={!!query}
-              onChange={(e) => setAllSources(e.target.checked)}
-              label="Select all"
-            />
           </Flex>
-        )}
-      </Flex>
+          {supportsBasicFilter[sourceType] && (
+            <Flex alignItems="center" gap={12}>
+              {sourceType !== 'threeD' && (
+                <ResourceCount
+                  type={sourceType}
+                  filter={sourceFilter}
+                  advancedFilter={advancedFilter}
+                />
+              )}
 
-      {sourceType === 'timeseries' && (
-        <TimeseriesTable
-          filter={sourceFilter}
-          selected={sourcesList}
-          setSelected={setSourcesList}
-          advancedFilter={advancedFilter}
-          allSources={allSources}
-        />
-      )}
-      {sourceType === 'events' && (
-        <EventTable
-          filter={sourceFilter}
-          selected={sourcesList}
-          setSelected={setSourcesList}
-          advancedFilter={advancedFilter}
-          allSources={allSources}
-        />
-      )}
-      {sourceType === 'files' && (
-        <FileInfoTable
-          filter={sourceFilter}
-          selected={sourcesList}
-          setSelected={setSourcesList}
-          advancedFilter={advancedFilter}
-          allSources={allSources}
-          query={query}
-        />
-      )}
-      {sourceType === 'sequences' && (
-        <SequenceTable
-          filter={sourceFilter}
-          selected={sourcesList}
-          setSelected={setSourcesList}
-          advancedFilter={advancedFilter}
-          allSources={allSources}
-        />
-      )}
-      {sourceType === 'threeD' && <ThreeDTable />}
-    </Flex>
+              <Checkbox
+                checked={!query && allSources}
+                disabled={!!query}
+                onChange={(e) => setAllSources(e.target.checked)}
+                label="Select all"
+              />
+            </Flex>
+          )}
+        </Flex>
+
+        {sourceType === 'timeseries' && (
+          <TimeseriesTable
+            filter={sourceFilter}
+            selected={sourcesList}
+            setSelected={setSourcesList}
+            advancedFilter={advancedFilter}
+            allSources={allSources}
+          />
+        )}
+        {sourceType === 'events' && (
+          <EventTable
+            filter={sourceFilter}
+            selected={sourcesList}
+            setSelected={setSourcesList}
+            advancedFilter={advancedFilter}
+            allSources={allSources}
+          />
+        )}
+        {sourceType === 'files' && (
+          <FileInfoTable
+            filter={sourceFilter}
+            selected={sourcesList}
+            setSelected={setSourcesList}
+            advancedFilter={advancedFilter}
+            allSources={allSources}
+            query={query}
+          />
+        )}
+        {sourceType === 'sequences' && (
+          <SequenceTable
+            filter={sourceFilter}
+            selected={sourcesList}
+            setSelected={setSourcesList}
+            advancedFilter={advancedFilter}
+            allSources={allSources}
+          />
+        )}
+        {sourceType === 'threeD' && <ThreeDTable />}
+      </Flex>
+      <QuickMatchActionBar
+        selectedRows={sourcesList}
+        sourceType={sourceType}
+        onClose={onClose}
+      />
+    </Container>
   );
 }
+
+const Container = styled.div<{ $isActionBarVisible?: boolean }>`
+  overflow-y: auto;
+  padding-bottom: ${({ $isActionBarVisible }) =>
+    $isActionBarVisible ? 56 : 0}px;
+`;
