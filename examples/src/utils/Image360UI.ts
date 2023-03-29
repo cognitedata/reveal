@@ -21,9 +21,7 @@ export class Image360UI {
       const revisions = selectedEntity.list360ImageRevisions();
       if (revisions.length > 0) {
         console.log('Available revisions:');
-        selectedEntity
-          .list360ImageRevisions()
-          .forEach(revision => console.log('- Id ' + revision.id + ', ' + revision.date));
+        revisions.forEach(revision => console.log('- Id ' + revision.id + ', ' + revision.date));
       }
     };
 
