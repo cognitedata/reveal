@@ -73,7 +73,7 @@ const PipelineRunResultsTable = ({
       }) ?? [];
     const previouslyConfirmedMatches =
       run.matches?.filter(
-        ({ matchType }) => matchType === 'previously_mapped'
+        ({ matchType }) => matchType === 'previously-confirmed'
       ) ?? [];
     const differentRecommendationMatches =
       run.matches?.filter(({ source, target }) => {

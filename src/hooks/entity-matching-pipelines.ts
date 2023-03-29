@@ -322,10 +322,7 @@ export const useDuplicateEMPipeline = () => {
 
 type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
-type EMPipelineMatchType =
-  | 'previously_mapped'
-  | 'model'
-  | 'rule_rule_input_pattern->rule_predict_pattern';
+type EMPipelineMatchType = 'previously-confirmed' | 'model';
 
 export type EMPipelineResource = Record<string, unknown>;
 export type EMPipelineSource = EMPipelineResource;
