@@ -138,6 +138,8 @@
   "resource-file_one": "File",
   "resource-file_other": "Files",
   "resource-selected-with-count": "{{resourceWithCount}} selected",
+  "matches-with-count_one": "{{count}} match selected",
+  "matches-with-count_other": "{{count}} matches selected",
   "resource-table-column-description": "Description",
   "resource-table-column-directory": "Directory",
   "resource-table-column-lastUpdated": "Last updated",
@@ -219,5 +221,6 @@
   "matched": "Matched",
   "previously-confirmed": "Previously confirmed",
   "different-recommendation": "Different recommendation",
-  "all": "All"
+  "all": "All",
+  "select-all-matches": "Select all matches"
 }

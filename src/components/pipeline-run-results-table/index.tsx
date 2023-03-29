@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Body, Button, Checkbox, Flex } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Select } from 'antd';
 
@@ -84,6 +84,14 @@ const PipelineRunResultsTable = ({
     setSelectedMatchType(value);
   };
 
+  const handleSelectAllMatches = (): void => {
+    setSelectedSourceIds(
+      (run.matches
+        ?.filter(({ source }) => typeof source?.id === 'number')
+        .map(({ source }) => source?.id) as number[] | undefined) ?? []
+    );
+  };
+
   useEffect(() => {
     if (shouldGroupByPattern) {
       setSelectedMatchType('all');
@@ -92,20 +100,35 @@ const PipelineRunResultsTable = ({
 
   return (
     <Flex direction="column" gap={16}>
-      <Flex gap={16}>
-        <Select
-          disabled={shouldGroupByPattern}
-          options={matchTypeOptions}
-          onChange={handleSelectMatchType}
-          style={{ width: 300 }}
-          value={selectedMatchType}
-        />
-        <Checkbox
-          disabled={!run.generatedRules || run.generatedRules.length === 0}
-          label={t('group-by-pattern')}
-          checked={shouldGroupByPattern}
-          onChange={(e) => setShouldGroupByPattern(e.target.checked)}
-        />
+      <Flex gap={16} justifyContent="space-between">
+        <Flex gap={16}>
+          <Select
+            disabled={shouldGroupByPattern}
+            options={matchTypeOptions}
+            onChange={handleSelectMatchType}
+            style={{ width: 300 }}
+            value={selectedMatchType}
+          />
+          <Checkbox
+            disabled={!run.generatedRules || run.generatedRules.length === 0}
+            label={t('group-by-pattern')}
+            checked={shouldGroupByPattern}
+            onChange={(e) => setShouldGroupByPattern(e.target.checked)}
+          />
+        </Flex>
+        <Flex alignItems="center" gap={16}>
+          {selectedSourceIds.length > 0 && (
+            <Body level={2} muted>
+              {t('matches-with-count', { count: selectedSourceIds.length })}
+            </Body>
+          )}
+          <Button
+            disabled={selectedSourceIds.length === run.matches?.length}
+            onClick={handleSelectAllMatches}
+          >
+            {t('select-all-matches')}
+          </Button>
+        </Flex>
       </Flex>
       {shouldGroupByPattern ? (
         <GroupedResultsTable
