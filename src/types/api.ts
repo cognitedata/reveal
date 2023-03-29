@@ -5,7 +5,6 @@ import {
   InternalId,
   Timeseries,
   Sequence,
-  DataSet,
 } from '@cognite/sdk';
 
 export type RawTimeseries = Omit<
@@ -27,7 +26,6 @@ export type RawCogniteEvent = Omit<
 export type RawAsset = Omit<Asset, 'lastUpdatedTime' | 'createdTime'> & {
   lastUpdatedTime: number;
   createdTime: number;
-  dataSet: DataSet;
 };
 
 export type RawFileInfo = Omit<FileInfo, 'lastUpdatedTime' | 'createdTime'> & {
