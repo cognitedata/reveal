@@ -104,7 +104,13 @@ const GroupedResultsTable = ({
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) =>
           !!record.matches ? (
-            <ExpandedRule matches={record.matches} confirmedPredictions={[]} />
+            <ExpandedRule
+              matches={record.matches}
+              confirmedPredictions={[]}
+              setConfirmedPredictions={(keys) =>
+                alert(`TODO ${JSON.stringify(keys)}`)
+              }
+            />
           ) : (
             false
           ),

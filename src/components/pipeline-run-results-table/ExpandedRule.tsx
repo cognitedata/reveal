@@ -18,7 +18,7 @@ type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
 type ExpandedRuleProps = {
   matches: RuleMatch[];
   confirmedPredictions: number[];
-  setConfirmedPredictions?: Dispatch<SetStateAction<number[]>>;
+  setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
 const ExpandedRule = ({
@@ -65,19 +65,15 @@ const ExpandedRule = ({
   const rowSelection: TableRowSelection<ExpandedRuleTableRecord> = {
     selectedRowKeys: confirmedPredictions,
     onSelectAll(all) {
-      if (setConfirmedPredictions) {
-        if (all) {
-          setConfirmedPredictions(matches.map((p) => p.source.id));
-        } else {
-          setConfirmedPredictions([]);
-        }
+      if (all) {
+        setConfirmedPredictions(matches.map((p) => p.source.id));
+      } else {
+        setConfirmedPredictions([]);
       }
     },
     onChange(keys, _, info) {
       if (info.type === 'single') {
-        if (setConfirmedPredictions) {
-          setConfirmedPredictions(keys as number[]);
-        }
+        setConfirmedPredictions(keys as number[]);
       }
     },
     columnWidth: 36,
