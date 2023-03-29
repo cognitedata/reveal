@@ -13,6 +13,7 @@ export class Image360Entity implements Image360 {
   private readonly _image360Icon: Image360Icon;
   private readonly _revisions: Image360RevisionEntity[];
   private _activeRevisionId: number;
+  private readonly _reloadImage: (entity: Image360Entity, revision: number) => Promise<void>;
 
   /**
    * Get the icon that represents the 360
@@ -28,9 +29,11 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon
+    icon: Image360Icon,
+    reloadImage: (entity: Image360Entity, revision: number) => Promise<void>
   ) {
     this._image360Icon = icon;
+    this._reloadImage = reloadImage;
     this._activeRevisionId = 0;
 
     this._revisions = image360Metadata.imageRevisions.map((descriptor, revision) => {
@@ -56,30 +59,36 @@ export class Image360Entity implements Image360 {
   }
 
   /**
+   * Will reload the entity with images from the new revision.
+   * Resolves once loading is complete. Rejects if revision could not be changed.
+   * If the entity is not entered/visible the promise will be resolved right away.
+   * @returns Promise for when revision has either been updated or it failed to change.
+   */
+  public changeRevision(revisionId: number): Promise<void> {
+    if (!this.getRevision(revisionId)) {
+      return Promise.reject(Error('Invalid revision id.', { cause: 'invalid' }));
+    }
+    return this._reloadImage(this, revisionId);
+  }
+
+  /**
    * Get the revision that is currently loaded for this entry.
    * @returns Returns the active revision.
    */
   public getActiveRevision(): Image360RevisionEntity {
-    return this.getRevision(this._activeRevisionId);
+    return this.getRevision(this._activeRevisionId) ?? this.getMostRecentRevision();
   }
 
   /**
    * Set the revision to be loaded for this entity.
    * If there are no revisions with the provided id, the most recent revision wil be set as active.
    */
-  public setActiveRevision(revisionId: number): Image360RevisionEntity {
-    const revision = this.getRevision(revisionId);
+  public setActiveRevision(revision: Image360RevisionEntity): void {
     this._activeRevisionId = revision.revisionId;
-    return revision;
   }
 
-  /**
-   * Returns the revision with the provided id.
-   * If there are no revisions with this id, the most recent revision will be returned
-   */
-  public getRevision(revisionId: number): Image360RevisionEntity {
-    const revision = this._revisions.find(revision => revisionId === revision.revisionId);
-    return revision ? revision : this.getMostRecentRevision();
+  public getRevision(revisionId: number): Image360RevisionEntity | undefined {
+    return this._revisions.find(revision => revisionId === revision.revisionId);
   }
 
   /**

@@ -16,9 +16,15 @@ export class Image360UI {
 
     const onImageEntered: Image360EnteredDelegate = entity => {
       selectedEntity = entity;
-      const date = selectedEntity.getActiveRevision().date;
-      console.log('Entered: ' + date);
-      selectedEntity.list360ImageRevisions().forEach(revision => console.log(revision.id + ': ' + revision.date));
+      console.warn('Current revision: ' + selectedEntity.getActiveRevision().date);
+
+      const revisions = selectedEntity.list360ImageRevisions();
+      if (revisions.length > 0) {
+        console.log('Available revisions:');
+        selectedEntity
+          .list360ImageRevisions()
+          .forEach(revision => console.log('- Id ' + revision.id + ', ' + revision.date));
+      }
     };
 
     const translation = {
@@ -94,7 +100,13 @@ export class Image360UI {
       .add(imageRevisions, 'id')
       .name('Current image revision')
       .onChange(() => {
-        viewer.setCurrent360ImageRevision(Number(imageRevisions.id));
+        if (selectedEntity) {
+          selectedEntity.changeRevision(Number(imageRevisions.id)).catch(e => {
+            const error = e as Error;
+            console.error(error.message);
+            console.log(error.cause);
+          });
+        }
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');

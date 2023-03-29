@@ -10,6 +10,7 @@ import { Image360CollectionFactory } from './collection/Image360CollectionFactor
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import { IconCullingScheme } from './icons/IconCollection';
 import pullAll from 'lodash/pullAll';
+import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -41,9 +42,15 @@ export class Image360Facade<T> {
   public async create(
     dataProviderFilter: T,
     postTransform = new THREE.Matrix4(),
-    preComputedRotation = true
+    preComputedRotation = true,
+    reloadImage: (entity: Image360Entity, revision: number) => Promise<void>
   ): Promise<DefaultImage360Collection> {
-    const image360Collection = await this._entityFactory.create(dataProviderFilter, postTransform, preComputedRotation);
+    const image360Collection = await this._entityFactory.create(
+      dataProviderFilter,
+      postTransform,
+      preComputedRotation,
+      reloadImage
+    );
     this._image360Collections.push(image360Collection);
     return image360Collection;
   }
@@ -63,8 +70,8 @@ export class Image360Facade<T> {
     pullAll(this._image360Collections, disposeableCollections);
   }
 
-  public preload(entity: Image360Entity, revisionId: number, lockDownload?: boolean): Promise<void> {
-    return this._image360Cache.cachedPreload(entity, revisionId, lockDownload);
+  public preload(revision: Image360RevisionEntity, lockDownload?: boolean): Promise<void> {
+    return this._image360Cache.cachedPreload(revision, lockDownload);
   }
 
   public intersect(
