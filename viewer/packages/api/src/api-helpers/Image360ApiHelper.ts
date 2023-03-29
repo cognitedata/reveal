@@ -134,9 +134,9 @@ export class Image360ApiHelper {
     };
     const imageCollection = await this._image360Facade.create(
       eventFilter,
+      reloadImage,
       collectionTransform,
-      preMultipliedRotation,
-      reloadImage
+      preMultipliedRotation
     );
     this._requestRedraw();
     return imageCollection;
