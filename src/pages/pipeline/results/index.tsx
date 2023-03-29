@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import { Button, Loader } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 
 import NoAccessPage from 'components/error-pages/NoAccess';
@@ -33,6 +36,10 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
       enabled: !!pipelineId && !!jobId,
     }
   );
+
+  const [selectedSourceIds, setSelectedSourceIds] = useState<
+    CogniteInternalId[]
+  >([]);
 
   if (error) {
     if (error?.status === 403) {
@@ -78,7 +85,12 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
           title={t('result-step-title', { step: 4 })}
           subtitle={t('result-step-subtitle')}
         >
-          <PipelineRunResultsTable pipeline={pipeline} run={emPipelineRun} />
+          <PipelineRunResultsTable
+            pipeline={pipeline}
+            run={emPipelineRun}
+            selectedSourceIds={selectedSourceIds}
+            setSelectedSourceIds={setSelectedSourceIds}
+          />
         </Step>
       </Page>
     );

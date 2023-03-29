@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { Checkbox, Flex } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -19,6 +19,8 @@ import MatchTypeOptionContent from './MatchTypeOptionContent';
 type PipelineRunResultsTableProps = {
   pipeline: Pipeline;
   run: EMPipelineRun;
+  selectedSourceIds: CogniteInternalId[];
+  setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
 type MatchType =
@@ -36,14 +38,12 @@ type MatchOptionType = {
 const PipelineRunResultsTable = ({
   pipeline,
   run,
+  selectedSourceIds,
+  setSelectedSourceIds,
 }: PipelineRunResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
 
   const [shouldGroupByPattern, setShouldGroupByPattern] = useState(false);
-
-  const [selectedSourceIds, setSelectedSourceIds] = useState<
-    CogniteInternalId[]
-  >([]);
 
   const [selectedMatchType, setSelectedMatchType] = useState<MatchType>('all');
 
