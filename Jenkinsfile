@@ -328,7 +328,7 @@ pods {
                 appHosting(
                   appName: firebaseSiteName,
                   environment: releaseToProd ? 'production' : 'staging',
-                  firebaseJson: 'build/firebase.json',
+                  firebaseJson: "dist/apps/${project}/firebase.json",
                   buildCommand: "yarn build production ${project}",
                   buildFolder: "dist/apps/${project}",
                 )
