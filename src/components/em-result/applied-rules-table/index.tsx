@@ -3,30 +3,41 @@ import { Flex, Icon } from '@cognite/cogs.js';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import ExpandedRule from 'components/pipeline-run-results-table/ExpandedRule';
+import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
 import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
-import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
-import MatchInfoButton from './MatchInfoButton';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 type Props = {
-  appliedRules?: AppliedRule[];
   predictions: Prediction[];
+  appliedRules?: AppliedRule[];
+  confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
 type AppliedRuleTableRecord = { key: number } & AppliedRule;
 type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
   title: string;
-  key: 'pattern' | 'fields' | 'numberOfMatches' | 'matches';
+  key: 'pattern' | 'fields' | 'numberOfMatches' | 'matches' | 'expandable';
 };
 
 export default function AppliedRulesTable({
   appliedRules,
+  confirmedPredictions,
   setConfirmedPredictions,
 }: Props) {
-  useEffect(() => {}, []);
-
   const { t } = useTranslation();
+
+  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
+  const handleClickExpandButton = (clickedRowKey: number) => {
+    setExpandedRowKeys((prevState) =>
+      prevState.includes(clickedRowKey)
+        ? prevState.filter((key) => key !== clickedRowKey)
+        : prevState.concat(clickedRowKey)
+    );
+  };
+
   const columns: AppliedRuleTableRecordCT[] = useMemo(
     () => [
       {
@@ -69,15 +80,27 @@ export default function AppliedRulesTable({
         width: 100,
         sorter: (a: AppliedRule, b: AppliedRule) =>
           a.numberOfMatches - b.numberOfMatches,
-        render: (rule: AppliedRule) => (
-          <Flex alignItems="center" gap={12}>
-            <>{rule.numberOfMatches.toLocaleString()}</>
-            <MatchInfoButton rule={rule} />
-          </Flex>
+        render: (rule: AppliedRule) => rule.numberOfMatches.toLocaleString(),
+      },
+      {
+        title: '',
+        dataIndex: 'matches',
+        key: 'expandable',
+        render: (_, record) => (
+          <ExpandButton onClick={() => handleClickExpandButton(record.key)}>
+            <Icon
+              type={
+                expandedRowKeys.includes(record.key)
+                  ? 'ChevronDown'
+                  : 'ChevronRight'
+              }
+            />
+          </ExpandButton>
         ),
+        width: 64,
       },
     ],
-    [t]
+    [t, expandedRowKeys]
   );
 
   const appliedRulesList = useMemo(
@@ -91,6 +114,7 @@ export default function AppliedRulesTable({
 
   const rowSelection: TableRowSelection<AppliedRuleTableRecord> = {
     hideSelectAll: true,
+
     onChange(selectedKeys) {
       const confirmed = (selectedKeys as number[]).reduce(
         (accl: number[], i) => [
@@ -115,6 +139,21 @@ export default function AppliedRulesTable({
       dataSource={appliedRulesList}
       pagination={PAGINATION_SETTINGS}
       rowSelection={rowSelection}
+      expandable={{
+        showExpandColumn: false,
+        expandedRowKeys: expandedRowKeys,
+        expandedRowRender: (record) =>
+          !!record.matches ? (
+            <ExpandedRule
+              matches={record.matches}
+              selectedSourceIds={confirmedPredictions}
+              setSelectedSourceIds={setConfirmedPredictions}
+            />
+          ) : (
+            false
+          ),
+        indentSize: 64,
+      }}
     />
   );
 }
