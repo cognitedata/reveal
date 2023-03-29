@@ -77,7 +77,11 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
   if (pipeline) {
     return (
       <Page
-        extraContent={<Button type="primary">Apply (TODO)</Button>}
+        extraContent={
+          <Button disabled={selectedSourceIds.length === 0} type="primary">
+            {t('apply-selected-matches', { count: selectedSourceIds.length })}
+          </Button>
+        }
         subtitle={pipeline?.description}
         title={pipeline?.name ?? ''}
       >
