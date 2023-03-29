@@ -102,7 +102,8 @@ const GroupedResultsTable = ({
       expandable={{
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
-        expandedRowRender: (record) => <ExpandedRule rule={record} />,
+        expandedRowRender: (record) =>
+          !!record.matches ? <ExpandedRule matches={record.matches} /> : false,
         indentSize: 64,
       }}
       rowSelection={{

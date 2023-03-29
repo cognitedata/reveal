@@ -21,9 +21,9 @@ export default function MatchInfoButton({ rule }: Props) {
         >
           {rule.matches.map((m, i) => (
             <Flex key={i} gap={12} alignItems="center">
-              {get(m.source, rule.rule.extractors[0]?.field)}
+              <>{get(m.source, rule.rule.extractors[0]?.field)}</>
               <Icon type="ArrowRight" />
-              {get(m.target, rule.rule.extractors[1]?.field)}
+              <>{get(m.target, rule.rule.extractors[1]?.field)}</>
             </Flex>
           ))}
         </Modal>

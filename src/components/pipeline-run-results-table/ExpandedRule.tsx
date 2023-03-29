@@ -4,25 +4,22 @@ import { ColumnType, Table } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import {
-  EMPipelineGeneratedRule,
-  EMPipelineGeneratedRuleMatch,
-} from 'hooks/entity-matching-pipelines';
 
 import ResourceName from './ResourceName';
 import { Colors } from '@cognite/cogs.js';
+import { RuleMatch } from 'hooks/entity-matching-rules';
 
-type ExpandedRuleTableRecord = EMPipelineGeneratedRuleMatch & { key: number };
+type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
 type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
   title: string;
 };
 
 type ExpandedRuleProps = {
-  rule: EMPipelineGeneratedRule;
+  matches: RuleMatch[];
 };
 
-const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
+const ExpandedRule = ({ matches }: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
@@ -33,7 +30,7 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
-        render: (source: EMPipelineGeneratedRuleMatch['source']) => (
+        render: (source: RuleMatch['source']) => (
           <ResourceName resource={source} />
         ),
       },
@@ -41,7 +38,7 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
         title: t('qm-result-target'),
         dataIndex: 'target',
         key: 'target',
-        render: (target: EMPipelineGeneratedRuleMatch['target']) => (
+        render: (target: RuleMatch['target']) => (
           <ResourceName resource={target} />
         ),
       },
@@ -51,14 +48,14 @@ const ExpandedRule = ({ rule }: ExpandedRuleProps): JSX.Element => {
 
   const dataSource = useMemo(
     () =>
-      rule.matches?.map((match) => ({
+      matches?.map((match) => ({
         ...match,
         key:
           match.source?.id && typeof match.source.id === 'number'
             ? match.source.id
             : -1,
       })),
-    [rule.matches]
+    [matches]
   );
 
   const handleSelectRow = (selectedRowKeys: Key[]) => {

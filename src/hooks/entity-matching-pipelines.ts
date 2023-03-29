@@ -14,6 +14,7 @@ import { PipelineSourceType, TargetType } from 'types/api';
 import { toast } from '@cognite/cogs.js';
 import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
 import { DEFAULT_MODEL_FEATURE_TYPE } from 'common/constants';
+import { RuleMatch } from './entity-matching-rules';
 
 export type Pipeline = {
   id: number;
@@ -354,17 +355,18 @@ type EMPipelineMatchCondition = {
 
 type EMPipelineGeneratedRuleExistingMatchType = 'model';
 
-export type EMPipelineGeneratedRuleMatch = {
+type EMPipelineGeneratedRuleMatch = {
   consistentMatch?: boolean;
   existingMatchType?: EMPipelineGeneratedRuleExistingMatchType;
-  source: Record<string, unknown>;
-  target: Record<string, unknown>;
+  source: { id: number } & Record<string, unknown>;
+  target: { id: number } & Record<string, unknown>;
 };
 
 export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
   conditions?: EMPipelineMatchCondition[];
-  matches?: EMPipelineGeneratedRuleMatch[];
+  matches?: RuleMatch[];
+  priority: number;
 };
 
 export type EMPipelineRun = {
