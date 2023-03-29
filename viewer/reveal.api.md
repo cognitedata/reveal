@@ -388,7 +388,6 @@ export class Cognite3DViewer {
     setCameraManager(cameraManager: CameraManager): void;
     // @deprecated
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
-    setCurrent360ImageRevision(revisonId: number): void;
     setGlobalClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
@@ -780,6 +779,7 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
+    changeRevision(revisionId: number): Promise<void>;
     getActiveRevision(): Image360Revision;
     list360ImageRevisions(): {
         id: number;
