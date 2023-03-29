@@ -23,7 +23,7 @@
     "@cognite/cogs.js": "^9.5.1",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-feature-flags": "^0.2.0",
-    "@cognite/reveal": "^4.1.0",
+    "@cognite/reveal": "^4.2.0",
     "@cognite/sdk": "^7.14.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
