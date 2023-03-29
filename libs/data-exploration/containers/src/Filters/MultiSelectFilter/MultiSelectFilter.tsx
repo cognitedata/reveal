@@ -43,6 +43,8 @@ export const MultiSelectFilter = <ValueType,>({
   value,
   onChange,
   options: defaultOptions,
+  isLoading,
+  isError,
   ...rest
 }: MultiSelectFilterProps<ValueType>) => {
   const handleChange = (newOptions: OptionType<ValueType | undefined>[]) => {
@@ -71,6 +73,8 @@ export const MultiSelectFilter = <ValueType,>({
 
       <MultiSelect<ValueType | undefined>
         {...rest}
+        isLoading={isLoading}
+        isError={isError}
         options={options}
         data-testid="multi-select-filter"
         value={formatValue(value)}

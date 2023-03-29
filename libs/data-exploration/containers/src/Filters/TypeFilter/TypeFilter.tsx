@@ -8,10 +8,12 @@ import {
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter, MultiSelectOptionType } from '../types';
+import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 
-interface BaseTypeFilterProps<TFilter> extends BaseFilter<TFilter> {
+interface BaseTypeFilterProps<TFilter>
+  extends BaseFilter<TFilter>,
+    CommonFilterProps {
   value?: string | string[];
   onChange?: (type: string | string[]) => void;
   addNilOption?: boolean;
@@ -42,7 +44,11 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
-  const { data: fileTypeItems = [] } = useDocumentAggregateFileTypeQuery();
+  const {
+    data: fileTypeItems = [],
+    isLoading,
+    isError,
+  } = useDocumentAggregateFileTypeQuery();
 
   const options = useDeepMemo(
     () =>
@@ -54,11 +60,23 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
     [fileTypeItems]
   );
 
-  return <TypeFilter {...props} options={options} title="File type" />;
+  return (
+    <TypeFilter
+      {...props}
+      isError={isError}
+      isLoading={isLoading}
+      options={options}
+      title="File type"
+    />
+  );
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
-  const { data = [] } = useEventsUniqueValuesByProperty('type', props.filter);
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useEventsUniqueValuesByProperty('type', props.filter);
 
   const options = useDeepMemo(
     () =>
@@ -70,7 +88,14 @@ const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
     [data]
   );
 
-  return <TypeFilter {...props} options={options} />;
+  return (
+    <TypeFilter
+      {...props}
+      isError={isError}
+      isLoading={isLoading}
+      options={options}
+    />
+  );
 };
 
 TypeFilter.Event = EventTypeFilter;

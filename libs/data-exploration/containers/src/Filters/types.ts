@@ -8,9 +8,9 @@ export interface BaseFilter<TFilter> {
   filter?: TFilter;
 }
 
-interface CommonFilterProps {
-  error?: boolean;
-  loading?: boolean;
+export interface CommonFilterProps {
+  isError?: boolean;
+  isLoading?: boolean;
 }
 
 export interface BaseMultiSelectFilterProps<TFilter, TValue = string>

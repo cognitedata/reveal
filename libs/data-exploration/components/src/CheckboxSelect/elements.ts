@@ -86,3 +86,12 @@ export const OptionMenuContainer: any = styled(Menu)`
   overflow: auto;
   max-width: 270px;
 `;
+
+export const OptionMenuLoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 16px;
+  gap: 8px;
+  text-align: center;
+`;

@@ -43,11 +43,6 @@ export const ChildOptionsMenu = ({
     return data?.options;
   }, [isCustomOptions, data?.options, customOptions]);
 
-  // TODO: Improve the loading state UI.
-  if (isCustomOptions && data?.isLoading) {
-    return <p>Loading</p>;
-  }
-
   if (!options || isEmpty(options)) {
     return null;
   }
@@ -71,6 +66,7 @@ export const ChildOptionsMenu = ({
 
   return (
     <OptionsMenu
+      isLoading={isCustomOptions && data?.isLoading}
       options={options}
       selection={getChildOptionsSelection(
         options,

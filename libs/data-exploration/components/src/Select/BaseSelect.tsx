@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import styled from 'styled-components';
 
 import { components, InputActionMeta, NamedProps } from 'react-select';
 
@@ -7,6 +8,7 @@ import {
   Select as CogsSelect,
   SelectProps as CogsSelectProps,
   Theme,
+  Tooltip,
 } from '@cognite/cogs.js';
 
 import { NIL_FILTER_LABEL, NIL_FILTER_VALUE } from '@data-exploration-lib/core';
@@ -18,10 +20,11 @@ export const NIL_FILTER_OPTION: OptionType<string> = {
 };
 export interface BaseSelectProps<ValueType>
   extends CogsSelectProps<ValueType>,
-    Pick<NamedProps, 'styles' | 'onInputChange'> {
+    Pick<NamedProps, 'styles' | 'onInputChange' | 'isLoading'> {
   creatable?: boolean;
   cogsTheme?: Theme;
   addNilOption?: boolean;
+  isError?: boolean;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
 }
 
@@ -40,6 +43,8 @@ export const BaseSelect = <ValueType,>({
   cogsTheme,
   addNilOption = false,
   options: optionsOriginal,
+  isError = false,
+  isLoading,
   ...rest
 }: BaseSelectProps<ValueType>) => {
   const options = useMemo(() => {
@@ -54,7 +59,9 @@ export const BaseSelect = <ValueType,>({
     closeMenuOnSelect: true,
     theme: cogsTheme,
     options,
-    ...rest,
+    isError,
+    isLoading,
+    ...rest, // Better to put this prop close to styles and after 'theme' due to 'rest.styles'.
     styles: {
       ...rest.styles,
       multiValue: (styles, styleProps) => ({
@@ -102,5 +109,24 @@ export const BaseSelect = <ValueType,>({
   //   );
   // }
 
-  return <CogsSelect {...props} components={{ Option }} />;
+  return (
+    <Tooltip interactive disabled={!isError} content="No data found">
+      <CogsSelectWrapper isError={isError}>
+        <CogsSelect
+          {...props}
+          components={{ Option }}
+          disabled={isError || isLoading}
+        />
+      </CogsSelectWrapper>
+    </Tooltip>
+  );
 };
+
+const CogsSelectWrapper = styled.div<{ isError: boolean }>`
+  border: 1px solid
+    ${(props) =>
+      props.isError
+        ? `var(--cogs-border--status-critical--strong)`
+        : 'transparent'};
+  border-radius: 4px;
+`;

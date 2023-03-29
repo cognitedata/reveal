@@ -1,4 +1,3 @@
-import { Tooltip } from '@cognite/cogs.js';
 import {
   useAssetsUniqueValuesByProperty,
   useDocumentsLabelAggregateQuery,
@@ -22,8 +21,8 @@ export const LabelFilter = <TFilter,>({
   value,
   addNilOption,
   onInputChange,
-  error,
-  loading,
+  isError,
+  isLoading,
 }: Props<TFilter>) => {
   const handleChange = (
     newValue: {
@@ -35,30 +34,20 @@ export const LabelFilter = <TFilter,>({
     onChange?.(newFilters);
   };
 
-  if (loading) {
-    return null;
-  }
-
   return (
-    <Tooltip
-      interactive
-      disabled={!error}
-      content="Error fetching labels, please make sure you have labelsAcl:READ"
-    >
-      <>
-        <MultiSelectFilter<string>
-          label="Labels"
-          options={options}
-          onChange={(_, newValue) => handleChange(newValue)}
-          value={value}
-          onInputChange={onInputChange}
-          isMulti
-          isSearchable
-          isClearable
-          addNilOption={addNilOption}
-        />
-      </>
-    </Tooltip>
+    <MultiSelectFilter<string>
+      label="Labels"
+      isLoading={isLoading}
+      isError={isError}
+      options={options}
+      onChange={(_, newValue) => handleChange(newValue)}
+      onInputChange={onInputChange}
+      value={value}
+      isMulti
+      isSearchable
+      isClearable
+      addNilOption={addNilOption}
+    />
   );
 };
 
@@ -87,8 +76,8 @@ const AssetLabelFilter = (
     <LabelFilter
       {...props}
       onInputChange={(value) => setQuery(value)}
-      error={isError}
-      loading={isLoading}
+      isError={isError}
+      isLoading={isLoading}
       options={options}
     />
   );
@@ -104,7 +93,7 @@ export const DocumentLabelFilter = (
     value: `${item.value}`,
   }));
 
-  return <LabelFilter {...props} options={options} loading={isLoading} />;
+  return <LabelFilter {...props} options={options} isLoading={isLoading} />;
 };
 
 LabelFilter.Asset = AssetLabelFilter;

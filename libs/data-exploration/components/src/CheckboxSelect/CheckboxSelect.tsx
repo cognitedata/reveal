@@ -24,6 +24,7 @@ export type CheckboxSelectProps = {
   onClickApply?: (selection: OptionSelection) => void;
   enableSorting?: boolean;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  isLoading?: boolean;
 } & WidthProps;
 
 export const CheckboxSelect = ({
@@ -35,6 +36,7 @@ export const CheckboxSelect = ({
   useCustomMetadataValuesQuery,
   enableSorting = false,
   width,
+  isLoading,
 }: CheckboxSelectProps) => {
   const [selection, setSelection] = React.useState<OptionSelection>(
     customSelection || EMPTY_OBJECT
@@ -55,6 +57,7 @@ export const CheckboxSelect = ({
     <Dropdown
       content={
         <OptionsMenu
+          isLoading={isLoading}
           options={options}
           selection={selection}
           onChange={handleChange}

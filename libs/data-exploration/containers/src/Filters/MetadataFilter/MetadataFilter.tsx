@@ -41,11 +41,13 @@ export const MetadataFilter = <TFilter,>({
   options,
   useCustomMetadataValuesQuery,
   onChange,
+  ...rest
 }: MetadataFilterProps<TFilter>) => {
   const selection = transformMetadataValues(values);
 
   return (
     <CheckboxSelect
+      {...rest}
       width="100%"
       selection={selection}
       label="Metadata"
@@ -64,12 +66,14 @@ export const MetadataFilter = <TFilter,>({
 const AssetsMetadataFilter = (
   props: BaseNestedFilterProps<InternalAssetFilters>
 ) => {
-  const { data } = useAssetsMetadataKeysAggregateQuery();
+  const { data, isLoading, isError } = useAssetsMetadataKeysAggregateQuery();
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
+      isError={isError}
+      isLoading={isLoading}
       useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery()}
       {...props}
     />
@@ -79,13 +83,15 @@ const AssetsMetadataFilter = (
 const EventsMetadataFilter = (
   props: BaseNestedFilterProps<InternalEventsFilters>
 ) => {
-  const { data } = useEventsMetadataKeysAggregateQuery();
+  const { data, isLoading, isError } = useEventsMetadataKeysAggregateQuery();
 
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
+      isError={isError}
+      isLoading={isLoading}
       useCustomMetadataValuesQuery={useEventsMetadataValuesOptionsQuery()}
       {...props}
     />
@@ -95,13 +101,17 @@ const EventsMetadataFilter = (
 const TimeseriesMetadataFilter = (
   props: BaseNestedFilterProps<InternalTimeseriesFilters>
 ) => {
-  const { data } = useTimeseriesMetadataKeysAggregateQuery(props.filter);
+  const { data, isLoading, isError } = useTimeseriesMetadataKeysAggregateQuery(
+    props.filter
+  );
 
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
+      isError={isError}
+      isLoading={isLoading}
       useCustomMetadataValuesQuery={useTimeseriesMetadataValuesOptionsQuery(
         props.filter
       )}
@@ -113,13 +123,15 @@ const TimeseriesMetadataFilter = (
 const FilesMetadataFilter = (
   props: BaseNestedFilterProps<InternalDocumentFilter>
 ) => {
-  const { data } = useDocumentsMetadataKeysAggregateQuery();
+  const { data, isLoading, isError } = useDocumentsMetadataKeysAggregateQuery();
 
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
+      isError={isError}
+      isLoading={isLoading}
       useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery()}
       {...props}
     />
@@ -129,13 +141,17 @@ const FilesMetadataFilter = (
 const SequencesMetadataFilter = (
   props: BaseNestedFilterProps<InternalSequenceFilters>
 ) => {
-  const { data } = useSequencesMetadataKeysAggregateQuery(props.filter);
+  const { data, isLoading, isError } = useSequencesMetadataKeysAggregateQuery(
+    props.filter
+  );
 
   const options = transformMetadataKeysToOptions(data);
 
   return (
     <MetadataFilter
       options={options}
+      isError={isError}
+      isLoading={isLoading}
       useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery(
         props.filter
       )}

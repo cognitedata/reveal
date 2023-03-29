@@ -2,14 +2,16 @@ import * as React from 'react';
 
 import { useTimeseriesUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter, MultiSelectOptionType } from '../types';
+import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 import {
   InternalTimeseriesFilters,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 
-interface BaseUnitFilterProps<TFilter> extends BaseFilter<TFilter> {
+interface BaseUnitFilterProps<TFilter>
+  extends BaseFilter<TFilter>,
+    CommonFilterProps {
   value?: string | string[];
   onChange?: (newSources: string | string[]) => void;
   addNilOption?: boolean;
@@ -39,10 +41,11 @@ export function UnitFilter<TFilter>({
 const TimeseriesUnitFilter = (
   props: BaseUnitFilterProps<InternalTimeseriesFilters>
 ) => {
-  const { data: units = [] } = useTimeseriesUniqueValuesByProperty(
-    'unit',
-    props.filter
-  );
+  const {
+    data: units = [],
+    isLoading,
+    isError,
+  } = useTimeseriesUniqueValuesByProperty('unit', props.filter);
 
   const options = useDeepMemo(
     () =>
@@ -54,7 +57,14 @@ const TimeseriesUnitFilter = (
     [units]
   );
 
-  return <UnitFilter {...props} options={options} />;
+  return (
+    <UnitFilter
+      {...props}
+      isError={isError}
+      isLoading={isLoading}
+      options={options}
+    />
+  );
 };
 
 UnitFilter.Timeseries = TimeseriesUnitFilter;

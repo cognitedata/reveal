@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Dropdown } from '@cognite/cogs.js';
+import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
 
 import { EMPTY_ARRAY } from '@data-exploration-lib/core';
 
@@ -24,7 +24,11 @@ import { Option } from './Option';
 import { ChildOptionsMenu } from './ChildOptionsMenu';
 import { FilterEmptyState } from './FilterEmptyState';
 import { SortAction } from './SortAction';
-import { OptionContainer, OptionMenuContainer } from '../elements';
+import {
+  OptionContainer,
+  OptionMenuContainer,
+  OptionMenuLoadingWrapper,
+} from '../elements';
 
 export interface OptionsMenuProps {
   options: Array<OptionType>;
@@ -33,6 +37,7 @@ export interface OptionsMenuProps {
   footer?: React.ReactNode;
   enableSorting?: boolean;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  isLoading?: boolean;
 }
 
 export const OptionsMenu = ({
@@ -42,6 +47,7 @@ export const OptionsMenu = ({
   footer,
   enableSorting,
   useCustomMetadataValuesQuery,
+  isLoading,
 }: OptionsMenuProps) => {
   const [displayOptions, setDisplayOptions] = React.useState(options);
 
@@ -101,6 +107,18 @@ export const OptionsMenu = ({
       );
     });
   };
+
+  if (isLoading) {
+    return (
+      <OptionMenuContainer>
+        <OptionMenuLoadingWrapper>
+          <Icon size={21} type="Loader" />
+          <Title level={5}>Loading...</Title>
+          <Body level={3}>Amount of data might affect loading time</Body>
+        </OptionMenuLoadingWrapper>
+      </OptionMenuContainer>
+    );
+  }
 
   return (
     <OptionMenuContainer>

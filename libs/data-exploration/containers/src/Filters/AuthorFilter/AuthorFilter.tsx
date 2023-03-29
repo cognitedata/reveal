@@ -4,10 +4,12 @@ import {
 } from '@data-exploration-lib/core';
 import { useDocumentAggregateAuthorQuery } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter, MultiSelectOptionType } from '../types';
+import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 
-interface BaseAuthorFilterProps<TFilter> extends BaseFilter<TFilter> {
+interface BaseAuthorFilterProps<TFilter>
+  extends BaseFilter<TFilter>,
+    CommonFilterProps {
   value?: string[];
   onChange?: (type: string[]) => void;
   addNilOption?: boolean;
@@ -43,7 +45,7 @@ export function AuthorFilter<TFilter>({
 const AuthorFilterFile = (
   props: BaseAuthorFilterProps<InternalDocumentFilter>
 ) => {
-  const { data = [] } = useDocumentAggregateAuthorQuery();
+  const { data = [], isLoading, isError } = useDocumentAggregateAuthorQuery();
 
   const options = useDeepMemo(
     () =>
@@ -54,7 +56,14 @@ const AuthorFilterFile = (
       })),
     [data]
   );
-  return <AuthorFilter {...props} options={options} />;
+  return (
+    <AuthorFilter
+      {...props}
+      isError={isError}
+      isLoading={isLoading}
+      options={options}
+    />
+  );
 };
 
 AuthorFilter.File = AuthorFilterFile;

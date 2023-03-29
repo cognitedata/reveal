@@ -8,8 +8,10 @@ import { MultiSelectFilter } from '../MultiSelectFilter';
 import {
   BaseFilter,
   BaseMultiSelectFilterProps,
+  CommonFilterProps,
   MultiSelectOptionType,
 } from '../types';
+
 import {
   InternalAssetFilters,
   InternalDocumentFilter,
@@ -24,7 +26,9 @@ export interface SourceFilterProps<TFilter>
   options: MultiSelectOptionType<string>[];
 }
 
-interface BaseFileSourceFilterProps<TFilter> extends BaseFilter<TFilter> {
+interface BaseFileSourceFilterProps<TFilter>
+  extends BaseFilter<TFilter>,
+    CommonFilterProps {
   value?: string[];
   onChange?: (subtype: string[]) => void;
   addNilOption?: boolean;
@@ -75,10 +79,11 @@ const AssetSourceFilter = (
 ) => {
   const [query, setQuery] = useState<string | undefined>(undefined);
 
-  const { data: sources = [] } = useAssetsUniqueValuesByProperty(
-    'source',
-    query
-  );
+  const {
+    data: sources = [],
+    isLoading,
+    isError,
+  } = useAssetsUniqueValuesByProperty('source', query);
 
   const options = useDeepMemo(
     () =>
@@ -93,6 +98,8 @@ const AssetSourceFilter = (
   return (
     <SourceFilter
       {...props}
+      isError={isError}
+      isLoading={isLoading}
       onInputChange={(newValue) => setQuery(newValue)}
       options={options}
     />
@@ -102,7 +109,11 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
-  const { data: sources = [] } = useEventsUniqueValuesByProperty('source');
+  const {
+    data: sources = [],
+    isLoading,
+    isError,
+  } = useEventsUniqueValuesByProperty('source');
 
   const options = useDeepMemo(
     () =>
@@ -114,13 +125,24 @@ const EventSourceFilter = (
     [sources]
   );
 
-  return <SourceFilter {...props} options={options} />;
+  return (
+    <SourceFilter
+      {...props}
+      isError={isError}
+      isLoading={isLoading}
+      options={options}
+    />
+  );
 };
 
 export const FileSourceFilter = (
   props: BaseFileSourceFilterProps<InternalDocumentFilter>
 ) => {
-  const { data: sources = [] } = useDocumentAggregateSourceQuery();
+  const {
+    data: sources = [],
+    isLoading,
+    isError,
+  } = useDocumentAggregateSourceQuery();
 
   const options = useDeepMemo(
     () =>
@@ -132,7 +154,14 @@ export const FileSourceFilter = (
     [sources]
   );
 
-  return <BaseFileSourceFilter {...props} options={options} />;
+  return (
+    <BaseFileSourceFilter
+      {...props}
+      isError={isError}
+      isLoading={isLoading}
+      options={options}
+    />
+  );
 };
 
 SourceFilter.Asset = AssetSourceFilter;
