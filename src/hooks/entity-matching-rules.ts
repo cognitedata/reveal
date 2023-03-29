@@ -55,9 +55,14 @@ export type Rule = {
   extractors: Extractor[];
 };
 
+export type RuleMatch = {
+  source: { id: number } & Record<string, unknown>;
+  target: { id: number } & Record<string, unknown>;
+};
+
 export type AppliedRule = {
   numberOfMatches: number;
-  matches: { source: any; target: any }[];
+  matches: RuleMatch[];
   rule: Rule;
 };
 

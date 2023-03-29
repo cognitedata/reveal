@@ -14,6 +14,7 @@ import { PipelineSourceType, TargetType } from 'types/api';
 import { toast } from '@cognite/cogs.js';
 import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
 import { DEFAULT_MODEL_FEATURE_TYPE } from 'common/constants';
+import { RuleMatch } from './entity-matching-rules';
 
 export type Pipeline = {
   id: number;
@@ -322,16 +323,17 @@ export const useDuplicateEMPipeline = () => {
 
 type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
-type EMPipelineMatchType =
-  | 'previously_mapped'
-  | 'model'
-  | 'rule_rule_input_pattern->rule_predict_pattern';
+type EMPipelineMatchType = 'previously-confirmed' | 'model';
+
+export type EMPipelineResource = Record<string, unknown>;
+export type EMPipelineSource = EMPipelineResource;
+export type EMPipelineTarget = EMPipelineResource;
 
 export type EMPipelineRunMatch = {
   matchType?: EMPipelineMatchType;
   score?: number;
-  source?: Record<string, unknown>;
-  target?: Record<string, unknown>;
+  source?: EMPipelineSource;
+  target?: EMPipelineTarget;
 };
 
 type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
@@ -352,19 +354,11 @@ type EMPipelineMatchCondition = {
   arguments: number[][];
 };
 
-type EMPipelineGeneratedRuleExistingMatchType = 'model';
-
-export type EMPipelineGeneratedRuleMatch = {
-  consistentMatch?: boolean;
-  existingMatchType?: EMPipelineGeneratedRuleExistingMatchType;
-  source: Record<string, unknown>;
-  target: Record<string, unknown>;
-};
-
 export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
   conditions?: EMPipelineMatchCondition[];
-  matches?: EMPipelineGeneratedRuleMatch[];
+  matches?: RuleMatch[];
+  priority: number;
 };
 
 export type EMPipelineRun = {

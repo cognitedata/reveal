@@ -1,6 +1,7 @@
-import { Key, useMemo, useState } from 'react';
+import { Dispatch, Key, SetStateAction, useMemo, useState } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { CogniteInternalId } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
@@ -13,6 +14,7 @@ import {
 import Extractor from './Extractor';
 import { Icon } from '@cognite/cogs.js';
 import ExpandedRule from './ExpandedRule';
+import { PAGINATION_SETTINGS } from 'common/constants';
 
 type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
 
@@ -23,15 +25,29 @@ type GroupedResultsTableColumnType = ColumnType<GroupedResultsTableRecord> & {
 type GroupedResultsTableProps = {
   pipeline: Pipeline;
   run: EMPipelineRun;
+  selectedSourceIds: CogniteInternalId[];
+  setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
+};
+
+const GROUPED_RESULTS_TABLE_KEY_PATTERN_SEPARATOR =
+  'GROUPED_RESULTS_TABLE_KEY_PATTERN_SEPARATOR';
+
+const getRuleKey = (rule: EMPipelineGeneratedRule) => {
+  return (
+    rule.extractors
+      ?.map(({ pattern }) => pattern)
+      .join(GROUPED_RESULTS_TABLE_KEY_PATTERN_SEPARATOR) ?? ''
+  );
 };
 
 const GroupedResultsTable = ({
   run,
+  selectedSourceIds,
+  setSelectedSourceIds,
 }: GroupedResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const handleClickExpandButton = (clickedRowKey: string) => {
     setExpandedRowKeys((prevState) =>
@@ -41,8 +57,30 @@ const GroupedResultsTable = ({
     );
   };
 
-  const handleSelectRow = (selectedRowKeys: Key[]) => {
-    setSelectedRowKeys(selectedRowKeys);
+  const selectedRuleKeys = useMemo(() => {
+    return run.generatedRules
+      ?.filter(({ matches }) =>
+        matches?.every(({ source }) =>
+          selectedSourceIds.includes(
+            typeof source.id === 'number' ? source.id : -1
+          )
+        )
+      )
+      .map((rule) => getRuleKey(rule));
+  }, [selectedSourceIds, run]);
+
+  const handleSelectRow = (rowKeys: Key[]) => {
+    const rules = run.generatedRules?.filter((rule) =>
+      rowKeys.includes(getRuleKey(rule))
+    );
+    setSelectedSourceIds(
+      rules?.flatMap(
+        ({ matches }) =>
+          matches?.map(({ source }) =>
+            typeof source.id === 'number' ? source.id : -1
+          ) ?? []
+      ) ?? []
+    );
   };
 
   const columns: GroupedResultsTableColumnType[] = useMemo(
@@ -72,8 +110,8 @@ const GroupedResultsTable = ({
             <Icon
               type={
                 expandedRowKeys.includes(record.key)
-                  ? 'ChevronDown'
-                  : 'ChevronRight'
+                  ? 'ChevronUp'
+                  : 'ChevronDown'
               }
             />
           </ExpandButton>
@@ -88,7 +126,7 @@ const GroupedResultsTable = ({
     () =>
       run.generatedRules?.map((rule) => ({
         ...rule,
-        key: rule.extractors?.map(({ pattern }) => pattern).join('-') ?? '',
+        key: getRuleKey(rule),
       })) ?? [],
     [run.generatedRules]
   );
@@ -99,14 +137,24 @@ const GroupedResultsTable = ({
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}
+      pagination={PAGINATION_SETTINGS}
       expandable={{
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
-        expandedRowRender: (record) => <ExpandedRule rule={record} />,
+        expandedRowRender: (record) =>
+          !!record.matches ? (
+            <ExpandedRule
+              matches={record.matches}
+              selectedSourceIds={selectedSourceIds}
+              setSelectedSourceIds={setSelectedSourceIds}
+            />
+          ) : (
+            false
+          ),
         indentSize: 64,
       }}
       rowSelection={{
-        selectedRowKeys,
+        selectedRowKeys: selectedRuleKeys,
         onChange: handleSelectRow,
         columnWidth: 36,
       }}
@@ -114,7 +162,7 @@ const GroupedResultsTable = ({
   );
 };
 
-const ExpandButton = styled.button`
+export const ExpandButton = styled.button`
   align-items: center;
   background: none;
   border: none;

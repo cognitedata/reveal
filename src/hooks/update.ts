@@ -29,17 +29,25 @@ export type RawTimeseries = Omit<
   createdTime: number;
 };
 
+type UpdateAssetIdsMutationVariables = {
+  api: API;
+  changes: AssetIdUpdate[];
+};
+
 export const useUpdateAssetIds = (
-  api: API,
-  predictionJobId: number,
-  options?: UseMutationOptions<InternalId[], CogniteError, AssetIdUpdate[]>
+  predictionJobId?: number,
+  options?: UseMutationOptions<
+    InternalId[],
+    CogniteError,
+    UpdateAssetIdsMutationVariables
+  >
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
   return useMutation(
-    ['update', api, predictionJobId],
-    (changes) => {
+    ['update', predictionJobId],
+    ({ api, changes }) => {
       switch (api) {
         case 'events': {
           return sdk.events.update(
@@ -64,6 +72,9 @@ export const useUpdateAssetIds = (
           return sdk.sequences.update(changes);
         }
         case 'threeD': {
+          if (!predictionJobId) {
+            return Promise.reject('Prediction job ID is not provided');
+          }
           const threeDDetailsStr = sessionStorage.getItem(
             sessionStorage3dDetailsKey(predictionJobId)
           );
