@@ -11,11 +11,15 @@ import {
 } from 'hooks/entity-matching-predictions';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { TableRowSelection } from 'antd/lib/table/interface';
-import { Slider } from '@cognite/cogs.js';
+import { Icon, Slider } from '@cognite/cogs.js';
 import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
 import styled from 'styled-components';
+import { EMModel } from 'hooks/entity-matching-models';
+import ExpandedMatch from 'components/pipeline-run-results-table/ExpandedMatch';
+import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
 
 type Predictions = {
+  model?: EMModel;
   predictions: Prediction[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
@@ -32,11 +36,22 @@ type ResultsTableRecordCT = ColumnType<PredictionsTableRecord> & {
 };
 
 const QuickMatchResultsTable = ({
+  model,
   predictions,
   confirmedPredictions,
   setConfirmedPredictions,
 }: Predictions): JSX.Element => {
   const { t } = useTranslation();
+
+  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
+
+  const handleClickExpandButton = (clickedRowKey: number) => {
+    setExpandedRowKeys((prevState) =>
+      prevState.includes(clickedRowKey)
+        ? prevState.filter((key) => key !== clickedRowKey)
+        : prevState.concat(clickedRowKey)
+    );
+  };
 
   const [scoreFilter, setScoreFilter] = useState<number | undefined>();
   const dataSource = useMemo(
@@ -138,8 +153,36 @@ const QuickMatchResultsTable = ({
           ),
         width: 100,
       },
+      {
+        title: '',
+        dataIndex: 'source',
+        key: 'expandable',
+        render: (_, record) =>
+          model?.matchFields ? (
+            <ExpandButton onClick={() => handleClickExpandButton(record.key)}>
+              <Icon
+                type={
+                  expandedRowKeys.includes(record.key)
+                    ? 'ChevronUp'
+                    : 'ChevronDown'
+                }
+              />
+            </ExpandButton>
+          ) : (
+            <></>
+          ),
+        width: 64,
+      },
     ],
-    [t, minScore, maxScore, scores, scoreFilter]
+    [
+      t,
+      minScore,
+      maxScore,
+      scores,
+      scoreFilter,
+      expandedRowKeys,
+      model?.matchFields,
+    ]
   );
 
   return (
@@ -153,6 +196,20 @@ const QuickMatchResultsTable = ({
       appendTooltipTo={undefined}
       dataSource={dataSource}
       pagination={PAGINATION_SETTINGS}
+      expandable={{
+        showExpandColumn: false,
+        expandedRowKeys: expandedRowKeys,
+        expandedRowRender: model?.matchFields
+          ? (record) => (
+              <ExpandedMatch
+                source={record.source}
+                target={record.match.target}
+                matchFields={model?.matchFields}
+              />
+            )
+          : undefined,
+        indentSize: 64,
+      }}
     />
   );
 };

@@ -6,6 +6,7 @@ import NoAccessPage from 'components/error-pages/NoAccess';
 import { Container, Graphic } from 'components/InfoBox';
 import Page from 'components/page';
 import Step from 'components/step';
+import { useEMModel } from 'hooks/entity-matching-models';
 import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
 import { useApplyRulesResults } from 'hooks/entity-matching-rules';
 
@@ -24,11 +25,13 @@ const QuickMatchResults = (): JSX.Element => {
   );
   const {
     subAppPath,
+    modelId: modelIdStr,
     predictJobId: predictJobIdStr,
     applyRulesJobId: applyRulesJobIdStr,
     sourceType,
   } = useParams<{
     subAppPath: string;
+    modelId: string;
     predictJobId: string;
     rulesJobId?: string;
     applyRulesJobId?: string;
@@ -36,6 +39,7 @@ const QuickMatchResults = (): JSX.Element => {
   }>();
 
   const { t } = useTranslation();
+  const modelId = parseInt(modelIdStr ?? '', 10);
   const predictJobId = parseInt(predictJobIdStr ?? '', 10);
   const applyRulesJobId = parseInt(applyRulesJobIdStr ?? '', 10);
 
@@ -46,6 +50,11 @@ const QuickMatchResults = (): JSX.Element => {
   const applyRulesJobToken = sessionStorage.getItem(
     sessionStorageApplyRulesJobKey(applyRulesJobId)
   );
+
+  const { data: model } = useEMModel(modelId!, {
+    enabled: !!modelId,
+    ...INFINITE_Q_OPTIONS, // models and prediction reponses can be _big_
+  });
 
   const {
     data: predictions,
@@ -150,6 +159,7 @@ const QuickMatchResults = (): JSX.Element => {
           {predictions?.status === 'Completed' && (
             <EntityMatchingResult
               sourceType={sourceType}
+              model={model}
               predictions={predictions.items}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}

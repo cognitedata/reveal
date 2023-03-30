@@ -10,9 +10,11 @@ import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 import Step from 'components/step';
 import styled from 'styled-components';
 import { SourceType } from 'types/api';
+import { EMModel } from 'hooks/entity-matching-models';
 
 type Props = {
   sourceType: SourceType;
+  model?: EMModel;
   predictions: Prediction[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
@@ -20,6 +22,7 @@ type Props = {
 };
 export default function EntityMatchingResult({
   sourceType,
+  model,
   predictions,
   confirmedPredictions,
   setConfirmedPredictions,
@@ -37,7 +40,7 @@ export default function EntityMatchingResult({
         title={t('result-step-title', { step: 4 })}
         subtitle={t('result-step-subtitle')}
       >
-        <StyledFlex direction="column">
+        <Flex direction="column">
           {appliedRules && (
             <Flex justifyContent="space-between">
               <Checkbox
@@ -56,12 +59,13 @@ export default function EntityMatchingResult({
             />
           ) : (
             <QuickMatchResultsTable
+              model={model}
               predictions={predictions}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}
             />
           )}
-        </StyledFlex>
+        </Flex>
       </Step>
       <QuickMatchActionBar
         selectedRows={confirmedPredictions}
@@ -71,10 +75,6 @@ export default function EntityMatchingResult({
     </Container>
   );
 }
-
-const StyledFlex = styled(Flex)`
-  padding: 20px;
-`;
 
 const Container = styled.div<{ $isActionBarVisible?: boolean }>`
   overflow-y: auto;

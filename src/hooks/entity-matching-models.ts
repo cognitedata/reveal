@@ -21,8 +21,9 @@ import { filterFieldsFromObjects } from 'utils';
 import { JobStatus } from './types';
 
 // Type in SDK is not correct
-type EMModel = Omit<EntityMatchingModel, 'status'> & {
+export type EMModel = Omit<EntityMatchingModel, 'status' | 'matchFields'> & {
   status: JobStatus;
+  matchFields?: ModelMapping;
 };
 
 const getEMModelsKey = (): QueryKey => ['em', 'models'];

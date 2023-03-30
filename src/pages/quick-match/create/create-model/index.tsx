@@ -481,7 +481,7 @@ const CreateModel = (): JSX.Element => {
     return (
       <Navigate
         to={createLink(
-          `/${subAppPath}/quick-match/results/${predictJobId}/${sourceType}/${rulesJobId}/${applyRulesJobId}`
+          `/${subAppPath}/quick-match/results/${modelId}/${predictJobId}/${sourceType}/${rulesJobId}/${applyRulesJobId}`
         )}
         replace={true}
       />
@@ -496,7 +496,7 @@ const CreateModel = (): JSX.Element => {
     return (
       <Navigate
         to={createLink(
-          `/${subAppPath}/quick-match/results/${predictJobId}/${sourceType}`
+          `/${subAppPath}/quick-match/results/${modelId}/${predictJobId}/${sourceType}`
         )}
         replace={true}
       />
@@ -508,7 +508,7 @@ const CreateModel = (): JSX.Element => {
     return (
       <Navigate
         to={createLink(
-          `/${subAppPath}/quick-match/results/${predictJobId}/${sourceType}`
+          `/${subAppPath}/quick-match/results/${modelId}/${predictJobId}/${sourceType}`
         )}
         replace={true}
       />

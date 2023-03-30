@@ -125,7 +125,11 @@ const BasicResultsTable = ({
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) => (
-          <ExpandedMatch match={record} pipeline={pipeline} />
+          <ExpandedMatch
+            source={record.source}
+            target={record.target}
+            matchFields={pipeline.modelParameters?.matchFields}
+          />
         ),
         indentSize: 64,
       }}
