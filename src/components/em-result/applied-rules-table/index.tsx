@@ -1,8 +1,9 @@
 import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Flex, Icon } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { Container, Graphic } from 'components/InfoBox';
 import ExpandedRule from 'components/pipeline-run-results-table/ExpandedRule';
 import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
 import { Prediction } from 'hooks/entity-matching-predictions';
@@ -11,7 +12,7 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 type Props = {
   predictions: Prediction[];
-  appliedRules?: AppliedRule[];
+  appliedRules: AppliedRule[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
@@ -127,8 +128,16 @@ export default function AppliedRulesTable({
     },
   };
 
-  if (!appliedRules || appliedRules.length === 0) {
-    return <>NOPE</>;
+  if (appliedRules.length === 0) {
+    return (
+      <Container direction="row" justifyContent="space-between">
+        <Flex direction="column" alignItems="flex-start">
+          <Title level={4}>{t('result-rules-empty-title')}</Title>
+          <Body level={1}>{t('result-rules-empty-body')}</Body>
+        </Flex>
+        <Graphic />
+      </Container>
+    );
   }
 
   return (
