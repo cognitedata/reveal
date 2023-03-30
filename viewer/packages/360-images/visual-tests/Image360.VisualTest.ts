@@ -22,6 +22,7 @@ import { Image360CollectionFactory } from '../src/collection/Image360CollectionF
 import { IconOctree } from '../src/icons/IconOctree';
 import { OctreeHelper } from 'sparse-octree';
 import { Image360Icon } from '../src/icons/Image360Icon';
+import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
@@ -30,7 +31,7 @@ type CdfImage360Facade = Image360Facade<{
 type LocalImage360Facade = Image360Facade<unknown>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
-  private readonly _reloadImage = async (entity: Image360Entity, revision: number) => {
+  private readonly _reloadImage = async (entity: Image360Entity, revision: Image360RevisionEntity) => {
     if (entity && revision) return Promise.resolve();
   };
 
