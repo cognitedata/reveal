@@ -118,6 +118,17 @@ const Targets = ({ pipeline }: TargetsProps): JSX.Element => {
     hideSelectAll: true,
   };
 
+  const filteredDataSource = useMemo(() => {
+    return dataSource.filter(({ externalId, id, name }) => {
+      const lowerCaseQuery = query.toLowerCase();
+      return (
+        name?.toLowerCase().includes(lowerCaseQuery) ||
+        externalId?.toLowerCase().includes(lowerCaseQuery) ||
+        `${id}`?.toLowerCase().includes(lowerCaseQuery)
+      );
+    });
+  }, [dataSource, query]);
+
   return (
     <Step
       subtitle={t('select-target-step-subtitle')}
@@ -162,7 +173,7 @@ const Targets = ({ pipeline }: TargetsProps): JSX.Element => {
         emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
         appendTooltipTo={undefined}
         rowSelection={rowSelection}
-        dataSource={dataSource}
+        dataSource={filteredDataSource}
         pagination={PAGINATION_SETTINGS}
       />
     </Step>
