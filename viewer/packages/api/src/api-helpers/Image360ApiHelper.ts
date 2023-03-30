@@ -123,9 +123,7 @@ export class Image360ApiHelper {
       }
 
       if (this._transitionInProgress) {
-        return Promise.reject(
-          Error('Failed to change revision. Image transition in progress.', { cause: 'transition' })
-        );
+        return Promise.reject('Failed to change revision. Image transition in progress.');
       }
       return this.enter360Image(entity, revision);
     };

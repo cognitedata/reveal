@@ -14,15 +14,18 @@ export class Image360UI {
 
     const optionsFolder = gui.addFolder('Add Options');
 
+
     const onImageEntered: Image360EnteredDelegate = entity => {
       selectedEntity = entity;
-      console.warn('Current revision: ' + selectedEntity.getActiveRevision().date);
+      // --- Remove after testing - Start 
+      console.log('Current revision: ' + selectedEntity.getActiveRevision().date);
 
       const revisions = selectedEntity.list360ImageRevisions();
       if (revisions.length > 0) {
         console.log('Available revisions:');
         revisions.forEach((revision, index) => console.log('- Id ' + index + ', ' + revision.date));
       }
+      // --- Remove after testing - End 
     };
 
     const translation = {
@@ -112,7 +115,6 @@ export class Image360UI {
       .onChange(() => {
         if (collections.length > 0) {
           const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
-          console.log(date);
           collections.forEach(p => (p.targetRevisionDate = date));
 
           if (selectedEntity) {
@@ -130,9 +132,7 @@ export class Image360UI {
           const index = Number(imageRevisions.id);
           if (index >= 0 && index < revisions.length) {
             selectedEntity.changeRevision(revisions[index]).catch(e => {
-              const error = e as Error;
-              console.error(error.message);
-              console.log(error.cause);
+              console.warn(e);
             });
           }
         }
