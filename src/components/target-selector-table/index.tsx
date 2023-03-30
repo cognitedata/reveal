@@ -1,4 +1,4 @@
-import { Checkbox, Flex, Overline } from '@cognite/cogs.js';
+import { Checkbox, Flex } from '@cognite/cogs.js';
 import { useSearchParams } from 'react-router-dom';
 import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
 import AssetTable from 'components/source-selector-table/AssetTable';
@@ -42,7 +42,6 @@ export default function TargetSelectionTable({}: Props) {
       <Flex direction="column">
         <Flex justifyContent="space-between">
           <Flex gap={12} alignItems="center">
-            <Overline>{t('filter', { count: 0 })}</Overline>
             <DataSetSelect
               api="assets"
               onChange={(id?: number) => {
@@ -64,11 +63,12 @@ export default function TargetSelectionTable({}: Props) {
             <SearchInput
               disabled={allTargets}
               value={query || ''}
-              placeholder={t('search-placeholder')}
+              placeholder={t('filter-by-name-placeholder')}
               onChange={(e) => {
                 searchParams.set(TARGET_TABLE_QUERY_KEY, e.target.value);
                 setSearchParams(searchParams);
               }}
+              icon="Search"
             />
           </Flex>
           <Flex alignItems="center" gap={12}>
@@ -84,20 +84,20 @@ export default function TargetSelectionTable({}: Props) {
               label="Select all"
             />
           </Flex>
+          <AssetTable
+            filter={targetFilter}
+            selected={targetsList}
+            setSelected={setTargetsList}
+            advancedFilter={advancedFilter}
+            allSources={allTargets}
+          />
         </Flex>
-        <AssetTable
-          filter={targetFilter}
-          selected={targetsList}
-          setSelected={setTargetsList}
-          advancedFilter={advancedFilter}
-          allSources={allTargets}
+        <QuickMatchActionBar
+          selectedRows={targetsList}
+          sourceType={sourceType}
+          onClose={onClose}
         />
       </Flex>
-      <QuickMatchActionBar
-        selectedRows={targetsList}
-        sourceType={sourceType}
-        onClose={onClose}
-      />
     </Container>
   );
 }

@@ -7,13 +7,12 @@ import {
 } from '@cognite/cdf-utilities';
 import { Button, Dropdown, Loader } from '@cognite/cogs.js';
 import PipelineName from 'components/pipeline-name/PipelineName';
-import { stringSorter } from 'common/utils';
 import { useTranslation } from 'common';
 
 import { PipelineTableTypes } from 'types/types';
 import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
 
-import { stringContains } from 'utils/shared';
+import { stringContains, stringSorter } from 'utils/shared';
 
 import { useSearchParams } from 'react-router-dom';
 import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
@@ -125,7 +124,7 @@ const PipelineTable = (): JSX.Element => {
         dataIndex: 'name',
         key: 'name',
         render: (value, record) => <PipelineName id={record.id} name={value} />,
-        sorter: (a, b) => stringSorter(a, b, 'name'),
+        sorter: (a, b) => stringSorter(a?.name, b?.name),
       },
       {
         title: t('pipeline-list-table-column-title-description'),
@@ -133,13 +132,13 @@ const PipelineTable = (): JSX.Element => {
         key: 'description',
         render: (description: string) => description || '—',
         sorter: (a: any, b: any) =>
-          stringSorter(a?.description, b?.description, 'description'),
+          stringSorter(a?.description, b?.description),
       },
       {
         title: t('pipeline-list-table-column-title-owner'),
         dataIndex: 'owner',
         key: 'owner',
-        sorter: (a: any, b: any) => stringSorter(a?.owner, b?.owner, 'owner'),
+        sorter: (a: any, b: any) => stringSorter(a?.owner, b?.owner),
       },
       {
         title: t('last-run'),

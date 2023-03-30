@@ -42,9 +42,7 @@ export default function RootAssetSelect({ onChange, selected }: Props) {
     <Select
       allowClear
       showSearch
-      placeholder={t('resource-type-root-asset', {
-        count: 0,
-      })}
+      placeholder={t('resource-type-root-asset')}
       style={{ width: 220 }}
       loading={!!query ? searchLoading : listLoading}
       optionFilterProp="label"

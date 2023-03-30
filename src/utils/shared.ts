@@ -22,17 +22,10 @@ export const createInternalLink = (path?: string | number) => {
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 
-export function stringSorter<T extends Record<string, any>>(
-  strA: T,
-  strB: T,
-  columnKey: keyof T
-) {
-  const a = strA[columnKey];
-  const b = strB[columnKey];
-
-  if (a.toLowerCase() < b.toLowerCase()) {
+export function stringSorter(a: string = '', b: string = '') {
+  if (a < b) {
     return -1;
-  } else if (b.toLowerCase() > a.toLowerCase()) {
+  } else if (b > a) {
     return 1;
   } else return 0;
 }

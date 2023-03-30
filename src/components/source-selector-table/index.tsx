@@ -118,7 +118,7 @@ export default function SourceSelectionTable({}: Props) {
                 <SearchInput
                   disabled={allSources}
                   value={query || ''}
-                  placeholder={t('search-placeholder')}
+                  placeholder={t('filter-by-name-placeholder')}
                   onChange={(e) => {
                     searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
                     setSearchParams(searchParams);
