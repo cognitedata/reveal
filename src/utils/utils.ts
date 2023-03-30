@@ -35,6 +35,9 @@ export const getReleaseState = (version?: string): string | undefined => {
       return 'Prerelease';
     }
   }
+  if (matches[0].startsWith('0.')) {
+    return 'Prerelease';
+  }
   return undefined;
 };
 
