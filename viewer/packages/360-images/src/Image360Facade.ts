@@ -41,7 +41,7 @@ export class Image360Facade<T> {
 
   public async create(
     dataProviderFilter: T,
-    reloadImage: (entity: Image360Entity, revision: number) => Promise<void>,
+    reloadImage: (entity: Image360Entity, revision: number, targetDate?: Date) => Promise<void>,
     postTransform = new THREE.Matrix4(),
     preComputedRotation = true
   ): Promise<DefaultImage360Collection> {

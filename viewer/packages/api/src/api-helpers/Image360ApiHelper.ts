@@ -30,7 +30,7 @@ export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
-  private _overrideRevisionDate: Date | undefined;
+  private _targetRevisionDate: Date | undefined;
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -79,7 +79,7 @@ export class Image360ApiHelper {
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
-    this._overrideRevisionDate = undefined;
+    this._targetRevisionDate = undefined;
 
     this._domElement = domElement;
     this._interactionState = {};
@@ -120,7 +120,9 @@ export class Image360ApiHelper {
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
-    const reloadImage = (entity: Image360Entity, revision: number) => {
+    const reloadImage = (entity: Image360Entity, revision: number, targetDate?: Date) => {
+      this._targetRevisionDate = targetDate;
+
       if (entity !== this._interactionState.currentImage360Entered) {
         return Promise.resolve();
       }
@@ -213,14 +215,6 @@ export class Image360ApiHelper {
     });
 
     imageCollection.events.image360Entered.fire(image360Entity);
-  }
-
-  public async override360ImageRevisionDate(date?: Date): Promise<void> {
-    this._overrideRevisionDate = date;
-
-    if (this._interactionState.currentImage360Entered) {
-      this.enter360Image(this._interactionState.currentImage360Entered);
-    }
   }
 
   private async transition(fromImageRevision: Image360RevisionEntity, toImageRevision: Image360RevisionEntity) {
@@ -370,7 +364,7 @@ export class Image360ApiHelper {
   }
 
   private findRevisionIdToEnter(image360Entity: Image360Entity): number {
-    return this._overrideRevisionDate ? image360Entity.getRevisionClosestToDate(this._overrideRevisionDate) : 0;
+    return this._targetRevisionDate ? image360Entity.getRevisionClosestToDate(this._targetRevisionDate) : 0;
   }
 
   private enter360ImageOnIntersect(event: PointerEventData): Promise<void> {

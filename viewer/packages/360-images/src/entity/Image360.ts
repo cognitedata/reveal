@@ -25,8 +25,13 @@ export interface Image360 {
   /**
    * Will reload the entity with images from the new revision.
    * Resolves once loading is complete. Rejects if revision could not be changed.
-   * If the entity is not entered/visible the promise will be resolved right away.
+   * If the entity is not entered/visible the promise will be resolved instantly.
+   *
+   * @param revisionId The id of the revision to show.
+   * @param keepDate If true any subsequently opened images will use revisions that are closest to the date of this revision.
+   * If false, the most recent revision will be loaded.
+   *
    * @returns Promise for when revision has either been updated or it failed to change.
    */
-  changeRevision(revisionId: number): Promise<void>;
+  changeRevision(revisionId: number, keepDate?: boolean): Promise<void>;
 }

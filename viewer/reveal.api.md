@@ -374,7 +374,6 @@ export class Cognite3DViewer {
     on(event: 'cameraStop', callback: CameraStopDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
-    override360ImageRevisionDate(date?: Date): void;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
     remove360Images(...image360Entities: Image360[]): Promise<void>;
@@ -779,7 +778,7 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
-    changeRevision(revisionId: number): Promise<void>;
+    changeRevision(revisionId: number, keepDate?: boolean): Promise<void>;
     getActiveRevision(): Image360Revision;
     list360ImageRevisions(): {
         id: number;
