@@ -204,7 +204,7 @@ export class Image360ApiHelper {
       this._requestRedraw();
     });
 
-    imageCollection.events.image360Entered.fire(image360Entity);
+    imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter.date);
   }
 
   private async transition(fromImageRevision: Image360RevisionEntity, toImageRevision: Image360RevisionEntity) {
