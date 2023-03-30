@@ -46,7 +46,7 @@ export default function EntityMatchingResult({
               />
             </Flex>
           )}
-          {rulesView ? (
+          {rulesView && appliedRules ? (
             <AppliedRulesTable
               appliedRules={appliedRules}
               predictions={predictions}
