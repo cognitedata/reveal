@@ -323,16 +323,17 @@ export const useDuplicateEMPipeline = () => {
 
 type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
-type EMPipelineMatchType =
-  | 'previously_mapped'
-  | 'model'
-  | 'rule_rule_input_pattern->rule_predict_pattern';
+type EMPipelineMatchType = 'previously-confirmed' | 'model';
+
+export type EMPipelineResource = Record<string, unknown>;
+export type EMPipelineSource = EMPipelineResource;
+export type EMPipelineTarget = EMPipelineResource;
 
 export type EMPipelineRunMatch = {
   matchType?: EMPipelineMatchType;
   score?: number;
-  source?: Record<string, unknown>;
-  target?: Record<string, unknown>;
+  source?: EMPipelineSource;
+  target?: EMPipelineTarget;
 };
 
 type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
