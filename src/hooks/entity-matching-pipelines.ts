@@ -348,16 +348,16 @@ export type EMPipelineRegexExtractor = {
   pattern: string;
 };
 
-type EMPipelineMatchConditionType = 'equals';
+type EMMatchConditionType = 'equals';
 
-type EMPipelineMatchCondition = {
-  conditionType: EMPipelineMatchConditionType;
+export type EMMatchCondition = {
+  conditionType: EMMatchConditionType;
   arguments: number[][];
 };
 
 export type EMPipelineGeneratedRule = {
   extractors?: EMPipelineRegexExtractor[];
-  conditions?: EMPipelineMatchCondition[];
+  conditions?: EMMatchCondition[];
   matches?: RuleMatch[];
   priority: number;
 };

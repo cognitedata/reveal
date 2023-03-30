@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-query';
 
 import { JobStatus } from './types';
+import { EMMatchCondition } from './entity-matching-pipelines';
 
 type RulesResponse = {
   createdTime: number;
@@ -31,18 +32,6 @@ type ApplyRulesInput = {
   rules: Rule[];
 };
 
-type Synonym = {
-  sources: string[];
-  targets: string[];
-};
-type Config = {
-  synonyms: Synonym[];
-};
-type Condition = {
-  conditionType: 'equals';
-  arguments: number[];
-  config: Config;
-};
 type Extractor = {
   entitySet: 'sources' | 'targets';
   extractorType: 'regex';
@@ -51,7 +40,7 @@ type Extractor = {
 };
 export type Rule = {
   priority: number;
-  conditions: Condition[];
+  conditions: EMMatchCondition[];
   extractors: Extractor[];
 };
 

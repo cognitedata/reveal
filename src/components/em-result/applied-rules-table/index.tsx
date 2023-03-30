@@ -69,23 +69,6 @@ export default function AppliedRulesTable({
         ),
       },
       {
-        title: t('rules-fields'),
-        key: 'fields',
-        sorter: (a: AppliedRule, b: AppliedRule) =>
-          `${a.rule.extractors[0]?.field} ${a.rule.extractors[1]?.field}`.localeCompare(
-            `${b.rule.extractors[0]?.field} ${b.rule.extractors[1]?.field}`
-          ),
-        render: (rule: AppliedRule) => {
-          return (
-            <Flex alignItems="center" gap={12}>
-              <>{rule.rule.extractors[0]?.field}</>
-              <Icon type="ArrowRight" />
-              <>{rule.rule.extractors[1]?.field}</>
-            </Flex>
-          );
-        },
-      },
-      {
         title: t('rules-matches'),
         key: 'numberOfMatches',
         width: 100,
@@ -162,8 +145,11 @@ export default function AppliedRulesTable({
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) =>
-          !!record.matches && !!record.rule.extractors ? (
+          !!record.matches &&
+          !!record.rule.extractors &&
+          !!record.rule.conditions ? (
             <ExpandedRule
+              conditions={record.rule.conditions}
               extractors={record.rule.extractors}
               matches={record.matches}
               selectedSourceIds={confirmedPredictions}

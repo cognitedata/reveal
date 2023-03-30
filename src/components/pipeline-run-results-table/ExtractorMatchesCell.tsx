@@ -3,32 +3,39 @@ import {
   EMPipelineRegexExtractor,
   EMPipelineResource,
 } from 'hooks/entity-matching-pipelines';
+import { MatchColorsByExtractorIndex } from './ExpandedRule';
 import ResourceCell from './ResourceCell';
 
 type ExtractorMatchesCellProps = {
   extractors: EMPipelineRegexExtractor[];
   entitySetToRender: EMPipelineRegexExtractor['entitySet'];
+  matchColorsByExtractorIndex: MatchColorsByExtractorIndex;
   resource: EMPipelineResource;
 };
 
 const ExtractorMatchesCell = ({
   extractors,
   entitySetToRender,
+  matchColorsByExtractorIndex,
   resource,
 }: ExtractorMatchesCellProps): JSX.Element => {
-  const filteredExtractors = extractors.filter(
-    ({ entitySet }) => entitySet === entitySetToRender
-  );
-
   return (
     <Flex direction="column" gap={8}>
-      {filteredExtractors.map((extractor) => (
-        <ResourceCell
-          key={extractor.field}
-          preferredProperties={[extractor.field]}
-          resource={resource}
-        />
-      ))}
+      {extractors.map((extractor, extractorIndex) => {
+        if (extractor.entitySet === entitySetToRender) {
+          return (
+            <ResourceCell
+              key={extractor.field}
+              matchColorsByGroupIndex={
+                matchColorsByExtractorIndex[extractorIndex]
+              }
+              pattern={extractor.pattern}
+              preferredProperties={[extractor.field]}
+              resource={resource}
+            />
+          );
+        }
+      })}
     </Flex>
   );
 };

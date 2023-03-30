@@ -102,6 +102,14 @@ const GroupedResultsTable = ({
         ),
       },
       {
+        title: t('rules-matches'),
+        key: 'numberOfMatches',
+        width: 100,
+        sorter: (a: GroupedResultsTableRecord, b: GroupedResultsTableRecord) =>
+          (a.matches?.length ?? 0) - (b.matches?.length ?? 0),
+        render: (rule: GroupedResultsTableRecord) => rule.matches?.length,
+      },
+      {
         title: '',
         dataIndex: 'extractors',
         key: 'expandable',
@@ -142,8 +150,9 @@ const GroupedResultsTable = ({
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) =>
-          !!record.matches && !!record.extractors ? (
+          !!record.matches && !!record.extractors && !!record.conditions ? (
             <ExpandedRule
+              conditions={record.conditions}
               extractors={record.extractors}
               matches={record.matches}
               selectedSourceIds={selectedSourceIds}

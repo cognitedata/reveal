@@ -1,14 +1,20 @@
 import { Body, Flex } from '@cognite/cogs.js';
+import HighlightedRegex from 'components/highlighted-regex';
+import { MatchColorsByGroupIndex } from './ExpandedRule';
 
 type ResourceCellProps = {
-  resource?: Record<string, unknown>;
+  matchColorsByGroupIndex?: MatchColorsByGroupIndex;
+  pattern?: string;
   preferredProperties?: string[];
+  resource?: Record<string, unknown>;
 };
 
 const DEFAULT_PROPERTY_PREFERENCE_ORDER = ['name', 'externalId', 'description'];
 const FALLBACK_PROPERTY = 'id';
 
 const ResourceCell = ({
+  matchColorsByGroupIndex,
+  pattern,
   preferredProperties,
   resource,
 }: ResourceCellProps): JSX.Element => {
@@ -31,13 +37,34 @@ const ResourceCell = ({
     }
   );
 
+  if (!preferredProperty) {
+    return (
+      <Flex direction="column">
+        <Body level={3} muted>
+          {propertyPreferenceOrder[0]}
+        </Body>
+        <Body level={2}>-</Body>
+      </Flex>
+    );
+  }
+
+  const value = resource[preferredProperty] as string;
+
   return (
     <Flex direction="column">
       <Body level={3} muted>
-        {preferredProperty ?? propertyPreferenceOrder[0]}
+        {preferredProperty}
       </Body>
       <Body level={2}>
-        {preferredProperty ? (resource[preferredProperty] as string) : '-'}
+        {pattern && matchColorsByGroupIndex ? (
+          <HighlightedRegex
+            matchColorsByGroupIndex={matchColorsByGroupIndex}
+            pattern={pattern}
+            text={value}
+          />
+        ) : (
+          value
+        )}
       </Body>
     </Flex>
   );
