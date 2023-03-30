@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { DEFAULT_MARGIN_V } from 'utils';
 import { useUserInformation } from 'hooks/useUserInformation';
+import { OrganizedRevisionLog } from 'utils/types';
 import { getOrganizedRevisionLogs } from '../../../utils/getOrganizedRevisionLogs';
 
 const EXTERNAL_LOG_NAME = {
@@ -62,12 +63,12 @@ export function RevisionLogs({ logs, isLoading }: Props) {
     if (isInternalUser) {
       visibleLogs[process] = uniqBy(
         organizedLogs[process],
-        (el: any) => el.type + formatDate(el.timestamp)
+        (el: OrganizedRevisionLog) => el.type + el.timestamp + el.info
       );
     } else {
       visibleLogs[EXTERNAL_LOG_NAME[process] || process] = uniqBy(
         organizedLogs[process],
-        (el: any) => el.type + formatDate(el.timestamp)
+        (el: OrganizedRevisionLog) => el.type + el.timestamp + el.info
       );
     }
   });
