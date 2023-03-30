@@ -27,7 +27,7 @@ export interface Image360 {
    * Resolves once loading is complete. Rejects if revision could not be changed.
    * If the entity is not entered/visible the promise will be resolved instantly.
    *
-   * @param Image360Revision The revision to load
+   * @param revision The revision to load
    * @returns Promise for when revision has either been updated or it failed to change.
    */
   changeRevision(revision: Image360Revision): Promise<void>;

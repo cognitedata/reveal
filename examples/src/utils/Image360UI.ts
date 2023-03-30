@@ -114,6 +114,10 @@ export class Image360UI {
           const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
           console.log(date);
           collections.forEach(p => (p.targetRevisionDate = date));
+
+          if (selectedEntity) {
+            viewer.enter360Image(selectedEntity);
+          }
         }
       });
 
