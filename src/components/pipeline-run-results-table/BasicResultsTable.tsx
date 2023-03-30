@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import { EMPipelineRunMatch, Pipeline } from 'hooks/entity-matching-pipelines';
 
-import ResourceIdentifier from './ResourceIdentifier';
+import ResourceCell from './ResourceCell';
 import ExpandedMatch from './ExpandedMatch';
 import Confidence from 'components/em-result/Confidence';
 import { PAGINATION_SETTINGS } from 'common/constants';
@@ -59,7 +59,7 @@ const BasicResultsTable = ({
         dataIndex: 'source',
         key: 'source',
         render: (source: EMPipelineRunMatch['source']) => (
-          <ResourceIdentifier resource={source} />
+          <ResourceCell resource={source} />
         ),
       },
       {
@@ -67,7 +67,7 @@ const BasicResultsTable = ({
         dataIndex: 'target',
         key: 'target',
         render: (target: EMPipelineRunMatch['target']) => (
-          <ResourceIdentifier resource={target} />
+          <ResourceCell resource={target} />
         ),
       },
       {

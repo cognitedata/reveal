@@ -12,6 +12,7 @@ import {
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { Slider } from '@cognite/cogs.js';
+import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
 
 type Predictions = {
   predictions: Prediction[];
@@ -80,8 +81,9 @@ const QuickMatchResultsTable = ({
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
-        render: (source: PredictionObject) =>
-          formatPredictionObject(source) || '—',
+        render: (source: PredictionObject) => (
+          <ResourceCell resource={source} />
+        ),
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.source).localeCompare(
             formatPredictionObject(b.source)
@@ -92,9 +94,7 @@ const QuickMatchResultsTable = ({
         title: t('qm-result-target'),
         dataIndex: 'match',
         key: 'match',
-        render: (match: Match) => {
-          return formatPredictionObject(match.target) || '—';
-        },
+        render: (match: Match) => <ResourceCell resource={match.target} />,
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.match.target).localeCompare(
             formatPredictionObject(b.match.target)
