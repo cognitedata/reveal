@@ -1,4 +1,3 @@
-export * from './useTimeseriesSearchAggregateQuery';
 export * from './useTimeseriesSearchResultQuery';
 export * from './useTimeseriesSearchResultWithLabelsQuery';
 export * from './useTimeseriesWithDatapointsQuery';

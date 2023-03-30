@@ -18,7 +18,10 @@ import noop from 'lodash/noop';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+import {
+  InternalEventsFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const EventSummary = ({
   query = '',
@@ -37,10 +40,15 @@ export const EventSummary = ({
   onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
 }) => {
-  const { data, isLoading } = useEventsSearchResultWithLabelsQuery({
-    query,
-    eventsFilters: filter,
-  });
+  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
+  const { data, isLoading } = useEventsSearchResultWithLabelsQuery(
+    {
+      query,
+      eventsFilters: filter,
+    },
+    undefined,
+    eventSearchConfig
+  );
   const { data: metadataKeys = [] } = useEventsMetadataKeys();
 
   const metadataColumns = useMemo(() => {

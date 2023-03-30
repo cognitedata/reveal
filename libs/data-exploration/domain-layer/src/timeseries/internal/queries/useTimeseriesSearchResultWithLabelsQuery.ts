@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   InternalTimeseriesFilters,
+  TimeseriesConfigType,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import { useTimeseriesSearchResultQuery } from '@data-exploration-lib/domain-layer';
@@ -22,54 +23,54 @@ export const useTimeseriesSearchResultWithLabelsQuery = (
     filter: InternalTimeseriesFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig: TimeseriesConfigType = getSearchConfig().timeSeries
 ) => {
   const { data, ...rest } = useTimeseriesSearchResultQuery(
     { query, filter, sortBy },
-    options
+    options,
+    searchConfig
   );
-
-  const timeseriesSearchConfig = getSearchConfig().timeSeries;
 
   const properties = React.useMemo(() => {
     const arr: MatchingLabelPropertyType[] = [];
 
-    if (timeseriesSearchConfig.id.enabled) {
+    if (searchConfig.id.enabled) {
       arr.push({
         key: 'id',
         label: 'ID',
       });
     }
 
-    if (timeseriesSearchConfig.description.enabled) {
+    if (searchConfig.description.enabled) {
       arr.push({
         key: 'description',
         useSubstringMatch: true,
       });
     }
 
-    if (timeseriesSearchConfig.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       arr.push({
         key: 'externalId',
         label: 'External ID',
       });
     }
 
-    if (timeseriesSearchConfig.name.enabled) {
+    if (searchConfig.name.enabled) {
       arr.push({
         key: 'name',
         useSubstringMatch: true,
       });
     }
-    if (timeseriesSearchConfig.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       arr.push('metadata');
     }
-    if (timeseriesSearchConfig.unit.enabled) {
+    if (searchConfig.unit.enabled) {
       arr.push('unit');
     }
 
     return arr;
-  }, [timeseriesSearchConfig]);
+  }, [searchConfig]);
 
   const mappedData = useDeepMemo(() => {
     if (data && query) {

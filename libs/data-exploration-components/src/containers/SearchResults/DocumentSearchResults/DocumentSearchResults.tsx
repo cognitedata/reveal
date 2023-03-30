@@ -23,7 +23,10 @@ import { VerticalDivider } from '@data-exploration-components/components/Divider
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { ResourceTypes } from '@data-exploration-components/types';
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -47,17 +50,22 @@ export const DocumentSearchResults = ({
   onFileClicked,
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearchResultWithMatchingLabelsQuery(
       { filter, query, sortBy },
-      { keepPreviousData: true }
+      { keepPreviousData: true },
+      documentSearchConfig
     );
 
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-  const { data: aggregateCount = 0 } = useDocumentFilteredAggregateCount({
-    query,
-    filters: filter,
-  });
+  const { data: aggregateCount = 0 } = useDocumentFilteredAggregateCount(
+    {
+      query,
+      filters: filter,
+    },
+    documentSearchConfig
+  );
 
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(

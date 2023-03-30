@@ -1,6 +1,7 @@
 import {
   InternalTimeseriesFilters,
   isNumeric,
+  TimeseriesConfigType,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
@@ -39,7 +40,8 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     isString,
     internalId,
   }: InternalTimeseriesFilters,
-  query?: string
+  query?: string,
+  searchConfig: TimeseriesConfigType = getSearchConfig().timeSeries
 ): AdvancedFilter<TimeseriesProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<TimeseriesProperties>();
 
@@ -99,22 +101,20 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     const searchQueryBuilder =
       new AdvancedFilterBuilder<TimeseriesProperties>();
 
-    const searchConfigData = getSearchConfig();
-
-    if (searchConfigData.timeSeries.name.enabled) {
+    if (searchConfig.name.enabled) {
       searchQueryBuilder.equals('name', query);
       searchQueryBuilder.prefix('name', query);
 
-      if (searchConfigData.timeSeries.name.enabledFuzzySearch) {
+      if (searchConfig.name.enabledFuzzySearch) {
         searchQueryBuilder.search('name', query);
       }
     }
 
-    if (searchConfigData.timeSeries.description.enabled) {
+    if (searchConfig.description.enabled) {
       searchQueryBuilder.equals('description', query);
       searchQueryBuilder.prefix('description', query);
 
-      if (searchConfigData.timeSeries.description.enabledFuzzySearch) {
+      if (searchConfig.description.enabledFuzzySearch) {
         searchQueryBuilder.search('description', query);
       }
     }
@@ -123,19 +123,19 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.timeSeries.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.timeSeries.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.timeSeries.unit.enabled) {
+    if (searchConfig.unit.enabled) {
       searchQueryBuilder.prefix('unit', query);
     }
 
-    if (searchConfigData.timeSeries.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 

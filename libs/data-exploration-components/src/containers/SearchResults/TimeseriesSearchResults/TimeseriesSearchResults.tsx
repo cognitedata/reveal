@@ -30,7 +30,10 @@ import {
 } from '@data-exploration-components/components';
 import styled from 'styled-components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -64,6 +67,9 @@ export const TimeseriesSearchResults = ({
 } & DateRangeProps) => {
   const api = convertResourceType('timeSeries');
 
+  const timeseriesSearchConfig =
+    useGetSearchConfigFromLocalStorage('timeSeries');
+
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<InternalTimeseriesData>(
       api,
@@ -90,7 +96,8 @@ export const TimeseriesSearchResults = ({
         sortBy,
         dateRange,
       },
-      { enabled: enableAdvancedFilters }
+      { enabled: enableAdvancedFilters },
+      timeseriesSearchConfig
     );
 
   const { data: countData } = useTimeseriesAggregateCountQuery(
@@ -98,7 +105,8 @@ export const TimeseriesSearchResults = ({
       timeseriesFilters: filter,
       query,
     },
-    { enabled: enableAdvancedFilters }
+    { enabled: enableAdvancedFilters },
+    timeseriesSearchConfig
   );
 
   const totalDataCount = enableAdvancedFilters

@@ -30,7 +30,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  InternalAssetFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -70,16 +73,21 @@ export const AssetTreeTable = ({
     }, [] as number[]);
   }, [rootExpanded]);
 
+  const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
+
   const rootAssetTree = useRootAssetsQuery(rootExpandedKeys);
   const {
     data: searchAssetTree,
     fetchNextPage,
     hasNextPage,
-  } = useSearchAssetTree({
-    query,
-    assetFilter: filter,
-    sortBy: [],
-  });
+  } = useSearchAssetTree(
+    {
+      query,
+      assetFilter: filter,
+      sortBy: [],
+    },
+    assetSearchConfig
+  );
 
   const startFromRoot = useMemo(() => {
     return (

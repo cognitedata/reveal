@@ -8,7 +8,10 @@ import {
 } from '../transformers';
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+} from '@data-exploration-lib/core';
 
 export const useAssetsSearchResultQuery = (
   {
@@ -20,11 +23,12 @@ export const useAssetsSearchResultQuery = (
     assetFilter: InternalAssetFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig?: AssetConfigType
 ) => {
   const advancedFilter = useMemo(
-    () => mapFiltersToAssetsAdvancedFilters(assetFilter, query),
-    [assetFilter, query]
+    () => mapFiltersToAssetsAdvancedFilters(assetFilter, query, searchConfig),
+    [assetFilter, query, searchConfig]
   );
 
   const filter = useMemo(

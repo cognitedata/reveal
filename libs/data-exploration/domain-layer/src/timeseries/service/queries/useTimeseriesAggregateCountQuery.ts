@@ -7,7 +7,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useMemo } from 'react';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  TimeseriesConfigType,
+} from '@data-exploration-lib/core';
 
 export const useTimeseriesAggregateCountQuery = (
   {
@@ -18,13 +21,19 @@ export const useTimeseriesAggregateCountQuery = (
     timeseriesFilters: InternalTimeseriesFilters;
   },
 
-  options?: UseQueryOptions
+  options?: UseQueryOptions,
+  searchConfig?: TimeseriesConfigType
 ) => {
   const sdk = useSDK();
 
   const advancedFilter = useMemo(
-    () => mapFiltersToTimeseriesAdvancedFilters(timeseriesFilters, query),
-    [timeseriesFilters, query]
+    () =>
+      mapFiltersToTimeseriesAdvancedFilters(
+        timeseriesFilters,
+        query,
+        searchConfig
+      ),
+    [timeseriesFilters, query, searchConfig]
   );
 
   const filter = useMemo(

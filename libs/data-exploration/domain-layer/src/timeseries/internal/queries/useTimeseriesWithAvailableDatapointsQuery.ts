@@ -5,6 +5,7 @@ import { useTimeseriesWithDatapointsQuery } from './useTimeseriesWithDatapointsQ
 import {
   InternalTimeseriesFilters,
   isDateInDateRange,
+  TimeseriesConfigType,
 } from '@data-exploration-lib/core';
 
 export const useTimeseriesWithAvailableDatapointsQuery = (
@@ -19,7 +20,8 @@ export const useTimeseriesWithAvailableDatapointsQuery = (
     sortBy?: TableSortBy[];
     dateRange?: [Date, Date];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig?: TimeseriesConfigType
 ) => {
   const { data: timeseries, ...rest } =
     useTimeseriesSearchResultWithLabelsQuery(
@@ -28,7 +30,8 @@ export const useTimeseriesWithAvailableDatapointsQuery = (
         filter,
         sortBy,
       },
-      options
+      options,
+      searchConfig
     );
 
   // We need end date from dateRange to see if the range has any datapoints.

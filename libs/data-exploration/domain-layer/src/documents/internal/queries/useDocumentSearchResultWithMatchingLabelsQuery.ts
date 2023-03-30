@@ -1,5 +1,6 @@
 import {
   EMPTY_OBJECT,
+  FileConfigType,
   InternalDocumentFilter,
   useDeepMemo,
 } from '@data-exploration-lib/core';
@@ -27,14 +28,14 @@ export const useDocumentSearchResultWithMatchingLabelsQuery = (
     limit?: number;
     sortBy?: TableSortBy[];
   } = {},
-  options: UseInfiniteQueryOptions = {}
+  options: UseInfiniteQueryOptions = {},
+  searchConfig: FileConfigType = getSearchConfig().file
 ) => {
   const { results, ...rest } = useDocumentSearchResultQuery(
     { filter, limit, query, sortBy },
-    options
+    options,
+    searchConfig
   );
-
-  const documentSearchConfig = getSearchConfig().file;
 
   const properties = React.useMemo(() => {
     const arr: MatchingLabelPropertyType[] = [
@@ -45,34 +46,34 @@ export const useDocumentSearchResultWithMatchingLabelsQuery = (
       },
     ];
 
-    if (documentSearchConfig.id.enabled) {
+    if (searchConfig.id.enabled) {
       arr.push({
         key: 'id',
         label: 'ID',
       });
     }
 
-    if (documentSearchConfig['sourceFile|metadata'].enabled) {
+    if (searchConfig['sourceFile|metadata'].enabled) {
       arr.push({
         key: 'sourceFile.metadata',
         label: 'Metadata',
       });
     }
-    if (documentSearchConfig['sourceFile|source'].enabled) {
+    if (searchConfig['sourceFile|source'].enabled) {
       arr.push({
         key: 'sourceFile.source',
         label: 'Source',
       });
     }
 
-    if (documentSearchConfig.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       arr.push({
         key: 'externalId',
         label: 'External ID',
       });
     }
 
-    if (documentSearchConfig.labels.enabled) {
+    if (searchConfig.labels.enabled) {
       arr.push({
         key: 'labels',
         customMatcher: extractMatchingLabelsFromCogniteLabels,
@@ -80,7 +81,7 @@ export const useDocumentSearchResultWithMatchingLabelsQuery = (
     }
 
     return arr;
-  }, [documentSearchConfig]);
+  }, [searchConfig]);
 
   const mappedData = useDeepMemo(() => {
     if (results && query) {

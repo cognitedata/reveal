@@ -1,4 +1,5 @@
 import {
+  AssetConfigType,
   InternalAssetFilters,
   isNumeric,
   METADATA_ALL_VALUE,
@@ -36,7 +37,8 @@ export const mapFiltersToAssetsAdvancedFilters = (
     metadata,
     internalId,
   }: InternalAssetFilters,
-  query?: string
+  query?: string,
+  searchConfig: AssetConfigType = getSearchConfig().asset
 ): AdvancedFilter<AssetsProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<AssetsProperties>();
 
@@ -107,22 +109,20 @@ export const mapFiltersToAssetsAdvancedFilters = (
   if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>();
 
-    const searchConfigData = getSearchConfig();
-
-    if (searchConfigData.asset.name.enabled) {
+    if (searchConfig.name.enabled) {
       searchQueryBuilder.equals('name', query);
       searchQueryBuilder.prefix('name', query);
 
-      if (searchConfigData.asset.name.enabledFuzzySearch) {
+      if (searchConfig.name.enabledFuzzySearch) {
         searchQueryBuilder.search('name', query);
       }
     }
 
-    if (searchConfigData.asset.description.enabled) {
+    if (searchConfig.description.enabled) {
       searchQueryBuilder.equals('description', query);
       searchQueryBuilder.prefix('description', query);
 
-      if (searchConfigData.asset.description.enabledFuzzySearch) {
+      if (searchConfig.description.enabledFuzzySearch) {
         searchQueryBuilder.search('description', query);
       }
     }
@@ -131,25 +131,25 @@ export const mapFiltersToAssetsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.asset.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.asset.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.asset.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
-    if (searchConfigData.asset.source.enabled) {
+    if (searchConfig.source.enabled) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
       searchQueryBuilder.prefix('source', query);
     }
 
-    if (searchConfigData.asset.labels.enabled) {
+    if (searchConfig.labels.enabled) {
       searchQueryBuilder.containsAny('labels', [query]);
     }
 

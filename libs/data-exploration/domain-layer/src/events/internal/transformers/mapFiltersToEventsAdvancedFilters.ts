@@ -1,4 +1,5 @@
 import {
+  EventConfigType,
   InternalEventsFilters,
   isNumeric,
   METADATA_ALL_VALUE,
@@ -39,7 +40,8 @@ export const mapFiltersToEventsAdvancedFilters = (
     metadata,
     internalId,
   }: InternalEventsFilters,
-  query?: string
+  query?: string,
+  searchConfig: EventConfigType = getSearchConfig().event
 ): AdvancedFilter<EventsProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<EventsProperties>();
 
@@ -120,15 +122,13 @@ export const mapFiltersToEventsAdvancedFilters = (
   builder.and(filterBuilder);
 
   if (query && !isEmpty(query)) {
-    const searchConfigData = getSearchConfig();
-
     const searchQueryBuilder = new AdvancedFilterBuilder<EventsProperties>();
 
-    if (searchConfigData.event.description.enabled) {
+    if (searchConfig.description.enabled) {
       searchQueryBuilder.equals('description', query);
       searchQueryBuilder.prefix('description', query);
 
-      if (searchConfigData.event.description.enabledFuzzySearch) {
+      if (searchConfig.description.enabledFuzzySearch) {
         searchQueryBuilder.search('description', query);
       }
     }
@@ -137,35 +137,35 @@ export const mapFiltersToEventsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.event.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (searchConfigData.event.type.enabled) {
+    if (searchConfig.type.enabled) {
       searchQueryBuilder.equals('type', query);
       searchQueryBuilder.prefix('type', query);
 
-      if (searchConfigData.event.type.enabledFuzzySearch) {
+      if (searchConfig.type.enabledFuzzySearch) {
         searchQueryBuilder.search('type', query);
       }
     }
 
-    if (searchConfigData.event.subtype.enabled) {
+    if (searchConfig.subtype.enabled) {
       searchQueryBuilder.prefix('subtype', query);
     }
 
-    if (searchConfigData.event.source.enabled) {
+    if (searchConfig.source.enabled) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
       searchQueryBuilder.prefix('source', query);
     }
 
-    if (searchConfigData.event.id.enabled && isNumeric(query)) {
+    if (searchConfig.id.enabled && isNumeric(query)) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.event.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 

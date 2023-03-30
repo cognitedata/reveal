@@ -1,6 +1,7 @@
 import {
   InternalSequenceFilters,
   isNumeric,
+  SequenceConfigType,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
 import {
@@ -30,7 +31,8 @@ export const mapFiltersToSequenceAdvancedFilters = (
     metadata,
     internalId,
   }: InternalSequenceFilters,
-  query?: string
+  query?: string,
+  searchConfig: SequenceConfigType = getSearchConfig().sequence
 ): AdvancedFilter<SequenceProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<SequenceProperties>();
 
@@ -68,22 +70,21 @@ export const mapFiltersToSequenceAdvancedFilters = (
 
   if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>();
-    const searchConfigData = getSearchConfig();
 
-    if (searchConfigData.sequence.name.enabled) {
+    if (searchConfig.name.enabled) {
       searchQueryBuilder.equals('name', query);
       searchQueryBuilder.prefix('name', query);
 
-      if (searchConfigData.sequence.name.enabledFuzzySearch) {
+      if (searchConfig.name.enabledFuzzySearch) {
         searchQueryBuilder.search('name', query);
       }
     }
 
-    if (searchConfigData.sequence.description.enabled) {
+    if (searchConfig.description.enabled) {
       searchQueryBuilder.equals('description', query);
       searchQueryBuilder.prefix('description', query);
 
-      if (searchConfigData.sequence.description.enabledFuzzySearch) {
+      if (searchConfig.description.enabledFuzzySearch) {
         searchQueryBuilder.search('description', query);
       }
     }
@@ -92,14 +93,14 @@ export const mapFiltersToSequenceAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.sequence.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.sequence.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
-    if (searchConfigData.sequence.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 

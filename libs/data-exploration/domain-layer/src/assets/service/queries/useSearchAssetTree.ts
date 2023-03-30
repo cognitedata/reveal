@@ -11,23 +11,33 @@ import isEmpty from 'lodash/isEmpty';
 import { buildTree } from '../utils/buildTree';
 import { concatParents } from '../utils/concatParents';
 import { TableSortBy } from '../../../types';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+} from '@data-exploration-lib/core';
 
-export const useSearchAssetTree = ({
-  query,
-  assetFilter,
-  sortBy,
-}: {
-  query?: string;
-  assetFilter: InternalAssetFilters;
-  sortBy: TableSortBy[];
-}) => {
-  const sdkClient = useSDK();
-  const { data, ...rest } = useAssetsSearchResultWithLabelsQuery({
+export const useSearchAssetTree = (
+  {
     query,
     assetFilter,
-    sortBy: sortBy,
-  });
+    sortBy,
+  }: {
+    query?: string;
+    assetFilter: InternalAssetFilters;
+    sortBy: TableSortBy[];
+  },
+  searchConfig?: AssetConfigType
+) => {
+  const sdkClient = useSDK();
+  const { data, ...rest } = useAssetsSearchResultWithLabelsQuery(
+    {
+      query,
+      assetFilter,
+      sortBy: sortBy,
+    },
+    undefined,
+    searchConfig
+  );
 
   // get all parent ids from path aggregates
   const parentIds = useMemo(() => {

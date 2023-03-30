@@ -6,7 +6,10 @@ import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import { mapTableSortByToEventSortFields } from '../transformers';
 import { mapInternalFilterToEventsFilter } from '../transformers';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+import {
+  EventConfigType,
+  InternalEventsFilters,
+} from '@data-exploration-lib/core';
 
 export const useEventsSearchResultQuery = (
   {
@@ -20,7 +23,8 @@ export const useEventsSearchResultQuery = (
     eventsSortBy?: TableSortBy[];
     limit?: number;
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig?: EventConfigType
 ) => {
   const filter = useMemo(
     () => mapInternalFilterToEventsFilter(eventsFilters),
@@ -28,8 +32,8 @@ export const useEventsSearchResultQuery = (
   );
 
   const advancedFilter = useMemo(
-    () => mapFiltersToEventsAdvancedFilters(eventsFilters, query),
-    [eventsFilters, query]
+    () => mapFiltersToEventsAdvancedFilters(eventsFilters, query, searchConfig),
+    [eventsFilters, query, searchConfig]
   );
 
   const sort = useMemo(

@@ -9,7 +9,10 @@ import {
   useSequenceListQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import {
+  InternalSequenceFilters,
+  SequenceConfigType,
+} from '@data-exploration-lib/core';
 
 export const useSequenceSearchResultQuery = (
   {
@@ -21,11 +24,12 @@ export const useSequenceSearchResultQuery = (
     filter: InternalSequenceFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig?: SequenceConfigType
 ) => {
   const advancedFilter = useMemo(
-    () => mapFiltersToSequenceAdvancedFilters(filter, query),
-    [filter, query]
+    () => mapFiltersToSequenceAdvancedFilters(filter, query, searchConfig),
+    [filter, query, searchConfig]
   );
 
   const sequenceFilter = useMemo(

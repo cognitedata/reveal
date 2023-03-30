@@ -1,9 +1,9 @@
 export type FilterIdType =
-  | keyof AssetType
-  | keyof TimeseriesType
-  | keyof SequenceType
-  | keyof FileType
-  | keyof EventType;
+  | keyof AssetConfigType
+  | keyof TimeseriesConfigType
+  | keyof SequenceConfigType
+  | keyof FileConfigType
+  | keyof EventConfigType;
 
 export type SearchConfigResourceType = keyof SearchConfigDataType;
 
@@ -18,7 +18,7 @@ type CommonKeys = {
   id: SearchConfig;
 };
 
-type AssetType = CommonKeys & {
+export type AssetConfigType = CommonKeys & {
   name: SearchConfig;
   description: SearchConfig;
   metadata: SearchConfig;
@@ -26,20 +26,20 @@ type AssetType = CommonKeys & {
   labels: SearchConfig;
 };
 
-type TimeseriesType = CommonKeys & {
+export type TimeseriesConfigType = CommonKeys & {
   name: SearchConfig;
   description: SearchConfig;
   metadata: SearchConfig;
   unit: SearchConfig;
 };
 
-type SequenceType = CommonKeys & {
+export type SequenceConfigType = CommonKeys & {
   name: SearchConfig;
   description: SearchConfig;
   metadata: SearchConfig;
 };
 
-type FileType = CommonKeys & {
+export type FileConfigType = CommonKeys & {
   'sourceFile|name'?: SearchConfig;
   content: SearchConfig;
   'sourceFile|metadata': SearchConfig;
@@ -47,7 +47,7 @@ type FileType = CommonKeys & {
   labels: SearchConfig;
 };
 
-type EventType = CommonKeys & {
+export type EventConfigType = CommonKeys & {
   type: SearchConfig;
   description: SearchConfig;
   metadata: SearchConfig;
@@ -56,9 +56,9 @@ type EventType = CommonKeys & {
 };
 
 export type SearchConfigDataType = {
-  asset: AssetType;
-  timeSeries: TimeseriesType;
-  sequence: SequenceType;
-  file: FileType;
-  event: EventType;
+  asset: AssetConfigType;
+  timeSeries: TimeseriesConfigType;
+  sequence: SequenceConfigType;
+  file: FileConfigType;
+  event: EventConfigType;
 };

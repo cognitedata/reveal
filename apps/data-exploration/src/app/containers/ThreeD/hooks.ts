@@ -32,6 +32,7 @@ import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -195,17 +196,22 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
 };
 
 export const useInfinite360Images = () => {
+  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
   const {
     data: images360Datasets,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useEventsSearchResultQuery({
-    eventsFilters: {
-      type: 'scan',
+  } = useEventsSearchResultQuery(
+    {
+      eventsFilters: {
+        type: 'scan',
+      },
+      limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
     },
-    limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-  });
+    undefined,
+    eventSearchConfig
+  );
 
   const images360Data = useMemo(() => {
     if (images360Datasets.length > 0) {

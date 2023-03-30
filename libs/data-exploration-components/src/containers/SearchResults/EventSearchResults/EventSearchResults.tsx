@@ -15,7 +15,10 @@ import {
 import { TableSortBy } from '../../../components/Table';
 import { AppliedFiltersTags } from '../../../components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '../../../components';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+import {
+  InternalEventsFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const EventSearchResults = ({
   query = '',
@@ -46,6 +49,8 @@ export const EventSearchResults = ({
     api: query && query.length > 0 ? 'search' : 'list',
   });
 
+  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
+
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, hasNextPage, fetchNextPage, isPreviousData } =
     useEventsSearchResultWithLabelsQuery(
@@ -54,14 +59,16 @@ export const EventSearchResults = ({
         eventsFilters: filter,
         eventsSortBy: sortBy,
       },
-      { enabled: enableAdvancedFilters }
+      { enabled: enableAdvancedFilters },
+      eventSearchConfig
     );
   const { data: countData } = useEventsAggregateCountQuery(
     {
       eventsFilters: filter,
       query,
     },
-    { enabled: enableAdvancedFilters }
+    { enabled: enableAdvancedFilters },
+    eventSearchConfig
   );
 
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
