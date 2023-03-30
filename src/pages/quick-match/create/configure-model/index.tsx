@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button, Flex, Checkbox } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import { Collapse } from 'antd';
 
 import { useTranslation } from 'common';
@@ -159,11 +159,20 @@ const ConfigureModel = (): JSX.Element => {
             title={t('model-configuration-generate-rule-header')}
             subtitle={t('model-configuration-generate-rule-desc')}
           />
-          <Checkbox
-            label={t('model-configuration-generate-rule-header')}
-            checked={generateRules}
-            onChange={(e) => setGenerateRules(e.target.checked)}
-          />
+
+          <Radio.Group
+            onChange={(e) => setGenerateRules(e.target.value)}
+            value={generateRules}
+          >
+            <Flex>
+              <RadioBox checked={generateRules} value={true}>
+                {t('model-configuration-generate-rule-do')}
+              </RadioBox>
+              <RadioBox checked={!generateRules} value={false}>
+                {t('model-configuration-generate-rule-dont')}
+              </RadioBox>
+            </Flex>
+          </Radio.Group>
         </Step.Section>
       </Flex>
     </Step>
