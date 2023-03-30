@@ -70,6 +70,7 @@ const CreateModel = (): JSX.Element => {
     allTargets,
     targetFilter,
     threeDModel,
+    generateRules,
   } = useQuickMatchContext();
   const [modelRefetchInterval, setModelRefetchInterval] = useState<
     number | undefined
@@ -406,7 +407,7 @@ const CreateModel = (): JSX.Element => {
           targetId: i.match.target.id,
         })) || [];
 
-      if (matches.length > 0) {
+      if (matches.length > 0 && generateRules) {
         createRulesJob({
           sources: filteredSources,
           targets: filteredTargets,
@@ -421,13 +422,15 @@ const CreateModel = (): JSX.Element => {
     filteredSources,
     filteredTargets,
     matchFields,
+    generateRules,
   ]);
 
   useEffect(() => {
     if (
       rules?.status === 'Completed' &&
       rules?.rules &&
-      rules.rules.length > 0
+      rules.rules.length > 0 &&
+      generateRules
     ) {
       applyRules({
         sources: filteredSources,
@@ -441,6 +444,7 @@ const CreateModel = (): JSX.Element => {
     filteredTargets,
     rules?.rules,
     rules?.status,
+    generateRules,
   ]);
 
   useEffect(() => {
@@ -485,7 +489,10 @@ const CreateModel = (): JSX.Element => {
   }
 
   // No predictions means there ar no rules generatioon to wait for
-  if (prediction?.status === 'Completed' && prediction?.items.length === 0) {
+  if (
+    prediction?.status === 'Completed' &&
+    (prediction?.items.length === 0 || !generateRules)
+  ) {
     return (
       <Navigate
         to={createLink(
@@ -556,33 +563,37 @@ const CreateModel = (): JSX.Element => {
               </Body>
             </Flex>
           )}
-          {rules ? (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={rules.status} />
-              <Body level={2}>{t(`create-rules-job-${rules.status}`)}</Body>
-            </Flex>
-          ) : (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={createRulesStatus} />
-              <Body level={2}>
-                {t(`create-rules-job-${createRulesStatus}`)}
-              </Body>
-            </Flex>
-          )}
-          {applyRulesResult ? (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={applyRulesResult.status} />
-              <Body level={2}>
-                {t(`create-apply-rules-job-${applyRulesResult.status}`)}
-              </Body>
-            </Flex>
-          ) : (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={applyRulesStatus} />
-              <Body level={2}>
-                {t(`create-apply-rules-job-${applyRulesStatus}`)}
-              </Body>
-            </Flex>
+          {generateRules && (
+            <>
+              {rules ? (
+                <Flex alignItems="center" gap={8}>
+                  <QueryStatusIcon status={rules.status} />
+                  <Body level={2}>{t(`create-rules-job-${rules.status}`)}</Body>
+                </Flex>
+              ) : (
+                <Flex alignItems="center" gap={8}>
+                  <QueryStatusIcon status={createRulesStatus} />
+                  <Body level={2}>
+                    {t(`create-rules-job-${createRulesStatus}`)}
+                  </Body>
+                </Flex>
+              )}
+              {applyRulesResult ? (
+                <Flex alignItems="center" gap={8}>
+                  <QueryStatusIcon status={applyRulesResult.status} />
+                  <Body level={2}>
+                    {t(`create-apply-rules-job-${applyRulesResult.status}`)}
+                  </Body>
+                </Flex>
+              ) : (
+                <Flex alignItems="center" gap={8}>
+                  <QueryStatusIcon status={applyRulesStatus} />
+                  <Body level={2}>
+                    {t(`create-apply-rules-job-${applyRulesStatus}`)}
+                  </Body>
+                </Flex>
+              )}
+            </>
           )}
         </Infobox>
       </Flex>
