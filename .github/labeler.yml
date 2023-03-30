@@ -1,5 +1,5 @@
 fusion-maintainers:
-  - '*'
+  - "*"
 
 platypus:
   - apps/platypus/**/*
@@ -20,3 +20,7 @@ coding-conventions:
 unified-file-viewer:
   - libs/industry-canvas/*
   - libs/industry-canvas/**/*
+
+contextualization:
+  - libs/contextualization/*
+  - libs/contextualization/**/*
