@@ -14092,17 +14092,10 @@ simple-update-notifier@^1.0.0:
   dependencies:
     semver "~7.0.0"
 
-single-spa-react@*:
+single-spa-react@*, single-spa-react@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-5.0.1.tgz#aec754011fa38fae86c436c44c25fdad294dbf77"
   integrity sha512-cuderSZbvH/UsXxbKFHz/F7syoR0UXb5II8kqIqf+X1K95cezE7/z3wVcoDCgVZQjFPkbopxTj6D1U3MQsS17A==
-  dependencies:
-    browserslist-config-single-spa "^1.0.1"
-
-single-spa-react@^4.1.1:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-4.6.1.tgz#1a1fe605c0ab56d3258d06fde787f1ddef7942f2"
-  integrity sha512-19Yr1f6u9ix/wTI+OVLzX/KJ258xCyfe1Zpw7NKoI02QWBLx5B9l9XmBx9gqVtkrgP5ARR0Wr3ztY7EN8V1DAA==
   dependencies:
     browserslist-config-single-spa "^1.0.1"
 

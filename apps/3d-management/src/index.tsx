@@ -9,6 +9,7 @@ const lifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,
+  renderType: 'render',
 
   // @ts-ignore
   errorBoundary() {
