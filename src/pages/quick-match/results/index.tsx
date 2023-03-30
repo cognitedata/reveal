@@ -149,6 +149,7 @@ const QuickMatchResults = (): JSX.Element => {
         >
           {predictions?.status === 'Completed' && (
             <EntityMatchingResult
+              sourceType={sourceType}
               predictions={predictions.items}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}

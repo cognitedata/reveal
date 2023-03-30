@@ -1,11 +1,11 @@
 import { Button, Flex, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useTranslation } from 'common/i18n';
-import { RawSource, SourceType } from 'types/api';
+import { RawSource, SourceType, TargetType } from 'types/api';
 
 type QuickMatchActionBarProps = {
   selectedRows: RawSource[] | number[];
-  sourceType: SourceType;
+  sourceType: SourceType | TargetType;
   onClose: () => void;
 };
 

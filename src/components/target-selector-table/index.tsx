@@ -17,7 +17,6 @@ type Props = {};
 
 export default function TargetSelectionTable({}: Props) {
   const {
-    sourceType,
     targetsList,
     setTargetsList,
     targetFilter,
@@ -94,7 +93,7 @@ export default function TargetSelectionTable({}: Props) {
         </Flex>
         <QuickMatchActionBar
           selectedRows={targetsList}
-          sourceType={sourceType}
+          sourceType="assets"
           onClose={onClose}
         />
       </Flex>
