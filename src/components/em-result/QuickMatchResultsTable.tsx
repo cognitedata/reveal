@@ -13,6 +13,7 @@ import { PAGINATION_SETTINGS } from 'common/constants';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { Slider } from '@cognite/cogs.js';
 import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
+import styled from 'styled-components';
 
 type Predictions = {
   predictions: Prediction[];
@@ -114,25 +115,26 @@ const QuickMatchResultsTable = ({
         filterDropdown: () =>
           Number.isFinite(minScore) &&
           Number.isFinite(maxScore) && (
-            <div
-              style={{ backgroundColor: 'white', padding: 22, width: '400px' }}
-            >
+            <SliderWrapper>
               <Slider
                 min={minScore}
                 max={maxScore}
                 defaultValue={minScore}
                 value={scoreFilter}
                 step={null}
-                marks={scores.reduce(
-                  (accl, i) => ({
-                    ...accl,
-                    [i]: `${Math.floor(i).toLocaleString()}%`,
-                  }),
-                  {}
-                )}
+                marks={{
+                  ...scores.reduce(
+                    (accl: any, i) => ({ ...accl, [i]: <></> }),
+                    {}
+                  ),
+
+                  [minScore]: `${Math.floor(minScore)}%`,
+                  [maxScore]: `${Math.ceil(maxScore)}%`,
+                }}
                 onChange={(n) => setScoreFilter(n)}
+                handle={({ value }) => <>{value.toFixed(1)}%</>}
               />
-            </div>
+            </SliderWrapper>
           ),
         width: 100,
       },
@@ -154,5 +156,12 @@ const QuickMatchResultsTable = ({
     />
   );
 };
+
+const SliderWrapper = styled.div`
+  background-color: white;
+  padding: 22px;
+  width: 400px;
+  border-radius: 12px;
+`;
 
 export default QuickMatchResultsTable;
