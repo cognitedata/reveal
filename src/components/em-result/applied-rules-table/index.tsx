@@ -5,6 +5,7 @@ import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { Container, Graphic } from 'components/InfoBox';
 import ExpandedRule from 'components/pipeline-run-results-table/ExpandedRule';
+import Extractor from 'components/pipeline-run-results-table/Extractor';
 import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
 import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
@@ -20,7 +21,13 @@ type Props = {
 type AppliedRuleTableRecord = { key: number } & AppliedRule;
 type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
   title: string;
-  key: 'pattern' | 'fields' | 'numberOfMatches' | 'matches' | 'expandable';
+  key:
+    | 'source'
+    | 'target'
+    | 'fields'
+    | 'numberOfMatches'
+    | 'matches'
+    | 'expandable';
 };
 
 export default function AppliedRulesTable({
@@ -42,21 +49,24 @@ export default function AppliedRulesTable({
   const columns: AppliedRuleTableRecordCT[] = useMemo(
     () => [
       {
-        title: t('rules-pattern'),
-        key: 'pattern',
-        sorter: (a: AppliedRule, b: AppliedRule) =>
-          (a.rule.extractors[0]?.pattern || '').localeCompare(
-            b.rule.extractors[1]?.pattern || ''
-          ),
-        render: (rule: AppliedRule) => {
-          return (
-            <Flex alignItems="center" gap={12}>
-              <>{rule.rule.extractors[0]?.pattern}</>
-              <Icon type="ArrowRight" />
-              <>{rule.rule.extractors[1]?.pattern}</>
-            </Flex>
-          );
-        },
+        title: t('source'),
+        key: 'source',
+        render: (rule: AppliedRule) => (
+          <Extractor
+            extractors={rule.rule.extractors}
+            entitySetToRender="sources"
+          />
+        ),
+      },
+      {
+        title: t('target'),
+        key: 'target',
+        render: (rule: AppliedRule) => (
+          <Extractor
+            extractors={rule.rule.extractors}
+            entitySetToRender="targets"
+          />
+        ),
       },
       {
         title: t('rules-fields'),
