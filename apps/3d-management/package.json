@@ -81,7 +81,7 @@
     "@types/styled-components": "^5.1.26",
     "@types/three": "^0.149.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
-    "babel-eslint": "^10.1.0",
+    "@babel/eslint-parser": "^7.11.0",
     "concurrently": "^8.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
