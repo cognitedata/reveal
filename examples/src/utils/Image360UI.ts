@@ -14,10 +14,9 @@ export class Image360UI {
 
     const optionsFolder = gui.addFolder('Add Options');
 
-
     const onImageEntered: Image360EnteredDelegate = entity => {
       selectedEntity = entity;
-      // --- Remove after testing - Start 
+      // --- Remove after testing - Start
       console.log('Current revision: ' + selectedEntity.getActiveRevision().date);
 
       const revisions = selectedEntity.list360ImageRevisions();
@@ -25,7 +24,7 @@ export class Image360UI {
         console.log('Available revisions:');
         revisions.forEach((revision, index) => console.log('- Id ' + index + ', ' + revision.date));
       }
-      // --- Remove after testing - End 
+      // --- Remove after testing - End
     };
 
     const translation = {
