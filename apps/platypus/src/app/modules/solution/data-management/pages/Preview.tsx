@@ -3,10 +3,7 @@ import { Flex, Modal } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 
-import {
-  useDataModel,
-  useDataModelTypeDefs,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -45,8 +42,6 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   const [, setSearchParams] = useSearchParams();
   const newQueryParameters: URLSearchParams = new URLSearchParams();
 
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
-
   const { dataModelVersion: selectedDataModelVersion } =
     useSelectedDataModelVersion(version, dataModelExternalId, space);
   const dataModelTypeDefs = useDataModelTypeDefs(
@@ -83,7 +78,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
     if (!typeFromQuery && dataModelTypeDefs.types.length > 0) {
       const firstAvailableType = dataModelTypeDefs.types[0];
       navigate(
-        `/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data-management/preview?type=${firstAvailableType.name}`
+        `/${space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data-management/preview?type=${firstAvailableType.name}`
       );
     }
   }
@@ -114,6 +109,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
             // refetch aggregate count
             queryClient.refetchQueries(
               QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
+                space,
                 dataModelExternalId,
                 selectedType.name
               )

@@ -20,6 +20,7 @@ import { useDebounce } from 'use-debounce';
 import {
   InternalCommonFilters,
   InternalTimeseriesFilters,
+  useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 
 interface Props {
@@ -75,6 +76,8 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
   const [debouncedQuery] = useDebounce(query, 300);
   const [filter, setFilter] = useState<InternalTimeseriesFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const timeseriesSearchConfig =
+    useGetSearchConfigFromLocalStorage('timeSeries');
 
   const timeseriesFilters = useMemo(() => {
     return {
@@ -98,7 +101,8 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
         filter: timeseriesFilters,
         sortBy,
       },
-      { enabled: enableAdvancedFilter }
+      { enabled: enableAdvancedFilter },
+      timeseriesSearchConfig
     );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };

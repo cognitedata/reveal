@@ -3,6 +3,7 @@ import { rgba } from 'polished';
 
 const fillOpacity = 0.9;
 export const SHAPE_ANNOTATION_FILL_COLOR_MAP = {
+  TRANSPARENT: 'transparent',
   BLUE: rgba(Colors['decorative--blue--300'], fillOpacity),
   GREEN: rgba(Colors['decorative--green--300'], fillOpacity),
   ORANGE: rgba(Colors['decorative--orange--300'], fillOpacity),
@@ -11,6 +12,7 @@ export const SHAPE_ANNOTATION_FILL_COLOR_MAP = {
 } as const;
 
 export const SHAPE_ANNOTATION_STROKE_COLOR_MAP = {
+  TRANSPARENT: 'transparent',
   BLUE: Colors['decorative--blue--600'],
   GREEN: Colors['decorative--green--600'],
   ORANGE: Colors['decorative--orange--600'],

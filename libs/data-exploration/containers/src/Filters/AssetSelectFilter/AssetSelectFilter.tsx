@@ -28,8 +28,8 @@ export const AssetSelectFilter = <TFilter,>({
   onChange,
   onInputChange,
   options,
-  error,
-  loading,
+  isError,
+  isLoading,
 }: ByAssetFilterProps<TFilter>) => {
   const handleChange = (
     newValue: {
@@ -45,18 +45,18 @@ export const AssetSelectFilter = <TFilter,>({
     onInputChange?.(query);
   };
 
-  if (loading) {
+  if (isLoading) {
     return null;
   }
 
   return (
-    <Tooltip interactive disabled={!error} content="Error fetching assets!">
+    <Tooltip interactive disabled={!isError} content="Error fetching assets!">
       <MultiSelectFilter<number>
         label="Asset"
         isMulti
         isClearable
         value={value}
-        isLoading={loading}
+        isLoading={isLoading}
         options={options}
         onInputChange={handleInputChange}
         onChange={(_, selected) => {
@@ -178,8 +178,8 @@ const CommonAssetSelectFilter = (
   return (
     <AssetSelectFilter
       {...props}
-      loading={isAssetsLoading}
-      error={isAssetsError}
+      isLoading={isAssetsLoading}
+      isError={isAssetsError}
       options={values}
       value={selectedItemValues}
       onInputChange={setQuery}

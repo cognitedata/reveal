@@ -1,5 +1,9 @@
+import { Aggregate } from '@cognite/sdk';
+
 import { Config, Data, Layout } from '../LineChart';
 import { TimePeriod } from './types';
+
+export const AGGREGATES: Aggregate[] = ['average', 'max', 'min', 'count'];
 
 export const DEFAULT_DATAPOINTS_LIMIT = 20;
 

@@ -1,88 +1,113 @@
 import React from 'react';
-import { ResetFiltersButton } from './ResetFiltersButton';
-import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
-import { BooleanFilter } from './BooleanFilter/BooleanFilter';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
-import { StringFilter } from './StringFilter/StringFilter';
-import { DateFilter } from './DateFilter/DateFilter';
-import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
-import { ResourceTypes } from '@data-exploration-components/types';
-import { AggregatedMultiselectFilter } from '@data-exploration-components/components/SearchNew';
-import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
+
 import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
-import { OldTimeseriesFilters } from '@data-exploration-lib/core';
+import {
+  COMMON_INFO_CONTENT,
+  InternalTimeseriesFilters,
+  isObjectEmpty,
+  SPECIFIC_INFO_CONTENT,
+} from '@data-exploration-lib/core';
+import { BaseFilterCollapse } from '@data-exploration/components';
+import { IsStepFilter, IsStringFilter } from '@data-exploration/containers';
+import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
+import {
+  AggregatedMultiselectFilter,
+  ByAssetFilterV2,
+  DataSetFilterV2,
+  DateFilterV2,
+  MetadataFilterV2,
+  StringFilterV2,
+} from '@data-exploration-components/components/SearchNew';
+import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+
+import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
+import {
+  useTimeseriesList,
+  useTimeseriesMetadataKeysAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
 
 export const TimeseriesFilters = ({
   filter,
   setFilter,
 }: {
-  filter: OldTimeseriesFilters;
-  setFilter: (newFilter: OldTimeseriesFilters) => void;
+  filter: InternalTimeseriesFilters;
+  setFilter: (newFilter: InternalTimeseriesFilters) => void;
 }) => {
-  const resourceType = ResourceTypes.TimeSeries;
-
   const isAdvancedFiltersEnabled = useAdvancedFiltersEnabled();
 
   const { items } = useTimeseriesList(filter, isAdvancedFiltersEnabled);
   const unit = filter.unit;
+  const handleResetCommonFilters = () => {
+    setFilter({
+      ...filter,
+      dataSetIds: undefined,
+      assetSubtreeIds: undefined,
+      createdTime: undefined,
+      lastUpdatedTime: undefined,
+      externalIdPrefix: undefined,
+    });
+  };
+  const { data: metadata = [] } = useTimeseriesMetadataKeysAggregateQuery();
+  const isFilterEmpty = isObjectEmpty(filter as any);
 
   return (
-    <div>
-      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
-      <DataSetFilter
-        resourceType={resourceType}
-        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={(newIds) =>
-          setFilter({
-            ...filter,
-            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
-          })
-        }
-      />
-
-      <BooleanFilter
-        title="Is step"
-        value={filter.isStep}
-        setValue={(newValue) =>
-          setFilter({
-            ...filter,
-            isStep: newValue,
-          })
-        }
-      />
-      <BooleanFilter
-        title="Is string"
-        value={filter.isString}
-        setValue={(newValue) =>
-          setFilter({
-            ...filter,
-            isString: newValue,
-          })
-        }
-      />
-      <StringFilter
-        title="External ID"
-        value={filter.externalIdPrefix}
-        setValue={(newExternalId) =>
-          setFilter({
-            ...filter,
-            externalIdPrefix: newExternalId,
-          })
-        }
-      />
-
-      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
-        <ByAssetFilter
-          value={filter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={(newValue) =>
-            setFilter({
-              ...filter,
-              assetSubtreeIds: newValue?.map((id) => ({ value: id })),
-            })
-          }
+    <BaseFilterCollapse>
+      <BaseFilterCollapse.Panel
+        title="Common"
+        hideResetButton={isFilterEmpty}
+        infoContent={COMMON_INFO_CONTENT}
+        onResetClick={handleResetCommonFilters}
+      >
+        <TempCommonMultiSelectFix>
+          <DataSetFilterV2
+            resourceType="timeSeries"
+            value={filter.dataSetIds}
+            setValue={(newValue) =>
+              setFilter({ ...filter, dataSetIds: newValue })
+            }
+          />
+          <ByAssetFilterV2
+            value={filter.assetSubtreeIds?.map(({ value }) => value)}
+            setValue={(newValue) =>
+              setFilter({ ...filter, assetSubtreeIds: newValue })
+            }
+          />
+          <DateFilterV2
+            title="Created time"
+            value={filter.createdTime}
+            setValue={(newValue) =>
+              setFilter({ ...filter, createdTime: newValue || undefined })
+            }
+          />
+          <DateFilterV2
+            title="Updated time"
+            value={filter.lastUpdatedTime}
+            setValue={(newValue) =>
+              setFilter({ ...filter, lastUpdatedTime: newValue || undefined })
+            }
+          />
+          <StringFilterV2
+            title="External ID"
+            value={filter.externalIdPrefix}
+            setValue={(newValue) =>
+              setFilter({ ...filter, externalIdPrefix: newValue })
+            }
+          />
+        </TempCommonMultiSelectFix>
+      </BaseFilterCollapse.Panel>
+      <BaseFilterCollapse.Panel
+        title="Timeseries"
+        hideResetButton={true}
+        infoContent={SPECIFIC_INFO_CONTENT}
+        // onResetClick={handleResetAssetFilters}
+      >
+        <IsStepFilter
+          value={filter.isStep}
+          onChange={(newValue) => setFilter({ ...filter, isStep: newValue })}
+        />
+        <IsStringFilter
+          value={filter.isString}
+          onChange={(newValue) => setFilter({ ...filter, isString: newValue })}
         />
         {isAdvancedFiltersEnabled ? (
           <AggregatedMultiselectFilter
@@ -102,37 +127,18 @@ export const TimeseriesFilters = ({
             setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
           />
         )}
-        <MetadataFilter
+        <MetadataFilterV2
           items={items}
           value={filter.metadata}
-          setValue={(newMetadata) =>
+          setValue={(newMetadata) => {
             setFilter({
               ...filter,
               metadata: newMetadata,
-            })
-          }
+            });
+          }}
+          keys={metadata}
         />
-        <DateFilter
-          title="Created Time"
-          value={filter.createdTime}
-          setValue={(newDate) =>
-            setFilter({
-              ...filter,
-              createdTime: newDate || undefined,
-            })
-          }
-        />
-        <DateFilter
-          title="Updated Time"
-          value={filter.lastUpdatedTime}
-          setValue={(newDate) =>
-            setFilter({
-              ...filter,
-              lastUpdatedTime: newDate || undefined,
-            })
-          }
-        />
-      </AdvancedFiltersCollapse>
-    </div>
+      </BaseFilterCollapse.Panel>
+    </BaseFilterCollapse>
   );
 };

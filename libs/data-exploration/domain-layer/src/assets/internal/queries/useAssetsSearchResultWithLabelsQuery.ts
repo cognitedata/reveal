@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { InternalAssetFilters, useDeepMemo } from '@data-exploration-lib/core';
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
@@ -20,52 +24,52 @@ export const useAssetsSearchResultWithLabelsQuery = (
     assetFilter: InternalAssetFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig: AssetConfigType = getSearchConfig().asset
 ) => {
   const { data, ...rest } = useAssetsSearchResultQuery(
     { query, assetFilter, sortBy },
-    options
+    options,
+    searchConfig
   );
-
-  const assetSearchConfig = getSearchConfig().asset;
 
   const properties = React.useMemo(() => {
     const arr: MatchingLabelPropertyType[] = [];
 
-    if (assetSearchConfig.id.enabled) {
+    if (searchConfig.id.enabled) {
       arr.push({
         key: 'id',
         label: 'ID',
       });
     }
 
-    if (assetSearchConfig.name.enabled) {
+    if (searchConfig.name.enabled) {
       arr.push({
         key: 'name',
         useSubstringMatch: true,
       });
     }
-    if (assetSearchConfig.description.enabled) {
+    if (searchConfig.description.enabled) {
       arr.push({
         key: 'description',
         useSubstringMatch: true,
       });
     }
 
-    if (assetSearchConfig.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       arr.push({
         key: 'externalId',
         label: 'External ID',
       });
     }
 
-    if (assetSearchConfig.source.enabled) {
+    if (searchConfig.source.enabled) {
       arr.push('source');
     }
-    if (assetSearchConfig.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       arr.push('metadata');
     }
-    if (assetSearchConfig.labels.enabled) {
+    if (searchConfig.labels.enabled) {
       arr.push({
         key: 'labels',
         customMatcher: extractMatchingLabelsFromCogniteLabels,
@@ -73,7 +77,7 @@ export const useAssetsSearchResultWithLabelsQuery = (
     }
 
     return arr;
-  }, [assetSearchConfig]);
+  }, [searchConfig]);
 
   const mappedData = useDeepMemo(() => {
     if (data && query) {

@@ -58,6 +58,7 @@ import { EventSearchResultView } from '@data-exploration-app/containers/Event/Ev
 import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { routes, ViewType } from '@data-exploration-app/containers/App';
+// import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${

@@ -1,6 +1,8 @@
 import {
   InternalTimeseriesFilters,
   isNumeric,
+  TimeseriesConfigType,
+  METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
@@ -38,7 +40,8 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     isString,
     internalId,
   }: InternalTimeseriesFilters,
-  query?: string
+  query?: string,
+  searchConfig: TimeseriesConfigType = getSearchConfig().timeSeries
 ): AdvancedFilter<TimeseriesProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<TimeseriesProperties>();
 
@@ -84,44 +87,55 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        filterBuilder.exists(`metadata|${key}`);
+      } else {
+        filterBuilder.equals(`metadata|${key}`, value);
+      }
     }
   }
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder =
       new AdvancedFilterBuilder<TimeseriesProperties>();
 
-    const searchConfigData = getSearchConfig();
-    if (searchConfigData.timeSeries.name.enabled) {
-      searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
+    if (searchConfig.name.enabled) {
+      searchQueryBuilder.equals('name', query);
+      searchQueryBuilder.prefix('name', query);
+
+      if (searchConfig.name.enabledFuzzySearch) {
+        searchQueryBuilder.search('name', query);
+      }
     }
-    if (searchConfigData.timeSeries.description.enabled) {
-      searchQueryBuilder.search(
-        'description',
-        isEmpty(query) ? undefined : query
-      );
+
+    if (searchConfig.description.enabled) {
+      searchQueryBuilder.equals('description', query);
+      searchQueryBuilder.prefix('description', query);
+
+      if (searchConfig.description.enabledFuzzySearch) {
+        searchQueryBuilder.search('description', query);
+      }
     }
 
     /**
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.timeSeries.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.timeSeries.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.timeSeries.unit.enabled) {
+    if (searchConfig.unit.enabled) {
       searchQueryBuilder.prefix('unit', query);
     }
 
-    if (searchConfigData.timeSeries.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 

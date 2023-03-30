@@ -1,6 +1,5 @@
 import React from 'react';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
-import { Row, Col, Badge } from 'antd';
+
 import {
   ResourceType,
   OldResourceFilterProps,
@@ -13,21 +12,10 @@ import {
   SequenceFilters,
   TimeseriesFilters,
 } from '@data-exploration-components/components/Search';
-import {
-  lightGrey,
-  getSelectedFilter,
-  countByFilter,
-  FiltersWithResourceType,
-  FilterType,
-} from '@data-exploration-components/utils';
+import { lightGrey } from '@data-exploration-components/utils';
 import styled from 'styled-components';
-import noop from 'lodash/noop';
 
 const TRANSITION_TIME = 200;
-interface IFilterIcon {
-  filter: FilterType;
-}
-
 export type FilterProps = Required<OldResourceFilterProps> &
   SetOldResourceFilterProps & {
     resourceType: ResourceType;
@@ -79,23 +67,8 @@ const Filters = ({
   }
 };
 
-const FilterIconWithCount = ({ filter }: IFilterIcon) => {
-  const filterCount = countByFilter(filter);
-  if (filterCount !== 0) {
-    return (
-      <Badge count={filterCount}>
-        <Icon type="Configure" />
-      </Badge>
-    );
-  }
-
-  return <Icon type="Configure" />;
-};
-
 export const SearchFilters = ({
   visible = true,
-  allowHide = true,
-  closeFilters = noop,
   resourceType,
   assetFilter,
   setAssetFilter,
@@ -114,15 +87,6 @@ export const SearchFilters = ({
   closeFilters?: () => void;
 } & Required<OldResourceFilterProps> &
   SetOldResourceFilterProps) => {
-  const selectedFilter = getSelectedFilter({
-    resourceType,
-    assetFilter,
-    timeseriesFilter,
-    sequenceFilter,
-    eventFilter,
-    fileFilter,
-  } as FiltersWithResourceType);
-
   return (
     <div
       style={{
@@ -138,23 +102,6 @@ export const SearchFilters = ({
     >
       {visible && (
         <>
-          <HeaderRow align="middle" justify="center">
-            <IconCol flex="none">
-              <FilterIconWithCount filter={selectedFilter} />
-            </IconCol>
-            <Col flex="auto">Filters</Col>
-            {allowHide && (
-              <Col flex="none">
-                <HideFiltersTooltip interactive content="Hide">
-                  <Button
-                    icon="PanelLeft"
-                    type="ghost"
-                    onClick={closeFilters}
-                  />
-                </HideFiltersTooltip>
-              </Col>
-            )}
-          </HeaderRow>
           <StyledFilters>
             <Filters
               resourceType={resourceType}
@@ -175,24 +122,6 @@ export const SearchFilters = ({
     </div>
   );
 };
-
-const IconCol = styled(Col)`
-  margin-right: 16px;
-  padding-right: 16px;
-  border-right: 1px solid ${lightGrey};
-`;
-
-const HeaderRow = styled(Row)`
-  padding-right: 16px;
-  padding-bottom: 20px;
-  margin-top: 24px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid ${lightGrey};
-`;
-
-const HideFiltersTooltip = styled(Tooltip)`
-  margin-bottom: 8px;
-`;
 
 const StyledFilters = styled.div`
   padding-left: 1px;

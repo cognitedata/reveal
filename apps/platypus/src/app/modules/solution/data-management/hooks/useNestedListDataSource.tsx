@@ -17,6 +17,7 @@ export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelVersion: DataModelVersion;
+  instanceSpace: string;
   onError?: (error: any) => void;
 };
 
@@ -24,6 +25,7 @@ export const useNestedListDataSource = ({
   dataModelType,
   dataModelTypeDefs,
   dataModelVersion,
+  instanceSpace,
   onError,
 }: ListDataSourceProps) => {
   const cursor = useRef('');
@@ -52,6 +54,7 @@ export const useNestedListDataSource = ({
         if (isCustomType) {
           return dataManagementHandler
             .getDataById({
+              dataModelExternalId: dataModelVersion.externalId,
               nestedCursors: {
                 [field]: hasNextPage.current ? cursor.current : '',
               },
@@ -64,9 +67,11 @@ export const useNestedListDataSource = ({
               externalId,
               dataModelType,
               dataModelTypeDefs,
-              dataModelVersion,
               nestedLimit: limit,
               limitFields: [field],
+              dataModelSpace: dataModelVersion.space,
+              instanceSpace,
+              version: dataModelVersion.version,
             })
             .then((response) => {
               const result = response.getValue();

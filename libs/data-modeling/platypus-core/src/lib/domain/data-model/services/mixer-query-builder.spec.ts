@@ -150,6 +150,7 @@ describe('MixerApiQueryBuilderServiceTest', () => {
           externalId
           lastUpdatedTime
           createdTime
+          space
           name
 posts (first: 2) { items { externalId } }
 user { name }
@@ -187,6 +188,7 @@ user { name }
           externalId
           lastUpdatedTime
           createdTime
+          space
           name
 posts (first: 2) { items { externalId } }
 user { name }
@@ -223,6 +225,7 @@ user { name }
           externalId
           lastUpdatedTime
           createdTime
+          space
           name
 posts (first:2) { items { externalId } }
 user { name }
@@ -303,6 +306,7 @@ user { name }
           externalId
           lastUpdatedTime
           createdTime
+          space
           myTimeSeries { externalId }
         }
         pageInfo {
@@ -365,6 +369,7 @@ user { name }
           externalId
           lastUpdatedTime
           createdTime
+          space
           ts { externalId }
           tsList { externalId }
         }
@@ -419,6 +424,7 @@ user { name }
           externalId
           lastUpdatedTime
           createdTime
+          space
         }
         pageInfo {
           startCursor

@@ -12,11 +12,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 export function useNodesDeleteMutation({
   dataModelExternalId,
   dataModelType,
+  space,
 }: {
   dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
+  space: string;
 }) {
   const aggregationsQueryKey = QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
+    space,
     dataModelExternalId,
     dataModelType.name
   );

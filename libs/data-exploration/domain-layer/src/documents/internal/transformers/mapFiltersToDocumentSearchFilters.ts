@@ -1,6 +1,12 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
-import { InternalDocumentFilter, isNumeric } from '@data-exploration-lib/core';
+import {
+  FileConfigType,
+  InternalDocumentFilter,
+  isNumeric,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import { getSearchConfig } from '../../../utils';
+import isEmpty from 'lodash/isEmpty';
 
 export type DocumentProperties = {
   'sourceFile|datasetId': number[];
@@ -28,7 +34,8 @@ export const mapFiltersToDocumentSearchFilters = (
     internalId,
     metadata,
   }: InternalDocumentFilter,
-  query?: string
+  query?: string,
+  searchConfig: FileConfigType = getSearchConfig().file
 ): AdvancedFilter<DocumentProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<DocumentProperties>();
 
@@ -66,46 +73,61 @@ export const mapFiltersToDocumentSearchFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`sourceFile|metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        filterBuilder.exists(`sourceFile|metadata|${key}`);
+      } else {
+        filterBuilder.equals(`sourceFile|metadata|${key}`, value);
+      }
     }
   }
 
   builder.and(filterBuilder);
 
-  if (query) {
-    const searchConfigData = getSearchConfig();
-
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<DocumentProperties>();
 
-    if (searchConfigData.file['sourceFile|name']?.enabled) {
+    if (searchConfig['sourceFile|name']?.enabled) {
       /* eslint-disable @typescript-eslint/ban-ts-comment */
       // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
-      searchQueryBuilder.search('sourceFile|name', query);
-    }
-    if (searchConfigData.file.content.enabled) {
-      // @ts-ignore
-      searchQueryBuilder.search('content', query);
+      searchQueryBuilder.equals('sourceFile|name', query);
+
+      /* eslint-disable @typescript-eslint/ban-ts-comment */
+      // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+      searchQueryBuilder.prefix('sourceFile|name', query);
+
+      if (searchConfig['sourceFile|name']?.enabledFuzzySearch) {
+        /* eslint-disable @typescript-eslint/ban-ts-comment */
+        // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+        searchQueryBuilder.search('sourceFile|name', query);
+      }
     }
 
-    if (searchConfigData.file['sourceFile|metadata'].enabled) {
+    if (searchConfig.content.enabled) {
+      if (searchConfig.content.enabledFuzzySearch) {
+        // @ts-ignore
+        searchQueryBuilder.search('content', query);
+      }
+    }
+
+    if (searchConfig['sourceFile|metadata'].enabled) {
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|metadata', query);
     }
 
-    if (isNumeric(query) && searchConfigData.file.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.file.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       searchQueryBuilder.prefix('externalId', query);
     }
 
-    if (searchConfigData.file['sourceFile|source'].enabled) {
+    if (searchConfig['sourceFile|source'].enabled) {
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|source', query);
     }
 
-    if (searchConfigData.file.labels.enabled) {
+    if (searchConfig.labels.enabled) {
       // @ts-ignore
       searchQueryBuilder.containsAny('labels', [{ externalId: query }]);
     }

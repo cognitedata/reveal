@@ -18,8 +18,11 @@ import {
   ContainerType,
   isSupportedFileInfo,
   UnifiedViewer,
+  UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
+import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
@@ -29,7 +32,7 @@ import {
   ContainerReferenceType,
   ContainerReferenceWithoutDimensions,
 } from './types';
-import { useState } from 'react';
+import { useState, useEffect, KeyboardEventHandler } from 'react';
 import useManagedState from './hooks/useManagedState';
 import { clearCanvasState } from './utils/utils';
 
@@ -39,10 +42,12 @@ export const IndustryCanvasPage = () => {
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
+  const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
+
+  const sdk = useSDK();
 
   const {
     container,
-    setContainer,
     canvasAnnotations,
     containerReferences,
     addContainerReferences,
@@ -50,6 +55,10 @@ export const IndustryCanvasPage = () => {
     removeContainerReference,
     onDeleteRequest,
     onUpdateRequest,
+    undo,
+    redo,
+    interactionState,
+    setInteractionState,
   } = useManagedState({
     container: {
       id: 'flexible-layout-container',
@@ -62,11 +71,21 @@ export const IndustryCanvasPage = () => {
     unifiedViewer: unifiedViewerRef,
     addContainerReferences,
   });
-  const sdk = useSDK();
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
   };
+
+  useEffect(() => {
+    if (unifiedViewerRef === null) {
+      return;
+    }
+    setCurrentZoomScale(unifiedViewerRef.getScale());
+    unifiedViewerRef.addEventListener(
+      UnifiedViewerEventType.ON_ZOOM_CHANGE,
+      setCurrentZoomScale
+    );
+  }, [unifiedViewerRef]);
 
   const onAddResourcePress = () => {
     openResourceSelector({
@@ -131,10 +150,12 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'timeSeries') {
               return {
                 type: ContainerReferenceType.TIMESERIES,
-                id: supportedResourceItem.id,
-                startDate: new Date(
-                  new Date().setMonth(new Date().getMonth() - 6)
-                ),
+                id: uuid(),
+                resourceId: supportedResourceItem.id,
+                startDate: dayjs(new Date())
+                  .subtract(2, 'years')
+                  .startOf('day')
+                  .toDate(),
                 endDate: new Date(),
               };
             }
@@ -142,7 +163,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'file') {
               return {
                 type: ContainerReferenceType.FILE,
-                id: supportedResourceItem.id,
+                id: supportedResourceItem.id.toString(),
+                resourceId: supportedResourceItem.id,
                 page: 1,
               };
             }
@@ -150,7 +172,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'asset') {
               return {
                 type: ContainerReferenceType.ASSET,
-                id: supportedResourceItem.id,
+                id: supportedResourceItem.id.toString(),
+                resourceId: supportedResourceItem.id,
               };
             }
 
@@ -167,6 +190,17 @@ export const IndustryCanvasPage = () => {
     window.location.reload();
   };
 
+  const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      if (event.shiftKey) {
+        redo.fn();
+        return;
+      }
+      undo.fn();
+      return;
+    }
+  };
+
   return (
     <>
       <PageTitle title="Industry Canvas" />
@@ -180,11 +214,30 @@ export const IndustryCanvasPage = () => {
 
         <StyledGoBackWrapper>
           <Button onClick={onClearLocalStorage}>
-            <Icon type="Delete" /> Clear local storage
+            <Icon type="Delete" /> Clear Canvas
           </Button>
 
+          <Tooltip content="Undo">
+            <Button
+              type="ghost"
+              icon="Restore"
+              onClick={undo.fn}
+              disabled={undo.isDisabled}
+              aria-label="Undo"
+            />
+          </Tooltip>
+          <Tooltip content="Redo">
+            <Button
+              type="ghost"
+              icon="Refresh"
+              onClick={redo.fn}
+              disabled={redo.isDisabled}
+              aria-label="Redo"
+            />
+          </Tooltip>
+
           <Button onClick={onAddResourcePress}>
-            <Icon type="Plus" /> Add resources...
+            <Icon type="Plus" /> Add data...
           </Button>
 
           <Tooltip content="Download canvas as PDF">
@@ -196,15 +249,18 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
-      <PreviewTabWrapper>
+      <PreviewTabWrapper onKeyDown={onKeyDown}>
         <IndustryCanvas
           id={APPLICATION_ID_INDUSTRY_CANVAS}
+          currentZoomScale={currentZoomScale}
+          viewerRef={unifiedViewerRef}
           applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
           onAddContainerReferences={onAddContainerReferences}
           onDeleteRequest={onDeleteRequest}
           onUpdateRequest={onUpdateRequest}
+          interactionState={interactionState}
+          setInteractionState={setInteractionState}
           container={container}
-          setContainer={setContainer}
           updateContainerReference={updateContainerReference}
           containerReferences={containerReferences}
           canvasAnnotations={canvasAnnotations}

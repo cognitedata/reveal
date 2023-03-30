@@ -26,6 +26,7 @@ type Props = {
   onPublishedRowsCountClick: () => void;
   onSearchInputValueChange: (value: string) => void;
   publishedRowsCount: number;
+  filteredRowCount: null | undefined | number;
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
   suggestionsAvailable?: boolean;
@@ -47,6 +48,7 @@ export function PreviewPageHeader({
   onPublishedRowsCountClick,
   onSearchInputValueChange,
   publishedRowsCount,
+  filteredRowCount,
   shouldShowDraftRows,
   shouldShowPublishedRows,
   suggestionsAvailable = false,
@@ -123,7 +125,11 @@ export function PreviewPageHeader({
                 marginLeft: '8px',
                 opacity: !shouldShowPublishedRows ? '0.2' : '1.0',
               }}
-              label={`${publishedRowsCount}`}
+              label={`${
+                filteredRowCount !== null && filteredRowCount !== undefined
+                  ? filteredRowCount
+                  : publishedRowsCount
+              }`}
             />
           </Tooltip>
           {isManualPopulationEnabled && (

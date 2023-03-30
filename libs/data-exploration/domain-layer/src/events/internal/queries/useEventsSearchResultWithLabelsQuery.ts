@@ -2,7 +2,11 @@ import * as React from 'react';
 import { TableSortBy } from '../../../types';
 import { useEventsSearchResultQuery } from './useEventsSearchResultQuery';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { InternalEventsFilters, useDeepMemo } from '@data-exploration-lib/core';
+import {
+  EventConfigType,
+  InternalEventsFilters,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
 import {
   extractMatchingLabels,
   MatchingLabelPropertyType,
@@ -19,55 +23,55 @@ export const useEventsSearchResultWithLabelsQuery = (
     eventsFilters: InternalEventsFilters;
     eventsSortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig: EventConfigType = getSearchConfig().event
 ) => {
   const { data, ...rest } = useEventsSearchResultQuery(
     { query, eventsFilters, eventsSortBy },
-    options
+    options,
+    searchConfig
   );
-
-  const eventSearchConfig = getSearchConfig().event;
 
   const properties = React.useMemo(() => {
     const arr: MatchingLabelPropertyType[] = [];
 
-    if (eventSearchConfig.id.enabled) {
+    if (searchConfig.id.enabled) {
       arr.push({
         key: 'id',
         label: 'ID',
       });
     }
 
-    if (eventSearchConfig.description.enabled) {
+    if (searchConfig.description.enabled) {
       arr.push({
         key: 'description',
         useSubstringMatch: true,
       });
     }
 
-    if (eventSearchConfig.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       arr.push({
         key: 'externalId',
         label: 'External ID',
       });
     }
 
-    if (eventSearchConfig.source.enabled) {
+    if (searchConfig.source.enabled) {
       arr.push('source');
     }
-    if (eventSearchConfig.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       arr.push('metadata');
     }
-    if (eventSearchConfig.type.enabled) {
+    if (searchConfig.type.enabled) {
       arr.push('type');
     }
 
-    if (eventSearchConfig.subtype.enabled) {
+    if (searchConfig.subtype.enabled) {
       arr.push('subtype');
     }
 
     return arr;
-  }, [eventSearchConfig]);
+  }, [searchConfig]);
 
   const mappedData = useDeepMemo(() => {
     if (data && query) {

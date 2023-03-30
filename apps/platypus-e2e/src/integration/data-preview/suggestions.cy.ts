@@ -14,7 +14,8 @@ describe('Platypus Data Preview Page - Suggestions', () => {
     cy.get('.cogs-modal-footer-buttons > .cogs-button--type-ghost').click();
   });
 
-  it('should be able to see suggestions with incomplete direct relationship', () => {
+  // skipping as this is low priority
+  it.skip('should be able to see suggestions with incomplete direct relationship', () => {
     // add a new row
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible').click();

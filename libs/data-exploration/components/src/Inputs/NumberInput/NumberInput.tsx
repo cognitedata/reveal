@@ -1,40 +1,47 @@
 import { Input } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { FilterLabel } from '../../Labels/FilterLabel';
+
+export interface NumberInputProps {
+  label?: string;
+  placeholder?: string;
+  value?: number | undefined;
+  onChange?: (newValue: number | undefined) => void;
+  error?: boolean | string;
+  loading?: boolean;
+}
 
 export const NumberInput = ({
   value,
   onChange,
   label,
   placeholder = 'Enter exact match...',
-}: {
-  label?: string;
-  placeholder?: string;
-  value?: number | undefined;
-  onChange?: (newValue: number | undefined) => void;
-}) => {
+  error,
+  loading,
+}: NumberInputProps) => {
   const handleValueChange = (newValue: string | undefined) => {
     onChange?.(Number(newValue));
   };
+
+  const isLoading = loading
+    ? { disabled: true, icon: 'Loader', placeholder: 'Loading...' }
+    : {};
 
   return (
     <>
       {label && <FilterLabel>{label}</FilterLabel>}
 
-      <StyledInput
+      <Input
         type="number"
         variant="noBorder"
+        error={error}
         fullWidth
         value={value || ''}
         placeholder={placeholder}
         onChange={(event) => {
           handleValueChange(event.target.value);
         }}
+        {...isLoading}
       />
     </>
   );
 };
-
-const StyledInput = styled(Input)`
-  width: 100%;
-`;

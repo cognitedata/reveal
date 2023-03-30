@@ -1,94 +1,148 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { ResetFiltersButton } from './ResetFiltersButton';
-import { LabelFilter } from './LabelFilter/LabelFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
-import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { StringFilter } from './StringFilter/StringFilter';
-import { DateFilter } from './DateFilter/DateFilter';
-import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+
+import {
+  AggregatedFilterV2,
+  MetadataFilterV2,
+} from '@data-exploration-components/components/SearchNew';
+
+import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
-import { OldFilesFilters } from '@data-exploration-lib/core';
+import {
+  COMMON_INFO_CONTENT,
+  InternalFilesFilters,
+  isObjectEmpty,
+  SPECIFIC_INFO_CONTENT,
+} from '@data-exploration-lib/core';
+import { BaseFilterCollapse } from '@data-exploration/components';
+import {
+  ByAssetFilterV2,
+  DataSetFilterV2,
+  DateFilterV2,
+  LabelFilterV2,
+  StringFilterV2,
+} from '@data-exploration-components/components/SearchNew';
 
 export const FileFilters = ({
   filter,
   setFilter,
 }: {
-  filter: OldFilesFilters;
-  setFilter: (newFilter: OldFilesFilters) => void;
+  filter: InternalFilesFilters;
+  setFilter: (newFilter: InternalFilesFilters) => void;
 }) => {
   const resourceType = ResourceTypes.File;
   const { data: items = [] } = useList<any>('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });
+  const handleResetCommonFilters = () => {
+    setFilter({
+      ...filter,
+      dataSetIds: undefined,
+      assetSubtreeIds: undefined,
+      createdTime: undefined,
+      lastUpdatedTime: undefined,
+      externalIdPrefix: undefined,
+    });
+  };
+
+  const handleResetFileFilters = () => {
+    setFilter({
+      ...filter,
+      labels: undefined,
+      mimeType: undefined,
+      metadata: undefined,
+      sourceModifiedTime: undefined,
+      uploadedTime: undefined,
+      directoryPrefix: undefined,
+      source: undefined,
+      sourceCreatedTime: undefined,
+    });
+  };
+
+  const isFilterEmpty = isObjectEmpty(filter as any);
 
   return (
-    <div>
-      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
-      <DataSetFilter
-        resourceType={resourceType}
-        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={(newIds) =>
-          setFilter({
-            ...filter,
-            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
-          })
-        }
-      />
-      <AggregatedFilter
-        items={items}
-        aggregator="mimeType"
-        title="Mime type"
-        value={filter.mimeType}
-        setValue={(newValue) => setFilter({ ...filter, mimeType: newValue })}
-      />
-      <StringFilter
-        title="External ID"
-        value={filter.externalIdPrefix}
-        setValue={(newExternalId) =>
-          setFilter({
-            ...filter,
-            externalIdPrefix: newExternalId,
-          })
-        }
-      />
-      <DateFilter
-        title="Source Modified Time"
-        value={filter.sourceModifiedTime}
-        setValue={(newDate) =>
-          setFilter({
-            ...filter,
-            sourceModifiedTime: newDate || undefined,
-          })
-        }
-      />
-      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
-        <LabelFilter
-          resourceType={resourceType}
-          value={filter.labels?.map(({ value }) => ({ externalId: value }))}
+    <BaseFilterCollapse>
+      <BaseFilterCollapse.Panel
+        title="Common"
+        hideResetButton={isFilterEmpty}
+        infoContent={COMMON_INFO_CONTENT}
+        onResetClick={handleResetCommonFilters}
+      >
+        <TempCommonMultiSelectFix>
+          <DataSetFilterV2
+            resourceType={resourceType}
+            value={filter.dataSetIds}
+            setValue={(newValue) =>
+              setFilter({ ...filter, dataSetIds: newValue })
+            }
+          />
+          <ByAssetFilterV2
+            value={filter.assetSubtreeIds?.map(({ value }) => value)}
+            setValue={(newValue) =>
+              setFilter({ ...filter, assetSubtreeIds: newValue })
+            }
+          />
+          <DateFilterV2
+            title="Created time"
+            value={filter.createdTime}
+            setValue={(newValue) =>
+              setFilter({ ...filter, createdTime: newValue || undefined })
+            }
+          />
+          <DateFilterV2
+            title="Updated time"
+            value={filter.lastUpdatedTime}
+            setValue={(newValue) =>
+              setFilter({ ...filter, lastUpdatedTime: newValue || undefined })
+            }
+          />
+          <StringFilterV2
+            title="External ID"
+            value={filter.externalIdPrefix}
+            setValue={(newValue) =>
+              setFilter({ ...filter, externalIdPrefix: newValue })
+            }
+          />
+        </TempCommonMultiSelectFix>
+      </BaseFilterCollapse.Panel>
+      <BaseFilterCollapse.Panel
+        title="Files"
+        hideResetButton={isFilterEmpty}
+        onResetClick={handleResetFileFilters}
+        infoContent={SPECIFIC_INFO_CONTENT}
+      >
+        <AggregatedFilterV2
+          items={items}
+          aggregator="mimeType"
+          title="Mime type"
+          value={filter.mimeType}
+          setValue={(newValue) => setFilter({ ...filter, mimeType: newValue })}
+        />
+        <DateFilterV2
+          title="Source Modified Time"
+          value={filter.sourceModifiedTime}
+          setValue={(newDate) =>
+            setFilter({
+              ...filter,
+              sourceModifiedTime: newDate || undefined,
+            })
+          }
+        />
+        <LabelFilterV2
+          resourceType="file"
+          value={filter.labels}
           setValue={(newFilters) =>
             setFilter({
               ...filter,
-              labels: newFilters
-                ? newFilters?.map(({ externalId }) => ({ value: externalId }))
-                : undefined,
+              labels: newFilters,
             })
           }
         />
-        <ByAssetFilter
-          value={filter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={(newValue) =>
-            setFilter({
-              ...filter,
-              assetSubtreeIds: newValue?.map((id) => ({ value: id })),
-            })
-          }
-        />
-        <DateFilter
+
+        <DateFilterV2
           title="Uploaded Time"
           value={filter.uploadedTime}
           setValue={(newDate) =>
@@ -98,7 +152,7 @@ export const FileFilters = ({
             })
           }
         />
-        <StringFilter
+        <StringFilterV2
           title="Directory prefix"
           value={(filter as any).directoryPrefix}
           setValue={(newPrefix) =>
@@ -109,7 +163,7 @@ export const FileFilters = ({
             })
           }
         />
-        <AggregatedFilter
+        <AggregatedFilterV2
           title="Source"
           items={items}
           aggregator="source"
@@ -121,37 +175,8 @@ export const FileFilters = ({
             })
           }
         />
-        <MetadataFilter
-          items={items}
-          value={filter.metadata}
-          setValue={(newMetadata) =>
-            setFilter({
-              ...filter,
-              metadata: newMetadata,
-            })
-          }
-        />
-        <DateFilter
-          title="Created Time"
-          value={filter.createdTime}
-          setValue={(newDate) =>
-            setFilter({
-              ...filter,
-              createdTime: newDate || undefined,
-            })
-          }
-        />
-        <DateFilter
-          title="Updated Time"
-          value={filter.lastUpdatedTime}
-          setValue={(newDate) =>
-            setFilter({
-              ...filter,
-              lastUpdatedTime: newDate || undefined,
-            })
-          }
-        />
-        <DateFilter
+
+        <DateFilterV2
           title="Source Created Time"
           value={filter.sourceCreatedTime}
           setValue={(newDate) =>
@@ -161,7 +186,17 @@ export const FileFilters = ({
             })
           }
         />
-      </AdvancedFiltersCollapse>
-    </div>
+        <MetadataFilterV2
+          items={items}
+          value={filter.metadata}
+          setValue={(newMetadata) =>
+            setFilter({
+              ...filter,
+              metadata: newMetadata,
+            })
+          }
+        />
+      </BaseFilterCollapse.Panel>
+    </BaseFilterCollapse>
   );
 };

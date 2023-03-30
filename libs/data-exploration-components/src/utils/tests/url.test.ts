@@ -1,4 +1,14 @@
-import { isValidUrl } from '../url';
+import { renderHook } from '@testing-library/react';
+import { isValidUrl, useSearchParamString } from '../url';
+
+const mockFunction = jest.fn();
+
+jest.mock('react-router-dom', () => {
+  return {
+    ...jest.requireActual('react-router-dom'),
+    useSearchParams: () => ['q=URLUtils.searchParams&topic=api', mockFunction],
+  };
+});
 
 describe('url', () => {
   describe('isValidUrl', () => {
@@ -33,6 +43,48 @@ describe('url', () => {
     ])('isValidUrl(%s)', (value, expected) => {
       const result = isValidUrl(value);
       expect(result).toBe(expected);
+    });
+  });
+
+  describe('useSearchParamString', () => {
+    beforeEach(() => mockFunction.mockClear());
+    afterAll(() => jest.clearAllMocks());
+
+    const initRender = (key: string, opts?: { replace?: boolean }) => {
+      return renderHook(() => useSearchParamString(key, opts));
+    };
+
+    it('should return expected value by key', () => {
+      const { result } = initRender('topic');
+
+      expect(result.current[0]).toEqual('api');
+    });
+
+    it('should be null', () => {
+      const { result } = initRender('test');
+
+      expect(result.current[0]).toBeNull();
+    });
+
+    it('should add new params', () => {
+      const { result } = initRender('test');
+
+      result.current[1]('new-topic');
+      expect(mockFunction).toHaveBeenCalled();
+      expect(mockFunction).toHaveBeenCalledWith(
+        'q=URLUtils.searchParams&topic=api&test=new-topic',
+        { replace: false }
+      );
+    });
+
+    it('should replace existing param', () => {
+      const { result } = initRender('topic', { replace: true });
+
+      result.current[1]('new-topic');
+      expect(mockFunction).toHaveBeenCalledWith(
+        'q=URLUtils.searchParams&topic=new-topic',
+        { replace: true }
+      );
     });
   });
 });

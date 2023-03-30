@@ -21,6 +21,7 @@ import { useDebounce } from 'use-debounce';
 import {
   InternalCommonFilters,
   InternalSequenceFilters,
+  useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 
 interface Props {
@@ -63,6 +64,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   const [debouncedQuery] = useDebounce(query, 300);
   const [filter, setFilter] = useState<InternalSequenceFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
   const sequenceFilter = useMemo(() => {
     return {
@@ -84,7 +86,8 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
       filter: sequenceFilter,
       sortBy,
     },
-    { enabled: enableAdvancedFilter }
+    { enabled: enableAdvancedFilter },
+    sequenceSearchConfig
   );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };

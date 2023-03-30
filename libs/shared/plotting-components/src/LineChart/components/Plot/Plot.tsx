@@ -7,9 +7,10 @@ import {
   Config as PlotlyConfig,
   PlotHoverEvent,
   PlotMouseEvent,
-  PlotRelayoutEvent,
   PlotSelectionEvent,
 } from 'plotly.js';
+
+import debounce from 'lodash/debounce';
 
 import { getCommonAxisLayoutProps } from '../../utils/getCommonAxisLayoutProps';
 import {
@@ -158,11 +159,23 @@ export const Plot = React.memo(
         [height, width]
       );
 
+      const handleInitialized = useCallback(() => {
+        resetPlotRange();
+        updateAxisTickCount(plotRef.current, isEmptyData);
+        updateLayoutMargin(plotRef.current);
+      }, [
+        isEmptyData,
+        resetPlotRange,
+        updateAxisTickCount,
+        updateLayoutMargin,
+      ]);
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       const handleRelayout = useCallback(
-        (_event: PlotRelayoutEvent) => {
+        debounce(() => {
           updateAxisTickCount(plotRef.current, isEmptyData);
           updateLayoutMargin(plotRef.current);
-        },
+        }, 100),
         [isEmptyData, updateAxisTickCount, updateLayoutMargin]
       );
 
@@ -177,6 +190,11 @@ export const Plot = React.memo(
         [onSelected, setPlotRange]
       );
 
+      const handleResetPlotZoom = useCallback(() => {
+        resetPlotRange();
+        handleRelayout();
+      }, [handleRelayout, resetPlotRange]);
+
       if (isLoading) {
         return <Loader variant={variant} style={{ height, width }} />;
       }
@@ -187,7 +205,6 @@ export const Plot = React.memo(
           showticks={showTicks}
           cursor={cursor}
           variant={variant}
-          showyticklabels={plotLayout.yaxis?.showticklabels}
         >
           <PlotlyPlot
             data={plotData}
@@ -195,14 +212,14 @@ export const Plot = React.memo(
             config={plotConfig}
             style={plotStyle}
             useResizeHandler={responsive}
-            onInitialized={resetPlotRange}
+            onInitialized={handleInitialized}
             onHover={onHover}
             onUnhover={onUnhover}
             onRelayout={handleRelayout}
             onSelecting={onSelecting}
             onSelected={handleSelected}
-            onDeselect={resetPlotRange}
-            onDoubleClick={resetPlotRange}
+            onDeselect={handleResetPlotZoom}
+            onDoubleClick={handleResetPlotZoom}
           />
         </PlotWrapper>
       );

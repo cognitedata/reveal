@@ -20,14 +20,22 @@ import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
   const resetDocumentFilters = useResetDocumentFilters();
   const isFiltersEmpty = useFilterEmptyState('document');
+  const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
 
-  const { results } = useDocumentSearchResultQuery({ filter: documentFilter });
+  const { results } = useDocumentSearchResultQuery(
+    { filter: documentFilter },
+    undefined,
+    documentSearchConfig
+  );
 
   const resultWithMetadata = results.map((document) => ({
     ...document,

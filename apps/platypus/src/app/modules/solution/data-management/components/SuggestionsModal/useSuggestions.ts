@@ -35,6 +35,7 @@ export const useSuggestions = ({
         });
         queryClient.invalidateQueries(
           QueryKeys.PREVIEW_TABLE_DATA(
+            space,
             dataModelExternalId,
             dataModelType.name,
             version

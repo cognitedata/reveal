@@ -21,6 +21,13 @@ export const useAxisDirection = (axisDirectionConfig: AxisDirectionConfig) => {
 
     window.focus();
 
+    const defaultAxisDirectionConfig = axisDirectionConfig.find(
+      ({ trigger }) => trigger === 'default'
+    );
+    if (defaultAxisDirectionConfig) {
+      setDirection(defaultAxisDirectionConfig.direction);
+    }
+
     const unsubscribeListeners = axisDirectionConfig.map(
       ({ trigger, direction }) => {
         const type = trigger === 'default' ? 'keyup' : 'keydown';

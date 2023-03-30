@@ -8,7 +8,7 @@
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "build",
+        "outputPath": "dist/apps/platypus",
         "index": "apps/platypus/src/index.html",
         "main": "apps/platypus/src/main.tsx",
         "runtimeChunk": false,

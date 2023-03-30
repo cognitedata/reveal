@@ -38,7 +38,12 @@ export interface DocumentsAggregateProperty {
     | DocumentMetadataValueProperty;
 }
 
-export type DocumentProperty = 'type' | 'sourceFile' | 'source' | 'author';
+export type DocumentProperty =
+  | 'type'
+  | 'sourceFile'
+  | 'source'
+  | 'author'
+  | 'labels';
 
 export type DocumentMetadataKeyProperty = [string, 'metadata'];
 

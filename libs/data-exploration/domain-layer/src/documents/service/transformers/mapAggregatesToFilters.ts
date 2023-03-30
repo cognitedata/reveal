@@ -10,8 +10,9 @@ export const mapAggregatesToFilters = (
       const count = item.count;
 
       return {
-        label: `${name} (${count})`,
+        label: `${name}`,
         value: name,
+        count: count,
       };
     });
 };

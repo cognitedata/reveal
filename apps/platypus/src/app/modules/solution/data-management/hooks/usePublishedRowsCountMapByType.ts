@@ -9,7 +9,6 @@ import {
   formatValidationErrors,
   Notification,
 } from '@platypus-app/components/Notification/Notification';
-import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useParams } from 'react-router-dom';
@@ -24,14 +23,9 @@ export const usePublishedRowsCountMapByType = ({
   space: string;
 }) => {
   const { version } = useParams() as { version: string };
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(
-      version,
-      dataModelExternalId,
-      dataModel?.space || ''
-    );
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
   const dto: FetchPublishedRowsCountDTO = {
     dataModelId: dataModelExternalId,
     dataModelTypes,
@@ -41,7 +35,11 @@ export const usePublishedRowsCountMapByType = ({
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   return useQuery(
-    QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(dto.dataModelId, dto.dataModelId),
+    QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
+      space,
+      dto.dataModelId,
+      dto.dataModelId
+    ),
     async () => {
       try {
         const result = await dataManagementHandler.fetchPublishedRowsCount(dto);

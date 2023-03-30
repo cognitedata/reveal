@@ -19,7 +19,10 @@ import {
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { useResultCount } from '@data-exploration-components/components';
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import {
+  InternalSequenceFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -54,6 +57,7 @@ export const SequenceSearchResults = ({
     query,
     api: query && query.length > 0 ? 'search' : 'list',
   });
+  const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
@@ -63,7 +67,8 @@ export const SequenceSearchResults = ({
         filter,
         sortBy,
       },
-      { enabled: enableAdvancedFilters }
+      { enabled: enableAdvancedFilters },
+      sequenceSearchConfig
     );
 
   const { data: aggregateData } = useSequenceSearchAggregateQuery(
@@ -71,7 +76,8 @@ export const SequenceSearchResults = ({
       query,
       filter,
     },
-    { enabled: enableAdvancedFilters }
+    { enabled: enableAdvancedFilters },
+    sequenceSearchConfig
   );
 
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;

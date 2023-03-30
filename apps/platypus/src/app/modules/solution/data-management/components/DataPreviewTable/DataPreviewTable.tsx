@@ -94,6 +94,9 @@ export const DataPreviewTable = forwardRef<
       useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
+    const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
+      null
+    );
     const gridRef = useRef<AgGridReact>(null);
     const { track } = useMixpanel();
     const { isEnabled: isManualPopulationEnabled } =
@@ -172,6 +175,7 @@ export const DataPreviewTable = forwardRef<
     const deleteRowsMutation = useNodesDeleteMutation({
       dataModelExternalId,
       dataModelType,
+      space,
     });
 
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
@@ -355,7 +359,12 @@ export const DataPreviewTable = forwardRef<
     };
 
     const toggleSidebar = useCallback(
-      (field: string, externalId: string, currValue?: any) => {
+      (
+        field: string,
+        externalId: string,
+        instanceSpace: string,
+        currValue?: any
+      ) => {
         const fieldType = dataModelType.fields.find(
           (item) => item.name === field
         );
@@ -374,6 +383,7 @@ export const DataPreviewTable = forwardRef<
           setSidebarData({
             externalId,
             fieldName: field,
+            instanceSpace,
             type: 'list',
           });
         } else if (fieldType.type.name === 'JSONObject') {
@@ -391,6 +401,7 @@ export const DataPreviewTable = forwardRef<
               externalId: currValue.externalId,
               fieldName: field,
               fieldType: targetFieldType,
+              instanceSpace,
               type: 'custom',
             });
           }
@@ -406,7 +417,16 @@ export const DataPreviewTable = forwardRef<
         if (!event.colDef.field) {
           return;
         }
-        toggleSidebar(event.colDef.field, event.data.externalId, event.value);
+        toggleSidebar(
+          event.colDef.field,
+          event.data.externalId,
+          /*
+          If the cell is a direct relation, use the space from the cell value,
+          else use the space from the instance in this row
+          */
+          event.value.space || event.data.space,
+          event.value
+        );
         // 400ms is animation time of side panel opening
         window.setTimeout(() => {
           event.colDef.field &&
@@ -473,7 +493,12 @@ export const DataPreviewTable = forwardRef<
           gridRef.current?.api.refreshCells();
           if (e.colDef.field) {
             e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
-            toggleSidebar(e.colDef.field, e.data.externalId, newValue);
+            toggleSidebar(
+              e.colDef.field,
+              e.data.externalId,
+              e.data.space,
+              newValue
+            );
           }
           const data: KeyValueMap[] = [];
           gridRef.current?.api.forEachNode((el) => data.push(el.data));
@@ -636,6 +661,7 @@ export const DataPreviewTable = forwardRef<
           onPublishedRowsCountClick={toggleShouldShowPublishedRows}
           onSearchInputValueChange={debouncedHandleSearchInputValueChange}
           publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
+          filteredRowCount={filteredRowCount}
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           title={dataModelType.name}
@@ -674,6 +700,9 @@ export const DataPreviewTable = forwardRef<
           >
             <CogDataGrid
               ref={gridRef}
+              onModelUpdated={(event) => {
+                setFilteredRowCount(event.api.getDisplayedRowCount());
+              }}
               onSortChanged={() => {
                 track('DataModel.Data.Sort', {
                   version,

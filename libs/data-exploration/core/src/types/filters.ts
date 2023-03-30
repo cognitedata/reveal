@@ -5,6 +5,7 @@ import {
   NullableProperty,
 } from '@cognite/sdk';
 
+import { METADATA_ALL_VALUE } from '../constants/filters';
 import { ResourceType } from './resource';
 
 export type FilterResourceType = ResourceType | 'document' | 'common';
@@ -28,10 +29,11 @@ export interface FilterProps {
   onResetFilterClick: (resourceType: FilterResourceType) => void;
 }
 
+// Base internal types
+
 export type InternalCommonFilters = {
   assetSubtreeIds?: { label?: string; value: number }[];
   dataSetIds?: { label?: string; value: number }[];
-  // metadata?: Metadata;
   createdTime?: DateRange;
   lastUpdatedTime?: DateRange;
   externalIdPrefix?: string;
@@ -55,7 +57,7 @@ export interface OldEventsFilters
 
 export interface InternalAssetFilters extends InternalCommonFilters {
   labels?: { label?: string; value: string }[];
-  metadata?: { key: string; value: string }[];
+  metadata?: { key: string; value: string | typeof METADATA_ALL_VALUE }[];
   sources?: { label?: string; value: string }[];
 }
 
@@ -69,6 +71,7 @@ export interface InternalDocumentFilter extends InternalCommonFilters {
   source?: string[];
   type?: string[];
   metadata?: { key: string; value: string }[];
+  labels?: { label?: string; value: string }[];
 }
 
 export interface InternalTimeseriesFilters extends InternalCommonFilters {

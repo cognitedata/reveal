@@ -4,6 +4,8 @@ import {
   isAssetAnnotation,
 } from '@cognite/data-exploration';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { v4 as uuid } from 'uuid';
+import dayjs from 'dayjs';
 
 import { useMemo } from 'react';
 import AssetTooltip from '../components/AssetTooltip';
@@ -24,13 +26,37 @@ const useIndustryCanvasAssetTooltips = (
       return [];
     }
 
+    const onAddThreeD = ({
+      modelId,
+      revisionId,
+      initialAssetId,
+    }: {
+      modelId: number;
+      revisionId: number;
+      initialAssetId?: number;
+    }) => {
+      onAddContainerReferences([
+        {
+          type: ContainerReferenceType.THREE_D,
+          id: `${modelId}-${revisionId}`,
+          modelId,
+          revisionId,
+          initialAssetId,
+        },
+      ]);
+    };
+
     const onAddTimeseries = (timeseriesId: number) => {
       onAddContainerReferences([
         {
           type: ContainerReferenceType.TIMESERIES,
-          id: timeseriesId,
-          startDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-          endDate: new Date(),
+          resourceId: timeseriesId,
+          id: uuid(),
+          startDate: dayjs(new Date())
+            .subtract(2, 'years')
+            .startOf('day')
+            .toDate(),
+          endDate: dayjs(new Date()).endOf('day').toDate(),
         },
       ]);
     };
@@ -41,6 +67,7 @@ const useIndustryCanvasAssetTooltips = (
         content: (
           <AssetTooltip
             id={resourceId}
+            onAddThreeD={onAddThreeD}
             onAddTimeseries={onAddTimeseries}
             onAddAsset={() => {
               // To be implemented
@@ -56,7 +83,7 @@ const useIndustryCanvasAssetTooltips = (
         shouldPositionStrictly: true,
       },
     ];
-  }, [selectedAnnotation]);
+  }, [selectedAnnotation, onAddContainerReferences]);
 };
 
 export default useIndustryCanvasAssetTooltips;

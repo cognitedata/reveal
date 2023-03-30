@@ -14,15 +14,21 @@ import {
   MultiSelect,
   MultiSelectProps,
 } from '@data-exploration/components';
+import { InputActionMeta } from 'react-select';
+import { MultiSelectOptionType } from '../types';
 
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {
   label?: string;
+
   value?:
     | ValueType[]
     | OptionType<ValueType>[]
     | { label?: string; value: ValueType }[];
-  options: OptionType<ValueType>[] | { label?: string; value: ValueType }[];
+
+  options: OptionType<ValueType>[] | MultiSelectOptionType<ValueType>[];
+
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   onChange: (
     selectedValues: ValueType[],
     selectedOptions: {
@@ -37,6 +43,8 @@ export const MultiSelectFilter = <ValueType,>({
   value,
   onChange,
   options: defaultOptions,
+  isLoading,
+  isError,
   ...rest
 }: MultiSelectFilterProps<ValueType>) => {
   const handleChange = (newOptions: OptionType<ValueType | undefined>[]) => {
@@ -55,6 +63,7 @@ export const MultiSelectFilter = <ValueType,>({
       ...item,
       label: item.label || String(item.value),
       value: item.value,
+      count: item.count,
     };
   });
 
@@ -64,6 +73,8 @@ export const MultiSelectFilter = <ValueType,>({
 
       <MultiSelect<ValueType | undefined>
         {...rest}
+        isLoading={isLoading}
+        isError={isError}
         options={options}
         data-testid="multi-select-filter"
         value={formatValue(value)}

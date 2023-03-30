@@ -8,7 +8,10 @@ import {
   useTimeseriesListQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  TimeseriesConfigType,
+} from '@data-exploration-lib/core';
 
 export const useTimeseriesSearchResultQuery = (
   {
@@ -20,11 +23,12 @@ export const useTimeseriesSearchResultQuery = (
     filter: InternalTimeseriesFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig?: TimeseriesConfigType
 ) => {
   const advancedFilter = useMemo(
-    () => mapFiltersToTimeseriesAdvancedFilters(filter, query),
-    [filter, query]
+    () => mapFiltersToTimeseriesAdvancedFilters(filter, query, searchConfig),
+    [filter, query, searchConfig]
   );
 
   const timeseriesFilter = useMemo(

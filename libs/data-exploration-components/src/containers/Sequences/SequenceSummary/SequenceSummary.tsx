@@ -19,6 +19,7 @@ import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
   EMPTY_OBJECT,
   InternalSequenceFilters,
+  useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
@@ -40,10 +41,16 @@ export const SequenceSummary = ({
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
 }) => {
-  const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery({
-    filter,
-    query,
-  });
+  const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
+
+  const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery(
+    {
+      filter,
+      query,
+    },
+    undefined,
+    sequenceSearchConfig
+  );
   const { data: metadataKeys = [] } = useSequencesMetadataKeys();
 
   const metadataColumns = useMemo(() => {

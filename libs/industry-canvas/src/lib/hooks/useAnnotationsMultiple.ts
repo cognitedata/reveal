@@ -27,11 +27,13 @@ export const useAnnotationsMultiple = (
               .list({
                 filter: {
                   annotatedResourceType: 'file',
-                  annotatedResourceIds: [{ id: containerReference.id }],
+                  annotatedResourceIds: [{ id: containerReference.resourceId }],
                 },
                 limit: 1000,
               })
-              .autoPagingToArray()
+              .autoPagingToArray({
+                limit: Infinity,
+              })
           ).filter((annotation) => {
             // @ts-expect-error
             const annotationPageNumber = annotation.data.pageNumber;

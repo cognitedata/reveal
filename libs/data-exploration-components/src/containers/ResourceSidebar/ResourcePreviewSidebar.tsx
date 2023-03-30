@@ -124,5 +124,7 @@ const ResourcePreviewSidebarContainer = styled.div`
 `;
 
 const CloseButton = styled(Button)`
-  align-self: flex-end;
+  position: absolute;
+  top: 16px;
+  right: 12px;
 `;
