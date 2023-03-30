@@ -55,7 +55,7 @@ export const App = () => {
                     apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
                     projectName={projectName}
                   >
-                    <SubAppWrapper>
+                    <SubAppWrapper title={APP_TITLE}>
                       <ErrorBoundary>
                         <PageTitle title={APP_TITLE} />
                         <ReactQueryDevtools initialIsOpen={false} />

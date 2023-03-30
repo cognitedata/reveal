@@ -227,17 +227,23 @@ describe('NodesTreeView test cases', () => {
         />
       );
 
-      userEvent.click(await screen.findByText('0-0'));
+      const user = userEvent.setup();
+
+      await user.click(await screen.findByText('0-0'));
       onSelect.mockReset();
 
-      userEvent.click(screen.getByText('0-2'), { ctrlKey: true });
+      await user.keyboard('{Control>}');
+      await user.click(screen.getByText('0-2'));
+      await user.keyboard('{/Control}');
 
       expect(onSelect).toHaveBeenCalledTimes(1);
       expect(onSelect).toHaveBeenCalledWith([1, 21]);
       onSelect.mockReset();
 
       // unselect
-      userEvent.click(screen.getByText('0-2'), { ctrlKey: true });
+      await user.keyboard('{Control>}');
+      await user.click(screen.getByText('0-2'));
+      await user.keyboard('{/Control}');
 
       expect(onSelect).toHaveBeenCalledTimes(1);
       expect(onSelect).toHaveBeenCalledWith([1]);
@@ -254,18 +260,25 @@ describe('NodesTreeView test cases', () => {
             }}
           />
         );
+
+        const user = userEvent.setup();
+
         userEvent.click(await screen.findByText('0-0-0'));
 
         expect(onSelect).toHaveBeenCalledWith([2]);
 
-        userEvent.click(screen.getByText('0-1'), { shiftKey: true });
+        await user.keyboard('{Shift>}');
+        await user.click(screen.getByText('0-1'));
+        await user.keyboard('{/Shift}');
 
         expect(onSelect).toHaveBeenNthCalledWith(2, [2, 3, 4, 5, 11]);
 
         // it "remembers start node of the range"
         // then click N0 -> all nodes between N0..N1 selected instead
 
-        userEvent.click(screen.getByText('RootNode'), { shiftKey: true });
+        await user.keyboard('{Shift>}');
+        await user.click(screen.getByText('RootNode'));
+        await user.keyboard('{/Shift}');
 
         expect(onSelect).toHaveBeenNthCalledWith(3, [0, 1, 2]);
         expect(onSelect).toHaveBeenCalledTimes(3);
@@ -285,6 +298,8 @@ describe('NodesTreeView test cases', () => {
           />
         );
 
+        const user = userEvent.setup();
+
         // after common click
         userEvent.click(await screen.findByText('0-0-0'));
         onSelect.mockReset();
@@ -297,7 +312,9 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenCalledWith([1]);
 
         // after ctrl click
-        userEvent.click(screen.getByText('0-0-1-1'), { ctrlKey: true });
+        await user.keyboard('{Control>}');
+        await user.click(screen.getByText('0-0-1-1'));
+        await user.keyboard('{/Control}');
         expect(onSelect).toHaveBeenNthCalledWith(2, [1, 5]);
 
         fireEvent.keyDown(document.activeElement!, {
@@ -306,7 +323,9 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenNthCalledWith(3, [4]);
 
         // after shift click (range from bot to top)
-        userEvent.click(screen.getByText('0-0-0'), { shiftKey: true });
+        await user.keyboard('{Shift>}');
+        await user.click(screen.getByText('0-0-0'));
+        await user.keyboard('{/Shift}');
         expect(onSelect).toHaveBeenNthCalledWith(4, [2, 3, 4]);
 
         fireEvent.keyDown(document.activeElement!, {
@@ -315,7 +334,9 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenNthCalledWith(5, [1]);
 
         // after shift click (range from top to bot)
-        userEvent.click(screen.getByText('0-0-1-0'), { shiftKey: true });
+        await user.keyboard('{Shift>}');
+        await user.click(screen.getByText('0-0-1-0'));
+        await user.keyboard('{/Shift}');
         expect(onSelect).toHaveBeenNthCalledWith(6, [1, 2, 3, 4]);
 
         fireEvent.keyDown(document.activeElement!, {
@@ -391,6 +412,8 @@ describe('NodesTreeView test cases', () => {
           />
         );
 
+        const user = userEvent.setup();
+
         // after common click
         userEvent.click(await screen.findByText('0-0-1'));
         onSelect.mockReset();
@@ -403,7 +426,9 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenCalledWith([4]);
 
         // after ctrl click
-        userEvent.click(screen.getByText('0-1'), { ctrlKey: true });
+        await user.keyboard('{Control>}');
+        await user.click(screen.getByText('0-1'));
+        await user.keyboard('{/Control}');
         expect(onSelect).toHaveBeenNthCalledWith(2, [4, 11]);
 
         fireEvent.keyDown(document.activeElement!, {
@@ -412,7 +437,9 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenNthCalledWith(3, [21]);
 
         // after shift click (range from bot to top)
-        userEvent.click(screen.getByText('0-0-0'), { shiftKey: true });
+        await user.keyboard('{Shift>}');
+        await user.click(screen.getByText('0-0-0'));
+        await user.keyboard('{/Shift}');
         expect(onSelect).toHaveBeenNthCalledWith(4, [2, 3, 4, 5, 11, 21]);
 
         fireEvent.keyDown(document.activeElement!, {
@@ -421,7 +448,9 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenNthCalledWith(5, [3]);
 
         // after shift click (range from top to bot)
-        userEvent.click(screen.getByText('0-0-1-1'), { shiftKey: true });
+        await user.keyboard('{Shift>}');
+        await user.click(screen.getByText('0-0-1-1'));
+        await user.keyboard('{/Shift}');
         expect(onSelect).toHaveBeenNthCalledWith(6, [3, 4, 5]);
 
         fireEvent.keyDown(document.activeElement!, {
