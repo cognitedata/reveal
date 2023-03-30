@@ -1,6 +1,5 @@
 import {
   isPolylineAnnotation,
-  isRectangleAnnotation,
   isTextAnnotation,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
@@ -9,7 +8,7 @@ import styled from 'styled-components';
 import { LineAnnotationTooltip } from '../components/tooltips/LineAnnotationTooltip';
 import { ShapeAnnotationTooltip } from '../components/tooltips/ShapeAnnotationTooltip';
 import { TextAnnotationTooltip } from '../components/tooltips/TextAnnotationTooltip';
-import { CanvasAnnotation } from '../types';
+import { CanvasAnnotation, isShapeAnnotation } from '../types';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
 
 export type UseCanvasAnnotationTooltipsParams = {
@@ -28,7 +27,7 @@ const useCanvasAnnotationTooltips = ({
       return [];
     }
 
-    if (isRectangleAnnotation(selectedCanvasAnnotation)) {
+    if (isShapeAnnotation(selectedCanvasAnnotation)) {
       return [
         {
           targetId: String(selectedCanvasAnnotation.id),

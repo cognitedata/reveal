@@ -154,10 +154,10 @@ export const IndustryCanvas = ({
   });
 
   const onStageClick = useCallback(() => {
-    // Sometimes the stage click event is fired when the user creates a line annotation.
+    // Sometimes the stage click event is fired when the user creates an annotation.
     // We want the tooltip to stay open in this case.
     // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-507
-    if (tool === ToolType.LINE) {
+    if (tool === ToolType.LINE || tool === ToolType.ELLIPSE) {
       return;
     }
     setInteractionState({

@@ -1,6 +1,6 @@
-import { Button, ToolBar } from '@cognite/cogs.js';
+import { ToolBar } from '@cognite/cogs.js';
 import React from 'react';
-import { FillIcon } from './FillIcon';
+import { FillButton } from './FillButton';
 
 export type FillColorPaletteTooltipProps = {
   colors: string[];
@@ -20,17 +20,13 @@ export const FillColorPalette: React.FC<FillColorPaletteTooltipProps> = ({
     <ToolBar direction="horizontal">
       <>
         {colors.map((color) => (
-          <Button
-            key={color}
-            className="cogs-button--icon-only"
-            aria-label={`Fill color ${color}`}
-            type={selectedColor === color ? 'secondary' : 'ghost'}
+          <FillButton
+            color={color}
+            isToggled={selectedColor === color}
             onClick={() => onUpdateColor(color)}
-          >
-            <i className="cogs-icon">
-              <FillIcon color={color} />
-            </i>
-          </Button>
+            key={color}
+            ariaLabel={`Fill color ${color}`}
+          />
         ))}
       </>
     </ToolBar>

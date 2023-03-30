@@ -77,8 +77,9 @@ export const LineAnnotationTooltip: React.FC<
           <Tooltip content="Change color">
             <Button
               icon="ColorPalette"
-              aria-label="Change color"
-              type={isInEditFillMode ? 'secondary' : 'ghost'}
+              aria-label="Edit color"
+              type="ghost"
+              toggled={isInEditFillMode}
               onClick={() => {
                 setIsInEditFillMode((prev) => !prev);
               }}
