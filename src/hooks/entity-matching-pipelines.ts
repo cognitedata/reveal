@@ -35,6 +35,7 @@ export type Pipeline = {
     matchFields?: ModelMapping;
   };
   generateRules?: boolean;
+  useExistingMatches?: boolean;
 };
 
 export type PipelineWithLatestRun = Pipeline & {
