@@ -176,7 +176,12 @@ export const useApplyRulesResults = (
         )
         .then((r) => {
           if (r.status === 200) {
-            return r.data;
+            return {
+              ...r.data,
+              items: r.data.items.sort(
+                (a, b) => b.numberOfMatches - a.numberOfMatches
+              ),
+            };
           } else {
             return Promise.reject(r);
           }
