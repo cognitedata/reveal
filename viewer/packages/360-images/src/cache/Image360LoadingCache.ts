@@ -64,7 +64,7 @@ export class Image360LoadingCache {
     }
 
     if (this._inProgressDownloads.length >= this._downloadCacheSize) {
-      this.abortLastRecentlyReqestedEntity();
+      this.abortLastRecentlyReqestedRevision();
     }
 
     const { signal, abort } = this.createAbortSignal();
@@ -155,17 +155,17 @@ export class Image360LoadingCache {
     }
 
     if (this._loaded360Images.length === this._imageCacheSize) {
-      const entityToPurge = findLast(this._loaded360Images, image => !image.revision.image360Visualization.visible);
-      if (entityToPurge === undefined) {
+      const imageToPurge = findLast(this._loaded360Images, image => !image.revision.image360Visualization.visible);
+      if (imageToPurge === undefined) {
         throw new Error('Unable to purge 360 image from cache due to too many visible instances');
       }
-      pull(this._loaded360Images, entityToPurge);
-      entityToPurge.revision.unload360Image();
+      pull(this._loaded360Images, imageToPurge);
+      imageToPurge.revision.unload360Image();
     }
     this._loaded360Images.unshift({ revision, isFullResolution });
   }
 
-  private abortLastRecentlyReqestedEntity() {
+  private abortLastRecentlyReqestedRevision() {
     const download = find(
       this._inProgressDownloads,
       download => download.revision !== this._lockedDownload && !download.revision.image360Visualization.visible
