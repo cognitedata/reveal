@@ -83,20 +83,20 @@ export default function TargetSelectionTable({}: Props) {
               label="Select all"
             />
           </Flex>
-          <AssetTable
-            filter={targetFilter}
-            selected={targetsList}
-            setSelected={setTargetsList}
-            advancedFilter={advancedFilter}
-            allSources={allTargets}
-          />
         </Flex>
-        <QuickMatchActionBar
-          selectedRows={targetsList}
-          sourceType="assets"
-          onClose={onClose}
+        <AssetTable
+          filter={targetFilter}
+          selected={targetsList}
+          setSelected={setTargetsList}
+          advancedFilter={advancedFilter}
+          allSources={allTargets}
         />
       </Flex>
+      <QuickMatchActionBar
+        selectedRows={targetsList}
+        sourceType="assets"
+        onClose={onClose}
+      />
     </Container>
   );
 }
