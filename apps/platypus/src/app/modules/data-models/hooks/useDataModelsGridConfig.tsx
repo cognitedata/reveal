@@ -10,6 +10,16 @@ import { createRoot } from 'react-dom/client';
 import { DataModelActionsCellRenderer } from '../components/DataModelsTable/DataModelActionsCellRenderer';
 import { DataModelNameCellRenderer } from '../components/DataModelsTable/DataModelNameCellRenderer';
 
+const caseInsensitiveSorting = (a: string, b: string) => {
+  if (!a || a.trim() === '') {
+    return -1;
+  }
+  if (!b || b.trim() === '') {
+    return 1;
+  }
+  return a.localeCompare(b, undefined, { sensitivity: 'base' });
+};
+
 export const useDataModelsGridConfig = () => {
   const { t } = useTranslation('DataModelsTable');
   const dateUtils = useInjection(TOKENS.dateUtils);
@@ -51,6 +61,7 @@ export const useDataModelsGridConfig = () => {
         headerName: t('data_models_list_name_column', 'Data Model'),
         type: 'textColType',
         cellRenderer: DataModelNameCellRenderer,
+        comparator: caseInsensitiveSorting,
       },
       {
         field: 'updatedTime',
@@ -64,11 +75,13 @@ export const useDataModelsGridConfig = () => {
         field: 'space',
         headerName: t('data_models_list_space_column', 'Space'),
         type: 'textColType',
+        comparator: caseInsensitiveSorting,
       },
       {
         field: 'description',
         headerName: t('data_models_list_description_column', 'Description'),
         type: 'textColType',
+        comparator: caseInsensitiveSorting,
       },
       ...(isFDMV3
         ? [

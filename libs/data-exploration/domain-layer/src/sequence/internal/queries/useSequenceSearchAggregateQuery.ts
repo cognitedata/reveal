@@ -5,7 +5,10 @@ import {
   useSequenceAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import {
+  InternalSequenceFilters,
+  SequenceConfigType,
+} from '@data-exploration-lib/core';
 
 export const useSequenceSearchAggregateQuery = (
   {
@@ -15,11 +18,12 @@ export const useSequenceSearchAggregateQuery = (
     query?: string;
     filter: InternalSequenceFilters;
   },
-  options?: UseQueryOptions
+  options?: UseQueryOptions,
+  searchConfig?: SequenceConfigType
 ) => {
   const advancedFilter = useMemo(
-    () => mapFiltersToSequenceAdvancedFilters(filter, query),
-    [filter, query]
+    () => mapFiltersToSequenceAdvancedFilters(filter, query, searchConfig),
+    [filter, query, searchConfig]
   );
 
   const sequenceFilter = useMemo(

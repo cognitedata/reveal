@@ -282,7 +282,7 @@ pods {
                   repo: domain,
                   prefix: prefix,
                   buildCommand: "yarn build preview ${project}",
-                  buildFolder: "build",
+                  buildFolder: "dist/apps/${project}",
                 )
                 deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
@@ -328,9 +328,9 @@ pods {
                 appHosting(
                   appName: firebaseSiteName,
                   environment: releaseToProd ? 'production' : 'staging',
-                  firebaseJson: 'build/firebase.json',
+                  firebaseJson: "dist/apps/${project}/firebase.json",
                   buildCommand: "yarn build production ${project}",
-                  buildFolder: 'build',
+                  buildFolder: "dist/apps/${project}",
                 )
 
                 slack.send(

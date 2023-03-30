@@ -138,6 +138,7 @@ export const TimeseriesPreview = ({
 
                   <TimeseriesChart
                     timeseriesId={timeseries.id}
+                    isString={timeseries.isString}
                     height={300}
                     quickTimePeriodOptions={['1D', '1W', '1Y']}
                     dateRange={dateRange}

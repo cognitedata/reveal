@@ -139,6 +139,7 @@ export const ResourceDetailsTabs = ({
 const DetailsTabWrapper = styled.div`
   /* This workaround is need to fix the file preview in file details tab */
   height: 100%;
+  overflow: hidden;
   & > div {
     height: 100%;
   }

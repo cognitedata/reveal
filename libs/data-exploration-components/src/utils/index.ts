@@ -12,7 +12,6 @@ export * from './getTimeseriesFilterUnit';
 export * from './id';
 export * from './mapMimeTypeToDocumentType';
 export * from './numbers';
-export * from './relationships';
 export * from './string';
 export * from './url';
 export * from './windowEvents';

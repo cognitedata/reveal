@@ -22,10 +22,10 @@ export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
     text-align: center;
   }
 
-  #delete-button {
+  .delete-button {
     opacity: 0;
   }
-  .ag-row-hover #delete-button {
+  .ag-row-hover .delete-button {
     opacity: 1;
   }
 `;

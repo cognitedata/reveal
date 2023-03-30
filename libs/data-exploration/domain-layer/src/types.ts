@@ -21,3 +21,7 @@ export interface MatchingLabels {
   partial: string[];
   fuzzy: string[];
 }
+
+export type AggregateFilters = {
+  aggregateFilter?: { prefix: { value: string } };
+};

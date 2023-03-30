@@ -1,7 +1,7 @@
 import { ResourceType } from '@data-exploration-components/types';
-import styled from 'styled-components/macro';
+
 import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
-import { Colors, TabProps, Tabs } from '@cognite/cogs.js';
+import { TabProps, Tabs } from '@cognite/cogs.js';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -75,9 +75,8 @@ export const ResourceTypeTabs = ({
     );
   });
   const tabs = [...additionalTabs, ...resourceTabs];
-
   return (
-    <StyledTabs
+    <Tabs
       showTrack
       activeKey={currentResourceType || 'all'}
       onTabClick={(tab) => {
@@ -85,12 +84,6 @@ export const ResourceTypeTabs = ({
       }}
     >
       {tabs}
-    </StyledTabs>
+    </Tabs>
   );
 };
-
-const StyledTabs = styled(Tabs)`
-  .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
-  }
-`;

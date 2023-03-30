@@ -34,10 +34,7 @@ import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBound
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { useInjection } from '@platypus-app/hooks/useInjection';
-import {
-  useDataModel,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
@@ -109,7 +106,6 @@ export const DataModelPage = () => {
     setCurrentTypeName,
     switchDataModelVersion,
   } = useDataModelState();
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const { dataModelVersion: selectedDataModelVersion } =
     useSelectedDataModelVersion(version, dataModelExternalId, space);
@@ -152,19 +148,14 @@ export const DataModelPage = () => {
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-    navigate(
-      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}`,
-      { replace: true }
-    );
+    navigate(`/${space}/${dataModelExternalId}/${dataModelVersion.version}`, {
+      replace: true,
+    });
   };
 
   const [isVisualizerOn, setIsVisualizerOn] = usePersistedState(
     true,
-    getKeyForDataModel(
-      dataModel?.space || '',
-      dataModelExternalId,
-      'isVisualizerOn'
-    )
+    getKeyForDataModel(space, dataModelExternalId, 'isVisualizerOn')
   );
 
   // Use this effect as init lifecycle
@@ -321,21 +312,20 @@ export const DataModelPage = () => {
         if (publishNewVersion) {
           // add new version to react-query cache and then refetch
           queryClient.setQueryData<DataModelVersion[]>(
-            QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
+            QueryKeys.DATA_MODEL_VERSION_LIST(space, dataModelExternalId),
             (oldDataModelVersions = []) => {
               return [...oldDataModelVersions, result.getValue()];
             }
           );
 
           refetchDataModelVersions();
-          navigate(
-            `/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`,
-            { replace: true }
-          );
+          navigate(`/${space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`, {
+            replace: true,
+          });
         } else {
           // update version in react-query cache and then refetch
           queryClient.setQueryData<DataModelVersion[]>(
-            QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
+            QueryKeys.DATA_MODEL_VERSION_LIST(space, dataModelExternalId),
             (oldDataModelVersions = []) => {
               return oldDataModelVersions.map((dataModelVersion) => {
                 return dataModelVersion.version === version
@@ -393,7 +383,7 @@ export const DataModelPage = () => {
         <PageContentLayout.Header>
           <DataModelHeader
             dataModelExternalId={dataModelExternalId}
-            dataModelSpace={dataModel?.space || ''}
+            dataModelSpace={space}
             dataModelVersions={dataModelVersions}
             isSaving={saving}
             isUpdating={updating}
@@ -414,7 +404,7 @@ export const DataModelPage = () => {
                 <EditorPanel
                   editorMode={editorMode}
                   setEditorHasError={setEditorHasError}
-                  space={dataModel?.space || ''}
+                  space={space}
                   version={selectedDataModelVersion.version}
                   externalId={dataModelExternalId}
                   isPublishing={saving || updating}

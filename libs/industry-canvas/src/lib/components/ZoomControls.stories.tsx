@@ -3,7 +3,7 @@ import { useState } from 'react';
 import ZoomControls from './ZoomControls';
 
 export default {
-  title: 'Components/Toolbar Component Story',
+  title: 'Components/Zoom Controls Story',
   component: ZoomControls,
 };
 

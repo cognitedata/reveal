@@ -7,6 +7,7 @@ import {
   NIL_FILTER_VALUE,
   NIL_FILTER_LABEL,
 } from '@data-exploration-lib/domain-layer';
+import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
 
 export const getTitle = (input: string) => {
   return CUSTOM_FILTER_TITLE[input] || startCase(input);
@@ -63,6 +64,9 @@ export const formatValue = (input?: FilterValues): string => {
   }
 
   if ('key' in input && 'value' in input) {
+    if (input.value === METADATA_ALL_VALUE) {
+      return `${input.key}`;
+    }
     return `${input.key}=${input.value}`;
   }
 

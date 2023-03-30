@@ -4,10 +4,7 @@ import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentL
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPage } from '../data-model/pages/elements';
-import {
-  useDataModel,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelVersion } from '@platypus/platypus-core';
@@ -52,14 +49,8 @@ export const DataManagementPage = ({
 
   const navigate = useNavigate();
 
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
-
   const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(
-      version,
-      dataModelExternalId,
-      dataModel?.space || ''
-    );
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
 
   const selectedTypeName = useSelector<string>(
     (state) => state.dataManagement.selectedType?.name || ''

@@ -1,4 +1,4 @@
-import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { TextAnnotation } from '@cognite/unified-file-viewer';
 import { useState } from 'react';
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
@@ -58,27 +58,33 @@ export const TextAnnotationTooltip: React.FC<TextAnnotationTooltipProps> = ({
               </Menu>
             }
           >
-            <Button
-              type="ghost"
-              icon="Typography"
-              aria-label="Font size menu"
-            ></Button>
+            <Tooltip content="Change font size">
+              <Button
+                type="ghost"
+                icon="Typography"
+                aria-label="Font size menu"
+              />
+            </Tooltip>
           </Dropdown>
-          <Button
-            icon="ColorPalette"
-            aria-label="Edit color"
-            type={isInEditMode ? 'secondary' : 'ghost'}
-            onClick={() => {
-              setIsInEditMode((prev) => !prev);
-            }}
-          />
+          <Tooltip content="Change color">
+            <Button
+              icon="ColorPalette"
+              aria-label="Change color"
+              type={isInEditMode ? 'secondary' : 'ghost'}
+              onClick={() => {
+                setIsInEditMode((prev) => !prev);
+              }}
+            />
+          </Tooltip>
         </>
-        <Button
-          icon="Delete"
-          type="ghost"
-          aria-label="Delete annotation"
-          onClick={onDeleteSelectedCanvasAnnotation}
-        />
+        <Tooltip content="Delete annotation">
+          <Button
+            icon="Delete"
+            type="ghost"
+            aria-label="Delete annotation"
+            onClick={onDeleteSelectedCanvasAnnotation}
+          />
+        </Tooltip>
       </ToolBar>
     </>
   );

@@ -1,5 +1,12 @@
 import { CogniteClient, FileInfo } from '@cognite/sdk';
-import { isFileOfType, fetchFilePreviewURL } from '../files';
+import {
+  isFileOfType,
+  fetchFilePreviewURL,
+  mapFileType,
+  APPLICATION,
+  IMAGE,
+  TEXT,
+} from '../files';
 
 jest.mock('@cognite/unified-file-viewer', () => {
   return {
@@ -97,6 +104,59 @@ describe('FileUtils', () => {
 
       const result = await fetchFilePreviewURL(mockSdk, file);
       expect(result).toBe('http://link.to.pdf');
+    });
+  });
+
+  describe('mapFileType', () => {
+    it.each([
+      [`${APPLICATION}/pdf`, 'PDF'],
+      [`${APPLICATION}/msword`, 'Word Document'],
+      [`${APPLICATION}/vnd.ms-excel`, 'Excel Sheet'],
+      [
+        `${APPLICATION}/vnd.openxmlformats-officedocument.spreadsheetml.sheet`,
+        'Excel Sheet',
+      ],
+      [`${APPLICATION}/xml`, 'XML'],
+      [`${APPLICATION}/zip`, 'Archive'],
+      [`${APPLICATION}/7z`, 'Archive'],
+      [`${APPLICATION}/vnd.rar`, 'Archive'],
+      [`${APPLICATION}/x-tar`, 'Archive'],
+      [`${APPLICATION}/plain`, 'Text'],
+      [`${APPLICATION}/txt`, 'Text'],
+      [`${APPLICATION}/json`, 'JSON'],
+      [`${APPLICATION}/octet-stream`, 'Binary'],
+      [`${APPLICATION}/csv`, 'CSV'],
+      [`${APPLICATION}/x-cit`, 'CIT'],
+      [`${APPLICATION}/test`, 'test'],
+
+      [`${TEXT}/pdf`, 'PDF'],
+      [`${TEXT}/msword`, 'Word Document'],
+      [`${TEXT}/vnd.ms-excel`, 'Excel Sheet'],
+      [
+        `${TEXT}/vnd.openxmlformats-officedocument.spreadsheetml.sheet`,
+        'Excel Sheet',
+      ],
+      [`${TEXT}/xml`, 'XML'],
+      [`${TEXT}/zip`, 'Archive'],
+      [`${TEXT}/7z`, 'Archive'],
+      [`${TEXT}/vnd.rar`, 'Archive'],
+      [`${TEXT}/x-tar`, 'Archive'],
+      [`${TEXT}/plain`, 'Text'],
+      [`${TEXT}/txt`, 'Text'],
+      [`${TEXT}/json`, 'JSON'],
+      [`${TEXT}/octet-stream`, 'Binary'],
+      [`${TEXT}/csv`, 'CSV'],
+      [`${TEXT}/x-cit`, 'CIT'],
+      [`${TEXT}/test`, 'test'],
+
+      [`${IMAGE}/dwg`, 'DWG'],
+      [`${IMAGE}/x-dfx`, 'vnd.dgn'],
+      [`${IMAGE}/svg`, 'SVG'],
+      [`${IMAGE}/svg+xml`, 'SVG'],
+      [`${IMAGE}/test`, 'Image'],
+      ['test', 'test'],
+    ])('mapFileType %s %s', (value, expected) => {
+      expect(mapFileType(value)).toEqual(expected);
     });
   });
 });

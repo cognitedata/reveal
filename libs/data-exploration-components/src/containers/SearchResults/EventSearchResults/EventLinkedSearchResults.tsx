@@ -20,6 +20,7 @@ import { convertResourceType } from '@data-exploration-components/types';
 import {
   InternalCommonFilters,
   InternalEventsFilters,
+  useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 
 interface Props {
@@ -80,7 +81,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
   const [debouncedQuery] = useDebounce(query, 300);
   const [filter, setFilter] = useState<InternalEventsFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
-
+  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
   const eventsFilters = useMemo(() => {
     return {
       ...filter,
@@ -94,7 +95,8 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
       eventsFilters,
       eventsSortBy: sortBy,
     },
-    { enabled: enableAdvancedFilter }
+    { enabled: enableAdvancedFilter },
+    eventSearchConfig
   );
   const api = convertResourceType('event');
   const { canFetchMore, fetchMore, items } = useResourceResults<CogniteEvent>(

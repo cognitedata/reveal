@@ -8,7 +8,7 @@ import {
 } from '@data-exploration-lib/core';
 import { ColumnHeader, CommonWrapper, ModalCheckbox } from './elements';
 
-type Props = {
+export type Props = {
   searchConfigData: SearchConfigDataType;
   onChange: (
     enabled: boolean,
@@ -46,10 +46,13 @@ export const ResourceColumns: React.FC<Props> = ({
                         }
                         name={config?.label}
                         checked={config?.enabled}
+                        data-testid={`modal-checkbox-${resource}-${filterId}`}
                       >
                         {config?.label}
                       </ModalCheckbox>
-                      {index === sizeOfCommonSection - 1 && <Divider />}
+                      {index === sizeOfCommonSection - 1 && (
+                        <Divider data-testid="search-config-divider" />
+                      )}
                     </React.Fragment>
                   );
                 })}

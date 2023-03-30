@@ -28,7 +28,10 @@ import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Asset } from '@cognite/sdk';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const DocumentSummary = ({
   query = '',
@@ -45,11 +48,15 @@ export const DocumentSummary = ({
   onRowClick?: (row: InternalDocument) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
+  const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
+
   const { results, isLoading } = useDocumentSearchResultWithMatchingLabelsQuery(
     {
       query,
       filter,
-    }
+    },
+    undefined,
+    documentSearchConfig
   );
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 

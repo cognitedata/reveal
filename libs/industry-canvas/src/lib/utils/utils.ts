@@ -1,6 +1,6 @@
 import { ContainerConfig } from '@cognite/unified-file-viewer';
 import {
-  CanvasState,
+  IndustryCanvasState,
   ContainerReference,
   ContainerReferenceType,
 } from '../types';
@@ -10,14 +10,18 @@ export const getContainerId = (
   containerReference: ContainerReference
 ): string => {
   if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.id}-${containerReference.page}`;
+    return `${containerReference.resourceId}-${containerReference.page}`;
   }
 
   if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-    return `${containerReference.id}`;
+    return `${containerReference.resourceId}-${containerReference.id}`;
   }
 
   if (containerReference.type === ContainerReferenceType.ASSET) {
+    return `${containerReference.resourceId}`;
+  }
+
+  if (containerReference.type === ContainerReferenceType.THREE_D) {
     return `${containerReference.id}`;
   }
 
@@ -51,9 +55,9 @@ export const getContainerReferencesWithUpdatedDimensions = (
   return Array.from(containerReferencesById.values());
 };
 
-const deserializeCanvasState = (value: string): CanvasState => {
+const deserializeCanvasState = (value: string): IndustryCanvasState => {
   try {
-    const canvasState = JSON.parse(value) as CanvasState;
+    const canvasState = JSON.parse(value) as IndustryCanvasState;
     const containerReferences = canvasState.containerReferences.map(
       (containerReference) => {
         if (containerReference.type === ContainerReferenceType.TIMESERIES) {
@@ -84,7 +88,7 @@ const deserializeCanvasState = (value: string): CanvasState => {
 
 const CANVAS_STATE_KEY = 'COGNITE_CANVAS_STATE';
 
-export const loadCanvasState = (): CanvasState | null => {
+export const loadCanvasState = (): IndustryCanvasState | null => {
   const canvasStateString = localStorage.getItem(CANVAS_STATE_KEY);
   if (canvasStateString === null) {
     return null;
@@ -93,7 +97,7 @@ export const loadCanvasState = (): CanvasState | null => {
   return deserializeCanvasState(canvasStateString);
 };
 
-export const saveCanvasState = (canvasState: CanvasState): void => {
+export const saveCanvasState = (canvasState: IndustryCanvasState): void => {
   localStorage.setItem(CANVAS_STATE_KEY, JSON.stringify(canvasState));
 };
 

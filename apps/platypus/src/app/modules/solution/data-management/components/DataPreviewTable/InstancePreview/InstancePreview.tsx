@@ -5,19 +5,27 @@ import { CogDataList } from '@cognite/cog-data-grid';
 import { Body } from '@cognite/cogs.js';
 
 export const InstancePreview = (props: {
-  externalId: string;
   dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
-  space: string;
+  dataModelSpace: string;
+  externalId: string;
+  instanceSpace: string;
 }) => {
-  const { dataModelExternalId, dataModelType, externalId, space } = props;
+  const {
+    dataModelExternalId,
+    dataModelSpace,
+    dataModelType,
+    externalId,
+    instanceSpace,
+  } = props;
 
   const { data: previewData } = usePreviewData({
     dataModelExternalId,
+    dataModelSpace,
     dataModelType,
     externalId,
+    instanceSpace,
     nestedLimit: 2,
-    space,
   });
 
   const nonRelationshipValues = useMemo(() => {

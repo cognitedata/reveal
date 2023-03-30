@@ -59,11 +59,15 @@ const clearFilters = (currentFilters: GlobalFilter, key: GlobalFilterKeys) => {
 };
 
 export const defaultFilterSetter =
-  (id: GlobalFilterKeys) =>
+  (id?: GlobalFilterKeys) =>
   <T>(
     { set, get }: { set: SetRecoilState; get: GetRecoilValue },
     newValue: T
   ) => {
+    if (!id) {
+      return undefined;
+    }
+
     const currentFilters = get(globalFilterAtom);
 
     if (newValue instanceof DefaultValue) {

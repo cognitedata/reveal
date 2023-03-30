@@ -5,10 +5,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { QueryExplorer } from '../components/QueryExplorer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import {
-  useDataModel,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
@@ -34,18 +31,13 @@ export const QueryExplorerPage = ({
     space
   );
   const { version } = useParams() as { version: string };
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(
-      version,
-      dataModelExternalId,
-      dataModel?.space || ''
-    );
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     navigate(
-      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/query-explorer`,
+      `/${space}/${dataModelExternalId}/${dataModelVersion.version}/query-explorer`,
       { replace: true }
     );
   };
@@ -67,9 +59,9 @@ export const QueryExplorerPage = ({
       <PageContentLayout.Body>
         {selectedDataModelVersion.version ? (
           <QueryExplorer
-            key={`${dataModelExternalId}_${selectedDataModelVersion.version}_${dataModel?.space}`}
+            key={`${dataModelExternalId}_${selectedDataModelVersion.version}_${space}`}
             dataModelExternalId={dataModelExternalId}
-            space={selectedDataModelVersion?.space || ''}
+            space={space}
             schemaVersion={selectedDataModelVersion.version}
           />
         ) : (

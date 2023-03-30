@@ -70,4 +70,9 @@ const BreadcrumbWrapper = styled.div`
       color: var(--cogs-text-icon--strong);
     }
   }
+  .cogs-breadcrumbs__item {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 `;

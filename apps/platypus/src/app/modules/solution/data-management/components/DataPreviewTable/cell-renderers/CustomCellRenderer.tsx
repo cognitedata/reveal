@@ -48,13 +48,14 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   const { data: previewData, refetch } = usePreviewData(
     {
       dataModelExternalId,
+      dataModelSpace: space,
       dataModelType: columnType!,
       externalId: props.value?.externalId,
+      instanceSpace: props.value?.space,
       nestedLimit: 0,
       limitFields: nonListAndRelationshipValues
         .slice(0, PROPERTY_TO_SHOW)
         .map((el) => el.name),
-      space,
     },
     { enabled: false }
   );

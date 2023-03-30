@@ -1,6 +1,7 @@
 import { AggregateResponse, AssetFilterProps } from '@cognite/sdk';
 import {
   AdvancedFilter,
+  AggregateFilters,
   AssetsProperties,
 } from '@data-exploration-lib/domain-layer';
 
@@ -9,10 +10,10 @@ import {
  * https://cognitedata.atlassian.net/wiki/spaces/SFAA/pages/3867312421/ApiSpec+Assets+Events+advanced+aggregation+capabilities
  */
 
-export type AssetsAggregateFilters = {
+export interface AssetsAggregateFilters extends AggregateFilters {
   filter?: AssetFilterProps;
   advancedFilter?: AdvancedFilter<AssetsProperties>;
-};
+}
 
 export type AssetsAggregateOptions =
   | {
@@ -47,6 +48,7 @@ export interface AssetsAggregateUniqueValuesResponse extends AggregateResponse {
 }
 
 export interface AssetsMetadataAggregateResponse extends AggregateResponse {
+  // @deprecated use 'values'
   value: string;
   values: string[];
 }

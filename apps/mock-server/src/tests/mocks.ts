@@ -130,8 +130,15 @@ directive @relation(
   direction: _RelationDirection
 ) on FIELD_DEFINITION
 
+"""
+Specifies that the view can be readonly, which means it's not writable.
+The view can then omit mapping required properties of a container.
+"""
+directive @readonly on OBJECT | INTERFACE
+
 type Post {
   externalId: ID!
+  spaceExternalId:String!
   title: String!
   views: Int!
   user: User
@@ -145,11 +152,13 @@ type Post {
 
 type User {
   externalId: ID!
+  spaceExternalId:String!
   name: String!
 }
 
 type Comment {
   externalId: ID!
+  spaceExternalId:String!
   body: String!
   date: Timestamp!
   post: Post

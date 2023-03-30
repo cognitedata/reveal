@@ -191,7 +191,8 @@ export const ghostAsset = async (
   sdk: CogniteClient,
   threeDModel: CogniteCadModel,
   assetId: number,
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  secondaryModels?: (CogniteCadModel | CognitePointCloudModel)[]
 ) => {
   const assetNodes = await fetchAssetNodeCollection(
     sdk,
@@ -202,6 +203,15 @@ export const ghostAsset = async (
 
   threeDModel.removeAllStyledNodeCollections();
   threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+  secondaryModels?.forEach((model) => {
+    if (model instanceof CogniteCadModel) {
+      model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+    } else {
+      model.setDefaultPointCloudAppearance({
+        color: new THREE.Color('#111111'),
+      });
+    }
+  });
   threeDModel.assignStyledNodeCollection(
     assetNodes,
     DefaultNodeAppearance.Default
@@ -231,6 +241,13 @@ export const highlightAssetMappedNodes = async (
 export const removeAllStyles = (threeDModel: CogniteCadModel) => {
   threeDModel.removeAllStyledNodeCollections();
   threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+};
+
+export const removeAllPointCloudStyles = (
+  pointCloudModel: CognitePointCloudModel
+) => {
+  pointCloudModel.removeAllStyledObjectCollections();
+  pointCloudModel.setDefaultPointCloudAppearance({ visible: true });
 };
 
 export const fetchNodeIdByTreeIndex = (

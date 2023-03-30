@@ -448,16 +448,16 @@ describe('GraphQlUtilsServiceTest', () => {
 
       expect(result).toMatchObject([
         {
-          message: 'Space argument must be of type String',
+          message: 'String cannot represent a non string value: false',
           status: 400,
-          errorMessage: 'Space argument must be of type String',
+          errorMessage: 'String cannot represent a non string value: false',
           typeName: undefined,
           fieldName: undefined,
         },
         {
-          message: 'Version argument must be of type string',
+          message: 'String cannot represent a non string value: false',
           status: 400,
-          errorMessage: 'Version argument must be of type string',
+          errorMessage: 'String cannot represent a non string value: false',
           typeName: undefined,
           fieldName: undefined,
         },
@@ -481,16 +481,16 @@ describe('GraphQlUtilsServiceTest', () => {
 
       expect(result).toMatchObject([
         {
-          message: 'Space argument must be of type String',
+          message: 'String cannot represent a non string value: false',
           status: 400,
-          errorMessage: 'Space argument must be of type String',
+          errorMessage: 'String cannot represent a non string value: false',
           typeName: undefined,
           fieldName: undefined,
         },
         {
-          message: 'Version argument must be of type string',
+          message: 'String cannot represent a non string value: false',
           status: 400,
-          errorMessage: 'Version argument must be of type string',
+          errorMessage: 'String cannot represent a non string value: false',
           typeName: undefined,
           fieldName: undefined,
         },
@@ -523,8 +523,6 @@ describe('GraphQlUtilsServiceTest', () => {
           status: 400,
           errorMessage:
             'Interface field Describable.description expected but Person does not provide it.',
-          typeName: 'Person',
-          fieldName: 'id',
         },
         {
           message:
@@ -532,8 +530,6 @@ describe('GraphQlUtilsServiceTest', () => {
           status: 400,
           errorMessage:
             'Interface field Assignable.assignedTo expected but Person does not provide it.',
-          typeName: 'Person',
-          fieldName: 'id',
         },
       ]);
     });
@@ -560,11 +556,9 @@ describe('GraphQlUtilsServiceTest', () => {
         c: String
     }`;
       const result = service.validate(schema);
-      expect(result).toMatchObject([
-        {
-          message: 'Type D must implement A because it is implemented by C',
-        },
-      ]);
+      expect(result[0]).toMatchObject({
+        errorMessage: 'Type D must implement A because it is implemented by C.',
+      });
     });
     it('should validate type name for pascal case', () => {
       const service = createInstance();

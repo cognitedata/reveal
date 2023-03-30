@@ -16,6 +16,12 @@ export default {
     isSearchable: {
       type: 'boolean',
     },
+    isLoading: {
+      type: 'boolean',
+    },
+    isError: {
+      type: 'boolean',
+    },
   },
 };
 export const Example: ComponentStory<typeof Select> = (args) => (
@@ -25,6 +31,8 @@ Example.args = {
   creatable: false,
   isClearable: true,
   isSearchable: false,
+  isLoading: false,
+  isError: false,
   options: [
     {
       label: 'hello',

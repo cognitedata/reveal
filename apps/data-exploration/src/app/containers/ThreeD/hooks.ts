@@ -32,6 +32,7 @@ import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -195,17 +196,22 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
 };
 
 export const useInfinite360Images = () => {
+  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
   const {
     data: images360Datasets,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useEventsSearchResultQuery({
-    eventsFilters: {
-      type: 'scan',
+  } = useEventsSearchResultQuery(
+    {
+      eventsFilters: {
+        type: 'scan',
+      },
+      limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
     },
-    limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-  });
+    undefined,
+    eventSearchConfig
+  );
 
   const images360Data = useMemo(() => {
     if (images360Datasets.length > 0) {
@@ -530,10 +536,18 @@ export const getSecondaryModelQueryFn =
     viewer: Cognite3DViewer,
     modelId: number,
     revisionId: number,
+    loadedSecondaryModels?: (CogniteCadModel | CognitePointCloudModel)[],
+    setLoadedSecondaryModels?: (
+      models: (CogniteCadModel | CognitePointCloudModel)[]
+    ) => void,
     applied?: boolean
   ) =>
   async () => {
-    if (applied === undefined) {
+    if (
+      applied === undefined ||
+      setLoadedSecondaryModels === undefined ||
+      loadedSecondaryModels === undefined
+    ) {
       return undefined;
     }
 
@@ -550,6 +564,7 @@ export const getSecondaryModelQueryFn =
 
     if (applied && !hasAdded) {
       await viewer.addModel({ modelId, revisionId });
+      setLoadedSecondaryModels(viewer.models.slice(1));
     } else if (!applied && hasAdded) {
       const modelToRemove = (
         viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
@@ -558,6 +573,14 @@ export const getSecondaryModelQueryFn =
           modelId === tmId && revisionId === trId
       );
       if (modelToRemove) {
+        loadedSecondaryModels.splice(
+          loadedSecondaryModels.findIndex(
+            (modelToRemoveFromSecondaryModel) =>
+              modelToRemoveFromSecondaryModel.modelId === modelToRemove.modelId
+          ),
+          1
+        );
+        setLoadedSecondaryModels(loadedSecondaryModels);
         viewer.removeModel(modelToRemove);
       }
     }

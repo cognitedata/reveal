@@ -139,6 +139,7 @@ export const GraphqlCodeEditor = React.memo(
             autoIndent: 'full',
             formatOnPaste: true,
             formatOnType: true,
+            fixedOverflowWidgets: true,
           }}
           language="graphql"
           value={editorValue}

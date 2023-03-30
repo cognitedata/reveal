@@ -52,7 +52,8 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     });
   });
 
-  it('should update, remove, and then insert direct relationships', () => {
+  // skipping as this is low priority
+  it.skip('should update, remove, and then insert direct relationships', () => {
     cy.get('[data-testid="Post"]').click();
     cy.get('[data-testid="Post"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');

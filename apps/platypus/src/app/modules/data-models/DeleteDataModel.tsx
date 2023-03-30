@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Body, Button, Checkbox, Modal } from '@cognite/cogs.js';
+import { Body, Button, Modal } from '@cognite/cogs.js';
 
 import { DataModel, StorageProviderType } from '@platypus/platypus-core';
 
@@ -27,7 +27,6 @@ export const DeleteDataModel = ({
 
   const { track } = useMixpanel();
 
-  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
   const localStorageProvider = useInjection(
@@ -96,9 +95,11 @@ export const DeleteDataModel = ({
           localStorageProvider.removeItem(
             getLocalDraftKey(dataModel.id, dataModel.space)
           );
-          queryClient.removeQueries(QueryKeys.DATA_MODEL(dataModel.id));
           queryClient.removeQueries(
-            QueryKeys.DATA_MODEL_VERSION_LIST(dataModel.id)
+            QueryKeys.DATA_MODEL(dataModel.space, dataModel.id)
+          );
+          queryClient.removeQueries(
+            QueryKeys.DATA_MODEL_VERSION_LIST(dataModel.space, dataModel.id)
           );
           onCancel();
           onAfterDeleting();
@@ -109,43 +110,27 @@ export const DeleteDataModel = ({
   return (
     <Modal
       visible={dataModel ? true : false}
-      title={t('delete_data_model', 'Delete Data Model')}
+      title={t('delete_data_model_modal_title', 'Delete Data Model?')}
       onCancel={() => {
         onCancel();
-        setConfirmDelete(false);
       }}
       onOk={() => onDeleteDataModel(dataModel.id)}
-      okDisabled={!confirmDelete || deleting}
+      okDisabled={deleting}
       okText={t('delete', 'Delete')}
       icon={deleting ? 'Loader' : undefined}
       destructive
     >
       <Body level={2}>
         {t(
-          'are_you_sure_to_delete_data_model_1',
-          'Are you sure you want to delete «'
+          'delete_data_model_modal_body_1',
+          'Do you want to delete the data model «'
         )}
         <strong>{dataModel.name || NoNameDisplayName}</strong>
         {t(
-          'are_you_sure_to_delete_data_model_2',
-          '»? This is an irreversible action. We will delete all unreferenced and unused data types within the data model. This may take a few minutes. '
+          'delete_data_model_modal_body_2',
+          '»? The data model and all underlying data types will be permanently deleted. This may take a few minutes.'
         )}
       </Body>
-      <br />
-      <div className="confirmDelete">
-        <Checkbox
-          name="ConfirmDelete"
-          checked={confirmDelete}
-          disabled={deleting}
-          onChange={() => setConfirmDelete(!confirmDelete)}
-          data-cy="data-model-confirm-deletion-checkbox"
-        >
-          {t(
-            'yes_sure_to_delete_data_model',
-            "Yes, I'm sure I want to delete this data model."
-          )}
-        </Checkbox>
-      </div>
     </Modal>
   );
 };

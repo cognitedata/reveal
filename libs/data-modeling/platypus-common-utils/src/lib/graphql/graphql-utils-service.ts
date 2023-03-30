@@ -19,7 +19,9 @@ import {
   Kind,
   NameNode,
   DirectiveDefinitionNode,
+  validateSchema,
 } from 'graphql';
+import { validateWithCustomRules } from 'graphql-language-service';
 import {
   documentApi,
   DocumentApi,
@@ -31,18 +33,11 @@ import {
   DirectiveApi,
   InputValueApi,
 } from 'graphql-extra';
-import {
-  validate as validateFromGql,
-  ValidationRule,
-} from 'graphql/validation';
 import { validateSDL } from 'graphql/validation/validate';
 
-import { MappingDirectiveValidator } from './validation/MappingDirectiveValidator';
 import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
-import { ViewDirectiveValidator } from './validation/ViewDirectiveValidator';
 import { ContainerDirectiveValidator } from './validation/ContainerDirectiveValidator';
 import { getBuiltInTypesString } from './utils';
-import { RelationDirectiveValidator } from './validation/RelationDirectiveValidator';
 import { FieldNodeValidator } from './validation/FieldNodeValidator';
 
 const DIRECTIVE_ARGUMENTS_KIND_MAP: {
@@ -421,44 +416,40 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     const customValidationRules = [
       NotSupportedFeaturesRule,
       FieldNodeValidator,
-    ] as ValidationRule[];
+    ];
 
     if (options && options.useExtendedSdl) {
-      customValidationRules.push(ViewDirectiveValidator);
-      customValidationRules.push(MappingDirectiveValidator);
-      customValidationRules.push(RelationDirectiveValidator);
       customValidationRules.push(ContainerDirectiveValidator);
     }
 
-    let errors = [];
+    let errors: GraphQLError[] = [];
     let doc: DocumentNode | null = null;
 
     try {
       doc = parse(schemaToValidate);
       errors = validateSDL(doc).slice();
-
       if (errors.length) {
         return errors.map((err) => this.graphQlToValidationError(err));
       }
-      errors = validateFromGql(
+      errors = validateSchema(buildSchema(schemaToValidate)).slice();
+      if (errors.length) {
+        return errors.map((err) => {
+          const locations = err.locations?.slice(1);
+          const newGQLError = { ...err, locations } as unknown as GraphQLError;
+          return this.graphQlToValidationError(newGQLError);
+        });
+      }
+      errors = validateWithCustomRules(
         buildSchema(schemaToValidate),
         doc,
-        Object.freeze(customValidationRules)
-      ).map((err) => err);
+        customValidationRules
+      );
     } catch (err) {
-      if (doc) {
-        errors = this.handleValidationErrorsThrownAsExceptions(
-          doc,
-          (err as Error).message
-        );
-      } else {
+      if (err instanceof GraphQLError) {
         errors = [err];
       }
     }
-
-    return errors.map((err) =>
-      this.graphQlToValidationError(err as GraphQLError)
-    );
+    return errors.map((err) => this.graphQlToValidationError(err));
   }
 
   private graphQlToValidationError(
@@ -491,90 +482,5 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         column: loc.column,
       })),
     };
-  }
-
-  private handleValidationErrorsThrownAsExceptions(
-    document: DocumentNode,
-    errorMessage: string
-  ): GraphQLError[] {
-    const errors = [] as GraphQLError[];
-    const interfaceUnimplementedFieldsRegex =
-      /^Interface field.*expected but.*does not provide it./gm;
-    const interfaceTransitiveRegex =
-      /^Type .* must implement .* because it is implemented by ./gm;
-    if (errorMessage.match(interfaceTransitiveRegex)) {
-      let matches;
-      while ((matches = interfaceTransitiveRegex.exec(errorMessage)) !== null) {
-        if (matches.index === interfaceTransitiveRegex.lastIndex) {
-          interfaceTransitiveRegex.lastIndex++;
-        }
-        matches.forEach((match) => {
-          const [missingInterface] = match
-            .replace(/^Type/g, '')
-            .replace(/must implement/g, '')
-            .replace(/because it is implemented.$/g, '')
-            .replace(/\s{2,}/g, ' ')
-            .trim()
-            .split(' ');
-          const typeNodeIndex = document.definitions.findIndex(
-            (node) =>
-              (node.kind === Kind.OBJECT_TYPE_DEFINITION ||
-                node.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
-              node.name.value === missingInterface
-          );
-          if (typeNodeIndex !== -1) {
-            errors.push(
-              new GraphQLError(match, {
-                nodes: [document.definitions[typeNodeIndex]],
-              })
-            );
-          }
-        });
-        return errors;
-      }
-    }
-    if (errorMessage.match(interfaceUnimplementedFieldsRegex)) {
-      let m;
-
-      while (
-        (m = interfaceUnimplementedFieldsRegex.exec(errorMessage)) !== null
-      ) {
-        // This is necessary to avoid infinite loops with zero-width matches
-        if (m.index === interfaceUnimplementedFieldsRegex.lastIndex) {
-          interfaceUnimplementedFieldsRegex.lastIndex++;
-        }
-
-        // The result can be accessed through the `m`-variable.
-        m.forEach((match) => {
-          const [missingField, typeName] = match
-            .replace(/^Interface field/g, '')
-            .replace(/expected but/g, '')
-            .replace(/does not provide it.$/g, '')
-            .replace(/\s{2,}/g, ' ')
-            .trim()
-            .split(' ');
-
-          const typeNodeIndex = document.definitions.findIndex(
-            (node) =>
-              (node.kind === Kind.OBJECT_TYPE_DEFINITION ||
-                node.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
-              node.name.value === (typeName as string)
-          );
-          if (typeNodeIndex !== -1) {
-            errors.push(
-              new GraphQLError(match, {
-                nodes: [document.definitions[typeNodeIndex]],
-                extensions: {
-                  field: missingField,
-                },
-              })
-            );
-          }
-        });
-      }
-      return errors;
-    }
-
-    return [new GraphQLError(errorMessage)];
   }
 }

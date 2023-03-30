@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import AssetTooltip from './AssetTooltip';
 
 export default {
-  title: 'Components/AssetTooltip',
+  title: 'Components/Asset Tooltip Story',
   component: AssetTooltip,
 };
 
@@ -47,7 +47,7 @@ const mockSdk = {
 
 const queryClient = new QueryClient();
 
-export const Example: ComponentStory<typeof AssetTooltip> = () => {
+export const AssetTooltipStory: ComponentStory<typeof AssetTooltip> = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <SDKProvider sdk={mockSdk}>

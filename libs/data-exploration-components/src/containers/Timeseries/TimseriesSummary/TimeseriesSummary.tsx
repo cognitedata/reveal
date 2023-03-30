@@ -19,7 +19,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export const TimeseriesSummary = ({
   query = '',
@@ -38,10 +41,16 @@ export const TimeseriesSummary = ({
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
 }) => {
-  const { isLoading, data } = useTimeseriesSearchResultWithLabelsQuery({
-    query,
-    filter,
-  });
+  const timeseriesSearchConfig =
+    useGetSearchConfigFromLocalStorage('timeSeries');
+  const { isLoading, data } = useTimeseriesSearchResultWithLabelsQuery(
+    {
+      query,
+      filter,
+    },
+    undefined,
+    timeseriesSearchConfig
+  );
 
   const { data: metadataKeys = [] } = useTimeseriesMetadataKeys();
 

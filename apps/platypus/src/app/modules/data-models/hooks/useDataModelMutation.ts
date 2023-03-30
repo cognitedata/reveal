@@ -38,9 +38,11 @@ export function useDataModelMutation() {
           queryClient.refetchQueries(QueryKeys.DATA_MODEL_LIST);
 
           // add data model to detail cache
-          queryClient.cancelQueries(QueryKeys.DATA_MODEL(dataModel.id));
+          queryClient.cancelQueries(
+            QueryKeys.DATA_MODEL(dataModel.space, dataModel.id)
+          );
           queryClient.setQueryData<DataModel>(
-            QueryKeys.DATA_MODEL(dataModel.id),
+            QueryKeys.DATA_MODEL(dataModel.space, dataModel.id),
             dataModel
           );
 
@@ -58,9 +60,11 @@ export function useDataModelMutation() {
           const dataModel = result.getValue();
 
           // update cached data model detail
-          queryClient.cancelQueries(QueryKeys.DATA_MODEL(dataModel.id));
+          queryClient.cancelQueries(
+            QueryKeys.DATA_MODEL(dataModel.space, dataModel.id)
+          );
           queryClient.setQueryData<DataModel>(
-            QueryKeys.DATA_MODEL(dataModel.id),
+            QueryKeys.DATA_MODEL(dataModel.space, dataModel.id),
             dataModel
           );
 

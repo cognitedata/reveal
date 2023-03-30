@@ -3,6 +3,7 @@ import { getChipRightPropsForResourceCounter } from '../../../utils';
 import { ResourceTabProps } from './types';
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { CounterTab } from './elements';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 // This is FilesTab with counts when advanced filters are enabled!
 export const DocumentsTab = ({
@@ -11,8 +12,12 @@ export const DocumentsTab = ({
 
   ...rest
 }: ResourceTabProps) => {
+  const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
   const { data: filteredDocumentCount = 0, isLoading } =
-    useDocumentFilteredAggregateCount({ filters: filter, query });
+    useDocumentFilteredAggregateCount(
+      { filters: filter, query },
+      documentSearchConfig
+    );
 
   const chipRightProps = getChipRightPropsForResourceCounter(
     filteredDocumentCount,

@@ -527,21 +527,24 @@ export class FdmClient implements FlexibleDataModelingClient {
 
   getDataByExternalId(dto: GetByExternalIdDTO): Promise<CdfResourceInstance> {
     const {
-      externalId,
-      nestedCursors,
-      nestedLimit,
+      dataModelExternalId,
+      dataModelSpace,
       dataModelType,
       dataModelTypeDefs,
-      dataModelVersion: { space, version, externalId: dataModelId },
-      nestedFilters,
+      externalId,
+      instanceSpace,
       limitFields,
+      nestedCursors,
+      nestedFilters,
+      nestedLimit,
+      version,
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
       dataModelType.name,
       OPERATION_TYPE.GET
     );
     const query = this.queryBuilder.buildGetByExternalIdQuery({
-      spaceId: space,
+      spaceId: instanceSpace,
       externalId,
       nestedCursors,
       dataModelType,
@@ -552,13 +555,13 @@ export class FdmClient implements FlexibleDataModelingClient {
     });
     return this.mixerApiService
       .runQuery({
+        dataModelId: dataModelExternalId,
         graphQlParams: {
           query,
           variables: nestedFilters,
         },
-        space,
-        dataModelId,
         schemaVersion: version,
+        space: dataModelSpace,
       })
       .then((result) => {
         const response = result.data[operationName];

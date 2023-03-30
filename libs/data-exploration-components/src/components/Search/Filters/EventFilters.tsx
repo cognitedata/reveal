@@ -1,150 +1,163 @@
 import React from 'react';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { ResetFiltersButton } from './ResetFiltersButton';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { AggregatedEventFilter } from './AggregatedEventFilter/AggregatedEventFilter';
-import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
-import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { DateFilter } from './DateFilter/DateFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
-import { StringFilter } from './StringFilter/StringFilter';
-import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+
+import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-import { ResourceTypes } from '@data-exploration-components/types';
-import head from 'lodash/head';
-import { OldEventsFilters } from '@data-exploration-lib/core';
+
+import {
+  COMMON_INFO_CONTENT,
+  InternalEventsFilters,
+  isObjectEmpty,
+  SPECIFIC_INFO_CONTENT,
+} from '@data-exploration-lib/core';
+import {
+  AggregatedEventFilterV2,
+  ByAssetFilterV2,
+  DataSetFilterV2,
+  DateFilterV2,
+  MetadataFilterV2,
+  SourceFilter,
+  StringFilterV2,
+} from '@data-exploration-components/components/SearchNew';
+import { BaseFilterCollapse } from '@data-exploration/components';
 
 export const EventFilters = ({
   filter,
   setFilter,
 }: {
-  filter: OldEventsFilters;
-  setFilter: (newFilter: OldEventsFilters) => void;
+  filter: InternalEventsFilters;
+  setFilter: (newFilter: InternalEventsFilters) => void;
 }) => {
-  const resourceType = ResourceTypes.Event;
   const { data: items = [] } = useList<any>('events', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });
 
+  const handleResetCommonFilters = () => {
+    setFilter({
+      ...filter,
+      dataSetIds: undefined,
+      assetSubtreeIds: undefined,
+      createdTime: undefined,
+      lastUpdatedTime: undefined,
+      externalIdPrefix: undefined,
+    });
+  };
+
+  const isFilterEmpty = isObjectEmpty(filter as any);
+
   return (
-    <div>
-      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
-      <DataSetFilter
-        resourceType={resourceType}
-        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={(newIds) =>
-          setFilter({
-            ...filter,
-            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
-          })
-        }
-      />
-      <AggregatedEventFilter
-        field="type"
-        filter={filter}
-        setValue={(newValue) => {
-          setFilter({ ...filter, type: newValue });
-        }}
-        title="Type"
-        value={String(filter.type)}
-      />
-      <DateFilter
-        title="Start Time"
-        value={filter.startTime}
-        setValue={(newDate) =>
-          setFilter({
-            ...filter,
-            startTime: newDate || undefined,
-          })
-        }
-      />
-      <DateFilter
-        title="End Time"
-        enableNull
-        value={
-          filter.endTime && 'isNull' in filter.endTime ? null : filter.endTime
-        }
-        setValue={(newDate) =>
-          setFilter({
-            ...filter,
-            endTime: newDate === null ? { isNull: true } : newDate || undefined,
-          })
-        }
-      />
-      <StringFilter
-        title="External ID"
-        value={filter.externalIdPrefix}
-        setValue={(newExternalId) =>
-          setFilter({
-            ...filter,
-            externalIdPrefix: newExternalId,
-          })
-        }
-      />
-      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
-        <AggregatedEventFilter
+    <BaseFilterCollapse>
+      <BaseFilterCollapse.Panel
+        title="Common"
+        hideResetButton={isFilterEmpty}
+        infoContent={COMMON_INFO_CONTENT}
+        onResetClick={handleResetCommonFilters}
+      >
+        <TempCommonMultiSelectFix>
+          <DataSetFilterV2
+            resourceType="event"
+            value={filter.dataSetIds}
+            setValue={(newValue) =>
+              setFilter({ ...filter, dataSetIds: newValue })
+            }
+          />
+          <ByAssetFilterV2
+            value={filter.assetSubtreeIds?.map(({ value }) => value)}
+            setValue={(newValue) =>
+              setFilter({ ...filter, assetSubtreeIds: newValue })
+            }
+          />
+          <DateFilterV2
+            title="Created time"
+            value={filter.createdTime}
+            setValue={(newValue) =>
+              setFilter({ ...filter, createdTime: newValue || undefined })
+            }
+          />
+          <DateFilterV2
+            title="Updated time"
+            value={filter.lastUpdatedTime}
+            setValue={(newValue) =>
+              setFilter({ ...filter, lastUpdatedTime: newValue || undefined })
+            }
+          />
+          <StringFilterV2
+            title="External ID"
+            value={filter.externalIdPrefix}
+            setValue={(newValue) =>
+              setFilter({ ...filter, externalIdPrefix: newValue })
+            }
+          />
+        </TempCommonMultiSelectFix>
+      </BaseFilterCollapse.Panel>
+      <BaseFilterCollapse.Panel
+        title="Event"
+        hideResetButton={true}
+        infoContent={SPECIFIC_INFO_CONTENT}
+        // onResetClick={handleResetAssetFilters}
+      >
+        <AggregatedEventFilterV2
+          field="type"
+          filter={filter}
+          setValue={(newValue) => {
+            setFilter({ ...filter, type: newValue });
+          }}
+          title="Type"
+          value={filter.type || []}
+          isMulti={false}
+        />
+        <DateFilterV2
+          title="Start time"
+          value={filter.startTime}
+          setValue={(newDate) =>
+            setFilter({
+              ...filter,
+              startTime: newDate || undefined,
+            })
+          }
+        />
+        <DateFilterV2
+          title="End time"
+          enableNull
+          value={
+            filter.endTime && 'isNull' in filter.endTime ? null : filter.endTime
+          }
+          setValue={(newDate) =>
+            setFilter({
+              ...filter,
+              endTime:
+                newDate === null ? { isNull: true } : newDate || undefined,
+            })
+          }
+        />
+        <AggregatedEventFilterV2
           field="subtype"
           filter={filter}
           setValue={(newValue) => {
             setFilter({ ...filter, subtype: newValue });
           }}
           title="Sub-type"
-          value={String(filter.subtype)}
+          value={filter.subtype || []}
+          isMulti={false}
         />
-        <ByAssetFilter
-          value={filter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={(newValue) =>
-            setFilter({
-              ...filter,
-              assetSubtreeIds: newValue?.map((id) => ({ value: id })),
-            })
-          }
-        />
-        <AggregatedFilter
-          title="Source"
+        <SourceFilter
           items={items}
-          aggregator="source"
-          value={head(filter.sources)?.value}
-          setValue={(newSource) =>
-            setFilter({
-              ...filter,
-              sources: [{ value: String(newSource) }],
-            })
+          value={filter.sources}
+          onChange={(newSources) =>
+            setFilter({ ...filter, sources: newSources })
           }
+          isAdvancedFiltersEnabled={false}
         />
-        <MetadataFilter
+        <MetadataFilterV2
           items={items}
           value={filter.metadata}
           setValue={(newMetadata) =>
-            setFilter({
-              ...filter,
-              metadata: newMetadata,
-            })
+            setFilter({ ...filter, metadata: newMetadata })
           }
         />
-        <DateFilter
-          title="Created Time"
-          value={filter.createdTime}
-          setValue={(newDate) =>
-            setFilter({
-              ...filter,
-              createdTime: newDate || undefined,
-            })
-          }
-        />
-        <DateFilter
-          title="Updated Time"
-          value={filter.lastUpdatedTime}
-          setValue={(newDate) =>
-            setFilter({
-              ...filter,
-              lastUpdatedTime: newDate || undefined,
-            })
-          }
-        />
-      </AdvancedFiltersCollapse>
-    </div>
+      </BaseFilterCollapse.Panel>
+    </BaseFilterCollapse>
   );
 };
