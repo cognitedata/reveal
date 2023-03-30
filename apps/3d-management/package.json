@@ -36,7 +36,7 @@
     "history": "^5.3.0",
     "i18next": "^22.4.9",
     "lodash": "^4.17.21",
-    "query-string": "^8.0.0",
+    "query-string": "^7.1.0",
     "re-resizable": "^6.9.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -50,7 +50,7 @@
     "redux-actions": "^3.0.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.2",
-    "single-spa-react": "^5.0.0",
+    "single-spa-react": "^4.1.1",
     "styled-components": "^5.3.6",
     "three": "^0.149.0"
   },
