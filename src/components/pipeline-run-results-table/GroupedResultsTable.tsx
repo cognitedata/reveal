@@ -142,8 +142,9 @@ const GroupedResultsTable = ({
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) =>
-          !!record.matches ? (
+          !!record.matches && !!record.extractors ? (
             <ExpandedRule
+              extractors={record.extractors}
               matches={record.matches}
               selectedSourceIds={selectedSourceIds}
               setSelectedSourceIds={setSelectedSourceIds}

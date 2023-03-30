@@ -152,8 +152,9 @@ export default function AppliedRulesTable({
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
         expandedRowRender: (record) =>
-          !!record.matches ? (
+          !!record.matches && !!record.rule.extractors ? (
             <ExpandedRule
+              extractors={record.rule.extractors}
               matches={record.matches}
               selectedSourceIds={confirmedPredictions}
               setSelectedSourceIds={setConfirmedPredictions}
