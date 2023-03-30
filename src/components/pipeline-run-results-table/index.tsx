@@ -14,19 +14,13 @@ import { useTranslation } from 'common';
 import BasicResultsTable from './BasicResultsTable';
 import GroupedResultsTable from './GroupedResultsTable';
 import MatchTypeOptionContent from './MatchTypeOptionContent';
+import { MatchOptionType, MatchType } from 'types/types';
 
 type PipelineRunResultsTableProps = {
   pipeline: Pipeline;
   run: EMPipelineRun;
   selectedSourceIds: CogniteInternalId[];
   setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
-};
-
-type MatchType = 'all' | 'previously-confirmed';
-
-type MatchOptionType = {
-  label: React.ReactNode;
-  value: MatchType;
 };
 
 const PipelineRunResultsTable = ({

@@ -57,6 +57,7 @@
   "data-set": "Data set",
   "dataset-error-body": "An error occurred while retrieving data sets: '{{error}}'",
   "description": "Description",
+  "diff-matched": "Different recommendation",
   "different-recommendation": "Different recommendation",
   "do-not-generate-rules": "Do not generate rules",
   "do-not-leave-the-page-pipeline": "Running the pipeline, please do not leave the page",

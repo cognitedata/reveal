@@ -26,3 +26,15 @@ export type TargetTableProps = TablePropsBase & {
   selected: RawTarget[];
   setSelected: Dispatch<SetStateAction<RawTarget[]>>;
 };
+
+export type MatchType =
+  | 'all'
+  | 'previously-confirmed'
+  | 'matched'
+  | 'unmatched'
+  | 'diff-matched';
+
+export type MatchOptionType = {
+  label: React.ReactNode;
+  value: MatchType;
+};
