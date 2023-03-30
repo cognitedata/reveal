@@ -1,5 +1,4 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Asset, Timeseries } from '@cognite/sdk';
 import {
   createContext,
   Dispatch,
@@ -33,12 +32,9 @@ export type EMFeatureType =
   | 'bigramextratokenizers'
   | 'bigramcombo';
 
-type TimeseriesKeys = keyof Pick<Timeseries, 'unit' | 'name' | 'description'>;
-type AssetKeys = keyof Pick<Asset, 'name' | 'description'>;
-
 export type ModelMapping = {
-  source?: TimeseriesKeys | '';
-  target?: AssetKeys | '';
+  source?: string;
+  target?: string;
 }[];
 
 export type Scope = 'all' | 'unmatched';

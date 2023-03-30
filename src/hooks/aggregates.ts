@@ -22,11 +22,11 @@ export const aggregatePropertyQueryKey = (t: T): QueryKey => [
 ];
 
 const topLevelProperties: Record<T, string[]> = {
-  assets: ['name', 'description', 'source'],
-  timeseries: ['name', 'description', 'unit'],
-  events: ['type', 'subtype', 'description', 'source'],
-  files: ['name', 'directory', 'source', 'mimeType'],
-  sequences: ['name', 'description'],
+  assets: ['name', 'externalId', 'description', 'source'],
+  timeseries: ['name', 'externalId', 'description', 'unit'],
+  events: ['externalId', 'type', 'subtype', 'description', 'source'],
+  files: ['name', 'externalId', 'directory', 'source', 'mimeType'],
+  sequences: ['name', 'externalId', 'description'],
   threeD: ['name'],
 };
 

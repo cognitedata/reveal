@@ -53,6 +53,7 @@ export default function SourceSelectionTable({}: Props) {
     setSourceFilter,
     allSources,
     setAllSources,
+    setModelFieldMapping,
   } = useQuickMatchContext();
   const sourceTypeOptions: { value: SourceType; label: string }[] = [
     { value: 'timeseries', label: t('resource-type-ts') },
@@ -67,6 +68,11 @@ export default function SourceSelectionTable({}: Props) {
   const handleSelectSourceType = (selectedSourceType: string) => {
     if (SOURCE_TYPES.some((type) => type === selectedSourceType)) {
       setSourceType(selectedSourceType as SourceType);
+    }
+    if (selectedSourceType === 'events') {
+      setModelFieldMapping([{ source: 'externalId', target: 'name' }]);
+    } else {
+      setModelFieldMapping([{ source: 'name', target: 'name' }]);
     }
   };
 

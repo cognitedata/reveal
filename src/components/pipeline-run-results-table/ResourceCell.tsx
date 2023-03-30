@@ -31,18 +31,16 @@ const ResourceCell = ({
     }
   );
 
-  if (preferredProperty) {
-    return (
-      <Flex direction="column">
-        <Body level={3} muted>
-          {preferredProperty}
-        </Body>
-        <Body level={2}>{resource[preferredProperty] as string}</Body>
-      </Flex>
-    );
-  }
-
-  return <>-</>;
+  return (
+    <Flex direction="column">
+      <Body level={3} muted>
+        {preferredProperty ?? propertyPreferenceOrder[0]}
+      </Body>
+      <Body level={2}>
+        {preferredProperty ? (resource[preferredProperty] as string) : '-'}
+      </Body>
+    </Flex>
+  );
 };
 
 export default ResourceCell;
