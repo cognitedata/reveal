@@ -12,7 +12,6 @@ export class Image360RevisionEntity implements Image360Revision {
   private readonly _image360Descriptor: Image360Descriptor;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private readonly _revisionId: number;
   private _getFullResolutionTextures:
     | undefined
     | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>;
@@ -21,22 +20,13 @@ export class Image360RevisionEntity implements Image360Revision {
     imageProvider: Image360FileProvider,
     image360Descriptor: Image360Descriptor,
     sceneHandler: SceneHandler,
-    transform: THREE.Matrix4,
-    revisionId: number
+    transform: THREE.Matrix4
   ) {
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
     this._transform = transform;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
-    this._revisionId = revisionId;
-  }
-
-  /**
-   * The index of this revision.
-   */
-  get revisionId(): Readonly<number> {
-    return this._revisionId;
   }
 
   /**

@@ -30,7 +30,6 @@ export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
-  private _targetRevisionDate: Date | undefined;
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -48,8 +47,7 @@ export class Image360ApiHelper {
 
   private readonly _debouncePreLoad = debounce(
     entity => {
-      const revisionToLoad = entity.getRevision(this.findRevisionIdToEnter(entity));
-      if (revisionToLoad) this._image360Facade.preload(revisionToLoad).catch(() => {});
+      this._image360Facade.preload(this.findRevisionIdToEnter(entity)).catch(() => {});
     },
     300,
     {
@@ -79,7 +77,6 @@ export class Image360ApiHelper {
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
-    this._targetRevisionDate = undefined;
 
     this._domElement = domElement;
     this._interactionState = {};
@@ -120,9 +117,7 @@ export class Image360ApiHelper {
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
-    const reloadImage = (entity: Image360Entity, revision: number, targetDate?: Date) => {
-      this._targetRevisionDate = targetDate;
-
+    const reloadImage = (entity: Image360Entity, revision: Image360RevisionEntity) => {
       if (entity !== this._interactionState.currentImage360Entered) {
         return Promise.resolve();
       }
@@ -156,13 +151,10 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
-  public async enter360Image(image360Entity: Image360Entity, revisionId?: number): Promise<void> {
-    const revisionToEnter = image360Entity.getRevision(revisionId ?? this.findRevisionIdToEnter(image360Entity));
-    if (!revisionToEnter) {
-      return;
-    }
-
+  public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
+    const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
+
     const fatalDownloadError = await this._image360Facade.preload(revisionToEnter, true).catch(e => {
       return e;
     });
@@ -363,8 +355,9 @@ export class Image360ApiHelper {
     this._image360Navigation.dispose();
   }
 
-  private findRevisionIdToEnter(image360Entity: Image360Entity): number {
-    return this._targetRevisionDate ? image360Entity.getRevisionClosestToDate(this._targetRevisionDate) : 0;
+  private findRevisionIdToEnter(image360Entity: Image360Entity): Image360RevisionEntity {
+    const targetDate = this._image360Facade.getCollectionContainingEntity(image360Entity).targetRevisionDate;
+    return targetDate ? image360Entity.getRevisionClosestToDate(targetDate) : image360Entity.getMostRecentRevision();
   }
 
   private enter360ImageOnIntersect(event: PointerEventData): Promise<void> {

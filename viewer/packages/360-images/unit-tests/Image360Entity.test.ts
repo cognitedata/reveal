@@ -42,6 +42,6 @@ describe(Image360Entity.name, () => {
       It.IsAny()
     );
 
-    expect(entity.getRevision(0)!.transform.equals(testTranslation)).toBeTrue();
+    expect(entity.getMostRecentRevision().transform.equals(testTranslation)).toBeTrue();
   });
 });

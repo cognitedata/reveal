@@ -131,14 +131,14 @@ export class Image360LoadingCache {
     const revisions = entity.list360ImageRevisions();
     revisions.forEach(revision => {
       const inFlightDownloads = this._inProgressDownloads.filter(download => {
-        return download.revision.revisionId === revision.id;
+        return download.revision === revision;
       });
       inFlightDownloads.map(inFlightDownload => {
         pull(this._inProgressDownloads, inFlightDownload);
         inFlightDownload.abort();
       });
       remove(this._loaded360Images, image => {
-        return image.revision.revisionId === revision.id;
+        return image.revision === revision;
       });
     });
   }

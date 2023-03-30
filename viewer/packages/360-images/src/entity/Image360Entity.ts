@@ -12,8 +12,8 @@ import { Image360RevisionEntity } from './Image360RevisionEntity';
 export class Image360Entity implements Image360 {
   private readonly _image360Icon: Image360Icon;
   private readonly _revisions: Image360RevisionEntity[];
-  private _activeRevisionId: number;
-  private readonly _reloadImage: (entity: Image360Entity, revision: number, targetDate?: Date) => Promise<void>;
+  private _activeRevision: Image360RevisionEntity;
+  private readonly _reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>;
 
   /**
    * Get the icon that represents the 360
@@ -30,15 +30,15 @@ export class Image360Entity implements Image360 {
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
     icon: Image360Icon,
-    reloadImage: (entity: Image360Entity, revision: number, targetDate?: Date) => Promise<void>
+    reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>
   ) {
     this._image360Icon = icon;
     this._reloadImage = reloadImage;
-    this._activeRevisionId = 0;
 
-    this._revisions = image360Metadata.imageRevisions.map((descriptor, revision) => {
-      return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform, revision);
+    this._revisions = image360Metadata.imageRevisions.map(descriptor => {
+      return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform);
     });
+    this._activeRevision = this.getMostRecentRevision();
   }
 
   /**
@@ -49,13 +49,10 @@ export class Image360Entity implements Image360 {
   }
 
   /**
-   * List the ids and dates for all available revisions. If a revison is undated, the date will be undefined.
-   * @returns A list of id and date pairs, sorted with the most recent date first.
+   * List all available revisions.
    * */
-  public list360ImageRevisions(): { id: number; date?: Date }[] {
-    return this._revisions.map(revision => {
-      return { id: revision.revisionId, date: revision.date };
-    });
+  public list360ImageRevisions(): Image360RevisionEntity[] {
+    return this._revisions;
   }
 
   /**
@@ -63,18 +60,11 @@ export class Image360Entity implements Image360 {
    * Resolves once loading is complete. Rejects if revision could not be changed.
    * If the entity is not entered/visible the promise will be resolved instantly.
    *
-   * @param revisionId The id of the revision to show.
-   * @param keepDate If true any subsequently opened images will use revisions that are closest to the date of this revision.
-   * If false, the most recent revision will be loaded.
-   *
+   * @param Image360Revision The revision to load
    * @returns Promise for when revision has either been updated or it failed to change.
    */
-  public changeRevision(revisionId: number, keepDate = false): Promise<void> {
-    const revision = this.getRevision(revisionId);
-    if (!revision) {
-      return Promise.reject(Error('Invalid revision id.', { cause: 'invalid' }));
-    }
-    return this._reloadImage(this, revisionId, keepDate ? revision.date : undefined);
+  public changeRevision(revision: Image360RevisionEntity): Promise<void> {
+    return this._reloadImage(this, revision);
   }
 
   /**
@@ -82,34 +72,34 @@ export class Image360Entity implements Image360 {
    * @returns Returns the active revision.
    */
   public getActiveRevision(): Image360RevisionEntity {
-    return this.getRevision(this._activeRevisionId) ?? this._revisions[0];
+    return this._activeRevision;
   }
 
   public setActiveRevision(revision: Image360RevisionEntity): void {
-    this._activeRevisionId = revision.revisionId;
+    this._activeRevision = revision;
   }
 
-  public getRevision(revisionId: number): Image360RevisionEntity | undefined {
-    return this._revisions.find(revision => revisionId === revision.revisionId);
+  public getMostRecentRevision(): Image360RevisionEntity {
+    return this._revisions[0];
   }
 
   /**
-   * Get the id of the revision closest to the provided date.
+   * Get the revision closest to the provided date.
    * If all revisions are undated the first available revison is returned.
    */
-  public getRevisionClosestToDate(date: Date): number {
+  public getRevisionClosestToDate(date: Date): Image360RevisionEntity {
     const dateAsNumber = date.getTime();
     const closest = this._revisions.reduce(
       (closest, revision) => {
         if (revision.date) {
           const difference = Math.abs(revision.date.getTime() - dateAsNumber);
-          if (difference < closest.difference) return { id: revision.revisionId, difference };
+          if (difference < closest.difference) return { revision: revision, difference };
         }
         return closest;
       },
-      { id: 0, difference: Number.POSITIVE_INFINITY }
+      { revision: this.getMostRecentRevision(), difference: Number.POSITIVE_INFINITY }
     );
-    return closest.id;
+    return closest.revision;
   }
 
   /**

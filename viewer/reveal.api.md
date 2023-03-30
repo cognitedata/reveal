@@ -778,12 +778,9 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
-    changeRevision(revisionId: number, keepDate?: boolean): Promise<void>;
+    changeRevision(revision: Image360Revision): Promise<void>;
     getActiveRevision(): Image360Revision;
-    list360ImageRevisions(): {
-        id: number;
-        date?: Date;
-    }[];
+    list360ImageRevisions(): Image360Revision[];
     setOpacity(alpha: number): void;
 }
 
@@ -798,6 +795,7 @@ export interface Image360Collection {
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setIconsVisibility(visible: boolean): void;
+    targetRevisionDate: Date | undefined;
 }
 
 // @public

@@ -15,6 +15,12 @@ export interface Image360Collection {
   readonly image360Entities: Image360[];
 
   /**
+   * If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
+   * If undefined, the most recent revision will be loaded.
+   */
+  targetRevisionDate: Date | undefined;
+
+  /**
    * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
    * @param radius Only icons within the given radius will be made visible.
    * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized.

@@ -21,7 +21,7 @@ export class Image360UI {
       const revisions = selectedEntity.list360ImageRevisions();
       if (revisions.length > 0) {
         console.log('Available revisions:');
-        revisions.forEach(revision => console.log('- Id ' + revision.id + ', ' + revision.date));
+        revisions.forEach((revision, index) => console.log('- Id ' + index + ', ' + revision.date));
       }
     };
 
@@ -49,7 +49,8 @@ export class Image360UI {
     };
 
     const imageRevisions = {
-      id: '0'
+      id: '0',
+      targetDate: ''
     };
 
     const params = {
@@ -106,15 +107,30 @@ export class Image360UI {
       });
 
     gui
+      .add(imageRevisions, 'targetDate')
+      .name('Revision date (Unix epoch time):')
+      .onChange(() => {
+        if (collections.length > 0) {
+          const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
+          console.log(date);
+          collections.forEach(p => (p.targetRevisionDate = date));
+        }
+      });
+
+    gui
       .add(imageRevisions, 'id')
       .name('Current image revision')
       .onChange(() => {
         if (selectedEntity) {
-          selectedEntity.changeRevision(Number(imageRevisions.id)).catch(e => {
-            const error = e as Error;
-            console.error(error.message);
-            console.log(error.cause);
-          });
+          const revisions = selectedEntity.list360ImageRevisions();
+          const index = Number(imageRevisions.id);
+          if (index >= 0 && index < revisions.length) {
+            selectedEntity.changeRevision(revisions[index]).catch(e => {
+              const error = e as Error;
+              console.error(error.message);
+              console.log(error.cause);
+            });
+          }
         }
       });
 
