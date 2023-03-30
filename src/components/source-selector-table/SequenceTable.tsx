@@ -9,7 +9,6 @@ import { SourceTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { stringSorter } from 'utils';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
-import { useDataSet } from 'hooks/dataset';
 
 type SequenceListTableRecord = { key: string } & RawSequence;
 type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
