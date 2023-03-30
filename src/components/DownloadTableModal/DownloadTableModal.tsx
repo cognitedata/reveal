@@ -27,7 +27,9 @@ export const prepareRows = (
       const escapedColumns: Record<string, string> = { key: '' };
       Object.keys(item.columns).forEach((columnName) => {
         escapedColumns[columnName] = escapeCSVValue(
-          JSON.stringify(item.columns[columnName])
+          typeof item.columns[columnName] === 'object'
+            ? JSON.stringify(item.columns[columnName])
+            : item.columns[columnName]
         );
       });
       escapedColumns.key = escapeCSVValue(item.key);
