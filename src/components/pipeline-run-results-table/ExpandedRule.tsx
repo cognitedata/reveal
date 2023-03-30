@@ -9,8 +9,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { RuleMatch } from 'hooks/entity-matching-rules';
+import { EMPipelineRegexExtractor } from 'hooks/entity-matching-pipelines';
 
-import ResourceCell from './ResourceCell';
+import ExtractorMatchesCell from './ExtractorMatchesCell';
 
 type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
@@ -19,12 +20,14 @@ type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
 };
 
 type ExpandedRuleProps = {
+  extractors: EMPipelineRegexExtractor[];
   matches: RuleMatch[];
   selectedSourceIds: CogniteInternalId[];
   setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
 const ExpandedRule = ({
+  extractors,
   matches,
   selectedSourceIds,
   setSelectedSourceIds,
@@ -38,7 +41,11 @@ const ExpandedRule = ({
         dataIndex: 'source',
         key: 'source',
         render: (source: RuleMatch['source']) => (
-          <ResourceCell resource={source} />
+          <ExtractorMatchesCell
+            entitySetToRender="sources"
+            extractors={extractors}
+            resource={source}
+          />
         ),
       },
       {
@@ -46,11 +53,15 @@ const ExpandedRule = ({
         dataIndex: 'target',
         key: 'target',
         render: (target: RuleMatch['target']) => (
-          <ResourceCell resource={target} />
+          <ExtractorMatchesCell
+            entitySetToRender="targets"
+            extractors={extractors}
+            resource={target}
+          />
         ),
       },
     ],
-    [t]
+    [extractors, t]
   );
 
   const dataSource = useMemo(
