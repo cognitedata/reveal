@@ -55,6 +55,9 @@ type QuickMatchContext = {
   supervisedMode: boolean;
   setSupervisedMode: Dispatch<SetStateAction<boolean>>;
 
+  generateRules: boolean;
+  setGenerateRules: Dispatch<SetStateAction<boolean>>;
+
   threeDModel?: Selected3dModel;
   setThreeDModel: Dispatch<SetStateAction<Selected3dModel | undefined>>;
 
@@ -148,6 +151,10 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setSupervisedMode: function (_: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.');
   },
+  generateRules: true,
+  setGenerateRules: function (_: SetStateAction<boolean>): void {
+    throw new Error('Function not implemented.');
+  },
   featureType: 'simple',
   setFeatureType: function (_: SetStateAction<EMFeatureType>): void {
     throw new Error('Function not implemented.');
@@ -190,6 +197,11 @@ export const QuickMatchContextProvider = ({
   const [supervisedMode, setSupervisedMode] = useContextState(
     false,
     'supervisedMode'
+  );
+
+  const [generateRules, setGenerateRules] = useContextState(
+    true,
+    'generateRules'
   );
 
   const [unmatchedOnly, setUnmatchedOnly] = useContextState(
@@ -329,6 +341,8 @@ export const QuickMatchContextProvider = ({
         setTargetFilter,
         supervisedMode,
         setSupervisedMode,
+        generateRules,
+        setGenerateRules,
         featureType,
         setFeatureType,
         scope,

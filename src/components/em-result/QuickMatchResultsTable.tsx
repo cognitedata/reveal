@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
@@ -11,6 +11,8 @@ import {
 } from 'hooks/entity-matching-predictions';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { Slider } from '@cognite/cogs.js';
+import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
 
 type Predictions = {
   predictions: Prediction[];
@@ -35,21 +37,33 @@ const QuickMatchResultsTable = ({
 }: Predictions): JSX.Element => {
   const { t } = useTranslation();
 
+  const [scoreFilter, setScoreFilter] = useState<number | undefined>();
   const dataSource = useMemo(
     () =>
-      predictions.map((a) => ({
-        ...a,
-        key: a.source.id,
-        score: a.match.score,
-      })) || [],
-    [predictions]
+      predictions
+        .filter((p) =>
+          Number.isFinite(scoreFilter)
+            ? 100 * p.match.score >= (scoreFilter as number)
+            : true
+        )
+        .map((a) => ({
+          ...a,
+          key: a.source.id,
+          score: a.match.score,
+        })) || [],
+    [predictions, scoreFilter]
   );
+
+  const scores = useMemo(() => {
+    return Array.from(new Set(predictions.map((p) => p.match.score * 100)));
+  }, [predictions]);
+  const [minScore, maxScore] = [Math.min(...scores), Math.max(...scores)];
 
   const rowSelection: TableRowSelection<PredictionsTableRecord> = {
     selectedRowKeys: confirmedPredictions,
     onSelectAll(all) {
       if (all) {
-        setConfirmedPredictions(predictions.map((p) => p.source.id));
+        setConfirmedPredictions(dataSource.map((ds) => ds.key));
       } else {
         setConfirmedPredictions([]);
       }
@@ -67,8 +81,9 @@ const QuickMatchResultsTable = ({
         title: t('qm-result-source'),
         dataIndex: 'source',
         key: 'source',
-        render: (source: PredictionObject) =>
-          formatPredictionObject(source) || '—',
+        render: (source: PredictionObject) => (
+          <ResourceCell resource={source} />
+        ),
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.source).localeCompare(
             formatPredictionObject(b.source)
@@ -79,9 +94,7 @@ const QuickMatchResultsTable = ({
         title: t('qm-result-target'),
         dataIndex: 'match',
         key: 'match',
-        render: (match: Match) => {
-          return formatPredictionObject(match.target) || '—';
-        },
+        render: (match: Match) => <ResourceCell resource={match.target} />,
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.match.target).localeCompare(
             formatPredictionObject(b.match.target)
@@ -98,12 +111,33 @@ const QuickMatchResultsTable = ({
         ),
         sorter: (a: Prediction, b: Prediction) =>
           (a.match.score ?? 0) - (b.match.score ?? 0),
-        sortDirections: ['descend', 'ascend'],
-        defaultSortOrder: 'descend',
+        filterDropdown: () =>
+          Number.isFinite(minScore) &&
+          Number.isFinite(maxScore) && (
+            <div
+              style={{ backgroundColor: 'white', padding: 22, width: '400px' }}
+            >
+              <Slider
+                min={minScore}
+                max={maxScore}
+                defaultValue={minScore}
+                value={scoreFilter}
+                step={null}
+                marks={scores.reduce(
+                  (accl, i) => ({
+                    ...accl,
+                    [i]: `${Math.floor(i).toLocaleString()}%`,
+                  }),
+                  {}
+                )}
+                onChange={(n) => setScoreFilter(n)}
+              />
+            </div>
+          ),
         width: 100,
       },
     ],
-    [t]
+    [t, minScore, maxScore, scores, scoreFilter]
   );
 
   return (

@@ -25,7 +25,10 @@ import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
 
 const { Option } = Select;
 
-type PipelineSourceTableRecord = { key: string } & DataSet;
+type PipelineSourceTableRecord = DataSet & {
+  [k: string]: unknown;
+  key: string;
+};
 type PipelineSourceTableColumnType = ColumnType<PipelineSourceTableRecord> & {
   title: string;
   key: string;
@@ -142,6 +145,17 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
     [dataSets]
   );
 
+  const filteredDataSource = useMemo(() => {
+    return dataSource.filter(({ externalId, id, name }) => {
+      const lowerCaseQuery = query.toLowerCase();
+      return (
+        name?.toLowerCase().includes(lowerCaseQuery) ||
+        externalId?.toLowerCase().includes(lowerCaseQuery) ||
+        `${id}`?.toLowerCase().includes(lowerCaseQuery)
+      );
+    });
+  }, [dataSource, query]);
+
   const columns: PipelineSourceTableColumnType[] = useMemo(
     () => [
       {
@@ -244,13 +258,13 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
           )}
         </Flex>
       </Flex>
-      <Table<any> // FIXME
+      <Table<PipelineSourceTableRecord>
         loading={isInitialLoading}
         columns={columns}
         emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
         appendTooltipTo={undefined}
         rowSelection={rowSelection}
-        dataSource={dataSource}
+        dataSource={filteredDataSource}
         pagination={PAGINATION_SETTINGS}
       />
     </Step>

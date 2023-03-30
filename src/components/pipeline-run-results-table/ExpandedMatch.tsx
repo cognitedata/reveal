@@ -2,6 +2,7 @@ import { Body, Flex } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { EMPipelineRunMatch, Pipeline } from 'hooks/entity-matching-pipelines';
 import styled from 'styled-components';
+import ResourceCell from './ResourceCell';
 
 type ExpandedMatchProps = {
   match: EMPipelineRunMatch;
@@ -23,30 +24,20 @@ const ExpandedMatch = ({
         ({ source: sourcePropertyName, target: targetPropertyName }) => (
           <Flex key={`${sourcePropertyName}-${targetPropertyName}`}>
             <MatchFieldContainer>
-              <Body level={3} muted>
-                {sourcePropertyName}
-              </Body>
-              <Body level={2}>
-                {sourcePropertyName &&
-                typeof match.source?.[sourcePropertyName] === 'string' ? (
-                  <>{match.source?.[sourcePropertyName]}</>
-                ) : (
-                  '-'
-                )}
-              </Body>
+              {sourcePropertyName && (
+                <ResourceCell
+                  preferredProperties={[sourcePropertyName]}
+                  resource={match.source}
+                />
+              )}
             </MatchFieldContainer>
             <MatchFieldContainer>
-              <Body level={3} muted>
-                {targetPropertyName}
-              </Body>
-              <Body level={2}>
-                {targetPropertyName &&
-                typeof match.target?.[targetPropertyName] === 'string' ? (
-                  <>{match.target?.[targetPropertyName]}</>
-                ) : (
-                  '-'
-                )}
-              </Body>
+              {targetPropertyName && (
+                <ResourceCell
+                  preferredProperties={[targetPropertyName]}
+                  resource={match.target}
+                />
+              )}
             </MatchFieldContainer>
           </Flex>
         )

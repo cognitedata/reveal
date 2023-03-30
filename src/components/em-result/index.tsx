@@ -37,15 +37,16 @@ export default function EntityMatchingResult({
         subtitle={t('result-step-subtitle')}
       >
         <StyledFlex direction="column">
-          <Flex justifyContent="space-between">
-            <Checkbox
-              disabled={!appliedRules || appliedRules.length === 0}
-              label="Group by pattern"
-              checked={rulesView}
-              onChange={(e) => setRulesView(e.target.checked)}
-            />
-          </Flex>
-          {rulesView ? (
+          {appliedRules && (
+            <Flex justifyContent="space-between">
+              <Checkbox
+                label={t('group-by-pattern')}
+                checked={rulesView}
+                onChange={(e) => setRulesView(e.target.checked)}
+              />
+            </Flex>
+          )}
+          {rulesView && appliedRules ? (
             <AppliedRulesTable
               appliedRules={appliedRules}
               predictions={predictions}

@@ -57,6 +57,13 @@ const ConfigurePipeline = ({
     });
   };
 
+  const handleUpdateModelType = (isSupervisedModel: boolean): void => {
+    mutate({
+      id: pipeline.id,
+      useExistingMatches: isSupervisedModel,
+    });
+  };
+
   return (
     <Step isCentered title={t('configure-pipeline-step-title', { step: 3 })}>
       <Flex direction="column">
@@ -72,7 +79,6 @@ const ConfigurePipeline = ({
             setModelFieldMapping={handleUpdateMatchFields}
           />
         </Step.Section>
-
         <Step.Section>
           <Step.SectionHeader
             subtitle={t('model-configuration-model-score-body')}
@@ -146,6 +152,33 @@ const ConfigurePipeline = ({
                   )}
                 </Button>
               </div>
+            </Flex>
+          </Radio.Group>
+        </Step.Section>
+        <Step.Section>
+          <Step.SectionHeader
+            subtitle={t('model-configuration-model-type-body')}
+            title={t('model-configuration-model-type-header')}
+          />
+          <Radio.Group
+            onChange={(e) =>
+              handleUpdateModelType(e.target.value === 'supervised')
+            }
+            value={pipeline.useExistingMatches ? 'supervised' : 'unsupervised'}
+          >
+            <Flex>
+              <RadioBox
+                checked={!pipeline.useExistingMatches}
+                value="unsupervised"
+              >
+                {t('unsupervised-model')}
+              </RadioBox>
+              <RadioBox
+                checked={pipeline.useExistingMatches}
+                value="supervised"
+              >
+                {t('supervised-model')}
+              </RadioBox>
             </Flex>
           </Radio.Group>
         </Step.Section>

@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
+
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -9,7 +10,7 @@ import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { RuleMatch } from 'hooks/entity-matching-rules';
 
-import ResourceName from './ResourceName';
+import ResourceCell from './ResourceCell';
 
 type ExpandedRuleTableRecord = RuleMatch & { key: number };
 
@@ -37,7 +38,7 @@ const ExpandedRule = ({
         dataIndex: 'source',
         key: 'source',
         render: (source: RuleMatch['source']) => (
-          <ResourceName resource={source} />
+          <ResourceCell resource={source} />
         ),
       },
       {
@@ -45,7 +46,7 @@ const ExpandedRule = ({
         dataIndex: 'target',
         key: 'target',
         render: (target: RuleMatch['target']) => (
-          <ResourceName resource={target} />
+          <ResourceCell resource={target} />
         ),
       },
     ],
