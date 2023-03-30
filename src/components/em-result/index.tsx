@@ -9,22 +9,23 @@ import QuickMatchResultsTable from './QuickMatchResultsTable';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 import Step from 'components/step';
 import styled from 'styled-components';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
+import { SourceType } from 'types/api';
 
 type Props = {
+  sourceType: SourceType;
   predictions: Prediction[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
   appliedRules?: AppliedRule[];
 };
 export default function EntityMatchingResult({
+  sourceType,
   predictions,
   confirmedPredictions,
   setConfirmedPredictions,
   appliedRules,
 }: Props) {
   const [rulesView, setRulesView] = useState(false);
-  const { sourceType } = useQuickMatchContext();
 
   const { t } = useTranslation();
 
