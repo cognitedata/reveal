@@ -104,16 +104,21 @@ export default function EntityMatchingResult({
         switch (sourceType) {
           case 'timeseries':
           case 'sequences': {
+            const r = d as Timeseries | Sequence;
             return (
-              (d as Timeseries | Sequence).assetId !==
-              predictions.find((p) => p.source.id === d.id)?.match.target.id
+              !!r.assetId &&
+              r.assetId !==
+                predictions.find((p) => p.source.id === d.id)?.match.target.id
             );
           }
           case 'files':
           case 'events': {
             const p = predictions.find((p) => p.source.id === d.id)?.match
               .target.id;
-            return p && (d as FileInfo | CogniteEvent).assetIds?.includes(p);
+            const r = d as FileInfo | CogniteEvent;
+            return (
+              p && (r.assetIds?.length || 0) > 0 && r.assetIds?.includes(p)
+            );
           }
           default: {
             return false;
