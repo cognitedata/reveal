@@ -83,7 +83,7 @@ export class Image360LoadingCache {
       })
       .then(
         () => {
-          this.addEntityToCache(revision, true);
+          this.addRevisionToCache(revision, true);
         },
         () => {
           return Promise.resolve();
@@ -99,7 +99,7 @@ export class Image360LoadingCache {
       })
       .then(
         () => {
-          this.addEntityToCache(revision, false);
+          this.addRevisionToCache(revision, false);
         },
         reason => {
           removeDownload(this._lockedDownload, this._inProgressDownloads);
@@ -143,7 +143,7 @@ export class Image360LoadingCache {
     });
   }
 
-  private addEntityToCache(revision: Image360RevisionEntity, isFullResolution: boolean) {
+  private addRevisionToCache(revision: Image360RevisionEntity, isFullResolution: boolean) {
     const cachedImage = this._loaded360Images.find(image => image.revision === revision);
     if (cachedImage && cachedImage.isFullResolution) {
       // Image is already cached with full resolution. Discard attempts to add lower quality image.
