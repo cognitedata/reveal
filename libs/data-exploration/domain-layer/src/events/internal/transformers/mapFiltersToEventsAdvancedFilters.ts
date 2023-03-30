@@ -144,10 +144,6 @@ export const mapFiltersToEventsAdvancedFilters = (
     if (searchConfig.type.enabled) {
       searchQueryBuilder.equals('type', query);
       searchQueryBuilder.prefix('type', query);
-
-      if (searchConfig.type.enabledFuzzySearch) {
-        searchQueryBuilder.search('type', query);
-      }
     }
 
     if (searchConfig.subtype.enabled) {
