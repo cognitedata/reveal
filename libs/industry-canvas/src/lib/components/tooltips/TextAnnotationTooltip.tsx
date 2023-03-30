@@ -69,8 +69,9 @@ export const TextAnnotationTooltip: React.FC<TextAnnotationTooltipProps> = ({
           <Tooltip content="Change color">
             <Button
               icon="ColorPalette"
-              aria-label="Change color"
-              type={isInEditMode ? 'secondary' : 'ghost'}
+              aria-label="Edit color"
+              type="ghost"
+              toggled={isInEditMode}
               onClick={() => {
                 setIsInEditMode((prev) => !prev);
               }}

@@ -46,6 +46,7 @@
         "libs/data-exploration/containers/src/index.ts"
       ],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
+      "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
       "@fusion/industry-canvas": ["libs/industry-canvas/src/index.ts"],
       "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
       "@platypus-app/*": [

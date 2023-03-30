@@ -1,18 +1,18 @@
 import { ComponentStory } from '@storybook/react';
 import { useState } from 'react';
-import { FillColorPalette } from './FillColorPalette';
+import { StrokeColorPalette } from './StrokeColorPalette';
 
 export default {
-  title: 'Tooltips/Color Palettes/Fill Color Palette Story',
-  component: FillColorPalette,
+  title: 'Tooltips/Color Palettes/Stroke Color Palette Story',
+  component: StrokeColorPalette,
 };
 
-export const FillColorPaletteStory: ComponentStory<
-  typeof FillColorPalette
+export const StrokeColorPaletteStory: ComponentStory<
+  typeof StrokeColorPalette
 > = () => {
   const [selectedColor, setSelectedColor] = useState('red');
   return (
-    <FillColorPalette
+    <StrokeColorPalette
       colors={['transparent', 'red', 'green', 'blue']}
       selectedColor={selectedColor}
       onUpdateColor={setSelectedColor}

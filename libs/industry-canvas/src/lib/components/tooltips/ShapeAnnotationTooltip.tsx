@@ -1,42 +1,46 @@
 import { useState } from 'react';
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
-import { RectangleAnnotation } from '@cognite/unified-file-viewer';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
-import { FillAndStrokeColorPalette } from '../color-palettes/FillAndStrokeColorPalette';
-import { RightAlignedColorPalettePosition } from './elements';
 import {
   SHAPE_ANNOTATION_FILL_COLOR_MAP,
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
 } from '../../colors';
+import { StrokeColorPalette } from '../color-palettes/StrokeColorPalette';
+import { FillColorPalette } from '../color-palettes/FillColorPalette';
+import { RightAlignedColorPalettePosition } from './elements';
+import { FillButton } from '../color-palettes/FillButton';
+import { StrokeButton } from '../color-palettes/StrokeButton';
+import { ShapeAnnotation } from '../../types';
 
 export type ShapeAnnotationTooltipProps = {
-  shapeAnnotation: RectangleAnnotation;
+  shapeAnnotation: ShapeAnnotation;
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onDeleteSelectedCanvasAnnotation: () => void;
 };
+
+enum EditMode {
+  FILL = 'fill',
+  STROKE = 'stroke',
+}
 
 export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
   shapeAnnotation,
   onUpdateAnnotationStyleByType,
   onDeleteSelectedCanvasAnnotation,
 }) => {
-  const [isInEditMode, setIsInEditMode] = useState(false);
+  const [editMode, setEditMode] = useState<EditMode | undefined>(undefined);
+
+  const isEditingStroke = editMode === EditMode.STROKE;
+  const isEditingFill = editMode === EditMode.FILL;
 
   return (
     <>
-      {isInEditMode && (
+      {isEditingStroke && (
         <RightAlignedColorPalettePosition>
-          <FillAndStrokeColorPalette
-            fillColors={Object.values(SHAPE_ANNOTATION_FILL_COLOR_MAP)}
-            selectedFillColor={shapeAnnotation.style?.fill}
-            onUpdateFillColor={(color) => {
-              onUpdateAnnotationStyleByType({
-                shape: { fill: color },
-              });
-            }}
-            strokeColors={Object.values(SHAPE_ANNOTATION_STROKE_COLOR_MAP)}
-            selectedStrokeColor={shapeAnnotation.style?.stroke}
-            onUpdateStrokeColor={(color) => {
+          <StrokeColorPalette
+            colors={Object.values(SHAPE_ANNOTATION_STROKE_COLOR_MAP)}
+            selectedColor={shapeAnnotation.style?.stroke}
+            onUpdateColor={(color) => {
               onUpdateAnnotationStyleByType({
                 shape: { stroke: color },
               });
@@ -44,19 +48,50 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
           />
         </RightAlignedColorPalettePosition>
       )}
-      <ToolBar direction="horizontal">
-        <Tooltip
-          content={isInEditMode ? 'Close color palette' : 'Change color'}
-        >
-          <Button
-            icon="ColorPalette"
-            type={isInEditMode ? 'secondary' : 'ghost'}
-            aria-label={isInEditMode ? 'Close color palette' : 'Change color'}
-            onClick={() => {
-              setIsInEditMode((prev) => !prev);
+
+      {isEditingFill && (
+        <RightAlignedColorPalettePosition>
+          <FillColorPalette
+            colors={Object.values(SHAPE_ANNOTATION_FILL_COLOR_MAP)}
+            selectedColor={shapeAnnotation.style?.fill}
+            onUpdateColor={(color) => {
+              onUpdateAnnotationStyleByType({
+                shape: { fill: color },
+              });
             }}
           />
-        </Tooltip>
+        </RightAlignedColorPalettePosition>
+      )}
+
+      <ToolBar direction="horizontal">
+        <>
+          <Tooltip
+            content={isEditingStroke ? 'Close color palette' : 'Change color'}
+          >
+            <StrokeButton
+              color={SHAPE_ANNOTATION_STROKE_COLOR_MAP.YELLOW}
+              isToggled={isEditingStroke}
+              ariaLabel="Edit stroke color"
+              onClick={() => {
+                setEditMode(isEditingStroke ? undefined : EditMode.STROKE);
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip
+            content={isEditingFill ? 'Close color palette' : 'Change color'}
+          >
+            <FillButton
+              color={SHAPE_ANNOTATION_FILL_COLOR_MAP.BLUE}
+              isToggled={isEditingFill}
+              ariaLabel="Edit fill color"
+              onClick={() => {
+                setEditMode(isEditingFill ? undefined : EditMode.FILL);
+              }}
+            />
+          </Tooltip>
+        </>
+
         <Tooltip content="Delete annotation">
           <Button
             icon="Delete"

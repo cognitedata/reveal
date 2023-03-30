@@ -31,7 +31,8 @@ const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
   updatedAnnotationStyle: ExactlyOneKey<AnnotationStyleByType>
 ): T => {
   switch (annotation.type) {
-    case AnnotationType.RECTANGLE: {
+    case AnnotationType.RECTANGLE:
+    case AnnotationType.ELLIPSE: {
       if (updatedAnnotationStyle.shape === undefined) {
         throw new Error(
           'Incorrect annotation style for annotation type. This should not happen.'
@@ -190,7 +191,7 @@ const useManagedTools = ({
       return DEFAULT_TOOL_OPTIONS[tool];
     }
 
-    if (tool === ToolType.RECTANGLE) {
+    if (tool === ToolType.RECTANGLE || tool === ToolType.ELLIPSE) {
       return {
         ...DEFAULT_TOOL_OPTIONS[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.shape),

@@ -1,4 +1,10 @@
-import { Annotation } from '@cognite/unified-file-viewer';
+import {
+  Annotation,
+  RectangleAnnotation,
+  EllipseAnnotation,
+  isRectangleAnnotation,
+  isEllipseAnnotation,
+} from '@cognite/unified-file-viewer';
 
 export enum ContainerReferenceType {
   FILE = 'file',
@@ -80,6 +86,13 @@ export type ContainerReference =
   | TimeseriesContainerReference
   | AssetContainerReference
   | ThreeDContainerReference;
+
+export type ShapeAnnotation = RectangleAnnotation | EllipseAnnotation;
+
+export const isShapeAnnotation = (
+  annotation: Annotation
+): annotation is ShapeAnnotation =>
+  isRectangleAnnotation(annotation) || isEllipseAnnotation(annotation);
 
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;
