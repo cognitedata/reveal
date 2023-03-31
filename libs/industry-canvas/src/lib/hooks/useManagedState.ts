@@ -14,21 +14,21 @@ import {
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import {
-  loadCanvasState,
   getContainerId,
   getContainerReferencesWithUpdatedDimensions,
-  saveCanvasState,
 } from '../utils/utils';
 import {
   CanvasAnnotation,
   ContainerReference,
   ContainerReferenceWithoutDimensions,
+  IndustryCanvasState,
 } from '../types';
 import { useShamefullySyncContainerFromContainerReferences } from './useShamefullySyncContainerFromContainerReferences';
 import {
   useHistory,
   UseCanvasStateHistoryReturnType,
 } from './useCanvasStateHistory';
+import { useIndustryCanvasService } from './useIndustryCanvasService';
 
 export type InteractionState = {
   hoverId: string | undefined;
@@ -155,8 +155,17 @@ const useManagedState = (initialState: {
     selectedAnnotationId: undefined,
   });
 
+  const { activeCanvas, saveCanvas } = useIndustryCanvasService();
+
   const { undo, redo, pushState, replaceState, historyState } = useHistory({
-    saveState: saveCanvasState,
+    saveState: async (state: IndustryCanvasState) => {
+      if (activeCanvas !== undefined) {
+        await saveCanvas({
+          ...activeCanvas,
+          data: { ...state },
+        });
+      }
+    },
   });
 
   const canvasState = useMemo(() => {
@@ -171,12 +180,11 @@ const useManagedState = (initialState: {
 
   // Initializing the state from local storage when the component mounts
   useEffect(() => {
-    const canvasState = loadCanvasState();
-    if (canvasState === null) {
+    if (activeCanvas === undefined) {
       return;
     }
-    replaceState(canvasState);
-  }, [replaceState]);
+    replaceState(activeCanvas.data);
+  }, [activeCanvas, replaceState]);
 
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
