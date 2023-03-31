@@ -67,6 +67,7 @@ import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
 
 const pageSizeLimit = 100;
 const instanceIdCol = 'externalId';
+const lockedFields = ['space', 'lastUpdatedTime', 'createdTime'];
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
@@ -472,6 +473,10 @@ export const DataPreviewTable = forwardRef<
       const updatedRowData = {
         ...e.data,
       };
+
+      for (const key of lockedFields) {
+        delete updatedRowData[key];
+      }
 
       dataManagementHandler
         .ingestNodes({

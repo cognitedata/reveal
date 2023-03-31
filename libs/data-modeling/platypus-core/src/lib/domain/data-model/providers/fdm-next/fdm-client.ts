@@ -845,6 +845,13 @@ const normalizeIngestionItem = (
               return [key, { space, externalId }];
             }
           }
+        } else if (
+          fieldType?.type.name === 'TimeSeries' &&
+          typeof value === 'object' &&
+          value !== null &&
+          'externalId' in value
+        ) {
+          return [key, value.externalId];
         }
         return [key, value];
       })
