@@ -35,6 +35,7 @@ const config = {
   sentryDSN:
     'https://b35f7e3635d34e44bd24a354dfc4f13a@o124058.ingest.sentry.io/5509609',
   intercomAppId: 'ou1uyk2p',
+  isStorybook: process.env.STORYBOOK,
 } as const;
 
 export default config;

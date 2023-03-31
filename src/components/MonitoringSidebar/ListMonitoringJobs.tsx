@@ -6,7 +6,8 @@ import {
   LoadingRow,
 } from 'components/Common/SidebarElements';
 import { Collapse } from '@cognite/cogs.js';
-import { head } from 'lodash';
+import head from 'lodash/head';
+import difference from 'lodash/difference';
 import { useSearchParam } from 'hooks/navigation';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
@@ -15,6 +16,7 @@ import {
 } from 'utils/constants';
 import { useChartAtom } from 'models/chart/atom';
 import { trackUsage } from 'services/metrics';
+import { CHARTS_FOLDER_PREFIX } from 'domain/monitoring/constants';
 import { SidebarChip, SidebarCollapseWrapped, ExpandTitle } from './elements';
 import { MonitoringFolderJobs, MonitoringJob } from './types';
 import { useMonitoringFoldersWithJobs } from './hooks';
@@ -26,6 +28,9 @@ import {
   FilterOption,
   MONITORING_FILTER_OPTIONS,
 } from './JobAndAlertsFilter';
+
+const removePrefixFromFolder = (folderName: string = '') =>
+  folderName.replace(CHARTS_FOLDER_PREFIX, '');
 
 const ListMonitoringJobs = memo(() => {
   const [chart] = useChartAtom();
@@ -40,15 +45,26 @@ const ListMonitoringJobs = memo(() => {
     filterOption = MONITORING_FILTER_OPTIONS[0].value,
     setMonitoringFilter,
   ] = useSearchParam(MONITORING_FILTER);
-  const [activeKeys, setActiveKeys] = useState(
+  const [activeKeys, setActiveKeys] = useState<string[]>(
     monitoringFolderParam ? [monitoringFolderParam] : []
   );
 
-  const handleToggleAccordian = (key: any) => {
-    trackUsage('Sidebar.Monitoring.ToggleJob', {
-      monitoringJob: key,
+  const handleToggleAccordian = (folderNames: any) => {
+    // need only toggled folder name
+    const toggledFolder =
+      folderNames?.length > activeKeys?.length
+        ? difference(folderNames, activeKeys)
+        : difference(activeKeys, folderNames);
+
+    // remove prefix
+    const folder = toggledFolder.map(removePrefixFromFolder);
+
+    trackUsage('Sidebar.Monitoring.ToggleFolder', {
+      folder,
+      filter: filterOption,
     });
-    setActiveKeys(key);
+
+    setActiveKeys(folderNames);
   };
 
   const handleFilterOptionChange = (updatedFilterOption: FilterOption) => {
@@ -132,7 +148,7 @@ const ListMonitoringJobs = memo(() => {
                       <Row align="middle" wrap={false}>
                         <Col>
                           <ExpandTitle level={2} strong>
-                            {folder.folderExtID.replace('charts-folder-', '')}
+                            {removePrefixFromFolder(folder.folderExtID)}
                           </ExpandTitle>
                         </Col>
                         <Col>
@@ -153,6 +169,12 @@ const ListMonitoringJobs = memo(() => {
                         <ListMonitoringJobPreview
                           key={job.externalId}
                           monitoringJob={job}
+                          trackingInfo={{
+                            folderName: removePrefixFromFolder(
+                              folder.folderExtID
+                            ),
+                            filter: filterOption,
+                          }}
                         />
                       );
                     })}

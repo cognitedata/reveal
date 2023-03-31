@@ -16,7 +16,7 @@ if (!configToApply.mixpanelToken && isPreviewLink) {
 }
 if (configToApply.mixpanelToken) {
   mixpanel.init(configToApply.mixpanelToken, { debug: isDevelopment });
-} else if (isProduction || isStaging) {
+} else if ((isProduction || isStaging) && !config.isStorybook) {
   throw new Error('Mixpanel token must be present outside of development!');
 } else {
   // eslint-disable-next-line no-console

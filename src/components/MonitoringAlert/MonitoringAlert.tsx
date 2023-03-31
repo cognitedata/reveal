@@ -100,7 +100,10 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
             ],
           });
           setIsModalVisible(false);
-          trackUsage('Sidebar.Alerting.ResolveAlert', { alert: alert.id });
+          trackUsage('Sidebar.Alerting.ResolveAlert', {
+            alert: alert.id,
+            monitoringJob: jobId,
+          });
         }}
         onCancel={() => {
           setIsModalVisible(false);

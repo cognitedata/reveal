@@ -7,6 +7,7 @@ import { makeDefaultTranslations } from 'utils/translations';
 import { delay, head } from 'lodash';
 import styled from 'styled-components';
 import { CogniteError } from '@cognite/sdk';
+import { trackUsage } from 'services/metrics';
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -85,6 +86,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
         folderExternalID: `${name}`,
         folderName: `${name}`,
       });
+      trackUsage('Sidebar.Monitoring.CreateFolder', { folder: name });
       e.preventDefault();
       setName('');
     }
@@ -133,7 +135,10 @@ const MonitoringFolderSelect: React.FC<Props> = ({
             value={value}
             ref={ref}
             onBlur={onBlur}
-            onChange={(selectOption: any) => {
+            onChange={(selectOption: { label: string; value: string }) => {
+              trackUsage('Sidebar.Monitoring.ExistingFolder', {
+                folder: selectOption.label,
+              });
               onChange(selectOption);
             }}
             options={

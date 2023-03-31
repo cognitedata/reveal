@@ -47,6 +47,7 @@ type Props = {
   timeseriesName?: string;
   showHighlightedBorder?: boolean;
   showLastAlert?: boolean;
+  trackingInfo?: { filter?: string; folderName?: string };
 };
 const ListMonitoringJobPreview = ({
   monitoringJob,
@@ -54,6 +55,7 @@ const ListMonitoringJobPreview = ({
   translations,
   showHighlightedBorder = true,
   showLastAlert = true,
+  trackingInfo,
 }: Props) => {
   const { data: timeseriesDef } = useCdfItems<Timeseries>(
     'timeseries',
@@ -172,6 +174,8 @@ const ListMonitoringJobPreview = ({
       });
       trackUsage('Sidebar.Monitoring.Subscribe', {
         monitoringJob: externalId,
+        folder: trackingInfo?.folderName,
+        filter: trackingInfo?.filter,
       });
     }
   };
@@ -189,6 +193,8 @@ const ListMonitoringJobPreview = ({
       });
       trackUsage('Sidebar.Monitoring.Unsubscribe', {
         monitoringJob: externalId,
+        folder: trackingInfo?.folderName,
+        filter: trackingInfo?.filter,
       });
     }
   };
@@ -202,6 +208,8 @@ const ListMonitoringJobPreview = ({
     setMonitoringJobIdParam(`${id}`);
     trackUsage('Sidebar.Monitoring.AlertHistory', {
       monitoringJob: externalId,
+      folder: trackingInfo?.folderName,
+      filter: trackingInfo?.filter,
     });
   };
 

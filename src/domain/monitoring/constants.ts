@@ -35,3 +35,5 @@ export const ALERTING_CAPABILITIES = [
   'alertsApiExperiment',
   'dataPipelinesApiExperiment',
 ];
+
+export const CHARTS_FOLDER_PREFIX = 'charts-folder-';
