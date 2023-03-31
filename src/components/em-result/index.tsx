@@ -217,6 +217,7 @@ export default function EntityMatchingResult({
             />
           ) : (
             <QuickMatchResultsTable
+              sourceType={sourceType}
               model={model}
               predictions={filteredPreditions}
               confirmedPredictions={confirmedPredictions}

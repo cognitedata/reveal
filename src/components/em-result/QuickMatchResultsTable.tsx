@@ -17,8 +17,11 @@ import styled from 'styled-components';
 import { EMModel } from 'hooks/entity-matching-models';
 import ExpandedMatch from 'components/pipeline-run-results-table/ExpandedMatch';
 import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
+import MatchInfo from 'components/MatchInfo';
+import { SourceType } from 'types/api';
 
-type Predictions = {
+type Props = {
+  sourceType: SourceType;
   model?: EMModel;
   predictions: Prediction[];
   confirmedPredictions: number[];
@@ -36,11 +39,12 @@ type ResultsTableRecordCT = ColumnType<PredictionsTableRecord> & {
 };
 
 const QuickMatchResultsTable = ({
+  sourceType,
   model,
   predictions,
   confirmedPredictions,
   setConfirmedPredictions,
-}: Predictions): JSX.Element => {
+}: Props): JSX.Element => {
   const { t } = useTranslation();
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
@@ -118,7 +122,6 @@ const QuickMatchResultsTable = ({
             formatPredictionObject(b.match.target)
           ),
       },
-
       {
         title: t('confidence'),
         dataIndex: 'score',
@@ -156,6 +159,13 @@ const QuickMatchResultsTable = ({
         width: 100,
       },
       {
+        title: t('existing-target'),
+        key: 'existing',
+        render: (p: Prediction) => {
+          return <MatchInfo api={sourceType} id={p.source.id} />;
+        },
+      },
+      {
         title: '',
         dataIndex: 'source',
         key: 'expandable',
@@ -177,13 +187,14 @@ const QuickMatchResultsTable = ({
       },
     ],
     [
-      t,
-      minScore,
-      maxScore,
-      scores,
-      scoreFilter,
       expandedRowKeys,
+      maxScore,
+      minScore,
       model?.matchFields,
+      scoreFilter,
+      scores,
+      sourceType,
+      t,
     ]
   );
 

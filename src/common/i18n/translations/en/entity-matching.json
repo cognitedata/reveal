@@ -70,6 +70,7 @@
   "error-403-title": "Permission denied",
   "events-with-count_one": "1 asset",
   "events-with-count_other": "{{count}} events",
+  "existing-target": "Current asset",
   "external-id": "External ID",
   "files-with-count_one": "1 file",
   "files-with-count_other": "{{count}} files",
