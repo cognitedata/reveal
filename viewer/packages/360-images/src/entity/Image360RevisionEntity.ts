@@ -13,8 +13,8 @@ export class Image360RevisionEntity implements Image360Revision {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _getFullResolutionTextures:
-    | undefined
-    | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>;
+    | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>
+    | undefined;
 
   constructor(
     imageProvider: Image360FileProvider,
@@ -111,12 +111,16 @@ export class Image360RevisionEntity implements Image360Revision {
    * Apply full resolution textures to the image360VisualzationBox. This has no effect if full resolution has already been applied.
    */
   public async applyFullResolution(): Promise<void> {
-    if (this._getFullResolutionTextures) {
-      const result = await this._getFullResolutionTextures.catch(() => {});
+    if (!this._getFullResolutionTextures) return;
+
+    try {
+      const result = await this._getFullResolutionTextures;
       if (result) {
         this._image360VisualzationBox.loadImages(await result.textures);
         this._getFullResolutionTextures = undefined;
       }
+    } catch (e) {
+      return;
     }
   }
 

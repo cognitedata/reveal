@@ -112,14 +112,11 @@ export class Image360UI {
       .add(imageRevisions, 'targetDate')
       .name('Revision date (Unix epoch time):')
       .onChange(() => {
-        if (collections.length > 0) {
-          const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
-          collections.forEach(p => (p.targetRevisionDate = date));
+        if (collections.length < 1) return;
 
-          if (selectedEntity) {
-            viewer.enter360Image(selectedEntity);
-          }
-        }
+        const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
+        collections.forEach(p => (p.targetRevisionDate = date));
+        if (selectedEntity) viewer.enter360Image(selectedEntity);
       });
 
     gui

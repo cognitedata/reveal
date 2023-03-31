@@ -128,19 +128,23 @@ export class Image360LoadingCache {
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
-    const revisions = entity.list360ImageRevisions();
-    revisions.forEach(revision => {
-      const inFlightDownloads = this._inProgressDownloads.filter(download => {
-        return download.revision === revision;
-      });
-      inFlightDownloads.map(inFlightDownload => {
-        pull(this._inProgressDownloads, inFlightDownload);
-        inFlightDownload.abort();
-      });
-      remove(this._loaded360Images, image => {
+    const { _inProgressDownloads, _loaded360Images } = this;
+    entity.list360ImageRevisions().forEach(revision => purgeRevision(revision));
+
+    function purgeRevision(revision: Image360RevisionEntity): void {
+      _inProgressDownloads
+        .filter(download => {
+          download.revision === revision;
+        })
+        .forEach(download => {
+          pull(_inProgressDownloads, download);
+          download.abort();
+        });
+
+      remove(_loaded360Images, image => {
         return image.revision === revision;
       });
-    });
+    }
   }
 
   private addRevisionToCache(revision: Image360RevisionEntity, isFullResolution: boolean) {

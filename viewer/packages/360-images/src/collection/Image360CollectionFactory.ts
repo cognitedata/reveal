@@ -51,7 +51,7 @@ export class Image360CollectionFactory<T> {
           this._sceneHandler,
           this._image360DataProvider,
           descriptor.transform,
-          icon!,
+          icon,
           reloadImage
         );
       });

@@ -8,6 +8,7 @@ import { Image360Icon } from '../icons/Image360Icon';
 import { Image360 } from './Image360';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
+import minBy from 'lodash/minBy';
 
 export class Image360Entity implements Image360 {
   private readonly _image360Icon: Image360Icon;
@@ -35,9 +36,9 @@ export class Image360Entity implements Image360 {
     this._image360Icon = icon;
     this._reloadImage = reloadImage;
 
-    this._revisions = image360Metadata.imageRevisions.map(descriptor => {
-      return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform);
-    });
+    this._revisions = image360Metadata.imageRevisions.map(
+      descriptor => new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform)
+    );
     this._activeRevision = this.getMostRecentRevision();
   }
 
@@ -89,17 +90,9 @@ export class Image360Entity implements Image360 {
    */
   public getRevisionClosestToDate(date: Date): Image360RevisionEntity {
     const dateAsNumber = date.getTime();
-    const closest = this._revisions.reduce(
-      (closest, revision) => {
-        if (revision.date) {
-          const difference = Math.abs(revision.date.getTime() - dateAsNumber);
-          if (difference < closest.difference) return { revision: revision, difference };
-        }
-        return closest;
-      },
-      { revision: this.getMostRecentRevision(), difference: Number.POSITIVE_INFINITY }
-    );
-    return closest.revision;
+    const datedRevisions = this._revisions.filter(revision => revision.date !== undefined);
+    const closestDatedRevision = minBy(datedRevisions, revision => Math.abs(revision.date!.getTime() - dateAsNumber));
+    return closestDatedRevision ?? this.getMostRecentRevision();
   }
 
   /**
