@@ -98,7 +98,7 @@ const QuickMatchResultsTable = ({
         dataIndex: 'source',
         key: 'source',
         render: (source: PredictionObject) => (
-          <ResourceCell resource={source} />
+          <ResourceCell resource={source} showId />
         ),
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.source).localeCompare(
@@ -110,7 +110,9 @@ const QuickMatchResultsTable = ({
         title: t('qm-result-target'),
         dataIndex: 'match',
         key: 'match',
-        render: (match: Match) => <ResourceCell resource={match.target} />,
+        render: (match: Match) => (
+          <ResourceCell resource={match.target} showId />
+        ),
         sorter: (a: Prediction, b: Prediction) =>
           formatPredictionObject(a.match.target).localeCompare(
             formatPredictionObject(b.match.target)
