@@ -4,10 +4,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import {
   useSequenceSearchResultWithMatchingLabelsQuery,
   InternalSequenceDataWithMatchingLabels,
-  useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import {
-  ResourceTableColumns,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
@@ -23,6 +21,7 @@ import {
 } from '@data-exploration-lib/core';
 
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
+import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
 
 export const SequenceSummary = ({
   query = '',
@@ -51,13 +50,10 @@ export const SequenceSummary = ({
     undefined,
     sequenceSearchConfig
   );
-  const { data: metadataKeys = [] } = useSequencesMetadataKeys();
 
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } =
+    useSequencesMetadataColumns();
+
   const columns = useMemo(
     () =>
       [
@@ -100,6 +96,7 @@ export const SequenceSummary = ({
           isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
         }
         query={query}
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>
   );

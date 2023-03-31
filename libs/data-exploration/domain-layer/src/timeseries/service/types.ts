@@ -3,11 +3,12 @@ import {
   AdvancedFilter,
   TimeseriesProperties,
 } from '@data-exploration-lib/domain-layer';
+import { AggregateFilters } from '../../types';
 
-export type TimeseriesAggregateFilters = {
+export interface TimeseriesAggregateFilters extends AggregateFilters {
   filter?: TimeseriesFilter;
   advancedFilter?: AdvancedFilter<TimeseriesProperties>;
-};
+}
 
 export type TimeseriesAggregateOptions =
   | {

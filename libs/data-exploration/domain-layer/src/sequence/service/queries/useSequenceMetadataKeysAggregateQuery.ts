@@ -14,6 +14,7 @@ import {
 
 export const useSequencesMetadataKeysAggregateQuery = (
   filter?: InternalSequenceFilters | OldSequenceFilters,
+  query?: string,
   options?: UseQueryOptions<
     SequencesMetadataAggregateResponse[],
     unknown,
@@ -24,10 +25,11 @@ export const useSequencesMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.sequencesMetadata(filter),
+    queryKeys.sequencesMetadata(filter, query),
     () => {
       return getSequencesMetadataKeysAggregate(sdk, {
         filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     options

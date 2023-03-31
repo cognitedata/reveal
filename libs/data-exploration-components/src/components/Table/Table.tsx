@@ -93,6 +93,7 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   renderSubRowComponent?: (row: Row<T>) => React.ReactNode;
   // This is to render a sub component inside a cell of a row
   renderCellSubComponent?: (cell: Cell<T, unknown>) => React.ReactNode;
+  onChangeSearchInput?: (value: string) => void;
 };
 
 export type TableData = Record<string, any>;
@@ -131,6 +132,7 @@ export function Table<T extends TableData>({
   renderRowSubComponent,
   renderSubRowComponent,
   renderCellSubComponent,
+  onChangeSearchInput,
 }: TableProps<T>) {
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
     () => ({
@@ -425,6 +427,7 @@ export function Table<T extends TableData>({
                 onColumnOrderChanged={setColumnOrder}
                 allColumns={getAllLeafColumns}
                 onResetSelectedColumns={handleResetSelectedColumns}
+                onChangeSearchInput={onChangeSearchInput}
               />
             </StyledFlex>
           )}

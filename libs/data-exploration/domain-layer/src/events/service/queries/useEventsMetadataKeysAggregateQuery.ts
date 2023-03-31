@@ -14,6 +14,7 @@ import {
 
 export const useEventsMetadataKeysAggregateQuery = (
   filter?: InternalEventsFilters | OldEventsFilters,
+  query?: string,
   options?: UseQueryOptions<
     EventsMetadataAggregateResponse[],
     unknown,
@@ -24,10 +25,11 @@ export const useEventsMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsMetadata(filter),
+    queryKeys.eventsMetadata(filter, query),
     () => {
       return getEventsMetadataKeysAggregate(sdk, {
         filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     options

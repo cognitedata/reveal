@@ -1,16 +1,17 @@
 import { AggregateResponse, DocumentFilter } from '@cognite/sdk';
 import { InternalDocumentFilter } from '@data-exploration-lib/core';
 import { AdvancedFilter } from '../../builders';
+import { AggregateFilters } from '../../types';
 
 export interface DocumentsMetadataAggregateResponse extends AggregateResponse {
   value: string;
   values: string[];
 }
 
-export type DocumentsAggregateFilters = {
+export interface DocumentsAggregateFilters extends AggregateFilters {
   filter?: DocumentFilter;
   advancedFilter?: AdvancedFilter<InternalDocumentFilter>;
-};
+}
 
 export type DocumentsAggregateOptions =
   | {

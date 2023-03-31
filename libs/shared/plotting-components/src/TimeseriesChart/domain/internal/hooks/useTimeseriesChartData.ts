@@ -24,13 +24,18 @@ export const useTimeseriesChartData = ({
     limit: numberOfPoints,
   };
 
+  const granularity =
+    !isString && dateRange
+      ? calculateGranularity(dateRange, numberOfPoints)
+      : undefined;
+
   const datapointAggregatesChartData = useDatapointAggregatesChartData({
     query: {
       ...queryBase,
       aggregates: ['average', 'max', 'min', 'count'],
-      granularity: dateRange && calculateGranularity(dateRange, numberOfPoints),
+      granularity,
     },
-    enabled: !isString,
+    enabled: !isString && Boolean(granularity),
   });
 
   const stringDatapointsChartData = useStringDatapointsChartData({
