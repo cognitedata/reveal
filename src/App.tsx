@@ -24,6 +24,7 @@ import Pipeline from 'pages/pipeline';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchIntervalInBackground: true,
       retry(count, error) {
         if ((error as CogniteError).status === 403) {
           return false;
