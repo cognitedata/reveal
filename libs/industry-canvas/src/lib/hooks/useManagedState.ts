@@ -32,7 +32,7 @@ import {
 
 export type InteractionState = {
   hoverId: string | undefined;
-  clickedContainer: ContainerReference | undefined;
+  clickedContainerReferenceId: string | undefined;
   selectedAnnotationId: string | undefined;
 };
 
@@ -151,7 +151,7 @@ const useManagedState = (initialState: {
 
   const [interactionState, setInteractionState] = useState<InteractionState>({
     hoverId: undefined,
-    clickedContainer: undefined,
+    clickedContainerReferenceId: undefined,
     selectedAnnotationId: undefined,
   });
 
@@ -205,7 +205,7 @@ const useManagedState = (initialState: {
       // We want the tooltip to show when creating an annotation
       if (updatedAnnotations.length === 1) {
         setInteractionState({
-          clickedContainer: undefined,
+          clickedContainerReferenceId: undefined,
           hoverId: undefined,
           selectedAnnotationId: updatedAnnotations[0].id,
         });

@@ -10,7 +10,7 @@ export const getContainerId = (
   containerReference: ContainerReference
 ): string => {
   if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.resourceId}-${containerReference.page}`;
+    return `${containerReference.resourceId}`;
   }
 
   if (containerReference.type === ContainerReferenceType.TIMESERIES) {
