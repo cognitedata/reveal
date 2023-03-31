@@ -99,6 +99,7 @@ export default function TimeseriesTable({
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
+    hideSelectAll: true,
     onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
       setSelected(rows);
     },

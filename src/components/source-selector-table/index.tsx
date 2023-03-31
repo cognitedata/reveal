@@ -1,4 +1,12 @@
-import { Flex, Icon, Body, IconType, InputExp, Switch } from '@cognite/cogs.js';
+import {
+  Flex,
+  Icon,
+  Body,
+  IconType,
+  InputExp,
+  Switch,
+  Checkbox,
+} from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 
@@ -51,6 +59,7 @@ export default function SourceSelectionTable({}: Props) {
     sourceFilter,
     setSourceFilter,
     allSources,
+    setAllSources,
     setModelFieldMapping,
   } = useQuickMatchContext();
 
@@ -154,7 +163,9 @@ export default function SourceSelectionTable({}: Props) {
             )}
             {supportsAdvancedFilter[sourceType] && (
               <Switch
-                onChange={() => setUnmatchedOnly((prevState) !prevState)}
+                onChange={() =>
+                  setUnmatchedOnly((unmatchedOnly) => !unmatchedOnly)
+                }
                 checked={unmatchedOnly}
                 label={t('filter-only-unmatched-items')}
               />
@@ -169,6 +180,12 @@ export default function SourceSelectionTable({}: Props) {
                   advancedFilter={advancedFilter}
                 />
               )}
+              <Checkbox
+                checked={!query && allSources}
+                disabled={!!query}
+                onChange={(e) => setAllSources(e.target.checked)}
+                label="Select all"
+              />
             </Flex>
           )}
         </Flex>

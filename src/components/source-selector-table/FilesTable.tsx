@@ -123,6 +123,7 @@ export default function FileInfoTable({
       : selected.map((s) => s.id.toString()),
 
     type: 'checkbox' as RowSelectionType,
+    hideSelectAll: true,
     onChange(_: (string | number)[], rows: FileInfoListTableRecord[]) {
       setSelected(rows);
     },

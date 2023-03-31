@@ -97,6 +97,7 @@ export default function EventTable({
       : selected.map((s) => s.id.toString()),
 
     type: 'checkbox' as RowSelectionType,
+    hideSelectAll: true,
     onChange(_: (string | number)[], rows: EventListTableRecord[]) {
       setSelected(rows);
     },

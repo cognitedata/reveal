@@ -94,6 +94,7 @@ export default function SequenceTable({
       : selected.map((s) => s.id.toString()),
 
     type: 'checkbox' as RowSelectionType,
+    hideSelectAll: true,
     onChange(_: (string | number)[], rows: SequenceListTableRecord[]) {
       setSelected(rows);
     },
