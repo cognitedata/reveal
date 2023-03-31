@@ -154,7 +154,7 @@ export default function SourceSelectionTable({}: Props) {
             )}
             {supportsAdvancedFilter[sourceType] && (
               <Switch
-                onChange={() => setUnmatchedOnly(!unmatchedOnly)}
+                onChange={() => setUnmatchedOnly((prevState) !prevState)}
                 checked={unmatchedOnly}
                 label={t('filter-only-unmatched-items')}
               />
