@@ -32,7 +32,11 @@ export const AggregatedEventFilterV2 = ({
 }): JSX.Element => {
   const trackUsage = useMetrics();
 
-  const { data = [] } = useEventsUniqueValuesByProperty(field, filter);
+  const { data = [] } = useEventsUniqueValuesByProperty(
+    field,
+    undefined,
+    filter
+  );
 
   const options = useMemo(() => {
     return data.map(({ value: eventType, count }) => ({

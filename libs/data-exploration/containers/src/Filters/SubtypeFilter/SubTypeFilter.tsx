@@ -1,14 +1,20 @@
-import { InternalEventsFilters, useDeepMemo } from '@data-exploration-lib/core';
+import {
+  InternalEventsFilters,
+  useDebouncedState,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
 import { useEventsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
+import { InputActionMeta } from 'react-select';
 
 interface BaseSubTypeFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {
   value?: string | string[];
   onChange?: (subtype: string | string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
 }
 
@@ -37,11 +43,15 @@ export function SubTypeFilter<TFilter>({
 const EventSubTypeFilter = (
   props: BaseSubTypeFilterProps<InternalEventsFilters>
 ) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const {
     data = [],
     isLoading,
     isError,
-  } = useEventsUniqueValuesByProperty('subtype', props.filter);
+  } = useEventsUniqueValuesByProperty('subtype', query, props.filter, {
+    keepPreviousData: true,
+  });
 
   const options = useDeepMemo(
     () =>
@@ -56,6 +66,7 @@ const EventSubTypeFilter = (
   return (
     <SubTypeFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}

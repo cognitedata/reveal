@@ -40,8 +40,14 @@ export const queryKeys = {
       metadataKey,
       filter,
     ] as const,
-  timeseriesUniqueValues: (property: string, filter?: any) =>
-    [...queryKeys.timeseries(), 'unique-values', property, filter] as const,
+  timeseriesUniqueValues: (property: string, query?: string, filter?: any) =>
+    [
+      ...queryKeys.timeseries(),
+      'unique-values',
+      property,
+      query,
+      filter,
+    ] as const,
 
   timeseriesDatapoints: (items: IdEither[], filter?: any) =>
     [...queryKeys.timeseries(), 'datapoints', items, filter] as const,
@@ -55,8 +61,8 @@ export const queryKeys = {
   events: () => [...queryKeys.all, 'events'] as const,
   eventsMetadataValues: (metadataKey: string, filter?: any) =>
     [...queryKeys.events(), 'metadata', 'values', metadataKey, filter] as const,
-  eventsUniqueValues: (property: string, filter?: any) =>
-    [...queryKeys.events(), 'unique-values', property, filter] as const,
+  eventsUniqueValues: (property: string, query?: string, filter?: any) =>
+    [...queryKeys.events(), 'unique-values', property, query, filter] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>
@@ -122,6 +128,10 @@ export const queryKeys = {
     [...queryKeys.documents(), 'metadata', metadataKey, 'values'] as const,
 
   documentsLabelValues: () => [...queryKeys.documents(), 'labels'] as const,
+  documentsUniqueValues: (
+    property: string | [string, string],
+    query?: string
+  ) => [...queryKeys.documents(), 'unique-values', property, query] as const,
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,

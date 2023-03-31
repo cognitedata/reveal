@@ -1,7 +1,7 @@
 import { AggregateResponse, DocumentFilter } from '@cognite/sdk';
 import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import { AggregateFilters } from '@data-exploration-lib/domain-layer';
 import { AdvancedFilter } from '../../builders';
-import { AggregateFilters } from '../../types';
 
 export interface DocumentsMetadataAggregateResponse extends AggregateResponse {
   value: string;
@@ -32,19 +32,23 @@ export type DocumentsAggregateRequestPayload = DocumentsAggregateFilters &
     path?: string[];
   };
 
+// !?
 export interface DocumentsAggregateProperty {
   property:
     | [DocumentProperty]
+    | DocumentSourceProperty
     | DocumentMetadataKeyProperty
     | DocumentMetadataValueProperty;
 }
 
 export type DocumentProperty =
   | 'type'
-  | 'sourceFile'
-  | 'source'
+  | 'sourceFile' // needed?
+  | 'source' // needed?
   | 'author'
   | 'labels';
+
+export type DocumentSourceProperty = ['sourceFile', 'source'];
 
 export type DocumentMetadataKeyProperty = [string, 'metadata'];
 

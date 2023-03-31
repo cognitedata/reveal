@@ -44,7 +44,8 @@ export interface EventsAggregateUniquePropertiesResponse
 }
 
 export interface EventsAggregateUniqueValuesResponse extends AggregateResponse {
-  values: [string];
+  value: string;
+  values: string[];
 }
 
 export interface EventsMetadataAggregateResponse extends AggregateResponse {

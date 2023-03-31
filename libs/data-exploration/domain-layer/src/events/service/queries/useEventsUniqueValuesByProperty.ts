@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -6,7 +6,9 @@ import {
   getEventsUniqueValuesByProperty,
   queryKeys,
   transformNewFilterToOldFilter,
+  EventsAggregateUniqueValuesResponse,
 } from '@data-exploration-lib/domain-layer';
+
 import {
   InternalEventsFilters,
   OldEventsFilters,
@@ -14,13 +16,28 @@ import {
 
 export const useEventsUniqueValuesByProperty = (
   property: EventProperty,
-  filter?: InternalEventsFilters | OldEventsFilters
+  query?: string,
+  filter?: InternalEventsFilters | OldEventsFilters,
+  options?: Omit<
+    UseQueryOptions<
+      EventsAggregateUniqueValuesResponse[],
+      unknown,
+      EventsAggregateUniqueValuesResponse[],
+      any
+    >,
+    'queryKey'
+  >
 ) => {
   const sdk = useSDK();
 
-  return useQuery(queryKeys.eventsUniqueValues(property, filter), () => {
-    return getEventsUniqueValuesByProperty(sdk, property, {
-      filter: transformNewFilterToOldFilter(filter),
-    });
-  });
+  return useQuery(
+    queryKeys.eventsUniqueValues(property, query, filter),
+    () => {
+      return getEventsUniqueValuesByProperty(sdk, property, {
+        filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+      });
+    },
+    options
+  );
 };

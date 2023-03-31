@@ -32,7 +32,11 @@ export const AggregatedTimeseriesFilterV2 = ({
 }): JSX.Element => {
   const trackUsage = useMetrics();
 
-  const { data = [] } = useTimeseriesUniqueValuesByProperty(field, filter);
+  const { data = [] } = useTimeseriesUniqueValuesByProperty(
+    field,
+    undefined,
+    filter
+  );
 
   const options = useMemo(() => {
     return data.map(({ values: unit, count }) => ({
