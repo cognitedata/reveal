@@ -4,10 +4,15 @@ import { useDocumentsMetadataValuesAggregateQuery } from '../../service';
 
 export const useDocumentMetadataValuesOptionsQuery =
   (filter?: InternalDocumentFilter) =>
-  (metadataKeys?: string | null, options?: UseQueryOptions<any>) => {
+  (
+    metadataKeys?: string | null,
+    query?: string,
+    options?: UseQueryOptions<any>
+  ) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data, isLoading } = useDocumentsMetadataValuesAggregateQuery(
       metadataKeys,
+      query,
       options
     );
 

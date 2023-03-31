@@ -13,8 +13,8 @@ import {
 } from '@data-exploration-lib/core';
 
 export const useSequencesMetadataKeysAggregateQuery = (
-  filter?: InternalSequenceFilters | OldSequenceFilters,
   query?: string,
+  filter?: InternalSequenceFilters | OldSequenceFilters,
   options?: UseQueryOptions<
     SequencesMetadataAggregateResponse[],
     unknown,
@@ -25,7 +25,7 @@ export const useSequencesMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.sequencesMetadata(filter, query),
+    queryKeys.sequencesMetadata(query, filter),
     () => {
       return getSequencesMetadataKeysAggregate(sdk, {
         filter: transformNewFilterToOldFilter(filter),

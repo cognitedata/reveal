@@ -14,8 +14,8 @@ import {
 } from '@data-exploration-lib/core';
 
 export const useTimeseriesMetadataKeysAggregateQuery = (
-  filter?: InternalTimeseriesFilters | OldTimeseriesFilters,
   query?: string,
+  filter?: InternalTimeseriesFilters | OldTimeseriesFilters,
   options?: UseQueryOptions<
     TimeseriesMetadataAggregateResponse[],
     unknown,
@@ -26,7 +26,7 @@ export const useTimeseriesMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesMetadata(filter, query),
+    queryKeys.timeseriesMetadata(query, filter),
     () => {
       return getTimeseriesMetadataKeysAggregate(sdk, {
         filter: transformNewFilterToOldFilter(filter),

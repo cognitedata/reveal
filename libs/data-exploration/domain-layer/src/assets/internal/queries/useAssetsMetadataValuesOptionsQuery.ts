@@ -4,10 +4,15 @@ import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export const useAssetsMetadataValuesOptionsQuery =
   (filter?: InternalAssetFilters) =>
-  (metadataKeys?: string | null, options?: UseQueryOptions<any>) => {
+  (
+    metadataKeys?: string | null,
+    query?: string,
+    options?: UseQueryOptions<any>
+  ) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data, isLoading } = useAssetsMetadataValuesAggregateQuery(
       metadataKeys,
+      query,
       filter,
       options
     );

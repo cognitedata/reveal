@@ -13,8 +13,8 @@ import {
 } from '@data-exploration-lib/core';
 
 export const useEventsMetadataKeysAggregateQuery = (
-  filter?: InternalEventsFilters | OldEventsFilters,
   query?: string,
+  filter?: InternalEventsFilters | OldEventsFilters,
   options?: UseQueryOptions<
     EventsMetadataAggregateResponse[],
     unknown,
@@ -25,7 +25,7 @@ export const useEventsMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsMetadata(filter, query),
+    queryKeys.eventsMetadata(query, filter),
     () => {
       return getEventsMetadataKeysAggregate(sdk, {
         filter: transformNewFilterToOldFilter(filter),

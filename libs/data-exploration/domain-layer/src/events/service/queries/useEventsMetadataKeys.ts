@@ -9,8 +9,8 @@ interface Props {
 
 export const useEventsMetadataKeys = ({ query, enabled }: Props = {}) => {
   const { data, ...rest } = useEventsMetadataKeysAggregateQuery(
-    undefined,
     query,
+    undefined,
     { enabled }
   );
 

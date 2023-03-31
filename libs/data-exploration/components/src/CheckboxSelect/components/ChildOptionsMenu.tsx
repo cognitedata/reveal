@@ -11,6 +11,7 @@ import {
 import { getChildOptionsSelection } from '../utils/getChildOptionsSelection';
 
 import { OptionsMenu } from './OptionsMenu';
+import { useDebouncedState } from '@data-exploration-lib/core';
 
 export interface ChildOptionsMenuProps {
   parentOptionValue: string;
@@ -29,23 +30,31 @@ export const ChildOptionsMenu = ({
   useCustomMetadataValuesQuery,
   enableSorting,
 }: ChildOptionsMenuProps) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const isCustomOptions = customOptions === undefined;
 
-  const data = useCustomMetadataValuesQuery?.(parentOptionValue, {
+  const data = useCustomMetadataValuesQuery?.(parentOptionValue, query, {
     enabled: isCustomOptions,
+    keepPreviousData: true,
   });
 
   const options = React.useMemo(() => {
     if (!isCustomOptions) {
-      return customOptions;
+      return customOptions || [];
     }
 
-    return data?.options;
+    return data?.options || [];
   }, [isCustomOptions, data?.options, customOptions]);
 
-  if (!options || isEmpty(options)) {
-    return null;
+  // TODO: Improve the loading state UI.
+  if (isCustomOptions && data?.isLoading) {
+    return <p>Loading</p>;
   }
+
+  // if (!options || isEmpty(options)) {
+  //   return null;
+  // }
 
   const handleChildOptionChange = (
     childOptionValues: string[],
@@ -72,6 +81,7 @@ export const ChildOptionsMenu = ({
         options,
         selection[parentOptionValue]
       )}
+      onSearchInputChange={(newValue) => setQuery(newValue)}
       onChange={(childOptionsSelection) => {
         const selectedOptions = Object.keys(childOptionsSelection);
         handleChildOptionChange(
@@ -80,6 +90,7 @@ export const ChildOptionsMenu = ({
         );
       }}
       enableSorting={enableSorting}
+      disableOptionsMenu
     />
   );
 };

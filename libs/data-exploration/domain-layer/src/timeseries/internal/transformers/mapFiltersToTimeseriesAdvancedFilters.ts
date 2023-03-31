@@ -86,13 +86,15 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<TimeseriesProperties>();
     for (const { key, value } of metadata) {
       if (value === METADATA_ALL_VALUE) {
-        filterBuilder.exists(`metadata|${key}`);
+        metadataBuilder.exists(`metadata|${key}`);
       } else {
-        filterBuilder.equals(`metadata|${key}`, value);
+        metadataBuilder.equals(`metadata|${key}`, value);
       }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);

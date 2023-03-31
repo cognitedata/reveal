@@ -38,7 +38,7 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
-import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
+// import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
 import {
   useAssetFilters,
   useEventsFilters,
@@ -58,7 +58,7 @@ import { EventSearchResultView } from '@data-exploration-app/containers/Event/Ev
 import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { routes, ViewType } from '@data-exploration-app/containers/App';
-// import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -115,7 +115,7 @@ function SearchPage() {
   return (
     <RootHeightWrapper>
       <SearchFiltersWrapper>
-        <SearchFilters
+        <SearchFiltersV2
           enableAdvancedFilters={isAdvancedFiltersEnabled}
           resourceType={currentResourceType}
           visible={currentResourceType !== 'threeD' && showFilter}
@@ -134,7 +134,7 @@ function SearchPage() {
             </>
           )}
           <SearchConfigButton
-            style={{ width: '36px', marginRight: '2px' }}
+            style={{ width: '36px', marginRight: '8px' }}
             onClick={() => {
               setShowSearchConfig(true);
             }}

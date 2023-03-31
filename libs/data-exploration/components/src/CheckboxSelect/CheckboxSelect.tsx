@@ -24,6 +24,7 @@ export type CheckboxSelectProps = {
   onClickApply?: (selection: OptionSelection) => void;
   enableSorting?: boolean;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  onSearchInputChange?: (newValue: string) => void;
   isLoading?: boolean;
 } & WidthProps;
 
@@ -36,6 +37,7 @@ export const CheckboxSelect = ({
   useCustomMetadataValuesQuery,
   enableSorting = false,
   width,
+  onSearchInputChange,
   isLoading,
 }: CheckboxSelectProps) => {
   const [selection, setSelection] = React.useState<OptionSelection>(
@@ -62,6 +64,7 @@ export const CheckboxSelect = ({
           selection={selection}
           onChange={handleChange}
           useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
+          onSearchInputChange={onSearchInputChange}
           footer={
             onClickApply && (
               <ApplyButton

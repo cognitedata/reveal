@@ -290,7 +290,9 @@ export function Table<T extends TableData>({
     }
 
     if (!data || data.length === 0) {
-      return <EmptyState body="Please, refine your filters" />;
+      return (
+        <EmptyState body="Please, refine your filters or update the search parameters" />
+      );
     }
     if (!getIsSomeColumnsVisible()) {
       return <EmptyState body="Please, select your columns" />;

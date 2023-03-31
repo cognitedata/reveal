@@ -9,8 +9,8 @@ interface Props {
 
 export const useTimeseriesMetadataKeys = ({ query, enabled }: Props = {}) => {
   const { data, ...rest } = useTimeseriesMetadataKeysAggregateQuery(
-    undefined,
     query,
+    undefined,
     { enabled }
   );
 

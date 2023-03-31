@@ -6,7 +6,6 @@ import {
   getEventsUniqueValuesByProperty,
   queryKeys,
   transformNewFilterToOldFilter,
-  EventsAggregateUniqueValuesResponse,
 } from '@data-exploration-lib/domain-layer';
 
 import {
@@ -18,15 +17,7 @@ export const useEventsUniqueValuesByProperty = (
   property: EventProperty,
   query?: string,
   filter?: InternalEventsFilters | OldEventsFilters,
-  options?: Omit<
-    UseQueryOptions<
-      EventsAggregateUniqueValuesResponse[],
-      unknown,
-      EventsAggregateUniqueValuesResponse[],
-      any
-    >,
-    'queryKey'
-  >
+  options?: UseQueryOptions
 ) => {
   const sdk = useSDK();
 
@@ -38,6 +29,6 @@ export const useEventsUniqueValuesByProperty = (
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
-    options
+    { ...(options as any) }
   );
 };

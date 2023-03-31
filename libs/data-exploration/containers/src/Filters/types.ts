@@ -23,6 +23,7 @@ export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
 }
+
 export interface BaseNestedFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {
