@@ -199,7 +199,6 @@ export class Image360ApiHelper {
     }
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
     applyFullResolutionTextures(this._requestRedraw);
-    this._requestRedraw();
 
     imageCollection.events.image360Entered.fire(image360Entity);
 

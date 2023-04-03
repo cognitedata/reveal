@@ -16,15 +16,6 @@ export class Image360UI {
 
     const onImageEntered: Image360EnteredDelegate = entity => {
       selectedEntity = entity;
-      // --- Remove after testing - Start
-      console.log('Current revision: ' + selectedEntity.getActiveRevision().date);
-
-      const revisions = selectedEntity.list360ImageRevisions();
-      if (revisions.length > 0) {
-        console.log('Available revisions:');
-        revisions.forEach((revision, index) => console.log('- Id ' + index + ', ' + revision.date));
-      }
-      // --- Remove after testing - End
     };
 
     const translation = {
@@ -80,7 +71,7 @@ export class Image360UI {
     gui.add(params, 'add').name('Add image set');
 
     gui.add(opacity, 'alpha', 0, 1, 0.01).onChange(() => {
-      entities.forEach(p => p.setOpacity(opacity.alpha));
+      entities.forEach(p => (p.image360Visualization.opacity = opacity.alpha));
       viewer.requestRedraw();
     });
 

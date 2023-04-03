@@ -780,8 +780,10 @@ export type HtmlOverlayToolOptions = {
 export interface Image360 {
     changeRevision(revision: Image360Revision): Promise<void>;
     getActiveRevision(): Image360Revision;
+    readonly image360Visualization: Image360Visualization;
     list360ImageRevisions(): Image360Revision[];
     setOpacity(alpha: number): void;
+    readonly transform: THREE.Matrix4;
 }
 
 // @public
@@ -807,8 +809,6 @@ export type Image360ExitedDelegate = () => void;
 // @public (undocumented)
 export interface Image360Revision {
     readonly date: Date | undefined;
-    readonly image360Visualization: Image360Visualization;
-    readonly transform: THREE.Matrix4;
 }
 
 // @public
