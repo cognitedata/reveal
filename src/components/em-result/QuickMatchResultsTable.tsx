@@ -95,8 +95,8 @@ const QuickMatchResultsTable = ({
     },
   };
 
-  const columns: ResultsTableRecordCT[] = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const columns: ResultsTableRecordCT[] = [
       {
         title: t('qm-result-source', {
           resource: t(`resource-type-${sourceType}`, {
@@ -163,13 +163,6 @@ const QuickMatchResultsTable = ({
         width: 100,
       },
       {
-        title: t('existing-target'),
-        key: 'existing',
-        render: (p: Prediction) => {
-          return <MatchInfo api={sourceType} id={p.source.id} />;
-        },
-      },
-      {
         title: '',
         dataIndex: 'source',
         key: 'expandable',
@@ -189,18 +182,27 @@ const QuickMatchResultsTable = ({
           ),
         width: 64,
       },
-    ],
-    [
-      expandedRowKeys,
-      maxScore,
-      minScore,
-      model?.matchFields,
-      scoreFilter,
-      scores,
-      sourceType,
-      t,
-    ]
-  );
+    ];
+    if (sourceType !== 'threeD') {
+      columns.splice(-1, 0, {
+        title: t('existing-target'),
+        key: 'existing',
+        render: (p: Prediction) => {
+          return <MatchInfo api={sourceType} id={p.source.id} />;
+        },
+      });
+    }
+    return columns;
+  }, [
+    expandedRowKeys,
+    maxScore,
+    minScore,
+    model?.matchFields,
+    scoreFilter,
+    scores,
+    sourceType,
+    t,
+  ]);
 
   return (
     <Table<PredictionsTableRecord>
