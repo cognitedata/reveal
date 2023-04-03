@@ -785,7 +785,7 @@ __metadata:
     "@types/jest-environment-puppeteer": 5.0.3
     "@types/jest-image-snapshot": 6.1.0
     "@types/jsdom": 21.1.1
-    "@types/lodash": 4.14.191
+    "@types/lodash": 4.14.192
     "@types/mixpanel-browser": 2.38.1
     "@types/node": 18.15.0
     "@types/random-seed": 0.3.3
@@ -844,7 +844,7 @@ __metadata:
     three-stdlib: 2.21.8
     ts-jest: 29.0.5
     ts-loader: 9.4.2
-    tsc-alias: 1.8.4
+    tsc-alias: 1.8.5
     typescript: 5.0.2
     wasm-pack: 0.10.3
     webpack: 5.76.3
@@ -2226,10 +2226,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.191":
-  version: 4.14.191
-  resolution: "@types/lodash@npm:4.14.191"
-  checksum: ba0d5434e10690869f32d5ea49095250157cae502f10d57de0a723fd72229ce6c6a4979576f0f13e0aa9fbe3ce2457bfb9fa7d4ec3d6daba56730a51906d1491
+"@types/lodash@npm:4.14.192":
+  version: 4.14.192
+  resolution: "@types/lodash@npm:4.14.192"
+  checksum: 31e1f0543a04158d2c429c45efd7c77882736630d0652f82eb337d6159ec0c249c5d175c0af731537b53271e665ff8d76f43221d75d03646d31cb4bd6f0056b1
   languageName: node
   linkType: hard
 
@@ -11249,9 +11249,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.8.4":
-  version: 1.8.4
-  resolution: "tsc-alias@npm:1.8.4"
+"tsc-alias@npm:1.8.5":
+  version: 1.8.5
+  resolution: "tsc-alias@npm:1.8.5"
   dependencies:
     chokidar: ^3.5.3
     commander: ^9.0.0
@@ -11261,7 +11261,7 @@ resolve@~1.19.0:
     plimit-lit: ^1.2.6
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: a3d9a5c597a2ceb24b08fc30fc12a2deb896b10de693067f0186d117380c7c9eefa129084c50d981d5d273977d559af22cb68293f5b9928a529d1d10f449dace
+  checksum: 9b92f4141e2d388bd248d3bb362fa48e1bab7a350004ec000016375ca779632d6c6eac53f2a2d92284152cc42dabdf1d9e70162da5a5eb691d93e161d5ed65d2
   languageName: node
   linkType: hard
 
