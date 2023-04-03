@@ -48,7 +48,7 @@ export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
       <Styled.StateContainer>
         <EquipmentStateBar />
       </Styled.StateContainer>
-      <Button onClick={saveEquipmentToRaw}>save</Button>
+      <Button onClick={saveEquipmentToRaw}>publish</Button>
     </Styled.Container>
   );
 };

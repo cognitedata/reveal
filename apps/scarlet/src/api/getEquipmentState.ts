@@ -44,3 +44,38 @@ export const getEquipmentState = async (
     throw error;
   }
 };
+
+export const clearEquipmentState = async (
+  client: CogniteClient,
+  {
+    facility,
+    unitId,
+    equipmentId,
+  }: { facility?: Facility; unitId: string; equipmentId: string }
+): Promise<any> => {
+  if (!facility) throw Error('Facility is not set');
+  const dataSet = datasetByProject(client.project);
+
+  try {
+    const file = await client.files
+      .list({
+        filter: {
+          dataSetIds: [{ id: dataSet.P66_ScarletEquipmentState }],
+          metadata: {
+            env: config.env,
+            facilityId: facility.id,
+            unitId,
+            equipmentId,
+          },
+        },
+      })
+      .then((response) => response.items.pop());
+
+    if (!file) return Promise.resolve();
+
+    return await client.files.delete([{ id: file.id }]);
+  } catch (error: any) {
+    if (error?.message?.includes('Files not deleted')) return undefined;
+    throw error;
+  }
+};
