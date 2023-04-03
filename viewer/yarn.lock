@@ -820,11 +820,11 @@ __metadata:
     jest-environment-jsdom: 29.5.0
     jest-extended: 3.2.4
     jest-image-snapshot: 6.1.0
-    jest-puppeteer: 8.0.5
+    jest-puppeteer: 8.0.6
     jsdom: 21.1.1
     lodash: 4.17.21
     loglevel: 1.8.1
-    mixpanel-browser: 2.45.0
+    mixpanel-browser: 2.46.0
     moq.ts: 10.0.2
     nock: 13.3.0
     path-browserify: 1.0.1
@@ -7209,16 +7209,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-puppeteer@npm:^8.0.5":
-  version: 8.0.5
-  resolution: "jest-environment-puppeteer@npm:8.0.5"
+"jest-environment-puppeteer@npm:^8.0.6":
+  version: 8.0.6
+  resolution: "jest-environment-puppeteer@npm:8.0.6"
   dependencies:
     chalk: ^4.1.2
     cosmiconfig: ^8.1.0
     deepmerge: ^4.3.0
     jest-dev-server: ^8.0.5
     jest-environment-node: ^29.5.0
-  checksum: 5fa558e1b6fb08a4463529381fa494f8157133d5d93aa8d376957cf869d3357c924bf05804acc9fab7a2d5d6ff0665cb4f21b50a3d64942bf630ea3fcb4ce36c
+  checksum: 2109a7a00e1398c3039c591a64b3064676397aa33d9b653d355c8e2261e00bc2975ec6e212014d249aabdc1534b0ee3f8967d1d689967f97a6852922e3129b0b
   languageName: node
   linkType: hard
 
@@ -7430,15 +7430,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-puppeteer@npm:8.0.5":
-  version: 8.0.5
-  resolution: "jest-puppeteer@npm:8.0.5"
+"jest-puppeteer@npm:8.0.6":
+  version: 8.0.6
+  resolution: "jest-puppeteer@npm:8.0.6"
   dependencies:
     expect-puppeteer: ^8.0.5
-    jest-environment-puppeteer: ^8.0.5
+    jest-environment-puppeteer: ^8.0.6
   peerDependencies:
     puppeteer: ">=19"
-  checksum: 07fc18730ba4a3a551b6a8f5340ce0088808b65db580efbae09874d4944b4f959cd043c01af5ab82f0a92758f286eaacb15962eef590fe9982acfd6b9e391d8c
+  checksum: 0ca2184335b628e3fc6d132579c63b65dfa39077bc6c4b01fd16c2701dddef0887bef3bdd4d67598c32e136f437c2f01cc2750d0d4234c7288cf2b50ed1bec4d
   languageName: node
   linkType: hard
 
@@ -8462,10 +8462,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.45.0":
-  version: 2.45.0
-  resolution: "mixpanel-browser@npm:2.45.0"
-  checksum: 43722dd5019ece65302e933f3d5812ea015aff8525b3ba5347da9cd8694871ed85179047bf2bc7f47cd58c050158ea4ce84cc2810e128988c151fe4457f52f55
+"mixpanel-browser@npm:2.46.0":
+  version: 2.46.0
+  resolution: "mixpanel-browser@npm:2.46.0"
+  checksum: 0d10c673443e795b6a3ff40064fb4aa6f7471c553262a8fe70bcb0f0d15125ee60a0515e8e011db8b108ea349c5702e25ba899a592a6c9277d718d4a095e9ce1
   languageName: node
   linkType: hard
 
