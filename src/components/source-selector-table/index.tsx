@@ -1,4 +1,12 @@
-import { Checkbox, Flex, Overline } from '@cognite/cogs.js';
+import {
+  Flex,
+  Icon,
+  Body,
+  IconType,
+  InputExp,
+  Switch,
+  Checkbox,
+} from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 
@@ -14,10 +22,9 @@ import { getAdvancedFilter } from 'utils';
 import { API, SourceType, SOURCE_TYPES } from 'types/api';
 import FileInfoTable from './FilesTable';
 import { DataSetSelect } from 'components/data-set-select';
-import SearchInput from 'components/search-input';
 import ThreeDTable from './Three3Table';
-import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 import styled from 'styled-components';
+import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 
 const { Option } = Select;
 
@@ -55,12 +62,37 @@ export default function SourceSelectionTable({}: Props) {
     setAllSources,
     setModelFieldMapping,
   } = useQuickMatchContext();
-  const sourceTypeOptions: { value: SourceType; label: string }[] = [
-    { value: 'timeseries', label: t('resource-type-timeseries') },
-    { value: 'events', label: t('resource-type-events', { count: 0 }) },
-    { value: 'files', label: t('resource-type-files', { count: 0 }) },
-    { value: 'sequences', label: t('resource-type-sequences', { count: 0 }) },
-    { value: 'threeD', label: t('resource-type-threeD', { count: 0 }) },
+
+  const sourceTypeOptions: {
+    value: SourceType;
+    label: string;
+    icon: IconType;
+  }[] = [
+    {
+      value: 'timeseries',
+      label: t('resource-type-timeseries'),
+      icon: 'Timeseries',
+    },
+    {
+      value: 'events',
+      label: t('resource-type-events', { count: 0 }),
+      icon: 'Events',
+    },
+    {
+      value: 'files',
+      label: t('resource-type-files', { count: 0 }),
+      icon: 'Document',
+    },
+    {
+      value: 'sequences',
+      label: t('resource-type-sequences', { count: 0 }),
+      icon: 'Sequences',
+    },
+    {
+      value: 'threeD',
+      label: t('resource-type-threeD', { count: 0 }),
+      icon: 'Cube',
+    },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -95,21 +127,22 @@ export default function SourceSelectionTable({}: Props) {
       <Flex direction="column">
         <Flex justifyContent="space-between">
           <Flex direction="row" gap={12} alignItems="center">
-            <Overline>{t('resource-type')}</Overline>
             <Select
               style={{ width: 220 }}
               defaultValue="timeseries"
               onChange={handleSelectSourceType}
             >
-              {sourceTypeOptions.map(({ value, label }) => (
+              {sourceTypeOptions.map(({ value, label, icon }) => (
                 <Option key={value} value={value}>
-                  {label}
+                  <SourceOptionContainer>
+                    <Icon type={icon} />
+                    <Body level={2}>{label}</Body>
+                  </SourceOptionContainer>
                 </Option>
               ))}
             </Select>
             {supportsBasicFilter[sourceType] && (
               <>
-                <Overline>{t('filter', { count: 0 })}</Overline>
                 <DataSetSelect
                   api={sourceType}
                   onChange={(id?: number) => {
@@ -121,7 +154,7 @@ export default function SourceSelectionTable({}: Props) {
                   }}
                   selected={sourceFilter.dataSetIds?.[0]?.id}
                 />
-                <SearchInput
+                <InputExp
                   disabled={allSources}
                   value={query || ''}
                   placeholder={t('filter-by-name-placeholder')}
@@ -133,8 +166,10 @@ export default function SourceSelectionTable({}: Props) {
               </>
             )}
             {supportsAdvancedFilter[sourceType] && (
-              <Checkbox
-                onChange={(e) => setUnmatchedOnly(e.target.checked)}
+              <Switch
+                onChange={() =>
+                  setUnmatchedOnly((unmatchedOnly) => !unmatchedOnly)
+                }
                 checked={unmatchedOnly}
                 label={t('filter-only-unmatched-items')}
               />
@@ -149,7 +184,6 @@ export default function SourceSelectionTable({}: Props) {
                   advancedFilter={advancedFilter}
                 />
               )}
-
               <Checkbox
                 checked={!query && allSources}
                 disabled={!!query}
@@ -207,6 +241,13 @@ export default function SourceSelectionTable({}: Props) {
     </Container>
   );
 }
+
+const SourceOptionContainer = styled(Flex).attrs({
+  alignItems: 'center',
+  gap: 8,
+})`
+  height: 100%;
+`;
 
 const Container = styled.div<{ $isActionBarVisible?: boolean }>`
   overflow-y: auto;
