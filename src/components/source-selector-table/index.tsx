@@ -56,11 +56,11 @@ export default function SourceSelectionTable({}: Props) {
     setModelFieldMapping,
   } = useQuickMatchContext();
   const sourceTypeOptions: { value: SourceType; label: string }[] = [
-    { value: 'timeseries', label: t('resource-type-ts') },
+    { value: 'timeseries', label: t('resource-type-timeseries') },
     { value: 'events', label: t('resource-type-events', { count: 0 }) },
     { value: 'files', label: t('resource-type-files', { count: 0 }) },
     { value: 'sequences', label: t('resource-type-sequences', { count: 0 }) },
-    { value: 'threeD', label: t('resource-type-3d-model', { count: 0 }) },
+    { value: 'threeD', label: t('resource-type-threeD', { count: 0 }) },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;

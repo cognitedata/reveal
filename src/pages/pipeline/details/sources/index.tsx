@@ -82,7 +82,11 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
     label: string;
     icon: IconType;
   }[] = [
-    { value: 'time_series', label: t('resource-type-ts'), icon: 'Timeseries' },
+    {
+      value: 'time_series',
+      label: t('resource-type-timeseries'),
+      icon: 'Timeseries',
+    },
     {
       value: 'events',
       label: t('resource-type-events', { count: 0 }),

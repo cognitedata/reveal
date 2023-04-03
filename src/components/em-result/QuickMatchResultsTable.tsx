@@ -98,7 +98,11 @@ const QuickMatchResultsTable = ({
   const columns: ResultsTableRecordCT[] = useMemo(
     () => [
       {
-        title: t('qm-result-source'),
+        title: t('qm-result-source', {
+          resource: t(`resource-type-${sourceType}`, {
+            count: 1,
+          }).toLocaleLowerCase(),
+        }),
         dataIndex: 'source',
         key: 'source',
         render: (source: PredictionObject) => (
