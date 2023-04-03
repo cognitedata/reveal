@@ -97,6 +97,8 @@ export default function AssetTable({
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
         render: (value: number) => new Date(value).toLocaleString(),
+        sorter: (rowA: AssetListTableRecord, rowB: AssetListTableRecord) =>
+          (rowA?.lastUpdatedTime ?? 0) - (rowB?.lastUpdatedTime ?? 0),
       },
     ],
     [t, items]
