@@ -34,4 +34,4 @@ libs/industry-canvas              @cognitedata/unified-file-viewer
 apps/coding-conventions           @deep-cognite @CimStordal
 
 # Contextualization
-libs/industry-canvas              @dlcognite @cognitedata/contextualization
+libs/contextualization              @dlcognite @cognitedata/contextualization
