@@ -358,6 +358,8 @@ export class Cognite3DViewer {
     off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    // (undocumented)
+    off(event: 'cameraStop', callback: CameraStopDelegate): void;
     off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     // (undocumented)
     off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
@@ -368,6 +370,8 @@ export class Cognite3DViewer {
     on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
     on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    // (undocumented)
+    on(event: 'cameraStop', callback: CameraStopDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
@@ -787,6 +791,8 @@ export interface Image360Collection {
     on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setIconsVisibility(visible: boolean): void;
 }
 
 // @public

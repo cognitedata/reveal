@@ -33,6 +33,7 @@ export class Image360ApiHelper {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
+    image360SelectedForEntry?: Image360Entity;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -43,7 +44,9 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
+  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity).catch(() => {}), 300, {
+    leading: true
+  });
   private readonly _requestRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
@@ -125,27 +128,38 @@ export class Image360ApiHelper {
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
-    this._interactionState.currentImage360Entered = image360Entity;
-
-    if (lastEntered360ImageEntity === image360Entity) {
+    if (this._interactionState.image360SelectedForEntry === image360Entity) {
       this._requestRedraw();
       return;
     }
+    this._interactionState.image360SelectedForEntry = image360Entity;
 
-    await this._image360Facade.preload(image360Entity);
+    const fatalDownloadError = await this._image360Facade.preload(image360Entity, true).catch(e => {
+      return e;
+    });
 
-    if (this._interactionState.currentImage360Entered !== image360Entity) {
+    if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
     }
 
+    if (fatalDownloadError) {
+      this._interactionState.image360SelectedForEntry = undefined;
+      return;
+    }
+
+    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    this._interactionState.currentImage360Entered = image360Entity;
+
     this.set360CameraManager();
+
+    const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
+    lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
+    image360Entity.icon.setVisibility(false);
 
     const image360Visualization = image360Entity.image360Visualization;
     image360Visualization.visible = true;
-    this._image360Facade.allIconsVisibility = true;
+    this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
-    image360Entity.icon.visible = false;
 
     this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {
@@ -163,10 +177,11 @@ export class Image360ApiHelper {
     this._transitionInProgress = false;
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
 
-    this._requestRedraw();
-    this._image360Facade.collections
-      .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
-      .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
+    image360Entity.applyFullResolution().then(() => {
+      this._requestRedraw();
+    });
+
+    imageCollection.events.image360Entered.fire(image360Entity);
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -279,15 +294,17 @@ export class Image360ApiHelper {
   }
 
   public exit360Image(): void {
-    this._image360Facade.allIconsVisibility = true;
+    this._image360Facade.allIconCullingScheme = 'clustered';
     if (this._interactionState.currentImage360Entered !== undefined) {
-      this._image360Facade.collections
-        .filter(imageCollection =>
-          imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)
-        )
-        .forEach(imageCollection => imageCollection.events.image360Exited.fire());
+      const imageCollection = this._image360Facade.getCollectionContainingEntity(
+        this._interactionState.currentImage360Entered
+      );
+      this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
+      imageCollection.events.image360Exited.fire();
+
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
+      this._interactionState.image360SelectedForEntry = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
@@ -330,7 +347,7 @@ export class Image360ApiHelper {
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
-      { x: ndcCoordinates.x, y: ndcCoordinates.y },
+      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
     return entity;
@@ -344,7 +361,7 @@ export class Image360ApiHelper {
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
-      { x: ndcCoordinates.x, y: ndcCoordinates.y },
+      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
 

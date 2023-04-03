@@ -11,7 +11,7 @@ import { Box3, Matrix4, Vector3 } from 'three';
 import { Image360Icon } from '../icons/Image360Icon';
 
 type NodeMetadata = {
-  medianIcon: Image360Icon;
+  icon: Image360Icon;
   level: number;
 };
 
@@ -29,10 +29,10 @@ export class IconOctree extends PointOctree<Image360Icon> {
     this._nodeCenters = this.populateNodeCenters();
   }
 
-  public getNodeMedianIcon(node: Node): Image360Icon | undefined {
+  public getNodeIcon(node: Node): Image360Icon | undefined {
     const nodeMetadata = this._nodeCenters.get(node);
     assert(nodeMetadata !== undefined);
-    return nodeMetadata.medianIcon;
+    return nodeMetadata.icon;
   }
 
   public getLODByScreenArea(
@@ -87,10 +87,10 @@ export class IconOctree extends PointOctree<Image360Icon> {
     this.traverseLevelsBottomUp(nodes => {
       nodes.forEach(node => {
         if (this.hasData(node)) {
-          nodeCenters.set(node, { medianIcon: this.getMedianIcon(node.data.data), level });
+          nodeCenters.set(node, { icon: this.getClosestToAverageIcon(node.data.data), level });
         } else if (this.hasChildren(node)) {
-          const icons = node.children!.map(child => nodeCenters.get(child)!.medianIcon);
-          nodeCenters.set(node, { medianIcon: this.getMedianIcon(icons), level });
+          const icons = node.children!.map(child => nodeCenters.get(child)!.icon);
+          nodeCenters.set(node, { icon: this.getClosestToAverageIcon(icons), level });
         }
       });
       level--;
@@ -130,7 +130,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
     return node instanceof PointOctant;
   }
 
-  private getMedianIcon(icons: Image360Icon[]): Image360Icon {
+  private getClosestToAverageIcon(icons: Image360Icon[]): Image360Icon {
     const center = icons
       .reduce((result, currentValue) => result.add(currentValue.position), new Vector3())
       .divideScalar(icons.length);

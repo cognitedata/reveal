@@ -7,7 +7,7 @@ import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { IconCollection } from '../icons/IconCollection';
+import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -26,6 +26,7 @@ export class DefaultImage360Collection implements Image360Collection {
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
+  private _isCollectionVisible: boolean;
 
   /**
    * The events from the image collection.
@@ -37,9 +38,14 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._events;
   }
 
+  get isCollectionVisible(): boolean {
+    return this._isCollectionVisible;
+  }
+
   constructor(entities: Image360Entity[], icons: IconCollection) {
     this.image360Entities = entities;
     this._icons = icons;
+    this._isCollectionVisible = true;
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -69,12 +75,31 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   /**
+   * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
+   * @param radius Only icons within the given radius will be made visible.
+   * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized.
+   */
+  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
+    this._icons.set360IconCullingRestrictions(radius, pointLimit);
+  }
+
+  /**
+   * Set visibility of all 360 image icons.
+   * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
+   */
+  public setIconsVisibility(visible: boolean): void {
+    this._isCollectionVisible = visible;
+    this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
+  }
+
+  /**
    * Unsubscribes from 360 image dataset event.
    * @param event The event type.
    * @param callback Callback function to be unsubscribed.
    */
   public off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
   public off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+
   /**
    * Unsubscribe to the 360 Image events
    * @param event `Image360Events` event
@@ -93,12 +118,12 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
-  public setIconsVisibility(visible: boolean): void {
-    this.image360Entities.forEach(entity => (entity.icon.visible = visible));
-  }
-
   public setSelectedVisibility(visible: boolean): void {
     this.image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
+  }
+
+  public setCullingScheme(scheme: IconCullingScheme): void {
+    this._icons.setCullingScheme(scheme);
   }
 
   public remove(entity: Image360Entity): void {

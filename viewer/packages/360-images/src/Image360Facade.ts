@@ -3,12 +3,13 @@
  */
 import * as THREE from 'three';
 import first from 'lodash/first';
+import pull from 'lodash/pull';
 
 import { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
-import pullAll from 'lodash/pullAll';
+import { IconCullingScheme } from './icons/IconCollection';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -25,6 +26,10 @@ export class Image360Facade<T> {
 
   set allHoverIconsVisibility(visible: boolean) {
     this._image360Collections.forEach(collection => collection.setSelectedVisibility(visible));
+  }
+
+  set allIconCullingScheme(scheme: IconCullingScheme) {
+    this._image360Collections.forEach(collection => collection.setCullingScheme(scheme));
   }
 
   constructor(private readonly _entityFactory: Image360CollectionFactory<T>) {
@@ -45,30 +50,31 @@ export class Image360Facade<T> {
 
   public async delete(entity: Image360Entity): Promise<void> {
     await this._image360Cache.purge(entity);
-    const collectionContainingEntity = this._image360Collections.filter(collection =>
+    const collection = this.getCollectionContainingEntity(entity);
+    collection.remove(entity);
+    if (collection.image360Entities.length === 0) {
+      collection.dispose();
+      pull(this._image360Collections, collection);
+    }
+  }
+
+  public preload(entity: Image360Entity, lockDownload?: boolean): Promise<void> {
+    return this._image360Cache.cachedPreload(entity, lockDownload);
+  }
+
+  public getCollectionContainingEntity(entity: Image360Entity): DefaultImage360Collection {
+    const imageCollection = this._image360Collections.filter(collection =>
       collection.image360Entities.includes(entity)
     );
-    collectionContainingEntity.forEach(collection => {
-      collection.remove(entity);
-    });
-    const disposeableCollections = collectionContainingEntity.filter(
-      collection => collection.image360Entities.length === 0
-    );
-    disposeableCollections.forEach(collection => collection.dispose());
-    pullAll(this._image360Collections, disposeableCollections);
+    if (imageCollection.length !== 1) {
+      throw new Error(
+        `Failed to get Collection for Image360Entity. The entity is present in ${imageCollection.length} collections.`
+      );
+    }
+    return imageCollection[0];
   }
 
-  public preload(entity: Image360Entity): Promise<void> {
-    return this._image360Cache.cachedPreload(entity);
-  }
-
-  public intersect(
-    coords: {
-      x: number;
-      y: number;
-    },
-    camera: THREE.Camera
-  ): Image360Entity | undefined {
+  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity | undefined {
     this._rayCaster.setFromCamera(coords, camera);
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
@@ -90,7 +96,7 @@ export class Image360Facade<T> {
     }
 
     function hasVisibleIcon(entity: Image360Entity) {
-      return entity.icon.visible && !entity.image360Visualization.visible;
+      return entity.icon.isVisible() && !entity.image360Visualization.visible;
     }
 
     function getIntersection(entity: Image360Entity, ray: THREE.Ray): [Image360Entity, THREE.Vector3 | null] {

@@ -10,7 +10,16 @@ import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
 import head from 'lodash/head';
 
-import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
+import {
+  CogniteClient,
+  CogniteEvent,
+  EventFilter,
+  FileFilterProps,
+  FileInfo,
+  FileLink,
+  IdEither,
+  Metadata
+} from '@cognite/sdk';
 import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
@@ -61,20 +70,32 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    const fileIds = image360FaceDescriptors.map(image360FaceDescriptor => {
+    const fullResFileBuffers = await this.getFileBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
+    return this.createFaces(image360FaceDescriptors, fullResFileBuffers);
+  }
+
+  public async getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
+    return this.createFaces(image360FaceDescriptors, lowResFileBuffers);
+  }
+
+  private getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
+    return image360FaceDescriptors.map(image360FaceDescriptor => {
       return { id: image360FaceDescriptor.fileId };
     });
-    const fileBuffers = await this.getFileBuffers(fileIds, abortSignal);
+  }
 
-    const faces = zipWith(image360FaceDescriptors, fileBuffers, (image360FaceDescriptor, fileBuffer) => {
+  private createFaces(image360FaceDescriptors: Image360FileDescriptor[], fileBuffer: ArrayBuffer[]): Image360Face[] {
+    return zipWith(image360FaceDescriptors, fileBuffer, (image360FaceDescriptor, fileBuffer) => {
       return {
         face: image360FaceDescriptor.face,
         mimeType: image360FaceDescriptor.mimeType,
         data: fileBuffer
       } as Image360Face;
     });
-
-    return faces;
   }
 
   private mergeDescriptors(
@@ -171,13 +192,55 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
-    const fileLinks = await this._client.files.getDownloadUrls(fileIds);
+    const fileLinks = await this.getDownloadUrls(fileIds, abortSignal);
     if (abortSignal?.aborted) throw new Error('Request aborted before fetch.');
     return Promise.all(
       fileLinks
         .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }))
         .map(async response => (await response).arrayBuffer())
     );
+  }
+
+  public async getIconBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon?id=`;
+    const headers = {
+      ...this._client.getDefaultRequestHeaders(),
+      Accept: '*/*'
+    };
+
+    const options: RequestInit = {
+      headers,
+      signal: abortSignal,
+      method: 'GET'
+    };
+
+    return Promise.all(
+      fileIds.map(fileId => fetch(url + fileId.id, options)).map(async response => (await response).arrayBuffer())
+    );
+  }
+
+  private async getDownloadUrls(
+    fileIds: { id: number }[],
+    abortSignal?: AbortSignal
+  ): Promise<(FileLink & IdEither)[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/downloadlink`;
+    const headers: HeadersInit = {
+      ...this._client.getDefaultRequestHeaders(),
+      Accept: 'application/json',
+      'Content-type': 'application/json'
+    };
+
+    const options: RequestInit = {
+      headers,
+      signal: abortSignal,
+      method: 'POST',
+      body: JSON.stringify({
+        items: fileIds
+      })
+    };
+
+    const result = await (await fetch(url, options)).json();
+    return result.items;
   }
 
   private parseEventMetadata(eventMetadata: Event360Metadata, preMultipliedRotation: boolean): Image360EventDescriptor {
@@ -190,14 +253,14 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     };
 
     function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
-      const translationComponents = transformationData.translation.split(' ').map(parseFloat);
+      const translationComponents = transformationData.translation.split(',').map(parseFloat);
       const milimetersInMeters = 1000;
       const translation = new THREE.Vector3(
         translationComponents[0],
         translationComponents[2],
         -translationComponents[1]
       ).divideScalar(milimetersInMeters);
-      const rotationAxisComponents = transformationData.rotation_axis.split(' ').map(parseFloat);
+      const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
       const rotationAxis = new THREE.Vector3(
         rotationAxisComponents[0],
         rotationAxisComponents[2],

@@ -5,21 +5,31 @@
 import { Image360Entity } from '../entity/Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
-import { Log } from '@reveal/logger';
+import find from 'lodash/find';
 import remove from 'lodash/remove';
+import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
-  load360Image: Promise<void>;
+  firstCompleted: Promise<void>;
+  fullResolutionCompleted: Promise<void>;
   abort: () => void;
 };
 
+export type Loaded360Image = {
+  entity: Image360Entity;
+  isFullResolution: boolean;
+};
+
 export class Image360LoadingCache {
-  private readonly _loaded360Images: Image360Entity[];
+  private readonly _loaded360Images: Loaded360Image[];
   private readonly _inProgressDownloads: DownloadRequest[];
+  private _lockedDownload: Image360Entity | undefined;
 
   get cachedEntities(): Image360Entity[] {
-    return this._loaded360Images;
+    return this._loaded360Images.map(image => {
+      return image.entity;
+    });
   }
 
   get currentlyLoadingEntities(): DownloadRequest[] {
@@ -33,76 +43,128 @@ export class Image360LoadingCache {
     return inProgressDownload;
   }
 
-  constructor(private readonly _imageCacheSize = 10, private readonly _downloadCacheSize = 10) {
+  constructor(private readonly _imageCacheSize = 10, private readonly _downloadCacheSize = 3) {
     this._loaded360Images = [];
     this._inProgressDownloads = [];
   }
 
-  public async cachedPreload(entity: Image360Entity): Promise<void> {
-    if (this._loaded360Images.includes(entity)) {
+  public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void> {
+    if (this._loaded360Images.find(image => image.entity === entity)?.isFullResolution) {
       return;
+    }
+
+    if (lockDownload) {
+      this._lockedDownload = entity;
     }
 
     const inProgressDownload = this.getDownloadInProgress(entity);
     if (inProgressDownload !== undefined) {
-      return inProgressDownload.load360Image;
+      return inProgressDownload.firstCompleted;
     }
 
-    if (this._inProgressDownloads.length === this._downloadCacheSize) {
+    if (this._inProgressDownloads.length >= this._downloadCacheSize) {
       this.abortLastRecentlyReqestedEntity();
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const load360Image = entity
-      .load360Image(signal)
+    const { firstCompleted, fullResolutionCompleted } = entity.load360Image(signal);
+
+    this._inProgressDownloads.push({
+      entity,
+      firstCompleted,
+      fullResolutionCompleted,
+      abort
+    });
+
+    fullResolutionCompleted
       .catch(e => {
-        if (signal.aborted || e === 'Aborted') {
-          Log.info('Abort warning: ' + e);
-        } else {
-          Log.warn('Failed to load 360 image: ' + e);
-        }
-        return Promise.reject();
+        return Promise.reject(e);
       })
       .then(
         () => {
-          if (this._loaded360Images.length === this._imageCacheSize) {
-            this.purgeLastRecentlyUsedInvisibleEntity();
-          }
-          this._loaded360Images.unshift(entity);
+          this.addEntityToCache(entity, true);
         },
-        () => {}
+        () => {
+          return Promise.resolve();
+        }
       )
       .finally(() => {
-        remove(this._inProgressDownloads, download => {
-          return download.entity === entity;
-        });
+        removeDownload(this._lockedDownload, this._inProgressDownloads);
       });
 
-    this._inProgressDownloads.push({ entity, load360Image, abort });
-    await load360Image;
+    const visualzationBoxReady = await firstCompleted
+      .catch(e => {
+        return Promise.reject(e);
+      })
+      .then(
+        () => {
+          this.addEntityToCache(entity, false);
+        },
+        reason => {
+          removeDownload(this._lockedDownload, this._inProgressDownloads);
+
+          if (signal.aborted || reason === 'Aborted') {
+            Log.info('360 Image download aborted: ' + reason);
+          } else {
+            throw new Error('Failed to load 360 image: ' + reason);
+          }
+        }
+      );
+
+    return visualzationBoxReady;
+
+    function removeDownload(_lockedDownload: Image360Entity | undefined, _inProgressDownloads: DownloadRequest[]) {
+      if (_lockedDownload === entity) {
+        _lockedDownload = undefined;
+      }
+      remove(_inProgressDownloads, download => {
+        return download.entity === entity;
+      });
+    }
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
     const inFlightDownload = this.getDownloadInProgress(entity);
     if (inFlightDownload) {
-      await inFlightDownload.load360Image;
+      pull(this._inProgressDownloads, inFlightDownload);
+      inFlightDownload.abort();
     }
-    pull(this._loaded360Images, entity);
+    remove(this._loaded360Images, image => {
+      return image.entity === entity;
+    });
   }
 
-  private purgeLastRecentlyUsedInvisibleEntity() {
-    const entityToPurge = findLast(this._loaded360Images, entity => !entity.image360Visualization.visible);
-    if (entityToPurge === undefined) {
-      throw new Error('Unable to purge 360 image from cache due to too many visible instances');
+  private addEntityToCache(entity: Image360Entity, isFullResolution: boolean) {
+    const cachedImage = this._loaded360Images.find(image => image.entity === entity);
+    if (cachedImage && cachedImage.isFullResolution) {
+      // Image is already cached with full resolution. Discard attempts to add lower quality image.
+      return;
     }
-    pull(this._loaded360Images, entityToPurge);
-    entityToPurge.unload360Image();
+
+    if (cachedImage) {
+      pull(this._loaded360Images, cachedImage);
+    }
+
+    if (this._loaded360Images.length === this._imageCacheSize) {
+      const entityToPurge = findLast(this._loaded360Images, image => !image.entity.image360Visualization.visible);
+      if (entityToPurge === undefined) {
+        throw new Error('Unable to purge 360 image from cache due to too many visible instances');
+      }
+      pull(this._loaded360Images, entityToPurge);
+      entityToPurge.entity.unload360Image();
+    }
+    this._loaded360Images.unshift({ entity, isFullResolution });
   }
 
   private abortLastRecentlyReqestedEntity() {
-    const download = this._inProgressDownloads[0];
-    this._inProgressDownloads.shift();
-    download.abort();
+    const download = find(
+      this._inProgressDownloads,
+      download => download.entity !== this._lockedDownload && !download.entity.image360Visualization.visible
+    );
+    if (download) {
+      pull(this._inProgressDownloads, download);
+      download.abort();
+    }
   }
 
   private createAbortSignal() {
