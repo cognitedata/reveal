@@ -19,7 +19,8 @@ export const NumberInput = ({
   loading,
 }: NumberInputProps) => {
   const handleValueChange = (newValue: string | undefined) => {
-    onChange?.(Number(newValue));
+    const parsedValue = newValue === '' ? undefined : Number(newValue);
+    onChange?.(parsedValue);
   };
 
   const isLoading = loading
