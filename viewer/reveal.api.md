@@ -782,7 +782,6 @@ export interface Image360 {
     getActiveRevision(): Image360Revision;
     readonly image360Visualization: Image360Visualization;
     list360ImageRevisions(): Image360Revision[];
-    setOpacity(alpha: number): void;
     readonly transform: THREE.Matrix4;
 }
 
