@@ -65,8 +65,8 @@ export class Image360Facade<T> {
     }
   }
 
-  public preload(revision: Image360RevisionEntity, lockDownload?: boolean): Promise<void> {
-    return this._image360Cache.cachedPreload(revision, lockDownload);
+  public preload(entity: Image360Entity, revision: Image360RevisionEntity, lockDownload?: boolean): Promise<void> {
+    return this._image360Cache.cachedPreload(entity, revision, lockDownload);
   }
 
   public getCollectionContainingEntity(entity: Image360Entity): DefaultImage360Collection {
@@ -103,7 +103,7 @@ export class Image360Facade<T> {
     }
 
     function hasVisibleIcon(entity: Image360Entity) {
-      return entity.icon.isVisible() && !entity.getActiveRevision().image360Visualization.visible;
+      return entity.icon.isVisible() && !entity.image360Visualization.visible;
     }
 
     function getIntersection(entity: Image360Entity, ray: THREE.Ray): [Image360Entity, THREE.Vector3 | null] {

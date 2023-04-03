@@ -47,7 +47,7 @@ export class Image360ApiHelper {
 
   private readonly _debouncePreLoad = debounce(
     entity => {
-      this._image360Facade.preload(this.findRevisionIdToEnter(entity)).catch(() => {});
+      this._image360Facade.preload(entity, this.findRevisionIdToEnter(entity)).catch(() => {});
     },
     300,
     {
@@ -153,7 +153,7 @@ export class Image360ApiHelper {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
-    const fatalDownloadError = await this._image360Facade.preload(revisionToEnter, true).catch(e => {
+    const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
       return e;
     });
 
@@ -168,56 +168,58 @@ export class Image360ApiHelper {
 
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
-
-    const fromImageRevision = lastEntered360ImageEntity?.getActiveRevision();
     image360Entity.setActiveRevision(revisionToEnter);
-    if (fromImageRevision === revisionToEnter) {
-      return;
-    }
 
     this.set360CameraManager();
 
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
     lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
     image360Entity.icon.setVisibility(false);
-    revisionToEnter.image360Visualization.visible = true;
+    image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
 
-    this._transitionInProgress = true;
-    if (fromImageRevision !== undefined) {
-      await this.transition(fromImageRevision, revisionToEnter);
-      MetricsLogger.trackEvent('360ImageEntered', {});
-    } else {
-      const transitionDuration = 1000;
-      const position = new THREE.Vector3().setFromMatrixPosition(revisionToEnter.transform);
-      await Promise.all([
-        this._image360Navigation.moveTo(position, transitionDuration),
-        this.tweenVisualizationAlpha(revisionToEnter, 0, 1, transitionDuration)
-      ]);
-      MetricsLogger.trackEvent('360ImageTransitioned', {});
+    // Only do transition if we are swithing between entities.
+    // Revisions are updated instantly (for now).
+    if (lastEntered360ImageEntity !== image360Entity) {
+      this._transitionInProgress = true;
+      if (lastEntered360ImageEntity !== undefined) {
+        await this.transition(lastEntered360ImageEntity, image360Entity);
+        MetricsLogger.trackEvent('360ImageEntered', {});
+      } else {
+        const transitionDuration = 1000;
+        const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
+        await Promise.all([
+          this._image360Navigation.moveTo(position, transitionDuration),
+          this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+        ]);
+        MetricsLogger.trackEvent('360ImageTransitioned', {});
+      }
+      this._transitionInProgress = false;
     }
-    this._transitionInProgress = false;
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
-
-    revisionToEnter.applyFullResolution().then(() => {
-      this._requestRedraw();
-    });
+    applyFullResolutionTextures(this._requestRedraw);
+    this._requestRedraw();
 
     imageCollection.events.image360Entered.fire(image360Entity);
+
+    async function applyFullResolutionTextures(_requestRedraw: () => void) {
+      await revisionToEnter.applyFullResolutionTextures();
+      _requestRedraw();
+    }
   }
 
-  private async transition(fromImageRevision: Image360RevisionEntity, toImageRevision: Image360RevisionEntity) {
+  private async transition(fromImage: Image360Entity, toImage: Image360Entity) {
     const cameraTransitionDuration = 1000;
     const alphaTweenDuration = 800;
     const default360ImageRenderOrder = 3;
 
-    const toVisualizationCube = toImageRevision.image360Visualization;
-    const fromVisualizationCube = fromImageRevision.image360Visualization;
+    const toVisualizationCube = toImage.image360Visualization;
+    const fromVisualizationCube = fromImage.image360Visualization;
 
-    const fromPosition = new THREE.Vector3().setFromMatrixPosition(fromImageRevision.transform);
-    const toPosition = new THREE.Vector3().setFromMatrixPosition(toImageRevision.transform);
-    const length = Math.max(1, new THREE.Vector3().subVectors(toPosition, fromPosition).length());
+    const fromPosition = new THREE.Vector3().setFromMatrixPosition(fromImage.transform);
+    const toPosition = new THREE.Vector3().setFromMatrixPosition(toImage.transform);
+    const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
 
     const toZoom = this._image360Navigation.defaultFOV;
     const fromZoom = this._image360Navigation.getCamera().fov;
@@ -228,7 +230,7 @@ export class Image360ApiHelper {
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
       this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
-      this.tweenVisualizationAlpha(fromImageRevision, currentFromOpacity, 0, alphaTweenDuration)
+      this.tweenVisualizationAlpha(fromImage, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
     restorePostTransitionState(currentFromOpacity);
@@ -259,7 +261,7 @@ export class Image360ApiHelper {
   }
 
   private tweenVisualizationAlpha(
-    entityRevision: Image360RevisionEntity,
+    entity: Image360Entity,
     alphaFrom: number,
     alphaTo: number,
     duration: number
@@ -269,7 +271,7 @@ export class Image360ApiHelper {
     const tween = new TWEEN.Tween(from)
       .to(to, duration)
       .onUpdate(() => {
-        entityRevision.image360Visualization.opacity = from.alpha;
+        entity.image360Visualization.opacity = from.alpha;
         this._requestRedraw();
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
@@ -325,7 +327,7 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
       imageCollection.events.image360Exited.fire();
 
-      this._interactionState.currentImage360Entered.getActiveRevision().image360Visualization.visible = false;
+      this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
@@ -415,7 +417,7 @@ export class Image360ApiHelper {
       return;
     }
 
-    const lastEntered = this._interactionState.currentImage360Entered?.getActiveRevision();
+    const lastEntered = this._interactionState.currentImage360Entered;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;

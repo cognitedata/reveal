@@ -81,12 +81,12 @@ export class Image360VisualizationBox implements Image360Visualization {
     };
   }
 
-  public async loadImages(textures: Image360Texture[]): Promise<void> {
+  public createImage(textures: Image360Texture[]): void {
     if (this._visualizationMesh) {
       this._faceMaterialOrder.forEach((face, index) => {
         this._faceMaterials[index].map = getFaceTexture(face);
       });
-      return Promise.resolve();
+      return;
     }
 
     this._faceMaterials = this._faceMaterialOrder.map(
@@ -107,8 +107,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.scale.copy(this._visualizationState.scale);
     this._visualizationMesh.visible = this._visualizationState.visible;
     this._sceneHandler.addCustomObject(this._visualizationMesh);
-
-    return Promise.resolve();
 
     function getFaceTexture(face: Image360Face['face']) {
       const texture = textures.find(p => p.face === face);
@@ -131,7 +129,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     );
   }
 
-  public unloadImages(): void {
+  public unloadImage(): void {
     if (this._visualizationMesh === undefined) {
       return;
     }

@@ -98,9 +98,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      const revision = entity.getActiveRevision();
-      await facade.preload(revision);
-      revision.image360Visualization.visible = true;
+      await facade.preload(entity, entity.getActiveRevision());
+      entity.image360Visualization.visible = true;
       entity.icon.setVisibility(false);
 
       if (lastClicked !== undefined) {
@@ -109,7 +108,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      const transform = revision.transform.toArray();
+      const transform = entity.transform.toArray();
       const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
       camera.position.copy(image360Translation);
       const cameraForward = camera.getWorldDirection(new THREE.Vector3());
@@ -126,22 +125,19 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera: THREE.PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
-    const lastClickedRevision = lastClicked.getActiveRevision();
-    const entirtyRevision = entity.getActiveRevision();
+    lastClicked.image360Visualization.renderOrder = 1;
+    entity.image360Visualization.renderOrder = 0;
 
-    lastClickedRevision.image360Visualization.renderOrder = 1;
-    entirtyRevision.image360Visualization.renderOrder = 0;
-
-    const transformTo = entirtyRevision.transform.toArray();
+    const transformTo = entity.transform.toArray();
     const translationTo = new THREE.Vector3(transformTo[12], transformTo[13], transformTo[14]);
 
-    const transformFrom = lastClickedRevision.transform.toArray();
+    const transformFrom = lastClicked.transform.toArray();
     const translationFrom = new THREE.Vector3(transformFrom[12], transformFrom[13], transformFrom[14]);
 
     const length = new THREE.Vector3().subVectors(translationTo, translationFrom).length();
 
-    lastClickedRevision.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-    entirtyRevision.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+    lastClicked.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+    entity.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
 
     const renderTrigger = setInterval(() => this.render(), 16);
 
@@ -155,7 +151,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         .onUpdate(() => {
           const animatedPosition = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
           camera.position.copy(animatedPosition);
-          lastClickedRevision!.image360Visualization.opacity = 1 - from.t;
+          lastClicked!.image360Visualization.opacity = 1 - from.t;
         })
         .easing(num => TWEEN.Easing.Quintic.InOut(num))
         .start(TWEEN.now());
@@ -193,9 +189,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
       entity.icon.hoverSpriteVisible = true;
-      const revision = entity.getActiveRevision();
-      await facade.preload(revision);
-      revision.image360Visualization.visible = false;
+      await facade.preload(entity, entity.getActiveRevision());
+      entity.image360Visualization.visible = false;
       this.render();
     });
   }
@@ -205,7 +200,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       opacity: 1.0
     };
     this.gui.add(guiData, 'opacity', 0, 1).onChange(() => {
-      entities.forEach(entity => (entity.getActiveRevision().image360Visualization.opacity = guiData.opacity));
+      entities.forEach(entity => (entity.image360Visualization.opacity = guiData.opacity));
       this.render();
     });
   }

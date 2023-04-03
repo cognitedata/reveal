@@ -9,12 +9,32 @@ import { Image360 } from './Image360';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
+import { Image360VisualizationBox } from './Image360VisualizationBox';
 
 export class Image360Entity implements Image360 {
   private readonly _image360Icon: Image360Icon;
   private readonly _revisions: Image360RevisionEntity[];
+  private readonly _transform: THREE.Matrix4;
+  private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
   private readonly _reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>;
+
+  /**
+   * Get a copy of the model-to-world transformation matrix
+   * of the given 360 image.
+   * @returns model-to-world transform of the 360 Image
+   */
+  get transform(): THREE.Matrix4 {
+    return this._transform.clone();
+  }
+
+  /**
+   * The object containing the unit cube with the 360 images.
+   * @returns Image360Visualization
+   */
+  get image360Visualization(): Image360VisualizationBox {
+    return this._image360VisualzationBox;
+  }
 
   /**
    * Get the icon that represents the 360
@@ -33,11 +53,15 @@ export class Image360Entity implements Image360 {
     icon: Image360Icon,
     reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>
   ) {
+    this._transform = transform;
     this._image360Icon = icon;
     this._reloadImage = reloadImage;
 
+    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
+    this._image360VisualzationBox.visible = false;
+
     this._revisions = image360Metadata.imageRevisions.map(
-      descriptor => new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform)
+      descriptor => new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualzationBox)
     );
     this._activeRevision = this.getMostRecentRevision();
   }
@@ -46,7 +70,7 @@ export class Image360Entity implements Image360 {
    * Set the opacity of all images in this entity.
    */
   public setOpacity(alpha: number): void {
-    this._revisions.forEach(revision => (revision.image360Visualization.opacity = alpha));
+    this.image360Visualization.opacity = alpha;
   }
 
   /**
@@ -78,6 +102,7 @@ export class Image360Entity implements Image360 {
 
   public setActiveRevision(revision: Image360RevisionEntity): void {
     this._activeRevision = revision;
+    this._activeRevision.applyTextures();
   }
 
   public getMostRecentRevision(): Image360RevisionEntity {
@@ -96,10 +121,18 @@ export class Image360Entity implements Image360 {
   }
 
   /**
+   * Drops the GPU resources for the 360 image
+   */
+  public unloadImage(): void {
+    this._image360VisualzationBox.unloadImage();
+  }
+
+  /**
    * @obvious
    */
   public dispose(): void {
-    this._revisions.forEach(revision => revision.unload360Image());
+    this.unloadImage();
+    this._revisions.forEach(revision => revision.clearTextures());
     this._image360Icon.dispose();
   }
 }
