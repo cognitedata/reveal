@@ -28,13 +28,13 @@ describe(Image360LoadingCache.name, () => {
     entityLoadingCache.cachedPreload(entityMock1, revisionMock1);
 
     expect(entityLoadingCache.getDownloadInProgress(revisionMock1)).not.toBe(undefined);
-    expect(entityLoadingCache.cachedEntities.includes(revisionMock1)).toBeFalsy();
+    expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeFalsy();
 
     deferredPromise.fullResolutionCompleted.resolve();
     await deferredPromise.fullResolutionCompleted;
 
     expect(entityLoadingCache.getDownloadInProgress(revisionMock1)).toBe(undefined);
-    expect(entityLoadingCache.cachedEntities.includes(revisionMock1)).toBeTruthy();
+    expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeTruthy();
   });
 
   test('preloading when cache is full should purge stale entity', async () => {
@@ -85,15 +85,15 @@ describe(Image360LoadingCache.name, () => {
     const preLoad2 = entityLoadingCache.cachedPreload(entityMock2, revisionMock2);
 
     expect(entityLoadingCache.getDownloadInProgress(revisionMock2)).not.toBe(undefined);
-    expect(entityLoadingCache.cachedEntities.includes(revisionMock1)).toBeTruthy();
+    expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeTruthy();
 
     deferredPromise2.firstCompleted.resolve();
     deferredPromise2.fullResolutionCompleted.resolve();
     await preLoad2;
 
     expect(entityLoadingCache.currentlyLoadingEntities.length).toBe(0);
-    expect(entityLoadingCache.cachedEntities.length).toBe(1);
-    expect(entityLoadingCache.cachedEntities.includes(revisionMock2)).toBeTruthy();
+    expect(entityLoadingCache.cachedRevisions.length).toBe(1);
+    expect(entityLoadingCache.cachedRevisions.includes(revisionMock2)).toBeTruthy();
   });
 
   test('cache should not purge visible 360 images', async () => {
@@ -166,10 +166,10 @@ describe(Image360LoadingCache.name, () => {
     deferredPromise3.firstCompleted.resolve();
     await preLoad3;
 
-    expect(entityLoadingCache.cachedEntities.length).toBe(2);
+    expect(entityLoadingCache.cachedRevisions.length).toBe(2);
 
-    expect(entityLoadingCache.cachedEntities.includes(revisionMock1)).toBeTruthy();
-    expect(entityLoadingCache.cachedEntities.includes(revisionMock3)).toBeTruthy();
+    expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeTruthy();
+    expect(entityLoadingCache.cachedRevisions.includes(revisionMock3)).toBeTruthy();
   });
 
   test('cache should handle failed downloads', async () => {
@@ -223,8 +223,8 @@ describe(Image360LoadingCache.name, () => {
     await expect(downloadToAbort).resolves.not.toThrow();
     await expect(downloadToResolve).resolves.not.toThrow();
 
-    expect(loadingCache.cachedEntities.length).toBe(1);
-    expect(loadingCache.cachedEntities[0]).toBe(revisionMockToResolve);
+    expect(loadingCache.cachedRevisions.length).toBe(1);
+    expect(loadingCache.cachedRevisions[0]).toBe(revisionMockToResolve);
     expect(loadingCache.currentlyLoadingEntities.length).toBe(0);
   });
 
@@ -296,8 +296,8 @@ describe(Image360LoadingCache.name, () => {
     await download3;
 
     expect(loadingCache.currentlyLoadingEntities.length).toBe(0);
-    expect(loadingCache.cachedEntities.length).toBe(cacheSize);
-    expect(loadingCache.cachedEntities[0]).toBe(revision360Mock3);
-    expect(loadingCache.cachedEntities[1]).toBe(revision360Mock2);
+    expect(loadingCache.cachedRevisions.length).toBe(cacheSize);
+    expect(loadingCache.cachedRevisions[0]).toBe(revision360Mock3);
+    expect(loadingCache.cachedRevisions[1]).toBe(revision360Mock2);
   });
 });

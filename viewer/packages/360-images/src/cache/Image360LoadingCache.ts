@@ -29,7 +29,7 @@ export class Image360LoadingCache {
   private readonly _inProgressDownloads: DownloadRequest[];
   private _lockedDownload: Image360RevisionEntity | undefined;
 
-  get cachedEntities(): Image360RevisionEntity[] {
+  get cachedRevisions(): Image360RevisionEntity[] {
     return this._loaded360Images.map(image => {
       return image.revision;
     });
