@@ -208,16 +208,16 @@ export class Image360ApiHelper {
     }
   }
 
-  private async transition(fromImage: Image360Entity, toImage: Image360Entity) {
+  private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
     const cameraTransitionDuration = 1000;
     const alphaTweenDuration = 800;
     const default360ImageRenderOrder = 3;
 
-    const toVisualizationCube = toImage.image360Visualization;
-    const fromVisualizationCube = fromImage.image360Visualization;
+    const toVisualizationCube = to360Entity.image360Visualization;
+    const fromVisualizationCube = from360Entity.image360Visualization;
 
-    const fromPosition = new THREE.Vector3().setFromMatrixPosition(fromImage.transform);
-    const toPosition = new THREE.Vector3().setFromMatrixPosition(toImage.transform);
+    const fromPosition = new THREE.Vector3().setFromMatrixPosition(from360Entity.transform);
+    const toPosition = new THREE.Vector3().setFromMatrixPosition(to360Entity.transform);
     const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
 
     const toZoom = this._image360Navigation.defaultFOV;
@@ -229,7 +229,7 @@ export class Image360ApiHelper {
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
       this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
-      this.tweenVisualizationAlpha(fromImage, currentFromOpacity, 0, alphaTweenDuration)
+      this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
     restorePostTransitionState(currentFromOpacity);
