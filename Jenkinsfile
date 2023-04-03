@@ -303,7 +303,7 @@ pods {
           summarizeTestResults()
         }
         stage('Upload coverage reports') {
-          codecov.uploadCoverageReport()
+          codecov.upload()
         }
       }
     }
