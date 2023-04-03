@@ -46,6 +46,7 @@ import { isSuccessResponse } from 'utils/responseUtils';
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';
 import { CalculationStatusIndicator } from './CalculationStatusIndicator';
+import { ConfigureCustomCalculation } from './ConfigureCustomCalculation';
 import { STATUS_POLLING_INTERVAL } from './constants';
 import DeleteConfirmModal from './DeleteConfirmModal';
 
@@ -502,21 +503,10 @@ export function CalculationList({
     </GraphicContainer>
   ) : (
     <NonConfiguredCalculationList>
-      {isCustomCalculationEnabled && (
-        <>
-          <Link to="UserDefined/new-calculation/configuration">
-            <Button
-              className="configure-calculation"
-              icon="Settings"
-              size="small"
-              type="primary"
-            >
-              Configure
-            </Button>
-          </Link>
-          <span className="name">Create custom calculation</span>
-        </>
-      )}
+      <ConfigureCustomCalculation
+        modelName={decodeURI(modelName)}
+        simulator={simulator}
+      />
       {nonConfiguredCalculations
         .sort((a: CalculationType, b: CalculationType) => a.localeCompare(b))
         .filter((calcConfig: CalculationType) => {

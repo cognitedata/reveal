@@ -1,6 +1,18 @@
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink, getProject } from '@cognite/cdf-utilities';
 
-export const createCdfLink = (path: string, cluster?: string) => {
+export const createCdfLink = (
+  path: string,
+  cluster?: string,
+  searchParams?: URLSearchParams
+) => {
+  const project = getProject();
+  const pathNameWithoutProject = window.location.pathname.replace(
+    `/${project}`,
+    ''
+  );
+  const pPath = path.startsWith('/')
+    ? `/simint/${path}`
+    : `${pathNameWithoutProject}/${path}`;
   const queryString = window.location.search;
   if (
     cluster &&
@@ -14,7 +26,12 @@ export const createCdfLink = (path: string, cluster?: string) => {
       cluster: parseCluster,
       env: parseCluster.split('.')[0],
     }).toString();
-    return createLink(`/simint${path}?${qs}`).replace(/\s+/g, '');
+    return createLink(
+      `${pPath}?${qs}${searchParams?.toString() ?? ''}`
+    ).replace(/\s+/g, '');
   }
-  return createLink(`/simint${path}`).replace(/\s+/g, '');
+  return createLink(`${pPath}${searchParams?.toString() ?? ''}`).replace(
+    /\s+/g,
+    ''
+  );
 };

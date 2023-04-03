@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useMatch } from 'react-location';
+import { useMatch, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import { Skeleton } from '@cognite/cogs.js';
@@ -11,6 +11,7 @@ import {
   useGetSimulatorsListQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { useUserInfo } from 'hooks/useUserInfo';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { CustomCalculationBuilder } from './CustomCalculationBuilder';
@@ -20,6 +21,8 @@ import type { AppLocationGenerics } from 'routes';
 export function CustomCalculationConfiguration() {
   const [calculation, setCalculation] = useState<UserDefined | null>();
   const project = useSelector(selectProject);
+  const { data: user } = useUserInfo();
+  const userEmail = user ? user.mail : calculation?.userEmail ?? '';
   const {
     params: {
       simulator = 'UNKNOWN',
@@ -28,6 +31,10 @@ export function CustomCalculationConfiguration() {
       userDefined,
     },
   } = useMatch<AppLocationGenerics>();
+  const searchFilters: Partial<{
+    calculationName: string;
+    calculationDescription: string;
+  }> = useSearch<AppLocationGenerics>();
 
   const isNewConfig = userDefined === 'new-calculation';
 
@@ -77,15 +84,28 @@ export function CustomCalculationConfiguration() {
       setCalculation(modelCalculation.configuration as UserDefined);
     }
 
-    if (isNewConfig && !isFetchingConfigurationTemplate) {
+    if (
+      isNewConfig &&
+      !isFetchingConfigurationTemplate &&
+      searchFilters.calculationName
+    ) {
       const calc = configurationTemplate as UserDefined;
-      setCalculation({ ...calc, calculationName: 'User Defined' });
+      if (configurationTemplate) {
+        setCalculation({
+          ...calc,
+          calculationName: searchFilters.calculationName,
+          userEmail,
+          calcTypeUserDefined: searchFilters.calculationName.replace(/ /g, ''),
+        });
+      }
     }
   }, [
     modelCalculation,
     configurationTemplate,
     isNewConfig,
     isFetchingConfigurationTemplate,
+    searchFilters,
+    userEmail,
   ]);
 
   if (
@@ -106,7 +126,7 @@ export function CustomCalculationConfiguration() {
     <CustomCalculationBuilder
       calculation={calculation}
       dataSetId={modelFile.dataSetId}
-      modelName={modelFile.metadata.modelName}
+      modelName={modelName}
       project={project}
       setCalculation={setCalculation}
       simulator={simulator}

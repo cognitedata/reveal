@@ -242,9 +242,6 @@ const WizardStepLabels = styled.div`
     }
     &.disabled {
       color: var(--cogs-border-default);
-      &::after {
-        content: ' (n/a)';
-      }
     }
   }
 `;

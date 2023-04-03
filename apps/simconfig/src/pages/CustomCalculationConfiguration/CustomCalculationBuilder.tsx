@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-location';
 
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Switch, toast } from '@cognite/cogs.js';
+import { Infobox, toast } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -14,13 +14,10 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { DataSamplingStep } from 'pages/CalculationConfiguration/steps/DataSamplingStep';
 import { ScheduleStep } from 'pages/CalculationConfiguration/steps/ScheduleStep';
 import { SummaryStep } from 'pages/CalculationConfiguration/steps/SummaryStep';
+import { createCdfLink } from 'utils/createCdfLink';
 
 import { CustomCalculationBuilderContainer } from './elements';
-import { Routine } from './Routine';
-import {
-  getStepValidationErrors,
-  userDefinedCalculationSchema,
-} from './Routine/validation';
+import { getStepValidationErrors } from './Routine/validation';
 
 interface CustomCalculationBuilderProps {
   calculation: UserDefined;
@@ -39,10 +36,17 @@ export function CustomCalculationBuilder({
   modelName,
   simulator,
 }: CustomCalculationBuilderProps) {
-  const [isJsonModeEnabled, setJsonModeEnabled] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [isCalculationFormatValid, setIsCalculationFormatValid] =
+    useState<boolean>(true);
+  const [calculationTemp, setCalculationTemp] = useState<string>();
+  const [editorChangesSaved, setEditorChangesSaved] = useState<boolean>(true);
   const { data: user } = useUserInfo();
   const [upsertCalculation] = useUpsertCalculationMutation();
+
+  useEffect(() => {
+    setCalculationTemp(JSON.stringify(calculation, null, 2));
+  }, [calculation]);
 
   function isValidCalculation(str: string): UserDefined | boolean {
     try {
@@ -51,21 +55,22 @@ export function CustomCalculationBuilder({
       return false;
     }
   }
-
   const handleCalculationEditorChange = (
     calculationConfiguration: string | undefined,
     setValues: (values: UserDefined) => void
   ) => {
-    if (
-      calculationConfiguration &&
-      isValidCalculation(calculationConfiguration)
-    ) {
-      const update = {
-        ...(JSON.parse(calculationConfiguration) as UserDefined),
-        userEmail: user?.mail ?? '',
-      };
-      setCalculation(update);
-      setValues(update);
+    if (calculationConfiguration) {
+      const checkCalc = isValidCalculation(calculationConfiguration);
+      setIsCalculationFormatValid(!!checkCalc);
+
+      if (checkCalc) {
+        const update = {
+          ...(JSON.parse(calculationConfiguration) as UserDefined),
+          userEmail: user?.mail ?? '',
+        };
+        setCalculation(update);
+        setValues(update);
+      }
     }
   };
 
@@ -74,7 +79,6 @@ export function CustomCalculationBuilder({
       <Formik
         initialValues={calculation}
         validateOnChange={false}
-        validationSchema={userDefinedCalculationSchema}
         validateOnBlur
         validateOnMount
         onSubmit={async (_values) => {
@@ -90,7 +94,9 @@ export function CustomCalculationBuilder({
               });
 
               navigate({
-                to: `/model-library/models/${simulator}/${modelName}/calculations`,
+                to: createCdfLink(
+                  `/model-library/models/${simulator}/${modelName}/calculations`
+                ),
               });
             })
             .catch((error) =>
@@ -100,40 +106,32 @@ export function CustomCalculationBuilder({
             );
         }}
       >
-        {({
-          isSubmitting,
-          isValid,
-          values,
-          setValues,
-          submitForm,
-          setFieldValue,
-        }) => (
+        {({ isSubmitting, isValid, values, setValues, submitForm }) => (
           <Form>
             <CustomCalculationConfigurationHeader>
-              <Field
-                name="calculationName"
-                size={values.calculationName.length - 5}
-                value={values.calculationName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const { name, value } = event.target;
-                  setFieldValue(name, value);
-                  setCalculation({ ...calculation, calculationName: value });
-                }}
-              />
-              Configuration for {modelName}
+              <strong>{values.calculationName} </strong>
+              Configuration for {decodeURI(modelName)}
             </CustomCalculationConfigurationHeader>
             <Wizard
               isSubmitting={isSubmitting}
               isValid={isValid}
               animated
               onChangeStep={() => {
-                setCalculation(values);
-                setValues(values);
+                if (!editorChangesSaved && calculationTemp) {
+                  const val = JSON.parse(calculationTemp) as UserDefined;
+                  setCalculation(val);
+                  setValues(val);
+                  setEditorChangesSaved(true);
+                } else {
+                  setCalculation(values);
+                  setValues(values);
+                }
                 return true;
               }}
               onSubmit={submitForm}
             >
               <Wizard.Step
+                disabled={!isCalculationFormatValid}
                 icon="Calendar"
                 key="schedule"
                 title="Schedule"
@@ -143,47 +141,50 @@ export function CustomCalculationBuilder({
               </Wizard.Step>
 
               <Wizard.Step
+                disabled={!isCalculationFormatValid}
                 icon="DataSource"
                 key="data-sampling"
                 title="Data sampling"
                 validationErrors={getStepValidationErrors(
                   values,
-                  'dataSampling'
+                  'dataSampling',
+                  'logicalCheck',
+                  'steadyStateDetection'
                 )}
               >
                 <DataSamplingStep />
               </Wizard.Step>
 
-              <Wizard.Step
-                icon="Function"
-                key="routine"
-                title="Routine"
-                validationErrors={getStepValidationErrors(values, 'routine')}
-              >
-                <Routine setCalculation={setCalculation} />
-              </Wizard.Step>
-
-              <Wizard.Step icon="Checkmark" key="summary" title="Summary">
-                <Switch
-                  checked={isJsonModeEnabled}
-                  name="json-preview"
-                  onChange={() => {
-                    setJsonModeEnabled(!isJsonModeEnabled);
-                  }}
-                >
-                  JSON Preview
-                </Switch>
-                {isJsonModeEnabled ? (
+              <Wizard.Step icon="CLI" key="routine" title="Routine">
+                <EditorContainer>
+                  {!isCalculationFormatValid && (
+                    <Infobox style={{ width: '600px' }} type="danger">
+                      You entered an invalid value that is not supported. Please
+                      try again.
+                    </Infobox>
+                  )}
                   <Editor
-                    height="55vh"
-                    value={JSON.stringify(calculation, null, 2)}
+                    height="42vh"
+                    value={calculationTemp}
+                    width="90vw"
                     onChange={(value) => {
-                      handleCalculationEditorChange(value, setValues);
+                      const checkCalc = isValidCalculation(value);
+                      setIsCalculationFormatValid(!!checkCalc);
+                      setCalculationTemp(value);
+                      setEditorChangesSaved(false);
+                      // handleCalculationEditorChange(value, setValues);
                     }}
                   />
-                ) : (
-                  <SummaryStep />
-                )}
+                </EditorContainer>
+              </Wizard.Step>
+
+              <Wizard.Step
+                disabled={!isCalculationFormatValid}
+                icon="Checkmark"
+                key="summary"
+                title="Summary"
+              >
+                <SummaryStep />
               </Wizard.Step>
             </Wizard>
           </Form>
@@ -194,26 +195,24 @@ export function CustomCalculationBuilder({
 }
 
 const CustomCalculationConfigurationHeader = styled.div`
+  margin-top: 2.69em;
   font-size: 1.5rem;
   z-index: 3;
   position: fixed;
   width: calc(100% - 3rem);
   backdrop-filter: blur(5px);
-  padding: 2rem 0;
+  padding: 0.25rem 0;
+  padding-top: 2rem;
+  padding-bottom: 3.5rem;
   font-size: 1.5em;
   background: rgba(255, 255, 255, 0.9);
   top: 3.5rem;
-  input {
-    border: none;
-    background-color: inherit;
-    font-weight: 700;
-    min-width: 200px;
-    cursor: text;
-    &:focus,
-    &:hover {
-      outline: none;
-      background-color: rgba(217, 217, 217, 0.45);
-      border-bottom: 0.05px solid rgba(217, 217, 217, 1);
-    }
-  }
+`;
+
+const EditorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
 `;
