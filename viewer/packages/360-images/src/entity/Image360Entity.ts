@@ -118,7 +118,7 @@ export class Image360Entity implements Image360 {
    * Drops the GPU resources for the 360 image
    */
   public unloadImage(): void {
-    this._image360VisualzationBox.unloadImage();
+    this._image360VisualzationBox.unloadImages();
   }
 
   /**

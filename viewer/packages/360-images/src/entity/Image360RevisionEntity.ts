@@ -89,7 +89,7 @@ export class Image360RevisionEntity implements Image360Revision {
    * Apply cached textures to the image360VisualzationBox.
    */
   public applyTextures(): void {
-    this._image360VisualzationBox.createImage(this._textures);
+    this._image360VisualzationBox.loadImages(this._textures);
   }
 
   /**
@@ -102,7 +102,7 @@ export class Image360RevisionEntity implements Image360Revision {
       const result = await this._getFullResolutionTextures;
       if (result) {
         this._textures = await result.textures;
-        this._image360VisualzationBox.createImage(this._textures);
+        this._image360VisualzationBox.loadImages(this._textures);
         this._getFullResolutionTextures = undefined;
       }
     } catch (e) {}

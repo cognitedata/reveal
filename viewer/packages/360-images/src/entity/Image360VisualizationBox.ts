@@ -81,7 +81,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     };
   }
 
-  public createImage(textures: Image360Texture[]): void {
+  public loadImages(textures: Image360Texture[]): void {
     if (this._visualizationMesh) {
       this._faceMaterialOrder.forEach((face, index) => {
         this._faceMaterials[index].map = getFaceTexture(face);
@@ -129,7 +129,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     );
   }
 
-  public unloadImage(): void {
+  public unloadImages(): void {
     if (this._visualizationMesh === undefined) {
       return;
     }
