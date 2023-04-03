@@ -26,6 +26,7 @@ interface Props {
   visible?: boolean;
   allowHide?: boolean;
   enableAdvancedFilters?: boolean;
+  enableDocumentLabelsFilter?: boolean;
 }
 
 export const SearchFiltersV2: React.FC<Props> = ({
@@ -33,6 +34,7 @@ export const SearchFiltersV2: React.FC<Props> = ({
   // allowHide = true,
   // closeFilters = () => {},
   resourceType,
+  enableDocumentLabelsFilter,
 }) => {
   // const handleFilterChange = (
   //   resourceType: ResourceType,
@@ -54,6 +56,7 @@ export const SearchFiltersV2: React.FC<Props> = ({
     >
       {visible && (
         <SidebarFilters
+          enableDocumentLabelsFilter={enableDocumentLabelsFilter}
           resourceType={resourceType}
           onFilterChange={(type, nextFilter) => {
             setter(type, nextFilter);

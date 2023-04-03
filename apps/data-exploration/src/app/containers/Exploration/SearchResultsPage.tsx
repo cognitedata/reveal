@@ -48,6 +48,7 @@ import {
 } from '@data-exploration-app/store/filter/selectors';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { useFlagDocumentLabelsFilter } from '@data-exploration-app/hooks';
 import { AllTab } from '@data-exploration-app/containers/All';
 import { useFilterSidebarState } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -75,6 +76,7 @@ function SearchPage() {
   useSequencesMetadataKeys();
 
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const isDocumentsLabelsFilterEnabled = useFlagDocumentLabelsFilter();
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
@@ -117,6 +119,7 @@ function SearchPage() {
       <SearchFiltersWrapper>
         <SearchFiltersV2
           enableAdvancedFilters={isAdvancedFiltersEnabled}
+          enableDocumentLabelsFilter={isDocumentsLabelsFilterEnabled}
           resourceType={currentResourceType}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
