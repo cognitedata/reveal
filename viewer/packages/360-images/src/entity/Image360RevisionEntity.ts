@@ -35,14 +35,14 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   /**
-   * Loads the 360 image (6 faces) into the visualization object.
+   * Loads the textures needed for the 360 image (6 faces).
    *
-   * This will start the download of both low and full resolution images and return one promise for when the first image set is ready
+   * This will start the download of both low and full resolution textures and return one promise for when the first image set is ready
    * and one promise for when both downloads are completed. If the low resolution images are completed first the full resolution
    * download and texture loading will continue in the background, and applyFullResolution can be used to apply full resolution textures
    * to the image360VisualzationBox at a desired time.
    *
-   * @returns firstCompleted A promise for when the first set om images has been loaded and applied to the image360VisualzationBox.
+   * @returns firstCompleted A promise for when the first set of textures has been loaded.
    * @returns fullResolutionCompleted A promise for when full resolution images are done loading.
    */
   public loadTextures(abortSignal?: AbortSignal): {
@@ -78,6 +78,9 @@ export class Image360RevisionEntity implements Image360Revision {
     }
   }
 
+  /**
+   * Clear the cached textures used by this revision.
+   */
   public clearTextures(): void {
     this._textures = [];
   }
