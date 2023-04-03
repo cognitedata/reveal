@@ -20,8 +20,8 @@ export interface Image360 {
   readonly image360Visualization: Image360Visualization;
 
   /**
-   * List all available revisions for this image.
-   * @returns A list of  available revisions.
+   * List all historical images for this entity.
+   * @returns A list of available revisions.
    */
   list360ImageRevisions(): Image360Revision[];
 

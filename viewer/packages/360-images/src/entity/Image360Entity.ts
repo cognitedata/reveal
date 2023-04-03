@@ -12,12 +12,12 @@ import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 
 export class Image360Entity implements Image360 {
-  private readonly _image360Icon: Image360Icon;
   private readonly _revisions: Image360RevisionEntity[];
   private readonly _transform: THREE.Matrix4;
+  private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _activeRevision: Image360RevisionEntity;
   private readonly _reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>;
+  private _activeRevision: Image360RevisionEntity;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -29,20 +29,20 @@ export class Image360Entity implements Image360 {
   }
 
   /**
-   * The object containing the unit cube with the 360 images.
-   * @returns Image360Visualization
-   */
-  get image360Visualization(): Image360VisualizationBox {
-    return this._image360VisualzationBox;
-  }
-
-  /**
    * Get the icon that represents the 360
    * image during normal visualization.
    * @returns Image360Icon
    */
   get icon(): Image360Icon {
     return this._image360Icon;
+  }
+
+  /**
+   * The object containing the unit cube with the 360 images.
+   * @returns Image360Visualization
+   */
+  get image360Visualization(): Image360VisualizationBox {
+    return this._image360VisualzationBox;
   }
 
   constructor(
@@ -67,7 +67,7 @@ export class Image360Entity implements Image360 {
   }
 
   /**
-   * List all available revisions for this image.
+   * List all historical images for this entity.
    * @returns A list of available revisions.
    */
   public list360ImageRevisions(): Image360RevisionEntity[] {
