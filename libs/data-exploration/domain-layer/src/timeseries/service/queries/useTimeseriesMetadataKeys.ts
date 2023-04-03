@@ -2,8 +2,17 @@ import { useMemo } from 'react';
 
 import { useTimeseriesMetadataKeysAggregateQuery } from './useTimeseriesMetadataKeysAggregateQuery';
 
-export const useTimeseriesMetadataKeys = () => {
-  const { data, ...rest } = useTimeseriesMetadataKeysAggregateQuery();
+interface Props {
+  query?: string;
+  enabled?: boolean;
+}
+
+export const useTimeseriesMetadataKeys = ({ query, enabled }: Props = {}) => {
+  const { data, ...rest } = useTimeseriesMetadataKeysAggregateQuery(
+    query,
+    undefined,
+    { enabled }
+  );
 
   const metadataKeys = useMemo(() => {
     return data?.map(({ values }) => values);

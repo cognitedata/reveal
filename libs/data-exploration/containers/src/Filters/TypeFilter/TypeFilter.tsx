@@ -1,22 +1,26 @@
 import {
   InternalDocumentFilter,
   InternalEventsFilters,
+  useDebouncedState,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import {
-  useDocumentAggregateFileTypeQuery,
+  useDocumentsUniqueValuesByProperty,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
+import { InputActionMeta } from 'react-select';
 
 interface BaseTypeFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {
   value?: string | string[];
   onChange?: (type: string | string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  query?: string;
 }
 
 export interface TypeFilterProps<TFilter> extends BaseTypeFilterProps<TFilter> {
@@ -44,11 +48,15 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const {
     data: fileTypeItems = [],
     isLoading,
     isError,
-  } = useDocumentAggregateFileTypeQuery();
+  } = useDocumentsUniqueValuesByProperty('type', query, {
+    keepPreviousData: true,
+  });
 
   const options = useDeepMemo(
     () =>
@@ -63,6 +71,7 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
   return (
     <TypeFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -72,11 +81,15 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const {
     data = [],
     isLoading,
     isError,
-  } = useEventsUniqueValuesByProperty('type', props.filter);
+  } = useEventsUniqueValuesByProperty('type', query, props.filter, {
+    keepPreviousData: true,
+  });
 
   const options = useDeepMemo(
     () =>
@@ -91,6 +104,7 @@ const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
   return (
     <TypeFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}

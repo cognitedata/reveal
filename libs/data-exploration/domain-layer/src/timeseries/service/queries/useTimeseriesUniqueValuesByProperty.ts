@@ -14,13 +14,18 @@ import {
 
 export const useTimeseriesUniqueValuesByProperty = (
   property: TimeseriesProperty,
+  query?: string,
   filter?: InternalTimeseriesFilters | OldTimeseriesFilters
 ) => {
   const sdk = useSDK();
 
-  return useQuery(queryKeys.timeseriesUniqueValues(property, filter), () => {
-    return getTimeseriesUniqueValuesByProperty(sdk, property, {
-      filter: transformNewFilterToOldFilter(filter),
-    });
-  });
+  return useQuery(
+    queryKeys.timeseriesUniqueValues(property, query, filter),
+    () => {
+      return getTimeseriesUniqueValuesByProperty(sdk, property, {
+        filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+      });
+    }
+  );
 };

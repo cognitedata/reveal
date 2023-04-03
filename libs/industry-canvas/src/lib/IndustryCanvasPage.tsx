@@ -1,13 +1,5 @@
 import { PageTitle } from '@cognite/cdf-utilities';
-import {
-  Button,
-  Title,
-  Flex,
-  Tooltip,
-  Icon,
-  Colors,
-  toast,
-} from '@cognite/cogs.js';
+import { Button, Flex, Tooltip, Icon, Colors, toast } from '@cognite/cogs.js';
 import {
   isNotUndefined,
   ResourceIcons,
@@ -34,17 +26,28 @@ import {
 } from './types';
 import { useState, useEffect, KeyboardEventHandler } from 'react';
 import useManagedState from './hooks/useManagedState';
-import { clearCanvasState } from './utils/utils';
+import { CanvasTitle } from './components/CanvasTitle';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useIndustryCanvasService } from './hooks/useIndustryCanvasService';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
-export const IndustryCanvasPage = () => {
+const IndustryCanvasPageWithoutQueryClientProvider = () => {
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
 
   const sdk = useSDK();
+
+  const {
+    activeCanvas,
+    isCreatingCanvas,
+    isSavingCanvas,
+    isLoadingCanvas,
+    saveCanvas,
+    createCanvas,
+  } = useIndustryCanvasService();
 
   const {
     container,
@@ -185,8 +188,16 @@ export const IndustryCanvasPage = () => {
     });
   };
 
-  const onClearLocalStorage = () => {
-    clearCanvasState();
+  const onClearCanvas = async () => {
+    if (activeCanvas !== undefined) {
+      saveCanvas({
+        ...activeCanvas,
+        data: {
+          containerReferences: [],
+          canvasAnnotations: [],
+        },
+      });
+    }
     window.location.reload();
   };
 
@@ -207,14 +218,30 @@ export const IndustryCanvasPage = () => {
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
-            <ResourceIcons type="file" style={{ marginRight: '10px' }} />
-            <Name level="3">Industry Canvas</Name>
+            <ResourceIcons type="file" style={{ marginRight: '5px' }} />
+            <CanvasTitle />
+            <Button
+              aria-label="CreateCanvasButton"
+              size="medium"
+              type="primary"
+              icon="Plus"
+              loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
+              style={{ marginLeft: '10px' }}
+              onClick={() => {
+                createCanvas({
+                  canvasAnnotations: [],
+                  containerReferences: [],
+                });
+              }}
+            >
+              Create new canvas
+            </Button>
           </Flex>
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Button onClick={onClearLocalStorage}>
-            <Icon type="Delete" /> Clear Canvas
+          <Button onClick={onClearCanvas}>
+            <Icon type="Delete" /> Clear canvas
           </Button>
 
           <Tooltip content="Undo">
@@ -272,6 +299,15 @@ export const IndustryCanvasPage = () => {
   );
 };
 
+export const IndustryCanvasPage = () => {
+  const queryClient = new QueryClient();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <IndustryCanvasPageWithoutQueryClientProvider />
+    </QueryClientProvider>
+  );
+};
+
 const TitleRowWrapper = styled.div`
   h1 {
     margin: 0px;
@@ -285,12 +321,6 @@ const TitleRowWrapper = styled.div`
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
-`;
-
-const Name = styled(Title)`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 `;
 
 const StyledGoBackWrapper = styled.div`

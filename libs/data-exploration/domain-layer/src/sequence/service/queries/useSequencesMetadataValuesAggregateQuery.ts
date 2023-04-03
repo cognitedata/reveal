@@ -13,6 +13,7 @@ import {
 
 export const useSequencesMetadataValuesAggregateQuery = (
   metadataKey?: string | null,
+  query?: string,
   filter?: InternalSequenceFilters | OldSequenceFilters,
   options?: UseQueryOptions<
     SequencesMetadataAggregateResponse[],
@@ -24,10 +25,11 @@ export const useSequencesMetadataValuesAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.sequencesMetadataValues(String(metadataKey), filter),
+    queryKeys.sequencesMetadataValues(String(metadataKey), query, filter),
     () =>
       getSequencesMetadataValuesAggregate(sdk, String(metadataKey), {
         filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       }),
     {
       enabled:

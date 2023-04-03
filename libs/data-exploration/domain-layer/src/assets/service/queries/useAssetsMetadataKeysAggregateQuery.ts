@@ -13,6 +13,7 @@ import {
 } from '@data-exploration-lib/core';
 
 export const useAssetsMetadataKeysAggregateQuery = (
+  query?: string,
   filter?: InternalAssetFilters | OldAssetFilters,
   options?: UseQueryOptions<
     AssetsMetadataAggregateResponse[],
@@ -24,12 +25,16 @@ export const useAssetsMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsMetadata(filter),
+    queryKeys.assetsMetadata(query, filter),
     () => {
       return getAssetsMetadataKeysAggregate(sdk, {
         filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
-    options
+    {
+      keepPreviousData: true,
+      ...options,
+    }
   );
 };

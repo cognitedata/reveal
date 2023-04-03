@@ -2,8 +2,17 @@ import { useMemo } from 'react';
 
 import { useEventsMetadataKeysAggregateQuery } from './useEventsMetadataKeysAggregateQuery';
 
-export const useEventsMetadataKeys = () => {
-  const { data, ...rest } = useEventsMetadataKeysAggregateQuery();
+interface Props {
+  query?: string;
+  enabled?: boolean;
+}
+
+export const useEventsMetadataKeys = ({ query, enabled }: Props = {}) => {
+  const { data, ...rest } = useEventsMetadataKeysAggregateQuery(
+    query,
+    undefined,
+    { enabled }
+  );
 
   const metadataKeys = useMemo(() => {
     return data?.map(({ value }) => value);

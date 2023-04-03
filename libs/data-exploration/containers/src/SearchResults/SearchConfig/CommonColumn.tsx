@@ -12,8 +12,8 @@ import {
   CommonColumnWrapper,
   CommonWrapper,
   ModalCheckbox,
-  ModalSwitch,
 } from './elements';
+import { FuzzySearchToggle } from './FuzzySearchToggle';
 
 type Props = {
   searchConfigData: SearchConfigDataType;
@@ -68,14 +68,12 @@ export const CommonColumn = ({
               >
                 {column}
               </ModalCheckbox>
-              {showFuzzySearchToggle && (
-                <ModalSwitch
-                  checked={isFuzzySearchEnabled}
-                  onChange={(_: unknown, nextState: boolean) =>
-                    onToggleFuzzySearch(nextState, index)
-                  }
-                />
-              )}
+
+              <FuzzySearchToggle
+                visible={showFuzzySearchToggle}
+                enabled={isFuzzySearchEnabled}
+                onChange={(nextState) => onToggleFuzzySearch(nextState, index)}
+              />
             </Flex>
           );
         })}

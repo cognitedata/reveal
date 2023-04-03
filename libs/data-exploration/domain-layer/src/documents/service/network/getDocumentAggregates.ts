@@ -8,6 +8,6 @@ export const getDocumentAggregates = (
   sdk: CogniteClient
 ) => {
   return sdk.documents.aggregate
-    .allUniqueValues(aggregates)
+    .allUniqueValues(aggregates) //!
     .autoPagingToArray({ limit: Infinity });
 };

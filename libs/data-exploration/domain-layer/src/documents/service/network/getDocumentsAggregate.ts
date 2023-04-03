@@ -10,7 +10,8 @@ export const getDocumentsAggregate = <ResponseType = AggregateResponse>(
       `/api/v1/projects/${sdk.project}/documents/aggregate`,
       {
         headers: {
-          'cdf-version': 'alpha',
+          'cdf-version': '20230101-alpha',
+          'cdf-experiments': 'document-search-in-data-explorer',
         },
         data: {
           ...payload,

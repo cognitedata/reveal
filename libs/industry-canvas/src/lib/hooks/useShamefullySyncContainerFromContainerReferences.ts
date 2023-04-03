@@ -70,7 +70,7 @@ export const useShamefullySyncContainerFromContainerReferences = ({
             e.cancelBubble = true;
             setInteractionState({
               hoverId: undefined,
-              clickedContainer: containerReference,
+              clickedContainerReferenceId: containerReference.id,
               selectedAnnotationId: undefined,
             });
           };

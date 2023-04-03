@@ -1,6 +1,5 @@
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
-import { CogniteEvent } from '@cognite/unified-file-viewer';
 import { RelationshipLabels } from '../../../types';
 import { useAssetsByIdQuery } from '@data-exploration-lib/domain-layer';
 import { EMPTY_ARRAY } from '@data-exploration-lib/core';
@@ -8,12 +7,7 @@ import styled from 'styled-components';
 import { RootAssetButton } from '@data-exploration-components/components/RootAsset';
 
 interface DirectAssetsProps {
-  data: Timeseries &
-    RelationshipLabels &
-    Asset &
-    CogniteEvent &
-    FileInfo &
-    Sequence;
+  data: Timeseries & RelationshipLabels & Asset & FileInfo & Sequence;
   onClick: (directAsset: Asset) => void;
   ids?: IdEither[];
 }

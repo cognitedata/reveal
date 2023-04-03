@@ -102,3 +102,12 @@ export type IndustryCanvasState = {
   containerReferences: ContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
 };
+
+export type PersistedCanvasState = {
+  externalId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  version: number;
+  data: IndustryCanvasState;
+};

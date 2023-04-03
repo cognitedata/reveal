@@ -110,13 +110,15 @@ export const mapFiltersToEventsAdvancedFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<EventsProperties>();
     for (const { key, value } of metadata) {
       if (value === METADATA_ALL_VALUE) {
-        filterBuilder.exists(`metadata|${key}`);
+        metadataBuilder.exists(`metadata|${key}`);
       } else {
-        filterBuilder.equals(`metadata|${key}`, value);
+        metadataBuilder.equals(`metadata|${key}`, value);
       }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
@@ -144,10 +146,6 @@ export const mapFiltersToEventsAdvancedFilters = (
     if (searchConfig.type.enabled) {
       searchQueryBuilder.equals('type', query);
       searchQueryBuilder.prefix('type', query);
-
-      if (searchConfig.type.enabledFuzzySearch) {
-        searchQueryBuilder.search('type', query);
-      }
     }
 
     if (searchConfig.subtype.enabled) {

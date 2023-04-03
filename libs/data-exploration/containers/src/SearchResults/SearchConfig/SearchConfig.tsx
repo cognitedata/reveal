@@ -2,7 +2,7 @@ import { Flex } from '@cognite/cogs.js';
 import { SearchConfigModal } from '@data-exploration/components';
 import {
   FilterIdType,
-  searchConfigData,
+  searchConfigData as searchConfigDefaultData,
   SearchConfigDataType,
   SearchConfigResourceType,
   SEARCH_CONFIG_LOCAL_STORAGE_KEY,
@@ -28,7 +28,7 @@ export const SearchConfig: React.FC<Props> = ({
     useLocalStorageState<SearchConfigDataType>(
       SEARCH_CONFIG_LOCAL_STORAGE_KEY,
       {
-        defaultValue: searchConfigData,
+        defaultValue: searchConfigDefaultData,
         storageSync: true,
       }
     );
@@ -113,7 +113,7 @@ export const SearchConfig: React.FC<Props> = ({
     <SearchConfigModal
       visible={visible}
       onCancel={() => {
-        setConfigData(searchConfigData);
+        setConfigData(searchConfig);
         onCancel();
       }}
       onOk={() => {
