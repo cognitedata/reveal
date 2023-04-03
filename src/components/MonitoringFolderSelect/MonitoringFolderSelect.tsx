@@ -13,7 +13,8 @@ import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 const defaultTranslations = makeDefaultTranslations(
   'Unable to create monitoring job',
   'Folder is required',
-  'Create folder:'
+  'Create folder:',
+  'Select or create folder'
 );
 
 type Props = {
@@ -131,6 +132,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
       render={({ field: { onChange, onBlur, value, ref } }) => {
         return (
           <Select
+            placeholder={t['Select or create folder']}
             inputId="select-monitoring-input"
             value={value}
             ref={ref}
