@@ -1,4 +1,7 @@
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+import {
+  DEFAULT_SCORE_SORTING,
+  TableSortBy,
+} from '@data-exploration-lib/domain-layer';
 import {
   InternalSortBy,
   METADATA_KEY_SEPARATOR,
@@ -7,7 +10,9 @@ import {
 export const mapTableSortByToAssetSortFields = (
   sortBy?: TableSortBy[]
 ): InternalSortBy[] | undefined => {
-  if (!sortBy || sortBy.length === 0) return undefined;
+  if (!sortBy || sortBy.length === 0) {
+    return DEFAULT_SCORE_SORTING;
+  }
 
   return sortBy.map((tableSort) => {
     const properties = tableSort.id.split(METADATA_KEY_SEPARATOR);

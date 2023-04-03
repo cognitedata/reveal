@@ -22,6 +22,9 @@ export type SequenceProperties = {
   [key: `metadata|${string}`]: string;
 };
 
+// This will be gone when Timelords provides a proper implementation.
+const DUMMY_SEARCH_TOKEN = Array(128).join('Y');
+
 export const mapFiltersToSequenceAdvancedFilters = (
   {
     dataSetIds,
@@ -91,11 +94,15 @@ export const mapFiltersToSequenceAdvancedFilters = (
       }
     }
 
+    if (!(searchConfig.name.enabled && searchConfig.description.enabled)) {
+      searchQueryBuilder.search('name', DUMMY_SEARCH_TOKEN);
+    }
     /**
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
     if (searchConfig.metadata.enabled) {
+      searchQueryBuilder.equals(`metadata`, query);
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
@@ -103,6 +110,7 @@ export const mapFiltersToSequenceAdvancedFilters = (
       searchQueryBuilder.equals('id', Number(query));
     }
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals(`externalId`, query);
       searchQueryBuilder.prefix('externalId', query);
     }
 

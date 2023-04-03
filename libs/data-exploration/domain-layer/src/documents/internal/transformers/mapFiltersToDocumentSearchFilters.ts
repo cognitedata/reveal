@@ -119,6 +119,8 @@ export const mapFiltersToDocumentSearchFilters = (
 
     if (searchConfig['sourceFile|metadata'].enabled) {
       // @ts-ignore
+      searchQueryBuilder.equals('sourceFile|metadata', query);
+      // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|metadata', query);
     }
 
@@ -127,10 +129,13 @@ export const mapFiltersToDocumentSearchFilters = (
     }
 
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals('externalId', query);
       searchQueryBuilder.prefix('externalId', query);
     }
 
     if (searchConfig['sourceFile|source'].enabled) {
+      // @ts-ignore
+      searchQueryBuilder.equals('sourceFile|source', query);
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|source', query);
     }

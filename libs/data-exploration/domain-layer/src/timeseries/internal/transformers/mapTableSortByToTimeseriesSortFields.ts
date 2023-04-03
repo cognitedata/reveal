@@ -1,4 +1,7 @@
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  // DEFAULT_SCORE_SORTING,
+} from '@data-exploration-lib/domain-layer';
 import {
   InternalSortBy,
   METADATA_KEY_SEPARATOR,
@@ -8,6 +11,10 @@ export const mapTableSortByToTimeseriesSortFields = (
   sortBy?: TableSortBy[]
 ): InternalSortBy[] | undefined => {
   if (!sortBy || sortBy.length === 0) return undefined;
+  // INFO: Sorting according to search score is not supported by TS and Sequences yet.
+  // if (!sortBy || sortBy.length === 0) {
+  //   return DEFAULT_SCORE_SORTING;
+  // }
 
   if (sortBy.length > 0) {
     return sortBy.map((tableSort) => {
