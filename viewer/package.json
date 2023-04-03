@@ -134,7 +134,7 @@
     "three": "0.150.1",
     "ts-jest": "29.0.5",
     "ts-loader": "9.4.2",
-    "tsc-alias": "1.8.4",
+    "tsc-alias": "1.8.5",
     "typescript": "5.0.2",
     "wasm-pack": "0.10.3",
     "webpack": "5.76.3",
