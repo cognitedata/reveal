@@ -67,15 +67,8 @@ export class Image360Entity implements Image360 {
   }
 
   /**
-   * Set the opacity of all images in this entity.
-   */
-  public setOpacity(alpha: number): void {
-    this.image360Visualization.opacity = alpha;
-  }
-
-  /**
    * List all available revisions.
-   * */
+   */
   public list360ImageRevisions(): Image360RevisionEntity[] {
     return this._revisions;
   }

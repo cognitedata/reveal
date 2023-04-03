@@ -16,18 +16,13 @@ export interface Image360 {
   /**
    * The object containing the unit cube with the 360 images.
    * @returns Image360Visualization
-   * */
-  readonly image360Visualization: Image360Visualization;
-
-  /**
-   * Set the opacity of all images in this entity.
    */
-  setOpacity(alpha: number): void;
+  readonly image360Visualization: Image360Visualization;
 
   /**
    * List the ids and dates for all available revisions. If a revison is undated, the date will be undefined.
    * @returns A list of id and date pairs, sorted with the most recent date first.
-   * */
+   */
   list360ImageRevisions(): Image360Revision[];
 
   /**
