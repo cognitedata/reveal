@@ -82,7 +82,7 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
               </AlertAction>
             </Dropdown>
           ) : (
-            <ResolvedText>{t.Resolved}</ResolvedText>
+            <AlertAction resolved>{t.Resolved}</AlertAction>
           )}
         </ResolverContainer>
       </Col>
@@ -122,17 +122,6 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
     </Row>
   );
 };
-
-const ResolvedText = styled.div`
-  position: relative;
-  top: 8px;
-  left: 1.5px;
-  margin-right: 7px;
-  font-weight: 500;
-  line-height: 1;
-  margin-bottom: 1em;
-  color: var(--cogs-text-icon--status-undefined);
-`;
 
 const ResolverContainer = styled.div`
   text-align: right;

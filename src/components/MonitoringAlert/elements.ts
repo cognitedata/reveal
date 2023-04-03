@@ -11,13 +11,21 @@ export const AlertText = styled(Col)`
   top: 7px;
 `;
 
-export const AlertAction = styled(Button)`
+export const AlertAction = styled(Button)<{ resolved?: boolean }>`
   &&& {
-    height: 28px;
-    background-color: var(--cogs-surface--status-warning--muted--default);
+    height: 20px;
+    position: relative;
+    top: 7px;
+    background: ${(props) =>
+      props.resolved
+        ? 'none'
+        : 'var(--cogs-surface--status-warning--muted--default)'};
     border: 0;
     padding: 0;
-    color: var(--cogs-text-icon--status-warning);
+    color: ${(props) =>
+      props.resolved
+        ? 'var(--cogs-text-icon--status-undefined)'
+        : 'var(--cogs-text-icon--status-warning)'};
     padding: 0px 5px 0px 10px;
     i {
       margin-left: 3px;
