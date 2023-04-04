@@ -22,14 +22,6 @@ export const createInternalLink = (path?: string | number) => {
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 
-export function stringSorter(a: string = '', b: string = '') {
-  if (a < b) {
-    return -1;
-  } else if (b > a) {
-    return 1;
-  } else return 0;
-}
-
 export const sleep = async (ms: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
 
