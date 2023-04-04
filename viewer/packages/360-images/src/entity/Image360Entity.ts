@@ -70,7 +70,7 @@ export class Image360Entity implements Image360 {
    * List all historical images for this entity.
    * @returns A list of available revisions.
    */
-  public list360ImageRevisions(): Image360RevisionEntity[] {
+  public getRevisions(): Image360RevisionEntity[] {
     return this._revisions;
   }
 

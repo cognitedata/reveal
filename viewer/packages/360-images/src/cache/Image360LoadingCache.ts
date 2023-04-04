@@ -136,7 +136,7 @@ export class Image360LoadingCache {
 
   public async purge(entity: Image360Entity): Promise<void> {
     const { _inProgressDownloads, _loaded360Images } = this;
-    entity.list360ImageRevisions().forEach(revision => purgeRevision(revision));
+    entity.getRevisions().forEach(revision => purgeRevision(revision));
 
     function purgeRevision(revision: Image360RevisionEntity): void {
       _inProgressDownloads

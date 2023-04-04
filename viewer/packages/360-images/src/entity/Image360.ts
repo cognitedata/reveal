@@ -23,7 +23,7 @@ export interface Image360 {
    * List all historical images for this entity.
    * @returns A list of available revisions.
    */
-  list360ImageRevisions(): Image360Revision[];
+  getRevisions(): Image360Revision[];
 
   /**
    * Get the revision that is currently loaded for this entry.

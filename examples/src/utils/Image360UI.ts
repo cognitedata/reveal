@@ -115,7 +115,7 @@ export class Image360UI {
       .name('Current image revision')
       .onChange(() => {
         if (selectedEntity) {
-          const revisions = selectedEntity.list360ImageRevisions();
+          const revisions = selectedEntity.getRevisions();
           const index = Number(imageRevisions.id);
           if (index >= 0 && index < revisions.length) {
             selectedEntity.changeRevision(revisions[index]).catch(e => {

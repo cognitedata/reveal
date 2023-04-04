@@ -780,8 +780,8 @@ export type HtmlOverlayToolOptions = {
 export interface Image360 {
     changeRevision(revision: Image360Revision): Promise<void>;
     getActiveRevision(): Image360Revision;
+    getRevisions(): Image360Revision[];
     readonly image360Visualization: Image360Visualization;
-    list360ImageRevisions(): Image360Revision[];
     readonly transform: THREE.Matrix4;
 }
 
