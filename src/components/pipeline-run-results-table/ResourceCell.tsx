@@ -1,5 +1,7 @@
-import { Body, Flex } from '@cognite/cogs.js';
+import { Body, Colors, Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 import HighlightedRegex from 'components/highlighted-regex';
+import styled from 'styled-components';
 import { MatchColorsByGroupIndex } from './ExpandedRule';
 
 type ResourceCellProps = {
@@ -7,6 +9,7 @@ type ResourceCellProps = {
   pattern?: string;
   preferredProperties?: string[];
   resource?: Record<string, unknown>;
+  showId?: boolean;
 };
 
 const DEFAULT_PROPERTY_PREFERENCE_ORDER = ['name', 'externalId', 'description'];
@@ -17,7 +20,9 @@ const ResourceCell = ({
   pattern,
   preferredProperties,
   resource,
+  showId,
 }: ResourceCellProps): JSX.Element => {
+  const { t } = useTranslation();
   if (!resource) {
     return <>-</>;
   }
@@ -66,8 +71,14 @@ const ResourceCell = ({
           value
         )}
       </Body>
+      {showId ? <MutedId>{`${t('id')}: (${resource.id})`}</MutedId> : null}
     </Flex>
   );
 };
+
+const MutedId = styled.span`
+  font-size: 0.8em;
+  color: ${Colors['text-icon--muted']};
+`;
 
 export default ResourceCell;

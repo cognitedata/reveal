@@ -68,7 +68,11 @@ export default function SourceSelectionTable({}: Props) {
     label: string;
     icon: IconType;
   }[] = [
-    { value: 'timeseries', label: t('resource-type-ts'), icon: 'Timeseries' },
+    {
+      value: 'timeseries',
+      label: t('resource-type-timeseries'),
+      icon: 'Timeseries',
+    },
     {
       value: 'events',
       label: t('resource-type-events', { count: 0 }),
@@ -86,7 +90,7 @@ export default function SourceSelectionTable({}: Props) {
     },
     {
       value: 'threeD',
-      label: t('resource-type-3d-model', { count: 0 }),
+      label: t('resource-type-threeD', { count: 0 }),
       icon: 'Cube',
     },
   ];

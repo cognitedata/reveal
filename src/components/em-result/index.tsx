@@ -66,7 +66,7 @@ export default function EntityMatchingResult({
           }
           case 'files':
           case 'events': {
-            return !((d as FileInfo | CogniteEvent).assetIds?.length === 0);
+            return ((d as FileInfo | CogniteEvent).assetIds?.length || 0) > 0;
           }
           default: {
             return false;
@@ -87,7 +87,7 @@ export default function EntityMatchingResult({
           }
           case 'files':
           case 'events': {
-            return (d as FileInfo | CogniteEvent).assetIds?.length === 0;
+            return ((d as FileInfo | CogniteEvent).assetIds?.length || 0) === 0;
           }
           default: {
             return false;
@@ -217,6 +217,7 @@ export default function EntityMatchingResult({
             />
           ) : (
             <QuickMatchResultsTable
+              sourceType={sourceType}
               model={model}
               predictions={filteredPreditions}
               confirmedPredictions={confirmedPredictions}
