@@ -104,7 +104,7 @@ export const useUpdateAssetIds = (
     {
       ...options,
       onSuccess(a, b, c) {
-        queryClient.invalidateQueries(['timeseries']);
+        queryClient.invalidateQueries([b.api]);
         options?.onSuccess?.(a, b, c);
       },
     }

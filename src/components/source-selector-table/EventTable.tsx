@@ -7,7 +7,6 @@ import { useList } from 'hooks/list';
 import { RawCogniteEvent } from 'types/api';
 import { SourceTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
-import { stringSorter } from 'utils';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 
 type EventListTableRecord = { key: string } & RawCogniteEvent;
@@ -51,20 +50,20 @@ export default function EventTable({
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
-        sorter: (a: any, b: any) =>
-          stringSorter(a?.description, b?.description),
+        sorter: (a, b) =>
+          (a?.description || '').localeCompare(b?.description || ''),
       },
       {
         title: t('resource-table-column-type'),
         dataIndex: 'type',
         key: 'type',
-        sorter: (a: any, b: any) => stringSorter(a?.type, b?.type),
+        sorter: (a, b) => (a?.type || '').localeCompare(b?.type || ''),
       },
       {
         title: t('resource-table-column-subtype'),
         dataIndex: 'subtype',
         key: 'subtype',
-        sorter: (a: any, b: any) => stringSorter(a?.subtype, b?.subtype),
+        sorter: (a, b) => (a?.subtype || '').localeCompare(b?.subtype || ''),
       },
       {
         title: t('data-set'),

@@ -7,7 +7,6 @@ import { useList } from 'hooks/list';
 import { RawSequence } from 'types/api';
 import { SourceTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
-import { stringSorter } from 'utils';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 
 type SequenceListTableRecord = { key: string } & RawSequence;
@@ -50,14 +49,14 @@ export default function SequenceTable({
         title: t('resource-table-column-name'),
         dataIndex: 'name',
         key: 'name',
-        sorter: (a, b) => stringSorter(a?.name, b?.name),
+        sorter: (a, b) => (a?.name || '').localeCompare(b?.name || ''),
       },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
-        sorter: (a: any, b: any) =>
-          stringSorter(a?.description, b?.description),
+        sorter: (a, b) =>
+          (a?.description || '').localeCompare(b?.description || ''),
       },
       {
         title: t('data-set'),

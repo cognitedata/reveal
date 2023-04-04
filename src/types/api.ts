@@ -68,3 +68,16 @@ export type API = SourceType | TargetType;
 export type PipelineSourceType =
   | Exclude<SourceType, 'timeseries' | 'threeD'>
   | 'time_series';
+
+export const pipelineSourceTypeToSourceType = (
+  s: PipelineSourceType | 'assets'
+): Exclude<API, 'threeD'> => {
+  switch (s) {
+    case 'time_series': {
+      return 'timeseries';
+    }
+    default: {
+      return s;
+    }
+  }
+};
