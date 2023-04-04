@@ -15,13 +15,18 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
-import { API, PipelineSourceType } from 'types/api';
+import {
+  API,
+  PipelineSourceType,
+  pipelineSourceTypeToSourceType,
+} from 'types/api';
 import Step from 'components/step';
 import { useMemo, useState } from 'react';
 import { ColumnType, Table, Timestamp } from '@cognite/cdf-utilities';
 import { DataSet } from '@cognite/sdk';
 import { useAllDataSets, useDataSets } from 'hooks/datasets';
 import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
+import ResourceCount from 'components/resource-count';
 
 const { Option } = Select;
 
@@ -250,14 +255,12 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
           </Flex>
           {pipeline.sources.dataSetIds.length > 0 && (
             <MutedBody>
-              {t('resource-selected-with-count', {
-                resourceWithCount: t(
-                  `${pipeline.sources.resource}-with-count`,
-                  {
-                    count: pipeline.sources.dataSetIds.length,
-                  }
-                ),
-              })}
+              <ResourceCount
+                type={pipelineSourceTypeToSourceType(pipeline.sources.resource)}
+                filter={{
+                  dataSetIds: pipeline.sources.dataSetIds,
+                }}
+              />
             </MutedBody>
           )}
         </Flex>
