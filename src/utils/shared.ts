@@ -30,16 +30,6 @@ export function stringSorter(a: string = '', b: string = '') {
   } else return 0;
 }
 
-export const stringContains = (
-  value?: string | null,
-  searchText?: string | null
-) => {
-  if (!searchText) {
-    return true;
-  }
-  return value && value.includes(searchText && searchText);
-};
-
 export const sleep = async (ms: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
 

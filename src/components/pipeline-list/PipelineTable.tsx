@@ -12,7 +12,7 @@ import { useTranslation } from 'common';
 import { PipelineTableTypes } from 'types/types';
 import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
 
-import { stringContains, stringSorter } from 'utils/shared';
+import { stringSorter } from 'utils/shared';
 
 import { useSearchParams } from 'react-router-dom';
 import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
@@ -188,7 +188,7 @@ const PipelineTable = (): JSX.Element => {
     () =>
       !!searchParam
         ? dataSource?.filter((pipeline) =>
-            stringContains(pipeline.name || pipeline.id.toString(), searchParam)
+            (pipeline.name || pipeline.id.toString()).includes(searchParam)
           )
         : dataSource,
     [dataSource, searchParam]
