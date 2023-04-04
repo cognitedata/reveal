@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Colors, Icon, Tooltip, Infobox } from '@cognite/cogs.js';
+import { Button, Icon, Tooltip, Infobox } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import DeleteConfirmModal from '../DeleteConfirmModal';
 import { useTranslation } from 'common/i18n';
@@ -82,7 +82,7 @@ const StyledDisableButtonSection = styled.div`
 `;
 
 export const StyledHelpIcon = styled(Icon)`
-  color: ${Colors['text-hint']};
+  color: var(--cogs-text-icon--muted);
   margin: 4px 0 0 8px;
 `;
 

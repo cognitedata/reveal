@@ -181,7 +181,7 @@ export default function Groups() {
             >
               <Icon
                 type="Checkmark"
-                style={{ marginLeft: '10px', color: 'green' }}
+                css={{ marginLeft: '10px', color: 'green' }}
               />
             </Tooltip>
           );
@@ -275,7 +275,7 @@ export default function Groups() {
             </Menu>
           }
         >
-          <Icon style={{ cursor: 'pointer' }} type="EllipsisVertical" />
+          <Icon css={{ cursor: 'pointer' }} type="EllipsisVertical" />
         </Dropdown>
       ),
     },
