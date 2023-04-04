@@ -805,7 +805,7 @@ export type Image360EnteredDelegate = (image360: Image360) => void;
 // @public
 export type Image360ExitedDelegate = () => void;
 
-// @public (undocumented)
+// @public
 export interface Image360Revision {
     readonly date: Date | undefined;
 }
