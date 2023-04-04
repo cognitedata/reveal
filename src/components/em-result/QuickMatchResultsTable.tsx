@@ -11,7 +11,7 @@ import {
 } from 'hooks/entity-matching-predictions';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { TableRowSelection } from 'antd/lib/table/interface';
-import { Icon, Slider } from '@cognite/cogs.js';
+import { Icon, RangeSlider } from '@cognite/cogs.js';
 import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
 import styled from 'styled-components';
 import { EMModel } from 'hooks/entity-matching-models';
@@ -57,13 +57,14 @@ const QuickMatchResultsTable = ({
     );
   };
 
-  const [scoreFilter, setScoreFilter] = useState<number | undefined>();
+  const [scoreFilter, setScoreFilter] = useState<number[]>([]);
   const dataSource = useMemo(
     () =>
       predictions
         .filter((p) =>
-          Number.isFinite(scoreFilter)
-            ? 100 * p.match.score >= (scoreFilter as number)
+          scoreFilter.length == 2
+            ? 100 * p.match.score >= scoreFilter[0] &&
+              100 * p.match.score <= scoreFilter[1]
             : true
         )
         .map((a) => ({
@@ -140,12 +141,11 @@ const QuickMatchResultsTable = ({
           Number.isFinite(minScore) &&
           Number.isFinite(maxScore) && (
             <SliderWrapper>
-              <Slider
+              <RangeSlider
                 min={minScore}
                 max={maxScore}
-                defaultValue={minScore}
+                defaultValue={[minScore, maxScore]}
                 value={scoreFilter}
-                step={null}
                 marks={{
                   ...scores.reduce(
                     (accl: any, i) => ({ ...accl, [i]: <></> }),
@@ -155,8 +155,7 @@ const QuickMatchResultsTable = ({
                   [minScore]: `${Math.floor(minScore)}%`,
                   [maxScore]: `${Math.ceil(maxScore)}%`,
                 }}
-                onChange={(n) => setScoreFilter(n)}
-                handle={({ value }) => <>{value.toFixed(1)}%</>}
+                setValue={(n) => setScoreFilter(n)}
               />
             </SliderWrapper>
           ),
