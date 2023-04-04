@@ -114,7 +114,7 @@ const PipelineDetails = (): JSX.Element => {
             )}
             {nextStep && (
               <Button onClick={handleGoNextStep} type="primary">
-                {configurePipeline ? t('run-model') : t('navigate-next')}
+                {configurePipeline ? t('run-pipeline') : t('navigate-next')}
               </Button>
             )}
           </Flex>

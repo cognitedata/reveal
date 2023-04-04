@@ -192,6 +192,7 @@
   "rules-matches": "Matches",
   "rules-pattern": "Pattern",
   "run-model": "Run model",
+  "run-pipeline": "Run pipeline",
   "running-job-Completed": "Job is completed",
   "running-job-Failed": "Job is failed",
   "running-job-Queued": "Job is queued",
