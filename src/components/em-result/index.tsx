@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Flex, Switch } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
@@ -192,7 +192,7 @@ export default function EntityMatchingResult({
       >
         <Flex direction="column">
           {appliedRules && (
-            <Flex gap={12}>
+            <Flex gap={12} alignItems="center">
               <Select
                 disabled={rulesView}
                 loading={isInitialLoading}
@@ -201,10 +201,10 @@ export default function EntityMatchingResult({
                 style={{ width: 300 }}
                 value={selectedMatchType}
               />
-              <Checkbox
+              <Switch
                 label={t('group-by-pattern')}
                 checked={rulesView}
-                onChange={(e) => setRulesView(e.target.checked)}
+                onChange={() => setRulesView((enabled) => !enabled)}
               />
             </Flex>
           )}
