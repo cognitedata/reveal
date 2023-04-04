@@ -18,6 +18,8 @@ import Step from 'components/step';
 import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
 import { useMemo, useState } from 'react';
 import { useAllDataSets, useDataSets } from 'hooks/datasets';
+import ResourceCount from 'components/resource-count';
+import { pipelineSourceTypeToSourceType } from 'types/api';
 
 type PipelineTargetTableRecord = { key: string } & DataSet;
 type PipelineTargetTableColumnType = ColumnType<PipelineTargetTableRecord> & {
@@ -158,11 +160,12 @@ const Targets = ({ pipeline }: TargetsProps): JSX.Element => {
           </Flex>
           {pipeline.targets.dataSetIds.length > 0 && (
             <MutedBody>
-              {t('resource-selected-with-count', {
-                resourceWithCount: t(`assets-with-count`, {
-                  count: pipeline.targets.dataSetIds.length,
-                }),
-              })}
+              <ResourceCount
+                type={pipelineSourceTypeToSourceType(pipeline.targets.resource)}
+                filter={{
+                  dataSetIds: pipeline.targets.dataSetIds,
+                }}
+              />
             </MutedBody>
           )}
         </Flex>

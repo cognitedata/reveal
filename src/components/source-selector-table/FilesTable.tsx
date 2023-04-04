@@ -9,7 +9,6 @@ import { SourceTableProps } from 'types/types';
 import { useSearch } from 'hooks/search';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
-import { stringSorter } from 'utils';
 
 type FileInfoListTableRecord = { key: string } & RawFileInfo;
 type FileInfoListTableRecordCT = ColumnType<FileInfoListTableRecord> & {
@@ -74,19 +73,20 @@ export default function FileInfoTable({
         title: t('resource-table-column-name'),
         dataIndex: 'name',
         key: 'name',
-        sorter: (a, b) => stringSorter(a?.name, b?.name),
+        sorter: (a, b) => (a?.name || '').localeCompare(b?.name || ''),
       },
       {
         title: t('resource-table-column-mimeType'),
         dataIndex: 'mimeType',
         key: 'mimeType',
-        sorter: (a, b) => stringSorter(a?.mimeType, b?.mimeType),
+        sorter: (a, b) => (a?.mimeType || '').localeCompare(b?.mimeType || ''),
       },
       {
         title: t('resource-table-column-directory'),
         dataIndex: 'directory',
         key: 'directory',
-        sorter: (a, b) => stringSorter(a?.directory, b?.directory),
+        sorter: (a, b) =>
+          (a?.directory || '').localeCompare(b?.directory || ''),
       },
       {
         title: t('data-set'),

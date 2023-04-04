@@ -29,7 +29,9 @@ const QuickMatchActionBar = ({
       <StyledTitle level={5}>
         {t('n-source-type-selected', {
           count: selectedRows.length || 0,
-          sourceType: sourceType,
+          sourceType: t(`resource-type-${sourceType}`, {
+            count: selectedRows.length || 0,
+          }).toLocaleLowerCase(),
         })}
       </StyledTitle>
       <Tooltip
