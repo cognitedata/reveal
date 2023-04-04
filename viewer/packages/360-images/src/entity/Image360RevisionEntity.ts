@@ -82,6 +82,7 @@ export class Image360RevisionEntity implements Image360Revision {
    * Clear the cached textures used by this revision.
    */
   public clearTextures(): void {
+    this._textures.forEach(t => t.texture.dispose());
     this._textures = [];
   }
 
