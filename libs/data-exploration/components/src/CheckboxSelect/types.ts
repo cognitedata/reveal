@@ -23,6 +23,7 @@ export type WidthProps = OneOf<{
 
 export type CustomMetadataValue = (
   metadataKeys?: string | null,
+  query?: string,
   options?: UseQueryOptions<ChildOptionType>
 ) => {
   options: {

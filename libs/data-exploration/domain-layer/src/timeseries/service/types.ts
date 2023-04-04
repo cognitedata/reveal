@@ -1,13 +1,14 @@
 import { AggregateResponse, TimeseriesFilter } from '@cognite/sdk';
 import {
   AdvancedFilter,
+  AggregateFilters,
   TimeseriesProperties,
 } from '@data-exploration-lib/domain-layer';
 
-export type TimeseriesAggregateFilters = {
+export interface TimeseriesAggregateFilters extends AggregateFilters {
   filter?: TimeseriesFilter;
   advancedFilter?: AdvancedFilter<TimeseriesProperties>;
-};
+}
 
 export type TimeseriesAggregateOptions =
   | {

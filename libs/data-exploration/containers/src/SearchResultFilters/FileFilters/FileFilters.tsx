@@ -13,8 +13,13 @@ import {
   TypeFilter,
 } from '../../Filters';
 
+export interface FileFilterProps extends FilterProps {
+  enableDocumentLabelsFilter?: boolean;
+}
+
 // INFO: FileFilters is for documents.
-export const FileFilters: React.FC<FilterProps> = ({
+export const FileFilters: React.FC<FileFilterProps> = ({
+  enableDocumentLabelsFilter,
   filter,
   onFilterChange,
   onResetFilterClick,
@@ -29,12 +34,14 @@ export const FileFilters: React.FC<FilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
-        <LabelFilter.File
-          value={filter.document.labels}
-          onChange={(newFilters) =>
-            onFilterChange('document', { labels: newFilters })
-          }
-        />
+        {enableDocumentLabelsFilter && (
+          <LabelFilter.File
+            value={filter.document.labels}
+            onChange={(newFilters) =>
+              onFilterChange('document', { labels: newFilters })
+            }
+          />
+        )}
 
         <TypeFilter.File
           value={filter.document.type}

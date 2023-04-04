@@ -6,15 +6,19 @@ import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 import {
   InternalTimeseriesFilters,
+  useDebouncedState,
   useDeepMemo,
 } from '@data-exploration-lib/core';
+import { InputActionMeta } from 'react-select';
 
 interface BaseUnitFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {
   value?: string | string[];
   onChange?: (newSources: string | string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  query?: string;
 }
 
 export interface UnitFilterProps<TFilter> extends BaseUnitFilterProps<TFilter> {
@@ -41,11 +45,13 @@ export function UnitFilter<TFilter>({
 const TimeseriesUnitFilter = (
   props: BaseUnitFilterProps<InternalTimeseriesFilters>
 ) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const {
     data: units = [],
     isLoading,
     isError,
-  } = useTimeseriesUniqueValuesByProperty('unit', props.filter);
+  } = useTimeseriesUniqueValuesByProperty('unit', query, props.filter);
 
   const options = useDeepMemo(
     () =>
@@ -60,6 +66,7 @@ const TimeseriesUnitFilter = (
   return (
     <UnitFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}

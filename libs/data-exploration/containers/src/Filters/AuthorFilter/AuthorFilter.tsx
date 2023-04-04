@@ -1,8 +1,10 @@
 import {
   InternalDocumentFilter,
+  useDebouncedState,
   useDeepMemo,
 } from '@data-exploration-lib/core';
-import { useDocumentAggregateAuthorQuery } from '@data-exploration-lib/domain-layer';
+import { useDocumentsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
+import { InputActionMeta } from 'react-select';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
@@ -12,7 +14,9 @@ interface BaseAuthorFilterProps<TFilter>
     CommonFilterProps {
   value?: string[];
   onChange?: (type: string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  query?: string;
 }
 
 export interface AuthorFilterProps<TFilter>
@@ -45,7 +49,15 @@ export function AuthorFilter<TFilter>({
 const AuthorFilterFile = (
   props: BaseAuthorFilterProps<InternalDocumentFilter>
 ) => {
-  const { data = [], isLoading, isError } = useDocumentAggregateAuthorQuery();
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useDocumentsUniqueValuesByProperty('author', query, {
+    keepPreviousData: true,
+  });
 
   const options = useDeepMemo(
     () =>
@@ -59,6 +71,7 @@ const AuthorFilterFile = (
   return (
     <AuthorFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}

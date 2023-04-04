@@ -15,6 +15,7 @@ import {
 
 export const useTimeseriesMetadataValuesAggregateQuery = (
   metadataKey?: string | null,
+  query?: string,
   filter?: InternalTimeseriesFilters | OldTimeseriesFilters,
   options?: UseQueryOptions<
     TimeseriesMetadataAggregateResponse[],
@@ -26,10 +27,11 @@ export const useTimeseriesMetadataValuesAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesMetadataValues(String(metadataKey), filter),
+    queryKeys.timeseriesMetadataValues(String(metadataKey), query, filter),
     () => {
       return getTimeseriesMetadataValuesAggregate(sdk, String(metadataKey), {
         filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

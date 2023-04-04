@@ -13,9 +13,11 @@ import { SequenceFilters } from './SequenceFilters';
 
 export interface Props extends FilterProps {
   resourceType?: ResourceType;
+  enableDocumentLabelsFilter?: boolean;
 }
 
 export const SidebarFilters: React.FC<Props> = ({
+  enableDocumentLabelsFilter,
   resourceType,
   onFilterChange,
   filter,
@@ -56,6 +58,7 @@ export const SidebarFilters: React.FC<Props> = ({
             filter={filter}
             onFilterChange={onFilterChange}
             onResetFilterClick={onResetFilterClick}
+            enableDocumentLabelsFilter={enableDocumentLabelsFilter}
           />
         );
       }

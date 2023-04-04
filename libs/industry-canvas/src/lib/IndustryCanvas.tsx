@@ -20,6 +20,7 @@ import { ZOOM_TO_FIT_MARGIN } from './constants';
 import { isDevelopment } from '@cognite/cdf-utilities';
 import { CanvasAnnotation } from './types';
 import { useSDK } from '@cognite/sdk-provider';
+import { getContainerId } from './utils/utils';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -71,6 +72,27 @@ export const IndustryCanvas = ({
     [canvasAnnotations, interactionState.selectedAnnotationId]
   );
 
+  const clickedContainerReference = useMemo(
+    () =>
+      interactionState.clickedContainerReferenceId
+        ? containerReferences.find(
+            (containerReference) =>
+              containerReference.id ===
+              interactionState.clickedContainerReferenceId
+          )
+        : undefined,
+    [containerReferences, interactionState.clickedContainerReferenceId]
+  );
+
+  const clickedContainer = useMemo(() => {
+    if (!clickedContainerReference) {
+      return undefined;
+    }
+    return (container.children ?? []).find(
+      (child) => child.id === getContainerId(clickedContainerReference)
+    );
+  }, [container.children, clickedContainerReference]);
+
   const { tool, toolOptions, setTool, onUpdateAnnotationStyleByType } =
     useManagedTools({
       initialTool: ToolType.SELECT,
@@ -81,7 +103,7 @@ export const IndustryCanvas = ({
   const onClickContainerAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
       setInteractionState((prevInteractionState) => ({
-        clickedContainer: undefined,
+        clickedContainerReferenceId: undefined,
         hoverId: undefined,
         selectedAnnotationId:
           prevInteractionState.selectedAnnotationId === annotation.id
@@ -127,7 +149,7 @@ export const IndustryCanvas = ({
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({
-      clickedContainer: undefined,
+      clickedContainerReferenceId: undefined,
       hoverId: undefined,
       selectedAnnotationId: undefined,
     });
@@ -144,7 +166,8 @@ export const IndustryCanvas = ({
     containerAnnotations,
     selectedContainerAnnotation,
     selectedCanvasAnnotation,
-    clickedContainer: interactionState.clickedContainer,
+    clickedContainerReference,
+    clickedContainer,
     onAddContainerReferences,
     containerReferences,
     removeContainerReference,
@@ -162,7 +185,7 @@ export const IndustryCanvas = ({
     }
     setInteractionState({
       selectedAnnotationId: undefined,
-      clickedContainer: undefined,
+      clickedContainerReferenceId: undefined,
       hoverId: undefined,
     });
   }, [setInteractionState, tool]);
@@ -174,7 +197,7 @@ export const IndustryCanvas = ({
         onClick: (e: any, annotation: CanvasAnnotation) => {
           e.cancelBubble = true;
           setInteractionState({
-            clickedContainer: undefined,
+            clickedContainerReferenceId: undefined,
             hoverId: undefined,
             selectedAnnotationId: annotation.id,
           });

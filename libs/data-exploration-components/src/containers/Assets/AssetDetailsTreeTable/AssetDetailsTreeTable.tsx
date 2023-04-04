@@ -7,7 +7,7 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import { HighlightCell, ResourceTableColumns } from '../../../components';
+import { HighlightCell } from '../../../components';
 import { Table } from '../../../components';
 
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
@@ -15,12 +15,10 @@ import { DASH } from '../../../utils';
 
 import { useRootPath } from '../AssetTreeTable/hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import {
-  InternalAssetTreeData,
-  useAssetsMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
+import { InternalAssetTreeData } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
+import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -42,7 +40,7 @@ export const AssetDetailsTreeTable = ({
   TableStateProps) => {
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
 
-  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
   const rootExpandedKeys = useMemo(() => {
     return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
@@ -51,10 +49,6 @@ export const AssetDetailsTreeTable = ({
   }, [rootExpanded]);
 
   const rootAssetTree = useRootAssetsQuery(rootExpandedKeys, rootAssetId);
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
 
   const columns = React.useMemo(
     () =>
@@ -160,6 +154,7 @@ export const AssetDetailsTreeTable = ({
       onRowExpanded={(expanded) => {
         setRootExpanded(expanded);
       }}
+      onChangeSearchInput={setMetadataKeyQuery}
     />
   );
 };

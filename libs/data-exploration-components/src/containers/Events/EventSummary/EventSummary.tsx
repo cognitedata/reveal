@@ -2,14 +2,12 @@ import { Asset, CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
-  ResourceTableColumns,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
 import {
-  useEventsMetadataKeys,
   useEventsSearchResultWithLabelsQuery,
   InternalEventDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
@@ -22,6 +20,7 @@ import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { useEventsMetadataColumns } from '../hooks/useEventsMetadataColumns';
 
 export const EventSummary = ({
   query = '',
@@ -49,11 +48,7 @@ export const EventSummary = ({
     undefined,
     eventSearchConfig
   );
-  const { data: metadataKeys = [] } = useEventsMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -99,6 +94,7 @@ export const EventSummary = ({
         renderCellSubComponent={
           isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
         }
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>
   );

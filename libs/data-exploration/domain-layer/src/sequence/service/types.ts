@@ -1,13 +1,14 @@
 import { AggregateResponse, SequenceFilter } from '@cognite/sdk';
 import {
   AdvancedFilter,
+  AggregateFilters,
   SequenceProperties,
 } from '@data-exploration-lib/domain-layer';
 
-export type SequencesAggregateFilters = {
+export interface SequencesAggregateFilters extends AggregateFilters {
   filter?: SequenceFilter['filter'];
   advancedFilter?: AdvancedFilter<SequenceProperties>;
-};
+}
 
 export type SequencesAggregateOptions =
   | {

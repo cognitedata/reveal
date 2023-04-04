@@ -1,4 +1,5 @@
 import {
+  DEFAULT_SCORE_SORTING,
   InternalSortBy,
   METADATA_KEY_SEPARATOR,
   TableSortBy,
@@ -7,7 +8,9 @@ import {
 export const mapTableSortByToEventSortFields = (
   sortBy?: TableSortBy[]
 ): InternalSortBy[] | undefined => {
-  if (!sortBy || sortBy.length === 0) return undefined;
+  if (!sortBy || sortBy.length === 0) {
+    return DEFAULT_SCORE_SORTING;
+  }
   return sortBy.map((tableSort) => {
     const properties = tableSort.id.split(METADATA_KEY_SEPARATOR);
     return {

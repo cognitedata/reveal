@@ -91,6 +91,7 @@ export const DocumentLabelFilter = (
   const options = (labels || []).map((item) => ({
     label: `${item.value}`,
     value: `${item.value}`,
+    count: item.count,
   }));
 
   return <LabelFilter {...props} options={options} isLoading={isLoading} />;

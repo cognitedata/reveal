@@ -1,6 +1,6 @@
 import {
   useAssetsUniqueValuesByProperty,
-  useDocumentAggregateSourceQuery,
+  useDocumentsUniqueValuesByProperty,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 
@@ -16,10 +16,11 @@ import {
   InternalAssetFilters,
   InternalDocumentFilter,
   InternalEventsFilters,
+  useDebouncedState,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
-import { useState } from 'react';
+import { InputActionMeta } from 'react-select';
 
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {
@@ -31,6 +32,8 @@ interface BaseFileSourceFilterProps<TFilter>
     CommonFilterProps {
   value?: string[];
   onChange?: (subtype: string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
+  query?: string;
   addNilOption?: boolean;
 }
 export interface FileSourceFilterProps<TFilter>
@@ -77,7 +80,7 @@ export const BaseFileSourceFilter = <TFilter,>({
 const AssetSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useState<string | undefined>(undefined);
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
 
   const {
     data: sources = [],
@@ -109,11 +112,15 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const {
     data: sources = [],
     isLoading,
     isError,
-  } = useEventsUniqueValuesByProperty('source');
+  } = useEventsUniqueValuesByProperty('source', query, undefined, {
+    keepPreviousData: true,
+  });
 
   const options = useDeepMemo(
     () =>
@@ -128,6 +135,7 @@ const EventSourceFilter = (
   return (
     <SourceFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -138,11 +146,15 @@ const EventSourceFilter = (
 export const FileSourceFilter = (
   props: BaseFileSourceFilterProps<InternalDocumentFilter>
 ) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+
   const {
     data: sources = [],
     isLoading,
     isError,
-  } = useDocumentAggregateSourceQuery();
+  } = useDocumentsUniqueValuesByProperty(['sourceFile', 'source'], query, {
+    keepPreviousData: true,
+  });
 
   const options = useDeepMemo(
     () =>
@@ -157,6 +169,7 @@ export const FileSourceFilter = (
   return (
     <BaseFileSourceFilter
       {...props}
+      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}

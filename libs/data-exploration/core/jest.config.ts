@@ -6,7 +6,7 @@ export default {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'html'],
   coverageDirectory: '../../../coverage/libs/data-exploration/core',
   collectCoverage: true,
   setupFilesAfterEnv: ['./src/setupTests.js'],

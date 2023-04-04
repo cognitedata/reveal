@@ -10,7 +10,7 @@ export const getContainerId = (
   containerReference: ContainerReference
 ): string => {
   if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.resourceId}-${containerReference.page}`;
+    return `${containerReference.resourceId}`;
   }
 
   if (containerReference.type === ContainerReferenceType.TIMESERIES) {
@@ -55,13 +55,14 @@ export const getContainerReferencesWithUpdatedDimensions = (
   return Array.from(containerReferencesById.values());
 };
 
-const deserializeCanvasState = (value: string): IndustryCanvasState => {
+export const deserializeCanvasState = (
+  state: IndustryCanvasState
+): IndustryCanvasState => {
   try {
-    const canvasState = JSON.parse(value) as IndustryCanvasState;
-    const containerReferences = canvasState.containerReferences.map(
+    const containerReferences = state.containerReferences.map(
       (containerReference) => {
         if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-          // We need to convert the dates to Date objects since they are serialized as strings
+          // We need to convert the dates to Date objects since they are serialized as strings in FDM
           return {
             ...containerReference,
             startDate: new Date(containerReference.startDate),
@@ -72,10 +73,9 @@ const deserializeCanvasState = (value: string): IndustryCanvasState => {
         return containerReference;
       }
     );
-
     return {
+      ...state,
       containerReferences,
-      canvasAnnotations: canvasState.canvasAnnotations,
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
@@ -84,23 +84,4 @@ const deserializeCanvasState = (value: string): IndustryCanvasState => {
       canvasAnnotations: [],
     };
   }
-};
-
-const CANVAS_STATE_KEY = 'COGNITE_CANVAS_STATE';
-
-export const loadCanvasState = (): IndustryCanvasState | null => {
-  const canvasStateString = localStorage.getItem(CANVAS_STATE_KEY);
-  if (canvasStateString === null) {
-    return null;
-  }
-
-  return deserializeCanvasState(canvasStateString);
-};
-
-export const saveCanvasState = (canvasState: IndustryCanvasState): void => {
-  localStorage.setItem(CANVAS_STATE_KEY, JSON.stringify(canvasState));
-};
-
-export const clearCanvasState = (): void => {
-  localStorage.removeItem(CANVAS_STATE_KEY);
 };

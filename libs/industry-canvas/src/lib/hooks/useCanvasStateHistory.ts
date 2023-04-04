@@ -16,7 +16,7 @@ export type UseCanvasStateHistoryReturnType = {
 };
 
 type UseCanvasStateHistoryProps = {
-  saveState: (state: IndustryCanvasState) => void;
+  saveState: (state: IndustryCanvasState) => Promise<void>;
 };
 
 export const useHistory = ({

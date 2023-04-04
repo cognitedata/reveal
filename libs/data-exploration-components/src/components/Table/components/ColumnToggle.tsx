@@ -34,6 +34,7 @@ export interface ColumnToggleProps<T extends TableData = any> {
   onColumnOrderChanged: (updater: Updater<ColumnOrderState>) => void;
   onResetSelectedColumns: () => void;
   columnSelectionLimit?: number;
+  onChangeSearchInput?: (value: string) => void;
 }
 
 const style = {
@@ -59,6 +60,7 @@ export function ColumnToggle<T extends TableData = any>({
   onColumnOrderChanged,
   onResetSelectedColumns,
   columnSelectionLimit = MAX_COLUMN_SELECTION,
+  onChangeSearchInput,
 }: ColumnToggleProps<T>) {
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
@@ -139,7 +141,11 @@ export function ColumnToggle<T extends TableData = any>({
               fullWidth
               variant="noBorder"
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(e) => {
+                const searchInputValue = e.target.value;
+                setSearchInput(searchInputValue);
+                onChangeSearchInput?.(searchInputValue);
+              }}
             />
 
             {!isSearchResultEmpty && searchInput && (

@@ -1,5 +1,11 @@
 export const TOAST_POSITION = 'top-left' as const;
 
+export enum QueryKeys {
+  GET_CANVAS = 'canvas.get',
+  SAVE_CANVAS = 'canvas.save',
+  CREATE_CANVAS = 'canvas.create',
+}
+
 export const PERCENTAGE_VALUES = {
   '10%': 0.1,
   '25%': 0.25,

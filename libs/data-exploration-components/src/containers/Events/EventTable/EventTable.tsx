@@ -9,12 +9,9 @@ import {
 import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
-import {
-  InternalEventDataWithMatchingLabels,
-  useEventsMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
+import { InternalEventDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+import { useEventsMetadataColumns } from '../hooks/useEventsMetadataColumns';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
@@ -26,11 +23,7 @@ export const EventTable = ({
 }: Omit<TableProps<EventWithRelationshipLabels>, 'columns'> & {
   onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
 }) => {
-  const { data: metadataKeys = [] } = useEventsMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -63,6 +56,7 @@ export const EventTable = ({
       columns={columns}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
       {...rest}
     />
   );

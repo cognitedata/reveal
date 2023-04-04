@@ -9,16 +9,21 @@ export const queryKeys = {
   all: ['cdf'] as const,
   // SEQUENCE
   sequence: () => [...queryKeys.all, 'sequence'] as const,
-  sequencesMetadata: (filter?: any) =>
-    [...queryKeys.sequence(), 'metadata', 'keys', filter] as const,
+  sequencesMetadata: (query?: string, filter?: any) =>
+    [...queryKeys.sequence(), 'metadata', 'keys', query, filter] as const,
   listSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || [])] as const,
-  sequencesMetadataValues: (metadataKey: string, filter?: any) =>
+  sequencesMetadataValues: (
+    metadataKey: string,
+    query?: string,
+    filter?: any
+  ) =>
     [
       ...queryKeys.sequence(),
       'metadata',
       'values',
       metadataKey,
+      query,
       filter,
     ] as const,
   aggregateSequence: (input?: any[]) =>
@@ -30,18 +35,29 @@ export const queryKeys = {
     [...queryKeys.timeseries(), ...(input || [])] as const,
   aggregateTimeseries: (input?: any[]) =>
     [...queryKeys.timeseries(), ...(input || []), 'aggregate'] as const,
-  timeseriesMetadata: (filter?: any) =>
-    [...queryKeys.timeseries(), 'metadata', 'keys', filter] as const,
-  timeseriesMetadataValues: (metadataKey: string, filter?: any) =>
+  timeseriesMetadata: (query?: string, filter?: any) =>
+    [...queryKeys.timeseries(), 'metadata', 'keys', query, filter] as const,
+  timeseriesMetadataValues: (
+    metadataKey: string,
+    query?: string,
+    filter?: any
+  ) =>
     [
       ...queryKeys.timeseries(),
       'metadata',
       'values',
       metadataKey,
+      query,
       filter,
     ] as const,
-  timeseriesUniqueValues: (property: string, filter?: any) =>
-    [...queryKeys.timeseries(), 'unique-values', property, filter] as const,
+  timeseriesUniqueValues: (property: string, query?: string, filter?: any) =>
+    [
+      ...queryKeys.timeseries(),
+      'unique-values',
+      property,
+      query,
+      filter,
+    ] as const,
 
   timeseriesDatapoints: (items: IdEither[], filter?: any) =>
     [...queryKeys.timeseries(), 'datapoints', items, filter] as const,
@@ -53,16 +69,23 @@ export const queryKeys = {
 
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,
-  eventsMetadataValues: (metadataKey: string, filter?: any) =>
-    [...queryKeys.events(), 'metadata', 'values', metadataKey, filter] as const,
-  eventsUniqueValues: (property: string, filter?: any) =>
-    [...queryKeys.events(), 'unique-values', property, filter] as const,
+  eventsMetadataValues: (metadataKey: string, query?: string, filter?: any) =>
+    [
+      ...queryKeys.events(),
+      'metadata',
+      'values',
+      metadataKey,
+      query,
+      filter,
+    ] as const,
+  eventsUniqueValues: (property: string, query?: string, filter?: any) =>
+    [...queryKeys.events(), 'unique-values', property, query, filter] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || []), 'aggregate'] as const,
-  eventsMetadata: (filter?: any) =>
-    [...queryKeys.events(), 'metadata', 'keys', filter] as const,
+  eventsMetadata: (query?: string, filter?: any) =>
+    [...queryKeys.events(), 'metadata', 'keys', query, filter] as const,
 
   // ASSETS
   assets: () => [...queryKeys.all, 'assets'] as const,
@@ -78,10 +101,17 @@ export const queryKeys = {
   retrieveAsset: (id: number) => [...queryKeys.assets(), 'asset', id] as const,
   assetsUniqueValues: (property: string, query?: string) =>
     [...queryKeys.assets(), 'unique-values', property, query] as const,
-  assetsMetadata: (filter?: any) =>
-    [...queryKeys.assets(), 'metadata', 'keys', filter] as const,
-  assetsMetadataValues: (metadataKey: string, filter?: any) =>
-    [...queryKeys.assets(), 'metadata', 'values', metadataKey, filter] as const,
+  assetsMetadata: (query?: string, filter?: any) =>
+    [...queryKeys.assets(), 'metadata', 'keys', query, filter] as const,
+  assetsMetadataValues: (metadataKey: string, query?: string, filter?: any) =>
+    [
+      ...queryKeys.assets(),
+      'metadata',
+      'values',
+      metadataKey,
+      query,
+      filter,
+    ] as const,
   listBasicAssetMappings: (id: number) =>
     [...queryKeys.retrieveAsset(id), 'basic-mappings'] as const,
   listDetailedAssetMappings: (id: number) =>
@@ -116,12 +146,22 @@ export const queryKeys = {
   documentsFilteredAggregates: (filters: any, aggregates: any) =>
     [...queryKeys.documentsAggregate(), filters, aggregates] as const,
 
-  documentsMetadata: () =>
-    [...queryKeys.documents(), 'metadata', 'keys'] as const,
-  documentsMetadataValues: (metadataKey: string) =>
-    [...queryKeys.documents(), 'metadata', metadataKey, 'values'] as const,
+  documentsMetadata: (query?: string) =>
+    [...queryKeys.documents(), 'metadata', 'keys', query] as const,
+  documentsMetadataValues: (metadataKey: string, query?: string) =>
+    [
+      ...queryKeys.documents(),
+      'metadata',
+      metadataKey,
+      'values',
+      query,
+    ] as const,
 
   documentsLabelValues: () => [...queryKeys.documents(), 'labels'] as const,
+  documentsUniqueValues: (
+    property: string | [string, string],
+    query?: string
+  ) => [...queryKeys.documents(), 'unique-values', property, query] as const,
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,
