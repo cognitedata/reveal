@@ -5,7 +5,7 @@ import { useFlag } from '@cognite/react-feature-flags';
  *
  * Story: https://cognitedata.atlassian.net/browse/DEGR-1767
  */
-export const useFlagANewTheeDView = () => {
+export const useFlagNewTheeDView = () => {
   const { isEnabled } = useFlag('DATA_EXPLORATION_new_threeD_view', {
     forceRerender: true,
     fallback: false,
