@@ -117,7 +117,7 @@ export default function EntityMatchingResult({
               .target.id;
             const r = d as FileInfo | CogniteEvent;
             return (
-              p && (r.assetIds?.length || 0) > 0 && r.assetIds?.includes(p)
+              p && (r.assetIds?.length || 0) > 0 && !r.assetIds?.includes(p)
             );
           }
           default: {
