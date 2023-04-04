@@ -830,6 +830,17 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Add a UI to the screen that will show information about the currently entered 360 image.
+   * @param show
+   */
+  show360ImageInformation(show: boolean): void {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    this._image360ApiHelper.enable360Information(show);
+  }
+
+  /**
    * Removes a model that was previously added using {@link Cognite3DViewer.addModel},
    * {@link Cognite3DViewer.addCadModel} or {@link Cognite3DViewer.addPointCloudModel}
    * .

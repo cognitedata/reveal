@@ -12,3 +12,4 @@ export { Image360RevisionEntity } from './src/entity/Image360RevisionEntity';
 export { Image360Visualization } from './src/entity/Image360Visualization';
 export { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
+export { Image360Information } from './src/information/Image360Information';

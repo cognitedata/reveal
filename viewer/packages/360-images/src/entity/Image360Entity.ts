@@ -6,11 +6,12 @@ import { SceneHandler } from '@reveal/utilities';
 import { Image360FileProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
 import { Image360 } from './Image360';
-import { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 
 export class Image360Entity implements Image360 {
   private readonly _image360Icon: Image360Icon;
+  private readonly _eventMetadata: Image360EventDescriptor;
   private readonly _revisions: Image360RevisionEntity[];
   private _activeRevision: Image360RevisionEntity;
   private readonly _reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>;
@@ -34,6 +35,7 @@ export class Image360Entity implements Image360 {
   ) {
     this._image360Icon = icon;
     this._reloadImage = reloadImage;
+    this._eventMetadata = image360Metadata;
 
     this._revisions = image360Metadata.imageRevisions.map(descriptor => {
       return new Image360RevisionEntity(imageProvider, descriptor, sceneHandler, transform);
@@ -100,6 +102,10 @@ export class Image360Entity implements Image360 {
       { revision: this.getMostRecentRevision(), difference: Number.POSITIVE_INFINITY }
     );
     return closest.revision;
+  }
+
+  public getEventMetadata(): Image360EventDescriptor {
+    return this._eventMetadata;
   }
 
   /**

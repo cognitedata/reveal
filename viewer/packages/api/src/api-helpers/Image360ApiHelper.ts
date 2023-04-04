@@ -8,9 +8,11 @@ import { CogniteClient, Metadata } from '@cognite/sdk';
 import {
   Image360Collection,
   Image360Entity,
+  Image360RevisionEntity,
   Image360CollectionFactory,
   Image360Facade,
-  Image360
+  Image360,
+  Image360Information
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -24,12 +26,12 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { Image360RevisionEntity } from '@reveal/360-images/src/entity/Image360RevisionEntity';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
+  private _360ImageInformation: Image360Information | undefined;
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -168,6 +170,7 @@ export class Image360ApiHelper {
 
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
+    this._360ImageInformation?.updateInformation(image360Entity);
 
     const fromImageRevision = lastEntered360ImageEntity?.getActiveRevision();
     image360Entity.setActiveRevision(revisionToEnter);
@@ -328,6 +331,7 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.getActiveRevision().image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
+      this._360ImageInformation?.updateInformation(undefined);
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
@@ -351,6 +355,16 @@ export class Image360ApiHelper {
 
     this._image360Facade.dispose();
     this._image360Navigation.dispose();
+  }
+
+  public enable360Information(enable: boolean): void {
+    if (enable) {
+      if (!this._360ImageInformation) this._360ImageInformation = new Image360Information(this._domElement);
+      this._360ImageInformation.updateInformation(this._interactionState.currentImage360Entered);
+    } else {
+      this._360ImageInformation?.dispose();
+      this._360ImageInformation = undefined;
+    }
   }
 
   private findRevisionIdToEnter(image360Entity: Image360Entity): Image360RevisionEntity {

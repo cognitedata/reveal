@@ -59,7 +59,8 @@ export class Image360UI {
       siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
-      remove: removeAll360Images
+      remove: removeAll360Images,
+      showInfo: false
     };
 
     optionsFolder.add(params, 'siteId').name('Site ID');
@@ -135,6 +136,13 @@ export class Image360UI {
             });
           }
         }
+      });
+
+    gui
+      .add(params, 'showInfo')
+      .name('Show image information')
+      .onChange(() => {
+        viewer.show360ImageInformation(params.showInfo);
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');
