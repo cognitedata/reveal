@@ -119,7 +119,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   }, [depthMeasurementTypeProp]);
 
   const inclinationAnnotationDepths = useDeepMemo(() => {
-    return getAnnotationDepths(measurementsData?.data);
+    return getAnnotationDepths(casingsData?.data);
   }, [measurementsData?.data]);
 
   const isAnyColumnVisible = useDeepMemo(() => {

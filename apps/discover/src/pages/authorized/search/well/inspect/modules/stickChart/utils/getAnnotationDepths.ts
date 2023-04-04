@@ -1,35 +1,27 @@
-import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import { EMPTY_ARRAY } from 'constants/empty';
 
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells';
-
-import { AnnotationDepths } from '../types';
+import { AnnotationDepths, CasingAssemblyView } from '../types';
 
 export const getAnnotationDepths = (
-  data?: DepthMeasurementWithData[]
+  data?: CasingAssemblyView[]
 ): AnnotationDepths | undefined => {
   if (!data) {
     return undefined;
   }
 
   return data.reduce(
-    (result, { depthColumn: { type }, rows }) => {
-      const depths = rows.map(({ depth }) => depth);
-
-      if (type === DepthIndexTypeEnum.MeasuredDepth) {
-        return {
-          ...result,
-          measuredDepths: [...result.measuredDepths, ...depths],
-        };
-      }
-
+    (result, { measuredDepthBase, trueVerticalDepthBase }) => {
       return {
         ...result,
-        trueVerticalDepths: [...result.measuredDepths, ...depths],
+        measuredDepths: [...result.measuredDepths, measuredDepthBase.value],
+        trueVerticalDepths: trueVerticalDepthBase
+          ? [...result.trueVerticalDepths, trueVerticalDepthBase.value]
+          : result.trueVerticalDepths,
       };
     },
     {
-      measuredDepths: [],
-      trueVerticalDepths: [],
+      measuredDepths: EMPTY_ARRAY,
+      trueVerticalDepths: EMPTY_ARRAY,
     } as AnnotationDepths
   );
 };
