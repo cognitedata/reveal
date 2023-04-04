@@ -10,7 +10,8 @@ import {
   Image360Entity,
   Image360CollectionFactory,
   Image360Facade,
-  Image360
+  Image360,
+  Image360RevisionEntity
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -24,7 +25,6 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { Image360RevisionEntity } from '@reveal/360-images/src/entity/Image360RevisionEntity';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
