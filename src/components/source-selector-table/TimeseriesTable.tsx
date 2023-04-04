@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader } from '@cognite/cogs.js';
+import { Icon, Loader, Body } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 
@@ -8,6 +8,8 @@ import { useList } from 'hooks/list';
 import { SourceTableProps } from 'types/types';
 import { RawTimeseries } from 'types/api';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { stringSorter } from 'utils';
+import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 
 type TimeseriesListTableRecord = {
   key: string;
@@ -15,7 +17,7 @@ type TimeseriesListTableRecord = {
 } & RawTimeseries;
 type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
   title: string;
-  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
+  key: 'name' | 'id' | 'description' | 'lastUpdatedTime' | 'dataset';
 };
 
 export default function TimeseriesTable({
@@ -54,17 +56,39 @@ export default function TimeseriesTable({
         title: t('resource-table-column-name'),
         dataIndex: 'name',
         key: 'name',
+        sorter: (a, b) => stringSorter(a?.name, b?.name),
       },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
+        sorter: (a: any, b: any) =>
+          stringSorter(a?.description, b?.description),
+      },
+      {
+        title: t('data-set'),
+        dataIndex: 'dataSetId',
+        key: 'dataset',
+        render: (value) =>
+          !!value && (
+            <Body level={2} strong>
+              <QuickMatchDataSet dataSetId={value} />
+            </Body>
+          ),
+        sorter: (
+          rowA: TimeseriesListTableRecord,
+          rowB: TimeseriesListTableRecord
+        ) => (rowA?.dataSetId ?? 0) - (rowB?.dataSetId ?? 0),
       },
       {
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
         render: (value: number) => new Date(value).toLocaleString(),
+        sorter: (
+          rowA: TimeseriesListTableRecord,
+          rowB: TimeseriesListTableRecord
+        ) => (rowA?.lastUpdatedTime ?? 0) - (rowB?.lastUpdatedTime ?? 0),
       },
     ],
     [t]
