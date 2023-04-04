@@ -185,12 +185,12 @@ export default function EntityMatchingResult({
   }, [predictions, diffMatched, matched, selectedMatchType, unmatched]);
 
   return (
-    <Container $isActionBarVisible={!!confirmedPredictions.length}>
-      <Step
-        title={t('result-step-title', { step: 4 })}
-        subtitle={t('result-step-subtitle')}
-      >
-        <Flex direction="column">
+    <Step
+      title={t('result-step-title', { step: 4 })}
+      subtitle={t('result-step-subtitle')}
+    >
+      <Container $isActionBarVisible={!!confirmedPredictions.length}>
+        <Flex direction="column" gap={16}>
           {appliedRules && (
             <Flex gap={12} alignItems="center">
               <Select
@@ -225,13 +225,13 @@ export default function EntityMatchingResult({
             />
           )}
         </Flex>
-      </Step>
-      <QuickMatchActionBar
-        selectedRows={confirmedPredictions}
-        sourceType={sourceType}
-        onClose={onClose}
-      />
-    </Container>
+        <QuickMatchActionBar
+          selectedRows={confirmedPredictions}
+          sourceType={sourceType}
+          onClose={onClose}
+        />
+      </Container>
+    </Step>
   );
 }
 
