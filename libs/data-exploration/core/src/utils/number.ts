@@ -23,7 +23,7 @@ export const withThousandSeparatorStringExtended = (
   return withThousandSeparator(value, separator);
 };
 
-export const formatBigNumbersWithSuffix = (value: number) => {
+export const formatBigNumbersWithSuffix = (value: number): string => {
   const MILLION = 1000000;
   const TEN_THOUSAND = 10000;
   const THOUSAND = 1000;
@@ -49,7 +49,7 @@ export const formatBigNumbersWithSuffix = (value: number) => {
   }
 
   // if value below <10k, just display the original value.
-  return value;
+  return String(value);
 };
 
 // TODO: This is added to handle '1K+' phrase we get due to the aggregate limitations for advanced filters.

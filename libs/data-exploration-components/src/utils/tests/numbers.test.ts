@@ -37,7 +37,7 @@ describe('withThousandSeparatorStringExtended', () => {
 
 describe('formatBigNumbersWithSuffix', () => {
   test('0', () => {
-    expect(formatBigNumbersWithSuffix(0)).toEqual(0);
+    expect(formatBigNumbersWithSuffix(0)).toEqual('0');
   });
   test('huge number', () => {
     expect(formatBigNumbersWithSuffix(1231231293870)).toEqual('1231231.3M+');
