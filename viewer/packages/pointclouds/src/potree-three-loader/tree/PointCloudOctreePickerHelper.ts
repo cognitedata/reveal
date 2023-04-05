@@ -213,6 +213,8 @@ export class PointCloudOctreePickerHelper {
     pickMaterial.clipping = nodeMaterial.clipping;
     pickMaterial.clipIntersection = nodeMaterial.clipIntersection;
     pickMaterial.defines = nodeMaterial.defines;
+
+    pickMaterial.visibleNodeTextureOffsets = nodeMaterial.visibleNodeTextureOffsets;
   }
 
   public static updatePickRenderTarget(pickState: IPickState, width: number, height: number): void {
