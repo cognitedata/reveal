@@ -1496,10 +1496,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/reveal@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
-  integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
+"@cognite/reveal@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.1.tgz#cf03778c7c6333cf19124379d7a31635d213012b"
+  integrity sha512-8e1m2CxssmklHGgz8CBTnns5qLxHa7W+qQGK6FuO6bRr08/EGXM+wrj1i2bBtLeoxHn+C/pGQACw+LSqCtsnIQ==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
