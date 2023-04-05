@@ -2,7 +2,7 @@ import React from 'react';
 
 import Select from 'antd/lib/select';
 import { useTranslation } from 'common/i18n';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { getContainer } from 'utils/utils';
 
@@ -52,7 +52,7 @@ const useSpaces = () => {
     }
     return items;
   };
-  return useQuery('getSpaces', () => {
+  return useQuery(['getSpaces'], () => {
     return autoPageToArray(
       async (cursor) =>
         (

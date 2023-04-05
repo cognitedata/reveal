@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import React, { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@cognite/cogs.js';
 import { Col, Form, Input, Modal, Row, Table, notification } from 'antd';
 import { getContainer } from 'utils/utils';

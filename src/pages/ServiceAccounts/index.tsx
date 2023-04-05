@@ -11,7 +11,7 @@ import {
   Table,
   notification,
 } from 'antd';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { sleep } from 'utils/utils';

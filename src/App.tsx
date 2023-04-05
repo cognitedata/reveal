@@ -1,6 +1,6 @@
 import React from 'react';
-import { QueryClientProvider, QueryClient } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {

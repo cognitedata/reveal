@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Col, Input, Checkbox, Row, Table } from 'antd';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
