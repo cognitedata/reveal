@@ -3,10 +3,12 @@ import {
   isTextAnnotation,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
+import { isStickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import { LineAnnotationTooltip } from '../components/tooltips/LineAnnotationTooltip';
 import { ShapeAnnotationTooltip } from '../components/tooltips/ShapeAnnotationTooltip';
+import { StickyAnnotationTooltip } from '../components/tooltips/StickyAnnotationTooltip';
 import { TextAnnotationTooltip } from '../components/tooltips/TextAnnotationTooltip';
 import { CanvasAnnotation, isShapeAnnotation } from '../types';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
@@ -81,6 +83,27 @@ const useCanvasAnnotationTooltips = ({
                 }
                 onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
                 lineAnnotation={selectedCanvasAnnotation}
+              />
+            </BottomMarginStyle>
+          ),
+          anchorTo: TooltipAnchorPosition.TOP_RIGHT,
+          shouldPositionStrictly: true,
+        },
+      ];
+    }
+
+    if (isStickyAnnotation(selectedCanvasAnnotation)) {
+      return [
+        {
+          targetId: String(selectedCanvasAnnotation.id),
+          content: (
+            <BottomMarginStyle>
+              <StickyAnnotationTooltip
+                onDeleteSelectedCanvasAnnotation={
+                  onDeleteSelectedCanvasAnnotation
+                }
+                onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+                stickyAnnotation={selectedCanvasAnnotation}
               />
             </BottomMarginStyle>
           ),
