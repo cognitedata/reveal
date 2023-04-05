@@ -3,12 +3,19 @@ import { getChipRightPropsForResourceCounter } from '../../../utils';
 
 import { ResourceTabProps } from './types';
 import { CounterTab } from './elements';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 export const TimeseriesTab = ({ query, filter, ...rest }: ResourceTabProps) => {
-  const { data, isLoading } = useTimeseriesAggregateCountQuery({
-    timeseriesFilters: filter,
-    query,
-  });
+  const timeseriesSearchConfig =
+    useGetSearchConfigFromLocalStorage('timeSeries');
+  const { data, isLoading } = useTimeseriesAggregateCountQuery(
+    {
+      timeseriesFilters: filter,
+      query,
+    },
+    undefined,
+    timeseriesSearchConfig
+  );
   const chipRightProps = getChipRightPropsForResourceCounter(
     data?.count || 0,
     isLoading

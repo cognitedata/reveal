@@ -3,7 +3,7 @@ import { getContainerId } from '../utils/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotationsMultiple } from './useAnnotationsMultiple';
 import zip from 'lodash/zip';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { getExtendedAnnotationsFromAnnotationsApi } from '@cognite/data-exploration';
 import { getStyledAnnotationFromAnnotation } from '@cognite/data-exploration';
 import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
@@ -26,14 +26,10 @@ export const useContainerAnnotations = ({
   onMouseOver,
   onMouseOut,
 }: useContainerAnnotationsParams): ExtendedAnnotation[] => {
-  const previousAnnotationsRef = useRef<ExtendedAnnotation[]>([]);
-
-  // Now the container references change every time the user moves a container. Do we want to call the API every time?
-  // TODO: Investigate trigger this only when new containers is added or removed.
-  const { data: annotationsApiAnnotations, isLoading } =
+  const { data: annotationsApiAnnotations } =
     useAnnotationsMultiple(containerReferences);
 
-  const memoizedAnnotations = useMemo(() => {
+  return useMemo(() => {
     if (annotationsApiAnnotations === undefined) {
       return [];
     }
@@ -95,14 +91,4 @@ export const useContainerAnnotations = ({
     annotationsApiAnnotations,
     containerReferences,
   ]);
-
-  // Before the annotations would flicker when the user moved the container around.
-  // This is because the annotationsApiAnnotations first is undefined (while the API call is being made), and returned an empty array.
-  // Now we return the previous annotations if the API call is not done yet.
-  if (isLoading) {
-    return previousAnnotationsRef.current;
-  }
-  const extendedAnnotations = memoizedAnnotations;
-  previousAnnotationsRef.current = extendedAnnotations;
-  return extendedAnnotations;
 };

@@ -6,20 +6,37 @@ import {
   Body,
   Elevations,
   Button,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { useAsset } from '../../hooks/useAsset';
 import styled from 'styled-components';
+import ThreeDButton from './ThreeDButton';
 import TimeseriesList from './TimeseriesList';
 
 type AssetTooltipProps = {
   id: number;
+  onAddThreeD: ({
+    modelId,
+    revisionId,
+    initialAssetId,
+  }: {
+    modelId: number;
+    revisionId: number;
+    initialAssetId?: number;
+  }) => void;
   onAddTimeseries: (timeseriesId: number) => void;
   onAddAsset: () => void;
   onViewAsset: () => void;
 };
 
-const AssetTooltip: React.FC<AssetTooltipProps> = ({ id, onAddTimeseries }) => {
-  const { data: asset, isLoading: isLoading } = useAsset(id);
+const AssetTooltip: React.FC<AssetTooltipProps> = ({
+  id,
+  onAddAsset,
+  onViewAsset,
+  onAddThreeD,
+  onAddTimeseries,
+}) => {
+  const { data: asset, isLoading } = useAsset(id);
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -38,7 +55,27 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({ id, onAddTimeseries }) => {
           <Label level={5}>{asset.name ?? asset.externalId}</Label>
         </InnerHeaderWrapper>
 
-        <Button type="ghost" inverted icon="EllipsisHorizontal" size="medium" />
+        <ButtonsContainer>
+          <ButtonWrapper>
+            <Tooltip content="Add asset to canvas">
+              <Button icon="Add" onClick={onAddAsset} inverted />
+            </Tooltip>
+          </ButtonWrapper>
+
+          <ButtonWrapper>
+            <ThreeDButton
+              assetId={asset.id}
+              onAddThreeD={onAddThreeD}
+              aria-label="Add 3D Model to Canvas"
+            />
+          </ButtonWrapper>
+
+          <ButtonWrapper>
+            <Tooltip content="Open asset in Data Explorer">
+              <Button icon="ExternalLink" onClick={onViewAsset} inverted />
+            </Tooltip>
+          </ButtonWrapper>
+        </ButtonsContainer>
       </Header>
 
       <AssetType level={3}>Asset</AssetType>
@@ -96,6 +133,18 @@ const AssetType = styled(Body)`
   padding: 4px 0;
   text-transform: uppercase;
   color: ${Colors['text-icon--strong--inverted']};
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ButtonWrapper = styled.div`
+  &:not(:last-child) {
+    margin-right: 4px;
+  }
 `;
 
 export default AssetTooltip;

@@ -18,8 +18,8 @@ export const DataSetFilter = <TFilter,>({
   options,
   onChange,
   value,
-  error,
-  loading,
+  isError,
+  isLoading,
 }: DataSetFilterProps<TFilter>) => {
   const handleChange = (
     newValue: {
@@ -31,23 +31,23 @@ export const DataSetFilter = <TFilter,>({
     onChange?.(newFilters);
   };
 
-  if (loading) {
+  if (isLoading) {
     return null;
   }
 
   return (
     <Tooltip
       interactive
-      disabled={!error}
+      disabled={!isError}
       content={
-        error &&
+        isError &&
         'Error fetching datasets, please make sure you have datasetsAcl:READ'
       }
     >
       <MultiSelectFilter<number>
         label="Data set"
         options={options || []}
-        isDisabled={error}
+        isDisabled={isError}
         onChange={(_, newValues) => handleChange(newValues)}
         value={value || []}
       />
@@ -71,7 +71,7 @@ const CommonDataSetFilter = (
     };
   });
 
-  return <DataSetFilter {...props} error={isError} options={options} />;
+  return <DataSetFilter {...props} isError={isError} options={options} />;
 };
 
 DataSetFilter.Common = CommonDataSetFilter;

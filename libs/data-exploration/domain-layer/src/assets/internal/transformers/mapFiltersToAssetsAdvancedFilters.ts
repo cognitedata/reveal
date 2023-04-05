@@ -1,9 +1,15 @@
-import { InternalAssetFilters, isNumeric } from '@data-exploration-lib/core';
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+  isNumeric,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
   NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
+import isEmpty from 'lodash/isEmpty';
 
 import { getSearchConfig } from '../../../utils';
 
@@ -31,7 +37,8 @@ export const mapFiltersToAssetsAdvancedFilters = (
     metadata,
     internalId,
   }: InternalAssetFilters,
-  query?: string
+  query?: string,
+  searchConfig: AssetConfigType = getSearchConfig().asset
 ): AdvancedFilter<AssetsProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<AssetsProperties>();
 
@@ -88,49 +95,67 @@ export const mapFiltersToAssetsAdvancedFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        metadataBuilder.exists(`metadata|${key}`);
+      } else {
+        metadataBuilder.equals(`metadata|${key}`, value);
+      }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>();
 
-    const searchConfigData = getSearchConfig();
+    if (searchConfig.name.enabled) {
+      searchQueryBuilder.equals('name', query);
+      searchQueryBuilder.prefix('name', query);
 
-    if (searchConfigData.asset.name.enabled) {
-      searchQueryBuilder.search('name', query);
+      if (searchConfig.name.enabledFuzzySearch) {
+        searchQueryBuilder.search('name', query);
+      }
     }
 
-    if (searchConfigData.asset.description.enabled) {
-      searchQueryBuilder.search('description', query);
+    if (searchConfig.description.enabled) {
+      searchQueryBuilder.equals('description', query);
+      searchQueryBuilder.prefix('description', query);
+
+      if (searchConfig.description.enabledFuzzySearch) {
+        searchQueryBuilder.search('description', query);
+      }
     }
 
-    /**
-     * We want to filter all the metadata keys with the search query, to give a better result
-     * to the user when using our search.
-     */
-    if (searchConfigData.asset.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
+      /**
+       * We want to filter all the metadata keys with the search query, to give a better result
+       * to the user when using our search.
+       */
+      searchQueryBuilder.equals('metadata', query);
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.asset.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.asset.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals('externalId', query);
       searchQueryBuilder.prefix('externalId', query);
     }
-    if (searchConfigData.asset.source.enabled) {
+    if (searchConfig.source.enabled) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
+      // @ts-ignore
+      searchQueryBuilder.equals('source', query);
+      // @ts-ignore
       searchQueryBuilder.prefix('source', query);
     }
 
-    if (searchConfigData.asset.labels.enabled) {
+    if (searchConfig.labels.enabled) {
       searchQueryBuilder.containsAny('labels', [query]);
     }
 

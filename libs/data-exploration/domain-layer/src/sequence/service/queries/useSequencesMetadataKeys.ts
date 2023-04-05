@@ -2,8 +2,17 @@ import { useMemo } from 'react';
 
 import { useSequencesMetadataKeysAggregateQuery } from './useSequenceMetadataKeysAggregateQuery';
 
-export const useSequencesMetadataKeys = () => {
-  const { data, ...rest } = useSequencesMetadataKeysAggregateQuery();
+interface Props {
+  query?: string;
+  enabled?: boolean;
+}
+
+export const useSequencesMetadataKeys = ({ query, enabled }: Props = {}) => {
+  const { data, ...rest } = useSequencesMetadataKeysAggregateQuery(
+    query,
+    undefined,
+    { enabled }
+  );
 
   const metadataKeys = useMemo(() => {
     return data?.map(({ value }) => value);

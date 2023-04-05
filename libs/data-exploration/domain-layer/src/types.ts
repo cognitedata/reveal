@@ -8,7 +8,7 @@ export type Order = 'asc' | 'desc';
 
 export type InternalSortBy = {
   property: string[];
-  order: Order;
+  order?: Order;
 };
 
 export type TableSortBy = {
@@ -21,3 +21,7 @@ export interface MatchingLabels {
   partial: string[];
   fuzzy: string[];
 }
+
+export type AggregateFilters = {
+  aggregateFilter?: { prefix: { value: string } };
+};

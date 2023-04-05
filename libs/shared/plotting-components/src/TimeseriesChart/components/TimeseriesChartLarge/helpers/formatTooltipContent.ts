@@ -1,10 +1,14 @@
-import { DatapointAggregate } from '@cognite/sdk';
-
 import { TooltipRendererProps } from '../../../../LineChart';
+import { TimeseriesDatapoint } from '../../../domain/service/types';
 import { getTooltipNumericValue } from '../../../utils/getTooltipNumericValue';
 
 export const formatTooltipContent = ({ customData }: TooltipRendererProps) => {
-  const datapoint = customData as DatapointAggregate;
+  const datapoint = customData as TimeseriesDatapoint;
+
+  if ('value' in datapoint) {
+    return [{ label: 'Value', value: datapoint.value }];
+  }
+
   const { average, max, min, count } = datapoint;
 
   return [

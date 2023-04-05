@@ -282,7 +282,7 @@ pods {
                   repo: domain,
                   prefix: prefix,
                   buildCommand: "yarn build preview ${project}",
-                  buildFolder: "build",
+                  buildFolder: "dist/apps/${project}",
                 )
                 deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
@@ -313,9 +313,18 @@ pods {
                 continue;
               }
 
-              final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
+              final boolean isPreviewBranch = env.BRANCH_NAME.startsWith("release-preview-${project}")
+              final boolean isReleaseBranch = !isPreviewBranch && env.BRANCH_NAME.startsWith("release-${project}")
               final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project] == 'single-branch';
               final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
+
+               if (releaseToProd) {
+                   releaseEnvironment = 'production'
+               } else if (isPreviewBranch) {
+                   releaseEnvironment = 'preview'
+               } else {
+                   releaseEnvironment = 'staging'
+               }
 
               // Run the yarn install in the app in cases of local packages.json
               dir("apps/${project}") {
@@ -327,10 +336,10 @@ pods {
               stageWithNotify("Publish production build: ${project}") {
                 appHosting(
                   appName: firebaseSiteName,
-                  environment: releaseToProd ? 'production' : 'staging',
-                  firebaseJson: 'build/firebase.json',
+                  environment: releaseEnvironment,
+                  firebaseJson: "dist/apps/${project}/firebase.json",
                   buildCommand: "yarn build production ${project}",
-                  buildFolder: 'build',
+                  buildFolder: "dist/apps/${project}",
                 )
 
                 slack.send(

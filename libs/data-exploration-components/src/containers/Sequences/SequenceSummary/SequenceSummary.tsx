@@ -4,10 +4,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import {
   useSequenceSearchResultWithMatchingLabelsQuery,
   InternalSequenceDataWithMatchingLabels,
-  useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import {
-  ResourceTableColumns,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
@@ -19,9 +17,11 @@ import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
   EMPTY_OBJECT,
   InternalSequenceFilters,
+  useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
+import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
 
 export const SequenceSummary = ({
   query = '',
@@ -40,17 +40,20 @@ export const SequenceSummary = ({
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
 }) => {
-  const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery({
-    filter,
-    query,
-  });
-  const { data: metadataKeys = [] } = useSequencesMetadataKeys();
+  const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
-  }, [metadataKeys]);
+  const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery(
+    {
+      filter,
+      query,
+    },
+    undefined,
+    sequenceSearchConfig
+  );
+
+  const { metadataColumns, setMetadataKeyQuery } =
+    useSequencesMetadataColumns();
+
   const columns = useMemo(
     () =>
       [
@@ -93,6 +96,7 @@ export const SequenceSummary = ({
           isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
         }
         query={query}
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>
   );

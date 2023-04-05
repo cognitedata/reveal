@@ -10,11 +10,7 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import {
-  HighlightCell,
-  ResourceTableColumns,
-  HierarchyExtraRow,
-} from '../../../components';
+import { HighlightCell, HierarchyExtraRow } from '../../../components';
 import { Table } from '../../../components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
 import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
@@ -24,13 +20,14 @@ import { SubCellMatchingLabels } from '../../../components/Table/components/SubC
 import { DASH } from '../../../utils';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import {
-  InternalAssetTreeData,
-  useAssetsMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
+import { InternalAssetTreeData } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  InternalAssetFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
+import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -62,7 +59,7 @@ export const AssetTreeTable = ({
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
   const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 
-  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
   const rootExpandedKeys = useMemo(() => {
     return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
@@ -70,16 +67,21 @@ export const AssetTreeTable = ({
     }, [] as number[]);
   }, [rootExpanded]);
 
+  const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
+
   const rootAssetTree = useRootAssetsQuery(rootExpandedKeys);
   const {
     data: searchAssetTree,
     fetchNextPage,
     hasNextPage,
-  } = useSearchAssetTree({
-    query,
-    assetFilter: filter,
-    sortBy: [],
-  });
+  } = useSearchAssetTree(
+    {
+      query,
+      assetFilter: filter,
+      sortBy: [],
+    },
+    assetSearchConfig
+  );
 
   const startFromRoot = useMemo(() => {
     return (
@@ -87,10 +89,6 @@ export const AssetTreeTable = ({
       Object.values(filter).filter(Boolean).length === 0
     );
   }, [query, filter]);
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
 
   const columns = React.useMemo(
     () =>
@@ -312,6 +310,7 @@ export const AssetTreeTable = ({
           HierarchyExtraRow(row, onAssetSeeMoreClicked)
         }
         renderCellSubComponent={SubCellMatchingLabels}
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </Suspense>
   );

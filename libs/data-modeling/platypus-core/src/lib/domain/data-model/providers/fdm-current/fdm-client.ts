@@ -371,15 +371,18 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       dataModelType.name,
       OPERATION_TYPE.LIST
     );
-    const query = this.queryBuilder.buildListQuery({
-      cursor,
-      dataModelType,
-      dataModelTypeDefs,
-      limit,
-      filter,
-      sort,
-      nestedLimit,
-    });
+    const query = this.queryBuilder.buildListQuery(
+      {
+        cursor,
+        dataModelType,
+        dataModelTypeDefs,
+        limit,
+        filter,
+        sort,
+        nestedLimit,
+      },
+      true
+    );
     return this.mixerApiService
       .runQuery({
         graphQlParams: {
@@ -413,11 +416,14 @@ export class FdmV2Client implements FlexibleDataModelingClient {
     filter,
     searchTerm,
   }: SearchDataDTO): Promise<CdfResourceInstance[]> {
-    const query = this.queryBuilder.buildSearchQuery({
-      dataModelType,
-      dataModelTypeDefs,
-      filter,
-    });
+    const query = this.queryBuilder.buildSearchQuery(
+      {
+        dataModelType,
+        dataModelTypeDefs,
+        filter,
+      },
+      true
+    );
 
     return this.mixerApiService
       .runQuery({
@@ -449,11 +455,12 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       externalId,
       nestedCursors,
       nestedLimit,
+      dataModelExternalId,
       dataModelType,
       dataModelTypeDefs,
-      dataModelVersion: { externalId: dataModelExternalId, version },
       nestedFilters,
       limitFields,
+      version,
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
       dataModelType.name,

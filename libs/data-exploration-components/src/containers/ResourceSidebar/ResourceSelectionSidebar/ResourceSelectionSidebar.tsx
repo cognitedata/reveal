@@ -1,6 +1,8 @@
+import { usePrevious } from '@data-exploration-components/hooks/index';
+import isEqual from 'lodash/isEqual';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Input } from '@cognite/cogs.js';
+import { Button, Flex, Input } from '@cognite/cogs.js';
 import {
   ResourceType,
   ResourceItem,
@@ -9,8 +11,8 @@ import {
 } from '@data-exploration-components/types';
 import {
   Divider,
-  SpacedRow,
   ResourceTypeTabs,
+  SpacedRow,
 } from '@data-exploration-components/components';
 import {
   SearchFilters,
@@ -18,15 +20,38 @@ import {
   ResourcePreviewSidebar,
 } from '@data-exploration-components/containers';
 
+import { VerticalDivider } from '@data-exploration-components/components/Divider';
 import {
-  OldAssetFilters,
-  OldFilesFilters,
-  OldEventsFilters,
-  OldTimeseriesFilters,
+  InternalEventsFilters,
   OldSequenceFilters,
+  InternalAssetFilters,
+  InternalFilesFilters,
+  InternalTimeseriesFilters,
 } from '@data-exploration-lib/core';
-import zIndex from '../../../utils/zIndex';
+import zIndex from '@data-exploration-components/utils/zIndex';
+import { ExplorationFilterToggle } from '@data-exploration/components';
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  overflow: hidden;
+  z-index: ${zIndex.DRAWER};
+`;
+
+const CloseButton = styled(Button)`
+  position: absolute;
+  top: 16px;
+  left: -50px;
+  background-color: white;
+`;
+const SidebarWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
   top: 0;
@@ -37,8 +62,8 @@ const Drawer = styled.div<{ visible: boolean }>`
   background: #fff;
   transition: 0.3s all;
   && > div {
-    padding: 24px;
     height: 100%;
+    padding: 16px 16px 12px;
     display: flex;
     flex-direction: column;
   }
@@ -54,19 +79,6 @@ const Overlay = styled.div<{ visible: boolean }>`
   background-color: ${(props) =>
     props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};
   transition: 0.3s all;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  overflow: hidden;
-`;
-
-const CloseButton = styled(Button)`
-  align-self: flex-end;
 `;
 
 export const ResourceSelectionSidebar = ({
@@ -91,15 +103,16 @@ export const ResourceSelectionSidebar = ({
   children?: React.ReactNode;
 } & SelectableItemsProps &
   InitialOldResourceFilterProps) => {
-  const [assetFilter, setAssetFilter] = useState<OldAssetFilters>(
+  const previousResourceTypes = usePrevious(resourceTypes);
+  const [assetFilter, setAssetFilter] = useState<InternalAssetFilters>(
     initialAssetFilter || {}
   );
   const [timeseriesFilter, setTimeseriesFilter] =
-    useState<OldTimeseriesFilters>(initialTimeseriesFilter || {});
-  const [fileFilter, setFileFilter] = useState<OldFilesFilters>(
+    useState<InternalTimeseriesFilters>(initialTimeseriesFilter || {});
+  const [fileFilter, setFileFilter] = useState<InternalFilesFilters>(
     initialFileFilter || {}
   );
-  const [eventFilter, setEventFilter] = useState<OldEventsFilters>(
+  const [eventFilter, setEventFilter] = useState<InternalEventsFilters>(
     initialEventFilter || {}
   );
   const [sequenceFilter, setSequenceFilter] = useState<OldSequenceFilters>(
@@ -110,9 +123,14 @@ export const ResourceSelectionSidebar = ({
   const [previewItem, setPreviewItem] = useState<ResourceItem | undefined>(
     undefined
   );
+  const [showFilter, setShowFilter] = useState(false);
 
   useEffect(() => {
-    if (!resourceTypes.includes(activeKey)) {
+    if (
+      !resourceTypes.includes(activeKey) ||
+      // The resourceType order might have changed
+      !isEqual(previousResourceTypes, resourceTypes)
+    ) {
       setActiveKey(resourceTypes[0]);
     }
   }, [activeKey, resourceTypes]);
@@ -126,86 +144,99 @@ export const ResourceSelectionSidebar = ({
       <Drawer visible={visible}>
         {visible && (
           <div>
-            <CloseButton
-              icon="Close"
-              type="ghost"
-              onClick={() => onClose(false)}
-            />
+            <CloseButton icon="Close" onClick={() => onClose(false)} />
             {header}
-            <div>
-              <ResourceTypeTabs
-                currentResourceType={activeKey}
-                setCurrentResourceType={(tab) =>
-                  setActiveKey(tab as ResourceType)
-                }
-                resourceTypes={resourceTypes}
-              />
-            </div>
-            <Wrapper>
-              <SearchFilters
-                assetFilter={assetFilter}
-                setAssetFilter={setAssetFilter}
-                timeseriesFilter={timeseriesFilter}
-                setTimeseriesFilter={setTimeseriesFilter}
-                sequenceFilter={sequenceFilter}
-                setSequenceFilter={setSequenceFilter}
-                eventFilter={eventFilter}
-                setEventFilter={setEventFilter}
-                fileFilter={fileFilter}
-                setFileFilter={setFileFilter}
-                resourceType={activeKey}
-                allowHide={false}
-              />
-              <SearchResultWrapper>
-                <Input
-                  icon="Search"
-                  fullWidth
-                  size="large"
-                  iconPlacement="left"
-                  placeholder="Search..."
-                  onChange={(ev) => setQuery(ev.target.value)}
-                  value={query}
-                />
-                <SearchResults
-                  selectionMode={selectionMode}
-                  onSelect={onSelect}
-                  isSelected={isSelected}
-                  assetFilter={assetFilter}
-                  timeseriesFilter={timeseriesFilter}
-                  sequenceFilter={sequenceFilter}
-                  eventFilter={eventFilter}
-                  fileFilter={fileFilter}
-                  resourceType={activeKey}
-                  query={query}
-                  onClick={(item) => setPreviewItem(item)}
-                />
-              </SearchResultWrapper>
-              {previewItem && (
-                <div style={{ width: 360, flex: 1 }}>
-                  <ResourcePreviewSidebar
-                    item={previewItem}
-                    closable={false}
-                    selectionMode={selectionMode}
-                    onSelect={() => onSelect(previewItem)}
-                    isSelected={isSelected(previewItem)}
+            <SidebarWrapper>
+              <Wrapper>
+                <SearchFiltersWrapper>
+                  <SearchFilters
+                    assetFilter={assetFilter}
+                    setAssetFilter={setAssetFilter}
+                    timeseriesFilter={timeseriesFilter}
+                    setTimeseriesFilter={setTimeseriesFilter}
+                    sequenceFilter={sequenceFilter}
+                    setSequenceFilter={setSequenceFilter}
+                    eventFilter={eventFilter}
+                    setEventFilter={setEventFilter}
+                    fileFilter={fileFilter}
+                    setFileFilter={setFileFilter}
+                    resourceType={activeKey}
+                    visible={showFilter}
                   />
-                </div>
+                </SearchFiltersWrapper>
+                <MainSearchContainer>
+                  <SearchInputContainer>
+                    <>
+                      <ExplorationFilterToggle
+                        filterState={showFilter}
+                        onClick={() => setShowFilter((prev) => !prev)}
+                      />
+                      <VerticalDivider />
+                    </>
+                    <Input
+                      icon="Search"
+                      fullWidth
+                      size="large"
+                      iconPlacement="left"
+                      placeholder="Search..."
+                      onChange={(ev) => setQuery(ev.target.value)}
+                      value={query}
+                    />
+                  </SearchInputContainer>
+                  <TabsContainer>
+                    <ResourceTypeTabs
+                      query={query}
+                      resourceTypes={resourceTypes}
+                      currentResourceType={activeKey}
+                      setCurrentResourceType={(tab) => {
+                        setActiveKey(tab as ResourceType);
+                      }}
+                    />
+                  </TabsContainer>
+                  <MainContainer $isFilterFeatureEnabled>
+                    <SearchResults
+                      isAssetTreeEnabled={false}
+                      selectionMode={selectionMode}
+                      onSelect={onSelect}
+                      isSelected={isSelected}
+                      assetFilter={assetFilter}
+                      timeseriesFilter={timeseriesFilter}
+                      sequenceFilter={sequenceFilter}
+                      eventFilter={eventFilter}
+                      fileFilter={fileFilter}
+                      resourceType={activeKey}
+                      query={query}
+                      onClick={(item) => setPreviewItem(item)}
+                    />
+                  </MainContainer>
+                </MainSearchContainer>
+                {previewItem && (
+                  <ResourcePreviewSidebarWrapper>
+                    <ResourcePreviewSidebar
+                      item={previewItem}
+                      closable={true}
+                      onClose={() => setPreviewItem(undefined)}
+                      selectionMode={selectionMode}
+                      onSelect={() => onSelect(previewItem)}
+                      isSelected={isSelected(previewItem)}
+                    />
+                  </ResourcePreviewSidebarWrapper>
+                )}
+              </Wrapper>
+              {children}
+              {selectionMode !== 'none' && (
+                <>
+                  <Divider.Horizontal />
+                  <StyledSpacedRow>
+                    <Button onClick={() => onClose(false)}>Cancel</Button>
+                    <div className="spacer" />
+                    <Button type="primary" onClick={() => onClose(true)}>
+                      Select Resources
+                    </Button>
+                  </StyledSpacedRow>
+                </>
               )}
-            </Wrapper>
-            {children}
-
-            {selectionMode !== 'none' && (
-              <>
-                <Divider.Horizontal />
-                <SpacedRow>
-                  <Button onClick={() => onClose(false)}>Cancel</Button>
-                  <div className="spacer" />
-                  <Button type="primary" onClick={() => onClose(true)}>
-                    Select Resources
-                  </Button>
-                </SpacedRow>
-              </>
-            )}
+            </SidebarWrapper>
           </div>
         )}
       </Drawer>
@@ -214,9 +245,46 @@ export const ResourceSelectionSidebar = ({
   );
 };
 
-const SearchResultWrapper = styled.div`
+const SearchFiltersWrapper = styled.div`
+  display: flex;
+  flex: 0 0 auto;
+`;
+
+const SearchInputContainer = styled(Flex)`
+  padding: 16px;
+  padding-bottom: 12px;
+  align-items: center;
+  display: flex;
+  gap: 8px;
+`;
+
+const StyledSpacedRow = styled(SpacedRow)`
+  padding: 0 12px;
+`;
+const MainSearchContainer = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   height: 100%;
+  /* width: calc(100% - 303px); */
+  flex: 1;
+  overflow: auto;
+`;
+
+const TabsContainer = styled.div`
+  flex: 0 0 auto;
+`;
+
+const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
+  padding-left: ${({ $isFilterFeatureEnabled }) =>
+    $isFilterFeatureEnabled ? '0px' : '16px'};
+  height: 100%;
+  flex: 1;
+  overflow: auto;
+`;
+
+const ResourcePreviewSidebarWrapper = styled.div`
+  width: 360px;
+  margin: 12px;
+  flex: 1;
+  border-left: 1px solid var(--cogs-border--muted);
 `;

@@ -5,7 +5,10 @@ import {
   useAssetsAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+} from '@data-exploration-lib/core';
 
 export const useAssetsSearchAggregateQuery = (
   {
@@ -15,11 +18,12 @@ export const useAssetsSearchAggregateQuery = (
     query?: string;
     assetsFilters: InternalAssetFilters;
   },
-  options?: UseQueryOptions
+  options?: UseQueryOptions,
+  searchConfig?: AssetConfigType
 ) => {
   const advancedFilter = useMemo(
-    () => mapFiltersToAssetsAdvancedFilters(assetsFilters, query),
-    [assetsFilters, query]
+    () => mapFiltersToAssetsAdvancedFilters(assetsFilters, query, searchConfig),
+    [assetsFilters, query, searchConfig]
   );
 
   const filter = useMemo(

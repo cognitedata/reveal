@@ -17,6 +17,7 @@ export const useDatasetsListQuery = (
   options?: Omit<UseQueryOptions<DataSet[], any, DataSet[]>, 'queryFn'>
 ) => {
   const sdk = useSDK();
+
   return useQuery(
     queryKeys.listDatasets(filter, limit),
     () =>

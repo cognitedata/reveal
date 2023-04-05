@@ -1,15 +1,34 @@
-import { useCallback, useMemo, useState } from 'react';
 import { AnnotationType, ToolType } from '@cognite/unified-file-viewer';
-import { CanvasAnnotation } from '../types';
-import { UseManagedStateReturnType } from './useManagedState';
-import { ExactlyOneKey } from '../utils/ExactlyOneKey';
-import { FONT_SIZE, LINE_STROKE_WIDTH } from '../constants';
-import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
+import { useCallback, useMemo, useState } from 'react';
 import {
   SHAPE_ANNOTATION_FILL_COLOR_MAP,
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
+  STICKY_ANNOTATION_COLOR_MAP,
   TEXT_ANNOTATION_COLOR_MAP,
 } from '../colors';
+import { FONT_SIZE, LINE_STROKE_WIDTH } from '../constants';
+import { CanvasAnnotation } from '../types';
+import { ExactlyOneKey } from '../utils/ExactlyOneKey';
+import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
+import { UseManagedStateReturnType } from './useManagedState';
+
+const SHARED_STICKY_TOOL_OPTIONS = {
+  width: 200,
+  height: 200,
+  padding: 4,
+  borderRadius: 4,
+  borderWidth: 2,
+  lineHeight: 1.2,
+  shadowColor: 'rgba(79, 82, 104, 0.1)',
+  shadowOffset: {
+    x: 0,
+    y: 1,
+  },
+  shadowBlur: 16,
+  fontSize: '14px',
+  color: 'black',
+  borderColor: 'rgba(83, 88, 127, 0.24)',
+} as const;
 
 type ShapeAnnotationStyle = {
   fill?: string;
@@ -26,12 +45,17 @@ type LineAnnotationStyle = {
   strokeWidth?: number;
 };
 
+type StickyAnnotationStyle = {
+  backgroundColor?: string;
+};
+
 const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
   annotation: T,
   updatedAnnotationStyle: ExactlyOneKey<AnnotationStyleByType>
 ): T => {
   switch (annotation.type) {
-    case AnnotationType.RECTANGLE: {
+    case AnnotationType.RECTANGLE:
+    case AnnotationType.ELLIPSE: {
       if (updatedAnnotationStyle.shape === undefined) {
         throw new Error(
           'Incorrect annotation style for annotation type. This should not happen.'
@@ -73,6 +97,23 @@ const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
         },
       };
     }
+
+    case AnnotationType.STICKY: {
+      if (updatedAnnotationStyle.sticky === undefined) {
+        throw new Error(
+          'Incorrect annotation style for annotation type. This should not happen.'
+        );
+      }
+
+      return {
+        ...annotation,
+        style: {
+          ...annotation.style,
+          ...updatedAnnotationStyle.sticky,
+        },
+      };
+    }
+
     default:
       throw new Error(
         'Unsupported annotation type for updating style' + annotation.type
@@ -84,6 +125,7 @@ type AnnotationStyleByType = {
   shape: ShapeAnnotationStyle;
   text: TextAnnotationStyle;
   line: LineAnnotationStyle;
+  sticky: StickyAnnotationStyle;
 };
 
 export type OnUpdateAnnotationStyleByType = (
@@ -99,7 +141,9 @@ const DEFAULT_STYLE = {
   isWorkspaceAnnotation: true,
 };
 
-const DEFAULT_TOOL_OPTIONS: Record<ToolType, ToolOptions> = {
+type ToolsOptionsByType = Record<ToolType, ToolOptions>;
+
+const DEFAULT_TOOL_OPTIONS: ToolsOptionsByType = {
   [ToolType.RECTANGLE]: DEFAULT_STYLE,
   [ToolType.ELLIPSE]: DEFAULT_STYLE,
   [ToolType.POLYLINE]: {
@@ -116,6 +160,10 @@ const DEFAULT_TOOL_OPTIONS: Record<ToolType, ToolOptions> = {
   [ToolType.LINE]: DEFAULT_STYLE,
   [ToolType.IMAGE]: {},
   [ToolType.PAN]: {},
+  [ToolType.STICKY]: {
+    ...SHARED_STICKY_TOOL_OPTIONS,
+    backgroundColor: STICKY_ANNOTATION_COLOR_MAP.YELLOW,
+  },
 };
 
 const useManagedTools = ({
@@ -124,6 +172,7 @@ const useManagedTools = ({
   onUpdateRequest,
 }: {
   initialTool: ToolType;
+  initialToolsOptionsByType?: ToolsOptionsByType;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   onUpdateRequest: UseManagedStateReturnType['onUpdateRequest'];
 }): {
@@ -133,6 +182,9 @@ const useManagedTools = ({
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
 } => {
   const [tool, setTool] = useState<ToolType>(initialTool);
+  const [toolsOptionsByType] = useState<ToolsOptionsByType>({
+    ...DEFAULT_TOOL_OPTIONS,
+  });
 
   const [activeAnnotationStyleByType, setActiveAnnotationStyleByType] =
     useState<AnnotationStyleByType>({
@@ -146,6 +198,9 @@ const useManagedTools = ({
       line: {
         stroke: undefined,
         strokeWidth: undefined,
+      },
+      sticky: {
+        backgroundColor: undefined,
       },
     });
 
@@ -190,24 +245,31 @@ const useManagedTools = ({
       return DEFAULT_TOOL_OPTIONS[tool];
     }
 
-    if (tool === ToolType.RECTANGLE) {
+    if (tool === ToolType.RECTANGLE || tool === ToolType.ELLIPSE) {
       return {
-        ...DEFAULT_TOOL_OPTIONS[tool],
+        ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.shape),
       };
     }
 
     if (tool === ToolType.TEXT) {
       return {
-        ...DEFAULT_TOOL_OPTIONS[tool],
+        ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.text),
       };
     }
 
     if (tool === ToolType.LINE) {
       return {
-        ...DEFAULT_TOOL_OPTIONS[tool],
+        ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.line),
+      };
+    }
+
+    if (tool === ToolType.STICKY) {
+      return {
+        ...toolsOptionsByType[tool],
+        ...filterNotUndefinedValues(activeAnnotationStyleByType.sticky),
       };
     }
 

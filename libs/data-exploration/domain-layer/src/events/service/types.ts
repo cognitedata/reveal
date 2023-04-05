@@ -1,6 +1,7 @@
 import { AggregateResponse, EventFilter } from '@cognite/sdk';
 import {
   AdvancedFilter,
+  AggregateFilters,
   EventsProperties,
 } from '@data-exploration-lib/domain-layer';
 
@@ -9,10 +10,10 @@ import {
  * https://cognitedata.atlassian.net/wiki/spaces/SFAA/pages/3867312421/ApiSpec+Assets+Events+advanced+aggregation+capabilities
  */
 
-export type EventsAggregateFilters = {
+export interface EventsAggregateFilters extends AggregateFilters {
   filter?: EventFilter;
   advancedFilter?: AdvancedFilter<EventsProperties>;
-};
+}
 
 export type EventsAggregateOptions =
   | {
@@ -43,7 +44,8 @@ export interface EventsAggregateUniquePropertiesResponse
 }
 
 export interface EventsAggregateUniqueValuesResponse extends AggregateResponse {
-  values: [string];
+  value: string;
+  values: string[];
 }
 
 export interface EventsMetadataAggregateResponse extends AggregateResponse {

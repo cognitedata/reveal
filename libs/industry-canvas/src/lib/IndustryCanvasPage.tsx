@@ -1,13 +1,5 @@
 import { PageTitle } from '@cognite/cdf-utilities';
-import {
-  Button,
-  Title,
-  Flex,
-  Tooltip,
-  Icon,
-  Colors,
-  toast,
-} from '@cognite/cogs.js';
+import { Button, Flex, Tooltip, Icon, Colors, toast } from '@cognite/cogs.js';
 import {
   isNotUndefined,
   ResourceIcons,
@@ -18,8 +10,11 @@ import {
   ContainerType,
   isSupportedFileInfo,
   UnifiedViewer,
+  UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
+import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
@@ -29,20 +24,33 @@ import {
   ContainerReferenceType,
   ContainerReferenceWithoutDimensions,
 } from './types';
-import { useState } from 'react';
+import { useState, useEffect, KeyboardEventHandler } from 'react';
 import useManagedState from './hooks/useManagedState';
-import { clearCanvasState } from './utils/utils';
+import { CanvasTitle } from './components/CanvasTitle';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useIndustryCanvasService } from './hooks/useIndustryCanvasService';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
-export const IndustryCanvasPage = () => {
+const IndustryCanvasPageWithoutQueryClientProvider = () => {
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
+  const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
+
+  const sdk = useSDK();
+
+  const {
+    activeCanvas,
+    isCreatingCanvas,
+    isSavingCanvas,
+    isLoadingCanvas,
+    saveCanvas,
+    createCanvas,
+  } = useIndustryCanvasService();
 
   const {
     container,
-    setContainer,
     canvasAnnotations,
     containerReferences,
     addContainerReferences,
@@ -50,6 +58,10 @@ export const IndustryCanvasPage = () => {
     removeContainerReference,
     onDeleteRequest,
     onUpdateRequest,
+    undo,
+    redo,
+    interactionState,
+    setInteractionState,
   } = useManagedState({
     container: {
       id: 'flexible-layout-container',
@@ -62,11 +74,21 @@ export const IndustryCanvasPage = () => {
     unifiedViewer: unifiedViewerRef,
     addContainerReferences,
   });
-  const sdk = useSDK();
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
   };
+
+  useEffect(() => {
+    if (unifiedViewerRef === null) {
+      return;
+    }
+    setCurrentZoomScale(unifiedViewerRef.getScale());
+    unifiedViewerRef.addEventListener(
+      UnifiedViewerEventType.ON_ZOOM_CHANGE,
+      setCurrentZoomScale
+    );
+  }, [unifiedViewerRef]);
 
   const onAddResourcePress = () => {
     openResourceSelector({
@@ -131,10 +153,12 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'timeSeries') {
               return {
                 type: ContainerReferenceType.TIMESERIES,
-                id: supportedResourceItem.id,
-                startDate: new Date(
-                  new Date().setMonth(new Date().getMonth() - 6)
-                ),
+                id: uuid(),
+                resourceId: supportedResourceItem.id,
+                startDate: dayjs(new Date())
+                  .subtract(2, 'years')
+                  .startOf('day')
+                  .toDate(),
                 endDate: new Date(),
               };
             }
@@ -142,7 +166,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'file') {
               return {
                 type: ContainerReferenceType.FILE,
-                id: supportedResourceItem.id,
+                id: supportedResourceItem.id.toString(),
+                resourceId: supportedResourceItem.id,
                 page: 1,
               };
             }
@@ -150,7 +175,8 @@ export const IndustryCanvasPage = () => {
             if (supportedResourceItem.type === 'asset') {
               return {
                 type: ContainerReferenceType.ASSET,
-                id: supportedResourceItem.id,
+                id: supportedResourceItem.id.toString(),
+                resourceId: supportedResourceItem.id,
               };
             }
 
@@ -162,9 +188,28 @@ export const IndustryCanvasPage = () => {
     });
   };
 
-  const onClearLocalStorage = () => {
-    clearCanvasState();
+  const onClearCanvas = async () => {
+    if (activeCanvas !== undefined) {
+      saveCanvas({
+        ...activeCanvas,
+        data: {
+          containerReferences: [],
+          canvasAnnotations: [],
+        },
+      });
+    }
     window.location.reload();
+  };
+
+  const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      if (event.shiftKey) {
+        redo.fn();
+        return;
+      }
+      undo.fn();
+      return;
+    }
   };
 
   return (
@@ -173,18 +218,53 @@ export const IndustryCanvasPage = () => {
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
-            <ResourceIcons type="file" style={{ marginRight: '10px' }} />
-            <Name level="3">Industry Canvas</Name>
+            <ResourceIcons type="file" style={{ marginRight: '5px' }} />
+            <CanvasTitle />
+            <Button
+              aria-label="CreateCanvasButton"
+              size="medium"
+              type="primary"
+              icon="Plus"
+              loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
+              style={{ marginLeft: '10px' }}
+              onClick={() => {
+                createCanvas({
+                  canvasAnnotations: [],
+                  containerReferences: [],
+                });
+              }}
+            >
+              Create new canvas
+            </Button>
           </Flex>
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Button onClick={onClearLocalStorage}>
-            <Icon type="Delete" /> Clear local storage
+          <Button onClick={onClearCanvas}>
+            <Icon type="Delete" /> Clear canvas
           </Button>
 
+          <Tooltip content="Undo">
+            <Button
+              type="ghost"
+              icon="Restore"
+              onClick={undo.fn}
+              disabled={undo.isDisabled}
+              aria-label="Undo"
+            />
+          </Tooltip>
+          <Tooltip content="Redo">
+            <Button
+              type="ghost"
+              icon="Refresh"
+              onClick={redo.fn}
+              disabled={redo.isDisabled}
+              aria-label="Redo"
+            />
+          </Tooltip>
+
           <Button onClick={onAddResourcePress}>
-            <Icon type="Plus" /> Add resources...
+            <Icon type="Plus" /> Add data...
           </Button>
 
           <Tooltip content="Download canvas as PDF">
@@ -196,15 +276,18 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
-      <PreviewTabWrapper>
+      <PreviewTabWrapper onKeyDown={onKeyDown}>
         <IndustryCanvas
           id={APPLICATION_ID_INDUSTRY_CANVAS}
+          currentZoomScale={currentZoomScale}
+          viewerRef={unifiedViewerRef}
           applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
           onAddContainerReferences={onAddContainerReferences}
           onDeleteRequest={onDeleteRequest}
           onUpdateRequest={onUpdateRequest}
+          interactionState={interactionState}
+          setInteractionState={setInteractionState}
           container={container}
-          setContainer={setContainer}
           updateContainerReference={updateContainerReference}
           containerReferences={containerReferences}
           canvasAnnotations={canvasAnnotations}
@@ -213,6 +296,15 @@ export const IndustryCanvasPage = () => {
         />
       </PreviewTabWrapper>
     </>
+  );
+};
+
+export const IndustryCanvasPage = () => {
+  const queryClient = new QueryClient();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <IndustryCanvasPageWithoutQueryClientProvider />
+    </QueryClientProvider>
   );
 };
 
@@ -229,12 +321,6 @@ const TitleRowWrapper = styled.div`
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
-`;
-
-const Name = styled(Title)`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 `;
 
 const StyledGoBackWrapper = styled.div`

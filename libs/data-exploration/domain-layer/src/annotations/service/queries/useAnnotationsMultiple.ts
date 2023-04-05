@@ -27,7 +27,9 @@ export const useAnnotationsMultiple = (
                 },
                 limit: 1000,
               })
-              .autoPagingToArray()
+              .autoPagingToArray({
+                limit: Infinity,
+              })
           ).filter((annotation) => {
             // @ts-expect-error
             const annotationPageNumber = annotation.data.pageNumber;

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   EMPTY_OBJECT,
   InternalSequenceFilters,
+  SequenceConfigType,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from 'react-query';
@@ -23,51 +24,51 @@ export const useSequenceSearchResultWithMatchingLabelsQuery = (
     filter: InternalSequenceFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions
+  options?: UseInfiniteQueryOptions,
+  searchConfig: SequenceConfigType = getSearchConfig().sequence
 ) => {
   const { data, ...rest } = useSequenceSearchResultQuery(
     { query, filter, sortBy },
-    options
+    options,
+    searchConfig
   );
-
-  const sequenceSearchConfig = getSearchConfig().sequence;
 
   const properties = React.useMemo(() => {
     const arr: MatchingLabelPropertyType[] = [];
 
-    if (sequenceSearchConfig.id.enabled) {
+    if (searchConfig.id.enabled) {
       arr.push({
         key: 'id',
         label: 'ID',
       });
     }
 
-    if (sequenceSearchConfig.description.enabled) {
+    if (searchConfig.description.enabled) {
       arr.push({
         key: 'description',
         useSubstringMatch: true,
       });
     }
 
-    if (sequenceSearchConfig.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
       arr.push({
         key: 'externalId',
         label: 'External ID',
       });
     }
 
-    if (sequenceSearchConfig.name.enabled) {
+    if (searchConfig.name.enabled) {
       arr.push({
         key: 'name',
         useSubstringMatch: true,
       });
     }
-    if (sequenceSearchConfig.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
       arr.push('metadata');
     }
 
     return arr;
-  }, [sequenceSearchConfig]);
+  }, [searchConfig]);
 
   const mappedData = useDeepMemo(() => {
     if (data && query) {

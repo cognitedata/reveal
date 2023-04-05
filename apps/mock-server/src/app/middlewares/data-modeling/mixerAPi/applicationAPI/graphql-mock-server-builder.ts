@@ -39,7 +39,7 @@ export const buildMockServer = (
 
   const parsedSchema = parser.buildGraphQlSchema(
     `
-    ${schemaBuilder.getBuiltInTypes()}
+    ${schemaBuilder.getBuiltInTypes(useDmsV3)}
     ${schema}
     `
   );
@@ -47,7 +47,8 @@ export const buildMockServer = (
   const graphQlSchema = schemaBuilder.buildSchema(
     schema,
     parsedSchema,
-    templateTables
+    templateTables,
+    useDmsV3
   );
 
   const template = store.find({

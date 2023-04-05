@@ -24,6 +24,6 @@ export const getLayoutMargin = ({
     t: DEFAULT_MARGIN,
     r: DEFAULT_MARGIN,
     l: getMarginLeft(layout, graph, !isEmpty(yAxis?.name)),
-    b: getMarginBottom(layout, !isEmpty(xAxis?.name)),
+    b: getMarginBottom(layout, graph, !isEmpty(xAxis?.name)),
   };
 };

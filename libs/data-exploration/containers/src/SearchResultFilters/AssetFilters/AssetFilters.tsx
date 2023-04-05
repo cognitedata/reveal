@@ -5,7 +5,7 @@ import {
 } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
-import { LabelFilter, SourceFilter } from '../../../src/Filters';
+import { LabelFilter, MetadataFilter, SourceFilter } from '../../Filters';
 
 export const AssetFilters: React.FC<FilterProps> = ({
   filter,
@@ -39,18 +39,14 @@ export const AssetFilters: React.FC<FilterProps> = ({
           }
         />
 
-        {/* ///////////////// */}
-        {/* <MetadataFilterV2
-          items={items}
-          keys={metadataKeys}
-          value={filter.asset.metadata}
-          setValue={(newMetadata) =>
+        <MetadataFilter.Assets
+          values={filter.asset.metadata}
+          onChange={(newMetadata) => {
             onFilterChange('asset', {
               metadata: newMetadata,
-            })
-          }
-          useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
-        /> */}
+            });
+          }}
+        />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );

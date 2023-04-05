@@ -23,7 +23,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  InternalAssetFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 
 export type AssetViewMode = 'list' | 'tree';
 
@@ -74,12 +77,15 @@ export const AssetSearchResults = ({
       { enabled: enableAdvancedFilters }
     );
 
+  const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
+
   const { data: aggregateData } = useAssetsSearchAggregateQuery(
     {
       assetsFilters: filter,
       query,
     },
-    { enabled: enableAdvancedFilters }
+    { enabled: enableAdvancedFilters },
+    assetSearchConfig
   );
 
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;

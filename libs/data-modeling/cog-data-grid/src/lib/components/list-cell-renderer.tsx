@@ -21,17 +21,17 @@ export const ListCellRenderer = (props: IListCellRendererProps) => {
   };
 
   return (
-    <Flex justifyContent="space-between" alignItems="center" gap={2}>
-      <Flex alignItems="center" gap={4}>
-        {props.listDataType === 'CUSTOM' && props.value.length > 0 ? (
+    <Flex>
+      {props.listDataType === 'CUSTOM' && props.value.length > 0 ? (
+        <Flex style={{ flexShrink: 0, marginRight: '4px' }} alignItems="center">
           <Icon type="Link" />
-        ) : null}
-        <ListCellValueText>{getText()}</ListCellValueText>
-      </Flex>
+        </Flex>
+      ) : null}
+      <ListCellValueText>{getText()}</ListCellValueText>
       {props.value.length > 0 && (
-        <div style={{ flexShrink: 0 }}>
+        <Flex alignItems="center" style={{ marginLeft: 'auto' }}>
           <Icon type="List" />
-        </div>
+        </Flex>
       )}
     </Flex>
   );

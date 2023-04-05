@@ -22,6 +22,7 @@ export type ListPreviewProps = {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelVersion: DataModelVersion;
+  instanceSpace: string;
 };
 
 export const ListPreview: React.FC<ListPreviewProps> = ({
@@ -30,6 +31,7 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
   dataModelType,
   dataModelTypeDefs,
   dataModelVersion,
+  instanceSpace,
 }) => {
   const { t } = useTranslation('DataPreviewCollapsiblePanelContainer');
   const gridRef = useRef<AgGridReact>(null);
@@ -60,6 +62,7 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
     dataModelType,
     dataModelTypeDefs,
     dataModelVersion,
+    instanceSpace,
     onError,
   });
 
@@ -72,11 +75,12 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
 
   const { data: defaultData = { [field]: [] } } = usePreviewData({
     dataModelExternalId: dataModelVersion.externalId,
-    externalId,
+    dataModelSpace: dataModelVersion.space,
     dataModelType,
-    nestedLimit: PAGE_LIMIT,
+    externalId,
+    instanceSpace,
     limitFields: [field],
-    space: dataModelVersion.space,
+    nestedLimit: PAGE_LIMIT,
   });
 
   useEffect(() => {

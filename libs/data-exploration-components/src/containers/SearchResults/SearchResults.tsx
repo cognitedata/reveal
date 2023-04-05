@@ -20,6 +20,7 @@ export const SearchResults = ({
   resourceType,
   assetFilter,
   timeseriesFilter,
+  isAssetTreeEnabled = true,
   sequenceFilter,
   eventFilter,
   fileFilter,
@@ -30,6 +31,7 @@ export const SearchResults = ({
   allowEdit?: boolean;
   query?: string;
   activeIds?: number[];
+  isAssetTreeEnabled?: boolean;
   onClick: (item: ResourceItem) => void;
 } & Required<OldResourceFilterProps> &
   SelectableItemsProps &
@@ -40,7 +42,7 @@ export const SearchResults = ({
     case 'asset':
       return (
         <AssetSearchResults
-          isTreeEnabled
+          isTreeEnabled={isAssetTreeEnabled}
           view={assetView}
           onViewChange={setAssetView}
           onClick={(item) => onClick({ id: item.id, type: 'asset' })}
@@ -50,24 +52,14 @@ export const SearchResults = ({
               type: 'asset',
             })
           }
-          filter={{
-            ...assetFilter,
-            metadata: Object.entries(assetFilter?.metadata || {}).map(
-              ([key, value]) => ({ key, value })
-            ),
-          }}
+          filter={assetFilter}
           {...commonProps}
         />
       );
     case 'file':
       return (
         <FileSearchResults
-          filter={{
-            ...fileFilter,
-            metadata: Object.entries(fileFilter?.metadata || {}).map(
-              ([key, value]) => ({ key, value })
-            ),
-          }}
+          filter={fileFilter}
           allowEdit={allowEdit}
           onClick={(item) => onClick({ id: item.id, type: 'file' })}
           {...commonProps}
@@ -90,12 +82,7 @@ export const SearchResults = ({
       return (
         <TimeseriesSearchResults
           onClick={(item) => onClick({ id: item.id, type: 'timeSeries' })}
-          filter={{
-            ...timeseriesFilter,
-            metadata: Object.entries(timeseriesFilter?.metadata || {}).map(
-              ([key, value]) => ({ key, value })
-            ),
-          }}
+          filter={timeseriesFilter}
           {...commonProps}
         />
       );
@@ -103,12 +90,7 @@ export const SearchResults = ({
       return (
         <EventSearchResults
           onClick={(item) => onClick({ id: item.id, type: 'event' })}
-          filter={{
-            ...eventFilter,
-            metadata: Object.entries(eventFilter?.metadata || {}).map(
-              ([key, value]) => ({ key, value })
-            ),
-          }}
+          filter={eventFilter}
           {...commonProps}
         />
       );

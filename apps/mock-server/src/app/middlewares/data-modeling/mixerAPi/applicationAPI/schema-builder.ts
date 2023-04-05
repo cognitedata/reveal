@@ -15,12 +15,13 @@ export class SchemaServiceGraphqlApiBuilder {
   buildSchema(
     sourceSchema: string,
     parsedSchema: IntrospectionQuery,
-    tablesList: string[]
+    tablesList: string[],
+    useDmsV3: boolean
   ): string {
     this.typeSearchFieldsMap = {};
     const generatedSchema = `
-    ${this.getBuiltInTypes()}
-    ${this.extendSourceSchema(sourceSchema, parsedSchema, tablesList)}
+    ${this.getBuiltInTypes(useDmsV3)}
+    ${this.extendSourceSchema(sourceSchema, parsedSchema, tablesList, useDmsV3)}
     ${this.generateFiltersInputs(tablesList, parsedSchema)}
     ${this.generateTypeConnection(tablesList)}
     ${this.generateQueries(tablesList)}
@@ -31,7 +32,7 @@ export class SchemaServiceGraphqlApiBuilder {
     return generatedSchema;
   }
 
-  getBuiltInTypes() {
+  getBuiltInTypes(useDmsV3?: boolean) {
     return `
     scalar JSONObject
 
@@ -111,8 +112,8 @@ export class SchemaServiceGraphqlApiBuilder {
       endCursor: String
   }
     input InstanceRef {
-      spaceExternalId: String!
-      externalId: String! 
+      ${useDmsV3 ? 'space' : 'spaceExternalId'}: String!
+      externalId: String!
   }
 
 
@@ -124,7 +125,8 @@ ${mixerApiV3CustomDirectives}
   private extendSourceSchema(
     sourceSchema: string,
     parsedSchema: IntrospectionQuery,
-    tablesList: string[]
+    tablesList: string[],
+    useDmsV3: boolean
   ): string {
     let extendedSchema = sourceSchema;
     tablesList.forEach((table) => {
@@ -180,7 +182,8 @@ ${mixerApiV3CustomDirectives}
             extendedSchema = extendedSchema.replace(
               match,
               `${match}
-        externalId: ID!`
+        externalId: ID!
+        ${useDmsV3 ? 'space' : 'spaceExternalId'}: String!`
             );
           }
         });

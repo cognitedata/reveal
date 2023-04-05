@@ -1,4 +1,9 @@
-import { InternalSequenceFilters, isNumeric } from '@data-exploration-lib/core';
+import {
+  InternalSequenceFilters,
+  isNumeric,
+  SequenceConfigType,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
@@ -17,6 +22,9 @@ export type SequenceProperties = {
   [key: `metadata|${string}`]: string;
 };
 
+// This will be gone when Timelords provides a proper implementation.
+const DUMMY_SEARCH_TOKEN = Array(128).join('Y');
+
 export const mapFiltersToSequenceAdvancedFilters = (
   {
     dataSetIds,
@@ -26,7 +34,8 @@ export const mapFiltersToSequenceAdvancedFilters = (
     metadata,
     internalId,
   }: InternalSequenceFilters,
-  query?: string
+  query?: string,
+  searchConfig: SequenceConfigType = getSearchConfig().sequence
 ): AdvancedFilter<SequenceProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<SequenceProperties>();
 
@@ -51,39 +60,57 @@ export const mapFiltersToSequenceAdvancedFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<SequenceProperties>();
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        metadataBuilder.exists(`metadata|${key}`);
+      } else {
+        metadataBuilder.equals(`metadata|${key}`, value);
+      }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
 
-  if (query) {
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>();
-    const searchConfigData = getSearchConfig();
 
-    if (searchConfigData.sequence.name.enabled) {
-      searchQueryBuilder.search('name', isEmpty(query) ? undefined : query);
-    }
-    if (searchConfigData.sequence.description.enabled) {
-      searchQueryBuilder.search(
-        'description',
-        isEmpty(query) ? undefined : query
-      );
+    if (searchConfig.name.enabled) {
+      searchQueryBuilder.equals('name', query);
+      searchQueryBuilder.prefix('name', query);
+
+      if (searchConfig.name.enabledFuzzySearch) {
+        searchQueryBuilder.search('name', query);
+      }
     }
 
+    if (searchConfig.description.enabled) {
+      searchQueryBuilder.equals('description', query);
+      searchQueryBuilder.prefix('description', query);
+
+      if (searchConfig.description.enabledFuzzySearch) {
+        searchQueryBuilder.search('description', query);
+      }
+    }
+
+    if (!(searchConfig.name.enabled && searchConfig.description.enabled)) {
+      searchQueryBuilder.search('name', DUMMY_SEARCH_TOKEN);
+    }
     /**
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchConfigData.sequence.metadata.enabled) {
+    if (searchConfig.metadata.enabled) {
+      searchQueryBuilder.equals(`metadata`, query);
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
-    if (isNumeric(query) && searchConfigData.sequence.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
-    if (searchConfigData.sequence.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals(`externalId`, query);
       searchQueryBuilder.prefix('externalId', query);
     }
 

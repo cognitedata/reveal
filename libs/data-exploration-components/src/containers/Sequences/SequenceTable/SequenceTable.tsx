@@ -8,12 +8,10 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
-import {
-  InternalSequenceDataWithMatchingLabels,
-  useSequencesMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
+
+import { InternalSequenceDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 const visibleColumns = [
@@ -38,13 +36,9 @@ export const SequenceTable = ({
   onRootAssetClick,
   ...rest
 }: SequenceTableProps) => {
-  const { data: metadataKeys = [] } = useSequencesMetadataKeys();
+  const { metadataColumns, setMetadataKeyQuery } =
+    useSequencesMetadataColumns();
 
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
-  }, [metadataKeys]);
   const columns = useMemo(
     () =>
       [
@@ -82,6 +76,7 @@ export const SequenceTable = ({
       columns={columns}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
       {...rest}
     />
   );

@@ -15,6 +15,12 @@ export const mixerApiBuiltInTypes = [
   { name: 'Boolean', type: 'SCALAR', dmsType: 'boolean' },
   { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text' },
   {
+    name: 'readonly',
+    type: 'DIRECTIVE',
+    body: 'directive @readonly on OBJECT | INTERFACE',
+    fieldDirective: false,
+  },
+  {
     name: 'view',
     type: 'DIRECTIVE',
     body: 'directive @view(space: String, version: String) on OBJECT | INTERFACE',
@@ -39,7 +45,7 @@ export const mixerApiBuiltInTypes = [
       INWARDS
       OUTWARDS
     }
-    
+
     directive @relation(
       type: _DirectRelationRef!,
       direction: _RelationDirection

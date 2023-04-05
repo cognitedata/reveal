@@ -15,6 +15,7 @@ import {
 
 export const useAssetsMetadataValuesAggregateQuery = (
   metadataKey?: string | null,
+  query?: string,
   filter?: InternalAssetFilters | OldAssetFilters,
   options?: UseQueryOptions<
     AssetsMetadataAggregateResponse[],
@@ -26,10 +27,11 @@ export const useAssetsMetadataValuesAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsMetadataValues(String(metadataKey), filter),
+    queryKeys.assetsMetadataValues(String(metadataKey), query, filter),
     () => {
       return getAssetsMetadataValuesAggregate(sdk, String(metadataKey), {
         filter: transformNewFilterToOldFilter(filter),
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

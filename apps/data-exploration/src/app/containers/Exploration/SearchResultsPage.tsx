@@ -38,7 +38,7 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
-import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
+// import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
 import {
   useAssetFilters,
   useEventsFilters,
@@ -48,6 +48,7 @@ import {
 } from '@data-exploration-app/store/filter/selectors';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { useFlagDocumentLabelsFilter } from '@data-exploration-app/hooks';
 import { AllTab } from '@data-exploration-app/containers/All';
 import { useFilterSidebarState } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -58,6 +59,7 @@ import { EventSearchResultView } from '@data-exploration-app/containers/Event/Ev
 import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { routes, ViewType } from '@data-exploration-app/containers/App';
+import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -74,6 +76,7 @@ function SearchPage() {
   useSequencesMetadataKeys();
 
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const isDocumentsLabelsFilterEnabled = useFlagDocumentLabelsFilter();
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
@@ -114,8 +117,9 @@ function SearchPage() {
   return (
     <RootHeightWrapper>
       <SearchFiltersWrapper>
-        <SearchFilters
+        <SearchFiltersV2
           enableAdvancedFilters={isAdvancedFiltersEnabled}
+          enableDocumentLabelsFilter={isDocumentsLabelsFilterEnabled}
           resourceType={currentResourceType}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
@@ -133,7 +137,7 @@ function SearchPage() {
             </>
           )}
           <SearchConfigButton
-            style={{ width: '36px', marginRight: '2px' }}
+            style={{ width: '36px', marginRight: '8px' }}
             onClick={() => {
               setShowSearchConfig(true);
             }}

@@ -25,8 +25,10 @@ export const AssetFiltersV2 = ({
     limit: 1000,
   });
 
-  const { data: metadataKeys = [] } =
-    useAssetsMetadataKeysAggregateQuery(filter);
+  const { data: metadataKeys = [] } = useAssetsMetadataKeysAggregateQuery(
+    undefined,
+    filter
+  );
 
   return (
     <BaseFilterCollapse.Panel title="Assets" {...rest}>

@@ -1,6 +1,12 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
-import { InternalDocumentFilter, isNumeric } from '@data-exploration-lib/core';
+import {
+  FileConfigType,
+  InternalDocumentFilter,
+  isNumeric,
+  METADATA_ALL_VALUE,
+} from '@data-exploration-lib/core';
 import { getSearchConfig } from '../../../utils';
+import isEmpty from 'lodash/isEmpty';
 
 export type DocumentProperties = {
   'sourceFile|datasetId': number[];
@@ -12,6 +18,7 @@ export type DocumentProperties = {
   id: number;
   metadata: string;
   assetIds: number[];
+  'sourceFile|labels': { externalId: string }[];
   [key: `sourceFile|metadata|${string}`]: string;
 };
 
@@ -27,8 +34,10 @@ export const mapFiltersToDocumentSearchFilters = (
     assetSubtreeIds,
     internalId,
     metadata,
+    labels,
   }: InternalDocumentFilter,
-  query?: string
+  query?: string,
+  searchConfig: FileConfigType = getSearchConfig().file
 ): AdvancedFilter<DocumentProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<DocumentProperties>();
 
@@ -41,7 +50,11 @@ export const mapFiltersToDocumentSearchFilters = (
         return acc;
       }, [] as number[]);
     })
-
+    .containsAny('sourceFile|labels', () => {
+      return labels?.reduce((acc, { value }) => {
+        return [...acc, { externalId: value }];
+      }, [] as { externalId: string }[]);
+    })
     .in('author', author)
     .in('sourceFile|source', source)
     .in('type', type)
@@ -65,47 +78,69 @@ export const mapFiltersToDocumentSearchFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<DocumentProperties>();
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`sourceFile|metadata|${key}`, value);
+      if (value === METADATA_ALL_VALUE) {
+        metadataBuilder.exists(`sourceFile|metadata|${key}`);
+      } else {
+        metadataBuilder.equals(`sourceFile|metadata|${key}`, value);
+      }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
 
-  if (query) {
-    const searchConfigData = getSearchConfig();
-
+  if (query && !isEmpty(query)) {
     const searchQueryBuilder = new AdvancedFilterBuilder<DocumentProperties>();
 
-    if (searchConfigData.file['sourceFile|name']?.enabled) {
+    if (searchConfig['sourceFile|name']?.enabled) {
       /* eslint-disable @typescript-eslint/ban-ts-comment */
       // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
-      searchQueryBuilder.search('sourceFile|name', query);
-    }
-    if (searchConfigData.file.content.enabled) {
-      // @ts-ignore
-      searchQueryBuilder.search('content', query);
+      searchQueryBuilder.equals('sourceFile|name', query);
+
+      /* eslint-disable @typescript-eslint/ban-ts-comment */
+      // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+      searchQueryBuilder.prefix('sourceFile|name', query);
+
+      if (searchConfig['sourceFile|name']?.enabledFuzzySearch) {
+        /* eslint-disable @typescript-eslint/ban-ts-comment */
+        // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+        searchQueryBuilder.search('sourceFile|name', query);
+      }
     }
 
-    if (searchConfigData.file['sourceFile|metadata'].enabled) {
+    if (searchConfig.content.enabled) {
+      if (searchConfig.content.enabledFuzzySearch) {
+        // @ts-ignore
+        searchQueryBuilder.search('content', query);
+      }
+    }
+
+    if (searchConfig['sourceFile|metadata'].enabled) {
+      // @ts-ignore
+      searchQueryBuilder.equals('sourceFile|metadata', query);
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|metadata', query);
     }
 
-    if (isNumeric(query) && searchConfigData.file.id.enabled) {
+    if (isNumeric(query) && searchConfig.id.enabled) {
       searchQueryBuilder.equals('id', Number(query));
     }
 
-    if (searchConfigData.file.externalId.enabled) {
+    if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals('externalId', query);
       searchQueryBuilder.prefix('externalId', query);
     }
 
-    if (searchConfigData.file['sourceFile|source'].enabled) {
+    if (searchConfig['sourceFile|source'].enabled) {
+      // @ts-ignore
+      searchQueryBuilder.equals('sourceFile|source', query);
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|source', query);
     }
 
-    if (searchConfigData.file.labels.enabled) {
+    if (searchConfig.labels.enabled) {
       // @ts-ignore
       searchQueryBuilder.containsAny('labels', [{ externalId: query }]);
     }

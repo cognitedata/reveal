@@ -6,7 +6,7 @@
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "build",
+        "outputPath": "dist/apps/data-exploration",
         "index": "apps/data-exploration/src/index.html",
         "main": "apps/data-exploration/src/index.tsx",
         "runtimeChunk": false,

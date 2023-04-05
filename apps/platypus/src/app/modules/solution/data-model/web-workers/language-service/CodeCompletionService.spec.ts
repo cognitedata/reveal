@@ -10,13 +10,13 @@ const doCompletePropsTypeLevelMockCurrentCode = 'type Person @';
 
 const dataModel = `
 interface Person{
-  name: String! 
+  name: String!
   age: Int
 }
 
 type Actor implements Person {
   name: String!
-  age: Int 
+  age: Int
   didWinOscar: Actor
 }
 
@@ -61,6 +61,10 @@ describe('CodeCompletionServiceTest', () => {
 
     expect(completionList).toEqual({
       suggestions: [
+        expect.objectContaining({
+          kind: 3,
+          label: 'readonly',
+        }),
         expect.objectContaining({
           label: 'view',
           kind: 3,

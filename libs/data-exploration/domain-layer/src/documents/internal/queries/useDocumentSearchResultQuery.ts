@@ -12,6 +12,7 @@ import { UseInfiniteQueryOptions } from 'react-query';
 import { useDocumentSearchQuery } from '../../service';
 import {
   EMPTY_OBJECT,
+  FileConfigType,
   InternalDocumentFilter,
 } from '@data-exploration-lib/core';
 
@@ -27,11 +28,12 @@ export const useDocumentSearchResultQuery = (
     limit?: number;
     sortBy?: TableSortBy[];
   } = {},
-  options: UseInfiniteQueryOptions = {}
+  options: UseInfiniteQueryOptions = {},
+  searchConfig?: FileConfigType
 ) => {
   const transformFilter = useMemo(
-    () => mapFiltersToDocumentSearchFilters(filter, query),
-    [filter, query]
+    () => mapFiltersToDocumentSearchFilters(filter, query, searchConfig),
+    [filter, query, searchConfig]
   );
 
   const sort = useMemo(

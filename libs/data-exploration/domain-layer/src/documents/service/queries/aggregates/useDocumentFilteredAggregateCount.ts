@@ -6,21 +6,25 @@ import { useMemo } from 'react';
 import { mapFiltersToDocumentSearchFilters } from '@data-exploration-lib/domain-layer';
 import {
   EMPTY_OBJECT,
+  FileConfigType,
   InternalDocumentFilter,
 } from '@data-exploration-lib/core';
 
-export const useDocumentFilteredAggregateCount = ({
-  filters = EMPTY_OBJECT,
-  query,
-}: {
-  filters?: InternalDocumentFilter;
-  query?: string;
-}) => {
+export const useDocumentFilteredAggregateCount = (
+  {
+    filters = EMPTY_OBJECT,
+    query,
+  }: {
+    filters?: InternalDocumentFilter;
+    query?: string;
+  },
+  searchConfig?: FileConfigType
+) => {
   const sdk = useSDK();
 
   const transformFilter = useMemo(
-    () => mapFiltersToDocumentSearchFilters(filters, query),
-    [filters, query]
+    () => mapFiltersToDocumentSearchFilters(filters, query, searchConfig),
+    [filters, query, searchConfig]
   );
 
   return useQuery(

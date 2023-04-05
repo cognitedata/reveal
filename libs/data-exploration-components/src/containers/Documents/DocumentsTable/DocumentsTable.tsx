@@ -12,21 +12,15 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
-  useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
-import {
-  DASH,
-  getMetadataValueByKey,
-} from '@data-exploration-components/utils';
+import { DASH } from '@data-exploration-components/utils';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
-import {
-  TimeDisplay,
-  ResourceTableColumns,
-} from '@data-exploration-components/components';
+import { TimeDisplay } from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
 import { DocumentSummaryPreview } from './DocumentSummaryPreview';
+import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -48,15 +42,9 @@ const visibleColumns = [
 
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
-  const { data: metadataKeys } = useDocumentsMetadataKeys();
 
-  const metadataColumns = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key, (row: any) =>
-        getMetadataValueByKey(key, row?.sourceFile?.metadata)
-      )
-    );
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } =
+    useDocumentsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -160,6 +148,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       hiddenColumns={hiddenColumns}
       data={props.data}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
     />
   );
 };

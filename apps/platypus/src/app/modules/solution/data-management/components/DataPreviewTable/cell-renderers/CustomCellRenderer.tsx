@@ -48,13 +48,14 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   const { data: previewData, refetch } = usePreviewData(
     {
       dataModelExternalId,
+      dataModelSpace: space,
       dataModelType: columnType!,
       externalId: props.value?.externalId,
+      instanceSpace: props.value?.space,
       nestedLimit: 0,
       limitFields: nonListAndRelationshipValues
         .slice(0, PROPERTY_TO_SHOW)
         .map((el) => el.name),
-      space,
     },
     { enabled: false }
   );
@@ -76,6 +77,8 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
 
   return (
     <Tooltip
+      // disabled for no column type -> built in type (not custom defined) e.g. TimeSeries
+      disabled={!columnType}
       content={
         previewData ? (
           <div key="content">

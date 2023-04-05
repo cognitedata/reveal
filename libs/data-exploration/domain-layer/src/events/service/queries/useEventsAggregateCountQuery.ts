@@ -10,7 +10,10 @@ import {
   mapInternalFilterToEventsFilter,
 } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+import {
+  EventConfigType,
+  InternalEventsFilters,
+} from '@data-exploration-lib/core';
 
 export const useEventsAggregateCountQuery = (
   {
@@ -20,14 +23,14 @@ export const useEventsAggregateCountQuery = (
     query?: string;
     eventsFilters: InternalEventsFilters;
   },
-
-  options?: UseQueryOptions
+  options?: UseQueryOptions,
+  searchConfig?: EventConfigType
 ) => {
   const sdk = useSDK();
 
   const advancedFilter = useMemo(
-    () => mapFiltersToEventsAdvancedFilters(eventsFilters, query),
-    [eventsFilters, query]
+    () => mapFiltersToEventsAdvancedFilters(eventsFilters, query, searchConfig),
+    [eventsFilters, query, searchConfig]
   );
 
   const filter = useMemo(

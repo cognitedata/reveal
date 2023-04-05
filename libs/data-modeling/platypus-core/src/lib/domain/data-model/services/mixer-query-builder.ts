@@ -34,7 +34,7 @@ export class MixerQueryBuilder {
     }
   }
 
-  buildListQuery(dto: BuildListQueryDTO): string {
+  buildListQuery(dto: BuildListQueryDTO, isFDMv2 = false): string {
     const {
       dataModelType,
       dataModelTypeDefs,
@@ -61,6 +61,7 @@ export class MixerQueryBuilder {
     )}${paramString} {
       items {
         externalId
+        ${isFDMv2 ? 'space: spaceExternalId' : 'space'}
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>
@@ -69,7 +70,9 @@ export class MixerQueryBuilder {
               dataModelTypeDefs.types.find(
                 (typeDef) => typeDef.name === field.type.name
               ),
-              { limit: nestedLimit }
+              { limit: nestedLimit },
+              undefined,
+              isFDMv2
             )
           )
           .join('\n')}
@@ -140,7 +143,8 @@ export class MixerQueryBuilder {
                 cursor: nestedCursors[field.name],
                 pageInfo: true,
               },
-              nestedFilters[field.name] ? field.name : undefined
+              nestedFilters[field.name] ? field.name : undefined,
+              isFDMv2
             )
           )
           .join('\n')}
@@ -149,12 +153,10 @@ export class MixerQueryBuilder {
   }`;
   }
 
-  buildSearchQuery({
-    dataModelType,
-    dataModelTypeDefs,
-    limitFields,
-    filter,
-  }: BuildSearchQueryDTO): string {
+  buildSearchQuery(
+    { dataModelType, dataModelTypeDefs, limitFields }: BuildSearchQueryDTO,
+    isFDMv2 = false
+  ): string {
     const operationName = this.getOperationName(
       dataModelType.name,
       OPERATION_TYPE.SEARCH
@@ -180,7 +182,10 @@ export class MixerQueryBuilder {
               field,
               dataModelTypeDefs.types.find(
                 (typeDef) => typeDef.name === field.type.name
-              )
+              ),
+              undefined,
+              undefined,
+              isFDMv2
             )
           )
           .join('\n')}
@@ -197,7 +202,8 @@ export class MixerQueryBuilder {
       cursor: '',
       pageInfo: false,
     },
-    filterName?: string
+    filterName?: string,
+    isFDMv2 = false
   ): string {
     const isPrimitive = mixerApiBuiltInTypes
       .filter((t) => t.type === 'SCALAR')
@@ -236,7 +242,12 @@ export class MixerQueryBuilder {
       }}`;
     }
 
-    return `${field.name} { externalId }`;
+    return `
+      ${field.name} {
+        externalId
+        ${isFDMv2 ? 'space: spaceExternalId' : 'space'}
+      }
+    `;
   }
 
   /**

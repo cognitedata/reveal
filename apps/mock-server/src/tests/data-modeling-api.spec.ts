@@ -538,10 +538,12 @@ describe('DataModelingAPI Test', () => {
         blog: {
           Post: {
             externalId: '2',
+            space: 'blog',
             title: 'Sic Dolor amet',
             views: 65,
             user: {
               externalId: '456',
+              space: 'blog',
             },
             tags: ['Sic', 'Dolor'],
             comments: [],

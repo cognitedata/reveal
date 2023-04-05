@@ -9,6 +9,7 @@ import {
   Icon,
   ButtonProps,
   SegmentedControl,
+  DateRange,
   Flex,
 } from '@cognite/cogs.js';
 import { TIME_SELECT } from '@data-exploration-components/containers';
@@ -19,7 +20,7 @@ import {
   determinePivotRange,
   getPivotRangeAsDates,
 } from './Common';
-import { CalendarPicker } from './CalendarPicker';
+
 import styled from 'styled-components';
 
 export type RangePickerProps = {
@@ -84,15 +85,24 @@ export const RangePicker = ({
           onRangeChanged={onPivotRangeChange}
         />
       ) : (
-        <CalendarPicker
-          dates={[startEndRange.startDate, startEndRange.endDate]}
-          onDatesChanged={(startDate, endDate) => {
-            onRangeChanged([startDate, endDate]);
-            setStartEndRange((currentRange) => ({
-              ...currentRange,
-              startDate,
-              endDate,
-            }));
+        <DateRange
+          type="standard"
+          calendarHasBorder={false}
+          title="Select a range"
+          showClose
+          range={{
+            startDate: startEndRange.startDate,
+            endDate: startEndRange.endDate,
+          }}
+          onChange={({ startDate, endDate }) => {
+            if (startDate && endDate) {
+              onRangeChanged([startDate, endDate]);
+              setStartEndRange((currentRange) => ({
+                ...currentRange,
+                startDate,
+                endDate,
+              }));
+            }
           }}
         />
       )}

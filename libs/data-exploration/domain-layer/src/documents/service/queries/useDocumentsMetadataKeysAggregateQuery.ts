@@ -6,6 +6,7 @@ import { DocumentsMetadataAggregateResponse } from '../types';
 import { getDocumentsMetadataKeysAggregate } from '../network/getDocumentsMetadataKeysAggregate';
 
 export const useDocumentsMetadataKeysAggregateQuery = (
+  query?: string,
   options?: UseQueryOptions<
     DocumentsMetadataAggregateResponse[],
     unknown,
@@ -16,9 +17,11 @@ export const useDocumentsMetadataKeysAggregateQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.documentsMetadata(),
+    queryKeys.documentsMetadata(query),
     () => {
-      return getDocumentsMetadataKeysAggregate(sdk);
+      return getDocumentsMetadataKeysAggregate(sdk, {
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+      });
     },
     options
   );

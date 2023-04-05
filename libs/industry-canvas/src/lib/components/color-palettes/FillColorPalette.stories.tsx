@@ -13,7 +13,7 @@ export const FillColorPaletteStory: ComponentStory<
   const [selectedColor, setSelectedColor] = useState('red');
   return (
     <FillColorPalette
-      colors={['red', 'green', 'blue']}
+      colors={['transparent', 'red', 'green', 'blue']}
       selectedColor={selectedColor}
       onUpdateColor={setSelectedColor}
     />

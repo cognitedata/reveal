@@ -9,15 +9,13 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
-import { ResourceTableColumns } from '../../../components';
-import {
-  InternalAssetDataWithMatchingLabels,
-  useAssetsMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
+import { InternalAssetDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
 import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
+
+import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
 
 export type AssetWithRelationshipLabels = RelationshipLabels &
   InternalAssetDataWithMatchingLabels;
@@ -29,11 +27,7 @@ export const AssetTable = ({
   query,
   ...rest
 }: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>) => {
-  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -76,6 +70,7 @@ export const AssetTable = ({
       onRowClick={onRowClick}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
       {...rest}
     />
   );

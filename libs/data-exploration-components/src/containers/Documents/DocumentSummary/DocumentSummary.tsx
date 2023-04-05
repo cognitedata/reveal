@@ -3,11 +3,9 @@ import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
   useDocumentSearchResultWithMatchingLabelsQuery,
-  useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 
 import {
-  ResourceTableColumns,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
@@ -19,16 +17,17 @@ import {
   DocumentContentPreview,
 } from '@data-exploration-components/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import {
-  DASH,
-  getMetadataValueByKey,
-} from '@data-exploration-components/utils';
+import { DASH } from '@data-exploration-components/utils';
 import { Body } from '@cognite/cogs.js';
 import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Asset } from '@cognite/sdk';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
+import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
 
 export const DocumentSummary = ({
   query = '',
@@ -45,21 +44,18 @@ export const DocumentSummary = ({
   onRowClick?: (row: InternalDocument) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
+  const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
+
   const { results, isLoading } = useDocumentSearchResultWithMatchingLabelsQuery(
     {
       query,
       filter,
-    }
+    },
+    undefined,
+    documentSearchConfig
   );
-  const { data: metadataKeys } = useDocumentsMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key, (row) =>
-        getMetadataValueByKey(key, row?.sourceFile?.metadata)
-      )
-    );
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } =
+    useDocumentsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -153,6 +149,7 @@ export const DocumentSummary = ({
         renderCellSubComponent={SubCellMatchingLabels}
         enableColumnResizing={false}
         onRowClick={onRowClick}
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>
   );

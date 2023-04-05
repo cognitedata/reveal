@@ -121,7 +121,10 @@ export function Reveal({
           });
         }
 
-        viewer.loadCameraFromModel(model);
+        // Load camera from model when camera state is unavailable
+        if (!initialViewerState?.camera) {
+          viewer.loadCameraFromModel(model);
+        }
       }
 
       if (initialViewerState) {

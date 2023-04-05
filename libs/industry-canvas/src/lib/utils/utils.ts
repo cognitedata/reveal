@@ -1,6 +1,6 @@
 import { ContainerConfig } from '@cognite/unified-file-viewer';
 import {
-  CanvasState,
+  IndustryCanvasState,
   ContainerReference,
   ContainerReferenceType,
 } from '../types';
@@ -10,14 +10,18 @@ export const getContainerId = (
   containerReference: ContainerReference
 ): string => {
   if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.id}-${containerReference.page}`;
+    return `${containerReference.resourceId}`;
   }
 
   if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-    return `${containerReference.id}`;
+    return `${containerReference.resourceId}-${containerReference.id}`;
   }
 
   if (containerReference.type === ContainerReferenceType.ASSET) {
+    return `${containerReference.resourceId}`;
+  }
+
+  if (containerReference.type === ContainerReferenceType.THREE_D) {
     return `${containerReference.id}`;
   }
 
@@ -51,13 +55,14 @@ export const getContainerReferencesWithUpdatedDimensions = (
   return Array.from(containerReferencesById.values());
 };
 
-const deserializeCanvasState = (value: string): CanvasState => {
+export const deserializeCanvasState = (
+  state: IndustryCanvasState
+): IndustryCanvasState => {
   try {
-    const canvasState = JSON.parse(value) as CanvasState;
-    const containerReferences = canvasState.containerReferences.map(
+    const containerReferences = state.containerReferences.map(
       (containerReference) => {
         if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-          // We need to convert the dates to Date objects since they are serialized as strings
+          // We need to convert the dates to Date objects since they are serialized as strings in FDM
           return {
             ...containerReference,
             startDate: new Date(containerReference.startDate),
@@ -68,10 +73,9 @@ const deserializeCanvasState = (value: string): CanvasState => {
         return containerReference;
       }
     );
-
     return {
+      ...state,
       containerReferences,
-      canvasAnnotations: canvasState.canvasAnnotations,
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
@@ -80,23 +84,4 @@ const deserializeCanvasState = (value: string): CanvasState => {
       canvasAnnotations: [],
     };
   }
-};
-
-const CANVAS_STATE_KEY = 'COGNITE_CANVAS_STATE';
-
-export const loadCanvasState = (): CanvasState | null => {
-  const canvasStateString = localStorage.getItem(CANVAS_STATE_KEY);
-  if (canvasStateString === null) {
-    return null;
-  }
-
-  return deserializeCanvasState(canvasStateString);
-};
-
-export const saveCanvasState = (canvasState: CanvasState): void => {
-  localStorage.setItem(CANVAS_STATE_KEY, JSON.stringify(canvasState));
-};
-
-export const clearCanvasState = (): void => {
-  localStorage.removeItem(CANVAS_STATE_KEY);
 };

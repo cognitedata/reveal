@@ -32,3 +32,6 @@ libs/industry-canvas              @cognitedata/unified-file-viewer
 
 # Coding conventions
 apps/coding-conventions           @deep-cognite @CimStordal
+
+# Contextualization
+libs/contextualization              @dlcognite @cognitedata/contextualization

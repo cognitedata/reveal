@@ -5,8 +5,10 @@
  * @param pps points to show
  */
 
-export const calculateGranularity = (domain: number[], pps: number) => {
-  const diff = domain[1] - domain[0];
+import { DateRange } from '../types';
+
+export const calculateGranularity = (domain: DateRange, pps: number) => {
+  const diff = domain[1].valueOf() - domain[0].valueOf();
   for (let i = 1; i <= 60; i += 1) {
     const points = diff / (1000 * i);
     if (points < pps) {

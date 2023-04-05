@@ -1,20 +1,34 @@
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { AnnotationModel } from '@cognite/sdk';
-import { ContainerReference, ContainerReferenceType } from '../types';
+import {
+  ContainerReference,
+  ContainerReferenceType,
+  FileContainerReference,
+} from '../types';
+import { useMemo } from 'react';
 
-const queryKey = (containerReferences: ContainerReference[]) => [
-  'industry-canvas-annotations',
-  containerReferences,
-];
+const isFileContainerReference = (
+  containerReference: ContainerReference
+): containerReference is FileContainerReference =>
+  containerReference.type === ContainerReferenceType.FILE;
 
 export const useAnnotationsMultiple = (
   containerReferences: ContainerReference[]
 ) => {
   const sdk = useSDK();
 
+  const queryKey = useMemo(() => {
+    return containerReferences
+      .filter(isFileContainerReference)
+      .map((containerReference) => ({
+        resourceId: containerReference.resourceId,
+        page: containerReference.page,
+      }));
+  }, [containerReferences]);
+
   return useQuery(
-    queryKey(containerReferences),
+    queryKey,
     (): Promise<AnnotationModel[][]> =>
       Promise.all(
         containerReferences.map(async (containerReference) => {
@@ -27,11 +41,13 @@ export const useAnnotationsMultiple = (
               .list({
                 filter: {
                   annotatedResourceType: 'file',
-                  annotatedResourceIds: [{ id: containerReference.id }],
+                  annotatedResourceIds: [{ id: containerReference.resourceId }],
                 },
                 limit: 1000,
               })
-              .autoPagingToArray()
+              .autoPagingToArray({
+                limit: Infinity,
+              })
           ).filter((annotation) => {
             // @ts-expect-error
             const annotationPageNumber = annotation.data.pageNumber;
@@ -44,6 +60,9 @@ export const useAnnotationsMultiple = (
             return containerReference.page === annotationPageNumber;
           });
         })
-      )
+      ),
+    {
+      keepPreviousData: true,
+    }
   );
 };

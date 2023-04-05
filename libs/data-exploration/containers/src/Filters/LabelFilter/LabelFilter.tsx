@@ -1,11 +1,18 @@
-import { Tooltip } from '@cognite/cogs.js';
-import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
-import { BaseMultiSelectFilterProps } from '../types';
+import {
+  useAssetsUniqueValuesByProperty,
+  useDocumentsLabelAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
+import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+import {
+  InternalAssetFilters,
+  InternalDocumentFilter,
+  useDeepMemo,
+} from '@data-exploration-lib/core';
+import { useState } from 'react';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
-  options: { label?: string; value: string }[];
+  options: MultiSelectOptionType<string>[];
 }
 
 export const LabelFilter = <TFilter,>({
@@ -13,8 +20,9 @@ export const LabelFilter = <TFilter,>({
   onChange,
   value,
   addNilOption,
-  error,
-  loading,
+  onInputChange,
+  isError,
+  isLoading,
 }: Props<TFilter>) => {
   const handleChange = (
     newValue: {
@@ -26,54 +34,68 @@ export const LabelFilter = <TFilter,>({
     onChange?.(newFilters);
   };
 
-  if (loading) {
-    return null;
-  }
-
   return (
-    <Tooltip
-      interactive
-      disabled={!error}
-      content="Error fetching labels, please make sure you have labelsAcl:READ"
-    >
-      <>
-        <MultiSelectFilter<string>
-          label="Labels"
-          options={options}
-          onChange={(_, newValue) => handleChange(newValue)}
-          value={value}
-          isMulti
-          isSearchable
-          isClearable
-          addNilOption={addNilOption}
-        />
-      </>
-    </Tooltip>
+    <MultiSelectFilter<string>
+      label="Labels"
+      isLoading={isLoading}
+      isError={isError}
+      options={options}
+      onChange={(_, newValue) => handleChange(newValue)}
+      onInputChange={onInputChange}
+      value={value}
+      isMulti
+      isSearchable
+      isClearable
+      addNilOption={addNilOption}
+    />
   );
 };
 
 const AssetLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
+  const [query, setQuery] = useState<string | undefined>(undefined);
+
   const {
     data: labels = [],
     isLoading,
     isError,
-  } = useAssetsUniqueValuesByProperty('labels');
+  } = useAssetsUniqueValuesByProperty('labels', query);
 
-  const options = labels.map((label) => ({
-    label: String(label.value),
-    value: String(label.value),
-  }));
+  const options = useDeepMemo(
+    () =>
+      labels.map((label) => ({
+        label: String(label.value),
+        value: String(label.value),
+        count: label.count,
+      })),
+    [labels]
+  );
 
   return (
     <LabelFilter
       {...props}
-      error={isError}
-      loading={isLoading}
+      onInputChange={(value) => setQuery(value)}
+      isError={isError}
+      isLoading={isLoading}
       options={options}
     />
   );
 };
 
+export const DocumentLabelFilter = (
+  props: BaseMultiSelectFilterProps<InternalDocumentFilter>
+) => {
+  const { data: labels, isLoading } = useDocumentsLabelAggregateQuery();
+
+  const options = (labels || []).map((item) => ({
+    label: `${item.value}`,
+    value: `${item.value}`,
+    count: item.count,
+  }));
+
+  return <LabelFilter {...props} options={options} isLoading={isLoading} />;
+};
+
 LabelFilter.Asset = AssetLabelFilter;
+LabelFilter.File = DocumentLabelFilter;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { startCase } from 'lodash';
-import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { PolylineAnnotation } from '@cognite/unified-file-viewer';
 
 import { LINE_STROKE_WIDTH } from '../../constants';
@@ -66,27 +66,34 @@ export const LineAnnotationTooltip: React.FC<
             }
           >
             {/* TODO: This isn't the correct icon. Update to the correct icon when id is added in Cogs.js */}
-            <Button
-              type="ghost"
-              icon="AlignCenter"
-              aria-label="Edit stroke width"
-            ></Button>
+            <Tooltip content="Change stroke width">
+              <Button
+                type="ghost"
+                icon="AlignCenter"
+                aria-label="Change stroke width"
+              />
+            </Tooltip>
           </Dropdown>
-          <Button
-            icon="ColorPalette"
-            aria-label="Edit color"
-            type={isInEditFillMode ? 'secondary' : 'ghost'}
-            onClick={() => {
-              setIsInEditFillMode((prev) => !prev);
-            }}
-          />
+          <Tooltip content="Change color">
+            <Button
+              icon="ColorPalette"
+              aria-label="Edit color"
+              type="ghost"
+              toggled={isInEditFillMode}
+              onClick={() => {
+                setIsInEditFillMode((prev) => !prev);
+              }}
+            />
+          </Tooltip>
         </>
-        <Button
-          icon="Delete"
-          type="ghost"
-          aria-label="Delete annotation"
-          onClick={onDeleteSelectedCanvasAnnotation}
-        />
+        <Tooltip content="Delete annotation">
+          <Button
+            icon="Delete"
+            type="ghost"
+            aria-label="Delete annotation"
+            onClick={onDeleteSelectedCanvasAnnotation}
+          />
+        </Tooltip>
       </ToolBar>
     </>
   );
