@@ -36,7 +36,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
             <Button
               type="ghost"
               inverted
-              icon="Plus"
+              icon="Add"
               size="medium"
               aria-label="Add timeseries"
               onClick={() => onAddTimeseries(ts.id)}

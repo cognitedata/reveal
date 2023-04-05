@@ -1,5 +1,3 @@
-import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
-import { noop } from 'lodash';
 import React from 'react';
 import {
   Icon,
@@ -12,6 +10,7 @@ import {
 } from '@cognite/cogs.js';
 import { useAsset } from '../../hooks/useAsset';
 import styled from 'styled-components';
+import ThreeDButton from './ThreeDButton';
 import TimeseriesList from './TimeseriesList';
 
 type AssetTooltipProps = {
@@ -30,52 +29,10 @@ type AssetTooltipProps = {
   onViewAsset: () => void;
 };
 
-type ThreeDButtonProps = {
-  assetId: number;
-  onAddThreeD: ({
-    modelId,
-    revisionId,
-    initialAssetId,
-  }: {
-    modelId: number;
-    revisionId: number;
-    initialAssetId: number;
-  }) => void;
-};
-
-const ThreeDButton: React.FC<ThreeDButtonProps> = ({
-  assetId,
-  onAddThreeD,
-}) => {
-  const { data: mappings, isLoading } =
-    useDetailedMappingsByAssetIdQuery(assetId);
-
-  if (isLoading) {
-    return <Button icon="Loader" inverted onClick={noop} />;
-  }
-
-  if (mappings === undefined || mappings.length === 0) {
-    return null;
-  }
-
-  const onClick = async () => {
-    const mapping = mappings[0];
-    onAddThreeD({
-      modelId: mapping.modelId,
-      revisionId: mapping.revisionId,
-      initialAssetId: assetId,
-    });
-  };
-
-  return (
-    <Tooltip content="Add asset 3D-model to canvas">
-      <Button icon="Cube" onClick={onClick} inverted />
-    </Tooltip>
-  );
-};
-
 const AssetTooltip: React.FC<AssetTooltipProps> = ({
   id,
+  onAddAsset,
+  onViewAsset,
   onAddThreeD,
   onAddTimeseries,
 }) => {
@@ -98,11 +55,27 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
           <Label level={5}>{asset.name ?? asset.externalId}</Label>
         </InnerHeaderWrapper>
 
-        <ThreeDButton
-          assetId={asset.id}
-          onAddThreeD={onAddThreeD}
-          aria-label="Add 3D Model to Canvas"
-        />
+        <ButtonsContainer>
+          <ButtonWrapper>
+            <Tooltip content="Add asset to canvas">
+              <Button icon="Add" onClick={onAddAsset} inverted />
+            </Tooltip>
+          </ButtonWrapper>
+
+          <ButtonWrapper>
+            <ThreeDButton
+              assetId={asset.id}
+              onAddThreeD={onAddThreeD}
+              aria-label="Add 3D Model to Canvas"
+            />
+          </ButtonWrapper>
+
+          <ButtonWrapper>
+            <Tooltip content="Open asset in Data Explorer">
+              <Button icon="ExternalLink" onClick={onViewAsset} inverted />
+            </Tooltip>
+          </ButtonWrapper>
+        </ButtonsContainer>
       </Header>
 
       <AssetType level={3}>Asset</AssetType>
@@ -160,6 +133,18 @@ const AssetType = styled(Body)`
   padding: 4px 0;
   text-transform: uppercase;
   color: ${Colors['text-icon--strong--inverted']};
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ButtonWrapper = styled.div`
+  &:not(:last-child) {
+    margin-right: 4px;
+  }
 `;
 
 export default AssetTooltip;
