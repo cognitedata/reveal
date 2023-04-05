@@ -14,10 +14,10 @@ export class Image360UI {
 
     const optionsFolder = gui.addFolder('Add Options');
 
-    const onImageEntered: Image360EnteredDelegate = (entity, date) => {
+    const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
       selectedEntity = entity;
       // --- Remove after testing - Start
-      console.log('Current revision: ' + selectedEntity.getActiveRevision().date);
+      console.log('Current revision: ' + revision.date);
 
       const revisions = selectedEntity.list360ImageRevisions();
       if (revisions.length > 0) {
