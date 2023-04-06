@@ -1,6 +1,6 @@
 import { Button, Icon, Body, Colors, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
-import { useAssetTimeseries } from '../../hooks/useAssetTimeseries';
+import { useAssetTimeseries } from '../../../hooks/useAssetTimeseries';
 import styled from 'styled-components';
 
 type TimeseriesListProps = {
@@ -36,7 +36,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
             <Button
               type="ghost"
               inverted
-              icon="Plus"
+              icon="Add"
               size="medium"
               aria-label="Add timeseries"
               onClick={() => onAddTimeseries(ts.id)}

@@ -31,10 +31,10 @@ describe('MultiSelect', () => {
     expect(onChange).toHaveBeenCalledWith([options[0]]);
   });
 
-  test('It has multiple tag labels selected', () => {
+  test('It has first tag label plus remaining count', () => {
     render(<MultiSelect value={options} options={options} />);
 
     expect(screen.getByText(options[0].label)).toBeInTheDocument();
-    expect(screen.getByText(options[1].label)).toBeInTheDocument();
+    expect(screen.getByText(`+${options.length - 1}`)).toBeInTheDocument();
   });
 });

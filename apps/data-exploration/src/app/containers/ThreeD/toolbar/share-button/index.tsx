@@ -9,6 +9,7 @@ import { useContext } from 'react';
 const ShareButton = (): JSX.Element => {
   const {
     viewState,
+    slicingState,
     selectedAssetId,
     assetDetailsExpanded,
     secondaryModels,
@@ -21,6 +22,7 @@ const ShareButton = (): JSX.Element => {
     const path = getStateUrl({
       revisionId,
       viewState,
+      slicingState,
       selectedAssetId,
       assetDetailsExpanded,
       secondaryModels,

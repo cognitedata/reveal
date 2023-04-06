@@ -57,6 +57,7 @@ export const AssetTooltipStory: ComponentStory<typeof AssetTooltip> = () => {
             console.log('onAddTimeseries', { timeseriesId })
           }
           onAddAsset={() => console.log('onAddAsset')}
+          onAddThreeD={() => console.log('onAddThreeD')}
           onViewAsset={() => console.log('onViewAsset')}
         />
       </SDKProvider>

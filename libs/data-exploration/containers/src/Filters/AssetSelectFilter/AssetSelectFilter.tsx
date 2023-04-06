@@ -45,10 +45,6 @@ export const AssetSelectFilter = <TFilter,>({
     onInputChange?.(query);
   };
 
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <Tooltip interactive disabled={!isError} content="Error fetching assets!">
       <MultiSelectFilter<number>
@@ -72,7 +68,7 @@ export const AssetSelectFilter = <TFilter,>({
 const CommonAssetSelectFilter = (
   props: BaseAssetSelectFilterProps<InternalAssetData>
 ) => {
-  const { rootOnly, selectedAssetIds } = props;
+  const { rootOnly, selectedAssetIds, value } = props;
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounce(query, 100);
 
@@ -116,16 +112,13 @@ const CommonAssetSelectFilter = (
     filter: { root: true },
   });
 
-  const {
-    data: selectedItems,
-    isLoading: isAssetItemsLoading,
-    isError: isAssetItemsError,
-  } = useCdfItems<Asset>(
-    'assets',
-    selectedAssetIds ? selectedAssetIds.map((id) => ({ id })) : [],
-    false,
-    { keepPreviousData: true }
-  );
+  const { isLoading: isAssetItemsLoading, isError: isAssetItemsError } =
+    useCdfItems<Asset>(
+      'assets',
+      selectedAssetIds ? selectedAssetIds.map((id) => ({ id })) : [],
+      false,
+      { keepPreviousData: true }
+    );
 
   const [data, rootData] = useMemo(() => {
     if (debouncedQuery.length > 0) {
@@ -134,7 +127,7 @@ const CommonAssetSelectFilter = (
     return [listData, rootListData];
   }, [debouncedQuery, searchData, rootSearchData, listData, rootListData]);
 
-  const values = rootOnly
+  const options = rootOnly
     ? (rootData || []).map((el) => ({
         label: el.name,
         value: el.id,
@@ -156,11 +149,6 @@ const CommonAssetSelectFilter = (
         },
       ];
 
-  const selectedItemValues = (selectedItems || []).map((el) => ({
-    value: el.id,
-    label: el.name,
-  }));
-
   const isAssetsLoading =
     isAssetItemsLoading ||
     isLoading ||
@@ -180,8 +168,8 @@ const CommonAssetSelectFilter = (
       {...props}
       isLoading={isAssetsLoading}
       isError={isAssetsError}
-      options={values}
-      value={selectedItemValues}
+      options={options}
+      value={value}
       onInputChange={setQuery}
     />
   );

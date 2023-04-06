@@ -94,6 +94,16 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             />
           </Tooltip>
 
+          <Tooltip content="Add sticky">
+            <Button
+              icon="Square"
+              type="ghost"
+              toggled={activeTool === ToolType.STICKY}
+              aria-label="Sticky tool"
+              onClick={() => onToolChangeWrapper(ToolType.STICKY)}
+            />
+          </Tooltip>
+
           <Tooltip content="Shape tool">
             <Button
               icon="Shapes"

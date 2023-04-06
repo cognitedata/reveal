@@ -1,4 +1,4 @@
-import { Button } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import {
   getFileIdFromExtendedAnnotation,
   getResourceExternalIdFromExtendedAnnotation,
@@ -8,6 +8,7 @@ import {
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
+import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
 import { TooltipContainer } from '../TooltipContainer';
 import { ContainerReference, ContainerReferenceType } from '../types';
 import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
@@ -76,28 +77,30 @@ const useIndustryCanvasFileLinkTooltips = ({
       return [];
     }
 
+    const onAddFileClick = () => {
+      onAddContainerReferences([
+        {
+          type: ContainerReferenceType.FILE,
+          resourceId: resourceId,
+          id: resourceId.toString(),
+          page: 1,
+        },
+      ]);
+    };
+
+    const onViewClick = () => {
+      window.open(createLink(`/explore/files/${resourceId}`), '_blank');
+    };
+
     return [
       {
         targetId: String(selectedAnnotation.id),
         content: (
-          <TooltipContainer>
-            <Button
-              type="ghost"
-              icon="DocumentPlus"
-              onClick={() => {
-                onAddContainerReferences([
-                  {
-                    type: ContainerReferenceType.FILE,
-                    resourceId: resourceId,
-                    id: resourceId.toString(),
-                    page: 1,
-                  },
-                ]);
-              }}
-            >
-              Add file to view
-            </Button>
-          </TooltipContainer>
+          <FileTooltip
+            id={resourceId}
+            onAddFileClick={onAddFileClick}
+            onViewClick={onViewClick}
+          />
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
         shouldPositionStrictly: true,

@@ -55,7 +55,7 @@ export const formatBigNumbersWithSuffix = (value: number) => {
   }
 
   // if value below <10k, just display the original value.
-  return value;
+  return String(value);
 };
 
 // TODO: This is added to handle '1K+' phrase we get due to the aggregate limitations for advanced filters.
