@@ -15,7 +15,7 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
 import { useInfinite3DModels } from '@cognite/data-exploration';
 import styled from 'styled-components';
-import { useFlagNewTheeDView } from '@data-exploration-app/hooks/flags/useFlagNewThreeDView';
+import { useFlagNewThreeDView } from '@data-exploration-app/hooks/flags/useFlagNewThreeDView';
 
 export const ThreeDSearchResults = ({
   query = '',
@@ -39,7 +39,7 @@ export const ThreeDSearchResults = ({
     isFetchingNextPage: isFetchingMoreImage360Data,
   } = useInfinite360Images();
 
-  const isNewThreeDViewEnabled = useFlagNewTheeDView();
+  const isNewThreeDViewEnabled = useFlagNewThreeDView();
 
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {
