@@ -82,7 +82,7 @@ export const searchConfigData: SearchConfigDataType = {
       label: 'Source',
       enabled: false,
     },
-    labels: { label: 'Label', enabled: false },
+    labels: { label: 'Labels', enabled: false },
   },
   event: {
     type: {
