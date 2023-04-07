@@ -7,13 +7,9 @@ import {
 } from 'react-query';
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
-import { Asset, IdEither, Model3D } from '@cognite/sdk';
-import { extractUniqueIds } from '@data-exploration-components/utils';
-import {
-  SdkResourceType,
-  useCdfItem,
-  useCdfItems,
-} from '@cognite/sdk-react-query-hooks';
+import { IdEither, Model3D } from '@cognite/sdk';
+import { extractUniqueIds } from '@data-exploration-lib/core';
+import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import copy from 'copy-to-clipboard';
 import unionBy from 'lodash/unionBy';
 import { ColumnDef } from '@tanstack/react-table';
@@ -172,16 +168,6 @@ export const useIsOverflow = (ref: React.RefObject<HTMLElement>) => {
   }, [ref]);
 
   return isOverflow;
-};
-
-export const useGetRootAsset = (rootId: number) => {
-  return useCdfItem<Asset>(
-    'assets',
-    { id: rootId },
-    {
-      enabled: Boolean(rootId),
-    }
-  );
 };
 
 export interface UseClipboardOptions {

@@ -1,14 +1,15 @@
 import React from 'react';
-import { Table } from '@data-exploration-components/components/Table/Table';
+import {
+  EmptyState,
+  ResourceTableColumns,
+  Table,
+} from '@data-exploration/components';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '@data-exploration-components/components/Table/columns';
 import { RelationshipTableProps } from './RelationshipTable';
 import { EventWithRelationshipLabels } from '@data-exploration-components/containers/Events/EventTable/EventTable';
-
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { ColumnDef } from '@tanstack/react-table';
 import { ResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 

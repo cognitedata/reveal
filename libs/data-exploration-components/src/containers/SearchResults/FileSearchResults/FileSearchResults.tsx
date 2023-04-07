@@ -5,7 +5,7 @@ import { convertResourceType } from '@data-exploration-components/types';
 
 import { FileToolbar } from './FileToolbar';
 import { useResourceResults } from '..';
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { EmptyState } from '@data-exploration/components';
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 

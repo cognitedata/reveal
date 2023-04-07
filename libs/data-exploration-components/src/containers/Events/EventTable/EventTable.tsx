@@ -2,16 +2,16 @@ import React, { useMemo } from 'react';
 import { Asset, CogniteEvent } from '@cognite/sdk';
 
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+} from '@data-exploration/components';
 
 import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { InternalEventDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-import { useEventsMetadataColumns } from '../hooks/useEventsMetadataColumns';
+import { useEventsMetadataColumns } from '@data-exploration-components/containers/Events/hooks/useEventsMetadataColumns';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 

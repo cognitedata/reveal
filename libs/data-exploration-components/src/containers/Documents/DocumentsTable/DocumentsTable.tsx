@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+  TimeDisplay,
+} from '@data-exploration/components';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
@@ -13,11 +14,10 @@ import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { DASH } from '@data-exploration-components/utils';
+import { DASH } from '@data-exploration-lib/core';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
-import { TimeDisplay } from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
 import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
 

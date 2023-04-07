@@ -2,9 +2,11 @@ import { Asset } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { MetadataFilterV2 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AssetTable } from '@data-exploration-components/containers/Assets';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  transformNewFilterToOldFilter,
+} from '@data-exploration-lib/domain-layer';
 import { useAssetsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';

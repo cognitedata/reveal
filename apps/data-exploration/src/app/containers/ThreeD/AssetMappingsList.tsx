@@ -14,7 +14,7 @@ import { prepareSearchString, grepContains } from './utils';
 import { CogniteError } from '@cognite/sdk';
 import noop from 'lodash/noop';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { SearchEmpty } from '@data-exploration-components/graphics';
+import { SearchEmpty } from '@data-exploration/components';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;

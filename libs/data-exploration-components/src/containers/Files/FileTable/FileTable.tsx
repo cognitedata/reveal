@@ -2,15 +2,16 @@ import React, { useMemo } from 'react';
 
 import { Asset, FileInfo } from '@cognite/sdk';
 import {
+  ResourceTableColumns,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+} from '@data-exploration/components';
 import { RelationshipLabels } from '@data-exploration-components/types';
-import { ResourceTableColumns } from '../../../components';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 
 export type FileTableProps = Omit<
   TableProps<FileWithRelationshipLabels>,
@@ -23,7 +24,6 @@ export type FileTableProps = Omit<
   };
 
 const defaultVisibleColumns = ['name', 'mimeType', 'uploadedTime'];
-export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
 export const FileTable = (props: FileTableProps) => {
   const {
     query,

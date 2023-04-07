@@ -1,4 +1,4 @@
-export const SPACE = String.fromCharCode(32);
+import { SPACE } from '../constants';
 
 export const formatNumber = new Intl.NumberFormat().format;
 

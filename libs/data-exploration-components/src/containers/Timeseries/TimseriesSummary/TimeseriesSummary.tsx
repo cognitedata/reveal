@@ -2,9 +2,10 @@ import { Asset, Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
+  SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
@@ -16,7 +17,6 @@ import {
   InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 
-import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,

@@ -4,8 +4,7 @@ import { Sequence } from '@cognite/sdk';
 import { useInfiniteSequenceRows } from '@data-exploration-components/hooks/sequenceHooks';
 
 import { Loader } from '@data-exploration-components/components';
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
-import { Table } from '@data-exploration-components/components/Table/Table';
+import { EmptyState, Table } from '@data-exploration/components';
 import { AllowedTableStateId } from '@data-exploration-components/types';
 
 export interface SequenceDataRow {

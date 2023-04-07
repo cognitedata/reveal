@@ -27,8 +27,8 @@ import {
   InternalAssetFilters,
   InternalFilesFilters,
   InternalTimeseriesFilters,
+  zIndex,
 } from '@data-exploration-lib/core';
-import zIndex from '@data-exploration-components/utils/zIndex';
 import { ExplorationFilterToggle } from '@data-exploration/components';
 
 const Wrapper = styled.div`

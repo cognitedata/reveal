@@ -7,9 +7,9 @@ import {
   SequenceItem,
   SequenceRow,
 } from '@cognite/sdk';
-import { pickOptionalId } from '@data-exploration-components/utils';
 
 import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
+import { pickOptionalId } from '@data-exploration-lib/core';
 
 const post = <T>(sdk: CogniteClient, path: string, data: any) =>
   sdk

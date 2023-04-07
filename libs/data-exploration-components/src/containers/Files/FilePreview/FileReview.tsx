@@ -1,8 +1,8 @@
 import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
-import { ResourceIcons } from '@data-exploration-components/components/index';
-import { AppContext } from '@data-exploration-components/context/AppContext';
+import { ResourceIcons } from '@data-exploration-components/components';
+import { AppContext } from '@data-exploration-lib/core';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import {

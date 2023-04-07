@@ -1,19 +1,18 @@
 import React, { useMemo } from 'react';
 import { Asset, Sequence } from '@cognite/sdk';
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+} from '@data-exploration/components';
 import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-
 import { InternalSequenceDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
+import { SequenceWithRelationshipLabels } from '@data-exploration-lib/core';
 
-export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 const visibleColumns = [
   'name',
   'externalId',

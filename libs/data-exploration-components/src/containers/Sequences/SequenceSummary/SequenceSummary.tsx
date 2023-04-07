@@ -6,9 +6,10 @@ import {
   InternalSequenceDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 import {
+  SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
@@ -19,8 +20,6 @@ import {
   InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-
-import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
 
 export const SequenceSummary = ({

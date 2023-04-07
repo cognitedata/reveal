@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { FileInfo } from '@cognite/sdk/dist/src';
 import { getCanonicalMimeType } from '@cognite/unified-file-viewer';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 import { useDisclosure } from '../../../../hooks';
-import { useMetrics } from '../../../../hooks/useMetrics';
 import { useFileDownloadUrl } from '../hooks';
 
 type UseSearchBarProps = {

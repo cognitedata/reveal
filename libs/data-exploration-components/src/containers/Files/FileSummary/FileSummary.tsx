@@ -4,7 +4,7 @@ import {
   ResourceTableColumns,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { useResourceResults } from '@data-exploration-components/containers';

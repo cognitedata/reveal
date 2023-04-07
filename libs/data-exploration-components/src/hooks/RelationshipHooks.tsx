@@ -22,7 +22,7 @@ import {
 } from '@cognite/sdk';
 import flatten from 'lodash/flatten';
 import uniqueBy from 'lodash/uniqBy';
-import { AppContext } from '@data-exploration-components/context/AppContext';
+import { AppContext } from '@data-exploration-lib/core';
 import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/Annotations';
 import {
   getResourceExternalIdFromTaggedAnnotation,

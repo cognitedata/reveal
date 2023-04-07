@@ -2,23 +2,22 @@ import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
-import { RelationshipLabels } from '@data-exploration-components/types';
+} from '@data-exploration/components';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
-import { InternalAssetDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+import {
+  AssetWithRelationshipLabels,
+  InternalAssetDataWithMatchingLabels,
+} from '@data-exploration-lib/domain-layer';
 
 import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
 
 import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
-
-export type AssetWithRelationshipLabels = RelationshipLabels &
-  InternalAssetDataWithMatchingLabels;
 
 const visibleColumns = ['name', 'rootId'];
 export const AssetTable = ({
