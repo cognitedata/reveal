@@ -3,7 +3,7 @@ import {
   ThreeDModelsResponse,
   useInfinite360Images,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { Loader } from '@cognite/cogs.js';
+import { Body, Loader } from '@cognite/cogs.js';
 import {
   ThreeDGridPreview,
   Model3DWithType,
@@ -15,6 +15,7 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
 import { useInfinite3DModels } from '@cognite/data-exploration';
 import styled from 'styled-components';
+import { useFlagNewThreeDView } from '@data-exploration-app/hooks/flags/useFlagNewThreeDView';
 
 export const ThreeDSearchResults = ({
   query = '',
@@ -37,6 +38,8 @@ export const ThreeDSearchResults = ({
     fetchNextPage: fetchMoreImage360Data,
     isFetchingNextPage: isFetchingMoreImage360Data,
   } = useInfinite360Images();
+
+  const isNewThreeDViewEnabled = useFlagNewThreeDView();
 
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {
@@ -102,61 +105,70 @@ export const ThreeDSearchResults = ({
           const columnCount = Math.floor(width / 225);
 
           return (
-            <InfiniteLoader
-              isItemLoaded={isItemLoaded}
-              itemCount={query ? filteredModels.length : itemCount}
-              loadMoreItems={loadMoreItems}
-            >
-              {({ onItemsRendered, ref }) => (
-                <Grid
-                  height={height}
-                  width={width}
-                  columnWidth={width / columnCount}
-                  rowHeight={225}
-                  columnCount={columnCount}
-                  rowCount={Math.ceil(filteredModels.length / columnCount)}
-                  itemData={{
-                    list: filteredModels,
-                  }}
-                  onItemsRendered={({
-                    visibleRowStartIndex,
-                    visibleRowStopIndex,
-                    overscanRowStopIndex,
-                    overscanRowStartIndex,
-                  }) => {
-                    onItemsRendered({
-                      overscanStartIndex: overscanRowStartIndex,
-                      overscanStopIndex: overscanRowStopIndex,
-                      visibleStartIndex: visibleRowStartIndex,
-                      visibleStopIndex: visibleRowStopIndex,
-                    });
-                  }}
-                  ref={ref}
-                >
-                  {({ columnIndex, rowIndex, data, style }) => {
-                    const { list } = data;
-                    const item = list[
-                      rowIndex * columnCount + columnIndex
-                    ] as Model3DWithType;
-                    const modelItem = {
-                      ...item,
-                      type: item?.type ?? 'threeD',
-                    };
-                    return item ? (
-                      <ThreeDGridPreview
-                        item={modelItem}
-                        key={item.id}
-                        name={item.name}
-                        modelId={item.id}
-                        query={query}
-                        style={style}
-                        onClick={onClick}
-                      />
-                    ) : null;
-                  }}
-                </Grid>
+            <>
+              {isNewThreeDViewEnabled && (
+                // This is a placeholder.
+                // The actual feature will be added with the next immediate PR
+                <Header>
+                  <Lable level={2}>[Placeholder] New Fiter panel </Lable>
+                </Header>
               )}
-            </InfiniteLoader>
+              <InfiniteLoader
+                isItemLoaded={isItemLoaded}
+                itemCount={query ? filteredModels.length : itemCount}
+                loadMoreItems={loadMoreItems}
+              >
+                {({ onItemsRendered, ref }) => (
+                  <Grid
+                    height={height}
+                    width={width}
+                    columnWidth={width / columnCount}
+                    rowHeight={225}
+                    columnCount={columnCount}
+                    rowCount={Math.ceil(filteredModels.length / columnCount)}
+                    itemData={{
+                      list: filteredModels,
+                    }}
+                    onItemsRendered={({
+                      visibleRowStartIndex,
+                      visibleRowStopIndex,
+                      overscanRowStopIndex,
+                      overscanRowStartIndex,
+                    }) => {
+                      onItemsRendered({
+                        overscanStartIndex: overscanRowStartIndex,
+                        overscanStopIndex: overscanRowStopIndex,
+                        visibleStartIndex: visibleRowStartIndex,
+                        visibleStopIndex: visibleRowStopIndex,
+                      });
+                    }}
+                    ref={ref}
+                  >
+                    {({ columnIndex, rowIndex, data, style }) => {
+                      const { list } = data;
+                      const item = list[
+                        rowIndex * columnCount + columnIndex
+                      ] as Model3DWithType;
+                      const modelItem = {
+                        ...item,
+                        type: item?.type ?? 'threeD',
+                      };
+                      return item ? (
+                        <ThreeDGridPreview
+                          item={modelItem}
+                          key={item.id}
+                          name={item.name}
+                          modelId={item.id}
+                          query={query}
+                          style={style}
+                          onClick={onClick}
+                        />
+                      ) : null;
+                    }}
+                  </Grid>
+                )}
+              </InfiniteLoader>
+            </>
           );
         }}
       </AutoSizer>
@@ -166,4 +178,18 @@ export const ThreeDSearchResults = ({
 
 const StyledThreeDSearchResults = styled.div`
   height: 100%;
+`;
+
+const Header = styled.div`
+  width: fit-content;
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  padding-bottom: 8px;
+  align-items: center;
+  white-space: nowrap;
+`;
+
+const Lable = styled(Body)`
+  align-self: center;
 `;
