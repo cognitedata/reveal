@@ -15,6 +15,7 @@ import { CogniteError } from '@cognite/sdk';
 import noop from 'lodash/noop';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { SearchEmpty } from '@data-exploration/components';
+import uniqBy from 'lodash/uniqBy';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;
@@ -89,6 +90,8 @@ export const AssetMappingsList = ({
     [assets, querySet]
   );
 
+  const uniqueFilteredAssets = uniqBy(filteredAssets, 'assetName');
+
   if (error) {
     return <MappingsError />;
   }
@@ -97,7 +100,7 @@ export const AssetMappingsList = ({
     return <MappingsMissing />;
   }
 
-  if (filteredAssets.length === 0) {
+  if (uniqueFilteredAssets.length === 0) {
     return <EmptyAssetMappings />;
   }
 
@@ -109,36 +112,39 @@ export const AssetMappingsList = ({
           {({ height, width }) => (
             <InfiniteLoader
               isItemLoaded={isItemLoaded}
-              itemCount={query ? filteredAssets.length : itemCount}
+              itemCount={query ? uniqueFilteredAssets.length : itemCount}
               loadMoreItems={noop}
             >
               {({ onItemsRendered, ref }) => (
                 <List
                   height={height}
                   width={width}
-                  itemCount={filteredAssets.length}
+                  itemCount={uniqueFilteredAssets.length}
                   itemSize={90}
                   onItemsRendered={onItemsRendered}
                   ref={ref}
                 >
                   {({ index, style }) => {
-                    if (!filteredAssets[index]) {
+                    if (!uniqueFilteredAssets[index]) {
                       return null;
                     }
 
                     return (
                       <AssetListItem
-                        key={filteredAssets[index].assetId}
+                        key={uniqueFilteredAssets[index].assetId}
                         onClick={() => {
-                          onClick(filteredAssets[index].assetId);
+                          onClick(uniqueFilteredAssets[index].assetId);
                           trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
                             selectedAssetId,
                             resourceType: '3D',
                           });
                         }}
-                        onKeyDown={() => onClick(filteredAssets[index].assetId)}
+                        onKeyDown={() =>
+                          onClick(uniqueFilteredAssets[index].assetId)
+                        }
                         className={
-                          selectedAssetId === filteredAssets[index].assetId
+                          selectedAssetId ===
+                          uniqueFilteredAssets[index].assetId
                             ? 'selected'
                             : ''
                         }
@@ -157,13 +163,15 @@ export const AssetMappingsList = ({
                         <StyledFlex direction="column">
                           <StyledHighlighter
                             searchWords={query.split(' ')}
-                            textToHighlight={filteredAssets[index].assetName}
+                            textToHighlight={
+                              uniqueFilteredAssets[index].assetName
+                            }
                             autoEscape
                           />
                           <StyledDescriptionHighlighter
                             searchWords={query.split(' ')}
                             textToHighlight={
-                              filteredAssets[index].assetDescription || ''
+                              uniqueFilteredAssets[index].assetDescription || ''
                             }
                             autoEscape
                           />
