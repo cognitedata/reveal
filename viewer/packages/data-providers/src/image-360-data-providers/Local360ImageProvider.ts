@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { Image360Provider } from '../Image360Provider';
-import { Image360Descriptor, Image360Face, Image360FileDescriptor } from '../types';
+import { Historical360ImageSet, Image360Face, Image360FileDescriptor } from '../types';
 
 type Local360ImagesDescriptor = {
   translation: {
@@ -29,7 +29,8 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
   constructor(modelUrl: string) {
     this._modelUrl = modelUrl;
   }
-  public async get360ImageDescriptors(): Promise<Image360Descriptor[]> {
+
+  public async get360ImageDescriptors(): Promise<Historical360ImageSet[]> {
     const image360File = '360Images.json';
     const response = await fetch(`${this._modelUrl}/${image360File}`).catch(_err => {
       throw Error('Could not download Json file');
@@ -46,18 +47,23 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
         new THREE.Euler(localDescriptor.rotation.x, localDescriptor.rotation.y, localDescriptor.rotation.z)
       );
 
-      const image360Descriptor: Image360Descriptor = {
+      const historicalImage360Descriptor = {
         id: index.toString(),
         label: index.toString(),
         collectionId: 'local',
         collectionLabel: 'local',
         transform: translation.multiply(rotation),
-        faceDescriptors: localDescriptor.faces.map(p => {
-          return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
-        })
+        imageRevisions: [
+          {
+            timestamp: undefined,
+            faceDescriptors: localDescriptor.faces.map(p => {
+              return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
+            })
+          }
+        ]
       };
 
-      return image360Descriptor;
+      return historicalImage360Descriptor;
     });
   }
 

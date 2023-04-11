@@ -21,7 +21,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         },
         {
           id: '1',
@@ -29,7 +33,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         },
         {
           id: '2',
@@ -37,7 +45,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         }
       ]);
 
