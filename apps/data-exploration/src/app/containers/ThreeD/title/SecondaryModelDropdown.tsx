@@ -233,6 +233,7 @@ const SecondaryModelDropdown = ({
   return (
     <MenuWrapper>
       <StyledInput
+        autoFocus
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search"
         value={searchQuery || ''}
@@ -328,6 +329,7 @@ const StyledNoResultsContainer = styled.div`
 
 const StyledInput = styled(Input)`
   margin-bottom: 8px;
+  line-height: 36px;
 `;
 
 export default SecondaryModelDropdown;
