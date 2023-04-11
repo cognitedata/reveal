@@ -3,47 +3,27 @@
  */
 
 import { Image360Descriptor, Image360FileProvider, Image360Texture } from '@reveal/data-providers';
-import { SceneHandler } from '@reveal/utilities';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360FileProvider;
   private readonly _image360Descriptor: Image360Descriptor;
-  private readonly _transform: THREE.Matrix4;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
+  private _textures: Image360Texture[];
   private _getFullResolutionTextures:
-    | undefined
-    | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>;
+    | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>
+    | undefined;
 
   constructor(
     imageProvider: Image360FileProvider,
     image360Descriptor: Image360Descriptor,
-    sceneHandler: SceneHandler,
-    transform: THREE.Matrix4
+    image360VisualzationBox: Image360VisualizationBox
   ) {
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
-    this._transform = transform;
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
-    this._image360VisualzationBox.visible = false;
-  }
-
-  /**
-   * Get a copy of the model-to-world transformation matrix
-   * of the given 360 image.
-   * @returns model-to-world transform of the 360 Image
-   */
-  get transform(): THREE.Matrix4 {
-    return this._transform.clone();
-  }
-
-  /**
-   * The object containing the unit cube with the 360 images.
-   * @returns Image360Visualization
-   */
-  get image360Visualization(): Image360VisualizationBox {
-    return this._image360VisualzationBox;
+    this._image360VisualzationBox = image360VisualzationBox;
+    this._textures = [];
   }
 
   /**
@@ -55,17 +35,17 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   /**
-   * Loads the 360 image (6 faces) into the visualization object.
+   * Loads the textures needed for the 360 image (6 faces).
    *
-   * This will start the download of both low and full resolution images and return one promise for when the first image set is ready
+   * This will start the download of both low and full resolution textures and return one promise for when the first image set is ready
    * and one promise for when both downloads are completed. If the low resolution images are completed first the full resolution
    * download and texture loading will continue in the background, and applyFullResolution can be used to apply full resolution textures
    * to the image360VisualzationBox at a desired time.
    *
-   * @returns firstCompleted A promise for when the first set om images has been loaded and applied to the image360VisualzationBox.
+   * @returns firstCompleted A promise for when the first set of textures has been loaded.
    * @returns fullResolutionCompleted A promise for when full resolution images are done loading.
    */
-  public load360Image(abortSignal?: AbortSignal): {
+  public loadTextures(abortSignal?: AbortSignal): {
     firstCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
   } {
@@ -83,7 +63,7 @@ export class Image360RevisionEntity implements Image360Revision {
 
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
       async ({ textures, isLowResolution }) => {
-        await this._image360VisualzationBox.loadImages(await textures);
+        this._textures = await textures;
 
         if (isLowResolution) {
           this._getFullResolutionTextures = fullResolutionFaces;
@@ -91,40 +71,41 @@ export class Image360RevisionEntity implements Image360Revision {
       }
     );
 
-    const fullResolutionCompleted = fullResolutionFaces
-      .catch(e => {
-        return Promise.reject(e);
-      })
-      .then(
-        () => {
-          return Promise.resolve();
-        },
-        reason => {
-          return Promise.reject(reason);
-        }
-      );
+    return { firstCompleted, fullResolutionCompleted: awaitFullResolution() };
 
-    return { firstCompleted, fullResolutionCompleted };
+    async function awaitFullResolution(): Promise<void> {
+      await fullResolutionFaces;
+    }
+  }
+
+  /**
+   * Clear the cached textures used by this revision.
+   */
+  public clearTextures(): void {
+    this._textures.forEach(t => t.texture.dispose());
+    this._textures = [];
+  }
+
+  /**
+   * Apply cached textures to the image360VisualzationBox.
+   */
+  public applyTextures(): void {
+    this._image360VisualzationBox.loadImages(this._textures);
   }
 
   /**
    * Apply full resolution textures to the image360VisualzationBox. This has no effect if full resolution has already been applied.
    */
-  public async applyFullResolution(): Promise<void> {
-    if (this._getFullResolutionTextures) {
-      const result = await this._getFullResolutionTextures.catch(() => {});
+  public async applyFullResolutionTextures(): Promise<void> {
+    if (!this._getFullResolutionTextures) return undefined;
+
+    try {
+      const result = await this._getFullResolutionTextures;
       if (result) {
-        this._image360VisualzationBox.loadImages(await result.textures);
+        this._textures = await result.textures;
+        this._image360VisualzationBox.loadImages(this._textures);
         this._getFullResolutionTextures = undefined;
       }
-    }
-  }
-
-  /**
-   * Drops the GPU resources for the 360 image
-   */
-  public unload360Image(): void {
-    this._getFullResolutionTextures = undefined;
-    this._image360VisualzationBox.unloadImages();
+    } catch (e) {}
   }
 }
