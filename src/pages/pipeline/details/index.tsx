@@ -73,8 +73,18 @@ const PipelineDetails = (): JSX.Element => {
     return index;
   };
 
+  const matchFields = pipeline?.modelParameters?.matchFields;
+  const validMatchFields = matchFields?.filter(
+    ({ source, target }) => !!source && !!target
+  );
+
   const hasSources = pipeline ? pipeline?.sources.dataSetIds.length > 0 : false;
   const hasTargets = pipeline ? pipeline?.targets.dataSetIds.length > 0 : false;
+  const hasValidMatchFields =
+    pipeline && validMatchFields
+      ? validMatchFields?.length > 0 &&
+        validMatchFields?.length === matchFields?.length
+      : false;
 
   const stepDone = () => {
     switch (step) {
@@ -85,7 +95,7 @@ const PipelineDetails = (): JSX.Element => {
         return hasTargets;
       }
       case 'configure-pipeline': {
-        return hasSources && hasTargets;
+        return hasValidMatchFields;
       }
       default: {
         return true;
