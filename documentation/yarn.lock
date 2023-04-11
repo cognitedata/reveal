@@ -2032,9 +2032,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lang-javascript@npm:6.1.4":
-  version: 6.1.4
-  resolution: "@codemirror/lang-javascript@npm:6.1.4"
+"@codemirror/lang-javascript@npm:6.1.5":
+  version: 6.1.5
+  resolution: "@codemirror/lang-javascript@npm:6.1.5"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/language": ^6.6.0
@@ -2043,7 +2043,7 @@ __metadata:
     "@codemirror/view": ^6.0.0
     "@lezer/common": ^1.0.0
     "@lezer/javascript": ^1.0.0
-  checksum: d550db179c522cd7c39d26815ee47ac4751656c856d42eeb3743e67482d4377692c4fcd3413b0e97c2c7070b6b10aaa582909c6234f42b04145d56efc49c8a6b
+  checksum: f0355f9577fac03437137356b5c8826ec073480d9b0efc62289eac483172d47dafe569f31bf788e4228e8b789197e50a0768cf10b0cde5f600e89b6b469f52cc
   languageName: node
   linkType: hard
 
@@ -2138,7 +2138,7 @@ __metadata:
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
     "@azure/msal-browser": 2.34.0
-    "@codemirror/lang-javascript": 6.1.4
+    "@codemirror/lang-javascript": 6.1.5
     "@docusaurus/core": 2.4.0
     "@docusaurus/preset-classic": 2.4.0
     "@docusaurus/remark-plugin-npm2yarn": 2.4.0
