@@ -117,22 +117,7 @@ export class Image360ApiHelper {
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
-    const reloadImage = (entity: Image360Entity, revision: Image360RevisionEntity) => {
-      if (entity !== this._interactionState.currentImage360Entered) {
-        return Promise.resolve();
-      }
-
-      if (this._transitionInProgress) {
-        return Promise.reject('Failed to change revision. Image transition in progress.');
-      }
-      return this.enter360Image(entity, revision);
-    };
-    const imageCollection = await this._image360Facade.create(
-      eventFilter,
-      reloadImage,
-      collectionTransform,
-      preMultipliedRotation
-    );
+    const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
     return imageCollection;
   }
@@ -181,7 +166,9 @@ export class Image360ApiHelper {
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
-    if (lastEntered360ImageEntity !== image360Entity) {
+    if (lastEntered360ImageEntity === image360Entity) {
+      this._requestRedraw();
+    } else {
       this._transitionInProgress = true;
       if (lastEntered360ImageEntity !== undefined) {
         await this.transition(lastEntered360ImageEntity, image360Entity);

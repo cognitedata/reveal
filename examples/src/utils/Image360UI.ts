@@ -118,9 +118,7 @@ export class Image360UI {
           const revisions = selectedEntity.getRevisions();
           const index = Number(imageRevisions.id);
           if (index >= 0 && index < revisions.length) {
-            selectedEntity.changeRevision(revisions[index]).catch(e => {
-              console.warn(e);
-            });
+            viewer.enter360Image(selectedEntity, revisions[index]);
           }
         }
       });

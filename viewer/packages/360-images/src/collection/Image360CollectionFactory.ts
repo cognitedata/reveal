@@ -11,7 +11,6 @@ import { Image360Icon } from '../icons/Image360Icon';
 import { IconCollection } from '../icons/IconCollection';
 import { Vector3 } from 'three';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
-import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
@@ -30,8 +29,7 @@ export class Image360CollectionFactory<T> {
   public async create(
     dataProviderFilter: T,
     postTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean,
-    reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>
+    preMultipliedRotation: boolean
   ): Promise<DefaultImage360Collection> {
     const historicalDescriptors = await this._image360DataProvider.get360ImageDescriptors(
       dataProviderFilter,
@@ -51,8 +49,7 @@ export class Image360CollectionFactory<T> {
           this._sceneHandler,
           this._image360DataProvider,
           descriptor.transform,
-          icon,
-          reloadImage
+          icon
         );
       });
 

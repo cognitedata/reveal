@@ -60,7 +60,7 @@ describe(Image360CollectionFactory.name, () => {
       mockSceneHandler.object(),
       new EventTrigger<BeforeSceneRenderedDelegate>()
     );
-    const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true, It.IsAny());
+    const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);
 
     expect(collection.image360Entities.length).toBe(3);
   });

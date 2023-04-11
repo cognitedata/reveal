@@ -30,14 +30,4 @@ export interface Image360 {
    * @returns The active revision.
    */
   getActiveRevision(): Image360Revision;
-
-  /**
-   * Will reload the entity with images from the new revision.
-   * Resolves once loading is complete. Rejects if revision could not be changed.
-   * If the entity is not entered/visible the promise will be resolved instantly.
-   *
-   * @param revision The revision to load
-   * @returns Promise for when revision has either been updated or it failed to change.
-   */
-  changeRevision(revision: Image360Revision): Promise<void>;
 }

@@ -16,7 +16,6 @@ export class Image360Entity implements Image360 {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private readonly _reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>;
   private _activeRevision: Image360RevisionEntity;
 
   /**
@@ -50,12 +49,10 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon,
-    reloadImage: (entity: Image360Entity, revision: Image360RevisionEntity) => Promise<void>
+    icon: Image360Icon
   ) {
     this._transform = transform;
     this._image360Icon = icon;
-    this._reloadImage = reloadImage;
 
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
@@ -72,18 +69,6 @@ export class Image360Entity implements Image360 {
    */
   public getRevisions(): Image360RevisionEntity[] {
     return this._revisions;
-  }
-
-  /**
-   * Will reload the entity with images from the new revision.
-   * Resolves once loading is complete. Rejects if revision could not be changed.
-   * If the entity is not entered/visible the promise will be resolved instantly.
-   *
-   * @param revision The revision to load
-   * @returns Promise for when revision has either been updated or it failed to change.
-   */
-  public changeRevision(revision: Image360RevisionEntity): Promise<void> {
-    return this._reloadImage(this, revision);
   }
 
   /**
