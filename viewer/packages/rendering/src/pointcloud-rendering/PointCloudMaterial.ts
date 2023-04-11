@@ -90,7 +90,7 @@ const COLOR_DEFS = {
 function uniform<K extends keyof IPointCloudMaterialUniforms>(
   uniformName: K,
   requireSrcUpdate: boolean = false
-): ClassAutoAccessorDecorator {
+) {
   return () => ({
       get: () => (this as PointCloudMaterial).getUniform(uniformName),
       set: (value: unknown) => {
@@ -105,7 +105,7 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(
   });
 };
 
-const requiresShaderUpdate: ClassAutoAccessorDecorator = (_: {}, context: { name: string | symbol }) => {
+const requiresShaderUpdate = (_: {}, context: { name: string | symbol }) => {
 
   // return (target: any, propertyKey: string | symbol): void => {
   const fieldName = `_${context.name.toString()}`;
