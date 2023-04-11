@@ -56,14 +56,18 @@ export const DocumentsTable = (props: DocumentTableProps) => {
               fileName: row.original.name || '',
               file: row.original,
             };
-            return <DocumentNamePreview {...fileNamePreviewProps} query="" />;
+            return (
+              <DocumentNamePreview {...fileNamePreviewProps} query={query} />
+            );
           },
         },
         {
           accessorKey: 'content',
           header: 'Content',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return <DocumentContentPreview document={row.original} query="" />;
+            return (
+              <DocumentContentPreview document={row.original} query={query} />
+            );
           },
           enableSorting: false,
         },
@@ -110,8 +114,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.assets(onRootAssetClick),
-        Table.Columns.externalId(),
-        Table.Columns.id(),
+        Table.Columns.externalId(query),
+        Table.Columns.id(query),
         {
           ...Table.Columns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,

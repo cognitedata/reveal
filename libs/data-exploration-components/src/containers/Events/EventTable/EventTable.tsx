@@ -28,20 +28,20 @@ export const EventTable = ({
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type(), enableHiding: false },
-        Table.Columns.subtype(),
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        { ...Table.Columns.type(query), enableHiding: false },
+        Table.Columns.subtype(query),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id(),
+          ...Table.Columns.id(query),
           enableSorting: false,
         },
         { ...Table.Columns.dataSet, enableSorting: true },
         Table.Columns.startTime,
         Table.Columns.endTime,
-        Table.Columns.source(),
+        Table.Columns.source(query),
         Table.Columns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],

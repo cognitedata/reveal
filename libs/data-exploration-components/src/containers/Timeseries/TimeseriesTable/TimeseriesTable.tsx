@@ -34,6 +34,7 @@ const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   onRootAssetClick,
+  query,
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
@@ -82,13 +83,13 @@ export const TimeseriesTable = ({
   const columns = useMemo(() => {
     return [
       {
-        ...Table.Columns.name(),
+        ...Table.Columns.name(query),
         enableHiding: false,
       },
-      Table.Columns.description(),
-      Table.Columns.externalId(),
+      Table.Columns.description(query),
+      Table.Columns.externalId(query),
       {
-        ...Table.Columns.unit(),
+        ...Table.Columns.unit(query),
         enableSorting: false,
       },
       sparkLineColumn,
@@ -106,7 +107,7 @@ export const TimeseriesTable = ({
       },
       Table.Columns.created,
       {
-        ...Table.Columns.id(),
+        ...Table.Columns.id(query),
         enableSorting: false,
       },
       {
@@ -126,7 +127,7 @@ export const TimeseriesTable = ({
       ...metadataColumns,
     ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sparkLineColumn, metadataColumns]);
+  }, [query, sparkLineColumn, metadataColumns]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

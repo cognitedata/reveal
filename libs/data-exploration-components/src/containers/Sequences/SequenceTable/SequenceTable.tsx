@@ -42,11 +42,11 @@ export const SequenceTable = ({
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...Table.Columns.name(query),
           enableHiding: false,
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         {
           ...Table.Columns.columns,
           enableSorting: false,
@@ -54,7 +54,7 @@ export const SequenceTable = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id(),
+          ...Table.Columns.id(query),
           enableSorting: false,
         },
         Table.Columns.rootAsset(onRootAssetClick),

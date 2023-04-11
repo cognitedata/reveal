@@ -32,11 +32,11 @@ export const AssetTable = ({
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...Table.Columns.name(query),
           enableHiding: false,
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         Table.Columns.rootAsset((rootAsset) => onRowClick(rootAsset)),
         {
           accessorKey: 'id',
@@ -52,7 +52,7 @@ export const AssetTable = ({
           ...Table.Columns.labels,
           enableSorting: false,
         },
-        Table.Columns.source(),
+        Table.Columns.source(query),
         { ...Table.Columns.dataSet, enableSorting: true },
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],

@@ -130,7 +130,7 @@ export const AssetTreeTable = ({
               <HighlightCell
                 text={getValue<string>() || DASH}
                 lines={1}
-                query=""
+                query={query}
               />
             </div>
           ),
@@ -138,8 +138,8 @@ export const AssetTreeTable = ({
             isExpandable: true,
           },
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         {
           id: 'childCount',
           header:
@@ -164,7 +164,7 @@ export const AssetTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        Table.Columns.source(),
+        Table.Columns.source(query),
         Table.Columns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
