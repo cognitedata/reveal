@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader } from '@cognite/cogs.js';
+import { Icon, Loader, Body } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawCogniteEvent } from 'types/api';
 import { SourceTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 
 type EventListTableRecord = { key: string } & RawCogniteEvent;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
@@ -49,22 +50,41 @@ export default function EventTable({
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
+        sorter: (a, b) =>
+          (a?.description || '').localeCompare(b?.description || ''),
       },
       {
         title: t('resource-table-column-type'),
         dataIndex: 'type',
         key: 'type',
+        sorter: (a, b) => (a?.type || '').localeCompare(b?.type || ''),
       },
       {
         title: t('resource-table-column-subtype'),
         dataIndex: 'subtype',
         key: 'subtype',
+        sorter: (a, b) => (a?.subtype || '').localeCompare(b?.subtype || ''),
+      },
+      {
+        title: t('data-set'),
+        dataIndex: 'dataSetId',
+        key: 'dataSet',
+        render: (value) =>
+          !!value && (
+            <Body level={2} strong>
+              <QuickMatchDataSet dataSetId={value} />
+            </Body>
+          ),
+        sorter: (rowA: EventListTableRecord, rowB: EventListTableRecord) =>
+          (rowA?.dataSetId ?? 0) - (rowB?.dataSetId ?? 0),
       },
       {
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
         render: (value: number) => new Date(value).toLocaleString(),
+        sorter: (rowA: EventListTableRecord, rowB: EventListTableRecord) =>
+          (rowA?.lastUpdatedTime ?? 0) - (rowB?.lastUpdatedTime ?? 0),
       },
     ],
     [t]
@@ -76,10 +96,10 @@ export default function EventTable({
       : selected.map((s) => s.id.toString()),
 
     type: 'checkbox' as RowSelectionType,
+    hideSelectAll: true,
     onChange(_: (string | number)[], rows: EventListTableRecord[]) {
       setSelected(rows);
     },
-    hideSelectAll: true,
     getCheckboxProps(_: any) {
       return {
         disabled: allSources,
