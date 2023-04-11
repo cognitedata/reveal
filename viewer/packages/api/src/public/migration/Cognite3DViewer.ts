@@ -837,8 +837,9 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Add a UI to the screen that will show information about the currently entered 360 image.
-   * @param show
+   * Add a GUI to the screen that will show information about the currently entered 360 image.
+   * This GUI is hidden by default.
+   * @param show True to show, false to hide.
    */
   show360ImageInformation(show: boolean): void {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
