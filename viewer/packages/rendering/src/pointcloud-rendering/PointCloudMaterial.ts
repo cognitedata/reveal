@@ -87,6 +87,40 @@ const COLOR_DEFS = {
   [PointColorType.Classification]: 'color_type_classification'
 };
 
+function uniform<K extends keyof IPointCloudMaterialUniforms>(
+  uniformName: K,
+  requireSrcUpdate: boolean = false
+): ClassAutoAccessorDecorator {
+  return () => ({
+      get: () => (this as PointCloudMaterial).getUniform(uniformName),
+      set: (value: unknown) => {
+        const mat = this as PointCloudMaterial;
+        if (value !== mat.getUniform(uniformName)) {
+          mat.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
+          if (requireSrcUpdate) {
+            mat.updateShaderSource();
+          }
+        }
+      }
+  });
+};
+
+const requiresShaderUpdate: ClassAutoAccessorDecorator = (_: {}, context: { name: string | symbol }) => {
+
+  // return (target: any, propertyKey: string | symbol): void => {
+  const fieldName = `_${context.name.toString()}`;
+  return () => ({
+    get: () => (this as PointCloudMaterial)[fieldName],
+    set: (value: unknown) => {
+        const mat = this as PointCloudMaterial;
+        if (value !== mat[fieldName]) {
+          mat[fieldName] = value;
+          mat.updateShaderSource();
+        }
+    }
+  });
+};
+
 export class PointCloudMaterial extends RawShaderMaterial {
   private static readonly helperVec3 = new Vector3();
 
@@ -138,28 +172,28 @@ export class PointCloudMaterial extends RawShaderMaterial {
     vnStart: makeUniform('f', 0.0)
   };
 
-  @uniform('fov') fov!: number;
-  @uniform('heightMax') heightMax!: number;
-  @uniform('heightMin') heightMin!: number;
-  @uniform('intensityBrightness') intensityBrightness!: number;
-  @uniform('intensityContrast') intensityContrast!: number;
-  @uniform('intensityGamma') intensityGamma!: number;
-  @uniform('intensityRange') intensityRange!: [number, number];
-  @uniform('maxSize') maxSize!: number;
-  @uniform('minSize') minSize!: number;
-  @uniform('octreeSize') octreeSize!: number;
-  @uniform('opacity', true) opacity!: number;
-  @uniform('screenHeight') screenHeight!: number;
-  @uniform('screenWidth') screenWidth!: number;
-  @uniform('size') size!: number;
-  @uniform('spacing') spacing!: number;
+  @uniform('fov') accessor fov!: number;
+  @uniform('heightMax') accessor heightMax!: number;
+  @uniform('heightMin') accessor heightMin!: number;
+  @uniform('intensityBrightness') accessor intensityBrightness!: number;
+  @uniform('intensityContrast') accessor intensityContrast!: number;
+  @uniform('intensityGamma') accessor intensityGamma!: number;
+  @uniform('intensityRange') accessor intensityRange!: [number, number];
+  @uniform('maxSize') accessor maxSize!: number;
+  @uniform('minSize') accessor minSize!: number;
+  @uniform('octreeSize') accessor octreeSize!: number;
+  @uniform('opacity', true) accessor opacity!: number;
+  @uniform('screenHeight') accessor screenHeight!: number;
+  @uniform('screenWidth') accessor screenWidth!: number;
+  @uniform('size') accessor size!: number;
+  @uniform('spacing') accessor spacing!: number;
 
-  @requiresShaderUpdate() weighted: boolean = false;
-  @requiresShaderUpdate() hqDepthPass: boolean = false;
-  @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.Rgb;
-  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.Adaptive;
-  @requiresShaderUpdate() useEDL: boolean = false;
-  @requiresShaderUpdate() shape: PointShape = PointShape.Circle;
+  @requiresShaderUpdate accessor weighted: boolean = false;
+  @requiresShaderUpdate accessor hqDepthPass: boolean = false;
+  @requiresShaderUpdate() accessor pointColorType: PointColorType = PointColorType.Rgb;
+  @requiresShaderUpdate() accessor pointSizeType: PointSizeType = PointSizeType.Adaptive;
+  @requiresShaderUpdate() accessor useEDL: boolean = false;
+  @requiresShaderUpdate() accessor shape: PointShape = PointShape.Circle;
 
   attributes = {
     position: { type: 'fv', value: [] },
@@ -379,44 +413,4 @@ function makeUniform<T>(type: string, value: T): IUniform<T> {
 
 function getValid<T>(a: T | undefined, b: T): T {
   return a === undefined ? b : a;
-}
-
-// tslint:disable:no-invalid-this
-function uniform<K extends keyof IPointCloudMaterialUniforms>(
-  uniformName: K,
-  requireSrcUpdate: boolean = false
-): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol): void => {
-    Object.defineProperty(target, propertyKey, {
-      get() {
-        return this.getUniform(uniformName);
-      },
-      set(value: any) {
-        if (value !== this.getUniform(uniformName)) {
-          this.setUniform(uniformName, value);
-          if (requireSrcUpdate) {
-            this.updateShaderSource();
-          }
-        }
-      }
-    });
-  };
-}
-
-function requiresShaderUpdate(): (target: any, propertyKey: string | symbol) => void {
-  return (target: any, propertyKey: string | symbol): void => {
-    const fieldName = `_${propertyKey.toString()}`;
-
-    Object.defineProperty(target, propertyKey, {
-      get() {
-        return this[fieldName];
-      },
-      set(value: any) {
-        if (value !== this[fieldName]) {
-          this[fieldName] = value;
-          this.updateShaderSource();
-        }
-      }
-    });
-  };
 }
