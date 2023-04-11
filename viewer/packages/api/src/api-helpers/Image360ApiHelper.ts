@@ -115,10 +115,17 @@ export class Image360ApiHelper {
   }
 
   public async add360ImageSet(
-    eventFilter: { [key: string]: string },
+    eventFilter: Metadata,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
+    const id: string | undefined = eventFilter.site_id;
+    if (id === undefined) {
+      throw new Error('Image set filter must contain site_id');
+    }
+    if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
+      throw new Error(`Image set with id=${id} has already been added`);
+    }
     const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
     return imageCollection;

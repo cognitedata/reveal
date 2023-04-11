@@ -11,6 +11,8 @@ import { Image360Icon } from '../icons/Image360Icon';
 import { IconCollection } from '../icons/IconCollection';
 import { Vector3 } from 'three';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import uniq from 'lodash/uniq';
+import assert from 'assert';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
@@ -53,7 +55,11 @@ export class Image360CollectionFactory<T> {
         );
       });
 
-    return new DefaultImage360Collection(entities, collectionIcons);
+    const collectionIds = uniq(historicalDescriptors.map(desc => desc.collectionId));
+
+    assert(collectionIds.length === 1);
+
+    return new DefaultImage360Collection(collectionIds[0], entities, collectionIcons);
 
     function isDefined(
       pair: [Historical360ImageSet | undefined, Image360Icon | undefined]
