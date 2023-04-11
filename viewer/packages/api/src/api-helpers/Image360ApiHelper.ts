@@ -187,7 +187,7 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
     applyFullResolutionTextures(this._requestRedraw);
 
-    imageCollection.events.image360Entered.fire(image360Entity);
+    imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
 
     async function applyFullResolutionTextures(_requestRedraw: () => void) {
       await revisionToEnter.applyFullResolutionTextures();
