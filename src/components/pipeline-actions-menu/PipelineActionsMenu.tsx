@@ -37,11 +37,11 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
 
   switch (rerun) {
     case 'Queued': {
-      itemText = 'Queued';
+      itemText = t('queued');
       break;
     }
     case 'Running': {
-      itemText = 'Running';
+      itemText = t('running');
       break;
     }
     default: {
