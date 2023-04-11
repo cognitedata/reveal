@@ -1978,10 +1978,30 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal@^4.1.2", "@cognite/reveal@^4.2.0":
+"@cognite/reveal@^4.1.2":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
   integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
+  dependencies:
+    "@tweenjs/tween.js" "18.6.4"
+    assert "2.0.0"
+    async-mutex "0.4.0"
+    glslify "7.1.1"
+    glslify-import "3.1.0"
+    html2canvas "^1.4.1"
+    lodash "4.17.21"
+    loglevel "1.8.1"
+    mixpanel-browser "2.45.0"
+    path-browserify "1.0.1"
+    rxjs "7.8.0"
+    skmeans "0.11.3"
+    sparse-octree "7.1.6"
+    three-stdlib "2.21.8"
+
+"@cognite/reveal@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.1.tgz#cf03778c7c6333cf19124379d7a31635d213012b"
+  integrity sha512-8e1m2CxssmklHGgz8CBTnns5qLxHa7W+qQGK6FuO6bRr08/EGXM+wrj1i2bBtLeoxHn+C/pGQACw+LSqCtsnIQ==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"

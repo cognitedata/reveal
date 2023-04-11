@@ -17,7 +17,7 @@
     "@cognite/react-document-table": "^1.22.2",
     "@cognite/react-errors": "^1.0.4",
     "@cognite/react-feature-flags": "^1.0.1",
-    "@cognite/reveal": "^4.2.0",
+    "@cognite/reveal": "^4.2.1",
     "@cognite/sdk": "^7.19.0",
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sdk-react-query-hooks": "^7.1.0",
