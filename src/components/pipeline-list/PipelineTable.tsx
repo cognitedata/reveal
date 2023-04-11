@@ -25,10 +25,8 @@ import {
 } from 'hooks/entity-matching-pipelines';
 import LatestRunCell from 'components/latest-run-cell';
 
-type PipelineListTableRecord = { key: string } & Pick<
-  PipelineWithLatestRun,
-  PipelineTableTypes
->;
+type PipelineListTableRecord = { key: string } & PipelineWithLatestRun;
+
 type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
   title: string;
   key: PipelineTableTypes;
@@ -159,14 +157,15 @@ const PipelineTable = (): JSX.Element => {
         dataIndex: '',
         key: 'run',
         width: '52px',
-        render: (record) => {
+        render: (_, record) => {
           return (
             <Dropdown
               content={
                 <PipelineActionsMenu
                   onDuplicatePipeline={() => handleDuplicate(record)}
-                  id={record.id}
+                  pipeline={record}
                   onDeletePipeline={() => handleDeletePipeline(record.id)}
+                  latestRun={record.latestRun}
                 />
               }
               key={`dropdown-${record.id}`}

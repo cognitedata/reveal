@@ -149,6 +149,7 @@
   "qm-result-source": "Does this resource match",
   "qm-result-target": "... this target?",
   "quick-match": "Quick match",
+  "rerun-pipeline": "Rerun pipeline",
   "resource-asset_one": "Asset",
   "resource-asset_other": "Assets",
   "resource-count": "Resource count",
