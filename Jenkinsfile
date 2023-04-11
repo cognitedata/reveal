@@ -4,6 +4,9 @@
 // At this point, Fusion enforces all sub-app packages to be prefixed with cdf-.
 static final String FUSION_APP_ID = 'cdf-charts-ui'
 
+// Firebase hosting config
+static final String FIREBASE_APP_NAME = "charts"
+
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
 static final String APPLICATION_REPO_ID = 'cognite-charts'
@@ -32,8 +35,7 @@ static final Map<String, String> CONTEXTS = [
   checkout: 'continuous-integration/jenkins/checkout',
   setup: 'continuous-integration/jenkins/setup',
   buildFusion: 'continuous-integration/jenkins/build-fusion',
-  buildFusionPreview: 'continuous-integration/jenkins/build-fusion-preview',
-  publishFusion: 'continuous-integration/jenkins/publish-fusion'
+  buildFusionPreview: 'continuous-integration/jenkins/build-fusion-preview'
 ]
 
 // Copy these before installing dependencies so that we don't have to
@@ -66,13 +68,14 @@ def pods = { body ->
         secretKey: 'CHARTS_LOCIZE_API_KEY',
         optional: environment.isProduction
       )
-      fas.pod(
+      appHosting.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
         mixpanelToken: MIXPANEL_TOKEN,
         envVars: [
           locizeApiKey,
-          envVar(key: 'REACT_APP_ENV', value: appEnv())
+          envVar(key: 'REACT_APP_ENV', value: appEnv()),
+          envVar(key: 'REACT_APP_MIXPANEL_TOKEN', value: MIXPANEL_TOKEN)
         ]
       ) {
         node(POD_LABEL) {
@@ -132,11 +135,13 @@ pods {
                     println "Skipping Fusion Charts build for pull requests"
                     return
                   }
-                  fas.build(
-                    appId: FUSION_APP_ID,
-                    repo: APPLICATION_REPO_ID,
+                  appHosting(
+                    appName: FIREBASE_APP_NAME,
+                    environment: environment.isProduction ? 'production' : 'staging',
                     buildCommand: 'yarn build',
                     shouldPublishSourceMap: false,
+                    firebaseJson: 'firebase.json',
+                    buildFolder: 'build',
                   )
                 }
               }
@@ -145,14 +150,5 @@ pods {
           workers: 2,
         )
       }
-      if (isRelease) {
-      stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
-        dir('fusion') {
-          fas.publish(
-            shouldPublishSourceMap: false
-          )
-        }
-      }
-    }
   }
 }
