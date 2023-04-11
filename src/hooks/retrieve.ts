@@ -41,6 +41,9 @@ function getItems(sdk: CogniteClient, api: API, ids: IdEither[]) {
     case 'files': {
       return sdk.files.retrieve(ids);
     }
+    case 'sequences': {
+      return sdk.sequences.retrieve(ids);
+    }
     default: {
       return Promise.reject('API not supported');
     }

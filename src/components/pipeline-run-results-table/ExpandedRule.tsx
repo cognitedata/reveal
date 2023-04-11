@@ -99,7 +99,9 @@ const ExpandedRule = ({
   const columns: ExpandedRuleTableColumnType[] = useMemo(
     () => [
       {
-        title: t('qm-result-source'),
+        title: t('qm-result-source', {
+          resource: t('resource').toLocaleLowerCase(),
+        }),
         dataIndex: 'source',
         key: 'source',
         render: (source: RuleMatch['source']) => (

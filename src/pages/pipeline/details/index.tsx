@@ -94,6 +94,9 @@ const PipelineDetails = (): JSX.Element => {
     );
   };
 
+  const configurePipeline =
+    window.location.href.indexOf('configure-pipeline') !== -1;
+
   if (error) {
     if (error?.status === 403) {
       return <NoAccessPage />;
@@ -111,7 +114,7 @@ const PipelineDetails = (): JSX.Element => {
             )}
             {nextStep && (
               <Button onClick={handleGoNextStep} type="primary">
-                {t('navigate-next')}
+                {configurePipeline ? t('run-pipeline') : t('navigate-next')}
               </Button>
             )}
           </Flex>

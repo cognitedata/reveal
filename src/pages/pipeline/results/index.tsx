@@ -100,8 +100,8 @@ const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
     return (
       <Page subtitle={pipeline?.description} title={pipeline?.name ?? ''}>
         <Step
-          title={t('result-step-title', { step: 4 })}
-          subtitle={t('result-step-subtitle')}
+          title={t('download-result-step-title', { step: 4 })}
+          subtitle={t('download-result-step-subtitle')}
         >
           <Loader />
         </Step>

@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Flex, Switch } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { Prediction } from 'hooks/entity-matching-predictions';
 import { AppliedRule } from 'hooks/entity-matching-rules';
@@ -66,7 +66,7 @@ export default function EntityMatchingResult({
           }
           case 'files':
           case 'events': {
-            return !((d as FileInfo | CogniteEvent).assetIds?.length === 0);
+            return ((d as FileInfo | CogniteEvent).assetIds?.length || 0) > 0;
           }
           default: {
             return false;
@@ -87,7 +87,7 @@ export default function EntityMatchingResult({
           }
           case 'files':
           case 'events': {
-            return (d as FileInfo | CogniteEvent).assetIds?.length === 0;
+            return ((d as FileInfo | CogniteEvent).assetIds?.length || 0) === 0;
           }
           default: {
             return false;
@@ -117,7 +117,7 @@ export default function EntityMatchingResult({
               .target.id;
             const r = d as FileInfo | CogniteEvent;
             return (
-              p && (r.assetIds?.length || 0) > 0 && r.assetIds?.includes(p)
+              p && (r.assetIds?.length || 0) > 0 && !r.assetIds?.includes(p)
             );
           }
           default: {
@@ -185,14 +185,14 @@ export default function EntityMatchingResult({
   }, [predictions, diffMatched, matched, selectedMatchType, unmatched]);
 
   return (
-    <Container $isActionBarVisible={!!confirmedPredictions.length}>
-      <Step
-        title={t('result-step-title', { step: 4 })}
-        subtitle={t('result-step-subtitle')}
-      >
-        <Flex direction="column">
+    <Step
+      title={t('result-step-title', { step: 4 })}
+      subtitle={t('result-step-subtitle')}
+    >
+      <Container $isActionBarVisible={!!confirmedPredictions.length}>
+        <Flex direction="column" gap={16}>
           {appliedRules && (
-            <Flex gap={12}>
+            <Flex gap={12} alignItems="center">
               <Select
                 disabled={rulesView}
                 loading={isInitialLoading}
@@ -201,10 +201,10 @@ export default function EntityMatchingResult({
                 style={{ width: 300 }}
                 value={selectedMatchType}
               />
-              <Checkbox
+              <Switch
                 label={t('group-by-pattern')}
                 checked={rulesView}
-                onChange={(e) => setRulesView(e.target.checked)}
+                onChange={() => setRulesView((enabled) => !enabled)}
               />
             </Flex>
           )}
@@ -217,6 +217,7 @@ export default function EntityMatchingResult({
             />
           ) : (
             <QuickMatchResultsTable
+              sourceType={sourceType}
               model={model}
               predictions={filteredPreditions}
               confirmedPredictions={confirmedPredictions}
@@ -224,13 +225,13 @@ export default function EntityMatchingResult({
             />
           )}
         </Flex>
-      </Step>
-      <QuickMatchActionBar
-        selectedRows={confirmedPredictions}
-        sourceType={sourceType}
-        onClose={onClose}
-      />
-    </Container>
+        <QuickMatchActionBar
+          selectedRows={confirmedPredictions}
+          sourceType={sourceType}
+          onClose={onClose}
+        />
+      </Container>
+    </Step>
   );
 }
 
