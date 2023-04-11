@@ -62,7 +62,6 @@ export class PointCloudOctreePicker {
       return PointCloudOctreePickerHelper.getPickPoint(hit, renderedNodes);
     } finally {
       // Cleanup
-      pickMaterial.clearVisibleNodeTextureOffsets();
       this._pickerHelper.resetState();
     }
   }

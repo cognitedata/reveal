@@ -16,15 +16,6 @@ export class Image360UI {
 
     const onImageEntered: Image360EnteredDelegate = entity => {
       selectedEntity = entity;
-      // --- Remove after testing - Start
-      console.log('Current revision: ' + selectedEntity.getActiveRevision().date);
-
-      const revisions = selectedEntity.list360ImageRevisions();
-      if (revisions.length > 0) {
-        console.log('Available revisions:');
-        revisions.forEach((revision, index) => console.log('- Id ' + index + ', ' + revision.date));
-      }
-      // --- Remove after testing - End
     };
 
     const translation = {
@@ -59,8 +50,7 @@ export class Image360UI {
       siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
-      remove: removeAll360Images,
-      showInfo: false
+      remove: removeAll360Images
     };
 
     optionsFolder.add(params, 'siteId').name('Site ID');
@@ -81,7 +71,7 @@ export class Image360UI {
     gui.add(params, 'add').name('Add image set');
 
     gui.add(opacity, 'alpha', 0, 1, 0.01).onChange(() => {
-      entities.forEach(p => p.setOpacity(opacity.alpha));
+      entities.forEach(p => (p.image360Visualization.opacity = opacity.alpha));
       viewer.requestRedraw();
     });
 
@@ -113,14 +103,11 @@ export class Image360UI {
       .add(imageRevisions, 'targetDate')
       .name('Revision date (Unix epoch time):')
       .onChange(() => {
-        if (collections.length > 0) {
-          const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
-          collections.forEach(p => (p.targetRevisionDate = date));
+        if (collections.length === 0) return;
 
-          if (selectedEntity) {
-            viewer.enter360Image(selectedEntity);
-          }
-        }
+        const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
+        collections.forEach(p => (p.targetRevisionDate = date));
+        if (selectedEntity) viewer.enter360Image(selectedEntity);
       });
 
     gui
@@ -128,21 +115,12 @@ export class Image360UI {
       .name('Current image revision')
       .onChange(() => {
         if (selectedEntity) {
-          const revisions = selectedEntity.list360ImageRevisions();
+          const revisions = selectedEntity.getRevisions();
           const index = Number(imageRevisions.id);
           if (index >= 0 && index < revisions.length) {
-            selectedEntity.changeRevision(revisions[index]).catch(e => {
-              console.warn(e);
-            });
+            viewer.enter360Image(selectedEntity, revisions[index]);
           }
         }
-      });
-
-    gui
-      .add(params, 'showInfo')
-      .name('Show image information')
-      .onChange(() => {
-        viewer.show360ImageInformation(params.showInfo);
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');

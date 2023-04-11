@@ -340,7 +340,7 @@ export class Cognite3DViewer {
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
-    enter360Image(image360: Image360): Promise<void>;
+    enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
     exit360Image(): void;
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
@@ -778,10 +778,10 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
-    changeRevision(revision: Image360Revision): Promise<void>;
     getActiveRevision(): Image360Revision;
-    list360ImageRevisions(): Image360Revision[];
-    setOpacity(alpha: number): void;
+    getRevisions(): Image360Revision[];
+    readonly image360Visualization: Image360Visualization;
+    readonly transform: THREE.Matrix4;
 }
 
 // @public
@@ -804,11 +804,9 @@ export type Image360EnteredDelegate = (image360: Image360) => void;
 // @public
 export type Image360ExitedDelegate = () => void;
 
-// @public (undocumented)
+// @public
 export interface Image360Revision {
     readonly date: Date | undefined;
-    readonly image360Visualization: Image360Visualization;
-    readonly transform: THREE.Matrix4;
 }
 
 // @public

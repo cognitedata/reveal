@@ -70,7 +70,13 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Collection, Image360Entity, Image360 } from '@reveal/360-images';
+import {
+  Image360Collection,
+  Image360Entity,
+  Image360,
+  Image360Revision,
+  Image360RevisionEntity
+} from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 
@@ -810,13 +816,14 @@ export class Cognite3DViewer {
 
   /**
    * Enter visualization of a 360 image.
-   * @param image360
+   * @param image360 The 360 image to enter.
+   * @param revision The image revision to use. If not provided the newest revision will be shown.
    */
-  enter360Image(image360: Image360): Promise<void> {
+  enter360Image(image360: Image360, revision?: Image360Revision): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.enter360Image(image360 as Image360Entity);
+    return this._image360ApiHelper.enter360Image(image360 as Image360Entity, revision as Image360RevisionEntity);
   }
 
   /**

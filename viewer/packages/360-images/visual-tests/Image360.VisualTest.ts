@@ -22,7 +22,6 @@ import { Image360CollectionFactory } from '../src/collection/Image360CollectionF
 import { IconOctree } from '../src/icons/IconOctree';
 import { OctreeHelper } from 'sparse-octree';
 import { Image360Icon } from '../src/icons/Image360Icon';
-import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
@@ -31,10 +30,6 @@ type CdfImage360Facade = Image360Facade<{
 type LocalImage360Facade = Image360Facade<unknown>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
-  private readonly _reloadImage = async (entity: Image360Entity, revision: Image360RevisionEntity) => {
-    if (entity && revision) return Promise.resolve();
-  };
-
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { cogniteClient, sceneHandler, cameraControls, renderer, camera, onBeforeRender } = testFixtureComponents;
 
@@ -98,9 +93,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      const revision = entity.getActiveRevision();
-      await facade.preload(revision);
-      revision.image360Visualization.visible = true;
+      await facade.preload(entity, entity.getActiveRevision());
+      entity.image360Visualization.visible = true;
       entity.icon.setVisibility(false);
 
       if (lastClicked !== undefined) {
@@ -109,7 +103,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      const transform = revision.transform.toArray();
+      const transform = entity.transform.toArray();
       const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
       camera.position.copy(image360Translation);
       const cameraForward = camera.getWorldDirection(new THREE.Vector3());
@@ -126,22 +120,19 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera: THREE.PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
-    const lastClickedRevision = lastClicked.getActiveRevision();
-    const entirtyRevision = entity.getActiveRevision();
+    lastClicked.image360Visualization.renderOrder = 1;
+    entity.image360Visualization.renderOrder = 0;
 
-    lastClickedRevision.image360Visualization.renderOrder = 1;
-    entirtyRevision.image360Visualization.renderOrder = 0;
-
-    const transformTo = entirtyRevision.transform.toArray();
+    const transformTo = entity.transform.toArray();
     const translationTo = new THREE.Vector3(transformTo[12], transformTo[13], transformTo[14]);
 
-    const transformFrom = lastClickedRevision.transform.toArray();
+    const transformFrom = lastClicked.transform.toArray();
     const translationFrom = new THREE.Vector3(transformFrom[12], transformFrom[13], transformFrom[14]);
 
     const length = new THREE.Vector3().subVectors(translationTo, translationFrom).length();
 
-    lastClickedRevision.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-    entirtyRevision.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+    lastClicked.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+    entity.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
 
     const renderTrigger = setInterval(() => this.render(), 16);
 
@@ -155,7 +146,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         .onUpdate(() => {
           const animatedPosition = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
           camera.position.copy(animatedPosition);
-          lastClickedRevision!.image360Visualization.opacity = 1 - from.t;
+          lastClicked!.image360Visualization.opacity = 1 - from.t;
         })
         .easing(num => TWEEN.Easing.Quintic.InOut(num))
         .start(TWEEN.now());
@@ -193,9 +184,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
       entity.icon.hoverSpriteVisible = true;
-      const revision = entity.getActiveRevision();
-      await facade.preload(revision);
-      revision.image360Visualization.visible = false;
+      await facade.preload(entity, entity.getActiveRevision());
+      entity.image360Visualization.visible = false;
       this.render();
     });
   }
@@ -205,7 +195,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       opacity: 1.0
     };
     this.gui.add(guiData, 'opacity', 0, 1).onChange(() => {
-      entities.forEach(entity => (entity.getActiveRevision().image360Visualization.opacity = guiData.opacity));
+      entities.forEach(entity => (entity.image360Visualization.opacity = guiData.opacity));
       this.render();
     });
   }
@@ -259,7 +249,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const collectionTransform = translation.multiply(rotation);
     const collection = await image360Facade.create(
       { site_id: '6th floor v3 - enterprise' },
-      this._reloadImage,
       collectionTransform,
       false
     );
@@ -283,29 +272,17 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(177));
     const translation = new THREE.Matrix4().makeTranslation(11, 49, 32);
     const collectionTransform = translation.multiply(rotation);
-    const collection1 = await image360Facade.create(
-      { site_id: 'helideck-site-2' },
-      this._reloadImage,
-      collectionTransform
-    );
+    const collection1 = await image360Facade.create({ site_id: 'helideck-site-2' }, collectionTransform);
 
     const rotation2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(40));
     const translation2 = new THREE.Matrix4().makeTranslation(34, 30, 46);
     const collectionTransform2 = translation2.multiply(rotation2);
-    const collection2 = await image360Facade.create(
-      { site_id: 'j-tube-diesel-header-tank' },
-      this._reloadImage,
-      collectionTransform2
-    );
+    const collection2 = await image360Facade.create({ site_id: 'j-tube-diesel-header-tank' }, collectionTransform2);
 
     const rotation3 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(96));
     const translation3 = new THREE.Matrix4().makeTranslation(176, 37, 56);
     const collectionTransform3 = translation3.multiply(rotation3);
-    const collection3 = await image360Facade.create(
-      { site_id: 'se-stairs-module-5-boot-room' },
-      this._reloadImage,
-      collectionTransform3
-    );
+    const collection3 = await image360Facade.create({ site_id: 'se-stairs-module-5-boot-room' }, collectionTransform3);
 
     return {
       facade: image360Facade,
@@ -326,7 +303,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const dataProvider = new Local360ImageProvider(`${window.location.origin}/${modelUrl}`);
     const image360Factory = new Image360CollectionFactory(dataProvider, sceneHandler, onBeforeRender);
     const image360Facade = new Image360Facade(image360Factory);
-    const collection = await image360Facade.create({}, this._reloadImage);
+    const collection = await image360Facade.create({});
 
     return { facade: image360Facade, entities: collection.image360Entities };
   }
