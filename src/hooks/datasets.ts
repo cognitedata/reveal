@@ -9,10 +9,12 @@ import {
 import { API } from 'types/api';
 import { fetchAggregate } from './aggregates';
 
+type T = API | 'documents';
+
 const getAllDatasets = (sdk: CogniteClient) =>
   sdk.datasets.list({ limit: 1000 }).autoPagingToArray({ limit: -1 });
 
-const allDataSetsKey = (api?: API): QueryKey => ['datasets', api];
+const allDataSetsKey = (api?: T): QueryKey => ['datasets', api];
 export const useAllDataSets = (
   options?: UseQueryOptions<DataSet[], CogniteError, DataSet[]>
 ) => {
@@ -27,7 +29,7 @@ export const useAllDataSets = (
 type DatasetWithResourceCount = DataSet & { count?: number };
 
 export const useDataSets = (
-  api: API,
+  api: T,
   options?: UseQueryOptions<DatasetWithResourceCount[], CogniteError>
 ) => {
   const sdk = useSDK();
@@ -47,7 +49,14 @@ export const useDataSets = (
             {
               type: api,
               aggregate: 'uniqueValues',
-              properties: [{ property: ['dataSetId'] }],
+              properties: [
+                {
+                  property:
+                    api === 'documents'
+                      ? ['sourceFile', 'dataSetId']
+                      : ['dataSetId'],
+                },
+              ],
             },
             { retry: false, staleTime: 60000 }
           );
