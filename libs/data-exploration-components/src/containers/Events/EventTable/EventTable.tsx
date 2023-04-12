@@ -2,16 +2,16 @@ import React, { useMemo } from 'react';
 import { Asset, CogniteEvent } from '@cognite/sdk';
 
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+} from '@data-exploration/components';
 
 import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { InternalEventDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-import { useEventsMetadataColumns } from '../hooks/useEventsMetadataColumns';
+import { useEventsMetadataColumns } from '@data-exploration-components/containers/Events/hooks/useEventsMetadataColumns';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
@@ -28,20 +28,20 @@ export const EventTable = ({
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type(), enableHiding: false },
-        Table.Columns.subtype(),
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        { ...Table.Columns.type(query), enableHiding: false },
+        Table.Columns.subtype(query),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id(),
+          ...Table.Columns.id(query),
           enableSorting: false,
         },
         { ...Table.Columns.dataSet, enableSorting: true },
         Table.Columns.startTime,
         Table.Columns.endTime,
-        Table.Columns.source(),
+        Table.Columns.source(query),
         Table.Columns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],

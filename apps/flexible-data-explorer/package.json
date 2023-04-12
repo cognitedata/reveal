@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-flexible-data-explorer",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev flexible-data-explorer",
+    "build": "../../scripts/build.sh production flexible-data-explorer",
+    "test": "../../scripts/test.sh flexible-data-explorer",
+    "lint": "../../scripts/lint.sh flexible-data-explorer",
+    "lint:fix": "../../scripts/lint.sh --fix flexible-data-explorer"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

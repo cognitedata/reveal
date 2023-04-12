@@ -1,13 +1,13 @@
 import { components, OptionProps, OptionTypeBase } from 'react-select';
 
-import { Flex } from '@cognite/cogs.js';
+import { Checkbox } from '@cognite/cogs.js';
 
 import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 
 import isUndefined from 'lodash/isUndefined';
 
 import { Ellipsis } from '../../../Ellipsis';
-import { OptionCheckbox, OptionCount } from './elements';
+import { OptionContentWrapper, OptionCount } from './elements';
 
 export const Option = <OptionType extends OptionTypeBase>({
   data,
@@ -23,19 +23,15 @@ export const Option = <OptionType extends OptionTypeBase>({
       isSelected={isSelected}
       isFocused={false}
     >
-      <Flex>
-        <OptionCheckbox checked={isSelected} />
+      <OptionContentWrapper>
+        <Checkbox checked={isSelected} />
 
         <Ellipsis value={label} />
 
         {!isUndefined(count) && (
-          <OptionCount
-            type="neutral"
-            size="x-small"
-            label={formatBigNumbersWithSuffix(count)}
-          />
+          <OptionCount>{formatBigNumbersWithSuffix(count)}</OptionCount>
         )}
-      </Flex>
+      </OptionContentWrapper>
     </components.Option>
   );
 };

@@ -9,10 +9,10 @@ import { convertResourceType } from '../../../types';
 import { EventTable } from '../../../containers/Events';
 
 import {
+  TableSortBy,
   useEventsAggregateCountQuery,
   useEventsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { TableSortBy } from '../../../components/Table';
 import { AppliedFiltersTags } from '../../../components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '../../../components';
 import {

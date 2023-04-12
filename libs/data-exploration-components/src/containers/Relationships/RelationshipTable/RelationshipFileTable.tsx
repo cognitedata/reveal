@@ -4,12 +4,14 @@ import {
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 import { ResultCount } from '@data-exploration-components/components';
-import { Table } from '@data-exploration-components/components/Table/Table';
-import { ResourceTableColumns } from '@data-exploration-components/components/Table/columns';
+import {
+  EmptyState,
+  ResourceTableColumns,
+  Table,
+} from '@data-exploration/components';
 import { RelationshipTableProps } from './RelationshipTable';
 
-import { FileWithRelationshipLabels } from '@data-exploration-components/containers/Files/FileTable/FileTable';
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
 import { FileViewSwitcher } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileViewSwitcher';
 import FileGroupingTable from '@data-exploration-components/containers/Files/FileGroupingTable/FileGroupingTable';

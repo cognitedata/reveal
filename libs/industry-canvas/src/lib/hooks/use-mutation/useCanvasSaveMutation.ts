@@ -21,6 +21,7 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
           QueryKeys.GET_CANVAS,
           updatedCanvas.externalId,
         ]);
+        await queryClient.cancelQueries([QueryKeys.LIST_CANVASES]);
 
         // Snapshot the previous values
         const previousCanvas = queryClient.getQueryData<PersistedCanvasState>([
@@ -32,6 +33,21 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
         queryClient.setQueryData<PersistedCanvasState>(
           [QueryKeys.GET_CANVAS, updatedCanvas.externalId],
           { ...updatedCanvas, updatedAt: new Date().toISOString() }
+        );
+        queryClient.setQueriesData<PersistedCanvasState[]>(
+          [QueryKeys.LIST_CANVASES],
+          (prevCanvases: PersistedCanvasState[] = []) => {
+            return prevCanvases.map((canvas) =>
+              canvas.externalId === updatedCanvas.externalId
+                ? {
+                    ...updatedCanvas,
+                    externalId: updatedCanvas.externalId,
+                    name: updatedCanvas.name,
+                    updatedAt: new Date().toISOString(),
+                  }
+                : canvas
+            );
+          }
         );
 
         // Return a context with the previous and updated canvases
@@ -50,6 +66,8 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
             [QueryKeys.GET_CANVAS, context.updatedCanvas.externalId],
             context?.previousCanvas
           );
+          // Refetch since we don't know which queries have been updated
+          queryClient.refetchQueries([QueryKeys.LIST_CANVASES]);
         }
         captureException(err);
         toast.error('Failed to update canvas', {

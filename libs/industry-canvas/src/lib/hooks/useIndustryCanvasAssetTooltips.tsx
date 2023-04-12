@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 
 import { useMemo } from 'react';
-import AssetTooltip from '../components/AssetTooltip';
+import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
 import { ContainerReferenceType } from '../types';
 import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
 

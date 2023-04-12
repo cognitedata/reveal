@@ -4,10 +4,14 @@ import { ResourcePreviewProvider } from '@data-exploration-components/context/Re
 import { ResourceSelectorProvider } from '@data-exploration-components/context/ResourceSelectorContext';
 import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
+import {
+  Flow,
+  OverrideURLMap,
+  MetricsMetadata,
+} from '@data-exploration-lib/core';
 import { Tooltip, Tabs, Select } from '@cognite/cogs.js';
-import { MetricsMetadata } from '@data-exploration-components/hooks/useMetrics';
-import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration-components/components/DragDropContainer/constants';
+import { AppContextProvider } from './AppContext';
+import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 
 export type DataExplorationProviderProps = {
   flow: Flow;

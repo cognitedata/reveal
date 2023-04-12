@@ -11,7 +11,7 @@ import {
   SearchResultCountLabel,
 } from '@data-exploration-components/containers';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
-import { AppContext } from '@data-exploration-components/context/AppContext';
+import { AppContext } from '@data-exploration-lib/core';
 
 export const FileToolbar = ({
   onFileClicked,

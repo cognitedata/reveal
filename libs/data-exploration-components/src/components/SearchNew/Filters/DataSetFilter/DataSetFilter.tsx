@@ -6,8 +6,10 @@ import { DataSetWCount } from '@data-exploration-components/hooks/sdk';
 import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
 
 import { OptionValue } from '../types';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { MultiSelectFilter } from '@data-exploration-components/components';
 
 const formatOption = (dataset: DataSetWCount): OptionType<number> => {

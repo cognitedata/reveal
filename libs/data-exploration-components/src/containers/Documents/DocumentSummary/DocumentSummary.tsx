@@ -6,9 +6,11 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import {
+  SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+  TimeDisplay,
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
@@ -17,13 +19,11 @@ import {
   DocumentContentPreview,
 } from '@data-exploration-components/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { DASH } from '@data-exploration-components/utils';
 import { Body } from '@cognite/cogs.js';
-import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Asset } from '@cognite/sdk';
-import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 import {
+  DASH,
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';

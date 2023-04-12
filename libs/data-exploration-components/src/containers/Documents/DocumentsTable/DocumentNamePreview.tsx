@@ -2,18 +2,12 @@ import React, { useCallback } from 'react';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import styled from 'styled-components';
 
-import {
-  HighlightCell,
-  EllipsisText,
-  FileThumbnail,
-} from '@data-exploration-components/components';
+import { HighlightCell, EllipsisText } from '@data-exploration/components';
+import { FileThumbnail } from '@data-exploration-components/components';
 import { Popover } from 'antd';
-import {
-  mapMimeTypeToDocumentType,
-  isFilePreviewable,
-  DASH,
-} from '../../../utils';
+import { mapMimeTypeToDocumentType, isFilePreviewable } from '../../../utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
+import { DASH } from '@data-exploration-lib/core';
 
 const DocumentIconWrapper = styled.div`
   height: 17px;

@@ -1,7 +1,6 @@
 import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, useMetrics } from '@data-exploration-lib/core';
 import debounce from 'lodash/debounce';
 import { useCallback } from 'react';
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';

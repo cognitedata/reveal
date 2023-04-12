@@ -12,7 +12,7 @@ import {
   ResourceItem,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-import { SearchEmpty } from '@data-exploration-components/graphics';
+import { SearchEmpty } from '@data-exploration/components';
 
 type Props = {
   item?: ResourceItem;

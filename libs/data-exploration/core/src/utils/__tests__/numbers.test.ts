@@ -3,8 +3,8 @@ import {
   formatBigNumbersWithSuffix,
   withThousandSeparatorStringExtended,
   formatBigNumbersWithSuffixStringExtended,
-  SPACE,
 } from '../number';
+import { SPACE } from '../../constants';
 
 describe('numbers', () => {
   describe('withThousandSeparator', () => {

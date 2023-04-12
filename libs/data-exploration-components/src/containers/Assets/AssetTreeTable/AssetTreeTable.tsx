@@ -10,20 +10,24 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import { HighlightCell, HierarchyExtraRow } from '../../../components';
-import { Table } from '../../../components';
-import { EmptyState } from '../../../components/EmpyState/EmptyState';
-import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
-import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-
-import { DASH } from '../../../utils';
+import {
+  EmptyState,
+  HighlightCell,
+  HierarchyExtraRow,
+  SubCellMatchingLabels,
+  Table,
+} from '@data-exploration/components';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import { InternalAssetTreeData } from '@data-exploration-lib/domain-layer';
+import {
+  InternalAssetTreeData,
+  useRootAssetsQuery,
+  useSearchAssetTree,
+} from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 import {
+  DASH,
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
@@ -126,7 +130,7 @@ export const AssetTreeTable = ({
               <HighlightCell
                 text={getValue<string>() || DASH}
                 lines={1}
-                query=""
+                query={query}
               />
             </div>
           ),
@@ -134,8 +138,8 @@ export const AssetTreeTable = ({
             isExpandable: true,
           },
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         {
           id: 'childCount',
           header:
@@ -160,7 +164,7 @@ export const AssetTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        Table.Columns.source(),
+        Table.Columns.source(query),
         Table.Columns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],

@@ -19,8 +19,10 @@ import { ParentSize } from '@visx/responsive';
 
 import styled from 'styled-components';
 import { DatapointAggregates, Datapoints } from '@cognite/sdk';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { calculateGranularity } from '../utils/calculateGranularity';
 import { TimeOptions } from '../types';
 

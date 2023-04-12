@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
 import { useDisclosure } from '@data-exploration-components/hooks';
 import { InfoPanel } from '@data-exploration-components/components';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 export const FilesSyntaxButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure({ isOpen: false });

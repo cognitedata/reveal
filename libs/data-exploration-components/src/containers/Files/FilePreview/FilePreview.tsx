@@ -11,13 +11,13 @@ import ReactUnifiedViewer, {
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { Loader } from '@data-exploration-components/components/index';
+import { Loader } from '@data-exploration-components/components';
 import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ResourceItem } from '@data-exploration-components/types/index';
-import { lightGrey } from '@data-exploration-components/utils/index';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { ResourceItem } from '@data-exploration-components/types';
+import { lightGrey } from '@data-exploration-components/utils';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-lib/core';
 import {
   useSearchResults,
   SearchResult,

@@ -1,4 +1,4 @@
-import { SPACE } from '@data-exploration-components/utils/constants';
+import { SPACE } from '@data-exploration-lib/core';
 
 export const formatNumber = new Intl.NumberFormat().format;
 

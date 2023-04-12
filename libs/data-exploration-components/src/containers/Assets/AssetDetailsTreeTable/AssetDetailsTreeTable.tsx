@@ -7,11 +7,9 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import { HighlightCell } from '../../../components';
-import { Table } from '../../../components';
+import { HighlightCell, Table } from '@data-exploration/components';
 
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
-import { DASH } from '../../../utils';
 
 import { useRootPath } from '../AssetTreeTable/hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
@@ -19,6 +17,7 @@ import { InternalAssetTreeData } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
+import { DASH } from '@data-exploration-lib/core';
 
 const visibleColumns = ['name', 'rootId'];
 

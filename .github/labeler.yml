@@ -1,5 +1,5 @@
 fusion-maintainers:
-  - "*"
+  - '*'
 
 platypus:
   - apps/platypus/**/*
@@ -7,6 +7,8 @@ platypus:
 data-explorer:
   - apps/data-exploration/*
   - apps/data-exploration/**/*
+  - apps/flexible-data-explorer/*
+  - apps/flexible-data-explorer/**/*
   - libs/data-exploration-components/*
   - libs/data-exploration-components/**/*
   - libs/data-exploration/**

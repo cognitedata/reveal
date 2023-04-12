@@ -2,9 +2,10 @@ import { Asset, CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
+  SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 
 import {
@@ -15,7 +16,6 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import noop from 'lodash/noop';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,

@@ -7,8 +7,8 @@ import {
   useDetailedMappingsByAssetIdQuery,
 } from '@data-exploration-lib/domain-layer';
 import { createLink } from '@cognite/cdf-utilities';
-import { DASH } from '../../../utils';
-import { TimeDisplay } from '@data-exploration-components/components/TimeDisplay/TimeDisplay';
+import { DASH } from '@data-exploration-lib/core';
+import { TimeDisplay } from '@data-exploration/components';
 
 export const ThreeDModelCellLink = ({
   assetId,

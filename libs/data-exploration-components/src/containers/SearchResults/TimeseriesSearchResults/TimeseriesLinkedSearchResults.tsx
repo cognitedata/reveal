@@ -3,10 +3,12 @@ import {
   AggregatedFilterV2,
   DateFilterV2,
   MetadataFilterV2,
-  TableSortBy,
 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  useTimeseriesList,
+} from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';

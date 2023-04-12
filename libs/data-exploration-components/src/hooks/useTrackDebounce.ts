@@ -1,5 +1,5 @@
 import debounce from 'lodash/debounce';
-import { MetricsMetadata, useMetrics } from './useMetrics';
+import { MetricsMetadata, useMetrics } from '@data-exploration-lib/core';
 
 export const useDebounceTrackUsage = (duration = 500) => {
   const trackUsage = useMetrics();

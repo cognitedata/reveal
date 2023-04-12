@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 import isEmpty from 'lodash/isEmpty';
-import { ResourceTableColumns } from '@data-exploration-components/components';
+import { ResourceTableColumns } from '@data-exploration/components';
 import debounce from 'lodash/debounce';
 
 export const useTimeseriesMetadataColumns = () => {

@@ -13,10 +13,7 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components/index';
-import {
-  isFilePreviewable,
-  getIdParam,
-} from '@data-exploration-components/utils/index';
+import { isFilePreviewable } from '@data-exploration-components/utils/index';
 import {
   SmallPreviewProps,
   SelectableItemProps,
@@ -27,6 +24,7 @@ import {
 } from '@data-exploration-components/containers/Files/index';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
+import { getIdParam } from '@data-exploration-lib/core';
 
 export const FileSmallPreview = ({
   fileId,

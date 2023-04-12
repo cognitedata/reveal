@@ -1,7 +1,9 @@
 import React from 'react';
-
-import { Table } from '@data-exploration-components/components/Table/Table';
-
+import {
+  EmptyState,
+  ResourceTableColumns,
+  Table,
+} from '@data-exploration/components';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
@@ -10,10 +12,8 @@ import {
 import { ResultCount } from '@data-exploration-components/components';
 
 import { RelationshipTableProps } from './RelationshipTable';
-import { TimeseriesWithRelationshipLabels } from '@data-exploration-components/containers/Timeseries/TimeseriesTable/TimeseriesTable';
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
-import { ResourceTableColumns } from '@data-exploration-components/components/Table/columns';
 import { ColumnDef } from '@tanstack/react-table';
+import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 
 const {
   relationshipLabels,
