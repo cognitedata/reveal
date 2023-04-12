@@ -117,7 +117,7 @@ export const TransformationNode = ({
         {selectedTransformationId !== undefined && (
           <Flex gap={8}>
             <Button
-              block
+              css={{ display: 'block' }}
               onClick={() =>
                 navigate(
                   createLink(`/transformations/${selectedTransformationId}`)
@@ -126,7 +126,7 @@ export const TransformationNode = ({
             >
               {t('view')}
             </Button>
-            <Button block icon="Play">
+            <Button css={{ display: 'block' }} icon="Play">
               {t('run')}
             </Button>
           </Flex>
