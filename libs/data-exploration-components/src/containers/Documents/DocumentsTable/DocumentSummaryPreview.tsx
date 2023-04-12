@@ -74,7 +74,7 @@ export const DocumentSummaryPreview = ({
           if (query) {
             gptContent =
               'Given this information about this file: \n\n' +
-              ocrText +
+              ocrText.substring(0, 10000) +
               '\n' +
               query +
               "\nIf you don't have the answer, just return N/A.";
