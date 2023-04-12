@@ -1,7 +1,9 @@
-import { Colors, Icon } from '@cognite/cogs.js';
 import { MouseEventHandler } from 'react';
 
+import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { FLOATING_ELEMENT_MARGIN, Z_INDEXES } from 'common';
 
 type FloatingPlusButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -28,11 +30,11 @@ const FloatingButton = styled.button`
   height: 48px;
   justify-content: center;
   padding: 0;
-  left: 12px;
+  left: ${FLOATING_ELEMENT_MARGIN}px;
   position: absolute;
-  top: 12px;
+  top: ${FLOATING_ELEMENT_MARGIN}px;
   width: 48px;
-  z-index: 1;
+  z-index: ${Z_INDEXES.FLOATING_ELEMENT};
 
   :hover {
     background-color: ${Colors['surface--action--strong--hover']};

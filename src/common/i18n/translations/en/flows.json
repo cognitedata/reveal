@@ -29,5 +29,7 @@
   "post-process": "{{content}}",
   "table": "Table",
   "run": "Run",
-  "view": "View"
+  "view": "View",
+  "floating-components-panel-title": "Add components",
+  "floating-components-panel-description": "Drag and drop components to the canvas"
 }

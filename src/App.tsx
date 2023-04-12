@@ -20,6 +20,7 @@ import FlowList from 'pages/flow-list';
 import { CANVAS_PATH } from 'common';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFeedback from 'common/ErrorFeedback';
+import { WorkflowBuilderContextProvider } from 'contexts/WorkflowContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,7 +54,14 @@ const App = () => {
                     <ErrorBoundary FallbackComponent={ErrorFeedback}>
                       <Routes>
                         <Route path={ROOT_PATH} element={<FlowList />} />
-                        <Route path={`${ROOT_PATH}/:id`} element={<Flow />} />
+                        <Route
+                          path={`${ROOT_PATH}/:id`}
+                          element={
+                            <WorkflowBuilderContextProvider>
+                              <Flow />
+                            </WorkflowBuilderContextProvider>
+                          }
+                        />
                       </Routes>
                     </ErrorBoundary>
                   </BrowserRouter>
