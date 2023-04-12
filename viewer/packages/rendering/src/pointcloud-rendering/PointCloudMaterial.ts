@@ -87,36 +87,6 @@ const COLOR_DEFS = {
   [PointColorType.Classification]: 'color_type_classification'
 };
 
-function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
-  return () => ({
-    get: () => (this as PointCloudMaterial).getUniform(uniformName),
-    set: (value: unknown) => {
-      const mat = this as PointCloudMaterial;
-      if (value !== mat.getUniform(uniformName)) {
-        mat.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
-        if (requireSrcUpdate) {
-          mat.updateShaderSource();
-        }
-      }
-    }
-  });
-}
-
-const requiresShaderUpdate = (_: any, context: { name: string | symbol }) => {
-  // return (target: any, propertyKey: string | symbol): void => {
-  const fieldName = `_${context.name.toString()}`;
-  return () => ({
-    get: () => (this as PointCloudMaterial)[fieldName],
-    set: (value: unknown) => {
-      const mat = this as PointCloudMaterial;
-      if (value !== mat[fieldName]) {
-        mat[fieldName] = value;
-        mat.updateShaderSource();
-      }
-    }
-  });
-};
-
 export class PointCloudMaterial extends RawShaderMaterial {
   private static readonly helperVec3 = new Vector3();
 
@@ -140,6 +110,41 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   private _classification: PointClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
+
+
+  uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
+    return (_: any, _context: any) => ({
+      get: () =>
+        {
+          return this.getUniform(uniformName);
+        },
+      set: (value: unknown) => {
+        if (value !== this.getUniform(uniformName)) {
+          this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
+          if (requireSrcUpdate) {
+            this.updateShaderSource();
+          }
+        }
+      }
+    });
+  }
+
+  requiresShaderUpdate = () => {
+    return (_: any, context: { name: string | symbol }) => ({
+      get: () => {
+        const fieldName = `_${context.name.toString()}`;
+        return (this as Record<string, any>)[fieldName];
+      },
+      set: (value: unknown) => {
+        const fieldName = `_${context.name.toString()}`;
+        const mat = this as Record<string, any>;
+        if (value !== (mat[fieldName] as any)) {
+          mat[fieldName] = value;
+          mat.updateShaderSource();
+        }
+      }
+    });
+  };
 
   uniforms: IPointCloudMaterialUniforms & Record<string, IUniform<any>> = {
     classificationLUT: makeUniform('t', this.classificationTexture || new Texture()),
