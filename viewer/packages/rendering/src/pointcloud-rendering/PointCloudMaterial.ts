@@ -90,16 +90,14 @@ const COLOR_DEFS = {
 
 function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
   return (_: { get: () => unknown }, _context: any) => ({
-    get: () =>
-      {
-        return (this as PointCloudMaterial).getUniform(uniformName);
+    get (this: any) {
+        return this.getUniform(uniformName);
       },
-    set: (value: unknown) => {
-      const material = this as PointCloudMaterial;
-      if (value !== material.getUniform(uniformName)) {
-        material.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
+    set(this: any, value: unknown) {
+      if (value !== this.getUniform(uniformName)) {
+        this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
         if (requireSrcUpdate) {
-          material.updateShaderSource();
+          this.updateShaderSource();
         }
       }
     }
@@ -108,16 +106,15 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, re
 
 function requiresShaderUpdate() {
   return (_: any, context: { name: string | symbol }) => ({
-    get: () => {
+    get(this: any) {
       const fieldName = `_${context.name.toString()}`;
-      return (this as Record<string, any>)[fieldName];
+      return this[fieldName];
     },
-    set: (value: unknown) => {
+    set(this: any, value: unknown) {
       const fieldName = `_${context.name.toString()}`;
-      const mat = this as Record<string, any>;
-      if (value !== (mat[fieldName] as any)) {
-        mat[fieldName] = value;
-        mat.updateShaderSource();
+      if (value !== this[fieldName] as any) {
+        this[fieldName] = value;
+        this.updateShaderSource();
       }
     }
   });
