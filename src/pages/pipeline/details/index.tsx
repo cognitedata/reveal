@@ -84,6 +84,9 @@ const PipelineDetails = (): JSX.Element => {
       case 'targets': {
         return hasTargets;
       }
+      case 'configure-pipeline': {
+        return hasSources && hasTargets;
+      }
       default: {
         return true;
       }
