@@ -20,39 +20,6 @@ const PIPELINE_STEPS = [
   'configure-pipeline',
   'run',
 ] as const;
-type PipelineStep = (typeof PIPELINE_STEPS)[number];
-
-const getNextStep = (current?: string): PipelineStep | undefined => {
-  const step = PIPELINE_STEPS.find((item) => current?.includes(item));
-  switch (step) {
-    case 'sources':
-      return 'targets';
-    case 'targets':
-      return 'configure-pipeline';
-    case 'configure-pipeline':
-      return 'run';
-    case 'run':
-      return undefined;
-    default:
-      return undefined;
-  }
-};
-
-const getPrevStep = (current?: string): PipelineStep | undefined => {
-  const step = PIPELINE_STEPS.find((item) => current?.includes(item));
-  switch (step) {
-    case 'run':
-      return undefined;
-    case 'configure-pipeline':
-      return 'targets';
-    case 'targets':
-      return 'sources';
-    case 'sources':
-      return undefined;
-    default:
-      return undefined;
-  }
-};
 
 const PipelineDetails = (): JSX.Element => {
   const {
@@ -71,14 +38,16 @@ const PipelineDetails = (): JSX.Element => {
     enabled: !!pipelineId,
   });
 
-  const nextStep = getNextStep(step);
-  const prevStep = getPrevStep(step);
-
   const navigate = useNavigate();
 
   const handleGoNextStep = () => {
+    if (!hasNextStep()) {
+      throw new Error('No futher steps');
+    }
+    const order = getPipelineStepOrder(step);
+    const next = PIPELINE_STEPS[order + 1];
     navigate(
-      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/details/${nextStep}`),
+      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/details/${next}`),
       {
         replace: true,
       }
@@ -86,16 +55,63 @@ const PipelineDetails = (): JSX.Element => {
   };
 
   const handleGoPrevStep = () => {
+    if (!hasPrevStep()) {
+      throw new Error('No steps before this');
+    }
+    const order = getPipelineStepOrder(step);
+    const next = PIPELINE_STEPS[order - 1];
     navigate(
-      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/details/${prevStep}`),
+      createLink(`/${subAppPath}/pipeline/${pipeline?.id}/details/${next}`),
       {
         replace: true,
       }
     );
   };
 
-  const configurePipeline =
-    window.location.href.indexOf('configure-pipeline') !== -1;
+  const getPipelineStepOrder = (step?: string): number => {
+    const index = PIPELINE_STEPS.findIndex((value) => value === step);
+    return index;
+  };
+
+  const matchFields = pipeline?.modelParameters?.matchFields;
+  const validMatchFields = matchFields?.filter(
+    ({ source, target }) => !!source && !!target
+  );
+
+  const hasSources = pipeline ? pipeline?.sources.dataSetIds.length > 0 : false;
+  const hasTargets = pipeline ? pipeline?.targets.dataSetIds.length > 0 : false;
+  const hasValidMatchFields =
+    pipeline && validMatchFields
+      ? validMatchFields?.length > 0 &&
+        validMatchFields?.length === matchFields?.length
+      : false;
+
+  const stepDone = () => {
+    switch (step) {
+      case 'sources': {
+        return hasSources;
+      }
+      case 'targets': {
+        return hasTargets;
+      }
+      case 'configure-pipeline': {
+        return hasValidMatchFields;
+      }
+      default: {
+        return true;
+      }
+    }
+  };
+
+  const hasNextStep = () => {
+    const order = getPipelineStepOrder(step);
+    return stepDone() && order >= 0 && order < PIPELINE_STEPS.length - 1;
+  };
+
+  const hasPrevStep = () => {
+    const order = getPipelineStepOrder(step);
+    return step !== 'run' && order > 0 && order < PIPELINE_STEPS.length;
+  };
 
   if (error) {
     if (error?.status === 403) {
@@ -109,14 +125,16 @@ const PipelineDetails = (): JSX.Element => {
       <Page
         extraContent={
           <Flex gap={8}>
-            {prevStep && (
+            {hasPrevStep() && (
               <Button onClick={handleGoPrevStep}>{t('navigate-back')}</Button>
             )}
-            {nextStep && (
-              <Button onClick={handleGoNextStep} type="primary">
-                {configurePipeline ? t('run-pipeline') : t('navigate-next')}
-              </Button>
-            )}
+            <Button
+              disabled={!hasNextStep()}
+              onClick={handleGoNextStep}
+              type="primary"
+            >
+              {t('navigate-next')}
+            </Button>
           </Flex>
         }
         subtitle={pipeline?.description ?? '-'}
