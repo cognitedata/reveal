@@ -44,7 +44,7 @@ export const DocumentSummaryPreview = ({
           }
 
           // 2. Create summary
-          const ocrText = response.data;
+          const ocrText = response.data.substring(0, 10000);
 
           let gptContent =
             'Describe with maximum 150 characters the purpose of the following document: \n\n' +
@@ -52,7 +52,7 @@ export const DocumentSummaryPreview = ({
           if (query && query.endsWith('?')) {
             gptContent =
               'Given this information about this file: \n\n' +
-              ocrText.substring(0, 10000) +
+              ocrText +
               '\n' +
               query +
               "\nIf you don't have the answer, just return N/A, and only that.";
