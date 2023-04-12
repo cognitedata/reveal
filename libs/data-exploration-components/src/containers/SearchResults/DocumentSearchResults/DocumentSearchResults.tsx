@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components/macro';
 
 import {
@@ -27,6 +27,17 @@ import {
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { useSDK } from '@cognite/sdk-provider';
+
+type GptCompletionResponse = {
+  choices: {
+    message: {
+      role: string;
+      content: string;
+      finishReason: string;
+    };
+  }[];
+};
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -50,10 +61,13 @@ export const DocumentSearchResults = ({
   onFileClicked,
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [realQuery, setRealQuery] = useState<string>();
+
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
+
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearchResultWithMatchingLabelsQuery(
-      { filter, query: undefined, sortBy },
+      { filter, query: realQuery, sortBy },
       { keepPreviousData: true },
       documentSearchConfig
     );
@@ -66,6 +80,42 @@ export const DocumentSearchResults = ({
     },
     documentSearchConfig
   );
+  const sdk = useSDK();
+  
+  useEffect(() => {
+    (async () => {
+      const gptContent = `
+      Can you split the following user question into 3 parts and give the answer as JSON key-value pairs:
+      1. A keyword search prompt to find the relevant documents
+      2. A GPT prompt that will look for the answer within each document.
+      3. A column name with max 3 words describing the results from the GPT prompt.
+      
+      Return only the answer as a json key-value pair using the keys: keywords, prompt, column_name.
+
+      "${query}"
+      `;
+      const gptUrl = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
+      const gptQuery = {
+        messages: [
+          {
+            role: 'user',
+            content: gptContent,
+          },
+        ],
+        maxTokens: 300,
+        temperature: 0,
+      };
+      const gptResponse = await sdk.post<GptCompletionResponse>(gptUrl, {
+        data: gptQuery,
+        withCredentials: true,
+      });
+      const summary = JSON.parse(
+        gptResponse.data.choices[0].message.content.trim()
+      );
+      console.log('Setting this ', summary['keywords']);
+      setRealQuery(summary['keywords']);
+    })();
+  }, [query, sdk]);
 
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
