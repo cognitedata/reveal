@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import { Body, Flex } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+import gpt from '../../../utils/gpt';
 
 type GptCompletionResponse = {
   choices: {
@@ -46,11 +47,11 @@ export const DocumentSummaryPreview = ({
           // 2. Create summary
           const ocrText = response.data.substring(0, 10000);
 
-          let gptContent =
+          let gptQuery =
             'Describe with maximum 150 characters the purpose of the following document: \n\n' +
             ocrText;
           if (query && query.endsWith('?')) {
-            gptContent =
+            gptQuery =
               'Given this information about this file: \n\n' +
               ocrText +
               '\n' +
@@ -58,25 +59,23 @@ export const DocumentSummaryPreview = ({
               "\nIf you don't have the answer, just return N/A, and only that.";
           }
 
-          await sleep(document.id % 2000);
+          await sleep(document.id % 2000); // Avoid 429s in the worst possible way!
 
           // 3. Have ChatGPT figure out what the document is about
-          const gptUrl = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
-          const gptQuery = {
-            messages: [
-              {
-                role: 'user',
-                content: gptContent,
-              },
-            ],
-            maxTokens: 300,
-            temperature: 0,
-          };
-          const gptResponse = await sdk.post<GptCompletionResponse>(gptUrl, {
-            data: gptQuery,
-            withCredentials: true,
-          });
-          let summary = gptResponse.data.choices[0].message.content.trim();
+          const choices = await gpt(
+            {
+              messages: [
+                {
+                  role: 'user',
+                  content: gptQuery,
+                },
+              ],
+              temperature: 0,
+              maxTokens: 500,
+            },
+            sdk
+          );
+          let summary = choices[0].message.content.trim();
           summary =
             summary.charAt(0).toLocaleUpperCase() + summary.substring(1);
           if (summary.includes('N/A')) {

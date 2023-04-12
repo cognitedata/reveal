@@ -15,6 +15,7 @@ import { Asset, FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
+import gpt from '../../../utils/gpt';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-lib/core';
 import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
@@ -101,24 +102,22 @@ export const DocumentSearchResults = ({
 
       "${query}"
       `;
-      const gptUrl = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
-      const gptQuery = {
-        messages: [
-          {
-            role: 'user',
-            content: gptContent,
-          },
-        ],
-        maxTokens: 300,
-        temperature: 0,
-      };
-      const gptResponse = await sdk.post<GptCompletionResponse>(gptUrl, {
-        data: gptQuery,
-        withCredentials: true,
-      });
-      const summary = JSON.parse(
-        gptResponse.data.choices[0].message.content.trim()
+
+      const choices = await gpt(
+        {
+          messages: [
+            {
+              role: 'user',
+              content: gptContent,
+            },
+          ],
+          temperature: 0,
+          maxTokens: 500,
+        },
+        sdk
       );
+
+      const summary = JSON.parse(choices[0].message.content.trim());
       setGptColumnName(summary['column_name']);
       setRealQuery(summary['keywords']);
     })();
