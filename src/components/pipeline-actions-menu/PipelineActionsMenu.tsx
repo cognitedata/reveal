@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Menu, Modal, Divider } from '@cognite/cogs.js';
 import { getContainer } from 'utils';
 import { useTranslation } from 'common/i18n';
@@ -14,7 +14,6 @@ type PipelineActionsMenuProps = {
   onDeletePipeline: () => void;
 };
 const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
-  const [running, setRunning] = useState(false);
   const { onDuplicatePipeline, onDeletePipeline } = props;
   const { mutateAsync: runEMPipeline } = useRunEMPipeline();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -23,15 +22,11 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
   const onCancelDeletePipeline = () => setDeleteModalVisible(false);
 
   const rerun = props.pipeline?.latestRun?.status;
+  const running = rerun === 'Queued' || rerun === 'Running';
 
   const handleReRunPipeline = (id: number) => {
     runEMPipeline({ id });
   };
-
-  useEffect(
-    () => setRunning(rerun === 'Queued' || rerun === 'Running'),
-    [rerun]
-  );
 
   let itemText;
 
