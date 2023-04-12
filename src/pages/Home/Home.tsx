@@ -7,7 +7,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import styled from 'styled-components';
-import { Title, Icon, Loader } from '@cognite/cogs.js';
+import { Title, Loader, Button } from '@cognite/cogs.js';
 import Menu from 'antd/lib/menu';
 import { createLink } from '@cognite/cdf-utilities';
 import APIKeys from 'pages/APIKeys';
@@ -50,14 +50,13 @@ export default function () {
     <StyledAppContainerDiv>
       <Title level={1}>
         {t('access-management')}
-        <Icon
-          style={{
-            cursor: 'pointer',
-            color: 'var(--cogs-greyscale-grey5)',
-            marginLeft: '4px',
-          }}
-          type={isFetching || isMutating ? 'Loader' : 'Refresh'}
+        <Button
+          aria-label={t('refetch-data')}
+          css={{ marginLeft: '4px' }}
+          icon={isFetching || isMutating ? 'Loader' : 'Refresh'}
           onClick={() => client.invalidateQueries()}
+          size="small"
+          type="ghost"
         />
       </Title>
       <Menu

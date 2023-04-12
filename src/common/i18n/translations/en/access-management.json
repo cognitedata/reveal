@@ -210,6 +210,7 @@
   "protect-or-denylist-data": "Protect or denylist data",
   "raw-selector-database-info": "Scope to all current and future tables of {{databaseName}}. Specific table scopes will be ignored.",
   "raw-selector-placeholder": "Select databases or tables",
+  "refetch-data": "Refresh",
   "remove": "Remove",
   "resources-selector-placeholder": "Search and select resources",
   "robotics": "Robotics",

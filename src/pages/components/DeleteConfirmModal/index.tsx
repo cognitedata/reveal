@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
+import React, { ChangeEvent, useState } from 'react';
+import { Body, Button, Checkbox, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import Modal, { ModalProps } from '../Modal/index';
 import { useTranslation } from 'common/i18n';
@@ -33,8 +33,10 @@ const DeleteConfirmModal = ({
     onCancel();
   };
 
-  const handleConfirmCheckboxChange = (isChecked: boolean): void => {
-    setIsConfirmed(isChecked);
+  const handleConfirmCheckboxChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setIsConfirmed(event.target.checked);
   };
 
   return (
@@ -45,7 +47,11 @@ const DeleteConfirmModal = ({
           <StyledCancelButton onClick={handleClose} type="ghost">
             {t('cancel')}
           </StyledCancelButton>,
-          <Button disabled={!isConfirmed} onClick={handleDelete} type="danger">
+          <Button
+            disabled={!isConfirmed}
+            onClick={handleDelete}
+            type="destructive"
+          >
             {confirmLabel}
           </Button>,
         ]}
@@ -57,11 +63,11 @@ const DeleteConfirmModal = ({
         }
         {...modalProps}
       >
-        <StyledDeleteTableModalBody level={2}>
+        <Body level={2}>
           {t('delete-modal-confirm-message-1', { confirmMessage })}{' '}
           <b>{t('delete-modal-confirm-message-2')}</b>{' '}
           {t('delete-modal-confirm-message-3')}
-        </StyledDeleteTableModalBody>
+        </Body>
         <StyledConfirmCheckboxWrapper>
           <StyledConfirmCheckbox
             checked={isConfirmed}
@@ -75,10 +81,6 @@ const DeleteConfirmModal = ({
     </span>
   );
 };
-
-const StyledDeleteTableModalBody = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
-`;
 
 const StyledCancelButton = styled(Button)`
   margin-right: 8px;
