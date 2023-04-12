@@ -11,6 +11,7 @@ import {
   CANVAS_SIDE_PANEL_PREFERRED_SIZE,
 } from 'common';
 import { CanvasSidePanel } from '../canvas-side-panel';
+import { CanvasTopBar } from '../canvas-topbar/CanvasTopBar';
 import { FlowBuilder } from '../flow-builder';
 import { useDatabases } from 'hooks/raw';
 
@@ -36,23 +37,28 @@ export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
   return (
     <ReactFlowProvider>
       <StyledCanvasContainer>
-        <Allotment>
-          <Allotment.Pane
-            maxSize={CANVAS_SIDE_PANEL_MAX_SIZE}
-            minSize={CANVAS_SIDE_PANEL_MIN_SIZE}
-            preferredSize={CANVAS_SIDE_PANEL_PREFERRED_SIZE}
-          >
-            <CanvasSidePanel />
+        <Allotment vertical proportionalLayout={false}>
+          <Allotment.Pane key="topbar" minSize={56} maxSize={56}>
+            <CanvasTopBar flow={flow} />
           </Allotment.Pane>
-          <Allotment.Pane>
-            <FlowBuilder
-              initialNodes={nodes}
-              initialEdges={edges}
-              onChange={({ nodes, edges }) =>
-                onChange({ ...flow, canvas: { nodes, edges } })
-              }
-            />
-          </Allotment.Pane>
+          <Allotment>
+            <Allotment.Pane
+              maxSize={CANVAS_SIDE_PANEL_MAX_SIZE}
+              minSize={CANVAS_SIDE_PANEL_MIN_SIZE}
+              preferredSize={CANVAS_SIDE_PANEL_PREFERRED_SIZE}
+            >
+              <CanvasSidePanel />
+            </Allotment.Pane>
+            <Allotment.Pane>
+              <FlowBuilder
+                initialNodes={nodes}
+                initialEdges={edges}
+                onChange={({ nodes, edges }) =>
+                  onChange({ ...flow, canvas: { nodes, edges } })
+                }
+              />
+            </Allotment.Pane>
+          </Allotment>
         </Allotment>
       </StyledCanvasContainer>
     </ReactFlowProvider>

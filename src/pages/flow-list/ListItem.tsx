@@ -25,7 +25,7 @@ export default function ListItem({ flow }: { flow: Flow }) {
 }
 
 const StyledListItem = styled(Flex)`
-  border: 1px solid ${Colors['border-default']};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 8px;
   margin-bottom: 8px;
   padding: 16px;

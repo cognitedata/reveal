@@ -46,7 +46,7 @@ const StyledBlockContainer = styled.div`
   width: 128px;
 
   :hover {
-    border-color: ${Colors['border--interactive--alt']};
+    border-color: ${Colors['border--interactive--default--alt']};
     box-shadow: ${Elevations['elevation--surface--interactive']};
   }
 
