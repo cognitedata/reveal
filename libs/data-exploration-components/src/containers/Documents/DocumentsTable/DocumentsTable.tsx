@@ -34,6 +34,7 @@ export type DocumentTableProps = Omit<
 const visibleColumns = [
   'name',
   'content',
+  'summary',
   'type',
   'modifiedTime',
   'createdTime',
@@ -45,6 +46,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
+  console.log('Yeah bitch: ', query);
 
   const columns = useMemo(
     () =>
@@ -76,7 +78,9 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorKey: 'summary',
           header: 'Summary',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return <DocumentSummaryPreview document={row.original} query="" />;
+            return (
+              <DocumentSummaryPreview document={row.original} query={query} />
+            );
           },
           enableSorting: false,
         },
@@ -144,6 +148,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   //   );
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+  console.log('hiddenColumns: ', hiddenColumns);
 
   return (
     <Table<InternalDocumentWithMatchingLabels>

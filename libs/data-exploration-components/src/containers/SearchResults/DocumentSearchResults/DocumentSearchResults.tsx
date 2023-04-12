@@ -53,7 +53,7 @@ export const DocumentSearchResults = ({
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearchResultWithMatchingLabelsQuery(
-      { filter, query, sortBy },
+      { filter, query: undefined, sortBy },
       { keepPreviousData: true },
       documentSearchConfig
     );
@@ -78,7 +78,6 @@ export const DocumentSearchResults = ({
 
   const resourceType = ResourceTypes.File;
   const trackUsage = context?.trackUsage;
-
   return (
     <DocumentSearchResultWrapper>
       <DocumentsTable

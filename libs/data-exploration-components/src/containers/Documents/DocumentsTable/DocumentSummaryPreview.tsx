@@ -25,6 +25,8 @@ type GptCompletionResponse = {
   }[];
 };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const DocumentSummaryPreview = ({
   document,
   query,
@@ -68,15 +70,27 @@ export const DocumentSummaryPreview = ({
             ocrText = ocrText + ocr.annotations[i].text + ' ';
           }
 
+          let gptContent =
+            'Describe with maximum 150 characters the purpose of the following document: \n\n' +
+            ocrText;
+          if (query) {
+            gptContent =
+              'Given this information about this file: \n\n' +
+              ocrText +
+              '\n' +
+              query +
+              "\nIf you don't have the answer, just return N/A.";
+          }
+
+          await sleep(document.id % 2000);
+
           // 3. Have ChatGPT figure out what the document is about
           const gptUrl = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
           const gptQuery = {
             messages: [
               {
-                role: 'system',
-                content:
-                  'Describe with maximum 150 characters the purpose of the following document: \n\n' +
-                  ocrText,
+                role: 'user',
+                content: gptContent,
               },
             ],
             maxTokens: 300,
