@@ -63,7 +63,7 @@ export const DocumentSearchResults = ({
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [realQuery, setRealQuery] = useState<string>();
   const [gptColumnName, setGptColumnName] = useState<string>('Summary');
-  console.log('gptColumnName: ', gptColumnName);
+
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
 
   const { results, isLoading, fetchNextPage, hasNextPage } =
@@ -85,15 +85,10 @@ export const DocumentSearchResults = ({
 
   useEffect(() => {
     (async () => {
-      if (query == null) {
-        setRealQuery(undefined);
+      if (!query || !query.endsWith('?')) {
+        setRealQuery(query);
         setGptColumnName('Summary');
         return;
-      }
-
-      if (!query.endsWith('?')) {
-        setGptColumnName('Summary');
-        setRealQuery(query);
       }
 
       const gptContent = `
