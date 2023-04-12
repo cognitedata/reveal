@@ -87,7 +87,7 @@ const COLOR_DEFS = {
 };
 
 function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
-  return (_: { get: () => unknown }, _context: any) => ({
+  return (_target: any, _context: any) => ({
     get(this: any) {
       return this.getUniform(uniformName);
     },
