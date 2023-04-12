@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
   SubCellMatchingLabels,
@@ -29,6 +29,7 @@ export type DocumentTableProps = Omit<
 > & {
   query?: string;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+  gptColumnName: string;
 };
 
 const visibleColumns = [
@@ -43,7 +44,6 @@ const visibleColumns = [
 
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
-
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
 
@@ -75,13 +75,13 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         },
         {
           accessorKey: 'summary',
-          header: 'Summary',
+          header: props.gptColumnName,
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return (
               <DocumentSummaryPreview document={row.original} query={query} />
             );
           },
-          enableSorting: false,
+          enableSorting: true,
         },
         {
           accessorKey: 'author',
@@ -137,7 +137,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         ...metadataColumns,
       ] as ColumnDef<InternalDocumentWithMatchingLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, metadataColumns]
+    [query, metadataColumns, props.gptColumnName]
   );
 
   // const updatedColumns =

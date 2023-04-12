@@ -62,7 +62,8 @@ export const DocumentSearchResults = ({
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [realQuery, setRealQuery] = useState<string>();
-
+  const [gptColumnName, setGptColumnName] = useState<string>('Summary');
+  console.log('gptColumnName: ', gptColumnName);
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
 
   const { results, isLoading, fetchNextPage, hasNextPage } =
@@ -121,6 +122,7 @@ export const DocumentSearchResults = ({
       const summary = JSON.parse(
         gptResponse.data.choices[0].message.content.trim()
       );
+      setGptColumnName(summary['column_name']);
       console.log('Setting this ', summary['keywords']);
       setRealQuery(summary['keywords']);
     })();
@@ -145,6 +147,7 @@ export const DocumentSearchResults = ({
         selectedRows={selectedRow}
         onSort={setSortBy}
         query={query}
+        gptColumnName={gptColumnName}
         tableHeaders={
           <>
             <SearchResultToolbar

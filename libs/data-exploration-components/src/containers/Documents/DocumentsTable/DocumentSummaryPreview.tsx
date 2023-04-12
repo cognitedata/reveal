@@ -77,7 +77,7 @@ export const DocumentSummaryPreview = ({
               ocrText.substring(0, 10000) +
               '\n' +
               query +
-              "\nIf you don't have the answer, just return N/A.";
+              "\nIf you don't have the answer, just return N/A, and only that.";
           }
 
           await sleep(document.id % 2000);
@@ -98,10 +98,13 @@ export const DocumentSummaryPreview = ({
             data: gptQuery,
             withCredentials: true,
           });
-          const summary = gptResponse.data.choices[0].message.content.trim();
-          setContent(
-            summary.charAt(0).toLocaleUpperCase() + summary.substring(1)
-          );
+          let summary = gptResponse.data.choices[0].message.content.trim();
+          summary =
+            summary.charAt(0).toLocaleUpperCase() + summary.substring(1);
+          if (summary.includes('N/A')) {
+            summary = 'N/A';
+          }
+          setContent(summary);
         } catch (error) {
           setContent(`Could not generate summary`);
         }
@@ -112,16 +115,7 @@ export const DocumentSummaryPreview = ({
 
   return (
     <Body level={2}>
-      <Flex alignItems="center">
-        <StyledContentHighlight>
-          <HighlightCell text={content} query={query} lines={3} />
-        </StyledContentHighlight>
-      </Flex>
+      <Flex alignItems="center">{content}</Flex>
     </Body>
   );
 };
-
-const StyledContentHighlight = styled.div`
-  word-break: break-all;
-  font-size: 10pt;
-`;
