@@ -17,7 +17,11 @@ type OcrResponse = {
 
 type GptCompletionResponse = {
   choices: {
-    text: string;
+    message: {
+      role: string;
+      content: string;
+      finishReason: string;
+    };
   }[];
 };
 
@@ -42,7 +46,7 @@ export const DocumentSummaryPreview = ({
         try {
           // 1. Fetch document content using CDF OCR
           const response = await sdk.post<OcrResponse>(
-            `https://azure-dev.cognitedata.com/api/playground/projects/${sdk.project}/context/pnid/ocr`,
+            `/api/playground/projects/${sdk.project}/context/pnid/ocr`,
             {
               data: { fileId: document.id },
               responseType: HttpResponseType.Json,
@@ -65,26 +69,24 @@ export const DocumentSummaryPreview = ({
           }
 
           // 3. Have ChatGPT figure out what the document is about
-          const gptModel = 'text-davinci-002';
-          const gptUrl = `https://api.azure-dev.cogniteapp.com/openai-proxy/${sdk.project}/completion/${gptModel}`;
+          const gptUrl = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
           const gptQuery = {
-            prompt:
-              'Describe with maximum 150 characters the purpose of the following document: \n\n' +
-              ocrText,
-            max_tokens: 300,
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'Describe with maximum 150 characters the purpose of the following document: \n\n' +
+                  ocrText,
+              },
+            ],
+            maxTokens: 300,
             temperature: 0,
-            top_p: 0,
           };
           const gptResponse = await sdk.post<GptCompletionResponse>(gptUrl, {
             data: gptQuery,
             withCredentials: true,
           });
-          const summary = gptResponse.data.choices[0].text
-            .trim()
-            .replace('The document is a ', '')
-            .replace('This document is a ', '')
-            .replace('The document is an ', '')
-            .replace('This document is an ', '');
+          const summary = gptResponse.data.choices[0].message.content.trim();
           setContent(
             summary.charAt(0).toLocaleUpperCase() + summary.substring(1)
           );
