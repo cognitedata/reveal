@@ -43,9 +43,11 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           }
         }
       }
+      smartOverlayTool.addOverlays(labels);
+      labels.splice(0, labels.length);
     }
     
-    smartOverlayTool.addOverlays(labels);
+    //smartOverlayTool.addOverlays(labels);
     cameraManager.setCameraState({position: new THREE.Vector3()})
     return Promise.resolve();
   }
