@@ -28,7 +28,6 @@ uniform float size; // pixel size factor
 uniform float minSize; // minimum pixel size
 uniform float maxSize; // maximum pixel size
 uniform float octreeSize;
-uniform float opacity;
 uniform float level;
 uniform float vnStart;
 uniform bool isLeafNode;
@@ -72,10 +71,6 @@ bool isClipped(vec3 point) {
 }
 
 out vec3 vColor;
-
-#if !defined(color_type_point_index)
-	out float vOpacity;
-#endif
 
 #if defined(weighted_splats)
 	out float vLinearDepth;
@@ -278,14 +273,6 @@ void main() {
 	#endif
 
 	gl_PointSize = pointSize;
-
-	// ---------------------
-	// OPACITY
-	// ---------------------
-
-	#ifndef color_type_point_index
-                vOpacity = opacity;
-	#endif
 
 	// ---------------------
 	// POINT COLOR
