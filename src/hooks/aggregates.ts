@@ -11,7 +11,7 @@ import { PropertyAggregate } from 'common/types';
 
 import { API, Filter } from 'types/api';
 
-type T = API;
+type T = API | 'documents';
 
 const AGGREGATE_BASE_KEY = ['aggregate'];
 
@@ -28,6 +28,7 @@ const topLevelProperties: Record<T, string[]> = {
   files: ['name', 'externalId', 'directory', 'source', 'mimeType'],
   sequences: ['name', 'externalId', 'description'],
   threeD: ['name'],
+  documents: ['title', 'mimeType', 'type'],
 };
 
 export const useAggregateProperties = (
