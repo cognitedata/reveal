@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader, Body, Checkbox, Flex } from '@cognite/cogs.js';
-import { Alert } from 'antd';
+import { Icon, Loader, Body, Flex } from '@cognite/cogs.js';
+import { Alert, Checkbox } from 'antd';
 import { useTranslation } from 'common';
 
 import { useList } from 'hooks/list';
