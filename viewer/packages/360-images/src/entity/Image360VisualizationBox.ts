@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
-import { Image360Face, Image360Texture } from '@reveal/data-providers';
+import { Image360Face } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 
 type VisualizationState = {
@@ -18,11 +18,10 @@ type VisualizationState = {
 export class Image360VisualizationBox implements Image360Visualization {
   private readonly _worldTransform: THREE.Matrix4;
   private _visualizationMesh: THREE.Mesh | undefined;
-  private _faceMaterials: THREE.MeshBasicMaterial[] = [];
+  private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
   private readonly _sceneHandler: SceneHandler;
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
-  private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -30,6 +29,10 @@ export class Image360VisualizationBox implements Image360Visualization {
 
   set opacity(alpha: number) {
     this._visualizationState.opacity = alpha;
+
+    if (this._faceMaterials === undefined) {
+      return;
+    }
 
     this._faceMaterials.forEach(material => {
       material.opacity = alpha;
@@ -81,15 +84,14 @@ export class Image360VisualizationBox implements Image360Visualization {
     };
   }
 
-  public loadImages(textures: Image360Texture[]): void {
-    if (this._visualizationMesh) {
-      this._faceMaterialOrder.forEach((face, index) => {
-        this._faceMaterials[index].map = getFaceTexture(face);
-      });
-      return;
-    }
+  public async loadImages(faces: Image360Face[]): Promise<void> {
+    const faceTextures = await this.loadFaceTextures(faces);
 
-    this._faceMaterials = this._faceMaterialOrder.map(
+    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+
+    const faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+
+    this._faceMaterials = faceMaterialOrder.map(
       face =>
         new THREE.MeshBasicMaterial({
           side: THREE.BackSide,
@@ -99,8 +101,6 @@ export class Image360VisualizationBox implements Image360Visualization {
           transparent: true
         })
     );
-
-    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     this._visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
     this._visualizationMesh.renderOrder = this._visualizationState.renderOrder;
     this._visualizationMesh.applyMatrix4(this._worldTransform);
@@ -108,14 +108,16 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.visible = this._visualizationState.visible;
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
-    function getFaceTexture(face: Image360Face['face']) {
-      const texture = textures.find(p => p.face === face);
-      assert(texture !== undefined);
-      return texture.texture;
+    return Promise.resolve();
+
+    function getFaceTexture(side: Image360Face['face']) {
+      const face = faceTextures.find(p => p.side === side);
+      assert(face !== undefined);
+      return face.faceTexture;
     }
   }
 
-  public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
+  private loadFaceTextures(faces: Image360Face[]) {
     return Promise.all(
       faces.map(async image360Face => {
         const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
@@ -124,7 +126,7 @@ export class Image360VisualizationBox implements Image360Visualization {
         // Need to horizontally flip the texture since it is being rendered inside a cube
         faceTexture.center.set(0.5, 0.5);
         faceTexture.repeat.set(-1, 1);
-        return { face: image360Face.face, texture: faceTexture };
+        return { side: image360Face.face, faceTexture };
       })
     );
   }
@@ -147,6 +149,6 @@ export class Image360VisualizationBox implements Image360Visualization {
 
     this._visualizationMesh.geometry.dispose();
     this._visualizationMesh = undefined;
-    this._faceMaterials = [];
+    this._faceMaterials = undefined;
   }
 }

@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:7](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L7)
+[packages/rendering/src/pointcloud-rendering/enums.ts:7](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L7)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:6](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L6)
+[packages/rendering/src/pointcloud-rendering/enums.ts:6](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L6)
 
 ___
 
@@ -35,4 +35,4 @@ ___
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:5](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L5)
+[packages/rendering/src/pointcloud-rendering/enums.ts:5](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L5)

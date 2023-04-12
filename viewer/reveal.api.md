@@ -340,7 +340,7 @@ export class Cognite3DViewer {
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
-    enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
+    enter360Image(image360: Image360): Promise<void>;
     exit360Image(): void;
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
@@ -358,8 +358,6 @@ export class Cognite3DViewer {
     off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
-    // (undocumented)
-    off(event: 'cameraStop', callback: CameraStopDelegate): void;
     off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     // (undocumented)
     off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
@@ -370,8 +368,6 @@ export class Cognite3DViewer {
     on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
     on(event: 'cameraChange', callback: CameraChangeDelegate): void;
-    // (undocumented)
-    on(event: 'cameraStop', callback: CameraStopDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
@@ -778,8 +774,6 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
-    getActiveRevision(): Image360Revision;
-    getRevisions(): Image360Revision[];
     readonly image360Visualization: Image360Visualization;
     readonly transform: THREE.Matrix4;
 }
@@ -793,9 +787,6 @@ export interface Image360Collection {
     on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-    set360IconCullingRestrictions(radius: number, pointLimit: number): void;
-    setIconsVisibility(visible: boolean): void;
-    targetRevisionDate: Date | undefined;
 }
 
 // @public
@@ -803,11 +794,6 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 
 // @public
 export type Image360ExitedDelegate = () => void;
-
-// @public
-export interface Image360Revision {
-    readonly date: Date | undefined;
-}
 
 // @public
 export interface Image360Visualization {

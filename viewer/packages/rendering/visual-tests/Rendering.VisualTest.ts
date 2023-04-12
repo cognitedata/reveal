@@ -119,11 +119,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
   }
 
   private setupBackgroundColorGUI(renderer: THREE.WebGLRenderer) {
-    const backgroundGuiData: {
-      canvasColor: `#${string}`;
-      clearColor: `#${string}`;
-      clearAlpha: number;
-    } = {
+    const backgroundGuiData = {
       canvasColor: '#50728c',
       clearColor: '#444',
       clearAlpha: 1

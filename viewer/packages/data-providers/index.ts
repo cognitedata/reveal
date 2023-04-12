@@ -28,6 +28,5 @@ export {
   BlobOutputMetadata,
   Image360Descriptor,
   Image360FileProvider,
-  Image360Face,
-  Image360Texture
+  Image360Face
 } from './src/types';

@@ -105,9 +105,7 @@ export default class RenderTargetVisualTest extends StreamingVisualTestFixture {
 
   public render(): void {
     super.render();
-    if (this._glRenderer) {
-      this._glRenderer.setRenderTarget(null);
-      this._glRenderer.render(this._testScene, this._orthographicCamera);
-    }
+    this._glRenderer.setRenderTarget(null);
+    this._glRenderer.render(this._testScene, this._orthographicCamera);
   }
 }

@@ -32,7 +32,7 @@ EventDispatcher.constructor
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:218](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L218)
+[packages/camera-manager/src/ComboControls.ts:208](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L208)
 
 ## Properties
 
@@ -50,7 +50,7 @@ EventDispatcher.constructor
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:115](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L115)
+[packages/camera-manager/src/ComboControls.ts:114](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L114)
 
 ## Accessors
 
@@ -69,7 +69,7 @@ resets to default value when `setState` method is called with no rotation value.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:337](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L337)
+[packages/camera-manager/src/ComboControls.ts:346](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L346)
 
 ___
 
@@ -85,9 +85,9 @@ Returns true if these controls are enabled.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:200](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L200)
+[packages/camera-manager/src/ComboControls.ts:197](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L197)
 
-• `set` **enabled**(`newEnabledValue`): `void`
+• `set` **enabled**(`enabled`): `void`
 
 Sets the enabled state of these controls.
 
@@ -95,7 +95,7 @@ Sets the enabled state of these controls.
 
 | Name | Type |
 | :------ | :------ |
-| `newEnabledValue` | `boolean` |
+| `enabled` | `boolean` |
 
 #### Returns
 
@@ -103,7 +103,7 @@ Sets the enabled state of these controls.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:207](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L207)
+[packages/camera-manager/src/ComboControls.ts:204](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L204)
 
 ___
 
@@ -119,7 +119,7 @@ Gets current Combo Controls options.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:184](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L184)
+[packages/camera-manager/src/ComboControls.ts:181](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L181)
 
 • `set` **options**(`options`): `void`
 
@@ -139,7 +139,7 @@ Only the provided options will be changed, any undefined options will be kept as
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:193](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L193)
+[packages/camera-manager/src/ComboControls.ts:190](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L190)
 
 ## Methods
 
@@ -153,7 +153,7 @@ Only the provided options will be changed, any undefined options will be kept as
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:350](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L350)
+[packages/camera-manager/src/ComboControls.ts:358](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L358)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:312](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L312)
+[packages/camera-manager/src/ComboControls.ts:321](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L321)
 
 ___
 
@@ -192,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:346](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L346)
+[packages/camera-manager/src/ComboControls.ts:354](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L354)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:320](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L320)
+[packages/camera-manager/src/ComboControls.ts:329](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L329)
 
 ___
 
@@ -233,7 +233,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:341](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L341)
+[packages/camera-manager/src/ComboControls.ts:350](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L350)
 
 ___
 
@@ -247,7 +247,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:354](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L354)
+[packages/camera-manager/src/ComboControls.ts:362](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L362)
 
 ___
 
@@ -268,4 +268,4 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:238](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L238)
+[packages/camera-manager/src/ComboControls.ts:247](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/camera-manager/src/ComboControls.ts#L247)

@@ -12,7 +12,7 @@ export interface BinaryFileProvider {
 }
 
 export interface Image360DescriptorProvider<T> {
-  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Historical360ImageSet[]>;
+  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Image360Descriptor[]>;
 }
 
 export interface Image360FileProvider {
@@ -20,19 +20,9 @@ export interface Image360FileProvider {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]>;
-
-  getLowResolution360ImageFiles(
-    image360FaceDescriptors: Image360FileDescriptor[],
-    abortSignal?: AbortSignal
-  ): Promise<Image360Face[]>;
 }
 
-export type Historical360ImageSet = Image360EventDescriptor & {
-  imageRevisions: Image360Descriptor[];
-};
-
-export type Image360Descriptor = {
-  timestamp?: number;
+export type Image360Descriptor = Image360EventDescriptor & {
   faceDescriptors: Image360FileDescriptor[];
 };
 
@@ -48,11 +38,6 @@ export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
-};
-
-export type Image360Texture = {
-  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  texture: THREE.Texture;
 };
 
 export type Image360FileDescriptor = {

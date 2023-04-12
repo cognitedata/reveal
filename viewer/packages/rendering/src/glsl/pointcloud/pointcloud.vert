@@ -354,8 +354,7 @@ void main() {
         }
 #if !defined(color_type_point_index)
         if (any(greaterThan(styleColor, vec3(0.0)))) {
-					// Mix 20% color from original color & 80% from style color.
-					vColor = (styleColor * 0.8 + vColor * 0.2);
+                vColor = 0.5 * (styleColor + vColor);
         }
 #endif
 }

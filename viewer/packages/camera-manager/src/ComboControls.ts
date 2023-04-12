@@ -781,7 +781,7 @@ export class ComboControls extends EventDispatcher {
     const distToTarget = cameraDirection.length();
     const isDollyOut = deltaDistance > 0 ? true : false;
 
-    _raycaster.setFromCamera(new Vector2(x, y), _reusableCamera);
+    _raycaster.setFromCamera({ x, y }, _reusableCamera);
 
     let radius = distToTarget + deltaDistance;
 

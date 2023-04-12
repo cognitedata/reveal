@@ -8,18 +8,10 @@ import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
+import head from 'lodash/head';
 
-import {
-  CogniteClient,
-  CogniteEvent,
-  EventFilter,
-  FileFilterProps,
-  FileInfo,
-  FileLink,
-  IdEither,
-  Metadata
-} from '@cognite/sdk';
-import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
+import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
+import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
 
@@ -47,16 +39,13 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageDescriptors(
     metadataFilter: Metadata,
     preMultipliedRotation: boolean
-  ): Promise<Historical360ImageSet[]> {
+  ): Promise<Image360Descriptor[]> {
     const [events, files] = await Promise.all([
       this.listEvents({ metadata: metadataFilter }),
       this.listFiles({ metadata: metadataFilter, uploaded: true })
     ]);
 
     const image360Descriptors = this.mergeDescriptors(files, events, preMultipliedRotation);
-    if (image360Descriptors.length === 0) {
-      return Promise.reject(`Error: Could not find any 360 images to load for the site_id "${metadataFilter.site_id}"`);
-    }
 
     if (events.length !== image360Descriptors.length) {
       Log.warn(
@@ -72,39 +61,27 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    const fullResFileBuffers = await this.getFileBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
-    return this.createFaces(image360FaceDescriptors, fullResFileBuffers);
-  }
-
-  public async getLowResolution360ImageFiles(
-    image360FaceDescriptors: Image360FileDescriptor[],
-    abortSignal?: AbortSignal
-  ): Promise<Image360Face[]> {
-    const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
-    return this.createFaces(image360FaceDescriptors, lowResFileBuffers);
-  }
-
-  private getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
-    return image360FaceDescriptors.map(image360FaceDescriptor => {
+    const fileIds = image360FaceDescriptors.map(image360FaceDescriptor => {
       return { id: image360FaceDescriptor.fileId };
     });
-  }
+    const fileBuffers = await this.getFileBuffers(fileIds, abortSignal);
 
-  private createFaces(image360FaceDescriptors: Image360FileDescriptor[], fileBuffer: ArrayBuffer[]): Image360Face[] {
-    return zipWith(image360FaceDescriptors, fileBuffer, (image360FaceDescriptor, fileBuffer) => {
+    const faces = zipWith(image360FaceDescriptors, fileBuffers, (image360FaceDescriptor, fileBuffer) => {
       return {
         face: image360FaceDescriptor.face,
         mimeType: image360FaceDescriptor.mimeType,
         data: fileBuffer
       } as Image360Face;
     });
+
+    return faces;
   }
 
   private mergeDescriptors(
     files: Map<string, FileInfo[]>,
     events: CogniteEvent[],
     preMultipliedRotation: boolean
-  ): Historical360ImageSet[] {
+  ): Image360Descriptor[] {
     const eventDescriptors = events
       .map(event => event.metadata)
       .filter((metadata): metadata is Event360Metadata => !!metadata)
@@ -117,29 +94,22 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         const stationFileInfos = files.get(eventDescriptor.id);
 
         if (stationFileInfos === undefined || stationFileInfos.length < 6) {
-          return { ...eventDescriptor, imageRevisions: [] };
+          return { ...eventDescriptor, faceDescriptors: [] };
         }
 
-        const sortedFileInfoSet = this.sortFileInfoSetByNewest(stationFileInfos);
+        const fileInfoSet = this.getNewestFileInfoSet(stationFileInfos);
 
-        const imageRevisions = sortedFileInfoSet
-          .filter(imageSetInfo => imageSetInfo.length === 6)
-          .map(imageSetInfo => {
-            const timestamp = imageSetInfo[0].metadata?.timestamp;
-            return {
-              timestamp: timestamp ? Number(timestamp) : undefined,
-              faceDescriptors: imageSetInfo.map(imageInfo => {
-                return {
-                  face: imageInfo.metadata!.face,
-                  mimeType: imageInfo.mimeType!,
-                  fileId: imageInfo.id
-                } as Image360FileDescriptor;
-              })
-            };
-          });
-        return { ...eventDescriptor, imageRevisions };
+        const faceDescriptors = fileInfoSet.map(fileInfo => {
+          return {
+            face: fileInfo.metadata!.face,
+            mimeType: fileInfo.mimeType!,
+            fileId: fileInfo.id
+          } as Image360FileDescriptor;
+        });
+
+        return { ...eventDescriptor, faceDescriptors };
       })
-      .filter(historicalImages => historicalImages.imageRevisions.length > 0);
+      .filter(image360Descriptor => image360Descriptor.faceDescriptors.length === 6);
   }
 
   private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
@@ -178,77 +148,36 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  private sortFileInfoSetByNewest(fileInfos: FileInfo[]): FileInfo[][] {
+  private getNewestFileInfoSet(fileInfos: FileInfo[]) {
     if (hasTimestamp()) {
-      return sortedByAge();
+      return getNewestTimestamp();
     }
 
-    return [fileInfos];
+    return fileInfos;
 
     function hasTimestamp() {
       return fileInfos[0].metadata?.timestamp !== undefined;
     }
 
-    function sortedByAge() {
+    function getNewestTimestamp() {
       const sets = groupBy(fileInfos, fileInfo => fileInfo.metadata!.timestamp);
 
       const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc')
         .map(timeStampSets => timeStampSets[1])
         .filter(fileInfoSets => fileInfoSets.length === 6);
-      return ordered;
+
+      return head(ordered) ?? [];
     }
   }
 
   private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
-    const fileLinks = await this.getDownloadUrls(fileIds, abortSignal);
+    const fileLinks = await this._client.files.getDownloadUrls(fileIds);
     if (abortSignal?.aborted) throw new Error('Request aborted before fetch.');
     return Promise.all(
       fileLinks
         .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }))
         .map(async response => (await response).arrayBuffer())
     );
-  }
-
-  public async getIconBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
-    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon?id=`;
-    const headers = {
-      ...this._client.getDefaultRequestHeaders(),
-      Accept: '*/*'
-    };
-
-    const options: RequestInit = {
-      headers,
-      signal: abortSignal,
-      method: 'GET'
-    };
-
-    return Promise.all(
-      fileIds.map(fileId => fetch(url + fileId.id, options)).map(async response => (await response).arrayBuffer())
-    );
-  }
-
-  private async getDownloadUrls(
-    fileIds: { id: number }[],
-    abortSignal?: AbortSignal
-  ): Promise<(FileLink & IdEither)[]> {
-    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/downloadlink`;
-    const headers: HeadersInit = {
-      ...this._client.getDefaultRequestHeaders(),
-      Accept: 'application/json',
-      'Content-type': 'application/json'
-    };
-
-    const options: RequestInit = {
-      headers,
-      signal: abortSignal,
-      method: 'POST',
-      body: JSON.stringify({
-        items: fileIds
-      })
-    };
-
-    const result = await (await fetch(url, options)).json();
-    return result.items;
   }
 
   private parseEventMetadata(eventMetadata: Event360Metadata, preMultipliedRotation: boolean): Image360EventDescriptor {

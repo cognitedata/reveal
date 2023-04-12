@@ -3,14 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection, Image360EnteredDelegate } from '@cognite/reveal';
+import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
-    let collections: Image360Collection[] = [];
-    let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
 
@@ -33,17 +31,6 @@ export class Image360UI {
 
     const opacity = {
       alpha: 1
-    };
-
-    const iconCulling = {
-      radius: Infinity,
-      limit: 50,
-      hideAll: false
-    };
-
-    const imageRevisions = {
-      id: '0',
-      targetDate: ''
     };
 
     const params = {
@@ -75,88 +62,26 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
-    gui
-      .add(iconCulling, 'radius', 0, 10000, 1)
-      .name('Culling radius')
-      .onChange(() => {
-        set360IconCullingRestrictions();
-      });
-
-    gui
-      .add(iconCulling, 'limit', 0, 10000, 1)
-      .name('Number of points')
-      .onChange(() => {
-        set360IconCullingRestrictions();
-      });
-
-    gui
-      .add(iconCulling, 'hideAll')
-      .name('Hide all 360 images')
-      .onChange(() => {
-        if (collections.length > 0) {
-          collections.forEach(p => p.setIconsVisibility(!iconCulling.hideAll));
-          viewer.requestRedraw();
-        }
-      });
-
-    gui
-      .add(imageRevisions, 'targetDate')
-      .name('Revision date (Unix epoch time):')
-      .onChange(() => {
-        if (collections.length === 0) return;
-
-        const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
-        collections.forEach(p => (p.targetRevisionDate = date));
-        if (selectedEntity) viewer.enter360Image(selectedEntity);
-      });
-
-    gui
-      .add(imageRevisions, 'id')
-      .name('Current image revision')
-      .onChange(() => {
-        if (selectedEntity) {
-          const revisions = selectedEntity.getRevisions();
-          const index = Number(imageRevisions.id);
-          if (index >= 0 && index < revisions.length) {
-            viewer.enter360Image(selectedEntity, revisions[index]);
-          }
-        }
-      });
-
     gui.add(params, 'remove').name('Remove all 360 images');
 
     async function add360ImageSet() {
-      if (params.siteId.length === 0) return;
-
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(
         new THREE.Vector3(rotation.x, rotation.y, rotation.z),
         rotation.radians
       );
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
       const collectionTransform = translationMatrix.multiply(rotationMatrix);
-      const collection = await viewer.add360ImageSet(
+      const set = await viewer.add360ImageSet(
         'events',
         { site_id: params.siteId },
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
-      collection.setIconsVisibility(!iconCulling.hideAll);
-      collection.on('image360Entered', onImageEntered);
-      collections.push(collection);
-      entities = entities.concat(collection.image360Entities);
+      entities = entities.concat(set.image360Entities);
       viewer.requestRedraw();
-    }
-
-    async function set360IconCullingRestrictions() {
-      if (collections.length > 0) {
-        collections.forEach(p => p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit));
-        viewer.requestRedraw();
-      }
     }
 
     async function removeAll360Images() {
       await viewer.remove360Images(...entities);
-      entities = [];
-      collections = [];
     }
   }
 }

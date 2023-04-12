@@ -16,7 +16,7 @@ crate-type = ["cdylib"]
 wasm-bindgen = { version = "0.2.84", features = ["serde-serialize"] }
 web-sys = { version = "0.3.61", features = ["console"] }
 
-serde = { version = "1.0.160", features = ["derive"] }
+serde = { version = "1.0.152", features = ["derive"] }
 serde-wasm-bindgen = "0.5.0"
 
 js-sys = "0.3.61"
@@ -30,7 +30,7 @@ console_error_panic_hook = "0.1.7"
 # These crates are used for running unit tests.
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
-futures = "0.3.28"
+futures = "0.3.26"
 wasm-bindgen-futures = "0.4.34"
 rand = "0.8.5"
 rand_chacha = "0.3.1"

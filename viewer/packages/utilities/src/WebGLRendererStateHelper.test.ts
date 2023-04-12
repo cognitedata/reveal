@@ -27,10 +27,9 @@ describe('WebGLRendererStateHelper', () => {
 
     const helper = new WebGLRendererStateHelper(renderer);
     const setClearColorSpy = jest.spyOn(renderer, 'setClearColor');
-    const color = new THREE.Color('#112233');
 
-    helper.setClearColor(color, 0.8);
-    expect(setClearColorSpy).toBeCalledWith(color, 0.8);
+    helper.setClearColor('#112233', 0.8);
+    expect(setClearColorSpy).toBeCalledWith('#112233', 0.8);
 
     helper.resetState();
     expect(setClearColorSpy).toBeCalledWith(originalColor, originalAlpha);

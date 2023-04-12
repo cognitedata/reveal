@@ -52,13 +52,7 @@ import { Spinner } from '../../utilities/Spinner';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import {
-  DefaultCameraManager,
-  CameraManager,
-  CameraChangeDelegate,
-  ProxyCameraManager,
-  CameraStopDelegate
-} from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
@@ -70,24 +64,11 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import {
-  Image360Collection,
-  Image360Entity,
-  Image360,
-  Image360Revision,
-  Image360RevisionEntity
-} from '@reveal/360-images';
+import { Image360Collection, Image360Entity, Image360 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 
-type Cognite3DViewerEvents =
-  | 'click'
-  | 'hover'
-  | 'cameraChange'
-  | 'cameraStop'
-  | 'beforeSceneRendered'
-  | 'sceneRendered'
-  | 'disposed';
+type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
 /**
  * @example
@@ -145,7 +126,6 @@ export class Cognite3DViewer {
 
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
-    cameraStop: new EventTrigger<CameraStopDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),
     hover: new EventTrigger<PointerEventDelegate>(),
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -163,7 +143,6 @@ export class Cognite3DViewer {
 
   private readonly cameraManagerClock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
-  private _forceStopRendering: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -273,10 +252,6 @@ export class Cognite3DViewer {
 
     this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
-    });
-
-    this._activeCameraManager.on('cameraStop', () => {
-      this._events.cameraStop.fire();
     });
 
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
@@ -471,15 +446,6 @@ export class Cognite3DViewer {
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
-   * @example
-   * ```js
-   * viewer.on('cameraStop', () => {
-   *   console.log('Camera stopped');
-   * });
-   * ```
-   */
-  on(event: 'cameraStop', callback: CameraStopDelegate): void;
-  /**
    * Event that is triggered immediately before the scene is rendered.
    * @param event Metadata about the rendering frame.
    * @param callback Callback to trigger when event occurs.
@@ -502,7 +468,6 @@ export class Cognite3DViewer {
     callback:
       | PointerEventDelegate
       | CameraChangeDelegate
-      | CameraStopDelegate
       | BeforeSceneRenderedDelegate
       | SceneRenderedDelegate
       | DisposedDelegate
@@ -518,10 +483,6 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
-        break;
-
-      case 'cameraStop':
-        this._events.cameraStop.subscribe(callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -556,13 +517,6 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
-   * @example
-   * ```js
-   * viewer.off('cameraStop', onCameraStop);
-   * ```
-   */
-  off(event: 'cameraStop', callback: CameraStopDelegate): void;
-  /**
    * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
@@ -592,7 +546,6 @@ export class Cognite3DViewer {
     callback:
       | PointerEventDelegate
       | CameraChangeDelegate
-      | CameraStopDelegate
       | BeforeSceneRenderedDelegate
       | SceneRenderedDelegate
       | DisposedDelegate
@@ -608,10 +561,6 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
-        break;
-
-      case 'cameraStop':
-        this._events.cameraStop.unsubscribe(callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -816,14 +765,13 @@ export class Cognite3DViewer {
 
   /**
    * Enter visualization of a 360 image.
-   * @param image360 The 360 image to enter.
-   * @param revision The image revision to use. If not provided the newest revision will be shown.
+   * @param image360
    */
-  enter360Image(image360: Image360, revision?: Image360Revision): Promise<void> {
+  enter360Image(image360: Image360): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.enter360Image(image360 as Image360Entity, revision as Image360RevisionEntity);
+    return this._image360ApiHelper.enter360Image(image360 as Image360Entity);
   }
 
   /**
@@ -1397,7 +1345,7 @@ export class Cognite3DViewer {
       );
       this.revealManager.update(camera);
 
-      const needsRedraw = (this.revealManager.needsRedraw || this._clippingNeedsUpdate) && !this._forceStopRendering;
+      const needsRedraw = this.revealManager.needsRedraw || this._clippingNeedsUpdate;
 
       this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
 
@@ -1428,10 +1376,10 @@ export class Cognite3DViewer {
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const normalizedCoords = new THREE.Vector2(
-      (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-      (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-    );
+    const normalizedCoords = {
+      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+    };
 
     const input: IntersectInput = {
       normalizedCoords,
@@ -1442,13 +1390,13 @@ export class Cognite3DViewer {
     };
 
     // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
-    this._forceStopRendering = true;
+    cancelAnimationFrame(this.latestRequestId);
     const cadResults = await this._pickingHandler.intersectCadNodes(
       cadNodes,
       input,
       options?.asyncCADIntersection ?? true
     );
-    this._forceStopRendering = false;
+    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
     const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];

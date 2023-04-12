@@ -79,7 +79,6 @@ export {
 
 export {
   Image360,
-  Image360Revision,
   Image360Visualization,
   Image360Collection,
   Image360EnteredDelegate,

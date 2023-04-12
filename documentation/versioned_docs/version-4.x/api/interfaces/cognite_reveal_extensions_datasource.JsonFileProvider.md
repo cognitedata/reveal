@@ -32,4 +32,4 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:7](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/types.ts#L7)
+[packages/data-providers/src/types.ts:7](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/types.ts#L7)

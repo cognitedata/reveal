@@ -2,21 +2,19 @@
  * Copyright 2022 Cognite AS
  */
 
+import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
-import { Image360FileProvider } from '@reveal/data-providers';
+import { Image360Descriptor, Image360FileProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
-import { Image360 } from './Image360';
-import { Historical360ImageSet } from '@reveal/data-providers/src/types';
-import { Image360RevisionEntity } from './Image360RevisionEntity';
-import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { Image360 } from './Image360';
 
 export class Image360Entity implements Image360 {
-  private readonly _revisions: Image360RevisionEntity[];
+  private readonly _imageProvider: Image360FileProvider;
+  private readonly _image360Metadata: Image360Descriptor;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _activeRevision: Image360RevisionEntity;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -45,64 +43,34 @@ export class Image360Entity implements Image360 {
   }
 
   constructor(
-    image360Metadata: Historical360ImageSet,
+    image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
     icon: Image360Icon
   ) {
+    this._imageProvider = imageProvider;
+    this._image360Metadata = image360Metadata;
+
     this._transform = transform;
     this._image360Icon = icon;
-
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
-
-    this._revisions = image360Metadata.imageRevisions.map(
-      descriptor => new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualzationBox)
-    );
-    this._activeRevision = this.getMostRecentRevision();
   }
 
   /**
-   * List all historical images for this entity.
-   * @returns A list of available revisions.
+   * Loads the 360 image (6 faces) into the visualization object.
    */
-  public getRevisions(): Image360RevisionEntity[] {
-    return this._revisions;
-  }
-
-  /**
-   * Get the revision that is currently loaded for this entry.
-   * @returns Returns the active revision.
-   */
-  public getActiveRevision(): Image360RevisionEntity {
-    return this._activeRevision;
-  }
-
-  public setActiveRevision(revision: Image360RevisionEntity): void {
-    this._activeRevision = revision;
-    this._activeRevision.applyTextures();
-  }
-
-  public getMostRecentRevision(): Image360RevisionEntity {
-    return this._revisions[0];
-  }
-
-  /**
-   * Get the revision closest to the provided date.
-   * If all revisions are undated the first available revison is returned.
-   */
-  public getRevisionClosestToDate(date: Date): Image360RevisionEntity {
-    const dateAsNumber = date.getTime();
-    const datedRevisions = this._revisions.filter(revision => revision.date !== undefined);
-    const closestDatedRevision = minBy(datedRevisions, revision => Math.abs(revision.date!.getTime() - dateAsNumber));
-    return closestDatedRevision ?? this.getMostRecentRevision();
+  public async load360Image(abortSignal?: AbortSignal): Promise<void> {
+    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal);
+    await this._image360VisualzationBox.loadImages(faces);
   }
 
   /**
    * Drops the GPU resources for the 360 image
+   * the icon will be preserved.
    */
-  public unloadImage(): void {
+  public unload360Image(): void {
     this._image360VisualzationBox.unloadImages();
   }
 
@@ -110,8 +78,7 @@ export class Image360Entity implements Image360 {
    * @obvious
    */
   public dispose(): void {
-    this.unloadImage();
-    this._revisions.forEach(revision => revision.clearTextures());
+    this.unload360Image();
     this._image360Icon.dispose();
   }
 }

@@ -86,16 +86,16 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         renderer.domElement.clientWidth,
         renderer.domElement.clientHeight
       );
-      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
 
       if (entity === undefined) {
         this.render();
         return;
       }
 
-      await facade.preload(entity, entity.getActiveRevision());
+      await facade.preload(entity);
       entity.image360Visualization.visible = true;
-      entity.icon.setVisibility(false);
+      entity.icon.visible = false;
 
       if (lastClicked !== undefined) {
         this.transition360Image(lastClicked, entity, camera, cameraControls);
@@ -178,13 +178,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         renderer.domElement.clientWidth,
         renderer.domElement.clientHeight
       );
-      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity === undefined) {
         this.render();
         return;
       }
       entity.icon.hoverSpriteVisible = true;
-      await facade.preload(entity, entity.getActiveRevision());
+      await facade.preload(entity);
       entity.image360Visualization.visible = false;
       this.render();
     });

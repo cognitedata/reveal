@@ -15,7 +15,7 @@ export default class OutlineVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { viewer, models } = testFixtureComponents;
 
-    viewer.setBackgroundColor({ color: new THREE.Color('lightgray') });
+    viewer.setBackgroundColor({ color: new THREE.Color('lightGray') });
 
     const model = models[0];
 

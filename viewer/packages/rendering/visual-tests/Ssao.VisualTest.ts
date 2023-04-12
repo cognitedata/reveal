@@ -9,7 +9,7 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
-import { defaultRenderOptions, SsaoSampleQuality } from '../src/rendering/types';
+import { defaultRenderOptions } from '../src/rendering/types';
 
 export default class SsaoVisualTest extends StreamingVisualTestFixture {
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -24,7 +24,7 @@ export default class SsaoVisualTest extends StreamingVisualTestFixture {
 
     const renderOptions = defaultRenderOptions;
     renderOptions.ssaoRenderParameters = {
-      sampleSize: SsaoSampleQuality.VeryHigh,
+      sampleSize: 256,
       sampleRadius: 1.0,
       depthCheckBias: 0.0125
     };

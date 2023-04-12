@@ -12,9 +12,25 @@ support or to customize the 3D environment. Reveal supports this by using the
 `Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects.
 
 :::note
-Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you
-need lights this needs to be added to the viewer scene if the added objects isn't "unlit".
+There are a few restrictions to the 3D content that is to be combined with Reveal models:
+- Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you
+need lights this needs to be added to the viewer scene.
+- Geometry is expected to use "default depth testing", meaning
+[`THREE.Material.depthTest`](https://threejs.org/docs/#api/en/materials/Material.depthTest) must be `true`,
+[`THREE.Material.depthWrite`](https://threejs.org/docs/#api/en/materials/Material.depthWrite) must  `true` and
+[`THREE.Material.depthFunc`](https://threejs.org/docs/#api/en/materials/Material.depthFunc) must be `LessEqualDepth`.
+You might experience unexpected results if you are using materials where this doesn't hold.
+- Objects with opacity less than 1.0 will appear transparent regardless of if
+[`THREE.Material.transparent`](https://threejs.org/docs/?q=Material#api/en/materials/Material.transparent) is `true` or
+`false`. The final composited image is always blended as if
+[`THREE.Material.blendDst`](https://threejs.org/docs/?q=Material#api/en/materials/Material.blendDst) is
+`OneMinusSrcAlphaFactor` and the blending settings on the material won't have any effect on the composition.
 :::
+
+<!-- :::tip
+Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you
+need lights this needs to be added to the viewer scene.
+::: -->
 
 <DemoWrapper />
 
@@ -37,55 +53,6 @@ viewer.on('click', async event => {
     viewer.addObject3D(marker);
   }
 });
-```
-
-## Load external GLTF content
-
-[GLTF](https://www.khronos.org/gltf/) is a commonly used 3D format for content delivery - think of it as the JPG of 3D.
-GLTF is supported by ThreeJS and can easily be added to Reveal using [`GLTFLoader`](https://threejs.org/docs/#examples/en/loaders/GLTFLoader).
-GLTF is great for creating custom 3D content with high fidelity, and is supported by most 3D design software,
-e.g. [Blender](https://www.blender.org/). There's also several services for generating GLTF content (e.g. [ElevationAPI](https://elevationapi.com/))
-and market places for 3D models for download (e.g. [Sketchfab](https://sketchfab.com/) and [Turbosquid](https://www.turbosquid.com/)) - allowing you
-to quickly build "digital worlds" with Reveal.
-
-In the following example, a GLTF model is loaded and placed in the clicked positions in the CAD model. The 3D model is from 
-[Grand Dog Studio on Sketchfab](https://sketchfab.com/3d-models/3d-industrial-tanker-a9d3dac0c55042989309bdcf68c60f76) under 
-[the CC 4.0 license](https://creativecommons.org/licenses/by/4.0/).
-
-```jsx runnable-4x
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
-const loader = new GLTFLoader();
-function onLoaded(gltf) {
-  gltf.scene.scale.set(0.2, 0.2, 0.2);
-  const objectBounds = new THREE.Box3().setFromObject(gltf.scene);
-
-  viewer.on('click', async event => {
-    const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-    if (intersection) {
-      const clonedScene = gltf.scene.clone();
-      intersection.point.y += (objectBounds.max.y - objectBounds.min.y) * 0.5;
-      clonedScene.position.copy(intersection.point);
-      viewer.addObject3D(clonedScene);
-    }
-  });
-
-  alert('Loaded GLTF! Click the 3D model to place model');
-}
-function onProgress() {
-}
-function onError(error) {
-  alert('Loading GLTF failed: ' + error);
-}
-
-// Add a "sun"
-const sun = new THREE.PointLight();
-sun.position.set(500, 500, 500);
-viewer.addObject3D(sun);
-viewer.addObject3D(new THREE.AmbientLight())
-
-// Load and add 3D model
-loader.load(urls.gltfModelUrl, onLoaded, onProgress, onError);
 ```
 
 ## Add environment

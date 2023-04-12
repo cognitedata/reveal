@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { Image360Provider } from '../Image360Provider';
-import { Historical360ImageSet, Image360Face, Image360FileDescriptor } from '../types';
+import { Image360Descriptor, Image360Face, Image360FileDescriptor } from '../types';
 
 type Local360ImagesDescriptor = {
   translation: {
@@ -29,8 +29,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
   constructor(modelUrl: string) {
     this._modelUrl = modelUrl;
   }
-
-  public async get360ImageDescriptors(): Promise<Historical360ImageSet[]> {
+  public async get360ImageDescriptors(): Promise<Image360Descriptor[]> {
     const image360File = '360Images.json';
     const response = await fetch(`${this._modelUrl}/${image360File}`).catch(_err => {
       throw Error('Could not download Json file');
@@ -47,26 +46,20 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
         new THREE.Euler(localDescriptor.rotation.x, localDescriptor.rotation.y, localDescriptor.rotation.z)
       );
 
-      const historicalImage360Descriptor = {
+      const image360Descriptor: Image360Descriptor = {
         id: index.toString(),
         label: index.toString(),
         collectionId: 'local',
         collectionLabel: 'local',
         transform: translation.multiply(rotation),
-        imageRevisions: [
-          {
-            timestamp: undefined,
-            faceDescriptors: localDescriptor.faces.map(p => {
-              return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
-            })
-          }
-        ]
+        faceDescriptors: localDescriptor.faces.map(p => {
+          return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
+        })
       };
 
-      return historicalImage360Descriptor;
+      return image360Descriptor;
     });
   }
-
   get360ImageFiles(
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
@@ -81,17 +74,6 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
           face: image360FaceDescriptor.face
         } as Image360Face;
       })
-    );
-  }
-
-  getLowResolution360ImageFiles(
-    image360FaceDescriptors: Image360FileDescriptor[],
-    abortSignal?: AbortSignal
-  ): Promise<Image360Face[]> {
-    throw new Error(
-      'Local 360 Image Provider does not support loading of low resolution images. Use get360ImageFiles instead.' +
-        image360FaceDescriptors +
-        abortSignal
     );
   }
 }
