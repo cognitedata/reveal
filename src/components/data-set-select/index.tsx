@@ -8,7 +8,11 @@ import { API } from 'types/api';
 type Props = { api: API; onChange: (e: number) => void; selected?: number };
 export function DataSetSelect({ api, onChange, selected }: Props) {
   const { t } = useTranslation();
-  const { data: datasets = [], isInitialLoading, error } = useDataSets(api);
+  const {
+    data: datasets = [],
+    isInitialLoading,
+    error,
+  } = useDataSets(api === 'files' ? 'documents' : api);
 
   const items = useMemo(
     () =>
