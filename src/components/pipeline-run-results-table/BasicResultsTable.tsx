@@ -1,4 +1,4 @@
-import { Dispatch, Key, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
@@ -12,6 +12,7 @@ import ResourceCell from './ResourceCell';
 import ExpandedMatch from './ExpandedMatch';
 import Confidence from 'components/em-result/Confidence';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type BasicResultsTableRecord = EMPipelineRunMatch & { key: number };
 
@@ -41,14 +42,6 @@ const BasicResultsTable = ({
       prevState.includes(clickedRowKey)
         ? prevState.filter((key) => key !== clickedRowKey)
         : prevState.concat(clickedRowKey)
-    );
-  };
-
-  const handleSelectRow = (rowKeys: Key[]) => {
-    setSelectedSourceIds(
-      rowKeys.map((rowKey: Key) =>
-        typeof rowKey === 'string' ? parseInt(rowKey) : rowKey
-      )
     );
   };
 
@@ -116,6 +109,23 @@ const BasicResultsTable = ({
     [matches]
   );
 
+  const rowSelection: TableRowSelection<BasicResultsTableRecord> = {
+    selectedRowKeys: selectedSourceIds,
+    onChange: (_, rows, info) => {
+      if (info.type === 'single') {
+        const ids = rows.map(({ key }) => key);
+        setSelectedSourceIds(ids);
+      }
+    },
+    onSelectAll: (all) => {
+      if (all) {
+        setSelectedSourceIds(dataSource.map(({ key }) => key));
+      } else {
+        setSelectedSourceIds([]);
+      }
+    },
+  };
+
   return (
     <Table<BasicResultsTableRecord>
       columns={columns}
@@ -135,11 +145,7 @@ const BasicResultsTable = ({
         ),
         indentSize: 64,
       }}
-      rowSelection={{
-        selectedRowKeys: selectedSourceIds,
-        onChange: handleSelectRow,
-        columnWidth: 36,
-      }}
+      rowSelection={rowSelection}
     />
   );
 };

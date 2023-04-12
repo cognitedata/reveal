@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
-import { Body, Button, Checkbox, Flex } from '@cognite/cogs.js';
+import { Body, Checkbox, Flex } from '@cognite/cogs.js';
 import {
   CogniteEvent,
   CogniteInternalId,
@@ -211,14 +211,6 @@ const PipelineRunResultsTable = ({
     setSelectedMatchType(value);
   };
 
-  const handleSelectAllMatches = (): void => {
-    setSelectedSourceIds(
-      (run.matches
-        ?.filter(({ source }) => typeof source?.id === 'number')
-        .map(({ source }) => source?.id) as number[] | undefined) ?? []
-    );
-  };
-
   useEffect(() => {
     if (shouldGroupByPattern) {
       setSelectedMatchType('all');
@@ -250,12 +242,6 @@ const PipelineRunResultsTable = ({
               {t('matches-with-count', { count: selectedSourceIds.length })}
             </Body>
           )}
-          <Button
-            disabled={selectedSourceIds.length === run.matches?.length}
-            onClick={handleSelectAllMatches}
-          >
-            {t('select-all-matches')}
-          </Button>
         </Flex>
       </Flex>
       {shouldGroupByPattern ? (

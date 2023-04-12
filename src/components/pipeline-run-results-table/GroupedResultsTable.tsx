@@ -1,4 +1,4 @@
-import { Dispatch, Key, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -15,6 +15,7 @@ import Extractor from './Extractor';
 import { Icon } from '@cognite/cogs.js';
 import ExpandedRule from './ExpandedRule';
 import { PAGINATION_SETTINGS } from 'common/constants';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
 
@@ -68,20 +69,6 @@ const GroupedResultsTable = ({
       )
       .map((rule) => getRuleKey(rule));
   }, [selectedSourceIds, run]);
-
-  const handleSelectRow = (rowKeys: Key[]) => {
-    const rules = run.generatedRules?.filter((rule) =>
-      rowKeys.includes(getRuleKey(rule))
-    );
-    setSelectedSourceIds(
-      rules?.flatMap(
-        ({ matches }) =>
-          matches?.map(({ source }) =>
-            typeof source.id === 'number' ? source.id : -1
-          ) ?? []
-      ) ?? []
-    );
-  };
 
   const columns: GroupedResultsTableColumnType[] = useMemo(
     () => [
@@ -139,6 +126,36 @@ const GroupedResultsTable = ({
     [run.generatedRules]
   );
 
+  const rowSelection: TableRowSelection<GroupedResultsTableRecord> = {
+    selectedRowKeys: selectedRuleKeys,
+    onChange: (rowKeys, _, info) => {
+      if (info.type === 'single') {
+        const rules = run.generatedRules?.filter((rule) =>
+          rowKeys.includes(getRuleKey(rule))
+        );
+        setSelectedSourceIds(
+          rules?.flatMap(
+            ({ matches }) =>
+              matches?.map(({ source }) =>
+                typeof source.id === 'number' ? source.id : -1
+              ) ?? []
+          ) ?? []
+        );
+      }
+    },
+    onSelectAll: (all) => {
+      if (all) {
+        setSelectedSourceIds(
+          dataSource.flatMap(
+            ({ matches }) => matches?.map(({ source }) => source.id) ?? []
+          )
+        );
+      } else {
+        setSelectedSourceIds([]);
+      }
+    },
+  };
+
   return (
     <Table<GroupedResultsTableRecord>
       columns={columns}
@@ -163,11 +180,7 @@ const GroupedResultsTable = ({
           ),
         indentSize: 64,
       }}
-      rowSelection={{
-        selectedRowKeys: selectedRuleKeys,
-        onChange: handleSelectRow,
-        columnWidth: 36,
-      }}
+      rowSelection={rowSelection}
     />
   );
 };
