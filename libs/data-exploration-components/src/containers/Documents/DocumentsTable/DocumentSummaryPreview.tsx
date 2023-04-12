@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
-import styled from 'styled-components';
-import { HighlightCell } from '@data-exploration/components';
 import { Body, Flex } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-
-// type OcrResponse = {
-//   items: {
-//     annotations: {
-//       text: string;
-//       type: string;
-//     }[];
-//   }[];
-// };
 
 type GptCompletionResponse = {
   choices: {
@@ -54,7 +43,7 @@ export const DocumentSummaryPreview = ({
             return;
           }
 
-          // 2. Create summary of max ~200 kb
+          // 2. Create summary
           const ocrText = response.data;
 
           let gptContent =
