@@ -147,7 +147,6 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   //   );
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
-  console.log('hiddenColumns: ', hiddenColumns);
 
   return (
     <Table<InternalDocumentWithMatchingLabels>

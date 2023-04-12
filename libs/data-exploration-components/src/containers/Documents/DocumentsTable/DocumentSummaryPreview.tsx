@@ -41,9 +41,6 @@ export const DocumentSummaryPreview = ({
       if (document.mimeType !== 'application/pdf') {
         setContent('Summary only works for PDF');
       } else {
-        // const downloadUrl = await sdk.files.getDownloadUrls([
-        //   { id: document.id },
-        // ]);
         try {
           // 1. Fetch document content using CDF OCR
           const response = await sdk.get<string>(
@@ -59,14 +56,6 @@ export const DocumentSummaryPreview = ({
 
           // 2. Create summary of max ~200 kb
           const ocrText = response.data;
-          // let ocrText = '';
-          // for (
-          //   let i = 0;
-          //   ocrText.length < 200 * 1024 && i < ocr.annotations.length;
-          //   i++
-          // ) {
-          //   ocrText = ocrText + ocr.annotations[i].text + ' ';
-          // }
 
           let gptContent =
             'Describe with maximum 150 characters the purpose of the following document: \n\n' +

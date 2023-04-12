@@ -87,10 +87,12 @@ export const DocumentSearchResults = ({
     (async () => {
       if (query == null) {
         setRealQuery(undefined);
+        setGptColumnName('Summary');
         return;
       }
 
       if (!query.endsWith('?')) {
+        setGptColumnName('Summary');
         setRealQuery(query);
       }
 
@@ -123,7 +125,6 @@ export const DocumentSearchResults = ({
         gptResponse.data.choices[0].message.content.trim()
       );
       setGptColumnName(summary['column_name']);
-      console.log('Setting this ', summary['keywords']);
       setRealQuery(summary['keywords']);
     })();
   }, [query, sdk]);
