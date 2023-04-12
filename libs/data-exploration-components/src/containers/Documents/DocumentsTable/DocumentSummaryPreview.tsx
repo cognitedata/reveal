@@ -4,16 +4,15 @@ import styled from 'styled-components';
 import { HighlightCell } from '@data-exploration/components';
 import { Body, Flex } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { HttpResponseType } from '@cognite/sdk';
 
-type OcrResponse = {
-  items: {
-    annotations: {
-      text: string;
-      type: string;
-    }[];
-  }[];
-};
+// type OcrResponse = {
+//   items: {
+//     annotations: {
+//       text: string;
+//       type: string;
+//     }[];
+//   }[];
+// };
 
 type GptCompletionResponse = {
   choices: {
@@ -47,11 +46,10 @@ export const DocumentSummaryPreview = ({
         // ]);
         try {
           // 1. Fetch document content using CDF OCR
-          const response = await sdk.post<OcrResponse>(
-            `/api/playground/projects/${sdk.project}/context/pnid/ocr`,
+          const response = await sdk.get<string>(
+            `/api/v1/projects/${sdk.project}/documents/${document.id}/content`,
             {
-              data: { fileId: document.id },
-              responseType: HttpResponseType.Json,
+              headers: { accept: 'text/plain' },
             }
           );
           if (response.status !== 200) {
@@ -60,15 +58,15 @@ export const DocumentSummaryPreview = ({
           }
 
           // 2. Create summary of max ~200 kb
-          const ocr = response.data.items[0];
-          let ocrText = '';
-          for (
-            let i = 0;
-            ocrText.length < 200 * 1024 && i < ocr.annotations.length;
-            i++
-          ) {
-            ocrText = ocrText + ocr.annotations[i].text + ' ';
-          }
+          const ocrText = response.data;
+          // let ocrText = '';
+          // for (
+          //   let i = 0;
+          //   ocrText.length < 200 * 1024 && i < ocr.annotations.length;
+          //   i++
+          // ) {
+          //   ocrText = ocrText + ocr.annotations[i].text + ' ';
+          // }
 
           let gptContent =
             'Describe with maximum 150 characters the purpose of the following document: \n\n' +
