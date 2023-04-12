@@ -86,43 +86,6 @@ const COLOR_DEFS = {
   [PointColorType.Classification]: 'color_type_classification'
 };
 
-function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
-  return (_target: any, _context: any) => ({
-    get(this: any) {
-      return this.getUniform(uniformName);
-    },
-    set(this: any, value: unknown) {
-      if (value !== this.getUniform(uniformName)) {
-        this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
-        if (requireSrcUpdate) {
-          this.updateShaderSource();
-        }
-      }
-    }
-  });
-}
-
-function requiresShaderUpdate() {
-  return (_: any, context: { name: string | symbol }) => ({
-    get(this: any) {
-      const fieldName = `_${context.name.toString()}`;
-      return this[fieldName];
-    },
-    set(this: any, value: unknown) {
-      const fieldName = `_${context.name.toString()}`;
-      if (value !== (this[fieldName] as any)) {
-        this[fieldName] = value;
-        this.updateShaderSource();
-      }
-    },
-    init(this: any, value: any) {
-      const fieldName = `_${context.name.toString()}`;
-      this[fieldName] = value;
-      return value;
-    }
-  });
-}
-
 export class PointCloudMaterial extends RawShaderMaterial {
   private static readonly helperVec3 = new Vector3();
 
@@ -406,4 +369,41 @@ function makeUniform<T>(type: string, value: T): IUniform<T> {
 
 function getValid<T>(a: T | undefined, b: T): T {
   return a === undefined ? b : a;
+}
+
+function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
+  return (_target: any, _context: any) => ({
+    get(this: any) {
+      return this.getUniform(uniformName);
+    },
+    set(this: any, value: unknown) {
+      if (value !== this.getUniform(uniformName)) {
+        this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
+        if (requireSrcUpdate) {
+          this.updateShaderSource();
+        }
+      }
+    }
+  });
+}
+
+function requiresShaderUpdate() {
+  return (_: any, context: { name: string | symbol }) => ({
+    get(this: any) {
+      const fieldName = `_${context.name.toString()}`;
+      return this[fieldName];
+    },
+    set(this: any, value: unknown) {
+      const fieldName = `_${context.name.toString()}`;
+      if (value !== (this[fieldName] as any)) {
+        this[fieldName] = value;
+        this.updateShaderSource();
+      }
+    },
+    init(this: any, value: any) {
+      const fieldName = `_${context.name.toString()}`;
+      this[fieldName] = value;
+      return value;
+    }
+  });
 }
