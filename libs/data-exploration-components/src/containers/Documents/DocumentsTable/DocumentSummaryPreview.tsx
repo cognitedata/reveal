@@ -5,7 +5,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import gpt from '../../../utils/gpt';
 import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 
-
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const DocumentSummaryPreview = ({

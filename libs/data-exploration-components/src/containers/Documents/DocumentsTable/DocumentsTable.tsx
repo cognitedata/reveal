@@ -43,8 +43,6 @@ const visibleColumns = [
   'rootAsset',
 ];
 
-
-
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
   const { metadataColumns, setMetadataKeyQuery } =
@@ -78,17 +76,24 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
           enableSorting: false,
         },
-        ...isDocumentGPTEnabled ? [{
-          accessorKey: 'summary',
-          header: props.gptColumnName,
-          cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return (
-              <DocumentSummaryPreview document={row.original} query={query} />
-            );
-          },
-          enableSorting: true,
-          enableHiding: true,
-        }] : [],
+        ...(isDocumentGPTEnabled
+          ? [
+              {
+                accessorKey: 'summary',
+                header: props.gptColumnName,
+                cell: ({ row }: { row: Row<InternalDocument> }) => {
+                  return (
+                    <DocumentSummaryPreview
+                      document={row.original}
+                      query={query}
+                    />
+                  );
+                },
+                enableSorting: true,
+                enableHiding: true,
+              },
+            ]
+          : []),
         {
           accessorKey: 'author',
           id: 'author',

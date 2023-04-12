@@ -48,7 +48,10 @@ import {
 } from '@data-exploration-app/store/filter/selectors';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import { useFlagDocumentLabelsFilter } from '@data-exploration-app/hooks';
+import {
+  useFlagDocumentGPT,
+  useFlagDocumentLabelsFilter,
+} from '@data-exploration-app/hooks';
 import { AllTab } from '@data-exploration-app/containers/All';
 import { useFilterSidebarState } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -60,6 +63,7 @@ import { SequenceSearchResultView } from '@data-exploration-app/containers/Seque
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { routes, ViewType } from '@data-exploration-app/containers/App';
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -92,6 +96,9 @@ function SearchPage() {
   const [eventFilter] = useEventsFilters();
   const [timeseriesFilter] = useTimeseriesFilters();
   const [sequenceFilter] = useSequenceFilters();
+
+  const isDocumentGPTEnabled = useFlagDocumentGPT();
+  const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
 
   const filterMap = useMemo(
     () => ({
@@ -126,6 +133,9 @@ function SearchPage() {
       </SearchFiltersWrapper>
 
       <MainSearchContainer>
+        {isDocumentGPTEnabled &&
+          currentResourceType === 'file' &&
+          showGPTInfo && <GPTInfobar onClose={() => setShowGPTInfo(false)} />}
         <SearchInputContainer>
           {currentResourceType !== 'threeD' && (
             <>
