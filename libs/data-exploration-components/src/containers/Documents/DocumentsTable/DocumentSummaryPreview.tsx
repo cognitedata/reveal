@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import styled from 'styled-components';
-import { HighlightCell } from '@data-exploration-components/components';
+import { HighlightCell } from '@data-exploration/components';
 import { Body, Flex } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { HttpResponseType } from '@cognite/sdk';
