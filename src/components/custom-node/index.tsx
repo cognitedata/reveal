@@ -1,4 +1,4 @@
-import { NodeProps } from 'react-flow-renderer';
+import { NodeProps } from 'reactflow';
 
 import { CanvasBlockType } from 'components/canvas-block';
 import { RawNodeData, RawTableNode } from 'components/raw-table-node';

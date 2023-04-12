@@ -1,4 +1,4 @@
-import { NodeProps } from 'react-flow-renderer';
+import { NodeProps } from 'reactflow';
 
 import { NodeData } from 'components/custom-node';
 import { BaseNode } from 'components/base-node';

@@ -11,7 +11,7 @@ import ReactFlow, {
   ReactFlowInstance,
   useEdgesState,
   useNodesState,
-} from 'react-flow-renderer';
+} from 'reactflow';
 import { useState } from 'react';
 
 import styled from 'styled-components';

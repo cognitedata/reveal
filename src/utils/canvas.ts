@@ -1,6 +1,6 @@
 import { CanvasBlockType } from 'components/canvas-block';
 import { CustomNodeData } from 'components/custom-node';
-import { Connection, Node } from 'react-flow-renderer';
+import { Connection, Node } from 'reactflow';
 
 const COMPABILITY_MATRIX: Record<CanvasBlockType, CanvasBlockType[]> = {
   'data-set': ['entity-matching', 'extraction-pipeline', 'transformation'],
