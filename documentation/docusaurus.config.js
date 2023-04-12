@@ -55,6 +55,10 @@ module.exports = {
         },
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
+          sidebarItemsGenerator: async ({ defaultSidebarItemsGenerator, ...args }) => {
+            const sidebarItems = await defaultSidebarItemsGenerator(args);
+            return recursiveSortByLabel(sidebarItems);
+          },
           // Please change this to your repo.
           editUrl:
             'https://github.com/cognitedata/reveal/blob/master/documentation',
@@ -79,3 +83,16 @@ module.exports = {
     'docusaurus-plugin-typedoc'
   ],
 };
+
+function recursiveSortByLabel(items) {
+  const result = items.map((item) => {
+    if (item.type === 'category' && item.items.length > 0) {
+      return { ...item, items: recursiveSortByLabel(item.items) };
+    }
+    return item;
+  });
+
+  console.log(result);
+  result.sort((a, b) => (a.label < b.label ? -1 : 1));
+  return result;
+}
