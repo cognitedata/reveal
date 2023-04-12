@@ -27,6 +27,7 @@ import { DataSet } from '@cognite/sdk';
 import { useAllDataSets, useDataSets } from 'hooks/datasets';
 import { Pipeline, useUpdatePipeline } from 'hooks/entity-matching-pipelines';
 import ResourceCount from 'components/resource-count';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 const { Option } = Select;
 
@@ -201,13 +202,21 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
     [t, pipeline.sources.resource, shouldShowOnlyDataSetsContainingResourceType]
   );
 
-  const rowSelection = {
+  const rowSelection: TableRowSelection<PipelineSourceTableRecord> = {
     selectedRowKeys: pipeline.sources.dataSetIds.map(({ id }) => id.toString()),
-    onChange: (_: unknown, rows: PipelineSourceTableRecord[]) => {
-      const idsAsNumberArr = rows.map(({ key }) => parseInt(key));
-      handleChangeSelectedDataSetIds(idsAsNumberArr);
+    onChange: (_, rows, info) => {
+      if (info.type === 'single') {
+        const idsAsNumberArr = rows.map(({ key }) => parseInt(key));
+        handleChangeSelectedDataSetIds(idsAsNumberArr);
+      }
     },
-    hideSelectAll: true,
+    onSelectAll: (all) => {
+      if (all) {
+        handleChangeSelectedDataSetIds(filteredDataSource.map(({ id }) => id));
+      } else {
+        handleChangeSelectedDataSetIds([]);
+      }
+    },
   };
 
   return (

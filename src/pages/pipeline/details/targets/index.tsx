@@ -20,6 +20,7 @@ import { useMemo, useState } from 'react';
 import { useAllDataSets, useDataSets } from 'hooks/datasets';
 import ResourceCount from 'components/resource-count';
 import { pipelineSourceTypeToSourceType } from 'types/api';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type PipelineTargetTableRecord = { key: string } & DataSet;
 type PipelineTargetTableColumnType = ColumnType<PipelineTargetTableRecord> & {
@@ -111,13 +112,21 @@ const Targets = ({ pipeline }: TargetsProps): JSX.Element => {
     [t, shouldShowOnlyDataSetsContainingResourceType]
   );
 
-  const rowSelection = {
+  const rowSelection: TableRowSelection<PipelineTargetTableRecord> = {
     selectedRowKeys: pipeline.targets.dataSetIds.map(({ id }) => id.toString()),
-    onChange: (_: unknown, rows: PipelineTargetTableRecord[]) => {
-      const idsAsNumberArr = rows.map(({ key }) => parseInt(key));
-      handleChangeSelectedDataSetIds(idsAsNumberArr);
+    onChange: (_, rows, info) => {
+      if (info.type === 'single') {
+        const idsAsNumberArr = rows.map(({ key }) => parseInt(key));
+        handleChangeSelectedDataSetIds(idsAsNumberArr);
+      }
     },
-    hideSelectAll: true,
+    onSelectAll: (all) => {
+      if (all) {
+        handleChangeSelectedDataSetIds(filteredDataSource.map(({ id }) => id));
+      } else {
+        handleChangeSelectedDataSetIds([]);
+      }
+    },
   };
 
   const filteredDataSource = useMemo(() => {
