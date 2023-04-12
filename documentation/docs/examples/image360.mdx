@@ -82,13 +82,12 @@ image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mod
 ```
 
 ## Historical images
-Some image collections include 360 images with historical revisions. You can use the `360Image` interface to manage which revision of the image is displayed. To get a list of all available revisions for a 360 image, use the `getRevisions` method. The method returns a sorted list of `Image360Revision` objects by date, 
-with the most recent revision at the beginning of the list.
+Some image collections include 360 images with historical revisions. You can use the `360Image` interface to manage which revision of the image is displayed. Use `getRevisions` to obtain a list of all available revisions for an image. This method returns a list of `Image360Revision` objects sorted by date, with the most recent revision at the beginning of the list.
 
 Each `Image360Revision` object has a `date` property that represents when the image was taken. If an image is undated, the `date` property will be `undefined`.
 ```ts
 const onImageEntered: Image360EnteredDelegate = (entity: Image360, revision: Image360Revision) => {
-  entity.list360ImageRevisions.forEach(availableRevision => console.log(availableRevision.date);
+  entity.getRevisions().forEach(availableRevision => console.log(availableRevision.date);
 };
 ```
 
@@ -101,7 +100,7 @@ You can get the currently displayed revision for any `Image360` by using the `ge
 };
 ```
 
-To change the revision of an `Image360`, you can use the `enter360Image` method. Pass in the `Image360` entity you want to change along with one of the available revisions for that entity.
+To change the revision of an `Image360`, you can use the `enter360Image` method. Pass in the `Image360` entity you want to change, along with one of the available revisions for that entity.
 ```ts
 const revisions = entity.getRevisions();
 if (revisions.length === 1) {
