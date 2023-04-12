@@ -188,8 +188,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
   @uniform('size') accessor size!: number;
   @uniform('spacing') accessor spacing!: number;
 
-  @requiresShaderUpdate accessor weighted: boolean = false;
-  @requiresShaderUpdate accessor hqDepthPass: boolean = false;
+  @requiresShaderUpdate() accessor weighted: boolean = false;
+  @requiresShaderUpdate() accessor hqDepthPass: boolean = false;
   @requiresShaderUpdate() accessor pointColorType: PointColorType = PointColorType.Rgb;
   @requiresShaderUpdate() accessor pointSizeType: PointSizeType = PointSizeType.Adaptive;
   @requiresShaderUpdate() accessor useEDL: boolean = false;
