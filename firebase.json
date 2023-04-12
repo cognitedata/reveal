@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "site": "cognite-raw-explorer-production",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    },
+    {
+      "site": "cognite-raw-explorer-staging",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    }
+  ]
+}
