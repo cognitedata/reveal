@@ -55,7 +55,7 @@ export interface IPointCloudMaterialUniforms {
   minSize: IUniform<number>;
   objectIdLUT: IUniform<Texture>;
   octreeSize: IUniform<number>;
-  opacity: IUniform<number>;
+  rpacity: IUniform<number>;
   pcIndex: IUniform<number>;
   screenHeight: IUniform<number>;
   screenWidth: IUniform<number>;
@@ -157,7 +157,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
     objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
-    opacity: makeUniform('f', 1.0),
+    rpacity: makeUniform('f', 1.0),
     pcIndex: makeUniform('f', 0),
     screenHeight: makeUniform('f', 1.0),
     screenWidth: makeUniform('f', 1.0),
