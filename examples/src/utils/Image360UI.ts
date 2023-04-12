@@ -14,7 +14,7 @@ export class Image360UI {
 
     const optionsFolder = gui.addFolder('Add Options');
 
-    const onImageEntered: Image360EnteredDelegate = entity => {
+    const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
       selectedEntity = entity;
     };
 
