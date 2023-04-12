@@ -24,8 +24,8 @@ export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
             </Flex>
             <SecondaryTopbar.Divider />
             <Flex gap={10}>
-              <CanvasTopBarDiscardChangesButton flow={flow} />
-              <CanvasTopbarPublishButton flow={flow} />
+              <CanvasTopBarDiscardChangesButton />
+              <CanvasTopbarPublishButton />
             </Flex>
           </Flex>
         }

@@ -1,15 +1,8 @@
 import { Button, Flex } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
-import { Flow } from 'types';
 
-type CanvasTopbarPublishButtonProps = {
-  flow: Flow;
-};
-
-const CanvasTopbarPublishButton = ({
-  flow,
-}: CanvasTopbarPublishButtonProps): JSX.Element => {
+const CanvasTopbarPublishButton = (): JSX.Element => {
   const { t } = useTranslation();
 
   return (

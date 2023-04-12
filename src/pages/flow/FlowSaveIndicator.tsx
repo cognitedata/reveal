@@ -1,6 +1,6 @@
 import { Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useIsMutating } from '@tanstack/react-query';
+import { useIsMutating } from 'react-query';
 
 import { useTranslation } from 'common';
 import { useFlow } from 'hooks/raw';
@@ -15,17 +15,16 @@ const FlowSaveIndicator = ({ flowId }: FlowSaveIndicatorProps) => {
   const { t } = useTranslation();
   const { data } = useFlow(flowId);
 
-  //   const isLoading = useIsMutating();
-  //   console.log(isLoading);
+  const isLoading = useIsMutating();
 
-  //   if (isLoading) {
-  //     return (
-  //       <StyledWrapper>
-  //         <StyledLoader />
-  //         {t('details-saving-changes')}
-  //       </StyledWrapper>
-  //     );
-  //   }
+  if (isLoading) {
+    return (
+      <StyledWrapper>
+        <StyledLoader />
+        {t('details-saving-changes')}
+      </StyledWrapper>
+    );
+  }
 
   if (!data?.updated) {
     return null;
@@ -34,8 +33,6 @@ const FlowSaveIndicator = ({ flowId }: FlowSaveIndicatorProps) => {
   if (new Date().getTime() - data.updated < 1000 * 60) {
     return <StyledWrapper>{t('details-all-changes-saved')}</StyledWrapper>;
   }
-
-  console.log(data);
 
   return (
     <StyledWrapper>
