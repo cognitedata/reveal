@@ -114,6 +114,11 @@ function requiresShaderUpdate() {
         this[fieldName] = value;
         this.updateShaderSource();
       }
+    },
+    init(this: any, value: any) {
+      const fieldName = `_${context.name.toString()}`;
+      this[fieldName] = value;
+      return value;
     }
   });
 }
