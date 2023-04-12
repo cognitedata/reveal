@@ -20,7 +20,6 @@ const PIPELINE_STEPS = [
   'configure-pipeline',
   'run',
 ] as const;
-type PipelineStep = (typeof PIPELINE_STEPS)[number];
 
 const PipelineDetails = (): JSX.Element => {
   const {
@@ -73,7 +72,7 @@ const PipelineDetails = (): JSX.Element => {
     const index = PIPELINE_STEPS.findIndex((value) => value === step);
     return index;
   };
-  console.log(pipeline?.targets);
+
   const hasSources = pipeline ? pipeline?.sources.dataSetIds.length > 0 : false;
   const hasTargets = pipeline ? pipeline?.targets.dataSetIds.length > 0 : false;
 
