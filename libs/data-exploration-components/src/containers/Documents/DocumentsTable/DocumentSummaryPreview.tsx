@@ -3,6 +3,8 @@ import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import { Body, Flex } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import gpt from '../../../utils/gpt';
+import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
+
 
 type GptCompletionResponse = {
   choices: {
@@ -25,6 +27,7 @@ export const DocumentSummaryPreview = ({
 }) => {
   const sdk = useSDK();
   const [content, setContent] = useState('Loading...');
+  const isDocumentsGPTEnabled = useFlagDocumentGPT();
 
   useEffect(() => {
     async function retrieveContent() {
@@ -87,7 +90,9 @@ export const DocumentSummaryPreview = ({
         }
       }
     }
-    retrieveContent();
+    if (isDocumentsGPTEnabled) {
+      retrieveContent();
+    }
   }, [sdk, sdk.files, document, query]);
 
   return (

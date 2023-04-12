@@ -21,6 +21,7 @@ import { Body } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { DocumentSummaryPreview } from './DocumentSummaryPreview';
 import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
+import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -42,10 +43,14 @@ const visibleColumns = [
   'rootAsset',
 ];
 
+
+
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
+
+  const isDocumentGPTEnabled = useFlagDocumentGPT();
 
   const columns = useMemo(
     () =>
@@ -73,7 +78,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
           enableSorting: false,
         },
-        {
+        ...isDocumentGPTEnabled ? [{
           accessorKey: 'summary',
           header: props.gptColumnName,
           cell: ({ row }: { row: Row<InternalDocument> }) => {
@@ -82,7 +87,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
             );
           },
           enableSorting: true,
-        },
+          enableHiding: true,
+        }] : [],
         {
           accessorKey: 'author',
           id: 'author',

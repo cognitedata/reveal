@@ -16,6 +16,7 @@ import { AppliedFiltersTags } from '@data-exploration-components/components/Appl
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
 import gpt from '../../../utils/gpt';
+import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-lib/core';
 import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
@@ -83,9 +84,10 @@ export const DocumentSearchResults = ({
     documentSearchConfig
   );
   const sdk = useSDK();
+  const isDocumentsGPTEnabled = useFlagDocumentGPT();
 
   useEffect(() => {
-    (async () => {
+    async function retrieveAnswer() {
       if (!query || !query.endsWith('?')) {
         setRealQuery(query);
         setGptColumnName('Summary');
@@ -124,7 +126,11 @@ export const DocumentSearchResults = ({
       const summary = JSON.parse(choices[0].message.content.trim());
       setGptColumnName(summary['column_name']);
       setRealQuery(summary['keywords']);
-    })();
+    };
+
+    if (isDocumentsGPTEnabled) {
+      retrieveAnswer();
+    }
   }, [query, sdk]);
 
   const context = useContext(AppContext);
