@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import { Filter, RawSource, RawTarget } from './api';
 
 export type PipelineTableTypes =
@@ -15,16 +13,17 @@ type TablePropsBase = {
   advancedFilter?: any;
   filter: Filter;
   allSources: boolean;
+  onSelectAll: (checked: boolean) => void;
 };
 
 export type SourceTableProps = TablePropsBase & {
   selected: RawSource[];
-  setSelected: Dispatch<SetStateAction<RawSource[]>>;
+  onSelectRow: (row: RawSource, checked: boolean) => void;
 };
 
 export type TargetTableProps = TablePropsBase & {
   selected: RawTarget[];
-  setSelected: Dispatch<SetStateAction<RawTarget[]>>;
+  onSelectRow: (row: RawTarget, checked: boolean) => void;
 };
 
 export type MatchType =

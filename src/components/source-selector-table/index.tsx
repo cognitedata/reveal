@@ -1,12 +1,4 @@
-import {
-  Flex,
-  Icon,
-  Body,
-  IconType,
-  InputExp,
-  Switch,
-  Checkbox,
-} from '@cognite/cogs.js';
+import { Flex, Icon, Body, IconType, InputExp, Switch } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 
@@ -19,7 +11,7 @@ import TimeseriesTable from './TimeseriesTable';
 import EventTable from './EventTable';
 import SequenceTable from './SequenceTable';
 import { getAdvancedFilter } from 'utils';
-import { API, SourceType, SOURCE_TYPES } from 'types/api';
+import { API, RawSource, SourceType, SOURCE_TYPES } from 'types/api';
 import FileInfoTable from './FilesTable';
 import { DataSetSelect } from 'components/data-set-select';
 import ThreeDTable from './Three3Table';
@@ -122,6 +114,25 @@ export default function SourceSelectionTable({}: Props) {
 
   const onClose = () => setSourcesList([]);
 
+  const handleSelectRow = (row: RawSource, checked: boolean) => {
+    if (checked) {
+      setSourcesList((prevState) => prevState.concat([row]));
+    } else {
+      setSourcesList((prevState) =>
+        prevState.filter(({ id: testId }) => row.id !== testId)
+      );
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setAllSources(true);
+      setSourcesList([]);
+    } else {
+      setAllSources(false);
+    }
+  };
+
   return (
     <Container $isActionBarVisible={!!sourcesList.length}>
       <Flex direction="column">
@@ -184,12 +195,6 @@ export default function SourceSelectionTable({}: Props) {
                   advancedFilter={advancedFilter}
                 />
               )}
-              <Checkbox
-                checked={!query && allSources}
-                disabled={!!query}
-                onChange={(e) => setAllSources(e.target.checked)}
-                label="Select all"
-              />
             </Flex>
           )}
         </Flex>
@@ -198,27 +203,32 @@ export default function SourceSelectionTable({}: Props) {
           <TimeseriesTable
             filter={sourceFilter}
             selected={sourcesList}
-            setSelected={setSourcesList}
             advancedFilter={advancedFilter}
             allSources={allSources}
+            onSelectAll={handleSelectAll}
+            onSelectRow={handleSelectRow}
+            query={query}
           />
         )}
         {sourceType === 'events' && (
           <EventTable
             filter={sourceFilter}
             selected={sourcesList}
-            setSelected={setSourcesList}
             advancedFilter={advancedFilter}
             allSources={allSources}
+            onSelectAll={handleSelectAll}
+            onSelectRow={handleSelectRow}
+            query={query}
           />
         )}
         {sourceType === 'files' && (
           <FileInfoTable
             filter={sourceFilter}
             selected={sourcesList}
-            setSelected={setSourcesList}
             advancedFilter={advancedFilter}
             allSources={allSources}
+            onSelectAll={handleSelectAll}
+            onSelectRow={handleSelectRow}
             query={query}
           />
         )}
@@ -226,9 +236,11 @@ export default function SourceSelectionTable({}: Props) {
           <SequenceTable
             filter={sourceFilter}
             selected={sourcesList}
-            setSelected={setSourcesList}
             advancedFilter={advancedFilter}
             allSources={allSources}
+            onSelectAll={handleSelectAll}
+            onSelectRow={handleSelectRow}
+            query={query}
           />
         )}
         {sourceType === 'threeD' && <ThreeDTable />}

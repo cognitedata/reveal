@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader, Body } from '@cognite/cogs.js';
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Icon, Loader, Body, Checkbox, Flex } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
@@ -8,6 +8,7 @@ import { RawCogniteEvent } from 'types/api';
 import { SourceTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type EventListTableRecord = { key: string } & RawCogniteEvent;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
@@ -16,10 +17,12 @@ type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
 
 export default function EventTable({
   selected,
-  setSelected,
   advancedFilter,
   filter,
   allSources,
+  onSelectAll,
+  onSelectRow,
+  query,
 }: SourceTableProps) {
   const {
     data,
@@ -90,21 +93,23 @@ export default function EventTable({
     [t]
   );
 
-  const rowSelection = {
+  const rowSelection: TableRowSelection<EventListTableRecord> = {
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
-
-    type: 'checkbox' as RowSelectionType,
-    hideSelectAll: true,
-    onChange(_: (string | number)[], rows: EventListTableRecord[]) {
-      setSelected(rows);
+    onSelectAll,
+    renderCell: (value, record) => {
+      return (
+        <Flex alignItems="center">
+          <Checkbox
+            disabled={allSources}
+            onChange={(e) => onSelectRow(record, e.target.checked)}
+            checked={value}
+          />
+        </Flex>
+      );
     },
-    getCheckboxProps(_: any) {
-      return {
-        disabled: allSources,
-      };
-    },
+    getCheckboxProps: () => ({ disabled: !!query }),
   };
 
   if (error?.status === 403) {

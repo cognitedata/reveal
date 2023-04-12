@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Body } from '@cognite/cogs.js';
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Icon, Body, Checkbox, Flex } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
@@ -8,6 +8,7 @@ import { RawSequence } from 'types/api';
 import { SourceTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type SequenceListTableRecord = { key: string } & RawSequence;
 type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
@@ -16,10 +17,12 @@ type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {
 
 export default function SequenceTable({
   selected,
-  setSelected,
   advancedFilter,
   filter,
   allSources,
+  onSelectAll,
+  onSelectRow,
+  query,
 }: SourceTableProps) {
   const { data, isInitialLoading, error } = useList('sequences', {
     filter,
@@ -87,21 +90,23 @@ export default function SequenceTable({
     [t]
   );
 
-  const rowSelection = {
+  const rowSelection: TableRowSelection<SequenceListTableRecord> = {
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
-
-    type: 'checkbox' as RowSelectionType,
-    hideSelectAll: true,
-    onChange(_: (string | number)[], rows: SequenceListTableRecord[]) {
-      setSelected(rows);
+    onSelectAll,
+    renderCell: (value, record) => {
+      return (
+        <Flex alignItems="center">
+          <Checkbox
+            disabled={allSources}
+            onChange={(e) => onSelectRow(record, e.target.checked)}
+            checked={value}
+          />
+        </Flex>
+      );
     },
-    getCheckboxProps(_: any) {
-      return {
-        disabled: allSources,
-      };
-    },
+    getCheckboxProps: () => ({ disabled: !!query }),
   };
 
   if (error?.status === 403) {
