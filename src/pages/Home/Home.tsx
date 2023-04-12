@@ -16,7 +16,11 @@ import IDP from 'pages/IDP';
 import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
-import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
+import {
+  useQueryClient,
+  useIsFetching,
+  useIsMutating,
+} from '@tanstack/react-query';
 import { useAuthConfiguration, usePermissions } from 'hooks';
 import { useTranslation } from 'common/i18n';
 

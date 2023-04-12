@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { isEqual } from 'lodash';
 import { Select, Tag, notification } from 'antd';
 import { Icon, Button } from '@cognite/cogs.js';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { ServiceAccount } from '@cognite/sdk';

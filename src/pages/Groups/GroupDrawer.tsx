@@ -3,7 +3,7 @@ import { Button as CogsButton } from '@cognite/cogs.js';
 import { Drawer, Form, Input, notification } from 'antd';
 import styled from 'styled-components';
 import { Group, GroupSpec } from '@cognite/sdk';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouteMatch } from 'react-router';
 import { useGroups, useUpdateGroup } from 'hooks';
 import CapabilitiesSelector from './CapabilitiesSelector';

@@ -3,7 +3,7 @@ import {
   UseMutationOptions,
   useQuery,
   useQueryClient,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { notification } from 'antd';
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
@@ -31,7 +31,7 @@ export const useGroups = (all = false) => {
 
 export const useAuthConfiguration = () => {
   const sdk = useSDK();
-  return useQuery('auth-configuration', () => {
+  return useQuery(['auth-configuration'], () => {
     return sdk
       .get<{
         isLegacyLoginFlowAndApiKeysEnabled: boolean;
@@ -113,7 +113,7 @@ export const forUnitTests = {
 
 export const useListServiceAccounts = (isLegacyFlow: boolean) => {
   const sdk = useSDK();
-  return useQuery('service-accounts', () => sdk.serviceAccounts.list(), {
+  return useQuery(['service-accounts'], () => sdk.serviceAccounts.list(), {
     enabled: isLegacyFlow,
   });
 };

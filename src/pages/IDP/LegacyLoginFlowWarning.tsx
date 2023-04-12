@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useHistory, useRouteMatch } from 'react-router';
 
 import { Icon } from '@cognite/cogs.js';
@@ -57,7 +57,7 @@ const LegacyLoginFlowWarning = () => {
           key: 'disable-legacy-login-flow',
           message: t('legacy-login-flow-disable-success'),
         });
-        client.invalidateQueries('auth-configuration');
+        client.invalidateQueries(['auth-configuration']);
         if (match?.params) {
           history.push(`/${match.params.tenant}/${match.params.path}/oidc`);
         }

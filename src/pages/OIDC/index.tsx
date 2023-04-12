@@ -4,7 +4,7 @@ import InputNumber from 'antd/lib/input-number';
 import { OidcConfiguration } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Tooltip } from '@cognite/cogs.js';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getContainer } from 'utils/utils';
 import { useRouteMatch } from 'react-router';
 import { useAuthConfiguration } from 'hooks';
@@ -82,14 +82,14 @@ export default function OIDCConfigContainer() {
         });
       },
       onSettled() {
-        cache.invalidateQueries('project-settings');
-        cache.invalidateQueries('auth-configuration');
+        cache.invalidateQueries(['project-settings']);
+        cache.invalidateQueries(['auth-configuration']);
       },
     }
   );
 
   const { data: projectSettings, isFetched: areProjectSettingsFetched } =
-    useQuery('project-settings', () => {
+    useQuery(['project-settings'], () => {
       return sdk.projects.retrieve(match?.params.tenant!);
     });
   const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =

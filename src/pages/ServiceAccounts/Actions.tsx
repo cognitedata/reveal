@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Dropdown, Menu, Typography, notification } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions, useRefreshToken } from 'hooks';
 import { useTranslation } from 'common/i18n';

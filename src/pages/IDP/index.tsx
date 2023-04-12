@@ -13,7 +13,7 @@ import {
   notification,
 } from 'antd';
 
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from 'hooks';
 import AzureADForm, {
