@@ -14,7 +14,11 @@ const NumberFormat = new Intl.NumberFormat(undefined);
 
 export function DataSetSelect({ api, onChange, selected }: Props) {
   const { t } = useTranslation();
-  const { data: datasets = [], isInitialLoading, error } = useDataSets(api);
+  const {
+    data: datasets = [],
+    isInitialLoading,
+    error,
+  } = useDataSets(api === 'files' ? 'documents' : api);
 
   const items = useMemo(
     () =>
