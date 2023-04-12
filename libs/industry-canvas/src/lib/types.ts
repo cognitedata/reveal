@@ -106,6 +106,7 @@ export type IndustryCanvasState = {
 export type PersistedCanvasState = {
   externalId: string;
   name: string;
+  isArchived?: boolean;
   createdAt: string;
   updatedAt: string;
   version: number;

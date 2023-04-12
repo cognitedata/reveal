@@ -2144,10 +2144,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^9.2.1":
-  version "9.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-9.2.1.tgz#389c588686dddc7e7f06329334ae8991c6ffe082"
-  integrity sha512-NDapqcFOeC5o/g9br98zmFP//3MqnxETZtlQ9baB6Arj8H0GOE0429YkfSLLZOGB+29sUoich0Ns6m670f4uBg==
+"@cognite/unified-file-viewer@^10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-10.0.2.tgz#fdedd3fb411c53496710e0ef8fcc37bd1d75ade1"
+  integrity sha512-WMLXEmIBL/2BSrl/h/k5aDPkRhN0J/TJI2Oix+tn/TAA17QISwQZzuYe6Pj/KbouOj52SxtlfBgn5C7JXAutpA==
   dependencies:
     "@cognite/cogs.js" "^7.14.7"
     "@cognite/reveal" "^4.1.2"
@@ -2171,7 +2171,7 @@
     lodash "^4.17.21"
     mixpanel-browser "^2.45.0"
     pdf-lib "^1.17.1"
-    pdfjs-dist "3.3.122"
+    pdfjs-dist "3.5.141"
     styled-components "^5.3.5"
     three "0.148.0"
     uuid "^9.0.0"
@@ -23821,10 +23821,10 @@ pdf-lib@^1.17.1:
     pako "^1.0.11"
     tslib "^1.11.1"
 
-pdfjs-dist@3.3.122:
-  version "3.3.122"
-  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-3.3.122.tgz#750047cb347a8124092180fc4399d4f31f1de37b"
-  integrity sha512-98WC09jOq3OuqrmF5+LZfcyzTlGA0sY9ocMBbWZ/H6Pwni7deptxwkNZVLieOz+4nSoTEW25PsfnfOj3ELrHdA==
+pdfjs-dist@3.5.141:
+  version "3.5.141"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-3.5.141.tgz#a98c2d4dd3192592ba7055d3e450ed6e97112f41"
+  integrity sha512-lYIvyi5grtYOIatsfCifIKwxHeAJ8eHyP22DTdvY4pm0yWVSFQnMafpgCPSw8gaNRDDdcHnBVOkqMsyK8SRxZg==
   dependencies:
     path2d-polyfill "^2.0.1"
     web-streams-polyfill "^3.2.1"
