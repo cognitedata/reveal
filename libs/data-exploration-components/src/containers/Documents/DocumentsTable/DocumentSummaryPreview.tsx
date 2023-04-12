@@ -6,16 +6,6 @@ import gpt from '../../../utils/gpt';
 import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 
 
-type GptCompletionResponse = {
-  choices: {
-    message: {
-      role: string;
-      content: string;
-      finishReason: string;
-    };
-  }[];
-};
-
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const DocumentSummaryPreview = ({

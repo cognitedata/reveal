@@ -31,16 +31,6 @@ import {
 } from '@data-exploration-lib/core';
 import { useSDK } from '@cognite/sdk-provider';
 
-type GptCompletionResponse = {
-  choices: {
-    message: {
-      role: string;
-      content: string;
-      finishReason: string;
-    };
-  }[];
-};
-
 export interface DocumentSearchResultsProps {
   query?: string;
   filter: InternalDocumentFilter;
@@ -96,14 +86,14 @@ export const DocumentSearchResults = ({
 
       const gptContent = `
       Can you split the following user question into 3 parts and give the answer as JSON key-value pairs:
-      1. A keyword search prompt to find the relevant documents. If relevant include synonyms. 
+      1. A keyword search prompt to find the relevant documents. 
       2. A GPT prompt that will look for the answer within each document.
       3. A column name with max 3 words describing the results from the GPT prompt.
       
-      Return only the answer as a json key-value pair using the keys: keywords, prompt, column_name. Ensure the keywords are split by |.
+      Return only the answer as a json key-value pair using the keys: keywords, prompt, column_name.
 
       "${query}"
-      `;
+      `; // Can use this: Ensure the keywords are split by |.
 
       const choices = await gpt(
         {
