@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { CanvasSidePanel } from '../canvas-side-panel';
 import { CanvasTopBar } from '../canvas-topbar/CanvasTopBar';
-import { FlowBuilder } from '../flow-builder';
+import { WorkflowBuilder } from '../flow-builder';
 import { useDatabases } from 'hooks/raw';
 
 import { Flow } from 'types';
@@ -30,7 +30,7 @@ export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
     <CanvasContainer>
       <CanvasTopBar flow={flow} />
       <CanvasSidePanel />
-      <FlowBuilder
+      <WorkflowBuilder
         initialNodes={nodes}
         initialEdges={edges}
         onChange={({ nodes, edges }) =>

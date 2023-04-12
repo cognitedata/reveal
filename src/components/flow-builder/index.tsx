@@ -25,7 +25,8 @@ type Props = {
   initialNodes: Node<any>[];
   onChange: (f: { nodes: Node<any>[]; edges: Edge<any>[] }) => void;
 };
-export const FlowBuilder = ({
+
+export const WorkflowBuilder = ({
   initialEdges,
   initialNodes,
   onChange,
@@ -119,7 +120,7 @@ export const FlowBuilder = ({
   );
 
   return (
-    <StyledReactFlowContainer ref={reactFlowContainer}>
+    <Container ref={reactFlowContainer}>
       <ReactFlow
         edges={edges}
         nodes={nodes}
@@ -139,11 +140,11 @@ export const FlowBuilder = ({
           size={1}
         />
       </ReactFlow>
-    </StyledReactFlowContainer>
+    </Container>
   );
 };
 
-const StyledReactFlowContainer = styled.div`
+const Container = styled.div`
   height: 100%;
   width: 100%;
 `;
