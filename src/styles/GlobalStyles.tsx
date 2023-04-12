@@ -7,6 +7,7 @@ import { getContainer } from 'utils';
 import { styleScope } from 'styles/styleScope';
 
 import antdTheme from './antd-theme.less';
+import reactFlowStyles from 'reactflow/dist/style.css';
 
 // This will override the appendTo prop on all Tooltips used from cogs
 // @ts-ignore
@@ -17,7 +18,11 @@ CogsTooltip.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const didLoadStyles = useGlobalStyles([cogsStyles, antdTheme]);
+  const didLoadStyles = useGlobalStyles([
+    cogsStyles,
+    antdTheme,
+    reactFlowStyles,
+  ]);
 
   if (!didLoadStyles) {
     return <Loader />;

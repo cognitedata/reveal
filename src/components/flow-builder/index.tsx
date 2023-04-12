@@ -11,6 +11,8 @@ import ReactFlow, {
   ReactFlowInstance,
   useEdgesState,
   useNodesState,
+  BackgroundVariant,
+  Controls,
 } from 'reactflow';
 import { useState } from 'react';
 
@@ -132,19 +134,15 @@ export const WorkflowBuilder = ({
         onInit={setReactFlowInstance}
         onNodesChange={onNodesChange}
       >
-        <Background
-          style={{
-            background: Colors['surface--misc-canvas'],
-          }}
-          color="#dddddd"
-          size={1}
-        />
+        <Controls />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
     </Container>
   );
 };
 
 const Container = styled.div`
+  background-color: ${Colors['surface--strong']};
   height: 100%;
   width: 100%;
 `;
