@@ -2,12 +2,10 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { CanvasSidePanel } from '../canvas-side-panel';
-import { CanvasTopBar } from '../canvas-topbar/CanvasTopBar';
-import { WorkflowBuilder } from '../flow-builder';
 import { useDatabases } from 'hooks/raw';
-
 import { Flow } from 'types';
+
+import { WorkflowBuilder } from '../flow-builder';
 
 type Props = {
   flow: Flow;
@@ -28,8 +26,6 @@ export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
 
   return (
     <CanvasContainer>
-      <CanvasTopBar flow={flow} />
-      <CanvasSidePanel />
       <WorkflowBuilder
         initialNodes={nodes}
         initialEdges={edges}

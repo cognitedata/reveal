@@ -1,6 +1,7 @@
-import { Flex, Menu } from '@cognite/cogs.js';
+import { Colors, Flex, Menu } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
+import styled from 'styled-components';
 import { getContainer } from 'utils';
 import { Flow } from 'types';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
@@ -13,7 +14,7 @@ export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
   }>();
 
   return (
-    <>
+    <Container>
       <SecondaryTopbar
         title={flow?.name}
         goBackFallback={createLink(`/${subAppPath}`)}
@@ -38,6 +39,10 @@ export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
           content: <Menu></Menu>,
         }}
       />
-    </>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
+`;
