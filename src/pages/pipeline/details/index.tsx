@@ -126,9 +126,7 @@ const PipelineDetails = (): JSX.Element => {
         extraContent={
           <Flex gap={8}>
             {hasPrevStep() && (
-              <Button disabled={!hasPrevStep()} onClick={handleGoPrevStep}>
-                {t('navigate-back')}
-              </Button>
+              <Button onClick={handleGoPrevStep}>{t('navigate-back')}</Button>
             )}
             <Button
               disabled={!hasNextStep()}
