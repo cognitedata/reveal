@@ -27,7 +27,7 @@ export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
   }, [hasNextPage, fetchNextPage, isFetching]);
 
   return (
-    <StyledCanvasContainer>
+    <CanvasContainer>
       <CanvasTopBar flow={flow} />
       <CanvasSidePanel />
       <FlowBuilder
@@ -37,11 +37,11 @@ export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
           onChange({ ...flow, canvas: { nodes, edges } })
         }
       />
-    </StyledCanvasContainer>
+    </CanvasContainer>
   );
 };
 
-const StyledCanvasContainer = styled.div`
+const CanvasContainer = styled.div`
   height: 100%;
   width: 100%;
 `;
