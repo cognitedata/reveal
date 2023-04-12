@@ -23,13 +23,13 @@ const Flow = (): JSX.Element => {
   }
 
   return (
-    <StyledFlowContainer>
+    <FlowContainer>
       <Canvas flow={data} onChange={onChange} />
-    </StyledFlowContainer>
+    </FlowContainer>
   );
 };
 
-const StyledFlowContainer = styled.div`
+const FlowContainer = styled.div`
   height: 100%;
   width: 100%;
 `;
