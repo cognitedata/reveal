@@ -17,6 +17,7 @@ import {
   fitCameraToAsset,
 } from '@data-exploration-app/containers/ThreeD/utils';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import styled from 'styled-components';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';
@@ -50,7 +51,7 @@ export const ExpandButton = ({
 
   return (
     <Tooltip content="Fit view" placement="right">
-      <Button
+      <FullWidthButton
         icon="ExpandAlternative"
         aria-label="Fit to view"
         onClick={() => {
@@ -84,7 +85,7 @@ export const FocusAssetButton = ({
 
   return (
     <Tooltip content="Fit asset" placement="right">
-      <Button
+      <FullWidthButton
         icon="Collapse"
         onClick={() => {
           if (viewer && threeDModel) {
@@ -153,7 +154,7 @@ export const PointToPointMeasurementButton = ({
 
   return (
     <Tooltip content="Distance measuring tool" placement="right">
-      <Button
+      <FullWidthButton
         icon="Ruler"
         onClick={handleClick}
         toggled={!nodesSelectable}
@@ -163,3 +164,7 @@ export const PointToPointMeasurementButton = ({
     </Tooltip>
   );
 };
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
+`;

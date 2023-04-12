@@ -13,6 +13,7 @@ import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDCon
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import styled from 'styled-components';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;
@@ -79,7 +80,7 @@ const AssetsHighlightButton = ({
   };
   return (
     <Tooltip content="Emphasize clickable objects" placement="right">
-      <Button
+      <FullWidthButton
         onClick={handleAssetHighlighting}
         toggled={assetHighlightMode}
         icon="Assets"
@@ -118,5 +119,9 @@ function addLabelsFromAssetMappings(
     }
   });
 }
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
+`;
 
 export default AssetsHighlightButton;

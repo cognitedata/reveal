@@ -5,10 +5,11 @@ import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDCon
 import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useContext } from 'react';
+import styled from 'styled-components';
 
 const ShareButton = (): JSX.Element => {
   const {
-    viewState,
+    viewer,
     slicingState,
     selectedAssetId,
     assetDetailsExpanded,
@@ -19,6 +20,7 @@ const ShareButton = (): JSX.Element => {
   } = useContext(ThreeDContext);
 
   const handleShare = async () => {
+    const viewState = viewer?.getViewState();
     const path = getStateUrl({
       revisionId,
       viewState,
@@ -48,7 +50,7 @@ const ShareButton = (): JSX.Element => {
 
   return (
     <Tooltip content="Copy URL to current state" placement="right">
-      <Button
+      <FullWidthButton
         icon="Link"
         onClick={handleShare}
         type="ghost"
@@ -57,5 +59,9 @@ const ShareButton = (): JSX.Element => {
     </Tooltip>
   );
 };
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
+`;
 
 export default ShareButton;
