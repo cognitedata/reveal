@@ -1,8 +1,10 @@
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
   InternalEventsFilters,
   useDebouncedState,
   useDeepMemo,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import {
   useDocumentsUniqueValuesByProperty,
@@ -35,13 +37,28 @@ export function TypeFilter<TFilter>({
   value,
   ...rest
 }: TypeFilterProps<TFilter>) {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    type: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(type.map((t) => t.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_EVENT_FILTER, {
+      value: type,
+      title,
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       label={title}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, type) => onChange?.(type.map((t) => t.value))}
+      onChange={(_, type) => handleChange(type)}
       isMulti
     />
   );

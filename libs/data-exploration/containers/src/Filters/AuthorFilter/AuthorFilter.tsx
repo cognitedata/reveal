@@ -1,7 +1,9 @@
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
   useDebouncedState,
   useDeepMemo,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import { useDocumentsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { InputActionMeta } from 'react-select';
@@ -32,15 +34,28 @@ export function AuthorFilter<TFilter>({
   value,
   ...rest
 }: AuthorFilterProps<TFilter>) {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    authors: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(authors.map((author) => author.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: authors,
+      title,
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       label={title}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, authors) =>
-        onChange?.(authors.map((author) => author.value))
-      }
+      onChange={(_, authors) => handleChange(authors)}
       isMulti
     />
   );

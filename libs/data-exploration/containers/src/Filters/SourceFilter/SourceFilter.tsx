@@ -13,11 +13,13 @@ import {
 } from '../types';
 
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
   InternalDocumentFilter,
   InternalEventsFilters,
   useDebouncedState,
   useDeepMemo,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
 import { InputActionMeta } from 'react-select';
@@ -46,13 +48,28 @@ export const SourceFilter = <TFilter,>({
   onChange,
   ...rest
 }: SourceFilterProps<TFilter>) => {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    sources: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(sources);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: sources,
+      title: 'Source Filter',
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       addNilOption
       label="Source"
       options={options}
-      onChange={(_, newSources) => onChange?.(newSources)}
+      onChange={(_, newSources) => handleChange(newSources)}
     />
   );
 };
@@ -63,6 +80,21 @@ export const BaseFileSourceFilter = <TFilter,>({
   value,
   ...rest
 }: FileSourceFilterProps<TFilter>) => {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    newSources: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(newSources.map((source) => source.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: newSources,
+      title: 'File Source',
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
@@ -70,9 +102,7 @@ export const BaseFileSourceFilter = <TFilter,>({
       label="Source"
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, newSources) =>
-        onChange?.(newSources.map((source) => source.value))
-      }
+      onChange={(_, newSources) => handleChange(newSources)}
     />
   );
 };

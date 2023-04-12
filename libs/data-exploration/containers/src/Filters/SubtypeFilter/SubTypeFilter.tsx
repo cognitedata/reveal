@@ -1,7 +1,9 @@
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalEventsFilters,
   useDebouncedState,
   useDeepMemo,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import { useEventsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -29,13 +31,29 @@ export function SubTypeFilter<TFilter>({
   value,
   ...rest
 }: SubTypeFilterProps<TFilter>) {
+  const trackUsage = useMetrics();
+  const filterLabel = 'Sub Type';
+
+  const handleChange = (
+    newValue: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(newValue.map((s) => s.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_EVENT_FILTER, {
+      value: newValue,
+      title: filterLabel,
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label="Sub Type"
+      label={filterLabel}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, subtype) => onChange?.(subtype.map((s) => s.value))}
+      onChange={(_, subtype) => handleChange(subtype)}
     />
   );
 }

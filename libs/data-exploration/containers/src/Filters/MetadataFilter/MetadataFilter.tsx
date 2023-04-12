@@ -1,10 +1,12 @@
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
   InternalDocumentFilter,
   InternalEventsFilters,
   InternalSequenceFilters,
   InternalTimeseriesFilters,
   useDebouncedState,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import {
   useAssetsMetadataKeysAggregateQuery,
@@ -22,6 +24,7 @@ import {
   CheckboxSelect,
   OptionType,
   CustomMetadataValue,
+  OptionSelection,
 } from '@data-exploration/components';
 import { BaseNestedFilterProps } from '../types';
 import {
@@ -46,7 +49,16 @@ export const MetadataFilter = <TFilter,>({
   onChange,
   ...rest
 }: MetadataFilterProps<TFilter>) => {
+  const trackUsage = useMetrics();
   const selection = transformMetadataValues(values);
+
+  const handleOnClickApply = (newSelection: OptionSelection) => {
+    const transformedSelection = transformMetadataSelectionChange(newSelection);
+
+    onChange?.(transformedSelection);
+
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.METADATA_FILTER, values);
+  };
 
   return (
     <CheckboxSelect
@@ -56,12 +68,7 @@ export const MetadataFilter = <TFilter,>({
       label="Metadata"
       options={options}
       onSearchInputChange={onSearchInputChange}
-      onClickApply={(newSelection) => {
-        const transformedSelection =
-          transformMetadataSelectionChange(newSelection);
-
-        onChange?.(transformedSelection);
-      }}
+      onClickApply={handleOnClickApply}
       useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
     />
   );

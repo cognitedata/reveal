@@ -3,8 +3,7 @@ import * as React from 'react';
 import { Collapse, Container, Panel } from './elements';
 import { BaseFilterHeader } from './BaseFilterHeader';
 import { ResetButton } from '../../Buttons';
-// import { trackUsage } from '@data-exploration-app/utils/Metrics';
-// import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { EXPLORATION, useMetrics } from '@data-exploration-lib/core';
 
 // Might need this in the near future. Leaving for now
 // const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {
@@ -56,6 +55,8 @@ export const BaseFilterPanel = ({
   onResetClick,
   ...rest
 }: BaseFilterPanelProps) => {
+  const trackUsage = useMetrics();
+
   return (
     <Panel
       {...rest}
@@ -66,7 +67,7 @@ export const BaseFilterPanel = ({
             <ResetButton
               onClick={() => {
                 onResetClick && onResetClick();
-                // trackUsage(EXPLORATION.CLICK.RESET_FILTER, { title });
+                trackUsage(EXPLORATION.CLICK.RESET_FILTER, { title });
               }}
             />
           )}
