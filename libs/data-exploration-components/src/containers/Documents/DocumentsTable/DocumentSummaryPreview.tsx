@@ -71,7 +71,7 @@ export const DocumentSummaryPreview = ({
           let gptContent =
             'Describe with maximum 150 characters the purpose of the following document: \n\n' +
             ocrText;
-          if (query) {
+          if (query && query.endsWith('?')) {
             gptContent =
               'Given this information about this file: \n\n' +
               ocrText.substring(0, 10000) +
@@ -108,7 +108,7 @@ export const DocumentSummaryPreview = ({
       }
     }
     retrieveContent();
-  }, [sdk, sdk.files, document]);
+  }, [sdk, sdk.files, document, query]);
 
   return (
     <Body level={2}>

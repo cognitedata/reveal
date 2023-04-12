@@ -46,7 +46,6 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
-  console.log('Yeah bitch: ', query);
 
   const columns = useMemo(
     () =>

@@ -81,9 +81,18 @@ export const DocumentSearchResults = ({
     documentSearchConfig
   );
   const sdk = useSDK();
-  
+
   useEffect(() => {
     (async () => {
+      if (query == null) {
+        setRealQuery(undefined);
+        return;
+      }
+
+      if (!query.endsWith('?')) {
+        setRealQuery(query);
+      }
+
       const gptContent = `
       Can you split the following user question into 3 parts and give the answer as JSON key-value pairs:
       1. A keyword search prompt to find the relevant documents
