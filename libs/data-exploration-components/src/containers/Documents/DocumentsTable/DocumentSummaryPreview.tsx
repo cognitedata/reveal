@@ -42,7 +42,7 @@ export const DocumentSummaryPreview = ({
         try {
           // 1. Fetch document content using CDF OCR
           const response = await sdk.post<OcrResponse>(
-            'https://azure-dev.cognitedata.com/api/playground/projects/${sdk.project}/context/pnid/ocr',
+            `https://azure-dev.cognitedata.com/api/playground/projects/${sdk.project}/context/pnid/ocr`,
             {
               data: { fileId: document.id },
               responseType: HttpResponseType.Json,
