@@ -3,15 +3,20 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection } from '@cognite/reveal';
+import { Cognite3DViewer, Image360, Image360Collection, Image360EnteredDelegate } from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
     let collections: Image360Collection[] = [];
+    let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
+
+    const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
+      selectedEntity = entity;
+    };
 
     const translation = {
       x: 0,
@@ -34,6 +39,11 @@ export class Image360UI {
       radius: Infinity,
       limit: 50,
       hideAll: false
+    };
+
+    const imageRevisions = {
+      id: '0',
+      targetDate: ''
     };
 
     const params = {
@@ -89,6 +99,30 @@ export class Image360UI {
         }
       });
 
+    gui
+      .add(imageRevisions, 'targetDate')
+      .name('Revision date (Unix epoch time):')
+      .onChange(() => {
+        if (collections.length === 0) return;
+
+        const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
+        collections.forEach(p => (p.targetRevisionDate = date));
+        if (selectedEntity) viewer.enter360Image(selectedEntity);
+      });
+
+    gui
+      .add(imageRevisions, 'id')
+      .name('Current image revision')
+      .onChange(() => {
+        if (selectedEntity) {
+          const revisions = selectedEntity.getRevisions();
+          const index = Number(imageRevisions.id);
+          if (index >= 0 && index < revisions.length) {
+            viewer.enter360Image(selectedEntity, revisions[index]);
+          }
+        }
+      });
+
     gui.add(params, 'remove').name('Remove all 360 images');
 
     async function add360ImageSet() {
@@ -106,6 +140,7 @@ export class Image360UI {
         { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
+      collection.on('image360Entered', onImageEntered);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
       viewer.requestRedraw();

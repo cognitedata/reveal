@@ -21,12 +21,31 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   readonly image360Entities: Image360Entity[];
 
+  /**
+   * If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
+   * If undefined, the most recent revision will be loaded.
+   */
+  private _targetRevisionDate: Date | undefined;
+
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
+  private readonly _collectionId: string;
+
+  get id(): string {
+    return this._collectionId;
+  }
+
+  get targetRevisionDate(): Date | undefined {
+    return this._targetRevisionDate;
+  }
+
+  set targetRevisionDate(date: Date | undefined) {
+    this._targetRevisionDate = date;
+  }
 
   /**
    * The events from the image collection.
@@ -42,7 +61,8 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._isCollectionVisible;
   }
 
-  constructor(entities: Image360Entity[], icons: IconCollection) {
+  constructor(collectionId: string, entities: Image360Entity[], icons: IconCollection) {
+    this._collectionId = collectionId;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;

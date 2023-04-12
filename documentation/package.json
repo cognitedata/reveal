@@ -24,8 +24,8 @@
     "ws:replace": "replace"
   },
   "dependencies": {
-    "@azure/msal-browser": "2.34.0",
-    "@codemirror/lang-javascript": "6.1.4",
+    "@azure/msal-browser": "2.35.0",
+    "@codemirror/lang-javascript": "6.1.5",
     "@docusaurus/core": "2.4.0",
     "@docusaurus/preset-classic": "2.4.0",
     "@docusaurus/remark-plugin-npm2yarn": "2.4.0",
@@ -49,7 +49,7 @@
     "typedoc": "0.23.28",
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-no-inherit": "1.4.0",
-    "typescript": "5.0.3"
+    "typescript": "5.0.4"
   },
   "browserslist": {
     "production": [

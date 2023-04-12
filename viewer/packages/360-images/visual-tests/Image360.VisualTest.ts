@@ -93,7 +93,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      await facade.preload(entity);
+      await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = true;
       entity.icon.setVisibility(false);
 
@@ -184,7 +184,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
       entity.icon.hoverSpriteVisible = true;
-      await facade.preload(entity);
+      await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = false;
       this.render();
     });

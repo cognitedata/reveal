@@ -182,12 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.34.0":
-  version: 2.34.0
-  resolution: "@azure/msal-browser@npm:2.34.0"
+"@azure/msal-browser@npm:2.35.0":
+  version: 2.35.0
+  resolution: "@azure/msal-browser@npm:2.35.0"
   dependencies:
-    "@azure/msal-common": ^11.0.0
-  checksum: 0ce02792d4488aa7440dfb1d05895192e36edc6f99364e1665327ed7724b922b3f7626d9d7abc6c269f7797c21519433a52f2eb53750c5afb95b920515af92c3
+    "@azure/msal-common": ^12.0.0
+  checksum: 8d542d80eb74b8b5158ad3cb8feed9e7d1c24d85f708c3e5054bf5177161d2dcde3a8bcf8d0c97be278399c0b34dade24cc9f72fa7c8fb4ecfcbed2658d522d2
   languageName: node
   linkType: hard
 
@@ -200,10 +200,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@azure/msal-common@npm:11.0.0"
-  checksum: 32aa79b20ead2943d6622779aee6656f1b73ce4d981437da9bcfa7541799514c688e3f3d9d68ec5cc48031745a723be1a6de984c56c031bf9364daee559f5240
+"@azure/msal-common@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "@azure/msal-common@npm:12.0.0"
+  checksum: 674eff1d6465d35831953848092da735f9992bbb92e0a4a6847f1190ea842e84869c98c44ec256c3f04aeb968f97b775cfecf633a6971d48eb7608f3bc12b685
   languageName: node
   linkType: hard
 
@@ -2032,9 +2032,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lang-javascript@npm:6.1.4":
-  version: 6.1.4
-  resolution: "@codemirror/lang-javascript@npm:6.1.4"
+"@codemirror/lang-javascript@npm:6.1.5":
+  version: 6.1.5
+  resolution: "@codemirror/lang-javascript@npm:6.1.5"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/language": ^6.6.0
@@ -2043,7 +2043,7 @@ __metadata:
     "@codemirror/view": ^6.0.0
     "@lezer/common": ^1.0.0
     "@lezer/javascript": ^1.0.0
-  checksum: d550db179c522cd7c39d26815ee47ac4751656c856d42eeb3743e67482d4377692c4fcd3413b0e97c2c7070b6b10aaa582909c6234f42b04145d56efc49c8a6b
+  checksum: f0355f9577fac03437137356b5c8826ec073480d9b0efc62289eac483172d47dafe569f31bf788e4228e8b789197e50a0768cf10b0cde5f600e89b6b469f52cc
   languageName: node
   linkType: hard
 
@@ -2137,8 +2137,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.34.0
-    "@codemirror/lang-javascript": 6.1.4
+    "@azure/msal-browser": 2.35.0
+    "@codemirror/lang-javascript": 6.1.5
     "@docusaurus/core": 2.4.0
     "@docusaurus/preset-classic": 2.4.0
     "@docusaurus/remark-plugin-npm2yarn": 2.4.0
@@ -2160,7 +2160,7 @@ __metadata:
     typedoc: 0.23.28
     typedoc-plugin-markdown: 3.14.0
     typedoc-plugin-no-inherit: 1.4.0
-    typescript: 5.0.3
+    typescript: 5.0.4
   languageName: unknown
   linkType: soft
 
@@ -12497,23 +12497,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.0.3":
-  version: 5.0.3
-  resolution: "typescript@npm:5.0.3"
+"typescript@npm:5.0.4":
+  version: 5.0.4
+  resolution: "typescript@npm:5.0.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 3cce0576d218cb4277ff8b6adfef1a706e9114a98b4261a38ad658a7642f1b274a8396394f6cbff8c0ba852996d7ed2e233e9b8431d5d55ac7c2f6fea645af02
+  checksum: 82b94da3f4604a8946da585f7d6c3025fff8410779e5bde2855ab130d05e4fd08938b9e593b6ebed165bda6ad9292b230984f10952cf82f0a0ca07bbeaa08172
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.0.3#~builtin<compat/typescript>":
-  version: 5.0.3
-  resolution: "typescript@patch:typescript@npm%3A5.0.3#~builtin<compat/typescript>::version=5.0.3&hash=7ad353"
+"typescript@patch:typescript@5.0.4#~builtin<compat/typescript>":
+  version: 5.0.4
+  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 9ec0a8eed38d46cc2c8794555b7674e413604c56c159f71b8ff21ce7f17334a44127a68724cb2ef8221ff3b19369f8f05654e8a5266621d7d962aeed889bd630
+  checksum: 6a1fe9a77bb9c5176ead919cc4a1499ee63e46b4e05bf667079f11bf3a8f7887f135aa72460a4c3b016e6e6bb65a822cb8689a6d86cbfe92d22cc9f501f09213
   languageName: node
   linkType: hard
 
