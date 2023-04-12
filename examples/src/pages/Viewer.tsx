@@ -79,6 +79,7 @@ export function Viewer() {
         }
       };
 
+      // Cognite Client is initialised
       let client: CogniteClient;
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
@@ -331,7 +332,9 @@ export function Viewer() {
       new CameraUI(viewer, gui.addFolder('Camera'));
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
-      new Image360UI(viewer, gui.addFolder('360 Images'));
+
+      // UI for 360 images
+      new Image360UI(viewer, gui.addFolder('360 Images'), client);
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
@@ -351,6 +354,7 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
+      // on click event - when user clicks somewhere in the point cloud some action is triggered
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -369,14 +373,14 @@ export function Viewer() {
             case 'pointcloud':
               {
                 const { point, model } = intersection;
-                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`, point);
+                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.externalId} at`, point);
                 if (intersection.annotationId !== 0) {
                   pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
                   model.removeAllStyledObjectCollections();
                   const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
                 } else {
-                  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.025), new THREE.MeshBasicMaterial({ color: 'red' }));
                   sphere.position.copy(point);
                   viewer.addObject3D(sphere);
                 }
