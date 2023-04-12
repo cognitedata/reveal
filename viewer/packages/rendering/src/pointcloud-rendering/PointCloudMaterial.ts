@@ -86,12 +86,11 @@ const COLOR_DEFS = {
   [PointColorType.Classification]: 'color_type_classification'
 };
 
-
 function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
   return (_: { get: () => unknown }, _context: any) => ({
-    get (this: any) {
-        return this.getUniform(uniformName);
-      },
+    get(this: any) {
+      return this.getUniform(uniformName);
+    },
     set(this: any, value: unknown) {
       if (value !== this.getUniform(uniformName)) {
         this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
@@ -111,13 +110,13 @@ function requiresShaderUpdate() {
     },
     set(this: any, value: unknown) {
       const fieldName = `_${context.name.toString()}`;
-      if (value !== this[fieldName] as any) {
+      if (value !== (this[fieldName] as any)) {
         this[fieldName] = value;
         this.updateShaderSource();
       }
     }
   });
-};
+}
 
 export class PointCloudMaterial extends RawShaderMaterial {
   private static readonly helperVec3 = new Vector3();
