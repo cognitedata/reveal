@@ -13,10 +13,6 @@ import Sources from './sources';
 import Targets from './targets';
 import ConfigurePipeline from './configure-pipeline';
 import Run from './run';
-import { usePipelineContext } from 'context/PipelineContext';
-import { useContextState } from 'utils';
-import { Filter, RawSource, RawTarget, SourceType } from 'types/api';
-import { useEffect } from 'react';
 
 const PIPELINE_STEPS = [
   'sources',
