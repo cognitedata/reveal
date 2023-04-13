@@ -31,5 +31,11 @@
   "run": "Run",
   "view": "View",
   "floating-components-panel-title": "Add components",
-  "floating-components-panel-description": "Drag and drop components to the canvas"
+  "floating-components-panel-description": "Drag and drop components to the canvas",
+  "component-title-transformation": "Transformation",
+  "component-description-transformation": "Execute a SQL query",
+  "component-title-webhook": "Webhook",
+  "component-description-webhook": "Make an HTTP call to another service",
+  "component-title-workflow": "Workflow",
+  "component-description-workflow": "One workflow calls another"
 }

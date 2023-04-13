@@ -16,9 +16,9 @@ import ReactFlow, {
 import styled from 'styled-components';
 
 import { CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER } from 'common';
-import { CANVAS_BLOCK_TYPES } from 'components/canvas-block';
 import { CustomNode } from 'components/custom-node';
 import { Colors } from '@cognite/cogs.js';
+import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
 
 type Props = {
   initialEdges: Edge<any>[];
@@ -96,7 +96,7 @@ export const WorkflowBuilder = ({
         if (
           typeof type === 'undefined' ||
           !type ||
-          !CANVAS_BLOCK_TYPES.some((blockType) => blockType === type)
+          !WORKFLOW_COMPONENT_TYPES.some((testType) => testType === type)
         ) {
           return;
         }
@@ -122,6 +122,9 @@ export const WorkflowBuilder = ({
   return (
     <Container ref={reactFlowContainer}>
       <ReactFlow
+        panOnDrag={false}
+        selectionOnDrag
+        panOnScroll
         edges={edges}
         nodes={nodes}
         nodeTypes={nodeTypes}
