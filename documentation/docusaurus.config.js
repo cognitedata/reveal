@@ -92,7 +92,6 @@ function recursiveSortByLabel(items) {
     return item;
   });
 
-  console.log(result);
   result.sort((a, b) => (a.label < b.label ? -1 : 1));
   return result;
 }
