@@ -156,7 +156,6 @@ const ExpandedRule = ({
         setSelectedSourceIds(keys as number[]);
       }
     },
-    columnWidth: 36,
   };
 
   return (

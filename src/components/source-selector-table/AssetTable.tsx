@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Body, Icon } from '@cognite/cogs.js';
-import { Alert } from 'antd';
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Body, Flex, Icon } from '@cognite/cogs.js';
+import { Alert, Checkbox } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawAsset } from 'types/api';
@@ -9,6 +9,7 @@ import { TargetTableProps } from 'types/types';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import { useDataSets } from 'hooks/datasets';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type AssetListTableRecord = { key: string } & RawAsset;
 type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
@@ -18,10 +19,12 @@ type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
 
 export default function AssetTable({
   selected,
-  setSelected,
   advancedFilter,
   filter,
   allSources,
+  onSelectAll,
+  onSelectRow,
+  query,
 }: TargetTableProps) {
   const { t } = useTranslation();
   const { data, isInitialLoading, error } = useList('assets', {
@@ -104,20 +107,23 @@ export default function AssetTable({
     [t, items]
   );
 
-  const rowSelection = {
+  const rowSelection: TableRowSelection<AssetListTableRecord> = {
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
-    type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
-      setSelected(rows);
+    onSelectAll,
+    renderCell: (value, record) => {
+      return (
+        <Flex alignItems="center">
+          <Checkbox
+            disabled={allSources}
+            onChange={(e) => onSelectRow(record, e.target.checked)}
+            checked={value}
+          />
+        </Flex>
+      );
     },
-    hideSelectAll: true,
-    getCheckboxProps(_: AssetListTableRecord) {
-      return {
-        disabled: allSources,
-      };
-    },
+    getCheckboxProps: () => ({ disabled: !!query }),
   };
 
   if (error?.status === 403) {

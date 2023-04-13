@@ -1,4 +1,4 @@
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 import { useSearchParams } from 'react-router-dom';
 import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
 import AssetTable from 'components/source-selector-table/AssetTable';
@@ -12,6 +12,7 @@ import { useTranslation } from 'common';
 import RootAssetSelect from 'components/root-asset-select';
 import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
 import styled from 'styled-components';
+import { RawTarget } from 'types/api';
 
 type Props = {};
 
@@ -35,6 +36,25 @@ export default function TargetSelectionTable({}: Props) {
   );
 
   const onClose = () => setTargetsList([]);
+
+  const handleSelectRow = (row: RawTarget, checked: boolean) => {
+    if (checked) {
+      setTargetsList((prevState) => prevState.concat([row]));
+    } else {
+      setTargetsList((prevState) =>
+        prevState.filter(({ id: testId }) => row.id !== testId)
+      );
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setAllTargets(true);
+      setTargetsList([]);
+    } else {
+      setAllTargets(false);
+    }
+  };
 
   return (
     <Container $isActionBarVisible={!!targetsList.length}>
@@ -76,20 +96,16 @@ export default function TargetSelectionTable({}: Props) {
               filter={targetFilter}
               advancedFilter={advancedFilter}
             />
-            <Checkbox
-              checked={!query && allTargets}
-              disabled={!!query}
-              onChange={(e) => setAllTargets(e.target.checked)}
-              label="Select all"
-            />
           </Flex>
         </Flex>
         <AssetTable
           filter={targetFilter}
           selected={targetsList}
-          setSelected={setTargetsList}
           advancedFilter={advancedFilter}
           allSources={allTargets}
+          onSelectAll={handleSelectAll}
+          onSelectRow={handleSelectRow}
+          query={query}
         />
       </Flex>
       <QuickMatchActionBar

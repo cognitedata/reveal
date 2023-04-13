@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader, Body } from '@cognite/cogs.js';
-import { Alert } from 'antd';
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Icon, Loader, Body, Flex } from '@cognite/cogs.js';
+import { Alert, Checkbox } from 'antd';
 import { useTranslation } from 'common';
 
 import { useList } from 'hooks/list';
@@ -9,6 +9,7 @@ import { SourceTableProps } from 'types/types';
 import { RawTimeseries } from 'types/api';
 import { PAGINATION_SETTINGS } from 'common/constants';
 import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 type TimeseriesListTableRecord = {
   key: string;
@@ -21,10 +22,12 @@ type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
 
 export default function TimeseriesTable({
   selected,
-  setSelected,
   advancedFilter,
   filter,
   allSources,
+  onSelectAll,
+  onSelectRow,
+  query,
 }: SourceTableProps) {
   const {
     data,
@@ -93,20 +96,23 @@ export default function TimeseriesTable({
     [t]
   );
 
-  const rowSelection = {
+  const rowSelection: TableRowSelection<TimeseriesListTableRecord> = {
     selectedRowKeys: allSources
       ? dataSource?.map((d) => d.id.toString())
       : selected.map((s) => s.id.toString()),
-    type: 'checkbox' as RowSelectionType,
-    hideSelectAll: true,
-    onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
-      setSelected(rows);
+    onSelectAll,
+    renderCell: (value, record) => {
+      return (
+        <Flex alignItems="center">
+          <Checkbox
+            disabled={allSources}
+            onChange={(e) => onSelectRow(record, e.target.checked)}
+            checked={value}
+          />
+        </Flex>
+      );
     },
-    getCheckboxProps(_: TimeseriesListTableRecord) {
-      return {
-        disabled: allSources,
-      };
-    },
+    getCheckboxProps: () => ({ disabled: !!query }),
   };
 
   if (error?.status === 403) {
