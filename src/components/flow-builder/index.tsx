@@ -11,7 +11,9 @@ import ReactFlow, {
   ReactFlowInstance,
   useEdgesState,
   useNodesState,
-} from 'react-flow-renderer';
+  BackgroundVariant,
+  Controls,
+} from 'reactflow';
 import { useState } from 'react';
 
 import styled from 'styled-components';
@@ -25,7 +27,8 @@ type Props = {
   initialNodes: Node<any>[];
   onChange: (f: { nodes: Node<any>[]; edges: Edge<any>[] }) => void;
 };
-export const FlowBuilder = ({
+
+export const WorkflowBuilder = ({
   initialEdges,
   initialNodes,
   onChange,
@@ -119,7 +122,7 @@ export const FlowBuilder = ({
   );
 
   return (
-    <StyledReactFlowContainer ref={reactFlowContainer}>
+    <Container ref={reactFlowContainer}>
       <ReactFlow
         edges={edges}
         nodes={nodes}
@@ -131,19 +134,15 @@ export const FlowBuilder = ({
         onInit={setReactFlowInstance}
         onNodesChange={onNodesChange}
       >
-        <Background
-          style={{
-            background: Colors['surface--misc-canvas'],
-          }}
-          color="#dddddd"
-          size={1}
-        />
+        <Controls />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
-    </StyledReactFlowContainer>
+    </Container>
   );
 };
 
-const StyledReactFlowContainer = styled.div`
+const Container = styled.div`
+  background-color: ${Colors['surface--strong']};
   height: 100%;
   width: 100%;
 `;

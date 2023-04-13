@@ -7,7 +7,7 @@ import {
   IconType,
   Overline,
 } from '@cognite/cogs.js';
-import { Handle, Position, useNodes } from 'react-flow-renderer';
+import { Handle, Position, useNodes } from 'reactflow';
 import styled from 'styled-components';
 
 import { CustomNodeData } from 'components/custom-node';

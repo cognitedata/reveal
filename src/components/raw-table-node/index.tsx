@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { RawDB, RawDBTable } from '@cognite/sdk';
-import { NodeProps, useReactFlow } from 'react-flow-renderer';
+import { NodeProps, useReactFlow } from 'reactflow';
 
 import { NodeData } from 'components/custom-node';
 import { BaseNode } from 'components/base-node';

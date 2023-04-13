@@ -1,18 +1,10 @@
 import { useEffect } from 'react';
 
-import { Colors } from '@cognite/cogs.js';
-import { Allotment } from 'allotment';
-import { ReactFlowProvider } from 'react-flow-renderer';
 import styled from 'styled-components';
 
-import {
-  CANVAS_SIDE_PANEL_MAX_SIZE,
-  CANVAS_SIDE_PANEL_MIN_SIZE,
-  CANVAS_SIDE_PANEL_PREFERRED_SIZE,
-} from 'common';
 import { CanvasSidePanel } from '../canvas-side-panel';
 import { CanvasTopBar } from '../canvas-topbar/CanvasTopBar';
-import { FlowBuilder } from '../flow-builder';
+import { WorkflowBuilder } from '../flow-builder';
 import { useDatabases } from 'hooks/raw';
 
 import { Flow } from 'types';
@@ -35,40 +27,21 @@ export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
   }, [hasNextPage, fetchNextPage, isFetching]);
 
   return (
-    <ReactFlowProvider>
-      <StyledCanvasContainer>
-        <Allotment vertical proportionalLayout={false}>
-          <Allotment.Pane key="topbar" minSize={56} maxSize={56}>
-            <CanvasTopBar flow={flow} />
-          </Allotment.Pane>
-          <Allotment>
-            <Allotment.Pane
-              maxSize={CANVAS_SIDE_PANEL_MAX_SIZE}
-              minSize={CANVAS_SIDE_PANEL_MIN_SIZE}
-              preferredSize={CANVAS_SIDE_PANEL_PREFERRED_SIZE}
-            >
-              <CanvasSidePanel />
-            </Allotment.Pane>
-            <Allotment.Pane>
-              <FlowBuilder
-                initialNodes={nodes}
-                initialEdges={edges}
-                onChange={({ nodes, edges }) =>
-                  onChange({ ...flow, canvas: { nodes, edges } })
-                }
-              />
-            </Allotment.Pane>
-          </Allotment>
-        </Allotment>
-      </StyledCanvasContainer>
-    </ReactFlowProvider>
+    <CanvasContainer>
+      <CanvasTopBar flow={flow} />
+      <CanvasSidePanel />
+      <WorkflowBuilder
+        initialNodes={nodes}
+        initialEdges={edges}
+        onChange={({ nodes, edges }) =>
+          onChange({ ...flow, canvas: { nodes, edges } })
+        }
+      />
+    </CanvasContainer>
   );
 };
 
-const StyledCanvasContainer = styled.div`
+const CanvasContainer = styled.div`
   height: 100%;
   width: 100%;
-
-  --focus-border: ${Colors['border--interactive--hover']};
-  --separator-border: ${Colors['border--muted']};
 `;
