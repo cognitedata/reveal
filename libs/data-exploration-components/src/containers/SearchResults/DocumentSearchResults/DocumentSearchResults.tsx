@@ -30,6 +30,7 @@ import {
 } from '@data-exploration-lib/core';
 import { useSDK } from '@cognite/sdk-provider';
 import { useFlagDocumentGPT } from '@data-exploration-components/hooks';
+import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -75,6 +76,7 @@ export const DocumentSearchResults = ({
   );
   const sdk = useSDK();
   const isDocumentsGPTEnabled = useFlagDocumentGPT();
+  const track = useDebounceTrackUsage();
 
   useEffect(() => {
     async function retrieveAnswer() {
@@ -83,6 +85,10 @@ export const DocumentSearchResults = ({
         setGptColumnName('Summary');
         return;
       }
+
+      track(DATA_EXPLORATION_COMPONENT.SEARCH.DOCUMENT_GPT_SEARCH, {
+        query: query,
+      });
 
       const gptContent = `
       Can you split the following user question into 3 parts and give the answer as JSON key-value pairs:

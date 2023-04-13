@@ -38,6 +38,7 @@ const SELECT = {
 const SEARCH = {
   METADATA_FILTER: `${DATA_EXPLORATION}.Search.MetadataFilter`,
   PREVIEW_SEARCH: `${DATA_EXPLORATION}.Search.PreviewSearch`,
+  DOCUMENT_GPT_SEARCH: `${DATA_EXPLORATION}.Search.DocumentGPTSearch`,
 };
 
 const INPUT = {
