@@ -375,32 +375,33 @@ function getValid<T>(a: T | undefined, b: T): T {
 }
 
 function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K) {
+  type UniformType = IPointCloudMaterialUniforms[K]['value'];
   return (_target: any, _context: any) => ({
-    get(this: any) {
+    get(this: PointCloudMaterial) {
       return this.getUniform(uniformName);
     },
-    set(this: any, value: unknown) {
+    set(this: PointCloudMaterial, value: UniformType) {
       if (value !== this.getUniform(uniformName)) {
-        this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
+        this.setUniform(uniformName, value);
       }
     }
   });
 }
 
 function requiresShaderUpdate() {
-  return (_: any, context: { name: string | symbol }) => ({
-    get(this: any) {
+  return (_target: any, context: { name: string | symbol }) => ({
+    get(this: PointCloudMaterial & Record<string, any>) {
       const fieldName = `_${context.name.toString()}`;
       return this[fieldName];
     },
-    set(this: any, value: unknown) {
+    set(this: PointCloudMaterial & Record<string, any>, value: any) {
       const fieldName = `_${context.name.toString()}`;
-      if (value !== (this[fieldName] as any)) {
+      if (value !== this[fieldName]) {
         this[fieldName] = value;
         this.updateShaderSource();
       }
     },
-    init(this: any, value: any) {
+    init(this: PointCloudMaterial & Record<string, any>, value: any) {
       const fieldName = `_${context.name.toString()}`;
       this[fieldName] = value;
       return value;
