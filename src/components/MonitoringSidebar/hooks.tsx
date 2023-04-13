@@ -9,43 +9,9 @@ import {
   MonitoringSubscriptionPayload,
   MonitoringSubscriptionResponse,
   MonitoringSubscriptionsListResponse,
-  SessionAPIPayload,
-  SessionAPIResponse,
   CreateMonitoringJobAPIResponse,
 } from './types';
-
-/**
- * Create Session Nonce
- * ===================================
- *
- * This method creates a nOnce using the sessions API
- *
- * -----------------------------------------------------------------------------
- * Properties
- * -----------------------------------------------------------------------------
- * @returns UseMutationResult                             - Returns UseMutationResult
- * @returns
- */
-export const useCreateSessionNonce = () => {
-  const sdk = useSDK();
-  return useMutation(
-    async (payload: SessionAPIPayload) => {
-      await sdk.get('/api/v1/token/inspect');
-
-      const response = await sdk
-        .post<SessionAPIResponse>(`api/v1/projects/${sdk.project}/sessions`, {
-          data: payload,
-        })
-        .then(({ data }) => {
-          return data;
-        });
-      return response;
-    },
-    {
-      onSuccess: () => {},
-    }
-  );
-};
+import { SessionAPIResponse } from '../../domain/chart/internal/types';
 
 /**
  * Create a Monitoring Job

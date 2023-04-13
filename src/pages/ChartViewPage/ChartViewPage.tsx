@@ -92,6 +92,7 @@ import { MonitoringSidebar } from 'components/MonitoringSidebar/MonitoringSideba
 import { AlertingSidebar } from 'components/AlertingSidebar/AlertingSidebar';
 import interactionsAtom from 'models/interactions/atom';
 import { AccessDeniedModal } from 'components/AccessDeniedModal/AccessDeniedModal';
+import { useExperimentalCapabilitiesCheck } from 'domain/chart';
 import NotificationIndicator from './NotificationIndicator';
 import {
   BottomPaneWrapper,
@@ -108,7 +109,6 @@ import {
   useStatistics,
   useUploadCalculations,
 } from './hooks';
-import { useExperimentalCapabilitiesCheck } from '../../hooks/useCapabilities';
 
 const defaultTranslations = makeDefaultTranslations(
   'Data Profiling',
@@ -535,6 +535,7 @@ const ChartViewPage = () => {
       setChart((oldChart) => addWorkflows(oldChart!, calculations));
       toast.success('Calculations imported successfully!');
     },
+
     [setChart]
   );
 

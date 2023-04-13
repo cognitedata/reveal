@@ -1,40 +1,7 @@
-import { useQuery, UseQueryResult } from 'react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteCapability, CogniteClient } from '@cognite/sdk';
-
-type CapabilityWithExperimentAcl = {
-  experimentAcl: {
-    scope: {
-      experimentscope: {
-        experiments: string[];
-      };
-    };
-    actions: string[];
-  };
-};
-
-const fetchCapabilities = async (sdk: CogniteClient) =>
-  sdk.get<{ capabilities: CogniteCapability }>('/api/v1/token/inspect');
-
-export const useCapabilities = (): UseQueryResult<CogniteCapability> => {
-  const sdk = useSDK();
-
-  return useQuery<CogniteCapability>(
-    'capabilities',
-    async () => {
-      try {
-        const response = await fetchCapabilities(sdk);
-        return response.data.capabilities;
-      } catch (e) {
-        return [];
-      }
-    },
-    {
-      staleTime: Infinity,
-      cacheTime: Infinity,
-    }
-  );
-};
+import {
+  useCapabilities,
+  CapabilityWithExperimentAcl,
+} from './useCapabilities';
 
 export const useExperimentalCapabilitiesCheck = (
   capabilitiesToCheck: string[]

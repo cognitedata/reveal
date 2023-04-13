@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { makeDefaultTranslations } from 'utils/translations';
 import {
@@ -7,16 +6,13 @@ import {
   StyledError,
 } from './elements';
 
-const defaultTranslations = makeDefaultTranslations(
-  'Error validating data',
-  'Either the CDF credential option must be checked or the Client ID and Client secret need to be set'
-);
+const defaultTranslations = makeDefaultTranslations('Error validating data');
 
 type Props = {
   translations?: typeof defaultTranslations;
   errors: any;
 };
-const CreateMonitoringJobFormError = ({ errors, translations }: Props) => {
+export const FormError = ({ errors, translations }: Props) => {
   const t = {
     ...defaultTranslations,
     ...translations,
@@ -55,4 +51,4 @@ const StyledErrorMessagesContainer = styled.div`
   margin-left: 1.3em;
 `;
 
-export default CreateMonitoringJobFormError;
+export default FormError;

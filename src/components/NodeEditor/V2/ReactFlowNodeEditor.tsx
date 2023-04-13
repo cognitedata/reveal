@@ -11,14 +11,13 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 
 import { trackUsage } from 'services/metrics';
-import styled from 'styled-components/macro';
-import Layers from 'utils/z-index';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { Operation } from '@cognite/calculation-backend';
 import { usePrevious } from 'react-use';
 import compareVersions from 'compare-versions';
 import AlertIcon from 'components/AlertIcon/AlertIcon';
 import { WorkflowState } from 'models/calculation-results/types';
+import { useFlag } from '@cognite/react-feature-flags';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import AddButton, { AddMenu } from './AddButton';
 import EditorControls from './EditorControls/EditorControls';
@@ -30,6 +29,8 @@ import SourceNode from './Nodes/SourceNode';
 import { defaultTranslations } from '../translations';
 import { CanvasContext } from './CanvasContext';
 import EditorToolbar from './EditorToolbar/EditorToolbar';
+import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
+import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
 
 type Props = {
   id?: string;
@@ -86,6 +87,14 @@ const ReactFlowNodeEditor = ({
   translations: t,
   onErrorIconClick,
 }: Props) => {
+  const { isEnabled: isPersistenceCalcEnabled } = useFlag(
+    'CHARTS_PERSISTENCE_CALC',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
+
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<RFInstance | null>(
@@ -232,69 +241,76 @@ const ReactFlowNodeEditor = ({
           </ReactFlow>
         )}
         {isRenderable && (
-          <EditorToolbar>
-            {!readOnly && (
-              <AddButton
-                elements={flowElements}
-                sources={sources}
-                operations={operations}
-                addSourceNode={addSourceNode}
-                addFunctionNode={addFunctionNode}
-                addConstantNode={addConstantNode}
-                addOutputNode={addOutputNode}
+          <>
+            <EditorToolbar>
+              {!readOnly && (
+                <AddButton
+                  elements={flowElements}
+                  sources={sources}
+                  operations={operations}
+                  addSourceNode={addSourceNode}
+                  addFunctionNode={addFunctionNode}
+                  addConstantNode={addConstantNode}
+                  addOutputNode={addOutputNode}
+                  translations={t}
+                />
+              )}
+              <EditorControls
+                settings={settings}
+                onSaveSettings={onSaveSettings}
+                readOnly={readOnly}
                 translations={t}
+                horizontal
               />
-            )}
-            <EditorControls
-              settings={settings}
-              onSaveSettings={onSaveSettings}
-              readOnly={readOnly}
-              translations={t}
-              horizontal
-            />
-            {calculationResult ? (
-              <>
-                {calculationResult.loading && (
-                  <div style={{ display: 'flex' }}>
-                    <AlertIcon
-                      variant="unknown"
-                      icon="Loader"
-                      value="Loading"
-                    />
-                  </div>
-                )}
-                {calculationResult.error &&
-                  calculationResult.status === 'Success' && (
+              {calculationResult ? (
+                <>
+                  {calculationResult.loading && (
                     <div style={{ display: 'flex' }}>
                       <AlertIcon
-                        icon="ErrorFilled"
-                        variant="danger"
-                        value="Error"
-                        onClick={() => onErrorIconClick(id)}
+                        variant="unknown"
+                        icon="Loader"
+                        value="Loading"
                       />
                     </div>
                   )}
-                {!calculationResult.error &&
-                  !!calculationResult.warnings?.length &&
-                  calculationResult.status === 'Success' && (
-                    <div style={{ display: 'flex' }}>
-                      <AlertIcon
-                        icon="WarningFilled"
-                        variant="warning"
-                        value={`Warning${
-                          calculationResult.warnings.length > 1
-                            ? `s (${calculationResult.warnings.length})`
-                            : ''
-                        }`}
-                        onClick={() => onErrorIconClick(id)}
-                      />
-                    </div>
-                  )}
-              </>
-            ) : (
-              ''
-            )}
-          </EditorToolbar>
+                  {calculationResult.error &&
+                    calculationResult.status === 'Success' && (
+                      <div style={{ display: 'flex' }}>
+                        <AlertIcon
+                          icon="ErrorFilled"
+                          variant="danger"
+                          value="Error"
+                          onClick={() => onErrorIconClick(id)}
+                        />
+                      </div>
+                    )}
+                  {!calculationResult.error &&
+                    !!calculationResult.warnings?.length &&
+                    calculationResult.status === 'Success' && (
+                      <div style={{ display: 'flex' }}>
+                        <AlertIcon
+                          icon="WarningFilled"
+                          variant="warning"
+                          value={`Warning${
+                            calculationResult.warnings.length > 1
+                              ? `s (${calculationResult.warnings.length})`
+                              : ''
+                          }`}
+                          onClick={() => onErrorIconClick(id)}
+                        />
+                      </div>
+                    )}
+                </>
+              ) : (
+                ''
+              )}
+            </EditorToolbar>
+            {isPersistenceCalcEnabled ? (
+              <ScheduleToolbar>
+                <ScheduledCalculationButton />
+              </ScheduleToolbar>
+            ) : null}
+          </>
         )}
         {contextMenuPosition && (
           <ContextMenu
@@ -319,32 +335,5 @@ const ReactFlowNodeEditor = ({
     </CanvasContext.Provider>
   );
 };
-
-const NodeEditorContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: relative;
-  flex-grow: 9;
-  overflow-y: hidden;
-  background: var(--cogs-greyscale-grey2);
-
-  path.react-flow__edge-path {
-    stroke-width: 2;
-  }
-`;
-
-const ContextMenu = styled.div`
-  position: fixed;
-  margin: 0;
-  left: 0;
-  top: 0;
-  z-index: ${Layers.MINIMUM};
-  --mouse-x: ${(props: { position: { x: number; y: number } }) =>
-    props.position.x}px;
-  --mouse-y: ${(props: { position: { x: number; y: number } }) =>
-    props.position.y}px;
-  transform: translateX(min(var(--mouse-x), calc(100vw - 100%)))
-    translateY(min(var(--mouse-y), calc(100vh - 100%)));
-`;
 
 export default ReactFlowNodeEditor;

@@ -11,12 +11,13 @@ import { CogniteError } from '@cognite/sdk';
 import { useSearchParam } from 'hooks/navigation';
 import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from 'utils/constants';
 import { trackUsage, stopTimer } from 'services/metrics';
+import { useCreateSessionNonce } from 'domain/chart';
 import { FormTitle } from './elements';
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
 import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';
 import CreateMonitoringJobStep3 from './CreateMonitoringJobStep3';
 
-import { useCreateMonitoringJob, useCreateSessionNonce } from './hooks';
+import { useCreateMonitoringJob } from './hooks';
 import {
   CreateMonitoringJobStates,
   CreateMonitoringJobFormData,

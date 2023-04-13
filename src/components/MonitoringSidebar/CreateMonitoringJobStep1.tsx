@@ -22,16 +22,15 @@ import {
 } from 'domain/monitoring/constants';
 import { useChartInteractionsAtom } from 'models/interactions/atom';
 import { trackUsage } from 'services/metrics';
+import { FieldHelperText, FieldTitleRequired } from 'components/Form/elements';
 import {
-  FieldHelperText,
   NotificationBox,
   NotificationEmail,
-  FieldTitleRequired,
   FullWidthButton,
 } from './elements';
-import FormInputWithController from './FormInputWithController';
+import { FormInputWithController } from '../Form/FormInputWithController';
 import { CreateMonitoringJobFormData } from './types';
-import CreateMonitoringJobFormError from './CreateMonitoringJobFormError';
+import { FormError } from '../Form/FormError';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',
@@ -41,6 +40,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Above',
   'Below',
   'Minimum duration',
+  'Minutes',
   'Set a minimum duration to avoid alert flooding',
   'Schedule',
   'How often the monitoring job runs',
@@ -222,7 +222,6 @@ const CreateMonitoringJobStep1 = ({
             control={control}
             type="number"
             name="alertThreshold"
-            fullWidth
             required={t['Alert threshold is required']}
           />
         </Col>
@@ -239,10 +238,9 @@ const CreateMonitoringJobStep1 = ({
             placeholder="1"
             suffix={
               <Label size="small" variant="unknown">
-                Minutes
+                {t.Minutes}
               </Label>
             }
-            fullWidth
             required={t['Minimum duration is required']}
             validate={{
               minDuration: (value: string) =>
@@ -274,7 +272,7 @@ const CreateMonitoringJobStep1 = ({
             required={t['Schedule is required']}
             suffix={
               <Label size="small" variant="unknown">
-                Minutes
+                {t.Minutes}
               </Label>
             }
           />
@@ -288,7 +286,7 @@ const CreateMonitoringJobStep1 = ({
             required={t['Minimum duration is required']}
             options={[
               {
-                label: 'minutes',
+                label: t.Minutes,
                 value: 'm',
               },
             ]}
@@ -312,7 +310,7 @@ const CreateMonitoringJobStep1 = ({
         <NotificationEmail>{notificationEmail}</NotificationEmail>
       </NotificationBox>
 
-      {isDirty && !isValid && <CreateMonitoringJobFormError errors={errors} />}
+      {isDirty && !isValid && <FormError errors={errors} />}
 
       <PortalWait elementId="monitoring-job-stepper">
         <Row>

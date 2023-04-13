@@ -41,10 +41,12 @@ domain
     | | └── createxxx.ts
     | | └── deletexxx.ts
     |
-    | ├── utils <---- generic stuff used by network etc.
-    | | └── getxxx.ts
+    | ├── queries <---- generic stuff used by network etc.
     | | └── usexxx.ts
-    |
+    | |
+    ├── transformers
+    | | └── normalize.ts <- called inside the query
+    | |
     | └── types.ts <-- external API type
   |── types.ts <-- external API type
   |── constants.ts
