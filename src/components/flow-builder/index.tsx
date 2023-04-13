@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
   addEdge,
   Background,
@@ -14,13 +13,12 @@ import ReactFlow, {
   BackgroundVariant,
   Controls,
 } from 'reactflow';
-import { useState } from 'react';
-
 import styled from 'styled-components';
 
 import { CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER } from 'common';
 import { CANVAS_BLOCK_TYPES } from 'components/canvas-block';
 import { CustomNode } from 'components/custom-node';
+import { Colors } from '@cognite/cogs.js';
 
 type Props = {
   initialEdges: Edge<any>[];
