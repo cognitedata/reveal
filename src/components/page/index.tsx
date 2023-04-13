@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { SecondaryTopbar } from '@cognite/cdf-utilities';
+import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 
 const SECONDARY_TOPBAR_HEIGHT = 56;
 const FOOTER_HEIGHT = 53;
@@ -22,12 +23,17 @@ const Page = ({
   title,
   extraContent,
 }: PageProps): JSX.Element => {
+  const { subAppPath } = useParams<{
+    subAppPath: string;
+  }>();
+
   return (
     <Container>
       <SecondaryTopbar
         subtitle={subtitle}
         title={title}
         extraContent={extraContent}
+        goBackFallback={createLink(`/${subAppPath}`)}
       />
       <Content $hasFooter={!!footer}>{children}</Content>
       {footer && <Footer>{footer}</Footer>}
