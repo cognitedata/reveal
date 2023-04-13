@@ -1,3 +1,4 @@
+import { createLink } from '@cognite/cdf-utilities';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import {
   getResourceIdFromExtendedAnnotation,
@@ -8,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 
 import { useMemo } from 'react';
-import AssetTooltip from '../components/AssetTooltip';
+import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
 import { ContainerReferenceType } from '../types';
 import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
 
@@ -61,6 +62,20 @@ const useIndustryCanvasAssetTooltips = (
       ]);
     };
 
+    const onAddAsset = (): void => {
+      onAddContainerReferences([
+        {
+          type: ContainerReferenceType.ASSET,
+          id: `${resourceId}`,
+          resourceId: resourceId,
+        },
+      ]);
+    };
+
+    const onViewAsset = (): void => {
+      window.open(createLink(`/explore/asset/${resourceId}`), '_blank');
+    };
+
     return [
       {
         targetId: String(selectedAnnotation?.id),
@@ -69,14 +84,8 @@ const useIndustryCanvasAssetTooltips = (
             id={resourceId}
             onAddThreeD={onAddThreeD}
             onAddTimeseries={onAddTimeseries}
-            onAddAsset={() => {
-              // To be implemented
-              return undefined;
-            }}
-            onViewAsset={() => {
-              // To be implemented
-              return undefined;
-            }}
+            onAddAsset={onAddAsset}
+            onViewAsset={onViewAsset}
           />
         ),
         anchorTo: TooltipAnchorPosition.TOP_LEFT,

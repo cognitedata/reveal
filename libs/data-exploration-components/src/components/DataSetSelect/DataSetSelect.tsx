@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { A, Body, Colors } from '@cognite/cogs.js';
 import { stringContains } from '@data-exploration-components/utils';
 import { createLink } from '@cognite/cdf-utilities';
-import { AppContext } from '@data-exploration-components/context/AppContext';
+import { AppContext } from '@data-exploration-lib/core';
 
 export type DataSetSelectProps = {
   onSelectionChange: (ids: number[]) => void;

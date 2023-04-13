@@ -8,8 +8,12 @@ export const useAssetTimeseries = (assetId?: number) => {
   return useQuery<Timeseries[]>(
     ['timeseries', 'assetIds', assetId],
     async () => {
+      if (assetId === undefined) {
+        return [];
+      }
+
       const timeseries = await sdk.timeseries.list({
-        filter: { assetIds: [assetId!] },
+        filter: { assetIds: [assetId] },
       });
 
       return timeseries.items;

@@ -7,8 +7,10 @@ import { TIME_SELECT } from '@data-exploration-components/containers';
 import { DateRange } from '@cognite/sdk';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionType } from '@cognite/cogs.js';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { BaseSelect } from '@data-exploration-components/components/Select/BaseSelect';
 
 const determinePeriod = (value: DateRange | undefined | null) => {

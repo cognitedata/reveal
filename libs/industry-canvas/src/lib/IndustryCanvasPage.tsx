@@ -29,6 +29,7 @@ import useManagedState from './hooks/useManagedState';
 import { CanvasTitle } from './components/CanvasTitle';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useIndustryCanvasService } from './hooks/useIndustryCanvasService';
+import CanvasDropdown from './components/CanvasDropdown';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
@@ -42,9 +43,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const {
     activeCanvas,
+    canvases,
     isCreatingCanvas,
     isSavingCanvas,
     isLoadingCanvas,
+    isListingCanvases,
+    isArchivingCanvas,
+    archiveCanvas,
     saveCanvas,
     createCanvas,
   } = useIndustryCanvasService();
@@ -68,6 +73,8 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       type: ContainerType.FLEXIBLE_LAYOUT,
       children: [],
     },
+    activeCanvas,
+    saveCanvas,
   });
 
   const onAddContainerReferences = useIndustryCanvasAddContainerReferences({
@@ -219,7 +226,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         <PreviewLinkWrapper>
           <Flex alignItems="center">
             <ResourceIcons type="file" style={{ marginRight: '5px' }} />
-            <CanvasTitle />
+            <CanvasTitle activeCanvas={activeCanvas} saveCanvas={saveCanvas} />
             <Button
               aria-label="CreateCanvasButton"
               size="medium"
@@ -236,6 +243,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             >
               Create new canvas
             </Button>
+            <CanvasDropdown
+              activeCanvas={activeCanvas}
+              canvases={canvases}
+              archiveCanvas={archiveCanvas}
+              isArchivingCanvas={isArchivingCanvas}
+              isListingCanvases={isListingCanvases}
+            />
           </Flex>
         </PreviewLinkWrapper>
 

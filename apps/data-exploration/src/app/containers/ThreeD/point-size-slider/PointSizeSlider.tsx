@@ -72,7 +72,11 @@ export default function PointSizeSlider({
         </StyledMenu>
       }
     >
-      <Button icon="DotLarge" type="ghost" aria-label="point-size-button" />
+      <FullWidthButton
+        icon="DotLarge"
+        type="ghost"
+        aria-label="point-size-button"
+      />
     </Dropdown>
   );
 }
@@ -90,4 +94,8 @@ const StyledSlider = styled(CogsSlider)`
   offset-anchor: right top;
   float: right;
   display: inline;
+`;
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
 `;

@@ -15,11 +15,11 @@ import {
 } from '@data-exploration-components/types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
-import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import {
   useAssetsSearchResultWithLabelsQuery,
   useAssetsSearchAggregateQuery,
+  TableSortBy,
 } from '@data-exploration-lib/domain-layer';
 import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';

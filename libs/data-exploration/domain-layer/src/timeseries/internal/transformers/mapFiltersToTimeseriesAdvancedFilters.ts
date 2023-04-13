@@ -28,6 +28,8 @@ export type TimeseriesProperties = {
   [key: `metadata|${string}`]: string;
 };
 
+const DUMMY_SEARCH_TOKEN = Array(128).join('Y');
+
 export const mapFiltersToTimeseriesAdvancedFilters = (
   {
     dataSetIds,
@@ -121,11 +123,15 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       }
     }
 
-    /**
-     * We want to filter all the metadata keys with the search query, to give a better result
-     * to the user when using our search.
-     */
+    if (!(searchConfig.name.enabled && searchConfig.description.enabled)) {
+      searchQueryBuilder.search('name', DUMMY_SEARCH_TOKEN);
+    }
     if (searchConfig.metadata.enabled) {
+      /**
+       * We want to filter all the metadata keys with the search query, to give a better result
+       * to the user when using our search.
+       */
+      searchQueryBuilder.equals(`metadata`, query);
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
@@ -134,10 +140,12 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     }
 
     if (searchConfig.unit.enabled) {
+      searchQueryBuilder.equals(`unit`, query);
       searchQueryBuilder.prefix('unit', query);
     }
 
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals(`externalId`, query);
       searchQueryBuilder.prefix('externalId', query);
     }
 

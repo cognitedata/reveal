@@ -22,6 +22,7 @@ libs/data-modeling                @cognitedata/cdf-user-experience
 
 # Team data-explorer
 apps/data-exploration             @cognitedata/explorers
+apps/flexible-data-explorer       @cognitedata/explorers
 
 libs/data-exploration/            @cognitedata/explorers
 libs/data-exploration-components  @cognitedata/explorers
@@ -34,4 +35,4 @@ libs/industry-canvas              @cognitedata/unified-file-viewer
 apps/coding-conventions           @deep-cognite @CimStordal
 
 # Contextualization
-libs/industry-canvas              @dlcognite @cognitedata/contextualization
+libs/contextualization              @dlcognite @cognitedata/contextualization

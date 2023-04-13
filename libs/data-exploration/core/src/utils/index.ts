@@ -1,3 +1,4 @@
+export * from './isElementHorizontallyInViewport';
 export * from './localStorage';
 export * from './number';
 export * from './date';
@@ -6,3 +7,8 @@ export * from './undefined';
 export * from './useCompare';
 export * from './useDeep';
 export * from './number';
+export * from './id';
+export * from './zIndex';
+export * from './string';
+export * from './getMetadataValueByKey';
+export * from './files';

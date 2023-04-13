@@ -22,13 +22,13 @@ import {
   ContainerReference,
   ContainerReferenceWithoutDimensions,
   IndustryCanvasState,
+  PersistedCanvasState,
 } from '../types';
 import { useShamefullySyncContainerFromContainerReferences } from './useShamefullySyncContainerFromContainerReferences';
 import {
   useHistory,
   UseCanvasStateHistoryReturnType,
 } from './useCanvasStateHistory';
-import { useIndustryCanvasService } from './useIndustryCanvasService';
 
 export type InteractionState = {
   hoverId: string | undefined;
@@ -144,7 +144,14 @@ const addNewContainers = (
 
 const useManagedState = (initialState: {
   container: ContainerConfig;
+  activeCanvas: PersistedCanvasState | undefined;
+  saveCanvas: (state: PersistedCanvasState) => Promise<void>;
 }): UseManagedStateReturnType => {
+  const { activeCanvas, saveCanvas } = initialState;
+  const [prevActiveCanvas, setPrevActiveCanvas] = useState<
+    PersistedCanvasState | undefined
+  >(undefined);
+
   const [container, setContainer] = useState<ContainerConfig>(
     initialState.container
   );
@@ -155,18 +162,24 @@ const useManagedState = (initialState: {
     selectedAnnotationId: undefined,
   });
 
-  const { activeCanvas, saveCanvas } = useIndustryCanvasService();
+  const { undo, redo, pushState, replaceState, clearState, historyState } =
+    useHistory({
+      saveState: async (state: IndustryCanvasState) => {
+        if (activeCanvas !== undefined) {
+          await saveCanvas({
+            ...activeCanvas,
+            data: { ...state },
+          });
+        }
+      },
+    });
 
-  const { undo, redo, pushState, replaceState, historyState } = useHistory({
-    saveState: async (state: IndustryCanvasState) => {
-      if (activeCanvas !== undefined) {
-        await saveCanvas({
-          ...activeCanvas,
-          data: { ...state },
-        });
-      }
-    },
-  });
+  useEffect(() => {
+    if (prevActiveCanvas?.externalId !== activeCanvas?.externalId) {
+      clearState();
+    }
+    setPrevActiveCanvas(activeCanvas);
+  }, [activeCanvas, prevActiveCanvas, clearState]);
 
   const canvasState = useMemo(() => {
     return historyState.history[historyState.index];

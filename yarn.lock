@@ -1978,10 +1978,30 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal@^4.1.2", "@cognite/reveal@^4.2.0":
+"@cognite/reveal@^4.1.2":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
   integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
+  dependencies:
+    "@tweenjs/tween.js" "18.6.4"
+    assert "2.0.0"
+    async-mutex "0.4.0"
+    glslify "7.1.1"
+    glslify-import "3.1.0"
+    html2canvas "^1.4.1"
+    lodash "4.17.21"
+    loglevel "1.8.1"
+    mixpanel-browser "2.45.0"
+    path-browserify "1.0.1"
+    rxjs "7.8.0"
+    skmeans "0.11.3"
+    sparse-octree "7.1.6"
+    three-stdlib "2.21.8"
+
+"@cognite/reveal@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.1.tgz#cf03778c7c6333cf19124379d7a31635d213012b"
+  integrity sha512-8e1m2CxssmklHGgz8CBTnns5qLxHa7W+qQGK6FuO6bRr08/EGXM+wrj1i2bBtLeoxHn+C/pGQACw+LSqCtsnIQ==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
@@ -2124,10 +2144,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^9.0.1":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-9.0.1.tgz#7c73351e5c100eb0cbdbb83df47ceb0793297887"
-  integrity sha512-5Kl+Wi/moaeuPI+RqEuF/cuSEcfA1fVfQOrGta00Q22qa47Cs319PoSo8DzKzYI/aHt+sotThmwWfGI61fW9pw==
+"@cognite/unified-file-viewer@^10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-10.0.2.tgz#fdedd3fb411c53496710e0ef8fcc37bd1d75ade1"
+  integrity sha512-WMLXEmIBL/2BSrl/h/k5aDPkRhN0J/TJI2Oix+tn/TAA17QISwQZzuYe6Pj/KbouOj52SxtlfBgn5C7JXAutpA==
   dependencies:
     "@cognite/cogs.js" "^7.14.7"
     "@cognite/reveal" "^4.1.2"
@@ -2151,7 +2171,7 @@
     lodash "^4.17.21"
     mixpanel-browser "^2.45.0"
     pdf-lib "^1.17.1"
-    pdfjs-dist "3.3.122"
+    pdfjs-dist "3.5.141"
     styled-components "^5.3.5"
     three "0.148.0"
     uuid "^9.0.0"
@@ -24055,10 +24075,10 @@ pdf-lib@^1.17.1:
     pako "^1.0.11"
     tslib "^1.11.1"
 
-pdfjs-dist@3.3.122:
-  version "3.3.122"
-  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-3.3.122.tgz#750047cb347a8124092180fc4399d4f31f1de37b"
-  integrity sha512-98WC09jOq3OuqrmF5+LZfcyzTlGA0sY9ocMBbWZ/H6Pwni7deptxwkNZVLieOz+4nSoTEW25PsfnfOj3ELrHdA==
+pdfjs-dist@3.5.141:
+  version "3.5.141"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-3.5.141.tgz#a98c2d4dd3192592ba7055d3e450ed6e97112f41"
+  integrity sha512-lYIvyi5grtYOIatsfCifIKwxHeAJ8eHyP22DTdvY4pm0yWVSFQnMafpgCPSw8gaNRDDdcHnBVOkqMsyK8SRxZg==
   dependencies:
     path2d-polyfill "^2.0.1"
     web-streams-polyfill "^3.2.1"
@@ -31421,10 +31441,10 @@ webpack@4:
     watchpack "^1.7.4"
     webpack-sources "^1.4.1"
 
-"webpack@>=4.43.0 <6.0.0", webpack@^5.64.4, webpack@^5.75.0, webpack@^5.9.0:
-  version "5.75.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.75.0.tgz#1e440468647b2505860e94c9ff3e44d5b582c152"
-  integrity sha512-piaIaoVJlqMsPtX/+3KTTO6jfvrSYgauFVdt8cr9LTHKmcq/AMd4mhzsiP7ZF/PGRNPGA8336jldh9l2Kt2ogQ==
+"webpack@>=4.43.0 <6.0.0", webpack@^5.64.4, webpack@^5.75.0, webpack@^5.76.0, webpack@^5.9.0:
+  version "5.76.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.76.0.tgz#f9fb9fb8c4a7dbdcd0d56a98e56b8a942ee2692c"
+  integrity sha512-l5sOdYBDunyf72HW8dF23rFtWq/7Zgvt/9ftMof71E/yUb1YLOBmTgA2K4vQthB3kotMrSj609txVE0dnr2fjA==
   dependencies:
     "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^0.0.51"

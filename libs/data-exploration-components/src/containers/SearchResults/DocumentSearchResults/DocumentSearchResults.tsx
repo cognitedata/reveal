@@ -6,9 +6,9 @@ import {
   SearchResultToolbar,
 } from '@data-exploration-components/containers/SearchResults';
 import { DocumentsTable } from '@data-exploration-components/containers/Documents';
-import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
   InternalDocument,
+  TableSortBy,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { Asset, FileInfo } from '@cognite/sdk';
@@ -16,12 +16,12 @@ import { AppliedFiltersTags } from '@data-exploration-components/components/Appl
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { AppContext } from '@data-exploration-components/context/AppContext';
+import { AppContext } from '@data-exploration-lib/core';
 import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
 
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-lib/core';
 import { ResourceTypes } from '@data-exploration-components/types';
 import {
   InternalDocumentFilter,

@@ -1,5 +1,18 @@
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useDebouncedMetrics,
+} from '@data-exploration-lib/core';
 import { NumberInput, NumberInputProps } from '@data-exploration/components';
 
 export const InternalIdFilter = (props: NumberInputProps) => {
-  return <NumberInput label="Internal ID" {...props} />;
+  const { onChange } = props;
+  const trackUsage = useDebouncedMetrics();
+  const handleChange = (value?: number) => {
+    onChange?.(value);
+    trackUsage(DATA_EXPLORATION_COMPONENT.INPUT.NUMBER_FILTER, {
+      value,
+      title: 'Internal ID',
+    });
+  };
+  return <NumberInput label="Internal ID" onChange={handleChange} {...props} />;
 };

@@ -68,7 +68,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       placement="right-end"
     >
       <Tooltip content="Slice" placement="right">
-        <Button
+        <FullWidthButton
           icon="Slice"
           type="ghost"
           aria-label="slice-button"
@@ -84,6 +84,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
 const StyledMenu = styled(Menu)`
   height: 512px;
   padding: 12px;
+  min-width: 0px;
 
   .rc-slider-vertical .rc-slider-mark {
     display: none;
@@ -94,4 +95,8 @@ const StyledSlider = styled(RangeSlider)`
   offset-anchor: right top;
   float: right;
   display: inline;
+`;
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
 `;

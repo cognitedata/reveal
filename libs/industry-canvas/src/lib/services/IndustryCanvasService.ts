@@ -7,12 +7,20 @@ import { deserializeCanvasState } from '../utils/utils';
 
 export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
 
+type PageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor?: string;
+  endCursor: string;
+};
+
 export class IndustryCanvasService {
   public readonly CANVAS_DATA_SCHEMA_VERSION = 1;
-  public readonly SPACE_VERSION = 1;
+  public readonly SPACE_VERSION = 2;
   public readonly SPACE_EXTERNAL_ID = 'IndustryCanvas';
   public readonly DATA_MODEL_EXTERNAL_ID = 'Industry_Canvas';
   public readonly CANVAS_MODEL_NAME = 'Canvas';
+  private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
   private fdmClient: FDMClient;
 
@@ -28,12 +36,13 @@ export class IndustryCanvasService {
       canvases: { items: PersistedCanvasState[] };
     }>(
       gql`
-        query ListCanvases($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
+        query GetCanvasById($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
           canvases: list${this.CANVAS_MODEL_NAME}(filter: $filter) {
             items {
               externalId
               name
               version
+              isArchived
               createdAt
               updatedAt
               data
@@ -51,14 +60,73 @@ export class IndustryCanvasService {
         },
       }
     );
-    const canvasState = res.canvases.items[0];
-    const deserializedData = deserializeCanvasState(canvasState.data);
-    return {
-      ...canvasState,
-      data: {
-        ...deserializedData,
-      },
-    };
+    return deserializeCanvasState(res.canvases.items[0]);
+  }
+
+  private async getPaginatedCanvasData(
+    cursor: string | undefined = undefined,
+    paginatedData: PersistedCanvasState[] = [],
+    limit: number = this.LIST_LIMIT
+  ): Promise<PersistedCanvasState[]> {
+    const res = await this.fdmClient.graphQL<{
+      canvases: { items: PersistedCanvasState[]; pageInfo: PageInfo };
+    }>(
+      gql`
+        query ListCanvases($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
+          canvases: list${this.CANVAS_MODEL_NAME}(
+            filter: $filter,
+            first: ${limit},
+            after: ${cursor === undefined ? null : `"${cursor}"`},
+            sort: { createdAt: DESC }
+          ) {
+            items {
+              externalId
+              name
+              version
+              createdAt
+              updatedAt
+              data
+            }
+            pageInfo {
+              startCursor
+              hasPreviousPage
+              hasNextPage
+              endCursor
+            }
+          }
+        }
+      `,
+      this.DATA_MODEL_EXTERNAL_ID,
+      {
+        filter: {
+          and: [
+            { version: { eq: this.CANVAS_DATA_SCHEMA_VERSION } },
+            {
+              or: [
+                { isArchived: { eq: false } },
+                { isArchived: { isNull: true } },
+              ],
+            },
+          ],
+        },
+      }
+    );
+    const { items, pageInfo } = res.canvases;
+
+    paginatedData.push(...items);
+    if (pageInfo.hasNextPage) {
+      return await this.getPaginatedCanvasData(
+        pageInfo.startCursor,
+        paginatedData,
+        limit
+      );
+    }
+
+    return paginatedData;
+  }
+
+  public async listCanvases(): Promise<PersistedCanvasState[]> {
+    return this.getPaginatedCanvasData();
   }
 
   public async saveCanvas(
@@ -74,6 +142,12 @@ export class IndustryCanvasService {
     return updatedCanvas;
   }
 
+  public async archiveCanvas(canvas: PersistedCanvasState): Promise<void> {
+    await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
+      { ...canvas, isArchived: true },
+    ]);
+  }
+
   public async createCanvas(
     canvas: PersistedCanvasState
   ): Promise<PersistedCanvasState> {
@@ -81,8 +155,9 @@ export class IndustryCanvasService {
     return canvas;
   }
 
-  // TODO: implement
-  public async deleteCanvas(canvasId: string): Promise<void> {}
+  public async deleteCanvasById(canvasId: string): Promise<void> {
+    await this.fdmClient.deleteNodes(canvasId);
+  }
 
   public makeEmptyCanvas = (): PersistedCanvasState => {
     return {

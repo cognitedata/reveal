@@ -1,8 +1,8 @@
 import { ContainerConfig } from '@cognite/unified-file-viewer';
 import {
-  IndustryCanvasState,
   ContainerReference,
   ContainerReferenceType,
+  PersistedCanvasState,
 } from '../types';
 import assertNever from './assertNever';
 
@@ -56,10 +56,10 @@ export const getContainerReferencesWithUpdatedDimensions = (
 };
 
 export const deserializeCanvasState = (
-  state: IndustryCanvasState
-): IndustryCanvasState => {
+  state: PersistedCanvasState
+): PersistedCanvasState => {
   try {
-    const containerReferences = state.containerReferences.map(
+    const containerReferences = state.data.containerReferences.map(
       (containerReference) => {
         if (containerReference.type === ContainerReferenceType.TIMESERIES) {
           // We need to convert the dates to Date objects since they are serialized as strings in FDM
@@ -75,13 +75,19 @@ export const deserializeCanvasState = (
     );
     return {
       ...state,
-      containerReferences,
+      data: {
+        ...state.data,
+        containerReferences,
+      },
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
     return {
-      containerReferences: [],
-      canvasAnnotations: [],
+      ...state,
+      data: {
+        containerReferences: [],
+        canvasAnnotations: [],
+      },
     };
   }
 };

@@ -5,21 +5,21 @@ import {
   RelationshipLabels,
 } from '@data-exploration-components/types';
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+  TimeDisplay,
+} from '@data-exploration/components';
 import { TIME_SELECT } from '@data-exploration-components/containers';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { TimeDisplay } from '../../../components';
-import { InternalTimeseriesDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+import {
+  InternalTimeseriesDataWithMatchingLabels,
+  TimeseriesWithRelationshipLabels,
+} from '@data-exploration-lib/domain-layer';
 
 import { TimeseriesChart } from '@cognite/plotting-components';
 import { useTimeseriesMetadataColumns } from '../hooks/useTimeseriesMetadataColumns';
-
-export type TimeseriesWithRelationshipLabels =
-  InternalTimeseriesDataWithMatchingLabels & RelationshipLabels;
 
 export interface TimeseriesTableProps
   extends Omit<
@@ -34,6 +34,7 @@ const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   onRootAssetClick,
+  query,
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
@@ -82,13 +83,13 @@ export const TimeseriesTable = ({
   const columns = useMemo(() => {
     return [
       {
-        ...Table.Columns.name(),
+        ...Table.Columns.name(query),
         enableHiding: false,
       },
-      Table.Columns.description(),
-      Table.Columns.externalId(),
+      Table.Columns.description(query),
+      Table.Columns.externalId(query),
       {
-        ...Table.Columns.unit(),
+        ...Table.Columns.unit(query),
         enableSorting: false,
       },
       sparkLineColumn,
@@ -106,7 +107,7 @@ export const TimeseriesTable = ({
       },
       Table.Columns.created,
       {
-        ...Table.Columns.id(),
+        ...Table.Columns.id(query),
         enableSorting: false,
       },
       {
@@ -126,7 +127,7 @@ export const TimeseriesTable = ({
       ...metadataColumns,
     ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sparkLineColumn, metadataColumns]);
+  }, [query, sparkLineColumn, metadataColumns]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

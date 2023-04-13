@@ -1,5 +1,5 @@
 import { mapMimeTypeToDocumentType } from '../mapMimeTypeToDocumentType';
-import { DOCUMENT_ICON_FALLBACK_VALUE } from '../constants';
+import { DOCUMENT_ICON_FALLBACK_VALUE } from '@data-exploration-lib/core';
 
 describe('mapMimeTypeToDocumentType', () => {
   it('should return fallback value with undefine mime type', () => {

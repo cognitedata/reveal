@@ -140,7 +140,8 @@ export const mapFiltersToEventsAdvancedFilters = (
      * to the user when using our search.
      */
     if (searchConfig.metadata.enabled) {
-      searchQueryBuilder.prefix(`metadata`, query);
+      searchQueryBuilder.equals('metadata', query);
+      searchQueryBuilder.prefix('metadata', query);
     }
 
     if (searchConfig.type.enabled) {
@@ -149,6 +150,7 @@ export const mapFiltersToEventsAdvancedFilters = (
     }
 
     if (searchConfig.subtype.enabled) {
+      searchQueryBuilder.equals('subtype', query);
       searchQueryBuilder.prefix('subtype', query);
     }
 
@@ -156,6 +158,8 @@ export const mapFiltersToEventsAdvancedFilters = (
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
+      searchQueryBuilder.equals('source', query);
+      // @ts-ignore
       searchQueryBuilder.prefix('source', query);
     }
 
@@ -164,6 +168,7 @@ export const mapFiltersToEventsAdvancedFilters = (
     }
 
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals('externalId', query);
       searchQueryBuilder.prefix('externalId', query);
     }
 

@@ -1,4 +1,4 @@
-import { DASH } from '../../../../utils/constants';
+import { DASH } from '@data-exploration-lib/core';
 import { mockDocument } from '../../../../stubs/documents';
 import { getHighlightContent } from '../utils';
 

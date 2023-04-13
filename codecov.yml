@@ -5,10 +5,10 @@ coverage:
       apps:
         flags:
           - data-exploration
+          - flexible-data-explorer
           - mock-server
           - platypus
           - platypus-cdf-cli
-          - platypus-e2e
       libs:
         flags:
           - cog-data-grid

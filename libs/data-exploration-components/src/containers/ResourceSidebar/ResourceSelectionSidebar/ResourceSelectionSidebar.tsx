@@ -1,3 +1,5 @@
+import { usePrevious } from '@data-exploration-components/hooks/index';
+import isEqual from 'lodash/isEqual';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Flex, Input } from '@cognite/cogs.js';
@@ -25,8 +27,8 @@ import {
   InternalAssetFilters,
   InternalFilesFilters,
   InternalTimeseriesFilters,
+  zIndex,
 } from '@data-exploration-lib/core';
-import zIndex from '@data-exploration-components/utils/zIndex';
 import { ExplorationFilterToggle } from '@data-exploration/components';
 
 const Wrapper = styled.div`
@@ -101,6 +103,7 @@ export const ResourceSelectionSidebar = ({
   children?: React.ReactNode;
 } & SelectableItemsProps &
   InitialOldResourceFilterProps) => {
+  const previousResourceTypes = usePrevious(resourceTypes);
   const [assetFilter, setAssetFilter] = useState<InternalAssetFilters>(
     initialAssetFilter || {}
   );
@@ -123,7 +126,11 @@ export const ResourceSelectionSidebar = ({
   const [showFilter, setShowFilter] = useState(false);
 
   useEffect(() => {
-    if (!resourceTypes.includes(activeKey)) {
+    if (
+      !resourceTypes.includes(activeKey) ||
+      // The resourceType order might have changed
+      !isEqual(previousResourceTypes, resourceTypes)
+    ) {
       setActiveKey(resourceTypes[0]);
     }
   }, [activeKey, resourceTypes]);

@@ -233,9 +233,15 @@ const SecondaryModelDropdown = ({
   return (
     <MenuWrapper>
       <StyledInput
+        autoFocus
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search"
-        value={searchQuery}
+        value={searchQuery || ''}
+        onKeyDown={(e) => {
+          // Need to stop propagation to fix losing focus
+          // Check https://github.com/mui/material-ui/issues/19096#issuecomment-570918052
+          e.stopPropagation();
+        }}
       />
       <MainThreeDModelMenuItem
         model={mainModel}
@@ -323,6 +329,7 @@ const StyledNoResultsContainer = styled.div`
 
 const StyledInput = styled(Input)`
   margin-bottom: 8px;
+  line-height: 36px;
 `;
 
 export default SecondaryModelDropdown;
