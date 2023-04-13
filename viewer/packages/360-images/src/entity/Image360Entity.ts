@@ -13,7 +13,7 @@ import { Image360VisualizationBox } from './Image360VisualizationBox';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
-  private readonly _eventMetadata: Image360EventDescriptor;
+  private readonly _imageMetadata: Image360EventDescriptor;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
@@ -54,7 +54,7 @@ export class Image360Entity implements Image360 {
   ) {
     this._transform = transform;
     this._image360Icon = icon;
-    this._eventMetadata = image360Metadata;
+    this._imageMetadata = image360Metadata;
 
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
@@ -108,8 +108,8 @@ export class Image360Entity implements Image360 {
     this._image360VisualzationBox.unloadImages();
   }
 
-  public getEventMetadata(): Image360EventDescriptor {
-    return this._eventMetadata;
+  public getImageMetadata(): Image360EventDescriptor {
+    return this._imageMetadata;
   }
 
   /**

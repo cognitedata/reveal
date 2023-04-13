@@ -33,7 +33,7 @@ export class Image360Information {
         `
       : '';
 
-    const metadata = image360Entity.getEventMetadata();
+    const metadata = image360Entity.getImageMetadata();
     const metaDataString = `Station: ${metadata.label}
       Collection: ${metadata.collectionLabel}`;
 
