@@ -374,7 +374,7 @@ function getValid<T>(a: T | undefined, b: T): T {
   return a === undefined ? b : a;
 }
 
-function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, requireSrcUpdate: boolean = false) {
+function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K) {
   return (_target: any, _context: any) => ({
     get(this: any) {
       return this.getUniform(uniformName);
@@ -382,9 +382,6 @@ function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K, re
     set(this: any, value: unknown) {
       if (value !== this.getUniform(uniformName)) {
         this.setUniform(uniformName, value as IPointCloudMaterialUniforms[K]['value']);
-        if (requireSrcUpdate) {
-          this.updateShaderSource();
-        }
       }
     }
   });
