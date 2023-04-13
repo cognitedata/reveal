@@ -13,17 +13,15 @@ import styled from 'styled-components';
 import { CustomNodeData } from 'components/custom-node';
 import { isConnectionValid } from 'utils';
 
-const BASE_NODE_HANDLE_SIZE_IN_PX = 12;
+const BASE_NODE_HANDLE_SIZE = 12;
 
 type BaseNodeProps = {
-  children: React.ReactNode;
   description?: string;
   icon: IconType;
   title: string;
 };
 
 export const BaseNode = ({
-  children,
   description,
   icon,
   title,
@@ -57,57 +55,55 @@ export const BaseNode = ({
           </Flex>
         </Flex>
       </StyledBaseNodeHeader>
-      <StyledBaseNodeContent>{children}</StyledBaseNodeContent>
     </StyledBaseNodeContainer>
   );
 };
 
 const StyledBaseHandle = styled(Handle)`
-  background-color: transparent;
+  background-color: ${Colors['border--interactive--toggled-default']};
   border: none;
-  border-radius: 0;
-  height: 100%;
-  width: ${BASE_NODE_HANDLE_SIZE_IN_PX}px;
+
+  :hover {
+    background-color: ${Colors['border--interactive--toggled-hover']};
+  }
+
+  :active {
+    background-color: ${Colors['border--interactive--toggled-pressed']};
+  }
 `;
 
 const StyledBaseNodeContainer = styled.div`
   background-color: ${Colors['surface--muted']};
-  border-radius: 6px 0 0 6px;
+  border-radius: 6px;
   box-shadow: ${Elevations['elevation--surface--interactive']};
   display: flex;
   flex-direction: column;
   width: 300px;
 
   ${StyledBaseHandle}.react-flow__handle-left.react-flow__handle-connecting {
-    background-color: ${Colors['surface--status-critical--muted--default']};
+    background-color: ${Colors['surface--status-critical--strong--default']};
   }
 
   ${StyledBaseHandle}.react-flow__handle-left.react-flow__handle-valid {
-    background-color: ${Colors['surface--status-success--muted--default']};
-  }
-
-  :hover {
-    border-radius: 0;
+    background-color: ${Colors['surface--status-success--strong--default']};
   }
 `;
 
 const StyledBaseHandleRight = styled(StyledBaseHandle)`
-  background-color: ${Colors['text-icon--interactive--default']};
-  border-radius: 0 6px 6px 0;
-  right: -${BASE_NODE_HANDLE_SIZE_IN_PX}px;
-
-  :hover {
-    background-color: ${Colors['text-icon--interactive--hover']};
-  }
+  border-radius: 50%;
+  height: ${BASE_NODE_HANDLE_SIZE}px;
+  width: ${BASE_NODE_HANDLE_SIZE}px;
+  right: ${(BASE_NODE_HANDLE_SIZE / 2) * -1}px;
 `;
 
 const StyledBaseHandleLeft = styled(StyledBaseHandle)`
-  border-radius: 6px 0 0 6px;
-  left: -${BASE_NODE_HANDLE_SIZE_IN_PX}px;
+  border-radius: 2px;
+  height: ${BASE_NODE_HANDLE_SIZE}px;
+  width: ${BASE_NODE_HANDLE_SIZE / 2}px;
+  left: ${(BASE_NODE_HANDLE_SIZE / 4) * -1}px;
 `;
 
 const StyledBaseNodeHeader = styled.div`
-  border-bottom: 1px solid ${Colors['border--interactive--default']};
   padding: 8px;
 `;
 
@@ -131,9 +127,4 @@ const StyledBaseNodeTitle = styled(Overline)`
 
 const StyledBaseNodeDescription = styled(Detail)`
   color: ${Colors['text-icon--interactive--disabled']};
-`;
-
-const StyledBaseNodeContent = styled.div`
-  padding: 8px;
-  width: 100%;
 `;
