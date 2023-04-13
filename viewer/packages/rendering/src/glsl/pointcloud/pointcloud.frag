@@ -5,7 +5,6 @@ uniform mat4 viewMatrix;
 uniform vec3 cameraPosition;
 
 uniform mat4 projectionMatrix;
-uniform float opacity;
 
 uniform float spacing;
 uniform float pcIndex;
@@ -19,10 +18,6 @@ out vec4 outputColor;
 #endif
 
 in vec3 vColor;
-
-#if !defined(color_type_point_index)
-	in float vOpacity;
-#endif
 
 #if defined(weighted_splats)
 	in float vLinearDepth;
@@ -61,7 +56,7 @@ void main() {
 	#if defined color_type_point_index
 		outputColor = vec4(color, pcIndex / 255.0);
 	#else
-		outputColor = vec4(color, vOpacity);
+		outputColor = vec4(color, 1.0);
 	#endif
 
 	#if defined paraboloid_point_shape
