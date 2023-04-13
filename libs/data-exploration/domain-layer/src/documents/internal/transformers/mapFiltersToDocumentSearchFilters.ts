@@ -18,7 +18,7 @@ export type DocumentProperties = {
   id: number;
   metadata: string;
   assetIds: number[];
-  'sourceFile|labels': { externalId: string }[];
+  labels: { externalId: string }[];
   [key: `sourceFile|metadata|${string}`]: string;
 };
 
@@ -50,7 +50,7 @@ export const mapFiltersToDocumentSearchFilters = (
         return acc;
       }, [] as number[]);
     })
-    .containsAny('sourceFile|labels', () => {
+    .containsAny('labels', () => {
       return labels?.reduce((acc, { value }) => {
         return [...acc, { externalId: value }];
       }, [] as { externalId: string }[]);
