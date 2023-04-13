@@ -122,6 +122,9 @@ export const WorkflowBuilder = ({
   return (
     <Container ref={reactFlowContainer}>
       <ReactFlow
+        panOnDrag={false}
+        selectionOnDrag
+        panOnScroll
         edges={edges}
         nodes={nodes}
         nodeTypes={nodeTypes}
