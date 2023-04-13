@@ -63,7 +63,7 @@ const commandArgs = [
   },
   {
     name: 'skip-sample',
-    description: 'Create a sample.ts in /generated',
+    description: 'Create a sample.ts in the output directory',
     required: false,
     type: CommandArgumentType.BOOLEAN,
     alias: 'sample',
@@ -295,7 +295,7 @@ const getRelationshipString = (types: DataModelTypeDefsType[]) => {
     .filter(({ relationships }) => relationships.length !== 0)
     .map(({ name, relationships }) => {
       return `${name}: {\n${relationships
-        .map((field) => `${field.name}: "${field.type}"`)
+        .map((field) => `${field.name}: "${field.type.name}"`)
         .join(',\n')}\n}`;
     })
     .join(',\n')}\n};`;
