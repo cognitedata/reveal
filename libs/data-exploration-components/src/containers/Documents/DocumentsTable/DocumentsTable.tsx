@@ -15,13 +15,15 @@ import {
   InternalDocumentWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 import { DASH } from '@data-exploration-lib/core';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import {
+  useFlagDocumentGPT,
+  useGetHiddenColumns,
+} from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
 import { Asset } from '@cognite/sdk';
 import { DocumentSummaryPreview } from './DocumentSummaryPreview';
 import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
-import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<

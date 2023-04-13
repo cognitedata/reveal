@@ -16,7 +16,6 @@ import { AppliedFiltersTags } from '@data-exploration-components/components/Appl
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
 import gpt from '../../../utils/gpt';
-import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-lib/core';
 import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
@@ -30,6 +29,7 @@ import {
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 import { useSDK } from '@cognite/sdk-provider';
+import { useFlagDocumentGPT } from '@data-exploration-components/hooks';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -116,7 +116,7 @@ export const DocumentSearchResults = ({
       const summary = JSON.parse(choices[0].message.content.trim());
       setGptColumnName(summary['column_name']);
       setRealQuery(summary['keywords']);
-    };
+    }
 
     if (isDocumentsGPTEnabled) {
       retrieveAnswer();
