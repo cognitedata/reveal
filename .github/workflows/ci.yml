@@ -277,16 +277,14 @@ jobs:
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
-          include: "docusaurus.config.js"
-          exclude: ".git"
+          include: "documentation/docusaurus.config.js"
 
       - name: Update Docosaurus title
         uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${{ env.PR_TIMESTAMP }})',"
-          include: "docusaurus.config.js"
-          exclude: ".git"
+          include: "documentation/docusaurus.config.js"
 
       - name: Build documentation 🔧
         working-directory: documentation
