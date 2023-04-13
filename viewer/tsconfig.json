@@ -18,7 +18,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "experimentalDecorators": true,
     "esModuleInterop": true,
     "declaration": true,
     "baseUrl": ".",
