@@ -69,7 +69,7 @@ The `transform` property from `Image360` represents the world transformation (ro
 The `Image360Visualization` object has convenience functionality related to the visualization of the 360 image such as setting the opacity of the given 360 image.
   
 ## Events
-The `Image360Collection` exposes events `image360Entered` and `image360Exited` for subscribing to enter & exit from 360 image mode. `image360Entered` is also fired when the revision of an image is changed.
+The `Image360Collection` exposes events `image360Entered` and `image360Exited` for subscribing to enter & exit from 360 image mode. The `image360Entered` event is also triggered when the [revision](#historical-images) of an image is changed.
 Subscribing to the events can look like
 ```ts
 const image360Collection = await viewer.add360ImageSet('events', { site_id: 'site-S01-area-a03' });
@@ -82,34 +82,27 @@ image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mod
 ```
 
 ## Historical images
-Some image collections include 360 images with historical revisions. You can use the `360Image` interface to manage which revision of the image is displayed. Use `getRevisions` to obtain a list of all available revisions for an image. This method returns a list of `Image360Revision` objects sorted by date, with the most recent revision at the beginning of the list.
+Some image collections include 360 images with historical revisions. The `360Image` interface includes a `getRevisions` method used to obtain a list of all available revisions for that image. This list contains `Image360Revision` objects sorted by date, with the most recent revision at the beginning of the list.
 
 Each `Image360Revision` object has a `date` property that represents when the image was taken. If an image is undated, the `date` property will be `undefined`.
 ```ts
-const onImageEntered: Image360EnteredDelegate = (entity: Image360, revision: Image360Revision) => {
-  entity.getRevisions().forEach(availableRevision => console.log(availableRevision.date);
+image360.getRevisions().forEach(availableRevision => console.log(availableRevision.date);
+```
+
+You can get the currently active revision for any `Image360` by using the `getActiveRevision` method. Optionally, you can retrieve the active revision when `image360Entered` is triggered, as the revision of the entered image is included in the event.
+```ts
+image360Collection.on('image360Entered', (image360: Image360, revision: Image360Revision) => {
+    const activeDate = image360.getActiveRevision().date;
+    const enteredDate = revision.date;
+    alert(`The result is the same: ${activeDate} is equal to ${enteredDate}`);
 };
 ```
 
-You can get the currently displayed revision for any `Image360` by using the `getActiveRevision` method. Additionally, you can retrieve the active revision from `image360Entered` as the event includes the revision that was entered.
+To change the revision of an `Image360`, call the `enter360Image` method on `Cognite3DViewer`. Pass in the `Image360` you want to change, along with one of the available revisions for that image.
 ```ts
- const onImageEntered: Image360EnteredDelegate = (entity: Image360, revision: Image360Revision) => {
-      const activeDate = entity.getActiveRevision().date;
-      const enteredDate = revision.date;
-      alert(`The result is the same: ${activeDate} is equal to ${enteredDate}`);
-};
-```
-
-To change the revision of an `Image360`, you can use the `enter360Image` method. Pass in the `Image360` entity you want to change, along with one of the available revisions for that entity.
-```ts
-const revisions = entity.getRevisions();
-if (revisions.length === 1) {
-  //This image only has one revision
-  return;
-}
-
+const revisions = image360.getRevisions();
 const newRevision = revisions[1];
-await viewer.enter360Image(entity, newRevision);
+await viewer.enter360Image(image360, newRevision);
 alert(`Revision changed to ${newRevision.date}`);
 ```
 
@@ -121,3 +114,5 @@ Date and time will only be listed if the current revision is dated.
 ```ts
 viewer.show360ImageInformation(true);
 ```
+
+<img src={useBaseUrl('/img/image360_3.png')} alt="Image360InformationGUI" />
