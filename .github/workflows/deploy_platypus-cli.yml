@@ -1,8 +1,8 @@
 name: Release & Deploy Platypus CLI
 on:
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
     paths:
       - "apps/platypus-cdf-cli/**"
 jobs:
@@ -34,17 +34,17 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          tag: latest
+          tag: alpha
           access: public
           check-version: true
           package: ./dist/apps/platypus-cdf-cli/package.json
 
-      - name: Create Release
-        if: steps.publish.outputs.type != 'none'
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: cdf-cli-${{ steps.publish.outputs.version }}
-          title: Platypus CDF CLI Release ${{ steps.publish.outputs.version }}
-          files: |
-            ./dist/apps/platypus-cdf-cli/*.js*
+      # - name: Create Release
+      #   if: steps.publish.outputs.type != 'none'
+      #   uses: marvinpinto/action-automatic-releases@latest
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     automatic_release_tag: cdf-cli-${{ steps.publish.outputs.version }}
+      #     title: Platypus CDF CLI Release ${{ steps.publish.outputs.version }}
+      #     files: |
+      #       ./dist/apps/platypus-cdf-cli/*.js*

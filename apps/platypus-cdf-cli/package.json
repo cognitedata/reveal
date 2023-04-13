@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-cli",
-  "version": "2.0.2",
+  "version": "2.0.2--alpha1",
   "description": "A CLI for Cognite Data Fusion",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "tslib": "^2.0.0",
     "locate-path": "^3.0.0",
     "lowercase-keys": "^3.0.0",
-    "typescript": "4.8.4"
+    "typescript": "^4.8.4"
   },
   "resolutions": {
     "graphql": "^15.6.1"

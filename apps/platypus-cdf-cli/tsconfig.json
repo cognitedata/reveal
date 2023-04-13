@@ -6,7 +6,7 @@
   },
   "files": [],
   "include": [],
-  "exclude": ["**/*.spec.ts", "jest.config.ts"],
+  "exclude": ["**/*.spec.ts", "jest.config.ts", "**/codegen-static/**"],
   "references": [
     {
       "path": "./tsconfig.app.json"
