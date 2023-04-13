@@ -1562,6 +1562,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@reveal/3d-overlays@workspace:*, @reveal/3d-overlays@workspace:packages/3d-overlays":
+  version: 0.0.0-use.local
+  resolution: "@reveal/3d-overlays@workspace:packages/3d-overlays"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/api@workspace:*, @reveal/api@workspace:packages/api":
   version: 0.0.0-use.local
   resolution: "@reveal/api@workspace:packages/api"
@@ -1757,6 +1765,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/tools@workspace:packages/tools"
   dependencies:
+    "@reveal/3d-overlays": "workspace:*"
     "@reveal/api": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/metrics": "workspace:*"
