@@ -5,9 +5,11 @@ import {
 import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
   InternalDocumentFilter,
   useDeepMemo,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import { useState } from 'react';
 
@@ -24,6 +26,8 @@ export const LabelFilter = <TFilter,>({
   isError,
   isLoading,
 }: Props<TFilter>) => {
+  const trackUsage = useMetrics();
+
   const handleChange = (
     newValue: {
       label: string;
@@ -32,6 +36,10 @@ export const LabelFilter = <TFilter,>({
   ) => {
     const newFilters = newValue && newValue.length > 0 ? newValue : undefined;
     onChange?.(newFilters);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: newFilters,
+      title: 'Label Filter',
+    });
   };
 
   return (

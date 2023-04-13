@@ -10,7 +10,11 @@ import {
   Select,
 } from '@data-exploration/components';
 import { isEmpty } from 'lodash';
-import { TIME_SELECT } from '@data-exploration-lib/core';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  TIME_SELECT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {
@@ -48,6 +52,7 @@ export const DateFilter = ({
   label,
   enableNull = false,
 }: DateFilterProps) => {
+  const trackUsage = useMetrics();
   const initialPeriod = determinePeriod(value);
   const [period, setPeriod] = useState<PeriodType>(initialPeriod);
 
@@ -118,6 +123,11 @@ export const DateFilter = ({
       }
     }
     onChange(finalValue);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.DATE_FILTER, {
+      value: finalValue,
+      period: newKey,
+      title: label,
+    });
   };
 
   return (

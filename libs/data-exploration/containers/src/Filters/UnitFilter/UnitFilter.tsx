@@ -5,9 +5,11 @@ import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalTimeseriesFilters,
   useDebouncedState,
   useDeepMemo,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import { InputActionMeta } from 'react-select';
 
@@ -31,13 +33,28 @@ export function UnitFilter<TFilter>({
   value,
   ...rest
 }: UnitFilterProps<TFilter>) {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    units: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(units.map((unit) => unit.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: units,
+      title: 'Unit Filter',
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       label="Unit"
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, unit) => onChange?.(unit.map((u) => u.value))}
+      onChange={(_, units) => handleChange(units)}
     />
   );
 }
