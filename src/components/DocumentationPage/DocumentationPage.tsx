@@ -160,7 +160,6 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
       okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
-      hideActions
     >
       <div>
         <Col span={24}>

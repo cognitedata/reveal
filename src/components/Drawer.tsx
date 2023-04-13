@@ -6,7 +6,6 @@ import {
   Drawer as CogsDrawer,
   DrawerProps as CogsDrawerProps,
 } from '@cognite/cogs.js';
-// import AntdDrawer, { DrawerProps as AntdDrawerProps } from 'antd/lib/drawer';
 import { getContainer } from 'utils/shared';
 import noop from 'lodash/noop';
 
@@ -35,6 +34,7 @@ const ContentWithTitle = styled.div`
   height: calc(100vh - 112px);
   overflow-y: auto;
   padding: 24px;
+  border-bottom: 1px solid var(--cogs-border--muted);
 `;
 
 const ContentWithoutTitle = styled.div`
@@ -46,7 +46,7 @@ const ContentWithoutTitle = styled.div`
 const Actions = styled.div`
   width: 100%;
   height: 57px;
-  border-top: 1px solid #e9e9e9;
+
   padding: 10px 16px;
   text-align: right;
 `;
@@ -111,6 +111,10 @@ const Drawer = (props: DrawerProps): JSX.Element => {
     );
 
   const Content = title ? ContentWithTitle : ContentWithoutTitle;
+  // let drawerActions = props.footer || null;
+  // if (!props.footer && !hideActions) {
+  //   drawerActions = getActions();
+  // }
 
   return (
     <CogsDrawer
@@ -122,6 +126,12 @@ const Drawer = (props: DrawerProps): JSX.Element => {
       onClose={onCancel}
       getContainer={getContainer}
       {...otherProps}
+      footer={null}
+      // footer={
+      //   drawerActions ? (
+      //     <div style={{ textAlign: 'right' }}>{drawerActions}</div>
+      //   ) : null
+      // }
     >
       <Content>{children}</Content>
       {!hideActions && <Actions>{getActions()}</Actions>}

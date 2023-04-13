@@ -96,9 +96,8 @@ const DataSetEditor = ({
       visible={visible}
       onClose={onClose}
       onCancel={onClose}
-      cancelHidden
       isPrimarySidebar
-      okHidden
+      hideActions
     >
       <DataSetCreation
         loading={loading}

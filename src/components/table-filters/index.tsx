@@ -188,7 +188,7 @@ const TableFilter = ({
                         <Body level="3" strong>
                           {t('label_one')}
                         </Body>
-                        <Select
+                        <Select<string>
                           allowClear
                           // getPopupContainer={getContainer}
                           onChange={handleSelectedLabelChange}

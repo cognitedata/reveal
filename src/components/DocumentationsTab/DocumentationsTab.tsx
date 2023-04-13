@@ -11,7 +11,6 @@ import {
   Icon,
   Title,
 } from '@cognite/cogs.js';
-import Card from 'antd/lib/card';
 
 import {
   Documentation,
@@ -19,6 +18,7 @@ import {
   NoDataText,
   isNotNilOrWhitespace,
   ContentWrapper,
+  Card,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 

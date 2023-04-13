@@ -551,6 +551,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           />
         )}
       </div>
+
       {props.loading && (
         <ChangesSavedWrapper style={{ background: theme.pillBackground }}>
           <Spin /> {t('saving')}

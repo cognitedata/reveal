@@ -18,6 +18,7 @@ export const useTransformationsColumns = () => {
     {
       Header: t('transform'),
       id: 'name',
+      accessor: 'name',
       sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
       Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => {
         const onTransformationClick = () =>

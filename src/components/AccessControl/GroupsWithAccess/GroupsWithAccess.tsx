@@ -100,6 +100,7 @@ const GroupsWithAccess = (props: GroupsWithAccessProps) => {
                     size="x-small"
                     key={key}
                     label={capLabel}
+                    css={{ marginRight: '5px' }}
                   />
                 );
               })

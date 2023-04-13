@@ -60,14 +60,16 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       </LineageTitle>
       <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
       {isExtpipesFetched ? (
-        <Table
-          columns={rawTablesColumnsWithExtpipe()}
-          dataSource={rawList}
-          pageSize={5}
-          rowKey={(record: RawExtpipeWithUpdateTime) =>
-            `${record.databaseName}/${record.tableName}`
-          }
-        />
+        <div className="resource-table">
+          <Table
+            columns={rawTablesColumnsWithExtpipe()}
+            dataSource={rawList}
+            pageSize={5}
+            rowKey={(record: RawExtpipeWithUpdateTime) =>
+              `${record.databaseName}/${record.tableName}`
+            }
+          />
+        </div>
       ) : (
         <Icon type="Loader" />
       )}

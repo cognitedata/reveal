@@ -450,3 +450,19 @@ export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
     margin: 0 12px 12px 0;
   }
 `;
+
+export const ExpandableParagraph = styled.p`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  .expand-tag {
+    display: block;
+    float: right;
+  }
+
+  &.expanded {
+    overflow: visible;
+    white-space: normal;
+  }
+`;

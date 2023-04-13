@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
-import AntdSelect from 'antd/lib/select';
+// import AntdSelect from 'antd/lib/select';
 import theme from 'styles/theme';
-// import Switch from 'antd/lib/switch';
 import {
   SectionTitle,
   TitleOrnament,
@@ -24,6 +23,7 @@ import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
 import { Col } from 'utils';
 import { Switch, Collapse, Select } from '@cognite/cogs.js';
+import CreatableSelect from 'react-select/creatable';
 
 const { Panel } = Collapse;
 
@@ -43,14 +43,6 @@ interface DataSetInfoFormProps {
   setOwners(value: Group[]): void;
 }
 
-const { Option } = AntdSelect;
-
-declare module 'antd/lib/select' {
-  export interface OptionProps {
-    label?: ReactNode;
-  }
-}
-
 const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
   const { t } = useTranslation();
   const { groups: groupsList, isLoading, error } = useCdfGroups();
@@ -66,6 +58,13 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
           maxLength: DESC_MAX_LENGTH,
         })
       : false;
+
+  const onLabelsSelectChange = (selectedOptions: string[]) => {
+    props.setSelectedLabels(selectedOptions);
+    if (selectedOptions.length) {
+      props.setChangesSaved(false);
+    }
+  };
 
   return (
     <Col span={24}>
@@ -101,41 +100,41 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       />
 
       <FieldLabel>{t('label_other')}</FieldLabel>
-      <AntdSelect
-        mode="tags"
-        style={{ width: '600px', background: theme.blandColor }}
-        value={props.selectedLabels}
-        onChange={(selection: any) => {
-          props.setSelectedLabels(selection);
-          if (selection) {
-            props.setChangesSaved(false);
-          }
-        }}
-        notFoundContent={t('dataset-info-form-enter-labels')}
+      <CreatableSelect
+        isMulti
+        css={{ width: '600px', background: theme.blandColor }}
+        menuPlacement="bottom"
+        value={props.selectedLabels?.map((label) => ({ label, value: label }))}
+        onChange={(selection: any) =>
+          onLabelsSelectChange(selection.map((option: any) => option.label))
+        }
+        onCreateOption={(textFromInput: string) =>
+          onLabelsSelectChange([...(props.selectedLabels || []), textFromInput])
+        }
         placeholder={t('label_other')}
-        getPopupContainer={getContainer}
-      >
-        {Array.isArray(props.selectedLabels) &&
-          props.selectedLabels?.length &&
-          props.selectedLabels?.map((label: string) => (
-            <Option key={label} value={label}>
-              {label}
-            </Option>
-          ))}
-        {labelSuggestions
-          ?.filter(
-            (label) =>
-              !(
-                Array.isArray(props.selectedLabels) &&
-                props.selectedLabels?.includes(label)
+        isClearable
+        closeMenuOnSelect
+        noOptionsMessage={() => t('dataset-info-form-enter-labels')}
+        options={(props.selectedLabels || [])
+          ?.map((label) => ({
+            label,
+            value: label,
+          }))
+          .concat(
+            labelSuggestions
+              ?.filter(
+                (label) =>
+                  !(
+                    Array.isArray(props.selectedLabels) &&
+                    props.selectedLabels?.includes(label)
+                  )
               )
-          )
-          ?.map((suggestion: string) => (
-            <Option key={suggestion} value={suggestion}>
-              {suggestion}
-            </Option>
-          ))}
-      </AntdSelect>
+              .map((label) => ({
+                label,
+                value: label,
+              }))
+          )}
+      />
       <FieldLabel>
         <InfoTooltip
           title={t('write-protected')}
@@ -164,32 +163,37 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
               )}`}
             />
           ) : (
-            <Select
+            <CreatableSelect
               isMulti
               options={[]}
-              style={{ width: '100%', background: theme.blandColor }}
+              css={{ width: '100%', background: theme.blandColor }}
               loading={isLoading || !props.owners}
-              onChange={(selection: string[]) => {
-                if (groupsList && groupsList.length) {
-                  props.setChangesSaved(false);
-                  props.setOwners(
-                    groupsList.filter((group: any) =>
-                      selection.includes(String(group.id))
-                    )
-                  );
-                }
-              }}
-              // value={props.owners.map((group) => String(group.id))}
-              optionLabelProp="label"
-              filterOption={(input: string, option: any) =>
-                option.props.label.props.children &&
-                !!option.props.label.props.children
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              getPopupContainer={getContainer}
-            >
-              {/* {groupsList?.map((group: any) => (
+              // onChange={(selection: string[]) => {
+              //   if (groupsList && groupsList.length) {
+              //     props.setChangesSaved(false);
+              //     props.setOwners(
+              //       groupsList.filter((group: any) =>
+              //         selection.includes(String(group.id))
+              //       )
+              //     );
+              //   }
+              // }}
+              value={props.owners?.map((group) => ({
+                label: String(group.name),
+                value: String(group.id),
+              }))}
+
+              // optionLabelProp="label"
+              // filterOption={(input: string, option: any) =>
+              //   option.props.label.props.children &&
+              //   !!option.props.label.props.children
+              //     .toLowerCase()
+              //     .includes(input.toLowerCase())
+              // }
+              // getPopupContainer={getContainer}
+            />
+          )}
+          {/* {groupsList?.map((group: any) => (
                 <Select.Option
                   value={String(group.id)}
                   label={<GroupLabel>{group.name}</GroupLabel>}
@@ -208,8 +212,8 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
                   </OptionWrapper>
                 </Select.Option>
               ))} */}
-            </Select>
-          )}
+          {/* </Select> */}
+          {/* // )} */}
         </div>
       )}
       <Collapse

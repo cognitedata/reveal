@@ -265,7 +265,6 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
       okText={props.changesSaved ? 'Done' : 'Save'}
       onOk={props.changesSaved ? props.closeModal : handleSave}
       cancelHidden
-      hideActions
     >
       <div style={{ padding: '5px' }}>
         <Col span={24}>

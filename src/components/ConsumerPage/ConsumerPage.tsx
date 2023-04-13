@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Colors, Title } from '@cognite/cogs.js';
+import { Button, Colors } from '@cognite/cogs.js';
 import { Consumer, DataSet } from 'utils/types';
 import Drawer from 'components/Drawer';
 import { IconWrapper, InputField } from 'utils/styledComponents';
@@ -38,13 +38,7 @@ const LinksCol = styled(LocalCol)`
     top: 0;
   }
 `;
-const StyledTitle2 = styled((props) => (
-  <Title level={2} {...props}>
-    {props.children}
-  </Title>
-))`
-  font-size: 1.4rem;
-`;
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -176,7 +170,6 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
       okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
       cancelHidden
-      hideActions
     >
       <form>
         {Array.isArray(consumers) &&
