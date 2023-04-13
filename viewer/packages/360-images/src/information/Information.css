@@ -2,8 +2,8 @@
     position: absolute;
 
     /* Anchor to left corner and ignore events */
-    bottom: 15%;
-    left: 5%;
+    bottom: 100px;
+    left: 20px;
     pointer-events: none;
     touch-action: none;
     user-select: none;
