@@ -57,6 +57,8 @@ export class Image360RevisionEntity implements Image360Revision {
         return new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), -Math.PI / 2);
       case 'bottom':
         return new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2);
+      default:
+        throw Error(`Unrecognized face identifier "${face}"`);
     }
   }
 
