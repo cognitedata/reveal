@@ -31,6 +31,7 @@ def pods = { body ->
 
 pods {
   def isPullRequest = !!env.CHANGE_ID
+  def context_install = "continuous-integration/jenkins/install"
   
   static final Map<String, Boolean> version = versioning.getEnv(
     versioningStrategy: VERSIONING_STRATEGY
