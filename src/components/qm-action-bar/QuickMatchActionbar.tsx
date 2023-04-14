@@ -38,13 +38,9 @@ const QuickMatchActionBar = ({
         content={t('clear-selection')}
         css={{ transform: 'translateY(-8px)' }}
       >
-        <Button
-          icon="Close"
-          type="ghost"
-          onClick={onClose}
-          aria-label={t('close')}
-          inverted
-        />
+        <Button type="ghost" onClick={onClose} aria-label={t('close')} inverted>
+          Clear selection
+        </Button>
       </Tooltip>
     </StyledActionBarContainer>
   );
