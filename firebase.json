@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "site": "cognite-extractor-downloads-production",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    },
+    {
+      "site": "cognite-extractor-downloads-staging",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    }
+  ]
+}
