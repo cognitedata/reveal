@@ -23,6 +23,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+  private _annotations: Promise<THREE.Object3D[]> | undefined = undefined;
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -69,6 +70,16 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.renderOrder = newRenderOrder;
   }
 
+  setAnnotations(annotations: Promise<THREE.Object3D[]>) {
+    this._annotations = annotations;
+
+    if (this._visualizationMesh) {
+      annotations.then(unwrappedAnnotations => {
+        unwrappedAnnotations.forEach(a => this._visualizationMesh!.add(a));
+      });
+    }
+  }
+
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
     this._worldTransform = worldTransform;
     this._sceneHandler = sceneHandler;
@@ -107,6 +118,14 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.scale.copy(this._visualizationState.scale);
     this._visualizationMesh.visible = this._visualizationState.visible;
     this._sceneHandler.addCustomObject(this._visualizationMesh);
+
+    if (this._annotations) {
+      this._annotations.then(unwrappedAnnotations => {
+        unwrappedAnnotations.forEach(a => {
+          this._visualizationMesh!.add(a);
+        });
+      });
+    }
 
     function getFaceTexture(face: Image360Face['face']) {
       const texture = textures.find(p => p.face === face);

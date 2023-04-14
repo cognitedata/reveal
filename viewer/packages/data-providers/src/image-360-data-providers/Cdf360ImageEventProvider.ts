@@ -10,6 +10,7 @@ import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
 
 import {
+  AnnotationModel,
   CogniteClient,
   CogniteEvent,
   EventFilter,
@@ -66,6 +67,21 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
 
     return image360Descriptors;
+  }
+
+  public async getFileAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
+    const fileIds = descriptors.map(o => ({ id: o.fileId }));
+
+    const annotationsResult = this._client.annotations.list({
+      filter: {
+        annotatedResourceType: 'file',
+        annotatedResourceIds: fileIds
+      }
+    });
+
+    const annotationArray = await annotationsResult.autoPagingToArray();
+
+    return annotationArray;
   }
 
   public async get360ImageFiles(
