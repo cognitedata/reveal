@@ -21,6 +21,9 @@ import {
 import { CustomNode } from 'components/custom-node';
 import { Colors } from '@cognite/cogs.js';
 import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
+import ContextMenu, {
+  WorkflowContextMenu,
+} from 'components/context-menu/ContextMenu';
 
 type Props = {
   initialEdges: Edge<any>[];
@@ -39,6 +42,10 @@ export const WorkflowBuilder = ({
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
+
+  const [contextMenu, setContextMenu] = useState<
+    WorkflowContextMenu | undefined
+  >(undefined);
 
   const mutate = useCallback(onChange, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -116,7 +123,12 @@ export const WorkflowBuilder = ({
   );
 
   return (
-    <Container ref={reactFlowContainer}>
+    <Container
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}
+      ref={reactFlowContainer}
+    >
       <ReactFlow
         panOnDrag={false}
         selectionOnDrag
@@ -130,10 +142,36 @@ export const WorkflowBuilder = ({
         onEdgesChange={onEdgesChange}
         onInit={setReactFlowInstance}
         onNodesChange={onNodesChange}
+        onEdgeContextMenu={(e, edge) => {
+          setContextMenu({
+            position: { x: e.clientX, y: e.clientY },
+            items: [edge],
+            type: 'edge',
+          });
+        }}
+        onNodeContextMenu={(e, node) => {
+          setContextMenu({
+            position: { x: e.clientX, y: e.clientY },
+            items: [node],
+            type: 'node',
+          });
+        }}
+        onSelectionContextMenu={(e, nodes) => {
+          setContextMenu({
+            position: { x: e.clientX, y: e.clientY },
+            items: nodes,
+            type: 'node',
+          });
+        }}
       >
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
+      <ContextMenu
+        containerRef={reactFlowContainer}
+        contextMenu={contextMenu}
+        onClose={() => setContextMenu(undefined)}
+      />
     </Container>
   );
 };
@@ -141,6 +179,7 @@ export const WorkflowBuilder = ({
 const Container = styled.div`
   background-color: ${Colors['surface--strong']};
   height: 100%;
+  position: relative;
   width: 100%;
 
   .react-flow__nodes {
