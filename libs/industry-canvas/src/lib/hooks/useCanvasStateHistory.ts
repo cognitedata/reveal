@@ -1,6 +1,6 @@
-import { cloneDeep } from 'lodash';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { IndustryCanvasState } from '../types';
+import { EMPTY_FLEXIBLE_LAYOUT } from './constants';
 
 type HistoryState = {
   history: IndustryCanvasState[];
@@ -9,39 +9,41 @@ type HistoryState = {
 
 export type UseCanvasStateHistoryReturnType = {
   historyState: HistoryState;
-  pushState: (state: IndustryCanvasState) => void;
+  pushState: (
+    stateUpdaterFnOrState:
+      | IndustryCanvasState
+      | ((prevState: IndustryCanvasState) => IndustryCanvasState)
+  ) => void;
   replaceState: (state: IndustryCanvasState) => void;
-  clearState: () => void;
   undo: { fn: () => void; isDisabled: boolean };
   redo: { fn: () => void; isDisabled: boolean };
-};
-
-type UseCanvasStateHistoryProps = {
-  saveState: (state: IndustryCanvasState) => Promise<void>;
+  canvasState: IndustryCanvasState;
 };
 
 const INITIAL_HISTORY_STATE: HistoryState = {
   history: [
     {
-      containerReferences: [],
+      container: EMPTY_FLEXIBLE_LAYOUT,
       canvasAnnotations: [],
     },
   ],
   index: 0,
 };
 
-export const useHistory = ({
-  saveState,
-}: UseCanvasStateHistoryProps): UseCanvasStateHistoryReturnType => {
+export const useHistory = (): UseCanvasStateHistoryReturnType => {
   const [historyState, setHistoryState] = useState<HistoryState>(
     INITIAL_HISTORY_STATE
   );
 
   const pushState = useCallback(
-    (state: IndustryCanvasState) => {
-      const nextCanvasState = cloneDeep(state);
-
+    (
+      stateUpdateOrFn:
+        | IndustryCanvasState
+        | ((state: IndustryCanvasState) => IndustryCanvasState)
+    ) => {
       setHistoryState((prevHistoryState) => {
+        const currentCanvasState =
+          prevHistoryState.history[prevHistoryState.index];
         const nextHistoryIndex = prevHistoryState.index + 1;
         // TODO: Investigate whether we need to limit the history size
         const prevHistoryTruncated = prevHistoryState.history.slice(
@@ -49,32 +51,26 @@ export const useHistory = ({
           nextHistoryIndex
         );
         return {
-          history: [...prevHistoryTruncated, nextCanvasState],
+          history: [
+            ...prevHistoryTruncated,
+            typeof stateUpdateOrFn === 'function'
+              ? stateUpdateOrFn(currentCanvasState)
+              : stateUpdateOrFn,
+          ],
           index: nextHistoryIndex,
         };
       });
-
-      saveState(nextCanvasState);
     },
-    [saveState]
+    []
   );
 
   const replaceState = useCallback(
     (state: IndustryCanvasState) => {
-      setHistoryState((prevHistoryState) => {
-        const nextHistory = [...prevHistoryState.history];
-        nextHistory[prevHistoryState.index] = state;
-        return {
-          history: nextHistory,
-          index: prevHistoryState.index,
-        };
-      });
+      setHistoryState(() => ({
+        history: [state],
+        index: 0,
+      }));
     },
-    [setHistoryState]
-  );
-
-  const clearState = useCallback(
-    () => setHistoryState(INITIAL_HISTORY_STATE),
     [setHistoryState]
   );
 
@@ -98,11 +94,14 @@ export const useHistory = ({
     }
   }, [historyState]);
 
+  const canvasState = useMemo(() => {
+    return historyState.history[historyState.index];
+  }, [historyState]);
+
   return {
     historyState,
     pushState,
     replaceState,
-    clearState,
     undo: {
       fn: undoFn,
       isDisabled: historyState.index <= 0,
@@ -111,5 +110,6 @@ export const useHistory = ({
       fn: redoFn,
       isDisabled: historyState.index >= historyState.history.length - 1,
     },
+    canvasState,
   };
 };

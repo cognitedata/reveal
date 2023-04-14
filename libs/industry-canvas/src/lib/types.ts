@@ -1,9 +1,10 @@
 import {
   Annotation,
-  RectangleAnnotation,
+  ContainerConfig,
   EllipseAnnotation,
-  isRectangleAnnotation,
   isEllipseAnnotation,
+  isRectangleAnnotation,
+  RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
 
 export enum ContainerReferenceType {
@@ -22,20 +23,20 @@ export type Dimensions = {
   maxHeight?: number;
 };
 
-export type FileContainerReferenceWithoutDimensions = {
+export type FileContainerReference = {
   type: ContainerReferenceType.FILE;
   id: string;
   resourceId: number;
   page: number;
-};
+} & Partial<Dimensions>;
 
-export type AssetContaienrReferenceWithoutDimensions = {
+export type AssetContainerReference = {
   type: ContainerReferenceType.ASSET;
   id: string;
   resourceId: number;
-};
+} & Partial<Dimensions>;
 
-export type ThreeDContainerReferenceWithoutDimensions = {
+export type ThreeDContainerReference = {
   id: string;
   type: ContainerReferenceType.THREE_D;
   modelId: number;
@@ -53,33 +54,15 @@ export type ThreeDContainerReferenceWithoutDimensions = {
       z: number;
     };
   };
-};
+} & Partial<Dimensions>;
 
-export type FileContainerReference = FileContainerReferenceWithoutDimensions &
-  Dimensions;
-
-export type TimeseriesContainerReferenceWithoutDimensions = {
+export type TimeseriesContainerReference = {
   type: ContainerReferenceType.TIMESERIES;
   id: string;
   resourceId: number;
-  startDate: Date;
-  endDate: Date;
-};
-
-export type TimeseriesContainerReference =
-  TimeseriesContainerReferenceWithoutDimensions & Dimensions;
-
-export type AssetContainerReference = AssetContaienrReferenceWithoutDimensions &
-  Dimensions;
-
-export type ThreeDContainerReference =
-  ThreeDContainerReferenceWithoutDimensions & Dimensions;
-
-export type ContainerReferenceWithoutDimensions =
-  | FileContainerReferenceWithoutDimensions
-  | TimeseriesContainerReferenceWithoutDimensions
-  | AssetContaienrReferenceWithoutDimensions
-  | ThreeDContainerReferenceWithoutDimensions;
+  startDate: string;
+  endDate: string;
+} & Partial<Dimensions>;
 
 export type ContainerReference =
   | FileContainerReference
@@ -97,13 +80,22 @@ export const isShapeAnnotation = (
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;
 
+type ResourceMetadata = {
+  resourceId?: number;
+};
+export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
+  container: IndustryCanvasContainerConfig;
+  canvasAnnotations: CanvasAnnotation[];
+};
+
+export type SerializedIndustryCanvasState = {
   containerReferences: ContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
 };
 
-export type PersistedCanvasState = {
+export type CanvasDocument = {
   externalId: string;
   name: string;
   isArchived?: boolean;
@@ -111,4 +103,8 @@ export type PersistedCanvasState = {
   updatedAt: string;
   version: number;
   data: IndustryCanvasState;
+};
+
+export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
+  data: SerializedIndustryCanvasState;
 };

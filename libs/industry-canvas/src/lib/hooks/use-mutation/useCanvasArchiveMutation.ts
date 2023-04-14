@@ -4,14 +4,14 @@ import { useMutation, useQueryClient } from 'react-query';
 
 import { QueryKeys, TOAST_POSITION } from '../../constants';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
-import { PersistedCanvasState } from '../../types';
+import { SerializedCanvasDocument } from '../../types';
 
 export const useCanvasArchiveMutation = (service: IndustryCanvasService) => {
   const queryClient = useQueryClient();
 
   return useMutation(
     [QueryKeys.ARCHIVE_CANVAS],
-    (canvas: PersistedCanvasState) => {
+    (canvas: SerializedCanvasDocument) => {
       return service.archiveCanvas(canvas);
     },
     {

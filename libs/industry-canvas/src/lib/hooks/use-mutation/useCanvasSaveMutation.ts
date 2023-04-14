@@ -4,14 +4,14 @@ import { useMutation, useQueryClient } from 'react-query';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
 
 import { QueryKeys, TOAST_POSITION } from '../../constants';
-import { PersistedCanvasState } from '../../types';
+import { SerializedCanvasDocument } from '../../types';
 
 export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
   const queryClient = useQueryClient();
 
   return useMutation(
     [QueryKeys.SAVE_CANVAS],
-    (canvas: PersistedCanvasState) => {
+    (canvas: SerializedCanvasDocument) => {
       return service.saveCanvas(canvas);
     },
     {
@@ -24,19 +24,20 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
         await queryClient.cancelQueries([QueryKeys.LIST_CANVASES]);
 
         // Snapshot the previous values
-        const previousCanvas = queryClient.getQueryData<PersistedCanvasState>([
-          QueryKeys.GET_CANVAS,
-          updatedCanvas.externalId,
-        ]);
+        const previousCanvas =
+          queryClient.getQueryData<SerializedCanvasDocument>([
+            QueryKeys.GET_CANVAS,
+            updatedCanvas.externalId,
+          ]);
 
         // Optimistically update to the new values
-        queryClient.setQueryData<PersistedCanvasState>(
+        queryClient.setQueryData<SerializedCanvasDocument>(
           [QueryKeys.GET_CANVAS, updatedCanvas.externalId],
           { ...updatedCanvas, updatedAt: new Date().toISOString() }
         );
-        queryClient.setQueriesData<PersistedCanvasState[]>(
+        queryClient.setQueriesData<SerializedCanvasDocument[]>(
           [QueryKeys.LIST_CANVASES],
-          (prevCanvases: PersistedCanvasState[] = []) => {
+          (prevCanvases: SerializedCanvasDocument[] = []) => {
             return prevCanvases.map((canvas) =>
               canvas.externalId === updatedCanvas.externalId
                 ? {
@@ -57,8 +58,8 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
         err,
         canvas,
         context?: {
-          previousCanvas: PersistedCanvasState | undefined;
-          updatedCanvas: PersistedCanvasState;
+          previousCanvas: SerializedCanvasDocument | undefined;
+          updatedCanvas: SerializedCanvasDocument;
         }
       ) => {
         if (context) {
@@ -74,6 +75,16 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
           toastId: 'industry-canvas-update-error',
           position: TOAST_POSITION,
         });
+      },
+      onSettled: (updatedCanvas) => {
+        if (!updatedCanvas) {
+          return;
+        }
+
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.GET_CANVAS, updatedCanvas.externalId],
+        });
+        queryClient.invalidateQueries({ queryKey: [QueryKeys.LIST_CANVASES] });
       },
     }
   );

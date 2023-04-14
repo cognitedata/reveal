@@ -7,29 +7,28 @@ import {
   useResourceSelector,
 } from '@cognite/data-exploration';
 import {
-  ContainerType,
   isSupportedFileInfo,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
-import dayjs from 'dayjs';
 import { v4 as uuid } from 'uuid';
+import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 
 import { IndustryCanvas } from './IndustryCanvas';
-import { useIndustryCanvasAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
 import styled from 'styled-components';
 import { TOAST_POSITION } from './constants';
-import {
-  ContainerReferenceType,
-  ContainerReferenceWithoutDimensions,
-} from './types';
 import { useState, useEffect, KeyboardEventHandler } from 'react';
 import useManagedState from './hooks/useManagedState';
 import { CanvasTitle } from './components/CanvasTitle';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useIndustryCanvasService } from './hooks/useIndustryCanvasService';
 import CanvasDropdown from './components/CanvasDropdown';
+import {
+  IndustryCanvasProvider,
+  useIndustryCanvasContext,
+} from './IndustryCanvasContext';
+import { ContainerReference } from './types';
+import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
@@ -52,35 +51,21 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     archiveCanvas,
     saveCanvas,
     createCanvas,
-  } = useIndustryCanvasService();
+  } = useIndustryCanvasContext();
 
   const {
     container,
     canvasAnnotations,
-    containerReferences,
     addContainerReferences,
-    updateContainerReference,
-    removeContainerReference,
+    updateContainerById,
+    removeContainerById,
     onDeleteRequest,
     onUpdateRequest,
     undo,
     redo,
     interactionState,
     setInteractionState,
-  } = useManagedState({
-    container: {
-      id: 'flexible-layout-container',
-      type: ContainerType.FLEXIBLE_LAYOUT,
-      children: [],
-    },
-    activeCanvas,
-    saveCanvas,
-  });
-
-  const onAddContainerReferences = useIndustryCanvasAddContainerReferences({
-    unifiedViewer: unifiedViewerRef,
-    addContainerReferences,
-  });
+  } = useManagedState(unifiedViewerRef);
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
@@ -96,6 +81,21 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       setCurrentZoomScale
     );
   }, [unifiedViewerRef]);
+
+  const onAddContainerReferences = (
+    containerReferences: ContainerReference[]
+  ) => {
+    addContainerReferences(containerReferences);
+    toast.success(
+      <div>
+        <h4>Resource(s) added to your canvas</h4>
+      </div>,
+      {
+        toastId: `canvas-file-added-${uuid()}`,
+        position: TOAST_POSITION,
+      }
+    );
+  };
 
   const onAddResourcePress = () => {
     openResourceSelector({
@@ -155,57 +155,11 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           return;
         }
 
-        const containerReferencesToAdd: ContainerReferenceWithoutDimensions[] =
-          supportedResourceItems.map((supportedResourceItem) => {
-            if (supportedResourceItem.type === 'timeSeries') {
-              return {
-                type: ContainerReferenceType.TIMESERIES,
-                id: uuid(),
-                resourceId: supportedResourceItem.id,
-                startDate: dayjs(new Date())
-                  .subtract(2, 'years')
-                  .startOf('day')
-                  .toDate(),
-                endDate: new Date(),
-              };
-            }
-
-            if (supportedResourceItem.type === 'file') {
-              return {
-                type: ContainerReferenceType.FILE,
-                id: supportedResourceItem.id.toString(),
-                resourceId: supportedResourceItem.id,
-                page: 1,
-              };
-            }
-
-            if (supportedResourceItem.type === 'asset') {
-              return {
-                type: ContainerReferenceType.ASSET,
-                id: supportedResourceItem.id.toString(),
-                resourceId: supportedResourceItem.id,
-              };
-            }
-
-            throw new Error('Unsupported resource type');
-          });
-
-        onAddContainerReferences(containerReferencesToAdd);
+        onAddContainerReferences(
+          supportedResourceItems.map(resourceItemToContainerReference)
+        );
       },
     });
-  };
-
-  const onClearCanvas = async () => {
-    if (activeCanvas !== undefined) {
-      saveCanvas({
-        ...activeCanvas,
-        data: {
-          containerReferences: [],
-          canvasAnnotations: [],
-        },
-      });
-    }
-    window.location.reload();
   };
 
   const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
@@ -237,7 +191,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
               onClick={() => {
                 createCanvas({
                   canvasAnnotations: [],
-                  containerReferences: [],
+                  container: EMPTY_FLEXIBLE_LAYOUT,
                 });
               }}
             >
@@ -254,10 +208,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Button onClick={onClearCanvas}>
-            <Icon type="Delete" /> Clear canvas
-          </Button>
-
           <Tooltip content="Undo">
             <Button
               type="ghost"
@@ -302,10 +252,9 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           interactionState={interactionState}
           setInteractionState={setInteractionState}
           container={container}
-          updateContainerReference={updateContainerReference}
-          containerReferences={containerReferences}
+          updateContainerById={updateContainerById}
+          removeContainerById={removeContainerById}
           canvasAnnotations={canvasAnnotations}
-          removeContainerReference={removeContainerReference}
           onRef={setUnifiedViewerRef}
         />
       </PreviewTabWrapper>
@@ -317,7 +266,9 @@ export const IndustryCanvasPage = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <IndustryCanvasPageWithoutQueryClientProvider />
+      <IndustryCanvasProvider>
+        <IndustryCanvasPageWithoutQueryClientProvider />
+      </IndustryCanvasProvider>
     </QueryClientProvider>
   );
 };

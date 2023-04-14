@@ -1,7 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import {
   getFileIdFromExtendedAnnotation,
-  getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
@@ -10,21 +9,20 @@ import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
 import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
 import { TooltipContainer } from '../TooltipContainer';
-import { ContainerReference, ContainerReferenceType } from '../types';
-import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
+import { ContainerReferenceType } from '../types';
+import { UseManagedStateReturnType } from './useManagedState';
+import { v4 as uuid } from 'uuid';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];
   selectedAnnotation: ExtendedAnnotation | undefined;
-  onAddContainerReferences: OnAddContainerReferences;
-  containerReferences: ContainerReference[];
+  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
 };
 
 const useIndustryCanvasFileLinkTooltips = ({
   annotations,
   selectedAnnotation,
   onAddContainerReferences,
-  containerReferences,
 }: UseFileLinkTooltipsParams) => {
   return useMemo(() => {
     if (selectedAnnotation === undefined) {
@@ -63,26 +61,12 @@ const useIndustryCanvasFileLinkTooltips = ({
       return [];
     }
 
-    const additionalFileId =
-      getResourceExternalIdFromExtendedAnnotation(selectedAnnotation) ??
-      getResourceIdFromExtendedAnnotation(selectedAnnotation);
-
-    if (
-      containerReferences.some(
-        (containerReference) =>
-          containerReference.type === ContainerReferenceType.FILE &&
-          containerReference.resourceId === additionalFileId
-      )
-    ) {
-      return [];
-    }
-
     const onAddFileClick = () => {
       onAddContainerReferences([
         {
           type: ContainerReferenceType.FILE,
           resourceId: resourceId,
-          id: resourceId.toString(),
+          id: uuid(),
           page: 1,
         },
       ]);
@@ -106,12 +90,7 @@ const useIndustryCanvasFileLinkTooltips = ({
         shouldPositionStrictly: true,
       },
     ];
-  }, [
-    annotations,
-    selectedAnnotation,
-    onAddContainerReferences,
-    containerReferences,
-  ]);
+  }, [annotations, selectedAnnotation, onAddContainerReferences]);
 };
 
 export default useIndustryCanvasFileLinkTooltips;
