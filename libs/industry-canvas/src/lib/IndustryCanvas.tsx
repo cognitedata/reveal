@@ -9,24 +9,22 @@ import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
-import { OnAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
-import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import ZoomControls from './components/ZoomControls';
 import { ZOOM_TO_FIT_MARGIN } from './constants';
 import { isDevelopment } from '@cognite/cdf-utilities';
 import { CanvasAnnotation } from './types';
 import { useSDK } from '@cognite/sdk-provider';
-import { getContainerId } from './utils/utils';
+import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 
 export type IndustryCanvasProps = {
   id: string;
   applicationId: string;
   currentZoomScale: number;
-  onAddContainerReferences: OnAddContainerReferences;
+  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
   onRef?: (ref: UnifiedViewer | null) => void;
   viewerRef: UnifiedViewer | null;
 } & Pick<
@@ -35,9 +33,8 @@ export type IndustryCanvasProps = {
   | 'canvasAnnotations'
   | 'onDeleteRequest'
   | 'onUpdateRequest'
-  | 'containerReferences'
-  | 'updateContainerReference'
-  | 'removeContainerReference'
+  | 'updateContainerById'
+  | 'removeContainerById'
   | 'interactionState'
   | 'setInteractionState'
 >;
@@ -50,9 +47,8 @@ export const IndustryCanvas = ({
   currentZoomScale,
   onDeleteRequest,
   onUpdateRequest,
-  containerReferences,
-  updateContainerReference,
-  removeContainerReference,
+  updateContainerById,
+  removeContainerById,
   interactionState,
   setInteractionState,
   onAddContainerReferences,
@@ -72,26 +68,11 @@ export const IndustryCanvas = ({
     [canvasAnnotations, interactionState.selectedAnnotationId]
   );
 
-  const clickedContainerReference = useMemo(
-    () =>
-      interactionState.clickedContainerReferenceId
-        ? containerReferences.find(
-            (containerReference) =>
-              containerReference.id ===
-              interactionState.clickedContainerReferenceId
-          )
-        : undefined,
-    [containerReferences, interactionState.clickedContainerReferenceId]
-  );
-
   const clickedContainer = useMemo(() => {
-    if (!clickedContainerReference) {
-      return undefined;
-    }
     return (container.children ?? []).find(
-      (child) => child.id === getContainerId(clickedContainerReference)
+      (child) => child.id === interactionState.clickedContainerId
     );
-  }, [container.children, clickedContainerReference]);
+  }, [container.children, interactionState.clickedContainerId]);
 
   const { tool, toolOptions, setTool, onUpdateAnnotationStyleByType } =
     useManagedTools({
@@ -103,7 +84,7 @@ export const IndustryCanvas = ({
   const onClickContainerAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
       setInteractionState((prevInteractionState) => ({
-        clickedContainerReferenceId: undefined,
+        clickedContainerId: undefined,
         hoverId: undefined,
         selectedAnnotationId:
           prevInteractionState.selectedAnnotationId === annotation.id
@@ -131,7 +112,7 @@ export const IndustryCanvas = ({
   }, [setInteractionState]);
 
   const containerAnnotations = useContainerAnnotations({
-    containerReferences,
+    container,
     selectedAnnotationId: interactionState.selectedAnnotationId,
     hoverId: interactionState.hoverId,
     onClick: onClickContainerAnnotation,
@@ -149,7 +130,7 @@ export const IndustryCanvas = ({
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({
-      clickedContainerReferenceId: undefined,
+      clickedContainerId: undefined,
       hoverId: undefined,
       selectedAnnotationId: undefined,
     });
@@ -163,17 +144,15 @@ export const IndustryCanvas = ({
   }, [selectedCanvasAnnotation, onDeleteRequest, setInteractionState]);
 
   const tooltips = useIndustryCanvasTooltips({
+    clickedContainer,
     containerAnnotations,
     selectedContainerAnnotation,
     selectedCanvasAnnotation,
-    clickedContainerReference,
-    clickedContainer,
     onAddContainerReferences,
-    containerReferences,
-    removeContainerReference,
     onDeleteSelectedCanvasAnnotation,
     onUpdateAnnotationStyleByType,
-    updateContainerReference,
+    updateContainerById,
+    removeContainerById,
   });
 
   const onStageClick = useCallback(() => {
@@ -185,7 +164,7 @@ export const IndustryCanvas = ({
     }
     setInteractionState({
       selectedAnnotationId: undefined,
-      clickedContainerReferenceId: undefined,
+      clickedContainerId: undefined,
       hoverId: undefined,
     });
   }, [setInteractionState, tool]);
@@ -197,7 +176,7 @@ export const IndustryCanvas = ({
         onClick: (e: any, annotation: CanvasAnnotation) => {
           e.cancelBubble = true;
           setInteractionState({
-            clickedContainerReferenceId: undefined,
+            clickedContainerId: undefined,
             hoverId: undefined,
             selectedAnnotationId: annotation.id,
           });
@@ -211,7 +190,7 @@ export const IndustryCanvas = ({
       // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-363
       // ...getClickedContainerOutlineAnnotation(clickedContainer),
       ...getIndustryCanvasConnectionAnnotations({
-        containerReferences,
+        container,
         hoverId: interactionState.hoverId,
         annotations: containerAnnotations,
       }),
@@ -219,9 +198,9 @@ export const IndustryCanvas = ({
       ...canvasAnnotationWithEventHandlers,
     ],
     [
-      containerReferences,
-      containerAnnotations,
+      container,
       interactionState.hoverId,
+      containerAnnotations,
       canvasAnnotationWithEventHandlers,
     ]
   );

@@ -1,29 +1,25 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Link, Pagination, ToolBar, Tooltip } from '@cognite/cogs.js';
 import {
-  ContainerConfig,
-  DocumentContainerProps,
-  TooltipAnchorPosition,
+  ContainerType,
   getPdfCache,
+  TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import DateRangePrompt from '../components/DateRangePrompt';
 import { TooltipContainer, TooltipToolBarContainer } from '../TooltipContainer';
-import { ContainerReference, ContainerReferenceType } from '../types';
-import { getContainerId } from '../utils/utils';
+import { IndustryCanvasContainerConfig } from '../types';
 import { UseManagedStateReturnType } from './useManagedState';
 
 const useIndustryCanvasContainerTooltips = ({
-  clickedContainerReference,
   clickedContainer,
-  updateContainerReference,
-  removeContainerReference,
+  updateContainerById,
+  removeContainerById,
 }: {
-  clickedContainerReference: ContainerReference | undefined;
-  clickedContainer: ContainerConfig | undefined;
-  updateContainerReference: UseManagedStateReturnType['updateContainerReference'];
-  removeContainerReference: (containerReference: ContainerReference) => void;
+  clickedContainer: IndustryCanvasContainerConfig | undefined;
+  updateContainerById: UseManagedStateReturnType['updateContainerById'];
+  removeContainerById: UseManagedStateReturnType['removeContainerById'];
 }) => {
   const [numberOfPages, setNumberOfPages] = useState<number | undefined>(
     undefined
@@ -31,41 +27,41 @@ const useIndustryCanvasContainerTooltips = ({
 
   useEffect(() => {
     (async () => {
-      if (
-        clickedContainerReference === undefined ||
-        clickedContainer === undefined
-      ) {
+      if (clickedContainer === undefined) {
         return;
       }
 
-      if (clickedContainerReference.type === 'file') {
-        try {
-          const numPages = await getPdfCache().getPdfNumPages(
-            (clickedContainer as DocumentContainerProps).url
-          );
-          setNumberOfPages(numPages);
-        } catch (e) {
-          console.warn(e);
-        }
+      if (clickedContainer.type !== ContainerType.DOCUMENT) {
+        return;
+      }
+
+      try {
+        const numPages = await getPdfCache().getPdfNumPages(
+          clickedContainer.url
+        );
+        setNumberOfPages(numPages);
+      } catch (e) {
+        console.warn(e);
       }
     })();
-  }, [clickedContainerReference, clickedContainer]);
+  }, [clickedContainer]);
 
   return useMemo(() => {
-    if (clickedContainerReference === undefined) {
+    if (clickedContainer === undefined) {
       return [];
     }
 
-    if (clickedContainerReference.type === ContainerReferenceType.ASSET) {
+    if (clickedContainer.type === ContainerType.TABLE) {
+      // NOTE: This is going to break when we add support for Events etc
       return [
         {
-          targetId: getContainerId(clickedContainerReference),
+          targetId: clickedContainer.id,
           content: (
             <TooltipContainer>
               <Tooltip content="Open asset in Data Explorer">
                 <Link
                   href={createLink(
-                    `/explore/asset/${clickedContainerReference.resourceId}`
+                    `/explore/asset/${clickedContainer.metadata.resourceId}`
                   )}
                   target="_blank"
                 />
@@ -73,9 +69,7 @@ const useIndustryCanvasContainerTooltips = ({
               <Tooltip content="Remove asset from canvas">
                 <Button
                   icon="Delete"
-                  onClick={() =>
-                    removeContainerReference(clickedContainerReference)
-                  }
+                  onClick={() => removeContainerById(clickedContainer.id)}
                   type="ghost"
                 />
               </Tooltip>
@@ -86,33 +80,35 @@ const useIndustryCanvasContainerTooltips = ({
       ];
     }
 
-    if (clickedContainerReference.type === ContainerReferenceType.TIMESERIES) {
+    if (clickedContainer.type === ContainerType.TIMESERIES) {
       return [
         {
-          targetId: getContainerId(clickedContainerReference),
+          targetId: clickedContainer.id,
           content: (
             <TooltipContainer>
               <DateRangePrompt
                 initialRange={{
-                  startDate: clickedContainerReference.startDate,
-                  endDate: clickedContainerReference.endDate,
+                  startDate: clickedContainer.startDate,
+                  endDate: clickedContainer.endDate,
                 }}
                 onComplete={(dateRange) =>
-                  updateContainerReference({
-                    resourceId: clickedContainerReference.resourceId,
-                    id: clickedContainerReference.id,
-                    type: ContainerReferenceType.TIMESERIES,
+                  updateContainerById(clickedContainer.id, {
+                    // TODO: Enforce with types
+                    type: ContainerType.TIMESERIES,
                     startDate: dayjs(dateRange.startDate)
                       .startOf('day')
                       .toDate(),
                     endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
+                    metadata: {
+                      resourceId: clickedContainer.metadata.resourceId!,
+                    },
                   })
                 }
               />
               <Tooltip content="Open time series in Data Explorer">
                 <Link
                   href={createLink(
-                    `/explore/timeSeries/${clickedContainerReference.resourceId}`
+                    `/explore/timeSeries/${clickedContainer.metadata.resourceId}`
                   )}
                   target="_blank"
                 />
@@ -120,9 +116,7 @@ const useIndustryCanvasContainerTooltips = ({
               <Tooltip content="Remove time series from canvas">
                 <Button
                   icon="Delete"
-                  onClick={() =>
-                    removeContainerReference(clickedContainerReference)
-                  }
+                  onClick={() => removeContainerById(clickedContainer.id)}
                   type="ghost"
                 />
               </Tooltip>
@@ -133,26 +127,22 @@ const useIndustryCanvasContainerTooltips = ({
       ];
     }
 
-    if (clickedContainerReference.type === ContainerReferenceType.THREE_D) {
+    if (clickedContainer.type === ContainerType.REVEAL) {
       return [
         {
-          targetId: getContainerId(clickedContainerReference),
+          targetId: clickedContainer.id,
           content: (
             <TooltipContainer>
               <Tooltip content="Open 3D-model in Data Explorer">
                 <Link
-                  href={createLink(
-                    `/explore/threeD/${clickedContainerReference.id}`
-                  )}
+                  href={createLink(`/explore/threeD/${clickedContainer.id}`)}
                   target="_blank"
                 />
               </Tooltip>
               <Tooltip content="Remove 3D-model from canvas">
                 <Button
                   icon="Delete"
-                  onClick={() =>
-                    removeContainerReference(clickedContainerReference)
-                  }
+                  onClick={() => removeContainerById(clickedContainer.id)}
                   type="ghost"
                 />
               </Tooltip>
@@ -163,33 +153,38 @@ const useIndustryCanvasContainerTooltips = ({
       ];
     }
 
-    if (clickedContainerReference.type === ContainerReferenceType.FILE) {
+    if (
+      clickedContainer.type === ContainerType.DOCUMENT ||
+      clickedContainer.type === ContainerType.IMAGE
+    ) {
       return [
         {
-          targetId: getContainerId(clickedContainerReference),
+          targetId: clickedContainer.id,
           content: (
             <TooltipToolBarContainer>
               <ToolBar direction="horizontal">
-                {numberOfPages !== undefined && numberOfPages > 1 && (
-                  <Pagination
-                    totalPages={numberOfPages}
-                    hideItemsPerPage
-                    currentPage={clickedContainerReference.page}
-                    size="small"
-                    onPageChange={(page) =>
-                      updateContainerReference({
-                        ...clickedContainerReference,
-                        page,
-                      })
-                    }
-                  />
-                )}
+                {clickedContainer.type === ContainerType.DOCUMENT &&
+                  numberOfPages !== undefined &&
+                  numberOfPages > 1 && (
+                    <Pagination
+                      totalPages={numberOfPages}
+                      hideItemsPerPage
+                      currentPage={clickedContainer.page}
+                      size="small"
+                      onPageChange={(page) =>
+                        updateContainerById(clickedContainer.id, {
+                          ...clickedContainer,
+                          page,
+                        })
+                      }
+                    />
+                  )}
 
                 <>
                   <Tooltip content="Open file in Data Explorer">
                     <Link
                       href={createLink(
-                        `/explore/file/${clickedContainerReference.resourceId}`
+                        `/explore/file/${clickedContainer.metadata.resourceId}`
                       )}
                       target="_blank"
                     />
@@ -198,9 +193,7 @@ const useIndustryCanvasContainerTooltips = ({
                   <Tooltip content="Remove file from canvas">
                     <Button
                       icon="Delete"
-                      onClick={() =>
-                        removeContainerReference(clickedContainerReference)
-                      }
+                      onClick={() => removeContainerById(clickedContainer.id)}
                       type="ghost"
                     />
                   </Tooltip>
@@ -215,9 +208,9 @@ const useIndustryCanvasContainerTooltips = ({
 
     return [];
   }, [
-    clickedContainerReference,
-    removeContainerReference,
-    updateContainerReference,
+    clickedContainer,
+    removeContainerById,
+    updateContainerById,
     numberOfPages,
   ]);
 };

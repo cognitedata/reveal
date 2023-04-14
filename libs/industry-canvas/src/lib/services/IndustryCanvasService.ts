@@ -1,9 +1,8 @@
 import type { CogniteClient } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
 
-import { PersistedCanvasState } from '../types';
+import { SerializedCanvasDocument } from '../types';
 import { FDMClient, gql } from '../utils/FDMClient';
-import { deserializeCanvasState } from '../utils/utils';
 
 export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
 
@@ -23,17 +22,21 @@ export class IndustryCanvasService {
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
   private fdmClient: FDMClient;
+  private cogniteClient: CogniteClient;
 
   public constructor(client: CogniteClient) {
+    this.cogniteClient = client;
     this.fdmClient = new FDMClient(client, {
       spaceExternalId: this.SPACE_EXTERNAL_ID,
       spaceVersion: this.SPACE_VERSION,
     });
   }
 
-  public async getCanvasById(canvasId: string): Promise<PersistedCanvasState> {
+  public async getCanvasById(
+    canvasId: string
+  ): Promise<SerializedCanvasDocument> {
     const res = await this.fdmClient.graphQL<{
-      canvases: { items: PersistedCanvasState[] };
+      canvases: { items: SerializedCanvasDocument[] };
     }>(
       gql`
         query GetCanvasById($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
@@ -60,16 +63,17 @@ export class IndustryCanvasService {
         },
       }
     );
-    return deserializeCanvasState(res.canvases.items[0]);
+    return res.canvases.items[0];
   }
 
   private async getPaginatedCanvasData(
     cursor: string | undefined = undefined,
-    paginatedData: PersistedCanvasState[] = [],
+    paginatedData: SerializedCanvasDocument[] = [],
     limit: number = this.LIST_LIMIT
-  ): Promise<PersistedCanvasState[]> {
+  ): Promise<SerializedCanvasDocument[]> {
+    // TODO: Check this. Data is fetching. How is serialisation happening here? We don't want to hydrate the configs.
     const res = await this.fdmClient.graphQL<{
-      canvases: { items: PersistedCanvasState[]; pageInfo: PageInfo };
+      canvases: { items: SerializedCanvasDocument[]; pageInfo: PageInfo };
     }>(
       gql`
         query ListCanvases($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
@@ -125,33 +129,39 @@ export class IndustryCanvasService {
     return paginatedData;
   }
 
-  public async listCanvases(): Promise<PersistedCanvasState[]> {
+  public async listCanvases(): Promise<SerializedCanvasDocument[]> {
     return this.getPaginatedCanvasData();
   }
 
   public async saveCanvas(
-    canvas: PersistedCanvasState
-  ): Promise<PersistedCanvasState> {
-    const updatedCanvas = {
+    canvas: SerializedCanvasDocument
+  ): Promise<SerializedCanvasDocument> {
+    const updatedCanvas: SerializedCanvasDocument = {
       ...canvas,
       updatedAt: new Date().toISOString(),
     };
     await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
       { ...updatedCanvas },
     ]);
-    return updatedCanvas;
+    // This will induce an error because timestamps for instance will be incorrect
+    return canvas;
   }
 
-  public async archiveCanvas(canvas: PersistedCanvasState): Promise<void> {
+  public async archiveCanvas(canvas: SerializedCanvasDocument): Promise<void> {
     await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
       { ...canvas, isArchived: true },
     ]);
   }
 
   public async createCanvas(
-    canvas: PersistedCanvasState
-  ): Promise<PersistedCanvasState> {
-    await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [{ ...canvas }]);
+    canvas: SerializedCanvasDocument
+  ): Promise<SerializedCanvasDocument> {
+    const serializedCanvasState: SerializedCanvasDocument = {
+      ...canvas,
+    };
+    await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
+      serializedCanvasState,
+    ]);
     return canvas;
   }
 
@@ -159,7 +169,7 @@ export class IndustryCanvasService {
     await this.fdmClient.deleteNodes(canvasId);
   }
 
-  public makeEmptyCanvas = (): PersistedCanvasState => {
+  public makeEmptyCanvas = (): SerializedCanvasDocument => {
     return {
       externalId: uuid(),
       name: DEFAULT_CANVAS_NAME,

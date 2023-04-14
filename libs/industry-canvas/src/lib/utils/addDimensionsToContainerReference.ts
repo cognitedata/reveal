@@ -4,7 +4,6 @@ import { max } from 'lodash';
 import {
   ContainerReference,
   ContainerReferenceType,
-  ContainerReferenceWithoutDimensions,
   Dimensions,
 } from '../types';
 import assertNever from './assertNever';
@@ -12,16 +11,13 @@ import assertNever from './assertNever';
 const INITIAL_CONTAINER_MARGIN = 100;
 export const DEFAULT_TIMESERIES_HEIGHT = 400;
 export const DEFAULT_TIMESERIES_WIDTH = 700;
-
 export const DEFAULT_ASSET_WIDTH = 600;
 export const DEFAULT_ASSET_HEIGHT = 500;
-
 export const DEFAULT_THREE_D_WIDTH = 600;
 export const DEFAULT_THREE_D_HEIGHT = 400;
-
 const getInitialContainerReferenceDimensions = (
   currentMaxX: number,
-  containerReference: ContainerReferenceWithoutDimensions
+  containerReference: ContainerReference
 ): Dimensions => {
   const containerReferenceType = containerReference.type;
   if (containerReferenceType === ContainerReferenceType.FILE) {
@@ -66,11 +62,16 @@ const getInitialContainerReferenceDimensions = (
   );
 };
 
-const addDimensionsToContainerReferences = (
+const addDimensionsToContainerReference = (
   unifiedViewer: UnifiedViewer,
-  containerReferencesWithoutDimensions: ContainerReferenceWithoutDimensions[]
-): ContainerReference[] => {
-  let maxX =
+  containerReferenceWithoutDimensions: ContainerReference,
+  initialMaxX: number | undefined
+): {
+  maxX: number;
+  containerReference: ContainerReference;
+} => {
+  const maxX =
+    initialMaxX ??
     max(
       unifiedViewer
         .getContainers()
@@ -79,20 +80,20 @@ const addDimensionsToContainerReferences = (
         )
         .filter(isNotUndefined)
         .map((containerRect) => containerRect.x + containerRect.width)
-    ) ?? 0;
+    ) ??
+    0;
 
-  // TODO: If several vertical containers (smaller than the specified `maxWidth`) are added at once it can lead to large gaps between the containers.
-  //       Ideally we should have an API in UnifiedViewer to place the new containers compactly.
-  return containerReferencesWithoutDimensions.map(
-    (containerReferenceWithoutDimensions) => {
-      const dimensions = getInitialContainerReferenceDimensions(
-        maxX,
-        containerReferenceWithoutDimensions
-      );
-      maxX = dimensions.x + (dimensions.width ?? dimensions.maxWidth ?? 0);
-      return { ...containerReferenceWithoutDimensions, ...dimensions };
-    }
+  const dimensions = getInitialContainerReferenceDimensions(
+    maxX,
+    containerReferenceWithoutDimensions
   );
+  return {
+    maxX: dimensions.x + (dimensions.width ?? dimensions.maxWidth ?? 0),
+    containerReference: {
+      ...containerReferenceWithoutDimensions,
+      ...dimensions,
+    },
+  };
 };
 
-export default addDimensionsToContainerReferences;
+export default addDimensionsToContainerReference;

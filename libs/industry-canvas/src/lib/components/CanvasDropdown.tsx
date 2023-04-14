@@ -4,11 +4,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
-import { UseIndustryCanvasManagerReturnType } from '../hooks/useIndustryCanvasService';
-import { PersistedCanvasState } from '../types';
+import { IndustryCanvasContextType } from '../IndustryCanvasContext';
+import { SerializedCanvasDocument } from '../types';
 
 type CanvasDropdownProps = Pick<
-  UseIndustryCanvasManagerReturnType,
+  IndustryCanvasContextType,
   | 'activeCanvas'
   | 'canvases'
   | 'archiveCanvas'
@@ -26,12 +26,12 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const isSelected = useCallback(
-    (canvas: PersistedCanvasState) =>
+    (canvas: SerializedCanvasDocument) =>
       canvas.externalId === activeCanvas?.externalId,
     [activeCanvas]
   );
 
-  const onCanvasItemClick = (canvas: PersistedCanvasState) => {
+  const onCanvasItemClick = (canvas: SerializedCanvasDocument) => {
     navigate(
       createLink('/explore/industryCanvas', {
         canvasId: canvas.externalId,
@@ -40,7 +40,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
     setIsOpen(false);
   };
 
-  const onCanvasArchiveClick = (canvas: PersistedCanvasState) => {
+  const onCanvasArchiveClick = (canvas: SerializedCanvasDocument) => {
     archiveCanvas(canvas);
     setIsOpen(false);
   };

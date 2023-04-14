@@ -18,7 +18,7 @@ const getRectangleAnnotationFromCogniteAnnotation = (
     annotation.data
   );
   return {
-    id: String(annotation.id),
+    id: `${containerId}-${annotation.id}`,
     containerId: containerId,
     type: UfvAnnotationType.RECTANGLE,
     x: xMin,

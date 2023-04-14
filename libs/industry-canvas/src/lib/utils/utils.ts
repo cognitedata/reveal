@@ -1,93 +1,58 @@
-import { ContainerConfig } from '@cognite/unified-file-viewer';
+import { CogniteClient } from '@cognite/sdk/dist/src/index';
+import containerConfigToContainerReference from '../containerConfigToContainerReference';
+import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
+import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
 import {
-  ContainerReference,
-  ContainerReferenceType,
-  PersistedCanvasState,
+  IndustryCanvasState,
+  SerializedIndustryCanvasState,
+  IndustryCanvasContainerConfig,
+  SerializedCanvasDocument,
+  CanvasDocument,
 } from '../types';
-import assertNever from './assertNever';
 
-export const getContainerId = (
-  containerReference: ContainerReference
-): string => {
-  if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.resourceId}`;
-  }
-
-  if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-    return `${containerReference.resourceId}-${containerReference.id}`;
-  }
-
-  if (containerReference.type === ContainerReferenceType.ASSET) {
-    return `${containerReference.resourceId}`;
-  }
-
-  if (containerReference.type === ContainerReferenceType.THREE_D) {
-    return `${containerReference.id}`;
-  }
-
-  assertNever(containerReference, 'Unsupported container reference type');
+export const serializeCanvasState = (
+  state: IndustryCanvasState
+): SerializedIndustryCanvasState => {
+  return {
+    canvasAnnotations: state.canvasAnnotations,
+    containerReferences:
+      state.container.children?.map((childContainerConfig) =>
+        containerConfigToContainerReference(childContainerConfig)
+      ) ?? [],
+  };
 };
 
-export const getContainerReferencesWithUpdatedDimensions = (
-  containerReferences: ContainerReference[],
-  container: ContainerConfig
-): ContainerReference[] => {
-  const containerReferencesById = new Map(
-    containerReferences.map((containerReference) => [
-      getContainerId(containerReference),
-      containerReference,
-    ])
-  );
-
-  container.children?.forEach((child) => {
-    const containerReference = containerReferencesById.get(child.id ?? '');
-
-    if (containerReference === undefined) {
-      return;
-    }
-
-    containerReference.x = child.x ?? containerReference.x;
-    containerReference.y = child.y ?? containerReference.y;
-    containerReference.width = child.width;
-    containerReference.height = child.height;
-  });
-
-  return Array.from(containerReferencesById.values());
-};
-
-export const deserializeCanvasState = (
-  state: PersistedCanvasState
-): PersistedCanvasState => {
+export const deserializeCanvasState = async (
+  sdk: CogniteClient,
+  state: SerializedIndustryCanvasState
+): Promise<IndustryCanvasState> => {
   try {
-    const containerReferences = state.data.containerReferences.map(
-      (containerReference) => {
-        if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-          // We need to convert the dates to Date objects since they are serialized as strings in FDM
-          return {
-            ...containerReference,
-            startDate: new Date(containerReference.startDate),
-            endDate: new Date(containerReference.endDate),
-          };
-        }
-
-        return containerReference;
-      }
-    );
     return {
-      ...state,
-      data: {
-        ...state.data,
-        containerReferences,
-      },
+      canvasAnnotations: state.canvasAnnotations,
+      container: {
+        ...EMPTY_FLEXIBLE_LAYOUT,
+        children: await Promise.all(
+          state.containerReferences?.map((containerReference) =>
+            resolveContainerConfig(sdk, containerReference)
+          )
+        ),
+      } as IndustryCanvasContainerConfig,
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
     return {
-      ...state,
-      data: {
-        containerReferences: [],
-        canvasAnnotations: [],
-      },
+      container: EMPTY_FLEXIBLE_LAYOUT,
+      canvasAnnotations: [],
     };
   }
+};
+
+export const deserializeCanvasDocument = async (
+  sdk: CogniteClient,
+  canvasDocument: SerializedCanvasDocument
+): Promise<CanvasDocument> => {
+  return {
+    ...canvasDocument,
+    data: await deserializeCanvasState(sdk, canvasDocument.data),
+  };
 };
