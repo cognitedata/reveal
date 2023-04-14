@@ -74,8 +74,8 @@ export class Image360RevisionEntity implements Image360Revision {
     const rotationMatrix = this.getRotationFromFace(descriptor.face);
 
     const initialTranslation = new Matrix4().makeTranslation(
-      1 - (abox.xMax + abox.xMin) / 2 - 0.5,
-      1 - (abox.yMax + abox.yMin) / 2 - 0.5,
+      0.5 - (abox.xMax + abox.xMin) / 2,
+      0.5 - (abox.yMax + abox.yMin) / 2,
       0.5
     );
 
