@@ -32,5 +32,3 @@ Then show it in unified CDF UI by following these steps:
 - Select @cognite/cdf-access-management
 - Type in "https://localhost:8000/index.js"
 - Refresh the browser
-
-3. Go to `https://cog-appdev.dev.fusion.cogniteapp.com/`
