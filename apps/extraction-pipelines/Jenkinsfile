@@ -30,6 +30,7 @@ def pods = { body ->
         ]) {
         node(POD_LABEL) {
           body()
+        }
       }
     }
   }
@@ -91,5 +92,3 @@ pods {
     }
   }
 }
-
-
