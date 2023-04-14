@@ -49,13 +49,13 @@ pods {
     }
   
     githubNotifyWrapper(context_install) {
-        stage('Install dependencies') {
+      stage('Install dependencies') {
         yarn.setup()
       }
     }
 
     stage("Git config") {
-        sh("git config --global --add safe.directory ${env.WORKSPACE}/main")
+      sh("git config --global --add safe.directory ${env.WORKSPACE}/main")
     }
 
     parallel(
