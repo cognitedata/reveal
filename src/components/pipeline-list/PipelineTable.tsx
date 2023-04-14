@@ -132,12 +132,6 @@ const PipelineTable = (): JSX.Element => {
           (a?.description || '').localeCompare(b?.description || ''),
       },
       {
-        title: t('pipeline-list-table-column-title-owner'),
-        dataIndex: 'owner',
-        key: 'owner',
-        sorter: (a, b) => (a?.owner || '').localeCompare(b?.owner || ''),
-      },
-      {
         title: t('last-run'),
         dataIndex: 'latestRun',
         key: 'latestRun',
