@@ -4,11 +4,13 @@ import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { getContainer } from 'utils';
 import { Flow } from 'types';
+import { useTranslation } from 'common';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
 import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
 import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
 
 export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
+  const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
   }>();
@@ -36,7 +38,17 @@ export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
             hideOnContentClick: true,
             hideOnOutsideClick: true,
           },
-          content: <Menu></Menu>,
+          content: (
+            <Menu>
+              <Menu.Item
+                icon="Download"
+                iconPlacement="left"
+                // onClick={() => }
+              >
+                {t('download-png')}
+              </Menu.Item>
+            </Menu>
+          ),
         }}
       />
     </Container>
