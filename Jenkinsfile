@@ -80,20 +80,6 @@ pods {
           }
         }
       },
-      'Build': {
-        if (isPullRequest) {
-          println "Skipping build for pull requests"
-          return
-        }
-        stageWithNotify('Build for FAS') {
-          fas.build(
-            appId: APP_ID,
-            repo: APPLICATION_REPO_ID,
-            buildCommand: 'yarn build',
-            shouldPublishSourceMap: false
-          )
-        }   
-      }
     )
 
     if (isRelease) {
