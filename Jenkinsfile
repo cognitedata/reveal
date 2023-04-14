@@ -82,11 +82,11 @@ pods {
     )
 
     if (isRelease) {
-        stageWithNotify('Save missing keys to locize') {
-          sh("yarn save-missing")
-        stageWithNotify('Remove deleted keys from locize') {
-          sh("yarn remove-deleted")
-        }
+      stageWithNotify('Save missing keys to locize') {
+        sh("yarn save-missing")
+      }
+      stageWithNotify('Remove deleted keys from locize') {
+        sh("yarn remove-deleted")
       }
     }
   }
