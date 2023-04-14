@@ -5,7 +5,7 @@
 import { SceneHandler } from '@reveal/utilities';
 import { Image360FileProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
-import { Image360 } from './Image360';
+import { Image360, Image360Metadata } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
@@ -108,8 +108,12 @@ export class Image360Entity implements Image360 {
     this._image360VisualzationBox.unloadImages();
   }
 
-  public getImageMetadata(): Image360EventDescriptor {
-    return this._imageMetadata;
+  public getImageMetadata(): Image360Metadata {
+    return {
+      station: this._imageMetadata.label,
+      collection: this._imageMetadata.collectionLabel,
+      date: this._activeRevision.date
+    };
   }
 
   /**

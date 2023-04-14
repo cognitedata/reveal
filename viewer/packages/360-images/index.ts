@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-export { Image360 } from './src/entity/Image360';
+export { Image360, Image360Metadata } from './src/entity/Image360';
 export { Image360Revision } from './src/entity/Image360Revision';
 export { Image360Collection } from './src/collection/Image360Collection';
 export { Image360Facade } from './src/Image360Facade';
@@ -12,4 +12,3 @@ export { Image360RevisionEntity } from './src/entity/Image360RevisionEntity';
 export { Image360Visualization } from './src/entity/Image360Visualization';
 export { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
-export { Image360Information } from './src/information/Image360Information';

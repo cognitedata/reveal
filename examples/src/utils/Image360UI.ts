@@ -3,19 +3,33 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection, Image360EnteredDelegate } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  Image360,
+  Image360Collection,
+  Image360EnteredDelegate,
+  Image360ExitedDelegate
+} from '@cognite/reveal';
 import * as dat from 'dat.gui';
+import { Image360Information } from './Image360Information';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
     let collections: Image360Collection[] = [];
-    let selectedEntity: Image360;
+    let selectedEntity: Image360 | undefined;
+    let imageInformation: Image360Information | undefined;
 
     const optionsFolder = gui.addFolder('Add Options');
 
     const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
       selectedEntity = entity;
+      imageInformation?.updateInformation(selectedEntity);
+    };
+
+    const onImage360Exited: Image360ExitedDelegate = () => {
+      selectedEntity = undefined;
+      imageInformation?.updateInformation(selectedEntity);
     };
 
     const translation = {
@@ -128,7 +142,13 @@ export class Image360UI {
       .add(params, 'showInfo')
       .name('Show image information')
       .onChange(() => {
-        viewer.show360ImageInformation(params.showInfo);
+        if (params.showInfo) {
+          if (!imageInformation) imageInformation = new Image360Information(viewer.domElement);
+          imageInformation.updateInformation(selectedEntity);
+        } else {
+          imageInformation?.dispose();
+          imageInformation = undefined;
+        }
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');
@@ -149,6 +169,7 @@ export class Image360UI {
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
       collection.on('image360Entered', onImageEntered);
+      collection.on('image360Exited', onImage360Exited);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
       viewer.requestRedraw();
@@ -165,6 +186,7 @@ export class Image360UI {
       await viewer.remove360Images(...entities);
       entities = [];
       collections = [];
+      selectedEntity = undefined;
     }
   }
 }

@@ -391,7 +391,6 @@ export class Cognite3DViewer {
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
-    show360ImageInformation(show: boolean): void;
     worldToScreen(point: THREE_2.Vector3, normalize?: boolean): THREE_2.Vector2 | null;
 }
 
@@ -780,6 +779,7 @@ export type HtmlOverlayToolOptions = {
 // @public (undocumented)
 export interface Image360 {
     getActiveRevision(): Image360Revision;
+    getImageMetadata(): Image360Metadata;
     getRevisions(): Image360Revision[];
     readonly image360Visualization: Image360Visualization;
     readonly transform: THREE.Matrix4;
