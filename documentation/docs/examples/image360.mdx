@@ -105,14 +105,3 @@ const newRevision = revisions[1];
 await viewer.enter360Image(image360, newRevision);
 alert(`Revision changed to ${newRevision.date}`);
 ```
-
-## Image information GUI
-
-To help with navigation and identification of images it is possible to enable a simple GUI that lists relevant metadata for the currently entered image.
-Date and time will only be listed if the current revision is dated.
-
-```ts
-viewer.show360ImageInformation(true);
-```
-
-<img src={useBaseUrl('/img/image360_3.png')} alt="Image360InformationGUI" />
