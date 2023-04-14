@@ -195,10 +195,11 @@ const GCSUploader = (
   });
 };
 
-const uploadFile = async (file: UploadFile) => {
+const uploadFile = async (file: UploadFile, dataSetId: number | undefined) => {
   const { uploadUrl, id } = (await sdk.files.upload({
     name: file.name,
     source: 'Datastudio',
+    dataSetId,
   })) as FileUploadResponse;
   if (!uploadUrl) {
     throw new Error('Upload error, did not recieve "uploadUrl"');
@@ -233,11 +234,13 @@ const uploadFile = async (file: UploadFile) => {
 export const uploadFunction = async ({
   data,
   file,
+  dataSetId,
 }: {
   data: Omit<CogFunctionUpload, 'fileId'>;
   file: UploadFile;
+  dataSetId: number | undefined;
 }) => {
-  const fileId = await uploadFile(file);
+  const fileId = await uploadFile(file, dataSetId);
   try {
     const { id } = await createFunction({ ...data, fileId });
     return id;
