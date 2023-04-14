@@ -27,11 +27,8 @@ export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
   const handleDownloadToPNG = () => {
     toPng(document.querySelector('.react-flow') as HTMLElement, {
       filter: (node) => {
-        // we don't want to add the minimap and the controls to the image
-        if (
-          node?.classList?.contains('react-flow__minimap') ||
-          node?.classList?.contains('react-flow__controls')
-        ) {
+        // we don't want to add the controls to the image
+        if (node?.classList?.contains('react-flow__controls')) {
           return false;
         }
 
