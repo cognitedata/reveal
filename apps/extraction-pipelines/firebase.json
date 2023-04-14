@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "site": "cognite-extraction-pipelines-production",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    },
+    {
+      "site": "cognite-extraction-pipelines-staging",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    }
+  ]
+}
