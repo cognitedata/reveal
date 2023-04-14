@@ -1,6 +1,6 @@
 @Library('jenkins-helpers') _
 
-static final String NODE_VESION = 'node:16'
+static final String NODE_VERSION = 'node:16'
 static final String VERSIONING_STRATEGY = "single-branch"
 
 def pods = { body ->
