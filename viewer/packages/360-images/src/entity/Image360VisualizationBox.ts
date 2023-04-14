@@ -70,7 +70,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.renderOrder = newRenderOrder;
   }
 
-  setAnnotations(annotations: Promise<THREE.Object3D[]>) {
+  setAnnotations(annotations: Promise<THREE.Object3D[]>): void {
     this._annotations = annotations;
 
     if (this._visualizationMesh) {
