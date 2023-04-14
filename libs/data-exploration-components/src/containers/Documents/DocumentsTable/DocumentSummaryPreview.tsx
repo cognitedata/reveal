@@ -30,7 +30,7 @@ export const DocumentSummaryPreview = ({
             }
           );
           if (response.status !== 200) {
-            setContent('OCR not available');
+            setContent('Text in document not available');
             return;
           }
 
