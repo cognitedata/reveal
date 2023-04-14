@@ -13,8 +13,10 @@
 Should show output similar to this
 
 ```
+You can now view @cognite/cdf-access-management in the browser.
+
   Local:            http://localhost:8000
-  On Your Network:  .......
+  On Your Network:  http://192.168.1.157:8000
 ```
 
 _Note:_ http://localhost:8000 is wrong, you need to use **https://localhost:8000**
