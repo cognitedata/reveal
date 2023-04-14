@@ -4,8 +4,6 @@
 
 # Running locally
 
-After cloning the repo run
-
 1. Install dependencies
    `yarn`
 
