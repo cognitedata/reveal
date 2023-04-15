@@ -1,18 +1,20 @@
-import Select from 'antd/lib/select';
+import CreatableSelect from 'react-select/creatable';
 import { useEffect, useState } from 'react';
 import theme from 'styles/theme';
 import { DataSet, RawTable } from 'utils/types';
 import Drawer from 'components/Drawer';
-import { StyledSelect, IconWrapper, FieldLabel } from 'utils/styledComponents';
+import { IconWrapper, FieldLabel } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import getDataInIcon from 'assets/getDataInIcon.svg';
-import { getContainer } from 'utils/shared';
 import { OidcCheck } from 'components/OidcCheck/OidcCheck';
 import { RawSection } from 'components/GetDataInPage/raw/RawSection';
 import { useTranslation } from 'common/i18n';
 import { Col } from 'utils';
 
-const { Option } = Select;
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
 interface GetDataInProps {
   dataSet?: DataSet;
@@ -28,8 +30,10 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
   const { t } = useTranslation();
   const [selectedDb, setSelectedDb] = useState<string>('');
   const [selectedTables, setSelectedTables] = useState<RawTable[]>([]);
-  const [selectedExtractors, setSelectedExtractors] = useState<string[]>([]);
-  const [sourceNames, setSourceNames] = useState<string[]>([]);
+  const [selectedExtractors, setSelectedExtractors] = useState<SelectOption[]>(
+    []
+  );
+  const [selectedSources, setSelectedSources] = useState<SelectOption[]>([]);
 
   useEffect(() => {
     if (props.saveSection) {
@@ -42,10 +46,11 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
     if (props.dataSet) {
       const newDataSet: DataSet = props.dataSet;
       // check & set source name
-      if (sourceNames.length) {
+      if (selectedSources.length) {
+        const sourceNames = selectedSources.map(({ label }) => label);
         trackEvent(`DataSets.CreationFlow.Used source names`, {
           sources: sourceNames,
-          numberOfSources: sourceNames.length,
+          numberOfSources: selectedSources.length,
         });
         newDataSet.metadata.consoleSource = { names: sourceNames };
       }
@@ -55,7 +60,7 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
           numberOfExtractors: selectedExtractors.length,
         });
         newDataSet.metadata.consoleExtractors = {
-          accounts: selectedExtractors,
+          accounts: selectedExtractors.map(({ label }) => label),
         };
       }
       // check & set raw tables
@@ -79,7 +84,12 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
         props.dataSet.metadata.consoleSource &&
         props.dataSet.metadata.consoleSource.names
       ) {
-        setSourceNames(props.dataSet.metadata.consoleSource.names);
+        setSelectedSources(
+          props.dataSet.metadata.consoleSource.names.map((name) => ({
+            value: name,
+            label: name,
+          }))
+        );
       }
       // raw tables
       if (props.dataSet.metadata.rawTables) {
@@ -89,12 +99,27 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
       if (props.dataSet.metadata.consoleExtractors) {
         if (props.dataSet.metadata.consoleExtractors.accounts) {
           setSelectedExtractors(
-            props.dataSet.metadata.consoleExtractors.accounts
+            props.dataSet.metadata.consoleExtractors.accounts.map(
+              (account) => ({
+                value: account,
+                label: account,
+              })
+            )
           );
         }
       }
     }
   }, [props.dataSet]);
+
+  const sourcesOptions = [
+    {
+      label: t('suggested-options'),
+      options: (props.sourceSuggestions || []).map((suggestion) => ({
+        value: suggestion,
+        label: suggestion,
+      })),
+    },
+  ];
 
   return (
     <Drawer
@@ -111,65 +136,37 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
         <Col span={24}>
           <Col span={18}>
             <FieldLabel>{t('source_other')}</FieldLabel>
-            <Select
-              mode="tags"
-              style={{ width: '100%', background: theme.blandColor }}
-              onChange={(selection: any) => {
-                setSourceNames(selection);
-                if (selection) {
-                  props.setChangesSaved(false);
-                }
+            <CreatableSelect
+              isMulti
+              css={{ maxWidth: '600px', background: theme.blandColor }}
+              menuPlacement="bottom"
+              value={selectedSources}
+              onChange={(options) => {
+                setSelectedSources([...options]);
+                props.setChangesSaved(false);
               }}
-              value={sourceNames}
-              notFoundContent={t('enter-sources-to-your-data-set')}
               placeholder={t('source_other')}
-              getPopupContainer={getContainer}
-            >
-              {props.sourceSuggestions && props.sourceSuggestions.length && (
-                <Option disabled value="Suggestions">
-                  {t('suggested-options')}
-                </Option>
-              )}
-              {sourceNames?.length &&
-                sourceNames?.map((label: string) => (
-                  <Option key={label} value={label}>
-                    {label}
-                  </Option>
-                ))}
-              {props?.sourceSuggestions
-                ?.filter((name) => !sourceNames.includes(name))
-                .map((label: string) => (
-                  <Option key={label} value={label}>
-                    {label}
-                  </Option>
-                ))}
-            </Select>
+              isClearable
+              closeMenuOnSelect
+              noOptionsMessage={() => t('enter-sources-to-your-data-set')}
+              options={sourcesOptions}
+            />
             <OidcCheck>
               <FieldLabel>{t('service-accounts')}</FieldLabel>
-              <StyledSelect
+              <CreatableSelect
+                isMulti
+                css={{ maxWidth: '600px', background: theme.blandColor }}
+                menuPlacement="bottom"
                 value={selectedExtractors}
-                mode="tags"
-                optionFilterProp="children"
-                placeholder={t('please-select-the-service-accounts')}
-                onChange={(val: any) => {
-                  setSelectedExtractors(val);
+                onChange={(options) => {
+                  setSelectedExtractors([...options]);
                   props.setChangesSaved(false);
                 }}
-                filterOption={(input, option) =>
-                  option && option.props && option.props.children
-                    ? String(option.props.children)
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    : false
-                }
-                getPopupContainer={getContainer}
-              >
-                {selectedExtractors.map((ext) => (
-                  <Option key={ext} value={ext}>
-                    {ext}
-                  </Option>
-                ))}
-              </StyledSelect>
+                placeholder={t('please-select-the-service-accounts')}
+                isClearable
+                closeMenuOnSelect
+                options={[]}
+              />
             </OidcCheck>
           </Col>
           <Col span={6}>

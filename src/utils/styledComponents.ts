@@ -9,7 +9,6 @@ import {
   Menu,
 } from '@cognite/cogs.js';
 import Tag from 'antd/lib/tag';
-import Select from 'antd/lib/select';
 
 import zIndex from 'utils/zIndex';
 import { Card, Row } from './antdStyledComponents';
@@ -177,12 +176,6 @@ export const ValueTag = styled(Tag)`
 export const EmptyValueTag = styled(ValueTag)`
   background: #bfbfbf;
   color: #595959;
-`;
-
-export const StyledSelect = styled(Select)`
-  background: #f5f5f5;
-  border-radius: 4px;
-  width: 90%;
 `;
 
 export const NoDataText = styled.p`
@@ -367,10 +360,6 @@ export const OptionDescription = styled.div`
   width: 75%;
   font-weight: normal;
   white-space: normal;
-`;
-
-export const GroupLabel = styled.span`
-  font-size: 14px;
 `;
 
 export const TooltipLink = styled.a`
