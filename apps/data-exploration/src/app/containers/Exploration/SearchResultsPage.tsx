@@ -147,7 +147,7 @@ function SearchPage() {
             </>
           )}
           <SearchConfigButton
-            style={{ width: '36px', marginRight: '8px' }}
+            style={{ marginRight: '8px' }}
             onClick={() => {
               setShowSearchConfig(true);
             }}
@@ -155,6 +155,15 @@ function SearchPage() {
 
           <ExplorationSearchBar />
         </SearchInputContainer>
+
+        {/* Modal */}
+        <SearchConfig
+          visible={showSearchConfig}
+          onCancel={() => setShowSearchConfig(false)}
+          onSave={() => {
+            setShowSearchConfig(false);
+          }}
+        />
 
         <TabsContainer>
           {isAdvancedFiltersEnabled ? (
@@ -215,13 +224,6 @@ function SearchPage() {
             />
           )}
         </TabsContainer>
-        <SearchConfig
-          visible={showSearchConfig}
-          onCancel={() => setShowSearchConfig(false)}
-          onSave={() => {
-            setShowSearchConfig(false);
-          }}
-        />
 
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>

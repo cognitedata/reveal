@@ -5,6 +5,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { BaseIcon } from '../../Icons';
+import styled from 'styled-components';
 
 type Props = ButtonProps & {
   showNotificationDot?: boolean;
@@ -23,7 +24,12 @@ export const SearchConfigButton: React.FC<Props> = ({
             <BaseIcon type="Configure" style={{ verticalAlign: 'middle' }} />
           }
         </NotificationDot>
+        <StyledSpan>Config</StyledSpan>
       </Button>
     </Tooltip>
   );
 };
+
+const StyledSpan = styled.span`
+  margin-left: 8px;
+`;
