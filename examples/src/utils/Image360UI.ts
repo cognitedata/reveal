@@ -11,25 +11,21 @@ import {
   Image360ExitedDelegate
 } from '@cognite/reveal';
 import * as dat from 'dat.gui';
-import { Image360Information } from './Image360Information';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
     let collections: Image360Collection[] = [];
     let selectedEntity: Image360 | undefined;
-    let imageInformation: Image360Information | undefined;
 
     const optionsFolder = gui.addFolder('Add Options');
 
     const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
       selectedEntity = entity;
-      imageInformation?.updateInformation(selectedEntity);
     };
 
     const onImage360Exited: Image360ExitedDelegate = () => {
       selectedEntity = undefined;
-      imageInformation?.updateInformation(selectedEntity);
     };
 
     const translation = {
@@ -64,8 +60,7 @@ export class Image360UI {
       siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
-      remove: removeAll360Images,
-      showInfo: false
+      remove: removeAll360Images
     };
 
     optionsFolder.add(params, 'siteId').name('Site ID');
@@ -135,19 +130,6 @@ export class Image360UI {
           if (index >= 0 && index < revisions.length) {
             viewer.enter360Image(selectedEntity, revisions[index]);
           }
-        }
-      });
-
-    gui
-      .add(params, 'showInfo')
-      .name('Show image information')
-      .onChange(() => {
-        if (params.showInfo) {
-          if (!imageInformation) imageInformation = new Image360Information(viewer.domElement);
-          imageInformation.updateInformation(selectedEntity);
-        } else {
-          imageInformation?.dispose();
-          imageInformation = undefined;
         }
       });
 
