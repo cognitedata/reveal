@@ -5,7 +5,6 @@ import ReactFlow, {
   Background,
   Edge,
   Node,
-  MarkerType,
   OnConnect,
   ReactFlowInstance,
   useEdgesState,
@@ -15,7 +14,10 @@ import ReactFlow, {
 } from 'reactflow';
 import styled from 'styled-components';
 
-import { CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER } from 'common';
+import {
+  CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
+  Z_INDEXES,
+} from 'common';
 import { CustomNode } from 'components/custom-node';
 import { Colors } from '@cognite/cogs.js';
 import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
@@ -60,12 +62,6 @@ export const WorkflowBuilder = ({
         addEdge(
           {
             ...connection,
-            animated: true,
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              height: 16,
-              width: 16,
-            },
             style: {
               strokeWidth: 1,
             },
@@ -146,4 +142,8 @@ const Container = styled.div`
   background-color: ${Colors['surface--strong']};
   height: 100%;
   width: 100%;
+
+  .react-flow__nodes {
+    z-index: ${Z_INDEXES.REACT_FLOW_CANVAS_NODES};
+  }
 `;
