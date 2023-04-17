@@ -64,7 +64,7 @@ export const useDetailedMappingsByAssetIdQuery = (
     },
     {
       ...options,
-      enabled: !!isFetchingMore,
+      enabled: data.length > 0 && !canFetchMore,
     }
   );
 };
