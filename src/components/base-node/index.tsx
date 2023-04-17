@@ -13,23 +13,27 @@ import styled from 'styled-components';
 import { CustomNodeData } from 'components/custom-node';
 import { isConnectionValid } from 'utils';
 
-const BASE_NODE_HANDLE_SIZE = 12;
+const BASE_NODE_HANDLE_SIZE = 16;
 
 type BaseNodeProps = {
   description?: string;
   icon: IconType;
+  selected: boolean;
   title: string;
 };
 
 export const BaseNode = ({
   description,
   icon,
+  selected,
   title,
 }: BaseNodeProps): JSX.Element => {
   const nodes = useNodes<CustomNodeData>();
 
   return (
-    <StyledBaseNodeContainer>
+    <StyledBaseNodeContainer
+      className={selected ? 'workflow-builder-node-selected' : undefined}
+    >
       <StyledBaseHandleLeft
         isValidConnection={(connection) => isConnectionValid(connection, nodes)}
         position={Position.Left}
@@ -60,47 +64,73 @@ export const BaseNode = ({
 };
 
 const StyledBaseHandle = styled(Handle)`
-  background-color: ${Colors['border--interactive--toggled-default']};
+  background-color: white;
   border: none;
+  height: ${BASE_NODE_HANDLE_SIZE}px;
+  width: ${BASE_NODE_HANDLE_SIZE / 2}px;
+  right: ${(BASE_NODE_HANDLE_SIZE / 2) * -1}px;
+  right: 0px;
+  opacity: 0;
+  z-index: 1;
 
-  :hover {
-    background-color: ${Colors['border--interactive--toggled-hover']};
+  ::after {
+    content: '';
+    background-color: ${Colors['border--interactive--toggled-default']};
+    border-radius: ${BASE_NODE_HANDLE_SIZE / 4}px;
+    top: ${BASE_NODE_HANDLE_SIZE / 4}px;
+    position: absolute;
+    width: ${BASE_NODE_HANDLE_SIZE / 2}px;
+    height: ${BASE_NODE_HANDLE_SIZE / 2}px;
   }
 
-  :active {
-    background-color: ${Colors['border--interactive--toggled-pressed']};
+  :hover::after {
+    background-color: ${Colors['border--interactive--toggled-hover']};
+  }
+`;
+
+const StyledBaseHandleRight = styled(StyledBaseHandle)`
+  border-radius: 2px 0 0 2px;
+  right: 0px;
+
+  ::after {
+    left: ${BASE_NODE_HANDLE_SIZE / 4}px;
+  }
+`;
+
+const StyledBaseHandleLeft = styled(StyledBaseHandle)`
+  border-radius: 0 2px 2px 0;
+  left: 0px;
+
+  ::after {
+    right: ${BASE_NODE_HANDLE_SIZE / 4}px;
   }
 `;
 
 const StyledBaseNodeContainer = styled.div`
   background-color: ${Colors['surface--muted']};
+  border: 1px solid transparent;
   border-radius: 6px;
   box-shadow: ${Elevations['elevation--surface--interactive']};
   display: flex;
   flex-direction: column;
   width: 300px;
 
-  ${StyledBaseHandle}.react-flow__handle-left.react-flow__handle-connecting {
-    background-color: ${Colors['surface--status-critical--strong--default']};
+  :hover {
+    outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
+
+    ${StyledBaseHandleRight}, ${StyledBaseHandleLeft} {
+      opacity: 1;
+    }
   }
 
-  ${StyledBaseHandle}.react-flow__handle-left.react-flow__handle-valid {
-    background-color: ${Colors['surface--status-success--strong--default']};
+  &.workflow-builder-node-selected {
+    outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
+    border-color: ${Colors['border--interactive--toggled-default']};
+
+    ${StyledBaseHandleRight}, ${StyledBaseHandleLeft} {
+      opacity: 1;
+    }
   }
-`;
-
-const StyledBaseHandleRight = styled(StyledBaseHandle)`
-  border-radius: 50%;
-  height: ${BASE_NODE_HANDLE_SIZE}px;
-  width: ${BASE_NODE_HANDLE_SIZE}px;
-  right: ${(BASE_NODE_HANDLE_SIZE / 2) * -1}px;
-`;
-
-const StyledBaseHandleLeft = styled(StyledBaseHandle)`
-  border-radius: 2px;
-  height: ${BASE_NODE_HANDLE_SIZE}px;
-  width: ${BASE_NODE_HANDLE_SIZE / 2}px;
-  left: ${(BASE_NODE_HANDLE_SIZE / 4) * -1}px;
 `;
 
 const StyledBaseNodeHeader = styled.div`
