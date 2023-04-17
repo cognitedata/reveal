@@ -1,3 +1,4 @@
+import * as Automerge from '@automerge/automerge';
 import { Edge, Node } from 'reactflow';
 
 export type Canvas = {
@@ -12,6 +13,8 @@ export type Flow = {
   description?: string;
   canvas: Canvas;
 };
+
+export type AFlow = Automerge.Doc<Flow>;
 
 export type Items<T> = {
   items: T[];

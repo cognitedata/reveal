@@ -1,4 +1,4 @@
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Canvas } from 'components/canvas';
 import { useParams } from 'react-router-dom';
@@ -9,16 +9,26 @@ import {
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlusButton';
+import { useFlow } from 'hooks/files';
 
 const Flow = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
+  const { data, error, isInitialLoading } = useFlow(id!, { enabled: !!id });
 
-  if (!id) {
-    return <>404</>;
+  if (error) {
+    return <>ERROR: {JSON.stringify(error)}</>;
+  }
+
+  if (isInitialLoading) {
+    return <Loader />;
+  }
+
+  if (!data || !id) {
+    return <>wtf?</>;
   }
 
   return (
-    <FlowContextProvider externalId={id}>
+    <FlowContextProvider externalId={id} initialFlow={data}>
       <FlowContainer />
     </FlowContextProvider>
   );
