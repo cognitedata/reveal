@@ -2,14 +2,13 @@ import { useMemo } from 'react';
 
 import { InternalEventsFilters } from '@data-exploration-lib/core';
 
-import keyBy from 'lodash/keyBy';
-import orderBy from 'lodash/orderBy';
 import omit from 'lodash/omit';
 
 import { EventProperty } from '../types';
 import { useEventsUniqueValuesByProperty } from './useEventsUniqueValuesByProperty';
 import { mapFiltersToEventsAdvancedFilters } from '@data-exploration-lib/domain-layer';
 import { getSearchConfig } from '../../../utils';
+import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
   property: EventProperty;
@@ -36,9 +35,6 @@ export const useEventsFilterOptions = ({
   } = useEventsUniqueValuesByProperty({
     property,
     query,
-    options: {
-      keepPreviousData: true,
-    },
   });
 
   const { data: dynamicData = [] } = useEventsUniqueValuesByProperty({
@@ -49,21 +45,10 @@ export const useEventsFilterOptions = ({
       query,
       getSearchConfig().event
     ),
-    options: {
-      keepPreviousData: true,
-    },
   });
 
   const options = useMemo(() => {
-    const keyedDynamicData = keyBy(dynamicData, 'value');
-
-    const unsortedOptions = data.map((item) => ({
-      label: String(item.value),
-      value: String(item.value),
-      count: keyedDynamicData[item.value]?.count || 0,
-    }));
-
-    return orderBy(unsortedOptions, 'count', 'desc');
+    return mergeDynamicFilterOptions(data, dynamicData);
   }, [data, dynamicData]);
 
   return {

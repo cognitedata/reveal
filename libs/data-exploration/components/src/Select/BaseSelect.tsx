@@ -45,6 +45,10 @@ export const BaseSelect = <ValueType,>({
     if (!addNilOption) {
       return optionsOriginal;
     }
+    // If all options have a count of 0 and there is a nil option, move it to the beginning.
+    if (optionsOriginal.every((option) => option.count === 0)) {
+      return [NIL_FILTER_OPTION, ...optionsOriginal] as OptionType<ValueType>[];
+    }
     return [...optionsOriginal, NIL_FILTER_OPTION] as OptionType<ValueType>[];
   }, [optionsOriginal, addNilOption]);
 
