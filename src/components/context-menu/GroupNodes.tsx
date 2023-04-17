@@ -71,7 +71,9 @@ export const GroupNodes = ({
   if (
     contextMenu?.type === 'node' &&
     contextMenu.items.length > 1 &&
-    contextMenu.items.every(({ type }) => type !== 'groupNode')
+    contextMenu.items.every(
+      ({ parentNode, type }) => type !== 'groupNode' && !parentNode
+    )
   ) {
     return (
       <ContextMenuItem
