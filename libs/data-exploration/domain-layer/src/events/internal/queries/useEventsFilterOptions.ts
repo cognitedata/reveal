@@ -4,9 +4,11 @@ import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 import omit from 'lodash/omit';
 
-import { EventProperty } from '../types';
-import { useEventsUniqueValuesByProperty } from './useEventsUniqueValuesByProperty';
-import { mapFiltersToEventsAdvancedFilters } from '@data-exploration-lib/domain-layer';
+import {
+  EventProperty,
+  mapFiltersToEventsAdvancedFilters,
+  useEventsUniqueValuesByProperty,
+} from '@data-exploration-lib/domain-layer';
 import { getSearchConfig } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
@@ -36,13 +38,11 @@ export const useEventsFilterOptions = ({
     isError,
   } = useEventsUniqueValuesByProperty({
     property,
-    query,
     prefix,
   });
 
   const { data: dynamicData = [] } = useEventsUniqueValuesByProperty({
     property,
-    query,
     advancedFilter: mapFiltersToEventsAdvancedFilters(
       omit(filter, filterProperty || property),
       query,

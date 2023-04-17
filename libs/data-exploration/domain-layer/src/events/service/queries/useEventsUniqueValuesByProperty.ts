@@ -17,7 +17,6 @@ import {
 
 interface Props {
   property: EventProperty;
-  query?: string;
   filter?: InternalEventsFilters | OldEventsFilters;
   advancedFilter?: AdvancedFilter<EventsProperties>;
   prefix?: string;
@@ -25,7 +24,6 @@ interface Props {
 
 export const useEventsUniqueValuesByProperty = ({
   property,
-  query,
   filter,
   advancedFilter,
   prefix,
@@ -33,13 +31,7 @@ export const useEventsUniqueValuesByProperty = ({
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsUniqueValues(
-      property,
-      query,
-      filter,
-      advancedFilter,
-      prefix
-    ),
+    queryKeys.eventsUniqueValues(property, filter, advancedFilter, prefix),
     () => {
       return getEventsUniqueValuesByProperty(sdk, property, {
         filter: transformNewFilterToOldFilter(filter),

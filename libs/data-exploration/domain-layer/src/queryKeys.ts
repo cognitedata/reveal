@@ -80,7 +80,6 @@ export const queryKeys = {
     ] as const,
   eventsUniqueValues: (
     property: string,
-    query?: string,
     filter?: any,
     advancedFilter?: any,
     prefix?: string
@@ -89,7 +88,6 @@ export const queryKeys = {
       ...queryKeys.events(),
       'unique-values',
       property,
-      query,
       filter,
       advancedFilter,
       prefix,
