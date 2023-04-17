@@ -3,6 +3,7 @@ import {
   NavigateOptions,
   useNavigate as origUseNavigate,
 } from 'react-router';
+import queryString from 'query-string';
 import { isFDMv3 } from './isFDMv3';
 
 export const useNavigate = () => {
@@ -15,8 +16,15 @@ export const useNavigate = () => {
         newToUrl.startsWith('/') ? '' : '/'
       }${newToUrl}`;
     }
+    const { url, query: params } = queryString.parseUrl(newToUrl || '/');
     if (typeof to === 'string') {
-      origNavigate((newToUrl || '/') + window.location.search, options);
+      origNavigate(
+        `${url}?${queryString.stringify({
+          ...queryString.parse(window.location.search),
+          ...params,
+        })}`,
+        options
+      );
     } else {
       origNavigate({ ...to, pathname: newToUrl }, options);
     }
