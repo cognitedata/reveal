@@ -6,6 +6,7 @@ export * from './dataSets';
 export * from './documents';
 export * from './events';
 export * from './filters';
+export * from './gpt';
 export * from './pnids';
 export * from './queryKeys';
 export * from './sequence';

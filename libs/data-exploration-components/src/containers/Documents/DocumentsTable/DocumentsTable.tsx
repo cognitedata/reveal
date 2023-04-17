@@ -19,6 +19,7 @@ import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
 import { Asset } from '@cognite/sdk';
+import { DocumentSummaryPreview } from './DocumentSummaryPreview';
 import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
 
 // TODO: Might need to add RelationshipLabels at some point.
@@ -28,11 +29,14 @@ export type DocumentTableProps = Omit<
 > & {
   query?: string;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+  gptColumnName: string;
+  isDocumentsGPTEnabled?: boolean;
 };
 
 const visibleColumns = [
   'name',
   'content',
+  'summary',
   'type',
   'modifiedTime',
   'createdTime',
@@ -41,7 +45,6 @@ const visibleColumns = [
 
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
-
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
 
@@ -71,6 +74,24 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
           enableSorting: false,
         },
+        ...(props.isDocumentsGPTEnabled
+          ? [
+              {
+                accessorKey: 'summary',
+                header: props.gptColumnName,
+                cell: ({ row }: { row: Row<InternalDocument> }) => {
+                  return (
+                    <DocumentSummaryPreview
+                      document={row.original}
+                      query={query}
+                    />
+                  );
+                },
+                enableSorting: true,
+                enableHiding: true,
+              },
+            ]
+          : []),
         {
           accessorKey: 'author',
           id: 'author',
@@ -125,7 +146,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         ...metadataColumns,
       ] as ColumnDef<InternalDocumentWithMatchingLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, metadataColumns]
+    [query, metadataColumns, props.gptColumnName]
   );
 
   // const updatedColumns =

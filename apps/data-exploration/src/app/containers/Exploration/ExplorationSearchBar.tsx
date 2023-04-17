@@ -10,7 +10,7 @@ import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFla
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
-  const debouncedSetUrlQuery = debounce(setUrlQuery, 300);
+  const debouncedSetUrlQuery = debounce(setUrlQuery, 500);
   const [localQuery, setLocalQuery] = useState(urlQuery);
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
