@@ -1,28 +1,12 @@
 import { NodeProps } from 'reactflow';
 
-import { CanvasBlockType } from 'components/canvas-block';
-import { RawNodeData, RawTableNode } from 'components/raw-table-node';
 import { BaseNode } from 'components/base-node';
-import {
-  TransformationNode,
-  TransformationNodeData,
-} from 'components/transformation-node';
-import { DataSetNode, DataSetNodeData } from 'components/data-set-node';
-import {
-  EntityMatchingNode,
-  EntityMatchingNodeData,
-} from 'components/entity-matching-node';
-import {
-  ExtractionPipelineNode,
-  ExtractionPipelineNodeData,
-} from 'components/extraction-pipeline-node';
-import {
-  EngineeringDiagramNode,
-  EngineeringDiagramNodeData,
-} from 'components/engineering-diagram-node';
+import { WorkflowComponentType } from 'types/workflow';
+import { useTranslation } from 'common';
+import { WORKFLOW_COMPONENT_ICON_TYPES } from 'utils/workflow';
 
 export type NodeData<
-  NodeType extends CanvasBlockType,
+  NodeType extends WorkflowComponentType,
   ExtraProps extends Record<string, any> = any
 > = {
   type: NodeType;
@@ -30,46 +14,20 @@ export type NodeData<
 };
 
 export type CustomNodeData =
-  | DataSetNodeData
-  | EntityMatchingNodeData
-  | ExtractionPipelineNodeData
-  | RawNodeData
-  | TransformationNodeData
-  | EngineeringDiagramNodeData;
+  | NodeData<'transformation', {}>
+  | NodeData<'webhook', {}>
+  | NodeData<'workflow', {}>;
 
-export const CustomNode = (props: NodeProps<CustomNodeData>): JSX.Element => {
-  const { data } = props;
+export const CustomNode = ({
+  data,
+}: NodeProps<CustomNodeData>): JSX.Element => {
+  const { t } = useTranslation();
 
-  switch (data.type) {
-    case 'data-set':
-      return <DataSetNode {...(props as NodeProps<DataSetNodeData>)} />;
-    case 'engineering-diagram':
-      return (
-        <EngineeringDiagramNode
-          {...(props as NodeProps<EngineeringDiagramNodeData>)}
-        />
-      );
-    case 'entity-matching':
-      return (
-        <EntityMatchingNode {...(props as NodeProps<EntityMatchingNodeData>)} />
-      );
-    case 'extraction-pipeline':
-      return (
-        <ExtractionPipelineNode
-          {...(props as NodeProps<ExtractionPipelineNodeData>)}
-        />
-      );
-    case 'raw-table':
-      return <RawTableNode {...(props as NodeProps<RawNodeData>)} />;
-    case 'transformation':
-      return (
-        <TransformationNode {...(props as NodeProps<TransformationNodeData>)} />
-      );
-    default:
-      return (
-        <BaseNode icon="Favorite" title="unknown">
-          unknown type
-        </BaseNode>
-      );
-  }
+  return (
+    <BaseNode
+      description={t('no-configuration')}
+      icon={WORKFLOW_COMPONENT_ICON_TYPES[data.type]}
+      title={t(`component-title-${data.type}`, { postProcess: 'uppercase' })}
+    />
+  );
 };
