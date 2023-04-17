@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { InternalDocument } from '@data-exploration-lib/domain-layer';
+import {
+  InternalDocument,
+  getChatCompletions,
+} from '@data-exploration-lib/domain-layer';
 import { Body, Flex } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import gpt from '../../../utils/gpt';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -52,7 +54,7 @@ export const DocumentSummaryPreview = ({
           await sleep(document.id % 2000); // Avoid 429s in the worst possible way!
 
           // 3. Have ChatGPT figure out what the document is about
-          const choices = await gpt(
+          const choices = await getChatCompletions(
             {
               messages: [
                 {

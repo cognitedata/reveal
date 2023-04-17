@@ -15,10 +15,7 @@ import {
   InternalDocumentWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 import { DASH } from '@data-exploration-lib/core';
-import {
-  useFlagDocumentGPT,
-  useGetHiddenColumns,
-} from '@data-exploration-components/hooks';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
 import { Asset } from '@cognite/sdk';
@@ -33,6 +30,7 @@ export type DocumentTableProps = Omit<
   query?: string;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   gptColumnName: string;
+  isDocumentsGPTEnabled?: boolean;
 };
 
 const visibleColumns = [
@@ -49,8 +47,6 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
-
-  const isDocumentGPTEnabled = useFlagDocumentGPT();
 
   const columns = useMemo(
     () =>
@@ -78,7 +74,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
           enableSorting: false,
         },
-        ...(isDocumentGPTEnabled
+        ...(props.isDocumentsGPTEnabled
           ? [
               {
                 accessorKey: 'summary',

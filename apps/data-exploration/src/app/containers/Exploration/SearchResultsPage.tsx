@@ -12,7 +12,6 @@ import {
   TimeseriesTab,
   SequenceTab,
   ThreeDTab,
-  useFlagDocumentGPT,
 } from '@cognite/data-exploration';
 
 import { SearchConfigButton } from '@data-exploration/components';
@@ -49,7 +48,10 @@ import {
 } from '@data-exploration-app/store/filter/selectors';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import { useFlagDocumentLabelsFilter } from '@data-exploration-app/hooks';
+import {
+  useFlagDocumentGPT,
+  useFlagDocumentLabelsFilter,
+} from '@data-exploration-app/hooks';
 import { AllTab } from '@data-exploration-app/containers/All';
 import { useFilterSidebarState } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';

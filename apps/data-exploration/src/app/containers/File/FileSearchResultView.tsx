@@ -9,7 +9,10 @@ import {
 } from '@data-exploration-components/containers';
 import { FilePreview } from '@data-exploration-app/containers/File/FilePreview';
 import { useFileFilters } from '@data-exploration-app/store';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import {
+  useFlagAdvancedFilters,
+  useFlagDocumentGPT,
+} from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
@@ -26,6 +29,7 @@ import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPrevie
 
 export const FileSearchResultView = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const isDocumentsGPTEnabled = useFlagDocumentGPT();
   const [, openPreview] = useCurrentResourceId();
   const [fileFilter, setFileFilter] = useFileFilters();
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
@@ -70,6 +74,7 @@ export const FileSearchResultView = () => {
         ) : (
           <DocumentSearchResults
             enableAdvancedFilters={isAdvancedFiltersEnabled}
+            isDocumentsGPTEnabled={isDocumentsGPTEnabled}
             query={query}
             selectedRow={selectedRow}
             filter={documentFilter}
