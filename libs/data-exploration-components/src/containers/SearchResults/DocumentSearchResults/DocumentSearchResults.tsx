@@ -86,10 +86,6 @@ export const DocumentSearchResults = ({
         return;
       }
 
-      track(DATA_EXPLORATION_COMPONENT.SEARCH.DOCUMENT_GPT_SEARCH, {
-        query: query,
-      });
-
       const gptContent = `
       Can you split the following user question into 3 parts and give the answer as JSON key-value pairs:
       1. A keyword search prompt to find the relevant documents. 
@@ -122,6 +118,12 @@ export const DocumentSearchResults = ({
       const summary = JSON.parse(choices[0].message.content.trim());
       setGptColumnName(summary['column_name']);
       setRealQuery(summary['keywords']);
+
+      track(DATA_EXPLORATION_COMPONENT.SEARCH.DOCUMENT_GPT_SEARCH_PROMPT, {
+        query: query,
+        numberOfDocuments: results.length,
+        result: { summary },
+      });
     }
 
     if (isDocumentsGPTEnabled) {
