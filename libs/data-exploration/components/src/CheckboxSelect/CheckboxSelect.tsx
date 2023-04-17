@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
+import styled from 'styled-components';
 
 import { FilterButtonText } from './elements';
 import {
@@ -79,12 +80,46 @@ export const CheckboxSelect = ({
     >
       <>
         {label && <FilterLabel>{label}</FilterLabel>}
-        <Button icon="ChevronDown" iconPlacement="right" style={{ width }}>
+        <StyledButton
+          type="secondary"
+          icon="ChevronDown"
+          iconPlacement="right"
+          loading={isLoading}
+          style={{
+            width,
+            background: 'var(--cogs-bg-control--secondary)',
+            fontWeight: 400,
+            height: 40,
+
+            color:
+              Object.keys(selection).length === 0
+                ? 'var(--cogs-text-icon--muted)'
+                : 'initial',
+          }}
+        >
           <FilterButtonText data-testid="filter-button">
             {getFilterButtonText(selection)}
           </FilterButtonText>
-        </Button>
+        </StyledButton>
       </>
     </Dropdown>
   );
 };
+
+const StyledButton = styled(Button)`
+  .cogs-icon {
+    position: relative;
+    svg {
+      transform: scale(1.25);
+    }
+    &:before {
+      content: '';
+      width: 1px;
+      height: 20px;
+      position: absolute;
+      top: 0;
+      left: -10px;
+      background: #cccccc;
+    }
+  }
+`;
