@@ -115,6 +115,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [memory, setMemory] = useState(String(limits.memoryGb.default));
   const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
   const [metadata, setMetadata] = useState([] as MetaType[]);
+  const [dataSetId, setDataSetId] = useState<undefined | number>(undefined);
 
   const addSecret = () => {
     setSecrets(prevSecrets => [
@@ -190,6 +191,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
           runtime: runtime.value,
         },
         file: file!,
+        dataSetId,
       });
     }
   };
@@ -289,6 +291,16 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 here.
               </Link>
             </p>
+            <Form.Item label="Dataset ID">
+              <Input
+                disabled={disableForm}
+                name="datasetId"
+                value={dataSetId}
+                allowClear
+                type="number"
+                onChange={({ target: { value } }) => setDataSetId(+value)}
+              />
+            </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
