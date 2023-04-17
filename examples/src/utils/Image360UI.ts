@@ -3,7 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection, Image360EnteredDelegate, Image360AnnotationHoveredDelegate } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  Image360,
+  Image360Collection,
+  Image360EnteredDelegate,
+  Image360AnnotationHoveredDelegate
+} from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
@@ -18,7 +24,7 @@ export class Image360UI {
       selectedEntity = entity;
     };
 
-    const onAnnotationHovered: Image360AnnotationHoveredDelegate = (annotation) => {
+    const onAnnotationHovered: Image360AnnotationHoveredDelegate = annotation => {
       console.log('Hovered annotation with data: ', annotation.data);
     };
 
