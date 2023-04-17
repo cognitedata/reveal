@@ -43,7 +43,7 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   get annotations(): ImageAnnotationObject[] {
-    return this._image360VisualzationBox.annotations;
+    return this._image360VisualzationBox.getAnnotations() ?? [];
   }
 
   private createQuadFromAnnotation(
@@ -86,7 +86,7 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
-    if (this._image360VisualzationBox.annotations.length === 0) {
+    if (this._image360VisualzationBox.getAnnotations() === undefined) {
       const annotationObjects = this._imageProvider
         .get360ImageAnnotations(this._image360Descriptor.faceDescriptors)
         .then(
@@ -99,7 +99,7 @@ export class Image360RevisionEntity implements Image360Revision {
               .filter(isDefined) as ImageAnnotationObject[]
         );
 
-      annotationObjects.then(annotations => (this._image360VisualzationBox.annotations = annotations));
+      annotationObjects.then(annotations => this._image360VisualzationBox.setAnnotations(annotations));
     }
 
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(

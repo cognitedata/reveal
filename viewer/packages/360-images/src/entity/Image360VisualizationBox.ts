@@ -71,11 +71,11 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.renderOrder = newRenderOrder;
   }
 
-  get annotations(): ImageAnnotationObject[] {
-    return this._annotations ?? [];
+  getAnnotations(): ImageAnnotationObject[] | undefined {
+    return this._annotations;
   }
 
-  set annotations(annotations: ImageAnnotationObject[]) {
+  setAnnotations(annotations: ImageAnnotationObject[]) {
     this._annotations = annotations;
 
     if (this._visualizationMesh !== undefined) {
