@@ -125,7 +125,6 @@ export const SearchFilters = ({
 
 const StyledFilters = styled.div`
   padding-left: 1px;
-  padding-right: 16px;
   padding-bottom: 16px;
   height: 100%;
   overflow: auto;
