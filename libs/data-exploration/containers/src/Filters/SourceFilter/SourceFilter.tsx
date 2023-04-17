@@ -142,16 +142,20 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
+  const [prefix, setPrefix] = useDebouncedState<string>();
+
   const { options, isLoading, isError } = useEventsFilterOptions({
     property: 'source',
     filterProperty: 'sources',
     query: props.query,
     filter: props.filter,
+    prefix,
   });
 
   return (
     <SourceFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

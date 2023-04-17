@@ -20,6 +20,7 @@ interface Props {
   filterProperty?: string;
   query?: string;
   filter?: InternalEventsFilters;
+  prefix?: string;
 }
 
 export const useEventsFilterOptions = ({
@@ -27,6 +28,7 @@ export const useEventsFilterOptions = ({
   filterProperty,
   query,
   filter = {},
+  prefix,
 }: Props) => {
   const {
     data = [],
@@ -35,6 +37,7 @@ export const useEventsFilterOptions = ({
   } = useEventsUniqueValuesByProperty({
     property,
     query,
+    prefix,
   });
 
   const { data: dynamicData = [] } = useEventsUniqueValuesByProperty({
@@ -45,6 +48,7 @@ export const useEventsFilterOptions = ({
       query,
       getSearchConfig().event
     ),
+    prefix,
   });
 
   const options = useMemo(() => {

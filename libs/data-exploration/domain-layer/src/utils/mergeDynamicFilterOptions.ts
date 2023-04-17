@@ -2,7 +2,7 @@ import keyBy from 'lodash/keyBy';
 import orderBy from 'lodash/orderBy';
 
 type FilterDataType = {
-  value: string;
+  value: string | number;
   count?: number;
 };
 

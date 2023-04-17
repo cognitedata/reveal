@@ -20,6 +20,7 @@ interface Props {
   query?: string;
   filter?: InternalEventsFilters | OldEventsFilters;
   advancedFilter?: AdvancedFilter<EventsProperties>;
+  prefix?: string;
 }
 
 export const useEventsUniqueValuesByProperty = ({
@@ -27,16 +28,23 @@ export const useEventsUniqueValuesByProperty = ({
   query,
   filter,
   advancedFilter,
+  prefix,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsUniqueValues(property, query, filter, advancedFilter),
+    queryKeys.eventsUniqueValues(
+      property,
+      query,
+      filter,
+      advancedFilter,
+      prefix
+    ),
     () => {
       return getEventsUniqueValuesByProperty(sdk, property, {
         filter: transformNewFilterToOldFilter(filter),
         advancedFilter,
-        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
       });
     },
     {

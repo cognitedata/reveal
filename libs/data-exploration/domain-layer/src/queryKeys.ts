@@ -82,7 +82,8 @@ export const queryKeys = {
     property: string,
     query?: string,
     filter?: any,
-    advancedFilter?: any
+    advancedFilter?: any,
+    prefix?: string
   ) =>
     [
       ...queryKeys.events(),
@@ -91,6 +92,7 @@ export const queryKeys = {
       query,
       filter,
       advancedFilter,
+      prefix,
     ] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
