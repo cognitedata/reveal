@@ -33,6 +33,7 @@ const resolveContainerConfig = async (
       maxWidth: containerReference.maxWidth,
       maxHeight: containerReference.maxHeight,
       resourceId: containerReference.resourceId,
+      label: containerReference.label,
     });
   }
 
@@ -46,6 +47,7 @@ const resolveContainerConfig = async (
       y: containerReference.y,
       width: containerReference.width ?? DEFAULT_TIMESERIES_WIDTH,
       height: containerReference.height ?? DEFAULT_TIMESERIES_HEIGHT,
+      label: containerReference.label,
     });
   }
 
@@ -57,6 +59,7 @@ const resolveContainerConfig = async (
       y: containerReference.y,
       width: containerReference.width ?? DEFAULT_ASSET_WIDTH,
       height: containerReference.height ?? DEFAULT_ASSET_HEIGHT,
+      label: containerReference.label,
     });
   }
 
@@ -71,6 +74,7 @@ const resolveContainerConfig = async (
       y: containerReference.y,
       width: containerReference.width ?? DEFAULT_THREE_D_WIDTH,
       height: containerReference.height ?? DEFAULT_THREE_D_HEIGHT,
+      label: containerReference.label,
     });
   }
 

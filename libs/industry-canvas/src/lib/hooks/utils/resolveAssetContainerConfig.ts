@@ -16,6 +16,7 @@ const resolveAssetContainerConfig = async (
     y,
     width,
     height,
+    label,
   }: {
     id?: string | undefined;
     resourceId: number;
@@ -23,20 +24,23 @@ const resolveAssetContainerConfig = async (
     y?: number;
     width?: number;
     height?: number;
+    label?: string;
   }
 ): Promise<IndustryCanvasContainerConfig> => {
-  const asset = await sdk.assets.retrieve([{ id: resourceId }]);
+  const assets = await sdk.assets.retrieve([{ id: resourceId }]);
 
-  if (asset.length !== 1) {
+  if (assets.length !== 1) {
     throw new Error('Expected to find exactly one asset');
   }
+
+  const asset = assets[0];
 
   return {
     ...(await getAssetTableContainerConfig(
       sdk as any,
       {
         id: id || uuid(),
-        label: asset[0].name ?? asset[0].externalId,
+        label: label ?? asset.name ?? asset.externalId,
         x: x,
         y: y,
         width: width ?? DEFAULT_ASSET_WIDTH,
@@ -48,6 +52,8 @@ const resolveAssetContainerConfig = async (
     )),
     metadata: {
       resourceId,
+      name: asset.name,
+      externalId: asset.externalId,
     },
   } as IndustryCanvasContainerConfig;
 };

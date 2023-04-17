@@ -28,12 +28,14 @@ export type FileContainerReference = {
   id: string;
   resourceId: number;
   page: number;
+  label?: string;
 } & Partial<Dimensions>;
 
 export type AssetContainerReference = {
   type: ContainerReferenceType.ASSET;
   id: string;
   resourceId: number;
+  label?: string;
 } & Partial<Dimensions>;
 
 export type ThreeDContainerReference = {
@@ -54,6 +56,7 @@ export type ThreeDContainerReference = {
       z: number;
     };
   };
+  label?: string;
 } & Partial<Dimensions>;
 
 export type TimeseriesContainerReference = {
@@ -62,6 +65,7 @@ export type TimeseriesContainerReference = {
   resourceId: number;
   startDate: string;
   endDate: string;
+  label?: string;
 } & Partial<Dimensions>;
 
 export type ContainerReference =
@@ -80,8 +84,15 @@ export const isShapeAnnotation = (
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;
 
+// TODO: This should be better typed per container type
 type ResourceMetadata = {
   resourceId?: number;
+  name?: string;
+  externalId?: string;
+  assetName?: string; // Used by RevealContainer
+  assetExternalId?: string; // Used by RevealContainer
+  modelName?: string; // Used by RevealContainer
+  modelId?: number; // Used by RevealContainer
 };
 export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)

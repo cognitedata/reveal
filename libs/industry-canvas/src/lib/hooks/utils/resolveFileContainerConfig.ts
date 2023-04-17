@@ -15,6 +15,7 @@ const resolveFileContainerConfig = async (
     height,
     maxWidth,
     maxHeight,
+    label,
   }: {
     id?: string | undefined;
     resourceId: number;
@@ -25,6 +26,7 @@ const resolveFileContainerConfig = async (
     height?: number;
     maxWidth?: number;
     maxHeight?: number;
+    label?: string;
   }
 ): Promise<IndustryCanvasContainerConfig> => {
   const fileInfos = await sdk.files.retrieve([{ id: resourceId }]);
@@ -38,7 +40,7 @@ const resolveFileContainerConfig = async (
     fileInfo,
     {
       id: id || uuid(),
-      label: fileInfo.name ?? fileInfo.externalId,
+      label: label ?? fileInfo.name ?? fileInfo.externalId,
       page: page,
       x: x,
       y: y,
@@ -54,6 +56,8 @@ const resolveFileContainerConfig = async (
     ...containerConfig,
     metadata: {
       resourceId,
+      name: fileInfo.name,
+      externalId: fileInfo.externalId,
     },
   } as IndustryCanvasContainerConfig;
 };

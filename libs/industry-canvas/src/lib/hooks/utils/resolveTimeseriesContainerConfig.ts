@@ -18,6 +18,7 @@ const resolveTimeseriesContainerConfig = async (
     y,
     width,
     height,
+    label,
   }: {
     id?: string | undefined;
     resourceId: number;
@@ -27,6 +28,7 @@ const resolveTimeseriesContainerConfig = async (
     y?: number;
     width?: number;
     height?: number;
+    label?: string;
   }
 ): Promise<IndustryCanvasContainerConfig> => {
   const timeseries = await sdk.timeseries.retrieve([{ id: resourceId }]);
@@ -35,11 +37,14 @@ const resolveTimeseriesContainerConfig = async (
     throw new Error('Expected to find exactly one timeseries');
   }
 
+  const name = timeseries[0].name;
+  const timeseriesExternalId = timeseries[0].externalId;
+
   const containerConfig = await getTimeseriesContainerConfig(
     sdk as any,
     {
       id: id || uuid(),
-      label: timeseries[0].name ?? timeseries[0].externalId,
+      label: label ?? name ?? timeseriesExternalId,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       x: x,
@@ -56,6 +61,8 @@ const resolveTimeseriesContainerConfig = async (
     ...containerConfig,
     metadata: {
       resourceId,
+      name: name,
+      externalId: timeseriesExternalId,
     },
   } as IndustryCanvasContainerConfig;
 };

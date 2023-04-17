@@ -32,6 +32,7 @@ const containerConfigToContainerReference = (
       height: containerConfig.height,
       maxWidth: containerConfig.maxWidth,
       maxHeight: containerConfig.maxHeight,
+      label: containerConfig.label,
     };
   }
 
@@ -50,6 +51,7 @@ const containerConfigToContainerReference = (
       height: containerConfig.height,
       startDate: containerConfig.startDate.toISOString(),
       endDate: containerConfig.endDate.toISOString(),
+      label: containerConfig.label,
     };
   }
 
@@ -65,6 +67,7 @@ const containerConfigToContainerReference = (
       revisionId: containerConfig.revisionId,
       initialAssetId: containerConfig.initialAssetId,
       camera: containerConfig.camera,
+      label: containerConfig.label,
     };
   }
 
@@ -83,6 +86,7 @@ const containerConfigToContainerReference = (
       width: containerConfig.width,
       height: containerConfig.height,
       resourceId: containerConfig.metadata.resourceId,
+      label: containerConfig.label,
     };
   }
 

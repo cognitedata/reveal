@@ -7,17 +7,77 @@ import {
   DEFAULT_THREE_D_WIDTH,
 } from '../../utils/addDimensionsToContainerReference';
 
-const getAssetLabelById = async (
+const getAssetProperties = async (
   sdk: CogniteClient,
-  assetId: number
-): Promise<string> => {
-  const asset = await sdk.assets.retrieve([{ id: assetId }]);
+  assetId: number | undefined
+): Promise<{
+  name: string | undefined;
+  externalId: string | undefined;
+}> => {
+  if (assetId === undefined) {
+    return {
+      name: undefined,
+      externalId: undefined,
+    };
+  }
 
-  if (asset.length !== 1) {
+  const assets = await sdk.assets.retrieve([{ id: assetId }]);
+
+  if (assets.length !== 1) {
     throw new Error('Expected to find exactly one asset');
   }
 
-  return asset[0].name ?? asset[0].externalId;
+  return {
+    name: assets[0].name,
+    externalId: assets[0].externalId,
+  };
+};
+
+const getModelProperties = async (
+  sdk: CogniteClient,
+  modelId: number
+): Promise<{
+  name: string | undefined;
+}> => {
+  const model = await sdk.models3D.retrieve(modelId);
+
+  return {
+    name: model.name,
+  };
+};
+
+export const getDefaultRevealContainerLabel = (
+  assetName: string | undefined,
+  assetExternalId: string | undefined,
+  modelName: string | undefined,
+  modelId: number | undefined
+): string => {
+  const maybeAssetLabel = assetName ?? assetExternalId ?? undefined;
+  const modelLabel = modelName ?? modelId ? String(modelId) : '';
+  if (maybeAssetLabel) {
+    return `${modelLabel} - ${maybeAssetLabel}`;
+  }
+
+  return modelLabel;
+};
+
+const getLabel = (
+  label: string | undefined,
+  assetName: string | undefined,
+  assetExternalId: string | undefined,
+  modelName: string | undefined,
+  modelId: number
+): string => {
+  if (label) {
+    return label;
+  }
+
+  return getDefaultRevealContainerLabel(
+    assetName,
+    assetExternalId,
+    modelName,
+    modelId
+  );
 };
 
 const resolveRevealContainerConfig = async (
@@ -32,6 +92,7 @@ const resolveRevealContainerConfig = async (
     y,
     width,
     height,
+    label,
   }: {
     id?: string | undefined;
     modelId: number;
@@ -53,25 +114,17 @@ const resolveRevealContainerConfig = async (
     y?: number;
     width?: number;
     height?: number;
+    label?: string;
   }
 ): Promise<IndustryCanvasContainerConfig> => {
-  const model = await sdk.models3D.retrieve(modelId);
-
-  const maybeAssetName =
-    initialAssetId !== undefined
-      ? await getAssetLabelById(sdk, initialAssetId)
-      : undefined;
-
-  const modelLabel = model.name ?? model.id;
-
-  const label = maybeAssetName
-    ? `${modelLabel} - ${maybeAssetName}`
-    : modelLabel;
+  const { name: assetName, externalId: assetExternalId } =
+    await getAssetProperties(sdk, initialAssetId);
+  const { name: modelName } = await getModelProperties(sdk, modelId);
 
   return {
     type: ContainerType.REVEAL,
     id: id || uuid(),
-    label,
+    label: getLabel(label, assetName, assetExternalId, modelName, modelId),
     modelId: modelId,
     revisionId: revisionId,
     initialAssetId: initialAssetId,
@@ -80,7 +133,12 @@ const resolveRevealContainerConfig = async (
     y: y,
     width: width ?? DEFAULT_THREE_D_WIDTH,
     height: height ?? DEFAULT_THREE_D_HEIGHT,
-    metadata: {},
+    metadata: {
+      assetName,
+      assetExternalId,
+      modelName,
+      modelId,
+    },
   };
 };
 
