@@ -14,25 +14,27 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { translations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import Flow from 'pages/flow/Flow';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
-import FlowList from 'pages/flow-list';
 import { CANVAS_PATH } from 'common';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFeedback from 'common/ErrorFeedback';
-import { WorkflowBuilderContextProvider } from 'contexts/WorkflowContext';
+import React, { Suspense } from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
       staleTime: 10 * 60 * 1000, // Pretty long
+      structuralSharing: false, // CRITICAL when saving automerge docs in query cache
     },
   },
 });
 const env = getEnv();
 const project = getProject();
 const ROOT_PATH = `/:tenant/${CANVAS_PATH}`;
+
+const Flow = React.lazy(() => import('pages/flow/Flow'));
+const FlowList = React.lazy(() => import('pages/flow-list'));
 
 const App = () => {
   return (
@@ -53,13 +55,20 @@ const App = () => {
                   <BrowserRouter>
                     <ErrorBoundary FallbackComponent={ErrorFeedback}>
                       <Routes>
-                        <Route path={ROOT_PATH} element={<FlowList />} />
+                        <Route
+                          path={ROOT_PATH}
+                          element={
+                            <Suspense fallback={<div>Loading...</div>}>
+                              <FlowList />
+                            </Suspense>
+                          }
+                        />
                         <Route
                           path={`${ROOT_PATH}/:id`}
                           element={
-                            <WorkflowBuilderContextProvider>
+                            <Suspense fallback={<div>Loading...</div>}>
                               <Flow />
-                            </WorkflowBuilderContextProvider>
+                            </Suspense>
                           }
                         />
                       </Routes>

@@ -1,37 +1,36 @@
-import { Flex, Icon } from '@cognite/cogs.js';
-import debounce from 'lodash/debounce';
+import { Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-
 import { Canvas } from 'components/canvas';
-import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlusButton';
-import { useFlow, useInsertFlow } from 'hooks/raw';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
+import { useParams } from 'react-router-dom';
+import {
+  FlowContextProvider,
+  useWorkflowBuilderContext,
+} from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
+import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
+import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlusButton';
 
 const Flow = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading, error } = useFlow(id!, { enabled: !!id });
-  const { mutate } = useInsertFlow();
-  const onChange = debounce(mutate, 100);
 
-  const { isComponentsPanelVisible, setIsComponentsPanelVisible } =
-    useWorkflowBuilderContext();
-
-  if (isLoading) {
-    return <Icon type="Loader" />;
-  }
-  if (error) {
-    return <pre>{JSON.stringify(error, null, 2)}</pre>;
-  }
-  if (!id || !data) {
+  if (!id) {
     return <>404</>;
   }
 
   return (
-    <FlowContainer>
-      <CanvasTopBar flow={data} />
+    <FlowContextProvider externalId={id}>
+      <FlowContainer />
+    </FlowContextProvider>
+  );
+};
+
+function FlowContainer() {
+  const { isComponentsPanelVisible, setIsComponentsPanelVisible } =
+    useWorkflowBuilderContext();
+
+  return (
+    <StyledFlowContainer>
+      <CanvasTopBar />
       <Content>
         {isComponentsPanelVisible ? (
           <FloatingComponentsPanel />
@@ -40,13 +39,13 @@ const Flow = (): JSX.Element => {
             onClick={() => setIsComponentsPanelVisible(true)}
           />
         )}
-        <Canvas flow={data} onChange={onChange} />
+        <Canvas />
       </Content>
-    </FlowContainer>
+    </StyledFlowContainer>
   );
-};
+}
 
-const FlowContainer = styled(Flex).attrs({ direction: 'column' })`
+const StyledFlowContainer = styled(Flex).attrs({ direction: 'column' })`
   height: 100%;
   width: 100%;
 `;
