@@ -1,7 +1,7 @@
 import {
   useAssetsUniqueValuesByProperty,
   useDocumentsUniqueValuesByProperty,
-  useEventsUniqueValuesByProperty,
+  useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -142,30 +142,16 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
-
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useEventsUniqueValuesByProperty('source', query, undefined, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useEventsFilterOptions({
+    property: 'source',
+    filterProperty: 'sources',
+    query: props.query,
+    filter: props.filter,
   });
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
 
   return (
     <SourceFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
       isError={isError}
       isLoading={isLoading}
       options={options}

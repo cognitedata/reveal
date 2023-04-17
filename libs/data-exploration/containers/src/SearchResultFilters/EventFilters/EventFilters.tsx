@@ -14,6 +14,7 @@ import {
 } from '../../Filters';
 
 export const EventFilters: React.FC<FilterProps> = ({
+  query,
   filter,
   onFilterChange,
   onResetFilterClick,
@@ -29,6 +30,8 @@ export const EventFilters: React.FC<FilterProps> = ({
     >
       <TempMultiSelectFix>
         <TypeFilter.Event
+          query={query}
+          filter={filter.event}
           value={filter.event.type}
           onChange={(newFilters) =>
             onFilterChange('event', { type: newFilters })
@@ -56,6 +59,8 @@ export const EventFilters: React.FC<FilterProps> = ({
         />
 
         <SubTypeFilter.Event
+          query={query}
+          filter={filter.event}
           value={filter.event.subtype}
           onChange={(newFilters) =>
             onFilterChange('event', { subtype: newFilters })
@@ -63,6 +68,8 @@ export const EventFilters: React.FC<FilterProps> = ({
         />
 
         <SourceFilter.Event
+          query={query}
+          filter={filter.event}
           value={filter.event.sources}
           onChange={(newSources) =>
             onFilterChange('event', {
