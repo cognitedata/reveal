@@ -82,6 +82,7 @@ out vec3 vColor;
 
 #if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 	out float vRadius;
+	out vec3 vViewPosition;
 #endif
 
 #if defined(adaptive_point_size) || defined(color_type_lod)
@@ -228,6 +229,9 @@ vec4 getClassification() {
 
 void main() {
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+		#if defined paraboloid_point_shape
+			vViewPosition = mvPosition.xyz;
+		#endif
 
     vec4 classification = getClassification();
     float outColorAlpha = classification.a;
