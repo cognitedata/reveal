@@ -7,7 +7,11 @@ import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 import isUndefined from 'lodash/isUndefined';
 
 import { Ellipsis } from '../../../Ellipsis';
-import { OptionContentWrapper, OptionCount } from './elements';
+import {
+  OptionContentWrapper,
+  OptionCount,
+  OptionCountDisabled,
+} from './elements';
 
 export const Option = <OptionType extends OptionTypeBase>({
   data,
@@ -15,6 +19,9 @@ export const Option = <OptionType extends OptionTypeBase>({
   ...props
 }: OptionProps<OptionType>) => {
   const { label, count } = data;
+  const isDisabled = count === 0;
+
+  const OptionCountChip = isDisabled ? OptionCountDisabled : OptionCount;
 
   return (
     <components.Option
@@ -22,14 +29,15 @@ export const Option = <OptionType extends OptionTypeBase>({
       data={data}
       isSelected={isSelected}
       isFocused={false}
+      isDisabled={isDisabled}
     >
       <OptionContentWrapper>
-        <Checkbox checked={isSelected} />
+        <Checkbox checked={isSelected} disabled={isDisabled} />
 
         <Ellipsis value={label} />
 
         {!isUndefined(count) && (
-          <OptionCount>{formatBigNumbersWithSuffix(count)}</OptionCount>
+          <OptionCountChip>{formatBigNumbersWithSuffix(count)}</OptionCountChip>
         )}
       </OptionContentWrapper>
     </components.Option>

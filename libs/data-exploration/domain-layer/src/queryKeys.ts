@@ -78,8 +78,20 @@ export const queryKeys = {
       query,
       filter,
     ] as const,
-  eventsUniqueValues: (property: string, query?: string, filter?: any) =>
-    [...queryKeys.events(), 'unique-values', property, query, filter] as const,
+  eventsUniqueValues: (
+    property: string,
+    query?: string,
+    filter?: any,
+    advancedFilter?: any
+  ) =>
+    [
+      ...queryKeys.events(),
+      'unique-values',
+      property,
+      query,
+      filter,
+      advancedFilter,
+    ] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>

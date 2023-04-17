@@ -2,6 +2,9 @@ import React from 'react';
 import { ResourceType } from '@cognite/data-exploration';
 import { useAllFilters } from '../../store/filter/selectors/allSelectors';
 import { SidebarFilters } from '@data-exploration/containers';
+import { useQueryString } from '@data-exploration-app/hooks/hooks';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { useDebounce } from 'use-debounce';
 
 // import { useFilterState } from 'providers';
 
@@ -41,6 +44,8 @@ export const SearchFiltersV2: React.FC<Props> = ({
   //   updatingData: unknown
   // ) => {};
   const { state, setter, resetter } = useAllFilters();
+  const [query] = useQueryString(SEARCH_KEY);
+  const [debouncedQuery] = useDebounce(query, 100);
 
   return (
     <div
@@ -65,6 +70,7 @@ export const SearchFiltersV2: React.FC<Props> = ({
           onResetFilterClick={(type) => {
             resetter(type);
           }}
+          query={debouncedQuery}
         />
       )}
     </div>
