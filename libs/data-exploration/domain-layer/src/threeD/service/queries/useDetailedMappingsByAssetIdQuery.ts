@@ -1,35 +1,47 @@
 import { CogniteError } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query';
+import { useEffect } from 'react';
 import uniqWith from 'lodash/uniqWith';
 
 import {
   DetailedMapping,
-  fetchBasicMappingsByAssetIdQuery,
   fetchThreeDModelQuery,
   fetchThreeDRevisionQuery,
 } from '@data-exploration-lib/domain-layer';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
+import { useBasicMappingsByAssetIdQuery } from './useBasicMappingsByAssetIdQuery';
 
 export const useDetailedMappingsByAssetIdQuery = (
   assetId: number,
+  limit?: number | undefined,
   options?: UseQueryOptions<DetailedMapping[], CogniteError, DetailedMapping[]>
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
+  const {
+    data,
+    fetchNextPage: fetchMore,
+    hasNextPage: canFetchMore,
+    isFetchingNextPage: isFetchingMore,
+  } = useBasicMappingsByAssetIdQuery({
+    assetId: assetId,
+    limit: limit,
+  });
+
+  useEffect(() => {
+    if (canFetchMore && !isFetchingMore) {
+      fetchMore();
+    }
+  }, [canFetchMore, fetchMore, isFetchingMore]);
+
   return useQuery<DetailedMapping[], CogniteError, DetailedMapping[]>(
     queryKeys.listDetailedAssetMappings(assetId),
     async () => {
-      const basicMappings = await fetchBasicMappingsByAssetIdQuery(
-        sdk,
-        queryClient,
-        assetId
-      );
-
       return Promise.all(
         uniqWith(
-          basicMappings,
+          data,
           (
             { modelId: mId1, revisionId: rId1 },
             { modelId: mId2, revisionId: rId2 }
@@ -50,6 +62,9 @@ export const useDetailedMappingsByAssetIdQuery = (
         })
       );
     },
-    options
+    {
+      ...options,
+      enabled: !!isFetchingMore,
+    }
   );
 };

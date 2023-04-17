@@ -1,16 +1,37 @@
 import { getProject } from '@cognite/cdf-utilities';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, CursorResponse } from '@cognite/sdk';
 
-import { BasicMapping } from '@data-exploration-lib/domain-layer';
+import {
+  BasicMapping,
+  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+} from '@data-exploration-lib/domain-layer';
 
 export const getBasicMappingsByAssetId = (
   sdk: CogniteClient,
-  { assetId }: { assetId: number }
-) =>
-  sdk
-    .get<{
-      items: BasicMapping[];
-    }>(`/api/v1/projects/${getProject()}/3d/mappings/${assetId}/modelnodes`)
+  {
+    assetId,
+    limit,
+    cursor,
+  }: {
+    assetId: number;
+    limit?: number | undefined;
+    cursor?: string | undefined;
+  }
+) => {
+  return sdk
+    .get<CursorResponse<BasicMapping[]>>(
+      `/api/v1/projects/${getProject()}/3d/mappings/${assetId}/modelnodes`,
+      {
+        params: {
+          limit: limit ?? DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+          cursor,
+        },
+      }
+    )
     .then((response) => {
-      return response.data.items;
+      return {
+        data: response.data.items,
+        nextCursor: response.data.nextCursor,
+      };
     });
+};
