@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -20,7 +20,6 @@ interface Props {
   query?: string;
   filter?: InternalEventsFilters | OldEventsFilters;
   advancedFilter?: AdvancedFilter<EventsProperties>;
-  options?: UseQueryOptions;
 }
 
 export const useEventsUniqueValuesByProperty = ({
@@ -28,7 +27,6 @@ export const useEventsUniqueValuesByProperty = ({
   query,
   filter,
   advancedFilter,
-  options,
 }: Props) => {
   const sdk = useSDK();
 
@@ -41,6 +39,8 @@ export const useEventsUniqueValuesByProperty = ({
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
-    { ...(options as any) }
+    {
+      keepPreviousData: true,
+    }
   );
 };
