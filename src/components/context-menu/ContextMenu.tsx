@@ -1,10 +1,12 @@
-import { RefObject } from 'react';
+import { Dispatch, RefObject, SetStateAction } from 'react';
 
-import { Colors, Detail } from '@cognite/cogs.js';
-import { Dropdown, Menu } from 'antd';
+import { Dropdown } from 'antd';
 import { Edge, Node } from 'reactflow';
 import styled from 'styled-components';
 import { Z_INDEXES } from 'common';
+import { ContextMenuItem } from './ContextMenuItem';
+import { GroupNodes } from './GroupNodes';
+import { Colors, Elevations } from '@cognite/cogs.js';
 
 type WorkflowContextMenuPosition = {
   x: number;
@@ -29,12 +31,14 @@ type ContextMenuProps = {
   containerRef: RefObject<HTMLDivElement>;
   contextMenu?: WorkflowContextMenu;
   onClose: () => void;
+  setNodes: Dispatch<SetStateAction<Node[]>>;
 };
 
 const ContextMenu = ({
   containerRef,
   contextMenu,
   onClose,
+  setNodes,
 }: ContextMenuProps): JSX.Element => {
   const handleDelete = (): void => {};
 
@@ -45,17 +49,19 @@ const ContextMenu = ({
         animationDuration: '0s',
       }}
       overlay={
-        <div
+        <DropdownContent
           onContextMenu={(e) => {
             e.preventDefault();
           }}
+          onClick={onClose}
         >
-          <Menu>
-            <Menu.Item key="delete" onClick={handleDelete}>
-              <ContextMenuItem label="Delete" shortcut="⌘+D" />
-            </Menu.Item>
-          </Menu>
-        </div>
+          <ContextMenuItem
+            label="Delete"
+            onClick={handleDelete}
+            shortcut="⌘+D"
+          />
+          <GroupNodes contextMenu={contextMenu} setNodes={setNodes} />
+        </DropdownContent>
       }
       onOpenChange={(visible) => {
         if (!visible) {
@@ -67,17 +73,17 @@ const ContextMenu = ({
       trigger={['click']}
       placement="bottomLeft"
     >
-      <DropdownContent
+      <DropdownContainer
         $left={contextMenu?.position?.x}
         $top={contextMenu?.position?.y}
       >
         &nbsp;
-      </DropdownContent>
+      </DropdownContainer>
     </Dropdown>
   );
 };
 
-const DropdownContent = styled.div<{ $left?: number; $top?: number }>`
+const DropdownContainer = styled.div<{ $left?: number; $top?: number }>`
   position: fixed;
   left: ${({ $left }) => $left}px;
   top: ${({ $top }) => $top}px;
@@ -87,33 +93,13 @@ const DropdownContent = styled.div<{ $left?: number; $top?: number }>`
   height: 4px;
 `;
 
-type ContextMenuItemProps = {
-  disabled?: boolean;
-  label: string;
-  shortcut?: string;
-};
-
-const ContextMenuItem = ({ label, shortcut }: ContextMenuItemProps) => {
-  return (
-    <ContextMenuItemContent>
-      <Detail>{label}</Detail>
-      {shortcut && (
-        <Detail
-          style={{
-            color: Colors['text-icon--muted'],
-          }}
-        >
-          {shortcut}
-        </Detail>
-      )}
-    </ContextMenuItemContent>
-  );
-};
-
-const ContextMenuItemContent = styled.div`
+const DropdownContent = styled.div`
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--overlay']};
   display: flex;
-  gap: 32px;
-  justify-content: space-between;
+  flex-direction: column;
+  padding: 4px;
 `;
 
 export default ContextMenu;

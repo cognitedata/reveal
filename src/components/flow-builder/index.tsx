@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ReactFlow, {
   addEdge,
@@ -11,6 +11,7 @@ import ReactFlow, {
   useNodesState,
   BackgroundVariant,
   Controls,
+  SelectionMode,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -24,11 +25,17 @@ import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
 import ContextMenu, {
   WorkflowContextMenu,
 } from 'components/context-menu/ContextMenu';
+import { GroupNode } from 'components/group-node/GroupNode';
 
 type Props = {
   initialEdges: Edge<any>[];
   initialNodes: Node<any>[];
   onChange: (f: { nodes: Node<any>[]; edges: Edge<any>[] }) => void;
+};
+
+const NODE_TYPES = {
+  customNode: CustomNode,
+  groupNode: GroupNode,
 };
 
 export const WorkflowBuilder = ({
@@ -55,13 +62,6 @@ export const WorkflowBuilder = ({
       edges,
     });
   }, [nodes, edges, mutate]);
-
-  const nodeTypes = useMemo(
-    () => ({
-      customNode: CustomNode,
-    }),
-    []
-  );
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
@@ -133,9 +133,12 @@ export const WorkflowBuilder = ({
         panOnDrag={false}
         selectionOnDrag
         panOnScroll
+        deleteKeyCode={['Backspace', 'Delete']}
         edges={edges}
+        multiSelectionKeyCode={null}
+        selectionMode={SelectionMode.Partial}
         nodes={nodes}
-        nodeTypes={nodeTypes}
+        nodeTypes={NODE_TYPES}
         onConnect={onConnect}
         onDragOver={onDragOver}
         onDrop={onDrop}
@@ -171,6 +174,7 @@ export const WorkflowBuilder = ({
         containerRef={reactFlowContainer}
         contextMenu={contextMenu}
         onClose={() => setContextMenu(undefined)}
+        setNodes={setNodes}
       />
     </Container>
   );
