@@ -75,7 +75,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     return this._annotations;
   }
 
-  setAnnotations(annotations: ImageAnnotationObject[]) {
+  setAnnotations(annotations: ImageAnnotationObject[]): void {
     this._annotations = annotations;
 
     if (this._visualizationMesh !== undefined) {
