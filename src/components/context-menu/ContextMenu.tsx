@@ -1,13 +1,16 @@
 import { RefObject } from 'react';
 
+import { Colors, Elevations } from '@cognite/cogs.js';
 import { Dropdown } from 'antd';
 import { Edge } from 'reactflow';
 import styled from 'styled-components';
+
 import { Z_INDEXES } from 'common';
+import { CanvasNode } from 'types';
+
 import { ContextMenuItem } from './ContextMenuItem';
 import { GroupNodes } from './GroupNodes';
-import { Colors, Elevations } from '@cognite/cogs.js';
-import { CanvasNode } from 'types';
+import { UngroupNodes } from './UngroupNodes';
 
 type WorkflowContextMenuPosition = {
   x: number;
@@ -60,6 +63,7 @@ const ContextMenu = ({
             shortcut="⌘+D"
           />
           <GroupNodes contextMenu={contextMenu} />
+          <UngroupNodes contextMenu={contextMenu} />
         </DropdownContent>
       }
       onOpenChange={(visible) => {
