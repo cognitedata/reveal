@@ -64,14 +64,7 @@ export class Image360RevisionEntity implements Image360Revision {
     annotation: AnnotationModel,
     descriptor: Image360FileDescriptor
   ): ImageAnnotationObject | undefined {
-    const annotationData = annotation.data;
-
-    // TODO Make this check prettier
-    if (!isAnnotationsObject(annotationData) || annotationData.boundingBox === undefined) {
-      return undefined;
-    }
-
-    return new ImageAnnotationObject(annotation, descriptor);
+    return ImageAnnotationObject.createAnnotationObject(annotation, descriptor.face);
   }
 
   /**
