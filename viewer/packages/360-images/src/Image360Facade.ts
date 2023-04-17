@@ -11,6 +11,7 @@ import { Image360CollectionFactory } from './collection/Image360CollectionFactor
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import { IconCullingScheme } from './icons/IconCollection';
 import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
+import { ImageAnnotationObject } from './annotation/ImageAnnotationObject';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -132,6 +133,24 @@ export class Image360Facade<T> {
     function selectEntity([entity, _]: [Image360Entity, THREE.Vector3]): Image360Entity {
       return entity;
     }
+  }
+
+  public handleAnnotationHover(point: THREE.Vector2, camera: THREE.Camera, entity: Image360Entity): void {
+    this._rayCaster.setFromCamera(point, camera);
+
+    const intersection = this._rayCaster.intersectObjects(entity.getActiveRevision().annotations, false);
+
+    if (intersection.length === 0) {
+      return;
+    }
+
+    const collection = this.getCollectionContainingEntity(entity);
+
+    if (!(intersection[0].object instanceof ImageAnnotationObject)) {
+      throw Error('Intersected object was not an annotation');
+    }
+
+    collection.fireHoverEvent(intersection[0].object as ImageAnnotationObject);
   }
 
   public dispose(): void {

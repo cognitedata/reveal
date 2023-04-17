@@ -3,20 +3,19 @@
  */
 
 import {
-  Cdf360ImageEventProvider,
+  Image360DataProvider,
+  Image360FileDescriptor,
   Image360Descriptor,
-  Image360FileProvider,
   Image360Texture
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 
-import { PlaneGeometry, Mesh, MeshBasicMaterial, DoubleSide, Matrix4, Vector3 } from 'three';
-import { Image360Face, Image360FileDescriptor } from '@reveal/data-providers/src/types';
+import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
 export class Image360RevisionEntity implements Image360Revision {
-  private readonly _imageProvider: Image360FileProvider;
+  private readonly _imageProvider: Image360DataProvider;
   private readonly _image360Descriptor: Image360Descriptor;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _textures: Image360Texture[];
@@ -25,7 +24,7 @@ export class Image360RevisionEntity implements Image360Revision {
     | undefined;
 
   constructor(
-    imageProvider: Image360FileProvider,
+    imageProvider: Image360DataProvider,
     image360Descriptor: Image360Descriptor,
     image360VisualzationBox: Image360VisualizationBox
   ) {
@@ -43,57 +42,21 @@ export class Image360RevisionEntity implements Image360Revision {
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
   }
 
-  private getRotationFromFace(face: Image360Face['face']): Matrix4 {
-    switch (face) {
-      case 'front':
-        return new Matrix4().identity();
-      case 'back':
-        return new Matrix4().makeRotationAxis(new Vector3(0, 1, 0), Math.PI);
-      case 'left':
-        return new Matrix4().makeRotationAxis(new Vector3(0, 1, 0), Math.PI / 2);
-      case 'right':
-        return new Matrix4().makeRotationAxis(new Vector3(0, 1, 0), -Math.PI / 2);
-      case 'top':
-        return new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), -Math.PI / 2);
-      case 'bottom':
-        return new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2);
-      default:
-        throw Error(`Unrecognized face identifier "${face}"`);
-    }
+  get annotations(): ImageAnnotationObject[] {
+    return this._image360VisualzationBox.annotations;
   }
 
-  private createQuadFromAnnotation([annotationData, descriptor]: [AnnotationModel, Image360FileDescriptor]):
-    | THREE.Object3D
-    | undefined {
+  private createQuadFromAnnotation(
+    annotationData: AnnotationModel,
+    descriptor: Image360FileDescriptor
+  ): ImageAnnotationObject | undefined {
     const abox = (annotationData.data as AnnotationsObjectDetection).boundingBox;
 
     if (abox === undefined) {
       return undefined;
     }
 
-    const rotationMatrix = this.getRotationFromFace(descriptor.face);
-
-    const initialTranslation = new Matrix4().makeTranslation(
-      0.5 - (abox.xMax + abox.xMin) / 2,
-      0.5 - (abox.yMax + abox.yMin) / 2,
-      0.5
-    );
-
-    const geometry = new PlaneGeometry(abox.xMax - abox.xMin, abox.yMax - abox.yMin);
-    const material = new MeshBasicMaterial({
-      color: 0xffff00,
-      side: DoubleSide,
-      depthTest: false,
-      opacity: 0.5,
-      transparent: true
-    });
-    const plane = new Mesh(geometry, material);
-
-    const transformation = initialTranslation.clone().premultiply(rotationMatrix); // .multiply(this._image360VisualzationBox);
-    plane.matrix = transformation;
-    plane.matrixAutoUpdate = false;
-    plane.renderOrder = 4;
-    return plane;
+    return new ImageAnnotationObject(annotationData, descriptor);
   }
 
   /**
@@ -123,14 +86,21 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
-    const annotations = (this._imageProvider as Cdf360ImageEventProvider)
-      .getFileAnnotations(this._image360Descriptor.faceDescriptors)
-      .then(data =>
-        data
-          .map(d => combineWithFaceDescriptor(d, this._image360Descriptor))
-          .map(d => this.createQuadFromAnnotation(d))
-          .filter(isDefined)
-      );
+    if (this._image360VisualzationBox.annotations.length === 0) {
+      const annotationObjects = this._imageProvider
+        .get360ImageAnnotations(this._image360Descriptor.faceDescriptors)
+        .then(
+          annotationData =>
+            annotationData
+              .map(data => {
+                const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
+                return this.createQuadFromAnnotation(data, faceDescriptor);
+              })
+              .filter(isDefined) as ImageAnnotationObject[]
+        );
+
+      annotationObjects.then(annotations => (this._image360VisualzationBox.annotations = annotations));
+    }
 
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
       async ({ textures, isLowResolution }) => {
@@ -141,8 +111,6 @@ export class Image360RevisionEntity implements Image360Revision {
         }
       }
     );
-
-    this._image360VisualzationBox.setAnnotations(annotations);
 
     return { firstCompleted, fullResolutionCompleted: awaitFullResolution() };
 
@@ -187,12 +155,9 @@ function isDefined(obj: THREE.Object3D | undefined): obj is THREE.Object3D {
   return obj !== undefined;
 }
 
-function combineWithFaceDescriptor(
+function getAssociatedFaceDescriptor(
   annotation: AnnotationModel,
   faceDescriptors: Image360Descriptor
-): [AnnotationModel, Image360FileDescriptor] {
-  return [
-    annotation,
-    faceDescriptors.faceDescriptors.filter(desc => desc.fileId === annotation.annotatedResourceId)[0]
-  ];
+): Image360FileDescriptor {
+  return faceDescriptors.faceDescriptors.filter(desc => desc.fileId === annotation.annotatedResourceId)[0];
 }

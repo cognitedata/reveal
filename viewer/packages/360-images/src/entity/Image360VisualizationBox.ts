@@ -7,6 +7,7 @@ import { SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
 import { Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
+import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
 type VisualizationState = {
   opacity: number;
@@ -23,7 +24,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-  private _annotations: Promise<THREE.Object3D[]> | undefined = undefined;
+  private _annotations: ImageAnnotationObject[] | undefined = undefined;
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -70,13 +71,15 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.renderOrder = newRenderOrder;
   }
 
-  setAnnotations(annotations: Promise<THREE.Object3D[]>): void {
+  get annotations(): ImageAnnotationObject[] {
+    return this._annotations ?? [];
+  }
+
+  set annotations(annotations: ImageAnnotationObject[]) {
     this._annotations = annotations;
 
-    if (this._visualizationMesh) {
-      annotations.then(unwrappedAnnotations => {
-        unwrappedAnnotations.forEach(a => this._visualizationMesh!.add(a));
-      });
+    if (this._visualizationMesh !== undefined) {
+      this._annotations.forEach(a => this._visualizationMesh!.add(a));
     }
   }
 
@@ -120,10 +123,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
     if (this._annotations) {
-      this._annotations.then(unwrappedAnnotations => {
-        unwrappedAnnotations.forEach(a => {
-          this._visualizationMesh!.add(a);
-        });
+      this._annotations.forEach(a => {
+        this._visualizationMesh!.add(a);
       });
     }
 

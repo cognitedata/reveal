@@ -92,6 +92,9 @@ export class Image360ApiHelper {
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
 
+    const handleHover = (event: PointerEventData) => this.handleAnnotationHover(event);
+    inputHandler.on('hover', handleHover);
+
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
     const updateHoverStateOnRender = () => {
@@ -110,6 +113,25 @@ export class Image360ApiHelper {
       exit360ImageOnEscapeKey,
       updateHoverStateOnRender
     };
+  }
+
+  private getNormalizedOffset(data: PointerEventData): THREE.Vector2 {
+    return new THREE.Vector2(
+      (data.offsetX / this._domElement.clientWidth) * 2 - 1,
+      1 - (data.offsetY / this._domElement.clientHeight) * 2
+    );
+  }
+
+  private handleAnnotationHover(event: PointerEventData): void {
+    const currentEntity = this._interactionState.currentImage360Entered;
+
+    if (currentEntity === undefined) {
+      return;
+    }
+
+    const point = this.getNormalizedOffset(event);
+
+    this._image360Facade.handleAnnotationHover(point, this._activeCameraManager.getCamera(), currentEntity);
   }
 
   public async add360ImageSet(

@@ -69,7 +69,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return image360Descriptors;
   }
 
-  public async getFileAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
+  public async get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
     const fileIds = descriptors.map(o => ({ id: o.fileId }));
 
     const annotationsResult = this._client.annotations.list({

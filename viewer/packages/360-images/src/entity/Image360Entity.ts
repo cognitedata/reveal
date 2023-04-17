@@ -3,7 +3,7 @@
  */
 
 import { SceneHandler } from '@reveal/utilities';
-import { Image360FileProvider } from '@reveal/data-providers';
+import { Image360DataProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
 import { Image360 } from './Image360';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
@@ -47,7 +47,7 @@ export class Image360Entity implements Image360 {
   constructor(
     image360Metadata: Historical360ImageSet,
     sceneHandler: SceneHandler,
-    imageProvider: Image360FileProvider,
+    imageProvider: Image360DataProvider,
     transform: THREE.Matrix4,
     icon: Image360Icon
   ) {
