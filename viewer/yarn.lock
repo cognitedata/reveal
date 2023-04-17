@@ -777,7 +777,7 @@ __metadata:
     "@azure/msal-browser": 2.35.0
     "@cognite/sdk": 8.0.0
     "@microsoft/api-extractor": ^7.33.6
-    "@tweenjs/tween.js": 18.6.4
+    "@tweenjs/tween.js": 19.0.0
     "@types/dat.gui": 0.7.9
     "@types/gl": ^6.0.2
     "@types/glob": 8.1.0
@@ -1924,10 +1924,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:18.6.4":
-  version: 18.6.4
-  resolution: "@tweenjs/tween.js@npm:18.6.4"
-  checksum: 47208db3f6c32cde80284a852d0fca016284f90c4798eb4ebb2ebfc2e379504007bf0c031c2c33044df8a0878fd1942ebc4e0b7f5b8bcccf812b532ea1ee73eb
+"@tweenjs/tween.js@npm:19.0.0":
+  version: 19.0.0
+  resolution: "@tweenjs/tween.js@npm:19.0.0"
+  checksum: 8bb50058e6d20e74c7cd0d2d5675ce7aeb1505e4d92b667e35157b787ed885208eba3c85cae86c7dfed3016897ead2e667b251228f15130bb6fa61030a734b69
   languageName: node
   linkType: hard
 
