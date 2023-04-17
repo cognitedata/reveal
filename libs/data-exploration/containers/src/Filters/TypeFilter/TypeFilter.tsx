@@ -97,15 +97,19 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
+  const [prefix, setPrefix] = useDebouncedState<string>();
+
   const { options, isLoading, isError } = useEventsFilterOptions({
     property: 'type',
     query: props.query,
     filter: props.filter,
+    prefix,
   });
 
   return (
     <TypeFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

@@ -1,6 +1,7 @@
 import {
   DATA_EXPLORATION_COMPONENT,
   InternalEventsFilters,
+  useDebouncedState,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { useEventsFilterOptions } from '@data-exploration-lib/domain-layer';
@@ -59,15 +60,19 @@ export function SubTypeFilter<TFilter>({
 const EventSubTypeFilter = (
   props: BaseSubTypeFilterProps<InternalEventsFilters>
 ) => {
+  const [prefix, setPrefix] = useDebouncedState<string>();
+
   const { options, isLoading, isError } = useEventsFilterOptions({
     property: 'subtype',
     query: props.query,
     filter: props.filter,
+    prefix,
   });
 
   return (
     <SubTypeFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
