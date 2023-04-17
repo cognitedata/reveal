@@ -1,3 +1,5 @@
+import { CogniteClient } from '@cognite/sdk';
+
 type GptMessage = {
   role: 'user' | 'system' | 'assistant';
   content: string;
@@ -10,19 +12,24 @@ type GptRequest = {
   topP?: number;
 };
 
-type GptCompletionResponse = {
-  data: {
-    choices: {
-      message: {
-        role: string;
-        content: string;
-        finishReason: string;
-      };
-    }[];
+type GptMessageResult = {
+  message: {
+    role: string;
+    content: string;
+    finishReason: string;
   };
 };
 
-export default async function gpt(request: GptRequest, sdk: any) {
+type GptCompletionResponse = {
+  data: {
+    choices: GptMessageResult[];
+  };
+};
+
+export const getChatCompletions = async (
+  request: GptRequest,
+  sdk: CogniteClient
+): Promise<GptMessageResult[]> => {
   const url = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
   const response = (await sdk.post(url, {
     data: request,
@@ -30,4 +37,4 @@ export default async function gpt(request: GptRequest, sdk: any) {
   })) as GptCompletionResponse;
 
   return response.data.choices;
-}
+};

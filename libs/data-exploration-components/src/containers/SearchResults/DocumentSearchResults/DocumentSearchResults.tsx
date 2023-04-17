@@ -9,13 +9,13 @@ import { DocumentsTable } from '@data-exploration-components/containers/Document
 import {
   InternalDocument,
   TableSortBy,
+  getChatCompletions,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
-import gpt from '../../../utils/gpt';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-lib/core';
 import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
@@ -29,7 +29,6 @@ import {
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 import { useSDK } from '@cognite/sdk-provider';
-import { useFlagDocumentGPT } from '@data-exploration-components/hooks';
 import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 
 export interface DocumentSearchResultsProps {
@@ -41,10 +40,12 @@ export interface DocumentSearchResultsProps {
   onFileClicked?: (file: FileInfo) => boolean;
   selectedRow?: Record<string | number, boolean>;
   enableAdvancedFilters?: boolean;
+  isDocumentsGPTEnabled?: boolean;
 }
 
 export const DocumentSearchResults = ({
   enableAdvancedFilters,
+  isDocumentsGPTEnabled,
   query = '',
   filter = {},
   onClick,
@@ -75,7 +76,6 @@ export const DocumentSearchResults = ({
     documentSearchConfig
   );
   const sdk = useSDK();
-  const isDocumentsGPTEnabled = useFlagDocumentGPT();
   const track = useDebounceTrackUsage();
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export const DocumentSearchResults = ({
       "${query}"
       `; // Can use this: Ensure the keywords are split by |.
 
-      const choices = await gpt(
+      const choices = await getChatCompletions(
         {
           messages: [
             {
@@ -149,6 +149,7 @@ export const DocumentSearchResults = ({
         onSort={setSortBy}
         query={query}
         gptColumnName={gptColumnName}
+        isDocumentsGPTEnabled={isDocumentsGPTEnabled}
         tableHeaders={
           <>
             <SearchResultToolbar
