@@ -35,6 +35,8 @@ const NODE_TYPES = {
   groupNode: GroupNode,
 };
 
+const DELETE_KEY_CODES = ['Backspace', 'Delete'];
+
 type Props = {};
 export const FlowBuilder = ({}: Props): JSX.Element => {
   const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
@@ -158,7 +160,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         panOnDrag={false}
         selectionOnDrag
         panOnScroll
-        deleteKeyCode={['Backspace', 'Delete']}
+        deleteKeyCode={DELETE_KEY_CODES}
         edges={flowState.canvas.edges}
         nodes={flowState.canvas.nodes}
         multiSelectionKeyCode={null}
