@@ -14,18 +14,18 @@ const useHoverTooltips = (
       return [];
     }
 
-    const focusedAnnotation = annotations.find(
+    const hoveredAnnotation = annotations.find(
       ({ id: annotationId }) => String(annotationId) === hoverId
     );
 
-    if (!focusedAnnotation) {
+    if (!hoveredAnnotation) {
       return [];
     }
 
     return [
       {
-        targetId: String(focusedAnnotation?.id),
-        content: <AnnotationHoverPreview annotation={focusedAnnotation} />,
+        targetId: String(hoveredAnnotation?.id),
+        content: <AnnotationHoverPreview annotation={hoveredAnnotation} />,
         anchorTo: TooltipAnchorPosition.BOTTOM_CENTER,
       },
     ];

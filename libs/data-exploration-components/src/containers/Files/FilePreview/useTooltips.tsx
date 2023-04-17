@@ -3,6 +3,7 @@ import useHoverTooltips from './useHoverTooltips';
 import { useMemo } from 'react';
 import useFileLinkTooltips from './useFileLinkTooltips';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import useOverlappingAnnotationsTooltips from './useOverlappingAnnotationsTooltips';
 
 const useTooltips = ({
   isTooltipsEnabled,
@@ -10,12 +11,14 @@ const useTooltips = ({
   annotations,
   hoverId,
   selectedAnnotations,
+  selectAnnotation,
 }: {
   isTooltipsEnabled: boolean;
   fileId: number;
   annotations: ExtendedAnnotation[];
   hoverId: string | undefined;
   selectedAnnotations: ExtendedAnnotation[];
+  selectAnnotation: (annotation: ExtendedAnnotation) => void;
 }) => {
   const { isEnabled: isCanvasEnabled } = useFlag('UFV_CANVAS', {
     forceRerender: true,
@@ -27,6 +30,14 @@ const useTooltips = ({
     annotations,
     hoverId
   );
+
+  const overlappingAnnotationsTooltips = useOverlappingAnnotationsTooltips(
+    isTooltipsEnabled,
+    annotations,
+    selectedAnnotations,
+    selectAnnotation
+  );
+
   const fileLinkTooltips = useFileLinkTooltips(
     isCanvasEnabled,
     fileId,
@@ -35,8 +46,12 @@ const useTooltips = ({
   );
 
   return useMemo(() => {
-    return [...hoverTooltips, ...fileLinkTooltips];
-  }, [hoverTooltips, fileLinkTooltips]);
+    return [
+      ...hoverTooltips,
+      ...overlappingAnnotationsTooltips,
+      ...fileLinkTooltips,
+    ];
+  }, [hoverTooltips, overlappingAnnotationsTooltips, fileLinkTooltips]);
 };
 
 export default useTooltips;

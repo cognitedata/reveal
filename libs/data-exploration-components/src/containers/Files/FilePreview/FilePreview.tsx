@@ -291,6 +291,9 @@ export const FilePreview = ({
     annotations: annotations,
     hoverId: hoverId,
     selectedAnnotations: selectedAnnotations,
+    selectAnnotation: (annotation: ExtendedAnnotation) => {
+      setSelectedAnnotations([annotation]);
+    },
   });
 
   const onStageClick = useCallback(() => {
