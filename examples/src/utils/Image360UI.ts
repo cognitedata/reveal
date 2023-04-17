@@ -3,29 +3,19 @@
  */
 
 import * as THREE from 'three';
-import {
-  Cognite3DViewer,
-  Image360,
-  Image360Collection,
-  Image360EnteredDelegate,
-  Image360ExitedDelegate
-} from '@cognite/reveal';
+import { Cognite3DViewer, Image360, Image360Collection, Image360EnteredDelegate } from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
     let collections: Image360Collection[] = [];
-    let selectedEntity: Image360 | undefined;
+    let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
 
     const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
       selectedEntity = entity;
-    };
-
-    const onImage360Exited: Image360ExitedDelegate = () => {
-      selectedEntity = undefined;
     };
 
     const translation = {
@@ -151,7 +141,6 @@ export class Image360UI {
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
       collection.on('image360Entered', onImageEntered);
-      collection.on('image360Exited', onImage360Exited);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
       viewer.requestRedraw();
@@ -168,7 +157,6 @@ export class Image360UI {
       await viewer.remove360Images(...entities);
       entities = [];
       collections = [];
-      selectedEntity = undefined;
     }
   }
 }
