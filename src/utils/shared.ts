@@ -1,9 +1,10 @@
 import { getProject } from '@cognite/cdf-utilities';
+import { FileInfo } from '@cognite/sdk/dist/src';
 import { useMemo } from 'react';
 import { InfiniteData } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { styleScope } from 'styles/styleScope';
-import { Flow, Items } from 'types';
+import { Items } from 'types';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -35,7 +36,7 @@ export const useUrlQuery = (
 };
 
 export const filterFlow = (
-  { name, description }: Flow,
+  { name, metadata }: FileInfo,
   query?: string
 ): boolean | undefined => {
   if (!query) {
@@ -46,7 +47,7 @@ export const filterFlow = (
     queries.filter(
       (subQ) =>
         name.toLowerCase().includes(subQ) ||
-        description?.toLowerCase().includes(subQ)
+        metadata?.description?.toLowerCase().includes(subQ)
     ).length == queries.length
   );
 };

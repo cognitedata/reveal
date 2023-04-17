@@ -1,19 +1,16 @@
 import { Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useIsMutating } from 'react-query';
-
 import { useTranslation } from 'common';
-import { useFlow } from 'hooks/raw';
-import { Flow } from 'types';
 import { formatTime, Timestamp } from '@cognite/cdf-utilities';
 
-type FlowSaveIndicatorProps = {
-  flowId: Flow['id'];
-};
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useFlow } from 'hooks/files';
 
-const FlowSaveIndicator = ({ flowId }: FlowSaveIndicatorProps) => {
+const FlowSaveIndicator = () => {
   const { t } = useTranslation();
-  const { data } = useFlow(flowId);
+  const { externalId } = useWorkflowBuilderContext();
+  const { data } = useFlow(externalId);
 
   const isLoading = useIsMutating();
 
