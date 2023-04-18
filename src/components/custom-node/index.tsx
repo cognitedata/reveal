@@ -20,6 +20,7 @@ export type CustomNodeData =
 
 export const CustomNode = ({
   data,
+  selected,
 }: NodeProps<CustomNodeData>): JSX.Element => {
   const { t } = useTranslation();
 
@@ -27,6 +28,7 @@ export const CustomNode = ({
     <BaseNode
       description={t('no-configuration')}
       icon={WORKFLOW_COMPONENT_ICON_TYPES[data.type]}
+      selected={selected}
       title={t(`component-title-${data.type}`, { postProcess: 'uppercase' })}
     />
   );
