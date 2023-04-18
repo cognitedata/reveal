@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 
 import ReactFlow, {
-  addEdge,
   Background,
   MarkerType,
   OnConnect,
@@ -10,6 +9,7 @@ import ReactFlow, {
   Controls,
   BackgroundVariant,
   NodeChange,
+  Edge,
 } from 'reactflow';
 import { useState } from 'react';
 
@@ -24,6 +24,7 @@ import * as AM from '@automerge/automerge';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { AFlow } from 'types';
 import { ChangeFn } from '@automerge/automerge';
+import { v4 } from 'uuid';
 
 type Props = {};
 export const FlowBuilder = ({}: Props): JSX.Element => {
@@ -69,21 +70,31 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   );
 
   const onConnect: OnConnect = useCallback((connection) => {
-    const newEdges = addEdge(
-      {
-        ...connection,
-        animated: true,
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          height: 16,
-          width: 16,
-        },
-        style: {
-          strokeWidth: 1,
-        },
-      },
-      flowRef.current.canvas.edges
-    );
+    if (!!connection.source && !!connection.target) {
+      setFlow(
+        AM.change(flowRef.current, (f) => {
+          const newEdge: Edge<any> = {
+            ...connection,
+            source: connection.source!,
+            target: connection.target!,
+            type: 'default',
+            animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              height: 16,
+              width: 16,
+            },
+            style: {
+              strokeWidth: 1,
+            },
+            id: v4(),
+          };
+          // TODO: figure out this type issue
+          // @ts-ignore
+          f.canvas.edges.push(newEdge);
+        })
+      );
+    }
   }, []);
 
   const onDragOver: React.DragEventHandler = useCallback((event) => {
