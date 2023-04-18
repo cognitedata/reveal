@@ -60,13 +60,6 @@ export class Image360RevisionEntity implements Image360Revision {
     return undefined;
   }
 
-  private createQuadFromAnnotation(
-    annotation: AnnotationModel,
-    descriptor: Image360FileDescriptor
-  ): ImageAnnotationObject | undefined {
-    return ImageAnnotationObject.createAnnotationObject(annotation, descriptor.face);
-  }
-
   /**
    * Loads the textures needed for the 360 image (6 faces).
    *
@@ -123,7 +116,7 @@ export class Image360RevisionEntity implements Image360Revision {
     const annotationObjects = annotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
-        return this.createQuadFromAnnotation(data, faceDescriptor);
+        return ImageAnnotationObject.createAnnotationObject(data, faceDescriptor.face);
       })
       .filter(isDefined);
 
