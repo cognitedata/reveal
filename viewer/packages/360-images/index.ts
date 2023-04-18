@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-export { Image360 } from './src/entity/Image360';
+export { Image360, Image360Metadata } from './src/entity/Image360';
 export { Image360Revision } from './src/entity/Image360Revision';
 export { Image360Collection } from './src/collection/Image360Collection';
 export { Image360Facade } from './src/Image360Facade';
