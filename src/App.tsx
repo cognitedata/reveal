@@ -8,8 +8,8 @@ import {
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { translations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';

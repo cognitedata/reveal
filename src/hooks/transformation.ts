@@ -5,7 +5,7 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   useQueryClient,
-} from 'react-query';
+} from '@tanstack/react-query';
 
 import { BASE_QUERY_KEY } from 'common';
 import { SdkListData } from 'types';

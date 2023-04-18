@@ -1,6 +1,6 @@
 import { Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useIsMutating } from 'react-query';
+import { useIsMutating } from '@tanstack/react-query';
 import { useTranslation } from 'common';
 import { formatTime, Timestamp } from '@cognite/cdf-utilities';
 

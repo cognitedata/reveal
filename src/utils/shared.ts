@@ -1,7 +1,7 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk/dist/src';
 import { useMemo } from 'react';
-import { InfiniteData } from 'react-query';
+import { InfiniteData } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { styleScope } from 'styles/styleScope';
 import { Items } from 'types';

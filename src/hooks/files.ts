@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { AFlow, Flow } from 'types';
 import * as Automerge from '@automerge/automerge';
 import { isEqual } from 'lodash';

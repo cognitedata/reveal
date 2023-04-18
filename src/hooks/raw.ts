@@ -1,7 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { RawDB } from '@cognite/sdk';
 import { BASE_QUERY_KEY } from 'common/constants';
-import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 export const dbKey = (db: string) => [BASE_QUERY_KEY, db];
 export const databaseListKey = [BASE_QUERY_KEY, 'database-list'];
