@@ -29,7 +29,6 @@ import {
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 import { useSDK } from '@cognite/sdk-provider';
-import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 
 export interface DocumentSearchResultsProps {
   query?: string;
