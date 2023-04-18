@@ -779,6 +779,7 @@ export type HtmlOverlayToolOptions = {
 // @public (undocumented)
 export interface Image360 {
     getActiveRevision(): Image360Revision;
+    getImageMetadata(): Image360Metadata;
     getRevisions(): Image360Revision[];
     readonly image360Visualization: Image360Visualization;
     readonly transform: THREE.Matrix4;
@@ -803,6 +804,13 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 
 // @public
 export type Image360ExitedDelegate = () => void;
+
+// @public (undocumented)
+export type Image360Metadata = {
+    station: string;
+    collection: string;
+    date?: Date;
+};
 
 // @public
 export interface Image360Revision {
