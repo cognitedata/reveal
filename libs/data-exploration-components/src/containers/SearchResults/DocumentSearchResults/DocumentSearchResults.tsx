@@ -57,6 +57,9 @@ export const DocumentSearchResults = ({
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [realQuery, setRealQuery] = useState<string>();
   const [gptColumnName, setGptColumnName] = useState<string>('Summary');
+  const context = useContext(AppContext);
+
+  const trackUsage = context?.trackUsage;
 
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
 
@@ -76,7 +79,6 @@ export const DocumentSearchResults = ({
     documentSearchConfig
   );
   const sdk = useSDK();
-  const track = useDebounceTrackUsage();
 
   useEffect(() => {
     async function retrieveAnswer() {
@@ -119,11 +121,16 @@ export const DocumentSearchResults = ({
       setGptColumnName(summary['column_name']);
       setRealQuery(summary['keywords']);
 
-      track(DATA_EXPLORATION_COMPONENT.SEARCH.DOCUMENT_GPT_SEARCH_PROMPT, {
-        query: query,
-        numberOfDocuments: results.length,
-        result: { summary },
-      });
+      if (trackUsage) {
+        trackUsage(
+          DATA_EXPLORATION_COMPONENT.SEARCH.DOCUMENT_GPT_SEARCH_PROMPT,
+          {
+            query: query,
+            numberOfDocuments: results.length,
+            result: { summary },
+          }
+        );
+      }
     }
 
     if (isDocumentsGPTEnabled) {
@@ -131,7 +138,6 @@ export const DocumentSearchResults = ({
     }
   }, [query, sdk]);
 
-  const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
     context?.flow! as any,
     'filesAcl',
@@ -141,7 +147,7 @@ export const DocumentSearchResults = ({
   );
 
   const resourceType = ResourceTypes.File;
-  const trackUsage = context?.trackUsage;
+
   return (
     <DocumentSearchResultWrapper>
       <DocumentsTable

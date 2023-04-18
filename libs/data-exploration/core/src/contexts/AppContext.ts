@@ -1,4 +1,5 @@
 import React from 'react';
+import { MetricsMetadata } from '../hooks';
 
 export type Flow =
   | 'COGNITE_AUTH'
@@ -12,9 +13,11 @@ export type OverrideURLMap = {
   pdfjsWorkerSrc?: string;
 } & Record<string, string>;
 
-export const AppContext = React.createContext<{
+export type AppContextProps = {
   flow: Flow;
   overrideURLMap?: OverrideURLMap;
   userInfo: any;
-  trackUsage?: (event: string, metadata?: Record<string, unknown>) => void;
-} | null>(null);
+  isAdvancedFiltersEnabled: boolean;
+  trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
+};
+export const AppContext = React.createContext<AppContextProps | null>(null);
