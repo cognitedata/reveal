@@ -13,15 +13,13 @@ import { Log } from '@reveal/logger';
 export type DownloadRequest = {
   entity: Image360Entity;
   revision: Image360RevisionEntity;
-  firstCompleted: Promise<void>;
-  fullResolutionCompleted: Promise<void>;
+  completed: Promise<void>;
   abort: () => void;
 };
 
 export type Loaded360Image = {
   entity: Image360Entity;
   revision: Image360RevisionEntity;
-  isFullResolution: boolean;
 };
 
 export class Image360LoadingCache {
@@ -56,7 +54,7 @@ export class Image360LoadingCache {
     revision: Image360RevisionEntity,
     lockDownload = false
   ): Promise<void> {
-    if (this._loaded360Images.find(image => image.revision === revision)?.isFullResolution) {
+    if (this._loaded360Images.find(image => image.revision === revision)) {
       return;
     }
 
@@ -66,7 +64,7 @@ export class Image360LoadingCache {
 
     const inProgressDownload = this.getDownloadInProgress(revision);
     if (inProgressDownload !== undefined) {
-      return inProgressDownload.firstCompleted;
+      return inProgressDownload.completed;
     }
 
     if (this._inProgressDownloads.length >= this._downloadCacheSize) {
@@ -74,64 +72,41 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const { firstCompleted, fullResolutionCompleted } = revision.loadTextures(signal);
+    const completed = revision.loadTextures(signal);
 
     this._inProgressDownloads.push({
       entity,
       revision,
-      firstCompleted,
-      fullResolutionCompleted,
+      completed,
       abort
     });
 
-    fullResolutionCompleted
+    const revisionTextureReady = await completed
       .catch(e => {
         return Promise.reject(e);
       })
       .then(
         () => {
-          this.addRevisionToCache(entity, revision, true);
-        },
-        () => {
-          return Promise.resolve();
-        }
-      )
-      .finally(() => {
-        removeDownload(this._lockedDownload, this._inProgressDownloads);
-      });
-
-    const revisionTextureReady = await firstCompleted
-      .catch(e => {
-        return Promise.reject(e);
-      })
-      .then(
-        () => {
-          this.addRevisionToCache(entity, revision, false);
+          this.addRevisionToCache(entity, revision);
         },
         reason => {
-          removeDownload(this._lockedDownload, this._inProgressDownloads);
-
           if (signal.aborted || reason === 'Aborted') {
             Log.info('360 Image download aborted: ' + reason);
           } else {
             throw new Error('Failed to load 360 image: ' + reason);
           }
         }
-      );
+      )
+      .finally(() => {
+        if (this._lockedDownload === revision) {
+          this._lockedDownload = undefined;
+        }
+        remove(this._inProgressDownloads, download => {
+          return download.revision === revision;
+        });
+      });
 
     return revisionTextureReady;
-
-    function removeDownload(
-      _lockedDownload: Image360RevisionEntity | undefined,
-      _inProgressDownloads: DownloadRequest[]
-    ) {
-      if (_lockedDownload === revision) {
-        _lockedDownload = undefined;
-      }
-      remove(_inProgressDownloads, download => {
-        return download.revision === revision;
-      });
-    }
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
@@ -154,17 +129,7 @@ export class Image360LoadingCache {
     }
   }
 
-  private addRevisionToCache(entity: Image360Entity, revision: Image360RevisionEntity, isFullResolution: boolean) {
-    const cachedImage = this._loaded360Images.find(image => image.revision === revision);
-    if (cachedImage && cachedImage.isFullResolution) {
-      // Image is already cached with full resolution. Discard attempts to add lower quality image.
-      return;
-    }
-
-    if (cachedImage) {
-      pull(this._loaded360Images, cachedImage);
-    }
-
+  private addRevisionToCache(entity: Image360Entity, revision: Image360RevisionEntity) {
     if (this._loaded360Images.length === this._imageCacheSize) {
       const imageToPurge = findLast(
         this._loaded360Images,
@@ -174,10 +139,10 @@ export class Image360LoadingCache {
         throw new Error('Unable to purge 360 image from cache due to too many visible instances');
       }
       pull(this._loaded360Images, imageToPurge);
-      imageToPurge.revision.clearTextures();
+      imageToPurge.revision.dispose();
       if (!imageToPurge.entity.image360Visualization.visible) imageToPurge.entity.unloadImage();
     }
-    this._loaded360Images.unshift({ entity, revision, isFullResolution });
+    this._loaded360Images.unshift({ entity, revision });
   }
 
   private abortLastRecentlyReqestedRevision() {

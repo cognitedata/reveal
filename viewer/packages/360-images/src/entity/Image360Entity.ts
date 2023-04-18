@@ -6,13 +6,14 @@ import { SceneHandler } from '@reveal/utilities';
 import { Image360FileProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
 import { Image360 } from './Image360';
-import { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
+  private readonly _imageMetadata: Image360EventDescriptor;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
@@ -49,12 +50,14 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon
+    icon: Image360Icon,
+    renderer: THREE.WebGLRenderer
   ) {
     this._transform = transform;
     this._image360Icon = icon;
+    this._imageMetadata = image360Metadata;
 
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
+    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler, renderer);
     this._image360VisualzationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
@@ -71,6 +74,10 @@ export class Image360Entity implements Image360 {
     return this._revisions;
   }
 
+  public getLabel(): string {
+    return this._imageMetadata.label;
+  }
+
   /**
    * Get the revision that is currently loaded for this entry.
    * @returns Returns the active revision.
@@ -81,7 +88,18 @@ export class Image360Entity implements Image360 {
 
   public setActiveRevision(revision: Image360RevisionEntity): void {
     this._activeRevision = revision;
-    this._activeRevision.applyTextures();
+    console.log(this.getLabel() + ' set Active');
+    this._activeRevision.applyLowResolutionTextures();
+  }
+
+  public reduceTextureQuality(): void {
+    console.log(this.getLabel() + ' reduce Quality');
+    this._activeRevision.applyLowResolutionTextures();
+  }
+
+  public async increaseTextureQuality(): Promise<void> {
+    console.log(this.getLabel() + ' increase Quality');
+    this._activeRevision.applyFullResolutionTextures();
   }
 
   public getMostRecentRevision(): Image360RevisionEntity {
@@ -111,7 +129,7 @@ export class Image360Entity implements Image360 {
    */
   public dispose(): void {
     this.unloadImage();
-    this._revisions.forEach(revision => revision.clearTextures());
+    this._revisions.forEach(revision => revision.dispose());
     this._image360Icon.dispose();
   }
 }

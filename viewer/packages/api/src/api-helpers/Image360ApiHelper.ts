@@ -63,6 +63,7 @@ export class Image360ApiHelper {
   constructor(
     cogniteClient: CogniteClient,
     sceneHandler: SceneHandler,
+    renderer: THREE.WebGLRenderer,
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
@@ -73,6 +74,7 @@ export class Image360ApiHelper {
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
       sceneHandler,
+      renderer,
       onBeforeSceneRendered
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
@@ -143,6 +145,9 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
+    if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
+      return;
+    }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
     const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
@@ -179,6 +184,7 @@ export class Image360ApiHelper {
       this._transitionInProgress = true;
       if (lastEntered360ImageEntity !== undefined) {
         await this.transition(lastEntered360ImageEntity, image360Entity);
+        lastEntered360ImageEntity.reduceTextureQuality();
         MetricsLogger.trackEvent('360ImageEntered', {});
       } else {
         const transitionDuration = 1000;
@@ -192,12 +198,12 @@ export class Image360ApiHelper {
       this._transitionInProgress = false;
     }
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
-    applyFullResolutionTextures(this._requestRedraw);
+    increaseTextureQuality(this._requestRedraw);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
 
-    async function applyFullResolutionTextures(_requestRedraw: () => void) {
-      await revisionToEnter.applyFullResolutionTextures();
+    async function increaseTextureQuality(_requestRedraw: () => void) {
+      await image360Entity.increaseTextureQuality();
       _requestRedraw();
     }
   }

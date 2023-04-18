@@ -312,6 +312,7 @@ export class Cognite3DViewer {
       this._image360ApiHelper = new Image360ApiHelper(
         options.sdk,
         this._sceneHandler,
+        this.renderer,
         this._domElement,
         this._activeCameraManager,
         this._mouseHandler,

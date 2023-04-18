@@ -17,15 +17,18 @@ import assert from 'assert';
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
   private readonly _sceneHandler: SceneHandler;
+  private readonly _renderer: THREE.WebGLRenderer;
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
   constructor(
     image360DataProvider: Image360Provider<T>,
     sceneHandler: SceneHandler,
+    renderer: THREE.WebGLRenderer,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
     this._onBeforeSceneRendered = onBeforeSceneRendered;
+    this._renderer = renderer;
   }
 
   public async create(
@@ -51,7 +54,8 @@ export class Image360CollectionFactory<T> {
           this._sceneHandler,
           this._image360DataProvider,
           descriptor.transform,
-          icon
+          icon,
+          this._renderer
         );
       });
 
