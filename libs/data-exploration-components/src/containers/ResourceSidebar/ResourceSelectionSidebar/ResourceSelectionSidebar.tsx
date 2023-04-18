@@ -245,7 +245,17 @@ export const ResourceSelectionSidebar = ({
                       type="primary"
                       disabled={!previewItem}
                       onClick={() => {
-                        if (previewItem) onSelect(previewItem);
+                        if (selectionMode === 'single') {
+                          if (previewItem) {
+                            onSelect(previewItem);
+                            return;
+                          }
+                        }
+
+                        if (selectionMode === 'multiple') {
+                          onClose(true);
+                          return;
+                        }
                       }}
                     >
                       Add selected resources
