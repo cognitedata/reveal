@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   Body,
@@ -14,7 +14,6 @@ import {
   OptionType,
 } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
-import { getContainer } from 'utils/shared';
 import {
   useSearchParamState,
   useUpdateSearchParamState,
@@ -189,8 +188,7 @@ const TableFilter = ({
                           {t('label_one')}
                         </Body>
                         <Select<string>
-                          allowClear
-                          // getPopupContainer={getContainer}
+                          // @ts-ignore
                           onChange={handleSelectedLabelChange}
                           options={labelOptions.map((label) => ({
                             label,
