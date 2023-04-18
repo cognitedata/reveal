@@ -40,6 +40,7 @@ export interface TimeseriesAggregateUniquePropertiesResponse
 export interface TimeseriesAggregateUniqueValuesResponse
   extends AggregateResponse {
   values: [string];
+  value: string;
 }
 
 export interface TimeseriesMetadataAggregateResponse extends AggregateResponse {

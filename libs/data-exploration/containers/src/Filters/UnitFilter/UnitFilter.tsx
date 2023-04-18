@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useTimeseriesUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
+import { useTimeseriesFilterOptions } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
@@ -8,7 +8,6 @@ import {
   DATA_EXPLORATION_COMPONENT,
   InternalTimeseriesFilters,
   useDebouncedState,
-  useDeepMemo,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { InputActionMeta } from 'react-select';
@@ -59,31 +58,23 @@ export function UnitFilter<TFilter>({
   );
 }
 
-const TimeseriesUnitFilter = (
-  props: BaseUnitFilterProps<InternalTimeseriesFilters>
-) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
-
-  const {
-    data: units = [],
-    isLoading,
-    isError,
-  } = useTimeseriesUniqueValuesByProperty('unit', query, props.filter);
-
-  const options = useDeepMemo(
-    () =>
-      units.map((item) => ({
-        label: String(item.values),
-        value: String(item.values),
-        count: item.count,
-      })),
-    [units]
-  );
+const TimeseriesUnitFilter = ({
+  query,
+  filter,
+  ...props
+}: BaseUnitFilterProps<InternalTimeseriesFilters>) => {
+  const [prefix, setPrefix] = useDebouncedState<string>();
+  const { options, isLoading, isError } = useTimeseriesFilterOptions({
+    property: 'unit',
+    query,
+    prefix,
+    filter,
+  });
 
   return (
     <UnitFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

@@ -20,5 +20,7 @@ export const getTimeseriesUniqueValuesByProperty = (
         property: [property],
       },
     ],
-  }).then(({ items }) => items);
+  }).then(({ items }) =>
+    items.map((item) => ({ ...item, value: item.values[0] }))
+  );
 };

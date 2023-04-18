@@ -16,6 +16,7 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
   filter,
   onFilterChange,
   onResetFilterClick,
+  query,
   ...rest
 }) => {
   return (
@@ -42,6 +43,8 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
         />
 
         <UnitFilter.Timeseries
+          query={query}
+          filter={filter.timeseries}
           value={filter.timeseries.unit}
           onChange={(newUnit) =>
             onFilterChange('timeSeries', { unit: newUnit })

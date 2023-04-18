@@ -50,13 +50,19 @@ export const queryKeys = {
       query,
       filter,
     ] as const,
-  timeseriesUniqueValues: (property: string, query?: string, filter?: any) =>
+  timeseriesUniqueValues: (
+    property: string,
+    query?: string,
+    filter?: any,
+    advancedFilter?: any
+  ) =>
     [
       ...queryKeys.timeseries(),
       'unique-values',
       property,
       query,
       filter,
+      advancedFilter,
     ] as const,
 
   timeseriesDatapoints: (items: IdEither[], filter?: any) =>
