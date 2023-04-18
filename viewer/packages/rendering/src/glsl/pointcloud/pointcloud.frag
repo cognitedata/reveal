@@ -77,7 +77,6 @@ void main() {
 	#endif
 
 	#if defined(use_edl)
-		// We decided to use same depth value for all point shape.
 		// Note: potree library use different depth value for Paraboloid shape namely log2(linearDepth).
 		outputColor.a = vLogDepth;
 	#endif
