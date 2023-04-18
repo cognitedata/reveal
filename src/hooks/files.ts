@@ -88,7 +88,7 @@ export function useCreateFlow() {
       return file;
     },
     {
-      onSettled() {
+      onSuccess() {
         qc.invalidateQueries(getFlowListKey());
       },
     }
