@@ -7,11 +7,9 @@ import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
 import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
 import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useFlow } from 'hooks/files';
 
 export const CanvasTopBar = () => {
-  const { externalId } = useWorkflowBuilderContext();
-  const { data: flow } = useFlow(externalId);
+  const { flow } = useWorkflowBuilderContext();
   const { subAppPath } = useParams<{
     subAppPath: string;
   }>();
@@ -19,7 +17,7 @@ export const CanvasTopBar = () => {
   return (
     <Container>
       <SecondaryTopbar
-        title={flow?.name || ''}
+        title={flow.name}
         goBackFallback={createLink(`/${subAppPath}`)}
         extraContent={
           <Flex alignItems="center">

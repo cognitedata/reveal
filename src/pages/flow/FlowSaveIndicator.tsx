@@ -3,14 +3,11 @@ import styled from 'styled-components';
 import { useIsMutating } from '@tanstack/react-query';
 import { useTranslation } from 'common';
 import { formatTime, Timestamp } from '@cognite/cdf-utilities';
-
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useFlow } from 'hooks/files';
 
 const FlowSaveIndicator = () => {
   const { t } = useTranslation();
-  const { externalId } = useWorkflowBuilderContext();
-  const { data } = useFlow(externalId);
+  const { flow } = useWorkflowBuilderContext();
 
   const isLoading = useIsMutating();
 
@@ -23,11 +20,11 @@ const FlowSaveIndicator = () => {
     );
   }
 
-  if (!data?.updated) {
+  if (!flow.updated) {
     return null;
   }
 
-  if (new Date().getTime() - data.updated < 1000 * 60) {
+  if (new Date().getTime() - flow.updated < 1000 * 60) {
     return <StyledWrapper>{t('details-all-changes-saved')}</StyledWrapper>;
   }
 
@@ -37,7 +34,7 @@ const FlowSaveIndicator = () => {
         formatContent={(timestamp: number) =>
           t('last-edit-time', { time: formatTime(timestamp) })
         }
-        timestamp={data.updated}
+        timestamp={flow.updated}
       />
     </StyledWrapper>
   );
