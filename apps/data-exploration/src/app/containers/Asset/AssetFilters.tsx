@@ -30,7 +30,9 @@ export const AssetFilters = ({ ...rest }) => {
     limit: 1000,
   });
 
-  const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
+  const { data: sources = [] } = useAssetsUniqueValuesByProperty({
+    property: 'source',
+  });
 
   const { data: metadataKeys = [] } = useAssetsMetadataKeysAggregateQuery();
 

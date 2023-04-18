@@ -29,7 +29,7 @@ export const LabelFilterV2 = ({
     data: labels = [],
     isError,
     isFetched,
-  } = useAssetsUniqueValuesByProperty('labels');
+  } = useAssetsUniqueValuesByProperty({ property: 'labels' });
 
   if (!isFetched) {
     return null;

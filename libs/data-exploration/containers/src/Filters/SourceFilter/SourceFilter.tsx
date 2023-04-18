@@ -1,5 +1,5 @@
 import {
-  useAssetsUniqueValuesByProperty,
+  useAssetsFilterOptions,
   useDocumentsUniqueValuesByProperty,
   useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
@@ -110,30 +110,22 @@ export const BaseFileSourceFilter = <TFilter,>({
 const AssetSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useAssetsUniqueValuesByProperty('source', query);
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
+  const { options, isLoading, isError } = useAssetsFilterOptions({
+    property: 'source',
+    filterProperty: 'sources',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <SourceFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
-      onInputChange={(newValue) => setQuery(newValue)}
       options={options}
     />
   );
