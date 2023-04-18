@@ -44,7 +44,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const onEdgesChange: OnEdgesChange = (foo) => {};
+  const onEdgesChange: OnEdgesChange = () => {};
 
   const onNodesChange = (changes: NodeChange[]) => {
     if (!flowRef.current) {
@@ -79,33 +79,36 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
     []
   );
 
-  const onConnect: OnConnect = useCallback((connection) => {
-    if (!!connection.source && !!connection.target) {
-      setFlow(
-        AM.change(flowRef.current, (f) => {
-          const newEdge: Edge<any> = {
-            ...connection,
-            source: connection.source!,
-            target: connection.target!,
-            type: 'default',
-            animated: true,
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              height: 16,
-              width: 16,
-            },
-            style: {
-              strokeWidth: 1,
-            },
-            id: v4(),
-          };
-          // TODO: figure out this type issue
-          // @ts-ignore
-          f.canvas.edges.push(newEdge);
-        })
-      );
-    }
-  }, []);
+  const onConnect: OnConnect = useCallback(
+    (connection) => {
+      if (!!connection.source && !!connection.target) {
+        setFlow(
+          AM.change(flowRef.current, (f) => {
+            const newEdge: Edge<any> = {
+              ...connection,
+              source: connection.source!,
+              target: connection.target!,
+              type: 'default',
+              animated: true,
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+                height: 16,
+                width: 16,
+              },
+              style: {
+                strokeWidth: 1,
+              },
+              id: v4(),
+            };
+            // TODO: figure out this type issue
+            // @ts-ignore
+            f.canvas.edges.push(newEdge);
+          })
+        );
+      }
+    },
+    [flowRef, setFlow]
+  );
 
   const onDragOver: React.DragEventHandler = useCallback((event) => {
     event.preventDefault();
@@ -149,7 +152,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         );
       }
     },
-    [reactFlowInstance, setFlow]
+    [reactFlowInstance, setFlow, flowRef]
   );
 
   if (!flowState) {

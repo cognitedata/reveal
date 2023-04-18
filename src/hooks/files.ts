@@ -98,11 +98,8 @@ export function useCreateFlow() {
 export function useUpdateFlow() {
   const sdk = useSDK();
   const qc = useQueryClient();
-  // const mutate = useCallback(debounce(postFlow, 500), []);
   return useMutation(async (flow: AFlow) => {
     const { id } = flow;
-    console.log('save flow');
-
     let binary = Automerge.save(flow);
     const serverFile = await getFlow(sdk, id);
 
