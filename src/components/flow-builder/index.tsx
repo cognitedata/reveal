@@ -15,7 +15,10 @@ import { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER } from 'common';
+import {
+  CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
+  Z_INDEXES,
+} from 'common';
 import { CustomNode } from 'components/custom-node';
 import { Colors } from '@cognite/cogs.js';
 import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
@@ -25,11 +28,18 @@ import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { AFlow } from 'types';
 import { ChangeFn } from '@automerge/automerge';
 import { v4 } from 'uuid';
+import ContextMenu, {
+  WorkflowContextMenu,
+} from 'components/context-menu/ContextMenu';
 
 type Props = {};
 export const FlowBuilder = ({}: Props): JSX.Element => {
   const { flow: flowState, setFlow, flowRef } = useWorkflowBuilderContext();
   const reactFlowContainer = useRef<HTMLDivElement>(null);
+
+  const [contextMenu, setContextMenu] = useState<
+    WorkflowContextMenu | undefined
+  >(undefined);
 
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
@@ -147,7 +157,12 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   }
 
   return (
-    <Container ref={reactFlowContainer}>
+    <Container
+      ref={reactFlowContainer}
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}
+    >
       <ReactFlow
         panOnDrag={false}
         selectionOnDrag
@@ -161,10 +176,36 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         onEdgesChange={onEdgesChange}
         onInit={setReactFlowInstance}
         onNodesChange={onNodesChange}
+        onEdgeContextMenu={(e, edge) => {
+          setContextMenu({
+            position: { x: e.clientX, y: e.clientY },
+            items: [edge],
+            type: 'edge',
+          });
+        }}
+        onNodeContextMenu={(e, node) => {
+          setContextMenu({
+            position: { x: e.clientX, y: e.clientY },
+            items: [node],
+            type: 'node',
+          });
+        }}
+        onSelectionContextMenu={(e, nodes) => {
+          setContextMenu({
+            position: { x: e.clientX, y: e.clientY },
+            items: nodes,
+            type: 'node',
+          });
+        }}
       >
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
+      <ContextMenu
+        containerRef={reactFlowContainer}
+        contextMenu={contextMenu}
+        onClose={() => setContextMenu(undefined)}
+      />
     </Container>
   );
 };
@@ -172,5 +213,10 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
 const Container = styled.div`
   background-color: ${Colors['surface--strong']};
   height: 100%;
+  position: relative;
   width: 100%;
+
+  .react-flow__nodes {
+    z-index: ${Z_INDEXES.REACT_FLOW_CANVAS_NODES};
+  }
 `;
