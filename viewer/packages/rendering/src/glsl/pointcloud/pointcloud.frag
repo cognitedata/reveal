@@ -23,7 +23,7 @@ in vec3 vColor;
 	in float vLinearDepth;
 #endif
 
-#if !defined(paraboloid_point_shape) && defined(use_edl)
+#if defined(use_edl)
 	in float vLogDepth;
 #endif
 
@@ -74,15 +74,12 @@ void main() {
 			outputColor.r = linearDepth;
 			outputColor.g = expDepth;
 		#endif
+	#endif
 
-		#if defined(use_edl)
-			outputColor.a = log2(linearDepth);
-		#endif
-
-	#else
-		#if defined(use_edl)
-			outputColor.a = vLogDepth;
-		#endif
+	#if defined(use_edl)
+		// We decided to use same depth value for all point shape.
+		// Note: potree library use different depth value for Paraboloid shape namely log2(linearDepth).
+		outputColor.a = vLogDepth;
 	#endif
 
 	#if defined weighted_splats

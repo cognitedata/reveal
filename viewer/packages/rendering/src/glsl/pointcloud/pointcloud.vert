@@ -76,7 +76,7 @@ out vec3 vColor;
 	out float vLinearDepth;
 #endif
 
-#if !defined(paraboloid_point_shape) && defined(use_edl)
+#if defined(use_edl)
 	out float vLogDepth;
 #endif
 
@@ -242,7 +242,7 @@ void main() {
 		vLinearDepth = gl_Position.w;
 	#endif
 
-	#if !defined(paraboloid_point_shape) && defined(use_edl)
+	#if defined(use_edl)
 		// Division by 10 is added to make depth values more "flat" so that EDL effect is visible at distance.
 		vLogDepth = log2(-mvPosition.z)/10.0;
 	#endif
