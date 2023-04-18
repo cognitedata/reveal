@@ -86,11 +86,11 @@ function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {
 
   return new MeshBasicMaterial({
     color: new Color(random.floatBetween(0, 1), random.floatBetween(0, 1), random.floatBetween(0, 1))
-      .multiplyScalar(0.5)
-      .addScalar(0.5),
+      .multiplyScalar(0.7)
+      .addScalar(0.3),
     side: DoubleSide,
     depthTest: false,
-    opacity: 0.5,
+    opacity: 0.7,
     transparent: true
   });
 }
