@@ -40,7 +40,7 @@ export const ExplorationSearchBar = () => {
       icon="Search"
       placeholder={
         isAdvancedFiltersEnabled
-          ? 'Search for name, description, content, ID, and external ID...'
+          ? 'Search for name, description, content, ID, external ID, and metadata...'
           : 'Search...'
       }
       onChange={handleOnChange}
@@ -50,6 +50,11 @@ export const ExplorationSearchBar = () => {
 };
 
 const StyledInput = styled(Input)`
+  .cogs-input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
   .btn-reset {
     background: inherit !important;
   }

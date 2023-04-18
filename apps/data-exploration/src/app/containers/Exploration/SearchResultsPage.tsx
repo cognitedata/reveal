@@ -147,7 +147,7 @@ function SearchPage() {
             </>
           )}
           <SearchConfigButton
-            style={{ marginRight: '8px' }}
+            style={{ marginRight: '2px' }}
             onClick={() => {
               setShowSearchConfig(true);
             }}
