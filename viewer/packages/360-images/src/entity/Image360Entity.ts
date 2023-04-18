@@ -86,6 +86,10 @@ export class Image360Entity implements Image360 {
     this._activeRevision.applyTextures();
   }
 
+  public async applyFullResolutionTextures(): Promise<void> {
+    this._activeRevision.applyFullResolutionTextures();
+  }
+
   public getMostRecentRevision(): Image360RevisionEntity {
     return this._revisions[0];
   }
@@ -121,7 +125,7 @@ export class Image360Entity implements Image360 {
    */
   public dispose(): void {
     this.unloadImage();
-    this._revisions.forEach(revision => revision.clearTextures());
+    this._revisions.forEach(revision => revision.dispose());
     this._image360Icon.dispose();
   }
 }

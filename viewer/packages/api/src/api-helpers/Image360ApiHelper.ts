@@ -143,6 +143,9 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
+    if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
+      return;
+    }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
     const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
@@ -197,7 +200,7 @@ export class Image360ApiHelper {
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
 
     async function applyFullResolutionTextures(_requestRedraw: () => void) {
-      await revisionToEnter.applyFullResolutionTextures();
+      await image360Entity.applyFullResolutionTextures();
       _requestRedraw();
     }
   }
