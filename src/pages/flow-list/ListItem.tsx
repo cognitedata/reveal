@@ -6,6 +6,11 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import FlowListItemMenu from './FlowItemMenu';
 
+const format = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'full',
+  timeStyle: 'long',
+});
+
 export default function ListItem({ file }: { file: FileInfo }) {
   return (
     <StyledListItem justifyContent="space-between">
@@ -14,6 +19,9 @@ export default function ListItem({ file }: { file: FileInfo }) {
           <Body level={2} strong>
             {file.name}
           </Body>
+          <div style={{ color: Colors['text-icon--muted'] }}>
+            {format.format(file.uploadedTime)}
+          </div>
           <div style={{ color: Colors['text-icon--muted'] }}>
             {file.metadata?.description}
           </div>
