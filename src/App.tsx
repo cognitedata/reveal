@@ -23,7 +23,6 @@ import React, { Suspense } from 'react';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false,
       staleTime: 10 * 60 * 1000, // Pretty long
       structuralSharing: false, // CRITICAL when saving automerge docs in query cache
     },
