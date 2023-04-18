@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Upload, message } from 'antd';
 import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { Body, Icon } from '@cognite/cogs.js';
+import { Body, Icon, Input } from '@cognite/cogs.js';
 import { DocumentUploadButtons } from './DocumentUploadButtons';
 
 const { Dragger } = Upload;
@@ -37,6 +37,7 @@ export const DocumentUploader = ({
 }: Props) => {
   const [uploadStatus, setUploadStatus] = useState<STATUS>(STATUS.WAITING);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [datasetId, setDatasetId] = useState<number | undefined>();
 
   const removeFile = (file: UploadFile) => {
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
@@ -79,6 +80,17 @@ export const DocumentUploader = ({
       </Dragger>
       {children}
 
+      <Input
+        placeholder="Data set ID (optional)"
+        fullWidth
+        style={{ margin: '16px 0' }}
+        value={datasetId}
+        type={'number'}
+        onChange={(e) => {
+          setDatasetId(Number(e.target.value));
+        }}
+      />
+
       <DocumentUploadButtons
         uploadStatus={uploadStatus}
         fileList={fileList}
@@ -89,6 +101,7 @@ export const DocumentUploader = ({
         onUploadSuccess={onUploadSuccess}
         beforeUploadStart={beforeUploadStart}
         assetIds={assetIds}
+        dataSetId={datasetId}
       />
     </div>
   );
