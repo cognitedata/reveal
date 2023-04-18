@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import {
   AuthWrapper,
   getEnv,
@@ -56,11 +56,13 @@ export const App = () => {
                     projectName={projectName}
                   >
                     <SubAppWrapper title={APP_TITLE}>
-                      <ErrorBoundary>
-                        <PageTitle title={APP_TITLE} />
-                        <ReactQueryDevtools initialIsOpen={false} />
-                        <ModelRoutes />
-                      </ErrorBoundary>
+                      <ThreeDAppWrapper>
+                        <ErrorBoundary>
+                          <PageTitle title={APP_TITLE} />
+                          <ReactQueryDevtools initialIsOpen={false} />
+                          <ModelRoutes />
+                        </ErrorBoundary>
+                      </ThreeDAppWrapper>
                     </SubAppWrapper>
                   </FlagProvider>
                 </BrowserRouter>
@@ -74,3 +76,7 @@ export const App = () => {
 };
 
 export default App;
+
+const ThreeDAppWrapper = styled.div`
+  padding: 15px 20px;
+`;
