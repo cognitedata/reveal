@@ -147,7 +147,6 @@ export class Image360LoadingCache {
       if (!imageToPurge.entity.image360Visualization.visible) imageToPurge.entity.unloadImage();
     }
     this._loaded360Images.unshift({ entity, revision });
-    console.warn(entity.getImageMetadata().station + ' added to cache');
   }
 
   private abortLastRecentlyReqestedRevision() {
