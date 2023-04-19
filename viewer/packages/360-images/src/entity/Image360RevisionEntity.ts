@@ -10,9 +10,10 @@ import {
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject, isAnnotationsObject } from '../annotation/ImageAnnotationObject';
+import assert from 'assert';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;
@@ -168,7 +169,13 @@ function isDefined(obj: ImageAnnotationObject | undefined): obj is ImageAnnotati
 
 function getAssociatedFaceDescriptor(
   annotation: AnnotationModel,
-  faceDescriptors: Image360Descriptor
+  imageDescriptors: Image360Descriptor
 ): Image360FileDescriptor {
-  return faceDescriptors.faceDescriptors.filter(desc => desc.fileId === annotation.annotatedResourceId)[0];
+  const fileDescriptors = imageDescriptors.faceDescriptors.filter(
+    desc => desc.fileId === annotation.annotatedResourceId
+  );
+
+  assert(fileDescriptors.length !== 0);
+
+  return fileDescriptors[0];
 }
