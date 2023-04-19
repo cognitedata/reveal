@@ -23,10 +23,7 @@ import { CustomNode } from 'components/custom-node';
 import { Colors } from '@cognite/cogs.js';
 import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
 
-import * as AM from '@automerge/automerge';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { AFlow } from 'types';
-import { ChangeFn } from '@automerge/automerge';
 import { v4 } from 'uuid';
 import ContextMenu, {
   WorkflowContextMenu,
@@ -40,7 +37,7 @@ const NODE_TYPES = {
 
 type Props = {};
 export const FlowBuilder = ({}: Props): JSX.Element => {
-  const { flow: flowState, setFlow, flowRef } = useWorkflowBuilderContext();
+  const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
 
@@ -54,11 +51,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   const onEdgesChange: OnEdgesChange = () => {};
 
   const onNodesChange = (changes: NodeChange[]) => {
-    if (!flowRef.current) {
-      return;
-    }
-
-    const fn: ChangeFn<AFlow> = (f) => {
+    changeFlow((f) => {
       changes.forEach((change) => {
         switch (change.type) {
           case 'position': {
@@ -75,39 +68,36 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
           }
         }
       });
-    };
-    setFlow(AM.change(flowRef.current, fn));
+    });
   };
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
       if (!!connection.source && !!connection.target) {
-        setFlow(
-          AM.change(flowRef.current, (f) => {
-            const newEdge: Edge<any> = {
-              ...connection,
-              source: connection.source!,
-              target: connection.target!,
-              type: 'default',
-              animated: true,
-              markerEnd: {
-                type: MarkerType.ArrowClosed,
-                height: 16,
-                width: 16,
-              },
-              style: {
-                strokeWidth: 1,
-              },
-              id: v4(),
-            };
-            // TODO: figure out this type issue
-            // @ts-ignore
-            f.canvas.edges.push(newEdge);
-          })
-        );
+        changeFlow((f) => {
+          const newEdge: Edge<any> = {
+            ...connection,
+            source: connection.source!,
+            target: connection.target!,
+            type: 'default',
+            animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              height: 16,
+              width: 16,
+            },
+            style: {
+              strokeWidth: 1,
+            },
+            id: v4(),
+          };
+          // TODO: figure out this type issue
+          // @ts-ignore
+          f.canvas.edges.push(newEdge);
+        });
       }
     },
-    [flowRef, setFlow]
+    [changeFlow]
   );
 
   const onDragOver: React.DragEventHandler = useCallback((event) => {
@@ -119,7 +109,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
     (event) => {
       event.preventDefault();
 
-      if (flowRef.current && reactFlowContainer.current && reactFlowInstance) {
+      if (reactFlowContainer.current && reactFlowInstance) {
         const reactFlowBounds =
           reactFlowContainer.current.getBoundingClientRect();
         const type = event.dataTransfer.getData(
@@ -134,25 +124,23 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
           return;
         }
 
-        setFlow(
-          AM.change(flowRef.current, (f) => {
-            const position = reactFlowInstance.project({
-              x: event.clientX - reactFlowBounds.left,
-              y: event.clientY - reactFlowBounds.top,
-            });
+        changeFlow((f) => {
+          const position = reactFlowInstance.project({
+            x: event.clientX - reactFlowBounds.left,
+            y: event.clientY - reactFlowBounds.top,
+          });
 
-            const newNode = {
-              id: `${new Date().getTime()}`,
-              type: 'customNode',
-              position,
-              data: { label: `${type} node`, type },
-            };
-            f.canvas.nodes.push(newNode);
-          })
-        );
+          const newNode = {
+            id: `${new Date().getTime()}`,
+            type: 'customNode',
+            position,
+            data: { label: `${type} node`, type },
+          };
+          f.canvas.nodes.push(newNode);
+        });
       }
     },
-    [reactFlowInstance, setFlow, flowRef]
+    [reactFlowInstance, changeFlow]
   );
 
   if (!flowState) {

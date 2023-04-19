@@ -20,7 +20,7 @@ type FlowContextT = {
   externalId: string;
   isComponentsPanelVisible: boolean;
   setIsComponentsPanelVisible: Dispatch<SetStateAction<boolean>>;
-  setFlow: (f: AFlow) => void;
+  changeFlow: (fn: Automerge.ChangeFn<AFlow>) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
 };
@@ -43,9 +43,11 @@ export const FlowContextProvider = ({
     useState(false);
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
-  const setFlow = useCallback((f: AFlow) => {
-    flowRef.current = f;
-    setFlowState(f);
+
+  const changeFlow = useCallback((fn: Automerge.ChangeFn<AFlow>) => {
+    const newFlow = Automerge.change(flowRef.current, fn);
+    flowRef.current = newFlow;
+    setFlowState(newFlow);
   }, []);
 
   const { data } = useFlow(externalId, {
@@ -67,14 +69,14 @@ export const FlowContextProvider = ({
     if (!data) {
       return;
     }
-    if (!flowRef.current) {
-      setFlow(data);
-    } else if (
+    if (
       !isEqual(Automerge.getHeads(flowRef.current), Automerge.getHeads(data))
     ) {
-      setFlow(Automerge.merge(flowRef.current, data));
+      const mergedDoc = Automerge.merge(flowRef.current, data);
+      flowRef.current = mergedDoc;
+      setFlowState(mergedDoc);
     }
-  }, [data, setFlow]);
+  }, [data]);
 
   return (
     <WorkflowContext.Provider
@@ -84,7 +86,7 @@ export const FlowContextProvider = ({
         setIsComponentsPanelVisible,
         flow: flowState,
         flowRef,
-        setFlow,
+        changeFlow,
       }}
     >
       {children}
