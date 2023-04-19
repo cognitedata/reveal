@@ -9,7 +9,7 @@ export const getAllSecretKeys = (secrets: Secret[]) => {
   return keys;
 };
 
-export const checkSecrets = (secrets: Secret[], apiKey: string) => {
+export const checkSecrets = (secrets: Secret[]) => {
   if (secrets.length > 5) {
     return false;
   }
@@ -17,7 +17,7 @@ export const checkSecrets = (secrets: Secret[], apiKey: string) => {
   let allSecretsAreValid = true;
   secrets.forEach((s: Secret) => {
     if (
-      checkSecretKey(s.key, apiKey, getAllSecretKeys(secrets)).error ||
+      checkSecretKey(s.key, getAllSecretKeys(secrets)).error ||
       checkSecretValue(s.value).error
     ) {
       allSecretsAreValid = false;
@@ -26,11 +26,7 @@ export const checkSecrets = (secrets: Secret[], apiKey: string) => {
 
   return allSecretsAreValid;
 };
-export const checkSecretKey = (
-  key: string,
-  apiKey: string,
-  allKeys: string[]
-) => {
+export const checkSecretKey = (key: string, allKeys: string[]) => {
   if (key.length === 0) {
     return {
       error: true,
@@ -47,12 +43,6 @@ export const checkSecretKey = (
     return {
       error: true,
       message: 'Only lowercase letters, digits, & dashes allowed',
-    };
-  }
-  if (key === apiKey) {
-    return {
-      error: true,
-      message: 'Key may not be API Key',
     };
   }
   if (allKeys.filter(k => k === key).length > 1) {
@@ -151,18 +141,7 @@ export const checkDescription = (description: string) => {
     message: '',
   };
 };
-export const checkApiKey = (apiKey: string) => {
-  if (apiKey.length > 50) {
-    return {
-      error: true,
-      message: 'API Key may only be 50 characters',
-    };
-  }
-  return {
-    error: false,
-    message: '',
-  };
-};
+
 export const checkOwner = (owner: string) => {
   if (owner.length > 128) {
     return {

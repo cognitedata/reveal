@@ -25,7 +25,6 @@ import {
   checkFunctionName,
   checkOwner,
   checkDescription,
-  checkApiKey,
   checkExternalId,
   checkSecrets,
   checkFile,
@@ -105,7 +104,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     touched: false,
   });
   const [description, setDescription] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey] = useState('');
   const [owner, setOwner] = useState('');
   const [externalId, setExternalId] = useState('');
   const [file, setFile] = useState<UploadFile>();
@@ -176,7 +175,6 @@ export default function UploadFunctionModal({ onCancel }: Props) {
           name: functionName.value,
           externalId,
           owner,
-          apiKey,
           cpu: cpu ? parseFloat(cpu) : undefined,
           memory: memory ? parseFloat(memory) : undefined,
           secrets: secrets.reduce(
@@ -205,9 +203,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     !checkFunctionName(functionName.value).error &&
     !checkOwner(owner).error &&
     !checkDescription(description).error &&
-    !checkApiKey(apiKey).error &&
     !checkExternalId(externalId).error &&
-    checkSecrets(secrets, apiKey) &&
+    checkSecrets(secrets) &&
     !checkCPU(cpu).error &&
     !checkMemory(memory).error &&
     !checkFile(file).error;
@@ -359,30 +356,6 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             <Form.Item
               label={
                 <>
-                  API Key
-                  <Tooltip
-                    placement="right"
-                    content="Can be used inside the function to access data in CDF"
-                  >
-                    <Icon type="Help" />
-                  </Tooltip>
-                </>
-              }
-              validateStatus={checkApiKey(apiKey).error ? 'error' : 'success'}
-              help={checkApiKey(apiKey).message}
-            >
-              <Input.Password
-                disabled={disableForm}
-                name="apiKey"
-                visibilityToggle={false}
-                value={apiKey}
-                allowClear
-                onChange={({ target: { value } }) => setApiKey(value)}
-              />
-            </Form.Item>
-            <Form.Item
-              label={
-                <>
                   External Id
                   <Tooltip
                     placement="right"
@@ -467,18 +440,14 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                       required
                       validateStatus={
                         s.keyTouched &&
-                        checkSecretKey(s.key, apiKey, getAllSecretKeys(secrets))
-                          .error
+                        checkSecretKey(s.key, getAllSecretKeys(secrets)).error
                           ? 'error'
                           : 'success'
                       }
                       help={
                         s.keyTouched
-                          ? checkSecretKey(
-                              s.key,
-                              apiKey,
-                              getAllSecretKeys(secrets)
-                            ).message
+                          ? checkSecretKey(s.key, getAllSecretKeys(secrets))
+                              .message
                           : undefined
                       }
                     >
@@ -545,7 +514,6 @@ export default function UploadFunctionModal({ onCancel }: Props) {
 export const stuffForUnitTests = {
   checkFunctionName,
   checkFile,
-  checkApiKey,
   checkDescription,
   checkExternalId,
   checkOwner,
