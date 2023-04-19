@@ -24,6 +24,8 @@ export class Image360RevisionEntity implements Image360Revision {
     | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>
     | undefined;
 
+  private _annotations: ImageAnnotationObject[] | undefined = undefined;
+
   constructor(
     imageProvider: Image360DataProvider,
     image360Descriptor: Image360Descriptor,
@@ -44,7 +46,7 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   get annotations(): ImageAnnotationObject[] {
-    return this._image360VisualzationBox.getAnnotations() ?? [];
+    return this._annotations ?? [];
   }
 
   intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
@@ -99,8 +101,8 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
-    if (this._image360VisualzationBox.getAnnotations() === undefined) {
-      const annotationObjects = this._imageProvider
+    if (this._annotations === undefined) {
+      this._imageProvider
         .get360ImageAnnotations(this._image360Descriptor.faceDescriptors)
         .then(annotationData =>
           annotationData
@@ -109,9 +111,11 @@ export class Image360RevisionEntity implements Image360Revision {
               return this.createQuadFromAnnotation(data, faceDescriptor);
             })
             .filter(isDefined)
-        );
-
-      annotationObjects.then(annotations => this._image360VisualzationBox.setAnnotations(annotations));
+        )
+        .then(annotations => {
+          this._annotations = annotations;
+          this._image360VisualzationBox.setAnnotations(annotations);
+        });
     }
 
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
