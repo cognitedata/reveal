@@ -52,6 +52,10 @@ export class Image360UI {
       hideAll: false
     };
 
+    const annotations = {
+      visibility: true
+    };
+
     const imageRevisions = {
       id: '0',
       targetDate: ''
@@ -108,6 +112,14 @@ export class Image360UI {
           collections.forEach(p => p.setIconsVisibility(!iconCulling.hideAll));
           viewer.requestRedraw();
         }
+      });
+
+    gui
+      .add(annotations, 'visibility')
+      .name('Annotation visibility')
+      .onChange(() => {
+        collections.forEach(p => p.setImageAnnotationVisibility(annotations.visibility));
+        viewer.requestRedraw();
       });
 
     gui
