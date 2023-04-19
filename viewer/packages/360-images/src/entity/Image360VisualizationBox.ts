@@ -115,16 +115,18 @@ export class Image360VisualizationBox implements Image360Visualization {
     );
 
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-    this._visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
-    this._visualizationMesh.renderOrder = this._visualizationState.renderOrder;
-    this._visualizationMesh.applyMatrix4(this._worldTransform);
-    this._visualizationMesh.scale.copy(this._visualizationState.scale);
-    this._visualizationMesh.visible = this._visualizationState.visible;
+    const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
+    visualizationMesh.renderOrder = this._visualizationState.renderOrder;
+    visualizationMesh.applyMatrix4(this._worldTransform);
+    visualizationMesh.scale.copy(this._visualizationState.scale);
+    visualizationMesh.visible = this._visualizationState.visible;
+    this._visualizationMesh = visualizationMesh;
+
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
     if (this._annotations) {
       this._annotations.forEach(a => {
-        this._visualizationMesh!.add(a.getObject());
+        visualizationMesh.add(a.getObject());
       });
     }
 
