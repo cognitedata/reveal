@@ -3,16 +3,40 @@ import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { getContainer } from 'utils';
+import { useTranslation } from 'common';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
 import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
 import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
+import { toPng } from 'html-to-image';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 export const CanvasTopBar = () => {
   const { flow } = useWorkflowBuilderContext();
+  const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
   }>();
+
+  const downloadCanvasToImage = (dataUrl: string) => {
+    const a = document.createElement('a');
+
+    a.setAttribute('download', flow?.name);
+    a.setAttribute('href', dataUrl);
+    a.click();
+  };
+
+  const handleDownloadToPNG = () => {
+    toPng(document.querySelector('.react-flow') as HTMLElement, {
+      filter: (node) => {
+        // we don't want to add the controls to the image
+        if (node?.classList?.contains('react-flow__controls')) {
+          return false;
+        }
+
+        return true;
+      },
+    }).then(downloadCanvasToImage);
+  };
 
   return (
     <Container>
@@ -37,7 +61,17 @@ export const CanvasTopBar = () => {
             hideOnContentClick: true,
             hideOnOutsideClick: true,
           },
-          content: <Menu></Menu>,
+          content: (
+            <Menu>
+              <Menu.Item
+                icon="Download"
+                iconPlacement="left"
+                onClick={handleDownloadToPNG}
+              >
+                {t('download-png')}
+              </Menu.Item>
+            </Menu>
+          ),
         }}
       />
     </Container>
