@@ -1,10 +1,15 @@
+import { useState } from 'react';
+
 import {
+  Button,
   Colors,
   Detail,
+  Dropdown,
   Elevations,
   Flex,
   Icon,
   IconType,
+  Menu,
   Overline,
 } from '@cognite/cogs.js';
 import { Handle, Position } from 'reactflow';
@@ -25,13 +30,16 @@ export const BaseNode = ({
   selected,
   title,
 }: BaseNodeProps): JSX.Element => {
+  const [isLeftDropdownVisible, setIsLeftDropdownVisible] = useState(false);
+  const [isRightDropdownVisible, setIsRightDropdownVisible] = useState(false);
+
   return (
     <StyledBaseNodeContainer
       className={selected ? 'workflow-builder-node-selected' : undefined}
     >
-      <StyledBaseHandleLeft position={Position.Left} type="target" />
-      <StyledBaseHandleRight position={Position.Right} type="source" />
-      <StyledBaseNodeHeader>
+      <StyledBaseNodeContent>
+        <StyledBaseHandleLeft position={Position.Left} type="target" />
+        <StyledBaseHandleRight position={Position.Right} type="source" />
         <Flex gap={8}>
           <StyledBaseNodeIconContainer>
             <StyledBaseNodeIcon type={icon} />
@@ -45,10 +53,93 @@ export const BaseNode = ({
             )}
           </Flex>
         </Flex>
-      </StyledBaseNodeHeader>
+      </StyledBaseNodeContent>
+      <AddButtonLeftContainer
+        className="nodrag"
+        $isDropdownVisible={isLeftDropdownVisible}
+      >
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Item icon="Code">Transformation</Menu.Item>
+              <Menu.Item icon="FrameTool">Webhook</Menu.Item>
+              <Menu.Item icon="Pipeline">Workflow</Menu.Item>
+            </Menu>
+          }
+          onClickOutside={() => {
+            setIsLeftDropdownVisible(false);
+          }}
+          placement="bottom-end"
+          visible={isLeftDropdownVisible}
+        >
+          <Button
+            onClick={() => setIsLeftDropdownVisible((prevState) => !prevState)}
+            type="primary"
+            icon="AddLarge"
+            size="small"
+          />
+        </Dropdown>
+      </AddButtonLeftContainer>
+      <AddButtonRightContainer
+        className="nodrag"
+        $isDropdownVisible={isRightDropdownVisible}
+      >
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Item icon="Code">Transformation</Menu.Item>
+              <Menu.Item icon="FrameTool">Webhook</Menu.Item>
+              <Menu.Item icon="Pipeline">Workflow</Menu.Item>
+            </Menu>
+          }
+          onClickOutside={() => {
+            setIsRightDropdownVisible(false);
+          }}
+          visible={isRightDropdownVisible}
+        >
+          <Button
+            onClick={() => setIsRightDropdownVisible((prevState) => !prevState)}
+            type="primary"
+            icon="AddLarge"
+            size="small"
+          />
+        </Dropdown>
+      </AddButtonRightContainer>
     </StyledBaseNodeContainer>
   );
 };
+
+const AddButtonBase = styled.button<{ $isDropdownVisible?: boolean }>`
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: absolute;
+  z-index: 5000;
+  top: 13px;
+  background-color: ${Colors['border--interactive--toggled-default']};
+  color: ${Colors['text-icon--strong--inverted']};
+  opacity: ${({ $isDropdownVisible }) => ($isDropdownVisible ? 1 : 0)};
+
+  :hover {
+    opacity: 1;
+  }
+
+  :active {
+    background-color: ${Colors['border--interactive--toggled-hover']};
+  }
+`;
+
+const AddButtonLeftContainer = styled(AddButtonBase)`
+  left: -36px;
+`;
+
+const AddButtonRightContainer = styled(AddButtonBase)`
+  right: -36px;
+`;
 
 const StyledBaseHandle = styled(Handle)`
   background-color: white;
@@ -93,14 +184,10 @@ const StyledBaseHandleLeft = styled(StyledBaseHandle)`
   }
 `;
 
-const StyledBaseNodeContainer = styled.div`
-  background-color: ${Colors['surface--muted']};
+const StyledBaseNodeContent = styled.div`
   border: 1px solid transparent;
   border-radius: 6px;
-  box-shadow: ${Elevations['elevation--surface--interactive']};
-  display: flex;
-  flex-direction: column;
-  width: 300px;
+  padding: 8px;
 
   :hover {
     outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
@@ -109,19 +196,26 @@ const StyledBaseNodeContainer = styled.div`
       opacity: 1;
     }
   }
+`;
+
+const StyledBaseNodeContainer = styled.div`
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--interactive']};
+  display: flex;
+  flex-direction: column;
+  width: 300px;
 
   &.workflow-builder-node-selected {
-    outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
-    border-color: ${Colors['border--interactive--toggled-default']};
+    ${StyledBaseNodeContent} {
+      outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
+      border-color: ${Colors['border--interactive--toggled-default']};
+    }
 
     ${StyledBaseHandleRight}, ${StyledBaseHandleLeft} {
       opacity: 1;
     }
   }
-`;
-
-const StyledBaseNodeHeader = styled.div`
-  padding: 8px;
 `;
 
 const StyledBaseNodeIconContainer = styled.div`
