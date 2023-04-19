@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import { CogniteClient, CogniteError, FileInfo } from '@cognite/sdk';
 import { BASE_QUERY_KEY } from 'common/constants';
 import {
   useMutation,
@@ -88,8 +88,9 @@ export function useCreateFlow() {
       return file;
     },
     {
-      onSettled() {
-        qc.invalidateQueries(getFlowListKey());
+      onSuccess(fileInfo) {
+        const list = qc.getQueryData<FileInfo[]>(getFlowListKey()) || [];
+        qc.setQueryData(getFlowListKey(), [...list, fileInfo]);
       },
     }
   );
@@ -125,13 +126,18 @@ export function useUpdateFlow() {
 export function useDeleteFlow() {
   const sdk = useSDK();
   const qc = useQueryClient();
-  return useMutation(
-    ({ externalId }: { externalId: string }) => {
-      return sdk.files.delete([{ externalId }]);
+  return useMutation<void, CogniteError, { externalId: string }>(
+    ['delete-file'],
+    async ({ externalId }) => {
+      await sdk.files.delete([{ externalId }]);
     },
     {
-      onSuccess() {
-        qc.invalidateQueries(getFlowListKey());
+      onSuccess(_, { externalId }) {
+        const list = qc.getQueryData<FileInfo[]>(getFlowListKey());
+        qc.setQueryData(
+          getFlowListKey(),
+          list?.filter((f) => f.externalId !== externalId)
+        );
       },
     }
   );

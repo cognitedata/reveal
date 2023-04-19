@@ -51,7 +51,7 @@ export const FlowContextProvider = ({
   }, []);
 
   const { data } = useFlow(externalId, {
-    staleTime: Infinity,
+    staleTime: 0,
     refetchInterval: 60000,
   });
 
