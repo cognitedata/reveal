@@ -11,7 +11,6 @@ import { Image360CollectionFactory } from './collection/Image360CollectionFactor
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import { IconCullingScheme } from './icons/IconCollection';
 import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
-import { ImageAnnotationObject } from './annotation/ImageAnnotationObject';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];

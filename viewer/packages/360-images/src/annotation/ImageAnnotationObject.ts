@@ -5,11 +5,13 @@
 import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 import { Image360FileDescriptor } from '@reveal/data-providers';
 
-import { Matrix4, Vector3, Mesh, PlaneGeometry, MeshBasicMaterial, DoubleSide } from 'three';
+import { Matrix4, Vector3, Mesh, PlaneGeometry, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
 
-export class ImageAnnotationObject extends Mesh {
+export class ImageAnnotationObject {
   private readonly _annotation: AnnotationModel;
   private readonly _fileDescriptor: Image360FileDescriptor;
+
+  private readonly _mesh: Mesh;
 
   get annotation(): AnnotationModel {
     return this._annotation;
@@ -20,13 +22,16 @@ export class ImageAnnotationObject extends Mesh {
   }
 
   constructor(annotation: AnnotationModel, fileDescriptor: Image360FileDescriptor) {
-    super(createGeometry(annotation), createMaterial());
+    this._mesh = new Mesh(createGeometry(annotation), createMaterial());
+    this.initializeMesh(annotation, fileDescriptor);
 
     this._annotation = annotation;
     this._fileDescriptor = fileDescriptor;
+  }
 
+  private initializeMesh(annotation: AnnotationModel, fileDescriptor: Image360FileDescriptor) {
     this.initializeTransform(annotation, fileDescriptor);
-    this.renderOrder = 4;
+    this._mesh.renderOrder = 4;
   }
 
   private getRotationFromFace(face: Image360FileDescriptor['face']): Matrix4 {
@@ -60,8 +65,12 @@ export class ImageAnnotationObject extends Mesh {
     );
 
     const transformation = initialTranslation.clone().premultiply(rotationMatrix);
-    this.matrix = transformation;
-    this.matrixAutoUpdate = false;
+    this._mesh.matrix = transformation;
+    this._mesh.matrixAutoUpdate = false;
+  }
+
+  public getObject(): Object3D {
+    return this._mesh;
   }
 }
 

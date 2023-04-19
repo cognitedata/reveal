@@ -101,13 +101,7 @@ export class Image360Entity implements Image360 {
   }
 
   public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
-    const intersections = raycaster.intersectObjects<ImageAnnotationObject>(this._activeRevision.annotations);
-
-    if (intersections.length === 0) {
-      return undefined;
-    }
-
-    return intersections[0].object;
+    return this._activeRevision.intersectAnnotations(raycaster);
   }
 
   /**

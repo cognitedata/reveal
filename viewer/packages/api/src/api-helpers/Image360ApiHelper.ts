@@ -30,7 +30,7 @@ export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
-  private _raycaster = new THREE.Raycaster();
+  private readonly _raycaster = new THREE.Raycaster();
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;

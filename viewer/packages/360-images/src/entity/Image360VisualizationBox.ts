@@ -79,7 +79,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._annotations = annotations;
 
     if (this._visualizationMesh !== undefined) {
-      this._annotations.forEach(a => this._visualizationMesh!.add(a));
+      this._annotations.forEach(a => this._visualizationMesh!.add(a.getObject()));
     }
   }
 
@@ -124,7 +124,7 @@ export class Image360VisualizationBox implements Image360Visualization {
 
     if (this._annotations) {
       this._annotations.forEach(a => {
-        this._visualizationMesh!.add(a);
+        this._visualizationMesh!.add(a.getObject());
       });
     }
 

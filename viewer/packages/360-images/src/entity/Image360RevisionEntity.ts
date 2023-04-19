@@ -46,6 +46,17 @@ export class Image360RevisionEntity implements Image360Revision {
     return this._image360VisualzationBox.getAnnotations() ?? [];
   }
 
+  intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+    for (const annotation of this.annotations) {
+      const intersections = raycaster.intersectObject(annotation.getObject());
+      if (intersections.length > 0) {
+        return annotation;
+      }
+    }
+
+    return undefined;
+  }
+
   private createQuadFromAnnotation(
     annotationData: AnnotationModel,
     descriptor: Image360FileDescriptor
@@ -89,14 +100,13 @@ export class Image360RevisionEntity implements Image360Revision {
     if (this._image360VisualzationBox.getAnnotations() === undefined) {
       const annotationObjects = this._imageProvider
         .get360ImageAnnotations(this._image360Descriptor.faceDescriptors)
-        .then(
-          annotationData =>
-            annotationData
-              .map(data => {
-                const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
-                return this.createQuadFromAnnotation(data, faceDescriptor);
-              })
-              .filter(isDefined) as ImageAnnotationObject[]
+        .then(annotationData =>
+          annotationData
+            .map(data => {
+              const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
+              return this.createQuadFromAnnotation(data, faceDescriptor);
+            })
+            .filter(isDefined)
         );
 
       annotationObjects.then(annotations => this._image360VisualzationBox.setAnnotations(annotations));
@@ -151,8 +161,8 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 }
 
-function isDefined(obj: THREE.Object3D | undefined): obj is THREE.Object3D {
-  return obj !== undefined;
+function isDefined(obj: ImageAnnotationObject | undefined): obj is ImageAnnotationObject {
+  return obj !== undefined && obj.getObject !== undefined;
 }
 
 function getAssociatedFaceDescriptor(
