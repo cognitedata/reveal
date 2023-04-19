@@ -5,6 +5,7 @@ import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '@data-exploration/components';
 import debounce from 'lodash/debounce';
+import { getMetadataValueByKey } from '@data-exploration-lib/core';
 
 export const useDocumentsMetadataColumns = () => {
   const [query, setQuery] = useState<string>();
@@ -18,7 +19,11 @@ export const useDocumentsMetadataColumns = () => {
   const metadataColumns = useMemo(() => {
     const allMetadataKeys = [...metadataKeys, ...metadataKeysDynamic];
     const uniqueMetadataKeys = [...new Set(allMetadataKeys)];
-    return uniqueMetadataKeys.map((key) => ResourceTableColumns.metadata(key));
+    return uniqueMetadataKeys.map((key) =>
+      ResourceTableColumns.metadata(key, (row) =>
+        getMetadataValueByKey(key, row?.sourceFile?.metadata)
+      )
+    );
   }, [metadataKeys, metadataKeysDynamic]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
