@@ -136,10 +136,12 @@ export class Image360ApiHelper {
 
     const annotation = currentEntity.intersectAnnotations(this._raycaster);
 
-    if (annotation) {
-      const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
-      collection.fireHoverEvent(annotation);
+    if (annotation === undefined) {
+      return;
     }
+
+    const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
+    collection.fireHoverEvent(annotation);
   }
 
   public async add360ImageSet(
