@@ -11,9 +11,7 @@ export class Image360RevisionEntity implements Image360Revision {
   private readonly _image360Descriptor: Image360Descriptor;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _textures: Image360Texture[];
-  private _getFullResolutionTextures:
-    | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>
-    | undefined;
+  private _onFullResolutionCompleted: Promise<void> | undefined;
 
   constructor(
     imageProvider: Image360FileProvider,
@@ -24,7 +22,6 @@ export class Image360RevisionEntity implements Image360Revision {
     this._image360Descriptor = image360Descriptor;
     this._image360VisualzationBox = image360VisualzationBox;
     this._textures = [];
-    this._getFullResolutionTextures = undefined;
   }
 
   /**
@@ -38,33 +35,37 @@ export class Image360RevisionEntity implements Image360Revision {
   /**
    * Loads the textures needed for the 360 image (6 faces).
    *
-   * This will start the download of both low and full resolution textures and return a promise for when the first image set is ready.
+   * This will start the download of both low and full resolution textures and return one promise for when each texture set is ready.
    * If the low resolution images are completed first the full resolution download and texture loading will continue in the background,
-   * and applyFullResolution can be used to apply full resolution textures to the image360VisualzationBox at a desired time.
+   * and applyFullResolutionTextures can be called to apply full resolution textures to the image360VisualzationBox at a desired time.
    *
-   * @returns A promise for when the first set of textures has been loaded.
+   * @returns lowResolutionCompleted A promise for when the low resolution images are done loading.
+   * @returns fullResolutionCompleted A promise for when the full resolution images are done loading.
    */
-  public loadTextures(abortSignal?: AbortSignal): Promise<void> {
-    const lowResolutionFaces = this._imageProvider
+  public loadTextures(abortSignal?: AbortSignal): {
+    lowResolutionCompleted: Promise<void>;
+    fullResolutionCompleted: Promise<void>;
+  } {
+    const lowResolutionCompleted = this._imageProvider
       .getLowResolution360ImageFiles(this._image360Descriptor.faceDescriptors, abortSignal)
       .then(async faces => {
-        return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: true };
+        const textures = await this._image360VisualzationBox.loadFaceTextures(faces);
+
+        //If textures are already set we do not override these with low resolution.
+        if (this._textures.length === 6) return;
+        this._textures = textures;
       });
 
-    const fullResolutionFaces = this._imageProvider
+    const fullResolutionCompleted = this._imageProvider
       .get360ImageFiles(this._image360Descriptor.faceDescriptors, abortSignal)
       .then(async faces => {
-        return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
+        const textures = await this._image360VisualzationBox.loadFaceTextures(faces);
+        this._textures = textures;
       });
 
-    const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
-      async ({ textures, isLowResolution }) => {
-        this._textures = await textures;
-        this._getFullResolutionTextures = isLowResolution ? fullResolutionFaces : undefined;
-      }
-    );
+    this._onFullResolutionCompleted = fullResolutionCompleted;
 
-    return firstCompleted;
+    return { lowResolutionCompleted, fullResolutionCompleted };
   }
 
   /**
@@ -73,27 +74,26 @@ export class Image360RevisionEntity implements Image360Revision {
   public dispose(): void {
     this._textures.forEach(t => t.texture.dispose());
     this._textures = [];
-    this._getFullResolutionTextures = undefined;
   }
 
   /**
    * Apply cached textures to the image360VisualzationBox.
    */
-  public applyTextures(id: string): void {
+  public applyTextures(): void {
     this._image360VisualzationBox.loadImages(this._textures);
   }
 
   /**
-   * Apply full resolution textures to the image360VisualzationBox. This has no effect if full resolution has already been applied.
+   * Apply full resolution textures to the image360VisualzationBox.
+   * This has no effect if full resolution has already been applied.
    */
-  public async applyFullResolutionTextures(id: string): Promise<void> {
-    if (!this._getFullResolutionTextures) return;
+  public async applyFullResolutionTextures(): Promise<void> {
+    if (!this._onFullResolutionCompleted) return;
 
     try {
-      const result = await this._getFullResolutionTextures;
-      this._textures = await result.textures;
+      await this._onFullResolutionCompleted;
+      this._onFullResolutionCompleted = undefined;
       this._image360VisualzationBox.loadImages(this._textures);
-      this._getFullResolutionTextures = undefined;
     } catch (e) {}
   }
 }

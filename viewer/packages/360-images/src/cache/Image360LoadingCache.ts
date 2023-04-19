@@ -13,7 +13,7 @@ import { Log } from '@reveal/logger';
 export type DownloadRequest = {
   entity: Image360Entity;
   revision: Image360RevisionEntity;
-  completed: Promise<void>;
+  anyCompleted: Promise<void>;
   abort: () => void;
 };
 
@@ -64,7 +64,7 @@ export class Image360LoadingCache {
 
     const inProgressDownload = this.getDownloadInProgress(revision);
     if (inProgressDownload !== undefined) {
-      return inProgressDownload.completed;
+      return inProgressDownload.anyCompleted;
     }
 
     if (this._inProgressDownloads.length >= this._downloadCacheSize) {
@@ -72,41 +72,43 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const completed = revision.loadTextures(signal);
+    const { lowResolutionCompleted, fullResolutionCompleted } = revision.loadTextures(signal);
+    const anyCompleted = Promise.any([lowResolutionCompleted, fullResolutionCompleted]);
+    const allCompleted = Promise.allSettled([lowResolutionCompleted, fullResolutionCompleted]);
 
     this._inProgressDownloads.push({
       entity,
       revision,
-      completed,
+      anyCompleted,
       abort
     });
 
-    const revisionTextureReady = await completed
-      .catch(e => {
-        return Promise.reject(e);
+    allCompleted
+      .catch(() => {
+        return Promise.resolve();
       })
-      .then(
-        () => {
-          this.addRevisionToCache(entity, revision);
-        },
-        reason => {
-          if (signal.aborted || reason === 'Aborted') {
-            Log.info('360 Image download aborted: ' + reason);
-          } else {
-            throw new Error('Failed to load 360 image: ' + reason);
-          }
-        }
-      )
+      .then(() => {
+        this.addRevisionToCache(entity, revision);
+      })
       .finally(() => {
         if (this._lockedDownload === revision) {
           this._lockedDownload = undefined;
         }
+
         remove(this._inProgressDownloads, download => {
           return download.revision === revision;
         });
       });
 
-    return revisionTextureReady;
+    const readyToEnter = await anyCompleted.catch(e => {
+      if (signal.aborted || e === 'Aborted') {
+        Log.info('360 Image download aborted: ' + e);
+        return Promise.resolve();
+      } else {
+        throw new Error('Failed to load 360 image: ' + e);
+      }
+    });
+    return readyToEnter;
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
@@ -138,11 +140,14 @@ export class Image360LoadingCache {
       if (imageToPurge === undefined) {
         throw new Error('Unable to purge 360 image from cache due to too many visible instances');
       }
+
       pull(this._loaded360Images, imageToPurge);
       imageToPurge.revision.dispose();
+
       if (!imageToPurge.entity.image360Visualization.visible) imageToPurge.entity.unloadImage();
     }
     this._loaded360Images.unshift({ entity, revision });
+    console.warn(entity.getImageMetadata().station + ' added to cache');
   }
 
   private abortLastRecentlyReqestedRevision() {
