@@ -10,6 +10,7 @@ import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
@@ -97,6 +98,16 @@ export class Image360Entity implements Image360 {
     const datedRevisions = this._revisions.filter(revision => revision.date !== undefined);
     const closestDatedRevision = minBy(datedRevisions, revision => Math.abs(revision.date!.getTime() - dateAsNumber));
     return closestDatedRevision ?? this.getMostRecentRevision();
+  }
+
+  public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+    const intersections = raycaster.intersectObjects<ImageAnnotationObject>(this._activeRevision.annotations);
+
+    if (intersections.length === 0) {
+      return undefined;
+    }
+
+    return intersections[0].object;
   }
 
   /**

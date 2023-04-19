@@ -135,24 +135,6 @@ export class Image360Facade<T> {
     }
   }
 
-  public handleAnnotationHover(point: THREE.Vector2, camera: THREE.Camera, entity: Image360Entity): void {
-    this._rayCaster.setFromCamera(point, camera);
-
-    const intersection = this._rayCaster.intersectObjects(entity.getActiveRevision().annotations, false);
-
-    if (intersection.length === 0) {
-      return;
-    }
-
-    const collection = this.getCollectionContainingEntity(entity);
-
-    if (!(intersection[0].object instanceof ImageAnnotationObject)) {
-      throw Error('Intersected object was not an annotation');
-    }
-
-    collection.fireHoverEvent(intersection[0].object as ImageAnnotationObject);
-  }
-
   public dispose(): void {
     this._image360Collections.forEach(imageCollection => imageCollection.dispose());
     this._image360Collections.splice(0);

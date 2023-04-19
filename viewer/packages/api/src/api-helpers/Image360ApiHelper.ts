@@ -30,6 +30,7 @@ export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
+  private _raycaster = new THREE.Raycaster();
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -131,7 +132,14 @@ export class Image360ApiHelper {
 
     const point = this.getNormalizedOffset(event);
 
-    this._image360Facade.handleAnnotationHover(point, this._activeCameraManager.getCamera(), currentEntity);
+    this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
+
+    const annotation = currentEntity.intersectAnnotations(this._raycaster);
+
+    if (annotation) {
+      const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
+      collection.fireHoverEvent(annotation);
+    }
   }
 
   public async add360ImageSet(
