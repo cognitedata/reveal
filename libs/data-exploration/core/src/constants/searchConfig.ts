@@ -1,6 +1,6 @@
 import { SearchConfigDataType } from '../types';
 
-export const SEARCH_CONFIG_LOCAL_STORAGE_KEY = 'SEARCH_CONFIG_KEY';
+export const SEARCH_CONFIG_LOCAL_STORAGE_KEY = 'SEARCH_CONFIG_KEY_V1';
 
 export const SEARCH_CONFIG_TITLE = 'Search Parameters';
 export const SEARCH_CONFIG_SUBTITLE =
@@ -93,7 +93,7 @@ export const searchConfigData: SearchConfigDataType = {
   event: {
     type: {
       label: 'Type',
-      enabled: false,
+      enabled: true,
     },
     description: {
       label: 'Description',
