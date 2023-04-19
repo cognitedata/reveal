@@ -57,7 +57,8 @@ export const GroupNodes = ({ contextMenu }: GroupNodesProps): JSX.Element => {
           }
         });
 
-        nodes.unshift(parentNode);
+        // parent nodes need to appear before their children in nodes array
+        nodes.insertAt(0, parentNode);
       });
     }
   };
