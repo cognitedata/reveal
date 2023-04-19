@@ -25,6 +25,7 @@ export class Image360UI {
     };
 
     const onAnnotationHovered: Image360AnnotationHoveredDelegate = annotation => {
+      // TODO: Replace with styling when available 2023-04-19
       console.log('Hovered annotation with data: ', annotation.data);
     };
 
