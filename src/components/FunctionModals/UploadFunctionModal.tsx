@@ -104,7 +104,6 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     touched: false,
   });
   const [description, setDescription] = useState('');
-  const [apiKey] = useState('');
   const [owner, setOwner] = useState('');
   const [externalId, setExternalId] = useState('');
   const [file, setFile] = useState<UploadFile>();
