@@ -24,8 +24,8 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-  private _meshPromise: Promise<THREE.Object3D>;
-  private _annotationsPromise: Promise<ImageAnnotationObject[]>;
+  private readonly _meshPromise: Promise<THREE.Object3D>;
+  private readonly _annotationsPromise: Promise<ImageAnnotationObject[]>;
 
   private _meshResolve!: (o: THREE.Object3D) => void;
   private _annotationResolve!: (a: ImageAnnotationObject[]) => void;
