@@ -1,6 +1,6 @@
 import { Flex, Icon } from '@cognite/cogs.js';
 import { URL_SEARCH_QUERY_PARAM } from 'common';
-import { useFlowList } from 'hooks/raw';
+import { useFlowList } from 'hooks/files';
 import { filterFlow, useUrlQuery } from 'utils';
 import ListItem from './ListItem';
 
@@ -21,9 +21,9 @@ export default function List() {
   return (
     <Flex direction="column">
       {data
-        ?.filter((flow) => filterFlow(flow, query))
-        .map((flow) => (
-          <ListItem key={flow.id} flow={flow} />
+        ?.filter((file) => filterFlow(file, query))
+        .map((file) => (
+          <ListItem key={file.id} file={file} />
         ))}
     </Flex>
   );

@@ -3,14 +3,15 @@ import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { getContainer } from 'utils';
-import { Flow } from 'types';
 import { useTranslation } from 'common';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
 import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
 import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
 import { toPng } from 'html-to-image';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
-export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
+export const CanvasTopBar = () => {
+  const { flow } = useWorkflowBuilderContext();
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
@@ -40,12 +41,12 @@ export const CanvasTopBar = ({ flow }: { flow: Flow }) => {
   return (
     <Container>
       <SecondaryTopbar
-        title={flow?.name}
+        title={flow.name}
         goBackFallback={createLink(`/${subAppPath}`)}
         extraContent={
           <Flex alignItems="center">
             <Flex>
-              <FlowSaveIndicator flowId={flow.id} />
+              <FlowSaveIndicator />
             </Flex>
             <SecondaryTopbar.Divider />
             <Flex gap={10}>

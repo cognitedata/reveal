@@ -1,11 +1,11 @@
 import { Button } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
-import { useInsertFlow } from 'hooks/raw';
+import { useCreateFlow } from 'hooks/files';
 import { v4 } from 'uuid';
 
 export default function CreateButton({}: {}) {
   const { t } = useTranslation();
-  const { mutate, isLoading } = useInsertFlow();
+  const { mutate, isLoading } = useCreateFlow();
   return (
     <Button
       type="primary"

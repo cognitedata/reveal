@@ -1,5 +1,6 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
+const path = require('path');
 
 const { styleScope } = require('./src/styles/styleScope');
 
@@ -7,9 +8,22 @@ const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
 
 const cssRegexMatcher = (rule) =>
-  rule.test && rule.test.toString() === CSS_REGEX.toString();
+      rule.test && rule.test.toString() === CSS_REGEX.toString();
+
+const wasmExtensionRegExp = /\.wasm$/;
+
 
 const replaceStyleLoaders = (config) => {
+
+
+     config.module.rules.forEach((rule) => {
+        (rule.oneOf || []).forEach((oneOf) => {
+          if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
+            oneOf.exclude.push(wasmExtensionRegExp);
+          }
+        });
+     });
+
   const styleLoaders = [
     {
       loader: 'style-loader',
@@ -46,6 +60,7 @@ const replaceStyleLoaders = (config) => {
 
   config.module.rules = [
     ...config.module.rules.filter((rule) => !Array.isArray(rule.oneOf)),
+
     {
       oneOf: [
         {
@@ -98,11 +113,6 @@ module.exports = {
     // the regex).
     config = replaceStyleLoaders(config);
 
-    // Disabling webpack's optimization configuration, as that makes it harder
-    // to load JS output as a single in-browser JS module.
-    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    delete config.optimization;
-
     // Removing html-webpack-plugin.
     // https://single-spa.js.org/docs/faq/#create-react-app
     config.plugins = config.plugins.filter(
@@ -122,6 +132,13 @@ module.exports = {
       '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
     };
 
+    config.experiments = {
+      asyncWebAssembly: true,
+      syncWebAssembly: true
+    }
+
+    config.module.rules.at(-1).oneOf.at(-1).exclude.push(/\.wasm$/);
+
     return config;
   }),
   devServer(configFunction) {
@@ -140,4 +157,5 @@ module.exports = {
       return config;
     };
   },
+
 };

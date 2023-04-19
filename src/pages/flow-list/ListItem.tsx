@@ -1,25 +1,25 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk/dist/src';
 import { CANVAS_PATH } from 'common';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Flow } from 'types';
 import FlowListItemMenu from './FlowItemMenu';
 
-export default function ListItem({ flow }: { flow: Flow }) {
+export default function ListItem({ file }: { file: FileInfo }) {
   return (
     <StyledListItem justifyContent="space-between">
-      <Link to={createLink(`/${CANVAS_PATH}/${flow.id}`)}>
+      <Link to={createLink(`/${CANVAS_PATH}/${file.externalId}`)}>
         <Flex direction="column" gap={4}>
           <Body level={2} strong>
-            {flow.name}
+            {file.name}
           </Body>
           <div style={{ color: Colors['text-icon--muted'] }}>
-            {flow.description}
+            {file.metadata?.description}
           </div>
         </Flex>
       </Link>
-      <FlowListItemMenu id={flow.id} />
+      <FlowListItemMenu externalId={file.externalId!} />
     </StyledListItem>
   );
 }

@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import ReactFlow, {
-  addEdge,
   Background,
-  Edge,
-  Node,
+  MarkerType,
   OnConnect,
   ReactFlowInstance,
-  useEdgesState,
-  useNodesState,
-  BackgroundVariant,
+  OnEdgesChange,
   Controls,
+  BackgroundVariant,
+  NodeChange,
+  Edge,
   SelectionMode,
 } from 'reactflow';
+
 import styled from 'styled-components';
 
 import {
@@ -22,62 +22,82 @@ import {
 import { CustomNode } from 'components/custom-node';
 import { Colors } from '@cognite/cogs.js';
 import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
+
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { v4 } from 'uuid';
 import ContextMenu, {
   WorkflowContextMenu,
 } from 'components/context-menu/ContextMenu';
 import { GroupNode } from 'components/group-node/GroupNode';
-
-type Props = {
-  initialEdges: Edge<any>[];
-  initialNodes: Node<any>[];
-  onChange: (f: { nodes: Node<any>[]; edges: Edge<any>[] }) => void;
-};
 
 const NODE_TYPES = {
   customNode: CustomNode,
   groupNode: GroupNode,
 };
 
-export const WorkflowBuilder = ({
-  initialEdges,
-  initialNodes,
-  onChange,
-}: Props): JSX.Element => {
-  const reactFlowContainer = useRef<HTMLDivElement>(null);
+type Props = {};
+export const FlowBuilder = ({}: Props): JSX.Element => {
+  const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [reactFlowInstance, setReactFlowInstance] =
-    useState<ReactFlowInstance>();
+  const reactFlowContainer = useRef<HTMLDivElement>(null);
 
   const [contextMenu, setContextMenu] = useState<
     WorkflowContextMenu | undefined
   >(undefined);
 
-  const mutate = useCallback(onChange, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [reactFlowInstance, setReactFlowInstance] =
+    useState<ReactFlowInstance>();
 
-  useEffect(() => {
-    mutate({
-      nodes,
-      edges,
+  const onEdgesChange: OnEdgesChange = () => {};
+
+  const onNodesChange = (changes: NodeChange[]) => {
+    changeFlow((f) => {
+      changes.forEach((change) => {
+        switch (change.type) {
+          case 'position': {
+            if (change.position) {
+              const i = f.canvas.nodes.findIndex((n) => n.id === change.id);
+              f.canvas.nodes[i].position.x = change.position.x;
+              f.canvas.nodes[i].position.y = change.position.y;
+            }
+            break;
+          }
+
+          default: {
+            break;
+          }
+        }
+      });
     });
-  }, [nodes, edges, mutate]);
+  };
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
-      setEdges((prevEdges) =>
-        addEdge(
-          {
+      if (!!connection.source && !!connection.target) {
+        changeFlow((f) => {
+          const newEdge: Edge<any> = {
             ...connection,
+            source: connection.source!,
+            target: connection.target!,
+            type: 'default',
+            animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              height: 16,
+              width: 16,
+            },
             style: {
               strokeWidth: 1,
             },
-          },
-          prevEdges
-        )
-      );
+            id: v4(),
+          };
+          // TODO: figure out this type issue
+          // @ts-ignore
+          f.canvas.edges.push(newEdge);
+        });
+      }
     },
-    [setEdges]
+    [changeFlow]
   );
 
   const onDragOver: React.DragEventHandler = useCallback((event) => {
@@ -104,40 +124,45 @@ export const WorkflowBuilder = ({
           return;
         }
 
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
+        changeFlow((f) => {
+          const position = reactFlowInstance.project({
+            x: event.clientX - reactFlowBounds.left,
+            y: event.clientY - reactFlowBounds.top,
+          });
+
+          const newNode = {
+            id: `${new Date().getTime()}`,
+            type: 'customNode',
+            position,
+            data: { label: `${type} node`, type },
+          };
+          f.canvas.nodes.push(newNode);
         });
-
-        const newNode = {
-          id: `${new Date().getTime()}`,
-          type: 'customNode',
-          position,
-          data: { label: `${type} node`, type },
-        };
-
-        setNodes((prevNodes) => prevNodes.concat(newNode));
       }
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, changeFlow]
   );
+
+  if (!flowState) {
+    return <></>;
+  }
 
   return (
     <Container
+      ref={reactFlowContainer}
       onContextMenu={(e) => {
         e.preventDefault();
       }}
-      ref={reactFlowContainer}
     >
       <ReactFlow
         panOnDrag={false}
         selectionOnDrag
         panOnScroll
         deleteKeyCode={['Backspace', 'Delete']}
-        edges={edges}
+        edges={flowState.canvas.edges}
+        nodes={flowState.canvas.nodes}
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
-        nodes={nodes}
         nodeTypes={NODE_TYPES}
         onConnect={onConnect}
         onDragOver={onDragOver}
@@ -174,7 +199,9 @@ export const WorkflowBuilder = ({
         containerRef={reactFlowContainer}
         contextMenu={contextMenu}
         onClose={() => setContextMenu(undefined)}
-        setNodes={setNodes}
+        setNodes={() => {
+          throw new Error('Function not implemented.');
+        }}
       />
     </Container>
   );

@@ -1,19 +1,13 @@
 import { Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useIsMutating } from 'react-query';
-
+import { useIsMutating } from '@tanstack/react-query';
 import { useTranslation } from 'common';
-import { useFlow } from 'hooks/raw';
-import { Flow } from 'types';
 import { formatTime, Timestamp } from '@cognite/cdf-utilities';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
-type FlowSaveIndicatorProps = {
-  flowId: Flow['id'];
-};
-
-const FlowSaveIndicator = ({ flowId }: FlowSaveIndicatorProps) => {
+const FlowSaveIndicator = () => {
   const { t } = useTranslation();
-  const { data } = useFlow(flowId);
+  const { flow } = useWorkflowBuilderContext();
 
   const isLoading = useIsMutating();
 
@@ -26,11 +20,11 @@ const FlowSaveIndicator = ({ flowId }: FlowSaveIndicatorProps) => {
     );
   }
 
-  if (!data?.updated) {
+  if (!flow.updated) {
     return null;
   }
 
-  if (new Date().getTime() - data.updated < 1000 * 60) {
+  if (new Date().getTime() - flow.updated < 1000 * 60) {
     return <StyledWrapper>{t('details-all-changes-saved')}</StyledWrapper>;
   }
 
@@ -40,7 +34,7 @@ const FlowSaveIndicator = ({ flowId }: FlowSaveIndicatorProps) => {
         formatContent={(timestamp: number) =>
           t('last-edit-time', { time: formatTime(timestamp) })
         }
-        timestamp={data.updated}
+        timestamp={flow.updated}
       />
     </StyledWrapper>
   );
