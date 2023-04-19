@@ -1,6 +1,6 @@
 import {
   useAssetsFilterOptions,
-  useDocumentsLabelAggregateQuery,
+  useDocumentsLabelsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -84,15 +84,23 @@ const AssetLabelFilter = (
 export const DocumentLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalDocumentFilter>
 ) => {
-  const { data: labels, isLoading } = useDocumentsLabelAggregateQuery();
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = (labels || []).map((item) => ({
-    label: `${item.value}`,
-    value: `${item.value}`,
-    count: item.count,
-  }));
+  const { options, isLoading, isError } = useDocumentsLabelsFilterOptions({
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
-  return <LabelFilter {...props} options={options} isLoading={isLoading} />;
+  return (
+    <LabelFilter
+      {...props}
+      onInputChange={setPrefix}
+      options={options}
+      isError={isError}
+      isLoading={isLoading}
+    />
+  );
 };
 
 LabelFilter.Asset = AssetLabelFilter;

@@ -187,11 +187,20 @@ export const queryKeys = {
       query,
     ] as const,
 
-  documentsLabelValues: () => [...queryKeys.documents(), 'labels'] as const,
+  documentsLabelValues: (filter?: any, prefix?: any) =>
+    [...queryKeys.documents(), 'labels', filter, prefix] as const,
   documentsUniqueValues: (
     property: string | [string, string],
-    query?: string
-  ) => [...queryKeys.documents(), 'unique-values', property, query] as const,
+    filter?: any,
+    prefix?: any
+  ) =>
+    [
+      ...queryKeys.documents(),
+      'unique-values',
+      property,
+      filter,
+      prefix,
+    ] as const,
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,

@@ -2,10 +2,9 @@ import {
   DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
   useDebouncedState,
-  useDeepMemo,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { useDocumentsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
+import { useDocumentsFilterOptions } from '@data-exploration-lib/domain-layer';
 import { InputActionMeta } from 'react-select';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
@@ -64,29 +63,19 @@ export function AuthorFilter<TFilter>({
 const AuthorFilterFile = (
   props: BaseAuthorFilterProps<InternalDocumentFilter>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data = [],
-    isLoading,
-    isError,
-  } = useDocumentsUniqueValuesByProperty('author', query, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: 'author',
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
 
-  const options = useDeepMemo(
-    () =>
-      data.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [data]
-  );
   return (
     <AuthorFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

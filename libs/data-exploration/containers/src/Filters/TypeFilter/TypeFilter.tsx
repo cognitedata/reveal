@@ -3,11 +3,10 @@ import {
   InternalDocumentFilter,
   InternalEventsFilters,
   useDebouncedState,
-  useDeepMemo,
   useMetrics,
 } from '@data-exploration-lib/core';
 import {
-  useDocumentsUniqueValuesByProperty,
+  useDocumentsFilterOptions,
   useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -64,30 +63,19 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: fileTypeItems = [],
-    isLoading,
-    isError,
-  } = useDocumentsUniqueValuesByProperty('type', query, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: 'type',
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
-
-  const options = useDeepMemo(
-    () =>
-      fileTypeItems.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [fileTypeItems]
-  );
 
   return (
     <TypeFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

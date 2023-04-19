@@ -20,6 +20,7 @@ export interface FileFilterProps extends FilterProps {
 // INFO: FileFilters is for documents.
 export const FileFilters: React.FC<FileFilterProps> = ({
   enableDocumentLabelsFilter,
+  query,
   filter,
   onFilterChange,
   onResetFilterClick,
@@ -36,6 +37,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
       <TempMultiSelectFix>
         {enableDocumentLabelsFilter && (
           <LabelFilter.File
+            query={query}
+            filter={filter.document}
             value={filter.document.labels}
             onChange={(newFilters) =>
               onFilterChange('document', { labels: newFilters })
@@ -44,6 +47,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         )}
 
         <TypeFilter.File
+          query={query}
+          filter={filter.document}
           value={filter.document.type}
           onChange={(newFilters) =>
             onFilterChange('document', { type: newFilters })
@@ -51,6 +56,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         />
 
         <AuthorFilter.File
+          query={query}
+          filter={filter.document}
           value={filter.document.author}
           onChange={(newFilters) =>
             onFilterChange('document', { author: newFilters })
@@ -58,6 +65,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         />
 
         <SourceFilter.File
+          query={query}
+          filter={filter.document}
           value={filter.document.source}
           onChange={(newSources) =>
             onFilterChange('document', {

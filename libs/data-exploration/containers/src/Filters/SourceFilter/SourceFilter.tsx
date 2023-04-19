@@ -1,6 +1,6 @@
 import {
   useAssetsFilterOptions,
-  useDocumentsUniqueValuesByProperty,
+  useDocumentsFilterOptions,
   useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 
@@ -18,7 +18,6 @@ import {
   InternalDocumentFilter,
   InternalEventsFilters,
   useDebouncedState,
-  useDeepMemo,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
@@ -158,30 +157,19 @@ const EventSourceFilter = (
 export const FileSourceFilter = (
   props: BaseFileSourceFilterProps<InternalDocumentFilter>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useDocumentsUniqueValuesByProperty(['sourceFile', 'source'], query, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: ['sourceFile', 'source'],
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
 
   return (
     <BaseFileSourceFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
