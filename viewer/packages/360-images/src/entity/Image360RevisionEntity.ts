@@ -10,7 +10,7 @@ import {
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
@@ -57,17 +57,26 @@ export class Image360RevisionEntity implements Image360Revision {
     return undefined;
   }
 
+  private isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
+    const detection = annotation as AnnotationsObjectDetection;
+    return (
+      detection.label !== undefined &&
+      (detection.boundingBox !== undefined || detection.polygon !== undefined || detection.polyline !== undefined)
+    );
+  }
+
   private createQuadFromAnnotation(
-    annotationData: AnnotationModel,
+    annotation: AnnotationModel,
     descriptor: Image360FileDescriptor
   ): ImageAnnotationObject | undefined {
-    const abox = (annotationData.data as AnnotationsObjectDetection).boundingBox;
+    const annotationData = annotation.data;
 
-    if (abox === undefined) {
+    // TODO Make this check prettier
+    if (!this.isAnnotationsObject(annotationData) || annotationData.boundingBox === undefined) {
       return undefined;
     }
 
-    return new ImageAnnotationObject(annotationData, descriptor);
+    return new ImageAnnotationObject(annotation, descriptor);
   }
 
   /**
