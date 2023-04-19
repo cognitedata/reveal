@@ -58,12 +58,13 @@ export const StatusTable = styled(Table)`
 
 export const ChangesSavedWrapper = styled.div`
   margin-bottom: 10px;
-  text-align: right;
   border-radius: 4px;
   color: white;
-  display: inline-block;
+  display: flex;
+  gap: 6px;
+  align-items: center;
   margin-right: 20px;
-  padding: 3px;
+  padding: 3px 8px;
   position: absolute;
   bottom: 0;
   text-align: center;
@@ -424,6 +425,12 @@ export const SectionLine = styled.div`
   transform: rotate(90deg);
   width: 32px;
   border: 6px solid rgba(83, 88, 127, 0.16);
+`;
+
+export const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 24px;
 `;
 
 export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`

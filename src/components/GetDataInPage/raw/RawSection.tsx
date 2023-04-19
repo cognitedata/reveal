@@ -18,11 +18,10 @@ import { RawTable } from 'utils/types';
 import { notification } from 'antd';
 import { useRawList } from 'actions';
 import { useQueryClient } from 'react-query';
-import Spin from 'antd/lib/spin';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';
-import { Modal, Input } from '@cognite/cogs.js';
+import { Modal, Input, Icon } from '@cognite/cogs.js';
 import { Col, Row } from 'utils';
 
 interface RawSectionProps {
@@ -103,7 +102,7 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
   };
 
   if (isLoading) {
-    return <Spin />;
+    return <Icon size={24} type="Loader" />;
   }
 
   return (

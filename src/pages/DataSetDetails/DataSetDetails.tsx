@@ -6,7 +6,6 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import copy from 'copy-to-clipboard';
 
 import { notification } from 'antd';
-import Spin from 'antd/lib/spin';
 
 import {
   Button,
@@ -35,6 +34,7 @@ import {
   getGovernedStatus,
   trackUsage,
   DATASET_HELP_DOC,
+  LoaderWrapper,
 } from 'utils';
 
 import {
@@ -43,7 +43,6 @@ import {
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
-import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
@@ -182,7 +181,11 @@ const DataSetDetails = (): JSX.Element => {
 
   const renderLoadingError = (isLoading: boolean) => {
     if (isLoading) {
-      return <Spin />;
+      return (
+        <LoaderWrapper>
+          <Icon size={32} type="Loader" />
+        </LoaderWrapper>
+      );
     }
     return <ErrorMessage error={error} />;
   };

@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import Spin from 'antd/lib/spin';
-
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import { CogsTableCellRenderer, CreationDataSet, DataSet } from 'utils/types';
 import theme from 'styles/theme';
@@ -554,7 +552,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
 
       {props.loading && (
         <ChangesSavedWrapper style={{ background: theme.pillBackground }}>
-          <Spin /> {t('saving')}
+          <Icon type="Loader" /> {t('saving')}
         </ChangesSavedWrapper>
       )}
       {!props.changesSaved && !props.loading && (

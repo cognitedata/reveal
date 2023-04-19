@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
 import { notification, Popconfirm, Upload } from 'antd';
 import List from 'antd/lib/list';
-import Spin from 'antd/lib/spin';
 import { Button, Icon } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import isString from 'lodash/isString';
@@ -211,7 +210,7 @@ const UploadFiles = ({
             <p className="ant-upload-text">{t('upload-file-click-or-drag')}</p>
           </>
         ) : (
-          <Spin />
+          <Icon size={24} type="Loader" />
         )}
       </Upload.Dragger>
       {isMissingReadAccess && (
