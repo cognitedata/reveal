@@ -34,6 +34,12 @@ export interface Image360Collection {
   setIconsVisibility(visible: boolean): void;
 
   /**
+   * Set visibility of all 360 image annotations
+   * @param visible If true, annotations in the 360 image will be displayed. Default is `true`
+   */
+  setImageAnnotationVisibility(visible: boolean): void;
+
+  /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.

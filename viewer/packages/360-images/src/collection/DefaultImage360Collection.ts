@@ -35,6 +35,7 @@ export class DefaultImage360Collection implements Image360Collection {
   };
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
+  private _annotationVisibility: boolean = true;
   private readonly _collectionId: string;
 
   get id(): string {
@@ -120,6 +121,21 @@ export class DefaultImage360Collection implements Image360Collection {
   public setIconsVisibility(visible: boolean): void {
     this._isCollectionVisible = visible;
     this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
+  }
+
+  /**
+   * Set visibility of all 360 image annotations
+   * @param visible If true, annotations in the 360 image will be displayed. Default is `true`
+   */
+  setImageAnnotationVisibility(visible: boolean): void {
+    if (visible == this._annotationVisibility) {
+      return;
+    }
+
+    this._annotationVisibility = visible;
+    this.image360Entities.forEach(entity => {
+      entity.image360Visualization.setAnnotationsVisibility(visible);
+    });
   }
 
   /**
