@@ -20,8 +20,8 @@ export default function CreateButton({}: {}) {
           name: `Flow-demo ${new Date().getTime().toString()}`,
           description: `This is for the first iteration`,
           canvas: {
-            nodes: [],
-            edges: [],
+            nodes: [] as any, // FIXME: any
+            edges: [] as any, // FIXME: any
           },
         }).then((fileInfo) => {
           navigate(createLink(`/${CANVAS_PATH}/${fileInfo.externalId}`));
