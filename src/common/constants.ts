@@ -9,6 +9,7 @@ export const BASE_QUERY_KEY = 'flows';
 
 export const FLOATING_COMPONENTS_PANEL_WIDTH = 356;
 export const FLOATING_ELEMENT_MARGIN = 12;
+export const GROUP_PADDING = 16;
 
 export const Z_INDEXES = {
   FLOATING_ELEMENT: 1,
