@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/no-array-index-key */
 
 import React, { useState } from 'react';
@@ -5,6 +6,7 @@ import styled from 'styled-components';
 import {
   Modal,
   Form,
+  InputNumber,
   Input,
   Upload,
   Alert,
@@ -118,7 +120,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [dataSetId, setDataSetId] = useState<undefined | number>(undefined);
 
   const addSecret = () => {
-    setSecrets(prevSecrets => [
+    setSecrets((prevSecrets) => [
       ...prevSecrets,
       { key: '', value: '', keyTouched: false, valueTouched: false } as Secret,
     ]);
@@ -292,13 +294,12 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               </Link>
             </p>
             <Form.Item label="Dataset ID">
-              <Input
+              <InputNumber
                 disabled={disableForm}
                 name="datasetId"
+                style={{width:"100%"}}
                 value={dataSetId}
-                allowClear
-                type="number"
-                onChange={({ target: { value } }) => setDataSetId(+value)}
+                onChange={(value) => setDataSetId(value)}
               />
             </Form.Item>
           </Col>
@@ -445,7 +446,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               <Dropdown
                 content={
                   <Menu>
-                    {runtimes.map(rt => (
+                    {runtimes.map((rt) => (
                       <Menu.Item key={rt.value} onClick={() => setRuntime(rt)}>
                         {rt.label}
                       </Menu.Item>

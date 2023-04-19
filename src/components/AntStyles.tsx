@@ -69,6 +69,7 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
+import inputNumberStyle from 'antd/es/input-number/style/index.less';
 // import versionStyle from 'antd/es/version/style/index.less';
 
 const styles = [
@@ -107,6 +108,7 @@ const styles = [
   tooltipStyle,
   typographyStyle,
   uploadStyle,
+  inputNumberStyle,
 ];
 
 Modal.defaultProps = {
