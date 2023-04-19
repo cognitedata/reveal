@@ -2,8 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 import { Image360FileDescriptor } from '@reveal/data-providers';
+import assert from 'assert';
 
 import { Matrix4, Vector3, Mesh, PlaneGeometry, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
 
@@ -22,15 +23,18 @@ export class ImageAnnotationObject {
   }
 
   constructor(annotation: AnnotationModel, fileDescriptor: Image360FileDescriptor) {
-    this._mesh = new Mesh(createGeometry(annotation), createMaterial());
-    this.initializeMesh(annotation, fileDescriptor);
+    const annotationData = annotation.data;
+    assert(isAnnotationsObject(annotationData));
+
+    this._mesh = new Mesh(createGeometry(annotationData), createMaterial());
+    this.initializeMesh(annotationData, fileDescriptor);
 
     this._annotation = annotation;
     this._fileDescriptor = fileDescriptor;
   }
 
-  private initializeMesh(annotation: AnnotationModel, fileDescriptor: Image360FileDescriptor) {
-    this.initializeTransform(annotation, fileDescriptor);
+  private initializeMesh(annotationData: AnnotationsObjectDetection, fileDescriptor: Image360FileDescriptor) {
+    this.initializeTransform(annotationData, fileDescriptor);
     this._mesh.renderOrder = 4;
   }
 
@@ -53,8 +57,8 @@ export class ImageAnnotationObject {
     }
   }
 
-  private initializeTransform(annotationData: AnnotationModel, descriptor: Image360FileDescriptor): void {
-    const abox = (annotationData.data as AnnotationsObjectDetection).boundingBox!;
+  private initializeTransform(annotationData: AnnotationsObjectDetection, descriptor: Image360FileDescriptor): void {
+    const abox = annotationData.boundingBox!;
 
     const rotationMatrix = this.getRotationFromFace(descriptor.face);
 
@@ -74,8 +78,8 @@ export class ImageAnnotationObject {
   }
 }
 
-function createGeometry(annotationData: AnnotationModel): PlaneGeometry {
-  const abox = (annotationData.data as AnnotationsObjectDetection).boundingBox!;
+function createGeometry(annotationData: AnnotationsObjectDetection): PlaneGeometry {
+  const abox = annotationData.boundingBox!;
   return new PlaneGeometry(abox.xMax - abox.xMin, abox.yMax - abox.yMin);
 }
 
@@ -87,4 +91,12 @@ function createMaterial(): MeshBasicMaterial {
     opacity: 0.5,
     transparent: true
   });
+}
+
+export function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
+  const detection = annotation as AnnotationsObjectDetection;
+  return (
+    detection.label !== undefined &&
+    (detection.boundingBox !== undefined || detection.polygon !== undefined || detection.polyline !== undefined)
+  );
 }
