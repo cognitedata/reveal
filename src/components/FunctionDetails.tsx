@@ -62,9 +62,6 @@ export default function FunctionDetails({ id, name }: Props) {
       <Item label="Date Created" span={3}>
         {moment.utc(currentFunction?.createdTime).format('LLL')}
       </Item>
-      <Item label="API Key" span={3}>
-        {currentFunction?.apiKey || notSet}
-      </Item>
       <Item label="Function Id" span={3}>
         <Text copyable>{currentFunction?.id}</Text>
       </Item>
