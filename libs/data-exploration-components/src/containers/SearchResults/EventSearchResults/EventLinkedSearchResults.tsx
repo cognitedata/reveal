@@ -5,8 +5,10 @@ import {
   MetadataFilterV2,
 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from '@data-exploration-components/components/Table';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  transformNewFilterToOldFilter,
+} from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';

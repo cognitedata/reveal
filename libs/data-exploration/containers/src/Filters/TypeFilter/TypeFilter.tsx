@@ -1,21 +1,25 @@
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
   InternalEventsFilters,
-  useDeepMemo,
+  useDebouncedState,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import {
-  useDocumentAggregateFileTypeQuery,
-  useEventsUniqueValuesByProperty,
+  useDocumentsFilterOptions,
+  useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
+import { InputActionMeta } from 'react-select';
 
 interface BaseTypeFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {
   value?: string | string[];
   onChange?: (type: string | string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
 }
 
@@ -31,38 +35,47 @@ export function TypeFilter<TFilter>({
   value,
   ...rest
 }: TypeFilterProps<TFilter>) {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    type: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(type.map((t) => t.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_EVENT_FILTER, {
+      value: type,
+      title,
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       label={title}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, type) => onChange?.(type.map((t) => t.value))}
+      onChange={(_, type) => handleChange(type)}
       isMulti
     />
   );
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
-  const {
-    data: fileTypeItems = [],
-    isLoading,
-    isError,
-  } = useDocumentAggregateFileTypeQuery();
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = useDeepMemo(
-    () =>
-      fileTypeItems.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [fileTypeItems]
-  );
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: 'type',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <TypeFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -72,25 +85,19 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
-  const {
-    data = [],
-    isLoading,
-    isError,
-  } = useEventsUniqueValuesByProperty('type', props.filter);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = useDeepMemo(
-    () =>
-      data.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [data]
-  );
+  const { options, isLoading, isError } = useEventsFilterOptions({
+    property: 'type',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <TypeFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

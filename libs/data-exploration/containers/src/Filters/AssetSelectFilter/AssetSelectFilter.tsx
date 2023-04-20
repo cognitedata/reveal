@@ -4,12 +4,12 @@ import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 import { BaseMultiSelectFilterProps } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { useDebounce } from 'use-debounce';
-import {
-  useCdfItems,
-  useList,
-  useSearch,
-} from '@cognite/sdk-react-query-hooks';
+import { useList, useSearch } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk/dist/src';
+import {
+  useMetrics,
+  DATA_EXPLORATION_COMPONENT,
+} from '@data-exploration-lib/core';
 
 interface BaseAssetSelectFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter, number> {
@@ -23,6 +23,8 @@ interface ByAssetFilterProps<TFilter>
   onInputChange?: (query: string) => void;
 }
 
+const FILTER_LABEL = 'Asset';
+
 export const AssetSelectFilter = <TFilter,>({
   value,
   onChange,
@@ -31,6 +33,8 @@ export const AssetSelectFilter = <TFilter,>({
   isError,
   isLoading,
 }: ByAssetFilterProps<TFilter>) => {
+  const trackUsage = useMetrics();
+
   const handleChange = (
     newValue: {
       label: string;
@@ -39,20 +43,20 @@ export const AssetSelectFilter = <TFilter,>({
   ) => {
     const newFilters = newValue && newValue.length > 0 ? newValue : undefined;
     onChange?.(newFilters);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.ASSET_FILTER, {
+      ...newValue,
+      title: FILTER_LABEL,
+    });
   };
 
   const handleInputChange = (query: string) => {
     onInputChange?.(query);
   };
 
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <Tooltip interactive disabled={!isError} content="Error fetching assets!">
       <MultiSelectFilter<number>
-        label="Asset"
+        label={FILTER_LABEL}
         isMulti
         isClearable
         value={value}
@@ -72,7 +76,7 @@ export const AssetSelectFilter = <TFilter,>({
 const CommonAssetSelectFilter = (
   props: BaseAssetSelectFilterProps<InternalAssetData>
 ) => {
-  const { rootOnly, selectedAssetIds } = props;
+  const { rootOnly, value } = props;
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounce(query, 100);
 
@@ -116,17 +120,6 @@ const CommonAssetSelectFilter = (
     filter: { root: true },
   });
 
-  const {
-    data: selectedItems,
-    isLoading: isAssetItemsLoading,
-    isError: isAssetItemsError,
-  } = useCdfItems<Asset>(
-    'assets',
-    selectedAssetIds ? selectedAssetIds.map((id) => ({ id })) : [],
-    false,
-    { keepPreviousData: true }
-  );
-
   const [data, rootData] = useMemo(() => {
     if (debouncedQuery.length > 0) {
       return [searchData, rootSearchData];
@@ -134,7 +127,7 @@ const CommonAssetSelectFilter = (
     return [listData, rootListData];
   }, [debouncedQuery, searchData, rootSearchData, listData, rootListData]);
 
-  const values = rootOnly
+  const options = rootOnly
     ? (rootData || []).map((el) => ({
         label: el.name,
         value: el.id,
@@ -156,32 +149,19 @@ const CommonAssetSelectFilter = (
         },
       ];
 
-  const selectedItemValues = (selectedItems || []).map((el) => ({
-    value: el.id,
-    label: el.name,
-  }));
-
   const isAssetsLoading =
-    isAssetItemsLoading ||
-    isLoading ||
-    isRootLoading ||
-    isListLoading ||
-    isRootListLoading;
+    isLoading || isRootLoading || isListLoading || isRootListLoading;
 
   const isAssetsError =
-    isAssetItemsError ||
-    isError ||
-    isRootError ||
-    isListError ||
-    isRootListError;
+    isError || isRootError || isListError || isRootListError;
 
   return (
     <AssetSelectFilter
       {...props}
       isLoading={isAssetsLoading}
       isError={isAssetsError}
-      options={values}
-      value={selectedItemValues}
+      options={options}
+      value={value}
       onInputChange={setQuery}
     />
   );

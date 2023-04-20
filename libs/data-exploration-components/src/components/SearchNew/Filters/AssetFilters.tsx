@@ -25,8 +25,7 @@ export const AssetFiltersV2 = ({
     limit: 1000,
   });
 
-  const { data: metadataKeys = [] } =
-    useAssetsMetadataKeysAggregateQuery(filter);
+  const { data: metadataKeys = [] } = useAssetsMetadataKeysAggregateQuery();
 
   return (
     <BaseFilterCollapse.Panel title="Assets" {...rest}>
@@ -62,7 +61,10 @@ export const AssetFiltersV2 = ({
             metadata: newMetadata,
           })
         }
-        useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
+        useAggregateMetadataValues={(metadataKey) =>
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          useAssetsMetadataValuesAggregateQuery({ metadataKey })
+        }
       />
     </BaseFilterCollapse.Panel>
   );

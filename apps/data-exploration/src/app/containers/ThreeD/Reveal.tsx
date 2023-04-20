@@ -117,11 +117,14 @@ export function Reveal({
         } catch {
           return Promise.reject({
             message:
-              'The selected 3D Model is not supported and can not be loaded.',
+              'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.',
           });
         }
 
-        viewer.loadCameraFromModel(model);
+        // Load camera from model when camera state is unavailable
+        if (!initialViewerState?.camera) {
+          viewer.loadCameraFromModel(model);
+        }
       }
 
       if (initialViewerState) {

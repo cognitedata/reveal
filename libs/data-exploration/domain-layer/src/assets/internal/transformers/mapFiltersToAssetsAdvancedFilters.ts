@@ -95,13 +95,15 @@ export const mapFiltersToAssetsAdvancedFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
     for (const { key, value } of metadata) {
       if (value === METADATA_ALL_VALUE) {
-        filterBuilder.exists(`metadata|${key}`);
+        metadataBuilder.exists(`metadata|${key}`);
       } else {
-        filterBuilder.equals(`metadata|${key}`, value);
+        metadataBuilder.equals(`metadata|${key}`, value);
       }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
@@ -127,11 +129,12 @@ export const mapFiltersToAssetsAdvancedFilters = (
       }
     }
 
-    /**
-     * We want to filter all the metadata keys with the search query, to give a better result
-     * to the user when using our search.
-     */
     if (searchConfig.metadata.enabled) {
+      /**
+       * We want to filter all the metadata keys with the search query, to give a better result
+       * to the user when using our search.
+       */
+      searchQueryBuilder.equals('metadata', query);
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
@@ -140,12 +143,15 @@ export const mapFiltersToAssetsAdvancedFilters = (
     }
 
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals('externalId', query);
       searchQueryBuilder.prefix('externalId', query);
     }
     if (searchConfig.source.enabled) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       // the type here is a bit wrong, will be refactored in later PRs
+      // @ts-ignore
+      searchQueryBuilder.equals('source', query);
+      // @ts-ignore
       searchQueryBuilder.prefix('source', query);
     }
 

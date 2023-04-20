@@ -6,11 +6,11 @@ import {
 import {
   Annotation,
   AnnotationType,
+  ContainerType,
   LineType,
 } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { ContainerReference, ContainerReferenceType } from '../types';
-import { getContainerId } from './utils';
+import { IndustryCanvasContainerConfig } from '../types';
 
 const numFileLinksBetweenFiles = (
   fromFileId: number,
@@ -27,11 +27,11 @@ const numFileLinksBetweenFiles = (
 const CONNECTION_TARGET_ID = 'file-link-connection-target-id';
 
 export const getIndustryCanvasConnectionAnnotations = ({
-  containerReferences,
+  container,
   annotations,
   hoverId,
 }: {
-  containerReferences: ContainerReference[];
+  container: IndustryCanvasContainerConfig;
   annotations: ExtendedAnnotation[];
   hoverId: string | undefined;
 }): Annotation[] => {
@@ -66,15 +66,18 @@ export const getIndustryCanvasConnectionAnnotations = ({
     return [];
   }
 
+  const containerConfig = container.children ?? [];
+
   // We are using the pagedFileReferences here since we could have the same document
   // multiple times in the same canvas (for different pages).
-  return containerReferences
+  return containerConfig
     .filter(
-      (containerReference) =>
-        containerReference.type === ContainerReferenceType.FILE &&
-        containerReference.resourceId === linkedFileId
+      (containerConfig) =>
+        (containerConfig.type === ContainerType.DOCUMENT ||
+          containerConfig.type === ContainerType.IMAGE) &&
+        containerConfig.metadata.resourceId === linkedFileId
     )
-    .flatMap<Annotation>((containerReference) => {
+    .flatMap<Annotation>((containerConfig) => {
       const isSelfReferentialFileLink = annotatedFileId === linkedFileId;
 
       const isSingleSetOfFileLinksBetweenFiles =
@@ -120,7 +123,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
             {
               type: AnnotationType.RECTANGLE,
               id: CONNECTION_TARGET_ID,
-              containerId: getContainerId(containerReference),
+              containerId: containerConfig.id,
               x: targetAnnotation.x,
               y: targetAnnotation.y,
               width: targetAnnotation.width,
@@ -135,7 +138,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
             {
               type: AnnotationType.RECTANGLE,
               id: CONNECTION_TARGET_ID,
-              containerId: getContainerId(containerReference),
+              containerId: containerConfig.id,
               x: 0.0,
               y: 0.0,
               width: 1,

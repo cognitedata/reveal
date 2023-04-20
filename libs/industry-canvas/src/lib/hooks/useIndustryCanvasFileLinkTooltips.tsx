@@ -1,29 +1,28 @@
-import { Button } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import {
   getFileIdFromExtendedAnnotation,
-  getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
+import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
 import { TooltipContainer } from '../TooltipContainer';
-import { ContainerReference, ContainerReferenceType } from '../types';
-import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
+import { ContainerReferenceType } from '../types';
+import { UseManagedStateReturnType } from './useManagedState';
+import { v4 as uuid } from 'uuid';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];
   selectedAnnotation: ExtendedAnnotation | undefined;
-  onAddContainerReferences: OnAddContainerReferences;
-  containerReferences: ContainerReference[];
+  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
 };
 
 const useIndustryCanvasFileLinkTooltips = ({
   annotations,
   selectedAnnotation,
   onAddContainerReferences,
-  containerReferences,
 }: UseFileLinkTooltipsParams) => {
   return useMemo(() => {
     if (selectedAnnotation === undefined) {
@@ -62,53 +61,36 @@ const useIndustryCanvasFileLinkTooltips = ({
       return [];
     }
 
-    const additionalFileId =
-      getResourceExternalIdFromExtendedAnnotation(selectedAnnotation) ??
-      getResourceIdFromExtendedAnnotation(selectedAnnotation);
+    const onAddFileClick = () => {
+      onAddContainerReferences([
+        {
+          type: ContainerReferenceType.FILE,
+          resourceId: resourceId,
+          id: uuid(),
+          page: 1,
+        },
+      ]);
+    };
 
-    if (
-      containerReferences.some(
-        (containerReference) =>
-          containerReference.type === ContainerReferenceType.FILE &&
-          containerReference.resourceId === additionalFileId
-      )
-    ) {
-      return [];
-    }
+    const onViewClick = () => {
+      window.open(createLink(`/explore/files/${resourceId}`), '_blank');
+    };
 
     return [
       {
         targetId: String(selectedAnnotation.id),
         content: (
-          <TooltipContainer>
-            <Button
-              type="ghost"
-              icon="DocumentPlus"
-              onClick={() => {
-                onAddContainerReferences([
-                  {
-                    type: ContainerReferenceType.FILE,
-                    resourceId: resourceId,
-                    id: resourceId.toString(),
-                    page: 1,
-                  },
-                ]);
-              }}
-            >
-              Add file to view
-            </Button>
-          </TooltipContainer>
+          <FileTooltip
+            id={resourceId}
+            onAddFileClick={onAddFileClick}
+            onViewClick={onViewClick}
+          />
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
         shouldPositionStrictly: true,
       },
     ];
-  }, [
-    annotations,
-    selectedAnnotation,
-    onAddContainerReferences,
-    containerReferences,
-  ]);
+  }, [annotations, selectedAnnotation, onAddContainerReferences]);
 };
 
 export default useIndustryCanvasFileLinkTooltips;

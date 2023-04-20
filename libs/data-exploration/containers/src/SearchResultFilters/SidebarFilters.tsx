@@ -13,19 +13,23 @@ import { SequenceFilters } from './SequenceFilters';
 
 export interface Props extends FilterProps {
   resourceType?: ResourceType;
+  enableDocumentLabelsFilter?: boolean;
 }
 
 export const SidebarFilters: React.FC<Props> = ({
+  enableDocumentLabelsFilter,
   resourceType,
   onFilterChange,
   filter,
   onResetFilterClick,
+  query,
 }) => {
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
       case 'asset': {
         return (
           <AssetFilters
+            query={query}
             filter={filter}
             onFilterChange={onFilterChange}
             onResetFilterClick={onResetFilterClick}
@@ -35,6 +39,7 @@ export const SidebarFilters: React.FC<Props> = ({
       case 'event': {
         return (
           <EventFilters
+            query={query}
             filter={filter}
             onFilterChange={onFilterChange}
             onResetFilterClick={onResetFilterClick}
@@ -44,6 +49,7 @@ export const SidebarFilters: React.FC<Props> = ({
       case 'timeSeries': {
         return (
           <TimeseriesFilters
+            query={query}
             filter={filter}
             onFilterChange={onFilterChange}
             onResetFilterClick={onResetFilterClick}
@@ -53,9 +59,11 @@ export const SidebarFilters: React.FC<Props> = ({
       case 'file': {
         return (
           <FileFilters
+            query={query}
             filter={filter}
             onFilterChange={onFilterChange}
             onResetFilterClick={onResetFilterClick}
+            enableDocumentLabelsFilter={enableDocumentLabelsFilter}
           />
         );
       }
@@ -70,6 +78,7 @@ export const SidebarFilters: React.FC<Props> = ({
       case 'sequence': {
         return (
           <SequenceFilters
+            query={query}
             filter={filter}
             onFilterChange={onFilterChange}
             onResetFilterClick={onResetFilterClick}
@@ -86,6 +95,7 @@ export const SidebarFilters: React.FC<Props> = ({
     <Container>
       <BaseFilterCollapse>
         <CommonFilters
+          query={query}
           filter={filter}
           onFilterChange={onFilterChange}
           onResetFilterClick={onResetFilterClick}

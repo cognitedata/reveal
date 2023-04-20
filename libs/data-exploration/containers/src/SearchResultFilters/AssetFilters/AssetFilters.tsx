@@ -8,6 +8,7 @@ import { TempMultiSelectFix } from '../elements';
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../Filters';
 
 export const AssetFilters: React.FC<FilterProps> = ({
+  query,
   filter,
   onFilterChange,
   onResetFilterClick,
@@ -23,6 +24,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
     >
       <TempMultiSelectFix>
         <LabelFilter.Asset
+          query={query}
+          filter={filter.asset}
           value={filter.asset.labels}
           onChange={(newFilters) =>
             onFilterChange('asset', { labels: newFilters })
@@ -31,6 +34,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
         />
 
         <SourceFilter.Asset
+          query={query}
+          filter={filter.asset}
           value={filter.asset.sources}
           onChange={(newSources) =>
             onFilterChange('asset', {
@@ -40,6 +45,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
         />
 
         <MetadataFilter.Assets
+          query={query}
+          filter={filter.asset}
           values={filter.asset.metadata}
           onChange={(newMetadata) => {
             onFilterChange('asset', {

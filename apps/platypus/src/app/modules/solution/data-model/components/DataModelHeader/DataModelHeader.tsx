@@ -3,7 +3,7 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { DiscardButton, DocLinkWrapper, ReturnButton } from './elements';
+import { DiscardButton, ReturnButton } from './elements';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
@@ -11,11 +11,9 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import config from '@platypus-app/config/config';
-import { DOCS_LINKS } from '@platypus-app/constants';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
@@ -68,20 +66,11 @@ export const DataModelHeader = ({
     switchDataModelVersion,
   } = useDataModelState();
 
-  const { getRemoteAndLocalSchemas, removeLocalDraft, setLocalDraft } =
-    useLocalDraft(dataModelExternalId, dataModelSpace, latestDataModelVersion);
-
-  const getDataModelHeaderSchemas = () => {
-    /*
-    if there's neither a draft nor any published data model versions, for example when
-    we're in a newly created data model, return an array with a default data model version
-    */
-    if (!localDraft && dataModelVersions?.length === 0) {
-      return [selectedDataModelVersion];
-    } else {
-      return getRemoteAndLocalSchemas(dataModelVersions || []);
-    }
-  };
+  const { removeLocalDraft, setLocalDraft } = useLocalDraft(
+    dataModelExternalId,
+    dataModelSpace,
+    latestDataModelVersion
+  );
 
   const isDraftOld =
     !!localDraft &&
@@ -128,12 +117,6 @@ export const DataModelHeader = ({
     switchDataModelVersion(dataModelVersion);
     onDataModelVersionSelect(dataModelVersion);
   };
-
-  const docLink = (
-    <DocLinkWrapper>
-      <DocLinkButtonGroup docsLinkUrl={DOCS_LINKS.CREATION} />
-    </DocLinkWrapper>
-  );
 
   const renderTools = () => {
     if (editorMode === SchemaEditorMode.Edit) {
@@ -182,7 +165,6 @@ export const DataModelHeader = ({
           >
             {t('publish', 'Publish')}
           </Button>
-          {docLink}
         </div>
       );
     }
@@ -218,7 +200,6 @@ export const DataModelHeader = ({
               </ReturnButton>
             </Flex>
           </Flex>
-          {docLink}
         </Flex>
       );
     }
@@ -243,22 +224,12 @@ export const DataModelHeader = ({
             {t('edit_data_model', 'Edit data model')}
           </Button>
         </Tooltip>
-        {docLink}
       </Flex>
     );
   };
 
   return (
-    <VersionSelectorToolbar
-      title={title || ''}
-      schemas={getDataModelHeaderSchemas()}
-      onDataModelVersionSelect={handleDataModelVersionSelect}
-      selectedDataModelVersion={
-        editorMode === SchemaEditorMode.Edit && localDraft
-          ? localDraft
-          : selectedDataModelVersion
-      }
-    >
+    <VersionSelectorToolbar title={title || ''}>
       {renderTools()}
     </VersionSelectorToolbar>
   );

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { SIDEBAR_RESIZE_EVENT } from '@data-exploration-components/utils';
 import handle from '../../assets/handle.svg';
-import zIndex from '../../utils/zIndex';
+import { zIndex } from '@data-exploration-lib/core';
 
 export type SplitterProps = {
   secondaryMinSize?: number;

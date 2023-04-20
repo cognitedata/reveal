@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Title, Link } from '@cognite/cogs.js';
-import { Table } from '@data-exploration-components/components/Table';
+import { TooltipCell, Table } from '@data-exploration/components';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
   FilterContainer,
@@ -9,8 +9,11 @@ import {
   MetadataHeader,
   MetadataTableContainer,
 } from './elements';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DASH,
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 import { isValidUrl } from '@data-exploration-components/utils';
 
@@ -34,6 +37,9 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           header: 'Key',
           accessorKey: 'key',
           maxSize: undefined,
+          cell: ({ getValue }) => {
+            return <TooltipCell text={getValue<string>() || DASH} />;
+          },
         },
         {
           header: 'Value',
@@ -48,7 +54,8 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
                 </Link>
               );
             }
-            return value;
+
+            return <TooltipCell text={value} />;
           },
         },
       ] as ColumnDef<DataSource>[],
@@ -83,11 +90,11 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   }
 
   const handleOnClickHideEmpty = () => {
-    setHideEmpty((hideEmpty) => {
+    setHideEmpty((hideEmptyValue) => {
       trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.METADATA_HIDE_EMPTY, {
-        visible: !hideEmpty,
+        visible: !hideEmptyValue,
       });
-      return !hideEmpty;
+      return !hideEmptyValue;
     });
   };
 

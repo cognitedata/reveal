@@ -33,6 +33,17 @@ export type TRACKING_TOKENS =
   | 'DataModel.Links.GraphQL'
   | 'DataModel.Links.CLI'
   | 'DataModel.Links.Documentation'
+  // custom features
+  | 'FeatureFlag.Toggle'
+  // manual population
+  | 'ManualPopulation.Create'
+  | 'ManualPopulation.Update'
+  | 'ManualPopulation.Delete'
+  // suggestions
+  | 'Suggestions.Approve'
+  | 'Suggestions.Reject'
+  | 'Suggestions.Open'
+  | 'Suggestions.Save'
   // extra path tracking
   | 'UIEditor'
   | 'Navigate';

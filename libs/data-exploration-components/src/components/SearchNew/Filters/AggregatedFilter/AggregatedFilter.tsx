@@ -3,8 +3,10 @@ import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { OptionType } from '@cognite/cogs.js';
 
 export const AggregatedFilterV2 = <T,>({

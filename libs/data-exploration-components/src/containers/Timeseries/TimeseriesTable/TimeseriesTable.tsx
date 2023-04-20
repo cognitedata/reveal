@@ -5,26 +5,21 @@ import {
   RelationshipLabels,
 } from '@data-exploration-components/types';
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+  TimeDisplay,
+} from '@data-exploration/components';
 import { TIME_SELECT } from '@data-exploration-components/containers';
-// import { TimeseriesChart } from '..';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns, TimeDisplay } from '../../../components';
 import {
   InternalTimeseriesDataWithMatchingLabels,
-  useTimeseriesMetadataKeys,
+  TimeseriesWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-// import noop from 'lodash/noop';
-// import { EMPTY_ARRAY } from '@data-exploration-lib/core';
 
 import { TimeseriesChart } from '@cognite/plotting-components';
-
-export type TimeseriesWithRelationshipLabels =
-  InternalTimeseriesDataWithMatchingLabels & RelationshipLabels;
+import { useTimeseriesMetadataColumns } from '../hooks/useTimeseriesMetadataColumns';
 
 export interface TimeseriesTableProps
   extends Omit<
@@ -39,14 +34,17 @@ const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   onRootAssetClick,
+  query,
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
-  const { data: metadataKeys = [] } = useTimeseriesMetadataKeys();
 
   const [dateRange, setDateRange] = useState(
     dateRangeProp || TIME_SELECT['1Y'].getTime()
   );
+
+  const { metadataColumns, setMetadataKeyQuery } =
+    useTimeseriesMetadataColumns();
 
   useEffect(() => {
     if (dateRangeProp) {
@@ -54,17 +52,11 @@ export const TimeseriesTable = ({
     }
   }, [dateRangeProp]);
 
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) =>
-      ResourceTableColumns.metadata(String(key))
-    );
-  }, [metadataKeys]);
-
   const startTime = dateRange[0].getTime();
   const endTime = dateRange[1].getTime();
 
-  const columns = useMemo(() => {
-    const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
+  const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = useMemo(
+    () => ({
       header: 'Preview',
       accessorKey: 'data',
       size: 400,
@@ -72,25 +64,6 @@ export const TimeseriesTable = ({
       cell: ({ row }) => {
         const timeseries = row.original;
 
-        // return (
-        //   <TimeseriesChart
-        //     height={50}
-        //     showSmallerTicks
-        //     timeseriesId={timeseries.id}
-        //     numberOfPoints={100}
-        //     showAxis="horizontal"
-        //     timeOptions={EMPTY_ARRAY}
-        //     showContextGraph={false}
-        //     showPoints={false}
-        //     enableTooltip={false}
-        //     showGridLine="none"
-        //     minRowTicks={2}
-        //     enableTooltipPreview
-        //     dateRange={dateRange}
-        //     margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
-        //     onDateRangeChange={noop}
-        //   />
-        // );
         return (
           <TimeseriesChart
             timeseriesId={timeseries.id}
@@ -102,16 +75,21 @@ export const TimeseriesTable = ({
           />
         );
       },
-    };
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [startTime, endTime]
+  );
+
+  const columns = useMemo(() => {
     return [
       {
-        ...Table.Columns.name(),
+        ...Table.Columns.name(query),
         enableHiding: false,
       },
-      Table.Columns.description(),
-      Table.Columns.externalId(),
+      Table.Columns.description(query),
+      Table.Columns.externalId(query),
       {
-        ...Table.Columns.unit(),
+        ...Table.Columns.unit(query),
         enableSorting: false,
       },
       sparkLineColumn,
@@ -129,7 +107,7 @@ export const TimeseriesTable = ({
       },
       Table.Columns.created,
       {
-        ...Table.Columns.id(),
+        ...Table.Columns.id(query),
         enableSorting: false,
       },
       {
@@ -149,7 +127,7 @@ export const TimeseriesTable = ({
       ...metadataColumns,
     ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metadataColumns, startTime, endTime]);
+  }, [query, sparkLineColumn, metadataColumns]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
@@ -159,6 +137,7 @@ export const TimeseriesTable = ({
       data={data}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
       {...rest}
     />
   );

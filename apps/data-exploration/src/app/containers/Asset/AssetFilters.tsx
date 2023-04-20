@@ -30,7 +30,9 @@ export const AssetFilters = ({ ...rest }) => {
     limit: 1000,
   });
 
-  const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
+  const { data: sources = [] } = useAssetsUniqueValuesByProperty({
+    property: 'source',
+  });
 
   const { data: metadataKeys = [] } = useAssetsMetadataKeysAggregateQuery();
 
@@ -83,7 +85,10 @@ export const AssetFilters = ({ ...rest }) => {
               metadata: newMetadata,
             })
           }
-          useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
+          useAggregateMetadataValues={(metadataKey) =>
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useAssetsMetadataValuesAggregateQuery({ metadataKey })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

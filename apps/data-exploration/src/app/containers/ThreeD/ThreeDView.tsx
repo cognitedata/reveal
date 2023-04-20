@@ -57,6 +57,7 @@ import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags'
 import LoadImages360 from './load-secondary-models/LoadImages360';
 import zIndex from '../../utils/zIndex';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 
 type Props = {
   modelId?: number;
@@ -353,6 +354,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     />
                   )}
                   <StyledToolBarDivider />
+                  <HighQualityToggle viewer={revealViewer} />
                   <ShareButton />
                   <HelpButton />
                 </StyledToolBar>

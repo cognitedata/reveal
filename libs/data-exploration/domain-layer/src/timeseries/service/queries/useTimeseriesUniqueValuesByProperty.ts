@@ -2,8 +2,10 @@ import { useQuery } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
+  AdvancedFilter,
   getTimeseriesUniqueValuesByProperty,
   queryKeys,
+  TimeseriesProperties,
   TimeseriesProperty,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
@@ -12,15 +14,29 @@ import {
   OldTimeseriesFilters,
 } from '@data-exploration-lib/core';
 
-export const useTimeseriesUniqueValuesByProperty = (
-  property: TimeseriesProperty,
-  filter?: InternalTimeseriesFilters | OldTimeseriesFilters
-) => {
+interface Props {
+  property: TimeseriesProperty;
+  prefix?: string;
+  filter?: InternalTimeseriesFilters | OldTimeseriesFilters;
+  advancedFilter?: AdvancedFilter<TimeseriesProperties>;
+}
+
+export const useTimeseriesUniqueValuesByProperty = ({
+  property,
+  prefix,
+  filter,
+  advancedFilter,
+}: Props) => {
   const sdk = useSDK();
 
-  return useQuery(queryKeys.timeseriesUniqueValues(property, filter), () => {
-    return getTimeseriesUniqueValuesByProperty(sdk, property, {
-      filter: transformNewFilterToOldFilter(filter),
-    });
-  });
+  return useQuery(
+    queryKeys.timeseriesUniqueValues(property, prefix, filter, advancedFilter),
+    () => {
+      return getTimeseriesUniqueValuesByProperty(sdk, property, {
+        filter: transformNewFilterToOldFilter(filter),
+        advancedFilter,
+        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+      });
+    }
+  );
 };

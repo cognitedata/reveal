@@ -2,10 +2,10 @@ import { Asset, Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
-  ResourceTableColumns,
+  SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
@@ -13,16 +13,15 @@ import { SummaryHeader } from '@data-exploration-components/components/SummaryHe
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
-  useTimeseriesMetadataKeys,
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 
-import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { useTimeseriesMetadataColumns } from '../hooks/useTimeseriesMetadataColumns';
 
 export const TimeseriesSummary = ({
   query = '',
@@ -52,13 +51,8 @@ export const TimeseriesSummary = ({
     timeseriesSearchConfig
   );
 
-  const { data: metadataKeys = [] } = useTimeseriesMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) =>
-      ResourceTableColumns.metadata(String(key))
-    );
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } =
+    useTimeseriesMetadataColumns();
 
   const columns = useMemo(() => {
     return [
@@ -106,6 +100,7 @@ export const TimeseriesSummary = ({
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>
   );

@@ -4,10 +4,15 @@ import { useEventsMetadataValuesAggregateQuery } from '../../service';
 
 export const useEventsMetadataValuesOptionsQuery =
   (filter?: InternalAssetFilters) =>
-  (metadataKeys?: string | null, options?: UseQueryOptions<any>) => {
+  (
+    metadataKeys?: string | null,
+    query?: string,
+    options?: UseQueryOptions<any>
+  ) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data, isLoading } = useEventsMetadataValuesAggregateQuery(
       metadataKeys,
+      query,
       filter,
       options
     );

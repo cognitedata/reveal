@@ -2,25 +2,22 @@ import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
-import { RelationshipLabels } from '@data-exploration-components/types';
+} from '@data-exploration/components';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
-import { ResourceTableColumns } from '../../../components';
 import {
+  AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
-  useAssetsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
 
-export type AssetWithRelationshipLabels = RelationshipLabels &
-  InternalAssetDataWithMatchingLabels;
+import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
 
 const visibleColumns = ['name', 'rootId'];
 export const AssetTable = ({
@@ -29,21 +26,17 @@ export const AssetTable = ({
   query,
   ...rest
 }: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>) => {
-  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
   const columns = useMemo(
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...Table.Columns.name(query),
           enableHiding: false,
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         Table.Columns.rootAsset((rootAsset) => onRowClick(rootAsset)),
         {
           accessorKey: 'id',
@@ -59,7 +52,7 @@ export const AssetTable = ({
           ...Table.Columns.labels,
           enableSorting: false,
         },
-        Table.Columns.source(),
+        Table.Columns.source(query),
         { ...Table.Columns.dataSet, enableSorting: true },
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
@@ -76,6 +69,7 @@ export const AssetTable = ({
       onRowClick={onRowClick}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
       {...rest}
     />
   );

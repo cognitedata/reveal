@@ -3,26 +3,19 @@ import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkToolti
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
 import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
-import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
-import {
-  CanvasAnnotation,
-  ContainerReference,
-  ContainerReferenceWithoutDimensions,
-} from '../types';
+import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
 import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
+import { UseManagedStateReturnType } from './useManagedState';
 
 export type UseTooltipsParams = {
+  clickedContainer: IndustryCanvasContainerConfig | undefined;
   containerAnnotations: ExtendedAnnotation[];
   selectedContainerAnnotation: ExtendedAnnotation | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  clickedContainer: ContainerReference | undefined;
-  onAddContainerReferences: OnAddContainerReferences;
-  removeContainerReference: (containerReference: ContainerReference) => void;
-  containerReferences: ContainerReference[];
-  updateContainerReference: (
-    containerReference: ContainerReferenceWithoutDimensions
-  ) => void;
+  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
+  updateContainerById: UseManagedStateReturnType['updateContainerById'];
+  removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
 };
@@ -31,13 +24,12 @@ const useIndustryCanvasTooltips = ({
   containerAnnotations,
   selectedContainerAnnotation,
   selectedCanvasAnnotation,
-  clickedContainer,
   onAddContainerReferences,
-  removeContainerReference,
-  containerReferences,
   onDeleteSelectedCanvasAnnotation,
+  clickedContainer,
+  updateContainerById,
+  removeContainerById,
   onUpdateAnnotationStyleByType,
-  updateContainerReference,
 }: UseTooltipsParams) => {
   const assetTooltips = useIndustryCanvasAssetTooltips(
     selectedContainerAnnotation,
@@ -47,7 +39,6 @@ const useIndustryCanvasTooltips = ({
     annotations: containerAnnotations,
     selectedAnnotation: selectedContainerAnnotation,
     onAddContainerReferences,
-    containerReferences,
   });
   const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
     selectedCanvasAnnotation,
@@ -56,8 +47,8 @@ const useIndustryCanvasTooltips = ({
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     clickedContainer,
-    removeContainerReference,
-    updateContainerReference,
+    updateContainerById,
+    removeContainerById,
   });
 
   return useMemo(() => {

@@ -88,7 +88,7 @@ const useFileLinkTooltips = (
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
       },
     ];
-  }, [isEnabled, annotations, selectedAnnotations, fileId]);
+  }, [isEnabled, annotations, selectedAnnotations, fileId, serialize]);
 };
 
 export default useFileLinkTooltips;

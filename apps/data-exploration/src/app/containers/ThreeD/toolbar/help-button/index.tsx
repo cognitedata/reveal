@@ -23,7 +23,7 @@ const HelpButton = (): JSX.Element => {
       placement="right-end"
     >
       <Tooltip content="Help" placement="right">
-        <Button
+        <FullWidthButton
           icon="Help"
           type="ghost"
           aria-label="help-button"
@@ -46,6 +46,10 @@ const StyledMenu = styled(Menu)`
   gap: 24px;
   padding: 16px;
   width: fit-content;
+`;
+
+const FullWidthButton = styled(Button)`
+  width: 100%;
 `;
 
 export default HelpButton;

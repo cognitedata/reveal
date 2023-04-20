@@ -11,6 +11,7 @@ export interface BaseFilter<TFilter> {
 export interface CommonFilterProps {
   isError?: boolean;
   isLoading?: boolean;
+  query?: string;
 }
 
 export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
@@ -23,6 +24,7 @@ export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
 }
+
 export interface BaseNestedFilterProps<TFilter>
   extends BaseFilter<TFilter>,
     CommonFilterProps {

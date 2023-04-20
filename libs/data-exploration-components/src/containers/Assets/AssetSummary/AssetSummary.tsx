@@ -2,26 +2,25 @@ import { Asset } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
+  AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
-  useAssetsMetadataKeys,
   useAssetsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import {
-  ResourceTableColumns,
+  SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-} from '@data-exploration-components/components/Table';
+} from '@data-exploration/components';
 import React, { useMemo } from 'react';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import noop from 'lodash/noop';
 
-import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
 
 export const AssetSummary = ({
   query = '',
@@ -42,11 +41,8 @@ export const AssetSummary = ({
     query,
     assetFilter: filter,
   });
-  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
 
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -100,6 +96,7 @@ export const AssetSummary = ({
         renderCellSubComponent={
           isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
         }
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>
   );

@@ -1,8 +1,11 @@
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
-  useDeepMemo,
+  useDebouncedState,
+  useMetrics,
 } from '@data-exploration-lib/core';
-import { useDocumentAggregateAuthorQuery } from '@data-exploration-lib/domain-layer';
+import { useDocumentsFilterOptions } from '@data-exploration-lib/domain-layer';
+import { InputActionMeta } from 'react-select';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
@@ -12,7 +15,9 @@ interface BaseAuthorFilterProps<TFilter>
     CommonFilterProps {
   value?: string[];
   onChange?: (type: string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  query?: string;
 }
 
 export interface AuthorFilterProps<TFilter>
@@ -28,15 +33,28 @@ export function AuthorFilter<TFilter>({
   value,
   ...rest
 }: AuthorFilterProps<TFilter>) {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    authors: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(authors.map((author) => author.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: authors,
+      title,
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       label={title}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, authors) =>
-        onChange?.(authors.map((author) => author.value))
-      }
+      onChange={(_, authors) => handleChange(authors)}
       isMulti
     />
   );
@@ -45,20 +63,19 @@ export function AuthorFilter<TFilter>({
 const AuthorFilterFile = (
   props: BaseAuthorFilterProps<InternalDocumentFilter>
 ) => {
-  const { data = [], isLoading, isError } = useDocumentAggregateAuthorQuery();
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = useDeepMemo(
-    () =>
-      data.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [data]
-  );
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: 'author',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
+
   return (
     <AuthorFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

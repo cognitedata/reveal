@@ -18,6 +18,7 @@ export type DocumentProperties = {
   id: number;
   metadata: string;
   assetIds: number[];
+  labels: { externalId: string }[];
   [key: `sourceFile|metadata|${string}`]: string;
 };
 
@@ -33,6 +34,7 @@ export const mapFiltersToDocumentSearchFilters = (
     assetSubtreeIds,
     internalId,
     metadata,
+    labels,
   }: InternalDocumentFilter,
   query?: string,
   searchConfig: FileConfigType = getSearchConfig().file
@@ -48,7 +50,11 @@ export const mapFiltersToDocumentSearchFilters = (
         return acc;
       }, [] as number[]);
     })
-
+    .containsAny('labels', () => {
+      return labels?.reduce((acc, { value }) => {
+        return [...acc, { externalId: value }];
+      }, [] as { externalId: string }[]);
+    })
     .in('author', author)
     .in('sourceFile|source', source)
     .in('type', type)
@@ -72,13 +78,15 @@ export const mapFiltersToDocumentSearchFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<DocumentProperties>();
     for (const { key, value } of metadata) {
       if (value === METADATA_ALL_VALUE) {
-        filterBuilder.exists(`sourceFile|metadata|${key}`);
+        metadataBuilder.exists(`sourceFile|metadata|${key}`);
       } else {
-        filterBuilder.equals(`sourceFile|metadata|${key}`, value);
+        metadataBuilder.equals(`sourceFile|metadata|${key}`, value);
       }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
@@ -111,6 +119,8 @@ export const mapFiltersToDocumentSearchFilters = (
 
     if (searchConfig['sourceFile|metadata'].enabled) {
       // @ts-ignore
+      searchQueryBuilder.equals('sourceFile|metadata', query);
+      // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|metadata', query);
     }
 
@@ -119,10 +129,13 @@ export const mapFiltersToDocumentSearchFilters = (
     }
 
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals('externalId', query);
       searchQueryBuilder.prefix('externalId', query);
     }
 
     if (searchConfig['sourceFile|source'].enabled) {
+      // @ts-ignore
+      searchQueryBuilder.equals('sourceFile|source', query);
       // @ts-ignore
       searchQueryBuilder.prefix('sourceFile|source', query);
     }

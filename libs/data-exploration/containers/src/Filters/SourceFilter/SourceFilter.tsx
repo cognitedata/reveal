@@ -1,7 +1,7 @@
 import {
-  useAssetsUniqueValuesByProperty,
-  useDocumentAggregateSourceQuery,
-  useEventsUniqueValuesByProperty,
+  useAssetsFilterOptions,
+  useDocumentsFilterOptions,
+  useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -13,13 +13,15 @@ import {
 } from '../types';
 
 import {
+  DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
   InternalDocumentFilter,
   InternalEventsFilters,
-  useDeepMemo,
+  useDebouncedState,
+  useMetrics,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
-import { useState } from 'react';
+import { InputActionMeta } from 'react-select';
 
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {
@@ -31,6 +33,8 @@ interface BaseFileSourceFilterProps<TFilter>
     CommonFilterProps {
   value?: string[];
   onChange?: (subtype: string[]) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
+  query?: string;
   addNilOption?: boolean;
 }
 export interface FileSourceFilterProps<TFilter>
@@ -43,13 +47,28 @@ export const SourceFilter = <TFilter,>({
   onChange,
   ...rest
 }: SourceFilterProps<TFilter>) => {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    sources: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(sources);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: sources,
+      title: 'Source Filter',
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
       addNilOption
       label="Source"
       options={options}
-      onChange={(_, newSources) => onChange?.(newSources)}
+      onChange={(_, newSources) => handleChange(newSources)}
     />
   );
 };
@@ -60,6 +79,21 @@ export const BaseFileSourceFilter = <TFilter,>({
   value,
   ...rest
 }: FileSourceFilterProps<TFilter>) => {
+  const trackUsage = useMetrics();
+
+  const handleChange = (
+    newSources: {
+      label: string;
+      value: string;
+    }[]
+  ) => {
+    onChange?.(newSources.map((source) => source.value));
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
+      value: newSources,
+      title: 'File Source',
+    });
+  };
+
   return (
     <MultiSelectFilter<string>
       {...rest}
@@ -67,9 +101,7 @@ export const BaseFileSourceFilter = <TFilter,>({
       label="Source"
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
-      onChange={(_, newSources) =>
-        onChange?.(newSources.map((source) => source.value))
-      }
+      onChange={(_, newSources) => handleChange(newSources)}
     />
   );
 };
@@ -77,30 +109,22 @@ export const BaseFileSourceFilter = <TFilter,>({
 const AssetSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useAssetsUniqueValuesByProperty('source', query);
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
+  const { options, isLoading, isError } = useAssetsFilterOptions({
+    property: 'source',
+    filterProperty: 'sources',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <SourceFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
-      onInputChange={(newValue) => setQuery(newValue)}
       options={options}
     />
   );
@@ -109,25 +133,20 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useEventsUniqueValuesByProperty('source');
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
+  const { options, isLoading, isError } = useEventsFilterOptions({
+    property: 'source',
+    filterProperty: 'sources',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <SourceFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -138,25 +157,19 @@ const EventSourceFilter = (
 export const FileSourceFilter = (
   props: BaseFileSourceFilterProps<InternalDocumentFilter>
 ) => {
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useDocumentAggregateSourceQuery();
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: ['sourceFile', 'source'],
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <BaseFileSourceFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

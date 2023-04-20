@@ -10,8 +10,10 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
 import { getMIMEType, sleep } from '@data-exploration-components/utils';
 import { GCSUploader } from './GCSUploader';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 const { confirm } = Modal;
 const currentUploads: { [key: string]: any } = {};
@@ -26,6 +28,7 @@ type Props = {
   onUploadSuccess: (file: FileUploadResponse) => void;
   beforeUploadStart: () => void;
   assetIds?: number[];
+  dataSetId?: number;
 };
 
 export const DocumentUploadButtons: React.FC<Props> = ({
@@ -38,6 +41,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
   onUploadSuccess,
   beforeUploadStart,
   assetIds,
+  dataSetId,
 }: Props) => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
@@ -75,7 +79,8 @@ export const DocumentUploadButtons: React.FC<Props> = ({
       onUploadSuccess,
       beforeUploadStart,
       sdk,
-      assetIds
+      assetIds,
+      dataSetId
     );
 
     trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.FILE_UPLOAD_READY, {
@@ -210,7 +215,8 @@ export const startUpload = async (
   onUploadSuccess: (file: FileUploadResponse) => void,
   beforeUploadStart: () => void,
   sdk: CogniteClient,
-  assetIds?: number[]
+  assetIds?: number[],
+  dataSetId?: number
 ) => {
   if (uploadStatus !== STATUS.READY) {
     return;
@@ -232,6 +238,7 @@ export const startUpload = async (
     const fileMetadata = (await sdk.files.upload({
       name: file.name,
       mimeType: mimeType || fallbackMimeType,
+      dataSetId: dataSetId,
       source: 'Cognite Data Fusion',
       ...(assetIds && { assetIds }),
     })) as FileUploadResponse;

@@ -8,12 +8,14 @@ import {
   EventProperty,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import { useMemo } from 'react';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  InternalEventsFilters,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 export const AggregatedEventFilterV2 = ({
   field,
@@ -32,7 +34,10 @@ export const AggregatedEventFilterV2 = ({
 }): JSX.Element => {
   const trackUsage = useMetrics();
 
-  const { data = [] } = useEventsUniqueValuesByProperty(field, filter);
+  const { data = [] } = useEventsUniqueValuesByProperty({
+    property: field,
+    filter,
+  });
 
   const options = useMemo(() => {
     return data.map(({ value: eventType, count }) => ({

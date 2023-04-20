@@ -86,13 +86,15 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     });
 
   if (metadata) {
+    const metadataBuilder = new AdvancedFilterBuilder<TimeseriesProperties>();
     for (const { key, value } of metadata) {
       if (value === METADATA_ALL_VALUE) {
-        filterBuilder.exists(`metadata|${key}`);
+        metadataBuilder.exists(`metadata|${key}`);
       } else {
-        filterBuilder.equals(`metadata|${key}`, value);
+        metadataBuilder.equals(`metadata|${key}`, value);
       }
     }
+    filterBuilder.or(metadataBuilder);
   }
 
   builder.and(filterBuilder);
@@ -119,11 +121,12 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       }
     }
 
-    /**
-     * We want to filter all the metadata keys with the search query, to give a better result
-     * to the user when using our search.
-     */
     if (searchConfig.metadata.enabled) {
+      /**
+       * We want to filter all the metadata keys with the search query, to give a better result
+       * to the user when using our search.
+       */
+      searchQueryBuilder.equals(`metadata`, query);
       searchQueryBuilder.prefix(`metadata`, query);
     }
 
@@ -132,10 +135,12 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     }
 
     if (searchConfig.unit.enabled) {
+      searchQueryBuilder.equals(`unit`, query);
       searchQueryBuilder.prefix('unit', query);
     }
 
     if (searchConfig.externalId.enabled) {
+      searchQueryBuilder.equals(`externalId`, query);
       searchQueryBuilder.prefix('externalId', query);
     }
 

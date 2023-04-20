@@ -14,6 +14,7 @@ import {
 import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
+import { Divider } from '@cognite/cogs.js';
 
 import {
   Image360DatasetOptions,
@@ -233,16 +234,22 @@ const SecondaryModelDropdown = ({
   return (
     <MenuWrapper>
       <StyledInput
+        autoFocus
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search"
-        value={searchQuery}
+        value={searchQuery || ''}
+        onKeyDown={(e) => {
+          // Need to stop propagation to fix losing focus
+          // Check https://github.com/mui/material-ui/issues/19096#issuecomment-570918052
+          e.stopPropagation();
+        }}
       />
       <MainThreeDModelMenuItem
         model={mainModel}
         image360SiteData={mainImage360Data}
         revision={mainRevision}
       />
-
+      <Divider />
       <StyledSecondaryModelListContainer onScroll={handleImages360Scroll}>
         {viewer && filteredImages360SiteIds.length ? (
           <>
@@ -265,7 +272,7 @@ const SecondaryModelDropdown = ({
           <></>
         )}
       </StyledSecondaryModelListContainer>
-      <Menu.Divider />
+      <Divider />
       <StyledSecondaryModelListContainer onScroll={handleSecondaryModelScroll}>
         {viewer && filteredModels.length ? (
           <>
@@ -290,7 +297,7 @@ const SecondaryModelDropdown = ({
           </StyledNoResultsContainer>
         )}
       </StyledSecondaryModelListContainer>
-      <Menu.Divider />
+      <Divider />
       <StyledApplyButton
         disabled={!canApply && !canApplyImages360}
         onClick={handleApply}
@@ -323,6 +330,7 @@ const StyledNoResultsContainer = styled.div`
 
 const StyledInput = styled(Input)`
   margin-bottom: 8px;
+  line-height: 36px;
 `;
 
 export default SecondaryModelDropdown;

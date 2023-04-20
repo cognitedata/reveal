@@ -21,6 +21,7 @@ export interface FilterState {
 }
 
 export interface FilterProps {
+  query: string;
   filter: FilterState;
   onFilterChange: (
     resourceType: FilterResourceType,

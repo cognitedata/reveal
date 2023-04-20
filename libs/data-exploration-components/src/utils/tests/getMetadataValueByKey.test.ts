@@ -1,5 +1,4 @@
-import { DASH } from '../constants';
-import { getMetadataValueByKey } from '../getMetadataValueByKey';
+import { DASH, getMetadataValueByKey } from '@data-exploration-lib/core';
 
 describe('getMetadataValueByKey', () => {
   const metadata = { Key1: 'value1', key2: 'value2', KEY3: 'value3' };

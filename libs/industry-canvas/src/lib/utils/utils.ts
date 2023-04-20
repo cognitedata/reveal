@@ -1,106 +1,58 @@
-import { ContainerConfig } from '@cognite/unified-file-viewer';
+import { CogniteClient } from '@cognite/sdk/dist/src/index';
+import containerConfigToContainerReference from '../containerConfigToContainerReference';
+import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
+import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
 import {
   IndustryCanvasState,
-  ContainerReference,
-  ContainerReferenceType,
+  SerializedIndustryCanvasState,
+  IndustryCanvasContainerConfig,
+  SerializedCanvasDocument,
+  CanvasDocument,
 } from '../types';
-import assertNever from './assertNever';
 
-export const getContainerId = (
-  containerReference: ContainerReference
-): string => {
-  if (containerReference.type === ContainerReferenceType.FILE) {
-    return `${containerReference.resourceId}-${containerReference.page}`;
-  }
-
-  if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-    return `${containerReference.resourceId}-${containerReference.id}`;
-  }
-
-  if (containerReference.type === ContainerReferenceType.ASSET) {
-    return `${containerReference.resourceId}`;
-  }
-
-  if (containerReference.type === ContainerReferenceType.THREE_D) {
-    return `${containerReference.id}`;
-  }
-
-  assertNever(containerReference, 'Unsupported container reference type');
+export const serializeCanvasState = (
+  state: IndustryCanvasState
+): SerializedIndustryCanvasState => {
+  return {
+    canvasAnnotations: state.canvasAnnotations,
+    containerReferences:
+      state.container.children?.map((childContainerConfig) =>
+        containerConfigToContainerReference(childContainerConfig)
+      ) ?? [],
+  };
 };
 
-export const getContainerReferencesWithUpdatedDimensions = (
-  containerReferences: ContainerReference[],
-  container: ContainerConfig
-): ContainerReference[] => {
-  const containerReferencesById = new Map(
-    containerReferences.map((containerReference) => [
-      getContainerId(containerReference),
-      containerReference,
-    ])
-  );
-
-  container.children?.forEach((child) => {
-    const containerReference = containerReferencesById.get(child.id ?? '');
-
-    if (containerReference === undefined) {
-      return;
-    }
-
-    containerReference.x = child.x ?? containerReference.x;
-    containerReference.y = child.y ?? containerReference.y;
-    containerReference.width = child.width;
-    containerReference.height = child.height;
-  });
-
-  return Array.from(containerReferencesById.values());
-};
-
-const deserializeCanvasState = (value: string): IndustryCanvasState => {
+export const deserializeCanvasState = async (
+  sdk: CogniteClient,
+  state: SerializedIndustryCanvasState
+): Promise<IndustryCanvasState> => {
   try {
-    const canvasState = JSON.parse(value) as IndustryCanvasState;
-    const containerReferences = canvasState.containerReferences.map(
-      (containerReference) => {
-        if (containerReference.type === ContainerReferenceType.TIMESERIES) {
-          // We need to convert the dates to Date objects since they are serialized as strings
-          return {
-            ...containerReference,
-            startDate: new Date(containerReference.startDate),
-            endDate: new Date(containerReference.endDate),
-          };
-        }
-
-        return containerReference;
-      }
-    );
-
     return {
-      containerReferences,
-      canvasAnnotations: canvasState.canvasAnnotations,
+      canvasAnnotations: state.canvasAnnotations,
+      container: {
+        ...EMPTY_FLEXIBLE_LAYOUT,
+        children: await Promise.all(
+          state.containerReferences?.map((containerReference) =>
+            resolveContainerConfig(sdk, containerReference)
+          )
+        ),
+      } as IndustryCanvasContainerConfig,
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
     return {
-      containerReferences: [],
+      container: EMPTY_FLEXIBLE_LAYOUT,
       canvasAnnotations: [],
     };
   }
 };
 
-const CANVAS_STATE_KEY = 'COGNITE_CANVAS_STATE';
-
-export const loadCanvasState = (): IndustryCanvasState | null => {
-  const canvasStateString = localStorage.getItem(CANVAS_STATE_KEY);
-  if (canvasStateString === null) {
-    return null;
-  }
-
-  return deserializeCanvasState(canvasStateString);
-};
-
-export const saveCanvasState = (canvasState: IndustryCanvasState): void => {
-  localStorage.setItem(CANVAS_STATE_KEY, JSON.stringify(canvasState));
-};
-
-export const clearCanvasState = (): void => {
-  localStorage.removeItem(CANVAS_STATE_KEY);
+export const deserializeCanvasDocument = async (
+  sdk: CogniteClient,
+  canvasDocument: SerializedCanvasDocument
+): Promise<CanvasDocument> => {
+  return {
+    ...canvasDocument,
+    data: await deserializeCanvasState(sdk, canvasDocument.data),
+  };
 };

@@ -21,6 +21,12 @@ export const mixerApiBuiltInTypes = [
     fieldDirective: false,
   },
   {
+    name: 'import',
+    type: 'DIRECTIVE',
+    body: 'directive @import on OBJECT | INTERFACE',
+    fieldDirective: false,
+  },
+  {
     name: 'view',
     type: 'DIRECTIVE',
     body: 'directive @view(space: String, version: String) on OBJECT | INTERFACE',

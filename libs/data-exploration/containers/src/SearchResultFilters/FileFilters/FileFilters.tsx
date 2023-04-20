@@ -13,8 +13,14 @@ import {
   TypeFilter,
 } from '../../Filters';
 
+export interface FileFilterProps extends FilterProps {
+  enableDocumentLabelsFilter?: boolean;
+}
+
 // INFO: FileFilters is for documents.
-export const FileFilters: React.FC<FilterProps> = ({
+export const FileFilters: React.FC<FileFilterProps> = ({
+  enableDocumentLabelsFilter,
+  query,
   filter,
   onFilterChange,
   onResetFilterClick,
@@ -29,14 +35,20 @@ export const FileFilters: React.FC<FilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
-        <LabelFilter.File
-          value={filter.document.labels}
-          onChange={(newFilters) =>
-            onFilterChange('document', { labels: newFilters })
-          }
-        />
+        {enableDocumentLabelsFilter && (
+          <LabelFilter.File
+            query={query}
+            filter={filter.document}
+            value={filter.document.labels}
+            onChange={(newFilters) =>
+              onFilterChange('document', { labels: newFilters })
+            }
+          />
+        )}
 
         <TypeFilter.File
+          query={query}
+          filter={filter.document}
           value={filter.document.type}
           onChange={(newFilters) =>
             onFilterChange('document', { type: newFilters })
@@ -44,6 +56,8 @@ export const FileFilters: React.FC<FilterProps> = ({
         />
 
         <AuthorFilter.File
+          query={query}
+          filter={filter.document}
           value={filter.document.author}
           onChange={(newFilters) =>
             onFilterChange('document', { author: newFilters })
@@ -51,6 +65,8 @@ export const FileFilters: React.FC<FilterProps> = ({
         />
 
         <SourceFilter.File
+          query={query}
+          filter={filter.document}
           value={filter.document.source}
           onChange={(newSources) =>
             onFilterChange('document', {

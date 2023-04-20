@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import zIndex from '../../utils/zIndex';
+import { zIndex } from '@data-exploration-lib/core';
 
 export const AssetNodeWrapper = styled.div`
   .node-item {

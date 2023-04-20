@@ -27,3 +27,10 @@ export const TEXT_ANNOTATION_COLOR_MAP = {
   RED: Colors['text-icon--status-critical'],
   BLACK: Colors['text-icon--strong'],
 } as const;
+
+export const STICKY_ANNOTATION_COLOR_MAP = {
+  YELLOW: Colors['decorative--yellow--300'],
+  ORANGE: Colors['decorative--orange--300'],
+  GREEN: Colors['decorative--green--300'],
+  BLUE: Colors['decorative--blue--300'],
+};

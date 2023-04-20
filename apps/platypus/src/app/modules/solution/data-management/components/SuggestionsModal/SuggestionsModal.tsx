@@ -22,6 +22,7 @@ import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 import { TypeColumnSelect } from './TypeColumnSelect';
 import { useSuggestionsGridConfig } from './useSuggestionsGridConfig';
 import { useSuggestionsResult } from './useSuggestionsResult';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export type SuggestionsTableData = {
   id: string;
@@ -48,6 +49,7 @@ export const SuggestionsModal = ({
   dataModelInfo,
   defaultColumn,
 }: SuggestionsModalProps) => {
+  const { track } = useMixpanel();
   const { t } = useTranslation('Suggestions');
 
   const {
@@ -152,14 +154,18 @@ export const SuggestionsModal = ({
           setSelectedRows((currState) =>
             toggleKeyInObject(currState, id, true)
           ),
-        onApprove: (id) =>
+        onApprove: (id) => {
+          track('Suggestions.Approve');
           setApprovedMatch((currState) =>
             toggleKeyInObject(currState, id, true)
-          ),
-        onReject: (id) =>
+          );
+        },
+        onReject: (id) => {
+          track('Suggestions.Reject');
           setApprovedMatch((currState) =>
             toggleKeyInObject(currState, id, false)
-          ),
+          );
+        },
         onSelectAll: (allSelected) => {
           if (allSelected) {
             setSelectedRows(
@@ -188,11 +194,13 @@ export const SuggestionsModal = ({
       gridService,
       isAllSelected,
       tableData,
+      track,
     ]
   );
 
   const onApproved = async () => {
     if (selectedColumn) {
+      track('Suggestions.Save');
       const confirmedMatches = tableData
         .filter((el) => el.isApproved)
         .map((el) => ({
@@ -364,6 +372,7 @@ export const SuggestionsModal = ({
                     icon="Checkmark"
                     data-testid="accept-selection"
                     onClick={() => {
+                      track('Suggestions.Approve', { all: true });
                       setApprovedMatch((currState) => ({
                         ...currState,
                         ...Object.keys(selectedRows).reduce((prev, key) => {
@@ -379,6 +388,7 @@ export const SuggestionsModal = ({
                     icon="Close"
                     data-testid="reject-selection"
                     onClick={() => {
+                      track('Suggestions.Reject', { all: true });
                       setApprovedMatch((currState) => ({
                         ...currState,
                         ...Object.keys(selectedRows).reduce((prev, key) => {

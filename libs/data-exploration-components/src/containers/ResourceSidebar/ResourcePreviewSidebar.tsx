@@ -12,7 +12,7 @@ import {
   ResourceItem,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-import { SearchEmpty } from '@data-exploration-components/graphics';
+import { SearchEmpty } from '@data-exploration/components';
 
 type Props = {
   item?: ResourceItem;
@@ -126,5 +126,5 @@ const ResourcePreviewSidebarContainer = styled.div`
 const CloseButton = styled(Button)`
   position: absolute;
   top: 16px;
-  right: 12px;
+  right: 20px;
 `;

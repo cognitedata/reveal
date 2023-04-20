@@ -1,3 +1,5 @@
+import { usePrevious } from '@data-exploration-components/hooks/index';
+import isEqual from 'lodash/isEqual';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Flex, Input } from '@cognite/cogs.js';
@@ -25,8 +27,8 @@ import {
   InternalAssetFilters,
   InternalFilesFilters,
   InternalTimeseriesFilters,
+  zIndex,
 } from '@data-exploration-lib/core';
-import zIndex from '@data-exploration-components/utils/zIndex';
 import { ExplorationFilterToggle } from '@data-exploration/components';
 
 const Wrapper = styled.div`
@@ -40,9 +42,7 @@ const Wrapper = styled.div`
 `;
 
 const CloseButton = styled(Button)`
-  position: absolute;
-  top: 16px;
-  left: -50px;
+  margin-left: 20px;
   background-color: white;
 `;
 const SidebarWrapper = styled.div`
@@ -54,6 +54,7 @@ const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
   top: 0;
   right: 0;
+  isolation: isolate;
   width: ${(props) => (props.visible ? '80vw' : '0')};
   height: 100%;
   z-index: ${zIndex.DRAWER};
@@ -61,7 +62,6 @@ const Drawer = styled.div<{ visible: boolean }>`
   transition: 0.3s all;
   && > div {
     height: 100%;
-    padding: 16px 16px 12px;
     display: flex;
     flex-direction: column;
   }
@@ -101,6 +101,7 @@ export const ResourceSelectionSidebar = ({
   children?: React.ReactNode;
 } & SelectableItemsProps &
   InitialOldResourceFilterProps) => {
+  const previousResourceTypes = usePrevious(resourceTypes);
   const [assetFilter, setAssetFilter] = useState<InternalAssetFilters>(
     initialAssetFilter || {}
   );
@@ -120,10 +121,15 @@ export const ResourceSelectionSidebar = ({
   const [previewItem, setPreviewItem] = useState<ResourceItem | undefined>(
     undefined
   );
+
   const [showFilter, setShowFilter] = useState(false);
 
   useEffect(() => {
-    if (!resourceTypes.includes(activeKey)) {
+    if (
+      !resourceTypes.includes(activeKey) ||
+      // The resourceType order might have changed
+      !isEqual(previousResourceTypes, resourceTypes)
+    ) {
       setActiveKey(resourceTypes[0]);
     }
   }, [activeKey, resourceTypes]);
@@ -137,7 +143,6 @@ export const ResourceSelectionSidebar = ({
       <Drawer visible={visible}>
         {visible && (
           <div>
-            <CloseButton icon="Close" onClick={() => onClose(false)} />
             {header}
             <SidebarWrapper>
               <Wrapper>
@@ -166,15 +171,29 @@ export const ResourceSelectionSidebar = ({
                       />
                       <VerticalDivider />
                     </>
-                    <Input
-                      icon="Search"
-                      fullWidth
-                      size="large"
-                      iconPlacement="left"
-                      placeholder="Search..."
-                      onChange={(ev) => setQuery(ev.target.value)}
-                      value={query}
-                    />
+                    <InputWrapper>
+                      <Input
+                        size="large"
+                        variant="noBorder"
+                        autoFocus
+                        fullWidth
+                        icon="Search"
+                        placeholder="Search..."
+                        onChange={(ev) => setQuery(ev.target.value)}
+                        value={query}
+                      />
+                    </InputWrapper>
+
+                    {!previewItem && (
+                      <CloseButton
+                        icon="Close"
+                        onClick={() => {
+                          if (previewItem) {
+                            setPreviewItem(undefined);
+                          } else onClose(false);
+                        }}
+                      />
+                    )}
                   </SearchInputContainer>
                   <TabsContainer>
                     <ResourceTypeTabs
@@ -221,10 +240,25 @@ export const ResourceSelectionSidebar = ({
                 <>
                   <Divider.Horizontal />
                   <StyledSpacedRow>
-                    <Button onClick={() => onClose(false)}>Cancel</Button>
                     <div className="spacer" />
-                    <Button type="primary" onClick={() => onClose(true)}>
-                      Select Resources
+                    <Button
+                      type="primary"
+                      disabled={!previewItem}
+                      onClick={() => {
+                        if (selectionMode === 'single') {
+                          if (previewItem) {
+                            onSelect(previewItem);
+                            return;
+                          }
+                        }
+
+                        if (selectionMode === 'multiple') {
+                          onClose(true);
+                          return;
+                        }
+                      }}
+                    >
+                      Add selected resources
                     </Button>
                   </StyledSpacedRow>
                 </>
@@ -253,6 +287,7 @@ const SearchInputContainer = styled(Flex)`
 
 const StyledSpacedRow = styled(SpacedRow)`
   padding: 0 12px;
+  padding-bottom: 8px;
 `;
 const MainSearchContainer = styled.div`
   display: flex;
@@ -280,4 +315,7 @@ const ResourcePreviewSidebarWrapper = styled.div`
   margin: 12px;
   flex: 1;
   border-left: 1px solid var(--cogs-border--muted);
+`;
+const InputWrapper = styled.div`
+  width: 93%;
 `;

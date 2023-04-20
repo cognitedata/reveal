@@ -1,25 +1,47 @@
-import { useQuery } from 'react-query';
-import { useSDK } from '@cognite/sdk-provider';
 import { AnnotationModel } from '@cognite/sdk';
-import { ContainerReference, ContainerReferenceType } from '../types';
+import { useSDK } from '@cognite/sdk-provider';
+import { ContainerConfig, ContainerType } from '@cognite/unified-file-viewer';
+import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 
-const queryKey = (containerReferences: ContainerReference[]) => [
-  'industry-canvas-annotations',
-  containerReferences,
-];
-
-export const useAnnotationsMultiple = (
-  containerReferences: ContainerReference[]
-) => {
+export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
   const sdk = useSDK();
 
+  const queryKey = useMemo(() => {
+    return containerConfigs
+      .filter(
+        (containerConfig) =>
+          containerConfig.type === ContainerType.DOCUMENT ||
+          containerConfig.type === ContainerType.IMAGE
+      )
+      .map((containerConfig) => {
+        if (containerConfig.type === ContainerType.DOCUMENT) {
+          return {
+            resourceId: containerConfig.metadata.resourceId,
+            page: containerConfig.page,
+          };
+        }
+
+        return {
+          resourceId: containerConfig.metadata.resourceId,
+        };
+      });
+  }, [containerConfigs]);
+
   return useQuery(
-    queryKey(containerReferences),
+    queryKey,
     (): Promise<AnnotationModel[][]> =>
       Promise.all(
-        containerReferences.map(async (containerReference) => {
-          if (containerReference.type !== ContainerReferenceType.FILE) {
+        containerConfigs.map(async (containerConfig) => {
+          if (
+            containerConfig.type !== ContainerType.IMAGE &&
+            containerConfig.type !== ContainerType.DOCUMENT
+          ) {
             return [];
+          }
+
+          if (containerConfig.metadata.resourceId === undefined) {
+            throw new Error('Expected resourceId to be defined');
           }
 
           return (
@@ -27,7 +49,9 @@ export const useAnnotationsMultiple = (
               .list({
                 filter: {
                   annotatedResourceType: 'file',
-                  annotatedResourceIds: [{ id: containerReference.resourceId }],
+                  annotatedResourceIds: [
+                    { id: containerConfig.metadata.resourceId },
+                  ],
                 },
                 limit: 1000,
               })
@@ -37,15 +61,22 @@ export const useAnnotationsMultiple = (
           ).filter((annotation) => {
             // @ts-expect-error
             const annotationPageNumber = annotation.data.pageNumber;
-            if (containerReference.page === 1) {
+            if (containerConfig.type === ContainerType.IMAGE) {
+              return true;
+            }
+
+            if (containerConfig.page === 1) {
               return (
                 annotationPageNumber === 1 || annotationPageNumber === undefined
               );
             }
 
-            return containerReference.page === annotationPageNumber;
+            return containerConfig.page === annotationPageNumber;
           });
         })
-      )
+      ),
+    {
+      keepPreviousData: true,
+    }
   );
 };

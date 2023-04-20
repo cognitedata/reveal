@@ -9,31 +9,24 @@ import { TimeseriesTable } from '@data-exploration-components/containers/Timeser
 
 import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 
-import { Flex, Button, Tooltip } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
-import {
-  SearchResultCountLabel,
-  SearchResultToolbar,
-  useResourceResults,
-} from '..';
+import { useResourceResults } from '..';
 
 import {
   InternalTimeseriesData,
+  TableSortBy,
   useTimeseriesAggregateCountQuery,
   useTimeseriesWithAvailableDatapointsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { TableSortBy } from '@data-exploration-components/components/Table';
+
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import {
-  RangePicker,
-  useResultCount,
-} from '@data-exploration-components/components';
-import styled from 'styled-components';
-import { VerticalDivider } from '@data-exploration-components/components/Divider';
+import { useResultCount } from '@data-exploration-components/components';
 import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { TimeseriesTableHeader } from './TimeseriesTableHeader';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -129,48 +122,17 @@ export const TimeseriesSearchResults = ({
         dateRange={dateRange}
         onDateRangeChange={onDateRangeChange}
         tableHeaders={
-          <TimeseriesHeaderContainer
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <SearchResultToolbar
-              type="timeSeries"
-              showCount={showCount}
-              resultCount={
-                <SearchResultCountLabel
-                  loadedCount={timeseries.length}
-                  totalCount={totalDataCount}
-                  resourceType="timeSeries"
-                />
-              }
-            />
-            <Flex alignItems="center" gap={10}>
-              {showDatePicker && (
-                <RangePicker
-                  initialRange={dateRange}
-                  onRangeChanged={onDateRangeChange}
-                >
-                  <Button icon="XAxis" aria-label="Chart Preview logo">
-                    Chart preview{' '}
-                  </Button>
-                </RangePicker>
-              )}
-              <Tooltip
-                content="All loaded timeseries are empty. Button will be enabled when at least 1 timeseries has datapoints"
-                disabled={filteredTimeseries.length !== 0}
-              >
-                <Button
-                  toggled={hideEmptyData}
-                  disabled={filteredTimeseries.length === 0}
-                  onClick={() => setHideEmptyData((prev) => !prev)}
-                >
-                  Hide empty timeseries
-                </Button>
-              </Tooltip>
-
-              <VerticalDivider />
-            </Flex>
-          </TimeseriesHeaderContainer>
+          <TimeseriesTableHeader
+            showCount={showCount}
+            dateRange={dateRange}
+            onDateRangeChange={onDateRangeChange}
+            showDatePicker={showDatePicker}
+            hideEmptyData={hideEmptyData}
+            setHideEmptyData={setHideEmptyData}
+            filteredTimeseriesLength={filteredTimeseries.length}
+            loadedCount={timeseries.length}
+            totalCount={totalDataCount}
+          />
         }
         data={timeseriesData}
         isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
@@ -197,7 +159,3 @@ export const TimeseriesSearchResults = ({
     </>
   );
 };
-
-const TimeseriesHeaderContainer = styled(Flex)`
-  flex: 1;
-`;

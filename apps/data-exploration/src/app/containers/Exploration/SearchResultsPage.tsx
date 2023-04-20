@@ -38,7 +38,7 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
-import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
+// import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
 import {
   useAssetFilters,
   useEventsFilters,
@@ -48,6 +48,10 @@ import {
 } from '@data-exploration-app/store/filter/selectors';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import {
+  useFlagDocumentGPT,
+  useFlagDocumentLabelsFilter,
+} from '@data-exploration-app/hooks';
 import { AllTab } from '@data-exploration-app/containers/All';
 import { useFilterSidebarState } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -58,7 +62,8 @@ import { EventSearchResultView } from '@data-exploration-app/containers/Event/Ev
 import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { routes, ViewType } from '@data-exploration-app/containers/App';
-// import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -75,6 +80,7 @@ function SearchPage() {
   useSequencesMetadataKeys();
 
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const isDocumentsLabelsFilterEnabled = useFlagDocumentLabelsFilter();
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
@@ -90,6 +96,9 @@ function SearchPage() {
   const [eventFilter] = useEventsFilters();
   const [timeseriesFilter] = useTimeseriesFilters();
   const [sequenceFilter] = useSequenceFilters();
+
+  const isDocumentGPTEnabled = useFlagDocumentGPT();
+  const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
 
   const filterMap = useMemo(
     () => ({
@@ -115,14 +124,18 @@ function SearchPage() {
   return (
     <RootHeightWrapper>
       <SearchFiltersWrapper>
-        <SearchFilters
+        <SearchFiltersV2
           enableAdvancedFilters={isAdvancedFiltersEnabled}
+          enableDocumentLabelsFilter={isDocumentsLabelsFilterEnabled}
           resourceType={currentResourceType}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
       </SearchFiltersWrapper>
 
       <MainSearchContainer>
+        {isDocumentGPTEnabled &&
+          currentResourceType === 'file' &&
+          showGPTInfo && <GPTInfobar onClose={() => setShowGPTInfo(false)} />}
         <SearchInputContainer>
           {currentResourceType !== 'threeD' && (
             <>
@@ -134,7 +147,7 @@ function SearchPage() {
             </>
           )}
           <SearchConfigButton
-            style={{ width: '36px', marginRight: '2px' }}
+            style={{ marginRight: '2px' }}
             onClick={() => {
               setShowSearchConfig(true);
             }}
@@ -142,6 +155,15 @@ function SearchPage() {
 
           <ExplorationSearchBar />
         </SearchInputContainer>
+
+        {/* Modal */}
+        <SearchConfig
+          visible={showSearchConfig}
+          onCancel={() => setShowSearchConfig(false)}
+          onSave={() => {
+            setShowSearchConfig(false);
+          }}
+        />
 
         <TabsContainer>
           {isAdvancedFiltersEnabled ? (
@@ -202,13 +224,6 @@ function SearchPage() {
             />
           )}
         </TabsContainer>
-        <SearchConfig
-          visible={showSearchConfig}
-          onCancel={() => setShowSearchConfig(false)}
-          onSave={() => {
-            setShowSearchConfig(false);
-          }}
-        />
 
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>

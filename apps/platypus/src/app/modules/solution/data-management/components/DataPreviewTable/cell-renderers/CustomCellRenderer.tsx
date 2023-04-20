@@ -77,6 +77,8 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
 
   return (
     <Tooltip
+      // disabled for no column type -> built in type (not custom defined) e.g. TimeSeries
+      disabled={!columnType}
       content={
         previewData ? (
           <div key="content">

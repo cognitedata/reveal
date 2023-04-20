@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
 
-import { EMPTY_ARRAY } from '@data-exploration-lib/core';
+import { EMPTY_ARRAY, useDeepEffect } from '@data-exploration-lib/core';
 
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
@@ -37,6 +37,8 @@ export interface OptionsMenuProps {
   footer?: React.ReactNode;
   enableSorting?: boolean;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  onSearchInputChange?: (newValue: string) => void;
+  disableOptionsMenu?: boolean;
   isLoading?: boolean;
 }
 
@@ -46,12 +48,19 @@ export const OptionsMenu = ({
   onChange,
   footer,
   enableSorting,
+  onSearchInputChange,
   useCustomMetadataValuesQuery,
+  disableOptionsMenu,
   isLoading,
 }: OptionsMenuProps) => {
   const [displayOptions, setDisplayOptions] = React.useState(options);
 
+  useDeepEffect(() => {
+    setDisplayOptions(options);
+  }, [options]);
+
   const handleFilterOptions = (searchInputValue: string) => {
+    onSearchInputChange?.(searchInputValue);
     const filteredOptions = filterOptions(options, searchInputValue);
     setDisplayOptions(filteredOptions);
   };
@@ -81,7 +90,7 @@ export const OptionsMenu = ({
         <Dropdown
           key={option.value}
           placement="right-start"
-          // openOnHover
+          openOnHover
           content={
             <ChildOptionsMenu
               parentOptionValue={value}
@@ -92,6 +101,7 @@ export const OptionsMenu = ({
               enableSorting={enableSorting}
             />
           }
+          disabled={disableOptionsMenu}
         >
           <Option
             option={option}

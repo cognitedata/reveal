@@ -11,29 +11,27 @@ import {
   TableStateProps,
 } from '@data-exploration-components/types';
 import {
+  EmptyState,
   HighlightCell,
-  ResourceTableColumns,
   HierarchyExtraRow,
-} from '../../../components';
-import { Table } from '../../../components';
-import { EmptyState } from '../../../components/EmpyState/EmptyState';
-import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
-import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
-
-import { DASH } from '../../../utils';
+  SubCellMatchingLabels,
+  Table,
+} from '@data-exploration/components';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import {
   InternalAssetTreeData,
-  useAssetsMetadataKeys,
+  useRootAssetsQuery,
+  useSearchAssetTree,
 } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 import {
+  DASH,
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -65,7 +63,7 @@ export const AssetTreeTable = ({
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
   const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 
-  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
   const rootExpandedKeys = useMemo(() => {
     return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
@@ -95,10 +93,6 @@ export const AssetTreeTable = ({
       Object.values(filter).filter(Boolean).length === 0
     );
   }, [query, filter]);
-
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
-  }, [metadataKeys]);
 
   const columns = React.useMemo(
     () =>
@@ -136,7 +130,7 @@ export const AssetTreeTable = ({
               <HighlightCell
                 text={getValue<string>() || DASH}
                 lines={1}
-                query=""
+                query={query}
               />
             </div>
           ),
@@ -144,8 +138,8 @@ export const AssetTreeTable = ({
             isExpandable: true,
           },
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         {
           id: 'childCount',
           header:
@@ -170,7 +164,7 @@ export const AssetTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        Table.Columns.source(),
+        Table.Columns.source(query),
         Table.Columns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
@@ -320,6 +314,7 @@ export const AssetTreeTable = ({
           HierarchyExtraRow(row, onAssetSeeMoreClicked)
         }
         renderCellSubComponent={SubCellMatchingLabels}
+        onChangeSearchInput={setMetadataKeyQuery}
       />
     </Suspense>
   );

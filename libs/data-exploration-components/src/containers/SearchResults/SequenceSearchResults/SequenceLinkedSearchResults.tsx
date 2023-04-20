@@ -1,11 +1,11 @@
 import { Sequence } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  MetadataFilterV2,
-  TableSortBy,
-} from '@data-exploration-components/components';
+import { MetadataFilterV2 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  transformNewFilterToOldFilter,
+} from '@data-exploration-lib/domain-layer';
 
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
@@ -13,7 +13,6 @@ import { DefaultPreviewFilter } from '@data-exploration-components/components/Pr
 import { useSequenceSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import {
   SequenceTable,
-  SequenceWithRelationshipLabels,
   useResourceResults,
 } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
@@ -21,6 +20,7 @@ import { useDebounce } from 'use-debounce';
 import {
   InternalCommonFilters,
   InternalSequenceFilters,
+  SequenceWithRelationshipLabels,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 

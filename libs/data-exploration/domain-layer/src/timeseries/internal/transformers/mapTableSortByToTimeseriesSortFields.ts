@@ -1,4 +1,7 @@
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+import {
+  DEFAULT_SCORE_SORTING,
+  TableSortBy,
+} from '@data-exploration-lib/domain-layer';
 import {
   InternalSortBy,
   METADATA_KEY_SEPARATOR,
@@ -7,7 +10,9 @@ import {
 export const mapTableSortByToTimeseriesSortFields = (
   sortBy?: TableSortBy[]
 ): InternalSortBy[] | undefined => {
-  if (!sortBy || sortBy.length === 0) return undefined;
+  if (!sortBy || sortBy.length === 0) {
+    return DEFAULT_SCORE_SORTING;
+  }
 
   if (sortBy.length > 0) {
     return sortBy.map((tableSort) => {

@@ -1,13 +1,5 @@
 import { PageTitle } from '@cognite/cdf-utilities';
-import {
-  Button,
-  Title,
-  Flex,
-  Tooltip,
-  Icon,
-  Colors,
-  toast,
-} from '@cognite/cogs.js';
+import { Button, Flex, Tooltip, Icon, Colors, toast } from '@cognite/cogs.js';
 import {
   isNotUndefined,
   ResourceIcons,
@@ -15,30 +7,32 @@ import {
   useResourceSelector,
 } from '@cognite/data-exploration';
 import {
-  ContainerType,
   isSupportedFileInfo,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
-import dayjs from 'dayjs';
 import { v4 as uuid } from 'uuid';
+import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 
 import { IndustryCanvas } from './IndustryCanvas';
-import { useIndustryCanvasAddContainerReferences } from './hooks/useIndustryCanvasAddContainerReferences';
 import styled from 'styled-components';
 import { TOAST_POSITION } from './constants';
-import {
-  ContainerReferenceType,
-  ContainerReferenceWithoutDimensions,
-} from './types';
 import { useState, useEffect, KeyboardEventHandler } from 'react';
 import useManagedState from './hooks/useManagedState';
-import { clearCanvasState } from './utils/utils';
+import { CanvasTitle } from './components/CanvasTitle';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import CanvasDropdown from './components/CanvasDropdown';
+import {
+  IndustryCanvasProvider,
+  useIndustryCanvasContext,
+} from './IndustryCanvasContext';
+import { ContainerReference } from './types';
+import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
-export const IndustryCanvasPage = () => {
+const IndustryCanvasPageWithoutQueryClientProvider = () => {
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
@@ -47,30 +41,31 @@ export const IndustryCanvasPage = () => {
   const sdk = useSDK();
 
   const {
+    activeCanvas,
+    canvases,
+    isCreatingCanvas,
+    isSavingCanvas,
+    isLoadingCanvas,
+    isListingCanvases,
+    isArchivingCanvas,
+    archiveCanvas,
+    saveCanvas,
+    createCanvas,
+  } = useIndustryCanvasContext();
+
+  const {
     container,
     canvasAnnotations,
-    containerReferences,
     addContainerReferences,
-    updateContainerReference,
-    removeContainerReference,
+    updateContainerById,
+    removeContainerById,
     onDeleteRequest,
     onUpdateRequest,
     undo,
     redo,
     interactionState,
     setInteractionState,
-  } = useManagedState({
-    container: {
-      id: 'flexible-layout-container',
-      type: ContainerType.FLEXIBLE_LAYOUT,
-      children: [],
-    },
-  });
-
-  const onAddContainerReferences = useIndustryCanvasAddContainerReferences({
-    unifiedViewer: unifiedViewerRef,
-    addContainerReferences,
-  });
+  } = useManagedState(unifiedViewerRef);
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
@@ -87,9 +82,24 @@ export const IndustryCanvasPage = () => {
     );
   }, [unifiedViewerRef]);
 
+  const onAddContainerReferences = (
+    containerReferences: ContainerReference[]
+  ) => {
+    addContainerReferences(containerReferences);
+    toast.success(
+      <div>
+        <h4>Resource(s) added to your canvas</h4>
+      </div>,
+      {
+        toastId: `canvas-file-added-${uuid()}`,
+        position: TOAST_POSITION,
+      }
+    );
+  };
+
   const onAddResourcePress = () => {
     openResourceSelector({
-      resourceTypes: ['file', 'timeSeries', 'asset'],
+      resourceTypes: ['file', 'timeSeries', 'asset', 'event'],
       selectionMode: 'multiple',
       onSelect: () => {
         // It's a required prop, but we don't really want to do anything on
@@ -145,49 +155,11 @@ export const IndustryCanvasPage = () => {
           return;
         }
 
-        const containerReferencesToAdd: ContainerReferenceWithoutDimensions[] =
-          supportedResourceItems.map((supportedResourceItem) => {
-            if (supportedResourceItem.type === 'timeSeries') {
-              return {
-                type: ContainerReferenceType.TIMESERIES,
-                id: uuid(),
-                resourceId: supportedResourceItem.id,
-                startDate: dayjs(new Date())
-                  .subtract(2, 'years')
-                  .startOf('day')
-                  .toDate(),
-                endDate: new Date(),
-              };
-            }
-
-            if (supportedResourceItem.type === 'file') {
-              return {
-                type: ContainerReferenceType.FILE,
-                id: supportedResourceItem.id.toString(),
-                resourceId: supportedResourceItem.id,
-                page: 1,
-              };
-            }
-
-            if (supportedResourceItem.type === 'asset') {
-              return {
-                type: ContainerReferenceType.ASSET,
-                id: supportedResourceItem.id.toString(),
-                resourceId: supportedResourceItem.id,
-              };
-            }
-
-            throw new Error('Unsupported resource type');
-          });
-
-        onAddContainerReferences(containerReferencesToAdd);
+        onAddContainerReferences(
+          supportedResourceItems.map(resourceItemToContainerReference)
+        );
       },
     });
-  };
-
-  const onClearLocalStorage = () => {
-    clearCanvasState();
-    window.location.reload();
   };
 
   const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
@@ -207,16 +179,35 @@ export const IndustryCanvasPage = () => {
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
-            <ResourceIcons type="file" style={{ marginRight: '10px' }} />
-            <Name level="3">Industry Canvas</Name>
+            <ResourceIcons type="file" style={{ marginRight: '5px' }} />
+            <CanvasTitle activeCanvas={activeCanvas} saveCanvas={saveCanvas} />
+            <Button
+              aria-label="CreateCanvasButton"
+              size="medium"
+              type="primary"
+              icon="Plus"
+              loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
+              style={{ marginLeft: '10px' }}
+              onClick={() => {
+                createCanvas({
+                  canvasAnnotations: [],
+                  container: EMPTY_FLEXIBLE_LAYOUT,
+                });
+              }}
+            >
+              Create new canvas
+            </Button>
+            <CanvasDropdown
+              activeCanvas={activeCanvas}
+              canvases={canvases}
+              archiveCanvas={archiveCanvas}
+              isArchivingCanvas={isArchivingCanvas}
+              isListingCanvases={isListingCanvases}
+            />
           </Flex>
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Button onClick={onClearLocalStorage}>
-            <Icon type="Delete" /> Clear Canvas
-          </Button>
-
           <Tooltip content="Undo">
             <Button
               type="ghost"
@@ -261,14 +252,24 @@ export const IndustryCanvasPage = () => {
           interactionState={interactionState}
           setInteractionState={setInteractionState}
           container={container}
-          updateContainerReference={updateContainerReference}
-          containerReferences={containerReferences}
+          updateContainerById={updateContainerById}
+          removeContainerById={removeContainerById}
           canvasAnnotations={canvasAnnotations}
-          removeContainerReference={removeContainerReference}
           onRef={setUnifiedViewerRef}
         />
       </PreviewTabWrapper>
     </>
+  );
+};
+
+export const IndustryCanvasPage = () => {
+  const queryClient = new QueryClient();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <IndustryCanvasProvider>
+        <IndustryCanvasPageWithoutQueryClientProvider />
+      </IndustryCanvasProvider>
+    </QueryClientProvider>
   );
 };
 
@@ -285,12 +286,6 @@ const TitleRowWrapper = styled.div`
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
-`;
-
-const Name = styled(Title)`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 `;
 
 const StyledGoBackWrapper = styled.div`

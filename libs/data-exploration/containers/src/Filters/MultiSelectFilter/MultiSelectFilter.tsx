@@ -16,6 +16,7 @@ import {
 } from '@data-exploration/components';
 import { InputActionMeta } from 'react-select';
 import { MultiSelectOptionType } from '../types';
+import compact from 'lodash/compact';
 
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {
@@ -48,10 +49,18 @@ export const MultiSelectFilter = <ValueType,>({
   ...rest
 }: MultiSelectFilterProps<ValueType>) => {
   const handleChange = (newOptions: OptionType<ValueType | undefined>[]) => {
-    const selectedOptions = newOptions.map((option) => ({
-      label: isNilOption(option) ? NIL_FILTER_LABEL : option.label,
-      value: option.value as ValueType,
-    }));
+    const selectedOptions = compact(
+      newOptions.map((option) => {
+        if (option.count === 0) {
+          return null;
+        }
+
+        return {
+          label: isNilOption(option) ? NIL_FILTER_LABEL : option.label,
+          value: option.value as ValueType,
+        };
+      })
+    );
 
     const selectedValues = selectedOptions.map((option) => option.value);
 

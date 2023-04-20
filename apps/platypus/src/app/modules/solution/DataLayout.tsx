@@ -11,6 +11,7 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
+import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({
@@ -78,6 +79,7 @@ export const DataLayout = () => {
       <Route
         element={
           <StyledPageWrapper data-testid="data_model_page_wrapper">
+            <NavigationDataModel />
             <PageLayout>
               <PageLayout.Navigation>
                 <SideBarMenu items={sideBarMenuItems} />

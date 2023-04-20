@@ -1,38 +1,44 @@
+import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  ContainerConfig,
+  ContainerType,
+  UnifiedViewer,
+  UnifiedViewerEventListenerMap,
+  UnifiedViewerEventType,
+  UnifiedViewerMouseEvent,
+} from '@cognite/unified-file-viewer';
 import {
   Dispatch,
   SetStateAction,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
-
-import {
-  ContainerType,
-  ContainerConfig,
-  UnifiedViewerEventListenerMap,
-  UnifiedViewerEventType,
-} from '@cognite/unified-file-viewer';
-import {
-  loadCanvasState,
-  getContainerId,
-  getContainerReferencesWithUpdatedDimensions,
-  saveCanvasState,
-} from '../utils/utils';
+import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
   CanvasAnnotation,
   ContainerReference,
-  ContainerReferenceWithoutDimensions,
+  SerializedCanvasDocument,
+  IndustryCanvasContainerConfig,
+  IndustryCanvasState,
 } from '../types';
-import { useShamefullySyncContainerFromContainerReferences } from './useShamefullySyncContainerFromContainerReferences';
+import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
 import {
-  useHistory,
+  deserializeCanvasDocument,
+  serializeCanvasState,
+} from '../utils/utils';
+import {
   UseCanvasStateHistoryReturnType,
+  useHistory,
 } from './useCanvasStateHistory';
+import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
   hoverId: string | undefined;
-  clickedContainer: ContainerReference | undefined;
+  clickedContainerId: string | undefined;
   selectedAnnotationId: string | undefined;
 };
 
@@ -43,26 +49,26 @@ type DeleteHandlerFn =
   UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_DELETE_REQUEST];
 
 export type UseManagedStateReturnType = {
-  container: ContainerConfig;
+  container: IndustryCanvasContainerConfig;
   canvasAnnotations: CanvasAnnotation[];
-  containerReferences: ContainerReference[];
   addContainerReferences: (containerReference: ContainerReference[]) => void;
-  updateContainerReference: (
-    containerReference: ContainerReferenceWithoutDimensions
-  ) => void;
-  removeContainerReference: (containerReference: ContainerReference) => void;
   onUpdateRequest: UpdateHandlerFn;
   onDeleteRequest: DeleteHandlerFn;
   interactionState: InteractionState;
   setInteractionState: Dispatch<SetStateAction<InteractionState>>;
   redo: UseCanvasStateHistoryReturnType['redo'];
   undo: UseCanvasStateHistoryReturnType['undo'];
+  updateContainerById: (
+    containerId: string,
+    container: Partial<IndustryCanvasContainerConfig>
+  ) => void;
+  removeContainerById: (containerId: string) => void;
 };
 
-const transformRecursive = (
-  container: ContainerConfig,
-  transform: (fn: ContainerConfig) => ContainerConfig
-): ContainerConfig =>
+const transformRecursive = <T extends { children?: T[] }>(
+  container: T,
+  transform: (fn: T) => T
+): T =>
   transform({
     ...container,
     ...(container.children !== undefined && Array.isArray(container.children)
@@ -74,10 +80,10 @@ const transformRecursive = (
       : {}),
   });
 
-const removeRecursive = (
-  container: ContainerConfig,
-  shouldRemoveContainer: (fn: ContainerConfig) => boolean
-): ContainerConfig => ({
+const removeRecursive = <T extends { id?: string; children?: T[] | undefined }>(
+  container: T,
+  shouldRemoveContainer: (fn: T) => boolean
+): T => ({
   ...container,
   ...(container.children !== undefined && Array.isArray(container.children)
     ? {
@@ -88,10 +94,10 @@ const removeRecursive = (
     : {}),
 });
 
-const mergeIfMatchById = <T extends { id?: string }>(
+const mergeIfMatchById = <T extends { id: string }, U extends { id: string }>(
   array: T[],
-  element: T
-) => {
+  element: U
+): U => {
   const foundElement = array.find((arrElem) => arrElem.id === element.id);
 
   if (!foundElement) {
@@ -105,9 +111,9 @@ const mergeIfMatchById = <T extends { id?: string }>(
 };
 
 const getNextUpdatedContainer = (
-  container: ContainerConfig,
+  container: IndustryCanvasContainerConfig,
   updatedContainers: ContainerConfig[]
-): ContainerConfig => {
+): IndustryCanvasContainerConfig => {
   const containerWithNewContainersIfNecessary = addNewContainers(
     container,
     updatedContainers
@@ -120,15 +126,46 @@ const getNextUpdatedContainer = (
   );
 };
 
+const getNextUpdatedAnnotations = (
+  prevAnnotations: CanvasAnnotation[],
+  updatedAnnotations: CanvasAnnotation[]
+): CanvasAnnotation[] => {
+  return [
+    ...prevAnnotations.map((annotation) =>
+      mergeIfMatchById(updatedAnnotations, annotation)
+    ),
+    ...updatedAnnotations.filter(
+      (updatedAnnotation) =>
+        !prevAnnotations.some(
+          (annotation) => annotation.id === updatedAnnotation.id
+        )
+    ),
+  ];
+};
+
+const containerConfigToIndustryCanvasContainerConfig = (
+  containerConfig: ContainerConfig
+): IndustryCanvasContainerConfig => {
+  return {
+    ...containerConfig,
+    metadata: {
+      ...(containerConfig.metadata ?? {}),
+    },
+    // TODO: Remove this cast. For some reason, even when you explicitly set the metadata, it complains about the metadata being optional
+  } as IndustryCanvasContainerConfig;
+};
+
 // NOTE: We assume that the root container is a flexible layout since UFV only
 //       supports updating flexible layouts.
 const addNewContainers = (
-  rootContainer: ContainerConfig,
+  rootContainer: IndustryCanvasContainerConfig,
   containersToAdd: ContainerConfig[]
-): ContainerConfig => {
+): IndustryCanvasContainerConfig => {
   const newContainers = containersToAdd.filter(
     (container) =>
-      !rootContainer.children?.some((child) => container.id === child.id)
+      !rootContainer.children?.some(
+        (child: IndustryCanvasContainerConfig) => container.id === child.id
+      )
   );
   return {
     ...rootContainer,
@@ -136,93 +173,125 @@ const addNewContainers = (
     rootContainer.children !== undefined &&
     Array.isArray(rootContainer.children)
       ? {
-          children: [...rootContainer.children, ...newContainers],
+          children: [
+            ...rootContainer.children,
+            ...newContainers.map(
+              (container): IndustryCanvasContainerConfig =>
+                containerConfigToIndustryCanvasContainerConfig(container)
+            ),
+          ],
         }
       : {}),
   };
 };
 
-const useManagedState = (initialState: {
-  container: ContainerConfig;
-}): UseManagedStateReturnType => {
-  const [container, setContainer] = useState<ContainerConfig>(
-    initialState.container
-  );
-
-  const [interactionState, setInteractionState] = useState<InteractionState>({
-    hoverId: undefined,
-    clickedContainer: undefined,
-    selectedAnnotationId: undefined,
-  });
-
-  const { undo, redo, pushState, replaceState, historyState } = useHistory({
-    saveState: saveCanvasState,
-  });
-
-  const canvasState = useMemo(() => {
-    return historyState.history[historyState.index];
-  }, [historyState]);
-
-  useShamefullySyncContainerFromContainerReferences({
-    containerReferences: canvasState.containerReferences,
-    setContainer,
-    setInteractionState,
-  });
-
-  // Initializing the state from local storage when the component mounts
+const useAutoSaveState = (
+  canvasState: IndustryCanvasState,
+  hasFinishedInitialLoad: boolean,
+  activeCanvas: SerializedCanvasDocument | undefined,
+  saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>
+) => {
   useEffect(() => {
-    const canvasState = loadCanvasState();
-    if (canvasState === null) {
+    if (hasFinishedInitialLoad && activeCanvas !== undefined) {
+      saveCanvas({
+        ...activeCanvas,
+        data: serializeCanvasState(canvasState),
+      });
+    }
+    // activeCanvas will change with every save, so we don't want to include it in the dependency array
+    // if included, it will lead to an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasState, saveCanvas, hasFinishedInitialLoad]);
+};
+
+const useAutoLoadState = (
+  activeCanvas: SerializedCanvasDocument | undefined,
+  replaceState: (state: IndustryCanvasState) => void
+) => {
+  const sdk = useSDK();
+  const hasFinishedInitialLoad = useRef<boolean>(false);
+  const activeCanvasExternalId = activeCanvas?.externalId;
+  useEffect(() => {
+    if (activeCanvasExternalId === undefined) {
       return;
     }
-    replaceState(canvasState);
-  }, [replaceState]);
+    hasFinishedInitialLoad.current = false;
+  }, [activeCanvasExternalId]);
+
+  useEffect(() => {
+    if (activeCanvas === undefined || hasFinishedInitialLoad.current) {
+      return;
+    }
+    (async () => {
+      const deserializedCanvasDocument = await deserializeCanvasDocument(
+        sdk,
+        activeCanvas
+      );
+      replaceState(deserializedCanvasDocument.data);
+      hasFinishedInitialLoad.current = true;
+    })();
+  }, [activeCanvas, replaceState, sdk]);
+
+  return {
+    hasFinishedInitialLoad: hasFinishedInitialLoad.current,
+  };
+};
+
+const usePersistence = (
+  canvasState: IndustryCanvasState,
+  replaceState: (state: IndustryCanvasState) => void
+) => {
+  const { activeCanvas, saveCanvas } = useIndustryCanvasContext();
+  const { hasFinishedInitialLoad } = useAutoLoadState(
+    activeCanvas,
+    replaceState
+  );
+  useAutoSaveState(
+    canvasState,
+    hasFinishedInitialLoad,
+    activeCanvas,
+    saveCanvas
+  );
+};
+
+const useManagedState = (
+  unifiedViewer: UnifiedViewer | null
+): UseManagedStateReturnType => {
+  const sdk = useSDK();
+  const [interactionState, setInteractionState] = useState<InteractionState>({
+    hoverId: undefined,
+    clickedContainerId: undefined,
+    selectedAnnotationId: undefined,
+  });
+  const { canvasState, undo, redo, pushState, replaceState } = useHistory();
+  usePersistence(canvasState, replaceState);
 
   const onUpdateRequest: UpdateHandlerFn = useCallback(
-    ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
-      const { containerReferences, canvasAnnotations } = canvasState;
-      const nextContainer = getNextUpdatedContainer(
-        container,
-        updatedContainers
-      );
-      const nextContainerReferences =
-        getContainerReferencesWithUpdatedDimensions(
-          containerReferences,
-          nextContainer
-        );
-      const nextCanvasAnnotations = [
-        ...canvasAnnotations.map((annotation) =>
-          mergeIfMatchById(updatedAnnotations, annotation)
-        ),
-        ...updatedAnnotations.filter(
-          (updatedAnnotation) =>
-            !canvasAnnotations.some(
-              (annotation) => annotation.id === updatedAnnotation.id
-            )
-        ),
-      ];
+    ({ containers: updatedContainers, annotations: updatedAnnotations }) =>
+      pushState(({ container, canvasAnnotations }) => {
+        // If there is only one annotation in the update set, select it
+        if (updatedAnnotations.length === 1) {
+          setInteractionState({
+            clickedContainerId: undefined,
+            hoverId: undefined,
+            selectedAnnotationId: updatedAnnotations[0].id,
+          });
+        }
 
-      // We want the tooltip to show when creating an annotation
-      if (updatedAnnotations.length === 1) {
-        setInteractionState({
-          clickedContainer: undefined,
-          hoverId: undefined,
-          selectedAnnotationId: updatedAnnotations[0].id,
-        });
-      }
-
-      setContainer(nextContainer);
-      pushState({
-        containerReferences: nextContainerReferences,
-        canvasAnnotations: nextCanvasAnnotations,
-      });
-    },
-    [canvasState, container, pushState]
+        return {
+          container: getNextUpdatedContainer(container, updatedContainers),
+          canvasAnnotations: getNextUpdatedAnnotations(
+            canvasAnnotations,
+            updatedAnnotations
+          ),
+        };
+      }),
+    [pushState]
   );
 
   const onDeleteRequest: DeleteHandlerFn = useCallback(
     ({ annotationIds, containerIds }) => {
-      const { containerReferences, canvasAnnotations } = canvasState;
+      const { container, canvasAnnotations } = canvasState;
 
       const nextCanvasAnnotations = canvasAnnotations.filter(
         (annotation) =>
@@ -234,85 +303,136 @@ const useManagedState = (initialState: {
           )
       );
 
-      const nextContainer = removeRecursive(container, (container) => {
-        return (
-          container.id !== undefined && containerIds.includes(container.id)
-        );
-      });
+      const nextContainer = removeRecursive<IndustryCanvasContainerConfig>(
+        container,
+        (container) => {
+          return (
+            container.id !== undefined && containerIds.includes(container.id)
+          );
+        }
+      );
 
-      const nextContainerReferences =
-        getContainerReferencesWithUpdatedDimensions(
-          containerReferences.filter(
-            (cr) => !containerIds.includes(getContainerId(cr))
-          ),
-          nextContainer
-        );
-
-      setContainer(nextContainer);
       pushState({
-        containerReferences: nextContainerReferences,
+        container: nextContainer,
         canvasAnnotations: nextCanvasAnnotations,
       });
     },
-    [setContainer, container, pushState, canvasState]
+    [canvasState, pushState]
   );
 
-  const removeContainerReference = (containerReference: ContainerReference) => {
-    const { containerReferences, canvasAnnotations } = canvasState;
-    const nextContainerReferences = containerReferences.filter(
-      (cr) => cr.id !== containerReference.id
-    );
-    pushState({
-      containerReferences: nextContainerReferences,
-      canvasAnnotations,
-    });
-  };
+  const attachContainerClickHandler = useCallback(
+    (
+      containerConfig: IndustryCanvasContainerConfig
+    ): IndustryCanvasContainerConfig & {
+      // TODO: Fix this. Row layout etc don't support adding click handlers.
+      onClick: (e: UnifiedViewerMouseEvent) => void;
+    } => ({
+      ...containerConfig,
+      onClick: (e: UnifiedViewerMouseEvent) => {
+        e.cancelBubble = true;
+        setInteractionState({
+          hoverId: undefined,
+          clickedContainerId: containerConfig.id,
+          selectedAnnotationId: undefined,
+        });
+      },
+    }),
+    []
+  );
 
-  const addContainerReferences = (
-    containerReferences: ContainerReference[]
-  ) => {
-    const { containerReferences: prevContainerReferences, canvasAnnotations } =
-      canvasState;
-    const nextContainerReferences = [
-      ...prevContainerReferences,
-      ...containerReferences,
-    ];
-    pushState({
-      containerReferences: nextContainerReferences,
-      canvasAnnotations,
-    });
-  };
-
-  const updateContainerReference = (
-    containerReferenceUpdate: ContainerReferenceWithoutDimensions
-  ) => {
-    const { containerReferences, canvasAnnotations } = canvasState;
-
-    const nextContainerReferences = containerReferences.map(
-      (containerReference) => {
-        if (containerReference.id === containerReferenceUpdate.id) {
-          return {
-            ...containerReference,
-            ...containerReferenceUpdate,
-          } as ContainerReference;
-        }
-        return containerReference;
+  const addContainerReferences = useCallback(
+    async (containerReferences: ContainerReference[]) => {
+      if (unifiedViewer === null) {
+        throw new Error('UnifiedViewer is not initialized');
       }
-    );
 
-    pushState({
-      containerReferences: nextContainerReferences,
-      canvasAnnotations,
-    });
-  };
+      return Promise.all(
+        addDimensionsIfNotExists(unifiedViewer, containerReferences).map(
+          async (containerReference) => {
+            const containerConfig = await resolveContainerConfig(
+              sdk,
+              containerReference
+            );
+
+            pushState((prevState: IndustryCanvasState) => {
+              return {
+                ...prevState,
+                container: {
+                  ...prevState.container,
+                  children: [
+                    ...(prevState.container.children ?? []),
+                    containerConfig,
+                  ],
+                },
+              };
+            });
+          }
+        )
+      );
+    },
+    [unifiedViewer, sdk, pushState]
+  );
+
+  const removeContainerById = useCallback(
+    (containerIdToRemove: string) => {
+      pushState((prevState: IndustryCanvasState) => {
+        return {
+          ...prevState,
+          container: {
+            ...prevState.container,
+            children: [
+              ...(prevState.container.children ?? []).filter(
+                (child) => containerIdToRemove !== child.id
+              ),
+            ],
+          },
+        };
+      });
+    },
+    [pushState]
+  );
+
+  const updateContainerById = useCallback(
+    async (
+      containerId: string,
+      containerConfig: Partial<IndustryCanvasContainerConfig>
+    ) => {
+      pushState((prevState: IndustryCanvasState) => ({
+        ...prevState,
+        container: {
+          ...prevState.container,
+          children: [
+            ...(prevState.container.children ?? []).map((child) =>
+              child.id === containerId
+                ? ({
+                    ...child,
+                    ...containerConfig,
+                  } as IndustryCanvasContainerConfig)
+                : child
+            ),
+          ],
+        },
+      }));
+    },
+    [pushState]
+  );
+
+  const containerWithClickHandlers: IndustryCanvasContainerConfig =
+    useMemo(() => {
+      return {
+        ...canvasState.container,
+        children: canvasState.container.children?.map(
+          attachContainerClickHandler
+        ) as IndustryCanvasContainerConfig[],
+      };
+    }, [attachContainerClickHandler, canvasState.container]);
 
   return {
-    container,
+    container: containerWithClickHandlers,
     canvasAnnotations: canvasState.canvasAnnotations,
-    containerReferences: canvasState.containerReferences,
     addContainerReferences,
-    updateContainerReference,
-    removeContainerReference,
+    removeContainerById,
+    updateContainerById,
     onUpdateRequest,
     onDeleteRequest,
     interactionState,

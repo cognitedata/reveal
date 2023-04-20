@@ -1,5 +1,6 @@
 import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
 import { MatchingLabels } from '../../types';
+import { RelationshipLabels } from '@data-exploration-lib/core';
 
 export interface InternalAssetData {
   id: number;
@@ -27,3 +28,6 @@ export interface InternalAssetTreeData
   children?: InternalAssetTreeData[];
   shouldShowMoreAssetsRow?: boolean;
 }
+
+export type AssetWithRelationshipLabels = RelationshipLabels &
+  InternalAssetDataWithMatchingLabels;

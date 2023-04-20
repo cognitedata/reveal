@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+  TimeDisplay,
+} from '@data-exploration/components';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
@@ -12,20 +13,14 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
-  useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
-import {
-  DASH,
-  getMetadataValueByKey,
-} from '@data-exploration-components/utils';
+import { DASH } from '@data-exploration-lib/core';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
-import {
-  TimeDisplay,
-  ResourceTableColumns,
-} from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
+import { DocumentSummaryPreview } from './DocumentSummaryPreview';
+import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -34,11 +29,14 @@ export type DocumentTableProps = Omit<
 > & {
   query?: string;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+  gptColumnName: string;
+  isDocumentsGPTEnabled?: boolean;
 };
 
 const visibleColumns = [
   'name',
   'content',
+  'summary',
   'type',
   'modifiedTime',
   'createdTime',
@@ -47,15 +45,8 @@ const visibleColumns = [
 
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, onRootAssetClick } = props;
-  const { data: metadataKeys } = useDocumentsMetadataKeys();
-
-  const metadataColumns = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key, (row: any) =>
-        getMetadataValueByKey(key, row?.sourceFile?.metadata)
-      )
-    );
-  }, [metadataKeys]);
+  const { metadataColumns, setMetadataKeyQuery } =
+    useDocumentsMetadataColumns();
 
   const columns = useMemo(
     () =>
@@ -68,17 +59,39 @@ export const DocumentsTable = (props: DocumentTableProps) => {
               fileName: row.original.name || '',
               file: row.original,
             };
-            return <DocumentNamePreview {...fileNamePreviewProps} query="" />;
+            return (
+              <DocumentNamePreview {...fileNamePreviewProps} query={query} />
+            );
           },
         },
         {
           accessorKey: 'content',
           header: 'Content',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return <DocumentContentPreview document={row.original} query="" />;
+            return (
+              <DocumentContentPreview document={row.original} query={query} />
+            );
           },
           enableSorting: false,
         },
+        ...(props.isDocumentsGPTEnabled
+          ? [
+              {
+                accessorKey: 'summary',
+                header: props.gptColumnName,
+                cell: ({ row }: { row: Row<InternalDocument> }) => {
+                  return (
+                    <DocumentSummaryPreview
+                      document={row.original}
+                      query={query}
+                    />
+                  );
+                },
+                enableSorting: true,
+                enableHiding: true,
+              },
+            ]
+          : []),
         {
           accessorKey: 'author',
           id: 'author',
@@ -122,8 +135,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.assets(onRootAssetClick),
-        Table.Columns.externalId(),
-        Table.Columns.id(),
+        Table.Columns.externalId(query),
+        Table.Columns.id(query),
         {
           ...Table.Columns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,
@@ -133,7 +146,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         ...metadataColumns,
       ] as ColumnDef<InternalDocumentWithMatchingLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, metadataColumns]
+    [query, metadataColumns, props.gptColumnName]
   );
 
   // const updatedColumns =
@@ -151,6 +164,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       hiddenColumns={hiddenColumns}
       data={props.data}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
     />
   );
 };

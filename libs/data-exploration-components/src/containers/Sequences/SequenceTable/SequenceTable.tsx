@@ -1,21 +1,18 @@
 import React, { useMemo } from 'react';
 import { Asset, Sequence } from '@cognite/sdk';
 import {
+  SubCellMatchingLabels,
   Table,
   TableProps,
-} from '@data-exploration-components/components/Table/Table';
+} from '@data-exploration/components';
 import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
-import {
-  InternalSequenceDataWithMatchingLabels,
-  useSequencesMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
+import { InternalSequenceDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
+import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
+import { SequenceWithRelationshipLabels } from '@data-exploration-lib/core';
 
-export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 const visibleColumns = [
   'name',
   'externalId',
@@ -38,22 +35,18 @@ export const SequenceTable = ({
   onRootAssetClick,
   ...rest
 }: SequenceTableProps) => {
-  const { data: metadataKeys = [] } = useSequencesMetadataKeys();
+  const { metadataColumns, setMetadataKeyQuery } =
+    useSequencesMetadataColumns();
 
-  const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
-  }, [metadataKeys]);
   const columns = useMemo(
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...Table.Columns.name(query),
           enableHiding: false,
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        Table.Columns.description(query),
+        Table.Columns.externalId(query),
         {
           ...Table.Columns.columns,
           enableSorting: false,
@@ -61,7 +54,7 @@ export const SequenceTable = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id(),
+          ...Table.Columns.id(query),
           enableSorting: false,
         },
         Table.Columns.rootAsset(onRootAssetClick),
@@ -82,6 +75,7 @@ export const SequenceTable = ({
       columns={columns}
       hiddenColumns={hiddenColumns}
       renderCellSubComponent={SubCellMatchingLabels}
+      onChangeSearchInput={setMetadataKeyQuery}
       {...rest}
     />
   );

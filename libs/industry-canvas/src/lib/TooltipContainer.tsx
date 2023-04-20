@@ -9,3 +9,7 @@ export const TooltipContainer = styled.div`
   margin-bottom: 6px;
   display: flex;
 `;
+
+export const TooltipToolBarContainer = styled.div`
+  margin: 18px 0px;
+`;
