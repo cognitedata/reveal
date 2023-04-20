@@ -94,5 +94,8 @@ Cypress.Commands.add('selectDraftVersion', () => {
 });
 
 Cypress.Commands.add('selectLatestVersion', () => {
-  cy.getBySel('schema-version-select').click().contains('Latest').click();
+  cy.getBySel('schema-version-select')
+    .click()
+    .contains('Latest')
+    .click({ force: true });
 });
