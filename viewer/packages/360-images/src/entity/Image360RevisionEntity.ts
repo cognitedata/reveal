@@ -101,22 +101,7 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
-    if (this._annotations === undefined) {
-      this._imageProvider
-        .get360ImageAnnotations(this._image360Descriptor.faceDescriptors)
-        .then(annotationData =>
-          annotationData
-            .map(data => {
-              const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
-              return this.createQuadFromAnnotation(data, faceDescriptor);
-            })
-            .filter(isDefined)
-        )
-        .then(annotations => {
-          this._annotations = annotations;
-          this._image360VisualzationBox.setAnnotations(annotations);
-        });
-    }
+    this.loadAnnotations();
 
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
       async ({ textures, isLowResolution }) => {
@@ -133,6 +118,24 @@ export class Image360RevisionEntity implements Image360Revision {
     async function awaitFullResolution(): Promise<void> {
       await fullResolutionFaces;
     }
+  }
+
+  private async loadAnnotations(): Promise<void> {
+    if (this._annotations !== undefined) {
+      return;
+    }
+
+    const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
+
+    const annotationObjects = annotationData
+      .map(data => {
+        const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
+        return this.createQuadFromAnnotation(data, faceDescriptor);
+      })
+      .filter(isDefined);
+
+    this._annotations = annotationObjects;
+    this._image360VisualzationBox.setAnnotations(annotationObjects);
   }
 
   /**
