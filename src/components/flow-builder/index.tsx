@@ -12,6 +12,7 @@ import ReactFlow, {
   Edge,
   SelectionMode,
   Node,
+  EdgeChange,
 } from 'reactflow';
 
 import styled from 'styled-components';
@@ -52,21 +53,58 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const onEdgesChange: OnEdgesChange = () => {};
+  const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
+    changeFlow((f) => {
+      changes.forEach((change) => {
+        switch (change.type) {
+          case 'select': {
+            const e = f.canvas.edges.find((e) => e.id === change.id);
+            if (e) {
+              e.selected = change.selected;
+            }
+            break;
+          }
+          case 'remove': {
+            const eIndex = f.canvas.edges.findIndex((e) => e.id === change.id);
+            if (eIndex !== -1) {
+              f.canvas.edges.deleteAt(eIndex);
+            }
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+    });
+  };
 
   const onNodesChange = (changes: NodeChange[]) => {
     changeFlow((f) => {
       changes.forEach((change) => {
         switch (change.type) {
           case 'position': {
-            if (change.position) {
-              const i = f.canvas.nodes.findIndex((n) => n.id === change.id);
-              f.canvas.nodes[i].position.x = change.position.x;
-              f.canvas.nodes[i].position.y = change.position.y;
+            const n = f.canvas.nodes.find((n) => n.id === change.id);
+            if (n && change.position) {
+              n.position.x = change.position.x;
+              n.position.y = change.position.y;
             }
             break;
           }
-
+          case 'select': {
+            const n = f.canvas.nodes.find((n) => n.id === change.id);
+            if (n) {
+              n.selected = change.selected;
+            }
+            break;
+          }
+          case 'remove': {
+            const nIndex = f.canvas.nodes.findIndex((n) => n.id === change.id);
+            if (nIndex !== -1) {
+              f.canvas.nodes.deleteAt(nIndex);
+            }
+            break;
+          }
           default: {
             break;
           }
