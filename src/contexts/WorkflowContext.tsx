@@ -13,7 +13,7 @@ import {
 } from 'react';
 
 import * as Automerge from '@automerge/automerge';
-import { debounce, isEqual } from 'lodash';
+import { debounce } from 'lodash';
 
 import { useFlow, useUpdateFlow } from 'hooks/files';
 import { AFlow, CanvasEdges, CanvasNodes } from 'types';
@@ -54,11 +54,18 @@ export const FlowContextProvider = ({
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
 
-  const changeFlow = useCallback((fn: Automerge.ChangeFn<AFlow>) => {
-    const newFlow = Automerge.change(flowRef.current, fn);
-    flowRef.current = newFlow;
-    setFlowState(newFlow);
-  }, []);
+  const { mutate } = useUpdateFlow();
+  const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
+
+  const changeFlow = useCallback(
+    (fn: Automerge.ChangeFn<AFlow>) => {
+      const newFlow = Automerge.change(flowRef.current, fn);
+      flowRef.current = newFlow;
+      setFlowState(newFlow);
+      debouncedMutate(newFlow);
+    },
+    [debouncedMutate]
+  );
 
   const changeNodes = useCallback(
     (fn: AutomergeChangeNodesFn) => {
@@ -80,29 +87,18 @@ export const FlowContextProvider = ({
 
   const { data } = useFlow(externalId, {
     staleTime: 0,
-    refetchInterval: 60000,
+    refetchInterval: 1000,
   });
-
-  const { mutate } = useUpdateFlow();
-
-  const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
-
-  useEffect(() => {
-    if (flowState) {
-      debouncedMutate(flowState);
-    }
-  }, [flowState, debouncedMutate]);
 
   useEffect(() => {
     if (!data) {
       return;
     }
-    if (
-      !isEqual(Automerge.getHeads(flowRef.current), Automerge.getHeads(data))
-    ) {
-      const mergedDoc = Automerge.merge(flowRef.current, data);
-      flowRef.current = mergedDoc;
-      setFlowState(mergedDoc);
+    const changes = Automerge.getChanges(flowRef.current, data);
+    if (changes.length > 0) {
+      const [newFlow] = Automerge.applyChanges(flowRef.current, changes);
+      flowRef.current = newFlow;
+      setFlowState(newFlow);
     }
   }, [data]);
 
