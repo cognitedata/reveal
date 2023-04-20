@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { getAssetTableContainerConfig } from '@cognite/unified-file-viewer';
+import getAssetTableContainerConfig from './getAssetTableContainerConfig';
 import { IndustryCanvasContainerConfig } from '../../types';
 import {
   DEFAULT_ASSET_HEIGHT,
