@@ -74,7 +74,7 @@ export class ImageAnnotationObject {
     this._mesh.matrixAutoUpdate = false;
   }
 
-  getObject(): Object3D {
+  public getObject(): Object3D {
     return this._mesh;
   }
 }
