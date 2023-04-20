@@ -30,6 +30,7 @@ export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
+  private readonly _raycaster = new THREE.Raycaster();
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -92,6 +93,9 @@ export class Image360ApiHelper {
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
 
+    const handleHover = (event: PointerEventData) => this.handleAnnotationHover(event);
+    inputHandler.on('hover', handleHover);
+
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
     const updateHoverStateOnRender = () => {
@@ -110,6 +114,34 @@ export class Image360ApiHelper {
       exit360ImageOnEscapeKey,
       updateHoverStateOnRender
     };
+  }
+
+  private getNormalizedOffset(data: PointerEventData): THREE.Vector2 {
+    return new THREE.Vector2(
+      (data.offsetX / this._domElement.clientWidth) * 2 - 1,
+      1 - (data.offsetY / this._domElement.clientHeight) * 2
+    );
+  }
+
+  private handleAnnotationHover(event: PointerEventData): void {
+    const currentEntity = this._interactionState.currentImage360Entered;
+
+    if (currentEntity === undefined) {
+      return;
+    }
+
+    const point = this.getNormalizedOffset(event);
+
+    this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
+
+    const annotation = currentEntity.intersectAnnotations(this._raycaster);
+
+    if (annotation === undefined) {
+      return;
+    }
+
+    const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
+    collection.fireHoverEvent(annotation);
   }
 
   public async add360ImageSet(

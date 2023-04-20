@@ -3,13 +3,14 @@
  */
 
 import { SceneHandler } from '@reveal/utilities';
-import { Image360FileProvider } from '@reveal/data-providers';
+import { Image360DataProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
 import { Image360, Image360Metadata } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
@@ -48,7 +49,7 @@ export class Image360Entity implements Image360 {
   constructor(
     image360Metadata: Historical360ImageSet,
     sceneHandler: SceneHandler,
-    imageProvider: Image360FileProvider,
+    imageProvider: Image360DataProvider,
     transform: THREE.Matrix4,
     icon: Image360Icon
   ) {
@@ -99,6 +100,10 @@ export class Image360Entity implements Image360 {
     const datedRevisions = this._revisions.filter(revision => revision.date !== undefined);
     const closestDatedRevision = minBy(datedRevisions, revision => Math.abs(revision.date!.getTime() - dateAsNumber));
     return closestDatedRevision ?? this.getMostRecentRevision();
+  }
+
+  public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+    return this._activeRevision.intersectAnnotations(raycaster);
   }
 
   /**
