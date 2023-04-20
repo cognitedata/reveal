@@ -1,24 +1,22 @@
-import { Dispatch, SetStateAction } from 'react';
-
-import { Node } from 'reactflow';
+import { uuid } from '@automerge/automerge';
 
 import { GROUP_PADDING } from 'common';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { CanvasNode } from 'types';
 
-import { ContextMenuItem } from './ContextMenuItem';
 import { WorkflowContextMenu } from './ContextMenu';
+import { ContextMenuItem } from './ContextMenuItem';
 
 type GroupNodesProps = {
   contextMenu?: WorkflowContextMenu;
-  setNodes: Dispatch<SetStateAction<Node[]>>;
 };
 
-export const GroupNodes = ({
-  contextMenu,
-  setNodes,
-}: GroupNodesProps): JSX.Element => {
+export const GroupNodes = ({ contextMenu }: GroupNodesProps): JSX.Element => {
+  const { changeNodes } = useWorkflowBuilderContext();
+
   const handleGroup = (): void => {
     if (contextMenu?.items && contextMenu.type === 'node') {
-      setNodes((prevNodes) => {
+      changeNodes((nodes) => {
         const [minX, minY, maxX, maxY] = contextMenu.items.reduce(
           (acc, cur) => {
             return [
@@ -36,13 +34,8 @@ export const GroupNodes = ({
           ]
         );
 
-        const rest = prevNodes.filter(({ id: testId }) =>
-          contextMenu.items.every(
-            ({ id: groupedNodeId }) => testId !== groupedNodeId
-          )
-        );
-        const parentNode: Node = {
-          id: `${new Date().getTime()}`, // TODO: generate uuid
+        const parentNode: CanvasNode = {
+          id: uuid(),
           type: 'groupNode',
           position: { x: minX - GROUP_PADDING, y: minY - GROUP_PADDING },
           style: {
@@ -52,18 +45,20 @@ export const GroupNodes = ({
           data: {},
         };
 
-        return rest.concat(
-          parentNode,
-          contextMenu.items.map((item) => ({
-            ...item,
-            draggable: false,
-            parentNode: parentNode.id,
-            position: {
+        contextMenu.items.forEach((item) => {
+          const node = nodes.find((node) => node.id === item.id);
+          if (node) {
+            node.draggable = false;
+            node.parentNode = parentNode.id;
+            node.position = {
               x: item.position.x - minX + GROUP_PADDING,
               y: item.position.y - minY + GROUP_PADDING,
-            },
-          }))
-        );
+            };
+          }
+        });
+
+        // parent nodes need to appear before their children in nodes array
+        nodes.insertAt(0, parentNode);
       });
     }
   };
@@ -71,7 +66,9 @@ export const GroupNodes = ({
   if (
     contextMenu?.type === 'node' &&
     contextMenu.items.length > 1 &&
-    contextMenu.items.every(({ type }) => type !== 'groupNode')
+    contextMenu.items.every(
+      ({ parentNode, type }) => type !== 'groupNode' && !parentNode
+    )
   ) {
     return (
       <ContextMenuItem

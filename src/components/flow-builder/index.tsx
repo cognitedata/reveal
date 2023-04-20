@@ -11,6 +11,7 @@ import ReactFlow, {
   NodeChange,
   Edge,
   SelectionMode,
+  Node,
 } from 'reactflow';
 
 import styled from 'styled-components';
@@ -29,11 +30,14 @@ import ContextMenu, {
   WorkflowContextMenu,
 } from 'components/context-menu/ContextMenu';
 import { GroupNode } from 'components/group-node/GroupNode';
+import { CanvasNode } from 'types';
 
 const NODE_TYPES = {
   customNode: CustomNode,
   groupNode: GroupNode,
 };
+
+const DELETE_KEY_CODES = ['Backspace', 'Delete'];
 
 type Props = {};
 export const FlowBuilder = ({}: Props): JSX.Element => {
@@ -158,9 +162,9 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         panOnDrag={false}
         selectionOnDrag
         panOnScroll
-        deleteKeyCode={['Backspace', 'Delete']}
-        edges={flowState.canvas.edges}
-        nodes={flowState.canvas.nodes}
+        deleteKeyCode={DELETE_KEY_CODES}
+        edges={flowState.canvas.edges as Edge[]} // FIXME: can we remove as
+        nodes={flowState.canvas.nodes as Node[]} // FIXME: can we remove as
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
         nodeTypes={NODE_TYPES}
@@ -180,14 +184,14 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         onNodeContextMenu={(e, node) => {
           setContextMenu({
             position: { x: e.clientX, y: e.clientY },
-            items: [node],
+            items: [node as CanvasNode],
             type: 'node',
           });
         }}
         onSelectionContextMenu={(e, nodes) => {
           setContextMenu({
             position: { x: e.clientX, y: e.clientY },
-            items: nodes,
+            items: nodes as CanvasNode[],
             type: 'node',
           });
         }}
@@ -199,9 +203,6 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         containerRef={reactFlowContainer}
         contextMenu={contextMenu}
         onClose={() => setContextMenu(undefined)}
-        setNodes={() => {
-          throw new Error('Function not implemented.');
-        }}
       />
     </Container>
   );

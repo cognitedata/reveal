@@ -1,12 +1,16 @@
-import { Dispatch, RefObject, SetStateAction } from 'react';
+import { RefObject } from 'react';
 
+import { Colors, Elevations } from '@cognite/cogs.js';
 import { Dropdown } from 'antd';
-import { Edge, Node } from 'reactflow';
+import { Edge } from 'reactflow';
 import styled from 'styled-components';
+
 import { Z_INDEXES } from 'common';
+import { CanvasNode } from 'types';
+
 import { ContextMenuItem } from './ContextMenuItem';
 import { GroupNodes } from './GroupNodes';
-import { Colors, Elevations } from '@cognite/cogs.js';
+import { UngroupNodes } from './UngroupNodes';
 
 type WorkflowContextMenuPosition = {
   x: number;
@@ -15,7 +19,7 @@ type WorkflowContextMenuPosition = {
 
 type WorkflowNodeContextMenu = {
   type: 'node';
-  items: Node[];
+  items: CanvasNode[];
 };
 
 type WorkflowEdgeContextMenu = {
@@ -31,14 +35,12 @@ type ContextMenuProps = {
   containerRef: RefObject<HTMLDivElement>;
   contextMenu?: WorkflowContextMenu;
   onClose: () => void;
-  setNodes: Dispatch<SetStateAction<Node[]>>;
 };
 
 const ContextMenu = ({
   containerRef,
   contextMenu,
   onClose,
-  setNodes,
 }: ContextMenuProps): JSX.Element => {
   const handleDelete = (): void => {};
 
@@ -60,7 +62,8 @@ const ContextMenu = ({
             onClick={handleDelete}
             shortcut="⌘+D"
           />
-          <GroupNodes contextMenu={contextMenu} setNodes={setNodes} />
+          <GroupNodes contextMenu={contextMenu} />
+          <UngroupNodes contextMenu={contextMenu} />
         </DropdownContent>
       }
       onOpenChange={(visible) => {

@@ -1,6 +1,3 @@
-import * as Automerge from '@automerge/automerge';
-import { useFlow, useUpdateFlow } from 'hooks/files';
-import { debounce, isEqual } from 'lodash';
 import {
   useState,
   createContext,
@@ -14,7 +11,12 @@ import {
   useMemo,
   useEffect,
 } from 'react';
-import { AFlow } from 'types';
+
+import * as Automerge from '@automerge/automerge';
+import { debounce, isEqual } from 'lodash';
+
+import { useFlow, useUpdateFlow } from 'hooks/files';
+import { AFlow, CanvasEdges, CanvasNodes } from 'types';
 
 type FlowContextT = {
   externalId: string;
@@ -23,6 +25,9 @@ type FlowContextT = {
   changeFlow: (fn: Automerge.ChangeFn<AFlow>) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
+
+  changeNodes: (fn: AutomergeChangeNodesFn) => void;
+  changeEdges: (fn: AutomergeChangeEdgesFn) => void;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -33,6 +38,9 @@ type FlowContextProviderProps = {
   children: ReactNode;
   initialFlow: AFlow;
 };
+
+type AutomergeChangeNodesFn = Automerge.ChangeFn<CanvasNodes>;
+type AutomergeChangeEdgesFn = Automerge.ChangeFn<CanvasEdges>;
 
 export const FlowContextProvider = ({
   externalId,
@@ -49,6 +57,24 @@ export const FlowContextProvider = ({
     flowRef.current = newFlow;
     setFlowState(newFlow);
   }, []);
+
+  const changeNodes = useCallback(
+    (fn: AutomergeChangeNodesFn) => {
+      changeFlow((f) => {
+        fn(f.canvas.nodes);
+      });
+    },
+    [changeFlow]
+  );
+
+  const changeEdges = useCallback(
+    (fn: AutomergeChangeEdgesFn) => {
+      changeFlow((f) => {
+        fn(f.canvas.edges);
+      });
+    },
+    [changeFlow]
+  );
 
   const { data } = useFlow(externalId, {
     staleTime: 0,
@@ -87,6 +113,8 @@ export const FlowContextProvider = ({
         flow: flowState,
         flowRef,
         changeFlow,
+        changeNodes,
+        changeEdges,
       }}
     >
       {children}

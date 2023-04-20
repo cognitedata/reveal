@@ -1,9 +1,18 @@
-import * as Automerge from '@automerge/automerge';
+import {
+  List as AutomergeList,
+  Extend as AutomergeExtend,
+} from '@automerge/automerge';
 import { Edge, Node } from 'reactflow';
 
+export type CanvasNode = AutomergeExtend<Node<any>>; // FIXME: any
+export type CanvasNodes = AutomergeList<CanvasNode>;
+
+export type CanvasEdge = AutomergeExtend<Edge<any>>; // FIXME: any
+export type CanvasEdges = AutomergeList<CanvasEdge>;
+
 export type Canvas = {
-  nodes: Node<any>[];
-  edges: Edge<any>[];
+  nodes: CanvasNodes;
+  edges: CanvasEdges;
 };
 
 export type Flow = {
@@ -14,7 +23,7 @@ export type Flow = {
   canvas: Canvas;
 };
 
-export type AFlow = Automerge.Doc<Flow>;
+export type AFlow = AutomergeExtend<Flow>;
 
 export type Items<T> = {
   items: T[];
