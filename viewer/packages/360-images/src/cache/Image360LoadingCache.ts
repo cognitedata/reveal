@@ -14,6 +14,7 @@ export type DownloadRequest = {
   entity: Image360Entity;
   revision: Image360RevisionEntity;
   anyCompleted: Promise<void>;
+  allCompleted: Promise<boolean>;
   abort: () => void;
 };
 
@@ -38,10 +39,9 @@ export class Image360LoadingCache {
   }
 
   public getDownloadInProgress(revision: Image360RevisionEntity): DownloadRequest | undefined {
-    const inProgressDownload = this._inProgressDownloads.find(download => {
+    return this._inProgressDownloads.find(download => {
       return download.revision === revision;
     });
-    return inProgressDownload;
   }
 
   constructor(private readonly _imageCacheSize = 5, private readonly _downloadCacheSize = 3) {
@@ -74,34 +74,32 @@ export class Image360LoadingCache {
     const { signal, abort } = this.createAbortSignal();
     const { lowResolutionCompleted, fullResolutionCompleted } = revision.loadTextures(signal);
     const anyCompleted = Promise.any([lowResolutionCompleted, fullResolutionCompleted]);
-    const allCompleted = Promise.allSettled([lowResolutionCompleted, fullResolutionCompleted]);
+    const allCompleted = awaitAllCompleted();
 
     this._inProgressDownloads.push({
       entity,
       revision,
       anyCompleted,
+      allCompleted,
       abort
     });
 
-    allCompleted
-      .catch(() => {
-        return Promise.resolve();
-      })
-      .then(() => {
+    allCompleted.then(hasFullResolution => {
+      if (hasFullResolution) {
         this.addRevisionToCache(entity, revision);
-      })
-      .finally(() => {
-        if (this._lockedDownload === revision) {
-          this._lockedDownload = undefined;
-        }
+      }
 
-        remove(this._inProgressDownloads, download => {
-          return download.revision === revision;
-        });
+      if (this._lockedDownload === revision) {
+        this._lockedDownload = undefined;
+      }
+
+      remove(this._inProgressDownloads, download => {
+        return download.revision === revision;
       });
+    });
 
     const readyToEnter = await anyCompleted.catch(e => {
-      if (signal.aborted || e === 'Aborted') {
+      if (signal.aborted) {
         Log.info('360 Image download aborted: ' + e);
         return Promise.resolve();
       } else {
@@ -109,6 +107,11 @@ export class Image360LoadingCache {
       }
     });
     return readyToEnter;
+
+    async function awaitAllCompleted(): Promise<boolean> {
+      const fullResolution = (await Promise.allSettled([lowResolutionCompleted, fullResolutionCompleted]))[1];
+      return fullResolution.status === 'fulfilled';
+    }
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
