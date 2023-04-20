@@ -11,7 +11,7 @@ import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-type FeatureKey = 'manual-population' | 'suggestions';
+type FeatureKey = 'population' | 'suggestions';
 
 export const FeaturePreview = ({
   onRequestClose,
@@ -19,13 +19,12 @@ export const FeaturePreview = ({
   onRequestClose: () => void;
 }) => {
   const { track } = useMixpanel();
-  const [selectedFeature, setFeature] =
-    useState<FeatureKey>('manual-population');
+  const [selectedFeature, setFeature] = useState<FeatureKey>('population');
 
   const [featureStatus, setFeatureStatus] = useState<{
     [key in FeatureKey]: boolean;
   }>({
-    'manual-population': useManualPopulationFeatureFlag().isEnabled,
+    population: useManualPopulationFeatureFlag().isEnabled,
     suggestions: useSuggestionsFeatureFlag().isEnabled,
   });
 
@@ -35,7 +34,7 @@ export const FeaturePreview = ({
   const updateStatusState = (key: FeatureKey, status: boolean) => {
     track('FeatureFlag.Toggle', { key, status });
     switch (key) {
-      case 'manual-population': {
+      case 'population': {
         setManualPopulation(status);
         break;
       }
@@ -52,22 +51,20 @@ export const FeaturePreview = ({
 
   const features: { [key in FeatureKey]: string } = useMemo(
     () => ({
-      'manual-population': 'Manual Population',
-      suggestions: 'Suggestions UI',
+      population: 'Population',
+      suggestions: 'Smart Suggestions',
     }),
     []
   );
   const featuresDetails: { [key in FeatureKey]: React.ReactNode } = useMemo(
     () => ({
-      'manual-population': (
+      population: (
         <>
           <Body level="2">
-            Allow you to manually edit and create new instances.
+            Allows you to manually create new instances. As well you can edit
+            and delete existing instances.
           </Body>
-          <Body level="2">
-            Note: Only currently working with non-list values or direct
-            relations.
-          </Body>
+          <Body level="2">Note: Not yet supported for list values.</Body>
         </>
       ),
       suggestions: (
@@ -77,7 +74,7 @@ export const FeaturePreview = ({
             values of related instances.
           </Body>
           <Body level="2">
-            Recommend to be enabled along side Manual Population
+            Recommend to be enabled alongside Population feature.
           </Body>
         </>
       ),
