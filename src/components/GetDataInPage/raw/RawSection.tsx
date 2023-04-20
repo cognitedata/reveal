@@ -5,7 +5,6 @@ import {
   SetStateAction,
   useState,
 } from 'react';
-import Tag from 'antd/lib/tag';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   FieldLabel,
@@ -21,7 +20,7 @@ import { useQueryClient } from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';
-import { Modal, Input, Icon } from '@cognite/cogs.js';
+import { Modal, Input, Icon, Chip, Flex } from '@cognite/cogs.js';
 import { Col, Row } from 'utils';
 
 interface RawSectionProps {
@@ -134,8 +133,10 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
             {t('raw-section-insufficient-rights-p1')}
             <br /> {t('raw-section-insufficient-rights-p2')}
             <br />
-            <Tag>raw:read</Tag>
-            <Tag>raw:list</Tag>
+            <Flex gap={8}>
+              <Chip label="raw:read" hideTooltip size="x-small" />
+              <Chip label="raw:list" hideTooltip size="x-small" />
+            </Flex>
           </p>
         </BlockedInformationWrapper>
       ) : (

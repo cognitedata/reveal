@@ -8,7 +8,6 @@ import {
   Table,
   Menu,
 } from '@cognite/cogs.js';
-import Tag from 'antd/lib/tag';
 
 import zIndex from 'utils/zIndex';
 import { Card, Row } from './antdStyledComponents';
@@ -161,24 +160,6 @@ export const LabelOrnament = styled.div`
   margin-bottom: 20px;
 `;
 
-export const ValueTag = styled(Tag)`
-  background: #edf0ff;
-  border: 0px;
-  color: #4a67fb;
-  margin: 4px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 17px;
-  padding: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-`;
-
-export const EmptyValueTag = styled(ValueTag)`
-  background: #bfbfbf;
-  color: #595959;
-`;
-
 export const NoDataText = styled.p`
   font-style: italic;
 `;
@@ -194,13 +175,6 @@ export const LineageSubTitle = styled.p`
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
-`;
-
-export const LineageTag = styled(Tag)`
-  background: #f5f5f5;
-  border: 1px solid #dfdfdf;
-  box-sizing: border-box;
-  margin: 5px;
 `;
 
 export const ListBox = styled.div`
@@ -270,26 +244,6 @@ export const PaneTitle = styled.h4`
 
 export const ItemValue = styled.div`
   font-size: 14px;
-`;
-
-export const LabelTag = styled(Tag)`
-  font-size: 12px;
-  border: 1px solid #4a67fb;
-  box-sizing: border-box;
-  border-radius: 20px;
-  color: #4a67fb;
-  background: white;
-  margin: 4px;
-`;
-
-export const LabelTagGrey = styled(Tag)`
-  font-size: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-sizing: border-box;
-  border-radius: 20px;
-  color: #595959;
-  background: rgba(0, 0, 0, 0.05);
-  margin: 4px;
 `;
 
 export const SelectorWrapper = styled.div`

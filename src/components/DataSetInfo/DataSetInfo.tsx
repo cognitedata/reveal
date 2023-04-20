@@ -1,7 +1,7 @@
-import Tag from 'antd/lib/tag';
 import { SectionTitle, TitleOrnament } from 'utils/styledComponents';
 import { useTranslation } from 'common/i18n';
 import { CopyButton } from '@cognite/cdf-utilities';
+import { Chip, Flex } from '@cognite/cogs.js';
 
 interface DataSetInfoProps {
   id?: string | number;
@@ -26,7 +26,11 @@ const DataSetInfo = (props: DataSetInfoProps): JSX.Element => {
       </h3>
       <br />
       {props.labels && props.labels.length ? (
-        props.labels.map((label) => <Tag key={label}>{label}</Tag>)
+        <Flex gap={8}>
+          {props.labels.map((label) => (
+            <Chip hideTooltip size="x-small" key={label} label={label} />
+          ))}
+        </Flex>
       ) : (
         <p style={{ fontStyle: 'italic' }}>{t('no-labels')}</p>
       )}

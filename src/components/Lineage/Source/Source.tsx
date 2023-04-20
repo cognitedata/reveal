@@ -1,7 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
-import Tag from 'antd/lib/tag';
 import { NoDataText, NoStyleList } from 'utils/styledComponents';
 import { useTranslation } from 'common/i18n';
+import { Chip } from '@cognite/cogs.js';
 
 export interface SourceProps {
   sourceNames?: string[];
@@ -16,7 +16,7 @@ export const Source: FunctionComponent<SourceProps> = ({
       {sourceNames ? (
         sourceNames.map((sourceName) => (
           <li key={sourceName}>
-            <Tag>{sourceName}</Tag>
+            <Chip label={sourceName} size="x-small" hideTooltip />
           </li>
         ))
       ) : (
