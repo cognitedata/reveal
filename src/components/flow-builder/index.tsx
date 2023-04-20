@@ -59,14 +59,27 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
       changes.forEach((change) => {
         switch (change.type) {
           case 'position': {
-            if (change.position) {
-              const i = f.canvas.nodes.findIndex((n) => n.id === change.id);
-              f.canvas.nodes[i].position.x = change.position.x;
-              f.canvas.nodes[i].position.y = change.position.y;
+            const n = f.canvas.nodes.find((n) => n.id === change.id);
+            if (n && change.position) {
+              n.position.x = change.position.x;
+              n.position.y = change.position.y;
             }
             break;
           }
-
+          case 'select': {
+            const n = f.canvas.nodes.find((n) => n.id === change.id);
+            if (n) {
+              n.selected = change.selected;
+            }
+            break;
+          }
+          case 'remove': {
+            const nIndex = f.canvas.nodes.findIndex((n) => n.id === change.id);
+            if (nIndex !== -1) {
+              f.canvas.nodes.deleteAt(nIndex);
+            }
+            break;
+          }
           default: {
             break;
           }
