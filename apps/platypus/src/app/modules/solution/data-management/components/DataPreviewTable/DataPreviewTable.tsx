@@ -64,6 +64,7 @@ import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedData
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
+import { useColumnSelectionFeatureFlag } from '@platypus-app/flags/useColumnSelection';
 
 const pageSizeLimit = 100;
 const instanceIdCol = 'externalId';
@@ -105,6 +106,8 @@ export const DataPreviewTable = forwardRef<
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
     const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
+    const { isEnabled: isColumnSelectionEnabled } =
+      useColumnSelectionFeatureFlag();
     const { dataModelVersion: selectedDataModelVersion } =
       useSelectedDataModelVersion(version, dataModelExternalId, space);
 
@@ -688,22 +691,24 @@ export const DataPreviewTable = forwardRef<
           typeName={dataModelType.name}
           version={version}
         >
-          <ColumnToggle
-            allColumns={columnOrder}
-            onChange={(order) => {
-              setColumnOrder(order);
-              setGridConfig(
-                buildGridConfig(
-                  instanceIdCol,
-                  dataModelType,
-                  handleRowPublish,
-                  isDeletionEnabled,
-                  isManualPopulationEnabled,
-                  order.filter((el) => el.visible).map((el) => el.value)
-                )
-              );
-            }}
-          />
+          {isColumnSelectionEnabled && (
+            <ColumnToggle
+              allColumns={columnOrder}
+              onChange={(order) => {
+                setColumnOrder(order);
+                setGridConfig(
+                  buildGridConfig(
+                    instanceIdCol,
+                    dataModelType,
+                    handleRowPublish,
+                    isDeletionEnabled,
+                    isManualPopulationEnabled,
+                    order.filter((el) => el.visible).map((el) => el.value)
+                  )
+                );
+              }}
+            />
+          )}
         </PreviewPageHeader>
         <CollapsiblePanelContainer
           data={sidebarData}

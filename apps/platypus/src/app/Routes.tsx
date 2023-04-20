@@ -13,7 +13,7 @@ import { useMixpanelPathTracking } from './hooks/useMixpanel';
 import { isFDMv3 } from './flags';
 import { useInjection } from './hooks/useInjection';
 import { TOKENS } from './di';
-import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration-components/components/DragDropContainer/constants';
+import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 import { getContainer } from './GlobalStyles';
 import zIndex from './utils/zIndex';
 

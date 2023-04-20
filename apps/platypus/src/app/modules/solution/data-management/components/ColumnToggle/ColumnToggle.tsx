@@ -8,7 +8,6 @@ import {
   Menu,
   Chip,
   SegmentedControl,
-  Infobar,
   Detail,
   Body,
 } from '@cognite/cogs.js';
@@ -19,7 +18,8 @@ import {
   DragDropContainer,
   DragHandleIcon,
   WithDragHandleProps,
-} from '@data-exploration-components/components/DragDropContainer';
+} from '@data-exploration/components';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export type ColumnToggleType = {
   label: string;
@@ -57,6 +57,7 @@ export const ColumnToggle = ({
   onChange,
   columnSelectionLimit = Infinity,
 }: ColumnToggleProps) => {
+  const { t } = useTranslation('ColumnToggle');
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
 
@@ -135,13 +136,13 @@ export const ColumnToggle = ({
               currentKey={tab}
             >
               <StyledSegmentedButton key="All" data-cy="all-columns">
-                All
+                {t('column-selection-all', 'All')}
               </StyledSegmentedButton>
               <StyledSegmentedButton
                 key="Selected"
                 data-cy="selected-columns-only"
               >
-                Selected
+                {t('column-selection-selected', 'Selected')}
                 <StyledCountLabel
                   size="small"
                   label={String(selectedColumnsCount)}
@@ -152,7 +153,10 @@ export const ColumnToggle = ({
             <StyledInput
               type="search"
               clearable={{ callback: () => setSearchInput('') }}
-              placeholder="Filter by name"
+              placeholder={t(
+                'column-selection-filter-placeholder',
+                'Filter by field'
+              )}
               fullWidth
               variant="noBorder"
               value={searchInput}
@@ -163,36 +167,38 @@ export const ColumnToggle = ({
               <SearchResultText>Results for "{searchInput}":</SearchResultText>
             )}
 
-            <Flex gap={6}>
-              <Button
-                size="small"
-                data-cy="select-all"
-                key="select-all"
-                onClick={() => {
-                  setColumns((columns) =>
-                    columns.map((el) => {
-                      return { ...el, visible: true };
-                    })
-                  );
-                }}
-              >
-                Select all
-              </Button>
-              <Button
-                size="small"
-                data-cy="deselect-all"
-                key="deselect-all"
-                onClick={() => {
-                  setColumns((columns) =>
-                    columns.map((el) => {
-                      return { ...el, visible: false };
-                    })
-                  );
-                }}
-              >
-                Deselect all
-              </Button>
-            </Flex>
+            {tab === 'All' && (
+              <Flex gap={6}>
+                <Button
+                  size="small"
+                  data-cy="select-all"
+                  key="select-all"
+                  onClick={() => {
+                    setColumns((columns) =>
+                      columns.map((el) => {
+                        return { ...el, visible: true };
+                      })
+                    );
+                  }}
+                >
+                  {t('column-selection-select-all', 'Select all')}
+                </Button>
+                <Button
+                  size="small"
+                  data-cy="deselect-all"
+                  key="deselect-all"
+                  onClick={() => {
+                    setColumns((columns) =>
+                      columns.map((el) => {
+                        return { ...el, visible: false };
+                      })
+                    );
+                  }}
+                >
+                  {t('column-selection-deselect-all', 'Deselect all')}
+                </Button>
+              </Flex>
+            )}
 
             <MenuItemsWrapper>
               <DragDropContainer
@@ -231,26 +237,10 @@ export const ColumnToggle = ({
 
             {(isSelectedItemsEmpty || isSearchResultEmpty) && (
               <EmptyStateContainer alignItems="center" justifyContent="center">
-                <EmptyText>No options</EmptyText>
+                <EmptyText>
+                  {t('column-selection-empty', 'No options')}
+                </EmptyText>
               </EmptyStateContainer>
-            )}
-
-            {!isSearchResultEmpty && isSelectedCountLimitExceedingMaxValue && (
-              <Footer>
-                <WarningInfobar>
-                  Due to{' '}
-                  {columnSelectionLimit === 2 ? 'usability' : 'performance'}{' '}
-                  reasons, the max amount of columns that can be selected is{' '}
-                  {columnSelectionLimit}.{' '}
-                  <StyledResetSpan
-                    onClick={() => {
-                      setColumns(initialColumns);
-                    }}
-                  >
-                    Reset to default
-                  </StyledResetSpan>
-                </WarningInfobar>
-              </Footer>
             )}
           </StyledMenu>
         </Suspense>
@@ -266,14 +256,6 @@ export const ColumnToggle = ({
     </Dropdown>
   );
 };
-
-const StyledResetSpan = styled.span`
-  text-decoration: underline;
-  font-weight: 500;
-  &:hover {
-    cursor: pointer;
-  }
-`;
 
 const StyledMenu = styled(Menu)`
   min-width: 256px;
@@ -306,15 +288,6 @@ const StyledInput = styled(Input)`
 
 const StyledCountLabel = styled(Chip)`
   margin-left: 6px;
-`;
-
-const Footer = styled(Menu.Footer)`
-  padding: 0 !important;
-`;
-
-const WarningInfobar = styled(Infobar).attrs({ type: 'warning' })`
-  border-radius: 6px;
-  border: 1px solid rgba(255, 187, 0, 0.2);
 `;
 
 const SearchResultText = styled(Detail)`
