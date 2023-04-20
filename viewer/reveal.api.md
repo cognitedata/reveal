@@ -4,6 +4,7 @@
 
 ```ts
 
+import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -786,14 +787,21 @@ export interface Image360 {
 }
 
 // @public
+export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
+
+// @public
 export interface Image360Collection {
     readonly image360Entities: Image360[];
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    // (undocumented)
+    off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
     on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    // (undocumented)
+    on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;

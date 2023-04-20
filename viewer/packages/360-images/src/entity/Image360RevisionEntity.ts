@@ -2,12 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360Descriptor, Image360FileProvider, Image360Texture } from '@reveal/data-providers';
+import {
+  Image360DataProvider,
+  Image360FileDescriptor,
+  Image360Descriptor,
+  Image360Texture
+} from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { AnnotationModel } from '@cognite/sdk';
+
+import { ImageAnnotationObject, isAnnotationsObject } from '../annotation/ImageAnnotationObject';
+import assert from 'assert';
 
 export class Image360RevisionEntity implements Image360Revision {
-  private readonly _imageProvider: Image360FileProvider;
+  private readonly _imageProvider: Image360DataProvider;
   private readonly _image360Descriptor: Image360Descriptor;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _textures: Image360Texture[];
@@ -15,8 +24,10 @@ export class Image360RevisionEntity implements Image360Revision {
     | Promise<{ textures: Promise<Image360Texture[]>; isLowResolution: boolean }>
     | undefined;
 
+  private _annotations: ImageAnnotationObject[] | undefined = undefined;
+
   constructor(
-    imageProvider: Image360FileProvider,
+    imageProvider: Image360DataProvider,
     image360Descriptor: Image360Descriptor,
     image360VisualzationBox: Image360VisualizationBox
   ) {
@@ -32,6 +43,35 @@ export class Image360RevisionEntity implements Image360Revision {
    */
   get date(): Date | undefined {
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
+  }
+
+  get annotations(): ImageAnnotationObject[] {
+    return this._annotations ?? [];
+  }
+
+  intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+    for (const annotation of this.annotations) {
+      const intersections = raycaster.intersectObject(annotation.getObject());
+      if (intersections.length > 0) {
+        return annotation;
+      }
+    }
+
+    return undefined;
+  }
+
+  private createQuadFromAnnotation(
+    annotation: AnnotationModel,
+    descriptor: Image360FileDescriptor
+  ): ImageAnnotationObject | undefined {
+    const annotationData = annotation.data;
+
+    // TODO Make this check prettier
+    if (!isAnnotationsObject(annotationData) || annotationData.boundingBox === undefined) {
+      return undefined;
+    }
+
+    return new ImageAnnotationObject(annotation, descriptor);
   }
 
   /**
@@ -61,6 +101,8 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
+    this.loadAnnotations();
+
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
       async ({ textures, isLowResolution }) => {
         this._textures = await textures;
@@ -76,6 +118,24 @@ export class Image360RevisionEntity implements Image360Revision {
     async function awaitFullResolution(): Promise<void> {
       await Promise.all([firstCompleted, fullResolutionFaces]);
     }
+  }
+
+  private async loadAnnotations(): Promise<void> {
+    if (this._annotations !== undefined) {
+      return;
+    }
+
+    const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
+
+    const annotationObjects = annotationData
+      .map(data => {
+        const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
+        return this.createQuadFromAnnotation(data, faceDescriptor);
+      })
+      .filter(isDefined);
+
+    this._annotations = annotationObjects;
+    this._image360VisualzationBox.setAnnotations(annotationObjects);
   }
 
   /**
@@ -108,4 +168,21 @@ export class Image360RevisionEntity implements Image360Revision {
       }
     } catch (e) {}
   }
+}
+
+function isDefined(obj: ImageAnnotationObject | undefined): obj is ImageAnnotationObject {
+  return obj !== undefined && obj.getObject !== undefined;
+}
+
+function getAssociatedFaceDescriptor(
+  annotation: AnnotationModel,
+  imageDescriptors: Image360Descriptor
+): Image360FileDescriptor {
+  const fileDescriptors = imageDescriptors.faceDescriptors.filter(
+    desc => desc.fileId === annotation.annotatedResourceId
+  );
+
+  assert(fileDescriptors.length !== 0);
+
+  return fileDescriptors[0];
 }
