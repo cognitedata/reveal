@@ -9,7 +9,6 @@ import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
 import {
   BeforeSceneRenderedDelegate,
-  determineCurrentDevice,
   DeviceDescriptor,
   EventTrigger,
   pixelToNormalizedDeviceCoordinates,
