@@ -116,7 +116,7 @@ export class Image360RevisionEntity implements Image360Revision {
     return { firstCompleted, fullResolutionCompleted: awaitFullResolution() };
 
     async function awaitFullResolution(): Promise<void> {
-      await fullResolutionFaces;
+      await Promise.all([firstCompleted, fullResolutionFaces]);
     }
   }
 

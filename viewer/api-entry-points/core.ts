@@ -80,6 +80,7 @@ export {
 export {
   Image360,
   Image360Revision,
+  Image360Metadata,
   Image360Visualization,
   Image360Collection,
   Image360EnteredDelegate,
