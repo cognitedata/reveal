@@ -98,7 +98,7 @@ export class Image360LoadingCache {
       .catch(e => {
         if (signal.aborted) {
           Log.info('360 Image download aborted: ' + e);
-          return Promise.resolve();
+          return Promise.reject('Aborted');
         } else {
           throw new Error('Failed to load 360 image: ' + e);
         }
