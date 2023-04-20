@@ -1,10 +1,7 @@
-import { Connection, Node } from 'reactflow';
+import { Connection } from 'reactflow';
 
-import { CustomNodeData } from 'components/custom-node';
+import { WorkflowBuilderNode } from 'types';
 
-export const isConnectionValid = (
-  _: Connection,
-  __: Node<CustomNodeData>[]
-) => {
+export const isConnectionValid = (_: Connection, __: WorkflowBuilderNode[]) => {
   return true;
 };

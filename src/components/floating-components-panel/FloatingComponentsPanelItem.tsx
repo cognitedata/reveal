@@ -4,12 +4,11 @@ import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { WorkflowComponentType } from 'types/workflow';
-import { WORKFLOW_COMPONENT_ICON_TYPES } from 'utils/workflow';
+import { PROCESS_ICON, ProcessType } from 'types';
 
 type FloatingComponentsPanelItemProps = {
   onDragStart: DragEventHandler;
-  type: WorkflowComponentType;
+  type: ProcessType;
 };
 
 export const FloatingComponentsPanelItem = ({
@@ -22,7 +21,7 @@ export const FloatingComponentsPanelItem = ({
     <ItemContainer draggable onDragStart={onDragStart}>
       <Flex gap={8}>
         <ComponentTypeIconContainer>
-          <Icon type={WORKFLOW_COMPONENT_ICON_TYPES[type]} />
+          <Icon type={PROCESS_ICON[type]} />
         </ComponentTypeIconContainer>
         <Flex direction="column" justifyContent="space-between">
           <Body level={3} strong>

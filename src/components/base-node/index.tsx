@@ -7,11 +7,8 @@ import {
   IconType,
   Overline,
 } from '@cognite/cogs.js';
-import { Handle, Position, useNodes } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 import styled from 'styled-components';
-
-import { CustomNodeData } from 'components/custom-node';
-import { isConnectionValid } from 'utils';
 
 const BASE_NODE_HANDLE_SIZE = 16;
 
@@ -28,22 +25,12 @@ export const BaseNode = ({
   selected,
   title,
 }: BaseNodeProps): JSX.Element => {
-  const nodes = useNodes<CustomNodeData>();
-
   return (
     <StyledBaseNodeContainer
       className={selected ? 'workflow-builder-node-selected' : undefined}
     >
-      <StyledBaseHandleLeft
-        isValidConnection={(connection) => isConnectionValid(connection, nodes)}
-        position={Position.Left}
-        type="target"
-      />
-      <StyledBaseHandleRight
-        isValidConnection={(connection) => isConnectionValid(connection, nodes)}
-        position={Position.Right}
-        type="source"
-      />
+      <StyledBaseHandleLeft position={Position.Left} type="target" />
+      <StyledBaseHandleRight position={Position.Right} type="source" />
       <StyledBaseNodeHeader>
         <Flex gap={8}>
           <StyledBaseNodeIconContainer>

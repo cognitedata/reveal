@@ -16,20 +16,16 @@ import {
   useTranslation,
 } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
-import { WorkflowComponentType } from 'types/workflow';
 
 import { FloatingComponentsPanelItem } from './FloatingComponentsPanelItem';
+import { PROCESS_TYPES, ProcessType } from 'types';
 
 export const FloatingComponentsPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
   const { setIsComponentsPanelVisible } = useWorkflowBuilderContext();
 
-  const onDragStart = (
-    event: React.DragEvent<Element>,
-    type: WorkflowComponentType
-  ) => {
+  const onDragStart = (event: React.DragEvent<Element>, type: ProcessType) => {
     event.dataTransfer.setData(
       CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
       type
@@ -51,7 +47,7 @@ export const FloatingComponentsPanel = (): JSX.Element => {
         />
       </Flex>
       <Flex direction="column" gap={8}>
-        {WORKFLOW_COMPONENT_TYPES.map((type) => (
+        {PROCESS_TYPES.map((type) => (
           <FloatingComponentsPanelItem
             key={type}
             onDragStart={(e) => onDragStart(e, type)}
