@@ -36,6 +36,14 @@ const resourceItemToContainerReference = (
     };
   }
 
+  if (resourceItem.type === 'event') {
+    return {
+      type: ContainerReferenceType.EVENT,
+      id: uuid(),
+      resourceId: resourceItem.id,
+    };
+  }
+
   throw new Error('Unsupported resource type');
 };
 

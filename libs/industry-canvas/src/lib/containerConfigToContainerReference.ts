@@ -72,14 +72,21 @@ const containerConfigToContainerReference = (
   }
 
   if (containerType === ContainerType.TABLE) {
-    // TODO: This mapping is not going to work out
-    // when we add support for events using tables
     if (containerConfig.metadata.resourceId === undefined) {
       throw new Error('resourceId is undefined');
     }
+    if (
+      containerConfig.metadata.resourceType !== 'event' &&
+      containerConfig.metadata.resourceType !== 'asset'
+    ) {
+      throw new Error('resourceType must be one of asset and event');
+    }
 
     return {
-      type: ContainerReferenceType.ASSET,
+      type:
+        containerConfig.metadata.resourceType === 'asset'
+          ? ContainerReferenceType.ASSET
+          : ContainerReferenceType.EVENT,
       id: containerConfig.id,
       x: containerConfig.x,
       y: containerConfig.y,

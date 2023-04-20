@@ -138,6 +138,7 @@ const resolveRevealContainerConfig = async (
       assetExternalId,
       modelName,
       modelId,
+      resourceType: 'threeD',
     },
   };
 };

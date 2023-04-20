@@ -56,6 +56,7 @@ const resolveFileContainerConfig = async (
     ...containerConfig,
     metadata: {
       resourceId,
+      resourceType: 'file',
       name: fileInfo.name,
       externalId: fileInfo.externalId,
     },

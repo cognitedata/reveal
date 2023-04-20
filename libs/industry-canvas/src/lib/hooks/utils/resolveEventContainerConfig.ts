@@ -1,13 +1,15 @@
 import { CogniteClient } from '@cognite/sdk';
-import getAssetTableContainerConfig from './getAssetTableContainerConfig';
+import getEventTableContainerConfig, {
+  getEventTableTitle,
+} from './getEventTableContainerConfig';
 import { IndustryCanvasContainerConfig } from '../../types';
 import {
-  DEFAULT_ASSET_HEIGHT,
-  DEFAULT_ASSET_WIDTH,
+  DEFAULT_EVENT_HEIGHT,
+  DEFAULT_EVENT_WIDTH,
 } from '../../utils/addDimensionsToContainerReference';
 import { v4 as uuid } from 'uuid';
 
-const resolveAssetContainerConfig = async (
+const resolveEventContainerConfig = async (
   sdk: CogniteClient,
   {
     id,
@@ -27,36 +29,37 @@ const resolveAssetContainerConfig = async (
     label?: string;
   }
 ): Promise<IndustryCanvasContainerConfig> => {
-  const assets = await sdk.assets.retrieve([{ id: resourceId }]);
+  const events = await sdk.events.retrieve([{ id: resourceId }]);
 
-  if (assets.length !== 1) {
+  if (events.length !== 1) {
     throw new Error('Expected to find exactly one asset');
   }
 
-  const asset = assets[0];
+  const event = events[0];
+  const eventTitle = getEventTableTitle(event);
 
   return {
-    ...(await getAssetTableContainerConfig(
+    ...(await getEventTableContainerConfig(
       sdk as any,
       {
         id: id || uuid(),
-        label: label ?? asset.name ?? asset.externalId,
+        label: label ?? eventTitle,
         x: x,
         y: y,
-        width: width ?? DEFAULT_ASSET_WIDTH,
-        height: height ?? DEFAULT_ASSET_HEIGHT,
+        width: width ?? DEFAULT_EVENT_WIDTH,
+        height: height ?? DEFAULT_EVENT_HEIGHT,
       },
       {
-        assetId: resourceId,
+        eventId: resourceId,
       }
     )),
     metadata: {
       resourceId,
-      resourceType: 'asset',
-      name: asset.name,
-      externalId: asset.externalId,
+      resourceType: 'event',
+      name: eventTitle,
+      externalId: event.externalId,
     },
   } as IndustryCanvasContainerConfig;
 };
 
-export default resolveAssetContainerConfig;
+export default resolveEventContainerConfig;

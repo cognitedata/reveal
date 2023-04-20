@@ -44,7 +44,16 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   }, []);
 
   if (container.type === ContainerType.TABLE) {
-    // NOTE: This is going to break when we add support for Events etc
+    if (container.metadata.resourceType === undefined) {
+      throw new Error('resourceType is undefined');
+    }
+    if (
+      container.metadata.resourceType !== 'asset' &&
+      container.metadata.resourceType !== 'event'
+    ) {
+      throw new Error('resourceType must be one of event and asset');
+    }
+
     return (
       <TooltipToolBarContainer>
         {isInEditLabelMode && (
@@ -62,15 +71,19 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               type="ghost"
             />
           </Tooltip>
-          <Tooltip content="Open asset in Data Explorer">
+          <Tooltip
+            content={`Open ${container.metadata.resourceType} in Data Explorer`}
+          >
             <Link
               href={createLink(
-                `/explore/asset/${container.metadata.resourceId}`
+                `/explore/${container.metadata.resourceType}/${container.metadata.resourceId}`
               )}
               target="_blank"
             />
           </Tooltip>
-          <Tooltip content="Remove asset from canvas">
+          <Tooltip
+            content={`Remove ${container.metadata.resourceType} from canvas`}
+          >
             <Button
               icon="Delete"
               onClick={() => onRemoveContainer()}

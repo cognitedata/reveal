@@ -99,7 +99,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const onAddResourcePress = () => {
     openResourceSelector({
-      resourceTypes: ['file', 'timeSeries', 'asset'],
+      resourceTypes: ['file', 'timeSeries', 'asset', 'event'],
       selectionMode: 'multiple',
       onSelect: () => {
         // It's a required prop, but we don't really want to do anything on
