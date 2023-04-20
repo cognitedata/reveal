@@ -5,6 +5,10 @@ export const StyledTopBarRight = styled(TopBar.Right)`
   display: flex;
   align-items: center;
   padding-right: 12px;
+
+  .cogs-notification-dot__bubble {
+    background: var(--cogs-decorative--gradient--dawn);
+  }
 `;
 
 export const StyledTopBarLeft = styled(TopBar.Left)`
@@ -15,14 +19,7 @@ export const StyledTopBarLeft = styled(TopBar.Left)`
 
 export const StyledTopBar = styled(TopBar)`
   && {
-    height: 44px;
-  }
-  background-color: var(--cogs-bg-accent);
-`;
-
-export const StyledButton = styled(Button)`
-  && {
-    background: transparent;
+    height: 56px;
   }
 `;
 
@@ -37,7 +34,6 @@ export const StyledTitleButton = styled(Button)`
 export const StyledTitle = styled(Body)`
   && {
     color: var(--cogs-text-icon--medium);
-    margin-left: 10px;
     user-select: text;
   }
 `;

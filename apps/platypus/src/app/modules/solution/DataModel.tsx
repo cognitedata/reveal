@@ -1,6 +1,5 @@
 import { Body } from '@cognite/cogs.js';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -69,7 +68,6 @@ export const DataModel = () => {
 
   return (
     <>
-      <NavigationDataModel />
       <Routes>
         <Route path="*" element={<DataPage />} />
       </Routes>

@@ -1,7 +1,4 @@
-import { useFlag } from '../../environments/useFlag';
+import { useManualPopulationFeatureFlag } from './useManualPopulation';
 
-export const useDataManagementDeletionFeatureFlag = () => {
-  return useFlag('DEVX_DATA_MANAGEMENT_DELETION', {
-    fallback: true,
-  });
-};
+export const useDataManagementDeletionFeatureFlag =
+  useManualPopulationFeatureFlag;

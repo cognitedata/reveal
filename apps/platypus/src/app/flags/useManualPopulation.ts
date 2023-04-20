@@ -1,7 +1,6 @@
-import { useFlag } from '../../environments/useFlag';
+import { useFeatureToggle, useUpdateFeatureToggle } from './flag';
 
-export const useManualPopulationFeatureFlag = () => {
-  return useFlag('DEVX_MANUAL_POPULATION', {
-    fallback: true,
-  });
-};
+export const useManualPopulationFeatureFlag = () =>
+  useFeatureToggle('DEVX_MANUAL_POPULATION');
+export const useUpdateManualPopulationFeatureFlag = () =>
+  useUpdateFeatureToggle('DEVX_MANUAL_POPULATION');
