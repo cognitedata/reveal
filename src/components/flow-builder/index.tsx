@@ -23,13 +23,13 @@ import {
   DELETE_KEY_CODES,
   Z_INDEXES,
 } from 'common';
-import { ProcessNode as ProcessNodeRenderer } from 'components/process-node';
+import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { v4 } from 'uuid';
 import ContextMenu, {
   WorkflowContextMenu,
 } from 'components/context-menu/ContextMenu';
-import { ParentNode as ParentNodeRenderer } from 'components/parent-node/ParentNode';
+import { ParentNodeRenderer } from 'components/parent-node/ParentNodeRenderer';
 import {
   CanvasNode,
   ProcessNode,

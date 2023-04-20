@@ -1,59 +1,92 @@
 import { useState } from 'react';
 
+import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import {
   Button,
   Colors,
-  Detail,
   Dropdown,
   Elevations,
   Flex,
   Icon,
-  IconType,
   Menu,
   Overline,
 } from '@cognite/cogs.js';
-import { Handle, Position } from 'reactflow';
 import styled from 'styled-components';
+import { Edge, Handle, NodeProps, Position } from 'reactflow';
+
+import { useTranslation } from 'common';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { PROCESS_ICON, ProcessNode, ProcessNodeData, ProcessType } from 'types';
 
 const BASE_NODE_HANDLE_SIZE = 16;
 
-type BaseNodeProps = {
-  description?: string;
-  icon: IconType;
-  selected: boolean;
-  title: string;
-};
-
-export const BaseNode = ({
-  description,
-  icon,
+export const ProcessNodeRenderer = ({
+  data,
+  id,
   selected,
-  title,
-}: BaseNodeProps): JSX.Element => {
+  xPos,
+  yPos,
+}: NodeProps<ProcessNodeData>): JSX.Element => {
+  const { t } = useTranslation();
+
   const [isLeftDropdownVisible, setIsLeftDropdownVisible] = useState(false);
   const [isRightDropdownVisible, setIsRightDropdownVisible] = useState(false);
 
+  const { changeEdges, changeNodes } = useWorkflowBuilderContext();
+
+  const handleAddNode = (
+    processType: ProcessType,
+    direction: 'left' | 'right'
+  ): void => {
+    const node: AutomergeExtend<ProcessNode> = {
+      id: uuid(),
+      type: 'process',
+      position: {
+        x: xPos + 400 * (direction === 'left' ? -1 : 1), // FIXME: use constant for 400
+        y: yPos,
+      },
+      data: {
+        processType,
+        processProps: {},
+      },
+    };
+
+    // FIXME: any
+    const edge: AutomergeExtend<Edge<any>> = {
+      id: uuid(),
+      source: direction === 'left' ? node.id : id,
+      target: direction === 'left' ? id : node.id,
+      type: 'default',
+    };
+
+    changeNodes((nodes) => {
+      nodes.push(node);
+    });
+    changeEdges((edges) => {
+      edges.push(edge);
+    });
+  };
+
   return (
-    <StyledBaseNodeContainer
+    <ProcessNodeContainer
       className={selected ? 'workflow-builder-node-selected' : undefined}
     >
-      <StyledBaseNodeContent>
-        <StyledBaseHandleLeft position={Position.Left} type="target" />
-        <StyledBaseHandleRight position={Position.Right} type="source" />
+      <ProcessNodeContent>
+        <BaseHandleLeft position={Position.Left} type="target" />
+        <BaseHandleRight position={Position.Right} type="source" />
         <Flex gap={8}>
-          <StyledBaseNodeIconContainer>
-            <StyledBaseNodeIcon type={icon} />
-          </StyledBaseNodeIconContainer>
+          <ProcessNodeIconContainer>
+            <ProcessNodeIcon type={PROCESS_ICON[data.processType]} />
+          </ProcessNodeIconContainer>
           <Flex direction="column" gap={2}>
-            <StyledBaseNodeTitle level={3}>{title}</StyledBaseNodeTitle>
-            {!!description && (
-              <StyledBaseNodeDescription>
-                {description}
-              </StyledBaseNodeDescription>
-            )}
+            <ProcessNodeTitle level={3}>
+              {t(`component-title-${data.processType}`, {
+                postProcess: 'uppercase',
+              })}
+            </ProcessNodeTitle>
           </Flex>
         </Flex>
-      </StyledBaseNodeContent>
+      </ProcessNodeContent>
       <AddButtonLeftContainer
         className="nodrag"
         $isDropdownVisible={isLeftDropdownVisible}
@@ -61,9 +94,24 @@ export const BaseNode = ({
         <Dropdown
           content={
             <Menu>
-              <Menu.Item icon="Code">Transformation</Menu.Item>
-              <Menu.Item icon="FrameTool">Webhook</Menu.Item>
-              <Menu.Item icon="Pipeline">Workflow</Menu.Item>
+              <Menu.Item
+                icon="Code"
+                onClick={() => handleAddNode('transformation', 'left')}
+              >
+                Transformation
+              </Menu.Item>
+              <Menu.Item
+                icon="FrameTool"
+                onClick={() => handleAddNode('webhook', 'left')}
+              >
+                Webhook
+              </Menu.Item>
+              <Menu.Item
+                icon="Pipeline"
+                onClick={() => handleAddNode('workflow', 'left')}
+              >
+                Workflow
+              </Menu.Item>
             </Menu>
           }
           onClickOutside={() => {
@@ -87,9 +135,24 @@ export const BaseNode = ({
         <Dropdown
           content={
             <Menu>
-              <Menu.Item icon="Code">Transformation</Menu.Item>
-              <Menu.Item icon="FrameTool">Webhook</Menu.Item>
-              <Menu.Item icon="Pipeline">Workflow</Menu.Item>
+              <Menu.Item
+                icon="Code"
+                onClick={() => handleAddNode('transformation', 'right')}
+              >
+                Transformation
+              </Menu.Item>
+              <Menu.Item
+                icon="FrameTool"
+                onClick={() => handleAddNode('webhook', 'right')}
+              >
+                Webhook
+              </Menu.Item>
+              <Menu.Item
+                icon="Pipeline"
+                onClick={() => handleAddNode('workflow', 'right')}
+              >
+                Workflow
+              </Menu.Item>
             </Menu>
           }
           onClickOutside={() => {
@@ -105,7 +168,7 @@ export const BaseNode = ({
           />
         </Dropdown>
       </AddButtonRightContainer>
-    </StyledBaseNodeContainer>
+    </ProcessNodeContainer>
   );
 };
 
@@ -141,7 +204,7 @@ const AddButtonRightContainer = styled(AddButtonBase)`
   right: -36px;
 `;
 
-const StyledBaseHandle = styled(Handle)`
+const BaseHandle = styled(Handle)`
   background-color: white;
   border: none;
   height: ${BASE_NODE_HANDLE_SIZE}px;
@@ -166,7 +229,7 @@ const StyledBaseHandle = styled(Handle)`
   }
 `;
 
-const StyledBaseHandleRight = styled(StyledBaseHandle)`
+const BaseHandleRight = styled(BaseHandle)`
   border-radius: 2px 0 0 2px;
   right: 0px;
 
@@ -175,7 +238,7 @@ const StyledBaseHandleRight = styled(StyledBaseHandle)`
   }
 `;
 
-const StyledBaseHandleLeft = styled(StyledBaseHandle)`
+const BaseHandleLeft = styled(BaseHandle)`
   border-radius: 0 2px 2px 0;
   left: 0px;
 
@@ -184,7 +247,7 @@ const StyledBaseHandleLeft = styled(StyledBaseHandle)`
   }
 `;
 
-const StyledBaseNodeContent = styled.div`
+const ProcessNodeContent = styled.div`
   border: 1px solid transparent;
   border-radius: 6px;
   padding: 8px;
@@ -192,13 +255,13 @@ const StyledBaseNodeContent = styled.div`
   :hover {
     outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
 
-    ${StyledBaseHandleRight}, ${StyledBaseHandleLeft} {
+    ${BaseHandleRight}, ${BaseHandleLeft} {
       opacity: 1;
     }
   }
 `;
 
-const StyledBaseNodeContainer = styled.div`
+const ProcessNodeContainer = styled.div`
   background-color: ${Colors['surface--muted']};
   border-radius: 6px;
   box-shadow: ${Elevations['elevation--surface--interactive']};
@@ -207,18 +270,18 @@ const StyledBaseNodeContainer = styled.div`
   width: 300px;
 
   &.workflow-builder-node-selected {
-    ${StyledBaseNodeContent} {
+    ${ProcessNodeContent} {
       outline: ${Colors['surface--interactive--toggled-default']} solid 4px;
       border-color: ${Colors['border--interactive--toggled-default']};
     }
 
-    ${StyledBaseHandleRight}, ${StyledBaseHandleLeft} {
+    ${BaseHandleRight}, ${BaseHandleLeft} {
       opacity: 1;
     }
   }
 `;
 
-const StyledBaseNodeIconContainer = styled.div`
+const ProcessNodeIconContainer = styled.div`
   align-items: center;
   background-color: ${Colors['surface--interactive--toggled-default']};
   border-radius: 4px;
@@ -228,14 +291,10 @@ const StyledBaseNodeIconContainer = styled.div`
   width: 36px;
 `;
 
-const StyledBaseNodeIcon = styled(Icon)`
+const ProcessNodeIcon = styled(Icon)`
   color: ${Colors['text-icon--interactive--default']};
 `;
 
-const StyledBaseNodeTitle = styled(Overline)`
+const ProcessNodeTitle = styled(Overline)`
   color: ${Colors['text-icon--interactive--default']};
-`;
-
-const StyledBaseNodeDescription = styled(Detail)`
-  color: ${Colors['text-icon--interactive--disabled']};
 `;
