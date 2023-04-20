@@ -24,11 +24,4 @@ _Note:_ http://localhost:8000 is wrong, you need to use **https://localhost:8000
 Your bundle should now be accessible at https://localhost:8000/index.js.
 
 Then show it in unified CDF UI by following these steps:
-
-- Go to [https://cog-appdev.dev.fusion.cogniteapp.com/](https://cog-appdev.dev.fusion.cogniteapp.com/)
-- Open devtools
-- In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
-- On the bottom right click the "{...}"-button
-- Select @cognite/cdf-access-management
-- Type in "https://localhost:8000/index.js"
-- Refresh the browser
+[How to set up CDF developer environment in your local machine](https://cognitedata.atlassian.net/wiki/spaces/SupportKB/pages/3728408609/How+to+set+up+CDF+developer+environment+in+your+local+machine)
