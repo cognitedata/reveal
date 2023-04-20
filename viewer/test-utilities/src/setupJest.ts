@@ -8,12 +8,6 @@ import { jest } from '@jest/globals';
 import { TextDecoder, TextEncoder } from 'util';
 import ResizeObserver from 'resize-observer-polyfill';
 
-// Create document.currentScript required by potree-core
-Object.defineProperty(document, 'currentScript', {
-  value: document.createElement('script')
-});
-(document.currentScript as any).src = 'http://localhost/iamdummy.html';
-
 // To avoid warnings from CogniteClient that checks whether we use SSL
 global.window = Object.create(window);
 const url = 'https://api.cognitedata.com';
