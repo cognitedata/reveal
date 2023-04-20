@@ -32,7 +32,10 @@ export const ProcessNodeRenderer = ({
   const [isLeftDropdownVisible, setIsLeftDropdownVisible] = useState(false);
   const [isRightDropdownVisible, setIsRightDropdownVisible] = useState(false);
 
-  const { changeEdges, changeNodes } = useWorkflowBuilderContext();
+  const { changeEdges, changeNodes, edges } = useWorkflowBuilderContext();
+
+  const hasSource = edges.some((edge) => edge.target === id);
+  const hasTarget = edges.some((edge) => edge.source === id);
 
   const handleAddNode = (
     processType: ProcessType,
@@ -87,87 +90,95 @@ export const ProcessNodeRenderer = ({
           </Flex>
         </Flex>
       </ProcessNodeContent>
-      <AddButtonLeftContainer
-        className="nodrag"
-        $isDropdownVisible={isLeftDropdownVisible}
-      >
-        <Dropdown
-          content={
-            <Menu>
-              <Menu.Item
-                icon="Code"
-                onClick={() => handleAddNode('transformation', 'left')}
-              >
-                Transformation
-              </Menu.Item>
-              <Menu.Item
-                icon="FrameTool"
-                onClick={() => handleAddNode('webhook', 'left')}
-              >
-                Webhook
-              </Menu.Item>
-              <Menu.Item
-                icon="Pipeline"
-                onClick={() => handleAddNode('workflow', 'left')}
-              >
-                Workflow
-              </Menu.Item>
-            </Menu>
-          }
-          onClickOutside={() => {
-            setIsLeftDropdownVisible(false);
-          }}
-          placement="bottom-end"
-          visible={isLeftDropdownVisible}
+      {!hasSource && (
+        <AddButtonLeftContainer
+          className="nodrag"
+          $isDropdownVisible={isLeftDropdownVisible}
         >
-          <Button
-            onClick={() => setIsLeftDropdownVisible((prevState) => !prevState)}
-            type="primary"
-            icon="AddLarge"
-            size="small"
-          />
-        </Dropdown>
-      </AddButtonLeftContainer>
-      <AddButtonRightContainer
-        className="nodrag"
-        $isDropdownVisible={isRightDropdownVisible}
-      >
-        <Dropdown
-          content={
-            <Menu>
-              <Menu.Item
-                icon="Code"
-                onClick={() => handleAddNode('transformation', 'right')}
-              >
-                Transformation
-              </Menu.Item>
-              <Menu.Item
-                icon="FrameTool"
-                onClick={() => handleAddNode('webhook', 'right')}
-              >
-                Webhook
-              </Menu.Item>
-              <Menu.Item
-                icon="Pipeline"
-                onClick={() => handleAddNode('workflow', 'right')}
-              >
-                Workflow
-              </Menu.Item>
-            </Menu>
-          }
-          onClickOutside={() => {
-            setIsRightDropdownVisible(false);
-          }}
-          visible={isRightDropdownVisible}
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Item
+                  icon="Code"
+                  onClick={() => handleAddNode('transformation', 'left')}
+                >
+                  Transformation
+                </Menu.Item>
+                <Menu.Item
+                  icon="FrameTool"
+                  onClick={() => handleAddNode('webhook', 'left')}
+                >
+                  Webhook
+                </Menu.Item>
+                <Menu.Item
+                  icon="Pipeline"
+                  onClick={() => handleAddNode('workflow', 'left')}
+                >
+                  Workflow
+                </Menu.Item>
+              </Menu>
+            }
+            onClickOutside={() => {
+              setIsLeftDropdownVisible(false);
+            }}
+            placement="bottom-end"
+            visible={isLeftDropdownVisible}
+          >
+            <Button
+              onClick={() =>
+                setIsLeftDropdownVisible((prevState) => !prevState)
+              }
+              type="primary"
+              icon="AddLarge"
+              size="small"
+            />
+          </Dropdown>
+        </AddButtonLeftContainer>
+      )}
+      {!hasTarget && (
+        <AddButtonRightContainer
+          className="nodrag"
+          $isDropdownVisible={isRightDropdownVisible}
         >
-          <Button
-            onClick={() => setIsRightDropdownVisible((prevState) => !prevState)}
-            type="primary"
-            icon="AddLarge"
-            size="small"
-          />
-        </Dropdown>
-      </AddButtonRightContainer>
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Item
+                  icon="Code"
+                  onClick={() => handleAddNode('transformation', 'right')}
+                >
+                  Transformation
+                </Menu.Item>
+                <Menu.Item
+                  icon="FrameTool"
+                  onClick={() => handleAddNode('webhook', 'right')}
+                >
+                  Webhook
+                </Menu.Item>
+                <Menu.Item
+                  icon="Pipeline"
+                  onClick={() => handleAddNode('workflow', 'right')}
+                >
+                  Workflow
+                </Menu.Item>
+              </Menu>
+            }
+            onClickOutside={() => {
+              setIsRightDropdownVisible(false);
+            }}
+            visible={isRightDropdownVisible}
+          >
+            <Button
+              onClick={() =>
+                setIsRightDropdownVisible((prevState) => !prevState)
+              }
+              type="primary"
+              icon="AddLarge"
+              size="small"
+            />
+          </Dropdown>
+        </AddButtonRightContainer>
+      )}
     </ProcessNodeContainer>
   );
 };
