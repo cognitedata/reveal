@@ -91,7 +91,13 @@ export const FeaturePreview = ({
       size="medium"
       hidePaddings
     >
-      <Flex style={{ height: 400 }} gap={6}>
+      <Flex
+        style={{
+          height: 400,
+          borderBottom: '1px solid var(--cogs-border--muted)',
+        }}
+        gap={6}
+      >
         <Flex
           style={{
             overflow: 'auto',
@@ -162,7 +168,7 @@ export const FeaturePreview = ({
           {featuresDetails[selectedFeature]}
         </Flex>
       </Flex>
-      <Body level={3} style={{ padding: '0 12px' }}>
+      <Body level={3} style={{ padding: '12px 12px 0' }}>
         Enabling these features may introduce additional bugs to your
         experience. Please give any feedback or feature request you have via{' '}
         <a
