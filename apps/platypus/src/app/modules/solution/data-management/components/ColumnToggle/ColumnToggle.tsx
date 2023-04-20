@@ -20,6 +20,7 @@ import {
   WithDragHandleProps,
 } from '@data-exploration/components';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export type ColumnToggleType = {
   label: string;
@@ -58,6 +59,7 @@ export const ColumnToggle = ({
   columnSelectionLimit = Infinity,
 }: ColumnToggleProps) => {
   const { t } = useTranslation('ColumnToggle');
+  const { track } = useMixpanel();
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
 
@@ -98,6 +100,7 @@ export const ColumnToggle = ({
     selectedColumnsCount >= columnSelectionLimit;
 
   const handleColumnChange = (column: ColumnToggleType) => {
+    track('ColumnSelection.Select');
     if (!column.visible && selectedColumnsCount >= columnSelectionLimit) {
       return;
     }
@@ -124,6 +127,9 @@ export const ColumnToggle = ({
   return (
     <Dropdown
       appendTo="parent"
+      onShown={() => {
+        track('ColumnSelection.Open');
+      }}
       onHide={() => {
         onChange(sortedColumns);
       }}
@@ -174,6 +180,7 @@ export const ColumnToggle = ({
                   data-cy="select-all"
                   key="select-all"
                   onClick={() => {
+                    track('ColumnSelection.SelectAll');
                     setColumns((columns) =>
                       columns.map((el) => {
                         return { ...el, visible: true };
@@ -188,6 +195,7 @@ export const ColumnToggle = ({
                   data-cy="deselect-all"
                   key="deselect-all"
                   onClick={() => {
+                    track('ColumnSelection.SelectAll', { deselect: true });
                     setColumns((columns) =>
                       columns.map((el) => {
                         return { ...el, visible: false };
@@ -205,7 +213,10 @@ export const ColumnToggle = ({
                 direction="vertical"
                 id="column-toggle"
                 elementsOrder={elementOrders}
-                onDragEnd={(sorted) => setOrder(sorted)}
+                onDragEnd={(sorted) => {
+                  setOrder(sorted);
+                  track('ColumnSelection.Reorder');
+                }}
                 isCustomPortal
               >
                 {selectedTabColumns.map((column) => {

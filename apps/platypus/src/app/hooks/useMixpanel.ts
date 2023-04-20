@@ -44,6 +44,11 @@ export type TRACKING_TOKENS =
   | 'Suggestions.Reject'
   | 'Suggestions.Open'
   | 'Suggestions.Save'
+  // columns
+  | 'ColumnSelection.Select'
+  | 'ColumnSelection.Reorder'
+  | 'ColumnSelection.SelectAll'
+  | 'ColumnSelection.Open'
   // extra path tracking
   | 'UIEditor'
   | 'Navigate';

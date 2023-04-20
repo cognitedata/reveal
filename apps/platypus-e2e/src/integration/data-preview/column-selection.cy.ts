@@ -3,13 +3,16 @@ import { getUrl } from '../../utils/url';
 describe('Platypus Data Preview Page - Column Selection', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
+    window.localStorage.setItem(
+      '@cognite.fusion.data-modeling.platypus.DEVX_COLUMN_SELECTION',
+      'TRUE'
+    );
     cy.request('http://localhost:4200/reset');
     cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
     cy.ensurePageFinishedLoading();
   });
 
   it('should toggle off column', () => {
-    cy.getBySel('page-title').contains('Data management');
     cy.getBySel('column-select-dropdown').should('not.exist');
     cy.getBySel('column-select').click();
     cy.getBySel('column-select-dropdown').should('be.visible');
@@ -25,7 +28,6 @@ describe('Platypus Data Preview Page - Column Selection', () => {
   });
 
   it('should toggle all on and off column', () => {
-    cy.getBySel('page-title').contains('Data management');
     cy.getBySel('column-select-dropdown').should('not.exist');
     cy.getBySel('column-select').click();
     cy.getBySel('column-select-dropdown').should('be.visible');
@@ -49,7 +51,6 @@ describe('Platypus Data Preview Page - Column Selection', () => {
   });
 
   it('should see all selected', () => {
-    cy.getBySel('page-title').contains('Data management');
     cy.getBySel('column-select-dropdown').should('not.exist');
     cy.getBySel('column-select').click();
     cy.getBySel('column-select-dropdown').should('be.visible');
