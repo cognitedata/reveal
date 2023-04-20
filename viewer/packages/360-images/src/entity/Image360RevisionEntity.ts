@@ -14,6 +14,7 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject, isAnnotationsObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
+import { ImageAnnotationVisualizationState } from '../types';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;
@@ -101,8 +102,6 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
-    this.loadAnnotations();
-
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
       async ({ textures, isLowResolution }) => {
         this._textures = await textures;
@@ -120,7 +119,10 @@ export class Image360RevisionEntity implements Image360Revision {
     }
   }
 
-  private async loadAnnotations(): Promise<void> {
+  /**
+   * Initiates loading of annotations for this model
+   */
+  public async loadAnnotations(visualizationState: ImageAnnotationVisualizationState): Promise<void> {
     if (this._annotations !== undefined) {
       return;
     }
@@ -133,6 +135,14 @@ export class Image360RevisionEntity implements Image360Revision {
         return this.createQuadFromAnnotation(data, faceDescriptor);
       })
       .filter(isDefined);
+
+    annotationObjects.forEach(obj => {
+      obj.getObject().visible = visualizationState.visible;
+    });
+
+    if (this._annotations !== undefined) {
+      return;
+    }
 
     this._annotations = annotationObjects;
     this._image360VisualzationBox.setAnnotations(annotationObjects);

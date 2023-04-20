@@ -76,10 +76,6 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._annotationsLoadPromise.resolve(annotations);
   }
 
-  setAnnotationsVisibility(visibility: boolean): void {
-    this._annotations?.forEach(a => (a.visible = visibility));
-  }
-
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
     this._worldTransform = worldTransform;
     this._sceneHandler = sceneHandler;

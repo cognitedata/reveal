@@ -20,3 +20,10 @@ export type Image360ExitedDelegate = () => void;
  * Delegate for 360 image annotation hover events
  */
 export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
+
+/**
+ * General state keeping track of how annotations are visualized
+ */
+export type ImageAnnotationVisualizationState = {
+  visible: boolean;
+};

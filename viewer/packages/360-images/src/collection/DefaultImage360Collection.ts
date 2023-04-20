@@ -6,7 +6,12 @@ import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { Image360AnnotationHoveredDelegate, Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
+import {
+  Image360AnnotationHoveredDelegate,
+  Image360EnteredDelegate,
+  Image360ExitedDelegate,
+  ImageAnnotationVisualizationState
+} from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
@@ -35,8 +40,11 @@ export class DefaultImage360Collection implements Image360Collection {
   };
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
-  private _annotationVisibility: boolean = true;
   private readonly _collectionId: string;
+
+  private _annotationVisualizationState: ImageAnnotationVisualizationState = {
+    visible: true
+  };
 
   get id(): string {
     return this._collectionId;
@@ -123,18 +131,26 @@ export class DefaultImage360Collection implements Image360Collection {
     this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
   }
 
+  public getImageAnnotationVisualizationState(): ImageAnnotationVisualizationState {
+    return this._annotationVisualizationState;
+  }
+
   /**
    * Set visibility of all 360 image annotations
    * @param visible If true, annotations in the 360 image will be displayed. Default is `true`
    */
   setImageAnnotationVisibility(visible: boolean): void {
-    if (visible == this._annotationVisibility) {
+    if (visible == this._annotationVisualizationState.visible) {
       return;
     }
 
-    this._annotationVisibility = visible;
+    this._annotationVisualizationState.visible = visible;
     this.image360Entities.forEach(entity => {
-      entity.image360Visualization.setAnnotationsVisibility(visible);
+      entity.getRevisions().forEach(revision => {
+        revision.annotations.forEach(annotation => {
+          annotation.getObject().visible = visible;
+        });
+      });
     });
   }
 
