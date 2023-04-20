@@ -101,25 +101,37 @@ export function useUpdateFlow() {
   const qc = useQueryClient();
   return useMutation(async (flow: AFlow) => {
     const { id } = flow;
-    let binary = Automerge.save(flow);
-    const serverFile = await getFlow(sdk, id);
 
-    if (!isEqual(Automerge.getHeads(flow), Automerge.getHeads(serverFile))) {
-      const mergedDoc = Automerge.merge(serverFile, flow);
-      qc.setQueryData(getFlowItemKey(id), mergedDoc);
-      binary = Automerge.save(mergedDoc);
+    const serverFlow = await getFlow(sdk, id);
+
+    if (!isEqual(Automerge.getHeads(flow), Automerge.getHeads(serverFlow))) {
+      const binary = Automerge.save(Automerge.merge(serverFlow, flow));
+      /*
+       *This seems silly, but currently this is an issue:
+       * ```
+       * const mergedDoc = AM.merge(flow, serverFlow);
+       * const binary = AM.save(mergedFlow);
+       * AM.load(binary).canvas.nodes[x].position.y !== mergedDoc.canvas.nodes[x].position.y
+       * ```
+       *
+       * Serializing the merged document and unserializing it leads to a different result that the
+       * original merged doc (where there are conflicts). Instead, serialize the merged flow
+       * immediatly and unserialize it and set that in the query cache. That (seems to) ensure that
+       * the server version and local version match.
+       */
+      const mergedFlow = Automerge.load<AFlow>(binary);
+      qc.setQueryData(getFlowItemKey(id), mergedFlow);
+      await sdk.files.upload(
+        {
+          externalId: id,
+          name: `Flow: ${id}`,
+          mimeType: 'application/octet-stream',
+          metadata: { cdf_flow: 'true' },
+        },
+        binary.buffer,
+        true
+      );
     }
-
-    await sdk.files.upload(
-      {
-        externalId: id,
-        name: `Flow: ${id}`,
-        mimeType: 'application/octet-stream',
-        metadata: { cdf_flow: 'true' },
-      },
-      binary.buffer,
-      true
-    );
   });
 }
 
