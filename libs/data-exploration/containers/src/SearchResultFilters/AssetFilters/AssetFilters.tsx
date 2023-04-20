@@ -45,6 +45,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
         />
 
         <MetadataFilter.Assets
+          query={query}
+          filter={filter.asset}
           values={filter.asset.metadata}
           onChange={(newMetadata) => {
             onFilterChange('asset', {

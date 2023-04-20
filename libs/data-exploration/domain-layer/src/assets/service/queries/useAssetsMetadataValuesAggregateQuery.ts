@@ -4,34 +4,38 @@ import {
   getAssetsMetadataValuesAggregate,
   AssetsMetadataAggregateResponse,
   queryKeys,
-  transformNewFilterToOldFilter,
+  AdvancedFilter,
+  AssetsProperties,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import {
-  InternalAssetFilters,
-  OldAssetFilters,
-} from '@data-exploration-lib/core';
 
-export const useAssetsMetadataValuesAggregateQuery = (
-  metadataKey?: string | null,
-  query?: string,
-  filter?: InternalAssetFilters | OldAssetFilters,
+interface Props {
+  metadataKey?: string | null;
+  prefix?: string;
+  advancedFilter?: AdvancedFilter<AssetsProperties>;
   options?: UseQueryOptions<
     AssetsMetadataAggregateResponse[],
     unknown,
     AssetsMetadataAggregateResponse[],
     any
-  >
-) => {
+  >;
+}
+
+export const useAssetsMetadataValuesAggregateQuery = ({
+  metadataKey,
+  prefix,
+  advancedFilter,
+  options,
+}: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsMetadataValues(String(metadataKey), query, filter),
+    queryKeys.assetsMetadataValues(String(metadataKey), prefix, advancedFilter),
     () => {
       return getAssetsMetadataValuesAggregate(sdk, String(metadataKey), {
-        filter: transformNewFilterToOldFilter(filter),
-        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+        advancedFilter,
+        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
       });
     },
     {

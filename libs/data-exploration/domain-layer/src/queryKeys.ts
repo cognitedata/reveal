@@ -131,16 +131,20 @@ export const queryKeys = {
       advancedFilter,
       prefix,
     ] as const,
-  assetsMetadata: (query?: string, filter?: any) =>
-    [...queryKeys.assets(), 'metadata', 'keys', query, filter] as const,
-  assetsMetadataValues: (metadataKey: string, query?: string, filter?: any) =>
+  assetsMetadata: (query?: string, advancedFilter?: any) =>
+    [...queryKeys.assets(), 'metadata', 'keys', query, advancedFilter] as const,
+  assetsMetadataValues: (
+    metadataKey: string,
+    query?: string,
+    advancedFilter?: any
+  ) =>
     [
       ...queryKeys.assets(),
       'metadata',
       'values',
       metadataKey,
       query,
-      filter,
+      advancedFilter,
     ] as const,
   listBasicAssetMappings: (id: number) =>
     [...queryKeys.retrieveAsset(id), 'basic-mappings'] as const,
