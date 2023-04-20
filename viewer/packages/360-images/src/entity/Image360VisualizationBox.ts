@@ -206,9 +206,9 @@ export class Image360VisualizationBox implements Image360Visualization {
 
     context?.drawImage(texture.image, 0, 0, canvas.width, canvas.height);
 
-    const sacledImageTexture = new THREE.CanvasTexture(canvas);
+    const scaledImageTexture = new THREE.CanvasTexture(canvas);
     texture.dispose();
 
-    return sacledImageTexture;
+    return scaledImageTexture;
   }
 }
