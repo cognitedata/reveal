@@ -89,7 +89,7 @@ function createMaterial(): MeshBasicMaterial {
   });
 }
 
-export function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
+function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
   const detection = annotation as AnnotationsObjectDetection;
   return (
     detection.label !== undefined &&
