@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { Image360Provider } from '../Image360Provider';
 import { Historical360ImageSet, Image360Face, Image360FileDescriptor } from '../types';
+import { AnnotationModel } from '@cognite/sdk/dist/src';
 
 type Local360ImagesDescriptor = {
   translation: {
@@ -65,6 +66,11 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
 
       return historicalImage360Descriptor;
     });
+  }
+
+  get360ImageAnnotations(_descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
+    // Not supported for local models
+    return Promise.resolve([]);
   }
 
   get360ImageFiles(

@@ -20,7 +20,7 @@ export { StylableObject, SerializableStylableObject } from './src/pointcloud-sty
 export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';
 export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/DummyPointCloudStylableObjectProvider';
 
-export { Image360Provider } from './src/Image360Provider';
+export { Image360Provider, Image360DataProvider } from './src/Image360Provider';
 export {
   BinaryFileProvider,
   JsonFileProvider,
@@ -29,5 +29,6 @@ export {
   Image360Descriptor,
   Image360FileProvider,
   Image360Face,
-  Image360Texture
+  Image360Texture,
+  Image360FileDescriptor
 } from './src/types';
