@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { AnnotationModel } from '@cognite/sdk';
 import * as THREE from 'three';
 
 export interface JsonFileProvider {
@@ -9,6 +10,10 @@ export interface JsonFileProvider {
 
 export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+}
+
+export interface Image360AnnotationProvider {
+  get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
 }
 
 export interface Image360DescriptorProvider<T> {
