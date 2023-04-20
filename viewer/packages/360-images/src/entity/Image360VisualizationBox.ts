@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SceneHandler } from '@reveal/utilities';
+import { DeferredPromise, SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
 import { Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
@@ -24,11 +24,8 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-  private readonly _meshPromise: Promise<THREE.Object3D>;
-  private readonly _annotationsPromise: Promise<ImageAnnotationObject[]>;
-
-  private _meshResolve!: (o: THREE.Object3D) => void;
-  private _annotationResolve!: (a: ImageAnnotationObject[]) => void;
+  private readonly _meshLoadPromise: DeferredPromise<THREE.Object3D>;
+  private readonly _annotationsLoadPromise: DeferredPromise<ImageAnnotationObject[]>;
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -76,7 +73,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   setAnnotations(annotations: ImageAnnotationObject[]): void {
-    this._annotationResolve(annotations);
+    this._annotationsLoadPromise.resolve(annotations);
   }
 
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
@@ -90,15 +87,10 @@ export class Image360VisualizationBox implements Image360Visualization {
       visible: true
     };
 
-    this._meshPromise = new Promise<THREE.Object3D>((res, _rej) => {
-      this._meshResolve = res;
-    });
+    this._meshLoadPromise = new DeferredPromise();
+    this._annotationsLoadPromise = new DeferredPromise();
 
-    this._annotationsPromise = new Promise<ImageAnnotationObject[]>((res, _rej) => {
-      this._annotationResolve = res;
-    });
-
-    Promise.all([this._meshPromise, this._annotationsPromise]).then(
+    Promise.all([this._meshLoadPromise, this._annotationsLoadPromise]).then(
       ([mesh, annotations]: [THREE.Object3D, ImageAnnotationObject[]]) =>
         annotations.forEach(a => mesh.add(a.getObject()))
     );
@@ -133,7 +125,7 @@ export class Image360VisualizationBox implements Image360Visualization {
 
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
-    this._meshResolve(this._visualizationMesh);
+    this._meshLoadPromise.resolve(visualizationMesh);
 
     function getFaceTexture(face: Image360Face['face']) {
       const texture = textures.find(p => p.face === face);
