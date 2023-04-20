@@ -202,9 +202,17 @@ export const FilePreview = ({
     [setSelectedAnnotations]
   );
 
-  const onAnnotationMouseOver = useCallback((annotation: Annotation) => {
-    setHoverId(annotation.id);
-  }, []);
+  const onAnnotationMouseOver = useCallback(
+    (annotation: Annotation) => {
+      if (creatable) {
+        // Since you can't click on annotation in edit mode, we don't want to show hover state
+        return;
+      }
+
+      setHoverId(annotation.id);
+    },
+    [creatable]
+  );
 
   const onAnnotationMouseOut = useCallback(() => {
     setHoverId(undefined);
@@ -298,7 +306,7 @@ export const FilePreview = ({
   ]);
 
   const tooltips = useTooltips({
-    isTooltipsEnabled: enableToolTips,
+    isTooltipsEnabled: enableToolTips && !creatable,
     // NOTE: Once support for annotations from Events API has been removed, we can
     // actually access the file id directly from the annotation. This does not work currently
     // though because the Event API annotations might not hav the file id set (and only the external id)
