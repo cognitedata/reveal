@@ -6,12 +6,14 @@ import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@co
 import { Image360FileDescriptor } from '@reveal/data-providers';
 import assert from 'assert';
 
-import { Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
 import { PolygonAnnotationData } from './PolygonAnnotationData';
 
 type FaceType = Image360FileDescriptor['face'];
+
+import SeededRandom from 'random-seed';
 
 export class ImageAnnotationObject {
   private readonly _annotation: AnnotationModel;
@@ -41,7 +43,7 @@ export class ImageAnnotationObject {
 
   private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._mesh = new Mesh(objectData.getGeometry(), createMaterial());
+    this._mesh = new Mesh(objectData.getGeometry(), createMaterial(annotation));
 
     this.initializeTransform(face, objectData.getNormalizationMatrix());
     this._mesh.renderOrder = 4;
@@ -79,9 +81,13 @@ export class ImageAnnotationObject {
   }
 }
 
-function createMaterial(): MeshBasicMaterial {
+function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {
+  const random = SeededRandom.create((annotation.data as AnnotationsObjectDetection).label);
+
   return new MeshBasicMaterial({
-    color: 0xffff00,
+    color: new Color(random.floatBetween(0, 1), random.floatBetween(0, 1), random.floatBetween(0, 1))
+      .multiplyScalar(0.5)
+      .addScalar(0.5),
     side: DoubleSide,
     depthTest: false,
     opacity: 0.5,

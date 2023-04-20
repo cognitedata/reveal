@@ -72,6 +72,7 @@
     "loglevel": "1.8.1",
     "mixpanel-browser": "2.46.0",
     "path-browserify": "1.0.1",
+    "random-seed": "0.3.0",
     "rxjs": "7.8.0",
     "skmeans": "0.11.3",
     "sparse-octree": "7.1.6",
