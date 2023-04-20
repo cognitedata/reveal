@@ -28,6 +28,8 @@ type FlowContextT = {
 
   changeNodes: (fn: AutomergeChangeNodesFn) => void;
   changeEdges: (fn: AutomergeChangeEdgesFn) => void;
+  nodes: CanvasNodes;
+  edges: CanvasEdges;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -111,6 +113,8 @@ export const FlowContextProvider = ({
         changeFlow,
         changeNodes,
         changeEdges,
+        nodes: flowState.canvas.nodes,
+        edges: flowState.canvas.edges,
       }}
     >
       {children}

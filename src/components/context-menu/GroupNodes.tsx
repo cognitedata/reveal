@@ -1,6 +1,6 @@
 import { uuid } from '@automerge/automerge';
 
-import { GROUP_PADDING } from 'common';
+import { DEFAULT_GROUP_NAME, GROUP_PADDING } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { CanvasNode } from 'types';
 
@@ -36,13 +36,15 @@ export const GroupNodes = ({ contextMenu }: GroupNodesProps): JSX.Element => {
 
         const parentNode: CanvasNode = {
           id: uuid(),
-          type: 'groupNode',
+          type: 'parent',
           position: { x: minX - GROUP_PADDING, y: minY - GROUP_PADDING },
           style: {
             width: maxX - minX + GROUP_PADDING * 2,
             height: maxY - minY + GROUP_PADDING * 2,
           },
-          data: {},
+          data: {
+            label: DEFAULT_GROUP_NAME,
+          },
         };
 
         contextMenu.items.forEach((item) => {
@@ -67,7 +69,7 @@ export const GroupNodes = ({ contextMenu }: GroupNodesProps): JSX.Element => {
     contextMenu?.type === 'node' &&
     contextMenu.items.length > 1 &&
     contextMenu.items.every(
-      ({ parentNode, type }) => type !== 'groupNode' && !parentNode
+      ({ parentNode, type }) => type !== 'parent' && !parentNode
     )
   ) {
     return (

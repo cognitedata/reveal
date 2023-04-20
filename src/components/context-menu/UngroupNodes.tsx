@@ -1,6 +1,7 @@
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+
 import { WorkflowContextMenu } from './ContextMenu';
 import { ContextMenuItem } from './ContextMenuItem';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 type UngroupNodesProps = {
   contextMenu?: WorkflowContextMenu;
@@ -14,7 +15,7 @@ export const UngroupNodes = ({
   const handleUngroup = (): void => {
     if (contextMenu?.type === 'node') {
       const parentNode = contextMenu?.items.find(
-        ({ type }) => type === 'groupNode'
+        ({ type }) => type === 'parent'
       );
       if (parentNode) {
         changeNodes((nodes) => {
@@ -39,7 +40,7 @@ export const UngroupNodes = ({
 
   if (
     contextMenu?.type === 'node' &&
-    contextMenu.items.filter(({ type }) => type === 'groupNode').length === 1
+    contextMenu.items.filter(({ type }) => type === 'parent').length === 1
   ) {
     return (
       <ContextMenuItem label="Ungroup" onClick={handleUngroup} shortcut="⌘+U" />

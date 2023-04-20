@@ -1,5 +1,7 @@
-import { useCallback, useRef, useState } from 'react';
+import { ComponentType, useCallback, useRef, useState } from 'react';
 
+import { Extend as AutomergeExtend } from '@automerge/automerge';
+import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
   Background,
   MarkerType,
@@ -11,36 +13,37 @@ import ReactFlow, {
   NodeChange,
   Edge,
   SelectionMode,
-  Node,
+  EdgeChange,
+  NodeProps,
 } from 'reactflow';
-
 import styled from 'styled-components';
 
 import {
   CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
+  DELETE_KEY_CODES,
   Z_INDEXES,
 } from 'common';
-import { CustomNode } from 'components/custom-node';
-import { Colors } from '@cognite/cogs.js';
-import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
-
+import { ProcessNode as ProcessNodeRenderer } from 'components/process-node';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { v4 } from 'uuid';
 import ContextMenu, {
   WorkflowContextMenu,
 } from 'components/context-menu/ContextMenu';
-import { GroupNode } from 'components/group-node/GroupNode';
-import { CanvasNode } from 'types';
+import { ParentNode as ParentNodeRenderer } from 'components/parent-node/ParentNode';
+import {
+  CanvasNode,
+  ProcessNode,
+  WorkflowBuilderNode,
+  WorkflowBuilderNodeType,
+  isProcessType,
+} from 'types';
 
-const NODE_TYPES = {
-  customNode: CustomNode,
-  groupNode: GroupNode,
+const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
+  process: ProcessNodeRenderer,
+  parent: ParentNodeRenderer,
 };
 
-const DELETE_KEY_CODES = ['Backspace', 'Delete'];
-
-type Props = {};
-export const FlowBuilder = ({}: Props): JSX.Element => {
+export const FlowBuilder = (): JSX.Element => {
   const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -52,21 +55,58 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const onEdgesChange: OnEdgesChange = () => {};
+  const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
+    changeFlow((f) => {
+      changes.forEach((change) => {
+        switch (change.type) {
+          case 'select': {
+            const e = f.canvas.edges.find((e) => e.id === change.id);
+            if (e) {
+              e.selected = change.selected;
+            }
+            break;
+          }
+          case 'remove': {
+            const eIndex = f.canvas.edges.findIndex((e) => e.id === change.id);
+            if (eIndex !== -1) {
+              f.canvas.edges.deleteAt(eIndex);
+            }
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+    });
+  };
 
   const onNodesChange = (changes: NodeChange[]) => {
     changeFlow((f) => {
       changes.forEach((change) => {
         switch (change.type) {
           case 'position': {
-            if (change.position) {
-              const i = f.canvas.nodes.findIndex((n) => n.id === change.id);
-              f.canvas.nodes[i].position.x = change.position.x;
-              f.canvas.nodes[i].position.y = change.position.y;
+            const n = f.canvas.nodes.find((n) => n.id === change.id);
+            if (n && change.position) {
+              n.position.x = change.position.x;
+              n.position.y = change.position.y;
             }
             break;
           }
-
+          case 'select': {
+            const n = f.canvas.nodes.find((n) => n.id === change.id);
+            if (n) {
+              n.selected = change.selected;
+            }
+            break;
+          }
+          case 'remove': {
+            const nIndex = f.canvas.nodes.findIndex((n) => n.id === change.id);
+            if (nIndex !== -1) {
+              f.canvas.nodes.deleteAt(nIndex);
+            }
+            break;
+          }
           default: {
             break;
           }
@@ -120,11 +160,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
           CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER
         );
 
-        if (
-          typeof type === 'undefined' ||
-          !type ||
-          !WORKFLOW_COMPONENT_TYPES.some((testType) => testType === type)
-        ) {
+        if (!isProcessType(type)) {
           return;
         }
 
@@ -134,13 +170,16 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
             y: event.clientY - reactFlowBounds.top,
           });
 
-          const newNode = {
+          const node: AutomergeExtend<ProcessNode> = {
             id: `${new Date().getTime()}`,
-            type: 'customNode',
+            type: 'process',
             position,
-            data: { label: `${type} node`, type },
+            data: {
+              processType: type,
+              processProps: {},
+            },
           };
-          f.canvas.nodes.push(newNode);
+          f.canvas.nodes.push(node);
         });
       }
     },
@@ -164,7 +203,7 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
         panOnScroll
         deleteKeyCode={DELETE_KEY_CODES}
         edges={flowState.canvas.edges as Edge[]} // FIXME: can we remove as
-        nodes={flowState.canvas.nodes as Node[]} // FIXME: can we remove as
+        nodes={flowState.canvas.nodes as WorkflowBuilderNode[]}
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
         nodeTypes={NODE_TYPES}
