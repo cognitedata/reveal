@@ -462,3 +462,12 @@ export const ExpandableParagraph = styled.p`
     white-space: normal;
   }
 `;
+
+export const StyledPre = styled.pre`
+  padding: 6px 8px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: ${theme.backgroundColor};
+  border: 1px solid ${theme.borderColor};
+  border-radius: 3px;
+`;
