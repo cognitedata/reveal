@@ -6,11 +6,13 @@ import {
   isRectangleAnnotation,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
+import { ResourceType } from '@data-exploration-lib/core';
 
 export enum ContainerReferenceType {
   FILE = 'file',
   TIMESERIES = 'timeseries',
   ASSET = 'asset',
+  EVENT = 'event',
   THREE_D = 'threeD',
 }
 
@@ -33,6 +35,13 @@ export type FileContainerReference = {
 
 export type AssetContainerReference = {
   type: ContainerReferenceType.ASSET;
+  id: string;
+  resourceId: number;
+  label?: string;
+} & Partial<Dimensions>;
+
+export type EventContainerReference = {
+  type: ContainerReferenceType.EVENT;
   id: string;
   resourceId: number;
   label?: string;
@@ -72,6 +81,7 @@ export type ContainerReference =
   | FileContainerReference
   | TimeseriesContainerReference
   | AssetContainerReference
+  | EventContainerReference
   | ThreeDContainerReference;
 
 export type ShapeAnnotation = RectangleAnnotation | EllipseAnnotation;
@@ -87,6 +97,7 @@ export type CanvasAnnotation = Annotation;
 // TODO: This should be better typed per container type
 type ResourceMetadata = {
   resourceId?: number;
+  resourceType?: ResourceType;
   name?: string;
   externalId?: string;
   assetName?: string; // Used by RevealContainer

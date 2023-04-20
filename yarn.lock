@@ -1722,39 +1722,6 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^7.14.7":
-  version "7.19.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.19.1.tgz#32f1d2e0aabf6d95eb12dc22d66810f3995f36bf"
-  integrity sha512-QsFpM1BxYT+x9WvaKI3C68hPULQPjrnr5tlng1NjGmlbpru+cz8MjLy30ieEXUqliOHAEELLaeaWdcj8mUWrLw==
-  dependencies:
-    "@emotion/react" "^11.9.3"
-    "@emotion/styled" "^11.9.3"
-    "@mui/base" "^5.0.0-alpha.97"
-    "@mui/joy" "^5.0.0-alpha.36"
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.4.3"
-    axios "^0.21.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    csstype "^2.6.7"
-    dayjs "^1.9.7"
-    deepdash "^5.3.9"
-    dotenv "^16.0.3"
-    focus-visible "^5.1.0"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.16.1"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    resize-observer-polyfill "^1.5.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
-
 "@cognite/cogs.js@^9.10.0":
   version "9.10.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.10.0.tgz#7cf15d2d015854ce9d4204761b71b66d4038e743"
@@ -2144,12 +2111,12 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^10.2.3":
-  version "10.2.3"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-10.2.3.tgz#2291ae38a0f686315a8293c55564d989bb669dda"
-  integrity sha512-d54i8ibbxDsqe/k8Bsg+qAOpY7YjtyTQCVPl0N4uO5B9CkaTvtxh+d1fD8/LCTLk+7dm82D+9tGt/uEZpH05+w==
+"@cognite/unified-file-viewer@^10.2.4":
+  version "10.2.4"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-10.2.4.tgz#53a155f235aaa7f066b1cd167055ecf6d0b10641"
+  integrity sha512-5onSk8qYJhcAOvpWpeY+gk98yNKJtw+A+YreDjfH6GEiIRj+dqjNHYX68rR1d5ASd7My6EfAN6Su2oza6Q3esQ==
   dependencies:
-    "@cognite/cogs.js" "^7.14.7"
+    "@cognite/cogs.js" "^9.10.0"
     "@cognite/reveal" "^4.1.2"
     "@cognite/sdk" "^7.13.0"
     "@mathigon/euclid" "^1.1.6"
@@ -4001,20 +3968,6 @@
     "@emotion/is-prop-valid" "^1.2.0"
     "@mui/types" "^7.2.0"
     "@mui/utils" "^5.10.3"
-    "@popperjs/core" "^2.11.6"
-    clsx "^1.2.1"
-    prop-types "^15.8.1"
-    react-is "^18.2.0"
-
-"@mui/base@^5.0.0-alpha.97":
-  version "5.0.0-alpha.112"
-  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.112.tgz#80e815430c5df0316e0a549d34628d54215e05f1"
-  integrity sha512-KPwb1iYPXsV/P8uu0SNQrj7v7YU6wdN4Eccc2lZQyRDW+f6PJYjHBuFUTYKc408B98Jvs1XbC/z5MN45a2DWrQ==
-  dependencies:
-    "@babel/runtime" "^7.20.7"
-    "@emotion/is-prop-valid" "^1.2.0"
-    "@mui/types" "^7.2.3"
-    "@mui/utils" "^5.11.2"
     "@popperjs/core" "^2.11.6"
     clsx "^1.2.1"
     prop-types "^15.8.1"
@@ -14411,7 +14364,7 @@ dotenv@^10.0.0, dotenv@~10.0.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
 
-dotenv@^16.0.0, dotenv@^16.0.3:
+dotenv@^16.0.0:
   version "16.0.3"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
   integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
@@ -25667,7 +25620,7 @@ rc-table@~7.26.0:
     rc-util "^5.22.5"
     shallowequal "^1.1.0"
 
-rc-tabs@11.16.1, rc-tabs@^11.16.1, rc-tabs@^11.6.2:
+rc-tabs@11.16.1, rc-tabs@^11.6.2:
   version "11.16.1"
   resolved "https://registry.yarnpkg.com/rc-tabs/-/rc-tabs-11.16.1.tgz#7c57b6a092d9d0e2df54413b0319f195c27214a9"
   integrity sha512-bR7Dap23YyfzZQwtKomhiFEFzZuE7WaKWo+ypNRSGB9PDKSc6tM12VP8LWYkvmmQHthgwP0WRN8nFbSJWuqLYw==

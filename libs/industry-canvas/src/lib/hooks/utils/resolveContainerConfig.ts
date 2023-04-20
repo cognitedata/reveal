@@ -14,6 +14,7 @@ import {
 } from '../../utils/addDimensionsToContainerReference';
 import assertNever from '../../utils/assertNever';
 import resolveAssetContainerConfig from './resolveAssetContainerConfig';
+import resolveEventContainerConfig from './resolveEventContainerConfig';
 import resolveFileContainerConfig from './resolveFileContainerConfig';
 import resolveRevealContainerConfig from './resolveRevealContainerConfig';
 import resolveTimeseriesContainerConfig from './resolveTimeseriesContainerConfig';
@@ -53,6 +54,18 @@ const resolveContainerConfig = async (
 
   if (containerReference.type === ContainerReferenceType.ASSET) {
     return resolveAssetContainerConfig(sdk, {
+      id: containerReference.id,
+      resourceId: containerReference.resourceId,
+      x: containerReference.x,
+      y: containerReference.y,
+      width: containerReference.width ?? DEFAULT_ASSET_WIDTH,
+      height: containerReference.height ?? DEFAULT_ASSET_HEIGHT,
+      label: containerReference.label,
+    });
+  }
+
+  if (containerReference.type === ContainerReferenceType.EVENT) {
+    return resolveEventContainerConfig(sdk, {
       id: containerReference.id,
       resourceId: containerReference.resourceId,
       x: containerReference.x,

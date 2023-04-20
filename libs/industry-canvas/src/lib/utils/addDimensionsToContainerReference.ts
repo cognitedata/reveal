@@ -13,6 +13,8 @@ export const DEFAULT_TIMESERIES_HEIGHT = 400;
 export const DEFAULT_TIMESERIES_WIDTH = 700;
 export const DEFAULT_ASSET_WIDTH = 600;
 export const DEFAULT_ASSET_HEIGHT = 500;
+export const DEFAULT_EVENT_WIDTH = 600;
+export const DEFAULT_EVENT_HEIGHT = 500;
 export const DEFAULT_THREE_D_WIDTH = 600;
 export const DEFAULT_THREE_D_HEIGHT = 400;
 const getInitialContainerReferenceDimensions = (
@@ -44,6 +46,15 @@ const getInitialContainerReferenceDimensions = (
       y: 0,
       width: DEFAULT_ASSET_WIDTH,
       height: DEFAULT_ASSET_HEIGHT,
+    };
+  }
+
+  if (containerReferenceType === ContainerReferenceType.EVENT) {
+    return {
+      x: currentMaxX + INITIAL_CONTAINER_MARGIN,
+      y: 0,
+      width: DEFAULT_EVENT_WIDTH,
+      height: DEFAULT_EVENT_HEIGHT,
     };
   }
 

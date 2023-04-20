@@ -1,6 +1,6 @@
 import { ComponentStory } from '@storybook/react';
-import { ColumnDef } from '@tanstack/react-table';
-import React, { useMemo } from 'react';
+import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
+import React, { useMemo, useState } from 'react';
 import { Table } from './Table';
 
 export default {
@@ -58,11 +58,16 @@ const exampleColumns: ColumnDef<DataType>[] = [
 
 export const Example: ComponentStory<typeof Table> = () => {
   const data = useMemo(() => exampleDatas, []);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
   const columns = useMemo(() => exampleColumns, []);
   return (
     <Table<DataType>
+      enableSelection
       id="example-table"
+      selectedRows={rowSelection}
       data={data}
+      onRowSelection={setRowSelection}
       columns={columns}
       enableColumnResizing
       enableSorting

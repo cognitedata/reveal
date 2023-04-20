@@ -2,34 +2,37 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
+  AdvancedFilter,
+  AssetsMetadataAggregateResponse,
+  AssetsProperties,
   getAssetsMetadataKeysAggregate,
   queryKeys,
-  transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
-import { AssetsMetadataAggregateResponse } from '../types';
-import {
-  InternalAssetFilters,
-  OldAssetFilters,
-} from '@data-exploration-lib/core';
 
-export const useAssetsMetadataKeysAggregateQuery = (
-  query?: string,
-  filter?: InternalAssetFilters | OldAssetFilters,
+interface Props {
+  prefix?: string;
+  advancedFilter?: AdvancedFilter<AssetsProperties>;
   options?: UseQueryOptions<
     AssetsMetadataAggregateResponse[],
     unknown,
     AssetsMetadataAggregateResponse[],
     any
-  >
-) => {
+  >;
+}
+
+export const useAssetsMetadataKeysAggregateQuery = ({
+  prefix,
+  advancedFilter,
+  options,
+}: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsMetadata(query, filter),
+    queryKeys.assetsMetadata(prefix, advancedFilter),
     () => {
       return getAssetsMetadataKeysAggregate(sdk, {
-        filter: transformNewFilterToOldFilter(filter),
-        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+        advancedFilter,
+        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
       });
     },
     {

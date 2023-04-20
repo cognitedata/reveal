@@ -9,7 +9,7 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 import {
-  useAssetsMetadataKeysAggregateQuery,
+  useAssetsMetadataFilterOptions,
   useAssetsMetadataValuesOptionsQuery,
   useDocumentMetadataValuesOptionsQuery,
   useDocumentsMetadataKeysAggregateQuery,
@@ -77,22 +77,24 @@ export const MetadataFilter = <TFilter,>({
 const AssetsMetadataFilter = (
   props: BaseNestedFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useAssetsMetadataKeysAggregateQuery(
-    query,
-    undefined,
-    { keepPreviousData: true }
-  );
-  const options = transformMetadataKeysToOptions(data);
+  const { options, isLoading, isError } = useAssetsMetadataFilterOptions({
+    prefix,
+    query: props.query,
+    filter: props.filter,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
+      onSearchInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
-      useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery()}
+      useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery({
+        query: props.query,
+        filter: props.filter,
+      })}
       {...props}
     />
   );

@@ -63,6 +63,7 @@ const resolveTimeseriesContainerConfig = async (
       resourceId,
       name: name,
       externalId: timeseriesExternalId,
+      resourceType: 'timeSeries',
     },
   } as IndustryCanvasContainerConfig;
 };

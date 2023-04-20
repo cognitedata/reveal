@@ -85,7 +85,10 @@ export const AssetFilters = ({ ...rest }) => {
               metadata: newMetadata,
             })
           }
-          useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
+          useAggregateMetadataValues={(metadataKey) =>
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useAssetsMetadataValuesAggregateQuery({ metadataKey })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
