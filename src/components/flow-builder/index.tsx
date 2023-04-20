@@ -12,6 +12,7 @@ import ReactFlow, {
   Edge,
   SelectionMode,
   Node,
+  EdgeChange,
 } from 'reactflow';
 
 import styled from 'styled-components';
@@ -52,7 +53,31 @@ export const FlowBuilder = ({}: Props): JSX.Element => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
-  const onEdgesChange: OnEdgesChange = () => {};
+  const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
+    changeFlow((f) => {
+      changes.forEach((change) => {
+        switch (change.type) {
+          case 'select': {
+            const e = f.canvas.edges.find((e) => e.id === change.id);
+            if (e) {
+              e.selected = change.selected;
+            }
+            break;
+          }
+          case 'remove': {
+            const eIndex = f.canvas.edges.findIndex((e) => e.id === change.id);
+            if (eIndex !== -1) {
+              f.canvas.edges.deleteAt(eIndex);
+            }
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+    });
+  };
 
   const onNodesChange = (changes: NodeChange[]) => {
     changeFlow((f) => {
