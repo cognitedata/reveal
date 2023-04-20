@@ -42,7 +42,7 @@ export class DefaultImage360Collection implements Image360Collection {
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
 
-  private _annotationVisualizationState: ImageAnnotationVisualizationState = {
+  private readonly _annotationVisualizationState: ImageAnnotationVisualizationState = {
     visible: true
   };
 
