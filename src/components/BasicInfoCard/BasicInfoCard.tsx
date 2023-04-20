@@ -64,7 +64,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             {t('description')}
           </Body>
         }
-        value={<Body level={1}>{description}</Body>}
+        value={<TruncatedText level={1}>{description}</TruncatedText>}
       />
       <DatasetProperty
         label={
@@ -251,6 +251,13 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
 const HelpIcon = styled(Icon)`
   margin-top: 3px;
+`;
+
+const TruncatedText = styled(Body)`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 export default BasicInfoCard;
