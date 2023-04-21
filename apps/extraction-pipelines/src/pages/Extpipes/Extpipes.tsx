@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useExtpipes } from 'hooks/useExtpipes';
 import NoExtpipes from 'components/error/NoExtpipes';
-import { Button, Flex, Loader, Modal, Title } from '@cognite/cogs.js';
+import { Button, Flex, Loader, Modal, Tabs, Title } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { StyledTooltip, PageWrapperColumn } from 'components/styled';
 import ExtpipesTable from 'components/table/ExtpipesTable';
@@ -12,6 +12,8 @@ import { CreateExtpipe } from 'pages/create/CreateExtpipe';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
 import ExtpipesTableSearch from 'components/table/ExtpipesTableSearch';
+import HostedExtractionPipelineTable from 'components/table/HostedExtractionPipelineTable';
+import { useSearchParams } from 'react-router-dom';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -52,7 +54,11 @@ const Extpipes: FunctionComponent<Props> = () => {
   const canEdit = true;
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [searchQuery, setSearchQuery] = useState('');
+
+  const tab = searchParams.get('tab') ?? 'self-hosted';
 
   const onClickCreateButton = () => {
     if (canEdit && !createModalOpen) {
@@ -127,11 +133,32 @@ const Extpipes: FunctionComponent<Props> = () => {
         close={closeCreateDialog}
         title={t('create-ext-pipeline')}
       />
-      <StyledActionBar>
-        <ExtpipesTableSearch onChange={setSearchQuery} value={searchQuery} />
-        {createExtpipeButton}
-      </StyledActionBar>
-      <ExtpipesTable search={searchQuery} />
+      <Flex direction="column" gap={16}>
+        <Tabs
+          activeKey={tab}
+          onTabClick={(key) => {
+            setSearchParams(
+              (prev) => {
+                prev.set('tab', key);
+                return prev;
+              },
+              { replace: true }
+            );
+          }}
+        >
+          <Tabs.TabPane key="self-hosted" tab={t('self-hosted-extractors')} />
+          <Tabs.TabPane key="hosted" tab={t('hosted-extractors')} />
+        </Tabs>
+        <StyledActionBar>
+          <ExtpipesTableSearch onChange={setSearchQuery} value={searchQuery} />
+          {createExtpipeButton}
+        </StyledActionBar>
+      </Flex>
+      {tab === 'self-hosted' ? (
+        <ExtpipesTable search={searchQuery} />
+      ) : (
+        <HostedExtractionPipelineTable search={searchQuery} />
+      )}
     </StyledContainer>
   );
 };
