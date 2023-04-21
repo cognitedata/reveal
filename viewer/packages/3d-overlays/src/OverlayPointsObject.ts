@@ -9,7 +9,6 @@ import {
   Color,
   DepthModes,
   GLSL3,
-  GreaterDepth,
   Group,
   LessEqualDepth,
   Points,
@@ -23,19 +22,24 @@ import {
 import image360IconVert from './image360Icon.vert';
 import image360IconFrag from './image360Icon.frag';
 
-export class InstancedIconSprite extends Group {
+export type PointsMaterialParameters = {
+  spriteTexture: Texture,
+  minPixelSize: number,
+  maxPixelSize: number,
+  radius: number,
+  colorTint?: Color
+  depthMode?: DepthModes,
+  collectionOpacity?: number
+}
+
+export class OverlayPointsObject extends Group {
   private readonly _geometry: BufferGeometry;
   private readonly _frontMaterial: RawShaderMaterial;
-  private readonly _backMaterial: RawShaderMaterial;
   private readonly _positionBuffer: Float32Array;
   private readonly _positionAttribute: BufferAttribute;
   constructor(
     maxNumberOfPoints: number,
-    spriteTexture: Texture,
-    minPixelSize: number,
-    maxPixelSize: number,
-    radius: number,
-    colorTint = new Color(1, 1, 1)
+    materialParameters: PointsMaterialParameters
   ) {
     super();
     const geometry = new BufferGeometry();
@@ -44,31 +48,26 @@ export class InstancedIconSprite extends Group {
     geometry.setAttribute('position', this._positionAttribute);
     geometry.setDrawRange(0, 0);
 
+    const { spriteTexture, minPixelSize, maxPixelSize, radius,
+      colorTint = new Color(1, 1, 1),
+      depthMode = LessEqualDepth,
+      collectionOpacity = 1
+    } = materialParameters;
+
     const frontMaterial = this.createIconsMaterial(
       spriteTexture,
-      1,
-      LessEqualDepth,
+      collectionOpacity,
+      depthMode,
       minPixelSize,
       maxPixelSize,
       radius,
       colorTint
     );
-    const backMaterial = this.createIconsMaterial(
-      spriteTexture,
-      0.5,
-      GreaterDepth,
-      minPixelSize,
-      maxPixelSize,
-      radius,
-      colorTint
-    );
-    const [frontPoints, backPoints] = this.initializePoints(geometry, frontMaterial, backMaterial);
+    const frontPoints = this.initializePoints(geometry, frontMaterial);
     this.add(frontPoints);
-    this.add(backPoints);
 
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
-    this._backMaterial = backMaterial;
   }
 
   public setPoints(points: Vector3[]): void {
@@ -82,28 +81,37 @@ export class InstancedIconSprite extends Group {
     this._geometry.setDrawRange(0, points.length);
   }
 
+  public addPoints(points: Vector3[]): void {
+    const lastDrawIndex = this._geometry.drawRange.count*3;
+
+    if (lastDrawIndex + points.length * 3 > this._positionBuffer.length)
+      return;
+
+    points.forEach((point, index) => {
+      this._positionBuffer[lastDrawIndex + index * 3 + 0] = point.x;
+      this._positionBuffer[lastDrawIndex + index * 3 + 1] = point.y;
+      this._positionBuffer[lastDrawIndex + index * 3 + 2] = point.z;
+    });
+    this._positionAttribute.updateRange = { offset: 0, count: lastDrawIndex + points.length * 3 };
+    this._positionAttribute.needsUpdate = true;
+    this._geometry.setDrawRange(0, lastDrawIndex + points.length);
+  }
+
   public dispose(): void {
     this._frontMaterial.dispose();
-    this._backMaterial.dispose();
     this._geometry.dispose();
   }
 
   private initializePoints(
     geometry: BufferGeometry,
     frontMaterial: ShaderMaterial,
-    backMaterial: ShaderMaterial
-  ): [Points, Points] {
+  ): Points {
     const frontPoints = createPoints(geometry, frontMaterial);
     frontPoints.onBeforeRender = renderer => {
       setUniforms(renderer, frontMaterial);
     };
 
-    const backPoints = createPoints(geometry, backMaterial);
-    backPoints.onBeforeRender = renderer => {
-      setUniforms(renderer, backMaterial);
-    };
-
-    return [frontPoints, backPoints];
+    return frontPoints;
 
     function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
       const points = new Points(geometry, material);

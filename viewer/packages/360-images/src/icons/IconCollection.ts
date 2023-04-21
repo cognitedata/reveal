@@ -2,23 +2,26 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Frustum, Matrix4, Texture, Vector3 } from 'three';
+import { CanvasTexture, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3, Vector4 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
-import { Image360Icon } from './Image360Icon';
-import { InstancedIconSprite } from './InstancedIconSprite';
-import { IconOctree } from './IconOctree';
+import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
+import { Image360PointsObject } from './Image360PointsObject';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
+export type IconsOptions = {
+  platformMaxPointsSize?: number
+};
+
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 256;
+  private MAX_PIXEL_SIZE = 256;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _hoverIconTexture: CanvasTexture;
   private readonly _sharedTexture: Texture;
-  private readonly _icons: Image360Icon[];
-  private readonly _iconsSprite: InstancedIconSprite;
+  private readonly _hoverSprite: Sprite;
+  private readonly _icons: Overlay3DIcon[];
+  private readonly _pointsObject: Image360PointsObject;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
@@ -29,8 +32,12 @@ export class IconCollection {
   private _proximityRadius = Infinity;
   private _proximityPointLimit = 50;
 
-  get icons(): Image360Icon[] {
+  get icons(): Overlay3DIcon[] {
     return this._icons;
+  }
+
+  set hoverSpriteVisibility(value: boolean) {
+    this._hoverSprite.visible = value;
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
@@ -62,20 +69,25 @@ export class IconCollection {
   constructor(
     points: Vector3[],
     sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    iconOptions?: IconsOptions,
   ) {
+    this.MAX_PIXEL_SIZE = Math.min(this.MAX_PIXEL_SIZE, iconOptions?.platformMaxPointsSize ?? this.MAX_PIXEL_SIZE);
+
     const sharedTexture = this.createOuterRingsTexture();
     const iconSpriteRadius = this._iconRadius;
-    const iconsSprites = new InstancedIconSprite(
-      points.length * 2,
-      sharedTexture,
-      this.MIN_PIXEL_SIZE,
-      this.MAX_PIXEL_SIZE,
-      iconSpriteRadius
+    const iconsSprites = new Image360PointsObject(
+      points.length * 2, {
+      spriteTexture: sharedTexture,
+      minPixelSize: this.MIN_PIXEL_SIZE,
+      maxPixelSize: this.MAX_PIXEL_SIZE,
+      radius: iconSpriteRadius
+    }
     );
     iconsSprites.setPoints(points);
 
-    this._hoverIconTexture = this.createHoverIconTexture();
+    const spriteTexture = this.createHoverIconTexture();
+    this._hoverSprite = this.createHoverSprite(spriteTexture);
     this._sharedTexture = sharedTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
@@ -89,13 +101,13 @@ export class IconCollection {
     onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
 
     this._sceneHandler = sceneHandler;
-    this._iconsSprite = iconsSprites;
+    this._pointsObject = iconsSprites;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
     sceneHandler.addCustomObject(iconsSprites);
   }
 
-  private setIconClustersByLOD(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+  private setIconClustersByLOD(octree: IconOctree, iconSprites: Image360PointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
     const screenSpaceAreaThreshold = 0.04;
@@ -118,13 +130,13 @@ export class IconCollection {
         })
         .filter(icon => frustum.containsPoint(icon.position));
 
-      this._icons.forEach(icon => icon.setCulled(true));
-      selectedIcons.forEach(icon => icon.setCulled(false));
-      iconSprites.setPoints(selectedIcons.filter(icon => icon.isVisible()).map(icon => icon.position));
+      this._icons.forEach(icon => icon.culled = true);
+      selectedIcons.forEach(icon => icon.culled = false);
+      iconSprites.setPoints(selectedIcons.filter(icon => icon.visible).map(icon => icon.position));
     };
   }
 
-  private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+  private computeProximityPoints(octree: IconOctree, iconSprites: Image360PointsObject): BeforeSceneRenderedDelegate {
     return ({ camera }) => {
       const points =
         this._proximityRadius === Infinity
@@ -139,11 +151,11 @@ export class IconCollection {
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
 
-      this._icons.forEach(icon => icon.setCulled(true));
-      closestPoints.forEach(icon => icon.setCulled(false));
+      this._icons.forEach(icon => icon.culled = true);
+      closestPoints.forEach(icon => icon.culled = false);
       iconSprites.setPoints(
         closestPoints
-          .filter(icon => icon.isVisible())
+          .filter(icon => icon.visible)
           .reverse()
           .map(p => p.position)
       );
@@ -154,26 +166,41 @@ export class IconCollection {
     points: Vector3[],
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
-  ): Image360Icon[] {
-    return points.map(
-      point =>
-        new Image360Icon(
-          point,
-          this._hoverIconTexture,
-          sceneHandler,
-          this.MIN_PIXEL_SIZE,
-          this.MAX_PIXEL_SIZE,
-          this._iconRadius,
-          onBeforeSceneRendered
-        )
-    );
+  ): Overlay3DIcon[] {
+    sceneHandler.addCustomObject(this._hoverSprite);
+
+   const icons = points.map(
+     point => {
+       const icon = new Overlay3DIcon(
+         point,
+         this.MIN_PIXEL_SIZE,
+         this.MAX_PIXEL_SIZE,
+         this._iconRadius,
+         this._hoverSprite
+       );
+       
+       return icon
+     }
+   );
+    
+   onBeforeSceneRendered.subscribe((args) => icons.forEach((icon) => icon.updateAdaptiveScale(args)));
+
+    return icons;
   }
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
-    this._sceneHandler.removeCustomObject(this._iconsSprite);
-    this._iconsSprite.dispose();
+    this._sceneHandler.removeCustomObject(this._pointsObject);
+    this._pointsObject.dispose();
     this._sharedTexture.dispose();
+  }
+
+  private createHoverSprite(hoverIconTexture: THREE.CanvasTexture): THREE.Sprite {
+    const spriteMaterial = new SpriteMaterial({ map: hoverIconTexture, depthTest: false});
+    const sprite = new Sprite(spriteMaterial);
+    sprite.updateMatrixWorld();
+    sprite.renderOrder = 5;
+    return sprite;
   }
 
   private createOuterRingsTexture(): CanvasTexture {

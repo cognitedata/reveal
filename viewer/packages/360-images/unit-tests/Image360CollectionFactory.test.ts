@@ -46,7 +46,8 @@ describe(Image360CollectionFactory.name, () => {
     const image360EntityFactory = new Image360CollectionFactory(
       mock360ImageProvider.object(),
       mockSceneHandler.object(),
-      new EventTrigger<BeforeSceneRenderedDelegate>()
+      new EventTrigger<BeforeSceneRenderedDelegate>(),
+      { platformMaxPointsSize: 256}
     );
     const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);
 

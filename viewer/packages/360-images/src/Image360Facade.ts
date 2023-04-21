@@ -24,7 +24,11 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setIconsVisibility(visible));
   }
 
-  set allHoverIconsVisibility(visible: boolean) {
+  set allIconsSelected(visible: boolean) {
+    this._image360Collections.forEach(collection => collection.setSelectedForAll(visible));
+  }
+
+  set hoverIconVisibility(visible: boolean) {
     this._image360Collections.forEach(collection => collection.setSelectedVisibility(visible));
   }
 
@@ -96,7 +100,7 @@ export class Image360Facade<T> {
     }
 
     function hasVisibleIcon(entity: Image360Entity) {
-      return entity.icon.isVisible() && !entity.image360Visualization.visible;
+      return entity.icon.visible && !entity.image360Visualization.visible;
     }
 
     function getIntersection(entity: Image360Entity, ray: THREE.Ray): [Image360Entity, THREE.Vector3 | null] {

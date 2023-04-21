@@ -1556,6 +1556,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/360-images@workspace:packages/360-images"
   dependencies:
+    "@reveal/3d-overlays": "workspace:*"
     "@reveal/data-providers": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/utilities": "workspace:*"

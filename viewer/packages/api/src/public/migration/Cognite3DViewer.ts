@@ -310,7 +310,10 @@ export class Cognite3DViewer {
         this._activeCameraManager,
         this._mouseHandler,
         () => this.requestRedraw(),
-        this._events.beforeSceneRendered
+        this._events.beforeSceneRendered,
+        {
+          platformMaxPointsSize: getMaxPointSize(this._renderer),
+        }
       );
     }
 
@@ -1618,4 +1621,10 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     }
   };
   return revealOptions;
+}
+
+function getMaxPointSize(renderer: THREE.WebGLRenderer): number {
+  const gl = renderer.getContext();
+  const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
+  return maxPointSize;
 }

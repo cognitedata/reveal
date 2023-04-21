@@ -21,10 +21,10 @@ export type LabelInfo = {
   id: number;
   boundingBox: THREE.Box3;
 };
+export type LabelGroupId = string;
 
 export type LabelGroup = {
-  uuid: string;
-  labelsInfo: LabelInfo[];
+  id: LabelGroupId;
 };
 
 export type OverlayToolEvent = 'hover' | 'click';
@@ -38,7 +38,6 @@ export class SmartOverlayTool {
   private _isEnabled = true;
   private _isVisible = true;
 
-  private readonly pointsMaterial: THREE.PointsMaterial;
   private readonly _objectUUIDToLabelIndexToLabelInfoMap = new Map<string, Map<number, LabelInfo>>();
   private hoveredOverlayPointIndex = -1;
   private readonly overlayPoints: THREE.Object3D[] = [];
@@ -64,15 +63,6 @@ export class SmartOverlayTool {
   constructor(viewer: Cognite3DViewer) {
     this._htmlOverlayTool = new HtmlOverlayTool(viewer);
     this._viewer = viewer;
-
-    this.pointsMaterial = new THREE.PointsMaterial({
-      size: 1,
-      color: new THREE.Color(this.overlayColor),
-      sizeAttenuation: true,
-      map: this.createCircleTexture(),
-      transparent: true,
-      depthTest: true
-    });
 
     const raycaster = new THREE.Raycaster();
     raycaster.params.Points!.threshold = 0.1;
@@ -148,8 +138,7 @@ export class SmartOverlayTool {
     viewer.addObject3D(points);
 
     return {
-      uuid: points.uuid,
-      labelsInfo: labels
+      id: points.uuid
     }
   }
 

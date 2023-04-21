@@ -5,15 +5,15 @@
 import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360FileProvider, Image360Texture } from '@reveal/data-providers';
-import { Image360Icon } from '../icons/Image360Icon';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { Image360 } from './Image360';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 
 export class Image360Entity implements Image360 {
   private readonly _imageProvider: Image360FileProvider;
   private readonly _image360Metadata: Image360Descriptor;
   private readonly _transform: THREE.Matrix4;
-  private readonly _image360Icon: Image360Icon;
+  private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _getFullResolutionTextures:
     | undefined
@@ -33,7 +33,7 @@ export class Image360Entity implements Image360 {
    * image during normal visualization.
    * @returns Image360Icon
    */
-  get icon(): Image360Icon {
+  get icon(): Overlay3DIcon {
     return this._image360Icon;
   }
 
@@ -50,7 +50,7 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon
+    icon: Overlay3DIcon
   ) {
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;

@@ -10,3 +10,4 @@ export { Image360Entity } from './src/entity/Image360Entity';
 export { Image360Visualization } from './src/entity/Image360Visualization';
 export { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
+export { IconsOptions } from './src/icons/IconCollection';

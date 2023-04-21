@@ -7,22 +7,27 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import zip from 'lodash/zip';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { Image360Icon } from '../icons/Image360Icon';
-import { IconCollection } from '../icons/IconCollection';
+import { IconCollection, IconsOptions } from '../icons/IconCollection';
 import { Vector3 } from 'three';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
   private readonly _sceneHandler: SceneHandler;
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
+  private readonly _iconsOptions: IconsOptions | undefined;
+
   constructor(
     image360DataProvider: Image360Provider<T>,
     sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    iconsOptions?: IconsOptions
   ) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
     this._onBeforeSceneRendered = onBeforeSceneRendered;
+    this._iconsOptions = iconsOptions;
+
   }
 
   public async create(
@@ -37,7 +42,7 @@ export class Image360CollectionFactory<T> {
     event360Descriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = event360Descriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new IconCollection(points, this._sceneHandler, this._onBeforeSceneRendered);
+    const collectionIcons = new IconCollection(points, this._sceneHandler, this._onBeforeSceneRendered, this._iconsOptions);
     const icons = collectionIcons.icons;
 
     const entities = zip(event360Descriptors, icons)
@@ -55,8 +60,8 @@ export class Image360CollectionFactory<T> {
     return new DefaultImage360Collection(entities, collectionIcons);
 
     function isDefined(
-      pair: [Image360Descriptor | undefined, Image360Icon | undefined]
-    ): pair is [Image360Descriptor, Image360Icon] {
+      pair: [Image360Descriptor | undefined, Overlay3DIcon| undefined]
+    ): pair is [Image360Descriptor, Overlay3DIcon] {
       return pair[0] !== undefined && pair[1] !== undefined;
     }
   }
