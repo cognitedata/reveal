@@ -13,12 +13,11 @@ import { Group } from '@cognite/sdk';
 import { getReadableCapabilities } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
 import { useCdfGroups, useLabelSuggestions } from 'actions';
-import Alert from 'antd/lib/alert';
 
 import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
 import { Col } from 'utils';
-import { Switch, Collapse, Chip } from '@cognite/cogs.js';
+import { Switch, Collapse, Chip, Infobox } from '@cognite/cogs.js';
 import CreatableSelect from 'react-select/creatable';
 import Select, { components, OptionProps } from 'react-select';
 
@@ -175,12 +174,9 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         <div>
           <FieldLabel>{t('dataset-info-form-owners')}</FieldLabel>
           {error ? (
-            <Alert
-              type="error"
-              message={`${t('fetch-cdf-groups-failed')} ${t(
-                'please-try-again'
-              )}`}
-            />
+            <Infobox type="danger">
+              {`${t('fetch-cdf-groups-failed')} ${t('please-try-again')}`}
+            </Infobox>
           ) : (
             <Select<Group, true>
               isMulti
