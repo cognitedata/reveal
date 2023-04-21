@@ -20,3 +20,8 @@ export type Image360ExitedDelegate = () => void;
  * Delegate for 360 image annotation hover events
  */
 export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
+
+/**
+ * Delegate for 360 image annotation click events
+ */
+export type Image360AnnotationClickedDelegate = (annotation: AnnotationModel) => void;

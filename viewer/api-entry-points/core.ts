@@ -85,5 +85,6 @@ export {
   Image360Collection,
   Image360EnteredDelegate,
   Image360ExitedDelegate,
-  Image360AnnotationHoveredDelegate
+  Image360AnnotationHoveredDelegate,
+  Image360AnnotationClickedDelegate
 } from '../packages/360-images';
