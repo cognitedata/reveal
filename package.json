@@ -28,6 +28,7 @@
     "@cognite/sdk-provider": "^2.0.0",
     "antd": "^4.15.2",
     "babel-polyfill": "^6.26.0",
+    "formik": "^2.2.9",
     "i18next": "^21.6.12",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",

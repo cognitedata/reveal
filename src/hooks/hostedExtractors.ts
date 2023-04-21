@@ -1,10 +1,10 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
-import { useMutation, useQuery } from 'react-query';
+import { UseMutationOptions, useMutation, useQuery } from 'react-query';
 
 // SOURCES
 
-type MQTTSourceType = 'mqtt3' | 'mqtt5';
+export type MQTTSourceType = 'mqtt3' | 'mqtt5';
 
 type BaseMQTTSource = {
   externalId: string;
@@ -19,7 +19,7 @@ type ReadMQTTSource = BaseMQTTSource & {
   lastUpdatedTime: number;
 };
 
-type CreateMQTTSource = BaseMQTTSource & {
+export type CreateMQTTSource = BaseMQTTSource & {
   password: string;
 };
 
@@ -39,7 +39,9 @@ export const useMQTTSources = () => {
 
 type CreateMQTTSourceVariables = CreateMQTTSource;
 
-export const useCreateMQTTSource = () => {
+export const useCreateMQTTSource = (
+  options?: UseMutationOptions<unknown, unknown, CreateMQTTSourceVariables>
+) => {
   const sdk = useSDK();
 
   return useMutation(async (source: CreateMQTTSourceVariables) => {
@@ -48,12 +50,12 @@ export const useCreateMQTTSource = () => {
         items: [source],
       },
     });
-  });
+  }, options);
 };
 
 // DESTINATIONS
 
-type MQTTDestinationType = 'datapoints' | 'events' | 'raw';
+export type MQTTDestinationType = 'datapoints' | 'events' | 'raw';
 
 type BaseMQTTDestination = {
   externalId: string;
@@ -64,7 +66,7 @@ type MQTTSessionCredentials = {
   nonce: string;
 };
 
-type CreateMQTTDestination = BaseMQTTDestination & {
+export type CreateMQTTDestination = BaseMQTTDestination & {
   credentials?: MQTTSessionCredentials;
 };
 
@@ -100,7 +102,7 @@ type BaseMQTTJob = {
   format: MQTTFormat;
 };
 
-type CreateMQTTJob = BaseMQTTJob & {
+export type CreateMQTTJob = BaseMQTTJob & {
   destinationId: string;
   sourceId: string;
 };
