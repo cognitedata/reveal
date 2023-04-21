@@ -7,7 +7,11 @@ import styled from 'styled-components';
 
 import { DEFAULT_GROUP_NAME } from 'common';
 
-export const ParentNode = ({ data, id, selected }: NodeProps): JSX.Element => {
+export const ParentNodeRenderer = ({
+  data,
+  id,
+  selected,
+}: NodeProps): JSX.Element => {
   const { changeNodes } = useWorkflowBuilderContext();
 
   const [groupLabel, setGroupLabel] = useState(data.label);
