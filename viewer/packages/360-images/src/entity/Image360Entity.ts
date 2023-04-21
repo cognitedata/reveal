@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360FileProvider, Image360Texture } from '@reveal/data-providers';
+import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from '../icons/Image360Icon';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { Image360 } from './Image360';
@@ -50,14 +50,16 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon
+    icon: Image360Icon,
+    device: DeviceDescriptor
   ) {
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
 
     this._transform = transform;
     this._image360Icon = icon;
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
+
+    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
     this._image360VisualzationBox.visible = false;
     this._getFullResolutionTextures = undefined;
   }

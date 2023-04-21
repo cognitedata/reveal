@@ -3,7 +3,7 @@
  */
 
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
-import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
+import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
 import zip from 'lodash/zip';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
@@ -17,14 +17,17 @@ export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
   private readonly _sceneHandler: SceneHandler;
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
+  private readonly _device: DeviceDescriptor;
   constructor(
     image360DataProvider: Image360Provider<T>,
     sceneHandler: SceneHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    device: DeviceDescriptor
   ) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
     this._onBeforeSceneRendered = onBeforeSceneRendered;
+    this._device = device;
   }
 
   public async create(
@@ -50,7 +53,8 @@ export class Image360CollectionFactory<T> {
           this._sceneHandler,
           this._image360DataProvider,
           descriptor.transform,
-          icon!
+          icon,
+          this._device
         );
       });
 

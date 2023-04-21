@@ -15,6 +15,7 @@ import {
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
+  determineCurrentDevice,
   EventTrigger,
   InputHandler,
   pixelToNormalizedDeviceCoordinates,
@@ -63,10 +64,12 @@ export class Image360ApiHelper {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
       sceneHandler,
-      onBeforeSceneRendered
+      onBeforeSceneRendered,
+      device
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
