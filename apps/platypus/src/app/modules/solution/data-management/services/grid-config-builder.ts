@@ -134,6 +134,7 @@ export const buildGridConfig = (
           isList,
           colDef: {
             headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
+            suppressMovable: true,
             // Mixer API supports sorting only on primitives (not array and not custom types)
             sortable: !field.type.custom && !isList && !builtInDataField,
             filter: builtInDataField ? false : getColFilter(field),
