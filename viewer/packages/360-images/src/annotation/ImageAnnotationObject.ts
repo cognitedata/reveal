@@ -69,7 +69,7 @@ export class ImageAnnotationObject {
   private initializeTransform(face: FaceType, normalizationTransform: Matrix4): void {
     const rotationMatrix = this.getRotationFromFace(face);
 
-    const transformation = normalizationTransform.clone().premultiply(rotationMatrix);
+    const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._mesh.matrix = transformation;
     this._mesh.matrixAutoUpdate = false;
   }
