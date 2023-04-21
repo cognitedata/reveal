@@ -78,5 +78,5 @@ export const App = () => {
 export default App;
 
 const ThreeDAppWrapper = styled.div`
-  padding: 15px 20px;
+  padding: 24px 40px;
 `;

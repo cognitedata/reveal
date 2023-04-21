@@ -9,8 +9,6 @@ interface BreadcrumbsProps {
 }
 const Wrapper = styled.div`
   background: transparent;
-  height: 40px;
-  margin-bottom: 20px;
   font-size: 16px;
   color: ${theme.breadcrumbsText};
   font-weight: bold;
@@ -18,7 +16,7 @@ const Wrapper = styled.div`
 
 const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
   <Wrapper>
-    <Breadcrumb
+    <StyledAntdBreadCrumb
       separator={
         <span style={{ fontSize: '16px', fontWeight: 'bold' }}>&gt;</span>
       }
@@ -36,8 +34,14 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
             )}
           </Breadcrumb.Item>
         ))}
-    </Breadcrumb>
+    </StyledAntdBreadCrumb>
   </Wrapper>
 );
 
 export default Breadcrumbs;
+
+export const StyledAntdBreadCrumb = styled(Breadcrumb)`
+  ol {
+    align-items: center;
+  }
+`;
