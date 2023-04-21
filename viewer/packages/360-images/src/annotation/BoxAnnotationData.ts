@@ -6,27 +6,29 @@ import { ImageAnnotationObjectData } from './ImageAnnotationData';
 
 import { BufferGeometry, Matrix4, PlaneGeometry } from 'three';
 
-import { AnnotationsObjectDetection } from '@cognite/sdk';
+import { AnnotationsBoundingBox, AnnotationsObjectDetection } from '@cognite/sdk';
+import assert from 'assert';
 
 export class BoxAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: PlaneGeometry;
   private readonly _initialTranslation: Matrix4;
 
   constructor(annotation: AnnotationsObjectDetection) {
-    this._geometry = this.createGeometry(annotation);
+    const annotationsBox = annotation.boundingBox;
 
-    const abox = annotation.boundingBox!;
+    assert(annotationsBox !== undefined);
+
+    this._geometry = this.createGeometry(annotationsBox);
 
     this._initialTranslation = new Matrix4().makeTranslation(
-      0.5 - (abox.xMax + abox.xMin) / 2,
-      0.5 - (abox.yMax + abox.yMin) / 2,
+      0.5 - (annotationsBox.xMax + annotationsBox.xMin) / 2,
+      0.5 - (annotationsBox.yMax + annotationsBox.yMin) / 2,
       0.5
     );
   }
 
-  createGeometry(annotation: AnnotationsObjectDetection): PlaneGeometry {
-    const abox = annotation.boundingBox!;
-    return new PlaneGeometry(abox.xMax - abox.xMin, abox.yMax - abox.yMin);
+  createGeometry(annotationsBox: AnnotationsBoundingBox): PlaneGeometry {
+    return new PlaneGeometry(annotationsBox.xMax - annotationsBox.xMin, annotationsBox.yMax - annotationsBox.yMin);
   }
 
   getGeometry(): BufferGeometry {
