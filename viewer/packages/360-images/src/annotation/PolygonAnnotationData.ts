@@ -7,6 +7,7 @@ import { BufferGeometry, Matrix4, Shape, ShapeGeometry } from 'three';
 import { AnnotationsObjectDetection } from '@cognite/sdk';
 
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
+import assert from 'assert';
 
 export class PolygonAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: ShapeGeometry;
@@ -16,7 +17,9 @@ export class PolygonAnnotationData implements ImageAnnotationObjectData {
   }
 
   createGeometry(annotation: AnnotationsObjectDetection): ShapeGeometry {
-    const points = annotation.polygon!.vertices.map(({ x, y }) => ({ x: 0.5 - x, y: 0.5 - y }));
+    assert(annotation.polygon !== undefined);
+
+    const points = annotation.polygon.vertices.map(({ x, y }) => ({ x: 0.5 - x, y: 0.5 - y }));
 
     const polygon = new Shape();
 
