@@ -43,8 +43,7 @@
         ""
       ],
       "addLabels": [
-        "dependencies",
-        "auto-update"
+        "dependencies"
       ],
       "prConcurrentLimit": 5
     },
