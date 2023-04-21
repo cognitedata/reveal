@@ -37,9 +37,9 @@ export const useAssetsMetadataValuesOptionsQuery =
     });
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const transFormedOptions = useMemo(() => {
+    const transformedOptions = useMemo(() => {
       return mergeDynamicFilterOptions(data, dynamicData);
     }, [data, dynamicData]);
 
-    return { options: transFormedOptions, isLoading };
+    return { options: transformedOptions, isLoading };
   };

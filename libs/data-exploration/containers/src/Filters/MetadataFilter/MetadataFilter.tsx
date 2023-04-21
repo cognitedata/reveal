@@ -15,8 +15,8 @@ import {
   useDocumentsMetadataKeysAggregateQuery,
   useEventsMetadataKeysAggregateQuery,
   useEventsMetadataValuesOptionsQuery,
+  useSequenceMetadataFilterOptions,
   useSequenceMetadataValuesOptionsQuery,
-  useSequencesMetadataKeysAggregateQuery,
   useTimeseriesMetadataKeysAggregateQuery,
   useTimeseriesMetadataValuesOptionsQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -177,21 +177,22 @@ const FilesMetadataFilter = (
 const SequencesMetadataFilter = (
   props: BaseNestedFilterProps<InternalSequenceFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useSequencesMetadataKeysAggregateQuery(
-    query,
-    undefined,
-    { keepPreviousData: true }
-  );
-
-  const options = transformMetadataKeysToOptions(data);
+  const { options, isLoading, isError } = useSequenceMetadataFilterOptions({
+    prefix,
+    filter: props.filter,
+    query: props.query,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
-      useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery()}
+      onSearchInputChange={setPrefix}
+      useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery({
+        filter: props.filter,
+        query: props.query,
+      })}
       isError={isError}
       isLoading={isLoading}
       {...props}

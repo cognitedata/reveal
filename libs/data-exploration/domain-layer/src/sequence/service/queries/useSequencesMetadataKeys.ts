@@ -8,11 +8,9 @@ interface Props {
 }
 
 export const useSequencesMetadataKeys = ({ query, enabled }: Props = {}) => {
-  const { data, ...rest } = useSequencesMetadataKeysAggregateQuery(
-    query,
-    undefined,
-    { enabled }
-  );
+  const { data, ...rest } = useSequencesMetadataKeysAggregateQuery({
+    prefix: query,
+  });
 
   const metadataKeys = useMemo(() => {
     return data?.map(({ value }) => value);

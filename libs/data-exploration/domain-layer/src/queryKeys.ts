@@ -9,14 +9,20 @@ export const queryKeys = {
   all: ['cdf'] as const,
   // SEQUENCE
   sequence: () => [...queryKeys.all, 'sequence'] as const,
-  sequencesMetadata: (query?: string, filter?: any) =>
-    [...queryKeys.sequence(), 'metadata', 'keys', query, filter] as const,
+  sequencesMetadata: (query?: string, advancedFilter?: any) =>
+    [
+      ...queryKeys.sequence(),
+      'metadata',
+      'keys',
+      query,
+      advancedFilter,
+    ] as const,
   listSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || [])] as const,
   sequencesMetadataValues: (
     metadataKey: string,
     query?: string,
-    filter?: any
+    advancedFilter?: any
   ) =>
     [
       ...queryKeys.sequence(),
@@ -24,7 +30,7 @@ export const queryKeys = {
       'values',
       metadataKey,
       query,
-      filter,
+      advancedFilter,
     ] as const,
   aggregateSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || []), 'aggregate'] as const,

@@ -1,37 +1,34 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
+  AdvancedFilter,
   getSequencesMetadataKeysAggregate,
   queryKeys,
-  transformNewFilterToOldFilter,
+  SequenceProperties,
 } from '@data-exploration-lib/domain-layer';
-import { SequencesMetadataAggregateResponse } from '../types';
-import {
-  InternalSequenceFilters,
-  OldSequenceFilters,
-} from '@data-exploration-lib/core';
 
-export const useSequencesMetadataKeysAggregateQuery = (
-  query?: string,
-  filter?: InternalSequenceFilters | OldSequenceFilters,
-  options?: UseQueryOptions<
-    SequencesMetadataAggregateResponse[],
-    unknown,
-    SequencesMetadataAggregateResponse[],
-    any
-  >
-) => {
+interface Props {
+  prefix?: string;
+  advancedFilter?: AdvancedFilter<SequenceProperties>;
+}
+
+export const useSequencesMetadataKeysAggregateQuery = ({
+  prefix,
+  advancedFilter,
+}: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.sequencesMetadata(query, filter),
+    queryKeys.sequencesMetadata(prefix, advancedFilter),
     () => {
       return getSequencesMetadataKeysAggregate(sdk, {
-        filter: transformNewFilterToOldFilter(filter),
-        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+        advancedFilter,
+        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
       });
     },
-    options
+    {
+      keepPreviousData: true,
+    }
   );
 };
