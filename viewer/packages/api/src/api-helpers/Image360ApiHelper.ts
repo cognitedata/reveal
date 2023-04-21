@@ -93,8 +93,11 @@ export class Image360ApiHelper {
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
 
-    const handleHover = (event: PointerEventData) => this.handleAnnotationHover(event);
-    inputHandler.on('hover', handleHover);
+    const handleAnnotationHover = (event: PointerEventData) => this.handleAnnotationCursorEvent('hover', event);
+    inputHandler.on('hover', handleAnnotationHover);
+
+    const handleAnnotationClick = (event: PointerEventData) => this.handleAnnotationCursorEvent('click', event);
+    inputHandler.on('click', handleAnnotationClick);
 
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
@@ -123,7 +126,7 @@ export class Image360ApiHelper {
     );
   }
 
-  private handleAnnotationHover(event: PointerEventData): void {
+  private handleAnnotationCursorEvent(eventType: 'hover' | 'click', event: PointerEventData): void {
     const currentEntity = this._interactionState.currentImage360Entered;
 
     if (currentEntity === undefined) {
@@ -141,7 +144,12 @@ export class Image360ApiHelper {
     }
 
     const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
-    collection.fireHoverEvent(annotation);
+
+    if (eventType === 'hover') {
+      collection.fireHoverEvent(annotation);
+    } else if (eventType === 'click') {
+      collection.fireClickEvent(annotation);
+    }
   }
 
   public async add360ImageSet(
