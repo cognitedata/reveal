@@ -2,6 +2,7 @@ import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ToolType } from '@cognite/unified-file-viewer';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { StickyButton } from './StickyButton';
 
 export type ToolbarComponentProps = {
   activeTool: ToolType;
@@ -95,9 +96,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           </Tooltip>
 
           <Tooltip content="Add sticky">
-            <Button
-              icon="Square"
-              type="ghost"
+            <StickyButton
               toggled={activeTool === ToolType.STICKY}
               aria-label="Sticky tool"
               onClick={() => onToolChangeWrapper(ToolType.STICKY)}
