@@ -804,6 +804,7 @@ export interface Image360Collection {
     on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setIconsVisibility(visible: boolean): void;
+    setImageAnnotationVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;
 }
 
