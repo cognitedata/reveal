@@ -63,7 +63,8 @@ export const buildGridConfig = (
   onRowAdd: (row: KeyValueMap) => void,
   isDeletionEnabled: boolean,
   isManualPopulationEnabled: boolean,
-  columnOrder: string[]
+  columnOrder: string[],
+  nativeFilter: boolean
 ): GridConfig => {
   const columns: ColumnConfig[] = isDeletionEnabled
     ? [
@@ -108,7 +109,7 @@ export const buildGridConfig = (
               sortable: false,
               suppressMovable: true,
               cellRenderer: IdCellRenderer,
-              filter: getColFilter(builtInDataField),
+              filter: nativeFilter ? getColFilter(builtInDataField) : false,
               cellRendererParams: {
                 onRowAdd,
               },
@@ -137,7 +138,8 @@ export const buildGridConfig = (
             suppressMovable: true,
             // Mixer API supports sorting only on primitives (not array and not custom types)
             sortable: !field.type.custom && !isList && !builtInDataField,
-            filter: builtInDataField ? false : getColFilter(field),
+            filter:
+              !nativeFilter || builtInDataField ? false : getColFilter(field),
             editable: isManualPopulationEnabled && !isList && !builtInDataField,
             cellEditorParams: {
               isRequired: field.type.nonNull,

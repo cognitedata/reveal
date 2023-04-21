@@ -1,21 +1,19 @@
 import { Body, Flex, Icon, Modal, Switch } from '@cognite/cogs.js';
 import {
+  useFilterBuilderFeatureFlag,
+  useUpdateFilterBuilderFeatureFlag,
   useColumnSelectionFeatureFlag,
   useUpdateColumnSelectionFeatureFlag,
-} from '@platypus-app/flags/useColumnSelection';
-import {
   useManualPopulationFeatureFlag,
   useUpdateManualPopulationFeatureFlag,
-} from '@platypus-app/flags/useManualPopulation';
-import {
   useSuggestionsFeatureFlag,
   useUpdateSuggestionsFeatureFlag,
-} from '@platypus-app/flags/useSuggestions';
+} from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-type FeatureKey = 'population' | 'suggestions' | 'columns';
+type FeatureKey = 'population' | 'suggestions' | 'columns' | 'filters';
 
 export const FeaturePreview = ({
   onRequestClose,
@@ -31,11 +29,13 @@ export const FeaturePreview = ({
     population: useManualPopulationFeatureFlag().isEnabled,
     suggestions: useSuggestionsFeatureFlag().isEnabled,
     columns: useColumnSelectionFeatureFlag().isEnabled,
+    filters: useFilterBuilderFeatureFlag().isEnabled,
   });
 
   const setManualPopulation = useUpdateManualPopulationFeatureFlag();
   const setSuggestions = useUpdateSuggestionsFeatureFlag();
   const setColumnSelection = useUpdateColumnSelectionFeatureFlag();
+  const setFilterBuilder = useUpdateFilterBuilderFeatureFlag();
 
   const updateStatusState = (key: FeatureKey, status: boolean) => {
     track('FeatureFlag.Toggle', { key, status });
@@ -52,6 +52,10 @@ export const FeaturePreview = ({
         setColumnSelection(status);
         break;
       }
+      case 'filters': {
+        setFilterBuilder(status);
+        break;
+      }
     }
     setFeatureStatus((currValue) => ({
       ...currValue,
@@ -64,6 +68,7 @@ export const FeaturePreview = ({
       population: 'Population',
       suggestions: 'Smart Suggestions',
       columns: 'Column Selection',
+      filters: 'Advanced Filters',
     }),
     []
   );
@@ -94,6 +99,24 @@ export const FeaturePreview = ({
           <Body level="2">
             Provides a way for you to choose which columns are visible in the
             table.
+          </Body>
+        </>
+      ),
+      filters: (
+        <>
+          <Body level="2">
+            Build advanced filters right at home in the UI, with all the
+            complexities you need. No need to learn GraphQL to make complex
+            queries.
+          </Body>
+          <Body level="2">
+            Once you are happy with the result, use the "Copy to code" button to
+            copy the GraphQL query and variables for filter to use in your
+            solution.
+          </Body>
+          <Body level="2">
+            Note: This disables the basic column level filter within the table
+            in favor of the more robust filter builder.
           </Body>
         </>
       ),

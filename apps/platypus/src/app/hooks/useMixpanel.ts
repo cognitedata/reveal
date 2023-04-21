@@ -44,6 +44,10 @@ export type TRACKING_TOKENS =
   | 'Suggestions.Reject'
   | 'Suggestions.Open'
   | 'Suggestions.Save'
+  // filters
+  | 'FilterBuilder.Apply'
+  | 'FilterBuilder.Open'
+  | 'FilterBuilder.Copy'
   // columns
   | 'ColumnSelection.Select'
   | 'ColumnSelection.Reorder'

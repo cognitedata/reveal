@@ -12,6 +12,7 @@ import {
   DataModelTypeDefsType,
   DeleteInstancesDTO,
   KeyValueMap,
+  MixerQueryBuilder,
   PlatypusError,
 } from '@platypus/platypus-core';
 import {
@@ -54,6 +55,8 @@ import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
+  useFilterBuilderFeatureFlag,
+  useColumnSelectionFeatureFlag,
 } from '@platypus-app/flags';
 import {
   CollapsiblePanelContainer,
@@ -64,7 +67,8 @@ import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedData
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
-import { useColumnSelectionFeatureFlag } from '@platypus-app/flags/useColumnSelection';
+import { FilterBuilder } from '../FilterBuilder/FilterBuilder';
+import { Button } from '@cognite/cogs.js';
 
 const pageSizeLimit = 100;
 const instanceIdCol = 'externalId';
@@ -92,8 +96,10 @@ export const DataPreviewTable = forwardRef<
   ) => {
     const { t } = useTranslation('DataPreviewTable');
     const [searchTerm, setSearchTerm] = useState('');
+    const [filter, setFilter] = useState<any>(null);
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
       useState(false);
+    const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
     const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
@@ -104,6 +110,7 @@ export const DataPreviewTable = forwardRef<
     const { isEnabled: isManualPopulationEnabled } =
       useManualPopulationFeatureFlag();
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
+    const { isEnabled: isFilterBuilderEnabled } = useFilterBuilderFeatureFlag();
     const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
     const { isEnabled: isColumnSelectionEnabled } =
@@ -112,6 +119,7 @@ export const DataPreviewTable = forwardRef<
       useSelectedDataModelVersion(version, dataModelExternalId, space);
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
+    const queryBuilder = new MixerQueryBuilder();
 
     const draftRowsData = useSelector(
       (state) => state.dataManagement.draftRows[dataModelType.name] || []
@@ -234,7 +242,8 @@ export const DataPreviewTable = forwardRef<
         handleRowPublish,
         isDeletionEnabled,
         isManualPopulationEnabled,
-        columnOrder.filter((el) => el.visible).map((el) => el.value)
+        columnOrder.filter((el) => el.visible).map((el) => el.value),
+        !isFilterBuilderEnabled
       )
     );
 
@@ -322,6 +331,15 @@ export const DataPreviewTable = forwardRef<
       gridRef.current?.api.onFilterChanged();
       track('DataModel.Data.Search', { version, type: dataModelType.name });
     }, [searchTerm, track, dataModelType.name, version]);
+
+    useEffect(() => {
+      gridRef.current?.api.onFilterChanged();
+      track('DataModel.Data.Filter', {
+        version,
+        type: dataModelType.name,
+        builder: true,
+      });
+    }, [filter, track, dataModelType.name, version]);
 
     const debouncedHandleSearchInputValueChange = debounce((value) => {
       setSearchTerm(value);
@@ -664,6 +682,54 @@ export const DataPreviewTable = forwardRef<
             }}
           />
         )}
+        <FilterBuilder
+          initialFilter={filter}
+          visible={isFilterModalVisible}
+          onOk={(newFilter) => {
+            track('FilterBuilder.Apply', { filter });
+            setFilter(newFilter);
+            setFilterModalVisible(false);
+          }}
+          onCancel={() => setFilterModalVisible(false)}
+          dataModelType={dataModelType}
+          dataModelExternalId={dataModelExternalId}
+          version={version}
+          space={space}
+          copyButtonCallback={() => {
+            track('FilterBuilder.Copy');
+            const sortColumn = gridRef.current?.columnApi
+              .getColumnState()
+              .filter((el) => el.sort)[0];
+            const query = queryBuilder.buildListQuery({
+              cursor: '',
+              dataModelType,
+              dataModelTypeDefs,
+              limit: pageSizeLimit,
+              sort: sortColumn
+                ? {
+                    fieldName: sortColumn.colId,
+                    sortType:
+                      (sortColumn.sort!.toUpperCase() as 'ASC' | 'DESC') ||
+                      'ASC',
+                  }
+                : undefined,
+              nestedLimit: 2,
+              filter,
+            });
+            navigator.clipboard.writeText(
+              JSON.stringify(
+                { query: query, variables: { $filter: filter } },
+                null,
+                2
+              )
+            );
+            Notification({
+              type: 'success',
+              message: 'Copied code to clipboard 🚀',
+            });
+          }}
+        />
+
         <PreviewPageHeader
           space={space}
           draftRowsCount={draftRowsData.length}
@@ -691,24 +757,38 @@ export const DataPreviewTable = forwardRef<
           typeName={dataModelType.name}
           version={version}
         >
-          {isColumnSelectionEnabled && (
-            <ColumnToggle
-              allColumns={columnOrder}
-              onChange={(order) => {
-                setColumnOrder(order);
-                setGridConfig(
-                  buildGridConfig(
-                    instanceIdCol,
-                    dataModelType,
-                    handleRowPublish,
-                    isDeletionEnabled,
-                    isManualPopulationEnabled,
-                    order.filter((el) => el.visible).map((el) => el.value)
-                  )
-                );
-              }}
-            />
-          )}
+          <>
+            {isFilterBuilderEnabled && (
+              <Button
+                icon="Filter"
+                onClick={() => {
+                  setFilterModalVisible(true);
+                  track('FilterBuilder.Open');
+                }}
+              >
+                Filters
+              </Button>
+            )}
+            {isColumnSelectionEnabled && (
+              <ColumnToggle
+                allColumns={columnOrder}
+                onChange={(order) => {
+                  setColumnOrder(order);
+                  setGridConfig(
+                    buildGridConfig(
+                      instanceIdCol,
+                      dataModelType,
+                      handleRowPublish,
+                      isDeletionEnabled,
+                      isManualPopulationEnabled,
+                      order.filter((el) => el.visible).map((el) => el.value),
+                      isFilterBuilderEnabled
+                    )
+                  );
+                }}
+              />
+            )}
+          </>
         </PreviewPageHeader>
         <CollapsiblePanelContainer
           data={sidebarData}
@@ -764,6 +844,7 @@ export const DataPreviewTable = forwardRef<
                   dataModelType,
                   dataModelTypeDefs,
                   searchTerm,
+                  filter,
                   space,
                   // passing the useTranslate method in case any class components need it,
                   // such as custom-column-filter

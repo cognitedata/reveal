@@ -95,6 +95,7 @@ describe('Data model services utils', () => {
       expect(typesMap).toEqual({
         String: 'text',
         Int: 'int32',
+        Int32: 'int32',
         Int64: 'int64',
         Float: 'float64',
         Float32: 'float32',

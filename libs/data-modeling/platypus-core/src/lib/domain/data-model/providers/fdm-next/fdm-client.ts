@@ -60,6 +60,11 @@ import { compareDataModelVersions } from '../../utils';
 import { ItemsWithCursor } from './dto/dms-common-dtos';
 import { chunk, uniqBy } from 'lodash';
 import { InstancesApiService } from './services/data-modeling-api/instances-api.service';
+import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  GraphQLInputObjectType,
+} from 'graphql';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private dataModelDataMapper: DataModelDataMapper;
@@ -798,6 +803,27 @@ export class FdmClient implements FlexibleDataModelingClient {
       externalId,
       version
     );
+  }
+
+  async getFilterForType({
+    space,
+    externalId,
+    version,
+    typeName,
+  }: {
+    space: string;
+    externalId: string;
+    version: string;
+    typeName: string;
+  }) {
+    const a = await this.mixerApiService.runQuery({
+      dataModelId: externalId,
+      space,
+      schemaVersion: version,
+      graphQlParams: { query: getIntrospectionQuery() },
+    });
+    const schema = buildClientSchema(a.data);
+    return schema.getType(`_List${typeName}Filter`) as GraphQLInputObjectType;
   }
 }
 // Recursively fetches a paginated API request towards Cognite

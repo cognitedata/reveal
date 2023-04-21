@@ -11,6 +11,7 @@ import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
+import reactAwesomeQueryBuilderStyles from '@react-awesome-query-builder/ui/css/styles.css';
 
 import styleScope from '../styleScope';
 
@@ -54,6 +55,7 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     monacoStyles,
     agGridStyles,
     cogDataGridStyles,
+    reactAwesomeQueryBuilderStyles,
   ]);
 
   if (!isStyleLoaded) {
@@ -67,5 +69,12 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
 const Wrapper = styled.div`
   .cogs.cogs-modal--full-screen .cogs-modal__content {
     height: 100%;
+  }
+
+  .filter-builder {
+    overflow: visible;
+    .cogs-modal__content-container {
+      overflow: visible;
+    }
   }
 `;

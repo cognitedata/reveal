@@ -5086,6 +5086,30 @@
     prop-types "^15.7.2"
     tslib "^2.3.0"
 
+"@react-awesome-query-builder/core@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@react-awesome-query-builder/core/-/core-6.1.2.tgz#ad53e5c16748dddab102c9fd0e625ac2fecd0c93"
+  integrity sha512-7IxbQB7ts7ncTstr4nbu4DU1Sar8/XMgkk72ietBe8KhJCfJIcHloXAutXmMrDNuWRSEu5tJlNvEmZz8apo33Q==
+  dependencies:
+    clone "^2.1.2"
+    immutable "^3.8.2"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    spel2js "^0.2.8"
+    sqlstring "^2.3.3"
+
+"@react-awesome-query-builder/ui@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@react-awesome-query-builder/ui/-/ui-6.1.2.tgz#74deb2ee69e23bf64a107c08d46cbb04e6c4464d"
+  integrity sha512-h5S2UWvz4kXoJ+9he3ZeR/QAINdJ9KgmSXo/z85rGl9AVOm/K7R3TWsuZN56ethxpqzljWTfUUVDzF50eH3CVQ==
+  dependencies:
+    "@react-awesome-query-builder/core" "^6.1.2"
+    classnames "^2.3.1"
+    lodash "^4.17.21"
+    prop-types "^15.7.2"
+    react-redux "^7.2.2"
+    redux "^4.2.0"
+
 "@react-hook/latest@^1.0.2":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@react-hook/latest/-/latest-1.0.3.tgz#c2d1d0b0af8b69ec6e2b3a2412ba0768ac82db80"
@@ -5111,6 +5135,16 @@
   integrity sha512-bzs45n5HNcDq6mxXnSsOHysZWn1SbbebNxldBXCQs8dSvF8Aor9KCdpm+TpnnGweK3R6diqsT8lFhX77VX0NFw==
   dependencies:
     merge-options "^3.0.4"
+
+"@react-querybuilder/ctx@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@react-querybuilder/ctx/-/ctx-6.1.2.tgz#4931ed7dc72b1bdf8682fa15d605ae68104c4dd2"
+  integrity sha512-L10HKstU9UBCDEmD30gm1l9Co9D5D1GVMs5W1IDONKpd3V/RXrH1mTjkSH2fAy2uuD6tVcKNz0fSFuz8dV/g/g==
+
+"@react-querybuilder/ts@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@react-querybuilder/ts/-/ts-6.1.2.tgz#01cbb81d82f03155ab26e27c1b9c867aa38e280d"
+  integrity sha512-CaKattfKZFsudGJ4E9V/MXEAUzSf6+Q2HNmrTZJHBvOxIkiH1ewGgAD0ClN9Dl9C1c5oSOclM7Ew+0oCxpSwrw==
 
 "@recoiljs/refine@^0.1.1":
   version "0.1.1"
@@ -12034,6 +12068,11 @@ clone@^1.0.2:
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
   integrity sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==
 
+clone@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
+  integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
+
 clsx@^1.0.4, clsx@^1.1.1, clsx@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
@@ -18075,10 +18114,20 @@ image-size@~0.5.0:
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
   integrity sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==
 
+immer@^9.0.19:
+  version "9.0.19"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.19.tgz#67fb97310555690b5f9cd8380d38fc0aabb6b38b"
+  integrity sha512-eY+Y0qcsB4TZKwgQzLaE/lqYMlKhv5J9dyd2RhhtGhNo2njPXDqU9XPfcNfa3MIDsdtZt5KlkIsirlo4dHsWdQ==
+
 immer@^9.0.7:
   version "9.0.17"
   resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.17.tgz#7cfe8fbb8b461096444e9da7a5ec4a67c6c4adf4"
   integrity sha512-+hBruaLSQvkPfxRiTLK/mi4vLH+/VQS6z2KJahdoxlleFOI8ARqzOF17uy12eFDlqWmPoygwc5evgwcp+dlHhg==
+
+immutable@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
+  integrity sha512-15gZoQ38eYjEjxkorfbcgBKBL6R7T459OuK+CpcWt7O3KF4uPCx2tD0uFETlUDIyo+1789crbMhTvQBSR5yBMg==
 
 immutable@^4.0.0:
   version "4.2.1"
@@ -22168,7 +22217,7 @@ modify-values@^1.0.0:
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.1.tgz#b3939fa605546474e3e3e3c63d64bd43b4ee6022"
   integrity sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==
 
-moment@^2.24.0, moment@^2.29.2:
+moment@^2.24.0, moment@^2.29.2, moment@^2.29.4:
   version "2.29.4"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
@@ -26042,6 +26091,16 @@ react-query@3.39.0:
     broadcast-channel "^3.4.1"
     match-sorter "^6.0.2"
 
+react-querybuilder@^6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/react-querybuilder/-/react-querybuilder-6.1.2.tgz#093294d218a97166e40e3d166b89eae8444b38af"
+  integrity sha512-Nb2ymANaznLQj2ets7XjhrLDARs39x9qCLVQjnae8F8I7ZT/JmoxW393yC9Brzb6LXvNXVBKbZEwR0hVMv9eDA==
+  dependencies:
+    "@react-querybuilder/ctx" "^6.1.2"
+    "@react-querybuilder/ts" "^6.1.2"
+    clsx "^1.2.1"
+    immer "^9.0.19"
+
 react-redux@8.0.5:
   version "8.0.5"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-8.0.5.tgz#e5fb8331993a019b8aaf2e167a93d10af469c7bd"
@@ -26054,7 +26113,7 @@ react-redux@8.0.5:
     react-is "^18.0.0"
     use-sync-external-store "^1.0.0"
 
-react-redux@^7.2.0:
+react-redux@^7.2.0, react-redux@^7.2.2:
   version "7.2.9"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.9.tgz#09488fbb9416a4efe3735b7235055442b042481d"
   integrity sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==
@@ -26591,6 +26650,13 @@ redux@^4.0.0, redux@^4.0.4, redux@^4.1.2:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.2.0.tgz#46f10d6e29b6666df758780437651eeb2b969f13"
   integrity sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+
+redux@^4.2.0:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/redux/-/redux-4.2.1.tgz#c08f4306826c49b5e9dc901dee0452ea8fce6197"
+  integrity sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==
   dependencies:
     "@babel/runtime" "^7.9.2"
 
@@ -28262,6 +28328,11 @@ specificity@^0.4.1:
   resolved "https://registry.yarnpkg.com/specificity/-/specificity-0.4.1.tgz#aab5e645012db08ba182e151165738d00887b019"
   integrity sha512-1klA3Gi5PD1Wv9Q0wUoOQN1IWAuPu0D1U03ThXTr0cJ20+/iq2tHSDnK7Kk/0LXJ1ztUB2/1Os0wKmfyNgUQfg==
 
+spel2js@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/spel2js/-/spel2js-0.2.8.tgz#3ba3b291e5c6bae5c9f703e839294969b61fc691"
+  integrity sha512-dzYq+v4YV7SPIdNrmvFAUjc0HcgI7b0yoMw7kzOBmlj/GjdOb/+8dVn1I7nLuOS5X2SW+LK3tf2SVkXRjCkWBA==
+
 split-on-first@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/split-on-first/-/split-on-first-1.1.0.tgz#f610afeee3b12bce1d0c30425e76398b78249a5f"
@@ -28311,6 +28382,11 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
+
+sqlstring@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/sqlstring/-/sqlstring-2.3.3.tgz#2ddc21f03bce2c387ed60680e739922c65751d0c"
+  integrity sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==
 
 ssf@~0.11.2:
   version "0.11.2"

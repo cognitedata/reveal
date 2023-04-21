@@ -1,4 +1,5 @@
 import { TOKENS } from '@platypus-app/di';
+import { useFilterBuilderFeatureFlag } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import {
   DataModelTypeDefs,
@@ -35,6 +36,7 @@ export const useListDataSource = ({
   const cursor = useRef('');
   const hasNextPage = useRef(false);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
+  const { isEnabled } = useFilterBuilderFeatureFlag();
 
   const dataSource: IDatasource = {
     getRows: async (params: IGetRowsParams) => {
@@ -49,7 +51,7 @@ export const useListDataSource = ({
         hasNextPage.current = false;
       }
 
-      const filter = convertToGraphQlFilters(
+      const filterFromColumns = convertToGraphQlFilters(
         params.filterModel,
         dataModelType.fields
       );
@@ -61,7 +63,7 @@ export const useListDataSource = ({
             dataModelTypeDefs,
             dataModelVersion,
             limit: 100,
-            filter,
+            filter: isEnabled ? params.context.filter : filterFromColumns,
             searchTerm: params.context.searchTerm,
           })
           .then((response) => {
@@ -90,7 +92,7 @@ export const useListDataSource = ({
             dataModelTypeDefs,
             dataModelVersion,
             limit,
-            filter,
+            filter: isEnabled ? params.context.filter : filterFromColumns,
             sort,
             nestedLimit: 2,
           })

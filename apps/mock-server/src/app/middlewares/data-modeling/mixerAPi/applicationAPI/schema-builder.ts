@@ -185,7 +185,7 @@ ${mixerApiV3CustomDirectives}
               externalId: ID!
               lastUpdatedTime: Timestamp!
               createdTime: Timestamp!
-               ${useDmsV3 ? 'space' : 'spaceExternalId'}: String!`
+              ${useDmsV3 ? 'space' : 'spaceExternalId'}: String!`
             );
           }
         });
