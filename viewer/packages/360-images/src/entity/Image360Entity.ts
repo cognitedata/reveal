@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SceneHandler } from '@reveal/utilities';
+import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360DataProvider } from '@reveal/data-providers';
 import { Image360Icon } from '../icons/Image360Icon';
 import { Image360, Image360Metadata } from './Image360';
@@ -51,13 +51,14 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360DataProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon
+    icon: Image360Icon,
+    device: DeviceDescriptor
   ) {
     this._transform = transform;
     this._image360Icon = icon;
     this._imageMetadata = image360Metadata;
 
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
+    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
     this._image360VisualzationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
