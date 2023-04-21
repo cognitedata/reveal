@@ -33,6 +33,8 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   private _targetRevisionDate: Date | undefined;
 
+  private _needsRedraw: boolean = false;
+
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>(),
@@ -201,5 +203,13 @@ export class DefaultImage360Collection implements Image360Collection {
     this._icons.dispose();
     this._events.image360Entered.unsubscribeAll();
     this._events.image360Exited.unsubscribeAll();
+  }
+
+  get needsRedraw(): boolean {
+    return this._needsRedraw;
+  }
+
+  resetRedraw(): void {
+    this._needsRedraw = false;
   }
 }
