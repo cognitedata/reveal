@@ -17,7 +17,7 @@ import {
   getLinkId,
   RenderNodeFunction,
   RenderLinkFunction,
-} from '../Graph/Graph';
+} from '../Graph/GraphEngine';
 import {
   getLinkText,
   getNodeId,
@@ -253,11 +253,13 @@ export const SchemaVisualizer = React.memo(
         if (id.endsWith('-hover')) {
           //hover item
           return (
-            <path
-              style={{ strokeWidth: 40, stroke: 'transparent' }}
-              key={id}
-              id={id}
-            />
+            <g className="path">
+              <path
+                style={{ strokeWidth: 40, stroke: 'transparent' }}
+                key={id}
+                id={id}
+              />
+            </g>
           );
         }
         const style: CSSProperties = {
@@ -269,13 +271,15 @@ export const SchemaVisualizer = React.memo(
           style.stroke = Colors['border--muted--inverted'];
         }
         return (
-          <path
-            markerStart="url(#indicator)"
-            markerEnd="url(#indicator)"
-            style={style}
-            key={id}
-            id={id}
-          />
+          <g className="path">
+            <path
+              markerStart="url(#indicator)"
+              markerEnd="url(#indicator)"
+              style={style}
+              key={id}
+              id={id}
+            />
+          </g>
         );
       },
       [highlightedIds]
@@ -338,7 +342,6 @@ export const SchemaVisualizer = React.memo(
             graphRef={graphRef}
             nodes={nodes}
             links={links}
-            initialZoom={10}
             style={{ flex: 1 }}
             onLoadingStatus={setIsLoaded}
             useCurve

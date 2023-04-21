@@ -148,6 +148,7 @@
     "to-regex-range": "^5.0.1",
     "tslib": "^2.3.0",
     "underscore-db": "^0.12.2",
+    "uniqolor": "^1.1.0",
     "update-notifier": "^5.1.0",
     "use-debounce": "^6.0.1",
     "use-local-storage-state": "^18.1.2",

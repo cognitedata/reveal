@@ -14,7 +14,7 @@ import styled from 'styled-components/macro';
 import { getELKNodes } from './layout/elkLayout';
 import { getFitContentXYK } from './layout/fitLayout';
 import { HtmlElementProps } from '@platypus-app/types';
-import { loadFromCache, saveToCache } from './cache';
+import { getNodesKey, loadFromCache, saveToCache } from './cache';
 
 export type Node = SimulationNodeDatum & {
   id: string;
@@ -46,6 +46,8 @@ export const getLinkId = (
 const HALF_PIN_WIDTH = 0;
 export const MIN_ZOOM = 0.1;
 export const MAX_ZOOM = 3;
+export const TIMEOUT = 10000;
+export const DEFAULT_KEY = 'DefaultKey';
 
 export type RenderNodeFunction<T> = (
   item: Node & T,
@@ -61,8 +63,8 @@ export interface GraphProps<T> {
   nodes: (Node & T)[];
   links: Link[];
   useCurve?: boolean;
+  useCache?: boolean;
   children?: React.ReactNode;
-  initialZoom?: number;
   autoLayout?: boolean;
   offset?: { top?: number; left?: number; right?: number; bottom?: number };
   getLinkEndOffset?: GetLinkEndOffsetFn<T>;
@@ -104,6 +106,7 @@ export const Graph = <T,>({
   links: propsLinks = [],
   useCurve = false,
   autoLayout = true,
+  useCache = true,
   getLinkEndOffset = defaultGetOffset,
   onLinkEvent,
   children,
@@ -143,7 +146,7 @@ export const Graph = <T,>({
     d3.Selection<Element, Node & T, HTMLDivElement | null, unknown> | undefined
   >(undefined);
 
-  const [isFittingContent, setFittingContent] = useState<boolean>(
+  const [isFittingContent, setIsFittingContent] = useState<boolean>(
     propsNodes.length === 0 ? false : true
   );
   const [isAutoLayouting, setIsAutoLayouting] = useState<boolean>(false);
@@ -156,9 +159,13 @@ export const Graph = <T,>({
   }>(INITIAL_TRANSFORM);
 
   useEffect(() => {
-    setFittingContent(propsNodes.length === 0 ? false : true);
-    setTransform(INITIAL_TRANSFORM);
-  }, [propsNodes, propsLinks]);
+    if (autoLayout) {
+      setIsFittingContent(propsNodes.length === 0 ? false : true);
+      setTransform(INITIAL_TRANSFORM);
+    } else if (simulation) {
+      simulation.alphaTarget(0.3).restart();
+    }
+  }, [propsNodes, propsLinks, autoLayout, simulation]);
 
   const isLoading = isFittingContent || isAutoLayouting;
 
@@ -169,13 +176,15 @@ export const Graph = <T,>({
   }, [onLoadingStatus, isLoading]);
 
   useEffect(() => {
-    const cacheItems = loadFromCache(propsNodes);
+    const cacheItems = loadFromCache(
+      useCache ? getNodesKey(propsNodes) : DEFAULT_KEY
+    );
     const nodesWithCachedLocation = propsNodes.map((node) => ({
       ...cacheItems[node.id],
       ...node,
     }));
     setNodes(nodesWithCachedLocation);
-  }, [propsNodes]);
+  }, [propsNodes, useCache]);
 
   const links: SimulationLinkDatum<Node & T>[] = useMemo(() => {
     // make lookups easy
@@ -220,17 +229,26 @@ export const Graph = <T,>({
     if (!mainWrapperRef.current || !containerRef.current || !svgRef.current) {
       return;
     }
+
+    const width = containerRef.current.clientWidth;
+    const height = containerRef.current.clientHeight;
     // Initializing chart
     const initialChart = d3.select(svgRef.current);
 
     const initialSimulation = d3
       .forceSimulation()
-      .force('link', d3.forceLink().distance(100))
+      .force('link', d3.forceLink().distance(200).strength(10))
       .force(
         'charge',
-        d3.forceManyBody().strength(() => -60)
+        d3.forceManyBody().strength(() => -10)
       )
-      .force('collide', d3.forceCollide());
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collide', d3.forceCollide(80));
+
+    // After 2 seconds, stop the center gravity to move nodes to the center
+    setTimeout(() => {
+      initialSimulation.force('center', null).stop();
+    }, 2000);
 
     setChart(initialChart);
     setSimulation(initialSimulation);
@@ -347,6 +365,8 @@ export const Graph = <T,>({
             .classed('hidden', true)
             .filter(isLinkVisible)
             .classed('hidden', false)
+            // select the actual path (since links can be svg groups containing a path within)
+            .select('path')
             .attr('d', (d: SimulationLinkDatum<Node & T>) => {
               if (!d.source && !d.target) {
                 return '';
@@ -425,7 +445,7 @@ export const Graph = <T,>({
       >
     ) => {
       if (mainWrapperRef.current) {
-        setFittingContent(true);
+        setIsFittingContent(true);
         const newZoom = getFitContentXYK<T>(
           nodesForFitting,
           mainWrapperRef.current.clientWidth,
@@ -434,7 +454,7 @@ export const Graph = <T,>({
         if (newZoom) {
           onZoom(newZoom);
         }
-        setFittingContent(false);
+        setIsFittingContent(false);
       }
     },
     [onZoom]
@@ -475,7 +495,7 @@ export const Graph = <T,>({
       // Create links
       const newD3Lines = chart
         .select('g.links')
-        .selectAll<Element, SimulationLinkDatum<Node & T>>('path')
+        .selectAll<Element, SimulationLinkDatum<Node & T>>('.path')
         .data(links, (_, index) => {
           if (links[index]) {
             return getLinkId(links[index]);
@@ -494,11 +514,14 @@ export const Graph = <T,>({
 
       setD3Nodes(newD3Nodes);
 
-      // if autolayout is on and we do not have fixed position for everyone
-      if (autoLayout && nodes.some((el) => !el.fx)) {
-        setIsAutoLayouting(true);
-      } else {
-        fitContent(newD3Nodes);
+      // if autolayout is on
+      if (autoLayout) {
+        // if we do not have fixed position for every node (some nodes are new)
+        if (nodes.some((el) => !el.fx)) {
+          setIsAutoLayouting(true);
+        } else {
+          fitContent(newD3Nodes);
+        }
       }
     }
   }, [chart, links, nodes, mainWrapperRef, autoLayout, fitContent]);
@@ -524,7 +547,7 @@ export const Graph = <T,>({
   useEffect(() => {
     if (nodes && d3Nodes && simulation) {
       const dragStart = (_event: { active: any }, d: any) => {
-        simulation.alphaTarget(0.3).restart();
+        simulation.alphaTarget(0.5).restart();
         d.fx = d.x;
         d.fy = d.y;
       };
@@ -537,10 +560,13 @@ export const Graph = <T,>({
         setTransform((oldTransform) => ({ ...oldTransform }));
       };
 
-      const dragEnd = (event: { active: any }, d: any) => {
-        if (!event.active) simulation.alphaTarget(0).stop();
-        saveToCache(nodes, d.id, d.fx, d.fy);
+      const dragEnd = (event: { active: any }) => {
+        if (!event.active) simulation?.stop();
+        saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
       };
+      d3Nodes.on('click', () => {
+        saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
+      });
       d3Nodes.call(
         d3
           .drag<any, any>()

@@ -5,4 +5,5 @@ export * from './useUIEditor';
 export * from './useTransformations';
 export * from './useFilterBuilder';
 export * from './useColumnSelection';
+export * from './useGraphViewer';
 export { isFDMv3 } from './isFDMv3';

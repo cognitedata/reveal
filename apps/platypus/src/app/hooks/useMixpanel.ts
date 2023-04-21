@@ -48,6 +48,10 @@ export type TRACKING_TOKENS =
   | 'FilterBuilder.Apply'
   | 'FilterBuilder.Open'
   | 'FilterBuilder.Copy'
+  // graph
+  | 'Graph.Expand'
+  | 'Graph.Filter'
+  | 'Graph.Open'
   // columns
   | 'ColumnSelection.Select'
   | 'ColumnSelection.Reorder'

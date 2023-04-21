@@ -1,5 +1,5 @@
 import ELK from 'elkjs/lib/elk.bundled.js'; // keep it as it is, otherwise the build fails
-import { Node, Link } from '../Graph';
+import { Node, Link } from '../GraphEngine';
 
 export const getELKNodes = async (
   nodes: (Element & { __data__: Node })[],

@@ -8,12 +8,19 @@ import {
   useUpdateManualPopulationFeatureFlag,
   useSuggestionsFeatureFlag,
   useUpdateSuggestionsFeatureFlag,
+  useGraphViewerFeatureFlag,
+  useUpdateGraphViewerFeatureFlag,
 } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-type FeatureKey = 'population' | 'suggestions' | 'columns' | 'filters';
+type FeatureKey =
+  | 'population'
+  | 'suggestions'
+  | 'columns'
+  | 'filters'
+  | 'graph';
 
 export const FeaturePreview = ({
   onRequestClose,
@@ -30,12 +37,14 @@ export const FeaturePreview = ({
     suggestions: useSuggestionsFeatureFlag().isEnabled,
     columns: useColumnSelectionFeatureFlag().isEnabled,
     filters: useFilterBuilderFeatureFlag().isEnabled,
+    graph: useGraphViewerFeatureFlag().isEnabled,
   });
 
   const setManualPopulation = useUpdateManualPopulationFeatureFlag();
   const setSuggestions = useUpdateSuggestionsFeatureFlag();
   const setColumnSelection = useUpdateColumnSelectionFeatureFlag();
   const setFilterBuilder = useUpdateFilterBuilderFeatureFlag();
+  const setGraphViewer = useUpdateGraphViewerFeatureFlag();
 
   const updateStatusState = (key: FeatureKey, status: boolean) => {
     track('FeatureFlag.Toggle', { key, status });
@@ -56,6 +65,10 @@ export const FeaturePreview = ({
         setFilterBuilder(status);
         break;
       }
+      case 'graph': {
+        setGraphViewer(status);
+        break;
+      }
     }
     setFeatureStatus((currValue) => ({
       ...currValue,
@@ -69,6 +82,7 @@ export const FeaturePreview = ({
       suggestions: 'Smart Suggestions',
       columns: 'Column Selection',
       filters: 'Advanced Filters',
+      graph: 'Knowledge Graph',
     }),
     []
   );
@@ -117,6 +131,14 @@ export const FeaturePreview = ({
           <Body level="2">
             Note: This disables the basic column level filter within the table
             in favor of the more robust filter builder.
+          </Body>
+        </>
+      ),
+      graph: (
+        <>
+          <Body level="2">
+            A way for you to explore data focusing on the relationship it has.
+            Start from an instance and explore connected instances.
           </Body>
         </>
       ),

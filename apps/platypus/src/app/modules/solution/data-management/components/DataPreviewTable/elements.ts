@@ -30,6 +30,13 @@ export const StyledDataPreviewTable = styled.div`
   .ag-overlay {
     pointer-events: all;
   }
+  .ag-row .network {
+    opacity: 0;
+    transition: 0.2s all;
+  }
+  .ag-row:hover .network {
+    opacity: 1;
+  }
 `;
 
 export const NoRowsOverlay = styled.span`
