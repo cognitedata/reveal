@@ -87,8 +87,8 @@ export class Image360Entity implements Image360 {
     this._activeRevision.applyTextures();
   }
 
-  public async applyFullResolutionTextures(): Promise<void> {
-    this._activeRevision.applyFullResolutionTextures();
+  public applyFullResolutionTextures(): Promise<void> {
+    return this._activeRevision.applyFullResolutionTextures();
   }
 
   public getMostRecentRevision(): Image360RevisionEntity {
