@@ -90,7 +90,7 @@ export const getExtractorsWithReleases = async () => {
     };
   });
 
-  extractors['cognite-mqtt-extractor'] = MQTT_EXTRACTOR_MOCK;
+  extractorMap['cognite-mqtt-extractor'] = MQTT_EXTRACTOR_MOCK;
 
   releases.forEach((release) => {
     extractorMap[release.externalId].releases.push(release);

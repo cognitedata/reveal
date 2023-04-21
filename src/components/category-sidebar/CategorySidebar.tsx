@@ -11,11 +11,13 @@ import { SourceSystem, useSourceSystems } from 'hooks/useSourceSystems';
 
 type CategorySidebarProps = {
   extractorsList: ExtractorWithReleases[];
+  hostedExtractorsList: ExtractorWithReleases[];
   sourceSystems: SourceSystem[];
 };
 
 const CategorySidebar = ({
   extractorsList,
+  hostedExtractorsList,
   sourceSystems,
 }: CategorySidebarProps): JSX.Element => {
   const { t } = useTranslation();
@@ -24,10 +26,11 @@ const CategorySidebar = ({
   const { isFetched: didFetchSourceSystems } = useSourceSystems();
 
   const extractorCount = extractorsList?.length;
+  const hostedExtractorCount = hostedExtractorsList?.length;
   const sourceSystemCount = sourceSystems?.length;
 
   const isLoading = !didFetchExtractorList || !didFetchSourceSystems;
-  const totalCount = extractorCount + sourceSystemCount;
+  const totalCount = extractorCount + sourceSystemCount + hostedExtractorCount;
 
   return (
     <StyledContainer>
@@ -43,6 +46,12 @@ const CategorySidebar = ({
           count={extractorCount}
           isLoading={!didFetchExtractorList}
           title={t('extractor_other')}
+        />
+        <CategorySidebarItem
+          category="hosted-extractor"
+          count={hostedExtractorCount}
+          isLoading={!didFetchExtractorList}
+          title={t('hosted-extractor_other')}
         />
         <CategorySidebarItem
           category="source-system"
