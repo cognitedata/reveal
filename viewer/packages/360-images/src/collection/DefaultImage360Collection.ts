@@ -204,7 +204,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._events.image360Entered.unsubscribeAll();
     this._events.image360Exited.unsubscribeAll();
   }
-  get needsRedraw() {
+
+  get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
