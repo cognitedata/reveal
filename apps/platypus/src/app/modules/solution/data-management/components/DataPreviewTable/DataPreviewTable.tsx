@@ -183,6 +183,7 @@ export const DataPreviewTable = forwardRef<
           dataModelTypeDefs,
         })
         .then(({ items }) => {
+          track('ManualPopulation.Create', { success: true });
           removeDrafts(items.map((item) => item.externalId as string));
           refetchPublishedRowsCountMap().then(() => {
             gridRef.current?.api.refreshInfiniteCache();
@@ -191,6 +192,10 @@ export const DataPreviewTable = forwardRef<
             type: 'success',
             message: t('ingest_success_title', 'Instance added'),
           });
+        })
+        .catch((e) => {
+          track('ManualPopulation.Create', { success: false });
+          throw e;
         });
     };
 
@@ -476,6 +481,7 @@ export const DataPreviewTable = forwardRef<
           dataModelTypeDefs,
         })
         .then(() => {
+          track('ManualPopulation.Update', { success: true });
           gridRef.current?.api.refreshCells();
           if (e.colDef.field) {
             e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
@@ -496,6 +502,7 @@ export const DataPreviewTable = forwardRef<
           );
         })
         .catch((error: PlatypusError) => {
+          track('ManualPopulation.Update', { success: false });
           Notification({
             type: 'error',
             message: error.message,
@@ -546,6 +553,7 @@ export const DataPreviewTable = forwardRef<
           }
 
           if (isError) {
+            track('ManualPopulation.Delete', { success: false });
             Notification({
               type: 'error',
               message: errorMessage,
@@ -553,6 +561,7 @@ export const DataPreviewTable = forwardRef<
             setIsDeleteRowsModalVisible(false);
             return;
           }
+          track('ManualPopulation.Delete', { success: true });
 
           gridRef.current?.api.refreshInfiniteCache();
           // We have to manually deselect rows
@@ -592,6 +601,7 @@ export const DataPreviewTable = forwardRef<
       refetchPublishedRowsCountMap,
       t,
       space,
+      track,
     ]);
 
     if (!isPublishedRowsCountMapFetched) {
@@ -651,7 +661,10 @@ export const DataPreviewTable = forwardRef<
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           title={dataModelType.name}
-          onSuggestionsClick={() => setIsSuggestionsModalVisible(true)}
+          onSuggestionsClick={() => {
+            track('Suggestions.Open');
+            setIsSuggestionsModalVisible(true);
+          }}
           suggestionsAvailable={suggestionsAvailable}
           typeName={dataModelType.name}
           version={version}

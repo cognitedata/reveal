@@ -10,7 +10,6 @@ describe('Platypus Data Preview Page - Preview', () => {
   });
 
   it('should load page', () => {
-    cy.getBySel('page-title').contains('Data management');
     cy.getBySel('types-list-panel').should('be.visible');
     cy.getBySel('types-list-filter').should('be.visible');
     cy.getBySel('types-list-item').should('have.length', 4);

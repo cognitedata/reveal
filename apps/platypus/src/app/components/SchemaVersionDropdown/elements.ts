@@ -5,8 +5,8 @@ import styled from 'styled-components/macro';
 export const DropdownButton = styled(Button)<{ open: boolean }>`
   display: flex;
   justify-content: space-between;
-  min-width: 76px;
-  max-width: 200px;
+  min-width: 160px;
+  max-width: 260px;
   width: 100%;
   border-radius: 6px;
   background: #fff;

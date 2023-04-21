@@ -137,7 +137,12 @@ export function SchemaVersionDropdown({
           >
             <Body
               level="2"
-              style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                flex: 1,
+                textAlign: 'start',
+              }}
             >
               v. {selectedVersion.version}
             </Body>
