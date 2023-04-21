@@ -29,7 +29,7 @@ export const StickyButton: React.FC<StickyButtonProps> = ({
       <i className="cogs-icon">
         <StickyIcon
           fill={
-            isToggled
+            toggled
               ? Colors['text-icon--interactive--pressed']
               : Colors['text-icon--strong']
           }
