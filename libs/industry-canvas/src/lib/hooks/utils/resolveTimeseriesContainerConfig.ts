@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 import { getTimeseriesContainerConfig } from '@cognite/unified-file-viewer';
+import dayjs from 'dayjs';
 import { IndustryCanvasContainerConfig } from '../../types';
 import {
   DEFAULT_TIMESERIES_HEIGHT,
@@ -22,8 +23,8 @@ const resolveTimeseriesContainerConfig = async (
   }: {
     id?: string | undefined;
     resourceId: number;
-    startDate: string;
-    endDate: string;
+    startDate: string | undefined;
+    endDate: string | undefined;
     x?: number;
     y?: number;
     width?: number;
@@ -45,8 +46,14 @@ const resolveTimeseriesContainerConfig = async (
     {
       id: id || uuid(),
       label: label ?? name ?? timeseriesExternalId,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      startDate:
+        startDate !== undefined
+          ? new Date(startDate)
+          : dayjs(new Date()).subtract(2, 'years').startOf('day').toDate(),
+      endDate:
+        endDate !== undefined
+          ? new Date(endDate)
+          : dayjs(new Date()).endOf('day').toDate(),
       x: x,
       y: y,
       width: width ?? DEFAULT_TIMESERIES_WIDTH,

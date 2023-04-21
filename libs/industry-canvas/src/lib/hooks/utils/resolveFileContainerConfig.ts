@@ -19,7 +19,7 @@ const resolveFileContainerConfig = async (
   }: {
     id?: string | undefined;
     resourceId: number;
-    page: number;
+    page: number | undefined;
     x?: number;
     y?: number;
     width?: number;

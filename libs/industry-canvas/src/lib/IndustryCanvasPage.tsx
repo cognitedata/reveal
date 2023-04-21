@@ -7,7 +7,6 @@ import {
   useResourceSelector,
 } from '@cognite/data-exploration';
 import {
-  isSupportedFileInfo,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
@@ -28,6 +27,7 @@ import {
   useIndustryCanvasContext,
 } from './IndustryCanvasContext';
 import { ContainerReference } from './types';
+import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
@@ -37,9 +37,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
+  const [
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+  ] = useState(false);
 
   const sdk = useSDK();
-
   const {
     activeCanvas,
     canvases,
@@ -51,6 +54,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     archiveCanvas,
     saveCanvas,
     createCanvas,
+    initializeWithContainerReferences,
   } = useIndustryCanvasContext();
 
   const {
@@ -133,19 +137,11 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         const supportedResourceItems = (
           await Promise.all(
             results.map(async (resourceItem) => {
-              if (resourceItem.type === 'file') {
-                const fileInfo = await sdk.files.retrieve([
-                  { id: resourceItem.id },
-                ]);
-
-                if (isSupportedFileInfo(fileInfo[0])) {
-                  return resourceItem;
-                }
-
-                return undefined;
-              }
-
-              return resourceItem;
+              const isSupported = await isSupportedResourceItem(
+                sdk,
+                resourceItem
+              );
+              return isSupported ? resourceItem : undefined;
             })
           )
         ).filter(isNotUndefined);
@@ -161,6 +157,32 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (unifiedViewerRef === null) {
+      return;
+    }
+
+    if (activeCanvas?.externalId === undefined) {
+      return;
+    }
+
+    if (hasConsumedInitializeWithContainerReferences) {
+      return;
+    }
+
+    if (initializeWithContainerReferences !== undefined) {
+      onAddContainerReferences(initializeWithContainerReferences);
+    }
+
+    setHasConsumedInitializeWithContainerReferences(true);
+  }, [
+    initializeWithContainerReferences,
+    activeCanvas?.externalId,
+    unifiedViewerRef,
+    hasConsumedInitializeWithContainerReferences,
+    onAddContainerReferences,
+  ]);
 
   const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {

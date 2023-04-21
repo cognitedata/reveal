@@ -217,4 +217,8 @@ export const queryKeys = {
   annotationsPagedFileReferences: (
     pagedFileReferences: { id: number; page: number | undefined }[]
   ) => [...queryKeys.annotations(), pagedFileReferences] as const,
+  // Industry Canvas
+  canvas: () => [...queryKeys.all, 'canvas'] as const,
+  supportedResourceItem: (item: { id: number; type: string }) =>
+    [...queryKeys.canvas(), item.type, item.id] as const,
 } as const;

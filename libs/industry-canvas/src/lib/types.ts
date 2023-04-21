@@ -27,31 +27,31 @@ export type Dimensions = {
 
 export type FileContainerReference = {
   type: ContainerReferenceType.FILE;
-  id: string;
   resourceId: number;
-  page: number;
+  id?: string;
+  page?: number;
   label?: string;
 } & Partial<Dimensions>;
 
 export type AssetContainerReference = {
   type: ContainerReferenceType.ASSET;
-  id: string;
   resourceId: number;
+  id?: string;
   label?: string;
 } & Partial<Dimensions>;
 
 export type EventContainerReference = {
   type: ContainerReferenceType.EVENT;
-  id: string;
+  id?: string;
   resourceId: number;
   label?: string;
 } & Partial<Dimensions>;
 
 export type ThreeDContainerReference = {
-  id: string;
   type: ContainerReferenceType.THREE_D;
   modelId: number;
   revisionId: number;
+  id?: string;
   initialAssetId?: number;
   camera?: {
     position: {
@@ -70,10 +70,10 @@ export type ThreeDContainerReference = {
 
 export type TimeseriesContainerReference = {
   type: ContainerReferenceType.TIMESERIES;
-  id: string;
   resourceId: number;
-  startDate: string;
-  endDate: string;
+  id?: string;
+  startDate?: string;
+  endDate?: string;
   label?: string;
 } & Partial<Dimensions>;
 

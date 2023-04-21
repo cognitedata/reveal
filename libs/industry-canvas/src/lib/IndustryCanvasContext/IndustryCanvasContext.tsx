@@ -1,4 +1,3 @@
-import { useSearchParamString } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   createContext,
@@ -7,14 +6,19 @@ import {
   useEffect,
   useMemo,
 } from 'react';
-import { useCanvasArchiveMutation } from './hooks/use-mutation/useCanvasArchiveMutation';
-import { useCanvasCreateMutation } from './hooks/use-mutation/useCanvasCreateMutation';
-import { useCanvasSaveMutation } from './hooks/use-mutation/useCanvasSaveMutation';
-import { useGetCanvasByIdQuery } from './hooks/use-query/useGetCanvasByIdQuery';
-import { useListCanvases } from './hooks/use-query/useListCanvases';
-import { IndustryCanvasService } from './services/IndustryCanvasService';
-import { IndustryCanvasState, SerializedCanvasDocument } from './types';
-import { serializeCanvasState } from './utils/utils';
+import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
+import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
+import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
+import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
+import { useListCanvases } from '../hooks/use-query/useListCanvases';
+import { IndustryCanvasService } from '../services/IndustryCanvasService';
+import {
+  ContainerReference,
+  IndustryCanvasState,
+  SerializedCanvasDocument,
+} from '../types';
+import useIndustryCanvasSearchParameters from './useIndustryCanvasSearchParameters';
+import { serializeCanvasState } from '../utils/utils';
 
 export type IndustryCanvasContextType = {
   activeCanvas: SerializedCanvasDocument | undefined;
@@ -30,6 +34,7 @@ export type IndustryCanvasContextType = {
   isLoadingCanvas: boolean;
   isListingCanvases: boolean;
   isArchivingCanvas: boolean;
+  initializeWithContainerReferences: ContainerReference[] | undefined;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -50,18 +55,20 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
   isLoadingCanvas: false,
   isListingCanvases: false,
   isArchivingCanvas: false,
+  initializeWithContainerReferences: undefined,
 });
 
 type IndustryCanvasProviderProps = {
   children: React.ReactNode;
 };
-
 export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   children,
 }): JSX.Element => {
   const sdk = useSDK();
   const canvasService = useMemo(() => new IndustryCanvasService(sdk), [sdk]);
-  const [canvasId, setCanvasId] = useSearchParamString('canvasId');
+  const { canvasId, setCanvasId, initializeWithContainerReferences } =
+    useIndustryCanvasSearchParameters();
+
   const { data: activeCanvas, isLoading: isLoadingCanvas } =
     useGetCanvasByIdQuery(canvasService, canvasId);
   const { mutateAsync: saveCanvas, isLoading: isSavingCanvas } =
@@ -81,7 +88,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   // their changes persisted once they open up the IC page
   useEffect(() => {
     const createInitialCanvas = async () => {
-      if (canvasId === null && !isCreatingCanvas) {
+      if (canvasId === undefined && !isCreatingCanvas) {
         const initialCanvas = canvasService.makeEmptyCanvas();
         setCanvasId(initialCanvas.externalId);
         await createCanvas(initialCanvas);
@@ -103,9 +110,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
       const updatedCanvas = await saveCanvas(canvasDocument);
       setCanvasId(updatedCanvas.externalId);
     },
-    // TOOD: saveCanvasId is not stable for some reason
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [saveCanvas]
+    [saveCanvas, setCanvasId]
   );
 
   const createCanvasWrapper = useCallback(
@@ -128,7 +133,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         const nextCanvas = canvases?.find(
           (canvas) => canvas.externalId !== canvasToArchive.externalId
         );
-        setCanvasId(nextCanvas === undefined ? null : nextCanvas.externalId);
+        setCanvasId(nextCanvas?.externalId);
       }
       await refetchCanvases();
     },
@@ -149,6 +154,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         createCanvas: createCanvasWrapper,
         saveCanvas: saveCanvasWrapper,
         archiveCanvas: archiveCanvasWrapper,
+        initializeWithContainerReferences,
       }}
     >
       {children}
