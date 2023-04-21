@@ -100,6 +100,9 @@ export class Image360RevisionEntity implements Image360Revision {
       .get360ImageFiles(this._image360Descriptor.faceDescriptors, abortSignal)
       .then(async faces => {
         const textures = await this._image360VisualzationBox.loadFaceTextures(faces);
+        if (this._textures.length > 0) {
+          this._textures.forEach(texture => texture.texture.dispose());
+        }
         this._textures = textures;
       });
 
