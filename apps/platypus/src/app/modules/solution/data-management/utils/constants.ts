@@ -1,14 +1,20 @@
 import { ColumnDataType } from '@cognite/cog-data-grid';
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
 
-export const INSTANCE_TYPE_DEFS_FIELD: DataModelTypeDefsField = {
-  name: 'externalId',
-  type: {
+export const INSTANCE_TYPE_DEFS_FIELDS: DataModelTypeDefsField[] = [
+  {
     name: 'externalId',
-    custom: false,
-    list: false,
+    type: { list: false, custom: false, name: 'String', nonNull: true },
   },
-};
+  {
+    name: 'lastUpdatedTime',
+    type: { list: false, custom: false, name: 'Timestamp', nonNull: false },
+  },
+  {
+    name: 'createdTime',
+    type: { list: false, custom: false, name: 'Timestamp', nonNull: false },
+  },
+];
 
 export const COL_TYPES_MAP: { [key: string]: string } = {
   Boolean: ColumnDataType.Boolean,

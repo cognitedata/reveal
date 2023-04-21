@@ -45,7 +45,11 @@ import { SuggestionsModal } from '../SuggestionsModal/SuggestionsModal';
 import { StyledDataPreviewTable } from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
-import { getSuggestionsAvailable, sanitizeRow } from './utils';
+import {
+  getColumnsInitialOrder,
+  getSuggestionsAvailable,
+  sanitizeRow,
+} from './utils';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
@@ -59,8 +63,12 @@ import debounce from 'lodash/debounce';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
+import { useColumnSelectionFeatureFlag } from '@platypus-app/flags/useColumnSelection';
 
 const pageSizeLimit = 100;
+const instanceIdCol = 'externalId';
+const lockedFields = ['space', 'lastUpdatedTime', 'createdTime'];
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
@@ -82,7 +90,6 @@ export const DataPreviewTable = forwardRef<
     { dataModelType, dataModelTypeDefs, dataModelExternalId, version, space },
     ref
   ) => {
-    const instanceIdCol = 'externalId';
     const { t } = useTranslation('DataPreviewTable');
     const [searchTerm, setSearchTerm] = useState('');
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
@@ -99,6 +106,8 @@ export const DataPreviewTable = forwardRef<
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
     const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
+    const { isEnabled: isColumnSelectionEnabled } =
+      useColumnSelectionFeatureFlag();
     const { dataModelVersion: selectedDataModelVersion } =
       useSelectedDataModelVersion(version, dataModelExternalId, space);
 
@@ -121,6 +130,10 @@ export const DataPreviewTable = forwardRef<
       createNewDraftRow,
       deleteSelectedRows,
     } = useDraftRows();
+
+    const [columnOrder, setColumnOrder] = useState<ColumnToggleType[]>(
+      getColumnsInitialOrder(dataModelType, instanceIdCol)
+    );
 
     const [suggestionsAvailable, setSuggestionsAvailable] = useState(false);
     const [suggestionsColumn, setSuggestionsColumn] = useState<
@@ -203,6 +216,10 @@ export const DataPreviewTable = forwardRef<
       track('DataModel.Data.View', { version, type: dataModelType.name });
     }, [track, dataModelType, version]);
 
+    useEffect(() => {
+      setColumnOrder(getColumnsInitialOrder(dataModelType, instanceIdCol));
+    }, [dataModelType]);
+
     const handleSuggestionsClose = async (selectedColumn?: string) => {
       gridRef.current?.api.refreshInfiniteCache();
       setIsSuggestionsModalVisible(false);
@@ -210,13 +227,14 @@ export const DataPreviewTable = forwardRef<
     };
 
     // set gridConfig in state so the reference is stable and doesn't cause rerenders
-    const [gridConfig] = useState<GridConfig>(
+    const [gridConfig, setGridConfig] = useState<GridConfig>(
       buildGridConfig(
         instanceIdCol,
         dataModelType,
         handleRowPublish,
         isDeletionEnabled,
-        isManualPopulationEnabled
+        isManualPopulationEnabled,
+        columnOrder.filter((el) => el.visible).map((el) => el.value)
       )
     );
 
@@ -464,6 +482,10 @@ export const DataPreviewTable = forwardRef<
         ...e.data,
       };
 
+      for (const key of lockedFields) {
+        delete updatedRowData[key];
+      }
+
       dataManagementHandler
         .ingestNodes({
           /*
@@ -668,7 +690,26 @@ export const DataPreviewTable = forwardRef<
           suggestionsAvailable={suggestionsAvailable}
           typeName={dataModelType.name}
           version={version}
-        />
+        >
+          {isColumnSelectionEnabled && (
+            <ColumnToggle
+              allColumns={columnOrder}
+              onChange={(order) => {
+                setColumnOrder(order);
+                setGridConfig(
+                  buildGridConfig(
+                    instanceIdCol,
+                    dataModelType,
+                    handleRowPublish,
+                    isDeletionEnabled,
+                    isManualPopulationEnabled,
+                    order.filter((el) => el.visible).map((el) => el.value)
+                  )
+                );
+              }}
+            />
+          )}
+        </PreviewPageHeader>
         <CollapsiblePanelContainer
           data={sidebarData}
           onClose={() => setSidebarData(undefined)}

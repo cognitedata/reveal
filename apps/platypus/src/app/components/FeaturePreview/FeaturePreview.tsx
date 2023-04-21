@@ -1,5 +1,9 @@
 import { Body, Flex, Icon, Modal, Switch } from '@cognite/cogs.js';
 import {
+  useColumnSelectionFeatureFlag,
+  useUpdateColumnSelectionFeatureFlag,
+} from '@platypus-app/flags/useColumnSelection';
+import {
   useManualPopulationFeatureFlag,
   useUpdateManualPopulationFeatureFlag,
 } from '@platypus-app/flags/useManualPopulation';
@@ -11,7 +15,7 @@ import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-type FeatureKey = 'population' | 'suggestions';
+type FeatureKey = 'population' | 'suggestions' | 'columns';
 
 export const FeaturePreview = ({
   onRequestClose,
@@ -26,10 +30,12 @@ export const FeaturePreview = ({
   }>({
     population: useManualPopulationFeatureFlag().isEnabled,
     suggestions: useSuggestionsFeatureFlag().isEnabled,
+    columns: useColumnSelectionFeatureFlag().isEnabled,
   });
 
   const setManualPopulation = useUpdateManualPopulationFeatureFlag();
   const setSuggestions = useUpdateSuggestionsFeatureFlag();
+  const setColumnSelection = useUpdateColumnSelectionFeatureFlag();
 
   const updateStatusState = (key: FeatureKey, status: boolean) => {
     track('FeatureFlag.Toggle', { key, status });
@@ -40,6 +46,10 @@ export const FeaturePreview = ({
       }
       case 'suggestions': {
         setSuggestions(status);
+        break;
+      }
+      case 'columns': {
+        setColumnSelection(status);
         break;
       }
     }
@@ -53,6 +63,7 @@ export const FeaturePreview = ({
     () => ({
       population: 'Population',
       suggestions: 'Smart Suggestions',
+      columns: 'Column Selection',
     }),
     []
   );
@@ -75,6 +86,14 @@ export const FeaturePreview = ({
           </Body>
           <Body level="2">
             Recommend to be enabled alongside Population feature.
+          </Body>
+        </>
+      ),
+      columns: (
+        <>
+          <Body level="2">
+            Provides a way for you to choose which columns are visible in the
+            table.
           </Body>
         </>
       ),

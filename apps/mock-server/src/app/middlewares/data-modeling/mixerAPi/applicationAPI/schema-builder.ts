@@ -182,8 +182,10 @@ ${mixerApiV3CustomDirectives}
             extendedSchema = extendedSchema.replace(
               match,
               `${match}
-        externalId: ID!
-        ${useDmsV3 ? 'space' : 'spaceExternalId'}: String!`
+              externalId: ID!
+              lastUpdatedTime: Timestamp!
+              createdTime: Timestamp!
+               ${useDmsV3 ? 'space' : 'spaceExternalId'}: String!`
             );
           }
         });

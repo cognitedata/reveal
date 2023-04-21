@@ -70,6 +70,7 @@ export function SchemaVersionDropdown({
         visible={isOpen}
         content={
           <Menu
+            data-cy="schema-version-select-menu"
             style={{
               maxHeight: 192,
               minWidth: 300,

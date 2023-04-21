@@ -61,6 +61,8 @@ export class MixerQueryBuilder {
     )}${paramString} {
       items {
         externalId
+        lastUpdatedTime
+        createdTime
         ${isFDMv2 ? 'space: spaceExternalId' : 'space'}
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
@@ -175,6 +177,8 @@ export class MixerQueryBuilder {
     ${operationName}(first: $first, query: $query, filter: $filter) {
       items {
         externalId
+        lastUpdatedTime
+        createdTime
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>

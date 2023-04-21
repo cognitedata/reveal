@@ -20,11 +20,12 @@ import graphiqlStyles from 'graphiql/graphiql.min.css';
 import agGridStyles from 'ag-grid-community/dist/styles/ag-grid.css';
 import cogDataGridStyles from '@cognite/cog-data-grid-root/lib/cog-data-grid-styles.css';
 import styled from 'styled-components';
+import zIndex from './utils/zIndex';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope.styleScope);
   const el = els.item(0)! as HTMLElement;
-  return el;
+  return el || document.body;
 };
 
 // This will override the appendTo prop on all Tooltips used from cogs
@@ -42,6 +43,7 @@ Modal.defaultProps = {
 Dropdown.defaultProps = {
   ...Dropdown.defaultProps,
   appendTo: getContainer,
+  zIndex: zIndex.POPUP,
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {

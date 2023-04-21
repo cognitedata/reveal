@@ -222,6 +222,8 @@ export const mockDataSample = {
           {
             id: 1,
             externalId: '1',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             title: 'Lorem Ipsum',
             views: 254,
@@ -237,6 +239,8 @@ export const mockDataSample = {
           {
             id: 2,
             externalId: '2',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             title: 'Sic Dolor amet',
             views: 65,
@@ -259,12 +263,16 @@ export const mockDataSample = {
           {
             id: 123,
             externalId: '123',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             name: 'John Doe',
           },
           {
             id: 456,
             externalId: '456',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             name: 'Jane Doe',
           },
@@ -273,6 +281,8 @@ export const mockDataSample = {
           {
             id: 987,
             externalId: '987',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             post: { externalId: '1', spaceExternalId: 'blog' },
             body: 'Consectetur adipiscing elit',
@@ -281,6 +291,8 @@ export const mockDataSample = {
           {
             id: 995,
             externalId: '995',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             post: { externalId: '1', spaceExternalId: 'blog' },
             body: 'Nam molestie pellentesque dui',
@@ -289,6 +301,8 @@ export const mockDataSample = {
           {
             id: 996,
             externalId: '996',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             post: { externalId: '1', spaceExternalId: 'blog' },
             body: 'Random comment 996',
@@ -297,6 +311,8 @@ export const mockDataSample = {
           {
             id: 997,
             externalId: '997',
+            lastUpdatedTime: 1679400529215,
+            createdTime: 1679400529215,
             spaceExternalId: 'blog',
             post: { externalId: '1', spaceExternalId: 'blog' },
             body: 'Random comment 997',
