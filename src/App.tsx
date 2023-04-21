@@ -20,6 +20,7 @@ import { NewExtractor } from 'components/NewExtractor';
 
 import ExtractorDownloads from './Home/Extractors';
 import SourceSystemDetails from 'components/source-system-details/SourceSystemDetails';
+import { HostedExtractorDetails } from 'components/hosted-extractor-details/HostedExtractorDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,6 +63,10 @@ const App = () => {
                       <Route
                         path={`/:project/:subAppPath/extractor/:extractorExternalId`}
                         element={<ExtractorDetails />}
+                      />
+                      <Route
+                        path={`/:project/:subAppPath/hosted-extractor/:hostedExtractorExternalId`}
+                        element={<HostedExtractorDetails />}
                       />
                       <Route
                         path={`/:project/:subAppPath/source-system/:sourceSystemExternalId`}

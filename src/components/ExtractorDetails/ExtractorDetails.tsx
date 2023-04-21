@@ -139,7 +139,6 @@ const ExtractorDetails = () => {
                         }
                         icon="Download"
                         iconPlacement="right"
-                        size="large"
                         onClick={() => {
                           trackUsage({
                             e: 'Download.Extractor.Click',
@@ -340,13 +339,13 @@ const ExtractorDetails = () => {
 
 export default ExtractorDetails;
 
-const StyledLayoutGrid = styled.div`
+export const StyledLayoutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 296px;
   gap: 56px;
 `;
 
-const StyledDivider = styled.div`
+export const StyledDivider = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${Colors['border--muted']};
@@ -356,11 +355,11 @@ const StyledBodyMuted = styled(Body).attrs({ level: 2 })`
   color: ${Colors['text-icon--muted']};
 `;
 
-const StyledLink = styled.a`
+export const StyledLink = styled.a`
   color: ${Colors['text-icon--strong']};
 `;
 
-const StyledTagsContainer = styled.div`
+export const StyledTagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;

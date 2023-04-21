@@ -1,4 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
+import { MQTT_EXTRACTOR_MOCK } from 'common';
 import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 
 export type Artifact = {
@@ -88,6 +89,8 @@ export const getExtractorsWithReleases = async () => {
       releases: [],
     };
   });
+
+  extractors['cognite-mqtt-extractor'] = MQTT_EXTRACTOR_MOCK;
 
   releases.forEach((release) => {
     extractorMap[release.externalId].releases.push(release);
