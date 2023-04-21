@@ -86,30 +86,40 @@ export class Image360RevisionEntity implements Image360Revision {
     lowResolutionCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
   } {
-    const lowResolutionCompleted = this._imageProvider
-      .getLowResolution360ImageFiles(this._image360Descriptor.faceDescriptors, abortSignal)
-      .then(async faces => {
-        const textures = await this._image360VisualzationBox.loadFaceTextures(faces);
-
-        //If textures are already set we do not override these with low resolution.
-        if (this._textures.length === 6) return;
-        this._textures = textures;
-      });
-
-    const fullResolutionCompleted = this._imageProvider
-      .get360ImageFiles(this._image360Descriptor.faceDescriptors, abortSignal)
-      .then(async faces => {
-        const textures = await this._image360VisualzationBox.loadFaceTextures(faces);
-        if (this._textures.length > 0) {
-          this._textures.forEach(texture => texture.texture.dispose());
-        }
-        this._textures = textures;
-      });
+    const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
+    const fullResolutionCompleted = this.loadFullTextures();
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
+
     this.loadAnnotations();
 
     return { lowResolutionCompleted, fullResolutionCompleted };
+  }
+
+  private async loadPreviewTextures(abortSignal?: AbortSignal): Promise<void> {
+    const previewImageFiles = await this._imageProvider.getLowResolution360ImageFiles(
+      this._image360Descriptor.faceDescriptors,
+      abortSignal
+    );
+    const textures = await this._image360VisualzationBox.loadFaceTextures(previewImageFiles);
+    if (this._textures.length === 6) {
+      textures.forEach(texture => texture.texture.dispose());
+      return;
+    }
+    this._textures = textures;
+  }
+
+  private async loadFullTextures(abortSignal?: AbortSignal): Promise<void> {
+    const fullImageFiles = await this._imageProvider.get360ImageFiles(
+      this._image360Descriptor.faceDescriptors,
+      abortSignal
+    );
+
+    const textures = await this._image360VisualzationBox.loadFaceTextures(fullImageFiles);
+    if (this._textures.length > 0) {
+      this._textures.forEach(texture => texture.texture.dispose());
+    }
+    this._textures = textures;
   }
 
   private async loadAnnotations(): Promise<void> {
