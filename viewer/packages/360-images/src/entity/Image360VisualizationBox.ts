@@ -144,17 +144,12 @@ export class Image360VisualizationBox implements Image360Visualization {
         const url = window.URL.createObjectURL(blob);
         let faceTexture = await this._textureLoader.loadAsync(url);
 
-        switch (this._device.deviceType) {
-          case 'mobile':
-            if (
-              faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE ||
-              faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE
-            ) {
-              faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
-            }
-            break;
-          default:
-            break;
+        if (
+          this._device.deviceType === 'mobile' &&
+          (faceTexture.image.width > this.MAX_MOBILE_IMAGE_SIZE ||
+            faceTexture.image.height > this.MAX_MOBILE_IMAGE_SIZE)
+        ) {
+          faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
         }
         // Need to horizontally flip the texture since it is being rendered inside a cube
         faceTexture.center.set(0.5, 0.5);
@@ -204,7 +199,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     canvas.width = width;
     canvas.height = height;
 
-    context?.drawImage(texture.image, 0, 0, canvas.width, canvas.height);
+    context!.drawImage(texture.image, 0, 0, canvas.width, canvas.height);
 
     const scaledImageTexture = new THREE.CanvasTexture(canvas);
     texture.dispose();
