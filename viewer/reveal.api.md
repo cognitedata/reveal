@@ -794,6 +794,7 @@ export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) =>
 
 // @public
 export interface Image360Collection {
+    assignAnnotationStyle(filter: Image360AnnotationFilter, appearanceEdit: Image360AnnotationAppearanceEdit): void;
     readonly image360Entities: Image360[];
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
@@ -809,9 +810,12 @@ export interface Image360Collection {
     on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
     // (undocumented)
     on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
+    removeAllAnnotationStyles(): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setDefaultStyle(appearanceEdit: Image360AnnotationAppearanceEdit): void;
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;
+    unassignAnnotationStyle(filter: Image360AnnotationFilter): void;
 }
 
 // @public
