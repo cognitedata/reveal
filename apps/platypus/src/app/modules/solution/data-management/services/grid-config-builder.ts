@@ -4,6 +4,7 @@ import {
   ColumnDataType,
   GridConfig,
 } from '@cognite/cog-data-grid';
+import { IconType } from '@cognite/cogs.js';
 import {
   DataModelTypeDefsField,
   DataModelTypeDefsType,
@@ -123,6 +124,10 @@ export const buildGridConfig = (
         const dataType = COL_TYPES_MAP.hasOwnProperty(field.type.name)
           ? COL_TYPES_MAP[field.type.name]
           : ColumnDataType.Custom;
+        let customIcon: IconType | undefined = undefined;
+        if (field.type.name === 'TimeSeries') {
+          customIcon = 'Timeseries';
+        }
 
         const colConfig = {
           label: field.name,
@@ -135,6 +140,9 @@ export const buildGridConfig = (
           isList,
           colDef: {
             headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
+            headerComponentParams: {
+              headerIcon: customIcon,
+            },
             suppressMovable: true,
             // Mixer API supports sorting only on primitives (not array and not custom types)
             sortable: !field.type.custom && !isList && !builtInDataField,

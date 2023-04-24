@@ -432,6 +432,12 @@ export const DataPreviewTable = forwardRef<
               type: 'custom',
             });
           }
+        } else if (fieldType.type.name === 'TimeSeries') {
+          setSidebarData({
+            externalId: currValue.externalId,
+            fieldName: field,
+            type: 'timeseries',
+          });
         } else {
           setSidebarData(undefined);
         }

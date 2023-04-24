@@ -872,6 +872,7 @@ const normalizeIngestionItem = (
             }
           }
         } else if (
+          // special case for timeseries type
           fieldType?.type.name === 'TimeSeries' &&
           typeof value === 'object' &&
           value !== null &&
