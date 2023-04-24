@@ -1,6 +1,7 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { UseMutationOptions, useMutation, useQuery } from 'react-query';
+import { useCreateSession } from './sessions';
 
 // SOURCES
 
@@ -9,7 +10,7 @@ export type MQTTSourceType = 'mqtt3' | 'mqtt5';
 type BaseMQTTSource = {
   externalId: string;
   type: MQTTSourceType;
-  host?: string;
+  host: string;
   port?: string;
   username: string;
 };
@@ -45,11 +46,17 @@ export const useCreateMQTTSource = (
   const sdk = useSDK();
 
   return useMutation(async (source: CreateMQTTSourceVariables) => {
-    return sdk.post(`/api/v1/projects/${getProject()}/pluto/sources`, {
-      data: {
-        items: [source],
-      },
-    });
+    return sdk
+      .post<{ items: ReadMQTTSource[] }>(
+        `/api/v1/projects/${getProject()}/pluto/sources`,
+        {
+          headers: { 'cdf-version': 'alpha' },
+          data: {
+            items: [source],
+          },
+        }
+      )
+      .then((r) => r.data.items[0]);
   }, options);
 };
 
@@ -70,17 +77,50 @@ export type CreateMQTTDestination = BaseMQTTDestination & {
   credentials?: MQTTSessionCredentials;
 };
 
-type CreateMQTTDestinationVariables = CreateMQTTDestination;
+type ReadMQTTDestination = BaseMQTTDestination & {
+  createdTime: number;
+  lastUpdatedTime: number;
+  sessionId?: number;
+};
+
+type CreateMQTTDestinationVariables = Omit<
+  CreateMQTTDestination,
+  'credentials'
+> & {
+  clientId: string;
+  clientSecret: string;
+};
 
 export const useCreateMQTTDestination = () => {
   const sdk = useSDK();
 
+  const { mutateAsync: createSession } = useCreateSession();
+
   return useMutation(async (destination: CreateMQTTDestinationVariables) => {
-    return sdk.post(`/api/v1/projects/${getProject()}/pluto/destinations`, {
-      data: {
-        items: [destination],
-      },
+    const session = await createSession({
+      clientId: destination.clientId,
+      clientSecret: destination.clientSecret,
     });
+
+    return sdk
+      .post<{ items: ReadMQTTDestination[] }>(
+        `/api/v1/projects/${getProject()}/pluto/destinations`,
+        {
+          headers: { 'cdf-version': 'alpha' },
+          data: {
+            items: [
+              {
+                externalId: destination.externalId,
+                type: destination.type,
+                credentials: {
+                  nonce: session.nonce,
+                },
+              },
+            ],
+          },
+        }
+      )
+      .then((r) => r.data.items[0]);
   });
 };
 
@@ -114,6 +154,7 @@ export const useCreateMQTTJob = () => {
 
   return useMutation(async (job: CreateMQTTJobVariables) => {
     return sdk.post(`/api/v1/projects/${getProject()}/pluto/jobs`, {
+      headers: { 'cdf-version': 'alpha' },
       data: {
         items: [job],
       },

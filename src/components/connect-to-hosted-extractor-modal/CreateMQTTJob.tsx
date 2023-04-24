@@ -14,9 +14,9 @@ type CreateMQTTJobProps = {
   formik: FormikProps<CreateMQTTJobFormValues>;
 };
 
-export type CreateMQTTJobFormValues = Partial<
-  Pick<CreateMQTTJobType, 'externalId' | 'topicFilter'>
->;
+export type CreateMQTTJobFormValues = {
+  topicFilters?: CreateMQTTJobType['topicFilter'][];
+};
 
 export const MQTT_DESTINATION_TYPE_OPTIONS: {
   label: string;
@@ -34,11 +34,8 @@ export const validateCreateMQTTJobForm = (
 ): FormikErrors<CreateMQTTJobFormValues> => {
   const errors: FormikErrors<CreateMQTTJobFormValues> = {};
 
-  if (!values.externalId) {
-    errors.externalId = t('validation-error-field-required');
-  }
-  if (!values.topicFilter) {
-    errors.topicFilter = t('validation-error-field-required');
+  if (!values.topicFilters || !values.topicFilters.length) {
+    errors.topicFilters = t('validation-error-field-required');
   }
 
   return errors;
@@ -53,14 +50,14 @@ export const CreateMQTTJob = ({ formik }: CreateMQTTJobProps): JSX.Element => {
 
   const handleAddTopicFilter = (): void => {
     if (
-      !values.topicFilter ||
-      values.topicFilter.split(',').every((f) => f !== tempTopicFilterInput)
+      !values.topicFilters ||
+      !values.topicFilters.includes(tempTopicFilterInput)
     ) {
       setFieldValue(
-        'topicFilter',
-        values.topicFilter?.split(',').concat(tempTopicFilterInput).join(',') ||
-          tempTopicFilterInput ||
-          undefined
+        'topicFilters',
+        values.topicFilters?.concat(tempTopicFilterInput) ?? [
+          tempTopicFilterInput,
+        ]
       );
       setTempTopicFilterInput('');
     }
@@ -68,30 +65,13 @@ export const CreateMQTTJob = ({ formik }: CreateMQTTJobProps): JSX.Element => {
 
   const handleDeleteTopicFilter = (filter: string): void => {
     setFieldValue(
-      'topicFilter',
-      values.topicFilter
-        ?.split(',')
-        .filter((f) => f !== filter)
-        .join(',') || undefined
+      'topicFilters',
+      values.topicFilters?.filter((f) => f !== filter) ?? []
     );
   };
 
   return (
     <Flex direction="column" gap={16}>
-      <InputExp
-        clearable
-        fullWidth
-        label={{
-          required: true,
-          info: undefined,
-          text: t('form-job-external-id'),
-        }}
-        onChange={(e) => setFieldValue('externalId', e.target.value)}
-        placeholder={t('form-job-external-id-placeholder')}
-        status={errors.externalId ? 'critical' : undefined}
-        statusText={errors.externalId}
-        value={values.externalId}
-      />
       <Flex direction="column" gap={8}>
         <Flex gap={8} style={{ width: '100%' }}>
           <div style={{ flex: 1 }}>
@@ -108,8 +88,8 @@ export const CreateMQTTJob = ({ formik }: CreateMQTTJobProps): JSX.Element => {
                   handleAddTopicFilter();
                 }
               }}
-              status={errors.topicFilter ? 'critical' : undefined}
-              statusText={errors.topicFilter}
+              status={errors.topicFilters ? 'critical' : undefined}
+              statusText={errors.topicFilters}
               placeholder={t('form-topic-filters-placeholder')}
               value={tempTopicFilterInput}
             />
@@ -118,9 +98,7 @@ export const CreateMQTTJob = ({ formik }: CreateMQTTJobProps): JSX.Element => {
             <Button
               disabled={
                 !tempTopicFilterInput ||
-                values.topicFilter
-                  ?.split(',')
-                  .some((f) => f === tempTopicFilterInput)
+                values.topicFilters?.includes(tempTopicFilterInput)
               }
               onClick={handleAddTopicFilter}
               type="primary"
@@ -129,7 +107,7 @@ export const CreateMQTTJob = ({ formik }: CreateMQTTJobProps): JSX.Element => {
             </Button>
           </div>
         </Flex>
-        {values.topicFilter?.split(',').map((filter) => (
+        {values.topicFilters?.map((filter) => (
           <TopicFilterContainer>
             <Body level={2}>{filter}</Body>
             <Button

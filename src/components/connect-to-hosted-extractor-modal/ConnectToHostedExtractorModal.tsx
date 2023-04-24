@@ -23,6 +23,13 @@ import {
   CreateMQTTJobFormValues,
   validateCreateMQTTJobForm,
 } from './CreateMQTTJob';
+import {
+  useCreateMQTTDestination,
+  useCreateMQTTJob,
+  useCreateMQTTSource,
+} from 'hooks/hostedExtractors';
+import { createLink } from '@cognite/cdf-utilities';
+import { useNavigate } from 'react-router-dom';
 
 type ConnectToHostedExtractorModalProps = {
   extractor: ExtractorWithReleases;
@@ -46,8 +53,65 @@ export const ConnectToHostedExtractorModal = ({
 }: ConnectToHostedExtractorModalProps) => {
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
   const [modalStep, setModalStep] =
     useState<ConnectToHostedExtractorModalStep>('create-source');
+
+  const { mutateAsync: createMQTTSource } = useCreateMQTTSource();
+  const { mutateAsync: createMQTTDestination } = useCreateMQTTDestination();
+  const { mutateAsync: createMQTTJob } = useCreateMQTTJob();
+
+  const handleSubmitModal = async () => {
+    const sourceValues = createMQTTSourceForm.values;
+    const destinationValues = createMQTTDestinationForm.values;
+    const jobValues = createMQTTJobForm.values;
+
+    if (
+      sourceValues.externalId &&
+      sourceValues.type &&
+      sourceValues.username &&
+      sourceValues.password &&
+      sourceValues.host &&
+      destinationValues.externalId &&
+      destinationValues.type &&
+      destinationValues.clientId &&
+      destinationValues.clientSecret &&
+      jobValues.topicFilters
+    ) {
+      const source = await createMQTTSource({
+        externalId: sourceValues.externalId,
+        type: sourceValues.type,
+        username: sourceValues.username,
+        password: sourceValues.password,
+        host: sourceValues.host,
+        port: sourceValues.port,
+      });
+
+      const destination = await createMQTTDestination({
+        externalId: destinationValues.externalId,
+        type: destinationValues.type,
+        clientId: destinationValues.clientId,
+        clientSecret: destinationValues.clientSecret,
+      });
+
+      await Promise.all(
+        jobValues.topicFilters.map((topicFilter) => {
+          return createMQTTJob({
+            sourceId: source.externalId,
+            destinationId: destination.externalId,
+            externalId: `${source.externalId}-${destination.externalId}-${topicFilter}`,
+            format: {
+              type: 'cognite',
+            },
+            topicFilter,
+          });
+        })
+      );
+
+      navigate(createLink(`/extpipes`, { tab: 'hosted' }));
+    }
+  };
 
   const goNextStep = (): void => {
     switch (modalStep) {
@@ -58,7 +122,7 @@ export const ConnectToHostedExtractorModal = ({
         setModalStep('create-job');
         break;
       case 'create-job':
-        // create source, destination and job
+        handleSubmitModal();
         break;
     }
   };

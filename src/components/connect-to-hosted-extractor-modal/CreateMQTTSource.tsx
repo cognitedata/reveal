@@ -84,7 +84,7 @@ export const CreateMQTTSource = ({
         clearable
         fullWidth
         label={{
-          required: false,
+          required: true,
           info: undefined,
           text: t('form-host-name'),
         }}
