@@ -55,13 +55,27 @@ export const getFlowItemKey = (externalId: string) => ['flow', externalId];
 
 export function useFlow(
   externalId: string,
-  opts?: Omit<UseQueryOptions<AFlow, Error>, 'queryKey' | 'queryFn'>
+  opts?: Omit<
+    UseQueryOptions<AFlow, Error>,
+    'queryKey' | 'queryFn' | 'structuralSharing'
+  >
 ) {
   const sdk = useSDK();
-  return useQuery(
+  return useQuery<AFlow, Error>(
     getFlowItemKey(externalId),
     () => getFlow(sdk, externalId),
-    opts
+    {
+      ...opts,
+      structuralSharing(oldData, newData) {
+        if (!oldData) {
+          return newData;
+        }
+        if (isEqual(Automerge.getHeads(oldData), Automerge.getHeads(newData))) {
+          return oldData;
+        }
+        return Automerge.merge(newData, oldData);
+      },
+    }
   );
 }
 
