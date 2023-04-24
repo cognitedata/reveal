@@ -10,12 +10,23 @@ import {
   Image360EnteredDelegate,
   Image360AnnotationHoveredDelegate
 } from '@cognite/reveal';
+
+import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+
 import * as dat from 'dat.gui';
 
 export class Image360UI {
+  get collections(): Image360Collection[] {
+    return this._collections;
+  }
+
+  private _collections: Image360Collection[] = [];
+
+  private _currentSelectionFilter?: (annotation: AnnotationModel) => boolean;
+
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
-    let collections: Image360Collection[] = [];
+    const collections = this._collections;
     let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
@@ -24,9 +35,16 @@ export class Image360UI {
       selectedEntity = entity;
     };
 
-    const onAnnotationHovered: Image360AnnotationHoveredDelegate = annotation => {
-      // TODO: Replace with styling when available 2023-04-19
-      console.log('Hovered annotation with data: ', annotation.data);
+    const onAnnotationClicked: Image360AnnotationHoveredDelegate = annotation => {
+      console.log('Clicked annotation with data: ', annotation.data);
+      if (this._currentSelectionFilter !== undefined) {
+        collections.forEach(coll => coll.unassignAnnotationStyle(this._currentSelectionFilter!));
+      }
+
+      this._currentSelectionFilter = a => annotation.id === a.id;
+      collections.forEach(coll =>
+        coll.assignAnnotationStyle(this._currentSelectionFilter!, { color: new THREE.Color(0.8, 0.8, 1.0) })
+      );
     };
 
     const translation = {
@@ -58,7 +76,7 @@ export class Image360UI {
     };
 
     const params = {
-      siteId: '',
+      siteId: 'helideck-site-2-jpeg',
       add: add360ImageSet,
       premultipliedRotation: false,
       remove: removeAll360Images
@@ -152,9 +170,17 @@ export class Image360UI {
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
       collection.on('image360Entered', onImageEntered);
-      collection.on('image360AnnotationHovered', onAnnotationHovered);
+      collection.on('image360AnnotationClicked', onAnnotationClicked);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
+
+      collection.assignAnnotationStyle(
+        annotation => (annotation.data as AnnotationsObjectDetection).label === 'Just a normal rectangle',
+        {
+          color: new THREE.Color(0, 1, 1)
+        }
+      );
+
       viewer.requestRedraw();
     }
 
@@ -168,7 +194,7 @@ export class Image360UI {
     async function removeAll360Images() {
       await viewer.remove360Images(...entities);
       entities = [];
-      collections = [];
+      collections.splice(0);
     }
   }
 }
