@@ -11,7 +11,8 @@ import {
   Image360CollectionFactory,
   Image360Facade,
   Image360,
-  Image360RevisionEntity
+  Image360RevisionEntity,
+  DefaultImage360Collection
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -38,6 +39,7 @@ export class Image360ApiHelper {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
     revisionSelectedForEntry?: Image360RevisionEntity;
+    enteredCollection?: DefaultImage360Collection;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -46,6 +48,7 @@ export class Image360ApiHelper {
     enter360Image: (event: PointerEvent) => Promise<void>;
     exit360ImageOnEscapeKey: (event: KeyboardEvent) => void;
     updateHoverStateOnRender: () => void;
+    updateAnnotationStylingOnRender: () => void;
   };
 
   private readonly _debouncePreLoad = debounce(
@@ -111,13 +114,22 @@ export class Image360ApiHelper {
       this.setHoverIconOnIntersect(lastOffset.offsetX, lastOffset.offsetY);
     };
 
+    const updateAnnotationStylingOnRender = () => {
+      const currentCollection = this._interactionState.enteredCollection;
+      if (currentCollection !== undefined && currentCollection.needsStyleUpdate) {
+        currentCollection.stylingTracker.applyStyles(this._interactionState.revisionSelectedForEntry!.annotations);
+      }
+    };
+
     onBeforeSceneRendered.subscribe(updateHoverStateOnRender);
+    onBeforeSceneRendered.subscribe(updateAnnotationStylingOnRender);
 
     this._eventHandlers = {
       setHoverIconEventHandler,
       enter360Image,
       exit360ImageOnEscapeKey,
-      updateHoverStateOnRender
+      updateHoverStateOnRender,
+      updateAnnotationStylingOnRender
     };
   }
 
@@ -217,11 +229,15 @@ export class Image360ApiHelper {
     this.set360CameraManager();
 
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
+    this._interactionState.enteredCollection = imageCollection;
+
     lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
     image360Entity.icon.setVisibility(false);
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
+
+    imageCollection.stylingTracker.applyStyles(revisionToEnter.annotations);
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
@@ -375,6 +391,7 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
+      this._interactionState.enteredCollection = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();

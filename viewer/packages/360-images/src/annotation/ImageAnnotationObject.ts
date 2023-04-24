@@ -6,10 +6,11 @@ import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@co
 import { Image360FileDescriptor } from '@reveal/data-providers';
 import assert from 'assert';
 
-import { Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import { Matrix4, Color, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
 import { PolygonAnnotationData } from './PolygonAnnotationData';
+import { Image360AnnotationAppearance } from '../annotation-styling/types';
 
 type FaceType = Image360FileDescriptor['face'];
 
@@ -17,6 +18,7 @@ export class ImageAnnotationObject {
   private readonly _annotation: AnnotationModel;
 
   private readonly _mesh: Mesh;
+  private readonly _material: MeshBasicMaterial;
 
   get annotation(): AnnotationModel {
     return this._annotation;
@@ -41,7 +43,8 @@ export class ImageAnnotationObject {
 
   private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._mesh = new Mesh(objectData.getGeometry(), createMaterial());
+    this._material = createMaterial();
+    this._mesh = new Mesh(objectData.getGeometry(), this._material);
 
     this.initializeTransform(face, objectData.getNormalizationMatrix());
     this._mesh.renderOrder = 4;
@@ -76,6 +79,10 @@ export class ImageAnnotationObject {
 
   public getObject(): Object3D {
     return this._mesh;
+  }
+
+  public getMaterial(): MeshBasicMaterial {
+    return this._material;
   }
 }
 
