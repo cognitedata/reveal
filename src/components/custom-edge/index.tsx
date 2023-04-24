@@ -2,9 +2,9 @@ import { Flex } from '@cognite/cogs.js';
 import AddNodeButton from 'components/edge-hover-buttons/AddNodeButton';
 import DeleteEdgeButton from 'components/edge-hover-buttons/DeleteEdgeButton';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useState } from 'react';
 import { EdgeProps, getBezierPath } from 'reactflow';
 import styled from 'styled-components';
-
 export const CustomEdge = ({
   id,
   sourceX,
@@ -15,6 +15,8 @@ export const CustomEdge = ({
   targetPosition,
   style = {},
   markerEnd,
+  source,
+  target,
 }: EdgeProps): JSX.Element => {
   const [edgePath] = getBezierPath({
     sourceX,
@@ -24,6 +26,7 @@ export const CustomEdge = ({
     targetY,
     targetPosition,
   });
+  const [visibleAddButton, setVisibleAddButton] = useState<boolean>(false);
   const { changeEdges } = useWorkflowBuilderContext();
 
   const midpoint = {
@@ -37,9 +40,10 @@ export const CustomEdge = ({
       edge.deleteAt(i);
     });
   };
+
   return (
     <>
-      <EdgeContainer>
+      <EdgeContainer $visibleAddButton={visibleAddButton}>
         <path
           id={id}
           style={{ ...style, stroke: 'transparent', strokeWidth: 1 }}
@@ -68,6 +72,10 @@ export const CustomEdge = ({
               xPos={midpoint.x}
               yPos={midpoint.y}
               id={id}
+              source={source}
+              target={target}
+              visibleAddButton={visibleAddButton}
+              setVisibleAddButton={setVisibleAddButton}
             />
             <DeleteEdgeButton className="edge-button" onDelete={deleteEdge} />
           </Flex>
@@ -77,9 +85,10 @@ export const CustomEdge = ({
   );
 };
 
-const EdgeContainer = styled.g`
+const EdgeContainer = styled.g<{ $visibleAddButton: boolean }>`
   .edge-button {
-    visibility: hidden;
+    visibility: ${({ $visibleAddButton }) =>
+      $visibleAddButton ? 'visible' : 'hidden'};
   }
 
   :hover {

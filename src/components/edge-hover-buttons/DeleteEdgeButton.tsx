@@ -7,7 +7,6 @@ type Props = {
 };
 
 const DeleteButton = ({ className, onDelete }: Props) => {
-  //console.log('something');
   return (
     <StyledButton
       icon="Delete"

@@ -1,21 +1,31 @@
-import { Button, Menu, Dropdown } from '@cognite/cogs.js';
+import { Button, Menu } from '@cognite/cogs.js';
 import { ProcessNode, ProcessType } from 'types';
 import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useState } from 'react';
 import { Edge } from 'reactflow';
+import { Dropdown, Space } from 'antd';
 
 type Props = {
   className: string;
   xPos: number;
   yPos: number;
   id: string;
+  source: string;
+  target: string;
+  visibleAddButton: boolean;
+  setVisibleAddButton: (visible: boolean) => void;
 };
 
-const AddNodeButton = ({ className, id, xPos, yPos }: Props) => {
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  //console.log('isDropdownVisible: ', isDropdownVisible);
-
+const AddNodeButton = ({
+  className,
+  id,
+  xPos,
+  yPos,
+  source,
+  target,
+  visibleAddButton,
+  setVisibleAddButton,
+}: Props) => {
   const { changeEdges, changeNodes } = useWorkflowBuilderContext();
 
   const handleAddNode = (
@@ -38,15 +48,15 @@ const AddNodeButton = ({ className, id, xPos, yPos }: Props) => {
     // FIXME: any
     const leftEdge: AutomergeExtend<Edge<any>> = {
       id: uuid(),
-      source: node.id,
-      target: id,
-      type: 'default',
+      source: source,
+      target: node.id,
+      type: 'customEdge',
     };
     const rightEdge: AutomergeExtend<Edge<any>> = {
       id: uuid(),
-      source: id,
-      target: node.id,
-      type: 'default',
+      source: node.id,
+      target: target,
+      type: 'customEdge',
     };
     const newEdges = [leftEdge, rightEdge];
 
@@ -55,44 +65,47 @@ const AddNodeButton = ({ className, id, xPos, yPos }: Props) => {
     });
     changeEdges((edges) => {
       edges.push(...newEdges);
+      const i = edges.findIndex((e) => e.id === id);
+      edges.deleteAt(i);
     });
   };
 
   return (
-    <Dropdown
-      content={
-        <Menu>
-          <Menu.Item
-            icon="Code"
-            onClick={() => handleAddNode('transformation', xPos, yPos)}
-          >
-            Transformation
-          </Menu.Item>
-          <Menu.Item
-            icon="FrameTool"
-            onClick={() => handleAddNode('webhook', xPos, yPos)}
-          >
-            Webhook
-          </Menu.Item>
-          <Menu.Item
-            icon="Pipeline"
-            onClick={() => handleAddNode('workflow', xPos, yPos)}
-          >
-            Workflow
-          </Menu.Item>
-        </Menu>
-      }
-      placement="bottom-end"
-      visible={isDropdownVisible}
-    >
-      <Button
-        onClick={() => setIsDropdownVisible((prevState) => !prevState)}
-        type="primary"
-        icon="AddLarge"
-        className={className}
-        size="small"
-      />
-    </Dropdown>
+    <Space>
+      <Dropdown
+        trigger={['click']}
+        dropdownRender={() => (
+          <Menu>
+            <Menu.Item
+              icon="Code"
+              onClick={() => handleAddNode('transformation', xPos, yPos)}
+            >
+              Transformation
+            </Menu.Item>
+            <Menu.Item
+              icon="FrameTool"
+              onClick={() => handleAddNode('webhook', xPos, yPos)}
+            >
+              Webhook
+            </Menu.Item>
+            <Menu.Item
+              icon="Pipeline"
+              onClick={() => handleAddNode('workflow', xPos, yPos)}
+            >
+              Workflow
+            </Menu.Item>
+          </Menu>
+        )}
+      >
+        <Button
+          onClick={() => setVisibleAddButton(!visibleAddButton)}
+          type="primary"
+          icon="AddLarge"
+          className={className}
+          size="small"
+        />
+      </Dropdown>
+    </Space>
   );
 };
 
