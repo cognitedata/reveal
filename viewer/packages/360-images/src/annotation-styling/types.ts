@@ -5,6 +5,9 @@
 import { AnnotationModel } from '@cognite/sdk';
 import { Color } from 'three';
 
+/**
+ * Appearance / "style" of a 360 image annotation
+ */
 export type Image360AnnotationAppearance = {
   color: Color;
   visible: boolean;

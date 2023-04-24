@@ -16,5 +16,9 @@ export {
   Image360AnnotationHoveredDelegate,
   Image360AnnotationClickedDelegate
 } from './src/types';
-export { Image360AnnotationAppearanceEdit, Image360AnnotationFilter } from './src/annotation-styling/types';
+export {
+  Image360AnnotationAppearanceEdit,
+  Image360AnnotationFilter,
+  Image360AnnotationAppearance
+} from './src/annotation-styling/types';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
