@@ -787,6 +787,9 @@ export interface Image360 {
 }
 
 // @public
+export type Image360AnnotationClickedDelegate = (annotation: AnnotationModel) => void;
+
+// @public
 export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
 
 // @public
@@ -797,11 +800,15 @@ export interface Image360Collection {
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     // (undocumented)
     off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
+    // (undocumented)
+    off(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     // (undocumented)
     on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
+    // (undocumented)
+    on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;

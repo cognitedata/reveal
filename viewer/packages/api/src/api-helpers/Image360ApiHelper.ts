@@ -16,6 +16,7 @@ import {
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
+  determineCurrentDevice,
   EventTrigger,
   InputHandler,
   pixelToNormalizedDeviceCoordinates,
@@ -31,6 +32,7 @@ export class Image360ApiHelper {
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
+  private _needsRedraw: boolean = false;
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -55,7 +57,7 @@ export class Image360ApiHelper {
       leading: true
     }
   );
-  private readonly _requestRedraw: () => void;
+
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
@@ -67,14 +69,15 @@ export class Image360ApiHelper {
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
-    requestRedraw: () => void,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
       sceneHandler,
-      onBeforeSceneRendered
+      onBeforeSceneRendered,
+      device
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
@@ -85,7 +88,6 @@ export class Image360ApiHelper {
     this._activeCameraManager = activeCameraManager;
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
-    this._requestRedraw = requestRedraw;
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
@@ -93,8 +95,11 @@ export class Image360ApiHelper {
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
 
-    const handleHover = (event: PointerEventData) => this.handleAnnotationHover(event);
-    inputHandler.on('hover', handleHover);
+    const handleAnnotationHover = (event: PointerEventData) => this.handleAnnotationCursorEvent('hover', event);
+    inputHandler.on('hover', handleAnnotationHover);
+
+    const handleAnnotationClick = (event: PointerEventData) => this.handleAnnotationCursorEvent('click', event);
+    inputHandler.on('click', handleAnnotationClick);
 
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
@@ -116,6 +121,15 @@ export class Image360ApiHelper {
     };
   }
 
+  get needsRedraw(): boolean {
+    return this._needsRedraw || this._image360Facade.collections.some(collection => collection.needsRedraw);
+  }
+
+  resetRedraw(): void {
+    this._needsRedraw = false;
+    this._image360Facade.collections.forEach(collection => collection.resetRedraw());
+  }
+
   private getNormalizedOffset(data: PointerEventData): THREE.Vector2 {
     return new THREE.Vector2(
       (data.offsetX / this._domElement.clientWidth) * 2 - 1,
@@ -123,7 +137,7 @@ export class Image360ApiHelper {
     );
   }
 
-  private handleAnnotationHover(event: PointerEventData): void {
+  private handleAnnotationCursorEvent(eventType: 'hover' | 'click', event: PointerEventData): void {
     const currentEntity = this._interactionState.currentImage360Entered;
 
     if (currentEntity === undefined) {
@@ -141,7 +155,12 @@ export class Image360ApiHelper {
     }
 
     const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
-    collection.fireHoverEvent(annotation);
+
+    if (eventType === 'hover') {
+      collection.fireHoverEvent(annotation);
+    } else if (eventType === 'click') {
+      collection.fireClickEvent(annotation);
+    }
   }
 
   public async add360ImageSet(
@@ -157,7 +176,8 @@ export class Image360ApiHelper {
       throw new Error(`Image set with id=${id} has already been added`);
     }
     const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
-    this._requestRedraw();
+
+    this._needsRedraw = true;
     return imageCollection;
   }
 
@@ -170,7 +190,7 @@ export class Image360ApiHelper {
     }
 
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
-    this._requestRedraw();
+    this._needsRedraw = true;
   }
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
@@ -209,7 +229,7 @@ export class Image360ApiHelper {
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
     if (lastEntered360ImageEntity === image360Entity) {
-      this._requestRedraw();
+      this._needsRedraw = true;
     } else {
       this._transitionInProgress = true;
       if (lastEntered360ImageEntity !== undefined) {
@@ -227,14 +247,14 @@ export class Image360ApiHelper {
       this._transitionInProgress = false;
     }
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
-    applyFullResolutionTextures(this._requestRedraw);
+    this.applyFullResolutionTextures(revisionToEnter);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
+  }
 
-    async function applyFullResolutionTextures(_requestRedraw: () => void) {
-      await image360Entity.applyFullResolutionTextures();
-      _requestRedraw();
-    }
+  private async applyFullResolutionTextures(revision: Image360RevisionEntity) {
+    await revision.applyFullResolutionTextures();
+    this._needsRedraw = true;
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -300,7 +320,7 @@ export class Image360ApiHelper {
       .to(to, duration)
       .onUpdate(() => {
         entity.image360Visualization.opacity = from.alpha;
-        this._requestRedraw();
+        this._needsRedraw = true;
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
@@ -436,7 +456,7 @@ export class Image360ApiHelper {
       this._debouncePreLoad(entity);
     }
 
-    this._requestRedraw();
+    this._needsRedraw = true;
     this._interactionState.currentImage360Hovered = entity;
   }
 

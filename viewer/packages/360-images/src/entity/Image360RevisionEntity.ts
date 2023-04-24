@@ -12,7 +12,7 @@ import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { AnnotationModel } from '@cognite/sdk';
 
-import { ImageAnnotationObject, isAnnotationsObject } from '../annotation/ImageAnnotationObject';
+import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
 
 export class Image360RevisionEntity implements Image360Revision {
@@ -56,20 +56,6 @@ export class Image360RevisionEntity implements Image360Revision {
     }
 
     return undefined;
-  }
-
-  private createQuadFromAnnotation(
-    annotation: AnnotationModel,
-    descriptor: Image360FileDescriptor
-  ): ImageAnnotationObject | undefined {
-    const annotationData = annotation.data;
-
-    // TODO Make this check prettier
-    if (!isAnnotationsObject(annotationData) || annotationData.boundingBox === undefined) {
-      return undefined;
-    }
-
-    return new ImageAnnotationObject(annotation, descriptor);
   }
 
   /**
@@ -132,7 +118,7 @@ export class Image360RevisionEntity implements Image360Revision {
     const annotationObjects = annotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
-        return this.createQuadFromAnnotation(data, faceDescriptor);
+        return ImageAnnotationObject.createAnnotationObject(data, faceDescriptor.face);
       })
       .filter(isDefined);
 

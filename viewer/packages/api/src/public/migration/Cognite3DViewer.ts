@@ -315,7 +315,6 @@ export class Cognite3DViewer {
         this._domElement,
         this._activeCameraManager,
         this._mouseHandler,
-        () => this.requestRedraw(),
         this._events.beforeSceneRendered
       );
     }
@@ -1397,7 +1396,11 @@ export class Cognite3DViewer {
       );
       this.revealManager.update(camera);
 
-      const needsRedraw = (this.revealManager.needsRedraw || this._clippingNeedsUpdate) && !this._forceStopRendering;
+      const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
+
+      const needsRedraw =
+        (this.revealManager.needsRedraw || this._clippingNeedsUpdate || image360NeedsRedraw) &&
+        !this._forceStopRendering;
 
       this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
 

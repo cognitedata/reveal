@@ -1,16 +1,20 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2023 Cognite AS
  */
 
 import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 import { Image360FileDescriptor } from '@reveal/data-providers';
 import assert from 'assert';
 
-import { Matrix4, Vector3, Mesh, PlaneGeometry, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import { Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import { ImageAnnotationObjectData } from './ImageAnnotationData';
+import { BoxAnnotationData } from './BoxAnnotationData';
+import { PolygonAnnotationData } from './PolygonAnnotationData';
+
+type FaceType = Image360FileDescriptor['face'];
 
 export class ImageAnnotationObject {
   private readonly _annotation: AnnotationModel;
-  private readonly _fileDescriptor: Image360FileDescriptor;
 
   private readonly _mesh: Mesh;
 
@@ -18,27 +22,32 @@ export class ImageAnnotationObject {
     return this._annotation;
   }
 
-  get face(): Image360FileDescriptor['face'] {
-    return this._fileDescriptor.face;
+  public static createAnnotationObject(annotation: AnnotationModel, face: FaceType): ImageAnnotationObject | undefined {
+    const detection = annotation.data;
+    assert(isAnnotationsObject(detection));
+
+    let objectData: ImageAnnotationObjectData;
+
+    if (detection.boundingBox !== undefined) {
+      objectData = new BoxAnnotationData(detection);
+    } else if (detection.polygon !== undefined) {
+      objectData = new PolygonAnnotationData(detection);
+    } else {
+      return undefined;
+    }
+
+    return new ImageAnnotationObject(annotation, face, objectData);
   }
 
-  constructor(annotation: AnnotationModel, fileDescriptor: Image360FileDescriptor) {
-    const annotationData = annotation.data;
-    assert(isAnnotationsObject(annotationData));
-
-    this._mesh = new Mesh(createGeometry(annotationData), createMaterial());
-    this.initializeMesh(annotationData, fileDescriptor);
-
+  private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._fileDescriptor = fileDescriptor;
-  }
+    this._mesh = new Mesh(objectData.getGeometry(), createMaterial());
 
-  private initializeMesh(annotationData: AnnotationsObjectDetection, fileDescriptor: Image360FileDescriptor) {
-    this.initializeTransform(annotationData, fileDescriptor);
+    this.initializeTransform(face, objectData.getNormalizationMatrix());
     this._mesh.renderOrder = 4;
   }
 
-  private getRotationFromFace(face: Image360FileDescriptor['face']): Matrix4 {
+  private getRotationFromFace(face: FaceType): Matrix4 {
     switch (face) {
       case 'front':
         return new Matrix4().identity();
@@ -57,18 +66,10 @@ export class ImageAnnotationObject {
     }
   }
 
-  private initializeTransform(annotationData: AnnotationsObjectDetection, descriptor: Image360FileDescriptor): void {
-    const abox = annotationData.boundingBox!;
+  private initializeTransform(face: FaceType, normalizationTransform: Matrix4): void {
+    const rotationMatrix = this.getRotationFromFace(face);
 
-    const rotationMatrix = this.getRotationFromFace(descriptor.face);
-
-    const initialTranslation = new Matrix4().makeTranslation(
-      0.5 - (abox.xMax + abox.xMin) / 2,
-      0.5 - (abox.yMax + abox.yMin) / 2,
-      0.5
-    );
-
-    const transformation = initialTranslation.clone().premultiply(rotationMatrix);
+    const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._mesh.matrix = transformation;
     this._mesh.matrixAutoUpdate = false;
   }
@@ -76,11 +77,6 @@ export class ImageAnnotationObject {
   public getObject(): Object3D {
     return this._mesh;
   }
-}
-
-function createGeometry(annotationData: AnnotationsObjectDetection): PlaneGeometry {
-  const abox = annotationData.boundingBox!;
-  return new PlaneGeometry(abox.xMax - abox.xMin, abox.yMax - abox.yMin);
 }
 
 function createMaterial(): MeshBasicMaterial {
@@ -93,7 +89,7 @@ function createMaterial(): MeshBasicMaterial {
   });
 }
 
-export function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
+function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
   const detection = annotation as AnnotationsObjectDetection;
   return (
     detection.label !== undefined &&
