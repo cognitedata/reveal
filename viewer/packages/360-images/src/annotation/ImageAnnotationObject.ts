@@ -6,11 +6,10 @@ import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@co
 import { Image360FileDescriptor } from '@reveal/data-providers';
 import assert from 'assert';
 
-import { Matrix4, Color, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import { Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
 import { PolygonAnnotationData } from './PolygonAnnotationData';
-import { Image360AnnotationAppearance } from '../annotation-styling/types';
 
 type FaceType = Image360FileDescriptor['face'];
 

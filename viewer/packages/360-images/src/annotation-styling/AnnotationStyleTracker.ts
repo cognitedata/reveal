@@ -4,7 +4,6 @@
 
 import { AnnotationModel } from '@cognite/sdk/dist/src';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { applyStyleToMaterial, satisfiesFilter } from './assignStyle';
 import { Image360AnnotationAppearance, Image360AnnotationAppearanceEdit, Image360AnnotationFilter } from './types';
 
 import { Color, MeshBasicMaterial } from 'three';
@@ -40,7 +39,7 @@ export class AnnotationStyleTracker {
     this._needsUpdate = true;
   }
 
-  unassignAnnotationStyleEdit(filter: Image360AnnotationFilter) {
+  unassignAnnotationStyleEdit(filter: Image360AnnotationFilter): void {
     const index = this._annotationStyleAssignments.findIndex(assignment => assignment[0] === filter);
 
     if (index >= 0) {
