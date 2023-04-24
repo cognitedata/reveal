@@ -405,6 +405,7 @@ export class Image360ApiHelper {
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._eventHandlers.updateHoverStateOnRender);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._eventHandlers.updateAnnotationStylingOnRender);
     this._domElement.removeEventListener('mousemove', this._eventHandlers.setHoverIconEventHandler);
     this._domElement.addEventListener('pointerup', this._eventHandlers.enter360Image);
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
