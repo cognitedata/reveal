@@ -105,21 +105,9 @@ export function useUpdateFlow() {
     const serverFlow = await getFlow(sdk, id);
 
     if (!isEqual(Automerge.getHeads(flow), Automerge.getHeads(serverFlow))) {
-      const binary = Automerge.save(Automerge.merge(serverFlow, flow));
-      /*
-       *This seems silly, but currently this is an issue:
-       * ```
-       * const mergedDoc = AM.merge(flow, serverFlow);
-       * const binary = AM.save(mergedFlow);
-       * AM.load(binary).canvas.nodes[x].position.y !== mergedDoc.canvas.nodes[x].position.y
-       * ```
-       *
-       * Serializing the merged document and unserializing it leads to a different result that the
-       * original merged doc (where there are conflicts). Instead, serialize the merged flow
-       * immediatly and unserialize it and set that in the query cache. That (seems to) ensure that
-       * the server version and local version match.
-       */
-      const mergedFlow = Automerge.load<AFlow>(binary);
+      const mergedFlow = Automerge.merge(serverFlow, flow);
+      const binary = Automerge.save(mergedFlow);
+
       qc.setQueryData(getFlowItemKey(id), mergedFlow);
       await sdk.files.upload(
         {
