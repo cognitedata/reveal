@@ -87,7 +87,7 @@ export class Image360RevisionEntity implements Image360Revision {
     fullResolutionCompleted: Promise<void>;
   } {
     const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
-    const fullResolutionCompleted = this.loadFullTextures();
+    const fullResolutionCompleted = this.loadFullTextures(abortSignal);
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 

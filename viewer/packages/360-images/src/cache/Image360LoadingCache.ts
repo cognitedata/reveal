@@ -8,7 +8,6 @@ import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
 import find from 'lodash/find';
 import remove from 'lodash/remove';
-import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
@@ -73,8 +72,9 @@ export class Image360LoadingCache {
 
     const { signal, abort } = this.createAbortSignal();
     const { lowResolutionCompleted, fullResolutionCompleted } = revision.loadTextures(signal);
+
     const anyCompleted = Promise.any([lowResolutionCompleted, fullResolutionCompleted]);
-    const allCompleted = awaitAllCompleted();
+    const allCompleted = this.cacheWhenAllComplete(revision, entity, lowResolutionCompleted, fullResolutionCompleted);
 
     this._inProgressDownloads.push({
       entity,
@@ -84,37 +84,34 @@ export class Image360LoadingCache {
       abort
     });
 
-    allCompleted.then(() => {
-      if (this._lockedDownload === revision) {
-        this._lockedDownload = undefined;
-      }
-
-      remove(this._inProgressDownloads, download => {
-        return download.revision === revision;
-      });
-    });
-
-    const readyToEnter = await anyCompleted
-      .catch(e => {
-        if (signal.aborted) {
-          Log.info('360 Image download aborted: ' + e);
-          return Promise.reject('Aborted');
-        } else {
-          throw new Error('Failed to load 360 image: ' + e);
-        }
-      })
-      .then(() => {
-        this.addRevisionToCache(entity, revision);
-      });
-    return readyToEnter;
-
-    async function awaitAllCompleted(): Promise<void> {
-      await Promise.allSettled([lowResolutionCompleted, fullResolutionCompleted]);
-    }
+    await anyCompleted;
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
     entity.getRevisions().forEach(revision => this.purgeRevision(entity, revision));
+  }
+
+  private async cacheWhenAllComplete(
+    revision: Image360RevisionEntity,
+    entity: Image360Entity,
+    lowResolutionCompleted: Promise<void>,
+    fullResolutionCompleted: Promise<void>
+  ) {
+    const [_, fullResSettledResult] = await Promise.allSettled([lowResolutionCompleted, fullResolutionCompleted]);
+    this.purgeFromInProgressDownloads(revision);
+    if (fullResSettledResult.status === 'fulfilled') {
+      this.addRevisionToCache(entity, revision);
+    }
+  }
+
+  private purgeFromInProgressDownloads(revision: Image360RevisionEntity) {
+    if (this._lockedDownload === revision) {
+      this._lockedDownload = undefined;
+    }
+
+    remove(this._inProgressDownloads, download => {
+      return download.revision === revision;
+    });
   }
 
   private addRevisionToCache(entity: Image360Entity, revision: Image360RevisionEntity) {

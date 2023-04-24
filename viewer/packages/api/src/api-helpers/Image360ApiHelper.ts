@@ -180,16 +180,16 @@ export class Image360ApiHelper {
     }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
-    const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
-      return e;
-    });
-
-    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
+    try {
+      await this._image360Facade.preload(image360Entity, revisionToEnter, true);
+    } catch (error) {
+      if (this._interactionState.revisionSelectedForEntry === revisionToEnter) {
+        this._interactionState.revisionSelectedForEntry = undefined;
+      }
       return;
     }
 
-    if (fatalDownloadError) {
-      this._interactionState.revisionSelectedForEntry = undefined;
+    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
       return;
     }
 
