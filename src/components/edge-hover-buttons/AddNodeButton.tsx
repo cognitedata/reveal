@@ -4,6 +4,7 @@ import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { Edge } from 'reactflow';
 import { Dropdown, Space } from 'antd';
+import { useTranslation } from 'common';
 
 type Props = {
   className: string;
@@ -26,6 +27,7 @@ const AddNodeButton = ({
   visibleAddButton,
   setVisibleAddButton,
 }: Props) => {
+  const { t } = useTranslation();
   const { changeEdges, changeNodes } = useWorkflowBuilderContext();
 
   const handleAddNode = (
@@ -80,19 +82,19 @@ const AddNodeButton = ({
               icon="Code"
               onClick={() => handleAddNode('transformation', xPos, yPos)}
             >
-              Transformation
+              {t('transformation')}
             </Menu.Item>
             <Menu.Item
               icon="FrameTool"
               onClick={() => handleAddNode('webhook', xPos, yPos)}
             >
-              Webhook
+              {t('webhook')}
             </Menu.Item>
             <Menu.Item
               icon="Pipeline"
               onClick={() => handleAddNode('workflow', xPos, yPos)}
             >
-              Workflow
+              {t('workflow')}
             </Menu.Item>
           </Menu>
         )}
