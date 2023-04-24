@@ -3,7 +3,7 @@
   "extends": ["local>cognitedata/renovate-config"],
   "schedule": ["after 6am and before 3pm every weekday"],
   "prConcurrentLimit": 5,
-  "labels": ["dependencies", "auto-update"],
+  "labels": ["dependencies"],
   "prCreation": "not-pending",
   "timezone": "Europe/Oslo"
 }
