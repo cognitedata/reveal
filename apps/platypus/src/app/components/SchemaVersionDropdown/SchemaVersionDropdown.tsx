@@ -70,6 +70,7 @@ export function SchemaVersionDropdown({
         visible={isOpen}
         content={
           <Menu
+            data-cy="schema-version-select-menu"
             style={{
               maxHeight: 192,
               minWidth: 300,
@@ -137,7 +138,12 @@ export function SchemaVersionDropdown({
           >
             <Body
               level="2"
-              style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+              style={{
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                flex: 1,
+                textAlign: 'start',
+              }}
             >
               v. {selectedVersion.version}
             </Body>

@@ -1,6 +1,6 @@
 import {
-  useAssetsUniqueValuesByProperty,
-  useDocumentsLabelAggregateQuery,
+  useAssetsFilterOptions,
+  useDocumentsLabelsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -8,10 +8,9 @@ import {
   DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
   InternalDocumentFilter,
-  useDeepMemo,
+  useDebouncedState,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { useState } from 'react';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
   options: MultiSelectOptionType<string>[];
@@ -62,28 +61,19 @@ export const LabelFilter = <TFilter,>({
 const AssetLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: labels = [],
-    isLoading,
-    isError,
-  } = useAssetsUniqueValuesByProperty('labels', query);
-
-  const options = useDeepMemo(
-    () =>
-      labels.map((label) => ({
-        label: String(label.value),
-        value: String(label.value),
-        count: label.count,
-      })),
-    [labels]
-  );
+  const { options, isLoading, isError } = useAssetsFilterOptions({
+    property: 'labels',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <LabelFilter
       {...props}
-      onInputChange={(value) => setQuery(value)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -94,15 +84,23 @@ const AssetLabelFilter = (
 export const DocumentLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalDocumentFilter>
 ) => {
-  const { data: labels, isLoading } = useDocumentsLabelAggregateQuery();
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const options = (labels || []).map((item) => ({
-    label: `${item.value}`,
-    value: `${item.value}`,
-    count: item.count,
-  }));
+  const { options, isLoading, isError } = useDocumentsLabelsFilterOptions({
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
-  return <LabelFilter {...props} options={options} isLoading={isLoading} />;
+  return (
+    <LabelFilter
+      {...props}
+      onInputChange={setPrefix}
+      options={options}
+      isError={isError}
+      isLoading={isLoading}
+    />
+  );
 };
 
 LabelFilter.Asset = AssetLabelFilter;

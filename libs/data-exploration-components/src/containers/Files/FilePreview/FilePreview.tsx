@@ -24,11 +24,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
-import {
-  DEFAULT_ZOOM_SCALE,
-  MAX_CONTAINER_HEIGHT,
-  MAX_CONTAINER_WIDTH,
-} from './constants';
+import { MAX_CONTAINER_HEIGHT, MAX_CONTAINER_WIDTH } from './constants';
 import getExtendedAnnotationsWithBadges from './getExtendedAnnotationsWithBadges';
 import { useUnifiedFileViewerAnnotations } from './hooks';
 import { Pagination } from './Pagination';
@@ -135,15 +131,34 @@ export const FilePreview = ({
 
   const previousSearchQuery = usePrevious(searchQuery);
 
-  useEffect(() => {
-    if (selectedAnnotations.length === 1) {
-      const [annotation] = selectedAnnotations;
-      if (enableZoomToAnnotation) {
-        zoomToAnnotation(annotation);
+  const zoomToAnnotationIfNotInViewport = useCallback(
+    (annotation: ExtendedAnnotation) => {
+      if (
+        unifiedViewerRef?.isAnnotationInViewportById(annotation.id) === false
+      ) {
+        unifiedViewerRef.zoomToAnnotationById(annotation.id, {
+          shouldKeepScale: true,
+        });
       }
+    },
+    [unifiedViewerRef]
+  );
+
+  useEffect(() => {
+    if (!enableZoomToAnnotation) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAnnotations, enableZoomToAnnotation]);
+    if (selectedAnnotations.length !== 1) {
+      return;
+    }
+
+    const [annotation] = selectedAnnotations;
+    zoomToAnnotationIfNotInViewport(annotation);
+  }, [
+    selectedAnnotations,
+    enableZoomToAnnotation,
+    zoomToAnnotationIfNotInViewport,
+  ]);
 
   useEffect(() => {
     setPendingAnnotations([]);
@@ -187,9 +202,17 @@ export const FilePreview = ({
     [setSelectedAnnotations]
   );
 
-  const onAnnotationMouseOver = useCallback((annotation: Annotation) => {
-    setHoverId(annotation.id);
-  }, []);
+  const onAnnotationMouseOver = useCallback(
+    (annotation: Annotation) => {
+      if (creatable) {
+        // Since you can't click on annotation in edit mode, we don't want to show hover state
+        return;
+      }
+
+      setHoverId(annotation.id);
+    },
+    [creatable]
+  );
 
   const onAnnotationMouseOut = useCallback(() => {
     setHoverId(undefined);
@@ -283,7 +306,7 @@ export const FilePreview = ({
   ]);
 
   const tooltips = useTooltips({
-    isTooltipsEnabled: enableToolTips,
+    isTooltipsEnabled: enableToolTips && !creatable,
     // NOTE: Once support for annotations from Events API has been removed, we can
     // actually access the file id directly from the annotation. This does not work currently
     // though because the Event API annotations might not hav the file id set (and only the external id)
@@ -291,6 +314,9 @@ export const FilePreview = ({
     annotations: annotations,
     hoverId: hoverId,
     selectedAnnotations: selectedAnnotations,
+    selectAnnotation: (annotation: ExtendedAnnotation) => {
+      setSelectedAnnotations([annotation]);
+    },
   });
 
   const onStageClick = useCallback(() => {
@@ -338,11 +364,6 @@ export const FilePreview = ({
     setPendingAnnotations([pendingAnnotation]);
     setSelectedAnnotations([pendingAnnotation]);
   };
-
-  const zoomToAnnotation = (annotation: ExtendedAnnotation) =>
-    unifiedViewerRef?.zoomToAnnotationById(annotation.id, {
-      scale: DEFAULT_ZOOM_SCALE,
-    });
 
   const handlePageChange = (pageNumber: number) => setPage(pageNumber);
 

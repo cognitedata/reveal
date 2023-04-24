@@ -24,6 +24,11 @@ jest.mock('react-router-dom', () => ({
     version: mockSchema.version,
   }),
 }));
+jest.mock('@platypus-app/hooks/useMixpanel', () => ({
+  useMixpanel: () => ({
+    track: jest.fn(),
+  }),
+}));
 
 jest.mock('@platypus-app/hooks/useDataModelActions');
 jest.mock('@platypus-app/hooks/useSelectedDataModelVersion');

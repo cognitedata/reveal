@@ -3,12 +3,11 @@ import {
   InternalDocumentFilter,
   InternalEventsFilters,
   useDebouncedState,
-  useDeepMemo,
   useMetrics,
 } from '@data-exploration-lib/core';
 import {
-  useDocumentsUniqueValuesByProperty,
-  useEventsUniqueValuesByProperty,
+  useDocumentsFilterOptions,
+  useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
@@ -22,7 +21,6 @@ interface BaseTypeFilterProps<TFilter>
   onChange?: (type: string | string[]) => void;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
-  query?: string;
 }
 
 export interface TypeFilterProps<TFilter> extends BaseTypeFilterProps<TFilter> {
@@ -65,30 +63,19 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: fileTypeItems = [],
-    isLoading,
-    isError,
-  } = useDocumentsUniqueValuesByProperty('type', query, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: 'type',
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
-
-  const options = useDeepMemo(
-    () =>
-      fileTypeItems.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [fileTypeItems]
-  );
 
   return (
     <TypeFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -98,30 +85,19 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data = [],
-    isLoading,
-    isError,
-  } = useEventsUniqueValuesByProperty('type', query, props.filter, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useEventsFilterOptions({
+    property: 'type',
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
-
-  const options = useDeepMemo(
-    () =>
-      data.map((item) => ({
-        label: String(item.value),
-        value: String(item.value),
-        count: item.count,
-      })),
-    [data]
-  );
 
   return (
     <TypeFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

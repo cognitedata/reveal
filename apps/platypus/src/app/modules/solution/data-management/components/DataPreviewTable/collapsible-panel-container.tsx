@@ -1,5 +1,5 @@
-import { CollapsablePanel } from '@cognite/cogs.js';
-import { ReactElement } from 'react';
+import { Button, CollapsablePanel, Icon } from '@cognite/cogs.js';
+import { ReactElement, useEffect, useState } from 'react';
 import { SidePanelTitle } from './data-preview-side-panel-title';
 import { SidePanel } from './SidePanel';
 
@@ -13,6 +13,9 @@ import {
   KeyValueMap,
 } from '@platypus/platypus-core';
 import { CogDataList } from '@cognite/cog-data-grid';
+import { TimeseriesChart } from '@cognite/plotting-components';
+import { SDKProvider } from '@cognite/sdk-provider';
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 
 export type DataPreviewSidebarData =
   | {
@@ -32,6 +35,11 @@ export type DataPreviewSidebarData =
       type: 'json';
       fieldName: string;
       json: KeyValueMap;
+    }
+  | {
+      type: 'timeseries';
+      fieldName: string;
+      externalId: string;
     };
 
 export type CollapsiblePanelContainerProps = {
@@ -53,6 +61,16 @@ export const CollapsiblePanelContainer: React.FC<
   dataModelVersion,
   dataModelType,
 }) => {
+  const [resourceId, setResourceId] = useState<number | undefined>();
+  useEffect(() => {
+    if (!data || data.type !== 'timeseries') {
+      setResourceId(undefined);
+      return;
+    }
+    getCogniteSDKClient()
+      .timeseries.retrieve([{ externalId: data.externalId }])
+      .then(([{ id }]) => setResourceId(id));
+  }, [data]);
   const getSidebarContent = () => {
     if (!data) {
       return null;
@@ -75,6 +93,35 @@ export const CollapsiblePanelContainer: React.FC<
       );
 
       return <CogDataList data-cy="instance-values" listData={listData} />;
+    } else if (data.type === 'timeseries') {
+      return resourceId ? (
+        <SDKProvider sdk={getCogniteSDKClient()}>
+          <TimeseriesChart
+            timeseriesId={resourceId}
+            variant="small"
+            height={200}
+            dateRange={[
+              new Date(
+                `${
+                  new Date().getFullYear() - 1
+                }-${new Date().getMonth()}-${new Date().getDay()}`
+              ),
+              new Date(),
+            ]}
+          />
+          <a
+            href={`//${window.location.hostname}/${
+              getCogniteSDKClient().project
+            }/explore/timeSeries/${resourceId}${window.location.search}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
+          </a>
+        </SDKProvider>
+      ) : (
+        <Icon type="Loader" />
+      );
     } else {
       return (
         <InstancePreview

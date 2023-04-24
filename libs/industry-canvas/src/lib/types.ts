@@ -1,15 +1,18 @@
 import {
   Annotation,
-  RectangleAnnotation,
+  ContainerConfig,
   EllipseAnnotation,
-  isRectangleAnnotation,
   isEllipseAnnotation,
+  isRectangleAnnotation,
+  RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
+import { ResourceType } from '@data-exploration-lib/core';
 
 export enum ContainerReferenceType {
   FILE = 'file',
   TIMESERIES = 'timeseries',
   ASSET = 'asset',
+  EVENT = 'event',
   THREE_D = 'threeD',
 }
 
@@ -22,24 +25,33 @@ export type Dimensions = {
   maxHeight?: number;
 };
 
-export type FileContainerReferenceWithoutDimensions = {
+export type FileContainerReference = {
   type: ContainerReferenceType.FILE;
-  id: string;
   resourceId: number;
-  page: number;
-};
+  id?: string;
+  page?: number;
+  label?: string;
+} & Partial<Dimensions>;
 
-export type AssetContaienrReferenceWithoutDimensions = {
+export type AssetContainerReference = {
   type: ContainerReferenceType.ASSET;
-  id: string;
   resourceId: number;
-};
+  id?: string;
+  label?: string;
+} & Partial<Dimensions>;
 
-export type ThreeDContainerReferenceWithoutDimensions = {
-  id: string;
+export type EventContainerReference = {
+  type: ContainerReferenceType.EVENT;
+  id?: string;
+  resourceId: number;
+  label?: string;
+} & Partial<Dimensions>;
+
+export type ThreeDContainerReference = {
   type: ContainerReferenceType.THREE_D;
   modelId: number;
   revisionId: number;
+  id?: string;
   initialAssetId?: number;
   camera?: {
     position: {
@@ -53,38 +65,23 @@ export type ThreeDContainerReferenceWithoutDimensions = {
       z: number;
     };
   };
-};
+  label?: string;
+} & Partial<Dimensions>;
 
-export type FileContainerReference = FileContainerReferenceWithoutDimensions &
-  Dimensions;
-
-export type TimeseriesContainerReferenceWithoutDimensions = {
+export type TimeseriesContainerReference = {
   type: ContainerReferenceType.TIMESERIES;
-  id: string;
   resourceId: number;
-  startDate: Date;
-  endDate: Date;
-};
-
-export type TimeseriesContainerReference =
-  TimeseriesContainerReferenceWithoutDimensions & Dimensions;
-
-export type AssetContainerReference = AssetContaienrReferenceWithoutDimensions &
-  Dimensions;
-
-export type ThreeDContainerReference =
-  ThreeDContainerReferenceWithoutDimensions & Dimensions;
-
-export type ContainerReferenceWithoutDimensions =
-  | FileContainerReferenceWithoutDimensions
-  | TimeseriesContainerReferenceWithoutDimensions
-  | AssetContaienrReferenceWithoutDimensions
-  | ThreeDContainerReferenceWithoutDimensions;
+  id?: string;
+  startDate?: string;
+  endDate?: string;
+  label?: string;
+} & Partial<Dimensions>;
 
 export type ContainerReference =
   | FileContainerReference
   | TimeseriesContainerReference
   | AssetContainerReference
+  | EventContainerReference
   | ThreeDContainerReference;
 
 export type ShapeAnnotation = RectangleAnnotation | EllipseAnnotation;
@@ -97,13 +94,30 @@ export const isShapeAnnotation = (
 // Maybe we need to add some metadata etc here in the future
 export type CanvasAnnotation = Annotation;
 
+// TODO: This should be better typed per container type
+type ResourceMetadata = {
+  resourceId?: number;
+  resourceType?: ResourceType;
+  name?: string;
+  externalId?: string;
+  assetName?: string; // Used by RevealContainer
+  assetExternalId?: string; // Used by RevealContainer
+  modelName?: string; // Used by RevealContainer
+  modelId?: number; // Used by RevealContainer
+};
+export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
+  container: IndustryCanvasContainerConfig;
+  canvasAnnotations: CanvasAnnotation[];
+};
+
+export type SerializedIndustryCanvasState = {
   containerReferences: ContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
 };
 
-export type PersistedCanvasState = {
+export type CanvasDocument = {
   externalId: string;
   name: string;
   isArchived?: boolean;
@@ -111,4 +125,8 @@ export type PersistedCanvasState = {
   updatedAt: string;
   version: number;
   data: IndustryCanvasState;
+};
+
+export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
+  data: SerializedIndustryCanvasState;
 };

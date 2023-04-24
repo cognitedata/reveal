@@ -126,5 +126,5 @@ const ResourcePreviewSidebarContainer = styled.div`
 const CloseButton = styled(Button)`
   position: absolute;
   top: 16px;
-  right: 12px;
+  right: 20px;
 `;

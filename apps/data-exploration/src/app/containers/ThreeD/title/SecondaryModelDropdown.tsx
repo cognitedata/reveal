@@ -14,6 +14,7 @@ import {
 import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
+import { Divider } from '@cognite/cogs.js';
 
 import {
   Image360DatasetOptions,
@@ -248,7 +249,7 @@ const SecondaryModelDropdown = ({
         image360SiteData={mainImage360Data}
         revision={mainRevision}
       />
-
+      <Divider />
       <StyledSecondaryModelListContainer onScroll={handleImages360Scroll}>
         {viewer && filteredImages360SiteIds.length ? (
           <>
@@ -271,7 +272,7 @@ const SecondaryModelDropdown = ({
           <></>
         )}
       </StyledSecondaryModelListContainer>
-      <Menu.Divider />
+      <Divider />
       <StyledSecondaryModelListContainer onScroll={handleSecondaryModelScroll}>
         {viewer && filteredModels.length ? (
           <>
@@ -296,7 +297,7 @@ const SecondaryModelDropdown = ({
           </StyledNoResultsContainer>
         )}
       </StyledSecondaryModelListContainer>
-      <Menu.Divider />
+      <Divider />
       <StyledApplyButton
         disabled={!canApply && !canApplyImages360}
         onClick={handleApply}

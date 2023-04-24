@@ -77,11 +77,12 @@ export function ColumnToggle<T extends TableData = any>({
     });
   };
 
-  const filteredColumns = allColumns().filter((column) =>
-    column.columnDef.header
-      ?.toString()
-      .toLowerCase()
-      .includes(searchInput.toLowerCase())
+  const filteredColumns = allColumns().filter(
+    (column) =>
+      column.columnDef.header
+        ?.toString()
+        .toLowerCase()
+        .includes(searchInput.toLowerCase()) && column.columnDef.id !== 'select'
   );
   const isSearchResultEmpty = filteredColumns.length === 0;
 

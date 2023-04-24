@@ -45,7 +45,10 @@ export const SequenceFilters = ({ ...rest }) => {
               metadata: newMetadata,
             })
           }
-          useAggregateMetadataValues={useSequencesMetadataValuesAggregateQuery}
+          useAggregateMetadataValues={(key) =>
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useSequencesMetadataValuesAggregateQuery({ metadataKey: key })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

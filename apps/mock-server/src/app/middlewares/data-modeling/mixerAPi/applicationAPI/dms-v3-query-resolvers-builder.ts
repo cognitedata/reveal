@@ -240,11 +240,20 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
     parsedSchema,
   } = props;
 
-  let data = templateDb.filter(
-    (item) =>
-      item['_metadata_space'] === schemaType.space &&
-      item['_metadata_view'] === schemaType.view
-  );
+  let data = templateDb
+    .filter(
+      (item) =>
+        item['_metadata_space'] === schemaType.space &&
+        item['_metadata_view'] === schemaType.view
+    )
+    .map(
+      (el) =>
+        ({
+          ...el,
+          lastUpdatedTime: Number(el._metadata_lastUpdatedTime || new Date()),
+          createdTime: Number(el._metadata_lastUpdatedTime || new Date()),
+        } as CdfResourceObject)
+    );
 
   if (refObj) {
     const relation = refObj[schemaFieldName];

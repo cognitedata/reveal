@@ -1,5 +1,5 @@
 import LRU from 'lru-cache';
-import { Node } from './Graph';
+import { Node } from './GraphEngine';
 
 export const locationCache = new LRU<string, string>({
   maxAge: Infinity,
@@ -18,7 +18,7 @@ type TempLocationCache = {
   };
 };
 
-const getNodesKey = (nodes: Node[]) =>
+export const getNodesKey = (nodes: Node[]) =>
   nodes
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((node) => node.id)
@@ -26,40 +26,39 @@ const getNodesKey = (nodes: Node[]) =>
 
 const stringfyLocation = (nodes: Node[]) =>
   JSON.stringify(
-    nodes
-      .filter((node) => node.fx !== undefined && node.fy !== undefined)
-      .reduce(
-        (prev, node) => ({
-          ...prev,
-          [node.id]: {
-            fx: node.fx!,
-            fy: node.fy!,
-          },
-        }),
-        {} as TempLocationCache
-      )
+    nodes.reduce(
+      (prev, node) => ({
+        ...prev,
+        [node.id]: {
+          fx: node.fx!,
+          fy: node.fy!,
+          y: node.y!,
+          x: node.x!,
+          vx: node.vx!,
+          vy: node.vy!,
+        },
+      }),
+      {} as TempLocationCache
+    )
   );
 const parseLocation = (cacheString: string) =>
   JSON.parse(cacheString) as TempLocationCache;
 
-export const saveToCache = (
-  nodes: Node[],
-  id: string,
-  x: number,
-  y: number
-) => {
+export const saveToCache = (key: string, nodes: Node[]) => {
   locationCache.set(
-    getNodesKey(nodes),
+    key,
     stringfyLocation(
       nodes.map((el) => {
-        if (el.id === id) {
-          return {
-            ...el,
-            fx: x,
-            fy: y,
-          };
-        }
-        return el;
+        return {
+          id: el.id,
+          title: el.title,
+          fx: el.fx,
+          fy: el.fy,
+          x: el.x,
+          y: el.y,
+          vx: el.vx,
+          vy: el.vy,
+        };
       })
     )
   );
@@ -69,5 +68,5 @@ export const saveToCache = (
   );
 };
 
-export const loadFromCache = (nodes: Node[]) =>
-  parseLocation(locationCache.get(getNodesKey(nodes)) || '{}');
+export const loadFromCache = (key: string) =>
+  parseLocation(locationCache.get(key) || '{}');

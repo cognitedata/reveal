@@ -9,14 +9,14 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 import {
-  useAssetsMetadataKeysAggregateQuery,
+  useAssetsMetadataFilterOptions,
   useAssetsMetadataValuesOptionsQuery,
   useDocumentMetadataValuesOptionsQuery,
   useDocumentsMetadataKeysAggregateQuery,
   useEventsMetadataKeysAggregateQuery,
   useEventsMetadataValuesOptionsQuery,
+  useSequenceMetadataFilterOptions,
   useSequenceMetadataValuesOptionsQuery,
-  useSequencesMetadataKeysAggregateQuery,
   useTimeseriesMetadataKeysAggregateQuery,
   useTimeseriesMetadataValuesOptionsQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -77,22 +77,24 @@ export const MetadataFilter = <TFilter,>({
 const AssetsMetadataFilter = (
   props: BaseNestedFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useAssetsMetadataKeysAggregateQuery(
-    query,
-    undefined,
-    { keepPreviousData: true }
-  );
-  const options = transformMetadataKeysToOptions(data);
+  const { options, isLoading, isError } = useAssetsMetadataFilterOptions({
+    prefix,
+    query: props.query,
+    filter: props.filter,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
+      onSearchInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
-      useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery()}
+      useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery({
+        query: props.query,
+        filter: props.filter,
+      })}
       {...props}
     />
   );
@@ -175,21 +177,22 @@ const FilesMetadataFilter = (
 const SequencesMetadataFilter = (
   props: BaseNestedFilterProps<InternalSequenceFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useSequencesMetadataKeysAggregateQuery(
-    query,
-    undefined,
-    { keepPreviousData: true }
-  );
-
-  const options = transformMetadataKeysToOptions(data);
+  const { options, isLoading, isError } = useSequenceMetadataFilterOptions({
+    prefix,
+    filter: props.filter,
+    query: props.query,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
-      useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery()}
+      onSearchInputChange={setPrefix}
+      useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery({
+        filter: props.filter,
+        query: props.query,
+      })}
       isError={isError}
       isLoading={isLoading}
       {...props}

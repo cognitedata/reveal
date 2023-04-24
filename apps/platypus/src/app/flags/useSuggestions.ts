@@ -1,7 +1,7 @@
-import { useFlag } from '../../environments/useFlag';
+import { useFeatureToggle, useUpdateFeatureToggle } from './flag';
 
-export const useSuggestionsFeatureFlag = () => {
-  return useFlag('DEVX_MATCHMAKER_SUGGESTIONS_UI', {
-    fallback: true,
-  });
-};
+export const useSuggestionsFeatureFlag = () =>
+  useFeatureToggle('DEVX_MATCHMAKER_SUGGESTIONS_UI');
+
+export const useUpdateSuggestionsFeatureFlag = () =>
+  useUpdateFeatureToggle('DEVX_MATCHMAKER_SUGGESTIONS_UI');

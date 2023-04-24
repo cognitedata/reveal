@@ -17,11 +17,11 @@ export const useTimeseriesMetadataValuesOptionsQuery =
       options
     );
 
-    const transFormedOptions = (data || []).map((item) => ({
+    const transformedOptions = (data || []).map((item) => ({
       label: item.values[0],
       value: item.values[0],
       count: item.count,
     }));
 
-    return { options: transFormedOptions, isLoading };
+    return { options: transformedOptions, isLoading };
   };

@@ -11,11 +11,11 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
 import { ContainerReferenceType } from '../types';
-import { OnAddContainerReferences } from './useIndustryCanvasAddContainerReferences';
+import { UseManagedStateReturnType } from './useManagedState';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
-  onAddContainerReferences: OnAddContainerReferences
+  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences']
 ) => {
   return useMemo(() => {
     if (selectedAnnotation === undefined) {
@@ -56,8 +56,8 @@ const useIndustryCanvasAssetTooltips = (
           startDate: dayjs(new Date())
             .subtract(2, 'years')
             .startOf('day')
-            .toDate(),
-          endDate: dayjs(new Date()).endOf('day').toDate(),
+            .toISOString(),
+          endDate: dayjs(new Date()).endOf('day').toISOString(),
         },
       ]);
     };

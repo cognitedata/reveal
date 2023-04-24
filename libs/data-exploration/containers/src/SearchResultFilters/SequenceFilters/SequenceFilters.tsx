@@ -9,6 +9,7 @@ import { MetadataFilter } from '../../Filters';
 
 // INFO: FileFilters is for documents.
 export const SequenceFilters: React.FC<FilterProps> = ({
+  query,
   filter,
   onFilterChange,
   onResetFilterClick,
@@ -24,6 +25,8 @@ export const SequenceFilters: React.FC<FilterProps> = ({
     >
       <TempMultiSelectFix>
         <MetadataFilter.Sequences
+          query={query}
+          filter={filter.sequence}
           values={filter.sequence.metadata}
           onChange={(newMetadata) => {
             onFilterChange('sequence', {

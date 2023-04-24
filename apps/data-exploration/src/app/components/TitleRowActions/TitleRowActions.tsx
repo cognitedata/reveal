@@ -1,3 +1,4 @@
+import CanvasButton from '@data-exploration-app/components/TitleRowActions/CanvasButton';
 import React from 'react';
 import { ResourceItem } from '@cognite/data-exploration';
 import styled from 'styled-components';
@@ -34,6 +35,7 @@ export const TitleRowActions = ({
     <StyledSpace>
       {beforeDefaultActions}
       <DownloadButton item={item} dateFilter={dateFilter} />
+      <CanvasButton item={item} />
       <MoreButton item={item} />
       {afterDefaultActions}
       {!hideDefaultCloseActions && activeId && (

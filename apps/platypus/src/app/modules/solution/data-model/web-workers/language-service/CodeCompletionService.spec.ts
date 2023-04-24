@@ -66,6 +66,10 @@ describe('CodeCompletionServiceTest', () => {
           label: 'readonly',
         }),
         expect.objectContaining({
+          kind: 3,
+          label: 'import',
+        }),
+        expect.objectContaining({
           label: 'view',
           kind: 3,
         }),

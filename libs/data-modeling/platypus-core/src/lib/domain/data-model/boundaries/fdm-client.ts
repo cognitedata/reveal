@@ -1,3 +1,4 @@
+import { GraphQLInputObjectType } from 'graphql';
 import {
   ConflictMode,
   CreateDataModelDTO,
@@ -194,4 +195,11 @@ export interface FlexibleDataModelingClient {
     externalId: string;
     version: string;
   }): string;
+
+  getFilterForType(dto: {
+    space: string;
+    externalId: string;
+    version: string;
+    typeName: string;
+  }): Promise<GraphQLInputObjectType | undefined>;
 }

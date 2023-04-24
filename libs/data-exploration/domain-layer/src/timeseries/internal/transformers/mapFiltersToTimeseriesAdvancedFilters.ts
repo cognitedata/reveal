@@ -28,8 +28,6 @@ export type TimeseriesProperties = {
   [key: `metadata|${string}`]: string;
 };
 
-const DUMMY_SEARCH_TOKEN = Array(128).join('Y');
-
 export const mapFiltersToTimeseriesAdvancedFilters = (
   {
     dataSetIds,
@@ -123,9 +121,6 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       }
     }
 
-    if (!(searchConfig.name.enabled && searchConfig.description.enabled)) {
-      searchQueryBuilder.search('name', DUMMY_SEARCH_TOKEN);
-    }
     if (searchConfig.metadata.enabled) {
       /**
        * We want to filter all the metadata keys with the search query, to give a better result

@@ -1,16 +1,16 @@
+import { IndustryCanvasContainerConfig } from '../types';
 import { isNotUndefined } from '../utils/isNotUndefined';
-import { getContainerId } from '../utils/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { EMPTY_ARRAY } from './constants';
 import { useAnnotationsMultiple } from './useAnnotationsMultiple';
 import zip from 'lodash/zip';
 import { useMemo } from 'react';
 import { getExtendedAnnotationsFromAnnotationsApi } from '@cognite/data-exploration';
 import { getStyledAnnotationFromAnnotation } from '@cognite/data-exploration';
 import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
-import { ContainerReference } from '../types';
 
 type useContainerAnnotationsParams = {
-  containerReferences: ContainerReference[];
+  container: IndustryCanvasContainerConfig;
   selectedAnnotationId: string | undefined;
   hoverId: string | undefined;
   onMouseOver?: (annotation: ExtendedAnnotation) => void;
@@ -19,30 +19,28 @@ type useContainerAnnotationsParams = {
 };
 
 export const useContainerAnnotations = ({
-  containerReferences,
+  container,
   selectedAnnotationId,
   hoverId,
   onClick,
   onMouseOver,
   onMouseOut,
 }: useContainerAnnotationsParams): ExtendedAnnotation[] => {
+  const containerConfigs = container.children ?? EMPTY_ARRAY;
   const { data: annotationsApiAnnotations } =
-    useAnnotationsMultiple(containerReferences);
+    useAnnotationsMultiple(containerConfigs);
 
   return useMemo(() => {
     if (annotationsApiAnnotations === undefined) {
       return [];
     }
 
-    const extendedAnnotations = zip(
-      containerReferences,
-      annotationsApiAnnotations
-    )
+    const extendedAnnotations = zip(containerConfigs, annotationsApiAnnotations)
       .filter(isNotUndefinedTuple)
-      .flatMap(([containerReference, annotationsForContainerReference]) =>
+      .flatMap(([containerConfig, annotationsForContainerConfig]) =>
         getExtendedAnnotationsFromAnnotationsApi(
-          annotationsForContainerReference,
-          getContainerId(containerReference)
+          annotationsForContainerConfig,
+          containerConfig.id
         )
       )
       .filter(isNotUndefined)
@@ -89,6 +87,6 @@ export const useContainerAnnotations = ({
     selectedAnnotationId,
     hoverId,
     annotationsApiAnnotations,
-    containerReferences,
+    containerConfigs,
   ]);
 };

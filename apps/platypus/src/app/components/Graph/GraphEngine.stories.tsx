@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import { Story } from '@storybook/react';
-import { Graph } from './Graph';
+import { Graph } from './GraphEngine';
 
 const nodes = [
   {

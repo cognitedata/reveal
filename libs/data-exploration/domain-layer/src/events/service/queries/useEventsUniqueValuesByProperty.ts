@@ -1,8 +1,10 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
+  AdvancedFilter,
   EventProperty,
+  EventsProperties,
   getEventsUniqueValuesByProperty,
   queryKeys,
   transformNewFilterToOldFilter,
@@ -13,22 +15,32 @@ import {
   OldEventsFilters,
 } from '@data-exploration-lib/core';
 
-export const useEventsUniqueValuesByProperty = (
-  property: EventProperty,
-  query?: string,
-  filter?: InternalEventsFilters | OldEventsFilters,
-  options?: UseQueryOptions
-) => {
+interface Props {
+  property: EventProperty;
+  filter?: InternalEventsFilters | OldEventsFilters;
+  advancedFilter?: AdvancedFilter<EventsProperties>;
+  prefix?: string;
+}
+
+export const useEventsUniqueValuesByProperty = ({
+  property,
+  filter,
+  advancedFilter,
+  prefix,
+}: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsUniqueValues(property, query, filter),
+    queryKeys.eventsUniqueValues(property, filter, advancedFilter, prefix),
     () => {
       return getEventsUniqueValuesByProperty(sdk, property, {
         filter: transformNewFilterToOldFilter(filter),
-        aggregateFilter: query ? { prefix: { value: query } } : undefined,
+        advancedFilter,
+        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
       });
     },
-    { ...(options as any) }
+    {
+      keepPreviousData: true,
+    }
   );
 };

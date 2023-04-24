@@ -18,11 +18,13 @@ import {
   ColumnSizingState,
   VisibilityState,
   Cell,
+  RowSelectionState,
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
 import { ColumnToggle } from './components/ColumnToggle';
 import {
   DATA_EXPLORATION_COMPONENT,
+  EMPTY_OBJECT,
   isElementHorizontallyInViewport,
   useMetrics,
 } from '@data-exploration-lib/core';
@@ -49,7 +51,7 @@ import {
   TableDataBody,
 } from './elements';
 
-import { Flex } from '@cognite/cogs.js';
+import { Checkbox, Flex } from '@cognite/cogs.js';
 
 import { SortIcon } from './components/SortIcon';
 import { ResourceTableColumns } from './columns';
@@ -88,7 +90,9 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   getCanRowExpand?: (row: Row<T>) => boolean;
   getSubrowData?: (originalRow: T, index: number) => undefined | T[];
   onRowExpanded?: OnChangeFn<ExpandedState>;
+  onRowSelection?: OnChangeFn<RowSelectionState>;
   enableCopying?: boolean;
+  enableSelection?: boolean;
   // This is to render a sub component inside the row
   renderRowSubComponent?: (row: Row<T>) => React.ReactNode;
   // This is to render an additional row after, depending on the row's value
@@ -106,14 +110,16 @@ export function Table<T extends TableData>({
   id,
   data,
   enableCopying = false,
+  enableSelection = false,
   columns,
   onRowClick = noop,
+  onRowSelection,
+  selectedRows = EMPTY_OBJECT,
   columnSelectionLimit,
   onSort,
   enableSorting = false,
   manualSorting = true,
   expandedRows,
-  selectedRows,
   scrollIntoViewRow,
   stickyHeader = true,
   enableColumnResizing = true,
@@ -140,10 +146,41 @@ export function Table<T extends TableData>({
     () => ({
       minSize: 200,
       size: 400,
-      maxSize: 600,
     }),
     []
   );
+
+  const checkboxColumn: ColumnDef<T> = {
+    id: 'select',
+    header: ({ table }) => {
+      return (
+        <Checkbox
+          {...{
+            checked:
+              table.getIsAllRowsSelected() || table.getIsSomeRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler(),
+          }}
+        />
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <Checkbox
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      );
+    },
+  };
+
+  const updatedColumns = enableSelection
+    ? [checkboxColumn, ...columns]
+    : columns;
 
   const tbodyRef = useRef<HTMLDivElement>(null);
   const trackUsage = useMetrics();
@@ -222,22 +259,25 @@ export function Table<T extends TableData>({
     getIsSomeColumnsVisible,
   } = useReactTable<T>({
     data,
-    columns: columns,
+    columns: updatedColumns,
     state: {
       sorting,
       columnVisibility,
       expanded: expandedRows,
       columnOrder,
       columnSizing,
-      rowSelection: selectedRows || {},
+      rowSelection: selectedRows,
     },
+    enableRowSelection: enableSelection,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     onSortingChange: onSort,
     onColumnOrderChange: setColumnOrder,
     onColumnSizingChange: setColumnSizing,
+    onRowSelectionChange: onRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
+
     onExpandedChange: onRowExpanded,
     enableSorting: enableSorting,
     manualSorting: manualSorting,

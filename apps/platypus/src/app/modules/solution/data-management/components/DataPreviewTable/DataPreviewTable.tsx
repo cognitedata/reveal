@@ -12,6 +12,7 @@ import {
   DataModelTypeDefsType,
   DeleteInstancesDTO,
   KeyValueMap,
+  MixerQueryBuilder,
   PlatypusError,
 } from '@platypus/platypus-core';
 import {
@@ -45,11 +46,17 @@ import { SuggestionsModal } from '../SuggestionsModal/SuggestionsModal';
 import { StyledDataPreviewTable } from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
-import { getSuggestionsAvailable, sanitizeRow } from './utils';
+import {
+  getColumnsInitialOrder,
+  getSuggestionsAvailable,
+  sanitizeRow,
+} from './utils';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
+  useFilterBuilderFeatureFlag,
+  useColumnSelectionFeatureFlag,
 } from '@platypus-app/flags';
 import {
   CollapsiblePanelContainer,
@@ -59,8 +66,13 @@ import debounce from 'lodash/debounce';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
+import { FilterBuilder } from '../FilterBuilder/FilterBuilder';
+import { Button } from '@cognite/cogs.js';
 
 const pageSizeLimit = 100;
+const instanceIdCol = 'externalId';
+const lockedFields = ['space', 'lastUpdatedTime', 'createdTime'];
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
@@ -82,11 +94,12 @@ export const DataPreviewTable = forwardRef<
     { dataModelType, dataModelTypeDefs, dataModelExternalId, version, space },
     ref
   ) => {
-    const instanceIdCol = 'externalId';
     const { t } = useTranslation('DataPreviewTable');
     const [searchTerm, setSearchTerm] = useState('');
+    const [filter, setFilter] = useState<any>(null);
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
       useState(false);
+    const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
     const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
@@ -97,12 +110,16 @@ export const DataPreviewTable = forwardRef<
     const { isEnabled: isManualPopulationEnabled } =
       useManualPopulationFeatureFlag();
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
+    const { isEnabled: isFilterBuilderEnabled } = useFilterBuilderFeatureFlag();
     const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
+    const { isEnabled: isColumnSelectionEnabled } =
+      useColumnSelectionFeatureFlag();
     const { dataModelVersion: selectedDataModelVersion } =
       useSelectedDataModelVersion(version, dataModelExternalId, space);
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
+    const queryBuilder = new MixerQueryBuilder();
 
     const draftRowsData = useSelector(
       (state) => state.dataManagement.draftRows[dataModelType.name] || []
@@ -121,6 +138,10 @@ export const DataPreviewTable = forwardRef<
       createNewDraftRow,
       deleteSelectedRows,
     } = useDraftRows();
+
+    const [columnOrder, setColumnOrder] = useState<ColumnToggleType[]>(
+      getColumnsInitialOrder(dataModelType, instanceIdCol)
+    );
 
     const [suggestionsAvailable, setSuggestionsAvailable] = useState(false);
     const [suggestionsColumn, setSuggestionsColumn] = useState<
@@ -183,6 +204,7 @@ export const DataPreviewTable = forwardRef<
           dataModelTypeDefs,
         })
         .then(({ items }) => {
+          track('ManualPopulation.Create', { success: true });
           removeDrafts(items.map((item) => item.externalId as string));
           refetchPublishedRowsCountMap().then(() => {
             gridRef.current?.api.refreshInfiniteCache();
@@ -191,12 +213,20 @@ export const DataPreviewTable = forwardRef<
             type: 'success',
             message: t('ingest_success_title', 'Instance added'),
           });
+        })
+        .catch((e) => {
+          track('ManualPopulation.Create', { success: false });
+          throw e;
         });
     };
 
     useEffect(() => {
       track('DataModel.Data.View', { version, type: dataModelType.name });
     }, [track, dataModelType, version]);
+
+    useEffect(() => {
+      setColumnOrder(getColumnsInitialOrder(dataModelType, instanceIdCol));
+    }, [dataModelType]);
 
     const handleSuggestionsClose = async (selectedColumn?: string) => {
       gridRef.current?.api.refreshInfiniteCache();
@@ -205,13 +235,15 @@ export const DataPreviewTable = forwardRef<
     };
 
     // set gridConfig in state so the reference is stable and doesn't cause rerenders
-    const [gridConfig] = useState<GridConfig>(
+    const [gridConfig, setGridConfig] = useState<GridConfig>(
       buildGridConfig(
         instanceIdCol,
         dataModelType,
         handleRowPublish,
         isDeletionEnabled,
-        isManualPopulationEnabled
+        isManualPopulationEnabled,
+        columnOrder.filter((el) => el.visible).map((el) => el.value),
+        !isFilterBuilderEnabled
       )
     );
 
@@ -299,6 +331,15 @@ export const DataPreviewTable = forwardRef<
       gridRef.current?.api.onFilterChanged();
       track('DataModel.Data.Search', { version, type: dataModelType.name });
     }, [searchTerm, track, dataModelType.name, version]);
+
+    useEffect(() => {
+      gridRef.current?.api.onFilterChanged();
+      track('DataModel.Data.Filter', {
+        version,
+        type: dataModelType.name,
+        builder: true,
+      });
+    }, [filter, track, dataModelType.name, version]);
 
     const debouncedHandleSearchInputValueChange = debounce((value) => {
       setSearchTerm(value);
@@ -391,6 +432,12 @@ export const DataPreviewTable = forwardRef<
               type: 'custom',
             });
           }
+        } else if (fieldType.type.name === 'TimeSeries') {
+          setSidebarData({
+            externalId: currValue.externalId,
+            fieldName: field,
+            type: 'timeseries',
+          });
         } else {
           setSidebarData(undefined);
         }
@@ -459,6 +506,10 @@ export const DataPreviewTable = forwardRef<
         ...e.data,
       };
 
+      for (const key of lockedFields) {
+        delete updatedRowData[key];
+      }
+
       dataManagementHandler
         .ingestNodes({
           /*
@@ -476,6 +527,7 @@ export const DataPreviewTable = forwardRef<
           dataModelTypeDefs,
         })
         .then(() => {
+          track('ManualPopulation.Update', { success: true });
           gridRef.current?.api.refreshCells();
           if (e.colDef.field) {
             e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
@@ -496,6 +548,7 @@ export const DataPreviewTable = forwardRef<
           );
         })
         .catch((error: PlatypusError) => {
+          track('ManualPopulation.Update', { success: false });
           Notification({
             type: 'error',
             message: error.message,
@@ -546,6 +599,7 @@ export const DataPreviewTable = forwardRef<
           }
 
           if (isError) {
+            track('ManualPopulation.Delete', { success: false });
             Notification({
               type: 'error',
               message: errorMessage,
@@ -553,6 +607,7 @@ export const DataPreviewTable = forwardRef<
             setIsDeleteRowsModalVisible(false);
             return;
           }
+          track('ManualPopulation.Delete', { success: true });
 
           gridRef.current?.api.refreshInfiniteCache();
           // We have to manually deselect rows
@@ -592,6 +647,7 @@ export const DataPreviewTable = forwardRef<
       refetchPublishedRowsCountMap,
       t,
       space,
+      track,
     ]);
 
     if (!isPublishedRowsCountMapFetched) {
@@ -632,6 +688,54 @@ export const DataPreviewTable = forwardRef<
             }}
           />
         )}
+        <FilterBuilder
+          initialFilter={filter}
+          visible={isFilterModalVisible}
+          onOk={(newFilter) => {
+            track('FilterBuilder.Apply', { filter });
+            setFilter(newFilter);
+            setFilterModalVisible(false);
+          }}
+          onCancel={() => setFilterModalVisible(false)}
+          dataModelType={dataModelType}
+          dataModelExternalId={dataModelExternalId}
+          version={version}
+          space={space}
+          copyButtonCallback={() => {
+            track('FilterBuilder.Copy');
+            const sortColumn = gridRef.current?.columnApi
+              .getColumnState()
+              .filter((el) => el.sort)[0];
+            const query = queryBuilder.buildListQuery({
+              cursor: '',
+              dataModelType,
+              dataModelTypeDefs,
+              limit: pageSizeLimit,
+              sort: sortColumn
+                ? {
+                    fieldName: sortColumn.colId,
+                    sortType:
+                      (sortColumn.sort!.toUpperCase() as 'ASC' | 'DESC') ||
+                      'ASC',
+                  }
+                : undefined,
+              nestedLimit: 2,
+              filter,
+            });
+            navigator.clipboard.writeText(
+              JSON.stringify(
+                { query: query, variables: { $filter: filter } },
+                null,
+                2
+              )
+            );
+            Notification({
+              type: 'success',
+              message: 'Copied code to clipboard 🚀',
+            });
+          }}
+        />
+
         <PreviewPageHeader
           space={space}
           draftRowsCount={draftRowsData.length}
@@ -651,11 +755,47 @@ export const DataPreviewTable = forwardRef<
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           title={dataModelType.name}
-          onSuggestionsClick={() => setIsSuggestionsModalVisible(true)}
+          onSuggestionsClick={() => {
+            track('Suggestions.Open');
+            setIsSuggestionsModalVisible(true);
+          }}
           suggestionsAvailable={suggestionsAvailable}
           typeName={dataModelType.name}
           version={version}
-        />
+        >
+          <>
+            {isFilterBuilderEnabled && (
+              <Button
+                icon="Filter"
+                onClick={() => {
+                  setFilterModalVisible(true);
+                  track('FilterBuilder.Open');
+                }}
+              >
+                Filters
+              </Button>
+            )}
+            {isColumnSelectionEnabled && (
+              <ColumnToggle
+                allColumns={columnOrder}
+                onChange={(order) => {
+                  setColumnOrder(order);
+                  setGridConfig(
+                    buildGridConfig(
+                      instanceIdCol,
+                      dataModelType,
+                      handleRowPublish,
+                      isDeletionEnabled,
+                      isManualPopulationEnabled,
+                      order.filter((el) => el.visible).map((el) => el.value),
+                      isFilterBuilderEnabled
+                    )
+                  );
+                }}
+              />
+            )}
+          </>
+        </PreviewPageHeader>
         <CollapsiblePanelContainer
           data={sidebarData}
           onClose={() => setSidebarData(undefined)}
@@ -710,6 +850,7 @@ export const DataPreviewTable = forwardRef<
                   dataModelType,
                   dataModelTypeDefs,
                   searchTerm,
+                  filter,
                   space,
                   // passing the useTranslate method in case any class components need it,
                   // such as custom-column-filter

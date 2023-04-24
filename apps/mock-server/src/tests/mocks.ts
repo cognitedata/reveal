@@ -136,8 +136,16 @@ The view can then omit mapping required properties of a container.
 """
 directive @readonly on OBJECT | INTERFACE
 
+"""
+Specifies that the view is imported, which means the view definition needs to already exist.
+The imported view can omit fields, and container directives.
+"""
+directive @import on OBJECT | INTERFACE
+
 type Post {
   externalId: ID!
+  lastUpdatedTime: Timestamp!
+  createdTime: Timestamp!
   spaceExternalId:String!
   title: String!
   views: Int!
@@ -152,12 +160,16 @@ type Post {
 
 type User {
   externalId: ID!
+  lastUpdatedTime: Timestamp!
+  createdTime: Timestamp!
   spaceExternalId:String!
   name: String!
 }
 
 type Comment {
   externalId: ID!
+  lastUpdatedTime: Timestamp!
+  createdTime: Timestamp!
   spaceExternalId:String!
   body: String!
   date: Timestamp!

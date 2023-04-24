@@ -4,7 +4,7 @@ import {
   Kind,
   ObjectTypeDefinitionNode,
 } from 'graphql';
-import { Node } from '../Graph/Graph';
+import { Node } from '../Graph/GraphEngine';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 
 export const NODE_WIDTH = 240;

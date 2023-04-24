@@ -1,4 +1,4 @@
-import { INITIAL_TRANSFORM, MAX_ZOOM, MIN_ZOOM, Node } from '../Graph';
+import { INITIAL_TRANSFORM, MAX_ZOOM, MIN_ZOOM, Node } from '../GraphEngine';
 
 export const getFitContentXYK = <T>(
   nodesForCalculation: d3.Selection<

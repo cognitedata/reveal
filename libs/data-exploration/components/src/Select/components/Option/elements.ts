@@ -18,3 +18,8 @@ export const OptionCount = styled.div`
   font-size: 12px;
   line-height: 16px;
 `;
+
+export const OptionCountDisabled = styled(OptionCount)`
+  background: var(--cogs-surface--status-undefined--muted--default);
+  color: var(--cogs-text-icon--status-undefined);
+`;

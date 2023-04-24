@@ -1,10 +1,10 @@
 import { Button, Input, Title, Tooltip } from '@cognite/cogs.js';
 import { useState, useEffect } from 'react';
-import { UseIndustryCanvasManagerReturnType } from '../hooks/useIndustryCanvasService';
+import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { DEFAULT_CANVAS_NAME } from '../services/IndustryCanvasService';
 
 type CanvasTitleProps = Pick<
-  UseIndustryCanvasManagerReturnType,
+  IndustryCanvasContextType,
   'activeCanvas' | 'saveCanvas'
 >;
 

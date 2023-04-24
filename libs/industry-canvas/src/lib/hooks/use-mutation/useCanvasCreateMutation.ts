@@ -2,26 +2,14 @@ import { toast } from '@cognite/cogs.js';
 import { captureException } from '@sentry/react';
 import { useMutation } from 'react-query';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
-import { IndustryCanvasState, PersistedCanvasState } from '../../types';
+import { SerializedCanvasDocument } from '../../types';
 import { QueryKeys, TOAST_POSITION } from '../../constants';
-
-const isPersistedCanvasState = (
-  canvas: IndustryCanvasState | PersistedCanvasState
-): canvas is PersistedCanvasState => 'data' in canvas;
 
 export const useCanvasCreateMutation = (service: IndustryCanvasService) => {
   return useMutation(
     [QueryKeys.CREATE_CANVAS],
-    (canvas: IndustryCanvasState | PersistedCanvasState) => {
-      if (isPersistedCanvasState(canvas)) {
-        return service.createCanvas({ ...canvas });
-      }
-      return service.createCanvas({
-        ...service.makeEmptyCanvas(),
-        data: {
-          ...canvas,
-        },
-      });
+    (canvas: SerializedCanvasDocument) => {
+      return service.createCanvas({ ...canvas });
     },
     {
       onError: (err) => {

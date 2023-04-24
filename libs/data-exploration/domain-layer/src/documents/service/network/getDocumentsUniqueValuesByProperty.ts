@@ -1,4 +1,4 @@
-import { CogniteClient, UniqueValuesAggregateResponse } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 
 import {
   DocumentProperty,

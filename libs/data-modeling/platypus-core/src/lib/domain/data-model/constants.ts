@@ -5,6 +5,12 @@ export const mixerApiInlineTypeDirectiveName = 'nested';
 export const mixerApiBuiltInTypes = [
   { name: 'String', type: 'SCALAR', dmsType: 'text', tsType: 'string' },
   { name: 'Int', type: 'SCALAR', dmsType: 'int32', tsType: 'number' },
+  {
+    name: 'Int32',
+    type: 'SCALAR',
+    dmsType: 'int32',
+    tsType: 'number',
+  },
   { name: 'Int64', type: 'SCALAR', dmsType: 'int64', tsType: 'number' },
   { name: 'Float', type: 'SCALAR', dmsType: 'float64', tsType: 'number' },
   { name: 'Float32', type: 'SCALAR', dmsType: 'float32', tsType: 'number' },
@@ -18,6 +24,12 @@ export const mixerApiBuiltInTypes = [
     name: 'readonly',
     type: 'DIRECTIVE',
     body: 'directive @readonly on OBJECT | INTERFACE',
+    fieldDirective: false,
+  },
+  {
+    name: 'import',
+    type: 'DIRECTIVE',
+    body: 'directive @import on OBJECT | INTERFACE',
     fieldDirective: false,
   },
   {

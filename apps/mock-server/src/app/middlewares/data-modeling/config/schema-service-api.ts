@@ -46,6 +46,12 @@ Specifies that the view can be readonly, which means it's not writable.
 The view can then omit mapping required properties of a container.
 """
 directive @readonly on OBJECT | INTERFACE
+
+"""
+Specifies that the view is imported, which means the view definition needs to already exist.
+The imported view can omit fields, and container directives.
+"""
+directive @import on OBJECT | INTERFACE
 `;
 
 export const schemaServiceGraphqlApi = `

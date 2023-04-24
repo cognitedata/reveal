@@ -3,6 +3,14 @@ import { getUrl } from '../../utils/url';
 describe('Platypus Data Preview Page - Suggestions', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
+    window.localStorage.setItem(
+      '@cognite.fusion.data-modeling.platypus.DEVX_MANUAL_POPULATION',
+      'TRUE'
+    );
+    window.localStorage.setItem(
+      '@cognite.fusion.data-modeling.platypus.DEVX_MATCHMAKER_SUGGESTIONS_UI',
+      'true'
+    );
     cy.request('http://localhost:4200/reset');
     cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
     cy.ensurePageFinishedLoading();

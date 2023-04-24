@@ -33,6 +33,7 @@ type Props = {
   title: string;
   typeName: string;
   version: string;
+  children?: React.ReactNode;
 };
 
 export function PreviewPageHeader({
@@ -54,6 +55,7 @@ export function PreviewPageHeader({
   title,
   typeName,
   version,
+  children,
 }: Props) {
   const { t } = useTranslation('DataPreview');
   const isTransformationsEnabled = useTransformationsFeatureFlag();
@@ -161,6 +163,7 @@ export function PreviewPageHeader({
     >
       {shouldShowActions && (
         <Flex justifyContent="flex-end" gap={8}>
+          {children}
           {publishedRowsCount > 0 && (
             <>
               <S.SearchInput

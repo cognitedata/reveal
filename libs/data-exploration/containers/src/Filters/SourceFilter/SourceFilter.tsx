@@ -1,7 +1,7 @@
 import {
-  useAssetsUniqueValuesByProperty,
-  useDocumentsUniqueValuesByProperty,
-  useEventsUniqueValuesByProperty,
+  useAssetsFilterOptions,
+  useDocumentsFilterOptions,
+  useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -18,7 +18,6 @@ import {
   InternalDocumentFilter,
   InternalEventsFilters,
   useDebouncedState,
-  useDeepMemo,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { transformOptionsForMultiselectFilter } from '../utils';
@@ -110,30 +109,22 @@ export const BaseFileSourceFilter = <TFilter,>({
 const AssetSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useAssetsUniqueValuesByProperty('source', query);
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
+  const { options, isLoading, isError } = useAssetsFilterOptions({
+    property: 'source',
+    filterProperty: 'sources',
+    query: props.query,
+    filter: props.filter,
+    prefix,
+  });
 
   return (
     <SourceFilter
       {...props}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
-      onInputChange={(newValue) => setQuery(newValue)}
       options={options}
     />
   );
@@ -142,30 +133,20 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useEventsUniqueValuesByProperty('source', query, undefined, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useEventsFilterOptions({
+    property: 'source',
+    filterProperty: 'sources',
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
 
   return (
     <SourceFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -176,30 +157,19 @@ const EventSourceFilter = (
 export const FileSourceFilter = (
   props: BaseFileSourceFilterProps<InternalDocumentFilter>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const {
-    data: sources = [],
-    isLoading,
-    isError,
-  } = useDocumentsUniqueValuesByProperty(['sourceFile', 'source'], query, {
-    keepPreviousData: true,
+  const { options, isLoading, isError } = useDocumentsFilterOptions({
+    property: ['sourceFile', 'source'],
+    query: props.query,
+    filter: props.filter,
+    prefix,
   });
-
-  const options = useDeepMemo(
-    () =>
-      sources.map((item) => ({
-        label: `${item.value}`,
-        value: `${item.value}`,
-        count: item.count,
-      })),
-    [sources]
-  );
 
   return (
     <BaseFileSourceFilter
       {...props}
-      onInputChange={(newValue) => setQuery(newValue)}
+      onInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
       options={options}

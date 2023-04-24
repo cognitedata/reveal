@@ -48,7 +48,7 @@ export type FileConfigType = CommonKeys & {
 };
 
 export type EventConfigType = CommonKeys & {
-  type: SearchConfig;
+  type: Omit<SearchConfig, 'enabledFuzzySearch'>;
   description: SearchConfig;
   metadata: SearchConfig;
   source: SearchConfig;

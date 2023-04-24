@@ -11,6 +11,7 @@ import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
+import reactAwesomeQueryBuilderStyles from '@react-awesome-query-builder/ui/css/styles.css';
 
 import styleScope from '../styleScope';
 
@@ -20,11 +21,12 @@ import graphiqlStyles from 'graphiql/graphiql.min.css';
 import agGridStyles from 'ag-grid-community/dist/styles/ag-grid.css';
 import cogDataGridStyles from '@cognite/cog-data-grid-root/lib/cog-data-grid-styles.css';
 import styled from 'styled-components';
+import zIndex from './utils/zIndex';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope.styleScope);
   const el = els.item(0)! as HTMLElement;
-  return el;
+  return el || document.body;
 };
 
 // This will override the appendTo prop on all Tooltips used from cogs
@@ -42,6 +44,7 @@ Modal.defaultProps = {
 Dropdown.defaultProps = {
   ...Dropdown.defaultProps,
   appendTo: getContainer,
+  zIndex: zIndex.POPUP,
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
@@ -52,6 +55,7 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     monacoStyles,
     agGridStyles,
     cogDataGridStyles,
+    reactAwesomeQueryBuilderStyles,
   ]);
 
   if (!isStyleLoaded) {
@@ -65,5 +69,12 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
 const Wrapper = styled.div`
   .cogs.cogs-modal--full-screen .cogs-modal__content {
     height: 100%;
+  }
+
+  .filter-builder {
+    overflow: visible;
+    .cogs-modal__content-container {
+      overflow: visible;
+    }
   }
 `;

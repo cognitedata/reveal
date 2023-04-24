@@ -90,9 +90,13 @@ Cypress.Commands.add('publishSchema', (version, confirmModal = true) => {
 });
 
 Cypress.Commands.add('selectDraftVersion', () => {
-  cy.getBySel('schema-version-select').click().contains('Local draft').click();
+  cy.getBySel('schema-version-select').click();
+  cy.getBySel('schema-version-select-menu').contains('Local draft').click();
 });
 
 Cypress.Commands.add('selectLatestVersion', () => {
-  cy.getBySel('schema-version-select').click().contains('Latest').click();
+  cy.getBySel('schema-version-select').click();
+  cy.getBySel('schema-version-select-menu')
+    .contains('Latest')
+    .click({ force: true });
 });
