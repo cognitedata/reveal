@@ -12,7 +12,7 @@ import {
   useAssetsMetadataFilterOptions,
   useAssetsMetadataValuesOptionsQuery,
   useDocumentMetadataValuesOptionsQuery,
-  useDocumentsMetadataKeysAggregateQuery,
+  useDocumentsMetadataFilterOptions,
   useEventsMetadataKeysAggregateQuery,
   useEventsMetadataValuesOptionsQuery,
   useSequenceMetadataFilterOptions,
@@ -153,22 +153,24 @@ const TimeseriesMetadataFilter = (
 const FilesMetadataFilter = (
   props: BaseNestedFilterProps<InternalDocumentFilter>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [prefix, setPrefix] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useDocumentsMetadataKeysAggregateQuery(
-    query,
-    { keepPreviousData: true }
-  );
-
-  const options = transformMetadataKeysToOptions(data);
+  const { options, isLoading, isError } = useDocumentsMetadataFilterOptions({
+    prefix,
+    query: props.query,
+    filter: props.filter,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
+      onSearchInputChange={setPrefix}
       isError={isError}
       isLoading={isLoading}
-      useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery()}
+      useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery({
+        query: props.query,
+        filter: props.filter,
+      })}
       {...props}
     />
   );

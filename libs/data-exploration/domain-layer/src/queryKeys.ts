@@ -186,15 +186,20 @@ export const queryKeys = {
   documentsFilteredAggregates: (filters: any, aggregates: any) =>
     [...queryKeys.documentsAggregate(), filters, aggregates] as const,
 
-  documentsMetadata: (query?: string) =>
-    [...queryKeys.documents(), 'metadata', 'keys', query] as const,
-  documentsMetadataValues: (metadataKey: string, query?: string) =>
+  documentsMetadata: (query?: string, filter?: any) =>
+    [...queryKeys.documents(), 'metadata', 'keys', query, filter] as const,
+  documentsMetadataValues: (
+    metadataKey: string,
+    query?: string,
+    filter?: any
+  ) =>
     [
       ...queryKeys.documents(),
       'metadata',
       metadataKey,
       'values',
       query,
+      filter,
     ] as const,
 
   documentsLabelValues: (filter?: any, prefix?: any) =>
