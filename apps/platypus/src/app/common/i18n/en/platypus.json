@@ -95,6 +95,7 @@
   "field_name_label": "Field name",
   "field_type_label": "Type",
   "graphql-link-button": "URL",
+  "header-tooltip-refresh": "Refresh table",
   "ingest_success_title": "Instance added",
   "invalid_name_error": "Invalid type name",
   "keep_version_text": "Keep version",

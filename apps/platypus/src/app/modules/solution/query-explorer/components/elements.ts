@@ -35,6 +35,10 @@ export const QueryExplorerContainer = styled.div`
     outline: var(--cogs-primary) auto 1px;
   }
 
+  & .CodeMirror-scroll {
+    margin-right: 0 !important;
+  }
+
   & > .docExplorerWrap {
     .doc-explorer-title-bar {
       display: flex;

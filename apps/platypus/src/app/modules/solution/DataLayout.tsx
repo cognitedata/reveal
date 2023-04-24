@@ -64,7 +64,7 @@ export const DataLayout = () => {
       disabled: hasNoPublishedVersion,
     },
     {
-      icon: 'Search',
+      icon: 'CodeBraces',
       slug: 'query-explorer',
       tooltip: `${t('query_explorer_title', 'Query explorer')}${
         hasNoPublishedVersion ? disabledText : ''
