@@ -55,6 +55,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
   const { id: revisionId } = props.revision;
 
   const [nodesClickable, setNodesClickable] = useState<boolean>(true);
+  const [highQualityRender, setHighQualityRender] = useState<boolean>(true);
 
   useEffect(() => {
     if (canvasWrapperRef.current) {
@@ -169,6 +170,8 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
             model={model}
             setNodesClickable={setNodesClickable}
             nodesClickable={nodesClickable}
+            setHighQualityRender={setHighQualityRender}
+            highQualityRender={highQualityRender}
           />
         </StyledToolBar>
       )}
