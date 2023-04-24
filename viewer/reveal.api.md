@@ -787,7 +787,19 @@ export interface Image360 {
 }
 
 // @public
+export type Image360AnnotationAppearance = {
+    color: Color;
+    visible: boolean;
+};
+
+// @public
+export type Image360AnnotationAppearanceEdit = Partial<Image360AnnotationAppearance>;
+
+// @public
 export type Image360AnnotationClickedDelegate = (annotation: AnnotationModel) => void;
+
+// @public
+export type Image360AnnotationFilter = (annotation: AnnotationModel) => boolean;
 
 // @public
 export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
