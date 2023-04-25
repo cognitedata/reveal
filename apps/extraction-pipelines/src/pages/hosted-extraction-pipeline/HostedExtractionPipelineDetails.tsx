@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import { StyledHeadingContainer } from 'components/extpipe/ExtpipeHeading';
 import { StyledPageContainer } from 'components/styled';
-import { useMQTTSource } from 'hooks/hostedExtractors';
+import { useMQTTSourceWithMetrics } from 'hooks/hostedExtractors';
 
 import { HostedExtractionPipelineInsight } from './HostedExtractionPipelineInsight';
 import { HostedExtractionPipelineOverview } from './HostedExtractionPipelineOverview';
@@ -23,7 +23,7 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams();
   const detailsTab = searchParams.get('detailsTab') ?? 'overview';
 
-  const { data: source, isFetched } = useMQTTSource(externalId);
+  const { data: source, isFetched } = useMQTTSourceWithMetrics(externalId);
 
   if (!isFetched) {
     return <Loader />;

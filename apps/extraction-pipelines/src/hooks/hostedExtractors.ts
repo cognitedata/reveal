@@ -103,26 +103,72 @@ const getMQTTSourceQueryKey = (externalId?: string) => [
   externalId,
 ];
 
+const getMQTTSource = (sdk: CogniteClient, externalId?: string) => {
+  if (!externalId) {
+    throw Error('external id is missing');
+  }
+
+  return sdk
+    .post<{ items: ReadMQTTSource[] }>(
+      `/api/v1/projects/${getProject()}/pluto/sources/byIds`,
+      {
+        headers: { 'cdf-version': 'alpha' },
+        data: {
+          items: [{ externalId }],
+        },
+      }
+    )
+    .then((r) => r.data.items[0]);
+};
+
+const fetchMQTTSource = (
+  sdk: CogniteClient,
+  queryClient: QueryClient,
+  externalId?: string
+) => {
+  return queryClient.fetchQuery(getMQTTSourceQueryKey(), () =>
+    getMQTTSource(sdk, externalId)
+  );
+};
+
 export const useMQTTSource = (externalId?: string) => {
   const sdk = useSDK();
 
   return useQuery(getMQTTSourceQueryKey(externalId), async () => {
-    if (!externalId) {
-      throw Error('external id is missing');
-    }
-
-    return sdk
-      .post<{ items: ReadMQTTSource[] }>(
-        `/api/v1/projects/${getProject()}/pluto/sources/byIds`,
-        {
-          headers: { 'cdf-version': 'alpha' },
-          data: {
-            items: [{ externalId }],
-          },
-        }
-      )
-      .then((r) => r.data.items[0]);
+    return getMQTTSource(sdk, externalId);
   });
+};
+
+const getMQTTSourceWithMetricsQueryKey = (externalId?: string) => [
+  ...getMQTTSourceQueryKey(externalId),
+  'with-metrics',
+];
+
+export const useMQTTSourceWithMetrics = (externalId?: string) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useQuery<MQTTSourceWithJobMetrics>(
+    getMQTTSourceWithMetricsQueryKey(externalId),
+    async () => {
+      const source = await fetchMQTTSource(sdk, queryClient, externalId);
+
+      const jobsWithMetrics = await fetchMQTTJobsWithMetrics(sdk, queryClient);
+      const jobsForSource = jobsWithMetrics.filter(
+        ({ sourceId }) => sourceId === externalId
+      );
+      const throughput = jobsForSource.reduce(
+        (acc, cur) => acc + cur.throughput,
+        0
+      );
+
+      return {
+        ...source,
+        jobs: jobsForSource,
+        throughput,
+      };
+    }
+  );
 };
 
 // DESTINATIONS
@@ -168,6 +214,8 @@ type MQTTFormat = {
   prefix?: MQTTFormatPrefixConfig;
 };
 
+type MQTTJobStatus = 'running' | 'paused';
+
 type BaseMQTTJob = {
   externalId: string;
   topicFilter: string;
@@ -179,6 +227,8 @@ export type ReadMQTTJob = BaseMQTTJob & {
   lastUpdatedTime: number;
   destinationId: string;
   sourceId: string;
+  status?: string;
+  targetStatus: MQTTJobStatus;
 };
 
 const getMQTTJobsQueryKey = () => ['mqtt', 'jobs', 'list'];
@@ -201,7 +251,7 @@ export const useMQTTJobs = () => {
   });
 };
 
-type MQTTJobWithMetrics = ReadMQTTJob & {
+export type MQTTJobWithMetrics = ReadMQTTJob & {
   metrics: ReadMQTTJobMetric[];
   throughput: number;
 };

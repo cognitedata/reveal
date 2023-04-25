@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { ReadMQTTSource } from 'hooks/hostedExtractors';
+import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
 type HostedExtractionPipelineInsightProps = {
-  source: ReadMQTTSource;
+  source: MQTTSourceWithJobMetrics;
 };
 
 export const HostedExtractionPipelineInsight =

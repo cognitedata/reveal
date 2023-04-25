@@ -206,5 +206,11 @@
   "error_other": "{{count}} errors",
   "throughput": "Throughput",
   "datapoints-per-hour_one": "{{count}} datapoint p/hr",
-  "datapoints-per-hour_other": "{{count}} datapoints p/hr"
+  "datapoints-per-hour_other": "{{count}} datapoints p/hr",
+  "topic-filter_one": "Topic filter",
+  "topic-filter_other": "Topic filters",
+  "add-topic-filter": "Add topic filter",
+  "mqtt-job-status-running": "Running",
+  "mqtt-job-status-paused": "Paused",
+  "checked-with-date": "checked {{relativeTime}}"
 }

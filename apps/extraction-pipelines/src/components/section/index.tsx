@@ -7,6 +7,7 @@ import SectionItem, { SectionItemProps } from './SectionItem';
 import { Box } from 'components/box/Box';
 
 type SectionProps = {
+  className?: string;
   extra?: React.ReactNode;
   icon: IconType;
   title: string;
@@ -23,13 +24,14 @@ type SectionProps = {
 
 const Section = ({
   children,
+  className,
   extra,
   icon,
   items = [],
   title,
 }: SectionProps): JSX.Element => {
   return (
-    <StyledSectionContainer>
+    <StyledSectionContainer className={className}>
       <StyledSectionHeader $hasBorder={!!children || items.length > 0}>
         <Flex alignItems="center" gap={8}>
           <Icon type={icon} />
@@ -56,7 +58,7 @@ const StyledSectionContainer = styled(Box)`
 const StyledSectionHeader = styled.div<{ $hasBorder?: boolean }>`
   ${({ $hasBorder }) =>
     $hasBorder &&
-    `border-bottom: 1px solid ${Colors['border--interactive--default']}`};
+    `border-bottom: 1px solid ${Colors['border--interactive--disabled']}`};
 
   display: flex;
   justify-content: space-between;
