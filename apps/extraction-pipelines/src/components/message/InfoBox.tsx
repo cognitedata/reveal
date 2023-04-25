@@ -8,8 +8,8 @@ interface InfoBoxProps {
   color?: 'primary' | 'warning';
 }
 const colorMap = {
-  primary: Colors['decorative--blue--700'],
-  warning: Colors['decorative--yellow--700'],
+  primary: Colors['surface--status-neutral--muted--default'],
+  warning: Colors['surface--status-warning--muted--default'],
 };
 
 const Box = styled.div<Pick<InfoBoxProps, 'color'>>`
