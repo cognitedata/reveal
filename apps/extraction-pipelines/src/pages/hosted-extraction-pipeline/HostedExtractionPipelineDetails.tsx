@@ -52,8 +52,8 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
                     );
                   }}
                 >
-                  <Tabs.TabPane key="overview" tab={t('overview')} />
-                  <Tabs.TabPane key="insight" tab={t('insight')} />
+                  <Tabs.Tab tabKey="overview" label={t('overview')} />
+                  <Tabs.Tab tabKey="insight" label={t('insight')} />
                 </Tabs>
               </TabsContainer>
               <SecondaryTopbar.Divider />

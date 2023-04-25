@@ -212,5 +212,6 @@
   "add-topic-filter": "Add topic filter",
   "mqtt-job-status-running": "Running",
   "mqtt-job-status-paused": "Paused",
-  "checked-with-date": "checked {{relativeTime}}"
+  "checked-with-date": "checked {{relativeTime}}",
+  "create-source": "Create source"
 }

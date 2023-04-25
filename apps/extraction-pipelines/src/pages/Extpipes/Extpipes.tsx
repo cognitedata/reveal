@@ -14,6 +14,7 @@ import { useTranslation } from 'common';
 import ExtpipesTableSearch from 'components/table/ExtpipesTableSearch';
 import HostedExtractionPipelineTable from 'components/table/HostedExtractionPipelineTable';
 import { useSearchParams } from 'react-router-dom';
+import { CreateSourceModal } from 'components/create-source-modal/CreateSourceModal';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -52,7 +53,9 @@ const Extpipes: FunctionComponent<Props> = () => {
   const { data, isLoading, error: errorExtpipes, refetch } = useExtpipes(20);
 
   const canEdit = true;
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [isCreateSourceModalOpen, setIsCreateSourceModalOpen] = useState(false);
+  const [isCreateExtpipeModalOpen, setIsCreateExtpipeModalOpen] =
+    useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -61,14 +64,20 @@ const Extpipes: FunctionComponent<Props> = () => {
   const tab = searchParams.get('tab') ?? 'self-hosted';
 
   const onClickCreateButton = () => {
-    if (canEdit && !createModalOpen) {
+    if (tab === 'hosted') {
+      setIsCreateSourceModalOpen(true);
+    } else if (canEdit && !isCreateExtpipeModalOpen) {
       trackUsage({ t: 'Create.DialogOpened' });
-      setCreateModalOpen(true);
+      setIsCreateExtpipeModalOpen(true);
     }
   };
   const closeCreateDialog = () => {
     trackUsage({ t: 'Create.DialogClosed' });
-    setCreateModalOpen(false);
+    if (tab === 'hosted') {
+      setIsCreateSourceModalOpen(false);
+    } else {
+      setIsCreateExtpipeModalOpen(false);
+    }
   };
 
   const createExtpipeButton = (
@@ -92,8 +101,8 @@ const Extpipes: FunctionComponent<Props> = () => {
     return (
       <>
         <CreateExtpipeModal
-          visible={createModalOpen}
-          close={() => setCreateModalOpen(false)}
+          visible={isCreateExtpipeModalOpen}
+          close={() => setIsCreateExtpipeModalOpen(false)}
           title={t('create-ext-pipeline')}
         />
         <NoExtpipes actionButton={createExtpipeButton} />
@@ -129,9 +138,15 @@ const Extpipes: FunctionComponent<Props> = () => {
   return (
     <StyledContainer>
       <CreateExtpipeModal
-        visible={createModalOpen}
+        visible={isCreateExtpipeModalOpen}
         close={closeCreateDialog}
         title={t('create-ext-pipeline')}
+      />
+      <CreateSourceModal
+        onCancel={() => {
+          setIsCreateSourceModalOpen(false);
+        }}
+        visible={isCreateSourceModalOpen}
       />
       <Flex direction="column" gap={16}>
         <Tabs
@@ -146,8 +161,8 @@ const Extpipes: FunctionComponent<Props> = () => {
             );
           }}
         >
-          <Tabs.TabPane key="self-hosted" tab={t('self-hosted-extractors')} />
-          <Tabs.TabPane key="hosted" tab={t('hosted-extractors')} />
+          <Tabs.Tab tabKey="self-hosted" label={t('self-hosted-extractors')} />
+          <Tabs.Tab tabKey="hosted" label={t('hosted-extractors')} />
         </Tabs>
         <StyledActionBar>
           <ExtpipesTableSearch onChange={setSearchQuery} value={searchQuery} />
