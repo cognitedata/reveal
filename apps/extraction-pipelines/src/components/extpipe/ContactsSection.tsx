@@ -1,10 +1,9 @@
 import React, { FunctionComponent, useState } from 'react';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { EditModal } from 'components/modals/EditModal';
 import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import Section from 'components/section';
-import { Button, Flex, Icon, Chip } from '@cognite/cogs.js';
+import { Button, Flex, Icon, Chip, Modal } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 interface ContactsViewProps {
   canEdit: boolean;
@@ -37,14 +36,15 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
 
   return (
     <>
-      <EditModal
+      <Modal
+        size="large"
         title={t('contacts')}
         visible={showModal}
-        close={closeModal}
-        width={1024}
+        onCancel={closeModal}
+        hideFooter
       >
         <ContactsDialog close={closeModal} />
-      </EditModal>
+      </Modal>
       <Section
         extra={
           <Button
