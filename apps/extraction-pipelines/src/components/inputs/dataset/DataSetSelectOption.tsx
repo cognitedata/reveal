@@ -35,12 +35,6 @@ const OptionWrapper = styled(components.Option)`
   display: grid;
   grid-template-areas: 'name id' 'externalId . ';
   padding: 0.5rem 1rem;
-  &:hover {
-    background-color: ${Colors['decorative--blue--700']};
-  }
-  &:focus {
-    background-color: ${Colors['decorative--grayscale--100']};
-  }
 `;
 const OptionLabel = styled.span`
   grid-area: name;
