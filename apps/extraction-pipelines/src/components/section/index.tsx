@@ -1,16 +1,10 @@
 import React from 'react';
 
-import {
-  Colors,
-  Elevations,
-  Flex,
-  Icon,
-  IconType,
-  Title,
-} from '@cognite/cogs.js';
+import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import SectionItem, { SectionItemProps } from './SectionItem';
+import { Box } from 'components/box/Box';
 
 type SectionProps = {
   extra?: React.ReactNode;
@@ -55,11 +49,7 @@ const Section = ({
   );
 };
 
-const StyledSectionContainer = styled.div`
-  background: ${Colors['surface--muted']};
-  box-shadow: ${Elevations['elevation--surface--interactive']};
-  border-radius: 8px;
-
+const StyledSectionContainer = styled(Box)`
   margin-bottom: 12px;
 `;
 

@@ -1,14 +1,8 @@
 import React from 'react';
 
-import {
-  Body,
-  Colors,
-  Elevations,
-  Flex,
-  Icon,
-  IconType,
-} from '@cognite/cogs.js';
+import { Body, Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Box } from 'components/box/Box';
 
 type SummaryBoxProps = {
   className?: string;
@@ -29,19 +23,14 @@ export const SummaryBox = ({
         <BoxTitle level={3} strong>
           {title}
         </BoxTitle>
-        <Body level={2} strong>
-          {content}
-        </Body>
+        <Title level={6}>{content}</Title>
       </Flex>
       <Icon size={24} type={icon} />
     </Container>
   );
 };
 
-const Container = styled.div`
-  background-color: ${Colors['surface--muted']};
-  border-radius: 6px;
-  box-shadow: ${Elevations['elevation--surface--interactive']};
+const Container = styled(Box)`
   align-items: center;
   color: ${Colors['text-icon--muted']};
   display: flex;
