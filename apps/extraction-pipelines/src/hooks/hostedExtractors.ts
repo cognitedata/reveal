@@ -1,7 +1,13 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import {
+  QueryClient,
+  UseMutationOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
 
 // SOURCES
 
@@ -18,6 +24,10 @@ type BaseMQTTSource = {
 export type ReadMQTTSource = BaseMQTTSource & {
   createdTime: number;
   lastUpdatedTime: number;
+};
+
+export type CreateMQTTSource = BaseMQTTSource & {
+  password: string;
 };
 
 export type MQTTSourceWithJobMetrics = ReadMQTTSource & {
@@ -167,6 +177,38 @@ export const useMQTTSourceWithMetrics = (externalId?: string) => {
         jobs: jobsForSource,
         throughput,
       };
+    }
+  );
+};
+
+type CreateMQTTSourceVariables = CreateMQTTSource;
+
+export const useCreateMQTTSource = (
+  options?: UseMutationOptions<unknown, unknown, CreateMQTTSourceVariables>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (source: CreateMQTTSourceVariables) => {
+      return sdk
+        .post<{ items: ReadMQTTSource[] }>(
+          `/api/v1/projects/${getProject()}/pluto/sources`,
+          {
+            headers: { 'cdf-version': 'alpha' },
+            data: {
+              items: [source],
+            },
+          }
+        )
+        .then((r) => r.data.items[0]);
+    },
+    {
+      ...options,
+      onSuccess: (data, variables, context) => {
+        queryClient.invalidateQueries(getMQTTSourcesQueryKey());
+        options?.onSuccess?.(data, variables, context);
+      },
     }
   );
 };

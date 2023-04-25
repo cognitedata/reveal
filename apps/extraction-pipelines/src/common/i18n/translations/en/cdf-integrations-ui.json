@@ -213,5 +213,18 @@
   "mqtt-job-status-running": "Running",
   "mqtt-job-status-paused": "Paused",
   "checked-with-date": "checked {{relativeTime}}",
-  "create-source": "Create source"
+  "create-source": "Create source",
+  "validation-error-field-required": "You must enter a value in this field",
+  "form-host-name": "Host name",
+  "form-host-name-placeholder": "Which broker you want to connect to? E.g., mymqqtbroker.com",
+  "form-port": "Port",
+  "form-port-placeholder": "Enter port",
+  "form-username": "Username",
+  "form-username-placeholder": "What is your username?",
+  "form-password": "Password",
+  "form-password-placeholder": "What is your password?",
+  "form-source-external-id": "Source external ID",
+  "form-source-external-id-placeholder": "Enter a unique identifier",
+  "form-protocol-version": "Protocol version",
+  "form-protocol-version-placeholder": "Select a protocol version"
 }
