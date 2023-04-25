@@ -6,18 +6,23 @@ import { AnnotationData, AnnotationModel, AnnotationsObjectDetection } from '@co
 import { Image360FileDescriptor } from '@reveal/data-providers';
 import assert from 'assert';
 
-import { Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
 import { PolygonAnnotationData } from './PolygonAnnotationData';
+import { Image360Annotation } from './Image360Annotation';
+import { Image360AnnotationAppearance } from './types';
 
 type FaceType = Image360FileDescriptor['face'];
 
-export class ImageAnnotationObject {
+export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
 
   private readonly _mesh: Mesh;
   private readonly _material: MeshBasicMaterial;
+
+  private _defaultAppearance: Image360AnnotationAppearance = {};
+  private _appearance: Image360AnnotationAppearance = {};
 
   get annotation(): AnnotationModel {
     return this._annotation;
@@ -80,19 +85,48 @@ export class ImageAnnotationObject {
     return this._mesh;
   }
 
-  public getMaterial(): MeshBasicMaterial {
-    return this._material;
+  public updateMaterial(): void {
+    this._material.color = this._defaultAppearance.color ?? getDefaultColor();
+    this._material.visible = this._defaultAppearance.visibility ?? true;
+
+    if (this._appearance.color !== undefined) {
+      this._material.color = this._appearance.color;
+    }
+
+    if (this._appearance.visibility !== undefined) {
+      this._material.visible = this._appearance.visibility;
+    }
+
+    this._material.needsUpdate = true;
+  }
+
+  public setDefaultStyle(appearance: Image360AnnotationAppearance) {
+    this._defaultAppearance = appearance;
+  }
+
+  public setColor(color?: Color): void {
+    this._appearance.color = color;
+    this.updateMaterial();
+  }
+
+  public setVisibility(visible?: boolean): void {
+    this._appearance.visibility = visible;
+    this.updateMaterial();
   }
 }
 
 function createMaterial(): MeshBasicMaterial {
   return new MeshBasicMaterial({
-    color: 0xffff00,
+    color: getDefaultColor(),
     side: DoubleSide,
     depthTest: false,
     opacity: 0.5,
     transparent: true
   });
+}
+
+function getDefaultColor() {
+  return new Color(1, 1, 0);
 }
 
 function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {

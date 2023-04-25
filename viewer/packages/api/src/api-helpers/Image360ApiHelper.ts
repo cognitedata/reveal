@@ -48,7 +48,6 @@ export class Image360ApiHelper {
     enter360Image: (event: PointerEvent) => Promise<void>;
     exit360ImageOnEscapeKey: (event: KeyboardEvent) => void;
     updateHoverStateOnRender: () => void;
-    updateAnnotationStylingOnRender: () => void;
   };
 
   private readonly _debouncePreLoad = debounce(
@@ -114,22 +113,13 @@ export class Image360ApiHelper {
       this.setHoverIconOnIntersect(lastOffset.offsetX, lastOffset.offsetY);
     };
 
-    const updateAnnotationStylingOnRender = () => {
-      const currentCollection = this._interactionState.enteredCollection;
-      if (currentCollection !== undefined && currentCollection.needsStyleUpdate) {
-        currentCollection.stylingTracker.applyStyles(this._interactionState.revisionSelectedForEntry!.annotations);
-      }
-    };
-
     onBeforeSceneRendered.subscribe(updateHoverStateOnRender);
-    onBeforeSceneRendered.subscribe(updateAnnotationStylingOnRender);
 
     this._eventHandlers = {
       setHoverIconEventHandler,
       enter360Image,
       exit360ImageOnEscapeKey,
-      updateHoverStateOnRender,
-      updateAnnotationStylingOnRender
+      updateHoverStateOnRender
     };
   }
 
@@ -236,8 +226,6 @@ export class Image360ApiHelper {
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
-
-    imageCollection.stylingTracker.applyStyles(revisionToEnter.annotations);
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
@@ -405,7 +393,6 @@ export class Image360ApiHelper {
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._eventHandlers.updateHoverStateOnRender);
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._eventHandlers.updateAnnotationStylingOnRender);
     this._domElement.removeEventListener('mousemove', this._eventHandlers.setHoverIconEventHandler);
     this._domElement.addEventListener('pointerup', this._eventHandlers.enter360Image);
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);

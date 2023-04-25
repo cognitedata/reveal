@@ -14,8 +14,7 @@ import {
 } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
-import { Image360AnnotationAppearanceEdit, Image360AnnotationFilter } from '../annotation-styling/types';
-import { AnnotationStyleTracker } from '../annotation-styling/AnnotationStyleTracker';
+import { Image360AnnotationAppearance } from '../annotation/types';
 
 type Image360Events = 'image360Entered' | 'image360Exited' | 'image360AnnotationHovered' | 'image360AnnotationClicked';
 
@@ -46,7 +45,6 @@ export class DefaultImage360Collection implements Image360Collection {
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
-  private readonly _styleAssignmentTracker: AnnotationStyleTracker = new AnnotationStyleTracker();
 
   get id(): string {
     return this._collectionId;
@@ -180,11 +178,11 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   public fireHoverEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationHovered.fire(annotationObject.annotation);
+    this._events.annotationHovered.fire(annotationObject);
   }
 
   public fireClickEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationClicked.fire(annotationObject.annotation);
+    this._events.annotationClicked.fire(annotationObject);
   }
 
   public setSelectedVisibility(visible: boolean): void {
@@ -212,34 +210,15 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._needsRedraw;
   }
 
-  get needsStyleUpdate(): boolean {
-    return this._styleAssignmentTracker.needsUpdate;
-  }
-
   resetRedraw(): void {
     this._needsRedraw = false;
   }
 
-  get stylingTracker(): AnnotationStyleTracker {
-    return this._styleAssignmentTracker;
-  }
-
-  public setDefaultStyle(appearanceEdit: Image360AnnotationAppearanceEdit): void {
-    this._styleAssignmentTracker.setDefaultStyle(appearanceEdit);
-  }
-
-  public assignAnnotationStyle(
-    filter: Image360AnnotationFilter,
-    appearanceEdit: Image360AnnotationAppearanceEdit
-  ): void {
-    this._styleAssignmentTracker.assignAnnotationStyleEdit(filter, appearanceEdit);
-  }
-
-  public unassignAnnotationStyle(filter: Image360AnnotationFilter): void {
-    this._styleAssignmentTracker.unassignAnnotationStyleEdit(filter);
-  }
-
-  public removeAllAnnotationStyles(): void {
-    this._styleAssignmentTracker.clear();
+  public setDefaultStyle(appearanceEdit: Image360AnnotationAppearance): void {
+    this.image360Entities.forEach(entity =>
+      entity
+        .getRevisions()
+        .forEach(revision => revision.annotations.forEach(annotation => annotation.setDefaultStyle(appearanceEdit)))
+    );
   }
 }

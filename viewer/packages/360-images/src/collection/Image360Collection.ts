@@ -9,7 +9,8 @@ import {
   Image360EnteredDelegate,
   Image360ExitedDelegate
 } from '../types';
-import { Image360AnnotationAppearanceEdit, Image360AnnotationFilter } from '../annotation-styling/types';
+
+import { Image360AnnotationAppearance } from '../annotation/types';
 
 /**
  * A wrapper that represents a set of 360 images.
@@ -66,20 +67,5 @@ export interface Image360Collection {
   /**
    * Assign a default style which affects all annotations
    */
-  setDefaultStyle(appearanceEdit: Image360AnnotationAppearanceEdit): void;
-
-  /**
-   * Assign a style to a subset of annotations
-   */
-  assignAnnotationStyle(filter: Image360AnnotationFilter, appearanceEdit: Image360AnnotationAppearanceEdit): void;
-
-  /**
-   * Unassign previously assigned style
-   */
-  unassignAnnotationStyle(filter: Image360AnnotationFilter): void;
-
-  /**
-   * Removes all previously assigned styles, but not the default style
-   */
-  removeAllAnnotationStyles(): void;
+  setDefaultStyle(appearance: Image360AnnotationAppearance): void;
 }
