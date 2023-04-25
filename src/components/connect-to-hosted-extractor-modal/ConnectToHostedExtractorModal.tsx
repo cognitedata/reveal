@@ -192,7 +192,7 @@ export const ConnectToHostedExtractorModal = ({
       visible={visible}
       subtitle={t(`${modalStep}-step-subtitle`)}
       chip="Settings"
-      title={t('connect-cdf-to', { extractor: extractor?.name })}
+      title={t('connect-cdf-to-mqtt-broker')}
       onCancel={onCancel}
       hideFooter
     >

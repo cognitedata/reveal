@@ -61,7 +61,7 @@
   "use-extractor-for-with-colon": "Use {{extractor}} for:",
   "set-up-hosted-extractor": "Set up extractor",
   "connect-to-hosted-extractor": "Connect to {{extractor}}",
-  "connect-cdf-to": "Connect CDF to {{extractor}} broker",
+  "connect-cdf-to-mqtt-broker": "Connect CDF to MQTT broker",
   "topic-filters": "Topic filters",
   "authorisation": "Authorisation",
   "cancel": "Cancel",
