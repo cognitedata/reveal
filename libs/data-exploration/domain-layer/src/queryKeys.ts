@@ -87,14 +87,18 @@ export const queryKeys = {
 
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,
-  eventsMetadataValues: (metadataKey: string, query?: string, filter?: any) =>
+  eventsMetadataValues: (
+    metadataKey: string,
+    query?: string,
+    advancedFilter?: any
+  ) =>
     [
       ...queryKeys.events(),
       'metadata',
       'values',
       metadataKey,
       query,
-      filter,
+      advancedFilter,
     ] as const,
   eventsUniqueValues: (
     property: string,
@@ -114,8 +118,8 @@ export const queryKeys = {
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || []), 'aggregate'] as const,
-  eventsMetadata: (query?: string, filter?: any) =>
-    [...queryKeys.events(), 'metadata', 'keys', query, filter] as const,
+  eventsMetadata: (query?: string, advancedFilter?: any) =>
+    [...queryKeys.events(), 'metadata', 'keys', query, advancedFilter] as const,
 
   // ASSETS
   assets: () => [...queryKeys.all, 'assets'] as const,

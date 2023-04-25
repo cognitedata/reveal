@@ -117,7 +117,10 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
               metadata: newMetadata,
             })
           }
-          useAggregateMetadataValues={useEventsMetadataValuesAggregateQuery}
+          useAggregateMetadataValues={(metadataKey) =>
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useEventsMetadataValuesAggregateQuery({ metadataKey })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

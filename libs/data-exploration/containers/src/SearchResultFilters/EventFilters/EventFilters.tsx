@@ -78,6 +78,8 @@ export const EventFilters: React.FC<FilterProps> = ({
           }
         />
         <MetadataFilter.Events
+          query={query}
+          filter={filter.event}
           values={filter.event.metadata}
           onChange={(newMetadata) => {
             onFilterChange('event', {

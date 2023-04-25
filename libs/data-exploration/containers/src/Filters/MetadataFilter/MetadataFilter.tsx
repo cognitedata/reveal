@@ -12,8 +12,8 @@ import {
   useAssetsMetadataFilterOptions,
   useAssetsMetadataValuesOptionsQuery,
   useDocumentMetadataValuesOptionsQuery,
+  useEventsFilterOptionValues,
   useDocumentsMetadataFilterOptions,
-  useEventsMetadataKeysAggregateQuery,
   useEventsMetadataValuesOptionsQuery,
   useSequenceMetadataFilterOptions,
   useSequenceMetadataValuesOptionsQuery,
@@ -28,7 +28,6 @@ import {
 } from '@data-exploration/components';
 import { BaseNestedFilterProps } from '../types';
 import {
-  transformMetadataKeysToOptions,
   transformMetadataSelectionChange,
   transformMetadataValues,
 } from './utils';
@@ -103,23 +102,24 @@ const AssetsMetadataFilter = (
 const EventsMetadataFilter = (
   props: BaseNestedFilterProps<InternalEventsFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [query, setQuery] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useEventsMetadataKeysAggregateQuery(
+  const { options, isLoading, isError } = useEventsFilterOptionValues({
     query,
-    undefined,
-    { keepPreviousData: true }
-  );
-
-  const options = transformMetadataKeysToOptions(data);
+    searchQuery: props.query,
+    filter: props.filter,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
+      onSearchInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
-      useCustomMetadataValuesQuery={useEventsMetadataValuesOptionsQuery()}
+      useCustomMetadataValuesQuery={useEventsMetadataValuesOptionsQuery({
+        searchQuery: props.query,
+        filter: props.filter,
+      })}
       {...props}
     />
   );
