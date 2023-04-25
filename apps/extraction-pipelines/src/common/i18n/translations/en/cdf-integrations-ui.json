@@ -196,5 +196,12 @@
   "value": "Value",
   "self-hosted-extractors": "Self-hosted extractors",
   "hosted-extractors": "Hosted extractors",
-  "insight": "Insight"
+  "insight": "Insight",
+  "extractor-type": "Extractor type",
+  "hosted-mqtt-extractor": "Hosted MQTT Extractor",
+  "scheduled-to-run": "Scheduled to run",
+  "continuously": "Continuously",
+  "errors-in-the-last-30-days": "Errors in the last 30 days",
+  "error_one": "1 error",
+  "error_other": "{{count}} errors"
 }

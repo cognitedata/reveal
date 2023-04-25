@@ -1,14 +1,17 @@
 import React from 'react';
 
 import { SecondaryTopbar } from '@cognite/cdf-utilities';
+import { Button, Dropdown, Flex, Loader, Tabs } from '@cognite/cogs.js';
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { StyledHeadingContainer } from 'components/extpipe/ExtpipeHeading';
-import { PageWrapperColumn, StyledPageContainer } from 'components/styled';
-import { useMQTTSource } from 'hooks/hostedExtractors';
-import { Button, Dropdown, Flex, Tabs } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
+import { StyledHeadingContainer } from 'components/extpipe/ExtpipeHeading';
+import { StyledPageContainer } from 'components/styled';
+import { useMQTTSource } from 'hooks/hostedExtractors';
+
+import { HostedExtractionPipelineInsight } from './HostedExtractionPipelineInsight';
+import { HostedExtractionPipelineOverview } from './HostedExtractionPipelineOverview';
 
 export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const { t } = useTranslation();
@@ -20,7 +23,15 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams();
   const detailsTab = searchParams.get('detailsTab') ?? 'overview';
 
-  const { data: source } = useMQTTSource(externalId);
+  const { data: source, isFetched } = useMQTTSource(externalId);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (!source) {
+    return <>not found</>;
+  }
 
   return (
     <StyledPageContainer>
@@ -54,7 +65,13 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
           title={externalId}
         />
       </StyledHeadingContainer>
-      <PageWrapperColumn>{source?.externalId}</PageWrapperColumn>
+      <Content>
+        {detailsTab === 'insight' ? (
+          <HostedExtractionPipelineInsight source={source} />
+        ) : (
+          <HostedExtractionPipelineOverview source={source} />
+        )}
+      </Content>
     </StyledPageContainer>
   );
 };
@@ -66,4 +83,10 @@ const TabsContainer = styled.div`
   .rc-tabs-nav {
     height: 100%;
   }
+`;
+
+const Content = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 24px;
 `;
