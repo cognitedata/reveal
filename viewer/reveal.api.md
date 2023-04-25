@@ -787,26 +787,26 @@ export interface Image360 {
 }
 
 // @public
+export interface Image360Annotation {
+    readonly annotation: AnnotationModel;
+    setColor(color?: Color): void;
+    setVisibility(visible?: boolean): void;
+}
+
+// @public
 export type Image360AnnotationAppearance = {
-    color: Color;
-    visible: boolean;
+    color?: Color;
+    visibility?: boolean;
 };
 
 // @public
-export type Image360AnnotationAppearanceEdit = Partial<Image360AnnotationAppearance>;
+export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation) => void;
 
 // @public
-export type Image360AnnotationClickedDelegate = (annotation: AnnotationModel) => void;
-
-// @public
-export type Image360AnnotationFilter = (annotation: AnnotationModel) => boolean;
-
-// @public
-export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
+export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation) => void;
 
 // @public
 export interface Image360Collection {
-    assignAnnotationStyle(filter: Image360AnnotationFilter, appearanceEdit: Image360AnnotationAppearanceEdit): void;
     readonly image360Entities: Image360[];
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
@@ -822,12 +822,10 @@ export interface Image360Collection {
     on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
     // (undocumented)
     on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
-    removeAllAnnotationStyles(): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
-    setDefaultStyle(appearanceEdit: Image360AnnotationAppearanceEdit): void;
+    setDefaultStyle(appearance: Image360AnnotationAppearance): void;
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;
-    unassignAnnotationStyle(filter: Image360AnnotationFilter): void;
 }
 
 // @public
@@ -845,6 +843,7 @@ export type Image360Metadata = {
 
 // @public
 export interface Image360Revision {
+    annotations: Image360Annotation[];
     readonly date: Date | undefined;
 }
 
