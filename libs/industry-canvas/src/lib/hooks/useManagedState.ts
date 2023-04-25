@@ -347,30 +347,32 @@ const useManagedState = (
       }
 
       return Promise.all(
-        addDimensionsIfNotExists(unifiedViewer, containerReferences).map(
-          async (containerReference) => {
-            const containerConfig = await resolveContainerConfig(
-              sdk,
-              containerReference
-            );
+        addDimensionsIfNotExists(
+          unifiedViewer,
+          containerReferences,
+          canvasState.canvasAnnotations
+        ).map(async (containerReference) => {
+          const containerConfig = await resolveContainerConfig(
+            sdk,
+            containerReference
+          );
 
-            pushState((prevState: IndustryCanvasState) => {
-              return {
-                ...prevState,
-                container: {
-                  ...prevState.container,
-                  children: [
-                    ...(prevState.container.children ?? []),
-                    containerConfig,
-                  ],
-                },
-              };
-            });
-          }
-        )
+          pushState((prevState: IndustryCanvasState) => {
+            return {
+              ...prevState,
+              container: {
+                ...prevState.container,
+                children: [
+                  ...(prevState.container.children ?? []),
+                  containerConfig,
+                ],
+              },
+            };
+          });
+        })
       );
     },
-    [unifiedViewer, sdk, pushState]
+    [unifiedViewer, sdk, pushState, canvasState.canvasAnnotations]
   );
 
   const removeContainerById = useCallback(

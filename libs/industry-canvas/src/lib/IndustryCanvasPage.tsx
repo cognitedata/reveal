@@ -17,7 +17,7 @@ import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 import { IndustryCanvas } from './IndustryCanvas';
 import styled from 'styled-components';
 import { TOAST_POSITION } from './constants';
-import { useState, useEffect, KeyboardEventHandler } from 'react';
+import { useState, useEffect, KeyboardEventHandler, useCallback } from 'react';
 import useManagedState from './hooks/useManagedState';
 import { CanvasTitle } from './components/CanvasTitle';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -86,20 +86,21 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     );
   }, [unifiedViewerRef]);
 
-  const onAddContainerReferences = (
-    containerReferences: ContainerReference[]
-  ) => {
-    addContainerReferences(containerReferences);
-    toast.success(
-      <div>
-        <h4>Resource(s) added to your canvas</h4>
-      </div>,
-      {
-        toastId: `canvas-file-added-${uuid()}`,
-        position: TOAST_POSITION,
-      }
-    );
-  };
+  const onAddContainerReferences = useCallback(
+    (containerReferences: ContainerReference[]) => {
+      addContainerReferences(containerReferences);
+      toast.success(
+        <div>
+          <h4>Resource(s) added to your canvas</h4>
+        </div>,
+        {
+          toastId: `canvas-file-added-${uuid()}`,
+          position: TOAST_POSITION,
+        }
+      );
+    },
+    [addContainerReferences]
+  );
 
   const onAddResourcePress = () => {
     openResourceSelector({

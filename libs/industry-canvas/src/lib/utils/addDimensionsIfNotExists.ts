@@ -1,10 +1,11 @@
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
-import { ContainerReference } from '../types';
+import { CanvasAnnotation, ContainerReference } from '../types';
 import addDimensionsToContainerReference from './addDimensionsToContainerReference';
 
 const addDimensionsIfNotExists = (
   unifiedViewer: UnifiedViewer,
-  containerReferences: ContainerReference[]
+  containerReferences: ContainerReference[],
+  canvasAnnotations: CanvasAnnotation[]
 ): ContainerReference[] => {
   let maxX: number | undefined = undefined;
 
@@ -20,6 +21,7 @@ const addDimensionsIfNotExists = (
       addDimensionsToContainerReference(
         unifiedViewer,
         containerReference,
+        canvasAnnotations,
         maxX
       );
     maxX = nextMaxX;
