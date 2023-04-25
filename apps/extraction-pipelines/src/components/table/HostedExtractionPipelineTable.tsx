@@ -11,12 +11,20 @@ import {
 import { useTranslation } from 'common';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 import HostedExtractionPipelineExternalId from 'components/extpipes/cols/HostedExtractionPipelineExternalId';
-import { ReadMQTTSource, useMQTTSources } from 'hooks/hostedExtractors';
-import { dateSorter, getContainer, stringSorter } from 'utils/utils';
+import {
+  MQTTSourceWithJobMetrics,
+  useMQTTSourcesWithJobMetrics,
+} from 'hooks/hostedExtractors';
+import {
+  dateSorter,
+  getContainer,
+  numberSorter,
+  stringSorter,
+} from 'utils/utils';
 
 export type HostedExtractionPipelineListTableRecord = {
   key: string;
-} & ReadMQTTSource;
+} & MQTTSourceWithJobMetrics;
 
 type HostedExtractionPipelineTableProps = {
   search?: string;
@@ -28,7 +36,7 @@ const HostedExtractionPipelineTable = ({
   const { t } = useTranslation();
 
   const { data: sourcesData, isFetched: didFetchMQTTSources } =
-    useMQTTSources();
+    useMQTTSourcesWithJobMetrics();
 
   const sources = useMemo(
     () => sourcesData?.map((s) => ({ ...s, key: s.externalId })),
@@ -55,6 +63,17 @@ const HostedExtractionPipelineTable = ({
       ),
       sorter: (recordA, recordB) =>
         stringSorter(recordA.externalId, recordB.externalId),
+    },
+    {
+      title: t('throughput'),
+      dataIndex: 'throughput',
+      key: 'throughput',
+      render: (value) =>
+        t('datapoints-per-hour', {
+          count: value,
+        }),
+      sorter: (recordA, recordB) =>
+        numberSorter(recordA.throughput, recordB.throughput),
     },
     {
       title: t('last-modified'),

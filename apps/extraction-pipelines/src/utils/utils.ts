@@ -41,3 +41,7 @@ export const dateSorter = (dateA: number, dateB: number) => {
 export const stringSorter = (strA: string, strB: string) => {
   return strA.localeCompare(strB);
 };
+
+export const numberSorter = (a: number, b: number) => {
+  return a - b;
+};
