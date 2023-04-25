@@ -17,7 +17,7 @@ import {
   useEventsMetadataValuesOptionsQuery,
   useSequenceMetadataFilterOptions,
   useSequenceMetadataValuesOptionsQuery,
-  useTimeseriesMetadataKeysAggregateQuery,
+  useTimeseriesMetadataFilterOptions,
   useTimeseriesMetadataValuesOptionsQuery,
 } from '@data-exploration-lib/domain-layer';
 import {
@@ -128,21 +128,22 @@ const EventsMetadataFilter = (
 const TimeseriesMetadataFilter = (
   props: BaseNestedFilterProps<InternalTimeseriesFilters>
 ) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [query, setQuery] = useDebouncedState<string>();
 
-  const { data, isLoading, isError } = useTimeseriesMetadataKeysAggregateQuery(
+  const { options, isLoading, isError } = useTimeseriesMetadataFilterOptions({
     query,
-    undefined,
-    { keepPreviousData: true }
-  );
-
-  const options = transformMetadataKeysToOptions(data);
+    filter: props.filter,
+    searchQuery: props.query,
+  });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={(newValue) => setQuery(newValue)}
-      useCustomMetadataValuesQuery={useTimeseriesMetadataValuesOptionsQuery()}
+      onSearchInputChange={setQuery}
+      useCustomMetadataValuesQuery={useTimeseriesMetadataValuesOptionsQuery({
+        filter: props.filter,
+        searchQuery: props.query,
+      })}
       isError={isError}
       isLoading={isLoading}
       {...props}

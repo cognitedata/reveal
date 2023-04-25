@@ -4,33 +4,41 @@ import {
   getTimeseriesMetadataValuesAggregate,
   TimeseriesMetadataAggregateResponse,
   queryKeys,
-  transformNewFilterToOldFilter,
+  TimeseriesProperties,
+  AdvancedFilter,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import {
-  InternalTimeseriesFilters,
-  OldTimeseriesFilters,
-} from '@data-exploration-lib/core';
 
-export const useTimeseriesMetadataValuesAggregateQuery = (
-  metadataKey?: string | null,
-  query?: string,
-  filter?: InternalTimeseriesFilters | OldTimeseriesFilters,
+interface Props {
+  metadataKey?: string | null;
+  query?: string;
+  advancedFilter?: AdvancedFilter<TimeseriesProperties>;
   options?: UseQueryOptions<
     TimeseriesMetadataAggregateResponse[],
     unknown,
     TimeseriesMetadataAggregateResponse[],
     any
-  >
-) => {
+  >;
+}
+
+export const useTimeseriesMetadataValuesAggregateQuery = ({
+  metadataKey,
+  query,
+  advancedFilter,
+  options,
+}: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesMetadataValues(String(metadataKey), query, filter),
+    queryKeys.timeseriesMetadataValues(
+      String(metadataKey),
+      query,
+      advancedFilter
+    ),
     () => {
       return getTimeseriesMetadataValuesAggregate(sdk, String(metadataKey), {
-        filter: transformNewFilterToOldFilter(filter),
+        advancedFilter,
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
