@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
-import { Badge } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import { StyledTooltip } from 'components/styled';
 import { useTranslation } from 'common';
 import { RunStatus } from 'model/Runs';
@@ -24,10 +24,9 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
     case 'success':
       return (
         <StyledTooltip content={`${t('latest-run-status')}: ${status}`}>
-          <Badge
-            className="cogs-badge badge-success"
-            text={status}
-            background="transparent"
+          <Chip
+            label={status}
+            size="x-small"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
             {...rest}
@@ -38,10 +37,9 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
       const tip = tooltipText ?? t('latest-run-err-message-not-set');
       return (
         <StyledTooltip content={tip}>
-          <Badge
-            className="cogs-badge badge-fail"
-            text={status}
-            background="danger"
+          <Chip
+            label={status}
+            size="x-small"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
             {...rest}
@@ -52,9 +50,9 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
     case 'seen':
       return (
         <StyledTooltip content={`${t('latest-run-status')}: ${status}`}>
-          <Badge
-            text={status}
-            background="greyscale-grey2"
+          <Chip
+            label={status}
+            size="x-small"
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}
             {...rest}

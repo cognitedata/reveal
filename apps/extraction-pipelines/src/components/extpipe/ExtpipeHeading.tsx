@@ -105,7 +105,7 @@ export const ExtpipeHeading = () => {
                       setDropdownVisible(false);
                       setIsDeleteDialogOpen(true);
                     }}
-                    type="ghost-danger"
+                    type="ghost-destructive"
                     data-testid="delete-menu-item"
                   >
                     {t('delete-ext-pipeline')}
@@ -159,7 +159,7 @@ const PageNav = styled.ul`
     .tab-link {
       display: flex;
       align-items: center;
-      color: ${Colors.black};
+      color: ${Colors['decorative--grayscale--black']};
       padding: 4px 1rem 0;
       font-weight: bold;
       border-bottom: 3px solid transparent;

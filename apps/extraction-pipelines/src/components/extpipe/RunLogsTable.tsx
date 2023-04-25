@@ -8,7 +8,7 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
-import { Graphic, Pagination } from '@cognite/cogs.js'; // OptionType, Select
+import { Pagination } from '@cognite/cogs.js'; // OptionType, Select
 import { DivFlex } from 'components/styled';
 
 import { ExternalLink } from 'components/links/ExternalLink';
@@ -88,7 +88,6 @@ export const RunLogsTable = ({ externalId }: Props) => {
 
   return page.length === 0 ? (
     <DivFlex align="center" direction="column">
-      <Graphic style={{ margin: '2rem 0' }} type="Search" />
       {reasonForNoRows}
       <p>&nbsp;</p>
     </DivFlex>

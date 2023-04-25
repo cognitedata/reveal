@@ -111,11 +111,11 @@ const StyledAutoComplete = styled(AutoComplete)`
   align-self: flex-start;
   margin-bottom: 1rem;
   .cogs-select__control--is-focused {
-    outline: ${Colors.primary} auto 0.0625rem;
+    outline: ${Colors['text-icon--interactive--default']} auto 0.0625rem;
     outline-offset: 0.0625rem;
   }
   .cogs-select__single-value {
-    color: ${Colors.black};
+    color: ${Colors['decorative--grayscale--black']};
   }
   .cogs-select__clear-indicator::after {
     display: none;

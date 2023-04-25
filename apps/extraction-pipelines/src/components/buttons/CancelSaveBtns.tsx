@@ -18,11 +18,7 @@ export const CancelSaveBtns = ({
   const { t } = useTranslation();
   return (
     <StyledButtonGroup>
-      <Button
-        variant="default"
-        onClick={onCancel}
-        data-testid={dateTestIdCancelBtn}
-      >
+      <Button onClick={onCancel} data-testid={dateTestIdCancelBtn}>
         {t('cancel')}
       </Button>
       <Button type="primary" onClick={onSave} data-testid={dateTestIdSaveBtn}>

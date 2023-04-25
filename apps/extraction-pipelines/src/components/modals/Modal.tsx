@@ -21,7 +21,7 @@ const StyledReactModal = styled((props) => (
   textarea {
     &.cogs-input {
       &.has-error {
-        border-color: ${Colors.danger};
+        border-color: ${Colors['text-icon--status-critical']};
       }
     }
   }

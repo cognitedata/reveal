@@ -48,7 +48,7 @@ export const DeleteDialog: FunctionComponent<Props> = ({
           {t('cancel')}
         </Button>
         <Button
-          type="danger"
+          type="destructive"
           disabled={isDisabled}
           onClick={doDelete}
           data-testid="delete-btn"

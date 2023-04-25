@@ -9,7 +9,7 @@ const Link = (props: LinkProps): JSX.Element => {
 };
 
 const StyledLink = styled(ReactRouterLink)`
-  color: ${Colors['text-icon--interactive-default']};
+  color: ${Colors['text-icon--interactive--default']};
 
   :hover {
     color: ${Colors['text-icon--interactive--hover']};

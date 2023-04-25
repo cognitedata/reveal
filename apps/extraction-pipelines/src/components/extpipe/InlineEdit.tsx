@@ -177,7 +177,7 @@ const InlineEdit = <Fields extends FieldValues>({
                   {actualValue && actualValue !== '' ? (
                     <span>{actualValue}</span>
                   ) : (
-                    <span style={{ color: Colors['greyscale-grey6'] }}>
+                    <span style={{ color: Colors['decorative--grayscale--600'] }}>
                       {t('no-field-added', { field: name })}
                     </span>
                   )}

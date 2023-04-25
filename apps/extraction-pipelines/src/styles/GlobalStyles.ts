@@ -1,5 +1,4 @@
 import { createGlobalStyle } from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import theme from './theme';
 
 const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
@@ -42,23 +41,6 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-select-dropdown-menu {
     margin-top: 0;
   }
-
-  .cogs-badge {
-    &.badge-success {
-      border: 0.125rem solid ${Colors.success} !important;
-      color: ${Colors['greyscale-grey9']} !important;
-      font-weight: bold;
-    }
-    &.badge-fail {
-      border: 0.125rem solid ${Colors.danger} !important;
-    }
-    span {
-      text-transform: lowercase !important;
-      &::first-letter {
-        text-transform: uppercase !important;
-      }
-    }
-  } 
 
   .extpipes-ui-style-scope [data-tippy-root] {
     .tippy-box {

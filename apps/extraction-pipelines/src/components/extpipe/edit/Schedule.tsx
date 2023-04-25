@@ -90,7 +90,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 };
 
 const StyledCronWrapper = styled.div`
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3']};
+  border-top: 0.0625rem solid ${Colors['decorative--grayscale--300']};
   display: flex;
   margin: 1rem 0 0 2rem;
   padding-top: 0.5rem;

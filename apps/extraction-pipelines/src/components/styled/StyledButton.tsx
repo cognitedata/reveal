@@ -17,12 +17,12 @@ export const ButtonPlaced = styled(Button)`
 `;
 
 export const SaveButton = (props: ButtonProps) => (
-  <Button type="primary" {...props} aria-label={SAVE} icon="Checkmark">
+  <Button type="primary" {...(props as any)} aria-label={SAVE} icon="Checkmark">
     {props.children}
   </Button>
 );
 export const CloseButton = (props: ButtonProps) => (
-  <Button type="secondary" {...props} aria-label={CLOSE} icon="Close">
+  <Button type="secondary" {...(props as any)} aria-label={CLOSE} icon="Close">
     {props.children}
   </Button>
 );
@@ -54,7 +54,7 @@ export const EditButton = styled((props: EditButtonProps) => (
         }
       }
       :hover {
-        background-color: ${Colors['midblue-7']};
+        background-color: ${Colors['decorative--blue--700']};
         .cogs-icon {
           &.cogs-icon-Edit {
             opacity: ${(p) => (p.showPencilIcon ? '1' : '0')};

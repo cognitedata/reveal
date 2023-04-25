@@ -15,7 +15,7 @@ export const InputWarningIcon = styled((props) => (
       }
       #Vector {
         path {
-          fill: ${Colors.black};
+          fill: ${Colors['decorative--grayscale--black']};
         }
       }
     }

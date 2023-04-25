@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Icon, Tag } from '@cognite/cogs.js';
+import { Icon, Chip } from '@cognite/cogs.js';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 import Schedule from 'components/extpipes/cols/Schedule';
 import {
@@ -109,7 +109,7 @@ export const RunScheduleConnection = ({
       {runsStatus === 'success' && (
         <CardInWrapper>
           <StyledTitleCard className="card-title">
-            <Tag color="success">{last30DaysSuccess}</Tag>
+            <Chip type="success" label={`${last30DaysSuccess}`} />
             {t('successful-runs-30-days')}
           </StyledTitleCard>
           {last30Days > 0 && (

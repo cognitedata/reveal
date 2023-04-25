@@ -29,8 +29,10 @@ const ExtpipesTableSearch = ({
       prefix={
         <Icon
           type="Search"
-          style={{
-            color: isInputFocus ? `${Colors['midblue-3']}` : 'inherit',
+          css={{
+            color: isInputFocus
+              ? `${Colors['decorative--blue--300']}`
+              : 'inherit',
           }}
         />
       }

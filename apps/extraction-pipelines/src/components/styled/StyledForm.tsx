@@ -11,14 +11,14 @@ export const CreateFormWrapper = styled.form`
   flex-direction: column;
 
   .error-message {
-    color: ${Colors.danger};
+    color: ${Colors['text-icon--status-critical']};
   }
   .cogs-input,
   .cogs-checkbox {
     width: ${(props: InputProps) =>
       props.inputWidth ? `${props.inputWidth}%` : '100%'};
     &[aria-invalid='true'] {
-      border-color: ${Colors.danger};
+      border-color: ${Colors['text-icon--status-critical']};
     }
     &:focus {
       box-shadow: none;
@@ -42,7 +42,7 @@ export const StyledLabel = styled.label`
 `;
 
 export const Hint = styled.span`
-  color: ${Colors['greyscale-grey8']};
+  color: ${Colors['decorative--grayscale--800']};
   margin-bottom: 0.5rem;
   display: block;
 `;
@@ -58,12 +58,12 @@ export const StyledTextArea = styled.textarea`
   height: inherit;
   padding-top: 0.5rem;
   &.has-error {
-    border-color: ${Colors.danger};
+    border-color: ${Colors['text-icon--status-critical']};
   }
 `;
 
 export const ErrorSpan = styled.span`
-  color: ${Colors.danger};
+  color: ${Colors['text-icon--status-critical']};
 `;
 export const StyledForm = styled((props) => (
   <PaddedGridForm {...props}>{props.children}</PaddedGridForm>

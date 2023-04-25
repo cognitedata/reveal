@@ -186,10 +186,10 @@ const TimeWrapper = styled(DivFlex)`
       .cogs-btn {
         padding: 0.5rem;
         height: 100%;
-        background-color: ${Colors.white};
-        border-top: 1px solid ${Colors['greyscale-grey5']};
-        border-right: 1px solid ${Colors['greyscale-grey5']};
-        border-bottom: 1px solid ${Colors['greyscale-grey5']};
+        background-color: ${Colors['decorative--grayscale--white']};
+        border-top: 1px solid ${Colors['decorative--grayscale--500']};
+        border-right: 1px solid ${Colors['decorative--grayscale--500']};
+        border-bottom: 1px solid ${Colors['decorative--grayscale--500']};
         &:hover {
           background-color: transparent;
         }

@@ -7,7 +7,6 @@ import { StyledTooltip, PageWrapperColumn } from 'components/styled';
 import ExtpipesTable from 'components/table/ExtpipesTable';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
-import { styleScope } from 'styles/styleScope';
 import { CreateExtpipe } from 'pages/create/CreateExtpipe';
 
 import { trackUsage } from 'utils/Metrics';
@@ -25,12 +24,11 @@ const CreateExtpipeModal = (props: {
   return (
     <Modal
       visible={props.visible}
-      width={600}
+      size="large"
       closable
       onCancel={props.close}
-      appElement={document.getElementsByClassName(styleScope).item(0)!}
       getContainer={getContainer}
-      footer={null}
+      hideFooter
       title={props.title}
     >
       <VerticalSpace />
@@ -70,7 +68,6 @@ const Extpipes: FunctionComponent<Props> = () => {
   const createExtpipeButton = (
     <StyledTooltip disabled={canEdit} content={t('no-create-access')}>
       <Button
-        variant="default"
         type="primary"
         icon="AddLarge"
         disabled={!canEdit}

@@ -22,7 +22,7 @@ export default function ConfigurationErrorFeedback({ error, onCreate }: Props) {
         <ErrorFeedback>
           {t('configuration-404')}
           {onCreate && (
-            <Button icon="AddLarge" onClick={onCreate} type="link">
+            <Button icon="AddLarge" onClick={onCreate} type="ghost-accent">
               {t('create-configuration')}
             </Button>
           )}

@@ -15,9 +15,9 @@ export const DAYS_7: Readonly<string> = '7D';
 export const DAYS_30: Readonly<string> = '30D';
 
 const Wrapper = styled(DivFlex)`
-  background-color: ${Colors.white};
+  background-color: ${Colors['decorative--grayscale--white']};
   border-radius: 4px;
-  border: 1px solid ${Colors['greyscale-grey5']};
+  border: 1px solid ${Colors['decorative--grayscale--500']};
   .visually-hidden {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -32,10 +32,10 @@ const Wrapper = styled(DivFlex)`
     padding: 0.4rem 0.9rem;
   }
   input[type='radio']:checked + label {
-    background-color: ${Colors['midblue-7']};
+    background-color: ${Colors['decorative--blue--700']};
   }
   input[type='radio']:focus + label {
-    box-shadow: 0 0 0 4px ${Colors['midblue-4']};
+    box-shadow: 0 0 0 4px ${Colors['decorative--blue--400']};
   }
 `;
 

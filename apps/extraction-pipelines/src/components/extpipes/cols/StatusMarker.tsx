@@ -5,8 +5,8 @@ import {
   Flex,
   Icon,
   IconType,
-  Label,
-  LabelVariants,
+  Chip,
+  ChipProps,
 } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { RunStatus } from 'model/Runs';
@@ -47,7 +47,9 @@ const getIconColor = (status?: RunStatus): string => {
   }
 };
 
-const getVariant = (status?: RunStatus | 'not-activated'): LabelVariants => {
+const getVariant = (
+  status?: RunStatus | 'not-activated'
+): ChipProps['type'] => {
   switch (status) {
     case 'success':
       return 'success';
@@ -58,7 +60,7 @@ const getVariant = (status?: RunStatus | 'not-activated'): LabelVariants => {
     case 'not-activated':
       return 'default';
     default:
-      return 'unknown';
+      return 'default';
   }
 };
 
@@ -74,14 +76,13 @@ const StatusMarker: FunctionComponent<Props> = ({
   const variant = getVariant(status);
 
   return (
-    <Label
-      size="medium"
-      variant={variant}
+    <Chip
+      size="small"
+      type={variant}
       data-testid={`status-marker-${dataTestId}`}
+      label={t(status)}
       {...rest}
-    >
-      {t(status)}
-    </Label>
+    />
   );
 };
 
@@ -106,7 +107,7 @@ export const LastRunStatusMarker: FunctionComponent<
     const iconColor = getIconColor(lastRun.status);
     return (
       <Flex gap={8} alignItems="center">
-        <Icon type={iconType} style={{ color: iconColor }} />
+        <Icon type={iconType} css={{ color: iconColor }} />
         <RelativeTimeWithTooltip id="last-run" time={lastRun.createdTime} />
       </Flex>
     );
