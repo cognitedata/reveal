@@ -17,6 +17,7 @@ import {
   DataModelTypeDefsType,
   mixerApiBuiltInTypes,
 } from '@platypus/platypus-core';
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
 
 const DEBUG = _DEBUG.extend('js-sdk:generate');
 
@@ -89,16 +90,24 @@ class SolutionGenerateJSCommand extends CLICommand {
       DEBUG('Generating the FDM Query Client in JS/TS...');
 
       const generatedPath = path.join(__dirname, 'generated');
-      await generate({
-        endpoint: getFdmV3MixerApiService().getDataModelEndpointUrl(
-          args['space'],
-          args['external-id'],
-          args['version']
-        ),
-        headers: {
-          Authorization: `Bearer ${token}`,
+
+      // get client schemagetFdmV3MixerApiService().getDataModelEndpointUrl(
+
+      DEBUG('Fetching Introspection...');
+      const result = await getFdmV3MixerApiService().runQuery({
+        space: args['space'],
+        dataModelId: args['external-id'],
+        schemaVersion: args['version'],
+        graphQlParams: {
+          query: getIntrospectionQuery(),
         },
-        useGet: true,
+      });
+      DEBUG('Fetching Client from GenQL...');
+      await generate({
+        // yuck, but this is the most consistent way to pass in a schema string to the library
+        // cant use the endpoint field, because the library uses fetch, which does not do gzip decompression
+        // and there is no way to customize it https://github.com/node-fetch/node-fetch/issues/93
+        schema: printSchema(buildClientSchema(result.data)),
         output: generatedPath,
         verbose: args['verbose'],
         scalarTypes: mixerApiBuiltInTypes
