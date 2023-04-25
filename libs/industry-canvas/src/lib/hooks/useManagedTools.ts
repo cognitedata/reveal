@@ -166,22 +166,21 @@ const DEFAULT_TOOL_OPTIONS: ToolsOptionsByType = {
   },
 };
 
+export type UseManagedToolsReturnType = {
+  toolOptions: ToolOptions;
+  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
+};
+
 const useManagedTools = ({
-  initialTool,
+  tool,
   selectedCanvasAnnotation,
   onUpdateRequest,
 }: {
-  initialTool: ToolType;
+  tool: ToolType;
   initialToolsOptionsByType?: ToolsOptionsByType;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   onUpdateRequest: UseManagedStateReturnType['onUpdateRequest'];
-}): {
-  tool: ToolType;
-  toolOptions: ToolOptions;
-  setTool: (nextTool: ToolType, options?: ToolOptions) => void;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
-} => {
-  const [tool, setTool] = useState<ToolType>(initialTool);
+}): UseManagedToolsReturnType => {
   const [toolsOptionsByType] = useState<ToolsOptionsByType>({
     ...DEFAULT_TOOL_OPTIONS,
   });
@@ -219,7 +218,7 @@ const useManagedTools = ({
             },
           };
 
-          if (selectedCanvasAnnotation) {
+          if (selectedCanvasAnnotation !== undefined) {
             onUpdateRequest({
               containers: [],
               annotations: [
@@ -274,12 +273,10 @@ const useManagedTools = ({
     }
 
     throw new Error('Unsupported tool type: ' + tool);
-  }, [tool, activeAnnotationStyleByType]);
+  }, [tool, activeAnnotationStyleByType, toolsOptionsByType]);
 
   return {
-    tool,
     toolOptions,
-    setTool,
     onUpdateAnnotationStyleByType,
   };
 };

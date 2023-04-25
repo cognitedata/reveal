@@ -30,7 +30,7 @@ export const getStyledAnnotationFromAnnotation = (
     ...annotation,
     isDraggable: false,
     isResizable: false,
-    isSelectable: true,
+    isSelectable: false,
     style: {
       ...(annotation.style || {}),
       strokeWidth: 2,

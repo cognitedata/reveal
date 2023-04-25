@@ -5,20 +5,20 @@ import ReactUnifiedViewer, {
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useCallback, useMemo } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
-import useManagedTools from './hooks/useManagedTools';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
 import ZoomControls from './components/ZoomControls';
 import { ZOOM_TO_FIT_MARGIN } from './constants';
 import { isDevelopment } from '@cognite/cdf-utilities';
-import { CanvasAnnotation } from './types';
+import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
 import { useSDK } from '@cognite/sdk-provider';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
+import { UseManagedToolsReturnType } from './hooks/useManagedTools';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -27,6 +27,10 @@ export type IndustryCanvasProps = {
   onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
   onRef?: (ref: UnifiedViewer | null) => void;
   viewerRef: UnifiedViewer | null;
+  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedCanvasAnnotation: CanvasAnnotation | undefined;
+  tool: ToolType;
+  setTool: Dispatch<SetStateAction<ToolType>>;
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -37,7 +41,11 @@ export type IndustryCanvasProps = {
   | 'removeContainerById'
   | 'interactionState'
   | 'setInteractionState'
->;
+> &
+  Pick<
+    UseManagedToolsReturnType,
+    'toolOptions' | 'onUpdateAnnotationStyleByType'
+  >;
 
 export const IndustryCanvas = ({
   id,
@@ -51,43 +59,25 @@ export const IndustryCanvas = ({
   removeContainerById,
   interactionState,
   setInteractionState,
+  selectedContainer,
+  selectedCanvasAnnotation,
   onAddContainerReferences,
   onRef,
   viewerRef,
+  tool,
+  setTool,
+  onUpdateAnnotationStyleByType,
+  toolOptions,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
-
-  const selectedCanvasAnnotation = useMemo(
-    () =>
-      interactionState.selectedAnnotationId
-        ? canvasAnnotations.find(
-            (annotation) =>
-              annotation.id === interactionState.selectedAnnotationId
-          )
-        : undefined,
-    [canvasAnnotations, interactionState.selectedAnnotationId]
-  );
-
-  const clickedContainer = useMemo(() => {
-    return (container.children ?? []).find(
-      (child) => child.id === interactionState.clickedContainerId
-    );
-  }, [container.children, interactionState.clickedContainerId]);
-
-  const { tool, toolOptions, setTool, onUpdateAnnotationStyleByType } =
-    useManagedTools({
-      initialTool: ToolType.SELECT,
-      selectedCanvasAnnotation,
-      onUpdateRequest,
-    });
 
   const onClickContainerAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
       setInteractionState((prevInteractionState) => ({
         clickedContainerId: undefined,
         hoverId: undefined,
-        selectedAnnotationId:
-          prevInteractionState.selectedAnnotationId === annotation.id
+        clickedContainerAnnotationId:
+          prevInteractionState.clickedContainerAnnotationId === annotation.id
             ? undefined
             : annotation.id,
       })),
@@ -113,7 +103,7 @@ export const IndustryCanvas = ({
 
   const containerAnnotations = useContainerAnnotations({
     container,
-    selectedAnnotationId: interactionState.selectedAnnotationId,
+    selectedAnnotationId: interactionState.clickedContainerAnnotationId,
     hoverId: interactionState.hoverId,
     onClick: onClickContainerAnnotation,
     onMouseOver: onMouseOverContainerAnnotation,
@@ -123,16 +113,16 @@ export const IndustryCanvas = ({
   const selectedContainerAnnotation = useMemo(
     () =>
       containerAnnotations.find(
-        (annotation) => annotation.id === interactionState.selectedAnnotationId
+        (annotation) =>
+          annotation.id === interactionState.clickedContainerAnnotationId
       ),
-    [containerAnnotations, interactionState.selectedAnnotationId]
+    [containerAnnotations, interactionState.clickedContainerAnnotationId]
   );
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({
-      clickedContainerId: undefined,
       hoverId: undefined,
-      selectedAnnotationId: undefined,
+      clickedContainerAnnotationId: undefined,
     });
     onDeleteRequest({
       annotationIds:
@@ -144,7 +134,7 @@ export const IndustryCanvas = ({
   }, [selectedCanvasAnnotation, onDeleteRequest, setInteractionState]);
 
   const tooltips = useIndustryCanvasTooltips({
-    clickedContainer,
+    clickedContainer: selectedContainer,
     containerAnnotations,
     selectedContainerAnnotation,
     selectedCanvasAnnotation,
@@ -163,8 +153,7 @@ export const IndustryCanvas = ({
       return;
     }
     setInteractionState({
-      selectedAnnotationId: undefined,
-      clickedContainerId: undefined,
+      clickedContainerAnnotationId: undefined,
       hoverId: undefined,
     });
   }, [setInteractionState, tool]);
@@ -176,9 +165,8 @@ export const IndustryCanvas = ({
         onClick: (e: any, annotation: CanvasAnnotation) => {
           e.cancelBubble = true;
           setInteractionState({
-            clickedContainerId: undefined,
             hoverId: undefined,
-            selectedAnnotationId: annotation.id,
+            clickedContainerAnnotationId: annotation.id,
           });
         },
       })),
@@ -260,16 +248,16 @@ const FullHeightWrapper = styled.div`
 `;
 
 const BOTTOM_MARGIN = 20;
-const SIDE_MARGIN = isDevelopment() ? 70 : 20;
+const SIDE_MARGIN = 20;
 
 const ZoomControlsWrapper = styled.div`
   position: absolute;
   bottom: ${BOTTOM_MARGIN}px;
-  right: ${SIDE_MARGIN}px;
+  right: ${isDevelopment() ? 70 : SIDE_MARGIN}px;
 `;
 
 const ToolbarWrapper = styled.div`
   position: absolute;
-  bottom: ${BOTTOM_MARGIN}px;
+  bottom: ${isDevelopment() ? 70 : BOTTOM_MARGIN}px;
   left: ${SIDE_MARGIN}px;
 `;
