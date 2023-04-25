@@ -8,7 +8,7 @@
     "build": "react-app-rewired --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-demo-app -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
-    "test": "react-app-rewired test",
+    "test": "react-app-rewired test --passWithNoTests",
     "lint": "yarn prettier && yarn eslint",
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
