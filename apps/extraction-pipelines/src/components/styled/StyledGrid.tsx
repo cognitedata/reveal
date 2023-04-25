@@ -14,28 +14,28 @@ export const Grid = styled.div`
   grid-template-columns: 1fr;
   %row-style {
     &:hover {
-      background-color: ${Colors['greyscale-grey3'].hex()};
+      background-color: ${Colors['greyscale-grey3']};
     }
     &:first-child {
-      border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+      border-top: 0.0625rem solid ${Colors['greyscale-grey3']};
     }
-    border-bottom: 0.125rem solid ${Colors['greyscale-grey2'].hex()};
+    border-bottom: 0.125rem solid ${Colors['greyscale-grey2']};
   }
   .row-style-even {
     @extend %row-style;
     &:nth-child(even) {
-      background-color: ${Colors['greyscale-grey2'].hex()};
+      background-color: ${Colors['greyscale-grey2']};
       &:hover {
-        background-color: ${Colors['greyscale-grey3'].hex()};
+        background-color: ${Colors['greyscale-grey3']};
       }
     }
   }
   .row-style-odd {
     @extend %row-style;
     &:nth-child(odd) {
-      background-color: ${Colors['greyscale-grey2'].hex()};
+      background-color: ${Colors['greyscale-grey2']};
       &:hover {
-        background-color: ${Colors['greyscale-grey3'].hex()};
+        background-color: ${Colors['greyscale-grey3']};
       }
     }
   }

@@ -45,12 +45,12 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   .cogs-badge {
     &.badge-success {
-      border: 0.125rem solid ${Colors.success.hex()} !important;
-      color: ${Colors['greyscale-grey9'].hex()} !important;
+      border: 0.125rem solid ${Colors.success} !important;
+      color: ${Colors['greyscale-grey9']} !important;
       font-weight: bold;
     }
     &.badge-fail {
-      border: 0.125rem solid ${Colors.danger.hex()} !important;
+      border: 0.125rem solid ${Colors.danger} !important;
     }
     span {
       text-transform: lowercase !important;

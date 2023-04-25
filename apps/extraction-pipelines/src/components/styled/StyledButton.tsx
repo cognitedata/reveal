@@ -54,7 +54,7 @@ export const EditButton = styled((props: EditButtonProps) => (
         }
       }
       :hover {
-        background-color: ${Colors['midblue-7'].hex()};
+        background-color: ${Colors['midblue-7']};
         .cogs-icon {
           &.cogs-icon-Edit {
             opacity: ${(p) => (p.showPencilIcon ? '1' : '0')};

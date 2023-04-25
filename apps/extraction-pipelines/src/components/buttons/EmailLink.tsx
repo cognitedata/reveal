@@ -13,7 +13,7 @@ const EmailLink: FunctionComponent<Props> = ({ email }: OwnProps) => {
 };
 
 const Email = styled.a`
-  color: ${Colors['midblue-3'].hex()};
+  color: ${Colors['midblue-3']};
   margin: 0;
 `;
 

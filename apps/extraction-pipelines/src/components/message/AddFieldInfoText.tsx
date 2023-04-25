@@ -30,6 +30,6 @@ const Styled = styled.span`
   align-items: center;
   line-height: 1.5rem;
   button:enabled > & {
-    color: ${Colors.primary.hex()};
+    color: ${Colors.primary};
   }
 `;

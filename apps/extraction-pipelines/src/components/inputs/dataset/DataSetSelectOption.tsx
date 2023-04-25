@@ -36,10 +36,10 @@ const OptionWrapper = styled(components.Option)`
   grid-template-areas: 'name id' 'externalId . ';
   padding: 0.5rem 1rem;
   &:hover {
-    background-color: ${Colors['midblue-7'].hex()};
+    background-color: ${Colors['midblue-7']};
   }
   &:focus {
-    background-color: ${Colors['greyscale-grey1'].hex()};
+    background-color: ${Colors['greyscale-grey1']};
   }
 `;
 const OptionLabel = styled.span`
@@ -52,5 +52,5 @@ const OptionValue = styled.span`
 `;
 const OptionExternalId = styled.span`
   grid-area: externalId;
-  color: ${Colors['greyscale-grey5'].hex()};
+  color: ${Colors['greyscale-grey5']};
 `;

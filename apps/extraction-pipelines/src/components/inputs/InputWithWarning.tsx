@@ -57,7 +57,7 @@ const InputWithWarning: FunctionComponent<Props> = ({
       />
       {isDirty && (
         <InputWarningIcon
-          $color={Colors.warning.hex()}
+          $color={Colors.warning}
           data-testid={`warning-icon-${name}`}
           className="waring"
         />

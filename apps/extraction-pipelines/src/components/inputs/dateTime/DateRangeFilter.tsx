@@ -15,7 +15,7 @@ const Wrapper = styled(DivFlex)`
     }
   }
   .cogs-date-range--input {
-    border: 1px solid ${Colors['greyscale-grey5'].hex()};
+    border: 1px solid ${Colors['greyscale-grey5']};
   }
 `;
 interface DateRangeFilterProps {}

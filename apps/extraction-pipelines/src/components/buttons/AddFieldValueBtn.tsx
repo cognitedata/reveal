@@ -32,6 +32,6 @@ export const AddFieldValueBtn = ({
 };
 
 export const NoDataAdded = styled.div`
-  color: ${Colors['greyscale-grey6'].hex()};
+  color: ${Colors['greyscale-grey6']};
   padding: 0 1rem;
 `;

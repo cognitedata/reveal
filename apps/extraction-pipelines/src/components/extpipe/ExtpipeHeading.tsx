@@ -159,7 +159,7 @@ const PageNav = styled.ul`
     .tab-link {
       display: flex;
       align-items: center;
-      color: ${Colors.black.hex()};
+      color: ${Colors.black};
       padding: 4px 1rem 0;
       font-weight: bold;
       border-bottom: 3px solid transparent;

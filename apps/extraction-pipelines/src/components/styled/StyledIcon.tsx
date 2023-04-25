@@ -10,7 +10,7 @@ export const InfoIcon = styled((props) => <Icon {...props} type="Info" />)`
           &:nth-child(2),
           &:nth-child(3) {
             fill: ${(props: { color?: string }) =>
-              props.color ?? `${Colors.primary.hex()}`};
+              props.color ?? `${Colors.primary}`};
           }
         }
       }
@@ -23,9 +23,9 @@ export const IconFilled = styled((props) => <Icon {...props} />)`
       g {
         path {
           fill: ${(props: { color?: string }) =>
-            props.color ?? `${Colors.primary.hex()}`};
+            props.color ?? `${Colors.primary}`};
           &:nth-child(3) {
-            fill: ${Colors.white.hex()};
+            fill: ${Colors.white};
           }
         }
       }

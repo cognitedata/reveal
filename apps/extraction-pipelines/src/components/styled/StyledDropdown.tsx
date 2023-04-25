@@ -8,7 +8,7 @@ export const StyledDropdown = styled((props) => (
   .tippy-content {
     padding: 0;
     .cogs-menu-item {
-      color: ${Colors.black.hex()};
+      color: ${Colors.black};
     }
   }
 `;

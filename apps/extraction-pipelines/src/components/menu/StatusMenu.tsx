@@ -94,7 +94,7 @@ const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
     .cogs-icon-Checkmark {
       svg {
         path {
-          fill: ${Colors.primary.hex()};
+          fill: ${Colors.primary};
         }
       }
     }

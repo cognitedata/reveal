@@ -11,14 +11,14 @@ export const CreateFormWrapper = styled.form`
   flex-direction: column;
 
   .error-message {
-    color: ${Colors.danger.hex()};
+    color: ${Colors.danger};
   }
   .cogs-input,
   .cogs-checkbox {
     width: ${(props: InputProps) =>
       props.inputWidth ? `${props.inputWidth}%` : '100%'};
     &[aria-invalid='true'] {
-      border-color: ${Colors.danger.hex()};
+      border-color: ${Colors.danger};
     }
     &:focus {
       box-shadow: none;
@@ -42,7 +42,7 @@ export const StyledLabel = styled.label`
 `;
 
 export const Hint = styled.span`
-  color: ${Colors['greyscale-grey8'].hex()};
+  color: ${Colors['greyscale-grey8']};
   margin-bottom: 0.5rem;
   display: block;
 `;
@@ -58,12 +58,12 @@ export const StyledTextArea = styled.textarea`
   height: inherit;
   padding-top: 0.5rem;
   &.has-error {
-    border-color: ${Colors.danger.hex()};
+    border-color: ${Colors.danger};
   }
 `;
 
 export const ErrorSpan = styled.span`
-  color: ${Colors.danger.hex()};
+  color: ${Colors.danger};
 `;
 export const StyledForm = styled((props) => (
   <PaddedGridForm {...props}>{props.children}</PaddedGridForm>
@@ -87,7 +87,7 @@ export const ColumnForm = styled.form`
     props.marginBottom ? '1rem' : '0'};
   label {
     margin-left: 1rem;
-    color: Colors[ 'greyscale-grey10' ].hex();
+    color: Colors[ 'greyscale-grey10' ];
   }
   .cogs-input-container {
     width: 100%;

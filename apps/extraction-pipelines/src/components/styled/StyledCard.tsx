@@ -27,9 +27,9 @@ export const CardWrapper = styled.div`
   & > div,
   > a {
     flex: 1;
-    border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-right: 1px solid ${Colors['greyscale-grey3']};
     justify-content: space-between;
-    color: ${Colors.black.hex()};
+    color: ${Colors.black};
     &:last-child {
       border-right: none;
     }
@@ -52,7 +52,7 @@ export const CardInWrapper = styled.div`
     grid-area: value;
   }
   .cogs-icon-ArrowRight {
-    color: ${Colors.primary.hex()};
+    color: ${Colors.primary};
     grid-area: arrow;
     align-self: center;
     margin-right: 1rem;
@@ -65,7 +65,7 @@ export const CardNavLink = styled(NavLink)`
     opacity: 0;
   }
   :hover {
-    background-color: ${Colors['midblue-7'].hex()};
+    background-color: ${Colors['midblue-7']};
     .cogs-icon-ArrowRight {
       opacity: 1;
     }

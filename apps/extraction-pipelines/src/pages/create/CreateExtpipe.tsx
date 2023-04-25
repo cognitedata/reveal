@@ -287,7 +287,7 @@ const InfoMessage = styled.span`
           &:nth-child(2),
           &:nth-child(3) {
             fill: ${(props: { color?: string }) =>
-              props.color ?? `${Colors.primary.hex()}`};
+              props.color ?? `${Colors.primary}`};
           }
         }
       }

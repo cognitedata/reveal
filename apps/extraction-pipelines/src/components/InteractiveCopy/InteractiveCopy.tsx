@@ -87,7 +87,7 @@ const IconWrapper = styled.div`
     width: 0.7rem;
 
     path {
-      fill: ${Colors.primary.hex()};
+      fill: ${Colors.primary};
     }
   }
 `;

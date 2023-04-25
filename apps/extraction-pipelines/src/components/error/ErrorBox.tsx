@@ -29,6 +29,6 @@ const StyledErrorHeader = styled(StyledTitle2)`
   align-items: center;
 
   &&& {
-    color: ${Colors['yellow-1'].hex()};
+    color: ${Colors['yellow-1']};
   }
 `;

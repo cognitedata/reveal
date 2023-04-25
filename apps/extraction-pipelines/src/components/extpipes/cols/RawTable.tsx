@@ -62,7 +62,7 @@ const RawTableWrapper = styled.table`
       align-items: center;
     }
     .grid-row {
-      border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+      border-top: 0.0625rem solid ${Colors['greyscale-grey3']};
     }
     th {
       font-weight: bold;
