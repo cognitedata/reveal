@@ -36,6 +36,8 @@ export class DefaultImage360Collection implements Image360Collection {
 
   private _needsRedraw: boolean = false;
 
+  private _defaultStyle: Image360AnnotationAppearance = {};
+
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>(),
@@ -214,11 +216,16 @@ export class DefaultImage360Collection implements Image360Collection {
     this._needsRedraw = false;
   }
 
-  public setDefaultStyle(appearanceEdit: Image360AnnotationAppearance): void {
+  get defaultStyle(): Image360AnnotationAppearance {
+    return this._defaultStyle;
+  }
+
+  public setDefaultStyle(defaultStyle: Image360AnnotationAppearance): void {
+    this._defaultStyle = defaultStyle;
     this.image360Entities.forEach(entity =>
       entity
         .getRevisions()
-        .forEach(revision => revision.annotations.forEach(annotation => annotation.setDefaultStyle(appearanceEdit)))
+        .forEach(revision => revision.annotations.forEach(annotation => annotation.setDefaultStyle(defaultStyle)))
     );
   }
 }

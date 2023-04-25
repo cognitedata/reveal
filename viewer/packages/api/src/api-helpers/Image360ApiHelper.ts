@@ -227,6 +227,8 @@ export class Image360ApiHelper {
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
 
+    revisionToEnter.annotations.forEach(annotation => annotation.setDefaultStyle(imageCollection.defaultStyle));
+
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
     if (lastEntered360ImageEntity === image360Entity) {
