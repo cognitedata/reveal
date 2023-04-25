@@ -2149,7 +2149,7 @@ __metadata:
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
-    docusaurus-plugin-typedoc: 0.19.0
+    docusaurus-plugin-typedoc: 0.19.1
     ieee754: 1.2.1
     query-string: 8.1.0
     react: 18.2.0
@@ -6012,13 +6012,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:0.19.0":
-  version: 0.19.0
-  resolution: "docusaurus-plugin-typedoc@npm:0.19.0"
+"docusaurus-plugin-typedoc@npm:0.19.1":
+  version: 0.19.1
+  resolution: "docusaurus-plugin-typedoc@npm:0.19.1"
   peerDependencies:
     typedoc: ">=0.24.0"
     typedoc-plugin-markdown: ">=3.15.0"
-  checksum: fe4a186c2308a798f6eace5212ef5e56405baf53de80bb317679a48391ecaf6a78c3d7edb44e5a5ab3b30b9a7b23750d0d7d3f48287be0ef73b1e864fdf13dc0
+  checksum: 12f0a035c616b3d8eb32584ccf17e68c53d05569c790b2e518ab061596a1423a08f1db3ab8d06257a5d19f0dc3773b9f6b67f4350a294542f5d711d7057ff27e
   languageName: node
   linkType: hard
 
