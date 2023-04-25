@@ -75,7 +75,7 @@ export class Image360UI {
     };
 
     const params = {
-      siteId: 'helideck-site-2-jpeg',
+      siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
       remove: removeAll360Images
