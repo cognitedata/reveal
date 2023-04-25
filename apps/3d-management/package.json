@@ -29,7 +29,7 @@
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/z-index": "^0.2.0",
     "@google-cloud/storage": "^5.20.5",
-    "@sentry/browser": "^5.30.0",
+    "@sentry/browser": "^7.49.0",
     "antd": "^4.24.7",
     "date-fns": "^2.29.3",
     "dayjs": "^1.10.4",
