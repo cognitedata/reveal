@@ -22,7 +22,7 @@ export class ImageAnnotationObject implements Image360Annotation {
   private readonly _material: MeshBasicMaterial;
 
   private _defaultAppearance: Image360AnnotationAppearance = {};
-  private _appearance: Image360AnnotationAppearance = {};
+  private readonly _appearance: Image360AnnotationAppearance = {};
 
   get annotation(): AnnotationModel {
     return this._annotation;
@@ -100,7 +100,7 @@ export class ImageAnnotationObject implements Image360Annotation {
     this._material.needsUpdate = true;
   }
 
-  public setDefaultStyle(appearance: Image360AnnotationAppearance) {
+  public setDefaultStyle(appearance: Image360AnnotationAppearance): void {
     this._defaultAppearance = appearance;
   }
 
