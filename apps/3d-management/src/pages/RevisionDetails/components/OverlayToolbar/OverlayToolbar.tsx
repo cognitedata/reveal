@@ -1,4 +1,11 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+/* eslint-disable no-param-reassign */
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { ToolBarButton, ToolBar, Slider, Icon, Menu } from '@cognite/cogs.js';
 import {
   CameraControlsOptions,
@@ -7,6 +14,7 @@ import {
   CognitePointCloudModel,
   DefaultCameraManager,
   MeasurementTool,
+  ResolutionOptions,
 } from '@cognite/reveal';
 
 import styled from 'styled-components';
@@ -44,12 +52,16 @@ type Props = {
   model: CogniteCadModel | CognitePointCloudModel;
   setNodesClickable: Dispatch<SetStateAction<boolean>>;
   nodesClickable: boolean;
+  setHighQualityRender: Dispatch<SetStateAction<boolean>>;
+  highQualityRender: boolean;
 };
 export function OverlayToolbar({
   viewer,
   model,
   setNodesClickable,
   nodesClickable,
+  setHighQualityRender,
+  highQualityRender,
 }: Props) {
   const cameraManager = viewer.cameraManager as DefaultCameraManager;
 
@@ -74,6 +86,17 @@ export function OverlayToolbar({
     viewer,
   ]);
 
+  const defaultsRenderQualityConfig = useMemo(() => {
+    return {
+      cadBudget: { ...viewer.cadBudget },
+      pointCloudBudget: { ...viewer.pointCloudBudget },
+      resolutionOptions: {
+        maxRenderResolution: 1.4e6,
+        movingCameraResolutionFactor: 1,
+      } as ResolutionOptions,
+    };
+  }, [viewer]);
+
   const buttonGroups: ToolBarButton[][] = [
     [
       {
@@ -88,6 +111,7 @@ export function OverlayToolbar({
   addPointSizeSliderIfApplicable();
   addPointToPointMeasurement();
   subscribeMeasurementEvents();
+  addHighQualityMode();
 
   return (
     <ToolBar direction="vertical">
@@ -176,7 +200,6 @@ export function OverlayToolbar({
       ...cameraControlsOptions,
       changeCameraTargetOnClick: false,
     });
-    // eslint-disable-next-line no-param-reassign
     viewer.domElement.style.cursor = 'crosshair';
     setNodesClickable(false);
   }
@@ -188,7 +211,6 @@ export function OverlayToolbar({
     cameraManager.setCameraControlsOptions({
       ...cameraControlsOptions,
     });
-    // eslint-disable-next-line no-param-reassign
     viewer.domElement.style.cursor = 'default';
     setNodesClickable(true);
     measurementTool.exitMeasurementMode();
@@ -203,5 +225,41 @@ export function OverlayToolbar({
       measurementTool.on('started', setMeasurementStartState);
       setMeasurementEventsSubscribed(true);
     }
+  }
+
+  function addHighQualityMode() {
+    const highQuality = {
+      icon: 'SunHigh',
+      toggled: !highQualityRender,
+      description:
+        'Toggle improved fidelity rendering. Note that this might affect performance',
+      onClick: () => {
+        setHighQualityRender(!highQualityRender);
+        if (highQualityRender) {
+          viewer.pointCloudBudget = {
+            numberOfPoints:
+              3 * defaultsRenderQualityConfig.pointCloudBudget.numberOfPoints,
+          };
+          viewer.cadBudget = {
+            maximumRenderCost:
+              3 * defaultsRenderQualityConfig.cadBudget.maximumRenderCost,
+            highDetailProximityThreshold:
+              defaultsRenderQualityConfig.cadBudget
+                .highDetailProximityThreshold,
+          };
+          viewer.setResolutionOptions({ maxRenderResolution: Infinity });
+        } else {
+          viewer.pointCloudBudget = {
+            ...defaultsRenderQualityConfig.pointCloudBudget,
+          };
+          viewer.cadBudget = { ...defaultsRenderQualityConfig.cadBudget };
+          viewer.setResolutionOptions({
+            ...defaultsRenderQualityConfig.resolutionOptions,
+          });
+        }
+      },
+    };
+
+    buttonGroups[0].push(highQuality);
   }
 }

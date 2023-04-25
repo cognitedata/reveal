@@ -30,17 +30,4 @@ Regardless of what dev environment setup you choose above, you need a NPM accoun
 
 ## Deploying to production, staging and development
 
-Production ([fusion.cognite.com](fusion.cognite.com/)), staging ([next-release.fusion.cognite.com](https://next-release.fusion.cognite.com/)) and development ([dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com/)) versions of the Fusion are controlled by configurations in [cdf-hub on Github](https://github.com/cognitedata/cdf-hub), but separate configuration files for production and staging.
-
-1. Bump version in [package.json](./package.json) according to Semver and create a PR. See [this Stackexchange answer](https://softwareengineering.stackexchange.com/a/255201) for guidance on versioning for apps.
-1. Get someone to review PR and merge to master.
-1. Wait for [Jenkins](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-3d-management/activity) to finish build after merge
-1. Update the `cdf-3d-management`-entry of the respective configuration under [packages/sub-apps/config](https://github.com/cognitedata/cdf-ui-hub/tree/master/packages/sub-apps/config) to match version.
-1. Create PR, merge - after merge the change should be automatically deployed to the respective environment(s).
-1. For production release only:
-   1. Manually verify that the build works at <https://staging.fusion.cognite.com/>
-   1. Manually promote release in [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions?pipeline=deploy-fusion-app-prod) (for the relevant build, hover the orange indicator and select Continue)
-
-Note! The configuration uses Semver ranges, so if you deploy new versions of the cdf-3d-management applications they should automatically be released to the respective environment if updated versions is within the supported range. See [Semver calculator](https://jubianchi.github.io/semver-check/#/) to test if versions are compatible.
-
-More details available on [Wiki](https://cognitedata.atlassian.net/wiki/spaces/DET/pages/3334374461/Fusion+frontend+development+WIKI). Note however that the instructions are out-of-date and not always correct.
+See the following guide for instructions on how to deploy to production, staging and development environments: https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3893493926/Common+known+issues+and+FAQ 

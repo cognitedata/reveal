@@ -4,7 +4,6 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   CogniteModel,
-  PointSizeType,
   DefaultCameraManager,
   AxisViewTool,
 } from '@cognite/reveal';
@@ -56,6 +55,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
   const { id: revisionId } = props.revision;
 
   const [nodesClickable, setNodesClickable] = useState<boolean>(true);
+  const [highQualityRender, setHighQualityRender] = useState<boolean>(true);
 
   useEffect(() => {
     if (canvasWrapperRef.current) {
@@ -124,8 +124,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
               modelId,
               revisionId,
             });
-            modelLocal.pointSizeType = PointSizeType.Attenuated;
-            modelLocal.pointSize = 0.25;
+            modelLocal.pointSize = 1.0;
             break;
           }
           default: {
@@ -171,6 +170,8 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
             model={model}
             setNodesClickable={setNodesClickable}
             nodesClickable={nodesClickable}
+            setHighQualityRender={setHighQualityRender}
+            highQualityRender={highQualityRender}
           />
         </StyledToolBar>
       )}

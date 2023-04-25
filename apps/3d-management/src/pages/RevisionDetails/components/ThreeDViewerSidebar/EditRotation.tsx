@@ -7,6 +7,7 @@ import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
+  CDF_TO_VIEWER_TRANSFORMATION,
 } from '@cognite/reveal';
 
 import * as Sentry from '@sentry/browser';
@@ -53,26 +54,76 @@ export function EditRotation(props: Props) {
 
 function EditRotationOpened(props: Props & { onClose: () => void }) {
   const [rotationAxis, setRotationAxis] = useState<RotationAxis>('x');
-  const [initialRotation, setInitialRotation] = useState<THREE.Matrix4>();
+  const [cdfTransformWithoutRotation, setCdfTransformWithoutRotation] =
+    useState<THREE.Matrix4>();
+  const [invCdfTransformWithRotation, setInvCdfTransformWithRotation] =
+    useState<THREE.Matrix4>();
+  const [initialPiMultiplier, setInitialPiMultiplier] = useState<
+    Tuple3<number>
+  >([0, 0, 0]);
   const [rotationAnglePiMultiplier, setRotationAnglePiMultiplier] = useState<
     Tuple3<number>
   >([0, 0, 0]);
 
-  const getLocalModelTransformation = React.useCallback(() => {
-    return props.model.getModelTransformation();
-  }, [props.model]);
+  useEffect(() => {
+    const defaultTransformWithCdfMatrix =
+      props.model.getCdfToDefaultModelTransformation();
 
-  const setModelTransformation = (matrix: THREE.Matrix4) => {
-    props.model.setModelTransformation(matrix);
-    // TODO 2022-09-23 larsmoa: Necessary because of https://cognitedata.atlassian.net/browse/REV-521
-    props.viewer.requestRedraw();
+    setDefaultCdfTransformationUtils(defaultTransformWithCdfMatrix);
+
+    const customTransform = props.model.getModelTransformation();
+    const customTransformInCdfSpace = CDF_TO_VIEWER_TRANSFORMATION.clone()
+      .transpose()
+      .multiply(customTransform)
+      .multiply(CDF_TO_VIEWER_TRANSFORMATION);
+    const defaultTransformationMatrix = new THREE.Matrix4().multiplyMatrices(
+      CDF_TO_VIEWER_TRANSFORMATION.clone().transpose(), // Inverted of rotation matrix is transponed
+      defaultTransformWithCdfMatrix
+    );
+
+    const startTransformInCdfSpace = customTransformInCdfSpace
+      .clone()
+      .multiply(defaultTransformationMatrix);
+
+    const initialRotation = new THREE.Matrix4().extractRotation(
+      startTransformInCdfSpace
+    );
+    const euler = new THREE.Euler().setFromRotationMatrix(initialRotation);
+    const eulerComponents = [euler.x, euler.y, euler.z];
+    const eulerPiMultipliers = eulerComponents.map((a) => a / Math.PI);
+
+    setInitialPiMultiplier([...eulerPiMultipliers]);
+    setRotationAnglePiMultiplier([...eulerPiMultipliers]);
+  }, [props.model, props.model.modelId, props.model.revisionId]);
+
+  // When computing the new transformation of the model in view, we must take
+  // the default CDF transformation into account. Since it is always applied
+  // before the custom matrix, it must be multiplied away, and multiplied back in
+  // again when setting the rotation as a custom transform, as to simulate it
+  // as a CDF-stored transform. This function computes and sets the two matrices
+  // used for this back-and-forth conversion
+  const setDefaultCdfTransformationUtils = (
+    cdfDefaultMatrix: THREE.Matrix4
+  ) => {
+    const cdfRotation = new THREE.Matrix4().extractRotation(
+      CDF_TO_VIEWER_TRANSFORMATION.clone()
+        .transpose()
+        .multiply(cdfDefaultMatrix)
+    );
+
+    const invCdfTransform = cdfDefaultMatrix.clone().invert();
+
+    setInvCdfTransformWithRotation(invCdfTransform.clone());
+    setCdfTransformWithoutRotation(
+      cdfDefaultMatrix.clone().multiply(cdfRotation.clone().transpose())
+    );
   };
 
-  useEffect(() => {
-    setInitialRotation(getLocalModelTransformation);
-  }, [getLocalModelTransformation]);
-
-  const hasChanges = rotationAnglePiMultiplier.some((r) => r);
+  const hasChanges = rotationAnglePiMultiplier.some((r, ind) => {
+    const diff = Math.abs(r - initialPiMultiplier![ind]);
+    const modDiff = Math.min(diff, 2 - diff);
+    return modDiff > 1e-2;
+  });
 
   const onRotateClicked = (clockwise: boolean) => {
     const newRot = [0, 0, 0];
@@ -92,44 +143,53 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   const changeModelRotation = (newRotationDelta: Tuple3<number>) => {
-    setRotationAnglePiMultiplier(
-      rotationAnglePiMultiplier.map((rot, index) => {
-        const result = rot + newRotationDelta[index];
-        // reset value when full rotation circle is done
-        return result === 2 || result === -2 ? 0 : result;
-      })
-    );
+    const newPiMultiplier = rotationAnglePiMultiplier.map((rot, index) => {
+      const result = rot + newRotationDelta[index];
+      const wrappedResult = result % 2;
+      // reset value when full rotation circle is done
+      return wrappedResult;
+    });
 
-    const rotationMatrix = new THREE.Matrix4().makeRotationFromEuler(
-      new THREE.Euler(
-        newRotationDelta[0] * Math.PI,
-        newRotationDelta[1] * Math.PI,
-        newRotationDelta[2] * Math.PI
-      )
-    );
+    setRotationAnglePiMultiplier(newPiMultiplier);
 
-    redrawModelWithRotation(rotationMatrix);
+    redrawModelWithTransformation(
+      computeCustomTransformationFromPiMultipliers(newPiMultiplier)
+    );
   };
 
-  const redrawModelWithRotation = (rotationMatrix: THREE.Matrix4) => {
-    const matrix = props.model.getModelTransformation();
-    const newMatrix = new THREE.Matrix4().multiplyMatrices(
-      matrix,
-      rotationMatrix
-    );
-    props.model.setModelTransformation(newMatrix);
+  const redrawModelWithTransformation = (customMatrix: THREE.Matrix4) => {
+    props.model.setModelTransformation(customMatrix);
     // TODO 2022-09-23 larsmoa: Necessary because of https://cognitedata.atlassian.net/browse/REV-521
     props.viewer.requestRedraw();
   };
 
+  const computeCustomTransformationFromPiMultipliers = (
+    piMultipliers: Tuple3<number>
+  ) => {
+    const rotationMatrix = new THREE.Matrix4().makeRotationFromEuler(
+      new THREE.Euler(
+        piMultipliers[0] * Math.PI,
+        piMultipliers[1] * Math.PI,
+        piMultipliers[2] * Math.PI
+      )
+    );
+
+    return cdfTransformWithoutRotation!
+      .clone()
+      .multiply(rotationMatrix)
+      .multiply(invCdfTransformWithRotation!);
+  };
+
   const onCancelClicked = () => {
-    setModelTransformation(initialRotation!);
+    const customMatrix =
+      computeCustomTransformationFromPiMultipliers(initialPiMultiplier);
+    redrawModelWithTransformation(customMatrix);
 
     if (!rotationAnglePiMultiplier.every((c) => c === 0)) {
       props.viewer.fitCameraToModel(props.model, 0);
     }
 
-    setRotationAnglePiMultiplier([0, 0, 0]);
+    setRotationAnglePiMultiplier(initialPiMultiplier!);
     props.onClose();
   };
 
@@ -141,17 +201,13 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     if (rotationX || rotationY || rotationZ) {
       const progressMessage = message.loading('Uploading model rotation...');
       const rotationEuler = new THREE.Euler();
-      const tmpMatrix = getLocalModelTransformation();
-
-      // Undo the default 90 degrees on X axis shift
-      tmpMatrix.premultiply(
-        new THREE.Matrix4().makeRotationFromEuler(
-          new THREE.Euler(Math.PI / 2, 0, 0)
-        )
-      );
 
       // Fetch actual location radians
-      rotationEuler.setFromRotationMatrix(tmpMatrix);
+      rotationEuler.fromArray([
+        rotationX * Math.PI,
+        rotationY * Math.PI,
+        rotationZ * Math.PI,
+      ]);
 
       try {
         // Update revision with correct starting location and correct rotation
@@ -171,8 +227,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
         });
         Sentry.captureException(e);
       } finally {
-        setInitialRotation(getLocalModelTransformation());
-        setRotationAnglePiMultiplier([0, 0, 0]);
+        setInitialPiMultiplier(rotationAnglePiMultiplier);
       }
     }
   };

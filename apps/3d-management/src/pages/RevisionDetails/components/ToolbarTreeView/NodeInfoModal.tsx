@@ -213,10 +213,14 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
         activeKey={activeTabKey || defaultCdfMetaTabKey}
         onChange={setActiveTabKey}
       >
-        {nodeKeys.map((key) => (
-          <Tabs.TabPane key={key} tab={key} />
-        ))}
+        {nodeKeys.includes('Item') && <Tabs.TabPane key="Item" tab="Item" />}
         <Tabs.TabPane key={defaultCdfMetaTabKey} tab="CDF Metadata" />
+        {nodeKeys
+          .filter((key) => key !== 'Item')
+          .sort()
+          .map((key) => (
+            <Tabs.TabPane key={key} tab={key} />
+          ))}
       </Tabs>
 
       <TableWrapper>

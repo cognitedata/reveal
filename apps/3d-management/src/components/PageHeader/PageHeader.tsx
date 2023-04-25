@@ -19,8 +19,7 @@ const Title = styled.h5`
 const BreadcrumbsWrapper = styled.div`
   width: 100%;
   margin-bottom: 20px;
-  padding-bottom: 30px;
-  height: 20px;
+  padding-bottom: 6px;
   display: flex;
   justify-content: space-between;
   border-bottom: 2px solid ${theme.breadcrumbsBackground};

@@ -1,6 +1,7 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
 const { styleScope } = require('./src/utils/styleScope');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
@@ -127,6 +128,13 @@ module.exports = {
 
     config.plugins = config.plugins.filter(
         (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+    );
+
+    // Copy firebase.json to the build folder to deploy to firebase
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: ['./firebase.json'],
+      })
     );
 
     config.resolve.fallback = {
