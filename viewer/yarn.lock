@@ -775,7 +775,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.36.0
-    "@cognite/sdk": 8.0.0
+    "@cognite/sdk": 8.0.1
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
     "@types/dat.gui": 0.7.9
@@ -859,28 +859,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^4.8.2":
-  version: 4.8.2
-  resolution: "@cognite/sdk-core@npm:4.8.2"
+"@cognite/sdk-core@npm:^4.8.3":
+  version: 4.8.3
+  resolution: "@cognite/sdk-core@npm:4.8.3"
   dependencies:
     cross-fetch: ^3.0.4
     is-buffer: ^2.0.5
     lodash: ^4.17.11
     query-string: ^5.1.1
     url: ^0.11.0
-  checksum: e252cee628c4e9cd76038ea8df82cea561ec5dc2af121df77c81628d8102a90a0a8a607454c71de3522e341d8c5e7f2b31e48d777426db240656763f441ad272
+  checksum: 186e3c08a2293b91f1d7c863f3838419cc7fb34e7bac0abecaed288ad302d952f052da813f4f9b1924fd098ad89cd92ff97c05978a95f8361ca46fc6fac02229
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:8.0.0":
-  version: 8.0.0
-  resolution: "@cognite/sdk@npm:8.0.0"
+"@cognite/sdk@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@cognite/sdk@npm:8.0.1"
   dependencies:
-    "@cognite/sdk-core": ^4.8.2
+    "@cognite/sdk-core": ^4.8.3
     "@types/geojson": ^7946.0.8
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: 541356cc8ddc9da167da45df7897fda34edae9793155e5bc8cff88f1cee518578e8edb18bf294e18e92fa61dcd69ba93dc40258504bbbdef8b4a8120b20533d8
+  checksum: e1a7bc284465236c11d5250d61eb8d60865b7b15dbc41b90a0902c3bc548087b8125e470979a1325a1887c19106a7a10179f0c1f76c7ccda9cd2c1b3abe98c33
   languageName: node
   linkType: hard
 
