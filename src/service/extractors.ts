@@ -59,7 +59,11 @@ export const getDownloadUrl = async (artifact: Artifact) => {
   return (await sdk.get<ExtractorDownload>(artifact.link)).data.downloadUrl;
 };
 
-export const getExtractorsWithReleases = async () => {
+export const getExtractorsWithReleases = async ({
+  shouldShowHostedExtractors,
+}: {
+  shouldShowHostedExtractors?: boolean;
+}) => {
   const extractorsPromise = sdk
     .get<Items<Extractor>>(
       `/api/playground/projects/${sdk.project}/extractors`,
@@ -90,7 +94,9 @@ export const getExtractorsWithReleases = async () => {
     };
   });
 
-  extractorMap['cognite-mqtt-extractor'] = MQTT_EXTRACTOR_MOCK;
+  if (shouldShowHostedExtractors) {
+    extractorMap['cognite-mqtt-extractor'] = MQTT_EXTRACTOR_MOCK;
+  }
 
   releases.forEach((release) => {
     extractorMap[release.externalId].releases.push(release);

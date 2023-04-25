@@ -8,6 +8,7 @@ import CategorySidebarItem from './CategorySidebarItem';
 import { useExtractorsList } from 'hooks/useExtractorsList';
 import { ExtractorWithReleases } from 'service/extractors';
 import { SourceSystem, useSourceSystems } from 'hooks/useSourceSystems';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type CategorySidebarProps = {
   extractorsList: ExtractorWithReleases[];
@@ -32,6 +33,10 @@ const CategorySidebar = ({
   const isLoading = !didFetchExtractorList || !didFetchSourceSystems;
   const totalCount = extractorCount + sourceSystemCount + hostedExtractorCount;
 
+  const { isEnabled: shouldShowHostedExtractors } = useFlag(
+    'FUSION_HOSTED_EXTRACTORS'
+  );
+
   return (
     <StyledContainer>
       <Title level={6}>{t('categories')}</Title>
@@ -47,12 +52,14 @@ const CategorySidebar = ({
           isLoading={!didFetchExtractorList}
           title={t('extractor_other')}
         />
-        <CategorySidebarItem
-          category="hosted-extractor"
-          count={hostedExtractorCount}
-          isLoading={!didFetchExtractorList}
-          title={t('hosted-extractor_other')}
-        />
+        {shouldShowHostedExtractors && (
+          <CategorySidebarItem
+            category="hosted-extractor"
+            count={hostedExtractorCount}
+            isLoading={!didFetchExtractorList}
+            title={t('hosted-extractor_other')}
+          />
+        )}
         <CategorySidebarItem
           category="source-system"
           count={sourceSystemCount}

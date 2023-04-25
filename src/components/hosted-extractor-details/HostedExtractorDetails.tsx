@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import { MQTT_EXTRACTOR_MOCK, useTranslation } from 'common';
+import { useTranslation } from 'common';
 import { DetailsHeader } from 'components/DetailsHeader';
 import { Layout } from 'components/Layout';
 import { useExtractorsList } from 'hooks/useExtractorsList';
@@ -30,14 +30,14 @@ import { ConnectToHostedExtractorModal } from 'components/connect-to-hosted-extr
 export const HostedExtractorDetails = (): JSX.Element => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { extractorExternalId = '' } = useParams<{
-    extractorExternalId?: string;
+  const { hostedExtractorExternalId = '' } = useParams<{
+    hostedExtractorExternalId?: string;
   }>();
   const { data, status } = useExtractorsList();
 
-  const extractor =
-    data?.find((extractor) => extractor.externalId === extractorExternalId) ??
-    MQTT_EXTRACTOR_MOCK;
+  const extractor = data?.find(
+    (extractor) => extractor.externalId === hostedExtractorExternalId
+  );
 
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
@@ -55,6 +55,11 @@ export const HostedExtractorDetails = (): JSX.Element => {
 
   if (status === 'loading') {
     return <Loader />;
+  }
+
+  if (!extractor) {
+    // TODO: add not found page
+    return <>not found</>;
   }
 
   return (

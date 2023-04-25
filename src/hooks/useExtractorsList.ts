@@ -6,20 +6,25 @@ import {
   getExtractorsWithReleases,
 } from 'service/extractors';
 
-export const getExtractorsListQueryKey = (shouldShowUnreleased: boolean) => [
-  'extractors',
-  'list',
-  shouldShowUnreleased,
-];
+export const getExtractorsListQueryKey = (
+  shouldShowUnreleased: boolean,
+  shouldShowHostedExtractors: boolean
+) => ['extractors', 'list', shouldShowUnreleased, shouldShowHostedExtractors];
 export const getExtractorQueryKey = (
   externalId: string,
   shouldShowUnreleased: boolean
 ) => ['extractors', 'externalId', externalId, shouldShowUnreleased];
 
-const getExtractorList = async (
-  shouldShowUnreleased: boolean
-): Promise<ExtractorWithReleases[]> => {
-  const extractorsWithReleases = await getExtractorsWithReleases();
+const getExtractorList = async ({
+  shouldShowUnreleased,
+  shouldShowHostedExtractors,
+}: {
+  shouldShowUnreleased?: boolean;
+  shouldShowHostedExtractors?: boolean;
+}): Promise<ExtractorWithReleases[]> => {
+  const extractorsWithReleases = await getExtractorsWithReleases({
+    shouldShowHostedExtractors,
+  });
 
   if (!shouldShowUnreleased) {
     return extractorsWithReleases.filter(({ type }) => type !== 'unreleased');
@@ -30,11 +35,18 @@ const getExtractorList = async (
 
 const fetchExtractorsListQuery = (
   queryClient: QueryClient,
-  shouldShowUnreleased: boolean
+  {
+    shouldShowUnreleased = false,
+    shouldShowHostedExtractors = false,
+  }: {
+    shouldShowUnreleased?: boolean;
+    shouldShowHostedExtractors?: boolean;
+  }
 ) => {
   return queryClient.fetchQuery<ExtractorWithReleases[]>(
-    getExtractorsListQueryKey(shouldShowUnreleased),
-    async () => getExtractorList(shouldShowUnreleased)
+    getExtractorsListQueryKey(shouldShowUnreleased, shouldShowHostedExtractors),
+    async () =>
+      getExtractorList({ shouldShowUnreleased, shouldShowHostedExtractors })
   );
 };
 
@@ -43,8 +55,17 @@ export const useExtractorsList = () => {
     'FUSION_UNRELEASED_EXTRACTORS'
   );
 
-  return useQuery(getExtractorsListQueryKey(shouldShowUnreleased), async () =>
-    getExtractorList(shouldShowUnreleased)
+  const { isEnabled: shouldShowHostedExtractors } = useFlag(
+    'FUSION_HOSTED_EXTRACTORS'
+  );
+
+  return useQuery(
+    getExtractorsListQueryKey(shouldShowUnreleased, shouldShowHostedExtractors),
+    async () =>
+      getExtractorList({
+        shouldShowUnreleased,
+        shouldShowHostedExtractors,
+      })
   );
 };
 
@@ -55,13 +76,17 @@ export const useExtractor = (externalId: string) => {
     'FUSION_UNRELEASED_EXTRACTORS'
   );
 
+  const { isEnabled: shouldShowHostedExtractors } = useFlag(
+    'FUSION_HOSTED_EXTRACTORS'
+  );
+
   return useQuery<ExtractorWithReleases | undefined>(
     getExtractorQueryKey(externalId, shouldShowUnreleased),
     async () => {
-      const extractorsList = await fetchExtractorsListQuery(
-        queryClient,
-        shouldShowUnreleased
-      );
+      const extractorsList = await fetchExtractorsListQuery(queryClient, {
+        shouldShowUnreleased,
+        shouldShowHostedExtractors,
+      });
 
       return extractorsList.find(({ externalId: tId }) => tId === externalId);
     }
