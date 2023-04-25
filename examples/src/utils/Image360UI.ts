@@ -17,10 +17,6 @@ import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
-  get collections(): Image360Collection[] {
-    return this._collections;
-  }
-
   private _collections: Image360Collection[] = [];
 
   private _lastAnnotation: Image360Annotation | undefined = undefined;
@@ -188,5 +184,9 @@ export class Image360UI {
       entities = [];
       collections.splice(0);
     }
+  }
+
+  get collections(): Image360Collection[] {
+    return this._collections;
   }
 }
