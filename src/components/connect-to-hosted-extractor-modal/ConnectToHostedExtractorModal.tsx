@@ -4,7 +4,6 @@ import { Body, Button, Flex, Modal } from '@cognite/cogs.js';
 import { useFormik } from 'formik';
 
 import { useTranslation } from 'common';
-import { ExtractorWithReleases } from 'service/extractors';
 
 import {
   CreateMQTTSource,
@@ -32,7 +31,6 @@ import { createLink } from '@cognite/cdf-utilities';
 import { useNavigate } from 'react-router-dom';
 
 type ConnectToHostedExtractorModalProps = {
-  extractor: ExtractorWithReleases;
   onCancel: VoidFunction;
   visible: boolean;
 };
@@ -47,7 +45,6 @@ type ConnectToHostedExtractorModalStep =
   typeof CONNECT_TO_HOSTED_EXTRACTOR_MODAL_STEPS[number];
 
 export const ConnectToHostedExtractorModal = ({
-  extractor,
   onCancel,
   visible,
 }: ConnectToHostedExtractorModalProps) => {

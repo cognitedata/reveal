@@ -156,7 +156,6 @@ export const HostedExtractorDetails = (): JSX.Element => {
         </Layout.Container>
       </ContentContainer>
       <ConnectToHostedExtractorModal
-        extractor={extractor}
         onCancel={() => setIsModalOpen(false)}
         visible={isModalOpen}
       />
