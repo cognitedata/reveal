@@ -8,7 +8,8 @@ import {
   Image360,
   Image360Collection,
   Image360EnteredDelegate,
-  Image360AnnotationHoveredDelegate
+  Image360AnnotationHoveredDelegate,
+  Image360Annotation
 } from '@cognite/reveal';
 
 import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
@@ -22,7 +23,7 @@ export class Image360UI {
 
   private _collections: Image360Collection[] = [];
 
-  private _currentSelectionFilter?: (annotation: AnnotationModel) => boolean;
+  private _lastAnnotation: Image360Annotation | undefined = undefined;
 
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
@@ -36,15 +37,13 @@ export class Image360UI {
     };
 
     const onAnnotationClicked: Image360AnnotationHoveredDelegate = annotation => {
-      console.log('Clicked annotation with data: ', annotation.data);
-      if (this._currentSelectionFilter !== undefined) {
-        collections.forEach(coll => coll.unassignAnnotationStyle(this._currentSelectionFilter!));
+      if (this._lastAnnotation !== undefined) {
+        this._lastAnnotation.setColor(undefined);
       }
 
-      this._currentSelectionFilter = a => annotation.id === a.id;
-      collections.forEach(coll =>
-        coll.assignAnnotationStyle(this._currentSelectionFilter!, { color: new THREE.Color(0.8, 0.8, 1.0) })
-      );
+      console.log('Clicked annotation with data: ', annotation.annotation.data);
+      annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+      this._lastAnnotation = annotation;
     };
 
     const translation = {
@@ -173,13 +172,6 @@ export class Image360UI {
       collection.on('image360AnnotationClicked', onAnnotationClicked);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
-
-      collection.assignAnnotationStyle(
-        annotation => (annotation.data as AnnotationsObjectDetection).label === 'Just a normal rectangle',
-        {
-          color: new THREE.Color(0, 1, 1)
-        }
-      );
 
       viewer.requestRedraw();
     }

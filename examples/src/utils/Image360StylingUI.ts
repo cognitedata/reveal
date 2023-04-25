@@ -20,15 +20,7 @@ export class Image360StylingUI {
 
     const actions = {
       addStyle: () => {
-        image360Ui.collections.forEach(collection => {
-          collection.assignAnnotationStyle(
-            annotation => (annotation.data as AnnotationsObjectDetection).label === state.labelText,
-            { color: new THREE.Color(state.color as THREE.ColorRepresentation), visible: state.visible }
-          );
-        });
-      },
-      removeStyles: () => {
-        image360Ui.collections.forEach(collection => collection.removeAllAnnotationStyles());
+        image360Ui.collections.forEach(coll => coll.setDefaultStyle({}));
       }
     };
 
@@ -37,7 +29,6 @@ export class Image360StylingUI {
 
     gui.addColor(state, 'color').name('Color');
 
-    gui.add(actions, 'addStyle').name('Add style');
-    gui.add(actions, 'removeStyles').name('Remove all styles');
+    gui.add(actions, 'Set default style').name('Add style');
   }
 }
