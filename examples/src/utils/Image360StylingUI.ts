@@ -13,22 +13,25 @@ import * as THREE from 'three';
 export class Image360StylingUI {
   constructor(image360Ui: Image360UI, gui: dat.GUI) {
     const state = {
-      labelText: '',
       color: '#ffffff',
       visible: true
     };
 
     const actions = {
       addStyle: () => {
-        image360Ui.collections.forEach(coll => coll.setDefaultStyle({}));
+        image360Ui.collections.forEach(coll =>
+          coll.setDefaultStyle({
+            color: new THREE.Color(state.color as THREE.ColorRepresentation),
+            visibility: state.visible
+          })
+        );
       }
     };
 
-    gui.add(state, 'labelText').name('Label text');
     gui.add(state, 'visible').name('Visible');
 
     gui.addColor(state, 'color').name('Color');
 
-    gui.add(actions, 'Set default style').name('Add style');
+    gui.add(actions, 'addStyle').name('Set default style');
   }
 }
