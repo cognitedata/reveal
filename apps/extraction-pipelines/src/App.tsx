@@ -33,6 +33,7 @@ import isObject from 'lodash/isObject';
 import CreateExtpipe from 'pages/create/CreateExtpipe';
 import ExtpipePage from 'pages/Extpipe/ExtpipePage';
 import Extpipes from 'pages/Extpipes/Extpipes';
+import { HostedExtractionPipelineDetails } from 'pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -109,6 +110,10 @@ const App = () => {
                             <Route
                               path="/:projectName/:subAppPath/extpipe/:id*"
                               element={<ExtpipePage />}
+                            />
+                            <Route
+                              path="/:projectName/:subAppPath/hosted-extraction-pipeline/:externalId"
+                              element={<HostedExtractionPipelineDetails />}
                             />
                             <Route
                               path="/:projectName/:subAppPath"

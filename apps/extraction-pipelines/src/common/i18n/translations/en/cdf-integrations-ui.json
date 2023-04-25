@@ -195,5 +195,6 @@
   "try-again-later": "Oops, an error occurred. Please try again later.",
   "value": "Value",
   "self-hosted-extractors": "Self-hosted extractors",
-  "hosted-extractors": "Hosted extractors"
+  "hosted-extractors": "Hosted extractors",
+  "insight": "Insight"
 }

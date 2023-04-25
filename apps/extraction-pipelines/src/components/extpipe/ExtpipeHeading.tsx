@@ -129,7 +129,7 @@ export const ExtpipeHeading = () => {
   );
 };
 
-const StyledHeadingContainer = styled.div`
+export const StyledHeadingContainer = styled.div`
   border-bottom: 1px solid ${Colors['border--interactive--default']};
 `;
 

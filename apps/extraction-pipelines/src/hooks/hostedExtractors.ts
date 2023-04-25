@@ -35,6 +35,35 @@ export const useMQTTSources = () => {
   });
 };
 
+const getMQTTSourceQueryKey = (externalId?: string) => [
+  'mqtt',
+  'source',
+  'details',
+  externalId,
+];
+
+export const useMQTTSource = (externalId?: string) => {
+  const sdk = useSDK();
+
+  return useQuery(getMQTTSourceQueryKey(externalId), async () => {
+    if (!externalId) {
+      throw Error('external id is missing');
+    }
+
+    return sdk
+      .post<{ items: ReadMQTTSource[] }>(
+        `/api/v1/projects/${getProject()}/pluto/sources/byIds`,
+        {
+          headers: { 'cdf-version': 'alpha' },
+          data: {
+            items: [{ externalId }],
+          },
+        }
+      )
+      .then((r) => r.data.items[0]);
+  });
+};
+
 // DESTINATIONS
 
 export type MQTTDestinationType = 'datapoints' | 'events' | 'raw';
