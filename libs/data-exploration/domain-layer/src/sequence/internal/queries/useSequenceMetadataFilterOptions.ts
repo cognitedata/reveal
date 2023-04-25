@@ -7,28 +7,28 @@ import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOpti
 
 interface Props {
   filter?: InternalSequenceFilters;
+  searchQuery?: string;
   query?: string;
-  prefix?: string;
 }
 
 export const useSequenceMetadataFilterOptions = ({
-  query,
+  searchQuery,
   filter,
-  prefix,
+  query,
 }: Props) => {
   const {
     data = [],
     isLoading,
     isError,
   } = useSequencesMetadataKeysAggregateQuery({
-    prefix,
+    query,
   });
 
   const { data: dynamicData = [] } = useSequencesMetadataKeysAggregateQuery({
-    prefix,
+    query,
     advancedFilter: mapFiltersToSequenceAdvancedFilters(
       omit(filter, 'metadata'),
-      query
+      searchQuery
     ),
   });
 

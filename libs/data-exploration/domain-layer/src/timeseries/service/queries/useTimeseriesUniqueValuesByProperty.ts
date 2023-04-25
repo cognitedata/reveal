@@ -16,26 +16,26 @@ import {
 
 interface Props {
   property: TimeseriesProperty;
-  prefix?: string;
+  query?: string;
   filter?: InternalTimeseriesFilters | OldTimeseriesFilters;
   advancedFilter?: AdvancedFilter<TimeseriesProperties>;
 }
 
 export const useTimeseriesUniqueValuesByProperty = ({
   property,
-  prefix,
+  query,
   filter,
   advancedFilter,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesUniqueValues(property, prefix, filter, advancedFilter),
+    queryKeys.timeseriesUniqueValues(property, query, filter, advancedFilter),
     () => {
       return getTimeseriesUniqueValuesByProperty(sdk, property, {
         filter: transformNewFilterToOldFilter(filter),
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     }
   );

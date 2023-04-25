@@ -8,7 +8,6 @@ import {
   AssetProperty,
   useAssetsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-import { getSearchConfig } from '../../../utils';
 import { mapFiltersToAssetsAdvancedFilters } from '..';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
@@ -20,17 +19,17 @@ interface Props {
    * Better to fix this in future and remove this.
    */
   filterProperty?: string;
-  query?: string;
+  searchQuery?: string;
   filter?: InternalAssetFilters;
-  prefix?: string;
+  query?: string;
 }
 
 export const useAssetsFilterOptions = ({
   property,
   filterProperty,
-  query,
+  searchQuery,
   filter = {},
-  prefix,
+  query,
 }: Props) => {
   const {
     data = [],
@@ -38,19 +37,18 @@ export const useAssetsFilterOptions = ({
     isError,
   } = useAssetsUniqueValuesByProperty({
     property,
+    searchQuery,
     query,
-    prefix,
   });
 
   const { data: dynamicData = [] } = useAssetsUniqueValuesByProperty({
     property,
-    query,
+    searchQuery,
     advancedFilter: mapFiltersToAssetsAdvancedFilters(
       omit(filter, filterProperty || property),
-      query,
-      getSearchConfig().asset
+      searchQuery
     ),
-    prefix,
+    query,
   });
 
   const options = useMemo(() => {

@@ -8,14 +8,14 @@ import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
-  prefix?: string;
   query?: string;
+  searchQuery?: string;
   filter?: InternalDocumentFilter;
 }
 
 export const useDocumentsMetadataFilterOptions = ({
-  prefix,
   query,
+  searchQuery,
   filter,
 }: Props) => {
   const {
@@ -23,12 +23,15 @@ export const useDocumentsMetadataFilterOptions = ({
     isLoading,
     isError,
   } = useDocumentsMetadataKeysAggregateQuery({
-    prefix,
+    query,
   });
 
   const { data: dynamicData = [] } = useDocumentsMetadataKeysAggregateQuery({
-    filter: mapFiltersToDocumentSearchFilters(omit(filter, 'metadata'), query),
-    prefix,
+    filter: mapFiltersToDocumentSearchFilters(
+      omit(filter, 'metadata'),
+      searchQuery
+    ),
+    query,
   });
 
   const options = useMemo(() => {

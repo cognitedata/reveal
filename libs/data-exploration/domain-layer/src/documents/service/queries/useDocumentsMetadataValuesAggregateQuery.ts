@@ -13,7 +13,7 @@ import { getDocumentsMetadataValuesAggregate } from '../network/getDocumentsMeta
 
 interface Props {
   metadataKey?: string | null;
-  prefix?: string;
+  query?: string;
   filter?: AdvancedFilter<DocumentProperties>;
   options?: UseQueryOptions<
     DocumentsMetadataAggregateResponse[],
@@ -25,18 +25,18 @@ interface Props {
 
 export const useDocumentsMetadataValuesAggregateQuery = ({
   metadataKey,
-  prefix,
+  query,
   filter,
   options,
 }: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.documentsMetadataValues(String(metadataKey), prefix, filter),
+    queryKeys.documentsMetadataValues(String(metadataKey), query, filter),
     () => {
       return getDocumentsMetadataValuesAggregate(sdk, String(metadataKey), {
         filter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

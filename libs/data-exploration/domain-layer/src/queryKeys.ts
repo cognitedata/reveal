@@ -94,7 +94,7 @@ export const queryKeys = {
     property: string,
     filter?: any,
     advancedFilter?: any,
-    prefix?: string
+    query?: string
   ) =>
     [
       ...queryKeys.events(),
@@ -102,7 +102,7 @@ export const queryKeys = {
       property,
       filter,
       advancedFilter,
-      prefix,
+      query,
     ] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
@@ -127,7 +127,7 @@ export const queryKeys = {
     property: string,
     query?: string,
     advancedFilter?: any,
-    prefix?: string
+    searchQuery?: string
   ) =>
     [
       ...queryKeys.assets(),
@@ -135,7 +135,7 @@ export const queryKeys = {
       property,
       query,
       advancedFilter,
-      prefix,
+      searchQuery,
     ] as const,
   assetsMetadata: (query?: string, advancedFilter?: any) =>
     [...queryKeys.assets(), 'metadata', 'keys', query, advancedFilter] as const,
@@ -202,19 +202,19 @@ export const queryKeys = {
       filter,
     ] as const,
 
-  documentsLabelValues: (filter?: any, prefix?: any) =>
-    [...queryKeys.documents(), 'labels', filter, prefix] as const,
+  documentsLabelValues: (filter?: any, query?: any) =>
+    [...queryKeys.documents(), 'labels', filter, query] as const,
   documentsUniqueValues: (
     property: string | [string, string],
     filter?: any,
-    prefix?: any
+    query?: any
   ) =>
     [
       ...queryKeys.documents(),
       'unique-values',
       property,
       filter,
-      prefix,
+      query,
     ] as const,
 
   // Annotations

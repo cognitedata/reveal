@@ -61,19 +61,19 @@ export const LabelFilter = <TFilter,>({
 const AssetLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useAssetsFilterOptions({
     property: 'labels',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <LabelFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -84,18 +84,18 @@ const AssetLabelFilter = (
 export const DocumentLabelFilter = (
   props: BaseMultiSelectFilterProps<InternalDocumentFilter>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsLabelsFilterOptions({
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <LabelFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       options={options}
       isError={isError}
       isLoading={isLoading}

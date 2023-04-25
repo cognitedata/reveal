@@ -9,14 +9,14 @@ import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
-  prefix?: string;
   query?: string;
+  searchQuery?: string;
   filter?: InternalAssetFilters;
 }
 
 export const useAssetsMetadataFilterOptions = ({
-  prefix,
   query,
+  searchQuery,
   filter,
 }: Props) => {
   const {
@@ -24,14 +24,14 @@ export const useAssetsMetadataFilterOptions = ({
     isLoading,
     isError,
   } = useAssetsMetadataKeysAggregateQuery({
-    prefix,
+    query,
   });
 
   const { data: dynamicData = [] } = useAssetsMetadataKeysAggregateQuery({
-    prefix,
+    query,
     advancedFilter: mapFiltersToAssetsAdvancedFilters(
       omit(filter, 'metadata'),
-      query
+      searchQuery
     ),
   });
 

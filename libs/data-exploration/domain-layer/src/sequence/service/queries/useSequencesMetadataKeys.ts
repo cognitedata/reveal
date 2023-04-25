@@ -7,9 +7,9 @@ interface Props {
   enabled?: boolean;
 }
 
-export const useSequencesMetadataKeys = ({ query, enabled }: Props = {}) => {
+export const useSequencesMetadataKeys = ({ query }: Props = {}) => {
   const { data, ...rest } = useSequencesMetadataKeysAggregateQuery({
-    prefix: query,
+    query,
   });
 
   const metadataKeys = useMemo(() => {

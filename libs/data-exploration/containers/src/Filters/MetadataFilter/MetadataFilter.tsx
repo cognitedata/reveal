@@ -77,22 +77,22 @@ export const MetadataFilter = <TFilter,>({
 const AssetsMetadataFilter = (
   props: BaseNestedFilterProps<InternalAssetFilters>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useAssetsMetadataFilterOptions({
-    prefix,
-    query: props.query,
+    query,
+    searchQuery: props.query,
     filter: props.filter,
   });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={setPrefix}
+      onSearchInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery({
-        query: props.query,
+        searchQuery: props.query,
         filter: props.filter,
       })}
       {...props}
@@ -153,22 +153,22 @@ const TimeseriesMetadataFilter = (
 const FilesMetadataFilter = (
   props: BaseNestedFilterProps<InternalDocumentFilter>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsMetadataFilterOptions({
-    prefix,
-    query: props.query,
+    query,
+    searchQuery: props.query,
     filter: props.filter,
   });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={setPrefix}
+      onSearchInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery({
-        query: props.query,
+        searchQuery: props.query,
         filter: props.filter,
       })}
       {...props}
@@ -179,21 +179,21 @@ const FilesMetadataFilter = (
 const SequencesMetadataFilter = (
   props: BaseNestedFilterProps<InternalSequenceFilters>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useSequenceMetadataFilterOptions({
-    prefix,
+    query,
     filter: props.filter,
-    query: props.query,
+    searchQuery: props.query,
   });
 
   return (
     <MetadataFilter
       options={options}
-      onSearchInputChange={setPrefix}
+      onSearchInputChange={setQuery}
       useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery({
         filter: props.filter,
-        query: props.query,
+        searchQuery: props.query,
       })}
       isError={isError}
       isLoading={isLoading}

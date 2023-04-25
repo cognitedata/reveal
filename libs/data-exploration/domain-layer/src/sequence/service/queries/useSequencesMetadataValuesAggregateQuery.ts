@@ -10,7 +10,7 @@ import { SequenceProperties } from '../../internal';
 
 interface Props {
   metadataKey?: string | null;
-  prefix?: string;
+  query?: string;
   advancedFilter?: AdvancedFilter<SequenceProperties>;
   options?: UseQueryOptions<
     SequencesMetadataAggregateResponse[],
@@ -22,7 +22,7 @@ interface Props {
 
 export const useSequencesMetadataValuesAggregateQuery = ({
   metadataKey,
-  prefix,
+  query,
   advancedFilter,
   options,
 }: Props = {}) => {
@@ -31,13 +31,13 @@ export const useSequencesMetadataValuesAggregateQuery = ({
   return useQuery(
     queryKeys.sequencesMetadataValues(
       String(metadataKey),
-      prefix,
+      query,
       advancedFilter
     ),
     () =>
       getSequencesMetadataValuesAggregate(sdk, String(metadataKey), {
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       }),
     {
       enabled:

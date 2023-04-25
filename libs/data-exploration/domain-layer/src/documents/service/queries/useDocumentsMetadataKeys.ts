@@ -8,7 +8,7 @@ interface Props {
 
 export const useDocumentsMetadataKeys = ({ query, enabled }: Props = {}) => {
   const { data, ...rest } = useDocumentsMetadataKeysAggregateQuery({
-    prefix: query,
+    query,
     options: { enabled },
   });
 

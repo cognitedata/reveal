@@ -12,7 +12,7 @@ import isUndefined from 'lodash/isUndefined';
 
 interface Props {
   metadataKey?: string | null;
-  prefix?: string;
+  query?: string;
   advancedFilter?: AdvancedFilter<AssetsProperties>;
   options?: UseQueryOptions<
     AssetsMetadataAggregateResponse[],
@@ -24,18 +24,18 @@ interface Props {
 
 export const useAssetsMetadataValuesAggregateQuery = ({
   metadataKey,
-  prefix,
+  query,
   advancedFilter,
   options,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsMetadataValues(String(metadataKey), prefix, advancedFilter),
+    queryKeys.assetsMetadataValues(String(metadataKey), query, advancedFilter),
     () => {
       return getAssetsMetadataValuesAggregate(sdk, String(metadataKey), {
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

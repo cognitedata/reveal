@@ -7,21 +7,21 @@ import { useDocumentsMetadataValuesAggregateQuery } from '../../service';
 import { mapFiltersToDocumentSearchFilters } from '../transformers';
 
 interface Props {
-  query?: string;
+  searchQuery?: string;
   filter?: InternalDocumentFilter;
 }
 
 export const useDocumentMetadataValuesOptionsQuery =
-  ({ query, filter }: Props) =>
+  ({ searchQuery, filter }: Props) =>
   (
     metadataKey?: string | null,
-    prefix?: string,
+    query?: string,
     options?: UseQueryOptions<any>
   ) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data = [], isLoading } = useDocumentsMetadataValuesAggregateQuery({
       metadataKey,
-      prefix,
+      query,
       options,
     });
 
@@ -29,10 +29,10 @@ export const useDocumentMetadataValuesOptionsQuery =
     const { data: dynamicData = [] } = useDocumentsMetadataValuesAggregateQuery(
       {
         metadataKey,
-        prefix,
+        query,
         filter: mapFiltersToDocumentSearchFilters(
           omit(filter, 'metadata'),
-          query
+          searchQuery
         ),
         options,
       }

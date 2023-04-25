@@ -10,7 +10,7 @@ import { DocumentsMetadataAggregateResponse } from '../types';
 import { getDocumentsMetadataKeysAggregate } from '../network/getDocumentsMetadataKeysAggregate';
 
 interface Props {
-  prefix?: string;
+  query?: string;
   filter?: AdvancedFilter<DocumentProperties>;
   options?: UseQueryOptions<
     DocumentsMetadataAggregateResponse[],
@@ -21,18 +21,18 @@ interface Props {
 }
 
 export const useDocumentsMetadataKeysAggregateQuery = ({
-  prefix,
+  query,
   filter,
   options,
 }: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.documentsMetadata(prefix, filter),
+    queryKeys.documentsMetadata(query, filter),
     () => {
       return getDocumentsMetadataKeysAggregate(sdk, {
         filter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

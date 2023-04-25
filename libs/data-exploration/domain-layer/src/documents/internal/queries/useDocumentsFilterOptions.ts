@@ -8,22 +8,21 @@ import {
   mapFiltersToDocumentSearchFilters,
   useDocumentsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-import { getSearchConfig } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { DocumentProperty, DocumentSourceProperty } from '../../service/types';
 
 interface Props {
   property: Exclude<DocumentProperty, 'labels'> | DocumentSourceProperty;
-  query?: string;
+  searchQuery?: string;
   filter?: InternalDocumentFilter;
-  prefix?: string;
+  query?: string;
 }
 
 export const useDocumentsFilterOptions = ({
   property,
-  query,
+  searchQuery,
   filter = {},
-  prefix,
+  query,
 }: Props) => {
   const {
     data = [],
@@ -31,17 +30,16 @@ export const useDocumentsFilterOptions = ({
     isError,
   } = useDocumentsUniqueValuesByProperty({
     property,
-    prefix,
+    query,
   });
 
   const { data: dynamicData = [] } = useDocumentsUniqueValuesByProperty({
     property,
     filter: mapFiltersToDocumentSearchFilters(
       omit(filter, property),
-      query,
-      getSearchConfig().file
+      searchQuery
     ),
-    prefix,
+    query,
   });
 
   const options = useMemo(() => {

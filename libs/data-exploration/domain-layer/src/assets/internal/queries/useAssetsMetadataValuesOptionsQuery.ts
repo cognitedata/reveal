@@ -7,31 +7,31 @@ import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
-  query?: string;
+  searchQuery?: string;
   filter?: InternalAssetFilters;
 }
 
 export const useAssetsMetadataValuesOptionsQuery =
-  ({ query, filter }: Props) =>
+  ({ searchQuery, filter }: Props) =>
   (
     metadataKey?: string | null,
-    prefix?: string,
+    query?: string,
     options?: UseQueryOptions<any>
   ) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data = [], isLoading } = useAssetsMetadataValuesAggregateQuery({
       metadataKey,
-      prefix,
+      query,
       options,
     });
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data: dynamicData = [] } = useAssetsMetadataValuesAggregateQuery({
       metadataKey,
-      prefix,
+      query,
       advancedFilter: mapFiltersToAssetsAdvancedFilters(
         omit(filter, 'metadata'),
-        query
+        searchQuery
       ),
       options,
     });
