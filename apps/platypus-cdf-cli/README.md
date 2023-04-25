@@ -25,8 +25,8 @@ We currently support these top level commands
 | Data model Commands                                 | Description                                                                                                |
 | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `cdf data-models create`                            | Creates a new data model.                                                                                  |
-| `cdf data-models list`                              | List data models.                                                                                          |
-| `cdf data-models publish`                           | Updates a data model with a new GraphQL definition.                                                        |
+| [`cdf data-models list`](#data-models-list)         | List data models.                                                                                          |
+| [`cdf data-models publish`](#data-models-publish)   | Updates a data model with a new GraphQL definition.                                                        |
 | [`cdf data-models generate`](#Data-models-generate) | Generate a JavaScript GraphQL client for the data model. Powered by https://the-guild.dev/graphql/codegen. |
 
 # Options (Global)
@@ -72,6 +72,21 @@ This command will tell about the login status and later on status of the backend
 ```bash
 cdf status
 ```
+
+## Data models list
+
+This command lists all the data models in a table like UI in your shell. However, for CI/CD this can be bothersome. Hence, the `--simple` provides an easy way to list all the data models in a simple list format.
+
+`--columns` also allows for choosing specific columns to display. By default, all columns (data model external ID, name, space, version) are visible. For example `cdf dm list --columns=name --columns=id` will list the data models with columns `name` and `id` in that respective order.
+
+## Data models publish
+
+This command publishs a new version of a data model definition by specifying the data model external ID, space and version. However, to skip specifying a version, `--auto-increment` can be used to publish a new version with a `{current-version}+1` and `<Anything>-{current-version}+1` logic, note that we use `-` as the delimiter to identify version. For example:
+
+- version `3` becomes `4`
+- version `beta-2` becomes `beta-3`
+- version `alpha` becomes `alpha-1`
+- version `some.random.1` becomes `some.random.1-1`.
 
 ## Data models generate
 

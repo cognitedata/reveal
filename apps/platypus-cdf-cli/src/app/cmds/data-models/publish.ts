@@ -18,7 +18,11 @@ import {
 import { readFileSync } from 'fs';
 import { Arguments, Argv } from 'yargs';
 
-import { getDataModelsHandler, getDataModelVersionsHandler } from './utils';
+import {
+  autoIncrementVersion,
+  getDataModelsHandler,
+  getDataModelVersionsHandler,
+} from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:publish');
 
@@ -61,7 +65,15 @@ export const commandArgs = [
     description: 'Data model version',
     type: CommandArgumentType.STRING,
     prompt: 'Enter data model version',
-    required: true,
+    required: false,
+  },
+  {
+    name: 'auto-increment',
+    description:
+      'Automatically increment the data model version, takes the latest version and +1 at the end.',
+    type: CommandArgumentType.BOOLEAN,
+    required: false,
+    initial: false,
   },
 ] as CommandArgument[];
 
@@ -70,7 +82,8 @@ type DataModelPublishCommandArgs = BaseArgs & {
   file: string;
   space: string;
   'dry-run': boolean;
-  version: string;
+  'auto-increment': boolean;
+  version?: string;
 };
 
 export class PublishCmd extends CLICommand {
@@ -90,6 +103,50 @@ export class PublishCmd extends CLICommand {
   async execute(args: Arguments<DataModelPublishCommandArgs>) {
     const validator = new Validator(args);
 
+    this.dataModelVersionsHandler = getDataModelVersionsHandler();
+    this.dataModelsHandler = getDataModelsHandler();
+    DEBUG('dataModelVersionsHandler initialized');
+
+    let graphqlSchema;
+    try {
+      graphqlSchema = await this.readGraphqlSchemaFile(args.file);
+    } catch (e) {
+      Response.error(`Unable to read specified GraphQL file: ${args.file}`);
+      return;
+    }
+
+    const dataModelResponse = await this.dataModelsHandler.fetch({
+      dataModelId: args['external-id'],
+      space: args.space,
+    });
+    if (!dataModelResponse.isSuccess) {
+      Response.error(
+        'The data model specified does not exist. Create a data model first before publishing a new version.'
+      );
+      return;
+    }
+
+    if (!args.version) {
+      if (args['auto-increment']) {
+        const { version: currentVersion } = dataModelResponse.getValue();
+        args['version'] = autoIncrementVersion(currentVersion);
+      } else {
+        Response.error('You must specify a version or use `--auto-increment`.');
+        return;
+      }
+    }
+
+    const dto: CreateDataModelVersionDTO = {
+      externalId: args['external-id'],
+      schema: graphqlSchema,
+      version: args['version'],
+      space: args['space'],
+    };
+
+    Response.info(
+      `Publishing to data model version ${dto.version}. This can take a few minutes...`
+    );
+
     validator.addRule('version', new DataModelVersionValidator());
 
     const validationResult = validator.validate();
@@ -106,24 +163,6 @@ export class PublishCmd extends CLICommand {
       );
     }
 
-    this.dataModelVersionsHandler = getDataModelVersionsHandler();
-    this.dataModelsHandler = getDataModelsHandler();
-    DEBUG('dataModelVersionsHandler initialized');
-    let graphqlSchema;
-    try {
-      graphqlSchema = await this.readGraphqlSchemaFile(args.file);
-    } catch (e) {
-      Response.error(`Unable to read specified GraphQL file: ${args.file}`);
-      return;
-    }
-
-    const dto: CreateDataModelVersionDTO = {
-      externalId: args['external-id'],
-      schema: graphqlSchema,
-      version: args['version'],
-      space: args['space'],
-    };
-
     if (args['dry-run']) {
       const response = await this.dataModelVersionsHandler.validate(dto, true);
       if (response.isSuccess) {
@@ -135,21 +174,6 @@ export class PublishCmd extends CLICommand {
       }
       return;
     }
-
-    const dataModelResponse = await this.dataModelsHandler.fetch({
-      dataModelId: dto.externalId,
-      space: dto.space,
-    });
-    if (!dataModelResponse.isSuccess) {
-      Response.error(
-        'The data model specified does not exist. Create a data model first before publishing a new version.'
-      );
-      return;
-    }
-
-    Response.info(
-      `Publishing to data model version ${dto.version}. This can take a few minutes...`
-    );
 
     const dataModelMetadata = dataModelResponse.getValue();
     const response = await this.dataModelVersionsHandler.publish(
