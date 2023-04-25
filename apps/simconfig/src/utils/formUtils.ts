@@ -1,5 +1,3 @@
-import { FileExtensionToSimulator } from 'components/forms/ModelForm/constants';
-
 export const getSelectEntriesFromMap = <T extends Record<string, string>>(
   obj?: T
 ): { label: string; value: keyof T }[] =>
@@ -7,12 +5,6 @@ export const getSelectEntriesFromMap = <T extends Record<string, string>>(
     label,
     value,
   }));
-
-export function isValidExtension(
-  ext: string
-): ext is keyof typeof FileExtensionToSimulator {
-  return ext in FileExtensionToSimulator;
-}
 
 export const getFileExtensionFromFileName = (name: string) => {
   const lastDot = name.lastIndexOf('.');

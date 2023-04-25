@@ -3,7 +3,10 @@ import { useMatch } from 'react-location';
 import { Field, useFormikContext } from 'formik';
 
 import { Select } from '@cognite/cogs.js';
-import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+import type {
+  DefinitionMap,
+  UserDefined,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from 'components/forms/ModelForm/elements';
 
@@ -34,7 +37,8 @@ export function Unit({ routineIndex, step }: ConfigurationFieldProps) {
     return null;
   }
 
-  const timeserieUnitType = values.inputTimeSeries[tsIdx].unitType;
+  const timeserieUnitType = values.inputTimeSeries[tsIdx]
+    .unitType as keyof DefinitionMap['map']['unitType'];
   const unitLabels = definitions.map.unitType[timeserieUnitType];
   const TIMESERIES_UNIT_OPTIONS: ValueOptionType<string>[] = Object.entries(
     unitLabels

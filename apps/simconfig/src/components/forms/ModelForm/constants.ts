@@ -1,14 +1,5 @@
 import type { DefinitionMap } from '@cognite/simconfig-api-sdk/rtk';
 
-// TODO(SIM-209) Migrate to definitions endpoint
-export const FileExtensionToSimulator: Record<
-  string,
-  keyof DefinitionMap['type']['simulator']
-> = {
-  '.out': 'PROSPER',
-  '.yml': 'ProcessSim',
-};
-
 // TODO(SIM-209) Use definitions endpoint
 export const UnitSystem = {
   OilField: 'Oil field units',

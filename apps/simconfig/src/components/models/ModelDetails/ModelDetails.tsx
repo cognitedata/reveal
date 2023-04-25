@@ -154,12 +154,25 @@ export function ModelDetails({
           <div>
             <span className="model-name">{modelFile.metadata.modelName}</span>
             <ul>
-              <li>{simulatorConfigDetails?.name}, </li>
-              <li>
-                {definitions?.type.unitSystem[modelFile.metadata.unitSystem]},
-              </li>
-              {modelFile.metadata.modelType && (
-                <li>{definitions?.type.model[modelFile.metadata.modelType]}</li>
+              <li>{simulatorConfigDetails?.name} </li>
+              {modelFile.metadata.unitSystem ? (
+                <li>
+                  ,{' '}
+                  {definitions?.type.unitSystem[
+                    modelFile.metadata.unitSystem
+                  ] ?? modelFile.metadata.unitSystem}
+                </li>
+              ) : null}
+
+              {modelFile.metadata.modelType ? (
+                <li>
+                  ,{' '}
+                  {simulatorConfigDetails?.modelTypes?.filter(
+                    ({ key }) => key === modelFile.metadata.modelType
+                  )?.[0]?.name ?? modelFile.metadata.modelType}
+                </li>
+              ) : (
+                modelFile.metadata.modelType
               )}
               {isDeletionInProgress ? (
                 <li>

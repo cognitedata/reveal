@@ -22,7 +22,7 @@ import {
   getTypedFormData,
   useCreateModelFileMutation,
   useGetMetadataResourceQuery,
-  useGetSimulatorsListQuery,
+  useGetSimulatorsListV2Query,
   useUpdateModelFileVersionMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -35,18 +35,12 @@ import { selectProject } from 'store/simconfigApiProperties/selectors';
 import {
   getFileExtensionFromFileName,
   getSelectEntriesFromMap,
-  isValidExtension,
 } from 'utils/formUtils';
 import { isSuccessResponse } from 'utils/responseUtils';
 
 import { LabelsInput } from '../controls/LabelsInput';
 
-import {
-  DEFAULT_MODEL_SOURCE,
-  DEFAULT_UNIT_SYSTEM,
-  FileExtensionToSimulator,
-  UnitSystem,
-} from './constants';
+import { DEFAULT_MODEL_SOURCE, UnitSystem } from './constants';
 import { InputRow } from './elements';
 import type { BoundaryConditionResponse, ModelFormState } from './types';
 
@@ -60,10 +54,9 @@ const getInitialModelFormState = (
   file: undefined,
   metadata: {
     modelName: '',
-    simulator: DEFAULT_MODEL_SOURCE,
+    simulator: '',
     description: '',
     fileName: '',
-    unitSystem: DEFAULT_UNIT_SYSTEM,
     userEmail: '',
   },
   fileInfo: {
@@ -72,11 +65,6 @@ const getInitialModelFormState = (
   },
   availableBoundaryConditions: [],
 });
-
-const getSimulatorFromFileName = (fileName: string) => {
-  const ext = getFileExtensionFromFileName(fileName);
-  return isValidExtension(ext) && FileExtensionToSimulator[ext];
-};
 
 function SimulatorStatusDropdown({
   dataset,
@@ -101,8 +89,6 @@ function SimulatorStatusDropdown({
   );
 }
 
-const acceptedFileTypes = Object.keys(FileExtensionToSimulator);
-
 interface ComponentProps {
   initialModelFormState?: ModelFormState;
   onUpload?: (metadata: CreateMetadata | UpdateMetadata) => void;
@@ -118,7 +104,9 @@ export function ModelForm({
   const { data: user } = useUserInfo();
 
   // state to find which simulator was selected after uploading the model file
-  const [selectedSimulator, setSelectedSimulator] = useState<Simulator>();
+  const [selectedSimulator, setSelectedSimulator] = useState<
+    Simulator | undefined
+  >(initialModelFormState?.metadata.simulator ?? undefined);
 
   const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
   const {
@@ -126,8 +114,11 @@ export function ModelForm({
   } = useMatch<AppLocationGenerics>();
 
   const project = useSelector(selectProject);
-  const { data: simulatorsList } = useGetSimulatorsListQuery(
-    { project },
+
+  const { data: projectSimulatorsList } = useGetSimulatorsListV2Query(
+    {
+      project,
+    },
     { pollingInterval: HEARTBEAT_POLL_INTERVAL }
   );
 
@@ -203,8 +194,8 @@ export function ModelForm({
     if (!user) {
       throw new Error('User is not authenticated');
     }
-    // simulator name is chosen based on the extension of the filename
-    const simulator = getSimulatorFromFileName(formMetadata.fileName);
+
+    const { simulator } = formMetadata;
 
     if (!simulator) {
       throw new Error('Invalid file type');
@@ -223,16 +214,6 @@ export function ModelForm({
     );
 
     if (isNewModel) {
-      // Check for required property to narrow metadata type
-      if (!('unitSystem' in metadata)) {
-        throw new Error(`Missing required property: 'unitSystem'`);
-      }
-
-      if (!('modelType' in metadata)) {
-        toast.error('Missing required property: Please select Model Type');
-        return;
-      }
-
       const fileInfo: FileInfo = {
         ...formFileInfo,
         // Override linked values from metadata
@@ -280,13 +261,27 @@ export function ModelForm({
     }
   };
 
+  const simulatorsConfig = useMemo(
+    () => definitions?.simulatorsConfig,
+    [definitions]
+  );
+
+  const selectedSimulatorConfig = useMemo(() => {
+    const currentSimualtorConfig = definitions?.simulatorsConfig?.filter(
+      ({ key }) => selectedSimulator === key
+    );
+    if (currentSimualtorConfig?.length) {
+      return currentSimualtorConfig[0];
+    }
+    return null;
+  }, [selectedSimulator, definitions]);
+
   const validateFilename = (value: string) => {
     if (!value) {
       return undefined;
     }
-    const ext = getFileExtensionFromFileName(value);
 
-    if (!isValidExtension(ext)) {
+    if (!isValidFile(value)) {
       return 'Invalid file type';
     }
     return undefined;
@@ -294,21 +289,9 @@ export function ModelForm({
 
   const isValidFile = (fileName: string): boolean => {
     const ext = getFileExtensionFromFileName(fileName);
-    return isValidExtension(ext);
-  };
-
-  const getLatestSimulatorByFileExtension = (fileName: string | undefined) => {
-    const extensionToSimulator =
-      FileExtensionToSimulator[
-        fileName ? getFileExtensionFromFileName(fileName) : 'UNKNOWN'
-      ];
-
-    setSelectedSimulator(extensionToSimulator);
-
-    return simulatorsList?.simulators?.find(
-      (connectorSimulator) =>
-        connectorSimulator.simulator === extensionToSimulator
-    )?.dataSetId;
+    return !!selectedSimulatorConfig?.fileExtensionType
+      .map((ext) => ext.toLowerCase())
+      .includes(ext.replace('.', '').toLowerCase());
   };
 
   return (
@@ -321,182 +304,131 @@ export function ModelForm({
         validateField,
       }) => (
         <Form>
-          <InputRow>
-            {file ? (
+          {isNewModel ? (
+            <InputRow>
               <Field
-                as={RegularInput}
-                error={
-                  errors.metadata?.fileName
-                    ? errors.metadata.fileName
-                    : undefined
-                }
-                helpText={
-                  isValidFile(metadata.fileName)
-                    ? `Simulator: ${metadata.simulator}`
-                    : undefined
-                }
-                icon="Document"
-                isValid={isValidFile(metadata.fileName)}
-                maxLength={512}
-                name="metadata.fileName"
-                postfix={<Button onClick={onButtonClick}>File</Button>}
-                title="File name"
-                validate={validateFilename}
-                disabled
-                fullWidth
-              />
-            ) : (
-              <Field
-                as={FileInput}
-                extensions={acceptedFileTypes}
-                validate={validateFilename}
-                onFileSelected={(file?: File) => {
-                  setFieldValue('file', file);
-                  setFieldValue('metadata.fileName', file?.name);
-                  setFieldValue(
-                    'fileInfo.dataSetId',
-                    getLatestSimulatorByFileExtension(file?.name)
-                  );
-                  setFieldValue(
-                    'metadata.simulator',
-                    FileExtensionToSimulator[
-                      file?.name
-                        ? getFileExtensionFromFileName(file.name)
-                        : 'UNKNOWN'
-                    ]
-                  );
-                  validateField('metadata.fileName');
+                as={Select}
+                name="metadata.simulator"
+                options={simulatorsConfig?.map(({ key, name }) => ({
+                  label: name,
+                  value: key,
+                }))}
+                title="Simulators"
+                value={{ value: metadata.simulator, label: metadata.simulator }}
+                required
+                onChange={({ value }: { value: string }) => {
+                  setFieldValue('metadata.simulator', value);
+                  setSelectedSimulator(value);
                 }}
               />
-            )}
-            <HiddenInputFile
-              accept={acceptedFileTypes.join(',')}
-              id="file-upload"
-              ref={inputFile}
-              type="file"
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                const file = event.currentTarget.files?.[0];
-                setFieldValue(
-                  'fileInfo.dataSetId',
-                  getLatestSimulatorByFileExtension(file?.name)
-                );
-                setFieldValue('file', file);
-                setFieldValue('metadata.fileName', file?.name);
-              }}
-            />
-          </InputRow>
-          <InputRow>
-            <Field
-              as={RegularInput}
-              disabled={!isNewModel}
-              helpText="Only alphanumeric characters, spaces ( ), underscores (_) and dashes (-) are allowed."
-              maxLength={256}
-              name="metadata.modelName"
-              pattern="^[A-Za-z0-9_ -]*$"
-              title="Model name"
-              fullWidth
-              required
-            />
-          </InputRow>
-          <InputRow>
-            <Field
-              as={Input}
-              maxLength={200}
-              name="metadata.description"
-              title="Description"
-              fullWidth
-            />
-          </InputRow>
+            </InputRow>
+          ) : null}
 
-          {!isNewModel ? (
+          {metadata.simulator && (
             <>
               <InputRow>
-                <RegularInput
-                  title="Unit system"
-                  value={UnitSystem[metadata.unitSystem]}
-                  disabled
+                {file ? (
+                  <Field
+                    as={RegularInput}
+                    error={
+                      errors.metadata?.fileName
+                        ? errors.metadata.fileName
+                        : undefined
+                    }
+                    helpText={
+                      isValidFile(metadata.fileName)
+                        ? `Simulator: ${metadata.simulator}`
+                        : undefined
+                    }
+                    icon="Document"
+                    isValid={isValidFile(metadata.fileName)}
+                    maxLength={512}
+                    name="metadata.fileName"
+                    postfix={<Button onClick={onButtonClick}>File</Button>}
+                    title="File name"
+                    validate={validateFilename}
+                    disabled
+                    fullWidth
+                  />
+                ) : (
+                  <Field
+                    as={FileInput}
+                    extensions={selectedSimulatorConfig?.fileExtensionType.map(
+                      (ex) => `.${ex}`
+                    )}
+                    validate={validateFilename}
+                    onFileSelected={(file?: File) => {
+                      setFieldValue('file', file);
+                      setFieldValue('metadata.fileName', file?.name);
+                      setFieldValue(
+                        'fileInfo.dataSetId',
+                        projectSimulatorsList?.simulators?.filter(
+                          ({ simulator }) => metadata.simulator === simulator
+                        )[0].dataSetId
+                      );
+                      validateField('metadata.fileName');
+                    }}
+                  />
+                )}
+                <HiddenInputFile
+                  accept={selectedSimulatorConfig?.fileExtensionType
+                    .map((ex) => `.${ex}`)
+                    .join(',')}
+                  id="file-upload"
+                  ref={inputFile}
+                  type="file"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    const file = event.currentTarget.files?.[0];
+                    setFieldValue(
+                      'fileInfo.dataSetId',
+                      projectSimulatorsList?.simulators?.filter(
+                        ({ simulator }) => metadata.simulator === simulator
+                      )?.[0].dataSetId
+                    );
+                    setFieldValue('file', file);
+                    setFieldValue('metadata.fileName', file?.name);
+                  }}
+                />
+              </InputRow>
+              {isNewModel ? (
+                <InputRow>
+                  <Field
+                    as={RegularInput}
+                    disabled={!isNewModel}
+                    helpText="Only alphanumeric characters, spaces ( ), underscores (_) and dashes (-) are allowed."
+                    maxLength={256}
+                    name="metadata.modelName"
+                    pattern="^[A-Za-z0-9_ -]*$"
+                    title="Model name"
+                    fullWidth
+                    required
+                  />
+                </InputRow>
+              ) : null}
+
+              <InputRow>
+                <Field
+                  as={Input}
+                  maxLength={200}
+                  name="metadata.description"
+                  title="Description"
                   fullWidth
                 />
               </InputRow>
-              <InputRow>
-                <Field
-                  as={Select}
-                  name="boundaryConditions"
-                  options={modelFormState.availableBoundaryConditions.map(
-                    ({ key, name }) => ({ label: name, value: key })
-                  )}
-                  title="Additional boundary conditions"
-                  isMulti
-                  required
-                  onChange={(values: { label: string; value: string }[]) => {
-                    setFieldValue('boundaryConditions', values);
-                  }}
-                />
-              </InputRow>
             </>
-          ) : (
+          )}
+
+          {!isNewModel ? (
             <>
-              {isLabelsEnabled && <LabelsInput setFieldValue={setFieldValue} />}
-              <InputRow>
-                <Field
-                  as={Select}
-                  name="metadata.modelType"
-                  options={getSelectEntriesFromMap(definitions?.type.model)}
-                  title="Model type"
-                  value={{
-                    value: metadata.modelType,
-                    label: metadata.modelType
-                      ? definitions?.type.model[metadata.modelType]
-                      : null,
-                  }}
-                  closeMenuOnSelect
-                  required
-                  onChange={({ value }: { value: string }) => {
-                    setFieldValue('metadata.modelType', value);
-                  }}
-                />
-              </InputRow>
-              <InputRow>
-                <Field
-                  as={Select}
-                  name="fileInfo.dataSetId"
-                  options={datasets?.map((dataset) => ({
-                    label: (
-                      <SimulatorStatusDropdown
-                        dataset={dataset}
-                        simulators={simulatorsList?.simulators ?? []}
-                      />
-                    ),
-                    value: dataset.id,
-                  }))}
-                  title="Data set"
-                  value={
-                    fileInfo.dataSetId && {
-                      value: fileInfo.dataSetId,
-                      label: (
-                        <SimulatorStatusDropdown
-                          dataset={datasets?.find(
-                            (dataset) => dataset.id === fileInfo.dataSetId
-                          )}
-                          simulators={simulatorsList?.simulators ?? []}
-                        />
-                      ),
-                    }
-                  }
-                  closeMenuOnSelect
-                  required
-                  onChange={({ value }: { value: string }) => {
-                    setFieldValue('fileInfo.dataSetId', value);
-                  }}
-                />
-              </InputRow>
-              {selectedSimulator && boundaryConditionsData ? (
+              {selectedSimulatorConfig?.isBoundaryConditionsEnabled ? (
                 <InputRow>
                   <Field
                     as={Select}
                     name="boundaryConditions"
-                    options={getSelectEntriesFromMap(boundaryConditionsData)}
-                    title="Boundary conditions"
+                    options={modelFormState.availableBoundaryConditions.map(
+                      ({ key, name }) => ({ label: name, value: key })
+                    )}
+                    title="Additional boundary conditions"
                     isMulti
                     required
                     onChange={(values: { label: string; value: string }[]) => {
@@ -504,24 +436,122 @@ export function ModelForm({
                     }}
                   />
                 </InputRow>
-              ) : undefined}
+              ) : null}
+            </>
+          ) : (
+            <>
+              {metadata.simulator && (
+                <>
+                  {isLabelsEnabled && (
+                    <LabelsInput setFieldValue={setFieldValue} />
+                  )}
 
-              <InputRow>
-                <Field
-                  as={Select}
-                  name="metadata.unitSystem"
-                  options={getSelectEntriesFromMap(UnitSystem)}
-                  title="Unit system"
-                  value={{
-                    value: metadata.unitSystem,
-                    label: UnitSystem[metadata.unitSystem],
-                  }}
-                  closeMenuOnSelect
-                  onChange={({ value }: { value: string }) => {
-                    setFieldValue('metadata.unitSystem', value);
-                  }}
-                />
-              </InputRow>
+                  <InputRow>
+                    <Field
+                      as={Select}
+                      name="fileInfo.dataSetId"
+                      options={datasets?.map((dataset) => ({
+                        label: (
+                          <SimulatorStatusDropdown
+                            dataset={dataset}
+                            simulators={projectSimulatorsList?.simulators ?? []}
+                          />
+                        ),
+                        value: dataset.id,
+                      }))}
+                      title="Data set"
+                      value={
+                        fileInfo.dataSetId && {
+                          value: fileInfo.dataSetId,
+                          label: (
+                            <SimulatorStatusDropdown
+                              dataset={datasets?.find(
+                                (dataset) => dataset.id === fileInfo.dataSetId
+                              )}
+                              simulators={
+                                projectSimulatorsList?.simulators ?? []
+                              }
+                            />
+                          ),
+                        }
+                      }
+                      closeMenuOnSelect
+                      required
+                      onChange={({ value }: { value: string }) => {
+                        setFieldValue('fileInfo.dataSetId', value);
+                      }}
+                    />
+                  </InputRow>
+                  {selectedSimulatorConfig?.modelTypes?.length ? (
+                    <InputRow>
+                      <Field
+                        as={Select}
+                        name="metadata.modelType"
+                        options={selectedSimulatorConfig.modelTypes.map(
+                          ({ key, name }) => ({ label: name, value: key })
+                        )}
+                        title="Model type"
+                        value={{
+                          value: metadata.modelType,
+                          label: metadata.modelType
+                            ? selectedSimulatorConfig.modelTypes.filter(
+                                ({ key }) => key === metadata.modelType
+                              )[0]?.name
+                            : null,
+                        }}
+                        closeMenuOnSelect
+                        required
+                        onChange={({ value }: { value: string }) => {
+                          setFieldValue('metadata.modelType', value);
+                        }}
+                      />
+                    </InputRow>
+                  ) : null}
+
+                  {selectedSimulator &&
+                  boundaryConditionsData &&
+                  selectedSimulatorConfig?.isBoundaryConditionsEnabled ? (
+                    <InputRow>
+                      <Field
+                        as={Select}
+                        name="boundaryConditions"
+                        options={getSelectEntriesFromMap(
+                          boundaryConditionsData
+                        )}
+                        title="Boundary conditions"
+                        isMulti
+                        onChange={(
+                          values: { label: string; value: string }[]
+                        ) => {
+                          setFieldValue('boundaryConditions', values);
+                        }}
+                      />
+                    </InputRow>
+                  ) : undefined}
+                  {(selectedSimulator &&
+                    ['PROSPER', 'ProcessSim'].includes(selectedSimulator)) ||
+                  selectedSimulatorConfig?.unitDefinitions?.length ? (
+                    <InputRow>
+                      <Field
+                        as={Select}
+                        name="metadata.unitSystem"
+                        options={getSelectEntriesFromMap(UnitSystem)}
+                        title="Unit system"
+                        value={{
+                          value: metadata.unitSystem,
+                          label: metadata.unitSystem
+                            ? UnitSystem[metadata.unitSystem]
+                            : '',
+                        }}
+                        closeMenuOnSelect
+                        onChange={({ value }: { value: string }) => {
+                          setFieldValue('metadata.unitSystem', value);
+                        }}
+                      />
+                    </InputRow>
+                  ) : null}
+                </>
+              )}
             </>
           )}
           <div>

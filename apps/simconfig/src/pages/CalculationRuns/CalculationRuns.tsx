@@ -13,12 +13,12 @@ import { Illustrations } from '@cognite/cogs.js-v9';
 import {
   useGetCalculationRunListQuery,
   useGetModelFileListQuery,
-  useGetSimulatorsListV2Query,
 } from '@cognite/simconfig-api-sdk/rtk';
 import type {
   CalculationRun,
   CalculationRunMetadata,
   GetCalculationRunListApiArg,
+  SimulatorConfigDetails,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { selectProject } from 'store/simconfigApiProperties/selectors';
@@ -62,18 +62,15 @@ export function CalculationRuns() {
     {
       refetchOnMountOrArgChange: true,
       pollingInterval: shouldPollCalculations ? POLLING_INTERVAL : undefined,
-      skip: !searchFilters.simulator,
     }
   );
 
   const { data: modelFileList } = useGetModelFileListQuery({ project });
 
-  const { data: simulatorsList } = useGetSimulatorsListV2Query({ project });
-
-  const simualtorKeys = simulatorsList?.simulators?.reduce(
-    (prev: Record<string, string>, { simulator }): Record<string, string> => {
+  const simualtorKeys = definitions?.simulatorsConfig?.reduce(
+    (prev: Record<string, string>, { key, name }: SimulatorConfigDetails) => {
       // eslint-disable-next-line no-param-reassign
-      prev[simulator] = simulator;
+      prev[key] = name;
       return prev;
     },
     {}

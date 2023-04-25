@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
 import { Collapse } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
+import { useGetDefinitionsQuery } from '@cognite/simconfig-api-sdk/rtk';
+
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { SimulatorInformation } from './SimulatorInformation';
 import { SimulatorStatusLabel } from './SimulatorStatusLabel';
@@ -14,6 +18,11 @@ export function SimulatorList({
   simulators?: SimulatorInstance[];
 }) {
   const [activeKey, setActiveKey] = useState(simulators?.[0]?.connectorName);
+  const project = useSelector(selectProject);
+
+  const { data } = useGetDefinitionsQuery({
+    project,
+  });
 
   if (!simulators?.length) {
     return null;
@@ -36,7 +45,13 @@ export function SimulatorList({
                 className="simulator-header"
                 id={`simulator-header-${index}`}
               >
-                <span className="simulator">{simulator.simulator}</span>
+                <span className="simulator">
+                  {
+                    data?.simulatorsConfig?.filter(
+                      ({ key }) => key === simulator.simulator
+                    )?.[0].name
+                  }
+                </span>
                 <span className="connector">{simulator.connectorName}</span>
                 <SimulatorStatusLabel
                   simulator={simulator}

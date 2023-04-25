@@ -4,10 +4,7 @@ import styled from 'styled-components/macro';
 
 import { Flex, Icon } from '@cognite/cogs.js';
 
-import {
-  getFileExtensionFromFileName,
-  isValidExtension,
-} from 'utils/formUtils';
+import { getFileExtensionFromFileName } from 'utils/formUtils';
 
 interface ComponentProps {
   extensions?: string[];
@@ -28,9 +25,6 @@ export function FileInput({
     const file = event.dataTransfer.files[0];
     const ext = getFileExtensionFromFileName(file.name);
 
-    if (!isValidExtension(ext)) {
-      return;
-    }
     if (!extensions || extensions.includes(ext)) {
       onFileSelected(event.dataTransfer.files[0]);
     }
@@ -46,7 +40,8 @@ export function FileInput({
       <DropTextWrapper>
         <Flex gap={10} justifyContent="center">
           <Icon size={32} type="Download" /> Drag and drop model file, or browse
-          for file below.
+          for file below. The file must have a valid extension, which in this
+          case is {extensions?.map((ex) => ` ${ex}`).toString()}
         </Flex>
       </DropTextWrapper>
       <div>

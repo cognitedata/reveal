@@ -385,7 +385,13 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   )
                 </div>
                 <div>
-                  <NullableValue value={displayUnit(unit ?? '', unitType)} /> (
+                  <NullableValue
+                    value={displayUnit(
+                      unit ?? '',
+                      unitType as keyof DefinitionMap['map']['unitType']
+                    )}
+                  />{' '}
+                  (
                   <NullableValue value={unitType} />)
                 </div>
                 <div>
@@ -427,7 +433,13 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   )
                 </div>
                 <div>
-                  <NullableValue value={displayUnit(unit ?? '', unitType)} /> (
+                  <NullableValue
+                    value={displayUnit(
+                      unit ?? '',
+                      unitType as keyof DefinitionMap['map']['unitType']
+                    )}
+                  />{' '}
+                  (
                   <NullableValue value={unitType} />)
                 </div>
                 <div>{externalId}</div>

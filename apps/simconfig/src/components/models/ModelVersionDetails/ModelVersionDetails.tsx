@@ -144,14 +144,6 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     return <Skeleton.List lines={2} />;
   }
 
-  if (isErrorBoundaryConditions) {
-    return (
-      <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
-        {(errorMessageBoundaryConditions as InteralError).data?.error?.message}
-      </ProcessingStatus>
-    );
-  }
-
   const onDownloadClicked = async () => {
     if (!headers || !baseUrl) {
       toast.error(
@@ -173,13 +165,23 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
 
   return (
     <ModelVersionDetailsContainer>
-      {simulatorConfigDetails?.isBoundaryConditionsEnabled ? (
+      {simulatorConfigDetails?.isBoundaryConditionsEnabled &&
+      !errorMessageBoundaryConditions ? (
         <BoundaryConditionsContainer>
           <BoundaryConditionTable
             boundaryConditions={boundaryConditions?.modelBoundaryConditionList}
             modelFile={modelFileItem}
           />
         </BoundaryConditionsContainer>
+      ) : undefined}
+
+      {isErrorBoundaryConditions ? (
+        <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
+          {
+            (errorMessageBoundaryConditions as InteralError).data?.error
+              ?.message
+          }
+        </ProcessingStatus>
       ) : undefined}
 
       <ModelVersionProperties>

@@ -60,7 +60,9 @@ export function ModelList({
                 </div>
                 <ul>
                   <li>{modelFile.metadata.simulator}</li>
-                  <li>{modelFile.metadata.unitSystem}</li>
+                  {modelFile.metadata.unitSystem && (
+                    <li>{modelFile.metadata.unitSystem}</li>
+                  )}
                   <li>
                     {format(new Date(modelFile.createdTime), 'yyyy-MM-dd')}
                   </li>
