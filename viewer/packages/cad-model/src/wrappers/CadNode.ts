@@ -91,6 +91,10 @@ export class CadNode extends Object3D {
     return this._needsRedraw;
   }
 
+  resetRedraw(): void {
+    this._needsRedraw = false;
+  }
+
   get nodeTransformProvider(): NodeTransformProvider {
     return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier);
   }

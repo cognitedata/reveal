@@ -2,7 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
+import { Image360Revision } from './Image360Revision';
 import { Image360Visualization } from './Image360Visualization';
+
+export type Image360Metadata = {
+  station: string;
+  collection: string;
+  date?: Date;
+};
 
 export interface Image360 {
   /**
@@ -17,4 +24,21 @@ export interface Image360 {
    * @returns Image360Visualization
    */
   readonly image360Visualization: Image360Visualization;
+
+  /**
+   * Get additional information about this image and its active revision.
+   */
+  getImageMetadata(): Image360Metadata;
+
+  /**
+   * List all historical images for this entity.
+   * @returns A list of available revisions.
+   */
+  getRevisions(): Image360Revision[];
+
+  /**
+   * Get the revision that is currently loaded for this entry.
+   * @returns The active revision.
+   */
+  getActiveRevision(): Image360Revision;
 }

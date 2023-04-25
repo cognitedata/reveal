@@ -4,6 +4,7 @@
 
 ```ts
 
+import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -340,7 +341,7 @@ export class Cognite3DViewer {
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
-    enter360Image(image360: Image360): Promise<void>;
+    enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
     exit360Image(): void;
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
@@ -778,9 +779,18 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
+    getActiveRevision(): Image360Revision;
+    getImageMetadata(): Image360Metadata;
+    getRevisions(): Image360Revision[];
     readonly image360Visualization: Image360Visualization;
     readonly transform: THREE.Matrix4;
 }
+
+// @public
+export type Image360AnnotationClickedDelegate = (annotation: AnnotationModel) => void;
+
+// @public
+export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
 
 // @public
 export interface Image360Collection {
@@ -788,18 +798,39 @@ export interface Image360Collection {
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    // (undocumented)
+    off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
+    // (undocumented)
+    off(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    // (undocumented)
+    on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
+    // (undocumented)
+    on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setIconsVisibility(visible: boolean): void;
+    targetRevisionDate: Date | undefined;
 }
 
 // @public
-export type Image360EnteredDelegate = (image360: Image360) => void;
+export type Image360EnteredDelegate = (image360: Image360, revision: Image360Revision) => void;
 
 // @public
 export type Image360ExitedDelegate = () => void;
+
+// @public (undocumented)
+export type Image360Metadata = {
+    station: string;
+    collection: string;
+    date?: Date;
+};
+
+// @public
+export interface Image360Revision {
+    readonly date: Date | undefined;
+}
 
 // @public
 export interface Image360Visualization {

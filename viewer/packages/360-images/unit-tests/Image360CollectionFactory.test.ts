@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
-import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
+import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 
 describe(Image360CollectionFactory.name, () => {
@@ -21,7 +21,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         },
         {
           id: '1',
@@ -29,7 +33,11 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         },
         {
           id: '2',
@@ -37,16 +45,22 @@ describe(Image360CollectionFactory.name, () => {
           collectionId: '0',
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4(),
-          faceDescriptors: []
+          imageRevisions: [
+            {
+              faceDescriptors: []
+            }
+          ]
         }
       ]);
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
+    const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
     const image360EntityFactory = new Image360CollectionFactory(
       mock360ImageProvider.object(),
       mockSceneHandler.object(),
       new EventTrigger<BeforeSceneRenderedDelegate>(),
+      desktopDevice,
       { platformMaxPointsSize: 256}
     );
     const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);

@@ -55,7 +55,6 @@ export interface IPointCloudMaterialUniforms {
   minSize: IUniform<number>;
   objectIdLUT: IUniform<Texture>;
   octreeSize: IUniform<number>;
-  opacity: IUniform<number>;
   pcIndex: IUniform<number>;
   screenHeight: IUniform<number>;
   screenWidth: IUniform<number>;
@@ -87,6 +86,9 @@ const COLOR_DEFS = {
   [PointColorType.Classification]: 'color_type_classification'
 };
 
+/**
+ * @internal
+ */
 export class PointCloudMaterial extends RawShaderMaterial {
   private static readonly helperVec3 = new Vector3();
 
@@ -127,7 +129,6 @@ export class PointCloudMaterial extends RawShaderMaterial {
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
     objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
-    opacity: makeUniform('f', 1.0),
     pcIndex: makeUniform('f', 0),
     screenHeight: makeUniform('f', 1.0),
     screenWidth: makeUniform('f', 1.0),
@@ -138,28 +139,27 @@ export class PointCloudMaterial extends RawShaderMaterial {
     vnStart: makeUniform('f', 0.0)
   };
 
-  @uniform('fov') fov!: number;
-  @uniform('heightMax') heightMax!: number;
-  @uniform('heightMin') heightMin!: number;
-  @uniform('intensityBrightness') intensityBrightness!: number;
-  @uniform('intensityContrast') intensityContrast!: number;
-  @uniform('intensityGamma') intensityGamma!: number;
-  @uniform('intensityRange') intensityRange!: [number, number];
-  @uniform('maxSize') maxSize!: number;
-  @uniform('minSize') minSize!: number;
-  @uniform('octreeSize') octreeSize!: number;
-  @uniform('opacity', true) opacity!: number;
-  @uniform('screenHeight') screenHeight!: number;
-  @uniform('screenWidth') screenWidth!: number;
-  @uniform('size') size!: number;
-  @uniform('spacing') spacing!: number;
+  @uniform('fov') accessor fov!: number;
+  @uniform('heightMax') accessor heightMax!: number;
+  @uniform('heightMin') accessor heightMin!: number;
+  @uniform('intensityBrightness') accessor intensityBrightness!: number;
+  @uniform('intensityContrast') accessor intensityContrast!: number;
+  @uniform('intensityGamma') accessor intensityGamma!: number;
+  @uniform('intensityRange') accessor intensityRange!: [number, number];
+  @uniform('maxSize') accessor maxSize!: number;
+  @uniform('minSize') accessor minSize!: number;
+  @uniform('octreeSize') accessor octreeSize!: number;
+  @uniform('screenHeight') accessor screenHeight!: number;
+  @uniform('screenWidth') accessor screenWidth!: number;
+  @uniform('size') accessor size!: number;
+  @uniform('spacing') accessor spacing!: number;
 
-  @requiresShaderUpdate() weighted: boolean = false;
-  @requiresShaderUpdate() hqDepthPass: boolean = false;
-  @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.Rgb;
-  @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.Adaptive;
-  @requiresShaderUpdate() useEDL: boolean = false;
-  @requiresShaderUpdate() shape: PointShape = PointShape.Circle;
+  @requiresShaderUpdate() accessor weighted: boolean = false;
+  @requiresShaderUpdate() accessor hqDepthPass: boolean = false;
+  @requiresShaderUpdate() accessor pointColorType: PointColorType = PointColorType.Rgb;
+  @requiresShaderUpdate() accessor pointSizeType: PointSizeType = PointSizeType.Adaptive;
+  @requiresShaderUpdate() accessor useEDL: boolean = false;
+  @requiresShaderUpdate() accessor shape: PointShape = PointShape.Circle;
 
   attributes = {
     position: { type: 'fv', value: [] },
@@ -227,18 +227,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.vertexShader = this.applyDefines(pointCloudShaders.pointcloud.vertex);
     this.fragmentShader = this.applyDefines(pointCloudShaders.pointcloud.fragment);
 
-    if (this.opacity === 1.0) {
-      this.blending = NoBlending;
-      this.transparent = false;
-      this.depthTest = true;
-      this.depthWrite = true;
-      this.depthFunc = LessEqualDepth;
-    } else if (this.opacity < 1.0 && !this.useEDL) {
-      this.blending = AdditiveBlending;
-      this.transparent = true;
-      this.depthTest = false;
-      this.depthWrite = true;
-    }
+    this.blending = NoBlending;
+    this.transparent = false;
+    this.depthTest = true;
+    this.depthWrite = true;
+    this.depthFunc = LessEqualDepth;
 
     if (this.weighted) {
       this.blending = AdditiveBlending;
@@ -381,42 +374,37 @@ function getValid<T>(a: T | undefined, b: T): T {
   return a === undefined ? b : a;
 }
 
-// tslint:disable:no-invalid-this
-function uniform<K extends keyof IPointCloudMaterialUniforms>(
-  uniformName: K,
-  requireSrcUpdate: boolean = false
-): PropertyDecorator {
-  return (target: any, propertyKey: string | symbol): void => {
-    Object.defineProperty(target, propertyKey, {
-      get() {
-        return this.getUniform(uniformName);
-      },
-      set(value: any) {
-        if (value !== this.getUniform(uniformName)) {
-          this.setUniform(uniformName, value);
-          if (requireSrcUpdate) {
-            this.updateShaderSource();
-          }
-        }
+function uniform<K extends keyof IPointCloudMaterialUniforms>(uniformName: K) {
+  type UniformType = IPointCloudMaterialUniforms[K]['value'];
+  return (_target: any, _context: any) => ({
+    get(this: PointCloudMaterial) {
+      return this.getUniform(uniformName);
+    },
+    set(this: PointCloudMaterial, value: UniformType) {
+      if (value !== this.getUniform(uniformName)) {
+        this.setUniform(uniformName, value);
       }
-    });
-  };
+    }
+  });
 }
 
-function requiresShaderUpdate(): (target: any, propertyKey: string | symbol) => void {
-  return (target: any, propertyKey: string | symbol): void => {
-    const fieldName = `_${propertyKey.toString()}`;
-
-    Object.defineProperty(target, propertyKey, {
-      get() {
-        return this[fieldName];
-      },
-      set(value: any) {
-        if (value !== this[fieldName]) {
-          this[fieldName] = value;
-          this.updateShaderSource();
-        }
+function requiresShaderUpdate() {
+  return (_target: any, context: { name: string | symbol }) => ({
+    get(this: PointCloudMaterial & Record<string, any>) {
+      const fieldName = `_${context.name.toString()}`;
+      return this[fieldName];
+    },
+    set(this: PointCloudMaterial & Record<string, any>, value: any) {
+      const fieldName = `_${context.name.toString()}`;
+      if (value !== this[fieldName]) {
+        this[fieldName] = value;
+        this.updateShaderSource();
       }
-    });
-  };
+    },
+    init(this: PointCloudMaterial & Record<string, any>, value: any) {
+      const fieldName = `_${context.name.toString()}`;
+      this[fieldName] = value;
+      return value;
+    }
+  });
 }

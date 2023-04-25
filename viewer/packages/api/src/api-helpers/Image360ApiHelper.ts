@@ -11,11 +11,13 @@ import {
   Image360CollectionFactory,
   Image360Facade,
   Image360,
-  IconsOptions
+  IconsOptions,
+  Image360RevisionEntity
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
+  determineCurrentDevice,
   EventTrigger,
   InputHandler,
   pixelToNormalizedDeviceCoordinates,
@@ -30,11 +32,13 @@ export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
+  private readonly _raycaster = new THREE.Raycaster();
+  private _needsRedraw: boolean = false;
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
-    image360SelectedForEntry?: Image360Entity;
+    revisionSelectedForEntry?: Image360RevisionEntity;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -45,10 +49,16 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity).catch(() => {}), 300, {
-    leading: true
-  });
-  private readonly _requestRedraw: () => void;
+  private readonly _debouncePreLoad = debounce(
+    entity => {
+      this._image360Facade.preload(entity, this.findRevisionIdToEnter(entity)).catch(() => {});
+    },
+    300,
+    {
+      leading: true
+    }
+  );
+
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
@@ -60,15 +70,16 @@ export class Image360ApiHelper {
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
-    requestRedraw: () => void,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
-    iconsOptions: IconsOptions
+    iconsOptions?: IconsOptions
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
       sceneHandler,
       onBeforeSceneRendered,
+      device,
       iconsOptions
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
@@ -80,13 +91,18 @@ export class Image360ApiHelper {
     this._activeCameraManager = activeCameraManager;
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
-    this._requestRedraw = requestRedraw;
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
 
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
+
+    const handleAnnotationHover = (event: PointerEventData) => this.handleAnnotationCursorEvent('hover', event);
+    inputHandler.on('hover', handleAnnotationHover);
+
+    const handleAnnotationClick = (event: PointerEventData) => this.handleAnnotationCursorEvent('click', event);
+    inputHandler.on('click', handleAnnotationClick);
 
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
@@ -108,13 +124,63 @@ export class Image360ApiHelper {
     };
   }
 
+  get needsRedraw(): boolean {
+    return this._needsRedraw || this._image360Facade.collections.some(collection => collection.needsRedraw);
+  }
+
+  resetRedraw(): void {
+    this._needsRedraw = false;
+    this._image360Facade.collections.forEach(collection => collection.resetRedraw());
+  }
+
+  private getNormalizedOffset(data: PointerEventData): THREE.Vector2 {
+    return new THREE.Vector2(
+      (data.offsetX / this._domElement.clientWidth) * 2 - 1,
+      1 - (data.offsetY / this._domElement.clientHeight) * 2
+    );
+  }
+
+  private handleAnnotationCursorEvent(eventType: 'hover' | 'click', event: PointerEventData): void {
+    const currentEntity = this._interactionState.currentImage360Entered;
+
+    if (currentEntity === undefined) {
+      return;
+    }
+
+    const point = this.getNormalizedOffset(event);
+
+    this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
+
+    const annotation = currentEntity.intersectAnnotations(this._raycaster);
+
+    if (annotation === undefined) {
+      return;
+    }
+
+    const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
+
+    if (eventType === 'hover') {
+      collection.fireHoverEvent(annotation);
+    } else if (eventType === 'click') {
+      collection.fireClickEvent(annotation);
+    }
+  }
+
   public async add360ImageSet(
-    eventFilter: { [key: string]: string },
+    eventFilter: Metadata,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
+    const id: string | undefined = eventFilter.site_id;
+    if (id === undefined) {
+      throw new Error('Image set filter must contain site_id');
+    }
+    if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
+      throw new Error(`Image set with id=${id} has already been added`);
+    }
     const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
-    this._requestRedraw();
+
+    this._needsRedraw = true;
     return imageCollection;
   }
 
@@ -127,63 +193,68 @@ export class Image360ApiHelper {
     }
 
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
-    this._requestRedraw();
+    this._needsRedraw = true;
   }
 
-  public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    if (this._interactionState.image360SelectedForEntry === image360Entity) {
-      this._requestRedraw();
-      return;
-    }
-    this._interactionState.image360SelectedForEntry = image360Entity;
+  public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
+    const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
+    this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
-    const fatalDownloadError = await this._image360Facade.preload(image360Entity, true).catch(e => {
+    const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
       return e;
     });
 
-    if (this._interactionState.image360SelectedForEntry !== image360Entity) {
+    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
       return;
     }
 
     if (fatalDownloadError) {
-      this._interactionState.image360SelectedForEntry = undefined;
+      this._interactionState.revisionSelectedForEntry = undefined;
       return;
     }
 
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
+    image360Entity.setActiveRevision(revisionToEnter);
 
     this.set360CameraManager();
 
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
     image360Entity.icon.visible = false;
-
-    const image360Visualization = image360Entity.image360Visualization;
-    image360Visualization.visible = true;
+    image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
-
-    this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {
       lastEntered360ImageEntity.icon.visible = imageCollection.isCollectionVisible;
-      await this.transition(lastEntered360ImageEntity, image360Entity);
-      MetricsLogger.trackEvent('360ImageEntered', {});
-    } else {
-      const transitionDuration = 1000;
-      const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
-      await Promise.all([
-        this._image360Navigation.moveTo(position, transitionDuration),
-        this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
-      ]);
-      MetricsLogger.trackEvent('360ImageTransitioned', {});
     }
-    this._transitionInProgress = false;
+    // Only do transition if we are swithing between entities.
+    // Revisions are updated instantly (for now).
+    if (lastEntered360ImageEntity === image360Entity) {
+      this._needsRedraw = true;
+    } else {
+      this._transitionInProgress = true;
+      if (lastEntered360ImageEntity !== undefined) {
+        await this.transition(lastEntered360ImageEntity, image360Entity);
+        MetricsLogger.trackEvent('360ImageEntered', {});
+      } else {
+        const transitionDuration = 1000;
+        const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
+        await Promise.all([
+          this._image360Navigation.moveTo(position, transitionDuration),
+          this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+        ]);
+        MetricsLogger.trackEvent('360ImageTransitioned', {});
+      }
+      this._transitionInProgress = false;
+    }
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
+    this.applyFullResolutionTextures(revisionToEnter);
 
-    image360Entity.applyFullResolution().then(() => {
-      this._requestRedraw();
-    });
+    imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
+  }
 
-    imageCollection.events.image360Entered.fire(image360Entity);
+  private async applyFullResolutionTextures(revision: Image360RevisionEntity) {
+    await revision.applyFullResolutionTextures();
+    this._needsRedraw = true;
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -249,7 +320,7 @@ export class Image360ApiHelper {
       .to(to, duration)
       .onUpdate(() => {
         entity.image360Visualization.opacity = from.alpha;
-        this._requestRedraw();
+        this._needsRedraw = true;
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
@@ -306,7 +377,7 @@ export class Image360ApiHelper {
 
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
-      this._interactionState.image360SelectedForEntry = undefined;
+      this._interactionState.revisionSelectedForEntry = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
@@ -330,6 +401,11 @@ export class Image360ApiHelper {
 
     this._image360Facade.dispose();
     this._image360Navigation.dispose();
+  }
+
+  private findRevisionIdToEnter(image360Entity: Image360Entity): Image360RevisionEntity {
+    const targetDate = this._image360Facade.getCollectionContainingEntity(image360Entity).targetRevisionDate;
+    return targetDate ? image360Entity.getRevisionClosestToDate(targetDate) : image360Entity.getMostRecentRevision();
   }
 
   private enter360ImageOnIntersect(event: PointerEventData): Promise<void> {
@@ -384,7 +460,7 @@ export class Image360ApiHelper {
       this._debouncePreLoad(entity);
     }
 
-    this._requestRedraw();
+    this._needsRedraw = true;
     this._interactionState.currentImage360Hovered = entity;
   }
 

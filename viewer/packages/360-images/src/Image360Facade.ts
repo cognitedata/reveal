@@ -10,6 +10,7 @@ import { Image360LoadingCache } from './cache/Image360LoadingCache';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import { IconCullingScheme } from './icons/IconCollection';
+import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -62,8 +63,8 @@ export class Image360Facade<T> {
     }
   }
 
-  public preload(entity: Image360Entity, lockDownload?: boolean): Promise<void> {
-    return this._image360Cache.cachedPreload(entity, lockDownload);
+  public preload(entity: Image360Entity, revision: Image360RevisionEntity, lockDownload?: boolean): Promise<void> {
+    return this._image360Cache.cachedPreload(entity, revision, lockDownload);
   }
 
   public getCollectionContainingEntity(entity: Image360Entity): DefaultImage360Collection {

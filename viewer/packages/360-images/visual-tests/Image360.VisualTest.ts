@@ -9,6 +9,7 @@ import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
 import {
   BeforeSceneRenderedDelegate,
+  DeviceDescriptor,
   EventTrigger,
   pixelToNormalizedDeviceCoordinates,
   SceneHandler
@@ -35,8 +36,9 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     camera.near = 0.01;
     camera.updateProjectionMatrix();
+    const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
-    const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler, onBeforeRender);
+    const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler, onBeforeRender, desktopDevice);
 
     const icons = entities.map(entity => entity.icon);
     sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
@@ -93,7 +95,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      await facade.preload(entity);
+      await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = true;
       entity.icon.visible = false;
 
@@ -183,7 +185,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
       entity.icon.selected = true;
-      await facade.preload(entity);
+      await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = false;
       this.render();
     });
@@ -202,10 +204,11 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   private setup360Images(
     cogniteClient: CogniteClient | undefined,
     sceneHandler: SceneHandler,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
+    device: DeviceDescriptor
   ): Promise<{ facade: CdfImage360Facade | LocalImage360Facade; entities: Image360Entity[] }> {
     if (cogniteClient === undefined) {
-      return this.setupLocal(sceneHandler, onBeforeRender);
+      return this.setupLocal(sceneHandler, onBeforeRender, device);
     }
 
     const queryString = window.location.search;
@@ -216,7 +219,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       urlParams.get('modelId') === '946412141563897' &&
       urlParams.get('revisionId') === '6425532219434724'
     ) {
-      return this.setupTwinTestMauiA(sceneHandler, cogniteClient, onBeforeRender);
+      return this.setupTwinTestMauiA(sceneHandler, cogniteClient, onBeforeRender, device);
     }
 
     if (
@@ -224,16 +227,17 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       urlParams.get('modelId') === '2755498691043825' &&
       urlParams.get('revisionId') === '141507501940626'
     ) {
-      return this.setupOfficeRobotics(sceneHandler, cogniteClient, onBeforeRender);
+      return this.setupOfficeRobotics(sceneHandler, cogniteClient, onBeforeRender, device);
     }
 
-    return this.setupLocal(sceneHandler, onBeforeRender);
+    return this.setupLocal(sceneHandler, onBeforeRender, device);
   }
 
   private async setupOfficeRobotics(
     sceneHandler: SceneHandler,
     cogniteClient: CogniteClient,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
+    device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<{
       [key: string]: string;
@@ -241,7 +245,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     entities: Image360Entity[];
   }> {
     const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
-    const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender);
+    const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
     const translation = new THREE.Matrix4().makeTranslation(-18, 1, -13);
@@ -257,7 +261,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   private async setupTwinTestMauiA(
     sceneHandler: SceneHandler,
     cogniteClient: CogniteClient,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
+    device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<{
       [key: string]: string;
@@ -265,7 +270,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     entities: Image360Entity[];
   }> {
     const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
-    const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender);
+    const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
 
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(177));
@@ -291,7 +296,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private async setupLocal(
     sceneHandler: SceneHandler,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
+    device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<any>;
     entities: Image360Entity[];
@@ -300,7 +306,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const urlParams = new URLSearchParams(queryString);
     const modelUrl = urlParams.get('modelUrl') ?? 'primitives';
     const dataProvider = new Local360ImageProvider(`${window.location.origin}/${modelUrl}`);
-    const image360Factory = new Image360CollectionFactory(dataProvider, sceneHandler, onBeforeRender);
+    const image360Factory = new Image360CollectionFactory(dataProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
     const collection = await image360Facade.create({});
 

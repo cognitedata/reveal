@@ -3,7 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  Image360,
+  Image360Collection,
+  Image360EnteredDelegate,
+  Image360AnnotationHoveredDelegate
+} from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class Image360UI {
@@ -11,6 +17,7 @@ export class Image360UI {
   private gui: dat.GUI;
   private entities: Image360[] = [];
   private collections: Image360Collection[] = [];
+  private selectedEntity: Image360 | undefined;
 
   private params = {
     siteId: this.getSideIdFromUrl() ?? '',
@@ -43,13 +50,17 @@ export class Image360UI {
     hideAll: false,
   };
 
+  private imageRevisions = {
+    id: '0',
+    targetDate: ''
+  };
+
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
-    const { params } = this;
+    const { params, imageRevisions, collections, selectedEntity } = this;
     this.viewer = viewer;
     this.gui = gui;
 
     const optionsFolder = this.gui.addFolder('Add Options');
-
 
     optionsFolder.add(params, 'siteId').name('Site ID');
 
@@ -105,11 +116,37 @@ export class Image360UI {
     //restore image 360
     if (params.siteId.length > 0) {
       this.add360ImageSet();
+      gui
+        .add(imageRevisions, 'targetDate')
+        .name('Revision date (Unix epoch time):')
+        .onChange(() => {
+          if (collections.length === 0) return;
+
+          const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
+          collections.forEach(p => (p.targetRevisionDate = date));
+          if (selectedEntity) viewer.enter360Image(selectedEntity);
+        });
+
+      gui
+        .add(imageRevisions, 'id')
+        .name('Current image revision')
+        .onChange(() => {
+          if (selectedEntity) {
+            const revisions = selectedEntity.getRevisions();
+            const index = Number(imageRevisions.id);
+            if (index >= 0 && index < revisions.length) {
+              viewer.enter360Image(selectedEntity, revisions[index]);
+            }
+          }
+        });
+
+      gui.add(params, 'remove').name('Remove all 360 images');
+
     }
   }
 
   private async add360ImageSet() {
-   const { params } = this;
+   const { params, collections } = this;
 
     if (params.siteId.length === 0) return;
 
@@ -124,10 +161,15 @@ export class Image360UI {
       { site_id: params.siteId },
       { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
     );
+
     collection.setIconsVisibility(!this.iconCulling.hideAll);
-    this.collections.push(collection);
+    collection.on('image360Entered', (entity, _) => this.selectedEntity = entity);
+    collection.on('image360AnnotationHovered', (annotation) => {
+      // TODO: Replace with styling when available 2023-04-19
+      console.log('Hovered annotation with data: ', annotation.data)
+    });
+    collections.push(collection);
     this.entities = this.entities.concat(collection.image360Entities);
-    this.viewer.requestRedraw();
   }
 
   private async set360IconCullingRestrictions() {

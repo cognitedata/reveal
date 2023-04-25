@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { AnnotationModel } from '@cognite/sdk';
 import * as THREE from 'three';
 
 export interface JsonFileProvider {
@@ -11,8 +12,12 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
+export interface Image360AnnotationProvider {
+  get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
+}
+
 export interface Image360DescriptorProvider<T> {
-  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Image360Descriptor[]>;
+  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Historical360ImageSet[]>;
 }
 
 export interface Image360FileProvider {
@@ -27,7 +32,12 @@ export interface Image360FileProvider {
   ): Promise<Image360Face[]>;
 }
 
-export type Image360Descriptor = Image360EventDescriptor & {
+export type Historical360ImageSet = Image360EventDescriptor & {
+  imageRevisions: Image360Descriptor[];
+};
+
+export type Image360Descriptor = {
+  timestamp?: number;
   faceDescriptors: Image360FileDescriptor[];
 };
 
