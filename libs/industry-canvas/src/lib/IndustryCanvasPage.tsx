@@ -331,7 +331,7 @@ const TitleRowWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  padding: 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
 `;
 
