@@ -1,14 +1,13 @@
-import { Select } from '@cognite/cogs.js';
+import { Select } from 'antd';
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
 import { Extpipe } from 'model/Extpipe';
-import { OptionTypeBase } from 'react-select';
 import { TranslationKeys, useTranslation } from 'common';
 
 type ScheduleValue = Pick<Extpipe, 'schedule'>;
 
 interface SelectorProps extends ScheduleValue {
-  onSelectChange: (e: OptionTypeBase) => void;
+  onSelectChange: (value: string) => void;
 }
 
 const getOptions = (_t: (key: TranslationKeys) => string) => {
@@ -40,24 +39,17 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
   const { t } = useTranslation();
   const { options } = getOptions(t);
 
-  const selectedValue = (scheduleValue?: string) => {
-    return options.find(({ value }) => {
-      return value === scheduleValue;
-    })!;
-  };
-
-  const handleChange = (selected: OptionTypeBase) => {
+  const handleChange = (selected: string) => {
     onSelectChange(selected);
   };
 
   return (
     <Select
-      isClearable
-      value={selectedValue(schedule)}
+      allowClear
+      value={schedule}
       options={options}
       onChange={handleChange}
-      menuPosition="fixed"
-      placeholderSelectText={t('select-schedule')}
+      placeholder={t('select-schedule')}
     />
   );
 };

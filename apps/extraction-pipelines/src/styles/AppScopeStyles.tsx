@@ -7,6 +7,12 @@ import {
 } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
+import { Select } from 'antd';
+
+Select.defaultProps = {
+  ...Select.defaultProps,
+  getPopupContainer: getContainer,
+};
 
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,

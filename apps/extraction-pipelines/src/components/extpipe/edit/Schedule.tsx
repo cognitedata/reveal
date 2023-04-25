@@ -62,7 +62,9 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     <Flex direction="column">
       <ScheduleSelector
         schedule={values.schedule}
-        onSelectChange={(option) => setFieldValue('schedule', option.value)}
+        onSelectChange={(value) => {
+          setFieldValue('schedule', value as any);
+        }}
       />
       {shouldShowCron && (
         <StyledCronWrapper id="cron-expression">
