@@ -5,6 +5,7 @@ import Schedule from 'components/extpipes/cols/Schedule';
 import {
   CardInWrapper,
   CardNavLink,
+  CardNavLinkIcon,
   CardValue,
   CardWrapper,
   StyledTitleCard,
@@ -94,7 +95,7 @@ export const RunScheduleConnection = ({
           <CardValue className="card-value">
             <TimeDisplay value={lastRunTimeStamp} relative />
           </CardValue>
-          <Icon type="ArrowRight" />
+          <CardNavLinkIcon />
         </CardInWrapper>
       </CardNavLink>
       <CardInWrapper>
@@ -130,7 +131,7 @@ export const RunScheduleConnection = ({
           <CardValue className="card-value">
             {lastConnected && <TimeDisplay value={lastConnected} relative />}
           </CardValue>
-          <Icon type="ArrowRight" />
+          <CardNavLinkIcon />
         </CardInWrapper>
       </CardNavLink>
     </CardWrapper>

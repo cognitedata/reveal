@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Icon } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
 
 export const StyledTitleCard = styled.h2`
@@ -36,6 +36,10 @@ export const CardWrapper = styled.div`
   }
 `;
 
+export const CardNavLinkIcon = styled(Icon).attrs({ type: 'ArrowRight' })`
+  visibility: hidden;
+`;
+
 export const CardInWrapper = styled.div`
   display: grid;
   grid-template-areas: 'title arrow' 'value arrow';
@@ -51,7 +55,7 @@ export const CardInWrapper = styled.div`
   .card-value {
     grid-area: value;
   }
-  .cogs-icon-ArrowRight {
+  ${CardNavLinkIcon} {
     color: ${Colors['text-icon--interactive--default']};
     grid-area: arrow;
     align-self: center;
@@ -61,13 +65,9 @@ export const CardInWrapper = styled.div`
 `;
 
 export const CardNavLink = styled(NavLink)`
-  .cogs-icon-ArrowRight {
-    opacity: 0;
-  }
   :hover {
-    background-color: ${Colors['decorative--blue--700']};
-    .cogs-icon-ArrowRight {
-      opacity: 1;
+    ${CardNavLinkIcon} {
+      visibility: visible;
     }
   }
 `;
