@@ -102,6 +102,7 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   public setDefaultStyle(appearance: Image360AnnotationAppearance): void {
     this._defaultAppearance = appearance;
+    this.updateMaterial();
   }
 
   public setColor(color?: Color): void {
