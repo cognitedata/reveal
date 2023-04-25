@@ -9,11 +9,12 @@ import {
 import styled from 'styled-components';
 import { Title, Loader, Button } from '@cognite/cogs.js';
 import Menu from 'antd/lib/menu';
-import { createLink } from '@cognite/cdf-utilities';
+import { isProduction, createLink } from '@cognite/cdf-utilities';
 import APIKeys from 'pages/APIKeys';
 import Groups from 'pages/Groups';
 import IDP from 'pages/IDP';
 import OIDC from 'pages/OIDC';
+import UserProfiles from 'pages/UserProfiles';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
 import {
@@ -29,6 +30,7 @@ export default function () {
   const client = useQueryClient();
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
+
   const { data: projectsRead } = usePermissions('projectsAcl', 'READ');
   const { data: groupsRead } = usePermissions('groupsAcl', 'LIST');
   const { data: usersRead } = usePermissions('usersAcl', 'LIST');
@@ -92,6 +94,9 @@ export default function () {
         <Menu.Item key="oidc" disabled={!projectsRead}>
           {t('open-id-connect')}
         </Menu.Item>
+        {!isProduction() && (
+          <Menu.Item key="user-profiles">{t('user-profiles')}</Menu.Item>
+        )}
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="idp" disabled={!projectsRead}>
             {t('identity-provider-configuration')}
@@ -124,6 +129,10 @@ export default function () {
         <Route
           path={`/${params.tenant}/${params.path}/oidc`}
           component={OIDC}
+        />
+        <Route
+          path={`/${params.tenant}/${params.path}/user-profiles`}
+          component={UserProfiles}
         />
         <Route
           path={`/${params.tenant}/${params.path}/security-categories`}
