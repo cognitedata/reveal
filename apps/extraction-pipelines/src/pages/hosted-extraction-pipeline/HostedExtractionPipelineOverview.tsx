@@ -7,6 +7,7 @@ import { SummaryBox } from 'components/summary-box/SummaryBox';
 import { useTranslation } from 'common';
 import { TopicFilters } from 'components/topic-filters/TopicFilters';
 import { SourceDetails } from 'components/source-details/SourceDetails';
+import { SourceAuthentication } from 'components/source-authentication/SourceAuthentication';
 
 const PAGE_WIDTH = 1024;
 
@@ -38,6 +39,7 @@ export const HostedExtractionPipelineOverview = ({
       />
       <TopicFiltersSection source={source} />
       <SourceDetailsSection source={source} />
+      <SourceAuthenticationSection source={source} />
     </OverviewGrid>
   );
 };
@@ -46,7 +48,7 @@ const OverviewGrid = styled.div`
   display: grid;
   gap: 16px;
   grid-template-columns: [start] 1fr [first] 1fr [second] 1fr [end];
-  grid-template-rows: [start] 72px [first] 300px [second] 300px [end];
+  grid-template-rows: [start] 72px [first] auto [second] auto [end];
   width: ${PAGE_WIDTH}px;
 `;
 
@@ -58,9 +60,17 @@ const HostedExtractionPipelineSummaryBox = styled(SummaryBox)`
 const TopicFiltersSection = styled(TopicFilters)`
   grid-column: start / second;
   grid-row: first / second;
+  margin-bottom: 0;
 `;
 
 const SourceDetailsSection = styled(SourceDetails)`
   grid-column: second / end;
-  grid-row: first / end;
+  grid-row: first / second;
+  margin-bottom: 0;
+`;
+
+const SourceAuthenticationSection = styled(SourceAuthentication)`
+  grid-column: second / end;
+  grid-row: second / end;
+  margin-bottom: 0;
 `;

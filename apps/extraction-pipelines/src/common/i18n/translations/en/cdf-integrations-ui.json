@@ -245,5 +245,7 @@
   "form-destination-type-placeholder": "Select target type",
   "delete-topic-filter": "Delete topic filter",
   "details": "Details",
-  "edit-source": "Edit source"
+  "edit-source-details": "Edit source details",
+  "edit-source-authentication": "Edit source authentication",
+  "authentication": "Authentication"
 }

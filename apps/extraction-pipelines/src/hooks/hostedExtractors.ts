@@ -253,6 +253,7 @@ export const useEditMQTTSource = (
       ...options,
       onSuccess: (data, variables, context) => {
         queryClient.invalidateQueries(getMQTTSourcesQueryKey());
+        queryClient.invalidateQueries(getMQTTSourceQueryKey());
         options?.onSuccess?.(data, variables, context);
       },
     }

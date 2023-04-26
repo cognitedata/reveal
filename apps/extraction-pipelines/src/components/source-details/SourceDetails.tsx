@@ -6,7 +6,7 @@ import { useTranslation } from 'common';
 import Section from 'components/section';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 import { Timestamp } from '@cognite/cdf-utilities';
-import { EditSourceDetailsModal } from 'components/edit-source-details-modal/EditSourceModal';
+import { EditSourceDetailsModal } from 'components/edit-source-details-modal/EditSourceDetailsModal';
 import { MQTT_SOURCE_TYPE_LABEL } from 'components/create-source-modal/CreateSourceModal';
 
 type SourceDetailsProps = {
@@ -46,11 +46,6 @@ export const SourceDetails = ({
             key: 'externalId',
             title: t('external-id'),
             value: source.externalId,
-          },
-          {
-            key: 'username',
-            title: t('form-username'),
-            value: source.username,
           },
           {
             key: 'host',

@@ -78,7 +78,7 @@ export const EditSourceDetailsModal = ({
       onCancel={onCancel}
       okText={t('edit')}
       onOk={handleSubmit}
-      title={t('edit-source')}
+      title={t('edit-source-details')}
       visible={visible}
     >
       <Flex direction="column" gap={16}>
