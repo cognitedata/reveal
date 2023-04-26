@@ -1,7 +1,16 @@
 import { isNotUndefined } from '@cognite/data-exploration';
-import { UnifiedViewer } from '@cognite/unified-file-viewer';
+import {
+  UnifiedViewer,
+  isConnectionAnnotation,
+  isEllipseAnnotation,
+  isImageAnnotation,
+  isLabelAnnotation,
+  isPolylineAnnotation,
+  isTextAnnotation,
+} from '@cognite/unified-file-viewer';
 import { max } from 'lodash';
 import {
+  CanvasAnnotation,
   ContainerReference,
   ContainerReferenceType,
   Dimensions,
@@ -73,26 +82,66 @@ const getInitialContainerReferenceDimensions = (
   );
 };
 
+const DEFAULT_WIDTH_FOR_TEXT_ANNOTATIONS = 100;
+const getRightMostPointOfCanvasAnnotation = (
+  canvasAnnotation: CanvasAnnotation
+): number | undefined => {
+  if (isPolylineAnnotation(canvasAnnotation)) {
+    return max(canvasAnnotation.vertices.map((point) => point.x)) ?? 0;
+  }
+
+  if (isConnectionAnnotation(canvasAnnotation)) {
+    return undefined;
+  }
+
+  if (isImageAnnotation(canvasAnnotation)) {
+    return canvasAnnotation.x + canvasAnnotation.size;
+  }
+
+  if (
+    isTextAnnotation(canvasAnnotation) ||
+    isLabelAnnotation(canvasAnnotation)
+  ) {
+    return canvasAnnotation.x + DEFAULT_WIDTH_FOR_TEXT_ANNOTATIONS;
+  }
+
+  if (isEllipseAnnotation(canvasAnnotation)) {
+    const radiusX =
+      typeof canvasAnnotation.radius === 'number'
+        ? canvasAnnotation.radius
+        : canvasAnnotation.radius.x;
+    return canvasAnnotation.x + radiusX;
+  }
+
+  return canvasAnnotation.x + canvasAnnotation.width;
+};
+
 const addDimensionsToContainerReference = (
   unifiedViewer: UnifiedViewer,
   containerReferenceWithoutDimensions: ContainerReference,
+  canvasAnnotations: CanvasAnnotation[],
   initialMaxX: number | undefined
 ): {
   maxX: number;
   containerReference: ContainerReference;
 } => {
-  const maxX =
-    initialMaxX ??
-    max(
-      unifiedViewer
-        .getContainers()
-        .map((container) =>
-          unifiedViewer.getContainerRectRelativeToStageById(container.id)
-        )
-        .filter(isNotUndefined)
-        .map((containerRect) => containerRect.x + containerRect.width)
-    ) ??
-    0;
+  const canvasAnnotationMaxX = max(
+    canvasAnnotations
+      .map(getRightMostPointOfCanvasAnnotation)
+      .filter(isNotUndefined)
+  );
+
+  const containerMaxX = max(
+    unifiedViewer
+      .getContainers()
+      .map((container) =>
+        unifiedViewer.getContainerRectRelativeToStageById(container.id)
+      )
+      .filter(isNotUndefined)
+      .map((containerRect) => containerRect.x + containerRect.width)
+  );
+
+  const maxX = initialMaxX ?? max([canvasAnnotationMaxX, containerMaxX]) ?? 0;
 
   const dimensions = getInitialContainerReferenceDimensions(
     maxX,

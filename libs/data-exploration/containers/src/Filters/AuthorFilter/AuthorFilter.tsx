@@ -63,19 +63,19 @@ export function AuthorFilter<TFilter>({
 const AuthorFilterFile = (
   props: BaseAuthorFilterProps<InternalDocumentFilter>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsFilterOptions({
     property: 'author',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <AuthorFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}

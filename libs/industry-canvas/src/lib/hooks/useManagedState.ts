@@ -1,13 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
-
-import {
-  ContainerConfig,
-  ContainerType,
-  UnifiedViewer,
-  UnifiedViewerEventListenerMap,
-  UnifiedViewerEventType,
-  UnifiedViewerMouseEvent,
-} from '@cognite/unified-file-viewer';
 import {
   Dispatch,
   SetStateAction,
@@ -17,6 +7,19 @@ import {
   useRef,
   useState,
 } from 'react';
+
+import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  ContainerConfig,
+  ContainerType,
+  ToolType,
+  UnifiedViewer,
+  UnifiedViewerEventListenerMap,
+  UnifiedViewerEventType,
+  UnifiedViewerMouseEvent,
+} from '@cognite/unified-file-viewer';
+
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
   CanvasAnnotation,
@@ -38,8 +41,7 @@ import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
   hoverId: string | undefined;
-  clickedContainerId: string | undefined;
-  selectedAnnotationId: string | undefined;
+  clickedContainerAnnotationId: string | undefined;
 };
 
 type UpdateHandlerFn =
@@ -254,14 +256,17 @@ const usePersistence = (
   );
 };
 
-const useManagedState = (
-  unifiedViewer: UnifiedViewer | null
-): UseManagedStateReturnType => {
+const useManagedState = ({
+  unifiedViewer,
+  setTool,
+}: {
+  unifiedViewer: UnifiedViewer | null;
+  setTool: Dispatch<SetStateAction<ToolType>>;
+}): UseManagedStateReturnType => {
   const sdk = useSDK();
   const [interactionState, setInteractionState] = useState<InteractionState>({
     hoverId: undefined,
-    clickedContainerId: undefined,
-    selectedAnnotationId: undefined,
+    clickedContainerAnnotationId: undefined,
   });
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
@@ -272,9 +277,20 @@ const useManagedState = (
         // If there is only one annotation in the update set, select it
         if (updatedAnnotations.length === 1) {
           setInteractionState({
-            clickedContainerId: undefined,
             hoverId: undefined,
-            selectedAnnotationId: updatedAnnotations[0].id,
+            clickedContainerAnnotationId: updatedAnnotations[0].id,
+          });
+          setTool(ToolType.SELECT);
+
+          unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
+            // It takes a little bit of time before the annotation is added, hence the timeout.
+            // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
+            setTimeout(() => {
+              unifiedViewer?.selectByIds({
+                annotationIds: [updatedAnnotations[0].id],
+                containerIds: [],
+              });
+            }, 100);
           });
         }
 
@@ -286,7 +302,7 @@ const useManagedState = (
           ),
         };
       }),
-    [pushState]
+    [pushState, setTool, unifiedViewer]
   );
 
   const onDeleteRequest: DeleteHandlerFn = useCallback(
@@ -332,8 +348,7 @@ const useManagedState = (
         e.cancelBubble = true;
         setInteractionState({
           hoverId: undefined,
-          clickedContainerId: containerConfig.id,
-          selectedAnnotationId: undefined,
+          clickedContainerAnnotationId: undefined,
         });
       },
     }),
@@ -347,30 +362,32 @@ const useManagedState = (
       }
 
       return Promise.all(
-        addDimensionsIfNotExists(unifiedViewer, containerReferences).map(
-          async (containerReference) => {
-            const containerConfig = await resolveContainerConfig(
-              sdk,
-              containerReference
-            );
+        addDimensionsIfNotExists(
+          unifiedViewer,
+          containerReferences,
+          canvasState.canvasAnnotations
+        ).map(async (containerReference) => {
+          const containerConfig = await resolveContainerConfig(
+            sdk,
+            containerReference
+          );
 
-            pushState((prevState: IndustryCanvasState) => {
-              return {
-                ...prevState,
-                container: {
-                  ...prevState.container,
-                  children: [
-                    ...(prevState.container.children ?? []),
-                    containerConfig,
-                  ],
-                },
-              };
-            });
-          }
-        )
+          pushState((prevState: IndustryCanvasState) => {
+            return {
+              ...prevState,
+              container: {
+                ...prevState.container,
+                children: [
+                  ...(prevState.container.children ?? []),
+                  containerConfig,
+                ],
+              },
+            };
+          });
+        })
       );
     },
-    [unifiedViewer, sdk, pushState]
+    [unifiedViewer, sdk, pushState, canvasState.canvasAnnotations]
   );
 
   const removeContainerById = useCallback(

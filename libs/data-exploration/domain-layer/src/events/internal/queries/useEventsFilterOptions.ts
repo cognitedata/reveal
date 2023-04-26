@@ -9,7 +9,6 @@ import {
   mapFiltersToEventsAdvancedFilters,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-import { getSearchConfig } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
@@ -20,17 +19,17 @@ interface Props {
    * Better to fix this in future and remove this.
    */
   filterProperty?: string;
-  query?: string;
+  searchQuery?: string;
   filter?: InternalEventsFilters;
-  prefix?: string;
+  query?: string;
 }
 
 export const useEventsFilterOptions = ({
   property,
   filterProperty,
-  query,
+  searchQuery,
   filter = {},
-  prefix,
+  query,
 }: Props) => {
   const {
     data = [],
@@ -38,17 +37,16 @@ export const useEventsFilterOptions = ({
     isError,
   } = useEventsUniqueValuesByProperty({
     property,
-    prefix,
+    query,
   });
 
   const { data: dynamicData = [] } = useEventsUniqueValuesByProperty({
     property,
     advancedFilter: mapFiltersToEventsAdvancedFilters(
       omit(filter, filterProperty || property),
-      query,
-      getSearchConfig().event
+      searchQuery
     ),
-    prefix,
+    query,
   });
 
   const options = useMemo(() => {

@@ -19,24 +19,24 @@ interface Props {
   property: EventProperty;
   filter?: InternalEventsFilters | OldEventsFilters;
   advancedFilter?: AdvancedFilter<EventsProperties>;
-  prefix?: string;
+  query?: string;
 }
 
 export const useEventsUniqueValuesByProperty = ({
   property,
   filter,
   advancedFilter,
-  prefix,
+  query,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsUniqueValues(property, filter, advancedFilter, prefix),
+    queryKeys.eventsUniqueValues(property, filter, advancedFilter, query),
     () => {
       return getEventsUniqueValuesByProperty(sdk, property, {
         filter: transformNewFilterToOldFilter(filter),
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

@@ -5,32 +5,37 @@ import {
   EventsMetadataAggregateResponse,
   queryKeys,
   transformNewFilterToOldFilter,
+  AdvancedFilter,
+  EventsProperties,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import {
-  InternalEventsFilters,
-  OldEventsFilters,
-} from '@data-exploration-lib/core';
 
-export const useEventsMetadataValuesAggregateQuery = (
-  metadataKey?: string | null,
-  query?: string,
-  filter?: InternalEventsFilters | OldEventsFilters,
+interface Props {
+  metadataKey?: string | null;
+  query?: string;
+  advancedFilter?: AdvancedFilter<EventsProperties>;
   options?: UseQueryOptions<
     EventsMetadataAggregateResponse[],
     unknown,
     EventsMetadataAggregateResponse[],
     any
-  >
-) => {
+  >;
+}
+
+export const useEventsMetadataValuesAggregateQuery = ({
+  metadataKey,
+  query,
+  advancedFilter,
+  options,
+}: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsMetadataValues(String(metadataKey), query, filter),
+    queryKeys.eventsMetadataValues(String(metadataKey), query, advancedFilter),
     () => {
       return getEventsMetadataValuesAggregate(sdk, String(metadataKey), {
-        filter: transformNewFilterToOldFilter(filter),
+        advancedFilter,
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },

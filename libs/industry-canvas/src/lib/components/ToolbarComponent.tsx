@@ -1,6 +1,6 @@
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ToolType } from '@cognite/unified-file-viewer';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { StickyButton } from './StickyButton';
 
@@ -19,20 +19,20 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
     ToolType.RECTANGLE
   );
 
+  const onShapeToolChange = (shapeTool: ToolType) => {
+    setActiveShapeTool(shapeTool);
+    onToolChange(shapeTool);
+  };
+
   const onShapeToolClick = () => {
-    setIsShapeToolActive(true);
     onToolChange(activeShapeTool);
   };
 
-  const onSetShapeTool = (tool: ToolType) => {
-    setActiveShapeTool(tool);
-    onToolChange(tool);
-  };
-
-  const onToolChangeWrapper = (tool: ToolType) => {
-    setIsShapeToolActive(false);
-    onToolChange(tool);
-  };
+  useEffect(() => {
+    setIsShapeToolActive(
+      activeTool === ToolType.RECTANGLE || activeTool === ToolType.ELLIPSE
+    );
+  }, [activeTool]);
 
   return (
     <>
@@ -46,7 +46,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
                   type="ghost"
                   toggled={activeTool === ToolType.RECTANGLE}
                   aria-label="Rectangle tool"
-                  onClick={() => onSetShapeTool(ToolType.RECTANGLE)}
+                  onClick={() => onShapeToolChange(ToolType.RECTANGLE)}
                 />
               </Tooltip>
 
@@ -56,7 +56,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
                   type="ghost"
                   toggled={activeTool === ToolType.ELLIPSE}
                   aria-label="Ellipse tool"
-                  onClick={() => onSetShapeTool(ToolType.ELLIPSE)}
+                  onClick={() => onShapeToolChange(ToolType.ELLIPSE)}
                 />
               </Tooltip>
             </>
@@ -71,7 +71,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               type="ghost"
               toggled={activeTool === ToolType.SELECT}
               aria-label="Select tool"
-              onClick={() => onToolChangeWrapper(ToolType.SELECT)}
+              onClick={() => onToolChange(ToolType.SELECT)}
             />
           </Tooltip>
 
@@ -81,7 +81,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               type="ghost"
               toggled={activeTool === ToolType.PAN}
               aria-label="Pan tool"
-              onClick={() => onToolChangeWrapper(ToolType.PAN)}
+              onClick={() => onToolChange(ToolType.PAN)}
             />
           </Tooltip>
 
@@ -91,7 +91,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               type="ghost"
               toggled={activeTool === ToolType.TEXT}
               aria-label="Text tool"
-              onClick={() => onToolChangeWrapper(ToolType.TEXT)}
+              onClick={() => onToolChange(ToolType.TEXT)}
             />
           </Tooltip>
 
@@ -99,7 +99,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             <StickyButton
               toggled={activeTool === ToolType.STICKY}
               aria-label="Sticky tool"
-              onClick={() => onToolChangeWrapper(ToolType.STICKY)}
+              onClick={() => onToolChange(ToolType.STICKY)}
             />
           </Tooltip>
 
@@ -119,7 +119,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               type="ghost"
               toggled={activeTool === ToolType.LINE}
               aria-label="Line tool"
-              onClick={() => onToolChangeWrapper(ToolType.LINE)}
+              onClick={() => onToolChange(ToolType.LINE)}
             />
           </Tooltip>
         </>

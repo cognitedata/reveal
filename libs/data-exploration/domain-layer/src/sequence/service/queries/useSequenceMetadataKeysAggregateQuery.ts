@@ -9,22 +9,22 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 interface Props {
-  prefix?: string;
+  query?: string;
   advancedFilter?: AdvancedFilter<SequenceProperties>;
 }
 
 export const useSequencesMetadataKeysAggregateQuery = ({
-  prefix,
+  query,
   advancedFilter,
 }: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.sequencesMetadata(prefix, advancedFilter),
+    queryKeys.sequencesMetadata(query, advancedFilter),
     () => {
       return getSequencesMetadataKeysAggregate(sdk, {
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

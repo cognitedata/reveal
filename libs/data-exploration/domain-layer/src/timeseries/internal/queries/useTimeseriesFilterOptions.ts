@@ -7,34 +7,32 @@ import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useMemo } from 'react';
 import omit from 'lodash/omit';
-import { getSearchConfig } from '../../../utils';
 
 interface Props {
   property: TimeseriesProperty;
+  searchQuery?: string;
   query?: string;
-  prefix?: string;
   filter?: InternalTimeseriesFilters;
 }
 
 export const useTimeseriesFilterOptions = ({
   property,
+  searchQuery,
   query,
-  prefix,
   filter,
 }: Props) => {
   const {
     data = [],
     isLoading,
     isError,
-  } = useTimeseriesUniqueValuesByProperty({ property, prefix, filter });
+  } = useTimeseriesUniqueValuesByProperty({ property, query, filter });
 
   const { data: dynamicData = [] } = useTimeseriesUniqueValuesByProperty({
     property,
-    prefix,
+    query,
     advancedFilter: mapFiltersToTimeseriesAdvancedFilters(
       omit(filter, property),
-      query,
-      getSearchConfig().timeSeries
+      searchQuery
     ),
   });
 

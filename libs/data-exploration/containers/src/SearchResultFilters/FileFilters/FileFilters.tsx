@@ -76,6 +76,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         />
 
         <MetadataFilter.Files
+          query={query}
+          filter={filter.document}
           values={filter.document.metadata}
           onChange={(newMetadata) => {
             onFilterChange('document', {

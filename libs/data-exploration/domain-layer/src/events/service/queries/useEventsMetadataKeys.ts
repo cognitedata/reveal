@@ -8,11 +8,10 @@ interface Props {
 }
 
 export const useEventsMetadataKeys = ({ query, enabled }: Props = {}) => {
-  const { data, ...rest } = useEventsMetadataKeysAggregateQuery(
+  const { data, ...rest } = useEventsMetadataKeysAggregateQuery({
     query,
-    undefined,
-    { enabled }
-  );
+    options: { enabled },
+  });
 
   const metadataKeys = useMemo(() => {
     return data?.map(({ value }) => value);

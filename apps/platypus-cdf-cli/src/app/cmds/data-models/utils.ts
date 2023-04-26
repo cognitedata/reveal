@@ -63,3 +63,21 @@ export const getDataModelVersionsHandler = () => {
     new GraphQlUtilsService()
   );
 };
+
+export const autoIncrementVersion = (currentVersion: string) => {
+  const indexOfLastDash = currentVersion.lastIndexOf('-');
+  const version = Number(currentVersion.substring(indexOfLastDash + 1));
+  // if no valid number, use `currentVersion-1`
+  if (Number.isNaN(version)) {
+    return `${currentVersion}-1`;
+  } else {
+    // if valid number
+    if (indexOfLastDash === -1) {
+      // if there was no dash, then use `{number+1}`
+      return `${version + 1}`;
+    } else {
+      // if there was a dash, then use `versionName-{number+1}`
+      return `${currentVersion.substring(0, indexOfLastDash)}-${version + 1}`;
+    }
+  }
+};

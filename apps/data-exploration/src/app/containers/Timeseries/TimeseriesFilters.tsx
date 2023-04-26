@@ -77,7 +77,10 @@ export const TimeseriesFilters = ({ ...rest }) => {
               metadata: newMetadata,
             })
           }
-          useAggregateMetadataValues={useTimeseriesMetadataValuesAggregateQuery}
+          useAggregateMetadataValues={(metadataKey) =>
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useTimeseriesMetadataValuesAggregateQuery({ metadataKey })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

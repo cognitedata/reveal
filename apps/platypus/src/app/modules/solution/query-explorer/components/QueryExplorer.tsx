@@ -53,8 +53,9 @@ export const QueryExplorer = ({
 
   const explorerPlugin = useExplorerPlugin({
     schema: gqlSchema,
-    query: explorerQuery,
+    query: explorerQuery || '',
     onEdit: handleEditQuery,
+    showAttribution: false,
   });
 
   useEffect(() => {

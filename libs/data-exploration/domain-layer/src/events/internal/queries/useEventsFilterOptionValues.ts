@@ -1,35 +1,37 @@
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
-import { useSequencesMetadataKeysAggregateQuery } from '../../service';
-import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
+import { useEventsMetadataKeysAggregateQuery } from '../../service';
+import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
-  filter?: InternalSequenceFilters;
+  filter?: InternalEventsFilters;
   searchQuery?: string;
   query?: string;
 }
 
-export const useSequenceMetadataFilterOptions = ({
-  searchQuery,
+export const useEventsFilterOptionValues = ({
   filter,
+  searchQuery,
   query,
 }: Props) => {
   const {
     data = [],
     isLoading,
     isError,
-  } = useSequencesMetadataKeysAggregateQuery({
+  } = useEventsMetadataKeysAggregateQuery({
     query,
+    options: { keepPreviousData: true },
   });
 
-  const { data: dynamicData = [] } = useSequencesMetadataKeysAggregateQuery({
+  const { data: dynamicData = [] } = useEventsMetadataKeysAggregateQuery({
     query,
-    advancedFilter: mapFiltersToSequenceAdvancedFilters(
+    advancedFilter: mapFiltersToEventsAdvancedFilters(
       omit(filter, 'metadata'),
       searchQuery
     ),
+    options: { keepPreviousData: true },
   });
 
   const options = useMemo(() => {

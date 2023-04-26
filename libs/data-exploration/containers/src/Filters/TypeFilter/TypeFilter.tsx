@@ -63,19 +63,19 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsFilterOptions({
     property: 'type',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <TypeFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -85,19 +85,19 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
 };
 
 const EventTypeFilter = (props: BaseTypeFilterProps<InternalEventsFilters>) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useEventsFilterOptions({
     property: 'type',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <TypeFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}

@@ -172,7 +172,9 @@ export class FdmClient implements FlexibleDataModelingClient {
             )
           );
         }
-        return this.dataModelDataMapper.deserialize(dataModels[0]);
+        return this.dataModelDataMapper.deserialize(
+          dataModels.sort(compareDataModelVersions)[0]
+        );
       });
   }
 

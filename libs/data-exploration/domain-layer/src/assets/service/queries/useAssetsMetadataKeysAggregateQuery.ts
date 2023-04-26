@@ -10,7 +10,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 interface Props {
-  prefix?: string;
+  query?: string;
   advancedFilter?: AdvancedFilter<AssetsProperties>;
   options?: UseQueryOptions<
     AssetsMetadataAggregateResponse[],
@@ -21,18 +21,18 @@ interface Props {
 }
 
 export const useAssetsMetadataKeysAggregateQuery = ({
-  prefix,
+  query,
   advancedFilter,
   options,
 }: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsMetadata(prefix, advancedFilter),
+    queryKeys.assetsMetadata(query, advancedFilter),
     () => {
       return getAssetsMetadataKeysAggregate(sdk, {
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

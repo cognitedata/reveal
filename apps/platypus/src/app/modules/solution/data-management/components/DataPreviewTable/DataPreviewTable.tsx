@@ -754,6 +754,7 @@ export const DataPreviewTable = forwardRef<
           filteredRowCount={filteredRowCount}
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
+          onRefreshClick={() => gridRef.current?.api.purgeInfiniteCache()}
           title={dataModelType.name}
           onSuggestionsClick={() => {
             track('Suggestions.Open');

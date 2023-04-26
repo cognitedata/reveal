@@ -2,33 +2,36 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
+  AdvancedFilter,
+  EventsProperties,
   getEventsMetadataKeysAggregate,
   queryKeys,
-  transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
 import { EventsMetadataAggregateResponse } from '../types';
-import {
-  InternalEventsFilters,
-  OldEventsFilters,
-} from '@data-exploration-lib/core';
 
-export const useEventsMetadataKeysAggregateQuery = (
-  query?: string,
-  filter?: InternalEventsFilters | OldEventsFilters,
+interface Props {
+  query?: string;
+  advancedFilter?: AdvancedFilter<EventsProperties>;
   options?: UseQueryOptions<
     EventsMetadataAggregateResponse[],
     unknown,
     EventsMetadataAggregateResponse[],
     any
-  >
-) => {
+  >;
+}
+
+export const useEventsMetadataKeysAggregateQuery = ({
+  query,
+  advancedFilter,
+  options,
+}: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsMetadata(query, filter),
+    queryKeys.eventsMetadata(query, advancedFilter),
     () => {
       return getEventsMetadataKeysAggregate(sdk, {
-        filter: transformNewFilterToOldFilter(filter),
+        advancedFilter,
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },

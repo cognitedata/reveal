@@ -114,8 +114,8 @@ export const groupTransformationsByTypes = (
 Compare function used to sort DataModelVersion array with most recent createdTime first
 */
 export const compareDataModelVersions = (
-  a: DataModelVersion,
-  b: DataModelVersion
+  a: { createdTime?: string | number },
+  b: { createdTime?: string | number }
 ) => {
   if (a.createdTime === undefined && b.createdTime === undefined) {
     return 0;
@@ -131,5 +131,8 @@ export const compareDataModelVersions = (
     return 1;
   }
 
-  return b.createdTime - a.createdTime;
+  return (
+    new Date(b.createdTime as string).getTime() -
+    new Date(a.createdTime as string).getTime()
+  );
 };

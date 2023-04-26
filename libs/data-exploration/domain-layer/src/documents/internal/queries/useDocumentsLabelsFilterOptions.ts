@@ -8,35 +8,33 @@ import {
   mapFiltersToDocumentSearchFilters,
   useDocumentsLabelAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-import { getSearchConfig } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
-  query?: string;
+  searchQuery?: string;
   filter?: InternalDocumentFilter;
-  prefix?: string;
+  query?: string;
 }
 
 export const useDocumentsLabelsFilterOptions = ({
-  query,
+  searchQuery,
   filter = {},
-  prefix,
+  query,
 }: Props) => {
   const {
     data = [],
     isLoading,
     isError,
   } = useDocumentsLabelAggregateQuery({
-    prefix,
+    query,
   });
 
   const { data: dynamicData = [] } = useDocumentsLabelAggregateQuery({
     filter: mapFiltersToDocumentSearchFilters(
       omit(filter, 'labels'),
-      query,
-      getSearchConfig().file
+      searchQuery
     ),
-    prefix,
+    query,
   });
 
   const options = useMemo(() => {

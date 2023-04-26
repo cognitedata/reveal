@@ -3,33 +3,36 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
+  AdvancedFilter,
   getTimeseriesMetadataKeysAggregate,
   queryKeys,
-  transformNewFilterToOldFilter,
+  TimeseriesProperties,
 } from '@data-exploration-lib/domain-layer';
 import { TimeseriesMetadataAggregateResponse } from '../types';
-import {
-  InternalTimeseriesFilters,
-  OldTimeseriesFilters,
-} from '@data-exploration-lib/core';
 
-export const useTimeseriesMetadataKeysAggregateQuery = (
-  query?: string,
-  filter?: InternalTimeseriesFilters | OldTimeseriesFilters,
+interface Props {
+  query?: string;
+  advancedFilter?: AdvancedFilter<TimeseriesProperties>;
   options?: UseQueryOptions<
     TimeseriesMetadataAggregateResponse[],
     unknown,
     TimeseriesMetadataAggregateResponse[],
     any
-  >
-) => {
+  >;
+}
+
+export const useTimeseriesMetadataKeysAggregateQuery = ({
+  query,
+  advancedFilter,
+  options,
+}: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesMetadata(query, filter),
+    queryKeys.timeseriesMetadata(query, advancedFilter),
     () => {
       return getTimeseriesMetadataKeysAggregate(sdk, {
-        filter: transformNewFilterToOldFilter(filter),
+        advancedFilter,
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },

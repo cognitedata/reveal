@@ -7,21 +7,21 @@ import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
+  searchQuery?: string;
   filter?: InternalSequenceFilters;
-  query?: string;
 }
 
 export const useSequenceMetadataValuesOptionsQuery =
-  ({ filter, query }: Props = {}) =>
+  ({ searchQuery, filter }: Props = {}) =>
   (
     metadataKeys?: string | null,
-    prefix?: string,
+    query?: string,
     options?: UseQueryOptions<any>
   ) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data = [], isLoading } = useSequencesMetadataValuesAggregateQuery({
       metadataKey: metadataKeys,
-      prefix,
+      query,
       options,
     });
 
@@ -29,11 +29,11 @@ export const useSequenceMetadataValuesOptionsQuery =
     const { data: dynamicData = [] } = useSequencesMetadataValuesAggregateQuery(
       {
         metadataKey: metadataKeys,
-        prefix,
+        query,
         options,
         advancedFilter: mapFiltersToSequenceAdvancedFilters(
           omit(filter, 'metadata'),
-          query
+          searchQuery
         ),
       }
     );

@@ -67,4 +67,5 @@ const StyledReleaseBanner = styled.div`
 
 const StyledCloseButton = styled(Button)`
   align-self: end;
+  padding: 10px;
 `;

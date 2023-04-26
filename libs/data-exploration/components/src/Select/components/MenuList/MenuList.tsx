@@ -20,6 +20,9 @@ export const MenuList = <OptionType extends OptionTypeBase>({
     onMenuInputBlur,
   } = props.selectProps;
 
+  // reducing the height of the search input if it's enabled
+  const maxHeight = showMenuInput ? props.maxHeight - 45 : props.maxHeight;
+
   return (
     <>
       {showMenuInput && (
@@ -30,7 +33,9 @@ export const MenuList = <OptionType extends OptionTypeBase>({
           onBlur={onMenuInputBlur}
         />
       )}
-      <components.MenuList {...props}>{children}</components.MenuList>
+      <components.MenuList {...props} maxHeight={maxHeight}>
+        {children}
+      </components.MenuList>
     </>
   );
 };

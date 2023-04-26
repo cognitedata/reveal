@@ -8,14 +8,14 @@ import { DocumentProperties } from '../../../internal';
 
 interface Props {
   filter?: AdvancedFilter<DocumentProperties>;
-  prefix?: string;
+  query?: string;
 }
 
-export const useDocumentsLabelAggregateQuery = ({ filter, prefix }: Props) => {
+export const useDocumentsLabelAggregateQuery = ({ filter, query }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.documentsLabelValues(filter, prefix),
+    queryKeys.documentsLabelValues(filter, query),
     () => {
       return getDocumentsAggregate<DocumentsAggregateUniqueValuesItem>(sdk, {
         aggregate: 'uniqueValues',
@@ -25,7 +25,7 @@ export const useDocumentsLabelAggregateQuery = ({ filter, prefix }: Props) => {
           },
         ],
         filter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       }).then(({ items }) => {
         return items.map(({ count, values }) => {
           return {

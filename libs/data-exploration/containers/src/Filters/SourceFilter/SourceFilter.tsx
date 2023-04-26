@@ -109,20 +109,20 @@ export const BaseFileSourceFilter = <TFilter,>({
 const AssetSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalAssetFilters>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useAssetsFilterOptions({
     property: 'source',
     filterProperty: 'sources',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <SourceFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -133,20 +133,20 @@ const AssetSourceFilter = (
 const EventSourceFilter = (
   props: BaseMultiSelectFilterProps<InternalEventsFilters>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useEventsFilterOptions({
     property: 'source',
     filterProperty: 'sources',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <SourceFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}
@@ -157,19 +157,19 @@ const EventSourceFilter = (
 export const FileSourceFilter = (
   props: BaseFileSourceFilterProps<InternalDocumentFilter>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsFilterOptions({
     property: ['sourceFile', 'source'],
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <BaseFileSourceFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}

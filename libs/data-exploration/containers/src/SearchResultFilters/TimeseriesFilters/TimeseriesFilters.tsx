@@ -52,6 +52,8 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
         />
 
         <MetadataFilter.Timeseries
+          query={query}
+          filter={filter.timeseries}
           values={filter.timeseries.metadata}
           onChange={(newMetadata) => {
             onFilterChange('timeSeries', {

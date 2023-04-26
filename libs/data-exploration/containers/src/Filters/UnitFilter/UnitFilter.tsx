@@ -58,23 +58,22 @@ export function UnitFilter<TFilter>({
   );
 }
 
-const TimeseriesUnitFilter = ({
-  query,
-  filter,
-  ...props
-}: BaseUnitFilterProps<InternalTimeseriesFilters>) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+const TimeseriesUnitFilter = (
+  props: BaseUnitFilterProps<InternalTimeseriesFilters>
+) => {
+  const [query, setQuery] = useDebouncedState<string>();
+
   const { options, isLoading, isError } = useTimeseriesFilterOptions({
     property: 'unit',
     query,
-    prefix,
-    filter,
+    searchQuery: props.query,
+    filter: props.filter,
   });
 
   return (
     <UnitFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}

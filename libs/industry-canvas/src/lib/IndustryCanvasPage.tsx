@@ -7,6 +7,7 @@ import {
   useResourceSelector,
 } from '@cognite/data-exploration';
 import {
+  ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
@@ -17,8 +18,9 @@ import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 import { IndustryCanvas } from './IndustryCanvas';
 import styled from 'styled-components';
 import { TOAST_POSITION } from './constants';
-import { useState, useEffect, KeyboardEventHandler } from 'react';
+import { useState, useEffect, KeyboardEventHandler, useCallback } from 'react';
 import useManagedState from './hooks/useManagedState';
+import useManagedTools from './hooks/useManagedTools';
 import { CanvasTitle } from './components/CanvasTitle';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CanvasDropdown from './components/CanvasDropdown';
@@ -29,6 +31,7 @@ import {
 import { ContainerReference } from './types';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
+import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
@@ -41,6 +44,8 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     hasConsumedInitializeWithContainerReferences,
     setHasConsumedInitializeWithContainerReferences,
   ] = useState(false);
+
+  const [tool, setTool] = useState<ToolType>(ToolType.SELECT);
 
   const sdk = useSDK();
   const {
@@ -69,7 +74,24 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     redo,
     interactionState,
     setInteractionState,
-  } = useManagedState(unifiedViewerRef);
+  } = useManagedState({
+    unifiedViewer: unifiedViewerRef,
+    setTool,
+  });
+
+  const { selectedCanvasAnnotation, selectedContainer } =
+    useSelectedAnnotationOrContainer({
+      unifiedViewerRef,
+      tool,
+      canvasAnnotations,
+      container,
+    });
+
+  const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
+    tool,
+    selectedCanvasAnnotation,
+    onUpdateRequest,
+  });
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
@@ -86,20 +108,21 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     );
   }, [unifiedViewerRef]);
 
-  const onAddContainerReferences = (
-    containerReferences: ContainerReference[]
-  ) => {
-    addContainerReferences(containerReferences);
-    toast.success(
-      <div>
-        <h4>Resource(s) added to your canvas</h4>
-      </div>,
-      {
-        toastId: `canvas-file-added-${uuid()}`,
-        position: TOAST_POSITION,
-      }
-    );
-  };
+  const onAddContainerReferences = useCallback(
+    (containerReferences: ContainerReference[]) => {
+      addContainerReferences(containerReferences);
+      toast.success(
+        <div>
+          <h4>Resource(s) added to your canvas</h4>
+        </div>,
+        {
+          toastId: `canvas-file-added-${uuid()}`,
+          position: TOAST_POSITION,
+        }
+      );
+    },
+    [addContainerReferences]
+  );
 
   const onAddResourcePress = () => {
     openResourceSelector({
@@ -265,8 +288,9 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       <PreviewTabWrapper onKeyDown={onKeyDown}>
         <IndustryCanvas
           id={APPLICATION_ID_INDUSTRY_CANVAS}
-          currentZoomScale={currentZoomScale}
           viewerRef={unifiedViewerRef}
+          onRef={setUnifiedViewerRef}
+          currentZoomScale={currentZoomScale}
           applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
           onAddContainerReferences={onAddContainerReferences}
           onDeleteRequest={onDeleteRequest}
@@ -276,8 +300,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           container={container}
           updateContainerById={updateContainerById}
           removeContainerById={removeContainerById}
+          selectedContainer={selectedContainer}
           canvasAnnotations={canvasAnnotations}
-          onRef={setUnifiedViewerRef}
+          selectedCanvasAnnotation={selectedCanvasAnnotation}
+          tool={tool}
+          setTool={setTool}
+          onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+          toolOptions={toolOptions}
         />
       </PreviewTabWrapper>
     </>
@@ -302,7 +331,7 @@ const TitleRowWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  padding: 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
 `;
 

@@ -13,22 +13,22 @@ import { DocumentProperty, DocumentSourceProperty } from '../types';
 interface Props {
   property: DocumentProperty | DocumentSourceProperty;
   filter?: AdvancedFilter<DocumentProperties>;
-  prefix?: string;
+  query?: string;
 }
 
 export const useDocumentsUniqueValuesByProperty = ({
   property,
   filter,
-  prefix,
+  query,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.documentsUniqueValues(property, filter, prefix),
+    queryKeys.documentsUniqueValues(property, filter, query),
     () => {
       return getDocumentsUniqueValuesByProperty(sdk, property, {
         filter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

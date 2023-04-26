@@ -1,4 +1,4 @@
-import { Argv, Options, PositionalOptions } from 'yargs';
+import { Argv, PositionalOptions } from 'yargs';
 import {
   ArrayPromptOptions,
   CommandArgument,

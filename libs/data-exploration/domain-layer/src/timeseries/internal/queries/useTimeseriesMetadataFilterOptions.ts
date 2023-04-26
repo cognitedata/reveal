@@ -1,17 +1,17 @@
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
-import { useSequencesMetadataKeysAggregateQuery } from '../../service';
-import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import { useTimeseriesMetadataKeysAggregateQuery } from '../../service';
+import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 
 interface Props {
-  filter?: InternalSequenceFilters;
+  filter?: InternalTimeseriesFilters;
   searchQuery?: string;
   query?: string;
 }
 
-export const useSequenceMetadataFilterOptions = ({
+export const useTimeseriesMetadataFilterOptions = ({
   searchQuery,
   filter,
   query,
@@ -20,13 +20,13 @@ export const useSequenceMetadataFilterOptions = ({
     data = [],
     isLoading,
     isError,
-  } = useSequencesMetadataKeysAggregateQuery({
+  } = useTimeseriesMetadataKeysAggregateQuery({
     query,
   });
 
-  const { data: dynamicData = [] } = useSequencesMetadataKeysAggregateQuery({
+  const { data: dynamicData = [] } = useTimeseriesMetadataKeysAggregateQuery({
     query,
-    advancedFilter: mapFiltersToSequenceAdvancedFilters(
+    advancedFilter: mapFiltersToTimeseriesAdvancedFilters(
       omit(filter, 'metadata'),
       searchQuery
     ),

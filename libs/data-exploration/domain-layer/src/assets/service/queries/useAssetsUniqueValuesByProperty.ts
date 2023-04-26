@@ -8,34 +8,28 @@ import {
   queryKeys,
 } from '@data-exploration-lib/domain-layer';
 import { AssetsProperties } from '../../internal';
-// import {
-//   InternalAssetFilters,
-//   OldAssetFilters,
-// } from '@data-exploration-lib/core';
 
 interface Props {
   property: AssetProperty;
-  query?: string;
-  // filter?: InternalAssetFilters | OldAssetFilters;
+  searchQuery?: string;
   advancedFilter?: AdvancedFilter<AssetsProperties>;
-  prefix?: string;
+  query?: string;
 }
 
 export const useAssetsUniqueValuesByProperty = ({
   property,
-  query,
-  // filter,
+  searchQuery,
   advancedFilter,
-  prefix,
+  query,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsUniqueValues(property, query, advancedFilter, prefix),
+    queryKeys.assetsUniqueValues(property, searchQuery, advancedFilter, query),
     () => {
       return getAssetsUniqueValuesByProperty(sdk, property, {
         advancedFilter,
-        aggregateFilter: prefix ? { prefix: { value: prefix } } : undefined,
+        aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },
     {

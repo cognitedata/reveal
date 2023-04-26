@@ -60,19 +60,19 @@ export function SubTypeFilter<TFilter>({
 const EventSubTypeFilter = (
   props: BaseSubTypeFilterProps<InternalEventsFilters>
 ) => {
-  const [prefix, setPrefix] = useDebouncedState<string>();
+  const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useEventsFilterOptions({
     property: 'subtype',
-    query: props.query,
+    searchQuery: props.query,
     filter: props.filter,
-    prefix,
+    query,
   });
 
   return (
     <SubTypeFilter
       {...props}
-      onInputChange={setPrefix}
+      onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
       options={options}

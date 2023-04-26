@@ -18,6 +18,7 @@ type Props = {
   space: string;
   draftRowsCount: number;
   isDeleteButtonDisabled: boolean;
+  onRefreshClick: () => void;
   onAddTransformationClick: () => void;
   onCreateClick: () => void;
   onDeleteClick: () => void;
@@ -47,6 +48,7 @@ export function PreviewPageHeader({
   onDraftRowsCountClick,
   onPublishedRowsCountClick,
   onSearchInputValueChange,
+  onRefreshClick,
   publishedRowsCount,
   filteredRowCount,
   shouldShowDraftRows,
@@ -98,7 +100,7 @@ export function PreviewPageHeader({
     <PageToolbar
       title={title}
       behindTitle={
-        <>
+        <Flex alignItems="center" gap={8}>
           <Tooltip
             disabled={!isManualPopulationEnabled}
             content={`${
@@ -158,7 +160,15 @@ export function PreviewPageHeader({
               />
             </Tooltip>
           )}
-        </>
+          <Tooltip content={t('header-tooltip-refresh', 'Refresh table')}>
+            <Button
+              icon="Refresh"
+              onClick={onRefreshClick}
+              size="small"
+              type="ghost-accent"
+            />
+          </Tooltip>
+        </Flex>
       }
     >
       {shouldShowActions && (

@@ -103,7 +103,12 @@ export const DocumentFilter = ({ ...rest }) => {
           setValue={(newValue) => {
             updateDocumentFilter('metadata', newValue);
           }}
-          useAggregateMetadataValues={useDocumentsMetadataValuesAggregateQuery}
+          useAggregateMetadataValues={(metadataKey) =>
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useDocumentsMetadataValuesAggregateQuery({
+              metadataKey,
+            })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

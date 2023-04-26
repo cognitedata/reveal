@@ -1,42 +1,34 @@
-import { useMemo } from 'react';
-
 import { InternalDocumentFilter } from '@data-exploration-lib/core';
-
-import omit from 'lodash/omit';
-
 import {
   mapFiltersToDocumentSearchFilters,
-  useDocumentsUniqueValuesByProperty,
+  useDocumentsMetadataKeysAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
+import omit from 'lodash/omit';
+import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
-import { DocumentProperty, DocumentSourceProperty } from '../../service/types';
 
 interface Props {
-  property: Exclude<DocumentProperty, 'labels'> | DocumentSourceProperty;
+  query?: string;
   searchQuery?: string;
   filter?: InternalDocumentFilter;
-  query?: string;
 }
 
-export const useDocumentsFilterOptions = ({
-  property,
-  searchQuery,
-  filter = {},
+export const useDocumentsMetadataFilterOptions = ({
   query,
+  searchQuery,
+  filter,
 }: Props) => {
   const {
     data = [],
     isLoading,
     isError,
-  } = useDocumentsUniqueValuesByProperty({
-    property,
+  } = useDocumentsMetadataKeysAggregateQuery({
     query,
   });
 
-  const { data: dynamicData = [] } = useDocumentsUniqueValuesByProperty({
-    property,
+  const { data: dynamicData = [] } = useDocumentsMetadataKeysAggregateQuery({
     filter: mapFiltersToDocumentSearchFilters(
-      omit(filter, property),
+      omit(filter, 'metadata'),
       searchQuery
     ),
     query,
