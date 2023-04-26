@@ -29,13 +29,13 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     const reusableVec = new THREE.Vector3();
 
-    const boxSize = 10;
+    const boxSize = 30;
 
     for (let i = boxSize/-2; i < boxSize/2; i++) {
       for (let x = boxSize/-2; x < boxSize/2; x++) {
         for (let y = boxSize/-2; y < boxSize/2; y++) {
-          if (i===x && i===y) {
-          //if (x * x + y * y - 0.7 * i * i < 750) {
+          //if (i===x && i===y) {
+          if (x * x + y * y - 0.7 * i * i < 750) {
             const id = i + ' ' + x + ' ' + y;
             labels.push({
               text: 'Meow ' + id, id: i + x + y, position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone()
@@ -43,10 +43,10 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           }
         }
       }
-      // smartOverlayTool.addOverlays(labels);
-      // labels.splice(0, labels.length);
+       smartOverlayTool.addOverlays(labels);
+       labels.splice(0, labels.length);
     }
-    smartOverlayTool.addOverlays(labels);
+    //smartOverlayTool.addOverlays(labels);
     
     cameraManager.setCameraState({position: new THREE.Vector3()})
     return Promise.resolve();

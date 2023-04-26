@@ -76,6 +76,10 @@ export class SmartOverlayTool {
     const textOverlay = this.createTextOverlay('', this.circleSize);
     viewer.domElement.appendChild(textOverlay);
 
+    viewer.on('sceneRendered', (args) => {
+      this.overlayPoints.forEach(points => points.icons.forEach((icon) => icon.updateAdaptiveScale(args)));
+    });
+
     viewer.canvas.addEventListener(
       'mousemove',
       debounce((ev: MouseEvent) => {
