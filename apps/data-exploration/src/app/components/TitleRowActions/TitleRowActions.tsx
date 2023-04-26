@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
 import DownloadButton from './DownloadButton';
-import { MoreButton } from './MoreButton';
 import { PreviewCloseButton } from '@data-exploration-app/components/TitleRowActions/PreviewCloseButton';
 import { FullscreenButton } from '@data-exploration-app/components/TitleRowActions/FullscreenButton';
 
@@ -36,7 +35,6 @@ export const TitleRowActions = ({
       {beforeDefaultActions}
       <DownloadButton item={item} dateFilter={dateFilter} />
       <CanvasButton item={item} />
-      <MoreButton item={item} />
       {afterDefaultActions}
       {!hideDefaultCloseActions && activeId && (
         <>
