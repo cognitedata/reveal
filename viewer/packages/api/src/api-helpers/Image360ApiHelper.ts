@@ -471,6 +471,7 @@ export class Image360ApiHelper {
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;
+      lastEntered.image360Visualization.setAnnotationsVisibility(false);
       await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
