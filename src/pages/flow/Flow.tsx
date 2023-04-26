@@ -12,7 +12,6 @@ import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlus
 import { useFlow } from 'hooks/files';
 import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
 
-
 const Flow = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
   const { data, error, isInitialLoading } = useFlow(id!, { enabled: !!id });
