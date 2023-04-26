@@ -11,7 +11,7 @@ import {
   TimeseriesChartProps,
   UpdateTimePeriodProps,
 } from './types';
-import { DEFAULT_DATAPOINTS_LIMIT, TIME_PERIOD_OPTIONS } from './constants';
+import { TIME_PERIOD_OPTIONS } from './constants';
 import { TimePeriodSelect } from './components/TimePeriodSelect';
 import { OpenInChartsButton } from './components/OpenInChartsButton';
 import { DateRangePicker } from './components/DateRangePicker';
@@ -21,22 +21,24 @@ import { useTimeseriesChartData } from './domain/internal/hooks/useTimeseriesCha
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   timeseriesId,
   variant = 'large',
-  numberOfPoints = DEFAULT_DATAPOINTS_LIMIT,
-  isString = false,
+  numberOfPoints,
   quickTimePeriodOptions = [],
   dateRange: dateRangeProp,
   height,
+  dataFetchOptions,
   onChangeTimePeriod,
   onChangeDateRange,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
   const [dateRange, setDateRange] = useState<DateRange>();
 
-  const { data, isLoading } = useTimeseriesChartData({
-    timeseriesId,
-    dateRange,
-    numberOfPoints,
-    isString,
+  const { data, metadata, isLoading } = useTimeseriesChartData({
+    query: {
+      timeseriesId,
+      dateRange,
+      numberOfPoints,
+    },
+    dataFetchOptions,
   });
 
   const timePeriodSelectOptions = useMemo(() => {
@@ -67,6 +69,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   return (
     <Chart
       data={data}
+      metadata={metadata}
       isLoading={isLoading}
       style={{ height }}
       renderFilters={() => [

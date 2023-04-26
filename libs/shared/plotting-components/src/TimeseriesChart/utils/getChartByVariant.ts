@@ -1,12 +1,8 @@
-import React from 'react';
-
-import { LineChartProps, Variant } from '../../LineChart';
+import { Variant } from '../../LineChart';
 import { TimeseriesChartLarge } from '../components/TimeseriesChartLarge';
 import { TimeseriesChartSmall } from '../components/TimeseriesChartSmall';
 
-export const getChartByVariant = (
-  variant: Variant
-): React.FC<LineChartProps> => {
+export const getChartByVariant = (variant: Variant) => {
   switch (variant) {
     case 'small':
       return TimeseriesChartSmall;

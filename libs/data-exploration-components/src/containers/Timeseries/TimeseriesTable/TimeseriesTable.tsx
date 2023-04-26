@@ -72,6 +72,9 @@ export const TimeseriesTable = ({
             dateRange={dateRange}
             numberOfPoints={100}
             height={55}
+            dataFetchOptions={{
+              mode: 'aggregate',
+            }}
           />
         );
       },

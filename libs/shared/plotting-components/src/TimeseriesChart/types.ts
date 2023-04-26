@@ -8,6 +8,7 @@ export interface TimeseriesChartProps {
   quickTimePeriodOptions?: TimePeriod[];
   dateRange?: DateRange;
   height?: number;
+  dataFetchOptions?: DataFetchOptions;
   onChangeTimePeriod?: (props: UpdateTimePeriodProps) => void;
   onChangeDateRange?: (dateRange: DateRange) => void;
 }
@@ -21,3 +22,15 @@ export interface UpdateTimePeriodProps {
   timePeriod: TimePeriod;
   dateRange: DateRange;
 }
+
+export type DataFetchMode = 'raw' | 'aggregate';
+
+export type DataFetchOptions =
+  | {
+      mode: DataFetchMode;
+      rawDatapointsLimit?: never;
+    }
+  | {
+      mode?: 'auto';
+      rawDatapointsLimit: number;
+    };

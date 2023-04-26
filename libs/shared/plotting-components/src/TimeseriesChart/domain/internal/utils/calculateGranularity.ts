@@ -5,7 +5,7 @@
  * @param pps points to show
  */
 
-import { DateRange } from '../types';
+import { DateRange } from '../../../types';
 
 export const calculateGranularity = (domain: DateRange, pps: number) => {
   const diff = domain[1].valueOf() - domain[0].valueOf();
