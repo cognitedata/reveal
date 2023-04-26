@@ -77,38 +77,32 @@ const CreateFlowModal = ({ showCreateModal, setShowCreateModal }: Props) => {
       visible={showCreateModal}
     >
       <Flex direction="column" gap={10}>
-        <Flex direction="column" gap={10}>
-          <InputExp
-            label={t('name')}
-            fullWidth
-            disabled={isLoading}
-            placeholder={t('enter-name')}
-            value={values.name}
-            onChange={handleNameChange}
-          />
-        </Flex>
-        <Flex direction="column" gap={10}>
-          <InputExp
-            label={t('external-id')}
-            fullWidth
-            disabled={isLoading}
-            placeholder={t('enter-external-id')}
-            value={values.externalId}
-            onChange={handleExternalIdChange}
-          />
-        </Flex>
-        <Flex direction="column" gap={10}>
-          <InputExp
-            label={t('description')}
-            fullWidth
-            disabled={isLoading}
-            placeholder={t('enter-description')}
-            value={values.description}
-            onChange={(e) =>
-              setValues({ ...values, description: e.target.value })
-            }
-          />
-        </Flex>
+        <InputExp
+          label={t('name')}
+          fullWidth
+          disabled={isLoading}
+          placeholder={t('enter-name')}
+          value={values.name}
+          onChange={handleNameChange}
+        />
+        <InputExp
+          label={t('external-id')}
+          fullWidth
+          disabled={isLoading}
+          placeholder={t('enter-external-id')}
+          value={values.externalId}
+          onChange={handleExternalIdChange}
+        />
+        <InputExp
+          label={t('description')}
+          fullWidth
+          disabled={isLoading}
+          placeholder={t('enter-description')}
+          value={values.description}
+          onChange={(e) =>
+            setValues({ ...values, description: e.target.value })
+          }
+        />
       </Flex>
     </Modal>
   );
