@@ -111,7 +111,7 @@ const getMQTTSourceQueryKey = (externalId?: string) => [
   'mqtt',
   'source',
   'details',
-  externalId,
+  ...(externalId ? ['externalId'] : []),
 ];
 
 const getMQTTSource = (sdk: CogniteClient, externalId?: string) => {
@@ -458,6 +458,7 @@ export const useCreateMQTTJob = (
   options?: UseMutationOptions<unknown, unknown, CreateMQTTJobVariables>
 ) => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
   return useMutation(
     async (job: CreateMQTTJobVariables) => {
@@ -470,7 +471,8 @@ export const useCreateMQTTJob = (
     },
     {
       onSuccess: (data, variables, context) => {
-        // TODO: invalidation
+        queryClient.invalidateQueries(getMQTTJobsQueryKey());
+        queryClient.invalidateQueries(getMQTTSourceQueryKey());
         options?.onSuccess?.(data, variables, context);
       },
     }
@@ -481,13 +483,22 @@ type DeleteMQTTJobVariables = { externalId: string };
 
 export const useDeleteMQTTJob = () => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
-  return useMutation(async (variables: DeleteMQTTJobVariables) => {
-    return sdk.post(`/api/v1/projects/${getProject()}/pluto/jobs/delete`, {
-      headers: { 'cdf-version': 'alpha' },
-      data: {
-        items: [{ externalId: variables.externalId }],
+  return useMutation(
+    async (variables: DeleteMQTTJobVariables) => {
+      return sdk.post(`/api/v1/projects/${getProject()}/pluto/jobs/delete`, {
+        headers: { 'cdf-version': 'alpha' },
+        data: {
+          items: [{ externalId: variables.externalId }],
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(getMQTTJobsQueryKey());
+        queryClient.invalidateQueries(getMQTTSourceQueryKey());
       },
-    });
-  });
+    }
+  );
 };
