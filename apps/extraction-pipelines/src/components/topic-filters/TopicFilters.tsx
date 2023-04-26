@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -7,6 +7,7 @@ import Section from 'components/section';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
 import { TopicFilter } from './TopicFilter';
+import { CreateJobsModal } from 'components/create-jobs-modal/CreateJobsModal';
 
 type TopicFiltersProps = {
   className?: string;
@@ -19,17 +20,27 @@ export const TopicFilters = ({
 }: TopicFiltersProps): JSX.Element => {
   const { t } = useTranslation();
 
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   return (
     <Section
       className={className}
       extra={
-        <Button size="small" type="primary">
-          {t('add-topic-filter')}
+        <Button
+          size="small"
+          onClick={() => setIsCreateModalOpen(true)}
+          type="primary"
+        >
+          {t('create-jobs')}
         </Button>
       }
       icon="Columns"
       title={t('topic-filter', { count: 2 })}
     >
+      <CreateJobsModal
+        onCancel={() => setIsCreateModalOpen(false)}
+        visible={isCreateModalOpen}
+      />
       {source.jobs.map((job) => (
         <TopicFilter key={job.externalId} job={job} />
       ))}

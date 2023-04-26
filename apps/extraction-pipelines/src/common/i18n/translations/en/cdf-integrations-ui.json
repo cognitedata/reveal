@@ -226,5 +226,8 @@
   "form-source-external-id": "Source external ID",
   "form-source-external-id-placeholder": "Enter a unique identifier",
   "form-protocol-version": "Protocol version",
-  "form-protocol-version-placeholder": "Select a protocol version"
+  "form-protocol-version-placeholder": "Select a protocol version",
+  "create-jobs": "Create jobs",
+  "form-topic-filters-info": "Broker will return messages that has a topic matching your topic filter",
+  "form-topic-filters-placeholder": "Add topic filters for your broker, e.g., Ground floor/+/Light"
 }
