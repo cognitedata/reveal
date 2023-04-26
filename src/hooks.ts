@@ -46,52 +46,27 @@ export const usePermissions = (key: string, type?: string, scope?: any) => {
   return _usePermissions(flow, key, type, scope);
 };
 
-const getUpdater =
-  (sdk: CogniteClient, project: string) => async (g: Group) => {
-    const projectData = await sdk.projects.retrieve(project);
+const getUpdater = (sdk: CogniteClient) => async (g: Group) => {
+  // @ts-ignore sdk type not up to date wrt metadata
+  const { name, sourceId, capabilities, id, metadata } = g;
+  const [newGroup] = await sdk.groups.create([
     // @ts-ignore sdk type not up to date wrt metadata
-    const { name, sourceId, capabilities, id, metadata } = g;
-    const defaultGroup = projectData?.defaultGroupId === id;
-    let groupAccountIds: number[];
-    try {
-      groupAccountIds = (
-        id ? await sdk.groups.listServiceAccounts(id) : []
-      ).map((account) => account.id);
-    } catch {
-      groupAccountIds = [];
-    }
+    { name, sourceId, capabilities, metadata },
+  ]);
 
-    const [newGroup] = await sdk.groups.create([
-      // @ts-ignore sdk type not up to date wrt metadata
-      { name, sourceId, capabilities, metadata },
-    ]);
+  if (id) {
+    await sdk.groups.delete([id]);
+  }
 
-    if (groupAccountIds.length > 0) {
-      await sdk.groups.addServiceAccounts(newGroup.id, groupAccountIds);
-    }
-
-    if (defaultGroup && projectData) {
-      await sdk.projects.updateProject(projectData.urlName, {
-        update: {
-          defaultGroupId: { set: newGroup.id },
-        },
-      });
-    }
-
-    if (id) {
-      await sdk.groups.delete([id]);
-    }
-
-    await sleep(500);
-    return newGroup;
-  };
+  await sleep(500);
+  return newGroup;
+};
 
 export const useUpdateGroup = (
-  project: string,
   o: UseMutationOptions<Group, unknown, Group, unknown>
 ) => {
   const sdk = useSDK();
-  return useMutation(getUpdater(sdk, project), o);
+  return useMutation(getUpdater(sdk), o);
 };
 
 export const useRefreshToken = () => {
