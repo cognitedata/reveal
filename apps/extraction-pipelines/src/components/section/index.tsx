@@ -52,6 +52,8 @@ const Section = ({
 };
 
 const StyledSectionContainer = styled(Box)`
+  display: flex;
+  flex-direction: column;
   margin-bottom: 12px;
 `;
 

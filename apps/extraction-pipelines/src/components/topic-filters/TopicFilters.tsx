@@ -8,6 +8,7 @@ import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
 import { TopicFilter } from './TopicFilter';
 import { CreateJobsModal } from 'components/create-jobs-modal/CreateJobsModal';
+import styled from 'styled-components';
 
 type TopicFiltersProps = {
   className?: string;
@@ -42,9 +43,15 @@ export const TopicFilters = ({
         source={source}
         visible={isCreateModalOpen}
       />
-      {source.jobs.map((job) => (
-        <TopicFilter key={job.externalId} job={job} />
-      ))}
+      <Content>
+        {source.jobs.map((job) => (
+          <TopicFilter key={job.externalId} job={job} />
+        ))}
+      </Content>
     </Section>
   );
 };
+
+const Content = styled.div`
+  overflow-y: auto;
+`;
