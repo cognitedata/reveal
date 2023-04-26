@@ -1,10 +1,17 @@
 import React from 'react';
 
-import { Body, Button, Colors, Dropdown, formatDate } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Colors,
+  Dropdown,
+  Menu,
+  formatDate,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
+import { MQTTJobWithMetrics, useDeleteMQTTJob } from 'hooks/hostedExtractors';
 
 type TopicFilterProps = {
   className?: string;
@@ -18,6 +25,14 @@ export const TopicFilter = ({
   const { t } = useTranslation();
 
   const lastCheck = job.metrics[0];
+
+  const { mutate: deleteJob } = useDeleteMQTTJob();
+
+  const handleDelete = (): void => {
+    deleteJob({
+      externalId: job.externalId,
+    });
+  };
 
   return (
     <Container className={className}>
@@ -34,7 +49,19 @@ export const TopicFilter = ({
           </>
         )}
       </Body>
-      <Dropdown>
+      <Dropdown
+        content={
+          <Menu>
+            <Menu.Item icon="Delete" onClick={handleDelete}>
+              {t('delete-topic-filter')}
+            </Menu.Item>
+          </Menu>
+        }
+        hideOnSelect={{
+          hideOnContentClick: true,
+          hideOnOutsideClick: true,
+        }}
+      >
         <Button icon="EllipsisHorizontal" type="ghost" />
       </Dropdown>
     </Container>

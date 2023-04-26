@@ -476,3 +476,18 @@ export const useCreateMQTTJob = (
     }
   );
 };
+
+type DeleteMQTTJobVariables = { externalId: string };
+
+export const useDeleteMQTTJob = () => {
+  const sdk = useSDK();
+
+  return useMutation(async (variables: DeleteMQTTJobVariables) => {
+    return sdk.post(`/api/v1/projects/${getProject()}/pluto/jobs/delete`, {
+      headers: { 'cdf-version': 'alpha' },
+      data: {
+        items: [{ externalId: variables.externalId }],
+      },
+    });
+  });
+};

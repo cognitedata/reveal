@@ -242,5 +242,6 @@
   "form-client-secret": "Client secret",
   "form-client-secret-placeholder": "Enter client secret",
   "form-destination-type": "Target type",
-  "form-destination-type-placeholder": "Select target type"
+  "form-destination-type-placeholder": "Select target type",
+  "delete-topic-filter": "Delete topic filter"
 }
