@@ -14,10 +14,10 @@ import { useCreateSession } from './sessions';
 
 export type MQTTSourceType = 'mqtt3' | 'mqtt5';
 
-type BaseMQTTSource = {
+export type BaseMQTTSource = {
   externalId: string;
   type: MQTTSourceType;
-  host?: string;
+  host: string;
   port?: string;
   username: string;
 };
@@ -30,6 +30,11 @@ export type ReadMQTTSource = BaseMQTTSource & {
 export type CreateMQTTSource = BaseMQTTSource & {
   password: string;
 };
+
+export type EditMQTTSource = Required<Pick<BaseMQTTSource, 'externalId'>> &
+  Partial<Omit<BaseMQTTSource, 'externalId' | 'type'>> & {
+    password?: string;
+  };
 
 export type MQTTSourceWithJobMetrics = ReadMQTTSource & {
   jobs: MQTTJobWithMetrics[];
@@ -199,6 +204,46 @@ export const useCreateMQTTSource = (
             headers: { 'cdf-version': 'alpha' },
             data: {
               items: [source],
+            },
+          }
+        )
+        .then((r) => r.data.items[0]);
+    },
+    {
+      ...options,
+      onSuccess: (data, variables, context) => {
+        queryClient.invalidateQueries(getMQTTSourcesQueryKey());
+        options?.onSuccess?.(data, variables, context);
+      },
+    }
+  );
+};
+
+type EditMQTTSourceVariables = {
+  externalId: EditMQTTSource['externalId'];
+  update: { [key: string]: { set: unknown } | { setNull: true } };
+};
+
+export const useEditMQTTSource = (
+  options?: UseMutationOptions<unknown, unknown, EditMQTTSourceVariables>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (variables: EditMQTTSourceVariables) => {
+      return sdk
+        .post<{ items: ReadMQTTSource[] }>(
+          `/api/v1/projects/${getProject()}/pluto/sources/update`,
+          {
+            headers: { 'cdf-version': 'alpha' },
+            data: {
+              items: [
+                {
+                  externalId: variables.externalId,
+                  update: variables.update,
+                },
+              ],
             },
           }
         )

@@ -6,6 +6,7 @@ import { useTranslation } from 'common';
 import Section from 'components/section';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 import { Timestamp } from '@cognite/cdf-utilities';
+import { EditSourceDetailsModal } from 'components/edit-source-details-modal/EditSourceModal';
 import { MQTT_SOURCE_TYPE_LABEL } from 'components/create-source-modal/CreateSourceModal';
 
 type SourceDetailsProps = {
@@ -19,10 +20,15 @@ export const SourceDetails = ({
 }: SourceDetailsProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const [_, setIsEditModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
     <>
+      <EditSourceDetailsModal
+        onCancel={() => setIsEditModalOpen(false)}
+        source={source}
+        visible={isEditModalOpen}
+      />
       <Section
         className={className}
         extra={

@@ -8,20 +8,18 @@ import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import {
-  CreateMQTTSource as CreateMQTTSourceType,
+  BaseMQTTSource,
   MQTTSourceType,
   useCreateMQTTSource,
 } from 'hooks/hostedExtractors';
 import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
-
-type CreateMQTTSourceFormValues = Partial<CreateMQTTSourceType>;
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
   mqtt3: 'Version 5',
   mqtt5: 'Version 3.1.1',
 };
 
-const MQTT_SOURCE_TYPE_OPTIONS: {
+export const MQTT_SOURCE_TYPE_OPTIONS: {
   label: string;
   value: MQTTSourceType;
 }[] = [
@@ -31,6 +29,10 @@ const MQTT_SOURCE_TYPE_OPTIONS: {
   },
   { label: MQTT_SOURCE_TYPE_LABEL['mqtt3'], value: 'mqtt3' },
 ];
+
+type CreateMQTTSourceFormValues = Partial<BaseMQTTSource> & {
+  password?: string;
+};
 
 type CreateSourceModalProps = {
   onCancel: () => void;
@@ -67,6 +69,9 @@ export const CreateSourceModal = ({
     if (!values.type) {
       errors.type = t('validation-error-field-required');
     }
+    if (!values.host) {
+      errors.host = t('validation-error-field-required');
+    }
     if (!values.username) {
       errors.username = t('validation-error-field-required');
     }
@@ -86,6 +91,7 @@ export const CreateSourceModal = ({
         if (
           values.externalId &&
           values.type &&
+          values.host &&
           values.username &&
           values.password
         ) {

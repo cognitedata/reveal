@@ -244,5 +244,6 @@
   "form-destination-type": "Target type",
   "form-destination-type-placeholder": "Select target type",
   "delete-topic-filter": "Delete topic filter",
-  "details": "Details"
+  "details": "Details",
+  "edit-source": "Edit source"
 }
