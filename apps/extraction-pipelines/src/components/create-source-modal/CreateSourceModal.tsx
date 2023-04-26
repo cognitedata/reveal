@@ -7,12 +7,12 @@ import { FormikErrors, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
-import { FormField } from 'components/form-field/FormField';
 import {
   CreateMQTTSource as CreateMQTTSourceType,
   MQTTSourceType,
   useCreateMQTTSource,
 } from 'hooks/hostedExtractors';
+import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
 
 type CreateMQTTSourceFormValues = Partial<CreateMQTTSourceType>;
 
@@ -122,14 +122,14 @@ export const CreateSourceModal = ({
           statusText={errors.externalId}
           value={values.externalId}
         />
-        <FormField isRequired title={t('form-protocol-version')}>
+        <FormFieldWrapper isRequired title={t('form-protocol-version')}>
           <Select
             onChange={(e) => setFieldValue('type', e)}
             options={MQTT_SOURCE_TYPE_OPTIONS}
             placeholder={t('form-protocol-version-placeholder')}
             value={values.type}
           />
-        </FormField>
+        </FormFieldWrapper>
         <InputExp
           clearable
           fullWidth

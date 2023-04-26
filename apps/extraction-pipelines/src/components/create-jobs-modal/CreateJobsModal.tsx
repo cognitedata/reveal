@@ -12,10 +12,11 @@ import { FormikErrors, useFormik } from 'formik';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
+import FormFieldRadioGroup from 'components/form-field-radio-group/FormFieldRadioGroup';
 
 type CreateJobsFormValues = {
   topicFilters?: string[];
-  shouldUseExistingDestinationId: boolean;
+  shouldUseExistingDestinationId: string;
   selectedDestinationExternalId?: string;
   destinationExternalIdToCreate?: string;
   clientId?: string;
@@ -70,7 +71,7 @@ export const CreateJobsModal = ({
   const { errors, handleSubmit, setFieldValue, values } =
     useFormik<CreateJobsFormValues>({
       initialValues: {
-        shouldUseExistingDestinationId: false,
+        shouldUseExistingDestinationId: 'true',
       },
       onSubmit: () => {
         // TODO
@@ -158,6 +159,21 @@ export const CreateJobsModal = ({
             </TopicFilterContainer>
           ))}
         </Flex>
+        <FormFieldRadioGroup
+          isRequired
+          onChange={(value) =>
+            setFieldValue('shouldUseExistingDestinationId', value)
+          }
+          options={[
+            {
+              label: t('create-new-destination'),
+              value: 'false',
+            },
+            { label: t('use-existing-destination'), value: 'true' },
+          ]}
+          title={t('destination-option')}
+          value={values.shouldUseExistingDestinationId}
+        />
       </Flex>
     </Modal>
   );
