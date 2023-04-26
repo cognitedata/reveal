@@ -10,6 +10,8 @@ import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlusButton';
 import { useFlow } from 'hooks/files';
+import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
+
 
 const Flow = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
@@ -50,6 +52,7 @@ function FlowContainer() {
           />
         )}
         <Canvas />
+        <NodeConfigurationPanel />
       </Content>
     </StyledFlowContainer>
   );
