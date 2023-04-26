@@ -22,14 +22,14 @@ We currently support these top level commands
 
 ## Data-models (alias: `dm`)
 
-| Data model Commands                                                   | Description                                                                                                                     |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `cdf data-models create`                                              | Creates a new data model.                                                                                                       |
+| Data model Commands      | Description               |
+| ------------------------ | ------------------------- |
+| `cdf data-models create` | Creates a new data model. |
 
-| [`cdf data-models list`](#data-models-list)         | List data models.                                                                                          |
-| [`cdf data-models publish`](#data-models-publish)   | Updates a data model with a new GraphQL definition.                                                        |
+| [`cdf data-models list`](#data-models-list) | List data models. |
+| [`cdf data-models publish`](#data-models-publish) | Updates a data model with a new GraphQL definition. |
 | [`cdf data-models generate-js-sdk`](#javascript-and-typescript-sdk-generation) | Create a JavaScript (TypeScript) SDK from a data model to query and populate data, with code completion, type checks, and more. |
-| [`cdf data-models generate`](#Data-models-generate)                   | Generate a JavaScript GraphQL client for the data model. Powered by https://the-guild.dev/graphql/codegen.                      |
+| [`cdf data-models generate`](#Data-models-generate) | Generate a JavaScript GraphQL client for the data model. Powered by https://the-guild.dev/graphql/codegen. |
 
 # Options (Global)
 
@@ -79,12 +79,17 @@ cdf status
 
 This functionality creates a `FDMQueryClient` that is **auto-generated** from the specified data model which enables **type-safe** CDF data querying and ingestion against your data models.
 
-This tool **reduces boilerplate**. And you can easily use it along side React Query (demo coming soon).
+This tool **reduces boilerplate**. And you can easily use it along side Apollo.
 
 ```js
 import { FDMQueryClientBuilder } from './generated'; // you can change the output via the --output-directory when running `generate-js-sdk`
 
-const client = FDMQueryClientBuilder.fromClient(/**Your CogniteClient Here**/);
+// for application development, we recommend using this in conjunction with @cognite/sdk
+const client = FDMQueryClientBuilder.fromClient(/**Your CogniteClient Here, this would be provided by @cognite/sdk**/);
+
+// for simple script, you can also use
+// const client = FDMQueryClientBuilder.fromToken();
+// which gives you a client that will be able to access your data model for 30 minutes
 ```
 
 Hint: Feel free to checkout the `generated/sample.ts` for how to use the SDK!
@@ -174,7 +179,7 @@ When you upsert, you must specify the `externalId` and any other required fields
 
 #### Basic Nodes
 
-Loading basic nodes is very easy, simply pass in an array of JSON object after specifying the type that you would like to load to.
+Loading basic nodes is very easy: simply pass in an array of JSON objects after specifying the type that you would like to load to.
 
 ```js
 await client.upsertNodes('Actor', [
@@ -200,7 +205,7 @@ We have a special case for any relationships, you must specify the `externalId` 
 Just specify the target directly when updating the instance (node).
 
 ```js
-import { NodeRef } from '@cognite/fdm-client';
+import { NodeRef } from './generated';
 
 client.upsertNodes('Actor', [
   {
@@ -218,7 +223,7 @@ For loading relationships - 1:m (one to many) or m:n (many to many), specify fir
 Note: you can also supply an `externalId` of the edge itself, or else it will be the combination of the start and end node - `${startNode.externalId}-${endNode.externalId}`.
 
 ```js
-import { NodeRef } from '@cognite/fdm-client';
+import { NodeRef } from './generated';
 
 client.upsertEdges('Movie', 'actors', [
   {
@@ -237,7 +242,7 @@ For deleting relationships - 1:m (one to many) or m:n (many to many), use the sp
 Note: for relationships (edges), you can also supply an `externalId` of the edge itself, or else it will be the combination of the start and end node - `${startNode.externalId}-${endNode.externalId}`.
 
 ```js
-import { NodeRef } from '@cognite/fdm-client';
+import { NodeRef } from './generated';
 // deleting nodes
 client.deleteNodes('Movie', ['bp']);
 
@@ -249,6 +254,29 @@ client.deleteEdges('Movie', 'actors', [
   },
 ]);
 ```
+
+### Use with Apollo
+
+Apollo is a popular react GraphQL client, you can use a function from the generated code to generate a `query` string and `variables` object to be passed to `useQuery`.
+
+```js
+import { useQuery, ApolloProvider } from '@apollo/react-hooks';
+import { generateQueryOp } from './generated';
+
+const { query, variables } = generateQueryOp({
+  countries: {
+    __args: {
+      filter: 'US',
+    },
+    name: 1,
+    code: 1,
+  },
+});
+const { data, error } = useQuery(gql(query), {
+  variables,
+});
+```
+
 ## Data models list
 
 This command lists all the data models in a table like UI in your shell. However, for CI/CD this can be bothersome. Hence, the `--simple` provides an easy way to list all the data models in a simple list format.

@@ -32,7 +32,7 @@ export type SolutionsGeneratePythonCommandArgs = BaseArgs & {
 const commandArgs = [
   {
     name: 'external-id',
-    description: 'The external id of the data model',
+    description: 'The external ID of the data model.',
     prompt: 'Enter data model external ID',
     type: CommandArgumentType.STRING,
     required: true,
@@ -40,7 +40,7 @@ const commandArgs = [
   {
     name: 'space',
     description:
-      'Space id of the space the data model should belong to. Defaults to same as external-id.',
+      'Space ID of the space the data model should belong to. Defaults to same as external-id.',
     type: CommandArgumentType.STRING,
     required: true,
     prompt: 'Enter data model space ID',
@@ -48,14 +48,14 @@ const commandArgs = [
   },
   {
     name: 'version',
-    description: 'Data model version',
+    description: 'Data model version.',
     type: CommandArgumentType.STRING,
     prompt: 'Enter data model version',
     required: true,
   },
   {
     name: 'output-directory',
-    description: 'The directory for the generated code',
+    description: 'The directory for the generated code.',
     required: false,
     type: CommandArgumentType.STRING,
     alias: 'output',
@@ -64,7 +64,7 @@ const commandArgs = [
   },
   {
     name: 'skip-sample',
-    description: 'Create a sample.ts in the output directory',
+    description: 'Create a sample.ts in the output directory.',
     required: false,
     type: CommandArgumentType.BOOLEAN,
     alias: 'sample',
@@ -135,7 +135,6 @@ const ENDPOINT="${getFdmV3MixerApiService().getDataModelEndpointUrl(
           args['external-id'],
           args['version']
         )}"
-const DM_NAME="${args['external-id']}"
 const DM_VERSION="${args['version']}"
 const SPACE="${args['space']}"`
       );
