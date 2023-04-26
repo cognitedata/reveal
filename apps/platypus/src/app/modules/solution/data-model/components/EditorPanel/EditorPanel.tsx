@@ -105,6 +105,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
           <GraphqlCodeEditor
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
             externalId={externalId}
+            space={space}
             currentTypeName={currentTypeName}
             typeDefs={typeDefs}
             code={graphQlSchema}
