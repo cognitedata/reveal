@@ -116,7 +116,7 @@ const getMQTTSourceQueryKey = (externalId?: string) => [
   'mqtt',
   'source',
   'details',
-  ...(externalId ? ['externalId'] : []),
+  ...(externalId ? [externalId] : []),
 ];
 
 const getMQTTSource = (sdk: CogniteClient, externalId?: string) => {
