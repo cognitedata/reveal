@@ -131,6 +131,7 @@ export class CadManager {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+    [...this._cadModelMap.values()].some(m => m.resetRedraw());
   }
 
   get needsRedraw(): boolean {

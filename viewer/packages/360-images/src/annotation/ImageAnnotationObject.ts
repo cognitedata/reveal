@@ -15,6 +15,8 @@ import { Image360AnnotationAppearance } from './types';
 
 type FaceType = Image360FileDescriptor['face'];
 
+import SeededRandom from 'random-seed';
+
 export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
 
@@ -47,7 +49,7 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._material = createMaterial();
+    this._material = createMaterial(annotation);
     this._mesh = new Mesh(objectData.getGeometry(), this._material);
 
     this.initializeTransform(face, objectData.getNormalizationMatrix());
@@ -86,7 +88,7 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 
   public updateMaterial(): void {
-    this._material.color = this._defaultAppearance.color ?? getDefaultColor();
+    this._material.color = this._defaultAppearance.color ?? getDefaultColor(this._annotation);
     this._material.visible = this._defaultAppearance.visibility ?? true;
 
     if (this._appearance.color !== undefined) {
@@ -116,18 +118,21 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 }
 
-function createMaterial(): MeshBasicMaterial {
+function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {
   return new MeshBasicMaterial({
-    color: getDefaultColor(),
+    color: getDefaultColor(annotation),
     side: DoubleSide,
     depthTest: false,
-    opacity: 0.5,
+    opacity: 0.7,
     transparent: true
   });
 }
 
-function getDefaultColor() {
-  return new Color(1, 1, 0);
+function getDefaultColor(annotation: AnnotationModel): Color {
+  const random = SeededRandom.create((annotation.data as AnnotationsObjectDetection).label);
+  return new Color(random.floatBetween(0, 1), random.floatBetween(0, 1), random.floatBetween(0, 1))
+    .multiplyScalar(0.7)
+    .addScalar(0.3);
 }
 
 function isAnnotationsObject(annotation: AnnotationData): annotation is AnnotationsObjectDetection {

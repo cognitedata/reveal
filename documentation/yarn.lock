@@ -2032,9 +2032,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lang-javascript@npm:6.1.5":
-  version: 6.1.5
-  resolution: "@codemirror/lang-javascript@npm:6.1.5"
+"@codemirror/lang-javascript@npm:6.1.7":
+  version: 6.1.7
+  resolution: "@codemirror/lang-javascript@npm:6.1.7"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/language": ^6.6.0
@@ -2043,7 +2043,7 @@ __metadata:
     "@codemirror/view": ^6.0.0
     "@lezer/common": ^1.0.0
     "@lezer/javascript": ^1.0.0
-  checksum: f0355f9577fac03437137356b5c8826ec073480d9b0efc62289eac483172d47dafe569f31bf788e4228e8b789197e50a0768cf10b0cde5f600e89b6b469f52cc
+  checksum: 15ce6695e7276102dbc874d178cbc4434d126b7a3e08f89aa9338c7dce5d2d6bdd5f1c6d114a744a8fa26dfc62b0dc639fe6e5c7b306bd14ed37272e75739736
   languageName: node
   linkType: hard
 
@@ -2138,18 +2138,18 @@ __metadata:
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
     "@azure/msal-browser": 2.36.0
-    "@codemirror/lang-javascript": 6.1.5
+    "@codemirror/lang-javascript": 6.1.7
     "@docusaurus/core": 2.4.0
     "@docusaurus/preset-classic": 2.4.0
     "@docusaurus/remark-plugin-npm2yarn": 2.4.0
-    "@types/react": 18.0.29
+    "@types/react": 18.0.38
     "@types/styled-components": 5.1.26
     "@uiw/codemirror-theme-material": 4.19.16
-    "@uiw/react-codemirror": 4.19.11
+    "@uiw/react-codemirror": 4.19.16
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
-    docusaurus-plugin-typedoc: 0.19.0
+    docusaurus-plugin-typedoc: 0.19.1
     ieee754: 1.2.1
     query-string: 8.1.0
     react: 18.2.0
@@ -2158,7 +2158,7 @@ __metadata:
     rimraf: 5.0.0
     styled-components: 5.3.9
     typedoc: 0.24.4
-    typedoc-plugin-markdown: 3.15.1
+    typedoc-plugin-markdown: 3.15.2
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.0.4
   languageName: unknown
@@ -3756,14 +3756,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.0.29":
-  version: 18.0.29
-  resolution: "@types/react@npm:18.0.29"
+"@types/react@npm:18.0.38":
+  version: 18.0.38
+  resolution: "@types/react@npm:18.0.38"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 75f56f81d80a1c15ee3fcd2039bdc5f7a70f49cf69827ee0fc8beece9809b234f245dd62552e91018d8f25792986bd513b44caf054554d5c5eb979a5f9460214
+  checksum: 34481c79f4f7ea2aefbaa45281319dc183200230d932d968463eba1643bd3635073d0a17c5c613150a69e36ca18b811ecffafea6384fa3dff3b5203866339d69
   languageName: node
   linkType: hard
 
@@ -3892,9 +3892,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.19.11":
-  version: 4.19.11
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.19.11"
+"@uiw/codemirror-extensions-basic-setup@npm:4.19.16":
+  version: 4.19.16
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.19.16"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3911,7 +3911,7 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: c7bc3498ace8efa29492674ed94feb3c6d941f389302696136c1509ab5e3b55e590ca9887a7883b7e4972cee921d7120d9af7f78354094ccb341a72656ad8ac9
+  checksum: e5263f19e1ca838ac9cc7c0ab03d4d1ca2453ff306e17d354b0772954c14cfaa146b0a00ed2d5690f5687aeafdd5f2f5587efc573ffb5714bd77f6af46444f74
   languageName: node
   linkType: hard
 
@@ -3939,15 +3939,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.19.11":
-  version: 4.19.11
-  resolution: "@uiw/react-codemirror@npm:4.19.11"
+"@uiw/react-codemirror@npm:4.19.16":
+  version: 4.19.16
+  resolution: "@uiw/react-codemirror@npm:4.19.16"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.19.11
+    "@uiw/codemirror-extensions-basic-setup": 4.19.16
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3957,7 +3957,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 5ff4c7d021b565bc578d0fce2f4b6761b8d55024fa3190288435d287028cc8770b8fe5b4b103a64c452eaf26ab88c8bfd25819782a4b4d7dcfd4361765e307ff
+  checksum: 0625a544eb53ff1236e75dc4c81400285bf4dfdacd5c9c71129066f7decb7e902c97f756c6edc854d44b586ad4b0d3d303df065429532df9085c5f6b1adbad80
   languageName: node
   linkType: hard
 
@@ -6012,13 +6012,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:0.19.0":
-  version: 0.19.0
-  resolution: "docusaurus-plugin-typedoc@npm:0.19.0"
+"docusaurus-plugin-typedoc@npm:0.19.1":
+  version: 0.19.1
+  resolution: "docusaurus-plugin-typedoc@npm:0.19.1"
   peerDependencies:
     typedoc: ">=0.24.0"
     typedoc-plugin-markdown: ">=3.15.0"
-  checksum: fe4a186c2308a798f6eace5212ef5e56405baf53de80bb317679a48391ecaf6a78c3d7edb44e5a5ab3b30b9a7b23750d0d7d3f48287be0ef73b1e864fdf13dc0
+  checksum: 12f0a035c616b3d8eb32584ccf17e68c53d05569c790b2e518ab061596a1423a08f1db3ab8d06257a5d19f0dc3773b9f6b67f4350a294542f5d711d7057ff27e
   languageName: node
   linkType: hard
 
@@ -12502,14 +12502,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:3.15.1":
-  version: 3.15.1
-  resolution: "typedoc-plugin-markdown@npm:3.15.1"
+"typedoc-plugin-markdown@npm:3.15.2":
+  version: 3.15.2
+  resolution: "typedoc-plugin-markdown@npm:3.15.2"
   dependencies:
     handlebars: ^4.7.7
+    typedoc-plugin-mdn-links: ^3.0.3
   peerDependencies:
     typedoc: ">=0.24.0"
-  checksum: a80e43e8e8628fa6c65f44bfe20fc79b03e432e36c9a43c6dc419a0a0ec9658743ebb228cd05dd8491d2ad23e389d4903c00aef3d3de73340a86382b91db39b1
+  checksum: 231b3125498498249385e42fb5c3e24eed20e4fc72678ef3668a69df13ed4f5a7cd0e54610619ead99efb4a266f72c6658946acb83c3ab89bc034278bb8539a0
+  languageName: node
+  linkType: hard
+
+"typedoc-plugin-mdn-links@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "typedoc-plugin-mdn-links@npm:3.0.3"
+  peerDependencies:
+    typedoc: ">= 0.23.14 || 0.24.x"
+  checksum: 1682f8a65e1eff892f5ae0424919007d0673d9abda7c7f401b294fc73d64ce8fc4e1cbb35e5389170a8c48ed57efe6ee81403f870499c62decb016b689fa6522
   languageName: node
   linkType: hard
 
