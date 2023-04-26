@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { SecondaryTopbar } from '@cognite/cdf-utilities';
-import { Button, Dropdown, Flex, Loader, Tabs } from '@cognite/cogs.js';
+import { Loader, Menu, Tabs } from '@cognite/cogs.js';
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -37,30 +37,25 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
     <StyledPageContainer>
       <StyledHeadingContainer>
         <SecondaryTopbar
+          optionsDropdownProps={{ content: <Menu></Menu> }}
           extraContent={
-            <Flex alignItems="center" style={{ height: '100%' }}>
-              <TabsContainer>
-                <Tabs
-                  activeKey={detailsTab}
-                  onTabClick={(key) => {
-                    setSearchParams(
-                      (prev) => {
-                        prev.set('detailsTab', key);
-                        return prev;
-                      },
-                      { replace: true }
-                    );
-                  }}
-                >
-                  <Tabs.Tab tabKey="overview" label={t('overview')} />
-                  <Tabs.Tab tabKey="insight" label={t('insight')} />
-                </Tabs>
-              </TabsContainer>
-              <SecondaryTopbar.Divider />
-              <Dropdown>
-                <Button icon="EllipsisHorizontal" />
-              </Dropdown>
-            </Flex>
+            <TabsContainer>
+              <Tabs
+                activeKey={detailsTab}
+                onTabClick={(key) => {
+                  setSearchParams(
+                    (prev) => {
+                      prev.set('detailsTab', key);
+                      return prev;
+                    },
+                    { replace: true }
+                  );
+                }}
+              >
+                <Tabs.Tab tabKey="overview" label={t('overview')} />
+                <Tabs.Tab tabKey="insight" label={t('insight')} />
+              </Tabs>
+            </TabsContainer>
           }
           title={externalId}
         />
@@ -77,11 +72,8 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
 };
 
 const TabsContainer = styled.div`
-  height: 100%;
-
-  .rc-tabs,
-  .rc-tabs-nav {
-    height: 100%;
+  .cogs-tabs__list {
+    height: 56px;
   }
 `;
 
