@@ -22,10 +22,7 @@ import {
   useTranslation,
 } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { WORKFLOW_COMPONENT_TYPES } from 'utils/workflow';
 import { WorkflowComponentType } from 'types/workflow';
-
-import { FloatingComponentsPanelItem } from './NodeConfigurationPanelItem';
 
 const { Option } = Select;
 
@@ -65,17 +62,17 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     {
       value: 'Transformation',
       label: 'Transformation',
-      icon: 'Sunrise',
+      icon: 'Code',
     },
     {
       value: 'Function',
       label: 'Function',
-      icon: 'Sunrise',
+      icon: 'Function',
     },
     {
       value: 'Webhook',
       label: 'Webhook',
-      icon: 'Sunrise',
+      icon: 'FrameTool',
     },
   ];
 
@@ -90,6 +87,17 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       onClose={onClose}
       open={open}
       getContainer={false}
+      width="${FLOATING_COMPONENTS_PANEL_WIDTH}px"
+      headerStyle={{
+        padding: '12px',
+        border: 'none',
+      }}
+      bodyStyle={{
+        padding: '12px',
+        gap: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
     >
       <Flex direction="column">
         <Body level={2} strong>
@@ -125,7 +133,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         label="Label"
         placeholder="Enter a descriptive label to display"
         variant="solid"
-        css={{ width: 326 }}
+        style={{ width: 326 }}
       />
       {/* <Flex alignItems="flex-start" justifyContent="space-between">
         <Flex direction="column">
@@ -153,19 +161,10 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 };
 
 const StyledDrawer = styled(Drawer)`
-  background-color: ${Colors['surface--muted']};
-  border: 1px solid ${Colors['border--interactive--default']};
-  box-shadow: ${Elevations['elevation--surface--non-interactive']};
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  height: 100%;
-  right: 0px;
-  padding: 12px;
-  position: absolute;
-  top: 0px;
-  width: ${FLOATING_COMPONENTS_PANEL_WIDTH}px;
-  z-index: ${Z_INDEXES.FLOATING_ELEMENT};
+  button.ant-drawer-close {
+    position: absolute;
+    right: 0px;
+  }
 `;
 
 const Container = styled(Flex).attrs({ alignItems: 'center', gap: 8 })`
