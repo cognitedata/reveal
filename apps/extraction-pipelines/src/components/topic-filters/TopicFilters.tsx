@@ -38,11 +38,13 @@ export const TopicFilters = ({
       icon="Columns"
       title={t('topic-filter', { count: 2 })}
     >
-      <CreateJobsModal
-        onCancel={() => setIsCreateModalOpen(false)}
-        source={source}
-        visible={isCreateModalOpen}
-      />
+      {isCreateModalOpen && (
+        <CreateJobsModal
+          onCancel={() => setIsCreateModalOpen(false)}
+          source={source}
+          visible={isCreateModalOpen}
+        />
+      )}
       <Content>
         {source.jobs.length ? (
           source.jobs.map((job) => (

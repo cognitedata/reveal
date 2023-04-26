@@ -24,11 +24,13 @@ export const SourceDetails = ({
 
   return (
     <>
-      <EditSourceDetailsModal
-        onCancel={() => setIsEditModalOpen(false)}
-        source={source}
-        visible={isEditModalOpen}
-      />
+      {isEditModalOpen && (
+        <EditSourceDetailsModal
+          onCancel={() => setIsEditModalOpen(false)}
+          source={source}
+          visible={isEditModalOpen}
+        />
+      )}
       <Section
         className={className}
         extra={

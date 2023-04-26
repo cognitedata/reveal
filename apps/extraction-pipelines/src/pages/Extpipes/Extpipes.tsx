@@ -147,12 +147,14 @@ const Extpipes: FunctionComponent<Props> = () => {
         close={closeCreateDialog}
         title={t('create-ext-pipeline')}
       />
-      <CreateSourceModal
-        onCancel={() => {
-          setIsCreateSourceModalOpen(false);
-        }}
-        visible={isCreateSourceModalOpen}
-      />
+      {isCreateSourceModalOpen && (
+        <CreateSourceModal
+          onCancel={() => {
+            setIsCreateSourceModalOpen(false);
+          }}
+          visible={isCreateSourceModalOpen}
+        />
+      )}
       <Flex direction="column" gap={16}>
         {shouldShowHostedExtractors && (
           <Tabs

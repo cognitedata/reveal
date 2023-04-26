@@ -22,11 +22,13 @@ export const SourceAuthentication = ({
 
   return (
     <>
-      <EditSourceAuthenticationModal
-        onCancel={() => setIsEditModalOpen(false)}
-        source={source}
-        visible={isEditModalOpen}
-      />
+      {isEditModalOpen && (
+        <EditSourceAuthenticationModal
+          onCancel={() => setIsEditModalOpen(false)}
+          source={source}
+          visible={isEditModalOpen}
+        />
+      )}
       <Section
         className={className}
         extra={
