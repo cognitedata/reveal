@@ -1,28 +1,16 @@
-import {
-  Button,
-  Colors,
-  Detail,
-  Elevations,
-  Flex,
-  Title,
-  InputExp,
-  Body,
-  IconType,
-  Icon,
-} from '@cognite/cogs.js';
+import { Flex, InputExp, Body, IconType, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
-  FLOATING_COMPONENTS_PANEL_WIDTH,
-  FLOATING_ELEMENT_MARGIN,
-  Z_INDEXES,
   useTranslation,
 } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { WorkflowComponentType } from 'types/workflow';
+import { useTransformationList } from 'hooks/transformation';
+import { collectPages } from 'utils';
 
 const { Option } = Select;
 
@@ -30,6 +18,9 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
   const { setIsComponentsPanelVisible } = useWorkflowBuilderContext();
+
+  const { data } = useTransformationList();
+  const transformationList = useMemo(() => collectPages(data), [data]);
 
   const onDragStart = (
     event: React.DragEvent<Element>,
@@ -53,6 +44,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   };
 
   console.log(open);
+  console.log(transformationList);
 
   const nodeOptions: {
     value: string;
@@ -121,13 +113,15 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Select
           placeholder="Choose existing or create new"
           style={{ width: 326 }}
-          options={[
-            {
-              value: '1',
-              label: 'Not Identified',
-            },
-          ]}
-        />
+        >
+          {transformationList
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(({ externalId, name }) => (
+              <Option key={externalId} value={externalId}>
+                <Body level={2}>{name}</Body>
+              </Option>
+            ))}
+        </Select>
       </Flex>
       <InputExp
         label="Label"
@@ -135,26 +129,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         variant="solid"
         style={{ width: 326 }}
       />
-      {/* <Flex alignItems="flex-start" justifyContent="space-between">
-        <Flex direction="column">
-          <Title level={6}>{t('floating-components-panel-title')}</Title>
-          <Detail muted>{t('floating-components-panel-description')}</Detail>
-        </Flex>
-        <Button
-          icon="CloseLarge"
-          onClick={() => setIsComponentsPanelVisible(false)}
-          type="ghost"
-        />
-      </Flex>
-      <Flex direction="column" gap={8}>
-        {WORKFLOW_COMPONENT_TYPES.map((type) => (
-          <FloatingComponentsPanelItem
-            key={type}
-            onDragStart={(e) => onDragStart(e, type)}
-            type={type}
-          />
-        ))}
-      </Flex> */}
     </StyledDrawer>
     // </React.Fragment>
   );
@@ -164,6 +138,7 @@ const StyledDrawer = styled(Drawer)`
   button.ant-drawer-close {
     position: absolute;
     right: 0px;
+    padding: 12px;
   }
 `;
 
