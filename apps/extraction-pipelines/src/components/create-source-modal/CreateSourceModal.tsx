@@ -1,8 +1,10 @@
 import React from 'react';
 
+import { createLink } from '@cognite/cdf-utilities';
 import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import { FormField } from 'components/form-field/FormField';
@@ -36,9 +38,16 @@ export const CreateSourceModal = ({
 }: CreateSourceModalProps): JSX.Element => {
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
   const { mutate: createMQTTSource } = useCreateMQTTSource({
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       onCancel();
+      navigate(
+        createLink(
+          `/extpipes/hosted-extraction-pipeline/${variables.externalId}`
+        )
+      );
     },
   });
 
