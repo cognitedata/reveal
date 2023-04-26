@@ -28,6 +28,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
   private readonly _meshLoadPromise: DeferredPromise<THREE.Object3D>;
   private readonly _annotationsLoadPromise: DeferredPromise<ImageAnnotationObject[]>;
+  private readonly _annotationsGroup: THREE.Group = new THREE.Group();
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -94,8 +95,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._annotationsLoadPromise = new DeferredPromise();
 
     Promise.all([this._meshLoadPromise, this._annotationsLoadPromise]).then(
-      ([mesh, annotations]: [THREE.Object3D, ImageAnnotationObject[]]) =>
-        annotations.forEach(a => mesh.add(a.getObject()))
+      ([_mesh, annotations]: [THREE.Object3D, ImageAnnotationObject[]]) =>
+        annotations.forEach(a => this._annotationsGroup.add(a.getObject()))
     );
   }
 
@@ -124,6 +125,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     visualizationMesh.applyMatrix4(this._worldTransform);
     visualizationMesh.scale.copy(this._visualizationState.scale);
     visualizationMesh.visible = this._visualizationState.visible;
+    visualizationMesh.add(this._annotationsGroup);
     this._visualizationMesh = visualizationMesh;
 
     this._sceneHandler.addCustomObject(this._visualizationMesh);
@@ -205,5 +207,9 @@ export class Image360VisualizationBox implements Image360Visualization {
     texture.dispose();
 
     return scaledImageTexture;
+  }
+
+  public setAnnotationsVisibility(visibility: boolean): void {
+    this._annotationsGroup.visible = visibility;
   }
 }
