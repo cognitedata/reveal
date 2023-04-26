@@ -48,7 +48,7 @@ const OverviewGrid = styled.div`
   display: grid;
   gap: 16px;
   grid-template-columns: [start] 1fr [first] 1fr [second] 1fr [end];
-  grid-template-rows: [start] 72px [first] auto [second] auto [end];
+  grid-template-rows: [start] 72px [first] 408px [second] auto [end];
   width: ${PAGE_WIDTH}px;
 `;
 

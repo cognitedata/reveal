@@ -247,5 +247,6 @@
   "details": "Details",
   "edit-source-details": "Edit source details",
   "edit-source-authentication": "Edit source authentication",
-  "authentication": "Authentication"
+  "authentication": "Authentication",
+  "create-jobs-to-start-listening-messages": "Create jobs to start listening messages"
 }

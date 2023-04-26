@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Body, Button, Illustrations } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
 import Section from 'components/section';
@@ -44,14 +44,42 @@ export const TopicFilters = ({
         visible={isCreateModalOpen}
       />
       <Content>
-        {source.jobs.map((job) => (
-          <TopicFilter key={job.externalId} job={job} />
-        ))}
+        {source.jobs.length ? (
+          source.jobs.map((job) => (
+            <TopicFilter key={job.externalId} job={job} />
+          ))
+        ) : (
+          <EmptyContent>
+            <Illustrations.Solo type="ExtractorDataSources" />
+            <Body level={3} muted>
+              {t('create-jobs-to-start-listening-messages')}
+            </Body>
+            <Button
+              onClick={() => setIsCreateModalOpen(true)}
+              type="ghost-accent"
+              size="small"
+              icon="AddLarge"
+            >
+              {t('create-jobs')}
+            </Button>
+          </EmptyContent>
+        )}
       </Content>
     </Section>
   );
 };
 
 const Content = styled.div`
+  flex: 1;
   overflow-y: auto;
+`;
+
+const EmptyContent = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+  gap: 8px;
+  flex-direction: column;
+  padding: 16px;
 `;
