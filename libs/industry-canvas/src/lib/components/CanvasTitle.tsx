@@ -36,7 +36,7 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
         <span>{name}</span>
       )}
       {activeCanvas !== undefined && (
-        <Tooltip content="Edit canvas name">
+        <Tooltip content="Edit canvas name" position="bottom">
           <Button
             icon={isEditing ? 'Checkmark' : 'Edit'}
             aria-label="edit-canvas-name"

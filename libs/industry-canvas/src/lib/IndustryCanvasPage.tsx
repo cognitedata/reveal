@@ -253,7 +253,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Tooltip content="Undo">
+          <Tooltip content="Undo" position="bottom">
             <Button
               type="ghost"
               icon="Restore"
@@ -262,7 +262,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
               aria-label="Undo"
             />
           </Tooltip>
-          <Tooltip content="Redo">
+          <Tooltip content="Redo" position="bottom">
             <Button
               type="ghost"
               icon="Refresh"
@@ -276,7 +276,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             <Icon type="Plus" /> Add data...
           </Button>
 
-          <Tooltip content="Download canvas as PDF">
+          <Tooltip content="Download canvas as PDF" position="bottom">
             <Button
               icon="Download"
               aria-label="Download"

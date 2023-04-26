@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button, Link, Pagination, ToolBar, Tooltip } from '@cognite/cogs.js';
+import { Button, Pagination, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ContainerType } from '@cognite/unified-file-viewer';
 import dayjs from 'dayjs';
 import React, { useCallback, useState } from 'react';
@@ -8,6 +8,11 @@ import { TooltipToolBarContainer } from '../../TooltipContainer';
 import { IndustryCanvasContainerConfig } from '../../types';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
 import LabelToolbar from './LabelToolbar';
+
+const navigateToPath = (path: string) => {
+  const link = createLink(path);
+  window.open(link, '_blank');
+};
 
 type ContainerTooltipProps = {
   container: IndustryCanvasContainerConfig;
@@ -64,30 +69,34 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
           />
         )}
         <ToolBar direction="horizontal">
-          <Tooltip content="Change label">
-            <Button
-              icon="String"
-              onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
-              type="ghost"
-            />
-          </Tooltip>
-          <Tooltip
-            content={`Open ${container.metadata.resourceType} in Data Explorer`}
-          >
-            <Link
-              href={createLink(
-                `/explore/${container.metadata.resourceType}/${container.metadata.resourceId}`
-              )}
-              target="_blank"
-            />
-          </Tooltip>
-          <Tooltip
-            content={`Remove ${container.metadata.resourceType} from canvas`}
-          >
+          <>
+            <Tooltip content="Change label">
+              <Button
+                icon="String"
+                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
+                type="ghost"
+                aria-label="Change label"
+              />
+            </Tooltip>
+            <Tooltip content="Open in Data Explorer">
+              <Button
+                icon="ExternalLink"
+                onClick={() => {
+                  navigateToPath(
+                    `/explore/${container.metadata.resourceType}/${container.metadata.resourceId}`
+                  );
+                }}
+                type="ghost"
+                aria-label={`Open ${container.metadata.resourceType} in Data Explorer`}
+              />
+            </Tooltip>
+          </>
+          <Tooltip content="Remove">
             <Button
               icon="Delete"
-              onClick={() => onRemoveContainer()}
+              onClick={onRemoveContainer}
               type="ghost"
+              aria-label={`Remove ${container.metadata.resourceType}`}
             />
           </Tooltip>
         </ToolBar>
@@ -106,40 +115,48 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
           />
         )}
         <ToolBar direction="horizontal">
-          <Tooltip content="Change label">
-            <Button
-              icon="String"
-              onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
-              type="ghost"
+          <>
+            <Tooltip content="Change label">
+              <Button
+                icon="String"
+                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
+                type="ghost"
+                aria-label="Change label"
+              />
+            </Tooltip>
+            <DateRangePrompt
+              initialRange={{
+                startDate: container.startDate,
+                endDate: container.endDate,
+              }}
+              onComplete={(dateRange) =>
+                onUpdateContainer({
+                  // TODO: Enforce with types
+                  ...container,
+                  startDate: dayjs(dateRange.startDate).startOf('day').toDate(),
+                  endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
+                })
+              }
             />
-          </Tooltip>
-          <DateRangePrompt
-            initialRange={{
-              startDate: container.startDate,
-              endDate: container.endDate,
-            }}
-            onComplete={(dateRange) =>
-              onUpdateContainer({
-                // TODO: Enforce with types
-                ...container,
-                startDate: dayjs(dateRange.startDate).startOf('day').toDate(),
-                endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
-              })
-            }
-          />
-          <Tooltip content="Open time series in Data Explorer">
-            <Link
-              href={createLink(
-                `/explore/timeSeries/${container.metadata.resourceId}`
-              )}
-              target="_blank"
-            />
-          </Tooltip>
-          <Tooltip content="Remove time series from canvas">
+            <Tooltip content="Open in Data Explorer">
+              <Button
+                icon="ExternalLink"
+                onClick={() => {
+                  navigateToPath(
+                    `/explore/timeSeries/${container.metadata.resourceId}`
+                  );
+                }}
+                type="ghost"
+                aria-label="Open time series"
+              />
+            </Tooltip>
+          </>
+          <Tooltip content="Remove">
             <Button
               icon="Delete"
-              onClick={() => onRemoveContainer()}
+              onClick={onRemoveContainer}
               type="ghost"
+              aria-label="Remove time series"
             />
           </Tooltip>
         </ToolBar>
@@ -158,24 +175,32 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
           />
         )}
         <ToolBar direction="horizontal">
-          <Tooltip content="Change label">
-            <Button
-              icon="String"
-              onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
-              type="ghost"
-            />
-          </Tooltip>
-          <Tooltip content="Open 3D-model in Data Explorer">
-            <Link
-              href={createLink(`/explore/threeD/${container.id}`)}
-              target="_blank"
-            />
-          </Tooltip>
-          <Tooltip content="Remove 3D-model from canvas">
+          <>
+            <Tooltip content="Change label">
+              <Button
+                icon="String"
+                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
+                type="ghost"
+                aria-label="Change label"
+              />
+            </Tooltip>
+            <Tooltip content="Open in Data Explorer">
+              <Button
+                icon="ExternalLink"
+                onClick={() => {
+                  navigateToPath(`/explore/threeD/${container.id}`);
+                }}
+                type="ghost"
+                aria-label="Open 3D-model"
+              />
+            </Tooltip>
+          </>
+          <Tooltip content="Remove">
             <Button
               icon="Delete"
-              onClick={() => onRemoveContainer()}
+              onClick={onRemoveContainer}
               type="ghost"
+              aria-label="Remove 3D-model"
             />
           </Tooltip>
         </ToolBar>
@@ -198,48 +223,53 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
           />
         )}
         <ToolBar direction="horizontal">
-          <Tooltip content="Change label">
-            <Button
-              icon="String"
-              onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
-              type="ghost"
-            />
-          </Tooltip>
-          {container.type === ContainerType.DOCUMENT &&
-            shamefulNumPages !== undefined &&
-            shamefulNumPages > 1 && (
-              <Pagination
-                totalPages={shamefulNumPages}
-                hideItemsPerPage
-                currentPage={container.page}
-                size="small"
-                onPageChange={(page) =>
-                  onUpdateContainer({
-                    ...container,
-                    page,
-                  })
-                }
-              />
-            )}
-
           <>
-            <Tooltip content="Open file in Data Explorer">
-              <Link
-                href={createLink(
-                  `/explore/file/${container.metadata.resourceId}`
-                )}
-                target="_blank"
+            <Tooltip content="Change label">
+              <Button
+                icon="String"
+                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
+                type="ghost"
+                aria-label="Change label"
               />
             </Tooltip>
+            {container.type === ContainerType.DOCUMENT &&
+              shamefulNumPages !== undefined &&
+              shamefulNumPages > 1 && (
+                <Pagination
+                  totalPages={shamefulNumPages}
+                  hideItemsPerPage
+                  currentPage={container.page}
+                  size="small"
+                  onPageChange={(page) =>
+                    onUpdateContainer({
+                      ...container,
+                      page,
+                    })
+                  }
+                />
+              )}
 
-            <Tooltip content="Remove file from canvas">
+            <Tooltip content="Open in Data Explorer">
               <Button
-                icon="Delete"
-                onClick={() => onRemoveContainer()}
+                icon="ExternalLink"
+                onClick={() => {
+                  navigateToPath(
+                    `/explore/file/${container.metadata.resourceId}`
+                  );
+                }}
                 type="ghost"
+                aria-label="Open document"
               />
             </Tooltip>
           </>
+          <Tooltip content="Remove">
+            <Button
+              icon="Delete"
+              onClick={() => onRemoveContainer()}
+              aria-label="Remove document"
+              type="ghost"
+            />
+          </Tooltip>
         </ToolBar>
       </TooltipToolBarContainer>
     );

@@ -65,7 +65,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
       )}
       <ToolBar direction="vertical">
         <>
-          <Tooltip content="Select tool">
+          <Tooltip content="Select tool" position="right">
             <Button
               icon="Cursor"
               type="ghost"
@@ -75,7 +75,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content="Pan tool">
+          <Tooltip content="Pan tool" position="right">
             <Button
               icon="Grab"
               type="ghost"
@@ -85,7 +85,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content="Text tool">
+          <Tooltip content="Text tool" position="right">
             <Button
               icon="Text"
               type="ghost"
@@ -95,7 +95,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content="Add sticky">
+          <Tooltip content="Add sticky" position="right">
             <StickyButton
               toggled={activeTool === ToolType.STICKY}
               aria-label="Sticky tool"
@@ -103,7 +103,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content="Shape tool">
+          <Tooltip content="Shape tool" position="right">
             <Button
               icon="Shapes"
               type="ghost"
@@ -113,7 +113,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             />
           </Tooltip>
 
-          <Tooltip content="Line tool">
+          <Tooltip content="Line tool" position="right">
             <Button
               icon="VectorLine"
               type="ghost"
@@ -130,7 +130,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
 
 const ShapeToolbar = styled.div`
   position: absolute;
-  top: 108px;
+  top: 144px;
   left: 48px;
 `;
 

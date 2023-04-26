@@ -60,11 +60,11 @@ export const StickyAnnotationTooltip: React.FC<
             />
           </Tooltip>
         </>
-        <Tooltip content="Delete sticky">
+        <Tooltip content="Remove">
           <Button
             icon="Delete"
             type="ghost"
-            aria-label="Delete sticky"
+            aria-label="Remove sticky"
             onClick={onDeleteSelectedCanvasAnnotation}
           />
         </Tooltip>
