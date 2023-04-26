@@ -39,6 +39,9 @@ export const EditSourceDetailsModal = ({
     if (!values.host) {
       errors.host = t('validation-error-field-required');
     }
+    if (!values.port) {
+      errors.port = t('validation-error-field-required');
+    }
 
     return errors;
   };
@@ -50,20 +53,16 @@ export const EditSourceDetailsModal = ({
         port: source.port,
       },
       onSubmit: (values) => {
-        if (values.host) {
+        if (values.host && values.port) {
           editMQTTSource({
             externalId: source.externalId,
             update: {
               host: {
                 set: values.host,
               },
-              port: values.port
-                ? {
-                    set: values.port,
-                  }
-                : {
-                    setNull: true,
-                  },
+              port: {
+                set: values.port,
+              },
             },
           });
         }
@@ -100,7 +99,7 @@ export const EditSourceDetailsModal = ({
           clearable
           fullWidth
           label={{
-            required: false,
+            required: true,
             info: undefined,
             text: t('form-port'),
           }}
