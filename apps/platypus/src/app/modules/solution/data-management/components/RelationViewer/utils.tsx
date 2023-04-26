@@ -70,3 +70,11 @@ export const getRelationshipsForData = async ({
   }
   return Promise.resolve(undefined);
 };
+
+export const getRelationLinkId = (
+  type: string,
+  startNode: string,
+  endNode: string
+) => {
+  return `${startNode}-${type}-${endNode}`;
+};

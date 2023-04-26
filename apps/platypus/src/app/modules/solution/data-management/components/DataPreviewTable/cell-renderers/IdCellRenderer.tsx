@@ -65,7 +65,6 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
           onOk={() => setIsRelationViewerOpen(false)}
         >
           <RelationViewer
-            typeName={dataModelType.name}
             initialNodes={[
               { externalId: props.value, __typename: dataModelType.name },
             ]}

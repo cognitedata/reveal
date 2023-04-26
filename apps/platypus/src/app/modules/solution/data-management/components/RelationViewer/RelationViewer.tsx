@@ -12,34 +12,27 @@ import { SimulationLinkDatum } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
-import { getRelationshipsForData } from './utils';
+import { getRelationLinkId, getRelationshipsForData } from './utils';
 
 const getColor = (key: string) => uniqolor(key);
 
 export const RelationViewer = <
   T extends { externalId: string; __typename: string }
 >({
-  typeName,
   initialNodes,
   initialEdges,
 }: {
-  typeName: string;
   initialNodes: T[];
   initialEdges: {
     id: string;
     source: string;
     target: string;
-    sourceField?: string;
-    sourceType?: string;
+    type: string;
   }[];
 }) => {
   const { track } = useMixpanel();
-  const [nodes, setNodes] = useState(
-    new Map(initialNodes.map((el) => [el.externalId, el]))
-  );
-  const [links, setLinks] = useState(
-    new Map(initialEdges.map((el) => [el.id, el]))
-  );
+  const [nodes, setNodes] = useState(new Map());
+  const [links, setLinks] = useState(new Map());
   const [selectedItems, setSelectedItem] = useState<Map<string, string[]>>(
     new Map()
   );
@@ -64,14 +57,8 @@ export const RelationViewer = <
     version,
     space
   );
-
-  const dataModelType = useMemo(
-    () => dataModelTypeDefs.types.find((el) => el.name === typeName),
-    [dataModelTypeDefs, typeName]
-  );
-
   const onClick = useCallback(
-    (node: T & { __typename?: string }) => {
+    (node: T & { __typename?: string }, position: { x: number; y: number }) => {
       setSelectedItem((currentSelectedSet) => {
         const newSelectedItems = new Map(currentSelectedSet);
         // try and delete, if return a list of ids, it means it existed
@@ -83,7 +70,7 @@ export const RelationViewer = <
         }
         // first click for a new item, fetch and add nodes and edges
         if (!externalIdsToDelete) {
-          const clickedTypeName = node.__typename || dataModelType?.name;
+          const clickedTypeName = node.__typename;
           if (clickedTypeName) {
             getRelationshipsForData({
               dataModelTypeDefs,
@@ -93,10 +80,11 @@ export const RelationViewer = <
               version: selectedDataModelVersion.version,
               typeName: clickedTypeName,
             }).then((item) => {
+              const itemType = dataModelTypeDefs.types.find(
+                (el) => el.name === clickedTypeName
+              );
               const fields =
-                dataModelTypeDefs.types
-                  .find((el) => el.name === clickedTypeName)
-                  ?.fields.filter((el) => el.type.custom) || [];
+                itemType?.fields.filter((el) => el.type.custom) || [];
               const newNodes = new Map();
               const newLinks = new Map();
               for (const field of fields) {
@@ -107,17 +95,18 @@ export const RelationViewer = <
                   if (!el) {
                     return;
                   }
-                  newNodes.set(el.externalId, el);
-                  newLinks.set(
-                    `${node.externalId}-${field.name}-${el.externalId}`,
-                    {
-                      id: `${node.externalId}-${field.name}-${el.externalId}`,
-                      source: node.externalId,
-                      target: el.externalId,
-                      sourceField: field.name,
-                      sourceType: clickedTypeName,
-                    }
+                  newNodes.set(el.externalId, { ...el, ...position });
+                  const linkId = getRelationLinkId(
+                    `${itemType?.name}.${field.name}`,
+                    node.externalId,
+                    el.externalId
                   );
+                  newLinks.set(linkId, {
+                    id: linkId,
+                    source: node.externalId,
+                    target: el.externalId,
+                    type: `${clickedTypeName}.${field.name}`,
+                  });
                 });
               }
               // update selected items with the new edges
@@ -200,7 +189,6 @@ export const RelationViewer = <
     },
     [
       dataModelExternalId,
-      dataModelType?.name,
       dataModelTypeDefs,
       selectedDataModelVersion.version,
       space,
@@ -214,16 +202,31 @@ export const RelationViewer = <
       initialNodes.length === 1 &&
       !selectedItems.has(initialNodes[0].externalId)
     ) {
-      onClick(initialNodes[0]);
+      onClick(initialNodes[0], { x: 0, y: 0 });
     }
   }, []);
+
+  useEffect(() => {
+    setNodes(
+      new Map(
+        initialNodes.map((el, i) => {
+          if (i === 0) {
+            return [el.externalId, { fx: 0, fy: 0, ...el }];
+          }
+          return [el.externalId, el];
+        })
+      )
+    );
+    setLinks(new Map(initialEdges.map((el) => [el.id, el])));
+  }, [initialEdges, initialNodes]);
 
   const renderNode = useCallback(
     (node: T) => (
       <NodeItem
+        key={node.externalId}
         node={node}
-        onClick={(n) => {
-          onClick(n);
+        onClick={(n, position) => {
+          onClick(n, position);
 
           track('Graph.Expand', {
             node: n.externalId,
@@ -235,13 +238,13 @@ export const RelationViewer = <
     [onClick, selectedItems, track]
   );
   const renderLink = useCallback(
-    (el: SimulationLinkDatum<Node & T> & { sourceField?: string }) => {
+    (el: SimulationLinkDatum<Node & T> & { type?: string }) => {
       const id = getLinkId(el);
       return (
         <g key={`${id}`} className="path">
           <text>
-            <textPath href={`#${id}`} startOffset="50%" text-anchor="middle">
-              {el.sourceField}
+            <textPath href={`#${id}`} startOffset="50%" textAnchor="middle">
+              {el.type}
             </textPath>
           </text>
           <path key={id} id={id} />
@@ -276,8 +279,7 @@ export const RelationViewer = <
         ? true
         : (keys.includes(link.source) && keys.includes(link.target)) ||
           !disabledFields.some(
-            (field) =>
-              link.sourceField === field.field && link.sourceType === field.type
+            (field) => link.type === `${field.type}.${field.field}`
           )
     );
   }, [links, disabledFields, selectedItems]);
@@ -336,8 +338,8 @@ export const RelationViewer = <
         }}
       >
         {Object.entries(selectedFields).map(([key, fields]) => (
-          <>
-            <div style={{ marginTop: 12 }}>
+          <div key={key}>
+            <div style={{ marginTop: 12 }} key={`${key}-chip`}>
               <Chip
                 hideTooltip
                 size="small"
@@ -379,7 +381,7 @@ export const RelationViewer = <
                 ))}
               </Menu>
             )}
-          </>
+          </div>
         ))}
       </div>
     </Graph>
@@ -392,7 +394,7 @@ const NodeItem = <T extends { externalId: string }>({
   isSelected,
 }: {
   node: T & { __typename: string };
-  onClick: (node: T) => void;
+  onClick: (node: T, position: { x: number; y: number }) => void;
   isSelected: boolean;
 }) => {
   return (
@@ -407,8 +409,11 @@ const NodeItem = <T extends { externalId: string }>({
         transform: 'translate(-50%, -50%)',
         border: `1px solid ${getColor(node.__typename).color}`,
       }}
-      onClick={() => {
-        onClick(node);
+      onClick={(e) => {
+        onClick(node, {
+          x: (e.currentTarget.parentElement as any).__data__.x || 0,
+          y: (e.currentTarget.parentElement as any).__data__.y || 0,
+        });
       }}
     >
       <Chip

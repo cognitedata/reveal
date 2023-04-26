@@ -180,8 +180,8 @@ export const Graph = <T,>({
       useCache ? getNodesKey(propsNodes) : DEFAULT_KEY
     );
     const nodesWithCachedLocation = propsNodes.map((node) => ({
-      ...cacheItems[node.id],
       ...node,
+      ...cacheItems[node.id],
     }));
     setNodes(nodesWithCachedLocation);
   }, [propsNodes, useCache]);
@@ -230,25 +230,10 @@ export const Graph = <T,>({
       return;
     }
 
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
     // Initializing chart
     const initialChart = d3.select(svgRef.current);
 
-    const initialSimulation = d3
-      .forceSimulation()
-      .force('link', d3.forceLink().distance(200).strength(10))
-      .force(
-        'charge',
-        d3.forceManyBody().strength(() => -10)
-      )
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collide', d3.forceCollide(80));
-
-    // After 2 seconds, stop the center gravity to move nodes to the center
-    setTimeout(() => {
-      initialSimulation.force('center', null).stop();
-    }, 2000);
+    const initialSimulation = d3.forceSimulation();
 
     setChart(initialChart);
     setSimulation(initialSimulation);
@@ -435,6 +420,17 @@ export const Graph = <T,>({
     []
   );
 
+  useEffect(() => {
+    if (!autoLayout) {
+      const width = containerRef.current?.clientWidth || 0;
+      const height = containerRef.current?.clientHeight || 0;
+
+      onZoom({ ...INITIAL_TRANSFORM, x: width / 2, y: height / 2 });
+    } else {
+      onZoom(INITIAL_TRANSFORM);
+    }
+  }, [autoLayout, onZoom]);
+
   const fitContent = useCallback(
     (
       nodesForFitting: d3.Selection<
@@ -530,7 +526,13 @@ export const Graph = <T,>({
   useEffect(() => {
     if (simulation) {
       simulation.nodes(nodes);
-      simulation.force('link', d3.forceLink(links));
+      simulation
+        .force('link', d3.forceLink(links).distance(120))
+        .force('charge', d3.forceManyBody().strength(20))
+        .force('x', d3.forceX().strength(0.05))
+        .force('y', d3.forceY().strength(0.05))
+        .force('collide', d3.forceCollide().radius(120));
+      simulation.alphaTarget(0);
       if (autoLayout) {
         simulation.alphaTarget(0).stop();
       }
@@ -547,7 +549,7 @@ export const Graph = <T,>({
   useEffect(() => {
     if (nodes && d3Nodes && simulation) {
       const dragStart = (_event: { active: any }, d: any) => {
-        simulation.alphaTarget(0.5).restart();
+        simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
       };
@@ -561,7 +563,7 @@ export const Graph = <T,>({
       };
 
       const dragEnd = (event: { active: any }) => {
-        if (!event.active) simulation?.stop();
+        if (!event.active) simulation.alphaTarget(0);
         saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
       };
       d3Nodes.on('click', () => {
