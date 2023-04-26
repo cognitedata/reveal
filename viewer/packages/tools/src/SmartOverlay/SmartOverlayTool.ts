@@ -2,16 +2,17 @@
  * Copyright 2023 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/api';
-import { EventTrigger } from '@reveal/utilities';
+import { EventTrigger, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
 import { HtmlOverlayOptions, HtmlOverlayTool } from '../../index';
 import * as THREE from 'three';
 import { debounce } from 'lodash';
-import { Overlay3DCollection } from '@reveal/3d-overlays';
+import { Overlay3DCollection, Overlay3DIcon } from '@reveal/3d-overlays';
+import { OctreeRaycaster } from 'sparse-octree';
 
 export type SmartLabel = {
   text: string;
   id: number;
-  boundingBox: THREE.Box3;
+  position: THREE.Vector3;
   pointOverlay: HTMLElement;
   textOverlay: HTMLElement;
 };
@@ -19,7 +20,7 @@ export type SmartLabel = {
 export type LabelInfo = {
   text: string;
   id: number;
-  boundingBox: THREE.Box3;
+  position: THREE.Vector3;
 };
 export type LabelGroupId = string;
 
@@ -39,8 +40,10 @@ export class SmartOverlayTool {
   private _isVisible = true;
 
   private readonly _objectUUIDToLabelIndexToLabelInfoMap = new Map<string, Map<number, LabelInfo>>();
+  private readonly _labelIndexToLabelInfoMap = new Map<number, LabelInfo>();
   private hoveredOverlayPointIndex = -1;
-  private readonly overlayPoints: THREE.Object3D[] = [];
+  private readonly overlayPoints: Overlay3DCollection[] = [];
+  private currentPointIndex = 0;
 
   private readonly _events = {
     hover: new EventTrigger<LabelEventHandler>(),
@@ -60,6 +63,7 @@ export class SmartOverlayTool {
 
   maxLabelDistance: number = 4;
   maxPointIndicatorDistance: number = 4;
+
   constructor(viewer: Cognite3DViewer) {
     this._htmlOverlayTool = new HtmlOverlayTool(viewer);
     this._viewer = viewer;
@@ -76,23 +80,39 @@ export class SmartOverlayTool {
       'mousemove',
       debounce((ev: MouseEvent) => {
         const { x, y } = this.convertPixelCoordinatesToNormalized(ev, viewer.domElement);
-        raycaster.setFromCamera(vec.set(x, y), viewer.cameraManager.getCamera());
-        const intersection = raycaster.intersectObjects(this.overlayPoints);
+        const camera = viewer.cameraManager.getCamera();
+        const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
+        const cameraPosition = camera.position.clone();
+        raycaster.setFromCamera(vec.set(x, y), camera);
 
+        const intersection: [Overlay3DIcon, THREE.Vector3][] = [];
+
+        for (const points of this.overlayPoints) {
+          for (const icon of points.icons) {
+            if (icon.visible) {
+              const inter = icon.intersect(raycaster.ray);
+              if (inter) intersection.push([icon, inter]);
+            }
+          }
+        }
+
+        intersection
+          .map(([icon, intersection]) => [icon, intersection.sub(cameraPosition)] as [Overlay3DIcon, THREE.Vector3])
+          .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
+          .sort((a, b) => a[1].length() - b[1].length());
+        
         if (intersection.length > 0) {
-          const labelIntersec = intersection[0];
-          const labelInfo = this._objectUUIDToLabelIndexToLabelInfoMap
-            .get(labelIntersec.object.uuid)
-            ?.get(labelIntersec.index ?? -1);
+          const labelIntersec = intersection[0][0];
+          const labelInfo = this._labelIndexToLabelInfoMap.get(labelIntersec.iconMetadata?.id ?? -1);
 
-          if (labelInfo === undefined || labelIntersec.index === this.hoveredOverlayPointIndex) return;
+          if (labelInfo === undefined || labelIntersec.iconMetadata?.id === this.hoveredOverlayPointIndex) return;
 
-          this.hoveredOverlayPointIndex = labelIntersec.index!;
+          this.hoveredOverlayPointIndex = labelIntersec.iconMetadata?.id ?? -1;
 
           const targetLabel: SmartLabel = {
             text: labelInfo.text,
             id: labelInfo.id,
-            boundingBox: labelInfo.boundingBox,
+            position: labelInfo.position,
             pointOverlay: {} as HTMLElement,
             textOverlay
           };
@@ -119,21 +139,18 @@ export class SmartOverlayTool {
     const overlaysPositions = [];
     const labelsMap = new Map<number, LabelInfo>();
 
-    let pointIndex = 0;
-
     for (const label of labels) {
-      overlaysPositions.push(label.boundingBox.getCenter(new THREE.Vector3()));
-      labelsMap.set(pointIndex, label);
-      pointIndex++;
+      overlaysPositions.push({id: this.currentPointIndex, position: label.position});
+      this._labelIndexToLabelInfoMap.set(this.currentPointIndex, label);
+      this.currentPointIndex++;
     }
 
     const positionBuffer = new THREE.BufferGeometry();
-    positionBuffer.setFromPoints(overlaysPositions);
+    positionBuffer.setFromPoints(overlaysPositions.map(p => p.position));
 
     const points = new Overlay3DCollection(overlaysPositions);
 
     this.overlayPoints.push(points);
-    _objectUUIDToLabelIndexToAssetIdMap.set(points.uuid, labelsMap);
 
     viewer.addObject3D(points);
 
@@ -146,9 +163,9 @@ export class SmartOverlayTool {
    * Adds an overlay for specified bounding box.
    * @param text Text on the label.
    * @param id Unique id for the label.
-   * @param boundingBox Bounding box of labeled object.
+   * @param position position of the label in 3D space.
    */
-  addOverlay(text: string, id: number, boundingBox: THREE.Box3) {
+  addOverlay(text: string, id: number, position: THREE.Vector3) {
     if (!this._isEnabled) return;
 
     const { circleSize, _viewer: viewer } = this;
@@ -165,7 +182,7 @@ export class SmartOverlayTool {
     const label: SmartLabel = {
       text,
       id,
-      boundingBox,
+      position,
       pointOverlay: circleOverlay,
       textOverlay: textOverlay
     };
@@ -231,7 +248,7 @@ export class SmartOverlayTool {
     const positionBuffer = new THREE.BufferGeometry();
     positionBuffer.setAttribute(
       'position',
-      new THREE.BufferAttribute(new Float32Array(boundingBox.getCenter(new THREE.Vector3()).toArray()), 3)
+      new THREE.BufferAttribute(new Float32Array(position.toArray()), 3)
     );
 
     const points = new THREE.Points(positionBuffer, pointsMaterial);

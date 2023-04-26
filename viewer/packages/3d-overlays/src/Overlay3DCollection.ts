@@ -11,6 +11,8 @@ export type Overlay3DOptions = {
   overlayTexture?: Texture;
 };
 
+export type PointData = { position: Vector3, id: number };
+
 export class Overlay3DCollection extends Object3D {
   private readonly MIN_PIXEL_SIZE = 16;
   private readonly MAX_PIXEL_SIZE = 64;
@@ -18,32 +20,31 @@ export class Overlay3DCollection extends Object3D {
   private readonly _icons: Overlay3DIcon[];
   private readonly _iconsPoints: OverlayPointsObject;
   private readonly _octree: IconOctree;
-  private readonly _iconRadius = 0.3;
+  private readonly _iconRadius = 0.4;
 
   get icons(): Overlay3DIcon[] {
     return this._icons;
   }
 
   constructor(
-    points: Vector3[],
+    pointsData: PointData [],
     options?: Overlay3DOptions,
   ) {
     super();
 
     const sharedTexture = options?.overlayTexture ?? this.createCircleTexture();
-    const iconSpriteRadius = 0.5;
     const iconsSprites = new OverlayPointsObject(
-      points.length * 2,
+      pointsData.length * 2,
       {
         spriteTexture: sharedTexture,
         minPixelSize: this.MIN_PIXEL_SIZE,
         maxPixelSize: this.MAX_PIXEL_SIZE,
-        radius: iconSpriteRadius
+        radius: this._iconRadius
       });
-    iconsSprites.setPoints(points);
+    iconsSprites.setPoints(pointsData.map(p => p.position));
 
     this._sharedTexture = sharedTexture;
-    this._icons = this.initializeImage360Icons(points);
+    this._icons = this.initializeOverlay3DIcons(pointsData);
 
     this._iconsPoints = iconsSprites;
 
@@ -57,16 +58,18 @@ export class Overlay3DCollection extends Object3D {
     return this._octree;
   }
 
-  private initializeImage360Icons(
-    points: Vector3[]
+  private initializeOverlay3DIcons(
+    points: PointData []
   ): Overlay3DIcon[] {
     return points.map(
       point =>
-        new Overlay3DIcon(
-          point,
-          this.MIN_PIXEL_SIZE,
-          this.MAX_PIXEL_SIZE,
-          this._iconRadius
+        new Overlay3DIcon < { id: number }>({
+          position: point.position,
+          minPixelSize: this.MIN_PIXEL_SIZE,
+          maxPixelSize: this.MAX_PIXEL_SIZE,
+          iconRadius: this._iconRadius
+        },
+          { id: point.id }
         )
     );
   }

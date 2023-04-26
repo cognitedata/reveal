@@ -7,7 +7,15 @@ import * as THREE from 'three';
 import { PerspectiveCamera, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { clamp } from 'three/src/math/MathUtils';
 
-export class Overlay3DIcon {
+export type IconParameters = {
+  position: THREE.Vector3,
+  minPixelSize: number,
+  maxPixelSize: number,
+  iconRadius: number,
+  hoverSprite?: THREE.Sprite
+};
+
+export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
   private readonly _position: THREE.Vector3;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
@@ -18,22 +26,23 @@ export class Overlay3DIcon {
   private _selected = false;
   private readonly _iconRadius: number;
   private readonly _hoverSprite?: THREE.Sprite;
+  private readonly _iconMetadata?: MetadataType;
 
   private readonly _events = {
     selected: new EventTrigger<(value: boolean) => void>(),
   }
 
-  constructor(
-    position: THREE.Vector3,
-    minPixelSize: number,
-    maxPixelSize: number,
-    iconRadius: number,
-    hoverSprite?: THREE.Sprite,
+  constructor (
+    iconParameters: IconParameters,
+    iconMetadata?: MetadataType
   ) {
+    const { position, minPixelSize, maxPixelSize, iconRadius, hoverSprite } = iconParameters;
+
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
     this._iconRadius = iconRadius;
     this._hoverSprite = hoverSprite;
+    this._iconMetadata = iconMetadata;
 
     this._setAdaptiveScale = this.setupAdaptiveScaling(position);
    
@@ -77,6 +86,10 @@ export class Overlay3DIcon {
       this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale* 2, 1);
     }
   }
+  
+  get iconMetadata(): MetadataType | undefined {
+    return this._iconMetadata;
+  }
 
   get adaptiveScale(): number {
     return this._adaptiveScale;
@@ -103,7 +116,7 @@ export class Overlay3DIcon {
   }
 
   public intersect(ray: Ray): Vector3 | null {
-    const sphere = new Sphere(this._position, 0.5 * this._adaptiveScale);
+    const sphere = new Sphere(this._position, this._adaptiveScale);
     return ray.intersectSphere(sphere, new Vector3());
   }
 

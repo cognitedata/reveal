@@ -75,13 +75,13 @@ export class IconCollection {
     this.MAX_PIXEL_SIZE = Math.min(this.MAX_PIXEL_SIZE, iconOptions?.platformMaxPointsSize ?? this.MAX_PIXEL_SIZE);
 
     const sharedTexture = this.createOuterRingsTexture();
-    const iconSpriteRadius = this._iconRadius;
+   
     const iconsSprites = new Image360PointsObject(
       points.length * 2, {
       spriteTexture: sharedTexture,
       minPixelSize: this.MIN_PIXEL_SIZE,
       maxPixelSize: this.MAX_PIXEL_SIZE,
-      radius: iconSpriteRadius
+      radius: this._iconRadius
     }
     );
     iconsSprites.setPoints(points);
@@ -171,12 +171,13 @@ export class IconCollection {
 
    const icons = points.map(
      point => {
-       const icon = new Overlay3DIcon(
-         point,
-         this.MIN_PIXEL_SIZE,
-         this.MAX_PIXEL_SIZE,
-         this._iconRadius,
-         this._hoverSprite
+       const icon = new Overlay3DIcon({
+         position: point,
+         minPixelSize: this.MIN_PIXEL_SIZE,
+         maxPixelSize: this.MAX_PIXEL_SIZE,
+         iconRadius: this._iconRadius,
+         hoverSprite: this._hoverSprite
+       }
        );
        
        return icon
