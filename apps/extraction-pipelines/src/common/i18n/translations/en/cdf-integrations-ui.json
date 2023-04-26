@@ -232,5 +232,13 @@
   "form-topic-filters-placeholder": "Add topic filters for your broker, e.g., Ground floor/+/Light",
   "create-new-destination": "Create new destination",
   "use-existing-destination": "Use existing destination",
-  "destination-option": "Destination option"
+  "destination-option": "Destination option",
+  "destination": "Destination",
+  "select-destination-placeholder": "Select destination",
+  "destination-external-id": "Destination external id",
+  "destination-external-id-placeholder": "Enter a unique identifier",
+  "form-client-id": "Client id",
+  "form-client-id-placeholder": "Enter client id",
+  "form-client-secret": "Client secret",
+  "form-client-secret-placeholder": "Enter client secret"
 }

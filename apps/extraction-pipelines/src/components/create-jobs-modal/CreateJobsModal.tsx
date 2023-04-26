@@ -8,11 +8,14 @@ import {
   Modal,
   ModalProps,
 } from '@cognite/cogs.js';
+import { Select } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import FormFieldRadioGroup from 'components/form-field-radio-group/FormFieldRadioGroup';
+import { useMQTTDestinations } from 'hooks/hostedExtractors';
+import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
 
 type CreateJobsFormValues = {
   topicFilters?: string[];
@@ -36,6 +39,8 @@ export const CreateJobsModal = ({
 
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
 
+  const { data: destinations } = useMQTTDestinations();
+
   const handleValidate = (
     values: CreateJobsFormValues
   ): FormikErrors<CreateJobsFormValues> => {
@@ -45,7 +50,7 @@ export const CreateJobsModal = ({
       errors.topicFilters = t('validation-error-field-required');
     }
 
-    if (values.shouldUseExistingDestinationId) {
+    if (values.shouldUseExistingDestinationId === 'true') {
       if (!values.selectedDestinationExternalId) {
         errors.selectedDestinationExternalId = t(
           'validation-error-field-required'
@@ -165,15 +170,84 @@ export const CreateJobsModal = ({
             setFieldValue('shouldUseExistingDestinationId', value)
           }
           options={[
+            { label: t('use-existing-destination'), value: 'true' },
             {
               label: t('create-new-destination'),
               value: 'false',
             },
-            { label: t('use-existing-destination'), value: 'true' },
           ]}
           title={t('destination-option')}
           value={values.shouldUseExistingDestinationId}
         />
+        {values.shouldUseExistingDestinationId === 'true' ? (
+          <FormFieldWrapper
+            isRequired
+            error={errors.selectedDestinationExternalId}
+            title={t('destination')}
+          >
+            <Select
+              showSearch
+              onChange={(value) => {
+                setFieldValue('selectedDestinationExternalId', value);
+              }}
+              options={destinations?.map(({ externalId }) => ({
+                label: externalId,
+                value: externalId,
+              }))}
+              placeholder={t('select-destination-placeholder')}
+              value={values.selectedDestinationExternalId}
+            />
+          </FormFieldWrapper>
+        ) : (
+          <>
+            <InputExp
+              clearable
+              fullWidth
+              label={{
+                info: undefined,
+                required: true,
+                text: t('destination-external-id'),
+              }}
+              onChange={(e) =>
+                setFieldValue('destinationExternalIdToCreate', e.target.value)
+              }
+              status={
+                errors.destinationExternalIdToCreate ? 'critical' : undefined
+              }
+              statusText={errors.destinationExternalIdToCreate}
+              placeholder={t('destination-external-id-placeholder')}
+              value={values.destinationExternalIdToCreate}
+            />
+            <InputExp
+              clearable
+              fullWidth
+              label={{
+                required: true,
+                info: undefined,
+                text: t('form-client-id'),
+              }}
+              onChange={(e) => setFieldValue('clientId', e.target.value)}
+              placeholder={t('form-client-id-placeholder')}
+              status={errors.clientId ? 'critical' : undefined}
+              statusText={errors.clientId}
+              value={values.clientId}
+            />
+            <InputExp
+              clearable
+              fullWidth
+              label={{
+                required: true,
+                info: undefined,
+                text: t('form-client-secret'),
+              }}
+              onChange={(e) => setFieldValue('clientSecret', e.target.value)}
+              placeholder={t('form-client-secret-placeholder')}
+              status={errors.clientSecret ? 'critical' : undefined}
+              statusText={errors.clientSecret}
+              value={values.clientSecret}
+            />
+          </>
+        )}
       </Flex>
     </Modal>
   );
