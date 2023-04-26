@@ -15,6 +15,7 @@ import ExtpipesTableSearch from 'components/table/ExtpipesTableSearch';
 import HostedExtractionPipelineTable from 'components/table/HostedExtractionPipelineTable';
 import { useSearchParams } from 'react-router-dom';
 import { CreateSourceModal } from 'components/create-source-modal/CreateSourceModal';
+import { useFlag } from '@cognite/react-feature-flags';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -49,6 +50,10 @@ const Extpipes: FunctionComponent<Props> = () => {
   useEffect(() => {
     trackUsage({ t: 'Overview' });
   }, []);
+
+  const { isEnabled: shouldShowHostedExtractors } = useFlag(
+    'FUSION_HOSTED_EXTRACTORS'
+  );
 
   const { data, isLoading, error: errorExtpipes, refetch } = useExtpipes(20);
 
@@ -149,30 +154,35 @@ const Extpipes: FunctionComponent<Props> = () => {
         visible={isCreateSourceModalOpen}
       />
       <Flex direction="column" gap={16}>
-        <Tabs
-          activeKey={tab}
-          onTabClick={(key) => {
-            setSearchParams(
-              (prev) => {
-                prev.set('tab', key);
-                return prev;
-              },
-              { replace: true }
-            );
-          }}
-        >
-          <Tabs.Tab tabKey="self-hosted" label={t('self-hosted-extractors')} />
-          <Tabs.Tab tabKey="hosted" label={t('hosted-extractors')} />
-        </Tabs>
+        {shouldShowHostedExtractors && (
+          <Tabs
+            activeKey={tab}
+            onTabClick={(key) => {
+              setSearchParams(
+                (prev) => {
+                  prev.set('tab', key);
+                  return prev;
+                },
+                { replace: true }
+              );
+            }}
+          >
+            <Tabs.Tab
+              tabKey="self-hosted"
+              label={t('self-hosted-extractors')}
+            />
+            <Tabs.Tab tabKey="hosted" label={t('hosted-extractors')} />
+          </Tabs>
+        )}
         <StyledActionBar>
           <ExtpipesTableSearch onChange={setSearchQuery} value={searchQuery} />
           {createExtpipeButton}
         </StyledActionBar>
       </Flex>
-      {tab === 'self-hosted' ? (
-        <ExtpipesTable search={searchQuery} />
-      ) : (
+      {shouldShowHostedExtractors && tab === 'hosted' ? (
         <HostedExtractionPipelineTable search={searchQuery} />
+      ) : (
+        <ExtpipesTable search={searchQuery} />
       )}
     </StyledContainer>
   );

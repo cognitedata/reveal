@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { SecondaryTopbar } from '@cognite/cdf-utilities';
+import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
 import { Loader, Menu, Tabs } from '@cognite/cogs.js';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
@@ -12,6 +12,7 @@ import { useMQTTSourceWithMetrics } from 'hooks/hostedExtractors';
 
 import { HostedExtractionPipelineInsight } from './HostedExtractionPipelineInsight';
 import { HostedExtractionPipelineOverview } from './HostedExtractionPipelineOverview';
+import { useFlag } from '@cognite/react-feature-flags';
 
 export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const { t } = useTranslation();
@@ -20,13 +21,21 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
     externalId: string;
   }>();
 
+  const { isEnabled: shouldShowHostedExtractors, isClientReady } = useFlag(
+    'FUSION_HOSTED_EXTRACTORS'
+  );
+
   const [searchParams, setSearchParams] = useSearchParams();
   const detailsTab = searchParams.get('detailsTab') ?? 'overview';
 
   const { data: source, isFetched } = useMQTTSourceWithMetrics(externalId);
 
-  if (!isFetched) {
+  if (!isFetched || !isClientReady) {
     return <Loader />;
+  }
+
+  if (isClientReady && !shouldShowHostedExtractors) {
+    return <Navigate replace to={createLink('/extpipes')} />;
   }
 
   if (!source) {
