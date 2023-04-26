@@ -8,6 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query';
+import { useCreateSession } from './sessions';
 
 // SOURCES
 
@@ -244,6 +245,55 @@ export const useMQTTDestinations = () => {
   });
 };
 
+type MQTTSessionCredentials = {
+  nonce: string;
+};
+
+type CreateMQTTDestination = BaseMQTTDestination & {
+  credentials?: MQTTSessionCredentials;
+};
+
+type CreateMQTTDestinationVariables = Omit<
+  CreateMQTTDestination,
+  'credentials'
+> & {
+  clientId: string;
+  clientSecret: string;
+};
+
+export const useCreateMQTTDestination = () => {
+  const sdk = useSDK();
+
+  const { mutateAsync: createSession } = useCreateSession();
+
+  return useMutation(async (destination: CreateMQTTDestinationVariables) => {
+    const session = await createSession({
+      clientId: destination.clientId,
+      clientSecret: destination.clientSecret,
+    });
+
+    return sdk
+      .post<{ items: ReadMQTTDestination[] }>(
+        `/api/v1/projects/${getProject()}/pluto/destinations`,
+        {
+          headers: { 'cdf-version': 'alpha' },
+          data: {
+            items: [
+              {
+                externalId: destination.externalId,
+                type: destination.type,
+                credentials: {
+                  nonce: session.nonce,
+                },
+              },
+            ],
+          },
+        }
+      )
+      .then((r) => r.data.items[0]);
+  });
+};
+
 // JOBS
 
 type MQTTFormatPrefixConfig = {
@@ -310,7 +360,7 @@ const getMQTTJobsWithMetrics = async (sdk: CogniteClient) => {
   const jobsWithMetrics: Record<string, MQTTJobWithMetrics> = {};
 
   jobs.forEach((job) => {
-    jobsWithMetrics[job.sourceId] = {
+    jobsWithMetrics[job.externalId] = {
       ...job,
       metrics: [],
       throughput: 0,
@@ -395,4 +445,34 @@ export const useMQTTJobMetrics = () => {
   return useQuery(getMQTTJobMetricsQueryKey(), async () => {
     return getMQTTJobMetrics(sdk);
   });
+};
+
+export type CreateMQTTJob = BaseMQTTJob & {
+  destinationId: string;
+  sourceId: string;
+};
+
+type CreateMQTTJobVariables = CreateMQTTJob;
+
+export const useCreateMQTTJob = (
+  options?: UseMutationOptions<unknown, unknown, CreateMQTTJobVariables>
+) => {
+  const sdk = useSDK();
+
+  return useMutation(
+    async (job: CreateMQTTJobVariables) => {
+      return sdk.post(`/api/v1/projects/${getProject()}/pluto/jobs`, {
+        headers: { 'cdf-version': 'alpha' },
+        data: {
+          items: [job],
+        },
+      });
+    },
+    {
+      onSuccess: (data, variables, context) => {
+        // TODO: invalidation
+        options?.onSuccess?.(data, variables, context);
+      },
+    }
+  );
 };

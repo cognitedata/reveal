@@ -23,12 +23,16 @@ export const TopicFilter = ({
     <Container className={className}>
       <Body level={2}>{job.topicFilter}</Body>
       <Body level={2}>
-        {t(`mqtt-job-status-${job.targetStatus}`)} (
-        {t('checked-with-date', {
-          relativeTime: formatDate(lastCheck.timestamp, true),
-          postProcess: 'lowercase',
-        })}
-        )
+        {lastCheck && (
+          <>
+            {t(`mqtt-job-status-${job.targetStatus}`)} (
+            {t('checked-with-date', {
+              relativeTime: formatDate(lastCheck.timestamp, true),
+              postProcess: 'lowercase',
+            })}
+            )
+          </>
+        )}
       </Body>
       <Dropdown>
         <Button icon="EllipsisHorizontal" type="ghost" />

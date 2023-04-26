@@ -14,8 +14,24 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import FormFieldRadioGroup from 'components/form-field-radio-group/FormFieldRadioGroup';
-import { useMQTTDestinations } from 'hooks/hostedExtractors';
+import {
+  MQTTDestinationType,
+  MQTTSourceWithJobMetrics,
+  useCreateMQTTDestination,
+  useCreateMQTTJob,
+  useMQTTDestinations,
+} from 'hooks/hostedExtractors';
 import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
+
+const MQTT_DESTINATION_TYPE_OPTIONS: {
+  label: string;
+  value: MQTTDestinationType;
+}[] = [
+  {
+    label: 'Datapoints',
+    value: 'datapoints',
+  },
+];
 
 type CreateJobsFormValues = {
   topicFilters?: string[];
@@ -24,15 +40,18 @@ type CreateJobsFormValues = {
   destinationExternalIdToCreate?: string;
   clientId?: string;
   clientSecret?: string;
+  type?: MQTTDestinationType;
 };
 
 type CreateJobsModalProps = {
   onCancel: () => void;
+  source: MQTTSourceWithJobMetrics;
   visible: ModalProps['visible'];
 };
 
 export const CreateJobsModal = ({
   onCancel,
+  source,
   visible,
 }: CreateJobsModalProps): JSX.Element => {
   const { t } = useTranslation();
@@ -40,6 +59,13 @@ export const CreateJobsModal = ({
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
 
   const { data: destinations } = useMQTTDestinations();
+
+  const { mutateAsync: createDestination } = useCreateMQTTDestination();
+  const { mutateAsync: createJob } = useCreateMQTTJob({
+    onSuccess: () => {
+      onCancel();
+    },
+  });
 
   const handleValidate = (
     values: CreateJobsFormValues
@@ -68,6 +94,9 @@ export const CreateJobsModal = ({
       if (!values.clientSecret) {
         errors.clientSecret = t('validation-error-field-required');
       }
+      if (!values.type) {
+        errors.type = t('validation-error-field-required');
+      }
     }
 
     return errors;
@@ -77,9 +106,50 @@ export const CreateJobsModal = ({
     useFormik<CreateJobsFormValues>({
       initialValues: {
         shouldUseExistingDestinationId: 'true',
+        type: 'datapoints',
       },
-      onSubmit: () => {
-        // TODO
+      onSubmit: async (values) => {
+        if (!values.topicFilters || values.topicFilters.length === 0) {
+          return;
+        }
+
+        let destinationExternalId: string | undefined = undefined;
+        if (
+          values.shouldUseExistingDestinationId === 'true' &&
+          values.selectedDestinationExternalId
+        ) {
+          destinationExternalId = values.selectedDestinationExternalId;
+        } else if (
+          values.shouldUseExistingDestinationId === 'false' &&
+          values.clientId &&
+          values.clientSecret &&
+          values.destinationExternalIdToCreate &&
+          values.type
+        ) {
+          const destination = await createDestination({
+            clientId: values.clientId,
+            clientSecret: values.clientSecret,
+            externalId: values.destinationExternalIdToCreate,
+            type: values.type,
+          });
+          destinationExternalId = destination.externalId;
+        }
+
+        if (destinationExternalId) {
+          await Promise.all(
+            values.topicFilters.map((topicFilter) => {
+              return createJob({
+                destinationId: destinationExternalId!,
+                externalId: `${source.externalId}-${values.selectedDestinationExternalId}-${topicFilter}`,
+                format: {
+                  type: 'cognite',
+                },
+                sourceId: source.externalId,
+                topicFilter,
+              });
+            })
+          );
+        }
       },
       validate: handleValidate,
       validateOnBlur: false,
@@ -246,6 +316,14 @@ export const CreateJobsModal = ({
               statusText={errors.clientSecret}
               value={values.clientSecret}
             />
+            <FormFieldWrapper isRequired title={t('form-destination-type')}>
+              <Select
+                onChange={(e) => setFieldValue('type', e)}
+                options={MQTT_DESTINATION_TYPE_OPTIONS}
+                placeholder={t('form-destination-type-placeholder')}
+                value={values.type}
+              />
+            </FormFieldWrapper>
           </>
         )}
       </Flex>

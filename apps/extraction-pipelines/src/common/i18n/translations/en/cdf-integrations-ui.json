@@ -240,5 +240,7 @@
   "form-client-id": "Client id",
   "form-client-id-placeholder": "Enter client id",
   "form-client-secret": "Client secret",
-  "form-client-secret-placeholder": "Enter client secret"
+  "form-client-secret-placeholder": "Enter client secret",
+  "form-destination-type": "Target type",
+  "form-destination-type-placeholder": "Select target type"
 }

@@ -39,6 +39,7 @@ export const TopicFilters = ({
     >
       <CreateJobsModal
         onCancel={() => setIsCreateModalOpen(false)}
+        source={source}
         visible={isCreateModalOpen}
       />
       {source.jobs.map((job) => (
