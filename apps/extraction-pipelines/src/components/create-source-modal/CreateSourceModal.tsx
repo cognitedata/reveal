@@ -16,15 +16,20 @@ import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
 
 type CreateMQTTSourceFormValues = Partial<CreateMQTTSourceType>;
 
+export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
+  mqtt3: 'Version 5',
+  mqtt5: 'Version 3.1.1',
+};
+
 const MQTT_SOURCE_TYPE_OPTIONS: {
   label: string;
   value: MQTTSourceType;
 }[] = [
   {
-    label: 'Version 5',
+    label: MQTT_SOURCE_TYPE_LABEL['mqtt5'],
     value: 'mqtt5',
   },
-  { label: 'Version 3.1.1', value: 'mqtt3' },
+  { label: MQTT_SOURCE_TYPE_LABEL['mqtt3'], value: 'mqtt3' },
 ];
 
 type CreateSourceModalProps = {

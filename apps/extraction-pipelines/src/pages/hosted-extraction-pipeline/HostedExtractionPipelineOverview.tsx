@@ -6,6 +6,7 @@ import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 import { SummaryBox } from 'components/summary-box/SummaryBox';
 import { useTranslation } from 'common';
 import { TopicFilters } from 'components/topic-filters/TopicFilters';
+import { SourceDetails } from 'components/source-details/SourceDetails';
 
 const PAGE_WIDTH = 1024;
 
@@ -36,6 +37,7 @@ export const HostedExtractionPipelineOverview = ({
         title={t('errors-in-the-last-30-days')}
       />
       <TopicFiltersSection source={source} />
+      <SourceDetailsSection source={source} />
     </OverviewGrid>
   );
 };
@@ -56,4 +58,9 @@ const HostedExtractionPipelineSummaryBox = styled(SummaryBox)`
 const TopicFiltersSection = styled(TopicFilters)`
   grid-column: start / second;
   grid-row: first / second;
+`;
+
+const SourceDetailsSection = styled(SourceDetails)`
+  grid-column: second / end;
+  grid-row: first / end;
 `;
