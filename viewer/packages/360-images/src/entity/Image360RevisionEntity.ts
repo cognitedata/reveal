@@ -19,7 +19,8 @@ export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;
   private readonly _image360Descriptor: Image360Descriptor;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _textures: Image360Texture[];
+  private _previewTextures: Image360Texture[];
+  private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
 
   private _annotations: ImageAnnotationObject[] | undefined = undefined;
@@ -32,7 +33,8 @@ export class Image360RevisionEntity implements Image360Revision {
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
     this._image360VisualzationBox = image360VisualzationBox;
-    this._textures = [];
+    this._previewTextures = [];
+    this._fullResolutionTextures = [];
   }
 
   /**
@@ -96,12 +98,11 @@ export class Image360RevisionEntity implements Image360Revision {
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
-    const previewTextures = await this._image360VisualzationBox.loadFaceTextures(previewImageFiles);
-    if (this._textures.length === 6) {
-      previewTextures.forEach(texture => texture.texture.dispose());
+    if (this._fullResolutionTextures.length === 6) {
       return;
     }
-    this._textures = previewTextures;
+    const previewTextures = await this._image360VisualzationBox.loadFaceTextures(previewImageFiles);
+    this._previewTextures = previewTextures;
   }
 
   private async loadFullTextures(abortSignal?: AbortSignal): Promise<void> {
@@ -111,10 +112,7 @@ export class Image360RevisionEntity implements Image360Revision {
     );
 
     const textures = await this._image360VisualzationBox.loadFaceTextures(fullImageFiles);
-    if (this._textures.length > 0) {
-      this._textures.forEach(texture => texture.texture.dispose());
-    }
-    this._textures = textures;
+    this._fullResolutionTextures = textures;
   }
 
   private async loadAnnotations(): Promise<ImageAnnotationObject[]> {
@@ -141,15 +139,24 @@ export class Image360RevisionEntity implements Image360Revision {
    * Clear the cached textures used by this revision.
    */
   public dispose(): void {
-    this._textures.forEach(t => t.texture.dispose());
-    this._textures = [];
+    this._previewTextures.forEach(t => t.texture.dispose());
+    this._fullResolutionTextures.forEach(t => t.texture.dispose());
+    this._previewTextures = [];
+    this._fullResolutionTextures = [];
   }
 
   /**
    * Apply cached textures to the image360VisualzationBox.
    */
   public applyTextures(): void {
-    this._image360VisualzationBox.loadImages(this._textures);
+    if (this._fullResolutionTextures.length === 6) {
+      this._image360VisualzationBox.loadImages(this._fullResolutionTextures);
+      return;
+    }
+    if (this._previewTextures.length === 6) {
+      this._image360VisualzationBox.loadImages(this._previewTextures);
+      return;
+    }
   }
 
   /**
@@ -162,7 +169,11 @@ export class Image360RevisionEntity implements Image360Revision {
     try {
       await this._onFullResolutionCompleted;
       this._onFullResolutionCompleted = undefined;
-      this._image360VisualzationBox.loadImages(this._textures);
+      this._image360VisualzationBox.loadImages(this._fullResolutionTextures);
+      if (this._previewTextures.length === 6) {
+        this._previewTextures.forEach(t => t.texture.dispose());
+        this._previewTextures = [];
+      }
     } catch (e) {}
   }
 }
