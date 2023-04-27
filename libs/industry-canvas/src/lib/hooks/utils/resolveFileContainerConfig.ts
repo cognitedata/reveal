@@ -41,7 +41,7 @@ const resolveFileContainerConfig = async (
     {
       id: id || uuid(),
       label: label ?? fileInfo.name ?? fileInfo.externalId,
-      page: page,
+      page: page ?? 1,
       x: x,
       y: y,
       width: width,
