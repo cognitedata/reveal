@@ -212,6 +212,10 @@
   "add-topic-filter": "Add topic filter",
   "mqtt-job-status-running": "Running",
   "mqtt-job-status-paused": "Paused",
+  "mqtt-job-status-shutting_down": "Shutting down",
+  "mqtt-job-status-error": "Error",
+  "mqtt-job-status-startup_error": "Startup error",
+  "mqtt-job-status-waiting": "Waiting",
   "checked-with-date": "checked {{relativeTime}}",
   "create-source": "Create source",
   "validation-error-field-required": "You must enter a value in this field",
@@ -251,5 +255,7 @@
   "create-jobs-to-start-listening-messages": "Create jobs to start listening messages",
   "delete-source": "Delete source",
   "delete-source-warning": "The source will be deleted and can't be restored.",
-  "delete-source-checkbox": "I want to delete this source."
+  "delete-source-checkbox": "I want to delete this source.",
+  "pause": "Pause",
+  "resume": "Resume"
 }

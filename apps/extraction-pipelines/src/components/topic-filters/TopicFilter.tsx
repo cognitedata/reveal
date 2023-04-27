@@ -6,12 +6,17 @@ import {
   Colors,
   Dropdown,
   Menu,
-  formatDate,
+  Status,
+  StatusType,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { MQTTJobWithMetrics, useDeleteMQTTJob } from 'hooks/hostedExtractors';
+import {
+  MQTTJobWithMetrics,
+  useDeleteMQTTJob,
+  useUpdateMQTTJob,
+} from 'hooks/hostedExtractors';
 
 type TopicFilterProps = {
   className?: string;
@@ -24,9 +29,8 @@ export const TopicFilter = ({
 }: TopicFilterProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const lastCheck = job.metrics[0];
-
   const { mutate: deleteJob } = useDeleteMQTTJob();
+  const { mutate: updateJob } = useUpdateMQTTJob();
 
   const handleDelete = (): void => {
     deleteJob({
@@ -34,24 +38,43 @@ export const TopicFilter = ({
     });
   };
 
+  const handleUpdateTargetStatus = (): void => {
+    const nextTargetStatus: MQTTJobWithMetrics['targetStatus'] =
+      job.targetStatus === 'paused' ? 'running' : 'paused';
+
+    updateJob({
+      externalId: job.externalId,
+      update: {
+        targetStatus: {
+          set: nextTargetStatus,
+        },
+      },
+    });
+  };
+
   return (
     <Container className={className}>
       <Body level={2}>{job.topicFilter}</Body>
       <Body level={2}>
-        {lastCheck && (
-          <>
-            {t(`mqtt-job-status-${job.targetStatus}`)} (
-            {t('checked-with-date', {
-              relativeTime: formatDate(lastCheck.timestamp, true),
-              postProcess: 'lowercase',
-            })}
-            )
-          </>
+        {job.status ? (
+          <Status
+            text={t(`mqtt-job-status-${job.status}`)}
+            type={StatusType.default}
+          />
+        ) : (
+          '-'
         )}
       </Body>
       <Dropdown
         content={
           <Menu>
+            <Menu.Item
+              icon={job.targetStatus === 'paused' ? 'Play' : 'Pause'}
+              iconPlacement="left"
+              onClick={handleUpdateTargetStatus}
+            >
+              {job.targetStatus === 'paused' ? t('resume') : t('pause')}
+            </Menu.Item>
             <Menu.Item
               destructive
               icon="Delete"

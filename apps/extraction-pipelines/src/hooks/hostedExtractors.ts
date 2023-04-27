@@ -10,6 +10,13 @@ import {
 } from 'react-query';
 import { useCreateSession } from './sessions';
 
+type UpdateWithExternalId<T, P extends keyof T> = {
+  externalId: string;
+  update: {
+    [K in keyof Pick<T, P>]: { set: T[P] } | { setNull: true };
+  };
+};
+
 // SOURCES
 
 export type MQTTSourceType = 'mqtt3' | 'mqtt5';
@@ -388,7 +395,15 @@ type MQTTFormat = {
   prefix?: MQTTFormatPrefixConfig;
 };
 
-type MQTTJobStatus = 'running' | 'paused';
+type MQTTJobStatus =
+  | 'running'
+  | 'paused'
+  | 'shutting_down'
+  | 'error'
+  | 'startup_error'
+  | 'waiting';
+
+type MQTTJobTargetStatus = 'running' | 'paused';
 
 type BaseMQTTJob = {
   externalId: string;
@@ -401,8 +416,8 @@ export type ReadMQTTJob = BaseMQTTJob & {
   lastUpdatedTime: number;
   destinationId: string;
   sourceId: string;
-  status?: string;
-  targetStatus: MQTTJobStatus;
+  status?: MQTTJobStatus;
+  targetStatus: MQTTJobTargetStatus;
 };
 
 const getMQTTJobsQueryKey = () => ['mqtt', 'jobs', 'list'];
@@ -593,6 +608,35 @@ export const useCreateMQTTJob = (
         headers: { 'cdf-version': 'alpha' },
         data: {
           items: [job],
+        },
+      });
+    },
+    {
+      onSuccess: (data, variables, context) => {
+        queryClient.invalidateQueries(getMQTTJobsQueryKey());
+        queryClient.invalidateQueries(getMQTTSourceQueryKey());
+        options?.onSuccess?.(data, variables, context);
+      },
+    }
+  );
+};
+
+type UpdateMQTTJobVariables = UpdateWithExternalId<ReadMQTTJob, 'targetStatus'>;
+
+export const useUpdateMQTTJob = (
+  options?: UseMutationOptions<unknown, unknown, UpdateMQTTJobVariables>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (variables: UpdateMQTTJobVariables) => {
+      return sdk.post(`/api/v1/projects/${getProject()}/pluto/jobs/update`, {
+        headers: { 'cdf-version': 'alpha' },
+        data: {
+          items: [
+            { externalId: variables.externalId, update: variables.update },
+          ],
         },
       });
     },
