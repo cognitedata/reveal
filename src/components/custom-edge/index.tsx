@@ -56,8 +56,6 @@ export const CustomEdge = ({
           style={{ ...style }}
           className="react-flow__edge-path"
           d={edgePath}
-          stroke="red"
-          strokeWidth={1}
         />
         <foreignObject
           className="node"
