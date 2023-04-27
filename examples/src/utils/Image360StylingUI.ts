@@ -22,7 +22,7 @@ export class Image360StylingUI {
         image360Ui.collections.forEach(coll =>
           coll.setDefaultStyle({
             color: new THREE.Color(state.color as THREE.ColorRepresentation),
-            visibility: state.visible
+            visible: state.visible
           })
         );
       }

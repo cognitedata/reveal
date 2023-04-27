@@ -22,5 +22,5 @@ export interface Image360Annotation {
   /**
    * Set whether this annotation should be visible. Default: true
    */
-  setVisibility(visible?: boolean): void;
+  setVisible(visible?: boolean): void;
 }

@@ -16,5 +16,5 @@ export type Image360AnnotationAppearance = {
   /**
    * Whether the annotation is visible. Default: true
    */
-  visibility?: boolean;
+  visible?: boolean;
 };
