@@ -1,14 +1,13 @@
 import { Flex, InputExp, Body, IconType, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import {
   CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
   useTranslation,
 } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { WorkflowComponentType } from 'types/workflow';
 import { useTransformationList } from 'hooks/transformation';
 import { collectPages } from 'utils';
 
@@ -17,34 +16,15 @@ const { Option } = Select;
 export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
-  const { setIsComponentsPanelVisible } = useWorkflowBuilderContext();
+  const { isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen } =
+    useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
 
-  const onDragStart = (
-    event: React.DragEvent<Element>,
-    type: WorkflowComponentType
-  ) => {
-    event.dataTransfer.setData(
-      CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
-      type
-    );
-    event.dataTransfer.effectAllowed = 'move';
-  };
-
-  const [open, setOpen] = useState(true);
-
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
   const onClose = () => {
-    setOpen(false);
+    setIsNodeConfigurationPanelOpen(false);
   };
-
-  console.log(open);
-  console.log(transformationList);
 
   const nodeOptions: {
     value: string;
@@ -76,9 +56,11 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     <StyledDrawer
       title="Configuration"
       placement="right"
-      onClose={onClose}
-      open={open}
       getContainer={false}
+      onClose={onClose}
+      open={isNodeConfigurationPanelOpen}
+      maskClosable={true}
+      mask={false}
       width="${FLOATING_COMPONENTS_PANEL_WIDTH}px"
       headerStyle={{
         padding: '12px',
@@ -90,6 +72,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         display: 'flex',
         flexDirection: 'column',
       }}
+      maskStyle={{ backgroundColor: 'transparent' }}
     >
       <Flex direction="column">
         <Body level={2} strong>

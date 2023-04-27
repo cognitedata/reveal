@@ -22,6 +22,8 @@ type FlowContextT = {
   externalId: string;
   isComponentsPanelVisible: boolean;
   setIsComponentsPanelVisible: Dispatch<SetStateAction<boolean>>;
+  isNodeConfigurationPanelOpen: boolean;
+  setIsNodeConfigurationPanelOpen: Dispatch<SetStateAction<boolean>>;
   changeFlow: (fn: Automerge.ChangeFn<AFlow>) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
@@ -50,6 +52,8 @@ export const FlowContextProvider = ({
   initialFlow,
 }: FlowContextProviderProps) => {
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
+    useState(false);
+  const [isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen] =
     useState(false);
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
@@ -108,6 +112,8 @@ export const FlowContextProvider = ({
         externalId,
         isComponentsPanelVisible,
         setIsComponentsPanelVisible,
+        isNodeConfigurationPanelOpen,
+        setIsNodeConfigurationPanelOpen,
         flow: flowState,
         flowRef,
         changeFlow,
