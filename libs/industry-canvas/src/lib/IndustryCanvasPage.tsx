@@ -1,8 +1,15 @@
 import { PageTitle } from '@cognite/cdf-utilities';
-import { Button, Flex, Tooltip, Icon, Colors, toast } from '@cognite/cogs.js';
+import {
+  Button,
+  Flex,
+  Tooltip,
+  Icon,
+  Colors,
+  toast,
+  Chip,
+} from '@cognite/cogs.js';
 import {
   isNotUndefined,
-  ResourceIcons,
   ResourceItem,
   useResourceSelector,
 } from '@cognite/data-exploration';
@@ -13,7 +20,6 @@ import {
 } from '@cognite/unified-file-viewer';
 import { useSDK } from '@cognite/sdk-provider';
 import { v4 as uuid } from 'uuid';
-import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 
 import { IndustryCanvas } from './IndustryCanvas';
 import styled from 'styled-components';
@@ -40,6 +46,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     useState<UnifiedViewer | null>(null);
   const { openResourceSelector } = useResourceSelector();
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [
     hasConsumedInitializeWithContainerReferences,
     setHasConsumedInitializeWithContainerReferences,
@@ -224,31 +231,27 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
-            <ResourceIcons type="file" style={{ marginRight: '5px' }} />
-            <CanvasTitle activeCanvas={activeCanvas} saveCanvas={saveCanvas} />
-            <Button
-              aria-label="CreateCanvasButton"
-              size="medium"
-              type="primary"
-              icon="Plus"
-              loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
-              style={{ marginLeft: '10px' }}
-              onClick={() => {
-                createCanvas({
-                  canvasAnnotations: [],
-                  container: EMPTY_FLEXIBLE_LAYOUT,
-                });
-              }}
-            >
-              Create new canvas
-            </Button>
-            <CanvasDropdown
+            <Chip type="default" icon="Canvas" />
+            <CanvasTitle
               activeCanvas={activeCanvas}
-              canvases={canvases}
-              archiveCanvas={archiveCanvas}
-              isArchivingCanvas={isArchivingCanvas}
-              isListingCanvases={isListingCanvases}
+              saveCanvas={saveCanvas}
+              isEditingTitle={isEditingTitle}
+              setIsEditingTitle={setIsEditingTitle}
             />
+            {!isEditingTitle && (
+              <CanvasDropdown
+                activeCanvas={activeCanvas}
+                canvases={canvases}
+                archiveCanvas={archiveCanvas}
+                createCanvas={createCanvas}
+                isArchivingCanvas={isArchivingCanvas}
+                isListingCanvases={isListingCanvases}
+                isCreatingCanvas={isCreatingCanvas}
+                isLoadingCanvas={isLoadingCanvas}
+                isSavingCanvas={isSavingCanvas}
+                setIsEditingTitle={setIsEditingTitle}
+              />
+            )}
           </Flex>
         </PreviewLinkWrapper>
 
