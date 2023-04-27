@@ -2,12 +2,16 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
+import {
+  MQTTSourceWithJobMetrics,
+  useMQTTJobLogs,
+} from 'hooks/hostedExtractors';
 import { SummaryBox } from 'components/summary-box/SummaryBox';
 import { useTranslation } from 'common';
 import { TopicFilters } from 'components/topic-filters/TopicFilters';
 import { SourceDetails } from 'components/source-details/SourceDetails';
 import { SourceAuthentication } from 'components/source-authentication/SourceAuthentication';
+import { getErrorCountInLast30Days } from 'utils/hostedExtractors';
 
 const PAGE_WIDTH = 1024;
 
@@ -19,6 +23,13 @@ export const HostedExtractionPipelineOverview = ({
   source,
 }: HostedExtractionPipelineOverviewProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const { data: logs } = useMQTTJobLogs(
+    source.externalId,
+    source.jobs.map(({ externalId }) => externalId) // TODO: user source externalId once we have source filter on API
+  );
+
+  const errorCountInLast30Days = getErrorCountInLast30Days(logs);
 
   return (
     <OverviewGrid>
@@ -33,7 +44,7 @@ export const HostedExtractionPipelineOverview = ({
         title={t('scheduled-to-run')}
       />
       <HostedExtractionPipelineSummaryBox
-        content={t('error', { count: 0 })} // FIXME: use real data
+        content={t('error', { count: errorCountInLast30Days })}
         icon="InputData"
         title={t('errors-in-the-last-30-days')}
       />

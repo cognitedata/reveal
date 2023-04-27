@@ -529,6 +529,51 @@ export const useMQTTJobMetrics = () => {
   });
 };
 
+type MQTTJobLogType = 'startup_error' | 'error' | 'ok' | 'debug' | 'stopped';
+
+export type ReadMQTTJobLog = {
+  createdTime: number;
+  lastUpdatedTime: number;
+  jobExternalId: string;
+  message: string;
+  type: MQTTJobLogType;
+};
+
+const getMQTTJobLogsQueryKey = (sourceExternalId: string) => [
+  'mqtt',
+  'jobs',
+  'logs',
+  'list',
+  sourceExternalId,
+];
+
+const getMQTTJobLogs = (sdk: CogniteClient) => {
+  return sdk
+    .get<{ items: ReadMQTTJobLog[] }>(
+      `/api/v1/projects/${getProject()}/pluto/jobs/logs`,
+      {
+        headers: { 'cdf-version': 'alpha' },
+      }
+    )
+    .then((r) => r.data.items);
+};
+
+export const useMQTTJobLogs = (
+  sourceExternalId: string,
+  jobExternalIds: string[]
+) => {
+  const sdk = useSDK();
+
+  return useQuery(getMQTTJobLogsQueryKey(sourceExternalId), async () => {
+    const logs = await getMQTTJobLogs(sdk);
+
+    // TODO: use source filter on backend once it is ready
+    return logs.filter(({ jobExternalId }) =>
+      jobExternalIds.includes(jobExternalId)
+    );
+  });
+};
+
 export type CreateMQTTJob = BaseMQTTJob & {
   destinationId: string;
   sourceId: string;
