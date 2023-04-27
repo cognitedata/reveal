@@ -31,38 +31,38 @@ export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
     });
   }, [data, updateDescription]);
 
-  if (showLabelsModal) {
-    return (
+  return (
+    <>
+      <CommonClassifierPage
+        Widget={Widget}
+        Navigation={
+          <ManageTrainingSetNavigation disabled={data.length === 0} />
+        }
+      >
+        <PageHeader
+          title={classifierName}
+          subtitle="Classifier:"
+          description={description}
+          Action={
+            <Flex alignItems="center" gap={8}>
+              <Button
+                type="primary"
+                icon="AddLarge"
+                onClick={() => toggleLabelsModal()}
+                data-testid="add-labels"
+              >
+                Add labels
+              </Button>
+            </Flex>
+          }
+        />
+
+        <TrainingSetsTable />
+      </CommonClassifierPage>
       <LabelsModal
         visible={showLabelsModal}
         toggleVisibility={toggleLabelsModal}
       />
-    );
-  }
-
-  return (
-    <CommonClassifierPage
-      Widget={Widget}
-      Navigation={<ManageTrainingSetNavigation disabled={data.length === 0} />}
-    >
-      <PageHeader
-        title={classifierName}
-        subtitle="Classifier:"
-        description={description}
-        Action={
-          <Flex alignItems="center" gap={8}>
-            <Button
-              type="primary"
-              icon="AddLarge"
-              onClick={() => toggleLabelsModal()}
-            >
-              Add labels
-            </Button>
-          </Flex>
-        }
-      />
-
-      <TrainingSetsTable />
-    </CommonClassifierPage>
+    </>
   );
 };

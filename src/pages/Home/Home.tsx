@@ -48,61 +48,64 @@ const HomePage = () => {
     }
   };
 
-  const handleDeployClassifierClick = (classifier: Classifier) => {
-    updateActiveClassifierMutate(classifier.id)
-      .then(() => {
-        toggleConfusionMatrixModal();
-      })
-      .catch(() => null);
+  const handleDeployClassifierClick = (classifier?: Classifier) => {
+    if (classifier) {
+      updateActiveClassifierMutate(classifier.id)
+        .then(() => {
+          toggleConfusionMatrixModal();
+        })
+        .catch(() => null);
+    }
   };
 
   if (isLoading) {
     return <Loader darkMode />;
   }
 
-  if (selectedClassifier) {
-    return (
+  return (
+    <>
+      <Page Widget={<ClassifierWidget />}>
+        <PageHeader
+          title={`Trained models for ${pipeline?.classifier?.name}`}
+          description={homeConfig.DESCRIPTION}
+          Action={
+            <Button
+              icon="AddLarge"
+              type="primary"
+              onClick={() => toClassifier()}
+            >
+              Train new model
+            </Button>
+          }
+        />
+
+        <PageContent>
+          <ActiveModelContainer
+            classifier={activeClassifier}
+            onViewConfusionMatrixClick={() =>
+              toggleConfusionMatrixModal(activeClassifier)
+            }
+          />
+
+          <PageHeader
+            title="Overview"
+            titleLevel={4}
+            description="Queued and previously trained models"
+          />
+          <TableWrapper stickyHeader>
+            <ClassifierTable
+              classifierActionsCallback={handleClassifierTableActionsCallback}
+            />
+          </TableWrapper>
+        </PageContent>
+      </Page>
       <ReviewModelModal
         classifier={selectedClassifier}
         visible={Boolean(selectedClassifier)}
         toggleVisibility={toggleConfusionMatrixModal}
         onDeployClick={handleDeployClassifierClick}
       />
-    );
-  }
-
-  return (
-    <Page Widget={<ClassifierWidget />}>
-      <PageHeader
-        title={`Trained models for ${pipeline?.classifier?.name}`}
-        description={homeConfig.DESCRIPTION}
-        Action={
-          <Button icon="AddLarge" type="primary" onClick={() => toClassifier()}>
-            Train new model
-          </Button>
-        }
-      />
-
-      <PageContent>
-        <ActiveModelContainer
-          classifier={activeClassifier}
-          onViewConfusionMatrixClick={() =>
-            toggleConfusionMatrixModal(activeClassifier)
-          }
-        />
-
-        <PageHeader
-          title="Overview"
-          titleLevel={4}
-          description="Queued and previously trained models"
-        />
-        <TableWrapper stickyHeader>
-          <ClassifierTable
-            classifierActionsCallback={handleClassifierTableActionsCallback}
-          />
-        </TableWrapper>
-      </PageContent>
-    </Page>
+    </>
   );
 };
 

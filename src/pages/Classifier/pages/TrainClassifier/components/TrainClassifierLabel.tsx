@@ -1,33 +1,34 @@
 import React from 'react';
-import { Label, LabelVariants } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
+import { ChipType } from 'src/enums';
 
 const classifierStatusLabels = (
   status?: string
-): { text: string; variant?: LabelVariants } => {
+): { text: string; type?: ChipType } => {
   switch (status) {
     case 'queuing':
     case 'training': {
       return {
         text: 'Training',
-        variant: 'warning',
+        type: ChipType.Warning,
       };
     }
     case 'finished': {
       return {
         text: 'Done',
-        variant: 'success',
+        type: ChipType.Success,
       };
     }
     case 'failed': {
       return {
         text: 'Failed',
-        variant: 'danger',
+        type: ChipType.Danger,
       };
     }
     default: {
       return {
         text: 'Ready to run',
-        variant: 'default',
+        type: ChipType.Neutral,
       };
     }
   }
@@ -38,12 +39,8 @@ interface Props {
 }
 
 const TrainClassifierLabel: React.FC<Props> = ({ status }) => {
-  const { text, variant } = classifierStatusLabels(status);
-  return (
-    <Label size="small" variant={variant} style={{ width: 'fit-content' }}>
-      {text}
-    </Label>
-  );
+  const { text, type } = classifierStatusLabels(status);
+  return <Chip size="small" label={text} type={type} />;
 };
 
 export default TrainClassifierLabel;

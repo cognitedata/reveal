@@ -1,5 +1,4 @@
-import { Body, Button, Drawer, Label } from '@cognite/cogs.js';
-import { ModalProps } from 'src/components/modal/types';
+import { Body, Button, Drawer, Chip } from '@cognite/cogs.js';
 import { PageHeader } from 'src/components/page';
 import { Loading } from 'src/components/states/Loading';
 import { documentConfig } from 'src/configs/global.config';
@@ -28,11 +27,17 @@ const ImageContent = styled.div`
   min-height: 577px;
 `;
 
-interface Props extends ModalProps {
-  documentId?: number;
-}
-export const DocumentPreview: React.FC<Props> = React.memo(
-  ({ documentId, visible, toggleVisibility }) => {
+export const DocumentPreview = React.memo(
+  ({
+    documentId,
+    visible,
+    toggleVisibility,
+  }: {
+    documentId?: number;
+
+    visible?: boolean;
+    toggleVisibility: () => void;
+  }) => {
     const {
       data: preview,
       isLoading,
@@ -79,9 +84,7 @@ export const DocumentPreview: React.FC<Props> = React.memo(
             titleLevel={5}
             description={documentDescription}
             Action={
-              <Label size="medium">
-                {document?.labels?.length || 0} labels
-              </Label>
+              <Chip label={`${document?.labels?.length || '0'}` + ' labels'} />
             }
           />
         </Container>

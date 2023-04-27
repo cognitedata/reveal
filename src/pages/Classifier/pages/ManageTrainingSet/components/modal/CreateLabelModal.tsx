@@ -1,7 +1,5 @@
-import { Button, Flex, Input, ToastContainer } from '@cognite/cogs.js';
+import { Modal, Input, ToastContainer } from '@cognite/cogs.js';
 import { ExternalLabelDefinition } from '@cognite/sdk';
-import { Modal } from 'src/components/modal/Modal';
-import { ModalProps } from 'src/components/modal/types';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -18,20 +16,23 @@ const Container = styled.div`
   }
 `;
 
-interface Props extends ModalProps {
+export const CreateLabelModal = ({
+  onCreateClick,
+  visible,
+  toggleVisibility,
+  // TODO: Find a suitable alternative visual cue to indicate the label creation state,
+  // as the previous loading animation within the create button is no longer available.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isCreatingLabel,
+}: {
+  visible?: boolean;
+  isCreatingLabel?: boolean;
+  toggleVisibility: () => void;
   onCreateClick: ({
     name,
     externalId,
     description,
   }: ExternalLabelDefinition) => void;
-  isCreatingLabel?: boolean;
-}
-
-export const CreateLabelModal: React.FC<Props> = ({
-  onCreateClick,
-  visible,
-  toggleVisibility,
-  isCreatingLabel,
 }) => {
   const [name, setName] = React.useState<string>('');
   const [externalId, setExternalId] = React.useState<string>('');
@@ -41,29 +42,19 @@ export const CreateLabelModal: React.FC<Props> = ({
 
   return (
     <Modal
-      modalSize="25rem"
+      size="small"
       title="Create new label"
+      okText="Create label"
+      okDisabled={!isRequiredFieldsFilled}
       visible={visible}
-      footer={
-        <Flex justifyContent="flex-end">
-          <Button onClick={() => toggleVisibility()}>Cancel</Button>
-          <Button
-            type="primary"
-            disabled={!isRequiredFieldsFilled}
-            loading={isCreatingLabel}
-            onClick={() => {
-              onCreateClick({
-                name,
-                externalId,
-                description,
-              });
-            }}
-          >
-            Create label
-          </Button>
-        </Flex>
+      onOk={() =>
+        onCreateClick({
+          name,
+          externalId,
+          description,
+        })
       }
-      onCancel={() => toggleVisibility()}
+      onCancel={toggleVisibility}
     >
       <>
         <Container>

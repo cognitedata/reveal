@@ -4,7 +4,7 @@ import { PageHeader } from 'src/components/page';
 import { isClassifierDone, isClassifierTraining } from 'src/utils/classifier';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import TrainClassifierLabel from 'src/pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
-import { Flex, Body, Tag } from '@cognite/cogs.js';
+import { Flex, Body, Chip } from '@cognite/cogs.js';
 import { useClassifierActions } from 'src/machines/classifier/hooks/useClassifierActions';
 import { useClassifierManageTrainingSetsQuery } from 'src/services/query';
 import { ClassifierStatus } from 'src/services/types';
@@ -58,15 +58,19 @@ const TrainClassifierContainer: React.FC<Props> = ({ classifier, Action }) => {
         />
 
         <Wrapper>
-          <Flex gap={8}>
+          <Flex gap={8} alignItems="center">
             <Body>Training classifier with</Body>
-            <Tag icon="Edit" onClick={previousPage}>
-              {trainingSets} labels
-            </Tag>
+            <Chip
+              icon="Edit"
+              label={`${trainingSets} labels`}
+              onClick={previousPage}
+            />
             <Body>using</Body>
-            <Tag icon="Edit" onClick={previousPage}>
-              {trainingSetsFiles} files
-            </Tag>
+            <Chip
+              icon="Edit"
+              label={`${trainingSetsFiles} files`}
+              onClick={previousPage}
+            />
           </Flex>
         </Wrapper>
 

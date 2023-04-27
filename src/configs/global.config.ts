@@ -1,4 +1,4 @@
-import { TagColor } from 'src/components/Tag';
+import { ChipColor } from 'src/components/enums';
 
 export const globalConfig = {
   APP_NAME: 'Document Classifiers',
@@ -7,11 +7,13 @@ export const globalConfig = {
   DOCUMENT_WARNING_THRESHOLD: 25,
 
   DOCUMENT_THRESHOLD_TOOLTIP: {
-    primary: 'The label has enough documents to perform a classification.',
-    warning:
+    [ChipColor.Neutral]:
+      'The label has enough documents to perform a classification.',
+    [ChipColor.Warning]:
       'The label does not have enough documents to to perform a classification. Please try adding more.',
-    error: 'Classifications can not be completed without any documents.',
-  } as { [x in TagColor]: string },
+    [ChipColor.Danger]:
+      'Classifications can not be completed without any documents.',
+  } as { [x in ChipColor]: string },
 } as const;
 
 export const documentConfig = {

@@ -53,54 +53,51 @@ export const LabelPage: React.FC = () => {
     return <Loader darkMode />;
   }
 
-  if (showDocumentsModal) {
-    return (
+  return (
+    <>
+      <Page breadcrumbs={labelPageBreadcrumbs(classifierName, labelName)}>
+        <PageHeader
+          title={labelName}
+          subtitle="Label:"
+          Action={
+            <Flex alignItems="center" gap={8}>
+              <Body level="2">{data.length} files</Body>
+
+              <Button
+                icon="AddLarge"
+                type="primary"
+                onClick={() => toggleShowFiles()}
+              >
+                Add files
+              </Button>
+            </Flex>
+          }
+          showGoBack
+        />
+
+        <PageContent>
+          <TableWrapper stickyHeader>{renderTable}</TableWrapper>
+        </PageContent>
+
+        <TableBulkActions
+          isVisible={Object.keys(selectedIds).length > 0}
+          title={`${Object.keys(selectedIds).length} documents selected`}
+        >
+          <Button
+            icon="Delete"
+            loading={mutateLoading}
+            onClick={() => handleRemoveDocumentsClick()}
+          >
+            Remove
+          </Button>
+        </TableBulkActions>
+      </Page>
       <DocumentsSearchModal
         labelId={externalId}
         visible={showDocumentsModal}
         toggleVisibility={toggleShowFiles}
       />
-    );
-  }
-
-  return (
-    <Page breadcrumbs={labelPageBreadcrumbs(classifierName, labelName)}>
-      <PageHeader
-        title={labelName}
-        subtitle="Label:"
-        Action={
-          <Flex alignItems="center" gap={8}>
-            <Body level="2">{data.length} files</Body>
-
-            <Button
-              icon="AddLarge"
-              type="primary"
-              onClick={() => toggleShowFiles()}
-            >
-              Add files
-            </Button>
-          </Flex>
-        }
-        showGoBack
-      />
-
-      <PageContent>
-        <TableWrapper stickyHeader>{renderTable}</TableWrapper>
-      </PageContent>
-
-      <TableBulkActions
-        isVisible={Object.keys(selectedIds).length > 0}
-        title={`${Object.keys(selectedIds).length} documents selected`}
-      >
-        <Button
-          icon="Delete"
-          loading={mutateLoading}
-          onClick={() => handleRemoveDocumentsClick()}
-        >
-          Remove
-        </Button>
-      </TableBulkActions>
-    </Page>
+    </>
   );
 };
 

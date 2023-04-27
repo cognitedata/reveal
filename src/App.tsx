@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
@@ -8,7 +8,6 @@ import {
 } from '@cognite/cdf-utilities';
 import GlobalStyles from 'src/styles/GlobalStyles';
 import { setupMixpanel } from 'src/utils/config';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -33,14 +32,6 @@ const App = () => {
   if (!project) {
     throw new Error('CDF Project is missing');
   }
-
-  useEffect(() => {
-    cogsStyles.use();
-
-    return () => {
-      cogsStyles.unuse();
-    };
-  }, []);
 
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(

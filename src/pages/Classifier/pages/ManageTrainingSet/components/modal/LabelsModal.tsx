@@ -4,19 +4,20 @@ import { useLabelsCreateMutate } from 'src/services/query/labels/mutate';
 import { TableWrapper } from 'src/components/table/TableWrapper';
 import React from 'react';
 import { useDocumentsUpdatePipelineMutate } from 'src/services/query/pipelines/mutate';
-import ModalFooter from 'src/components/modal/ModalFooter';
-import ModalHeader from 'src/components/modal/ModalHeader';
+
 import {
   Labels,
   LabelsTable,
 } from 'src/components/table/LabelsTable/LabelsTable';
-import { ModalProps } from 'src/components/modal/types';
-import { Modal } from 'src/components/modal/Modal';
 import { CreateLabelModal } from './CreateLabelModal';
+import { Modal } from '@cognite/cogs.js';
 
-export const LabelsModal: React.FC<ModalProps> = ({
+export const LabelsModal = ({
   visible,
   toggleVisibility,
+}: {
+  visible?: boolean;
+  toggleVisibility: () => void;
 }) => {
   const [showCreateLabelModal, setShowCreateLabelModal] = React.useState(false);
   const toggleLabelsModal = React.useCallback(() => {
@@ -53,35 +54,26 @@ export const LabelsModal: React.FC<ModalProps> = ({
 
   return (
     <Modal
-      title={
-        <ModalHeader
-          title="Add labels to classifier"
-          buttonText="New label"
-          buttonIcon="AddLarge"
-          onButtonAction={() => toggleLabelsModal()}
-        />
-      }
+      size="full-screen"
+      title="Add labels to classifier"
       okText="Add labels"
+      okDisabled={selectedLabels.length === 0}
       visible={visible}
-      onCancel={() => toggleVisibility()}
-      footer={
-        <ModalFooter
-          data={selectedLabels}
-          label="labels"
-          onOk={() => handleLabelsClick()}
-          onCancel={() => toggleVisibility()}
-        />
-      }
+      onOk={handleLabelsClick}
+      onCancel={toggleVisibility}
+      additionalActions={[
+        { children: 'New Label', icon: 'AddLarge', onClick: toggleLabelsModal },
+      ]}
     >
+      <TableWrapper stickyHeader>
+        <LabelsTable onSelectionChange={handleSectionChange} />
+      </TableWrapper>
       <CreateLabelModal
         visible={showCreateLabelModal}
         toggleVisibility={toggleLabelsModal}
         onCreateClick={handleCreateLabelClick}
         isCreatingLabel={isLoading}
       />
-      <TableWrapper stickyHeader>
-        <LabelsTable onSelectionChange={handleSectionChange} />
-      </TableWrapper>
     </Modal>
   );
 };

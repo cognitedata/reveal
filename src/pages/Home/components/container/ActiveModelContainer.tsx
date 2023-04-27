@@ -1,4 +1,4 @@
-import { Body, Button, Flex, Label, Title } from '@cognite/cogs.js';
+import { Body, Button, Flex, Chip, Title } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { motion } from 'framer-motion';
 import React from 'react';
@@ -23,8 +23,6 @@ const MetricsWrapper = styled(FlexWrapper)`
   justify-content: space-between;
   width: 45rem;
 `;
-
-const TextLabel = styled(Label).attrs({ variant: 'unknown', size: 'medium' })``;
 
 interface Props {
   classifier?: Classifier;
@@ -59,13 +57,13 @@ export const ActiveModelContainer: React.FC<Props> = ({
 
       <FlexWrapper alignItems="center" gap={8}>
         <Body level={2}>Trained with</Body>
-        <TextLabel>
-          {classifier.metrics?.labels?.length || '?'} labels
-        </TextLabel>
+        <Chip
+          label={`${classifier.metrics?.labels?.length || '?'}` + ' labels'}
+        />
         <Body level={2}>using</Body>
-        <TextLabel>
-          {(classifier as any)?.trainingSetSize || '?'} files
-        </TextLabel>
+        <Chip
+          label={`${(classifier as any)?.trainingSetSize || '?'}` + ' labels'}
+        />
       </FlexWrapper>
 
       <MetricsWrapper>

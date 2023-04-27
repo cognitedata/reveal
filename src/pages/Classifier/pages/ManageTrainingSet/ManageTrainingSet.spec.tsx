@@ -17,8 +17,8 @@ describe('page:ManageTrainingSet', () => {
   it('works', () => {
     testRender(<ManageTrainingSets Widget={jest.fn()} />);
 
-    expect(
-      screen.getByRole('button', { name: /Train classifier/i })
-    ).toBeDisabled();
+    expect(screen.getByTestId('add-labels').getAttribute('aria-disabled')).toBe(
+      'false'
+    );
   });
 });

@@ -1,20 +1,21 @@
-import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { Modal } from 'src/components/modal/Modal';
+import { Loader, ToastContainer, Modal } from '@cognite/cogs.js';
 import { TableWrapper } from 'src/components/table/TableWrapper';
 import React from 'react';
 import { useDocumentsSearchQuery } from 'src/services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'src/services/query/files/mutate';
-import { getContainer } from 'src/utils/utils';
-import ModalFooter from 'src/components/modal/ModalFooter';
-import { ModalProps } from 'src/components/modal/types';
 import { DocumentsTable } from '../table/DocumentsTable';
 
-interface Props extends ModalProps {
-  labelId: string;
-}
+export const DocumentsSearchModal = React.memo(
+  ({
+    labelId,
+    visible,
+    toggleVisibility,
+  }: {
+    labelId: string;
 
-export const DocumentsSearchModal: React.FC<Props> = React.memo(
-  ({ visible, toggleVisibility, labelId }) => {
+    visible?: boolean;
+    toggleVisibility: () => void;
+  }) => {
     const [selectedFiles, setSelectedFiles] = React.useState({});
 
     const { data, isLoading } = useDocumentsSearchQuery(visible);
@@ -53,22 +54,15 @@ export const DocumentsSearchModal: React.FC<Props> = React.memo(
 
     return (
       <Modal
+        size="full-screen"
         title="Add new files"
         okText="Add files"
+        okDisabled={fileIds.length === 0}
         visible={visible}
-        appElement={getContainer()}
-        onCancel={() => toggleVisibility()}
-        footer={
-          <ModalFooter
-            data={fileIds}
-            label="files"
-            onOk={() => handleAddFilesClick()}
-            onCancel={() => toggleVisibility()}
-          />
-        }
+        onOk={handleAddFilesClick}
+        onCancel={toggleVisibility}
       >
         <TableWrapper stickyHeader>{renderTable}</TableWrapper>
-
         <ToastContainer />
       </Modal>
     );

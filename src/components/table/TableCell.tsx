@@ -1,11 +1,11 @@
+/* eslint-disable no-nested-ternary */
 import {
   Body,
   Button,
   Dropdown,
   formatDate,
   formatDateTime,
-  Label,
-  LabelVariants,
+  Chip,
   Menu,
   Tooltip,
 } from '@cognite/cogs.js';
@@ -14,7 +14,6 @@ import {
   Document,
 } from '@cognite/sdk-playground';
 import { ExternalId, LabelDefinition } from '@cognite/sdk';
-import { Tag, TagColor } from 'src/components/Tag';
 import { globalConfig } from 'src/configs/global.config';
 import { Navigation } from 'src/hooks/useNavigation';
 import capitalize from 'lodash/capitalize';
@@ -22,6 +21,7 @@ import { ClassifierActions } from 'src/pages/Home/components/table/curateClassif
 import React from 'react';
 import { CellProps } from 'react-table';
 import { ClassifierStatus, ClassifierTrainingSet } from 'src/services/types';
+import { ChipType } from 'src/enums';
 
 // NOTE: This file is getting too big.
 // Move the cell render's that are specific to the columns, closer to the curating columns.
@@ -52,22 +52,19 @@ export const TableCell = {
         return '-';
       }
 
-      let color: TagColor = 'primary';
-
-      if (value <= globalConfig.DOCUMENT_WARNING_THRESHOLD) {
-        color = 'warning';
-      }
-
-      if (value <= globalConfig.DOCUMENT_ERROR_THRESHOLD) {
-        color = 'error';
-      }
+      const color =
+        value <= globalConfig.DOCUMENT_WARNING_THRESHOLD
+          ? ChipType.Warning
+          : value <= globalConfig.DOCUMENT_ERROR_THRESHOLD
+          ? ChipType.Warning
+          : ChipType.Neutral;
 
       return (
         <Tooltip
           disabled={disableTooltip}
           content={globalConfig.DOCUMENT_THRESHOLD_TOOLTIP[color]}
         >
-          <Tag color={color}>{value}</Tag>
+          <Chip size="small" icon="Document" label={`${value}`} type={color} />
         </Tooltip>
       );
     },
@@ -79,30 +76,22 @@ export const TableCell = {
         original: { matrix },
       },
     }: CellProps<any, number>) => {
-      let variant: LabelVariants = 'success';
+      let type: ChipType | undefined = ChipType.Success;
 
       if (value === 0) {
-        variant = 'unknown';
+        type = undefined;
       }
 
       if (matrix[item].outlier) {
-        variant = 'warning';
+        type = ChipType.Warning;
       }
 
-      return (
-        <Label size="medium" variant={variant}>
-          {value}
-        </Label>
-      );
+      return <Chip size="medium" type={type} label={`${value}`} />;
     },
   Label:
-    (variant?: LabelVariants) =>
+    (type?: ChipType) =>
     ({ value }: CellProps<any, string | undefined>) =>
-      (
-        <Label size="medium" variant={variant || 'unknown'}>
-          {value || 'Unknown'}
-        </Label>
-      ),
+      <Chip size="medium" type={type || undefined} label={`${value}`} />,
   ClassifierStatusLabel: ({
     value,
     row: {
@@ -112,28 +101,18 @@ export const TableCell = {
     const status = capitalize(value);
 
     if (value === 'queuing' || value === 'training') {
-      return (
-        <Label size="medium" icon="Loader" variant="default">
-          {status}
-        </Label>
-      );
+      return <Chip size="medium" icon="Loader" type="default" label={status} />;
     }
 
     if (value === 'failed') {
       return (
         <Tooltip content={errorMessage}>
-          <Label size="medium" variant="danger">
-            {status}
-          </Label>
+          <Chip size="medium" type="danger" label={status} />
         </Tooltip>
       );
     }
 
-    return (
-      <Label size="medium" variant="success">
-        {status}
-      </Label>
-    );
+    return <Chip size="medium" type="success" label={status} />;
   },
   ManageFilesButton:
     (navigate: Navigation) =>
@@ -185,7 +164,7 @@ export const TableCell = {
           <Button
             size="small"
             icon="Delete"
-            type="danger"
+            type="destructive"
             aria-label="Delete label"
             onClick={() => deleteLabels([{ externalId }])}
           />
@@ -232,7 +211,7 @@ export const TableCell = {
 
               <Menu.Item
                 onClick={() => classifierActionsCallback('delete', original)}
-                appendIcon="Delete"
+                icon="Delete"
                 style={{ color: '#D51A46' }}
               >
                 Delete

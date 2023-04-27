@@ -1,4 +1,4 @@
-import { AllIconTypes, AutoComplete } from '@cognite/cogs.js';
+import { IconType, AutoComplete } from '@cognite/cogs.js';
 import React from 'react';
 import { OptionsType, ValueType } from 'react-select';
 
@@ -10,7 +10,7 @@ export interface Option<Value> {
 interface Props<OptionType extends Option<any>, IsMulti extends boolean> {
   title: string;
   options?: OptionsType<OptionType>;
-  icon?: AllIconTypes;
+  icon?: IconType;
   isLoading?: boolean;
   isMulti?: IsMulti;
   onChange(value: ValueType<OptionType, IsMulti>): void;
