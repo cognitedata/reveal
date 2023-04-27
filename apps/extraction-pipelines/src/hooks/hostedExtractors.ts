@@ -260,6 +260,42 @@ export const useEditMQTTSource = (
   );
 };
 
+type DeleteMQTTSourceVariables = {
+  externalId: string;
+};
+
+export const useDeleteMQTTSource = (
+  options?: UseMutationOptions<unknown, unknown, DeleteMQTTSourceVariables>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (variables: DeleteMQTTSourceVariables) => {
+      return sdk.post(`/api/v1/projects/${getProject()}/pluto/sources/delete`, {
+        headers: { 'cdf-version': 'alpha' },
+        data: {
+          items: [
+            {
+              externalId: variables.externalId,
+            },
+          ],
+        },
+      });
+    },
+    {
+      ...options,
+      onSuccess: (data, variables, context) => {
+        queryClient.invalidateQueries(
+          getMQTTSourceQueryKey(variables.externalId)
+        );
+        queryClient.invalidateQueries(getMQTTSourcesQueryKey());
+        options?.onSuccess?.(data, variables, context);
+      },
+    }
+  );
+};
+
 // DESTINATIONS
 
 export type MQTTDestinationType = 'datapoints' | 'events' | 'raw';

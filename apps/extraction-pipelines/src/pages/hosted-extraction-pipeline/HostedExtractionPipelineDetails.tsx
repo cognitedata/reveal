@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
 import { Loader, Menu, Tabs } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -12,7 +13,8 @@ import { useMQTTSourceWithMetrics } from 'hooks/hostedExtractors';
 
 import { HostedExtractionPipelineInsight } from './HostedExtractionPipelineInsight';
 import { HostedExtractionPipelineOverview } from './HostedExtractionPipelineOverview';
-import { useFlag } from '@cognite/react-feature-flags';
+import { getContainer } from 'utils/utils';
+import DeleteSourceModal from 'components/delete-source-modal/DeleteSourceModal';
 
 export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const { t } = useTranslation();
@@ -30,6 +32,8 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
 
   const { data: source, isFetched } = useMQTTSourceWithMetrics(externalId);
 
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
   if (!isFetched || !isClientReady) {
     return <Loader />;
   }
@@ -46,7 +50,25 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
     <StyledPageContainer>
       <StyledHeadingContainer>
         <SecondaryTopbar
-          optionsDropdownProps={{ content: <Menu></Menu> }}
+          optionsDropdownProps={{
+            appendTo: getContainer(),
+            hideOnSelect: {
+              hideOnContentClick: true,
+              hideOnOutsideClick: true,
+            },
+            content: (
+              <Menu>
+                <Menu.Item
+                  destructive
+                  icon="Delete"
+                  iconPlacement="left"
+                  onClick={() => setIsDeleteModalVisible(true)}
+                >
+                  {t('delete')}
+                </Menu.Item>
+              </Menu>
+            ),
+          }}
           extraContent={
             <TabsContainer>
               <Tabs
@@ -76,6 +98,13 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
           <HostedExtractionPipelineOverview source={source} />
         )}
       </Content>
+      {isDeleteModalVisible && (
+        <DeleteSourceModal
+          onCancel={() => setIsDeleteModalVisible(false)}
+          source={source}
+          visible={isDeleteModalVisible}
+        />
+      )}
     </StyledPageContainer>
   );
 };

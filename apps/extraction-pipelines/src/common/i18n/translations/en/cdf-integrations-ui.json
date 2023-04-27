@@ -248,5 +248,8 @@
   "edit-source-details": "Edit source details",
   "edit-source-authentication": "Edit source authentication",
   "authentication": "Authentication",
-  "create-jobs-to-start-listening-messages": "Create jobs to start listening messages"
+  "create-jobs-to-start-listening-messages": "Create jobs to start listening messages",
+  "delete-source": "Delete source",
+  "delete-source-warning": "The source will be deleted and can't be restored.",
+  "delete-source-checkbox": "I want to delete this source."
 }
