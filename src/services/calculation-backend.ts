@@ -21,7 +21,7 @@ import {
   CalculationResultQuery,
   CalculationResultDatapointsInner,
 } from '@cognite/calculation-backend';
-import { getEnv } from '@cognite/cdf-utilities';
+import { getCluster } from '@cognite/cdf-utilities';
 
 import { BACKEND_SERVICE_URL_KEY } from 'utils/constants';
 import {
@@ -32,6 +32,7 @@ import {
 } from '@cognite/sdk';
 import { isProduction } from 'utils/environment';
 import { WorkflowResult } from 'models/calculation-results/types';
+import { parseEnvFromCluster } from '@cognite/login-utils';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -41,8 +42,9 @@ const backendServiceBaseUrlFromQuery = queryString.parse(
 
 export const getBackendServiceBaseUrl = (cluster?: string) => {
   const stagingPart = isProduction ? '' : 'staging';
+  const env = parseEnvFromCluster(cluster || '');
 
-  const domain = ['calculation-backend', stagingPart, cluster, 'cognite', 'ai']
+  const domain = ['calculation-backend', stagingPart, env, 'cognite', 'ai']
     .filter(Boolean)
     .join('.');
 
@@ -52,7 +54,7 @@ export const getBackendServiceBaseUrl = (cluster?: string) => {
 async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   await sdk.get('/api/v1/token/inspect');
   const { Authorization } = sdk.getDefaultRequestHeaders();
-  const cluster = getEnv();
+  const cluster = getCluster();
 
   // @ts-ignore
   const sdkClientBaseUrl = sdk.httpClient.getBaseUrl();

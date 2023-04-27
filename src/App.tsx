@@ -22,7 +22,7 @@ import { IntercomProvider } from 'react-use-intercom';
 
 import {
   AuthWrapper,
-  getEnv,
+  getCluster,
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
@@ -42,6 +42,7 @@ import GlobalStyles from 'styles/GlobalStyles';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
+import { parseEnvFromCluster } from '@cognite/login-utils';
 import Routes from './pages/Routes';
 
 if (!isDevelopment && !config.sentryDSN) {
@@ -84,7 +85,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const env = getEnv();
+const env = parseEnvFromCluster(getCluster());
 const project = getProject();
 
 export const RootApp = () => {
