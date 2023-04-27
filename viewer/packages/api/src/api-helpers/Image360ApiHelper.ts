@@ -245,6 +245,7 @@ export class Image360ApiHelper {
           this._image360Navigation.moveTo(position, transitionDuration),
           this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
         ]);
+        image360Entity.image360Visualization.setAnnotationsVisibility(true);
         MetricsLogger.trackEvent('360ImageTransitioned', {});
       }
       this._transitionInProgress = false;
@@ -278,11 +279,14 @@ export class Image360ApiHelper {
     setPreTransitionState();
 
     const currentFromOpacity = fromVisualizationCube.opacity;
+
+    from360Entity.image360Visualization.setAnnotationsVisibility(false);
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
       this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
       this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
+    to360Entity.image360Visualization.setAnnotationsVisibility(true);
 
     restorePostTransitionState(currentFromOpacity);
 
@@ -378,6 +382,7 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
       imageCollection.events.image360Exited.fire();
 
+      this._interactionState.currentImage360Entered.image360Visualization.setAnnotationsVisibility(false);
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
@@ -473,6 +478,7 @@ export class Image360ApiHelper {
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;
+      lastEntered.image360Visualization.setAnnotationsVisibility(false);
       await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
