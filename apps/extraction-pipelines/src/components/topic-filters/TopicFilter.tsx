@@ -52,8 +52,13 @@ export const TopicFilter = ({
       <Dropdown
         content={
           <Menu>
-            <Menu.Item icon="Delete" onClick={handleDelete}>
-              {t('delete-topic-filter')}
+            <Menu.Item
+              destructive
+              icon="Delete"
+              iconPlacement="left"
+              onClick={handleDelete}
+            >
+              {t('delete')}
             </Menu.Item>
           </Menu>
         }
