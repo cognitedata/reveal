@@ -95,14 +95,9 @@ export const FlowContextProvider = ({
   });
 
   useEffect(() => {
-    if (!data) {
-      return;
-    }
-    const changes = Automerge.getChanges(flowRef.current, data);
-    if (changes.length > 0) {
-      const [newFlow] = Automerge.applyChanges(flowRef.current, changes);
-      flowRef.current = newFlow;
-      setFlowState(newFlow);
+    if (data) {
+      flowRef.current = data;
+      setFlowState(data);
     }
   }, [data]);
 
