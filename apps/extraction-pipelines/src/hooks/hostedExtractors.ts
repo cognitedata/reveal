@@ -175,19 +175,13 @@ export const useMQTTSourceWithMetrics = (externalId?: string) => {
     getMQTTSourceWithMetricsQueryKey(externalId),
     async () => {
       const source = await fetchMQTTSource(sdk, queryClient, externalId);
+      const jobs = await fetchMQTTJobsWithMetrics(sdk, queryClient, externalId);
 
-      const jobsWithMetrics = await fetchMQTTJobsWithMetrics(sdk, queryClient);
-      const jobsForSource = jobsWithMetrics.filter(
-        ({ sourceId }) => sourceId === externalId
-      );
-      const throughput = jobsForSource.reduce(
-        (acc, cur) => acc + cur.throughput,
-        0
-      );
+      const throughput = jobs.reduce((acc, cur) => acc + cur.throughput, 0);
 
       return {
         ...source,
-        jobs: jobsForSource,
+        jobs,
         throughput,
       };
     }
@@ -420,23 +414,31 @@ export type ReadMQTTJob = BaseMQTTJob & {
   targetStatus: MQTTJobTargetStatus;
 };
 
-const getMQTTJobsQueryKey = () => ['mqtt', 'jobs', 'list'];
+const getMQTTJobsQueryKey = (sourceExternalId?: string) => [
+  'mqtt',
+  'jobs',
+  'list',
+  ...(sourceExternalId ? [sourceExternalId] : []),
+];
 
-const getMQTTJobs = async (sdk: CogniteClient) => {
+const getMQTTJobs = async (sdk: CogniteClient, sourceExternalId?: string) => {
   return sdk
     .get<{ items: ReadMQTTJob[] }>(
       `/api/v1/projects/${getProject()}/pluto/jobs`,
       {
         headers: { 'cdf-version': 'alpha' },
+        params: {
+          source: sourceExternalId,
+        },
       }
     )
     .then((r) => r.data.items);
 };
 
-export const useMQTTJobs = () => {
+export const useMQTTJobs = (sourceExternalId?: string) => {
   const sdk = useSDK();
-  return useQuery(getMQTTJobsQueryKey(), async () => {
-    return getMQTTJobs(sdk);
+  return useQuery(getMQTTJobsQueryKey(sourceExternalId), async () => {
+    return getMQTTJobs(sdk, sourceExternalId);
   });
 };
 
@@ -445,14 +447,17 @@ export type MQTTJobWithMetrics = ReadMQTTJob & {
   throughput: number;
 };
 
-const getMQTTJobsWithMetricsQueryKey = () => [
-  ...getMQTTJobsQueryKey(),
+const getMQTTJobsWithMetricsQueryKey = (sourceExternalId?: string) => [
+  ...getMQTTJobsQueryKey(sourceExternalId),
   'with-metrics',
 ];
 
-const getMQTTJobsWithMetrics = async (sdk: CogniteClient) => {
-  const jobs = await getMQTTJobs(sdk);
-  const metrics = await getMQTTJobMetrics(sdk);
+const getMQTTJobsWithMetrics = async (
+  sdk: CogniteClient,
+  sourceExternalId?: string
+) => {
+  const jobs = await getMQTTJobs(sdk, sourceExternalId);
+  const metrics = await getMQTTJobMetrics(sdk, sourceExternalId);
 
   const jobsWithMetrics: Record<string, MQTTJobWithMetrics> = {};
 
@@ -496,17 +501,19 @@ const getMQTTJobsWithMetrics = async (sdk: CogniteClient) => {
 
 const fetchMQTTJobsWithMetrics = (
   sdk: CogniteClient,
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  sourceExternalId?: string
 ) => {
-  return queryClient.fetchQuery(getMQTTJobsWithMetricsQueryKey(), () =>
-    getMQTTJobsWithMetrics(sdk)
+  return queryClient.fetchQuery(
+    getMQTTJobsWithMetricsQueryKey(sourceExternalId),
+    () => getMQTTJobsWithMetrics(sdk, sourceExternalId)
   );
 };
 
-export const useMQTTJobsWithMetrics = () => {
+export const useMQTTJobsWithMetrics = (sourceExternalId?: string) => {
   const sdk = useSDK();
-  return useQuery(getMQTTJobsWithMetricsQueryKey(), () =>
-    getMQTTJobsWithMetrics(sdk)
+  return useQuery(getMQTTJobsWithMetricsQueryKey(sourceExternalId), () =>
+    getMQTTJobsWithMetrics(sdk, sourceExternalId)
   );
 };
 
@@ -523,24 +530,33 @@ type ReadMQTTJobMetric = {
   destinationUploadedValues: number;
 };
 
-const getMQTTJobMetricsQueryKey = () => ['mqtt', 'jobs', 'metrics', 'list'];
+const getMQTTJobMetricsQueryKey = (sourceExternalId?: string) => [
+  'mqtt',
+  'jobs',
+  'metrics',
+  'list',
+  ...(sourceExternalId ? [sourceExternalId] : []),
+];
 
-const getMQTTJobMetrics = (sdk: CogniteClient) => {
+const getMQTTJobMetrics = (sdk: CogniteClient, sourceExternalId?: string) => {
   return sdk
     .get<{ items: ReadMQTTJobMetric[] }>(
       `/api/v1/projects/${getProject()}/pluto/jobs/metrics`,
       {
         headers: { 'cdf-version': 'alpha' },
+        params: {
+          source: sourceExternalId,
+        },
       }
     )
     .then((r) => r.data.items);
 };
 
-export const useMQTTJobMetrics = () => {
+export const useMQTTJobMetrics = (sourceExternalId?: string) => {
   const sdk = useSDK();
 
-  return useQuery(getMQTTJobMetricsQueryKey(), async () => {
-    return getMQTTJobMetrics(sdk);
+  return useQuery(getMQTTJobMetricsQueryKey(sourceExternalId), async () => {
+    return getMQTTJobMetrics(sdk, sourceExternalId);
   });
 };
 
