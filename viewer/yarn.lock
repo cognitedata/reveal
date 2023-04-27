@@ -800,7 +800,7 @@ __metadata:
     concurrently: 8.0.1
     cross-env: 7.0.3
     dat.gui: 0.7.9
-    eslint: 8.38.0
+    eslint: 8.39.0
     eslint-config-prettier: 8.8.0
     eslint-plugin-header: 3.1.1
     eslint-plugin-jsdoc: 43.0.7
@@ -809,7 +809,7 @@ __metadata:
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
     gl: 6.0.2
-    glob: 10.2.1
+    glob: 10.2.2
     glslify: 7.1.1
     glslify-import: 3.1.0
     glslify-loader: 2.0.0
@@ -830,7 +830,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 2.8.7
     process: 0.11.10
-    puppeteer: 19.10.0
+    puppeteer: 19.10.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -848,7 +848,7 @@ __metadata:
     typescript: 5.0.4
     wasm-pack: 0.10.3
     webpack: 5.80.0
-    webpack-cli: 5.0.1
+    webpack-cli: 5.0.2
     webpack-dev-server: 4.13.3
     webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
@@ -937,10 +937,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:8.38.0":
-  version: 8.38.0
-  resolution: "@eslint/js@npm:8.38.0"
-  checksum: 1f28987aa8c9cd93e23384e16c7220863b39b5dc4b66e46d7cdbccce868040f455a98d24cd8b567a884f26545a0555b761f7328d4a00c051e7ef689cbea5fce1
+"@eslint/js@npm:8.39.0":
+  version: 8.39.0
+  resolution: "@eslint/js@npm:8.39.0"
+  checksum: 63fe36e2bfb5ff5705d1c1a8ccecd8eb2f81d9af239713489e767b0e398759c0177fcc75ad62581d02942f2776903a8496d5fae48dc2d883dff1b96fcb19e9e2
   languageName: node
   linkType: hard
 
@@ -1583,9 +1583,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@puppeteer/browsers@npm:0.4.1":
-  version: 0.4.1
-  resolution: "@puppeteer/browsers@npm:0.4.1"
+"@puppeteer/browsers@npm:0.5.0":
+  version: 0.5.0
+  resolution: "@puppeteer/browsers@npm:0.5.0"
   dependencies:
     debug: 4.3.4
     extract-zip: 2.0.1
@@ -1602,7 +1602,7 @@ __metadata:
       optional: true
   bin:
     browsers: lib/cjs/main-cli.js
-  checksum: bd72815d0aaac66651ef775e2816703daaaceef0d94b39b5a6baf3d9f9c2242866f3e0691e9aae6409cdffd1d96f3e7e00bddb8f0c0b5b2b427e9298bcc3c8a2
+  checksum: d75fde03be4be106ca907834739251c2bb0b33a09fa23315c5dbe8b8b4cfed2f1b26af62e1dbe5fccc227e9bc87b51da0815461b982477eb01439bfdd6e7b01a
   languageName: node
   linkType: hard
 
@@ -2989,16 +2989,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@webpack-cli/serve@npm:2.0.1"
+"@webpack-cli/serve@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@webpack-cli/serve@npm:2.0.2"
   peerDependencies:
     webpack: 5.x.x
     webpack-cli: 5.x.x
   peerDependenciesMeta:
     webpack-dev-server:
       optional: true
-  checksum: 75c55f8398dd60e4821f81bec6e96287cebb3ab1837ef016779bc2f0c76a1d29c45b99e53daa99ba1fa156b5e2b61c19abf58098de20c2b58391b1f496ecc145
+  checksum: f74c8cc7d3e4de58e1261c6d09af0e8b8a23f53ada4ec336140f30fa16d57d9f56de954e87125947c090c06a30b10a243ca1e093c3e4bd60ba3f19c852cb20b7
   languageName: node
   linkType: hard
 
@@ -4162,6 +4162,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "commander@npm:10.0.1"
+  checksum: 436901d64a818295803c1996cd856621a74f30b9f9e28a588e726b2b1670665bccd7c1a77007ebf328729f0139838a88a19265858a0fa7a8728c4656796db948
+  languageName: node
+  linkType: hard
+
 "commander@npm:^2.15.1, commander@npm:^2.20.0, commander@npm:^2.20.3":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
@@ -4187,13 +4194,6 @@ __metadata:
   version: 9.0.0
   resolution: "commander@npm:9.0.0"
   checksum: 15066e433d528315ded8261d16bc600d1f3c5671c75021e685ae67e4d62f7551243ff28411b28dc0a6f8b23c2a0f033550ec6f3e66bdf9d11a4fdc2d33dd9802
-  languageName: node
-  linkType: hard
-
-"commander@npm:^9.4.1":
-  version: 9.4.1
-  resolution: "commander@npm:9.4.1"
-  checksum: bfb18e325a5bdf772763c2213d5c7d9e77144d944124e988bcd8e5e65fb6d45d5d4e86b09155d0f2556c9a59c31e428720e57968bcd050b2306e910a0bf3cf13
   languageName: node
   linkType: hard
 
@@ -5222,13 +5222,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-scope@npm:^7.1.1":
-  version: 7.1.1
-  resolution: "eslint-scope@npm:7.1.1"
+"eslint-scope@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "eslint-scope@npm:7.2.0"
   dependencies:
     esrecurse: ^4.3.0
     estraverse: ^5.2.0
-  checksum: 9f6e974ab2db641ca8ab13508c405b7b859e72afe9f254e8131ff154d2f40c99ad4545ce326fd9fde3212ff29707102562a4834f1c48617b35d98c71a97fbf3e
+  checksum: 64591a2d8b244ade9c690b59ef238a11d5c721a98bcee9e9f445454f442d03d3e04eda88e95a4daec558220a99fa384309d9faae3d459bd40e7a81b4063980ae
   languageName: node
   linkType: hard
 
@@ -5246,14 +5246,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.38.0":
-  version: 8.38.0
-  resolution: "eslint@npm:8.38.0"
+"eslint@npm:8.39.0":
+  version: 8.39.0
+  resolution: "eslint@npm:8.39.0"
   dependencies:
     "@eslint-community/eslint-utils": ^4.2.0
     "@eslint-community/regexpp": ^4.4.0
     "@eslint/eslintrc": ^2.0.2
-    "@eslint/js": 8.38.0
+    "@eslint/js": 8.39.0
     "@humanwhocodes/config-array": ^0.11.8
     "@humanwhocodes/module-importer": ^1.0.1
     "@nodelib/fs.walk": ^1.2.8
@@ -5263,7 +5263,7 @@ __metadata:
     debug: ^4.3.2
     doctrine: ^3.0.0
     escape-string-regexp: ^4.0.0
-    eslint-scope: ^7.1.1
+    eslint-scope: ^7.2.0
     eslint-visitor-keys: ^3.4.0
     espree: ^9.5.1
     esquery: ^1.4.2
@@ -5292,7 +5292,7 @@ __metadata:
     text-table: ^0.2.0
   bin:
     eslint: bin/eslint.js
-  checksum: 73b6d9b650d0434aa7c07d0a1802f099b086ee70a8d8ba7be730439a26572a5eb71def12125c82942be2ec8ee5be38a6f1b42a13e40d4b67f11a148ec9e263eb
+  checksum: d7a074ff326e7ea482500dc0427a7d4b0260460f0f812d19b46b1cca681806b67309f23da9d17cd3de8eb74dd3c14cb549c4d58b05b140564d14cc1a391122a0
   languageName: node
   linkType: hard
 
@@ -6025,19 +6025,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.2.1":
-  version: 10.2.1
-  resolution: "glob@npm:10.2.1"
+"glob@npm:10.2.2":
+  version: 10.2.2
+  resolution: "glob@npm:10.2.2"
   dependencies:
     foreground-child: ^3.1.0
-    fs.realpath: ^1.0.0
     jackspeak: ^2.0.3
     minimatch: ^9.0.0
     minipass: ^5.0.0
     path-scurry: ^1.7.0
   bin:
     glob: dist/cjs/src/bin.js
-  checksum: 760a624138e7bbc49179859ba314a8547b114de2324cf571d43dc4ce3379be297034099b36857f966ec5445b30cbd558d0be90c9992ef186671aca53b1bde7a0
+  checksum: 33cbbbea74deb605107715f2ee51937953271ff2f6ce712b57d95a714e2f1bf272fa2c2b0c5101097bf98d3e5d40856941af498b05bce07567aca1a6e3cc7ae9
   languageName: node
   linkType: hard
 
@@ -9840,11 +9839,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.10.0":
-  version: 19.10.0
-  resolution: "puppeteer-core@npm:19.10.0"
+"puppeteer-core@npm:19.10.1":
+  version: 19.10.1
+  resolution: "puppeteer-core@npm:19.10.1"
   dependencies:
-    "@puppeteer/browsers": 0.4.1
+    "@puppeteer/browsers": 0.5.0
     chromium-bidi: 0.4.6
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -9860,21 +9859,21 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 836154f73ca607bf31379605855fae33470fe6990df66334b170fbf4450d9b6d5bbba39f5f34f3a3aa1afabfe57ab95fa4b8fdd0a17e27b5b527e098dba50421
+  checksum: b913bc566e6202b073021c4978845c3db905b85816631a05d50e0ddb05fa3760d620eb887b073e58352133f50c354daa843b74bab542c7b6756d3d26eb576f8b
   languageName: node
   linkType: hard
 
-"puppeteer@npm:19.10.0":
-  version: 19.10.0
-  resolution: "puppeteer@npm:19.10.0"
+"puppeteer@npm:19.10.1":
+  version: 19.10.1
+  resolution: "puppeteer@npm:19.10.1"
   dependencies:
-    "@puppeteer/browsers": 0.4.1
+    "@puppeteer/browsers": 0.5.0
     cosmiconfig: 8.1.3
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.10.0
-  checksum: b65b4121bf40e5fbc72ed6db0372411677dff1af58ab3b641716ff358603b1f5c26eb0e0a426d00dfdff7e7e8f0a6f10006457347a836e1f61c4f24515e2f842
+    puppeteer-core: 19.10.1
+  checksum: b0b10c6be44ecd619936ad31e6a8d7079cae4cc0fd887552e1afb3e2359773e71bcd5478f34170712369947a110b92ec8c76dbe699fe59f4a4dc5d2fd73761fe
   languageName: node
   linkType: hard
 
@@ -12037,16 +12036,16 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:5.0.1":
-  version: 5.0.1
-  resolution: "webpack-cli@npm:5.0.1"
+"webpack-cli@npm:5.0.2":
+  version: 5.0.2
+  resolution: "webpack-cli@npm:5.0.2"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
     "@webpack-cli/configtest": ^2.0.1
     "@webpack-cli/info": ^2.0.1
-    "@webpack-cli/serve": ^2.0.1
+    "@webpack-cli/serve": ^2.0.2
     colorette: ^2.0.14
-    commander: ^9.4.1
+    commander: ^10.0.1
     cross-spawn: ^7.0.3
     envinfo: ^7.7.3
     fastest-levenshtein: ^1.0.12
@@ -12065,7 +12064,7 @@ typescript@~4.8.4:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: b1544eea669442e78c3dba9f79c0f8d0136759b8b2fe9cd32c0d410250fd719988ae037778ba88993215d44971169f2c268c0c934068be561711615f1951bd53
+  checksum: 98816d84c51487b90e1008ddbcda8827dcb7ae9ab7892f4d742f0d7b93f90a4a18a6ec2671b380e5a7ee4b0917cf0c43921119419d8ba9e1b14ea060115684fd
   languageName: node
   linkType: hard
 

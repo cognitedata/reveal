@@ -14,6 +14,7 @@ import {
 } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import { Image360AnnotationAppearance } from '../annotation/types';
 
 type Image360Events = 'image360Entered' | 'image360Exited' | 'image360AnnotationHovered' | 'image360AnnotationClicked';
 
@@ -34,6 +35,8 @@ export class DefaultImage360Collection implements Image360Collection {
   private _targetRevisionDate: Date | undefined;
 
   private _needsRedraw: boolean = false;
+
+  private _defaultStyle: Image360AnnotationAppearance = {};
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
@@ -177,11 +180,11 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   public fireHoverEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationHovered.fire(annotationObject.annotation);
+    this._events.annotationHovered.fire(annotationObject);
   }
 
   public fireClickEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationClicked.fire(annotationObject.annotation);
+    this._events.annotationClicked.fire(annotationObject);
   }
 
   public setSelectedVisibility(visible: boolean): void {
@@ -211,5 +214,18 @@ export class DefaultImage360Collection implements Image360Collection {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+  }
+
+  get defaultStyle(): Image360AnnotationAppearance {
+    return this._defaultStyle;
+  }
+
+  public setDefaultStyle(defaultStyle: Image360AnnotationAppearance): void {
+    this._defaultStyle = defaultStyle;
+    this.image360Entities.forEach(entity =>
+      entity
+        .getRevisions()
+        .forEach(revision => revision.annotations.forEach(annotation => annotation.setDefaultStyle(defaultStyle)))
+    );
   }
 }

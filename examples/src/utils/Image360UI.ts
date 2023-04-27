@@ -8,14 +8,22 @@ import {
   Image360,
   Image360Collection,
   Image360EnteredDelegate,
-  Image360AnnotationHoveredDelegate
+  Image360AnnotationHoveredDelegate,
+  Image360Annotation
 } from '@cognite/reveal';
+
+import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+
 import * as dat from 'dat.gui';
 
 export class Image360UI {
+  private _collections: Image360Collection[] = [];
+
+  private _lastAnnotation: Image360Annotation | undefined = undefined;
+
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
-    let collections: Image360Collection[] = [];
+    const collections = this._collections;
     let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
@@ -24,9 +32,14 @@ export class Image360UI {
       selectedEntity = entity;
     };
 
-    const onAnnotationHovered: Image360AnnotationHoveredDelegate = annotation => {
-      // TODO: Replace with styling when available 2023-04-19
-      console.log('Hovered annotation with data: ', annotation.data);
+    const onAnnotationClicked: Image360AnnotationHoveredDelegate = annotation => {
+      if (this._lastAnnotation !== undefined) {
+        this._lastAnnotation.setColor(undefined);
+      }
+
+      console.log('Clicked annotation with data: ', annotation.annotation.data);
+      annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+      this._lastAnnotation = annotation;
     };
 
     const translation = {
@@ -152,9 +165,10 @@ export class Image360UI {
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
       collection.on('image360Entered', onImageEntered);
-      collection.on('image360AnnotationHovered', onAnnotationHovered);
+      collection.on('image360AnnotationClicked', onAnnotationClicked);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
+
       viewer.requestRedraw();
     }
 
@@ -168,7 +182,11 @@ export class Image360UI {
     async function removeAll360Images() {
       await viewer.remove360Images(...entities);
       entities = [];
-      collections = [];
+      collections.splice(0);
     }
+  }
+
+  get collections(): Image360Collection[] {
+    return this._collections;
   }
 }
