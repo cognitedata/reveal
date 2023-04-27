@@ -34,6 +34,7 @@ import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
 import { Image360UI } from '../utils/Image360UI';
+import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 
@@ -396,7 +397,8 @@ export function Viewer() {
       new CameraUI(viewer, gui.addFolder('Camera'));
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
-      new Image360UI(viewer, gui.addFolder('360 Images'));
+      const image360Ui = new Image360UI(viewer, gui.addFolder('360 Images'));
+      new Image360StylingUI(image360Ui, gui.addFolder('360 annotation styling'));
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
