@@ -126,7 +126,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     visualizationMesh.scale.copy(this._visualizationState.scale);
     visualizationMesh.visible = this._visualizationState.visible;
     visualizationMesh.add(this._annotationsGroup);
-    this._annotationsGroup.visible = false;
+    this.setAnnotationsVisibility(false);
     this._visualizationMesh = visualizationMesh;
 
     this._sceneHandler.addCustomObject(this._visualizationMesh);
