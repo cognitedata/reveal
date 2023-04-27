@@ -26,23 +26,23 @@ const StyledReactMarkdown = styled(ReactMarkdown)`
         display: flex;
         margin: 1rem 0;
         padding: 1rem;
-        background-color: ${Colors['greyscale-grey2'].hex()};
-        border-left: 4px solid ${Colors['greyscale-grey3'].hex()};
+        background-color: ${Colors['decorative--grayscale--200']};
+        border-left: 4px solid ${Colors['decorative--grayscale--300']};
       }
     }
     p {
       line-height: 1.3;
       code {
         padding: 0.1rem 0.2rem;
-        background-color: ${Colors['greyscale-grey2'].hex()};
-        border: 1px solid ${Colors['greyscale-grey3'].hex()};
+        background-color: ${Colors['decorative--grayscale--200']};
+        border: 1px solid ${Colors['decorative--grayscale--300']};
       }
     }
     blockquote {
       margin: 1rem 0;
       padding: 1rem 1rem 0 1rem;
-      background-color: ${Colors['midblue-8'].hex()};
-      border-left: 4px solid ${Colors['midblue-7'].hex()};
+      background-color: ${Colors['decorative--blue--700']};
+      border-left: 4px solid ${Colors['decorative--blue--700']};
     }
     .cogs-table {
       width: inherit;

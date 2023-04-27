@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { Icon, Tag } from '@cognite/cogs.js';
+import { Icon, Chip } from '@cognite/cogs.js';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 import Schedule from 'components/extpipes/cols/Schedule';
 import {
   CardInWrapper,
   CardNavLink,
+  CardNavLinkIcon,
   CardValue,
   CardWrapper,
   StyledTitleCard,
@@ -94,7 +95,7 @@ export const RunScheduleConnection = ({
           <CardValue className="card-value">
             <TimeDisplay value={lastRunTimeStamp} relative />
           </CardValue>
-          <Icon type="ArrowRight" />
+          <CardNavLinkIcon />
         </CardInWrapper>
       </CardNavLink>
       <CardInWrapper>
@@ -109,7 +110,7 @@ export const RunScheduleConnection = ({
       {runsStatus === 'success' && (
         <CardInWrapper>
           <StyledTitleCard className="card-title">
-            <Tag color="success">{last30DaysSuccess}</Tag>
+            <Chip type="success" label={`${last30DaysSuccess}`} />
             {t('successful-runs-30-days')}
           </StyledTitleCard>
           {last30Days > 0 && (
@@ -130,7 +131,7 @@ export const RunScheduleConnection = ({
           <CardValue className="card-value">
             {lastConnected && <TimeDisplay value={lastConnected} relative />}
           </CardValue>
-          <Icon type="ArrowRight" />
+          <CardNavLinkIcon />
         </CardInWrapper>
       </CardNavLink>
     </CardWrapper>

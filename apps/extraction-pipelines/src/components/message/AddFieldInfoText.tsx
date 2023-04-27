@@ -17,7 +17,7 @@ export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
     <Styled>
       <Icon
         type="AddLarge"
-        style={{ marginRight: '1rem' }}
+        css={{ marginRight: '1rem' }}
         data-testid={dataTestId}
       />{' '}
       {t('add')} {children}
@@ -30,6 +30,6 @@ const Styled = styled.span`
   align-items: center;
   line-height: 1.5rem;
   button:enabled > & {
-    color: ${Colors.primary.hex()};
+    color: ${Colors['text-icon--interactive--default']};
   }
 `;

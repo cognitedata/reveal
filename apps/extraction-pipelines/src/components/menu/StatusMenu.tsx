@@ -1,5 +1,5 @@
 import { StyledDropdown } from 'components/styled';
-import { Badge, Button, Colors, Menu } from '@cognite/cogs.js';
+import { Button, Chip, Colors, Menu } from '@cognite/cogs.js';
 import React, { PropsWithoutRef } from 'react';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import styled from 'styled-components';
@@ -55,8 +55,7 @@ const StatusMenuContent = ({
     <StyledMenu>
       <Menu.Item
         onClick={onClick('failure')}
-        selected={selected === 'failure'}
-        appendIcon={selected === 'failure' ? 'Checkmark' : undefined}
+        icon={selected === 'failure' ? 'Checkmark' : undefined}
         aria-selected={selected === 'failure'}
         data-testid="status-menu-item-fail"
       >
@@ -64,8 +63,7 @@ const StatusMenuContent = ({
       </Menu.Item>
       <Menu.Item
         onClick={onClick('success')}
-        selected={selected === 'success'}
-        appendIcon={selected === 'success' ? 'Checkmark' : undefined}
+        icon={selected === 'success' ? 'Checkmark' : undefined}
         aria-selected={selected === 'success'}
         data-testid="status-menu-item-ok"
       >
@@ -73,14 +71,13 @@ const StatusMenuContent = ({
       </Menu.Item>
       <Menu.Item
         onClick={onClick()}
-        selected={!selected}
-        appendIcon={!selected ? 'Checkmark' : undefined}
+        icon={!selected ? 'Checkmark' : undefined}
         aria-selected={!selected}
         data-testid="status-menu-item-all"
       >
-        <Badge
-          text={t('all')}
-          background="white"
+        <Chip
+          size="x-small"
+          label={t('all')}
           aria-label="All"
           data-testid="status-menu-item-all"
         />
@@ -94,7 +91,7 @@ const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
     .cogs-icon-Checkmark {
       svg {
         path {
-          fill: ${Colors.primary.hex()};
+          fill: ${Colors['text-icon--interactive--default']};
         }
       }
     }

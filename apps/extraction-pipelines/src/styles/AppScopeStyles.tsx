@@ -1,8 +1,18 @@
 // @ts-nocheck
 import React from 'react';
-import { DateRange, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  DateRange,
+  Tooltip as CogsTooltip,
+  Modal as CogsModal,
+} from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
+import { Select } from 'antd';
+
+Select.defaultProps = {
+  ...Select.defaultProps,
+  getPopupContainer: getContainer,
+};
 
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
@@ -11,6 +21,11 @@ CogsTooltip.defaultProps = {
 
 DateRange.defaultProps = {
   ...DateRange.defaultProps,
+  getContainer,
+};
+
+CogsModal.defaultProps = {
+  ...CogsModal.defaultProps,
   getContainer,
 };
 

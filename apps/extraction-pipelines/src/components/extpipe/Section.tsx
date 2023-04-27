@@ -47,7 +47,7 @@ export const Section = ({
     <SectionDiv className="z-2" data-testid={dataTestId}>
       <SectionHeaderRow alignItems="center" justifyContent="space-between">
         <SectionHeader alignItems="center">
-          <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
+          <Icon type={icon} css={{ marginRight: '0.5rem' }} /> {title}
         </SectionHeader>
         <div>
           {titleButton && (

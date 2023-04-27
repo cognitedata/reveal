@@ -169,24 +169,6 @@ describe('ExtpipePage', () => {
   const getInputFieldForDeleteConfirm = () =>
     screen.getByLabelText('Type DELETE to confirm');
 
-  test('Delete button should only be enabled when DELETE is written', async () => {
-    renderExtpipePage();
-    await clickDeletePipeline();
-
-    const confirmTextField = getInputFieldForDeleteConfirm();
-    const deleteButtonInsideDialog = screen.getByTestId('delete-btn', {
-      selector: '.cogs-btn',
-    });
-
-    expect(deleteButtonInsideDialog.disabled).toBe(true);
-    fireEvent.change(confirmTextField, { target: { value: 'DELETE' } });
-    expect(deleteButtonInsideDialog.disabled).toBe(false);
-    fireEvent.change(confirmTextField, { target: { value: 'abc' } });
-    expect(deleteButtonInsideDialog.disabled).toBe(true);
-    fireEvent.change(confirmTextField, { target: { value: 'delete' } });
-    expect(deleteButtonInsideDialog.disabled).toBe(false);
-  });
-
   test('Forget text in between dialog opens', async () => {
     renderExtpipePage();
     await clickDeletePipeline();

@@ -8,8 +8,8 @@ interface InfoBoxProps {
   color?: 'primary' | 'warning';
 }
 const colorMap = {
-  primary: Colors['midblue-7'],
-  warning: Colors['yellow-8'],
+  primary: Colors['surface--status-neutral--muted--default'],
+  warning: Colors['surface--status-warning--muted--default'],
 };
 
 const Box = styled.div<Pick<InfoBoxProps, 'color'>>`
@@ -18,7 +18,7 @@ const Box = styled.div<Pick<InfoBoxProps, 'color'>>`
   grid-template-columns: 2rem auto;
   padding: 1rem;
   border-radius: 0.25rem;
-  background-color: ${(p) => colorMap[p.color ?? 'primary'].hex()};
+  background-color: ${(p) => colorMap[p.color ?? 'primary']};
   h2 {
     grid-area: heading;
   }
@@ -44,7 +44,16 @@ export const InfoBox: FunctionComponent<InfoBoxProps> = ({
 }: PropsWithChildren<InfoBoxProps>) => {
   return (
     <Box className="bottom-spacing" color={color}>
-      <IconFilled color={Colors[color ?? 'primary'].hex()} type={iconType} />
+      <IconFilled
+        color={
+          Colors[
+            color === 'warning'
+              ? 'text-icon--status-warning'
+              : 'text-icon--status-neutral'
+          ]
+        }
+        type={iconType}
+      />
       {children}
     </Box>
   );

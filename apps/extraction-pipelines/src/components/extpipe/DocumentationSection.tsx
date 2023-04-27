@@ -22,7 +22,7 @@ import {
   StyledTextArea,
 } from 'components/styled';
 import { MarkdownView } from 'components/markDown/MarkdownView';
-import { A, Button, Flex, Graphic } from '@cognite/cogs.js';
+import { A, Button, Flex } from '@cognite/cogs.js';
 import Section from 'components/section';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
@@ -114,7 +114,12 @@ export const DocumentationSection: FunctionComponent<
         &nbsp;
         {t('ext-pipeline-how-to-edit-info-3')}
       </p>
-      <Button onClick={onEditClick} disabled={!canEdit} icon="Add" type="link">
+      <Button
+        onClick={onEditClick}
+        disabled={!canEdit}
+        icon="Add"
+        type="ghost-accent"
+      >
         {t('add-documentation')}
       </Button>
     </>
@@ -127,7 +132,6 @@ export const DocumentationSection: FunctionComponent<
   const whenNotEditing =
     currentExtpipe.documentation == null ? (
       <DivFlex align="center" direction="column" css="margin: 5rem 5rem">
-        <Graphic type="RuleMonitoring" />
         {canEdit ? infoHowEdit : infoNoDocumentation}
       </DivFlex>
     ) : (

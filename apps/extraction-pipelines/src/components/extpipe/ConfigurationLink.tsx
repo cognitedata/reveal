@@ -21,7 +21,12 @@ export const ConfigurationLink: FunctionComponent<Props> = ({
     { enabled: !!extpipe?.externalId }
   );
   if (isLoading) {
-    return <Icon type="Loader" style={{ color: Colors['greyscale-grey6'] }} />;
+    return (
+      <Icon
+        type="Loader"
+        css={{ color: Colors['decorative--grayscale--600'] }}
+      />
+    );
   }
 
   if (data) {

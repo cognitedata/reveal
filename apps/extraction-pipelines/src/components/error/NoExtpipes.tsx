@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ReactNode } from 'react';
-import { Graphic, Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { LEARNING_AND_RESOURCES_URL } from 'pages/Extpipes/Extpipes';
 import { ExternalLink } from 'components/links/ExternalLink';
@@ -26,7 +26,6 @@ const NoExtpipes: FunctionComponent<Props> = ({ actionButton }) => {
           </p>
           {actionButton}
         </div>
-        <Graphic type="RuleMonitoring" style={{ width: 150 }} />
       </div>
     </NoExtpipesWrapper>
   );

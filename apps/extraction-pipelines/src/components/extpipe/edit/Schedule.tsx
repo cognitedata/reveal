@@ -62,7 +62,9 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     <Flex direction="column">
       <ScheduleSelector
         schedule={values.schedule}
-        onSelectChange={(option) => setFieldValue('schedule', option.value)}
+        onSelectChange={(value) => {
+          setFieldValue('schedule', value as any);
+        }}
       />
       {shouldShowCron && (
         <StyledCronWrapper id="cron-expression">
@@ -90,7 +92,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 };
 
 const StyledCronWrapper = styled.div`
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+  border-top: 0.0625rem solid ${Colors['decorative--grayscale--300']};
   display: flex;
   margin: 1rem 0 0 2rem;
   padding-top: 0.5rem;

@@ -8,7 +8,7 @@ export const StyledTable = styled.div`
     border-collapse: collapse;
     thead {
       tr {
-        border-bottom: ${Colors['greyscale-grey3'].hex()};
+        border-bottom: ${Colors['decorative--grayscale--300']};
         th {
           background-color: white;
           padding: 1rem 0.75rem;
@@ -40,7 +40,8 @@ export const StyledTable = styled.div`
         td {
           padding: 0.75rem;
           &.timestamp-col {
-            border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+            border-bottom: 0.0625rem solid
+              ${Colors['decorative--grayscale--300']};
           }
         }
       }
@@ -70,16 +71,16 @@ export const StyledTableNoRowColor = styled((props) => (
       tr {
         &:hover,
         &:nth-child(2n):hover {
-          background-color: ${Colors['midblue-7'].hex()};
+          background-color: ${Colors['decorative--blue--700']};
           cursor: pointer;
         }
         &:nth-child(2n) {
           background-color: white;
         }
         &.row-active {
-          background-color: ${Colors['midblue-7'].hex()};
+          background-color: ${Colors['decorative--blue--700']};
           &:hover {
-            background-color: ${Colors['greyscale-grey2'].hex()};
+            background-color: ${Colors['decorative--grayscale--200']};
           }
         }
       }

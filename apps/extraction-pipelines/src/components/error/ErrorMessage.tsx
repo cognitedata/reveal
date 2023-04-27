@@ -14,7 +14,7 @@ export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({
   return (
     <span
       css={`
-        color: ${Colors.danger.hex()};
+        color: ${Colors['text-icon--status-critical']};
       `}
       {...rest}
     >

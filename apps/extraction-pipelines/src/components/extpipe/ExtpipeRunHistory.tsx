@@ -78,13 +78,13 @@ const FilterWrapper = styled.div`
   > :nth-child(4) {
     padding-right: 1rem;
     margin-right: 1rem;
-    border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
+    border-right: 1px solid ${Colors['decorative--grayscale--500']};
   }
   .cogs-btn-tertiary {
     height: 100%;
-    background-color: ${Colors.white.hex()};
+    background-color: ${Colors['decorative--grayscale--white']};
     &:hover {
-      border: 1px solid ${Colors.primary.hex()};
+      border: 1px solid ${Colors['text-icon--interactive--default']};
     }
   }
   .cogs-input-container {

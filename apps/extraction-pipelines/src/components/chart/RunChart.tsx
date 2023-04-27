@@ -122,7 +122,7 @@ export const RunChart = ({ externalId }: ChartProps) => {
         'success'
       )}: %{customdata[0]}</span><extra></extra>`,
       marker: {
-        color: `${Colors.success.hex()}`,
+        color: `${Colors['text-icon--status-success']}`,
       },
       showlegend: false,
     },
@@ -134,7 +134,7 @@ export const RunChart = ({ externalId }: ChartProps) => {
       mode: 'markers',
       hoverinfo: 'x',
       marker: {
-        color: `${Colors.danger.hex()}`,
+        color: `${Colors['text-icon--status-critical']}`,
       },
       showlegend: false,
     },
@@ -144,7 +144,7 @@ export const RunChart = ({ externalId }: ChartProps) => {
       name: t('seen'),
       type: 'scatter',
       marker: {
-        color: `${Colors.primary.hex()}`,
+        color: `${Colors['text-icon--interactive--default']}`,
       },
     },
   ];

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Icon } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
 
 export const StyledTitleCard = styled.h2`
@@ -27,13 +27,17 @@ export const CardWrapper = styled.div`
   & > div,
   > a {
     flex: 1;
-    border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-right: 1px solid ${Colors['decorative--grayscale--300']};
     justify-content: space-between;
-    color: ${Colors.black.hex()};
+    color: ${Colors['decorative--grayscale--black']};
     &:last-child {
       border-right: none;
     }
   }
+`;
+
+export const CardNavLinkIcon = styled(Icon).attrs({ type: 'ArrowRight' })`
+  visibility: hidden;
 `;
 
 export const CardInWrapper = styled.div`
@@ -51,8 +55,8 @@ export const CardInWrapper = styled.div`
   .card-value {
     grid-area: value;
   }
-  .cogs-icon-ArrowRight {
-    color: ${Colors.primary.hex()};
+  ${CardNavLinkIcon} {
+    color: ${Colors['text-icon--interactive--default']};
     grid-area: arrow;
     align-self: center;
     margin-right: 1rem;
@@ -61,13 +65,9 @@ export const CardInWrapper = styled.div`
 `;
 
 export const CardNavLink = styled(NavLink)`
-  .cogs-icon-ArrowRight {
-    opacity: 0;
-  }
   :hover {
-    background-color: ${Colors['midblue-7'].hex()};
-    .cogs-icon-ArrowRight {
-      opacity: 1;
+    ${CardNavLinkIcon} {
+      visibility: visible;
     }
   }
 `;

@@ -46,7 +46,7 @@ const BreadcrumbsWrapper = styled.nav`
   padding: 0.875rem ${PAGE_MARGIN};
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
   background-color: white;
   ol {
     margin: 0;
@@ -57,16 +57,16 @@ const BreadcrumbsWrapper = styled.nav`
       + li::before {
         display: inline-block;
         margin: 0 0.1rem 0 0.3rem;
-        color: ${Colors['greyscale-grey6'].hex()};
+        color: ${Colors['decorative--grayscale--600']};
         content: '/\\00a0';
       }
       a {
-        color: ${Colors['greyscale-grey6'].hex()};
+        color: ${Colors['decorative--grayscale--600']};
         &:hover {
           text-decoration: underline;
         }
         &.active {
-          color: ${Colors['greyscale-grey10'].hex()};
+          color: ${Colors['decorative--grayscale--1000']};
         }
       }
     }

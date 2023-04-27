@@ -33,8 +33,6 @@ import { ExtpipeRawTable } from 'model/Extpipe';
 import { User } from 'model/User';
 import { createAddExtpipeInfo } from 'utils/extpipeUtils';
 import { trackUsage } from 'utils/Metrics';
-import { getContainer } from 'utils/utils';
-import { styleScope } from 'styles/styleScope';
 import { createLink } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 export interface AddExtpipeFormInput extends ScheduleFormInput, FieldValues {
@@ -262,12 +260,9 @@ export default function CreateExtpipePage() {
     <RegisterExtpipeLayout>
       <Modal
         visible
-        width={600}
+        size="large"
         closable={false}
-        closeIcon={false}
-        appElement={document.getElementsByClassName(styleScope).item(0)!}
-        getContainer={getContainer}
-        footer={null}
+        hideFooter
         title={t('create-ext-pipeline')}
       >
         <CreateExtpipe />
@@ -287,7 +282,7 @@ const InfoMessage = styled.span`
           &:nth-child(2),
           &:nth-child(3) {
             fill: ${(props: { color?: string }) =>
-              props.color ?? `${Colors.primary.hex()}`};
+              props.color ?? `${Colors['text-icon--interactive--default']}`};
           }
         }
       }

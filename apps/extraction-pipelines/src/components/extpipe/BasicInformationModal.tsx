@@ -4,7 +4,8 @@ import { EditModal } from 'components/modals/EditModal';
 import { Extpipe } from 'model/Extpipe';
 import { useTranslation } from 'common';
 import Field from './fields/Field';
-import { Button, Flex, Input, OptionType, Select } from '@cognite/cogs.js';
+import { Button, Flex, InputExp, OptionType } from '@cognite/cogs.js';
+import { Select } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import { DATASET_LIST_LIMIT } from 'pages/create/DataSetIdInput';
@@ -118,6 +119,8 @@ const BasicInformationModal = ({
     },
     onSubmit: updateBasicInformation,
     validate: handleValidation,
+    validateOnChange: false,
+    validateOnBlur: false,
   });
 
   const { setFieldValue, errors, handleSubmit, values } = formik;
@@ -152,24 +155,32 @@ const BasicInformationModal = ({
       close={onClose}
     >
       <Flex direction="column" gap={16}>
-        <Field title={t('name')}>
-          <Input
-            error={errors.name}
-            fullWidth
-            name="name"
-            onChange={(e) => setFieldValue('name', e.target.value)}
-            placeholder={t('name-placeholder')}
-            value={values.name}
-          />
-        </Field>
-        <Field info={t('description-hint')} title={t('description')}>
-          <Input
-            name="description"
-            onChange={(e) => setFieldValue('description', e.target.value)}
-            placeholder={t('description-placeholder')}
-            value={values.description}
-          />
-        </Field>
+        <InputExp
+          label={{
+            required: false,
+            info: undefined,
+            text: t('name'),
+          }}
+          status={errors.name ? 'critical' : undefined}
+          statusText={errors.name}
+          fullWidth
+          name="name"
+          onChange={(e) => setFieldValue('name', e.target.value)}
+          placeholder={t('name-placeholder')}
+          value={values.name}
+        />
+        <InputExp
+          label={{
+            info: t('description-hint'),
+            required: false,
+            text: t('description'),
+          }}
+          fullWidth
+          name="description"
+          onChange={(e) => setFieldValue('description', e.target.value)}
+          placeholder={t('description-placeholder')}
+          value={values.description}
+        />
         <Field info={t('data-set-id-hint')} title={t('data-set')}>
           <Select
             disabled={status !== 'success'}
@@ -177,27 +188,37 @@ const BasicInformationModal = ({
               setFieldValue('dataSetId', option.value)
             }
             options={dataSetOptions}
+            optionFilterProp="label"
+            showSearch
             value={selectedOption}
           />
         </Field>
-        <Field info={t('source-hint')} title={t('source')}>
-          <Input
-            name="source"
-            onChange={(e) => setFieldValue('source', e.target.value)}
-            placeholder={t('source-placeholder')}
-            value={values.source}
-          />
-        </Field>
-        <Field info={t('external-id-hint')} isRequired title={t('external-id')}>
-          <Input
-            error={errors.externalId}
-            fullWidth
-            name="externalId"
-            onChange={(e) => setFieldValue('externalId', e.target.value)}
-            placeholder={t('external-id-placeholder')}
-            value={values.externalId}
-          />
-        </Field>
+        <InputExp
+          label={{
+            info: t('source-hint'),
+            required: false,
+            text: t('source'),
+          }}
+          fullWidth
+          name="source"
+          onChange={(e) => setFieldValue('source', e.target.value)}
+          placeholder={t('source-placeholder')}
+          value={values.source}
+        />
+        <InputExp
+          label={{
+            info: t('external-id-hint'),
+            required: true,
+            text: t('external-id'),
+          }}
+          status={errors.externalId ? 'critical' : undefined}
+          statusText={errors.externalId}
+          fullWidth
+          name="externalId"
+          onChange={(e) => setFieldValue('externalId', e.target.value)}
+          placeholder={t('external-id-placeholder')}
+          value={values.externalId}
+        />
         <Field info={t('schedule-hint')} title={t('schedule')}>
           <Schedule
             errors={errors}
