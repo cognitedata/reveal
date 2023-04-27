@@ -7,7 +7,9 @@ import DateRangePrompt from '../../components/DateRangePrompt';
 import { TooltipToolBarContainer } from '../../TooltipContainer';
 import { IndustryCanvasContainerConfig } from '../../types';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
+import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
+import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 
 const navigateToPath = (path: string) => {
   const link = createLink(path);
@@ -18,14 +20,28 @@ type ContainerTooltipProps = {
   container: IndustryCanvasContainerConfig;
   onUpdateContainer: (containerConfig: IndustryCanvasContainerConfig) => void;
   onRemoveContainer: () => void;
+  onAddSummarizationSticky: (
+    container: IndustryCanvasContainerConfig,
+    text: string,
+    isMultiPageDocument: boolean
+  ) => void;
   shamefulNumPages: number | undefined;
+  isOcrDataLoading: boolean;
+  ocrData: OCRAnnotationPageResult[] | undefined;
+  isLoadingSummary: boolean;
+  setIsLoadingSummary: (isLoading: boolean) => void;
 };
 
 const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   container,
   onUpdateContainer,
   onRemoveContainer,
+  onAddSummarizationSticky,
   shamefulNumPages,
+  isOcrDataLoading,
+  ocrData,
+  isLoadingSummary,
+  setIsLoadingSummary,
 }) => {
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
 
@@ -213,6 +229,18 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     container.type === ContainerType.IMAGE ||
     container.type === ContainerType.TEXT
   ) {
+    const ocrText = getContainerText(container, ocrData);
+    const onSummarizationClick = async () => {
+      if (onAddSummarizationSticky) {
+        setIsLoadingSummary(true);
+        await onAddSummarizationSticky(
+          container,
+          ocrText,
+          shamefulNumPages !== undefined && shamefulNumPages > 1
+        );
+        setIsLoadingSummary(false);
+      }
+    };
     return (
       <TooltipToolBarContainer>
         {isInEditLabelMode && (
@@ -248,6 +276,25 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   }
                 />
               )}
+
+            <Tooltip
+              content={
+                ocrText.length === 0
+                  ? `Summarization is unavailable for this ${container.type} (Experimental)`
+                  : `Summarize the ${container.type} (Experimental)`
+              }
+            >
+              <Button
+                icon={
+                  isOcrDataLoading || isLoadingSummary
+                    ? 'Loader'
+                    : 'Documentation'
+                }
+                disabled={isOcrDataLoading || !ocrData || ocrData.length === 0}
+                onClick={onSummarizationClick}
+                type="ghost"
+              />
+            </Tooltip>
 
             <Tooltip content="Open in Data Explorer">
               <Button

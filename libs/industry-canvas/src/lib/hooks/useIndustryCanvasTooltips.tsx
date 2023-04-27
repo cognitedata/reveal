@@ -14,6 +14,11 @@ export type UseTooltipsParams = {
   selectedContainerAnnotation: ExtendedAnnotation | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
+  onAddSummarizationSticky: (
+    container: IndustryCanvasContainerConfig,
+    text: string,
+    isMultiPageDocument: boolean
+  ) => void;
   updateContainerById: UseManagedStateReturnType['updateContainerById'];
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
@@ -25,6 +30,7 @@ const useIndustryCanvasTooltips = ({
   selectedContainerAnnotation,
   selectedCanvasAnnotation,
   onAddContainerReferences,
+  onAddSummarizationSticky,
   onDeleteSelectedCanvasAnnotation,
   clickedContainer,
   updateContainerById,
@@ -47,6 +53,7 @@ const useIndustryCanvasTooltips = ({
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     clickedContainer,
+    onAddSummarizationSticky,
     updateContainerById,
     removeContainerById,
   });

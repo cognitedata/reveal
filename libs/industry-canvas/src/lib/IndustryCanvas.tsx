@@ -17,8 +17,10 @@ import { ZOOM_TO_FIT_MARGIN } from './constants';
 import { isDevelopment } from '@cognite/cdf-utilities';
 import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
 import { useSDK } from '@cognite/sdk-provider';
+import getContainerSummarizationSticky from './utils/getSummarizationSticky';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
+import summarizeText from './utils/summarizeText';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -133,12 +135,36 @@ export const IndustryCanvas = ({
     });
   }, [selectedCanvasAnnotation, onDeleteRequest, setInteractionState]);
 
+  const onAddSummarizationSticky = async (
+    containerConfig: IndustryCanvasContainerConfig,
+    text: string,
+    isMultiPageDocument: boolean
+  ) => {
+    const MAX_WORDS_IN_GENERATED_SUMMARY = 80;
+    const summary = await summarizeText(
+      sdk,
+      text,
+      MAX_WORDS_IN_GENERATED_SUMMARY
+    );
+    onUpdateRequest({
+      annotations: [
+        getContainerSummarizationSticky(
+          containerConfig,
+          summary,
+          isMultiPageDocument
+        ),
+      ],
+      containers: [],
+    });
+  };
+
   const tooltips = useIndustryCanvasTooltips({
     clickedContainer: selectedContainer,
     containerAnnotations,
     selectedContainerAnnotation,
     selectedCanvasAnnotation,
     onAddContainerReferences,
+    onAddSummarizationSticky,
     onDeleteSelectedCanvasAnnotation,
     onUpdateAnnotationStyleByType,
     updateContainerById,
