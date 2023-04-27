@@ -74,7 +74,7 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const { firstCompleted, fullResolutionCompleted } = revision.loadTextures(signal);
+    const { firstCompleted, fullResolutionCompleted, annotationsCompleted } = revision.loadTextures(signal);
 
     this._inProgressDownloads.push({
       entity,
@@ -99,6 +99,8 @@ export class Image360LoadingCache {
       .finally(() => {
         removeDownload(this._lockedDownload, this._inProgressDownloads);
       });
+
+    await annotationsCompleted;
 
     const revisionTextureReady = await firstCompleted
       .catch(e => {
