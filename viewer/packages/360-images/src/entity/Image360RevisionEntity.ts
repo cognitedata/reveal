@@ -50,7 +50,11 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
-    for (const annotation of this.annotations) {
+    if (this._annotations === undefined) {
+      return undefined;
+    }
+
+    for (const annotation of this._annotations) {
       const intersections = raycaster.intersectObject(annotation.getObject());
       if (intersections.length > 0) {
         return annotation;
@@ -74,6 +78,7 @@ export class Image360RevisionEntity implements Image360Revision {
   public loadTextures(abortSignal?: AbortSignal): {
     firstCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
+    annotationsCompleted: Promise<void>;
   } {
     const lowResolutionFaces = this._imageProvider
       .getLowResolution360ImageFiles(this._image360Descriptor.faceDescriptors, abortSignal)
@@ -87,7 +92,7 @@ export class Image360RevisionEntity implements Image360Revision {
         return { textures: this._image360VisualzationBox.loadFaceTextures(faces), isLowResolution: false };
       });
 
-    this.loadAnnotations();
+    const annotationPromise = this.loadAnnotations();
 
     const firstCompleted = Promise.any([lowResolutionFaces, fullResolutionFaces]).then(
       async ({ textures, isLowResolution }) => {
@@ -99,16 +104,20 @@ export class Image360RevisionEntity implements Image360Revision {
       }
     );
 
-    return { firstCompleted, fullResolutionCompleted: awaitFullResolution() };
+    return {
+      firstCompleted,
+      fullResolutionCompleted: awaitFullResolution(),
+      annotationsCompleted: annotationPromise.then(() => {})
+    };
 
     async function awaitFullResolution(): Promise<void> {
       await Promise.all([firstCompleted, fullResolutionFaces]);
     }
   }
 
-  private async loadAnnotations(): Promise<void> {
+  private async loadAnnotations(): Promise<ImageAnnotationObject[]> {
     if (this._annotations !== undefined) {
-      return;
+      return this._annotations;
     }
 
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
@@ -120,8 +129,10 @@ export class Image360RevisionEntity implements Image360Revision {
       })
       .filter(isDefined);
 
-    this._annotations = annotationObjects;
     this._image360VisualzationBox.setAnnotations(annotationObjects);
+    this._annotations = annotationObjects;
+
+    return annotationObjects;
   }
 
   /**
