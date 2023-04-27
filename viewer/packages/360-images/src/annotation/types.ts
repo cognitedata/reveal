@@ -9,7 +9,7 @@ import { Color } from 'three';
  */
 export type Image360AnnotationAppearance = {
   /**
-   * The color of the annotation. Default: THREE.Color(1, 1, 0)
+   * The color of the annotation. Default: Random, based on annotation label
    */
   color?: Color;
 
