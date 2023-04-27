@@ -1,4 +1,4 @@
-import { Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Loader, Tooltip as CogsTooltip, Modal } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 import { ConfigProvider } from 'antd';
@@ -15,6 +15,11 @@ CogsTooltip.defaultProps = {
   // @ts-ignore
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,
+};
+
+Modal.defaultProps = {
+  getContainer,
+  ...Modal.defaultProps,
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
