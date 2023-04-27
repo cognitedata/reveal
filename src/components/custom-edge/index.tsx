@@ -1,4 +1,5 @@
 import { Flex } from '@cognite/cogs.js';
+import { FOREIGN_OBJECT_HEIGHT, FOREIGN_OBJECT_WIDTH } from 'common';
 import AddNodeButton from 'components/edge-hover-buttons/AddNodeButton';
 import DeleteEdgeButton from 'components/edge-hover-buttons/DeleteEdgeButton';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
@@ -30,8 +31,8 @@ export const CustomEdge = ({
   const { changeEdges } = useWorkflowBuilderContext();
 
   const midpoint = {
-    x: (sourceX + targetX) / 2,
-    y: (sourceY + targetY) / 2,
+    x: (sourceX + targetX) / 2 - FOREIGN_OBJECT_WIDTH / 2,
+    y: (sourceY + targetY) / 2 - FOREIGN_OBJECT_HEIGHT / 2,
   };
 
   const deleteEdge = () => {
@@ -61,10 +62,10 @@ export const CustomEdge = ({
           className="node"
           x={midpoint.x}
           y={midpoint.y}
-          width="100"
-          height="100"
+          width={FOREIGN_OBJECT_WIDTH}
+          height={FOREIGN_OBJECT_HEIGHT}
         >
-          <Flex gap={10}>
+          <StyledFlex gap={10}>
             <AddNodeButton
               className="edge-button"
               xPos={midpoint.x}
@@ -76,12 +77,19 @@ export const CustomEdge = ({
               setVisibleAddButton={setVisibleAddButton}
             />
             <DeleteEdgeButton className="edge-button" onDelete={deleteEdge} />
-          </Flex>
+          </StyledFlex>
         </foreignObject>
       </EdgeContainer>
     </>
   );
 };
+
+const StyledFlex = styled(Flex)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 const EdgeContainer = styled.g<{ $visibleAddButton: boolean }>`
   .edge-button {
