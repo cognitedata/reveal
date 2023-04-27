@@ -46,7 +46,7 @@ export const CustomEdge = ({
       <EdgeContainer $visibleAddButton={visibleAddButton}>
         <path
           id={id}
-          style={{ ...style, stroke: 'transparent', strokeWidth: 1 }}
+          style={{ ...style, stroke: 'transparent', strokeWidth: 10 }}
           className="react-flow__edge-path"
           d={edgePath}
           markerEnd={markerEnd}
