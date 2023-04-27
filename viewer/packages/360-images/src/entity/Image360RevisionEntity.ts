@@ -48,7 +48,11 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
-    for (const annotation of this.annotations) {
+    if (this._annotations === undefined) {
+      return undefined;
+    }
+
+    for (const annotation of this._annotations) {
       const intersections = raycaster.intersectObject(annotation.getObject());
       if (intersections.length > 0) {
         return annotation;
@@ -71,15 +75,20 @@ export class Image360RevisionEntity implements Image360Revision {
   public loadTextures(abortSignal?: AbortSignal): {
     lowResolutionCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
+    annotationsCompleted: Promise<void>;
   } {
     const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
     const fullResolutionCompleted = this.loadFullTextures(abortSignal);
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
-    this.loadAnnotations();
+    const annotationsCompleted = this.loadAnnotations();
 
-    return { lowResolutionCompleted, fullResolutionCompleted };
+    return { lowResolutionCompleted, fullResolutionCompleted, annotationsCompleted: awaitAnnotationCompleted() };
+
+    async function awaitAnnotationCompleted(): Promise<void> {
+      await annotationsCompleted;
+    }
   }
 
   private async loadPreviewTextures(abortSignal?: AbortSignal): Promise<void> {
@@ -108,9 +117,9 @@ export class Image360RevisionEntity implements Image360Revision {
     this._textures = textures;
   }
 
-  private async loadAnnotations(): Promise<void> {
+  private async loadAnnotations(): Promise<ImageAnnotationObject[]> {
     if (this._annotations !== undefined) {
-      return;
+      return this._annotations;
     }
 
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
@@ -122,8 +131,10 @@ export class Image360RevisionEntity implements Image360Revision {
       })
       .filter(isDefined);
 
-    this._annotations = annotationObjects;
     this._image360VisualzationBox.setAnnotations(annotationObjects);
+    this._annotations = annotationObjects;
+
+    return annotationObjects;
   }
 
   /**

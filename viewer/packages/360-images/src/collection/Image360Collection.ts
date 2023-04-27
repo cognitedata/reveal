@@ -10,6 +10,8 @@ import {
   Image360ExitedDelegate
 } from '../types';
 
+import { Image360AnnotationAppearance } from '../annotation/types';
+
 /**
  * A wrapper that represents a set of 360 images.
  */
@@ -61,4 +63,9 @@ export interface Image360Collection {
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
   off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
   off(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
+
+  /**
+   * Assign a default style which affects all annotations
+   */
+  setDefaultStyle(appearance: Image360AnnotationAppearance): void;
 }

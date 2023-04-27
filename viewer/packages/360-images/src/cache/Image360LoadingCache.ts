@@ -71,7 +71,7 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const { lowResolutionCompleted, fullResolutionCompleted } = revision.loadTextures(signal);
+    const { lowResolutionCompleted, fullResolutionCompleted, annotationsCompleted } = revision.loadTextures(signal);
 
     const anyCompleted = Promise.any([lowResolutionCompleted, fullResolutionCompleted]);
     const allCompleted = this.cacheWhenAllComplete(revision, entity, lowResolutionCompleted, fullResolutionCompleted);
@@ -85,6 +85,7 @@ export class Image360LoadingCache {
     });
 
     await anyCompleted;
+    await annotationsCompleted;
   }
 
   public async purge(entity: Image360Entity): Promise<void> {

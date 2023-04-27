@@ -11,7 +11,8 @@ import {
   Image360CollectionFactory,
   Image360Facade,
   Image360,
-  Image360RevisionEntity
+  Image360RevisionEntity,
+  DefaultImage360Collection
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -38,6 +39,7 @@ export class Image360ApiHelper {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
     revisionSelectedForEntry?: Image360RevisionEntity;
+    enteredCollection?: DefaultImage360Collection;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -220,11 +222,15 @@ export class Image360ApiHelper {
     this.set360CameraManager();
 
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
+    this._interactionState.enteredCollection = imageCollection;
+
     lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
     image360Entity.icon.setVisibility(false);
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
+
+    revisionToEnter.annotations.forEach(annotation => annotation.setDefaultStyle(imageCollection.defaultStyle));
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
@@ -242,6 +248,7 @@ export class Image360ApiHelper {
           this._image360Navigation.moveTo(position, transitionDuration),
           this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
         ]);
+        image360Entity.image360Visualization.setAnnotationsVisibility(true);
         MetricsLogger.trackEvent('360ImageTransitioned', {});
       }
       this._transitionInProgress = false;
@@ -275,11 +282,14 @@ export class Image360ApiHelper {
     setPreTransitionState();
 
     const currentFromOpacity = fromVisualizationCube.opacity;
+
+    from360Entity.image360Visualization.setAnnotationsVisibility(false);
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
       this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
       this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
+    to360Entity.image360Visualization.setAnnotationsVisibility(true);
 
     restorePostTransitionState(currentFromOpacity);
 
@@ -375,9 +385,11 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
       imageCollection.events.image360Exited.fire();
 
+      this._interactionState.currentImage360Entered.image360Visualization.setAnnotationsVisibility(false);
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
+      this._interactionState.enteredCollection = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
@@ -469,6 +481,7 @@ export class Image360ApiHelper {
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;
+      lastEntered.image360Visualization.setAnnotationsVisibility(false);
       await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
