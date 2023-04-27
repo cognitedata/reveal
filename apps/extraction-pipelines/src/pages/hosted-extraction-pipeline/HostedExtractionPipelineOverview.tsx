@@ -24,10 +24,7 @@ export const HostedExtractionPipelineOverview = ({
 }: HostedExtractionPipelineOverviewProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { data: logs } = useMQTTJobLogs(
-    source.externalId,
-    source.jobs.map(({ externalId }) => externalId) // TODO: user source externalId once we have source filter on API
-  );
+  const { data: logs } = useMQTTJobLogs(source.externalId);
 
   const errorCountInLast30Days = getErrorCountInLast30Days(logs);
 

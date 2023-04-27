@@ -554,38 +554,33 @@ export type ReadMQTTJobLog = {
   type: MQTTJobLogType;
 };
 
-const getMQTTJobLogsQueryKey = (sourceExternalId: string) => [
+const getMQTTJobLogsQueryKey = (sourceExternalId?: string) => [
   'mqtt',
   'jobs',
   'logs',
   'list',
-  sourceExternalId,
+  ...(sourceExternalId ? [sourceExternalId] : []),
 ];
 
-const getMQTTJobLogs = (sdk: CogniteClient) => {
+const getMQTTJobLogs = (sdk: CogniteClient, sourceExternalId?: string) => {
   return sdk
     .get<{ items: ReadMQTTJobLog[] }>(
       `/api/v1/projects/${getProject()}/pluto/jobs/logs`,
       {
         headers: { 'cdf-version': 'alpha' },
+        params: {
+          source: sourceExternalId,
+        },
       }
     )
     .then((r) => r.data.items);
 };
 
-export const useMQTTJobLogs = (
-  sourceExternalId: string,
-  jobExternalIds: string[]
-) => {
+export const useMQTTJobLogs = (sourceExternalId?: string) => {
   const sdk = useSDK();
 
   return useQuery(getMQTTJobLogsQueryKey(sourceExternalId), async () => {
-    const logs = await getMQTTJobLogs(sdk);
-
-    // TODO: use source filter on backend once it is ready
-    return logs.filter(({ jobExternalId }) =>
-      jobExternalIds.includes(jobExternalId)
-    );
+    return getMQTTJobLogs(sdk, sourceExternalId);
   });
 };
 
