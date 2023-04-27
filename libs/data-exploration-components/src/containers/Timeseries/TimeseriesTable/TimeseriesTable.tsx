@@ -67,7 +67,6 @@ export const TimeseriesTable = ({
         return (
           <TimeseriesChart
             timeseriesId={timeseries.id}
-            isString={timeseries.isString}
             variant="small"
             dateRange={dateRange}
             numberOfPoints={100}

@@ -4,7 +4,6 @@ export interface TimeseriesChartProps {
   timeseriesId: number;
   variant?: Variant;
   numberOfPoints?: number;
-  isString?: boolean;
   quickTimePeriodOptions?: TimePeriod[];
   dateRange?: DateRange;
   height?: number;

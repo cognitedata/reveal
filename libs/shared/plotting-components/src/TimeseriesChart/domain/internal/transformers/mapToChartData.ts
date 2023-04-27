@@ -3,9 +3,15 @@ import isUndefined from 'lodash/isUndefined';
 import { Data, ValueType } from '../../../../LineChart';
 
 import { TimeseriesDatapoint } from '../../service/types';
+import { TimeseriesChartMetadata } from '../types';
 import { getDatapointValue } from '../utils';
 
-export const mapToChartData = (datapoints: TimeseriesDatapoint[]): Data => {
+interface Props {
+  datapoints: TimeseriesDatapoint[];
+  metadata: TimeseriesChartMetadata;
+}
+
+export const mapToChartData = ({ datapoints, metadata }: Props): Data => {
   let x: ValueType[] = [];
   let y: ValueType[] = [];
   let customData: TimeseriesDatapoint[] = [];
@@ -28,5 +34,6 @@ export const mapToChartData = (datapoints: TimeseriesDatapoint[]): Data => {
     x,
     y,
     customData,
+    interpolation: metadata.isStep ? 'step' : undefined,
   };
 };

@@ -27,6 +27,7 @@ export interface Data {
   name?: string;
   color?: string;
   customData?: CustomDataType | CustomDataType[];
+  interpolation?: Interpolation;
 }
 
 export interface Layout {
@@ -84,6 +85,8 @@ export interface HoverLineData {
 }
 
 export type ValueType = Datum;
+
+export type Interpolation = 'linear' | 'spline' | 'step';
 
 export type CustomDataType = unknown;
 

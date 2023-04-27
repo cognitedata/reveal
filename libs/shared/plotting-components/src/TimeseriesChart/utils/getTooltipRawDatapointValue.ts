@@ -1,8 +1,10 @@
 import isNumber from 'lodash/isNumber';
 
+import { getTooltipNumericValue } from './getTooltipNumericValue';
+
 export const getTooltipRawDatapointValue = (value?: string | number) => {
   if (isNumber(value)) {
-    return value.toFixed(3);
+    return getTooltipNumericValue(value);
   }
 
   return value;
