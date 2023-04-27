@@ -87,12 +87,12 @@ export class Image360RevisionEntity implements Image360Revision {
       this._image360Descriptor.faceDescriptors,
       abortSignal
     );
-    const textures = await this._image360VisualzationBox.loadFaceTextures(previewImageFiles);
+    const previewTextures = await this._image360VisualzationBox.loadFaceTextures(previewImageFiles);
     if (this._textures.length === 6) {
-      textures.forEach(texture => texture.texture.dispose());
+      previewTextures.forEach(texture => texture.texture.dispose());
       return;
     }
-    this._textures = textures;
+    this._textures = previewTextures;
   }
 
   private async loadFullTextures(abortSignal?: AbortSignal): Promise<void> {
