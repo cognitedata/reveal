@@ -1,15 +1,25 @@
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
+import { mapFiltersToDocumentSearchFilters } from '../../internal';
 import { useDocumentsMetadataKeysAggregateQuery } from './useDocumentsMetadataKeysAggregateQuery';
 
 interface Props {
   query?: string;
   enabled?: boolean;
+  filter?: InternalDocumentFilter;
 }
 
-export const useDocumentsMetadataKeys = ({ query, enabled }: Props = {}) => {
+export const useDocumentsMetadataKeys = ({
+  query,
+  filter,
+  enabled,
+}: Props = {}) => {
   const { data, ...rest } = useDocumentsMetadataKeysAggregateQuery({
     query,
-    options: { enabled },
+    filter: filter ? mapFiltersToDocumentSearchFilters(filter) : undefined,
+    options: {
+      enabled,
+    },
   });
 
   const metadataKeys = useMemo(() => {
