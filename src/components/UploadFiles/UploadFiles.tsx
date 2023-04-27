@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { notification, Popconfirm, Upload } from 'antd';
+import { Popconfirm, Upload } from 'antd';
 import List from 'antd/lib/list';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Icon, toast } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import isString from 'lodash/isString';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -38,12 +38,11 @@ const updateFileWithDataSet = (fileId: number, dataSetId: number) => {
       },
     })
     .catch((error) => {
-      notification.error({
-        message:
-          error.message ||
+      toast.error(
+        error.message ||
           error.errors.map((err: any) => err.message) ||
-          'Something went wrong...',
-      });
+          'Something went wrong...'
+      );
     });
 };
 
@@ -131,13 +130,9 @@ const UploadFiles = ({
       }
       if (status === 'done') {
         // setFileList([{ name: file.name, id: info.file. }, ...fileList]);
-        notification.success({
-          message: t('upload-file-msg-success', { name: info.file.name }),
-        });
+        toast.success(t('upload-file-msg-success', { name: info.file.name }));
       } else if (status === 'error') {
-        notification.error({
-          message: t('upload-file-msg-failed', { name: info.file.name }),
-        });
+        toast.error(t('upload-file-msg-failed', { name: info.file.name }));
       }
     },
     customRequest: ({ file, onSuccess, onError }) => {
@@ -163,14 +158,12 @@ const UploadFiles = ({
               const { status } = xhr;
               if (status >= 200 && status < 300) {
                 setUploadError(null);
-                notification.success({
-                  message: t('upload-file-msg-uploaded'),
-                });
+                toast.success(t('upload-file-msg-uploaded'));
                 setIsUploading(false);
                 if (onSuccess) onSuccess('Ok', xhr);
                 setFileList([{ name: fileName, id: fileId }, ...fileList]);
               } else {
-                notification.error({ message: t('something-went-wrong') });
+                toast.error(t('something-went-wrong'));
               }
             };
             xhr.setRequestHeader('Content-Type', file.type);

@@ -5,8 +5,6 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import copy from 'copy-to-clipboard';
 
-import { notification } from 'antd';
-
 import {
   Button,
   Flex,
@@ -16,6 +14,7 @@ import {
   Tooltip,
   Menu,
   Tabs,
+  toast,
 } from '@cognite/cogs.js';
 
 import DataSetEditor from 'pages/DataSetEditor';
@@ -30,7 +29,6 @@ import { useTranslation } from 'common/i18n';
 import {
   DetailsPane,
   Divider,
-  getContainer,
   getGovernedStatus,
   trackUsage,
   DATASET_HELP_DOC,
@@ -99,9 +97,7 @@ const DataSetDetails = (): JSX.Element => {
     trackUsage({ e: 'data.sets.detail.copy.id.click', dataSetId: copiedText });
     if (copiedText) {
       copy(copiedText.toString());
-      notification.success({
-        message: t('copy-notification'),
-      });
+      toast.success(t('copy-notification'));
     }
   };
 
@@ -113,7 +109,7 @@ const DataSetDetails = (): JSX.Element => {
         onClick={() => {
           setEditDrawerVisible(false);
           setChangesSaved(true);
-          notification.close('navigateAway');
+          toast.dismiss('navigateAway');
         }}
       >
         {t('discard-changes')}
@@ -121,23 +117,37 @@ const DataSetDetails = (): JSX.Element => {
     </div>
   );
 
+  const ButtonCloseDiscardChangesToast = ({
+    closeToast,
+  }: {
+    closeToast: () => void;
+  }) => (
+    <StyledToastCloseButton
+      aria-label="Keep editing"
+      onClick={closeToast}
+      size="small"
+      icon="Close"
+      type="ghost"
+    />
+  );
+
   const onEditDrawerClose = () => {
     if (changesSaved) {
       setEditDrawerVisible(false);
     } else {
-      notification.warn({
-        message: 'Warning',
-        description: (
-          <div>
-            {t(
-              'you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away'
-            )}
-            {discardChangesButton}
-          </div>
-        ),
-        key: 'navigateAway',
-        getContainer,
-      });
+      toast.warning(
+        <div>
+          <h3>Warning</h3>
+          {t('you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away')}
+          {discardChangesButton}
+        </div>,
+        {
+          autoClose: false,
+          closeButton: ButtonCloseDiscardChangesToast,
+          closeOnClick: false,
+          toastId: 'navigateAway',
+        }
+      );
     }
   };
 
@@ -439,6 +449,24 @@ const Wrapper = styled.div`
   }
   .ant-tabs-nav {
     margin: 0 !important;
+  }
+`;
+
+/* 
+Using two unfortunate hacks here to override the Toast's styles which set color on all
+icons inside the toast and make our close icon orange:
+1. && makes the styles more specific
+2. selecting .cogs-icon class sets the proper color on the close icon
+
+Fortunately there's a new Cogs Toast component in the works
+*/
+const StyledToastCloseButton = styled(Button)`
+  align-self: flex-start;
+
+  && {
+    .cogs-icon {
+      color: var(--cogs-text-icon--strong);
+    }
   }
 `;
 

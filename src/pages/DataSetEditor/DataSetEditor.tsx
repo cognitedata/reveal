@@ -5,7 +5,6 @@ import { Group } from '@cognite/sdk';
 import DataSetCreation from 'components/DataSetCreation';
 import useDebounce from 'hooks/useDebounce';
 
-import { notification } from 'antd';
 import {
   useCreateDataSetMutation,
   useDataSetOwners,
@@ -15,6 +14,7 @@ import {
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
+import { toast } from '@cognite/cogs.js';
 
 interface DataSetEditorProps {
   visible: boolean;
@@ -56,7 +56,7 @@ const DataSetEditor = ({
 
   useEffect(() => {
     if (datasetCreated) {
-      notification.success({ message: t('data-set-created') });
+      toast.success(t('data-set-created'));
     }
   }, [datasetCreated, t]);
 

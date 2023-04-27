@@ -14,13 +14,12 @@ import {
 import RawSelector from 'components/RawSelector';
 import { RawTable } from 'utils/types';
 
-import { notification } from 'antd';
 import { useRawList } from 'actions';
 import { useQueryClient } from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';
-import { Modal, Input, Icon, Chip, Flex } from '@cognite/cogs.js';
+import { Modal, Input, Icon, Chip, Flex, toast } from '@cognite/cogs.js';
 import { Col, Row } from 'utils';
 
 interface RawSectionProps {
@@ -65,16 +64,14 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
           setNameField('');
           setCreateModal('');
           setCreateVisible(false);
-          notification.success({
-            message: t('raw-section-database-created', { name: res[0].name }),
-          });
+          toast.success(
+            t('raw-section-database-created', { name: res[0].name })
+          );
           setSelectedDb(nameField);
           invalidateList();
         })
         .catch((err) => {
-          notification.error({
-            message: err.message || t('raw-section-database-created-error'),
-          });
+          toast.error(err.message || t('raw-section-database-created-error'));
         });
     } else {
       sdk.raw
@@ -87,15 +84,11 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
             ...selectedTables,
             { databaseName: selectedDb, tableName: nameField },
           ]);
-          notification.success({
-            message: t('raw-section-table-created', { name: res[0].name }),
-          });
+          toast.success(t('raw-section-table-created', { name: res[0].name }));
           invalidateList();
         })
         .catch((err) => {
-          notification.error({
-            message: err.message || t('raw-section-table-created-error'),
-          });
+          toast.error(err.message || t('raw-section-table-created-error'));
         });
     }
   };

@@ -1,6 +1,4 @@
-import { notification } from 'antd';
-import Paragraph from 'antd/lib/typography/Paragraph';
-import { getContainer } from 'utils/shared';
+import { toast } from '@cognite/cogs.js';
 
 interface ApiError {
   duplicated: [];
@@ -16,9 +14,7 @@ interface ApiError {
 }
 
 interface ErrorNotificationProps extends ApiError {
-  message?: string;
   description?: string;
-  duration?: number;
 }
 
 // TODO CDFUX-1573 - figure out translation
@@ -41,10 +37,6 @@ const generateStatusMessage = (errorCode: number): string | null => {
   }
 };
 
-const generateErrorTitle = (errorMsg?: string) => (
-  <Paragraph ellipsis={{ rows: 1, expandable: true }}>{errorMsg}</Paragraph>
-);
-
 const generateErrorDescription = (
   error: ApiError,
   customDescription?: string
@@ -56,27 +48,23 @@ const generateErrorDescription = (
 
   const description =
     customDescription ?? httpError ?? errorMsgs ?? genericError;
-  return (
-    <Paragraph ellipsis={{ rows: 3, expandable: true }}>
-      <strong>{description}</strong>
-    </Paragraph>
-  );
+  return <strong>{description}</strong>;
 };
 
 export const handleError = (props: ErrorNotificationProps): void => {
-  const { description, duration = 6 } = props;
+  const { description } = props;
   const errorObject: ApiError = { ...props };
 
   // TODO CDFUX-1573 - figure out translation
-  const errorTitle = generateErrorTitle('Something went wrong');
+  const errorTitle = 'Something went wrong';
   const errorDescription = generateErrorDescription(errorObject, description);
 
-  return notification.error({
-    message: errorTitle,
-    description: errorDescription,
-    duration,
-    getContainer,
-  });
+  toast.error(
+    <div>
+      <h3>{errorTitle}</h3>
+      {errorDescription}
+    </div>
+  );
 };
 
 export default handleError;
