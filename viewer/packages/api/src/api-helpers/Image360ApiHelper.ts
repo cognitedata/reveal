@@ -197,18 +197,21 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
+    if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
+      return;
+    }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
-    const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
-      return e;
-    });
-
-    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
+    try {
+      await this._image360Facade.preload(image360Entity, revisionToEnter, true);
+    } catch (error) {
+      if (this._interactionState.revisionSelectedForEntry === revisionToEnter) {
+        this._interactionState.revisionSelectedForEntry = undefined;
+      }
       return;
     }
 
-    if (fatalDownloadError) {
-      this._interactionState.revisionSelectedForEntry = undefined;
+    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
       return;
     }
 
