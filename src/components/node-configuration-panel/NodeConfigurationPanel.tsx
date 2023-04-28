@@ -1,12 +1,9 @@
 import { Flex, InputExp, Body, IconType, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
-import {
-  CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
-  useTranslation,
-} from 'common';
+import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useTransformationList } from 'hooks/transformation';
 import { collectPages } from 'utils';
@@ -33,28 +30,24 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   }[] = [
     {
       value: 'Transformation',
-      label: 'Transformation',
+      label: t('transformation'),
       icon: 'Code',
     },
     {
       value: 'Function',
-      label: 'Function',
+      label: t('function'),
       icon: 'Function',
     },
     {
       value: 'Webhook',
-      label: 'Webhook',
+      label: t('webhook'),
       icon: 'FrameTool',
     },
   ];
 
   return (
-    // <React.Fragment>
-    // {/* <Button type="primary" onClick={showDrawer}>
-    //   Open
-    // </Button> */}
     <StyledDrawer
-      title="Configuration"
+      title={t('node-configuration-panel-title')}
       placement="right"
       getContainer={false}
       onClose={onClose}
@@ -76,7 +69,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     >
       <Flex direction="column">
         <Body level={2} strong>
-          {'Component'}
+          {t('node-configuration-panel-component')}
         </Body>
         <Select defaultValue="Transformation" style={{ width: 326 }}>
           {nodeOptions.map(({ icon, label, value }) => (
@@ -91,10 +84,10 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       </Flex>
       <Flex direction="column">
         <Body level={2} strong>
-          {'Item'}
+          {t('node-configuration-panel-item')}
         </Body>
         <Select
-          placeholder="Choose existing or create new"
+          placeholder={t('node-configuration-panel-item-placeholder')}
           style={{ width: 326 }}
         >
           {transformationList
@@ -107,13 +100,12 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         </Select>
       </Flex>
       <InputExp
-        label="Label"
-        placeholder="Enter a descriptive label to display"
+        label={t('node-configuration-panel-label')}
+        placeholder={t('node-configuration-panel-label-placeholder')}
         variant="solid"
         style={{ width: 326 }}
       />
     </StyledDrawer>
-    // </React.Fragment>
   );
 };
 
