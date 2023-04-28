@@ -8,7 +8,7 @@ apps/tenant-selector @cognitedata/frontend-tenant-selector-team
 apps/discover @cognitedata/discover
 apps/scarlet @cognitedata/phillips66-team
 # The Simulator Configuration app is owned by the Simulator Integration team
-apps/simconfig @cognitedata/simulator-integration
+apps/simconfig @cognitedata/deg-code-owners
 
 packages/auth-utils                  @cognitedata/frontend-auth-team
 packages/intercom-helper             @cognitedata/frontend-app-server
