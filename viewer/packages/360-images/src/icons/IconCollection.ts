@@ -184,7 +184,13 @@ export class IconCollection {
      }
    );
     
-   onBeforeSceneRendered.subscribe((args) => icons.forEach((icon) => icon.updateAdaptiveScale(args)));
+    const renderSize = new Vector2();
+    
+    onBeforeSceneRendered.subscribe(({ renderer, camera }) =>
+      icons.forEach((icon) =>
+        icon.updateAdaptiveScale({ camera, renderSize: renderer.getSize(renderSize), domElement: renderer.domElement })
+      )
+    );
 
     return icons;
   }

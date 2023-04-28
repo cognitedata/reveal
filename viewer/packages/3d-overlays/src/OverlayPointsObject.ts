@@ -37,6 +37,9 @@ export class OverlayPointsObject extends Group {
   private readonly _frontMaterial: RawShaderMaterial;
   private readonly _positionBuffer: Float32Array;
   private readonly _positionAttribute: BufferAttribute;
+  private readonly _colorBuffer: Float32Array;
+  private readonly _colorAttribute: BufferAttribute;
+
   constructor(
     maxNumberOfPoints: number,
     materialParameters: PointsMaterialParameters
@@ -45,7 +48,10 @@ export class OverlayPointsObject extends Group {
     const geometry = new BufferGeometry();
     this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
     this._positionAttribute = new BufferAttribute(this._positionBuffer, 3);
+    this._colorBuffer = new Float32Array(maxNumberOfPoints * 3).fill(1);
+    this._colorAttribute = new BufferAttribute(this._colorBuffer, 3);
     geometry.setAttribute('position', this._positionAttribute);
+    geometry.setAttribute('color', this._colorAttribute);
     geometry.setDrawRange(0, 0);
 
     const { spriteTexture, minPixelSize, maxPixelSize, radius,
@@ -70,14 +76,27 @@ export class OverlayPointsObject extends Group {
     this._frontMaterial = frontMaterial;
   }
 
-  public setPoints(points: Vector3[]): void {
-    points.forEach((point, index) => {
-      this._positionBuffer[index * 3 + 0] = point.x;
-      this._positionBuffer[index * 3 + 1] = point.y;
-      this._positionBuffer[index * 3 + 2] = point.z;
-    });
+  public setPoints(points: Vector3[], colors?: Color[]): void {
+    if (colors && points.length !== colors?.length)
+      throw new Error('Points positions and colors arrays must have the same length');
+    
+    for (let index = 0; index < points.length; index++) {
+      this._positionBuffer[index * 3 + 0] = points[index].x;
+      this._positionBuffer[index * 3 + 1] = points[index].y;
+      this._positionBuffer[index * 3 + 2] = points[index].z;
+
+      if (colors) {
+        this._colorBuffer[index * 3 + 0] = colors[index].r;
+        this._colorBuffer[index * 3 + 1] = colors[index].g;
+        this._colorBuffer[index * 3 + 2] = colors[index].b;
+      }
+    };
+
+    
     this._positionAttribute.updateRange = { offset: 0, count: points.length * 3 };
     this._positionAttribute.needsUpdate = true;
+    this._colorAttribute.updateRange = { offset: 0, count: points.length * 3 };
+    this._colorAttribute.needsUpdate = true;
     this._geometry.setDrawRange(0, points.length);
   }
 
@@ -148,7 +167,7 @@ export class OverlayPointsObject extends Group {
       vertexShader: glsl(image360IconVert),
       fragmentShader: glsl(image360IconFrag),
       depthTest: true,
-      depthWrite: false,
+      depthWrite: true,
       depthFunc: depthFunction,
       glslVersion: GLSL3,
       transparent: true

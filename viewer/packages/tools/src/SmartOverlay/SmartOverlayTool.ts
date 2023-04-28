@@ -2,159 +2,148 @@
  * Copyright 2023 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/api';
-import { EventTrigger, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
-import { HtmlOverlayOptions, HtmlOverlayTool } from '../../index';
+import { EventTrigger } from '@reveal/utilities';
 import * as THREE from 'three';
 import { debounce } from 'lodash';
 import { Overlay3DCollection, Overlay3DIcon } from '@reveal/3d-overlays';
-import { OctreeRaycaster } from 'sparse-octree';
+import { Color, WebGLRenderer } from 'three';
 
-export type SmartLabel = {
+export type SmartOverlay = {
   text: string;
   id: number;
   position: THREE.Vector3;
-  pointOverlay: HTMLElement;
-  textOverlay: HTMLElement;
+  infoOverlay: HTMLElement;
 };
 
-export type LabelInfo = {
+export type OverlayInfo = {
   text: string;
   id: number;
   position: THREE.Vector3;
+  color?: THREE.Color;
 };
+
 export type LabelGroupId = string;
 
-export type LabelGroup = {
+export type OverlayGroup = {
   id: LabelGroupId;
 };
 
 export type OverlayToolEvent = 'hover' | 'click';
 
-export type LabelEventHandler = (event: { targetLabel: SmartLabel; mouseEvent: MouseEvent }) => void;
+export type OverlayEventHandler = (event: { targetOverlay: SmartOverlay; mousePosition: { clientX: number, clientY: number} }) => void;
+
+export type SmartOverlayToolParameters = {
+  /**
+   * Max circle size in pixels. Default is 64.
+   */
+  maxCircleSize?: number;
+    /**
+   * Sets default overlay color for newly added labels.
+   */
+  defaultOverlayColor: THREE.Color;
+};
 
 export class SmartOverlayTool {
-  private readonly _htmlOverlayTool: HtmlOverlayTool;
   private readonly _viewer: Cognite3DViewer;
-  private readonly _labels: Map<number, SmartLabel> = new Map();
+  private readonly _labelIndexToLabelInfoMap = new Map<number, OverlayInfo>();
+  private readonly _labels: Map<number, OverlayInfo> = new Map();
+  private readonly _overlayPoints: Overlay3DCollection[] = [];
+
+  private _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
+  private _pointTexture: THREE.Texture;
+  private _temporaryVec = new THREE.Vector2();
+  private _raycaster = new THREE.Raycaster();
+
   private _isEnabled = true;
   private _isVisible = true;
-
-  private readonly _objectUUIDToLabelIndexToLabelInfoMap = new Map<string, Map<number, LabelInfo>>();
-  private readonly _labelIndexToLabelInfoMap = new Map<number, LabelInfo>();
-  private hoveredOverlayPointIndex = -1;
-  private readonly overlayPoints: Overlay3DCollection[] = [];
-  private currentPointIndex = 0;
+  private _pointMarkersVisible: boolean = true;
+  private _textOverlayVisible: boolean = true;
+  private _hoveredOverlayPointIndex = -1;
+  private _latestAddedPointIndex = 0;
 
   private readonly _events = {
-    hover: new EventTrigger<LabelEventHandler>(),
-    click: new EventTrigger<LabelEventHandler>()
+    hover: new EventTrigger<OverlayEventHandler>(),
+    click: new EventTrigger<OverlayEventHandler>()
   };
 
-  labelsVisible: boolean = true;
-  pointIndicatorsVisible: boolean = true;
-  /**
-   * Circle size in pixels. Default is 17.
-   */
-  circleSize: number = 17;
-  /**
-   * Sets overlay color for newly added labels.
-   */
-  overlayColor: THREE.Color = new THREE.Color('#fbe50b');
-
-  maxLabelDistance: number = 4;
-  maxPointIndicatorDistance: number = 4;
-
-  constructor(viewer: Cognite3DViewer) {
-    this._htmlOverlayTool = new HtmlOverlayTool(viewer);
+  constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters) {
     this._viewer = viewer;
-
-    const raycaster = new THREE.Raycaster();
-    raycaster.params.Points!.threshold = 0.1;
-
-    const vec = new THREE.Vector2();
-
-    const textOverlay = this.createTextOverlay('', this.circleSize);
+    this._defaultOverlayColor = toolParameters?.defaultOverlayColor ?? this._defaultOverlayColor;
+    this._pointTexture = this.createCircleTexture();
+    
+    const textOverlay = this.createTextOverlay('', toolParameters?.maxCircleSize ?? 20);
     viewer.domElement.appendChild(textOverlay);
 
-    viewer.on('sceneRendered', (args) => {
-      this.overlayPoints.forEach(points => points.icons.forEach((icon) => icon.updateAdaptiveScale(args)));
-    });
 
     viewer.canvas.addEventListener(
       'mousemove',
-      debounce((ev: MouseEvent) => {
-        const { x, y } = this.convertPixelCoordinatesToNormalized(ev, viewer.domElement);
-        const camera = viewer.cameraManager.getCamera();
-        const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-        const cameraPosition = camera.position.clone();
-        raycaster.setFromCamera(vec.set(x, y), camera);
-
-        const intersection: [Overlay3DIcon, THREE.Vector3][] = [];
-
-        for (const points of this.overlayPoints) {
-          for (const icon of points.icons) {
-            if (icon.visible) {
-              const inter = icon.intersect(raycaster.ray);
-              if (inter) intersection.push([icon, inter]);
-            }
-          }
-        }
-
-        intersection
-          .map(([icon, intersection]) => [icon, intersection.sub(cameraPosition)] as [Overlay3DIcon, THREE.Vector3])
-          .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
-          .sort((a, b) => a[1].length() - b[1].length());
+      debounce((event: MouseEvent) => {
         
-        if (intersection.length > 0) {
-          const labelIntersec = intersection[0][0];
-          const labelInfo = this._labelIndexToLabelInfoMap.get(labelIntersec.iconMetadata?.id ?? -1);
+        const intersection = this.intersectPointsMarkers(event);
 
-          if (labelInfo === undefined || labelIntersec.iconMetadata?.id === this.hoveredOverlayPointIndex) return;
+        if (intersection) {
+          const { intersectedOverlay, intersectedIcon} = intersection;
 
-          this.hoveredOverlayPointIndex = labelIntersec.iconMetadata?.id ?? -1;
+          this._hoveredOverlayPointIndex = intersectedIcon.iconMetadata?.id ?? -1;
 
-          const targetLabel: SmartLabel = {
-            text: labelInfo.text,
-            id: labelInfo.id,
-            position: labelInfo.position,
-            pointOverlay: {} as HTMLElement,
-            textOverlay
+          const targetOverlay: SmartOverlay = {
+            text: intersectedOverlay.text,
+            id: intersectedOverlay.id,
+            position: intersectedOverlay.position,
+            infoOverlay: textOverlay
           };
 
-          this._events.hover.fire({ targetLabel, mouseEvent: ev });
+          this._events.hover.fire({ targetOverlay: targetOverlay, mousePosition: event });
 
-          textOverlay.style.left = `${ev.offsetX}px`;
-          textOverlay.style.top = `${ev.offsetY}px`;
+          textOverlay.style.left = `${event.offsetX}px`;
+          textOverlay.style.top = `${event.offsetY}px`;
           textOverlay.style.opacity = '1';
         } else {
-          this.hoveredOverlayPointIndex = -1;
+          this._hoveredOverlayPointIndex = -1;
           textOverlay.style.opacity = '0';
         }
       }, 10)
     );
+
+    viewer.on('click', (event) => {
+      const intersection = this.intersectPointsMarkers({clientX: event.offsetX, clientY: event.offsetY});
+
+      if (intersection) {
+        const { intersectedOverlay } = intersection;
+
+        const targetOverlay: SmartOverlay = {
+          text: intersectedOverlay.text,
+          id: intersectedOverlay.id,
+          position: intersectedOverlay.position,
+          infoOverlay: textOverlay
+        };
+
+        this._events.click.fire({ targetOverlay: targetOverlay, mousePosition: {clientX: event.offsetX, clientY: event.offsetY} });
+      }
+    });
   }
 
-  addOverlays(labels: LabelInfo[]): LabelGroup{
+  /**
+   * Adds multiple overlay 
+   * @param overlays Array of labels to add.
+   * @returns Overlay group containing it's id.
+   */
+  addOverlays(overlays: OverlayInfo[]): OverlayGroup{
     const {
-      _objectUUIDToLabelIndexToLabelInfoMap: _objectUUIDToLabelIndexToAssetIdMap,
       _viewer: viewer,
     } = this;
 
-    const overlaysPositions = [];
-    const labelsMap = new Map<number, LabelInfo>();
+    const overlaysData = [];
 
-    for (const label of labels) {
-      overlaysPositions.push({id: this.currentPointIndex, position: label.position});
-      this._labelIndexToLabelInfoMap.set(this.currentPointIndex, label);
-      this.currentPointIndex++;
+    for (const label of overlays) {
+      overlaysData.push({ id: this._latestAddedPointIndex, position: label.position, color: label.color ?? this._defaultOverlayColor });
+      this._labelIndexToLabelInfoMap.set(this._latestAddedPointIndex, label);
+      this._latestAddedPointIndex++;
     }
 
-    const positionBuffer = new THREE.BufferGeometry();
-    positionBuffer.setFromPoints(overlaysPositions.map(p => p.position));
+    const points = new Overlay3DCollection(overlaysData, {overlayTexture: this._pointTexture });
 
-    const points = new Overlay3DCollection(overlaysPositions);
-
-    this.overlayPoints.push(points);
+    this._overlayPoints.push(points);
 
     viewer.addObject3D(points);
 
@@ -169,97 +158,14 @@ export class SmartOverlayTool {
    * @param id Unique id for the label.
    * @param position position of the label in 3D space.
    */
-  addOverlay(text: string, id: number, position: THREE.Vector3) {
+  addOverlay(labelData: OverlayInfo) {
     if (!this._isEnabled) return;
 
-    const { circleSize, _viewer: viewer } = this;
+    const { _viewer: viewer } = this;
     const overlayWrapper = this.createOverlayWrapper();
 
     overlayWrapper.style.display = 'none';
-
-    const circleOverlay = this.createCircleOverlay(circleSize, this.overlayColor);
-    overlayWrapper.appendChild(circleOverlay);
-
-    const textOverlay = this.createTextOverlay(text, circleSize + 2);
-    overlayWrapper.appendChild(textOverlay);
-
-    const label: SmartLabel = {
-      text,
-      id,
-      position,
-      pointOverlay: circleOverlay,
-      textOverlay: textOverlay
-    };
-
-    circleOverlay.addEventListener('mousedown', e => e.stopPropagation());
-    circleOverlay.addEventListener('mouseup', e => e.stopPropagation());
-
-    circleOverlay.addEventListener('click', event => {
-      this._events.click.fire({ targetLabel: label, mouseEvent: event });
-    });
-
-    circleOverlay.addEventListener('pointerover', event => {
-      this._events.hover.fire({
-        targetLabel: label,
-        mouseEvent: event
-      });
-
-      textOverlay.style.opacity = '1';
-      overlayWrapper.style.zIndex = '10';
-    });
-    circleOverlay.addEventListener('pointerout', () => {
-      textOverlay.style.opacity = '0';
-      overlayWrapper.style.zIndex = 'auto';
-    });
-    overlayWrapper.addEventListener('transitionend', e => {
-      if (e.propertyName !== 'opacity') return;
-
-      if (overlayWrapper.style.opacity === '0') {
-        overlayWrapper.style.display = 'none';
-      }
-    });
-
-    const options: HtmlOverlayOptions = {
-      positionUpdatedCallback: (element, position2D, position3D, distanceToCamera) => {
-        const isVisible = distanceToCamera < this.maxPointIndicatorDistance;
-
-        if (isVisible) {
-          element.style.display = 'block';
-          setTimeout(() => {
-            element.style.opacity = '1';
-          }, 0);
-
-          this.adjustCircleSize(distanceToCamera, element);
-        } else {
-          element.style.opacity = '0';
-        }
-      }
-    };
-
-    // this._htmlOverlayTool.add(
-    //   overlayWrapper,
-    //   boundingBox.getCenter(new THREE.Vector3()),
-    //   options
-    // );
-
-    const pointsMaterial = new THREE.PointsMaterial({
-      size: 5,
-      color: new THREE.Color(this.overlayColor),
-      sizeAttenuation: true
-      //depthTest: false
-    });
-
-    const positionBuffer = new THREE.BufferGeometry();
-    positionBuffer.setAttribute(
-      'position',
-      new THREE.BufferAttribute(new Float32Array(position.toArray()), 3)
-    );
-
-    const points = new THREE.Points(positionBuffer, pointsMaterial);
-
-    viewer.addObject3D(points);
-
-    this._labels.set(label.id, label);
+  
   }
   /**
    * Removes label with specified id.
@@ -271,16 +177,12 @@ export class SmartOverlayTool {
       throw new Error(`Label with id ${id} not found`);
     }
 
-    const overlayWrapper = label.pointOverlay.parentElement!;
-
-    this._htmlOverlayTool.remove(overlayWrapper);
-
     this._labels.delete(id);
   }
 
-  removeOverlays(uuid: string): void {
+  removeOverlays(id: string): void {
     const { _viewer: viewer } = this;
-    const points = this.overlayPoints.find(points => points.uuid === uuid);
+    const points = this._overlayPoints.find(points => points.uuid === id);
 
     if (points) {
       viewer.removeObject3D(points);
@@ -297,10 +199,8 @@ export class SmartOverlayTool {
 
   set visible(visible: boolean) {
     this._isVisible = visible;
-    this._htmlOverlayTool.visible(visible);
-    this._htmlOverlayTool.elements.forEach(element => {
-      element.element.style.display = visible ? 'block' : 'none';
-    });
+
+
   }
 
   get visible(): boolean {
@@ -308,14 +208,13 @@ export class SmartOverlayTool {
   }
 
   clear(): void {
-    this._htmlOverlayTool.clear();
     this._labels.clear();
   }
 
-  on(event: 'hover', eventHandler: LabelEventHandler): void;
-  on(event: 'click', eventHandler: LabelEventHandler): void;
+  on(event: 'hover', eventHandler: OverlayEventHandler): void;
+  on(event: 'click', eventHandler: OverlayEventHandler): void;
 
-  on(event: OverlayToolEvent, eventHandler: LabelEventHandler): void {
+  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler): void {
     switch (event) {
       case 'hover':
         this._events.hover.subscribe(eventHandler);
@@ -326,10 +225,10 @@ export class SmartOverlayTool {
     }
   }
 
-  off(event: 'hover', eventHandler: LabelEventHandler): void;
-  off(event: 'click', eventHandler: LabelEventHandler): void;
+  off(event: 'hover', eventHandler: OverlayEventHandler): void;
+  off(event: 'click', eventHandler: OverlayEventHandler): void;
 
-  off(event: OverlayToolEvent, eventHandler: LabelEventHandler): void {
+  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler): void {
     switch (event) {
       case 'hover':
         this._events.hover.unsubscribe(eventHandler);
@@ -340,16 +239,67 @@ export class SmartOverlayTool {
     }
   }
 
+  private intersectPointsMarkers(mouseCoords: {clientX: number, clientY: number}): { intersectedIcon: Overlay3DIcon, intersectedOverlay: OverlayInfo } | null {
+    const { _viewer, _raycaster, _temporaryVec} = this;
+
+    const { x, y } = this.convertPixelCoordinatesToNormalized(mouseCoords, _viewer.domElement);
+        const camera = _viewer.cameraManager.getCamera();
+        const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
+        _raycaster.setFromCamera(_temporaryVec.set(x, y), camera);
+
+        const intersection: [Overlay3DIcon, THREE.Vector3][] = [];
+
+        for (const points of this._overlayPoints) {
+          for (const icon of points.icons) {
+            if (icon.visible) {
+              const inter = icon.intersect(_raycaster.ray);
+              if (inter) {
+                intersection.push([icon, inter]);
+                icon.updateAdaptiveScale({
+                  camera,
+                  renderSize: _viewer.renderParameters.renderSize, 
+                  domElement: _viewer.canvas
+                });
+              }
+            }
+          }
+        }
+
+        intersection.filter(([icon,_]) => icon.intersect(_raycaster.ray) !== null);
+
+        intersection
+          .map(([icon, intersection]) => [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon, THREE.Vector3])
+          .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
+          .sort((a, b) => a[1].length() - b[1].length());
+         
+    if (intersection.length > 0) {
+      const labelIntersec = intersection[intersection.length - 1][0];
+      const labelInfo = this._labelIndexToLabelInfoMap.get(labelIntersec.iconMetadata?.id ?? -1);
+
+      if (labelInfo === undefined) //|| labelIntersec.iconMetadata?.id === this.hoveredOverlayPointIndex TODO: Do we want movement when hovering over the same label?
+        return null;
+
+      return {
+        intersectedIcon: labelIntersec,
+        intersectedOverlay: labelInfo
+      }
+    }
+
+    return null;
+  }
+
   private createCircleTexture(): THREE.Texture {
     const canvas = document.createElement('canvas');
     const textureSize = 128;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
+    const overlayColor = new THREE.Color('white');
+
     const context = canvas.getContext('2d')!;
     context.beginPath();
     context.lineWidth = textureSize / 8;
-    context.strokeStyle = '#' + this.overlayColor.getHexString();
+    context.strokeStyle = '#' + overlayColor.getHexString();
     context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
     context.shadowColor = 'rgba(0, 0, 0, 1)';
     context.shadowBlur = 10;
@@ -358,7 +308,7 @@ export class SmartOverlayTool {
 
     context.beginPath();
     context.lineWidth = textureSize / 8;
-    context.strokeStyle = '#' + this.overlayColor.getHexString();
+    context.strokeStyle = '#' + overlayColor.getHexString();
     context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
     context.shadowColor = 'rgba(0, 0, 0, 1)';
     context.shadowBlur = 0;
@@ -369,56 +319,15 @@ export class SmartOverlayTool {
     return new THREE.CanvasTexture(canvas);
   }
 
-  private convertPixelCoordinatesToNormalized(event: MouseEvent, domElement: HTMLElement) {
+  private convertPixelCoordinatesToNormalized(mouseCoords: {clientX: number, clientY: number}, domElement: HTMLElement) {
     const clientRect = domElement.getBoundingClientRect();
-    const pixelX = event.clientX - clientRect.left;
-    const pixelY = event.clientY - clientRect.top;
+    const pixelX = mouseCoords.clientX - clientRect.left;
+    const pixelY = mouseCoords.clientY - clientRect.top;
 
     const x = (pixelX / domElement.clientWidth) * 2 - 1;
     const y = (pixelY / domElement.clientHeight) * -2 + 1;
 
     return { x, y };
-  }
-
-  private adjustCircleSize(distanceToCamera: number, element: HTMLElement) {
-    if (distanceToCamera > this.maxPointIndicatorDistance / 2) {
-      // Ranges from 0 to 1 when distanceToCamera is from 0 to maxPointIndicatorDistance / 2.
-      const distanceCoefficient =
-        1 - (distanceToCamera - this.maxPointIndicatorDistance / 2) / (this.maxPointIndicatorDistance / 2);
-
-      // Non-linear size function for slightly bigger circles closer to camera.
-      const newCircleSize = this.circleSize * (-Math.pow(distanceCoefficient - 1, 2) + 1);
-
-      this.setCircleSize(element.querySelector('.circle-overlay')!, newCircleSize);
-    }
-  }
-
-  private setCircleSize(circleOverlay: HTMLElement, size: number) {
-    circleOverlay.style.height = `${size}px`;
-    circleOverlay.style.width = `${size}px`;
-    circleOverlay.style.borderRadius = `${size}px`;
-  }
-
-  private createCircleOverlay(circleSize: number, color: THREE.Color): HTMLElement {
-    const circleOverlay = document.createElement('div');
-    circleOverlay.setAttribute('class', 'circle-overlay');
-    circleOverlay.style.cssText = `
-            position: absolute;
-        
-            /* Anchor to the center of the element and ignore events */
-            transform: translate(-50%, -50%);
-            touch-action: none;
-            user-select: none;
-            z-index: 1;
-
-            width: ${circleSize}px;
-            height: ${circleSize}px;
-            border-radius: ${circleSize}px;
-        
-            background: #${color.getHexString()};
-            box-shadow: 0 0 6px black;
-        `;
-    return circleOverlay;
   }
 
   private createTextOverlay(text: string, horizontalOffset: number): HTMLElement {
@@ -433,9 +342,8 @@ export class SmartOverlayTool {
             touch-action: none;
             user-select: none;
                 
-            padding: 5px;
+            padding: 7px;
             max-width: 200px;
-            min-height: 35px;
             color: #fff;
             background: #232323da;
             border-radius: 5px;
@@ -444,6 +352,7 @@ export class SmartOverlayTool {
             transition: opacity 0.3s;
             opacity: 0;
             z-index: 10;
+            transition: left 0.05s, top 0.05s;
             `;
 
     return textOverlay;

@@ -41,7 +41,8 @@ import {
   Intersection,
   CadModelBudget,
   CadIntersection,
-  ResolutionOptions
+  ResolutionOptions,
+  RenderParameters
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -118,6 +119,15 @@ export class Cognite3DViewer {
    */
   get domElement(): HTMLElement {
     return this._domElement;
+  }
+
+  /**
+   * Returns parameters of THREE.WebGLRenderer used by the viewer.
+   */
+  get renderParameters(): RenderParameters {
+    return {
+      renderSize: this._renderer.getSize(new THREE.Vector2())
+    }
   }
 
   /**

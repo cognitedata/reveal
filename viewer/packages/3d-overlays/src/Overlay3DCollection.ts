@@ -11,7 +11,11 @@ export type Overlay3DOptions = {
   overlayTexture?: Texture;
 };
 
-export type PointData = { position: Vector3, id: number };
+export type PointData = {
+  position: Vector3,
+  id: number,
+  color?: Color,
+};
 
 export class Overlay3DCollection extends Object3D {
   private readonly MIN_PIXEL_SIZE = 16;
@@ -27,7 +31,7 @@ export class Overlay3DCollection extends Object3D {
   }
 
   constructor(
-    pointsData: PointData [],
+    pointsData: PointData[],
     options?: Overlay3DOptions,
   ) {
     super();
@@ -41,7 +45,11 @@ export class Overlay3DCollection extends Object3D {
         maxPixelSize: this.MAX_PIXEL_SIZE,
         radius: this._iconRadius
       });
-    iconsSprites.setPoints(pointsData.map(p => p.position));
+    
+    const pointsPositions = pointsData.map(p => p.position);
+    const pointsColors = pointsData.map(p => p.color ?? new Color(1, 1, 1));
+    
+    iconsSprites.setPoints(pointsPositions, pointsColors);
 
     this._sharedTexture = sharedTexture;
     this._icons = this.initializeOverlay3DIcons(pointsData);

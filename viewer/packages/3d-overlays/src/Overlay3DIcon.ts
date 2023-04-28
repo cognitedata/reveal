@@ -15,18 +15,22 @@ export type IconParameters = {
   hoverSprite?: THREE.Sprite
 };
 
+export type SetAdaptiveScaleDelegate = (args: { camera: THREE.Camera, renderSize: THREE.Vector2, domElement: HTMLElement }) => void;
+
 export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
   private readonly _position: THREE.Vector3;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
-  private readonly _setAdaptiveScale: BeforeSceneRenderedDelegate;
+  private readonly _setAdaptiveScale: SetAdaptiveScaleDelegate;
+  private readonly _iconRadius: number;
+  private readonly _hoverSprite?: THREE.Sprite;
+  private readonly _iconMetadata?: MetadataType;
+
   private _adaptiveScale = 1;
   private _visible = true;
   private _culled = false;
   private _selected = false;
-  private readonly _iconRadius: number;
-  private readonly _hoverSprite?: THREE.Sprite;
-  private readonly _iconMetadata?: MetadataType;
+  private _ndcPosition = new THREE.Vector4();
 
   private readonly _events = {
     selected: new EventTrigger<(value: boolean) => void>(),
@@ -79,7 +83,7 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
     }
   }
 
-  updateAdaptiveScale(delegateArguments: { renderer: WebGLRenderer, camera: PerspectiveCamera, frameNumber: number}): void {
+  updateAdaptiveScale(delegateArguments: { renderSize: THREE.Vector2, camera: PerspectiveCamera, domElement: HTMLElement}): void {
     this._setAdaptiveScale(delegateArguments);
 
     if (this._hoverSprite && this._selected) {
@@ -123,37 +127,38 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
   public dispose(): void {
   }
 
-  private setupAdaptiveScaling(position: THREE.Vector3): BeforeSceneRenderedDelegate {
-    const ndcPosition = new THREE.Vector4();
-    const renderSize = new THREE.Vector2();
-    return ({ renderer, camera }) => {
+  private setupAdaptiveScaling(position: THREE.Vector3): SetAdaptiveScaleDelegate {
+    return ({camera, renderSize, domElement}) => {
       if (!this.visible) {
         return;
       }
-      this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize, this._iconRadius);
+      this._adaptiveScale = this.computeAdaptiveScaling(position, renderSize, domElement, camera, this._maxPixelSize, this._minPixelSize, this._iconRadius);
     };
 
-    function computeAdaptiveScaling(
-      renderer: THREE.WebGLRenderer,
-      camera: THREE.Camera,
-      maxHeight: number,
-      minHeight: number,
-      iconRadius: number
-    ) {
-      ndcPosition.set(position.x, position.y, position.z, 1);
-      ndcPosition.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
-      if (Math.abs(ndcPosition.w) < 0.00001) {
-        return 1.0;
-      }
-      renderer.getSize(renderSize);
-      const pointSize = renderSize.y * camera.projectionMatrix.elements[5] * (iconRadius / ndcPosition.w);
-      const resolutionDownSampleFactor = renderSize.x / renderer.domElement.clientWidth;
-      const clampedSize = clamp(
-        pointSize,
-        minHeight * resolutionDownSampleFactor,
-        maxHeight * resolutionDownSampleFactor
-      );
-      return (clampedSize / pointSize) * iconRadius;
+  }
+
+  private computeAdaptiveScaling(
+    position: THREE.Vector3,
+    renderSize: THREE.Vector2,
+    domElement: HTMLElement,
+    camera: THREE.Camera,
+    maxHeight: number,
+    minHeight: number,
+    iconRadius: number
+  ) {
+    const { _ndcPosition } = this;
+    _ndcPosition.set(position.x, position.y, position.z, 1);
+    _ndcPosition.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+    if (Math.abs(_ndcPosition.w) < 0.00001) {
+      return 1.0;
     }
+    const pointSize = renderSize.y * camera.projectionMatrix.elements[5] * (iconRadius / _ndcPosition.w);
+    const resolutionDownSampleFactor = renderSize.x / domElement.clientWidth;
+    const clampedSize = clamp(
+      pointSize,
+      minHeight * resolutionDownSampleFactor,
+      maxHeight * resolutionDownSampleFactor
+    );
+    return (clampedSize / pointSize) * iconRadius;
   }
 }

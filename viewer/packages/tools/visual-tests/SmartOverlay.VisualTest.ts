@@ -8,7 +8,7 @@ import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
-import { LabelInfo, SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayTool';
+import { OverlayInfo, SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayTool';
 
 // Sanity test for loading model
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
@@ -17,28 +17,33 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     const cameraManager = viewer.cameraManager as DefaultCameraManager;
 
-    cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: true });
+    cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: false });
 
     const smartOverlayTool = new SmartOverlayTool(viewer);
 
-    smartOverlayTool.on('hover' , ({targetLabel, mouseEvent}) => {
-      targetLabel.textOverlay.innerText = targetLabel.text;
+    smartOverlayTool.on('hover' , ({targetOverlay}) => {
+      targetOverlay.infoOverlay.innerText = targetOverlay.text;
     });
 
-    const labels: LabelInfo[] = [];
+    smartOverlayTool.on('click', ({ targetOverlay }) => {
+      targetOverlay.infoOverlay.innerText = 'Haha, you clicked me!';
+    });
+
+    const labels: OverlayInfo[] = [];
 
     const reusableVec = new THREE.Vector3();
 
-    const boxSize = 30;
+    const boxSize = 100;
 
     for (let i = boxSize/-2; i < boxSize/2; i++) {
-      for (let x = boxSize/-2; x < boxSize/2; x++) {
-        for (let y = boxSize/-2; y < boxSize/2; y++) {
+      for (let x = boxSize/-2; x < boxSize/2; x+=4) {
+        for (let y = boxSize/-2; y < boxSize/2; y+=4) {
           //if (i===x && i===y) {
           if (x * x + y * y - 0.7 * i * i < 750) {
             const id = i + ' ' + x + ' ' + y;
             labels.push({
-              text: 'Meow ' + id, id: i + x + y, position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone()
+              text: 'Meow ' + id, id: i + x + y, position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone(),
+              color: new THREE.Color(Math.random(), Math.random(), Math.random())
             });
           }
         }
@@ -48,7 +53,7 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
     }
     //smartOverlayTool.addOverlays(labels);
     
-    cameraManager.setCameraState({position: new THREE.Vector3()})
+    cameraManager.setCameraState({ position: new THREE.Vector3() })
     return Promise.resolve();
   }
 }
