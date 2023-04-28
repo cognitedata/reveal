@@ -257,5 +257,6 @@
   "delete-source-warning": "The source will be deleted and can't be restored.",
   "delete-source-checkbox": "I want to delete this source.",
   "pause": "Pause",
-  "resume": "Resume"
+  "resume": "Resume",
+  "topic-filters-status": "Topic filters status"
 }

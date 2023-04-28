@@ -2,15 +2,16 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import {
-  MQTTSourceWithJobMetrics,
-  useMQTTJobLogs,
-} from 'hooks/hostedExtractors';
 import { SummaryBox } from 'components/summary-box/SummaryBox';
 import { useTranslation } from 'common';
 import { TopicFilters } from 'components/topic-filters/TopicFilters';
 import { SourceDetails } from 'components/source-details/SourceDetails';
 import { SourceAuthentication } from 'components/source-authentication/SourceAuthentication';
+import { SourceStatus } from 'components/source-status/SourceStatus';
+import {
+  MQTTSourceWithJobMetrics,
+  useMQTTJobLogs,
+} from 'hooks/hostedExtractors';
 import { getErrorCountInLast30Days } from 'utils/hostedExtractors';
 
 const PAGE_WIDTH = 1024;
@@ -48,6 +49,7 @@ export const HostedExtractionPipelineOverview = ({
       <TopicFiltersSection source={source} />
       <SourceDetailsSection source={source} />
       <SourceAuthenticationSection source={source} />
+      <SourceStatusSection source={source} />
     </OverviewGrid>
   );
 };
@@ -80,5 +82,11 @@ const SourceDetailsSection = styled(SourceDetails)`
 const SourceAuthenticationSection = styled(SourceAuthentication)`
   grid-column: second / end;
   grid-row: second / end;
+  margin-bottom: 0;
+`;
+
+const SourceStatusSection = styled(SourceStatus)`
+  grid-column: start / second;
+  grid-row: second / row;
   margin-bottom: 0;
 `;
