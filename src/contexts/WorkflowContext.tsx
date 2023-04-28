@@ -30,6 +30,8 @@ type FlowContextT = {
   changeEdges: (fn: AutomergeChangeEdgesFn) => void;
   nodes: CanvasNodes;
   edges: CanvasEdges;
+  isHistoryVisible: boolean;
+  setHistoryVisible: Dispatch<SetStateAction<boolean>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -110,6 +112,8 @@ export const FlowContextProvider = ({
         changeEdges,
         nodes: flowState.canvas.nodes,
         edges: flowState.canvas.edges,
+        isHistoryVisible,
+        setHistoryVisible,
       }}
     >
       {children}
