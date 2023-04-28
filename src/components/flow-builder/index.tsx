@@ -36,6 +36,7 @@ import {
   WorkflowBuilderNode,
   WorkflowBuilderNodeType,
   isProcessType,
+  ProcessNodeData,
 } from 'types';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
@@ -49,6 +50,7 @@ export const FlowBuilder = (): JSX.Element => {
     changeFlow,
     setIsNodeConfigurationPanelOpen,
     setSelectedNode,
+    setSelectedNodeComponent,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -107,6 +109,8 @@ export const FlowBuilder = (): JSX.Element => {
               n.selected = change.selected;
               if (change.selected) {
                 setIsNodeConfigurationPanelOpen(true);
+                const nodeData = n.data as ProcessNodeData;
+                setSelectedNodeComponent(nodeData.processType);
                 setSelectedNode(n);
               } else if (!change.selected && selectedNodes.length === 0) {
                 setIsNodeConfigurationPanelOpen(false);

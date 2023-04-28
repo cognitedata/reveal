@@ -16,7 +16,14 @@ import * as Automerge from '@automerge/automerge';
 import { debounce } from 'lodash';
 
 import { useFlow, useUpdateFlow } from 'hooks/files';
-import { AFlow, CanvasEdges, CanvasNodes, CanvasNode } from 'types';
+import {
+  AFlow,
+  CanvasEdges,
+  CanvasNodes,
+  CanvasNode,
+  ProcessType,
+  ProcessNodeData,
+} from 'types';
 
 type FlowContextT = {
   externalId: string;
@@ -35,6 +42,8 @@ type FlowContextT = {
 
   selectedNode: CanvasNode;
   setSelectedNode: Dispatch<SetStateAction<CanvasNode>>;
+  selectedNodeComponent: ProcessType;
+  setSelectedNodeComponent: Dispatch<SetStateAction<ProcessType>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -105,6 +114,10 @@ export const FlowContextProvider = ({
   }, [data]);
 
   const [selectedNode, setSelectedNode] = useState(initialFlow.canvas.nodes[0]);
+  const [selectedNodeComponent, setSelectedNodeComponent] = useState(() => {
+    const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
+    return nodeData.processType;
+  });
 
   return (
     <WorkflowContext.Provider
@@ -123,6 +136,8 @@ export const FlowContextProvider = ({
         edges: flowState.canvas.edges,
         selectedNode,
         setSelectedNode,
+        selectedNodeComponent,
+        setSelectedNodeComponent,
       }}
     >
       {children}

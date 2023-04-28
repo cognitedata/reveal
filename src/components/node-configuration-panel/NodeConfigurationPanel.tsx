@@ -1,13 +1,13 @@
 import { Flex, InputExp, Body, IconType, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useTransformationList } from 'hooks/transformation';
 import { collectPages } from 'utils';
-import { ProcessNodeData } from 'types';
+import { ProcessNodeData, ProcessType } from 'types';
 
 const { Option } = Select;
 
@@ -15,9 +15,14 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
   const {
+    nodes,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
     selectedNode,
+    setSelectedNode,
+    selectedNodeComponent,
+    setSelectedNodeComponent,
+    changeNodes,
   } = useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
@@ -51,6 +56,15 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     },
   ];
 
+  const handleComponentChange = (value: ProcessType) => {
+    changeNodes((nodes) => {
+      const node = nodes.find((node) => node.id === selectedNode.id);
+      const nodeData = node?.data as ProcessNodeData;
+      nodeData.processType = value;
+    });
+    setSelectedNodeComponent(value);
+  };
+
   return (
     <StyledDrawer
       title={t('node-configuration-panel-title')}
@@ -60,6 +74,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       open={isNodeConfigurationPanelOpen}
       maskClosable={true}
       mask={false}
+      destroyOnClose={true}
       width="${FLOATING_COMPONENTS_PANEL_WIDTH}px"
       headerStyle={{
         padding: '12px',
@@ -77,7 +92,11 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Body level={2} strong>
           {t('node-configuration-panel-component')}
         </Body>
-        <Select value={nodeData.processType} style={{ width: 326 }}>
+        <Select
+          value={selectedNodeComponent}
+          onChange={handleComponentChange}
+          style={{ width: 326 }}
+        >
           {nodeOptions.map(({ icon, label, value }) => (
             <Option key={value} value={value}>
               <Container>
