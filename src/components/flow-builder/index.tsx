@@ -107,10 +107,7 @@ export const FlowBuilder = (): JSX.Element => {
               n.selected = change.selected;
               if (change.selected) {
                 setIsNodeConfigurationPanelOpen(true);
-                const nodeData = flowState.canvas.nodes.find(
-                  (node) => node.id === change.id
-                ) as CanvasNode;
-                setSelectedNode(nodeData);
+                setSelectedNode(n);
               } else if (!change.selected && selectedNodes.length === 0) {
                 setIsNodeConfigurationPanelOpen(false);
               }

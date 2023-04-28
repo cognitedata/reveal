@@ -77,7 +77,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Body level={2} strong>
           {t('node-configuration-panel-component')}
         </Body>
-        <Select defaultValue={nodeData.processType} style={{ width: 326 }}>
+        <Select value={nodeData.processType} style={{ width: 326 }}>
           {nodeOptions.map(({ icon, label, value }) => (
             <Option key={value} value={value}>
               <Container>
