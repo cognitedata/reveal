@@ -2156,8 +2156,8 @@ __metadata:
     react-dom: 18.2.0
     replace: 1.2.2
     rimraf: 5.0.0
-    styled-components: 5.3.9
-    typedoc: 0.24.5
+    styled-components: 5.3.10
+    typedoc: 0.24.6
     typedoc-plugin-markdown: 3.15.2
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.0.4
@@ -12071,9 +12071,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:5.3.9":
-  version: 5.3.9
-  resolution: "styled-components@npm:5.3.9"
+"styled-components@npm:5.3.10":
+  version: 5.3.10
+  resolution: "styled-components@npm:5.3.10"
   dependencies:
     "@babel/helper-module-imports": ^7.0.0
     "@babel/traverse": ^7.4.5
@@ -12089,7 +12089,7 @@ __metadata:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
     react-is: ">= 16.8.0"
-  checksum: 404311cc7028259218674d3f9f39bdda2342fc02f2ebbba8f057ef560b2ad205c5bd63b82deed4d0bf217ac7eb960d0e1127510b0b606e32cbd5a48c10373ce8
+  checksum: 46dfea6c435516b22aae25798cf01f9b08423cfb517cfea9db760a18c941bddf79abaad9bedb9b3cca6faad24bd7eb4ef4dd21ae84b356ae29d279b2d571f7b7
   languageName: node
   linkType: hard
 
@@ -12532,9 +12532,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.24.5":
-  version: 0.24.5
-  resolution: "typedoc@npm:0.24.5"
+"typedoc@npm:0.24.6":
+  version: 0.24.6
+  resolution: "typedoc@npm:0.24.6"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12544,7 +12544,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x
   bin:
     typedoc: bin/typedoc
-  checksum: f6cc0585d92eda2c9eeb1ad000df89e2c5a386fa3a82dc259a7c3c54f3f97b86ca5ede5b07dbc9c16f983aac2547fb3c4793dd74a2f0601ffccda916c62b0f06
+  checksum: 3911ef6a7736ce6655a4b22fabc5be6df8812412e209d730fd168bfa7797847897f05fed797bc16558f11ce647b20746453748ff8afe85b1375c3efe2d7b57df
   languageName: node
   linkType: hard
 

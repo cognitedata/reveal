@@ -787,7 +787,7 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.194
     "@types/mixpanel-browser": 2.38.1
-    "@types/node": 18.15.13
+    "@types/node": 18.16.0
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -828,9 +828,9 @@ __metadata:
     moq.ts: 10.0.2
     nock: 13.3.0
     path-browserify: 1.0.1
-    prettier: 2.8.7
+    prettier: 2.8.8
     process: 0.11.10
-    puppeteer: 19.10.1
+    puppeteer: 19.11.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -2322,10 +2322,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.15.13":
-  version: 18.15.13
-  resolution: "@types/node@npm:18.15.13"
-  checksum: 79cc5a2b5f98e8973061a4260a781425efd39161a0e117a69cd089603964816c1a14025e1387b4590c8e82d05133b7b4154fa53a7dffb3877890a66145e76515
+"@types/node@npm:18.16.0":
+  version: 18.16.0
+  resolution: "@types/node@npm:18.16.0"
+  checksum: 63e0042136663b9e85ce503a4c65406cc6621fdba63ea66c74b4b1364a9aa9bdb57cadcb76696abab177f38a819b0fa6ace9e7f1647dcb990aedb1b4bd01012f
   languageName: node
   linkType: hard
 
@@ -4003,14 +4003,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.4.6":
-  version: 0.4.6
-  resolution: "chromium-bidi@npm:0.4.6"
+"chromium-bidi@npm:0.4.7":
+  version: 0.4.7
+  resolution: "chromium-bidi@npm:0.4.7"
   dependencies:
     mitt: 3.0.0
   peerDependencies:
     devtools-protocol: "*"
-  checksum: 1d6365896bca4592ddd95233a784e4743d2c8c692d065327a416a09acddc3d05e300c360b859d7049f91924be326d801e6fe9860ace4541325b25f4ec6b94b97
+  checksum: eec7581e2eddd2c95014c6edc5aae0b036c79bbeadee05166436b16139b6932c902c5ce21d95ed919a592f58d3a47c5469dc5f3de2a300700b2748ab119ad65e
   languageName: node
   linkType: hard
 
@@ -9655,12 +9655,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.8.7":
-  version: 2.8.7
-  resolution: "prettier@npm:2.8.7"
+"prettier@npm:2.8.8":
+  version: 2.8.8
+  resolution: "prettier@npm:2.8.8"
   bin:
     prettier: bin-prettier.js
-  checksum: fdc8f2616f099f5f0d685907f4449a70595a0fc1d081a88919604375989e0d5e9168d6121d8cc6861f21990b31665828e00472544d785d5940ea08a17660c3a6
+  checksum: b49e409431bf129dd89238d64299ba80717b57ff5a6d1c1a8b1a28b590d998a34e083fa13573bc732bb8d2305becb4c9a4407f8486c81fa7d55100eb08263cf8
   languageName: node
   linkType: hard
 
@@ -9839,12 +9839,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.10.1":
-  version: 19.10.1
-  resolution: "puppeteer-core@npm:19.10.1"
+"puppeteer-core@npm:19.11.0":
+  version: 19.11.0
+  resolution: "puppeteer-core@npm:19.11.0"
   dependencies:
     "@puppeteer/browsers": 0.5.0
-    chromium-bidi: 0.4.6
+    chromium-bidi: 0.4.7
     cross-fetch: 3.1.5
     debug: 4.3.4
     devtools-protocol: 0.0.1107588
@@ -9859,21 +9859,21 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: b913bc566e6202b073021c4978845c3db905b85816631a05d50e0ddb05fa3760d620eb887b073e58352133f50c354daa843b74bab542c7b6756d3d26eb576f8b
+  checksum: fe88d3055649ecebacbbd367bbe96e4ba1aea08f9c13589393cdc701934b34724afcbeba668195a9b9c70fd5a1cf6db230ead66b48767275e60898602a9ff784
   languageName: node
   linkType: hard
 
-"puppeteer@npm:19.10.1":
-  version: 19.10.1
-  resolution: "puppeteer@npm:19.10.1"
+"puppeteer@npm:19.11.0":
+  version: 19.11.0
+  resolution: "puppeteer@npm:19.11.0"
   dependencies:
     "@puppeteer/browsers": 0.5.0
     cosmiconfig: 8.1.3
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.10.1
-  checksum: b0b10c6be44ecd619936ad31e6a8d7079cae4cc0fd887552e1afb3e2359773e71bcd5478f34170712369947a110b92ec8c76dbe699fe59f4a4dc5d2fd73761fe
+    puppeteer-core: 19.11.0
+  checksum: 3e23568483ad00f35c23cc581bf7db32ac7835f1d0a31bbd764327e0c1a4515ef99554d1916ab4c56e0bde0c881b33491a248bac6b5972a78a58ca938f4a5b25
   languageName: node
   linkType: hard
 
