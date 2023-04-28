@@ -1,5 +1,5 @@
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { ComponentType, useCallback, useRef, useState } from 'react';
-
 import { Extend as AutomergeExtend } from '@automerge/automerge';
 import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
@@ -15,6 +15,8 @@ import ReactFlow, {
   SelectionMode,
   EdgeChange,
   NodeProps,
+  NodePositionChange,
+  NodeAddChange,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -37,6 +39,7 @@ import {
   WorkflowBuilderNodeType,
   isProcessType,
 } from 'types';
+import { useQuery } from '@tanstack/react-query';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
   process: ProcessNodeRenderer,
@@ -44,6 +47,7 @@ const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
 };
 
 export const FlowBuilder = (): JSX.Element => {
+  const { data: userInfo } = useQuery(['user-info'], getUserInformation);
   const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -82,37 +86,67 @@ export const FlowBuilder = (): JSX.Element => {
   };
 
   const onNodesChange = (changes: NodeChange[]) => {
-    changeFlow((f) => {
-      changes.forEach((change) => {
-        switch (change.type) {
-          case 'position': {
-            const n = f.canvas.nodes.find((n) => n.id === change.id);
-            if (n && change.position) {
-              n.position.x = change.position.x;
-              n.position.y = change.position.y;
+    changeFlow(
+      (flowDoc) => {
+        changes.forEach((change) => {
+          switch (change.type) {
+            case 'position': {
+              const node = flowDoc.canvas.nodes.find((n) => n.id === change.id);
+              if (!node) {
+                break;
+              }
+              if (change.position && change.position.x !== node.position.x) {
+                node.position.x = change.position.x;
+              }
+              if (change.position && change.position.y !== node.position.y) {
+                node.position.y = change.position.y;
+              }
+              if (node.dragging !== change.dragging) {
+                node.dragging = change.dragging;
+              }
+              break;
             }
-            break;
-          }
-          case 'select': {
-            const n = f.canvas.nodes.find((n) => n.id === change.id);
-            if (n) {
-              n.selected = change.selected;
+            case 'select': {
+              const n = flowDoc.canvas.nodes.find((n) => n.id === change.id);
+              if (n) {
+                n.selected = change.selected;
+              }
+              break;
             }
-            break;
-          }
-          case 'remove': {
-            const nIndex = f.canvas.nodes.findIndex((n) => n.id === change.id);
-            if (nIndex !== -1) {
-              f.canvas.nodes.deleteAt(nIndex);
+            case 'remove': {
+              const nIndex = flowDoc.canvas.nodes.findIndex(
+                (n) => n.id === change.id
+              );
+              if (nIndex !== -1) {
+                flowDoc.canvas.nodes.deleteAt(nIndex);
+              }
+              break;
             }
-            break;
+            default: {
+              break;
+            }
           }
-          default: {
-            break;
+        });
+      },
+      () => {
+        const messages = changes.reduce((accl, change) => {
+          if (change.type === 'position' && !change.dragging) {
+            return [...accl, `Node ${(change as NodePositionChange).id} moved`];
           }
+          return accl;
+        }, [] as string[]);
+
+        if (messages.length > 0) {
+          return {
+            message: JSON.stringify({
+              message: messages.join('\n * '),
+              user: userInfo?.displayName,
+            }),
+            time: Date.now(),
+          };
         }
-      });
-    });
+      }
+    );
   };
 
   const onConnect: OnConnect = useCallback(
@@ -164,23 +198,32 @@ export const FlowBuilder = (): JSX.Element => {
           return;
         }
 
-        changeFlow((f) => {
-          const position = reactFlowInstance.project({
-            x: event.clientX - reactFlowBounds.left,
-            y: event.clientY - reactFlowBounds.top,
-          });
+        changeFlow(
+          (f) => {
+            const position = reactFlowInstance.project({
+              x: event.clientX - reactFlowBounds.left,
+              y: event.clientY - reactFlowBounds.top,
+            });
 
-          const node: AutomergeExtend<ProcessNode> = {
-            id: `${new Date().getTime()}`,
-            type: 'process',
-            position,
-            data: {
-              processType: type,
-              processProps: {},
-            },
-          };
-          f.canvas.nodes.push(node);
-        });
+            const node: AutomergeExtend<ProcessNode> = {
+              id: `${new Date().getTime()}`,
+              type: 'process',
+              position,
+              data: {
+                processType: type,
+                processProps: {},
+              },
+            };
+            f.canvas.nodes.push(node);
+          },
+          () => ({
+            message: JSON.stringify({
+              message: 'Node added',
+              user: userInfo?.displayName,
+            }),
+            time: Date.now(),
+          })
+        );
       }
     },
     [reactFlowInstance, changeFlow]

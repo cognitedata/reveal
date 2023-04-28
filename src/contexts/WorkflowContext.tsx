@@ -17,15 +17,18 @@ import { debounce } from 'lodash';
 
 import { useFlow, useUpdateFlow } from 'hooks/files';
 import { AFlow, CanvasEdges, CanvasNodes } from 'types';
+import { ChangeOptions } from '@automerge/automerge';
 
 type FlowContextT = {
   externalId: string;
   isComponentsPanelVisible: boolean;
   setIsComponentsPanelVisible: Dispatch<SetStateAction<boolean>>;
-  changeFlow: (fn: Automerge.ChangeFn<AFlow>) => void;
+  changeFlow: (
+    fn: Automerge.ChangeFn<AFlow>,
+    logger?: () => ChangeOptions<AFlow> | string | undefined
+  ) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
-
   changeNodes: (fn: AutomergeChangeNodesFn) => void;
   changeEdges: (fn: AutomergeChangeEdgesFn) => void;
   nodes: CanvasNodes;
@@ -53,6 +56,7 @@ export const FlowContextProvider = ({
 }: FlowContextProviderProps) => {
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
+  const [isHistoryVisible, setHistoryVisible] = useState(false);
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
 
@@ -60,8 +64,14 @@ export const FlowContextProvider = ({
   const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
 
   const changeFlow = useCallback(
-    (fn: Automerge.ChangeFn<AFlow>) => {
-      const newFlow = Automerge.change(flowRef.current, fn);
+    (
+      fn: Automerge.ChangeFn<AFlow>,
+      logger?: () => ChangeOptions<AFlow> | string | undefined
+    ) => {
+      const msg = logger ? logger() : undefined;
+      const newFlow = msg
+        ? Automerge.change(flowRef.current, msg, fn)
+        : Automerge.change(flowRef.current, fn);
       flowRef.current = newFlow;
       setFlowState(newFlow);
       debouncedMutate(newFlow);
@@ -69,20 +79,33 @@ export const FlowContextProvider = ({
     [debouncedMutate]
   );
 
+  const history = useMemo(
+    () =>
+      Automerge.getHistory(flowState)
+        .filter((h) => !!h.change.message)
+        .map((h) => ({ message: h.change.message, time: h.change.time })),
+    [flowState]
+  );
+
+  useEffect(() => console.log(history), [history]);
+
   const changeNodes = useCallback(
-    (fn: AutomergeChangeNodesFn) => {
+    (
+      fn: AutomergeChangeNodesFn,
+      logger?: () => ChangeOptions<AFlow> | string | undefined
+    ) => {
       changeFlow((f) => {
         fn(f.canvas.nodes);
-      });
+      }, logger);
     },
     [changeFlow]
   );
 
   const changeEdges = useCallback(
-    (fn: AutomergeChangeEdgesFn) => {
+    (fn: AutomergeChangeEdgesFn, logger?: () => ChangeOptions<AFlow>) => {
       changeFlow((f) => {
         fn(f.canvas.edges);
-      });
+      }, logger);
     },
     [changeFlow]
   );
