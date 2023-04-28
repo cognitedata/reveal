@@ -57,6 +57,7 @@ export const CustomEdge = ({
           style={{ ...style }}
           className="react-flow__edge-path"
           d={edgePath}
+          markerEnd={markerEnd}
         />
         <foreignObject
           className="node"
@@ -65,7 +66,7 @@ export const CustomEdge = ({
           width={FOREIGN_OBJECT_WIDTH}
           height={FOREIGN_OBJECT_HEIGHT}
         >
-          <StyledFlex gap={10}>
+          <Flex gap={10}>
             <AddNodeButton
               className="edge-button"
               xPos={midpoint.x}
@@ -77,19 +78,12 @@ export const CustomEdge = ({
               setVisibleAddButton={setVisibleAddButton}
             />
             <DeleteEdgeButton className="edge-button" onDelete={deleteEdge} />
-          </StyledFlex>
+          </Flex>
         </foreignObject>
       </EdgeContainer>
     </>
   );
 };
-
-const StyledFlex = styled(Flex)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
 
 const EdgeContainer = styled.g<{ $visibleAddButton: boolean }>`
   .edge-button {
