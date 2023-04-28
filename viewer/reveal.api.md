@@ -790,13 +790,13 @@ export interface Image360 {
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
     setColor(color?: Color): void;
-    setVisibility(visible?: boolean): void;
+    setVisible(visible?: boolean): void;
 }
 
 // @public
 export type Image360AnnotationAppearance = {
     color?: Color;
-    visibility?: boolean;
+    visible?: boolean;
 };
 
 // @public
