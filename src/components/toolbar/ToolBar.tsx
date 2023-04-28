@@ -27,9 +27,7 @@ const Toolbar = ({ buttons }: ToolbarProps) => {
             <ToolbarButton
               key={index}
               onClick={(e) => {
-                if (button.onClick) {
-                  button.onClick(e);
-                }
+                button.onClick(e);
               }}
               active={button.activeButton}
               icon={button.icon}
