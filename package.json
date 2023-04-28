@@ -20,7 +20,7 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace flows"
   },
   "dependencies": {
-    "@automerge/automerge": "^2.0.2",
+    "@automerge/automerge": "^2.0.3",
     "@cognite/cdf-i18n-utils": "^0.6.0",
     "@cognite/cdf-utilities": "^3.2.0",
     "@cognite/cogs.js": "^9.11.0",
