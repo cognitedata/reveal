@@ -22,7 +22,6 @@ CogsTooltip.defaultProps = {
   appendTo: getContainer,
 };
 
-
 CogsButton.defaultProps = {
   // @ts-ignore
   getContainer,
