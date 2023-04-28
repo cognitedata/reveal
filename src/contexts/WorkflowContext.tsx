@@ -40,10 +40,12 @@ type FlowContextT = {
   nodes: CanvasNodes;
   edges: CanvasEdges;
 
-  selectedNode: CanvasNode;
-  setSelectedNode: Dispatch<SetStateAction<CanvasNode>>;
+  selectedNodeId: CanvasNode['id'];
+  setSelectedNodeId: Dispatch<SetStateAction<CanvasNode['id']>>;
   selectedNodeComponent: ProcessType;
   setSelectedNodeComponent: Dispatch<SetStateAction<ProcessType>>;
+  selectedNodeDescription: string;
+  setSelectedNodeDescription: Dispatch<SetStateAction<string>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -113,10 +115,16 @@ export const FlowContextProvider = ({
     }
   }, [data]);
 
-  const [selectedNode, setSelectedNode] = useState(initialFlow.canvas.nodes[0]);
+  const [selectedNodeId, setSelectedNodeId] = useState(
+    initialFlow.canvas.nodes[0].id
+  );
   const [selectedNodeComponent, setSelectedNodeComponent] = useState(() => {
     const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
     return nodeData.processType;
+  });
+  const [selectedNodeDescription, setSelectedNodeDescription] = useState(() => {
+    const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
+    return nodeData.processDescription as string;
   });
 
   return (
@@ -134,10 +142,12 @@ export const FlowContextProvider = ({
         changeEdges,
         nodes: flowState.canvas.nodes,
         edges: flowState.canvas.edges,
-        selectedNode,
-        setSelectedNode,
+        selectedNodeId,
+        setSelectedNodeId,
         selectedNodeComponent,
         setSelectedNodeComponent,
+        selectedNodeDescription,
+        setSelectedNodeDescription,
       }}
     >
       {children}

@@ -41,8 +41,15 @@ export const isProcessType = (t?: string): t is ProcessType => {
   return !!t && PROCESS_TYPES.includes(t as ProcessType);
 };
 
-type BaseProcessNodeData<T extends ProcessType, P = {}> = {
+export type ProcessDescription = string;
+
+type BaseProcessNodeData<
+  T extends ProcessType,
+  D extends ProcessDescription,
+  P = {}
+> = {
   processType: T;
+  processDescription: D;
   processProps: P;
 };
 
@@ -51,17 +58,26 @@ type TransformationNodeProps = {
 };
 type TransformationNodeData = BaseProcessNodeData<
   'transformation',
+  string,
   TransformationNodeProps
 >;
 
 type WebhookNodeProps = {};
-type WebhookNodeData = BaseProcessNodeData<'webhook', WebhookNodeProps>;
+type WebhookNodeData = BaseProcessNodeData<'webhook', string, WebhookNodeProps>;
 
 type WorkflowNodeProps = {};
-type WorkflowkNodeData = BaseProcessNodeData<'workflow', WorkflowNodeProps>;
+type WorkflowkNodeData = BaseProcessNodeData<
+  'workflow',
+  string,
+  WorkflowNodeProps
+>;
 
 type FunctionNodeProps = {};
-type FunctionNodeData = BaseProcessNodeData<'function', FunctionNodeProps>;
+type FunctionNodeData = BaseProcessNodeData<
+  'function',
+  string,
+  FunctionNodeProps
+>;
 
 export type ProcessNodeData =
   | TransformationNodeData

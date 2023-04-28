@@ -50,6 +50,7 @@ export const ProcessNodeRenderer = ({
       },
       data: {
         processType,
+        processDescription: '',
         processProps: {},
       },
     };
@@ -87,6 +88,7 @@ export const ProcessNodeRenderer = ({
                 postProcess: 'uppercase',
               })}
             </ProcessNodeTitle>
+            <div>{data.processDescription}</div>
           </Flex>
         </Flex>
       </ProcessNodeContent>

@@ -49,8 +49,9 @@ export const FlowBuilder = (): JSX.Element => {
     flow: flowState,
     changeFlow,
     setIsNodeConfigurationPanelOpen,
-    setSelectedNode,
+    setSelectedNodeId,
     setSelectedNodeComponent,
+    setSelectedNodeDescription,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -109,9 +110,12 @@ export const FlowBuilder = (): JSX.Element => {
               n.selected = change.selected;
               if (change.selected) {
                 setIsNodeConfigurationPanelOpen(true);
+                setSelectedNodeId(n.id);
                 const nodeData = n.data as ProcessNodeData;
                 setSelectedNodeComponent(nodeData.processType);
-                setSelectedNode(n);
+                setSelectedNodeDescription(
+                  nodeData.processDescription ? nodeData.processDescription : ''
+                );
               } else if (!change.selected && selectedNodes.length === 0) {
                 setIsNodeConfigurationPanelOpen(false);
               }
@@ -194,6 +198,7 @@ export const FlowBuilder = (): JSX.Element => {
             position,
             data: {
               processType: type,
+              processDescription: '',
               processProps: {},
             },
           };

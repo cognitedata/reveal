@@ -18,17 +18,16 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     nodes,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
-    selectedNode,
-    setSelectedNode,
+    selectedNodeId,
     selectedNodeComponent,
     setSelectedNodeComponent,
+    selectedNodeDescription,
+    setSelectedNodeDescription,
     changeNodes,
   } = useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
-
-  const nodeData = selectedNode.data as ProcessNodeData;
 
   const onClose = () => {
     setIsNodeConfigurationPanelOpen(false);
@@ -58,12 +57,23 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const handleComponentChange = (value: ProcessType) => {
     changeNodes((nodes) => {
-      const node = nodes.find((node) => node.id === selectedNode.id);
+      const node = nodes.find((node) => node.id === selectedNodeId);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processType = value;
     });
     setSelectedNodeComponent(value);
   };
+
+  // const handleChange = () => {
+  //   const value = e.target.value;
+  //   console.log(value);
+  //   changeNodes((nodes) => {
+  //     const node = nodes.find((node) => node.id === selectedNodeId);
+  //     const nodeData = node?.data as ProcessNodeData;
+  //     nodeData.processDescription = value;
+  //   });
+  //   setSelectedNodeDescription(value);
+  // };
 
   return (
     <StyledDrawer
@@ -125,8 +135,19 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         </Select>
       </Flex>
       <InputExp
+        name="label"
         label={t('node-configuration-panel-label')}
         placeholder={t('node-configuration-panel-label-placeholder')}
+        value={selectedNodeDescription}
+        onChange={(e) => {
+          const value = e.target.value;
+          changeNodes((nodes) => {
+            const node = nodes.find((node) => node.id === selectedNodeId);
+            const nodeData = node?.data as ProcessNodeData;
+            nodeData.processDescription = value;
+          });
+          setSelectedNodeDescription(value);
+        }}
         variant="solid"
         style={{ width: 326 }}
       />
