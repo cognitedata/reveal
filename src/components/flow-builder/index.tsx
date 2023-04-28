@@ -8,7 +8,6 @@ import ReactFlow, {
   OnConnect,
   ReactFlowInstance,
   OnEdgesChange,
-  Controls,
   BackgroundVariant,
   NodeChange,
   Edge,
@@ -37,6 +36,7 @@ import {
   WorkflowBuilderNodeType,
   isProcessType,
 } from 'types';
+import { Controls } from 'components/controls/Controls';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
   process: ProcessNodeRenderer,

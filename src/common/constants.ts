@@ -6,9 +6,11 @@ export const URL_SEARCH_QUERY_PARAM = 'q';
 export const BASE_QUERY_KEY = 'flows';
 export const FLOATING_COMPONENTS_PANEL_WIDTH = 356;
 export const FLOATING_ELEMENT_MARGIN = 12;
+export const TOOLBAR_MARGIN = 16;
 export const GROUP_PADDING = 16;
 export const Z_INDEXES = {
   FLOATING_ELEMENT: 1,
+  TOOLBAR: 10000,
   REACT_FLOW_CANVAS_NODES: 1002,
   WORKFLOW_CONTEXT_MENU: 1003,
 };
