@@ -724,11 +724,10 @@ export function generateLayout({
       const showEvent = !isLoading && isEventFilterValid && eventSet.visible;
 
       (eventSet.results || []).forEach((eventItem: CogniteEvent) => {
-        const { startTime } = eventItem;
-        const { endTime } = eventItem;
+        const { startTime, endTime } = eventItem;
 
         const eventSelected = isEventSelected(storedSelectedEvents, eventItem);
-        const eventHasDuration = Number(endTime) - Number(startTime);
+        const eventDuration = Number(endTime) - Number(startTime);
         const nonZeroDurationEvent = [
           {
             // Event rect left border
@@ -822,7 +821,7 @@ export function generateLayout({
           },
         ];
         (layout.shapes as any[]).push(
-          ...(eventHasDuration ? nonZeroDurationEvent : zeroDurationEvent)
+          ...(eventDuration >= 0 ? nonZeroDurationEvent : zeroDurationEvent)
         );
       });
     });
