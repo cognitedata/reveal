@@ -1,7 +1,7 @@
 import { Flex, InputExp, Body, IconType, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
@@ -15,7 +15,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
   const {
-    nodes,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
     selectedNodeId,
@@ -63,17 +62,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     });
     setSelectedNodeComponent(value);
   };
-
-  // const handleChange = () => {
-  //   const value = e.target.value;
-  //   console.log(value);
-  //   changeNodes((nodes) => {
-  //     const node = nodes.find((node) => node.id === selectedNodeId);
-  //     const nodeData = node?.data as ProcessNodeData;
-  //     nodeData.processDescription = value;
-  //   });
-  //   setSelectedNodeDescription(value);
-  // };
 
   return (
     <StyledDrawer
