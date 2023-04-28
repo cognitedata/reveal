@@ -27,6 +27,11 @@ export class DefaultImage360Collection implements Image360Collection {
   };
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
+  private readonly _collectionId: string;
+
+  get id(): string {
+    return this._collectionId;
+  }
 
   /**
    * The events from the image collection.
@@ -42,7 +47,8 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._isCollectionVisible;
   }
 
-  constructor(entities: Image360Entity[], icons: IconCollection) {
+  constructor(collectionId: string, entities: Image360Entity[], icons: IconCollection) {
+    this._collectionId = collectionId;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;

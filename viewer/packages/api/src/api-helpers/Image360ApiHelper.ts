@@ -15,6 +15,7 @@ import {
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
+  determineCurrentDevice,
   EventTrigger,
   InputHandler,
   pixelToNormalizedDeviceCoordinates,
@@ -63,10 +64,12 @@ export class Image360ApiHelper {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
       sceneHandler,
-      onBeforeSceneRendered
+      onBeforeSceneRendered,
+      device
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
@@ -106,10 +109,17 @@ export class Image360ApiHelper {
   }
 
   public async add360ImageSet(
-    eventFilter: { [key: string]: string },
+    eventFilter: Metadata,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
+    const id: string | undefined = eventFilter.site_id;
+    if (id === undefined) {
+      throw new Error('Image set filter must contain site_id');
+    }
+    if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
+      throw new Error(`Image set with id=${id} has already been added`);
+    }
     const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
     return imageCollection;
