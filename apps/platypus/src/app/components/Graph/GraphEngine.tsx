@@ -19,6 +19,8 @@ import { getNodesKey, loadFromCache, saveToCache } from './cache';
 export type Node = SimulationNodeDatum & {
   id: string;
   title: string;
+  initialX?: number;
+  initialY?: number;
 };
 
 export type Link = { source: string; target: string; id?: string };
@@ -27,6 +29,7 @@ const getMidPoint = (x = 0, y = 0) => (x + y) / 2;
 
 export const INITIAL_TRANSFORM = { k: 1, x: 0, y: 0 };
 const FULL_RENDER_LIMIT = 0.3;
+const ALPHA_ANIMATING_LIMIT = 0.1;
 
 export const getLinkId = (
   link: SimulationLinkDatum<Node> & { id?: string }
@@ -65,7 +68,7 @@ export interface GraphProps<T> {
   useCurve?: boolean;
   useCache?: boolean;
   children?: React.ReactNode;
-  autoLayout?: boolean;
+  autoLayout?: (node: Node & T) => { width: number; height: number };
   offset?: { top?: number; left?: number; right?: number; bottom?: number };
   getLinkEndOffset?: GetLinkEndOffsetFn<T>;
   graphRef?: React.Ref<GraphFns>;
@@ -105,7 +108,7 @@ export const Graph = <T,>({
   nodes: propsNodes = [],
   links: propsLinks = [],
   useCurve = false,
-  autoLayout = true,
+  autoLayout,
   useCache = true,
   getLinkEndOffset = defaultGetOffset,
   onLinkEvent,
@@ -150,6 +153,7 @@ export const Graph = <T,>({
     propsNodes.length === 0 ? false : true
   );
   const [isAutoLayouting, setIsAutoLayouting] = useState<boolean>(false);
+  const [isAnimating, setIsAnimation] = useState<boolean>(false);
   const [nodes, setNodes] = useState<(Node & T)[]>([]);
 
   const [transform, setTransform] = useState<{
@@ -160,31 +164,62 @@ export const Graph = <T,>({
 
   useEffect(() => {
     if (autoLayout) {
-      setIsFittingContent(propsNodes.length === 0 ? false : true);
       setTransform(INITIAL_TRANSFORM);
     } else if (simulation) {
-      simulation.alphaTarget(0.3).restart();
+      simulation.alpha(0).stop();
     }
-  }, [propsNodes, propsLinks, autoLayout, simulation]);
+  }, [propsNodes, autoLayout, simulation]);
 
-  const isLoading = isFittingContent || isAutoLayouting;
+  const isLoading = useMemo(() => {
+    if (autoLayout) {
+      return isFittingContent || isAutoLayouting;
+    } else {
+      return isAnimating;
+    }
+  }, [isFittingContent, isAutoLayouting, isAnimating, autoLayout]);
 
   useEffect(() => {
     if (onLoadingStatus) {
-      onLoadingStatus(!isLoading);
+      onLoadingStatus(isLoading);
     }
   }, [onLoadingStatus, isLoading]);
 
   useEffect(() => {
-    const cacheItems = loadFromCache(
-      useCache ? getNodesKey(propsNodes) : DEFAULT_KEY
-    );
-    const nodesWithCachedLocation = propsNodes.map((node) => ({
-      ...node,
-      ...cacheItems[node.id],
-    }));
-    setNodes(nodesWithCachedLocation);
-  }, [propsNodes, useCache]);
+    setNodes((currNodes) => {
+      const nodesMap = new Map(currNodes.map((el) => [el.id, el]));
+      const cacheItems = loadFromCache(
+        autoLayout ? getNodesKey(propsNodes) : DEFAULT_KEY
+      );
+      const nodesWithCachedLocation = propsNodes.map((node) => {
+        const currentNode = nodesMap.get(node.id);
+        return {
+          ...(useCache ? cacheItems[node.id] : undefined),
+          vx: 0,
+          vy: 0,
+          ...node,
+          ...(currentNode
+            ? {
+                fx: currentNode.fx,
+                fy: currentNode.fy,
+                x: currentNode.x,
+                y: currentNode.y,
+              }
+            : { x: node.initialX, y: node.initialY }),
+        };
+      });
+      // restarting simulation
+      if (simulation) {
+        const currentIdsSet = new Set(currNodes.map((el) => el.id));
+        if (propsNodes.some((el) => currentIdsSet.has(el.id))) {
+          simulation.alpha(ALPHA_ANIMATING_LIMIT).restart();
+        } else {
+          simulation.tick(propsNodes.length * 10);
+          simulation.alpha(1).restart();
+        }
+      }
+      return nodesWithCachedLocation;
+    });
+  }, [propsNodes, simulation, autoLayout, useCache]);
 
   const links: SimulationLinkDatum<Node & T>[] = useMemo(() => {
     // make lookups easy
@@ -247,7 +282,8 @@ export const Graph = <T,>({
   const ticked = useCallback(
     // global transform values
     ({ x, y, k }: { x: number; y: number; k: number } = transform) => {
-      if (containerRef.current) {
+      if (containerRef.current && simulation) {
+        setIsAnimation(simulation.alpha() > ALPHA_ANIMATING_LIMIT);
         const width = containerRef.current.clientWidth;
         const height = containerRef.current.clientHeight;
         // determine the amount to scale the node versus wrapper
@@ -394,6 +430,7 @@ export const Graph = <T,>({
     [
       d3Nodes,
       d3Links,
+      simulation,
       transform,
       useCurve,
       getLinkEndOffset,
@@ -456,6 +493,36 @@ export const Graph = <T,>({
     [onZoom]
   );
 
+  const layoutWithElk = useCallback(() => {
+    (async () => {
+      if (autoLayout) {
+        setIsAutoLayouting(true);
+        const nodesWithAutolayoutLocation = await getELKNodes(
+          nodes.map((node) => ({ ...node, ...autoLayout(node) })),
+          propsLinks
+        );
+        setNodes((prevNodes) => {
+          const newNodes = prevNodes.map((el) => {
+            return {
+              ...el,
+              ...nodesWithAutolayoutLocation.find((n) => n.id === el.id),
+            };
+          }) as (Node & T)[];
+
+          const newD3Nodes = d3
+            .select(containerRef.current)
+            .selectAll<Element, Node & T>('div.node')
+            .data(newNodes, (_, index) => newNodes[index].id);
+
+          setD3Nodes(newD3Nodes);
+          fitContent(newD3Nodes);
+          return newNodes;
+        });
+        setIsAutoLayouting(false);
+      }
+    })();
+  }, [nodes, propsLinks, autoLayout, fitContent]);
+
   // Zoom callbacks
   useEffect(() => {
     if (mainWrapperRef.current) {
@@ -514,13 +581,21 @@ export const Graph = <T,>({
       if (autoLayout) {
         // if we do not have fixed position for every node (some nodes are new)
         if (nodes.some((el) => !el.fx)) {
-          setIsAutoLayouting(true);
+          layoutWithElk();
         } else {
           fitContent(newD3Nodes);
         }
       }
     }
-  }, [chart, links, nodes, mainWrapperRef, autoLayout, fitContent]);
+  }, [
+    chart,
+    links,
+    nodes,
+    mainWrapperRef,
+    autoLayout,
+    fitContent,
+    layoutWithElk,
+  ]);
 
   // Set up simulation with node and links
   useEffect(() => {
@@ -532,7 +607,6 @@ export const Graph = <T,>({
         .force('x', d3.forceX().strength(0.05))
         .force('y', d3.forceY().strength(0.05))
         .force('collide', d3.forceCollide().radius(120));
-      simulation.alphaTarget(0);
       if (autoLayout) {
         simulation.alphaTarget(0).stop();
       }
@@ -549,7 +623,7 @@ export const Graph = <T,>({
   useEffect(() => {
     if (nodes && d3Nodes && simulation) {
       const dragStart = (_event: { active: any }, d: any) => {
-        simulation.alphaTarget(0.3).restart();
+        simulation.alphaTarget(ALPHA_ANIMATING_LIMIT).restart();
         d.fx = d.x;
         d.fy = d.y;
       };
@@ -562,12 +636,18 @@ export const Graph = <T,>({
         setTransform((oldTransform) => ({ ...oldTransform }));
       };
 
-      const dragEnd = (event: { active: any }) => {
+      const dragEnd = (event: { active: any }, d: any) => {
         if (!event.active) simulation.alphaTarget(0);
-        saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
+        d.fx = d.x;
+        d.fy = d.y;
+        if (useCache) {
+          saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
+        }
       };
       d3Nodes.on('click', () => {
-        saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
+        if (useCache) {
+          saveToCache(autoLayout ? getNodesKey(nodes) : DEFAULT_KEY, nodes);
+        }
       });
       d3Nodes.call(
         d3
@@ -577,7 +657,7 @@ export const Graph = <T,>({
           .on('end', dragEnd)
       );
     }
-  }, [nodes, d3Nodes, simulation, transform.k, autoLayout]);
+  }, [nodes, d3Nodes, simulation, transform.k, autoLayout, useCache]);
 
   useImperativeHandle(ref, () => ({
     zoomIn: (scaleFactor = 1.1) => {
@@ -599,40 +679,6 @@ export const Graph = <T,>({
       ticked();
     },
   }));
-
-  // Do an auto fit if it is loading...
-  useEffect(() => {
-    (async () => {
-      if (isAutoLayouting && d3Nodes) {
-        // if the d3 nodes are not up to date, skip handling layouting
-        if (d3Nodes.nodes().length !== nodes.length) {
-          return;
-        }
-        const nodesWithAutolayoutLocation = await getELKNodes(
-          d3Nodes.nodes() as (Element & { __data__: Node })[],
-          propsLinks
-        );
-        setNodes((prevNodes) => {
-          const newNodes = prevNodes.map((el) => {
-            return {
-              ...el,
-              ...nodesWithAutolayoutLocation.find((n) => n.id === el.id),
-            };
-          }) as (Node & T)[];
-
-          const newD3Nodes = d3
-            .select(containerRef.current)
-            .selectAll<Element, Node & T>('div.node')
-            .data(newNodes, (_, index) => newNodes[index].id);
-
-          setD3Nodes(newD3Nodes);
-          fitContent(newD3Nodes);
-          return newNodes;
-        });
-        setIsAutoLayouting(false);
-      }
-    })();
-  }, [isAutoLayouting, d3Nodes, nodes, propsLinks, fitContent]);
 
   return (
     <Wrapper {...htmlProps} ref={mainWrapperRef}>

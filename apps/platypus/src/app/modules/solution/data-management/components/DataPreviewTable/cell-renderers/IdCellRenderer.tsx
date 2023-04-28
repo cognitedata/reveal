@@ -33,6 +33,7 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
           className="network"
           icon="Network"
           type="secondary"
+          aria-label="Open graph"
           onClick={() => {
             track('Graph.Open');
             setIsRelationViewerOpen(true);

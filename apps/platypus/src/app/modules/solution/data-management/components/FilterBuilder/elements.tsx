@@ -314,9 +314,14 @@ export const InputWidget = (
       disabled={readonly}
       fullWidth
       value={
+        // If the input type is 'datetime-local' and currValue is truthy, format the date value
         inputType === 'datetime-local' && currValue
           ? new Date(currValue).toISOString().substring(0, 16)
-          : currValue || ''
+          : // If currValue is undefined, null, or falsey, set an empty string
+          currValue === undefined || currValue === null
+          ? ''
+          : // Otherwise, set the current value as a string
+            `${currValue}`
       }
       placeholder={placeholder}
       type={inputType}

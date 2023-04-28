@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
 import { getRelationLinkId, getRelationshipsForData } from './utils';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 const getColor = (key: string) => uniqolor(key);
 
@@ -31,11 +32,10 @@ export const RelationViewer = <
   }[];
 }) => {
   const { track } = useMixpanel();
+  const [isLoading, setLoading] = useState(true);
   const [nodes, setNodes] = useState(new Map());
   const [links, setLinks] = useState(new Map());
-  const [selectedItems, setSelectedItem] = useState<Map<string, string[]>>(
-    new Map()
-  );
+  const [_, setSelectedItem] = useState<Map<string, string[]>>(new Map());
   const [selectedFields, setSelectedField] = useState<{
     [key in string]: {
       def: DataModelTypeDefsField;
@@ -58,7 +58,7 @@ export const RelationViewer = <
     space
   );
   const onClick = useCallback(
-    (node: T & { __typename?: string }, position: { x: number; y: number }) => {
+    (node: T & { __typename?: string; x?: number; y?: number }) => {
       setSelectedItem((currentSelectedSet) => {
         const newSelectedItems = new Map(currentSelectedSet);
         // try and delete, if return a list of ids, it means it existed
@@ -95,7 +95,11 @@ export const RelationViewer = <
                   if (!el) {
                     return;
                   }
-                  newNodes.set(el.externalId, { ...el, ...position });
+                  newNodes.set(el.externalId, {
+                    ...el,
+                    initialX: node.x,
+                    initialY: node.y,
+                  });
                   const linkId = getRelationLinkId(
                     `${itemType?.name}.${field.name}`,
                     node.externalId,
@@ -118,6 +122,12 @@ export const RelationViewer = <
 
               // update the sidebar menu
               setSelectedField((currValue) => {
+                // update the nodes and edges
+                setNodes((currNodes) => {
+                  currNodes.set(node.externalId, { ...node, isSelected: true });
+                  setLinks((currLinks) => new Map([...newLinks, ...currLinks]));
+                  return new Map([...newNodes, ...currNodes]);
+                });
                 return [clickedTypeName, ...types.values()].reduce(
                   (prev, type) => {
                     if (!prev[type] || prev[type].length === 0) {
@@ -137,10 +147,6 @@ export const RelationViewer = <
                   currValue
                 );
               });
-
-              // update the nodes and edges
-              setNodes((currNodes) => new Map([...currNodes, ...newNodes]));
-              setLinks((currLinks) => new Map([...currLinks, ...newLinks]));
             });
           }
         } else {
@@ -161,6 +167,7 @@ export const RelationViewer = <
                 nodesToDelete.delete(link.target);
               }
               const newNodesList = new Map(currNodes);
+              newNodesList.set(node.externalId, { ...node, isSelected: false });
               for (const key of nodesToDelete) {
                 newNodesList.delete(key);
               }
@@ -200,11 +207,12 @@ export const RelationViewer = <
     if (
       initialEdges.length === 0 &&
       initialNodes.length === 1 &&
-      !selectedItems.has(initialNodes[0].externalId)
+      nodes.size === 1 &&
+      !nodes.get(initialNodes[0].externalId).isSelected
     ) {
-      onClick(initialNodes[0], { x: 0, y: 0 });
+      onClick({ ...initialNodes[0], fx: 0, fy: 0 });
     }
-  }, []);
+  }, [initialEdges, nodes, onClick, initialNodes]);
 
   useEffect(() => {
     setNodes(
@@ -221,21 +229,21 @@ export const RelationViewer = <
   }, [initialEdges, initialNodes]);
 
   const renderNode = useCallback(
-    (node: T) => (
+    (node: T & { isSelected?: boolean }) => (
       <NodeItem
         key={node.externalId}
         node={node}
-        onClick={(n, position) => {
-          onClick(n, position);
+        onClick={(n) => {
+          onClick(n);
 
           track('Graph.Expand', {
             node: n.externalId,
           });
         }}
-        isSelected={selectedItems.has(node.externalId)}
+        isSelected={node.isSelected}
       />
     ),
-    [onClick, selectedItems, track]
+    [onClick, track]
   );
   const renderLink = useCallback(
     (el: SimulationLinkDatum<Node & T> & { type?: string }) => {
@@ -268,7 +276,9 @@ export const RelationViewer = <
 
   // Represents a filtered list of visible links
   const visibleLinks = useMemo(() => {
-    const keys = [...selectedItems.keys()];
+    const keys = [...nodes.values()]
+      .filter((el) => el.isSelected)
+      .map((el) => el.externalId);
 
     // Return a new array containing filtered links from the `links` Map based on the following conditions:
     // 1. If `disabledFields` is empty, include all links
@@ -282,7 +292,7 @@ export const RelationViewer = <
             (field) => link.type === `${field.type}.${field.field}`
           )
     );
-  }, [links, disabledFields, selectedItems]);
+  }, [links, disabledFields, nodes]);
 
   // Represents a filtered list of visible nodes
   const visibleNodes = useMemo(() => {
@@ -290,7 +300,7 @@ export const RelationViewer = <
       .filter(
         (node) =>
           // include nodes that are selected
-          [...selectedItems.keys()].includes(node.externalId) ||
+          node.isSelected ||
           // include nodes that are in the 'initialNodes' array
           initialNodes.some(
             (initialNode) => initialNode.externalId === node.externalId
@@ -309,7 +319,7 @@ export const RelationViewer = <
         id: el.externalId,
         title: el.externalId,
       }));
-  }, [nodes, disabledFields, visibleLinks, initialNodes, selectedItems]);
+  }, [nodes, disabledFields.length, initialNodes, visibleLinks]);
 
   return (
     <Graph<T>
@@ -318,7 +328,7 @@ export const RelationViewer = <
       useCache={false}
       renderNode={renderNode}
       renderLink={renderLink}
-      autoLayout={false}
+      onLoadingStatus={setLoading}
       style={{
         position: 'relative',
         backgroundImage: `radial-gradient(
@@ -327,8 +337,23 @@ export const RelationViewer = <
         )`,
         backgroundSize: '24px 24px',
         backgroundColor: 'var(--cogs-bg-canvas)',
+        overflow: 'hidden',
       }}
     >
+      {isLoading && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'var(--cogs-bg-canvas)',
+          }}
+        >
+          <Spinner />
+        </div>
+      )}
       <div
         style={{
           position: 'absolute',
@@ -394,8 +419,8 @@ const NodeItem = <T extends { externalId: string }>({
   isSelected,
 }: {
   node: T & { __typename: string };
-  onClick: (node: T, position: { x: number; y: number }) => void;
-  isSelected: boolean;
+  onClick: (node: T) => void;
+  isSelected?: boolean;
 }) => {
   return (
     <div
@@ -409,11 +434,8 @@ const NodeItem = <T extends { externalId: string }>({
         transform: 'translate(-50%, -50%)',
         border: `1px solid ${getColor(node.__typename).color}`,
       }}
-      onClick={(e) => {
-        onClick(node, {
-          x: (e.currentTarget.parentElement as any).__data__.x || 0,
-          y: (e.currentTarget.parentElement as any).__data__.y || 0,
-        });
+      onClick={() => {
+        onClick(node);
       }}
     >
       <Chip

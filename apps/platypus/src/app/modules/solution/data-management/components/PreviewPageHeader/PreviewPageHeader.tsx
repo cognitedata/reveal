@@ -164,6 +164,7 @@ export function PreviewPageHeader({
             <Button
               icon="Refresh"
               onClick={onRefreshClick}
+              aria-label="Refresh data"
               size="small"
               type="ghost-accent"
             />

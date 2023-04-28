@@ -40,7 +40,14 @@ export const getRelationshipsForData = async ({
                 const subFields = dataModelTypeDefs.types
                   .find((type) => type.name === field.type.name)
                   ?.fields.filter((el) => !el.type.custom)
-                  .map((el) => el.name)
+                  .map((el) => {
+                    switch (el.type.name) {
+                      case 'TimeSeries':
+                        return `${el.name} { __typename externalId }`;
+                      default:
+                        return el.name;
+                    }
+                  })
                   .join('\n');
                 if (field.type.list) {
                   return `${field.name} { 
