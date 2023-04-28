@@ -56,6 +56,10 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
     const image360Descriptors = this.mergeDescriptors(files, events, preMultipliedRotation);
 
+    if (image360Descriptors.length === 0) {
+      return Promise.reject(`Error: Could not find any 360 images to load for the site_id "${metadataFilter.site_id}"`);
+    }
+
     if (events.length !== image360Descriptors.length) {
       Log.warn(
         `WARNING: There are ${events.length - image360Descriptors.length} rejected 360 images due to invalid data.`,
