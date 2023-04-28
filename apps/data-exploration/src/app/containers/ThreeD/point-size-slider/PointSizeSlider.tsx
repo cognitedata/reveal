@@ -6,6 +6,7 @@ import {
   Flex,
   Menu,
   Slider as CogsSlider,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 import { ids } from '../../../../cogs-variables';
@@ -72,11 +73,13 @@ export default function PointSizeSlider({
         </StyledMenu>
       }
     >
-      <FullWidthButton
-        icon="DotLarge"
-        type="ghost"
-        aria-label="point-size-button"
-      />
+      <Tooltip content="Point size" placement="right">
+        <FullWidthButton
+          icon="DotLarge"
+          type="ghost"
+          aria-label="point-size-button"
+        />
+      </Tooltip>
     </Dropdown>
   );
 }
