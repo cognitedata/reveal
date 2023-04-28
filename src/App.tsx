@@ -25,7 +25,6 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 10 * 60 * 1000, // Pretty long
-      structuralSharing: false, // CRITICAL when saving automerge docs in query cache
     },
   },
 });

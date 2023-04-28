@@ -1,6 +1,7 @@
 import {
   Loader,
   Tooltip as CogsTooltip,
+  Modal,
   Button as CogsButton,
 } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
@@ -21,11 +22,18 @@ CogsTooltip.defaultProps = {
   appendTo: getContainer,
 };
 
+
 CogsButton.defaultProps = {
   // @ts-ignore
   getContainer,
   ...CogsButton.defaultProps,
 };
+
+Modal.defaultProps = {
+  getContainer,
+  ...Modal.defaultProps,
+};
+
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   const didLoadStyles = useGlobalStyles([
     cogsStyles,

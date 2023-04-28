@@ -1,32 +1,25 @@
-import { createLink } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
-import { CANVAS_PATH, useTranslation } from 'common';
+import { useTranslation } from 'common';
 import { useCreateFlow } from 'hooks/files';
-import { useNavigate } from 'react-router-dom';
-import { v4 } from 'uuid';
+import { Dispatch, SetStateAction } from 'react';
 
-export default function CreateButton({}: {}) {
+type Props = {
+  showCreateModal: boolean;
+  setShowCreateModal: Dispatch<SetStateAction<boolean>>;
+};
+
+export default function CreateButton({
+  showCreateModal,
+  setShowCreateModal,
+}: Props) {
   const { t } = useTranslation();
-  const { mutateAsync, isLoading } = useCreateFlow();
-  const navigate = useNavigate();
+  const { isLoading } = useCreateFlow();
   return (
     <Button
       type="primary"
       disabled={isLoading}
       icon={isLoading ? 'Loader' : 'Add'}
-      onClick={() =>
-        mutateAsync({
-          id: v4(),
-          name: `Flow-demo ${new Date().getTime().toString()}`,
-          description: `This is for the first iteration`,
-          canvas: {
-            nodes: [] as any, // FIXME: any
-            edges: [] as any, // FIXME: any
-          },
-        }).then((fileInfo) => {
-          navigate(createLink(`/${CANVAS_PATH}/${fileInfo.externalId}`));
-        })
-      }
+      onClick={() => setShowCreateModal(!showCreateModal)}
     >
       {t('list-create-flow')}
     </Button>
