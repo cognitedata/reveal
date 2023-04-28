@@ -11,7 +11,6 @@ import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileToolti
 import { TooltipContainer } from '../TooltipContainer';
 import { ContainerReferenceType } from '../types';
 import { UseManagedStateReturnType } from './useManagedState';
-import { v4 as uuid } from 'uuid';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];
@@ -66,7 +65,6 @@ const useIndustryCanvasFileLinkTooltips = ({
         {
           type: ContainerReferenceType.FILE,
           resourceId: resourceId,
-          id: uuid(),
           page: 1,
         },
       ]);

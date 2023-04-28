@@ -5,7 +5,6 @@ import {
   isAssetAnnotation,
 } from '@cognite/data-exploration';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 
 import { useMemo } from 'react';
@@ -39,7 +38,6 @@ const useIndustryCanvasAssetTooltips = (
       onAddContainerReferences([
         {
           type: ContainerReferenceType.THREE_D,
-          id: `${modelId}-${revisionId}`,
           modelId,
           revisionId,
           initialAssetId,
@@ -52,7 +50,6 @@ const useIndustryCanvasAssetTooltips = (
         {
           type: ContainerReferenceType.TIMESERIES,
           resourceId: timeseriesId,
-          id: uuid(),
           startDate: dayjs(new Date())
             .subtract(2, 'years')
             .startOf('day')
@@ -66,7 +63,6 @@ const useIndustryCanvasAssetTooltips = (
       onAddContainerReferences([
         {
           type: ContainerReferenceType.ASSET,
-          id: `${resourceId}`,
           resourceId: resourceId,
         },
       ]);

@@ -26,32 +26,41 @@ export type Dimensions = {
 };
 
 export type FileContainerReference = {
+  id?: string;
   type: ContainerReferenceType.FILE;
   resourceId: number;
-  id?: string;
   page?: number;
   label?: string;
 } & Partial<Dimensions>;
 
+export type TimeseriesContainerReference = {
+  id?: string;
+  type: ContainerReferenceType.TIMESERIES;
+  resourceId: number;
+  startDate?: string;
+  endDate?: string;
+  label?: string;
+} & Partial<Dimensions>;
+
 export type AssetContainerReference = {
+  id?: string;
   type: ContainerReferenceType.ASSET;
   resourceId: number;
-  id?: string;
   label?: string;
 } & Partial<Dimensions>;
 
 export type EventContainerReference = {
-  type: ContainerReferenceType.EVENT;
   id?: string;
+  type: ContainerReferenceType.EVENT;
   resourceId: number;
   label?: string;
 } & Partial<Dimensions>;
 
 export type ThreeDContainerReference = {
+  id?: string;
   type: ContainerReferenceType.THREE_D;
   modelId: number;
   revisionId: number;
-  id?: string;
   initialAssetId?: number;
   camera?: {
     position: {
@@ -68,21 +77,37 @@ export type ThreeDContainerReference = {
   label?: string;
 } & Partial<Dimensions>;
 
-export type TimeseriesContainerReference = {
-  type: ContainerReferenceType.TIMESERIES;
-  resourceId: number;
-  id?: string;
-  startDate?: string;
-  endDate?: string;
-  label?: string;
-} & Partial<Dimensions>;
-
 export type ContainerReference =
   | FileContainerReference
   | TimeseriesContainerReference
   | AssetContainerReference
   | EventContainerReference
   | ThreeDContainerReference;
+
+export const isFileContainerReference = (
+  containerReference: ContainerReference
+): containerReference is FileContainerReference =>
+  containerReference.type === ContainerReferenceType.FILE;
+
+export const isTimeseriesContainerReference = (
+  containerReference: ContainerReference
+): containerReference is TimeseriesContainerReference =>
+  containerReference.type === ContainerReferenceType.TIMESERIES;
+
+export const isAssetContainerReference = (
+  containerReference: ContainerReference
+): containerReference is AssetContainerReference =>
+  containerReference.type === ContainerReferenceType.ASSET;
+
+export const isEventContainerReference = (
+  containerReference: ContainerReference
+): containerReference is EventContainerReference =>
+  containerReference.type === ContainerReferenceType.EVENT;
+
+export const isThreeDContainerReference = (
+  containerReference: ContainerReference
+): containerReference is ThreeDContainerReference =>
+  containerReference.type === ContainerReferenceType.THREE_D;
 
 export type ShapeAnnotation = RectangleAnnotation | EllipseAnnotation;
 

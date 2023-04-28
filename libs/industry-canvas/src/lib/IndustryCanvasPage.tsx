@@ -117,6 +117,32 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const onAddContainerReferences = useCallback(
     (containerReferences: ContainerReference[]) => {
+      // Ensure that we don't add a container with an ID that already exists
+      const currentContainerIds = new Set(
+        (container?.children ?? []).map((c) => c.id)
+      );
+      const containerReferencesToAdd = containerReferences.filter(
+        (containerReference) =>
+          containerReference.id === undefined ||
+          !currentContainerIds.has(containerReference.id)
+      );
+
+      if (containerReferencesToAdd.length !== containerReferences.length) {
+        toast.error(
+          <div>
+            <h4>Could not add resource(s) to your canvas</h4>
+            <p>Resource(s) already added to the canvas.</p>
+          </div>,
+          {
+            toastId: `canvas-file-already-added-${uuid()}`,
+            position: TOAST_POSITION,
+          }
+        );
+      }
+
+      if (containerReferencesToAdd.length === 0) {
+        return;
+      }
       addContainerReferences(containerReferences);
       toast.success(
         <div>
@@ -128,7 +154,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         }
       );
     },
-    [addContainerReferences]
+    [addContainerReferences, container]
   );
 
   const onAddResourcePress = () => {

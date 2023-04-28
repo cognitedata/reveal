@@ -2,7 +2,10 @@ import { CogniteClient } from '@cognite/sdk';
 import getEventTableContainerConfig, {
   getEventTableTitle,
 } from './getEventTableContainerConfig';
-import { IndustryCanvasContainerConfig } from '../../types';
+import {
+  EventContainerReference,
+  IndustryCanvasContainerConfig,
+} from '../../types';
 import {
   DEFAULT_EVENT_HEIGHT,
   DEFAULT_EVENT_WIDTH,
@@ -11,23 +14,7 @@ import { v4 as uuid } from 'uuid';
 
 const resolveEventContainerConfig = async (
   sdk: CogniteClient,
-  {
-    id,
-    resourceId,
-    x,
-    y,
-    width,
-    height,
-    label,
-  }: {
-    id?: string | undefined;
-    resourceId: number;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    label?: string;
-  }
+  { id, resourceId, x, y, width, height, label }: EventContainerReference
 ): Promise<IndustryCanvasContainerConfig> => {
   const events = await sdk.events.retrieve([{ id: resourceId }]);
 
