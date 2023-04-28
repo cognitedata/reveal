@@ -7,6 +7,7 @@ import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useTransformationList } from 'hooks/transformation';
 import { collectPages } from 'utils';
+import { ProcessNodeData } from 'types';
 
 const { Option } = Select;
 
@@ -14,15 +15,15 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
   const {
-    flow,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
-    selectedNodeComponent,
     selectedNode,
   } = useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
+
+  const nodeData = selectedNode.data as ProcessNodeData;
 
   const onClose = () => {
     setIsNodeConfigurationPanelOpen(false);
@@ -34,27 +35,21 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     icon: IconType;
   }[] = [
     {
-      value: 'Transformation',
+      value: 'transformation',
       label: t('transformation'),
       icon: 'Code',
     },
     {
-      value: 'Function',
+      value: 'function',
       label: t('function'),
       icon: 'Function',
     },
     {
-      value: 'Webhook',
+      value: 'webhook',
       label: t('webhook'),
       icon: 'FrameTool',
     },
   ];
-
-  console.log(selectedNode.data['processType']);
-  // const selectedNode = flow.canvas.nodes.filter((node) => {
-  //   return node.selected;
-  // });
-  // console.log(selectedNode);
 
   return (
     <StyledDrawer
@@ -82,7 +77,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Body level={2} strong>
           {t('node-configuration-panel-component')}
         </Body>
-        <Select defaultValue={selectedNodeComponent} style={{ width: 326 }}>
+        <Select defaultValue={nodeData.processType} style={{ width: 326 }}>
           {nodeOptions.map(({ icon, label, value }) => (
             <Option key={value} value={value}>
               <Container>
