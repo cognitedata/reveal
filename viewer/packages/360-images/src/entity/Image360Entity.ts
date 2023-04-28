@@ -126,6 +126,15 @@ export class Image360Entity implements Image360 {
     };
   }
 
+  public activateAnnotations(): void {
+    this._image360VisualzationBox.setAnnotations(this._activeRevision.annotations);
+    this._image360VisualzationBox.setAnnotationsVisibility(true);
+  }
+
+  public deactivateAnnotations(): void {
+    this._image360VisualzationBox.setAnnotationsVisibility(false);
+  }
+
   /**
    * @obvious
    */
