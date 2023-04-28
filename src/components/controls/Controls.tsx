@@ -65,26 +65,24 @@ export const Controls = () => {
   ]);
 
   const renderZoomPercentage = () => (
-    <StyledDropdown
+    <Dropdown
       content={
-        <Menu>
+        <StyledMenu className="custom-menu">
           {zoomPercentageArray.map((item) => (
             <Menu.Item key={item} onClick={() => handleMenuItemClick(item)}>
               {`${item}%`}
             </Menu.Item>
           ))}
-        </Menu>
+        </StyledMenu>
       }
       onClickOutside={() => {
         setZoomDropdownVisible(false);
         setActive(false);
       }}
-      placement="bottom-end"
       visible={zoomDropdownVisible}
-      maxWidth="30px"
     >
       <ZoomPercentage>{`${zoomPercentage}%`}</ZoomPercentage>
-    </StyledDropdown>
+    </Dropdown>
   );
   //console.log(wasZoomClicked);
   //console.log(zoomPercentage);
@@ -130,6 +128,10 @@ const ZoomPercentage = styled.div`
   font-weight: 500;
 `;
 
-const StyledDropdown = styled(Dropdown)`
-  width: 30px;
+const StyledMenu = styled(Menu).attrs({
+  className: 'custom-menu',
+})`
+  .custom-menu {
+    width: 30px !important;
+  }
 `;
