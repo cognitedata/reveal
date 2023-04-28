@@ -16,8 +16,8 @@ export const Controls = () => {
 
   const { setViewport, zoomIn, zoomOut } = useReactFlow();
   const zoomLevel = useStore((store) => store.transform[2]); // Trackpad zoom level
-  const isMaxZoom = useStore((store) => store.transform[2] === store.maxZoom);
-  const isMinZoom = useStore((store) => store.transform[2] === store.minZoom);
+  const maxZoom = useStore((store) => store.transform[2] === store.maxZoom);
+  const minZoom = useStore((store) => store.transform[2] === store.minZoom);
 
   const zoomPercentageArray = [50, 75, 100, 125, 150, 200];
 
@@ -91,7 +91,7 @@ export const Controls = () => {
   const buttons: ToolbarButtonProps[] = [
     {
       icon: 'ZoomOut',
-      disabled: isMinZoom,
+      disabled: minZoom,
       onClick: () => {
         setWasZoomClicked({ wasZoomOutClicked: true, wasZoomInClicked: false });
         handleZoomOut();
@@ -107,7 +107,7 @@ export const Controls = () => {
     },
     {
       icon: 'ZoomIn',
-      disabled: isMaxZoom,
+      disabled: maxZoom,
       onClick: () => {
         setWasZoomClicked({ wasZoomOutClicked: false, wasZoomInClicked: true });
         handleZoomIn();
