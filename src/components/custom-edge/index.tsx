@@ -50,7 +50,6 @@ export const CustomEdge = ({
           style={{ ...style, stroke: 'transparent', strokeWidth: 10 }}
           className="react-flow__edge-path"
           d={edgePath}
-          markerEnd={markerEnd}
         />
         <path
           id={id}
