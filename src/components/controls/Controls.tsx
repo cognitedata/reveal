@@ -19,6 +19,8 @@ export const Controls = () => {
   const isMaxZoom = useStore((store) => store.transform[2] === store.maxZoom);
   const isMinZoom = useStore((store) => store.transform[2] === store.minZoom);
 
+  const zoomPercentageArray = [50, 75, 100, 125, 150, 200];
+
   const handlePanToCenter = useCallback(() => {
     setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 800 });
     setZoomPercentage(100);
@@ -40,7 +42,7 @@ export const Controls = () => {
     zoomOut({ duration: 500 });
   }, [wasZoomClicked.wasZoomOutClicked, zoomOut]);
 
-  const handleZoomPercentageClick = useCallback(
+  const handleMenuItemClick = useCallback(
     (selectedPercentage: number) => {
       setViewport(
         { x: 0, y: 0, zoom: selectedPercentage / 100 },
@@ -62,17 +64,12 @@ export const Controls = () => {
     zoomLevel,
   ]);
 
-  const zoomPercentageArray = [50, 75, 100, 125, 150, 200];
-
   const renderZoomPercentage = () => (
     <StyledDropdown
       content={
         <Menu>
           {zoomPercentageArray.map((item) => (
-            <Menu.Item
-              key={item}
-              onClick={() => handleZoomPercentageClick(item)}
-            >
+            <Menu.Item key={item} onClick={() => handleMenuItemClick(item)}>
               {`${item}%`}
             </Menu.Item>
           ))}
