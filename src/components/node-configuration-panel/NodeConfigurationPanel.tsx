@@ -13,8 +13,13 @@ const { Option } = Select;
 export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
-  const { isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen } =
-    useWorkflowBuilderContext();
+  const {
+    flow,
+    isNodeConfigurationPanelOpen,
+    setIsNodeConfigurationPanelOpen,
+    selectedNodeComponent,
+    selectedNode,
+  } = useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
@@ -45,6 +50,12 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     },
   ];
 
+  console.log(selectedNode.data['processType']);
+  // const selectedNode = flow.canvas.nodes.filter((node) => {
+  //   return node.selected;
+  // });
+  // console.log(selectedNode);
+
   return (
     <StyledDrawer
       title={t('node-configuration-panel-title')}
@@ -71,7 +82,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Body level={2} strong>
           {t('node-configuration-panel-component')}
         </Body>
-        <Select defaultValue="Transformation" style={{ width: 326 }}>
+        <Select defaultValue={selectedNodeComponent} style={{ width: 326 }}>
           {nodeOptions.map(({ icon, label, value }) => (
             <Option key={value} value={value}>
               <Container>

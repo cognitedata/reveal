@@ -48,6 +48,7 @@ export const FlowBuilder = (): JSX.Element => {
     flow: flowState,
     changeFlow,
     setIsNodeConfigurationPanelOpen,
+    setSelectedNode,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -99,14 +100,19 @@ export const FlowBuilder = (): JSX.Element => {
           }
           case 'select': {
             const n = f.canvas.nodes.find((n) => n.id === change.id);
-            const selectednodes = changes.filter((change) => {
+            const selectedNodes = changes.filter((change) => {
               return change.type === 'select' && change.selected;
             });
             if (n) {
               n.selected = change.selected;
               if (change.selected) {
                 setIsNodeConfigurationPanelOpen(true);
-              } else if (!change.selected && selectednodes.length === 0) {
+                console.log(selectedNodes);
+                const nodeData = flowState.canvas.nodes.find(
+                  (node) => node.id === change.id
+                ) as CanvasNode;
+                setSelectedNode(nodeData);
+              } else if (!change.selected && selectedNodes.length === 0) {
                 setIsNodeConfigurationPanelOpen(false);
               }
             }
@@ -197,9 +203,6 @@ export const FlowBuilder = (): JSX.Element => {
     },
     [reactFlowInstance, changeFlow]
   );
-
-  // console.log(flow.canvas.nodes);
-  // const selectedNodes = canvas.nodes
 
   if (!flowState) {
     return <></>;
