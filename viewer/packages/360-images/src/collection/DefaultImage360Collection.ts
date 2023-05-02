@@ -15,6 +15,7 @@ import {
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Vector3 } from 'three';
 
 type Image360Events = 'image360Entered' | 'image360Exited' | 'image360AnnotationHovered' | 'image360AnnotationClicked';
 
@@ -179,12 +180,20 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
-  public fireHoverEvent(annotationObject: ImageAnnotationObject, pointerEvent: PointerEventData): void {
-    this._events.annotationHovered.fire(annotationObject, pointerEvent);
+  public fireHoverEvent(
+    annotationObject: ImageAnnotationObject,
+    pointerEvent: PointerEventData,
+    direction: Vector3
+  ): void {
+    this._events.annotationHovered.fire(annotationObject, pointerEvent, direction);
   }
 
-  public fireClickEvent(annotationObject: ImageAnnotationObject, pointerEvent: PointerEventData): void {
-    this._events.annotationClicked.fire(annotationObject, pointerEvent);
+  public fireClickEvent(
+    annotationObject: ImageAnnotationObject,
+    pointerEvent: PointerEventData,
+    direction: Vector3
+  ): void {
+    this._events.annotationClicked.fire(annotationObject, pointerEvent, direction);
   }
 
   public setSelectedVisibility(visible: boolean): void {

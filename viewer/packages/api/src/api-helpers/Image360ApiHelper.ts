@@ -147,6 +147,7 @@ export class Image360ApiHelper {
     }
 
     const point = this.getNormalizedOffset(event);
+    const direction = this._raycaster.ray.direction;
 
     this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
 
@@ -159,9 +160,9 @@ export class Image360ApiHelper {
     const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
 
     if (eventType === 'hover') {
-      collection.fireHoverEvent(annotation, event);
+      collection.fireHoverEvent(annotation, event, direction);
     } else if (eventType === 'click') {
-      collection.fireClickEvent(annotation, event);
+      collection.fireClickEvent(annotation, event, direction);
     }
   }
 
