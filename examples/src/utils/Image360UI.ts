@@ -3,13 +3,7 @@
  */
 
 import * as THREE from 'three';
-import {
-  Cognite3DViewer,
-  Image360,
-  Image360Collection,
-  Image360Annotation,
-  PointerEventData
-} from '@cognite/reveal';
+import { Cognite3DViewer, Image360, Image360Collection, Image360Annotation, PointerEventData } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
 import { Vector3 } from 'three';
