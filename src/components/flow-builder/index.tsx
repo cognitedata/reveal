@@ -147,7 +147,6 @@ export const FlowBuilder = (): JSX.Element => {
             source: connection.source!,
             target: connection.target!,
             type: 'customEdge',
-            animated: true,
             markerEnd: {
               type: MarkerType.ArrowClosed,
               height: 16,
@@ -224,6 +223,7 @@ export const FlowBuilder = (): JSX.Element => {
       flowState.canvas.edges.map((e) => ({
         ...e,
         selected: e.id === selectedObject,
+        animated: true,
       })) as Edge[],
     [flowState.canvas.edges, selectedObject]
   );
