@@ -159,9 +159,9 @@ export class Image360ApiHelper {
     const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
 
     if (eventType === 'hover') {
-      collection.fireHoverEvent(annotation);
+      collection.fireHoverEvent(annotation, event);
     } else if (eventType === 'click') {
-      collection.fireClickEvent(annotation);
+      collection.fireClickEvent(annotation, event);
     }
   }
 

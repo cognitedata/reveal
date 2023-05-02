@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger, PointerEventData } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
@@ -179,12 +179,12 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
-  public fireHoverEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationHovered.fire(annotationObject);
+  public fireHoverEvent(annotationObject: ImageAnnotationObject, pointerEvent: PointerEventData): void {
+    this._events.annotationHovered.fire(annotationObject, pointerEvent);
   }
 
-  public fireClickEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationClicked.fire(annotationObject);
+  public fireClickEvent(annotationObject: ImageAnnotationObject, pointerEvent: PointerEventData): void {
+    this._events.annotationClicked.fire(annotationObject, pointerEvent);
   }
 
   public setSelectedVisibility(visible: boolean): void {
