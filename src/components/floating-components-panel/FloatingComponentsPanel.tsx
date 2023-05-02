@@ -14,6 +14,7 @@ import {
   FLOATING_ELEMENT_MARGIN,
   Z_INDEXES,
   useTranslation,
+  FLOATING_PANEL_MARGIN,
 } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
@@ -68,7 +69,7 @@ const FloatingPanel = styled.div`
   flex-direction: column;
   gap: 12px;
   height: calc(100% - ${FLOATING_ELEMENT_MARGIN * 2}px);
-  left: ${FLOATING_ELEMENT_MARGIN}px;
+  left: ${FLOATING_PANEL_MARGIN}px;
   padding: 12px;
   position: absolute;
   top: ${FLOATING_ELEMENT_MARGIN}px;

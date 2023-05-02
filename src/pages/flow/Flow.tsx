@@ -2,13 +2,8 @@ import { Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Canvas } from 'components/canvas';
 import { useParams } from 'react-router-dom';
-import {
-  FlowContextProvider,
-  useWorkflowBuilderContext,
-} from 'contexts/WorkflowContext';
+import { FlowContextProvider } from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
-import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
-import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlusButton';
 import { useFlow } from 'hooks/files';
 
 const Flow = (): JSX.Element => {
@@ -35,20 +30,10 @@ const Flow = (): JSX.Element => {
 };
 
 function FlowContainer() {
-  const { isComponentsPanelVisible, setIsComponentsPanelVisible } =
-    useWorkflowBuilderContext();
-
   return (
     <StyledFlowContainer>
       <CanvasTopBar />
       <Content>
-        {isComponentsPanelVisible ? (
-          <FloatingComponentsPanel />
-        ) : (
-          <FloatingPlusButton
-            onClick={() => setIsComponentsPanelVisible(true)}
-          />
-        )}
         <Canvas />
       </Content>
     </StyledFlowContainer>

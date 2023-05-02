@@ -38,6 +38,7 @@ import {
   isProcessType,
 } from 'types';
 import { CustomEdge } from 'components/custom-edge';
+import { CanvasToolbar } from 'components/canvas-toolbar/CanvasToolbar';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
   process: ProcessNodeRenderer,
@@ -245,6 +246,7 @@ export const FlowBuilder = (): JSX.Element => {
         }}
       >
         <Controls />
+        <CanvasToolbar />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
       <ContextMenu
