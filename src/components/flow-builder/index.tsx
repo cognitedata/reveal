@@ -71,71 +71,71 @@ export const FlowBuilder = (): JSX.Element => {
   );
 
   const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
-    changeFlow((f) => {
-      changes.forEach((change) => {
-        switch (change.type) {
-          case 'select': {
-            const e = f.canvas.edges.find((e) => e.id === change.id);
-            if (e) {
-              e.selected = change.selected;
     const selectedEdgeChange = changes.find((c) => c.type === 'select');
     if (selectedEdgeChange) {
       setSelectedObject((selectedEdgeChange as EdgeSelectionChange).id);
     }
+
+    const amChanges = changes.filter((c) => ['remove'].includes(c.type));
+
+    if (amChanges.length > 0) {
+      changeFlow((f) => {
+        amChanges.forEach((change) => {
+          switch (change.type) {
+            case 'remove': {
+              const eIndex = f.canvas.edges.findIndex(
+                (e) => e.id === change.id
+              );
+              if (eIndex !== -1) {
+                f.canvas.edges.deleteAt(eIndex);
+              }
+              break;
             }
-            break;
-          }
-          case 'remove': {
-            const eIndex = f.canvas.edges.findIndex((e) => e.id === change.id);
-            if (eIndex !== -1) {
-              f.canvas.edges.deleteAt(eIndex);
+            default: {
+              break;
             }
-            break;
           }
-          default: {
-            break;
-          }
-        }
+        });
       });
-    });
+    }
   };
 
   const onNodesChange = (changes: NodeChange[]) => {
-    changeFlow((f) => {
-      changes.forEach((change) => {
-        switch (change.type) {
-          case 'position': {
-            const n = f.canvas.nodes.find((n) => n.id === change.id);
-            if (n && change.position) {
-              n.position.x = change.position.x;
-              n.position.y = change.position.y;
     const selectedNodeChange = changes.find((c) => c.type === 'select');
     if (selectedNodeChange) {
       setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
     }
+    const amChanges = changes.filter(
+      (c) => c.type === 'remove' || (c.type === 'position' && c.position)
+    );
+    if (amChanges.length > 0) {
+      changeFlow((f) => {
+        amChanges.forEach((change) => {
+          switch (change.type) {
+            case 'position': {
+              const n = f.canvas.nodes.find((n) => n.id === change.id);
+              if (n && change.position) {
+                n.position.x = change.position.x;
+                n.position.y = change.position.y;
+              }
+              break;
             }
-            break;
-          }
-          case 'select': {
-            const n = f.canvas.nodes.find((n) => n.id === change.id);
-            if (n) {
-              n.selected = change.selected;
+            case 'remove': {
+              const nIndex = f.canvas.nodes.findIndex(
+                (n) => n.id === change.id
+              );
+              if (nIndex !== -1) {
+                f.canvas.nodes.deleteAt(nIndex);
+              }
+              break;
             }
-            break;
-          }
-          case 'remove': {
-            const nIndex = f.canvas.nodes.findIndex((n) => n.id === change.id);
-            if (nIndex !== -1) {
-              f.canvas.nodes.deleteAt(nIndex);
+            default: {
+              break;
             }
-            break;
           }
-          default: {
-            break;
-          }
-        }
+        });
       });
-    });
+    }
   };
 
   const onConnect: OnConnect = useCallback(
