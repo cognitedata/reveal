@@ -4,7 +4,6 @@
 
 ```ts
 
-import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -380,6 +379,7 @@ export class Cognite3DViewer {
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
+    get renderParameters(): RenderParameters;
     requestRedraw(): void;
     setBackgroundColor(backgroundColor: {
         color?: THREE_2.Color;
@@ -1285,6 +1285,11 @@ export function registerNodeCollectionType<T extends NodeCollection>(nodeCollect
 export type RelativePosition = {
     corner: Corner;
     padding: THREE_2.Vector2;
+};
+
+// @public
+export type RenderParameters = {
+    renderSize: THREE.Vector2;
 };
 
 // @public
