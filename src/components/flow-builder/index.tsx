@@ -143,7 +143,6 @@ export const FlowBuilder = (): JSX.Element => {
       if (!!connection.source && !!connection.target) {
         changeFlow((f) => {
           const newEdge: Edge<any> = {
-            ...connection,
             source: connection.source!,
             target: connection.target!,
             type: 'customEdge',
