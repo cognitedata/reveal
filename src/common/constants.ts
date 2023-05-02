@@ -16,3 +16,7 @@ export const Z_INDEXES = {
 };
 export const DELETE_KEY_CODES = ['Backspace', 'Delete'];
 export const DEFAULT_GROUP_NAME = 'Group';
+export const DEFAULT_BUTTON_WIDTH = 28;
+export const DEFAULT_BUTTON_HEIGHT = 28;
+export const FOREIGN_OBJECT_WIDTH = DEFAULT_BUTTON_WIDTH * 2 + 10; // 10 is the space between the buttons
+export const FOREIGN_OBJECT_HEIGHT = DEFAULT_BUTTON_HEIGHT;

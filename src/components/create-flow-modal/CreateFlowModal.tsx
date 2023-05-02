@@ -37,15 +37,15 @@ const CreateFlowModal = ({ showCreateModal, setShowCreateModal }: Props) => {
   // Only show tr- prefix if name is changed
   useEffect(() => {
     if (!externalIdChanged) {
-      setValues({
-        ...values,
+      setValues((prevValues) => ({
+        ...prevValues,
         externalId:
-          values.name.length > 0
-            ? `tr-${values.name.toLowerCase().replace(/ /g, '-')}`
+          prevValues.name.length > 0
+            ? `tr-${prevValues.name.toLowerCase().replace(/ /g, '-')}`
             : '',
-      });
+      }));
     }
-  }, [values.name, externalIdChanged, values]);
+  }, [values.name, externalIdChanged]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!externalIdChanged) {
