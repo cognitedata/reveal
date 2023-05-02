@@ -2,22 +2,26 @@
  * Copyright 2022 Cognite AS
  */
 
-import { BeforeSceneRenderedDelegate, EventTrigger } from '@reveal/utilities';
+import { EventTrigger } from '@reveal/utilities';
 import * as THREE from 'three';
-import { PerspectiveCamera, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Ray, Sphere, Vector3 } from 'three';
 import { clamp } from 'three/src/math/MathUtils';
 
 export type IconParameters = {
-  position: THREE.Vector3,
-  minPixelSize: number,
-  maxPixelSize: number,
-  iconRadius: number,
-  hoverSprite?: THREE.Sprite
+  position: THREE.Vector3;
+  minPixelSize: number;
+  maxPixelSize: number;
+  iconRadius: number;
+  hoverSprite?: THREE.Sprite;
 };
 
-export type SetAdaptiveScaleDelegate = (args: { camera: THREE.Camera, renderSize: THREE.Vector2, domElement: HTMLElement }) => void;
+export type SetAdaptiveScaleDelegate = (args: {
+  camera: THREE.Camera;
+  renderSize: THREE.Vector2;
+  domElement: HTMLElement;
+}) => void;
 
-export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
+export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
   private readonly _position: THREE.Vector3;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
@@ -30,16 +34,13 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
   private _visible = true;
   private _culled = false;
   private _selected = false;
-  private _ndcPosition = new THREE.Vector4();
+  private readonly _ndcPosition = new THREE.Vector4();
 
   private readonly _events = {
-    selected: new EventTrigger<(value: boolean) => void>(),
-  }
+    selected: new EventTrigger<(value: boolean) => void>()
+  };
 
-  constructor (
-    iconParameters: IconParameters,
-    iconMetadata?: MetadataType
-  ) {
+  constructor(iconParameters: IconParameters, iconMetadata?: MetadataType) {
     const { position, minPixelSize, maxPixelSize, iconRadius, hoverSprite } = iconParameters;
 
     this._minPixelSize = minPixelSize;
@@ -49,7 +50,7 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
     this._iconMetadata = iconMetadata;
 
     this._setAdaptiveScale = this.setupAdaptiveScaling(position);
-   
+
     this._position = position;
   }
 
@@ -69,7 +70,7 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
 
     if (this._hoverSprite && this._selected) {
       this._hoverSprite.position.copy(this._position);
-      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale* 2, 1);
+      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
     }
   }
 
@@ -79,18 +80,22 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
 
   updateHoverSpriteScale(): void {
     if (this._hoverSprite) {
-      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale* 2, 1);
+      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
     }
   }
 
-  updateAdaptiveScale(delegateArguments: { renderSize: THREE.Vector2, camera: PerspectiveCamera, domElement: HTMLElement}): void {
+  updateAdaptiveScale(delegateArguments: {
+    renderSize: THREE.Vector2;
+    camera: PerspectiveCamera;
+    domElement: HTMLElement;
+  }): void {
     this._setAdaptiveScale(delegateArguments);
 
     if (this._hoverSprite && this._selected) {
-      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale* 2, 1);
+      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
     }
   }
-  
+
   get iconMetadata(): MetadataType | undefined {
     return this._iconMetadata;
   }
@@ -124,17 +129,23 @@ export class Overlay3DIcon <MetadataType = {[key: string]: any}> {
     return ray.intersectSphere(sphere, new Vector3());
   }
 
-  public dispose(): void {
-  }
+  public dispose(): void {}
 
   private setupAdaptiveScaling(position: THREE.Vector3): SetAdaptiveScaleDelegate {
-    return ({camera, renderSize, domElement}) => {
+    return ({ camera, renderSize, domElement }) => {
       if (!this.visible) {
         return;
       }
-      this._adaptiveScale = this.computeAdaptiveScaling(position, renderSize, domElement, camera, this._maxPixelSize, this._minPixelSize, this._iconRadius);
+      this._adaptiveScale = this.computeAdaptiveScaling(
+        position,
+        renderSize,
+        domElement,
+        camera,
+        this._maxPixelSize,
+        this._minPixelSize,
+        this._iconRadius
+      );
     };
-
   }
 
   private computeAdaptiveScaling(

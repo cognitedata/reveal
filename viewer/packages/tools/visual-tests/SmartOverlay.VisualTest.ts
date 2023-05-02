@@ -13,7 +13,7 @@ import { OverlayInfo, SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayT
 // Sanity test for loading model
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
   public setup(_: ViewerTestFixtureComponents): Promise<void> {
-    const { viewer, models } = _;
+    const { viewer } = _;
 
     const cameraManager = viewer.cameraManager as DefaultCameraManager;
 
@@ -21,8 +21,8 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     const smartOverlayTool = new SmartOverlayTool(viewer);
 
-    smartOverlayTool.on('hover' , ({targetOverlay}) => {
-      targetOverlay.infoOverlay.innerText = targetOverlay.text;
+    smartOverlayTool.on('hover', ({ targetOverlay }) => {
+      targetOverlay.infoOverlay.innerText += ' hovered';
     });
 
     smartOverlayTool.on('click', ({ targetOverlay }) => {
@@ -33,28 +33,27 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     const reusableVec = new THREE.Vector3();
 
-    const boxSize = 100;
+    const boxSize = 10;
 
-    for (let i = boxSize/-2; i < boxSize/2; i++) {
-      for (let x = boxSize/-2; x < boxSize/2; x+=4) {
-        for (let y = boxSize/-2; y < boxSize/2; y+=4) {
-          //if (i===x && i===y) {
+    for (let i = boxSize / -2; i < boxSize / 2; i++) {
+      for (let x = boxSize / -2; x < boxSize / 2; x++) {
+        for (let y = boxSize / -2; y < boxSize / 2; y++) {
           if (x * x + y * y - 0.7 * i * i < 750) {
             const id = i + ' ' + x + ' ' + y;
             labels.push({
-              text: 'Meow ' + id, id: i + x + y, position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone(),
+              text: 'Meow ' + id,
+              id: i + x + y,
+              position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone(),
               color: new THREE.Color(Math.random(), Math.random(), Math.random())
             });
           }
         }
       }
-       smartOverlayTool.addOverlays(labels);
-       labels.splice(0, labels.length);
+      smartOverlayTool.addOverlays(labels);
+      labels.splice(0, labels.length);
     }
-    //smartOverlayTool.addOverlays(labels);
-    
-    cameraManager.setCameraState({ position: new THREE.Vector3() })
+
+    cameraManager.setCameraState({ position: new THREE.Vector3() });
     return Promise.resolve();
   }
 }
-

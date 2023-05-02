@@ -23,14 +23,14 @@ import image360IconVert from './image360Icon.vert';
 import image360IconFrag from './image360Icon.frag';
 
 export type PointsMaterialParameters = {
-  spriteTexture: Texture,
-  minPixelSize: number,
-  maxPixelSize: number,
-  radius: number,
-  colorTint?: Color
-  depthMode?: DepthModes,
-  collectionOpacity?: number
-}
+  spriteTexture: Texture;
+  minPixelSize: number;
+  maxPixelSize: number;
+  radius: number;
+  colorTint?: Color;
+  depthMode?: DepthModes;
+  collectionOpacity?: number;
+};
 
 export class OverlayPointsObject extends Group {
   private readonly _geometry: BufferGeometry;
@@ -40,10 +40,7 @@ export class OverlayPointsObject extends Group {
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
 
-  constructor(
-    maxNumberOfPoints: number,
-    materialParameters: PointsMaterialParameters
-  ) {
+  constructor(maxNumberOfPoints: number, materialParameters: PointsMaterialParameters) {
     super();
     const geometry = new BufferGeometry();
     this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
@@ -54,7 +51,11 @@ export class OverlayPointsObject extends Group {
     geometry.setAttribute('color', this._colorAttribute);
     geometry.setDrawRange(0, 0);
 
-    const { spriteTexture, minPixelSize, maxPixelSize, radius,
+    const {
+      spriteTexture,
+      minPixelSize,
+      maxPixelSize,
+      radius,
       colorTint = new Color(1, 1, 1),
       depthMode = LessEqualDepth,
       collectionOpacity = 1
@@ -79,7 +80,7 @@ export class OverlayPointsObject extends Group {
   public setPoints(points: Vector3[], colors?: Color[]): void {
     if (colors && points.length !== colors?.length)
       throw new Error('Points positions and colors arrays must have the same length');
-    
+
     for (let index = 0; index < points.length; index++) {
       this._positionBuffer[index * 3 + 0] = points[index].x;
       this._positionBuffer[index * 3 + 1] = points[index].y;
@@ -90,21 +91,22 @@ export class OverlayPointsObject extends Group {
         this._colorBuffer[index * 3 + 1] = colors[index].g;
         this._colorBuffer[index * 3 + 2] = colors[index].b;
       }
-    };
+    }
 
-    
     this._positionAttribute.updateRange = { offset: 0, count: points.length * 3 };
     this._positionAttribute.needsUpdate = true;
     this._colorAttribute.updateRange = { offset: 0, count: points.length * 3 };
     this._colorAttribute.needsUpdate = true;
     this._geometry.setDrawRange(0, points.length);
+
+    this._geometry.computeBoundingBox();
+    this._geometry.computeBoundingSphere();
   }
 
   public addPoints(points: Vector3[]): void {
-    const lastDrawIndex = this._geometry.drawRange.count*3;
+    const lastDrawIndex = this._geometry.drawRange.count * 3;
 
-    if (lastDrawIndex + points.length * 3 > this._positionBuffer.length)
-      return;
+    if (lastDrawIndex + points.length * 3 > this._positionBuffer.length) return;
 
     points.forEach((point, index) => {
       this._positionBuffer[lastDrawIndex + index * 3 + 0] = point.x;
@@ -121,10 +123,7 @@ export class OverlayPointsObject extends Group {
     this._geometry.dispose();
   }
 
-  private initializePoints(
-    geometry: BufferGeometry,
-    frontMaterial: ShaderMaterial,
-  ): Points {
+  private initializePoints(geometry: BufferGeometry, frontMaterial: ShaderMaterial): Points {
     const frontPoints = createPoints(geometry, frontMaterial);
     frontPoints.onBeforeRender = renderer => {
       setUniforms(renderer, frontMaterial);

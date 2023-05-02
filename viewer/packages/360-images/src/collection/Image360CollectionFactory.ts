@@ -26,7 +26,7 @@ export class Image360CollectionFactory<T> {
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor,
-    iconsOptions?: IconsOptions,
+    iconsOptions?: IconsOptions
   ) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
@@ -47,7 +47,12 @@ export class Image360CollectionFactory<T> {
     historicalDescriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = historicalDescriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new IconCollection(points, this._sceneHandler, this._onBeforeSceneRendered, this._iconsOptions);
+    const collectionIcons = new IconCollection(
+      points,
+      this._sceneHandler,
+      this._onBeforeSceneRendered,
+      this._iconsOptions
+    );
     const icons = collectionIcons.icons;
 
     const entities = zip(historicalDescriptors, icons)

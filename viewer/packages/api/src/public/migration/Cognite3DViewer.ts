@@ -127,7 +127,7 @@ export class Cognite3DViewer {
   get renderParameters(): RenderParameters {
     return {
       renderSize: this._renderer.getSize(new THREE.Vector2())
-    }
+    };
   }
 
   /**
@@ -327,7 +327,7 @@ export class Cognite3DViewer {
         this._mouseHandler,
         this._events.beforeSceneRendered,
         {
-          platformMaxPointsSize: getMaxPointSize(this._renderer),
+          platformMaxPointsSize: getMaxPointSize(this._renderer)
         }
       );
     }

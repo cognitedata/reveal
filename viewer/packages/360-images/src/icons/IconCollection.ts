@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3, Vector4 } from 'three';
+import { CanvasTexture, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
@@ -11,12 +11,12 @@ import { Image360PointsObject } from './Image360PointsObject';
 export type IconCullingScheme = 'clustered' | 'proximity';
 
 export type IconsOptions = {
-  platformMaxPointsSize?: number
+  platformMaxPointsSize?: number;
 };
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
-  private MAX_PIXEL_SIZE = 256;
+  private readonly MAX_PIXEL_SIZE = 256;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
   private readonly _hoverSprite: Sprite;
@@ -70,20 +70,18 @@ export class IconCollection {
     points: Vector3[],
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
-    iconOptions?: IconsOptions,
+    iconOptions?: IconsOptions
   ) {
     this.MAX_PIXEL_SIZE = Math.min(this.MAX_PIXEL_SIZE, iconOptions?.platformMaxPointsSize ?? this.MAX_PIXEL_SIZE);
 
     const sharedTexture = this.createOuterRingsTexture();
-   
-    const iconsSprites = new Image360PointsObject(
-      points.length * 2, {
+
+    const iconsSprites = new Image360PointsObject(points.length * 2, {
       spriteTexture: sharedTexture,
       minPixelSize: this.MIN_PIXEL_SIZE,
       maxPixelSize: this.MAX_PIXEL_SIZE,
       radius: this._iconRadius
-    }
-    );
+    });
     iconsSprites.setPoints(points);
 
     const spriteTexture = this.createHoverIconTexture();
@@ -130,8 +128,8 @@ export class IconCollection {
         })
         .filter(icon => frustum.containsPoint(icon.position));
 
-      this._icons.forEach(icon => icon.culled = true);
-      selectedIcons.forEach(icon => icon.culled = false);
+      this._icons.forEach(icon => (icon.culled = true));
+      selectedIcons.forEach(icon => (icon.culled = false));
       iconSprites.setPoints(selectedIcons.filter(icon => icon.visible).map(icon => icon.position));
     };
   }
@@ -151,8 +149,8 @@ export class IconCollection {
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
 
-      this._icons.forEach(icon => icon.culled = true);
-      closestPoints.forEach(icon => icon.culled = false);
+      this._icons.forEach(icon => (icon.culled = true));
+      closestPoints.forEach(icon => (icon.culled = false));
       iconSprites.setPoints(
         closestPoints
           .filter(icon => icon.visible)
@@ -169,25 +167,22 @@ export class IconCollection {
   ): Overlay3DIcon[] {
     sceneHandler.addCustomObject(this._hoverSprite);
 
-   const icons = points.map(
-     point => {
-       const icon = new Overlay3DIcon({
-         position: point,
-         minPixelSize: this.MIN_PIXEL_SIZE,
-         maxPixelSize: this.MAX_PIXEL_SIZE,
-         iconRadius: this._iconRadius,
-         hoverSprite: this._hoverSprite
-       }
-       );
-       
-       return icon
-     }
-   );
-    
+    const icons = points.map(point => {
+      const icon = new Overlay3DIcon({
+        position: point,
+        minPixelSize: this.MIN_PIXEL_SIZE,
+        maxPixelSize: this.MAX_PIXEL_SIZE,
+        iconRadius: this._iconRadius,
+        hoverSprite: this._hoverSprite
+      });
+
+      return icon;
+    });
+
     const renderSize = new Vector2();
-    
+
     onBeforeSceneRendered.subscribe(({ renderer, camera }) =>
-      icons.forEach((icon) =>
+      icons.forEach(icon =>
         icon.updateAdaptiveScale({ camera, renderSize: renderer.getSize(renderSize), domElement: renderer.domElement })
       )
     );
@@ -203,7 +198,7 @@ export class IconCollection {
   }
 
   private createHoverSprite(hoverIconTexture: THREE.CanvasTexture): THREE.Sprite {
-    const spriteMaterial = new SpriteMaterial({ map: hoverIconTexture, depthTest: false});
+    const spriteMaterial = new SpriteMaterial({ map: hoverIconTexture, depthTest: false });
     const sprite = new Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
     sprite.renderOrder = 5;

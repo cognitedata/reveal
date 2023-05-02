@@ -132,7 +132,7 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public setIconsVisibility(visible: boolean): void {
     this._isCollectionVisible = visible;
-    this.image360Entities.forEach(entity => entity.icon.visible = visible);
+    this.image360Entities.forEach(entity => (entity.icon.visible = visible));
   }
 
   /**
@@ -179,7 +179,7 @@ export class DefaultImage360Collection implements Image360Collection {
   public setSelectedForAll(selected: boolean): void {
     this.image360Entities.forEach(entity => (entity.icon.selected = selected));
   }
-  
+
   public fireHoverEvent(annotationObject: ImageAnnotationObject): void {
     this._events.annotationHovered.fire(annotationObject.annotation);
   }
