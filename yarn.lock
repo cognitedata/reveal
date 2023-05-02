@@ -1965,10 +1965,10 @@
     sparse-octree "7.1.6"
     three-stdlib "2.21.8"
 
-"@cognite/reveal@^4.2.1":
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.1.tgz#cf03778c7c6333cf19124379d7a31635d213012b"
-  integrity sha512-8e1m2CxssmklHGgz8CBTnns5qLxHa7W+qQGK6FuO6bRr08/EGXM+wrj1i2bBtLeoxHn+C/pGQACw+LSqCtsnIQ==
+"@cognite/reveal@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.2.tgz#1bdffa7defaf90ff00ea5e89ae4e908d2d52b82e"
+  integrity sha512-BU/TGWsXYx1PjXZVHn0yBinDvLfpfk6umXm76yPkOKx5tlgBpq1/gSELnfnZUKZ/l2YROGvniGMTaUNyBV9nzw==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
