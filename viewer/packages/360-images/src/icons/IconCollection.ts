@@ -205,6 +205,7 @@ export class IconCollection {
     const spriteMaterial = new SpriteMaterial({ map: hoverIconTexture, depthTest: false });
     const sprite = new Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
+    sprite.visible = false;
     sprite.renderOrder = 5;
     return sprite;
   }
