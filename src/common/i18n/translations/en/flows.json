@@ -1,4 +1,6 @@
 {
+  "view": "View",
+  "restore": "Restore",
   "history": "History",
   "cancel": "Cancel",
   "create": "Create",

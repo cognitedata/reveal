@@ -16,7 +16,6 @@ import ReactFlow, {
   EdgeChange,
   NodeProps,
   NodePositionChange,
-  NodeAddChange,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -226,7 +225,7 @@ export const FlowBuilder = (): JSX.Element => {
         );
       }
     },
-    [reactFlowInstance, changeFlow]
+    [reactFlowInstance, changeFlow, userInfo?.displayName]
   );
 
   if (!flowState) {
