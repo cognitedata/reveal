@@ -26,12 +26,18 @@ type FlowContextT = {
   setIsComponentsPanelVisible: Dispatch<SetStateAction<boolean>>;
   changeFlow: (
     fn: Automerge.ChangeFn<AFlow>,
-    logger?: () => ChangeOptions<AFlow> | string | undefined
+    logger?: () => ChangeOptions<AFlow> | undefined
   ) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
-  changeNodes: (fn: AutomergeChangeNodesFn) => void;
-  changeEdges: (fn: AutomergeChangeEdgesFn) => void;
+  changeNodes: (
+    fn: AutomergeChangeNodesFn,
+    logger?: () => ChangeOptions<AFlow> | undefined
+  ) => void;
+  changeEdges: (
+    fn: AutomergeChangeEdgesFn,
+    logger?: () => ChangeOptions<AFlow> | undefined
+  ) => void;
   restoreWorkflow: (heads: Automerge.Heads) => void;
   nodes: CanvasNodes;
   edges: CanvasEdges;
@@ -128,7 +134,10 @@ export const FlowContextProvider = ({
   }, [flowState, previewHash]);
 
   const changeEdges = useCallback(
-    (fn: AutomergeChangeEdgesFn, logger?: () => ChangeOptions<AFlow>) => {
+    (
+      fn: AutomergeChangeEdgesFn,
+      logger?: () => ChangeOptions<AFlow> | undefined
+    ) => {
       changeFlow((f) => {
         fn(f.canvas.edges);
       }, logger);
