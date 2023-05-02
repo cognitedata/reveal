@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DefaultCameraManager } from '@reveal/camera-manager';
+import { DefaultCameraManager } from '../../camera-manager';
 import * as THREE from 'three';
 import {
   ViewerTestFixtureComponents,
