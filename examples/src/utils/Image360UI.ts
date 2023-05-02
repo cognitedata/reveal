@@ -170,7 +170,7 @@ export class Image360UI {
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => this.selectedEntity = entity);
-    collection.on('image360AnnotationClicked', this.onAnnotationClicked);
+    collection.on('image360AnnotationClicked', this.onAnnotationClicked.bind(this));
     collections.push(collection);
     this.entities = this.entities.concat(collection.image360Entities);
 
