@@ -16,7 +16,8 @@ export type IconsOptions = {
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 256;
+  private readonly DEFAULT_MAX_PIXEL_SIZE = 256;
+  private readonly MAX_PIXEL_SIZE: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
   private readonly _hoverSprite: Sprite;
@@ -72,7 +73,10 @@ export class IconCollection {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     iconOptions?: IconsOptions
   ) {
-    this.MAX_PIXEL_SIZE = Math.min(this.MAX_PIXEL_SIZE, iconOptions?.platformMaxPointsSize ?? this.MAX_PIXEL_SIZE);
+    this.MAX_PIXEL_SIZE = Math.min(
+      this.DEFAULT_MAX_PIXEL_SIZE,
+      iconOptions?.platformMaxPointsSize ?? this.DEFAULT_MAX_PIXEL_SIZE
+    );
 
     const sharedTexture = this.createOuterRingsTexture();
 
