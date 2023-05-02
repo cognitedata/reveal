@@ -59,7 +59,7 @@ export const ProcessNodeRenderer = ({
       id: uuid(),
       source: direction === 'left' ? node.id : id,
       target: direction === 'left' ? id : node.id,
-      type: 'default',
+      type: 'customEdge',
     };
 
     changeNodes((nodes) => {
@@ -102,19 +102,19 @@ export const ProcessNodeRenderer = ({
                   icon="Code"
                   onClick={() => handleAddNode('transformation', 'left')}
                 >
-                  Transformation
+                  {t('transformation')}
                 </Menu.Item>
                 <Menu.Item
                   icon="FrameTool"
                   onClick={() => handleAddNode('webhook', 'left')}
                 >
-                  Webhook
+                  {t('webhook')}
                 </Menu.Item>
                 <Menu.Item
                   icon="Pipeline"
                   onClick={() => handleAddNode('workflow', 'left')}
                 >
-                  Workflow
+                  {t('workflow')}
                 </Menu.Item>
               </Menu>
             }
@@ -147,19 +147,19 @@ export const ProcessNodeRenderer = ({
                   icon="Code"
                   onClick={() => handleAddNode('transformation', 'right')}
                 >
-                  Transformation
+                  {t('transformation')}
                 </Menu.Item>
                 <Menu.Item
                   icon="FrameTool"
                   onClick={() => handleAddNode('webhook', 'right')}
                 >
-                  Webhook
+                  {t('webhook')}
                 </Menu.Item>
                 <Menu.Item
                   icon="Pipeline"
                   onClick={() => handleAddNode('workflow', 'right')}
                 >
-                  Workflow
+                  {t('workflow')}
                 </Menu.Item>
               </Menu>
             }

@@ -1,4 +1,4 @@
-import { ComponentType, useCallback, useRef, useState } from 'react';
+import { ComponentType, useCallback, useMemo, useRef, useState } from 'react';
 
 import { Extend as AutomergeExtend } from '@automerge/automerge';
 import { Colors } from '@cognite/cogs.js';
@@ -37,6 +37,7 @@ import {
   WorkflowBuilderNodeType,
   isProcessType,
 } from 'types';
+import { CustomEdge } from 'components/custom-edge';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
   process: ProcessNodeRenderer,
@@ -54,6 +55,13 @@ export const FlowBuilder = (): JSX.Element => {
 
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
+
+  const edgeTypes = useMemo(
+    () => ({
+      customEdge: CustomEdge,
+    }),
+    []
+  );
 
   const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
     changeFlow((f) => {
@@ -123,7 +131,7 @@ export const FlowBuilder = (): JSX.Element => {
             ...connection,
             source: connection.source!,
             target: connection.target!,
-            type: 'default',
+            type: 'customEdge',
             animated: true,
             markerEnd: {
               type: MarkerType.ArrowClosed,
@@ -207,6 +215,7 @@ export const FlowBuilder = (): JSX.Element => {
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
         nodeTypes={NODE_TYPES}
+        edgeTypes={edgeTypes}
         onConnect={onConnect}
         onDragOver={onDragOver}
         onDrop={onDrop}

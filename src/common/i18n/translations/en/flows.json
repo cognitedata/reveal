@@ -46,5 +46,7 @@
   "component-title-webhook": "Webhook",
   "component-description-webhook": "Make an HTTP call to another service",
   "component-title-workflow": "Workflow",
-  "component-description-workflow": "One workflow calls another"
+  "component-description-workflow": "One workflow calls another",
+  "webhook": "Webhook",
+  "workflow": "Workflow"
 }
