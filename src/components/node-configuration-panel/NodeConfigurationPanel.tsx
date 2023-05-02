@@ -159,19 +159,16 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       const node = nodes.find((node) => node.id === selectedNodeId);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processType = value;
+      nodeData.processItem = '';
     });
     setSelectedNodeComponent(value);
+    setSelectedNodeItem('');
   };
 
   const handleItemChange = (value: string) => {
     let newValue = value;
     if (value == `Create new ${selectedNodeComponent}`) {
       newValue = '';
-      // switch(selectedNodeComponent){
-      //   case 'transformation': {
-
-      //   }
-      // }
     }
     changeNodes((nodes) => {
       const node = nodes.find((node) => node.id === selectedNodeId);
