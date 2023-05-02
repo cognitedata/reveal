@@ -147,14 +147,6 @@ export const FlowBuilder = (): JSX.Element => {
             source: connection.source!,
             target: connection.target!,
             type: 'customEdge',
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              height: 16,
-              width: 16,
-            },
-            style: {
-              strokeWidth: 1,
-            },
             id: v4(),
           };
           // TODO: figure out this type issue
@@ -224,6 +216,14 @@ export const FlowBuilder = (): JSX.Element => {
         ...e,
         selected: e.id === selectedObject,
         animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          height: 16,
+          width: 16,
+        },
+        style: {
+          strokeWidth: 1,
+        },
       })) as Edge[],
     [flowState.canvas.edges, selectedObject]
   );
