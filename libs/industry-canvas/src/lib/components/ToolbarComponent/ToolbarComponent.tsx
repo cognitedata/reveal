@@ -2,12 +2,24 @@ import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ToolType } from '@cognite/unified-file-viewer';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { StickyButton } from './StickyButton';
+import { StickyButton } from '../StickyButton';
+import ToolTooltip from './ToolTooltip';
+import { invert } from 'lodash';
 
 export type ToolbarComponentProps = {
   activeTool: ToolType;
   onToolChange: (tool: ToolType) => void;
 };
+
+export const ToolTypeByShortcutKey: Record<string, ToolType> = {
+  v: ToolType.SELECT,
+  l: ToolType.LINE,
+  t: ToolType.TEXT,
+  r: ToolType.RECTANGLE,
+  o: ToolType.ELLIPSE,
+  n: ToolType.STICKY,
+};
+export const ShortcutKeysByToolType = invert(ToolTypeByShortcutKey);
 
 const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
   activeTool,
@@ -40,22 +52,36 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
         <ShapeToolbar>
           <ToolBar direction="horizontal">
             <>
-              <Tooltip content="Rectangle tool">
+              <Tooltip
+                content={
+                  <ToolTooltip
+                    label="Rectangle"
+                    keys={[ShortcutKeysByToolType[ToolType.RECTANGLE]]}
+                  />
+                }
+              >
                 <Button
                   icon="Square"
                   type="ghost"
                   toggled={activeTool === ToolType.RECTANGLE}
-                  aria-label="Rectangle tool"
+                  aria-label="Rectangle"
                   onClick={() => onShapeToolChange(ToolType.RECTANGLE)}
                 />
               </Tooltip>
 
-              <Tooltip content="Ellipse tool">
+              <Tooltip
+                content={
+                  <ToolTooltip
+                    label="Ellipse"
+                    keys={[ShortcutKeysByToolType[ToolType.ELLIPSE]]}
+                  />
+                }
+              >
                 <Button
                   icon="Circle"
                   type="ghost"
                   toggled={activeTool === ToolType.ELLIPSE}
-                  aria-label="Ellipse tool"
+                  aria-label="Ellipse"
                   onClick={() => onShapeToolChange(ToolType.ELLIPSE)}
                 />
               </Tooltip>
@@ -65,60 +91,92 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
       )}
       <ToolBar direction="vertical">
         <>
-          <Tooltip content="Select tool" position="right">
+          <Tooltip
+            content={
+              <ToolTooltip
+                label="Select"
+                keys={[ShortcutKeysByToolType[ToolType.SELECT]]}
+              />
+            }
+            position="right"
+          >
             <Button
               icon="Cursor"
               type="ghost"
               toggled={activeTool === ToolType.SELECT}
-              aria-label="Select tool"
+              aria-label="Select"
               onClick={() => onToolChange(ToolType.SELECT)}
             />
           </Tooltip>
 
-          <Tooltip content="Pan tool" position="right">
+          <Tooltip content="Grab" position="right">
             <Button
               icon="Grab"
               type="ghost"
               toggled={activeTool === ToolType.PAN}
-              aria-label="Pan tool"
+              aria-label="Grab"
               onClick={() => onToolChange(ToolType.PAN)}
             />
           </Tooltip>
 
-          <Tooltip content="Text tool" position="right">
+          <Tooltip
+            content={
+              <ToolTooltip
+                label="Text"
+                keys={[ShortcutKeysByToolType[ToolType.TEXT]]}
+              />
+            }
+            position="right"
+          >
             <Button
               icon="Text"
               type="ghost"
               toggled={activeTool === ToolType.TEXT}
-              aria-label="Text tool"
+              aria-label="Text"
               onClick={() => onToolChange(ToolType.TEXT)}
             />
           </Tooltip>
 
-          <Tooltip content="Add sticky" position="right">
+          <Tooltip
+            content={
+              <ToolTooltip
+                label="Sticky note"
+                keys={[ShortcutKeysByToolType[ToolType.STICKY]]}
+              />
+            }
+            position="right"
+          >
             <StickyButton
               toggled={activeTool === ToolType.STICKY}
-              aria-label="Sticky tool"
+              aria-label="Sticky note"
               onClick={() => onToolChange(ToolType.STICKY)}
             />
           </Tooltip>
 
-          <Tooltip content="Shape tool" position="right">
+          <Tooltip content="Shape" position="right">
             <Button
               icon="Shapes"
               type="ghost"
               toggled={isShapeToolActive}
-              aria-label="Shape tool"
+              aria-label="Shape"
               onClick={onShapeToolClick}
             />
           </Tooltip>
 
-          <Tooltip content="Line tool" position="right">
+          <Tooltip
+            content={
+              <ToolTooltip
+                label="Line"
+                keys={[ShortcutKeysByToolType[ToolType.LINE]]}
+              />
+            }
+            position="right"
+          >
             <Button
               icon="VectorLine"
               type="ghost"
               toggled={activeTool === ToolType.LINE}
-              aria-label="Line tool"
+              aria-label="Line"
               onClick={() => onToolChange(ToolType.LINE)}
             />
           </Tooltip>

@@ -1,35 +1,36 @@
 import { PageTitle } from '@cognite/cdf-utilities';
 import {
   Button,
-  Flex,
-  Tooltip,
-  Icon,
-  Colors,
-  toast,
   Chip,
+  Colors,
+  Flex,
+  Icon,
+  toast,
+  Tooltip,
 } from '@cognite/cogs.js';
 import {
   isNotUndefined,
   ResourceItem,
   useResourceSelector,
 } from '@cognite/data-exploration';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
-import { useSDK } from '@cognite/sdk-provider';
-import { v4 as uuid } from 'uuid';
-
-import { IndustryCanvas } from './IndustryCanvas';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
+import CanvasDropdown from './components/CanvasDropdown';
+import { CanvasTitle } from './components/CanvasTitle';
 import { TOAST_POSITION } from './constants';
-import { useState, useEffect, KeyboardEventHandler, useCallback } from 'react';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
-import { CanvasTitle } from './components/CanvasTitle';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import CanvasDropdown from './components/CanvasDropdown';
+import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+
+import { IndustryCanvas } from './IndustryCanvas';
 import {
   IndustryCanvasProvider,
   useIndustryCanvasContext,
@@ -37,7 +38,7 @@ import {
 import { ContainerReference } from './types';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
-import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import useManagedTool from './utils/useManagedTool';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
@@ -51,8 +52,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     hasConsumedInitializeWithContainerReferences,
     setHasConsumedInitializeWithContainerReferences,
   ] = useState(false);
-
-  const [tool, setTool] = useState<ToolType>(ToolType.SELECT);
+  const { tool, setTool } = useManagedTool(ToolType.SELECT);
 
   const sdk = useSDK();
   const {
@@ -240,7 +240,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     onAddContainerReferences,
   ]);
 
-  const onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+  const onKeyDown: KeyboardEventHandler<HTMLElement> = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       if (event.shiftKey) {
         redo.fn();
