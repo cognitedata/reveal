@@ -62,6 +62,11 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       label: t('webhook'),
       icon: 'FrameTool',
     },
+    {
+      value: 'workflow',
+      label: t('workflow'),
+      icon: 'Pipeline',
+    },
   ];
 
   const itemCreateNewOption = () => {
