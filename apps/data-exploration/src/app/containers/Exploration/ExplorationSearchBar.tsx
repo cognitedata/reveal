@@ -42,6 +42,7 @@ export const ExplorationSearchBar = () => {
       fullWidth
       clearable={{ callback: () => setLocalQuery('') }}
       icon="Search"
+      data-testid="main-search-input"
       placeholder={t(
         'EXPLORER_SEARCH_BAR_PLACEHOLDER',
         'Search for name, description, content, ID, external ID, and metadata...'
