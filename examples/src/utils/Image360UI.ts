@@ -7,8 +7,6 @@ import {
   Cognite3DViewer,
   Image360,
   Image360Collection,
-  Image360EnteredDelegate,
-  Image360AnnotationHoveredDelegate,
   Image360Annotation,
   PointerEventData
 } from '@cognite/reveal';
@@ -22,7 +20,7 @@ export class Image360UI {
   private entities: Image360[] = [];
   private selectedEntity: Image360 | undefined;
   private _lastAnnotation: Image360Annotation | undefined = undefined;
-  
+
   public collections: Image360Collection[] = [];
 
   private params = {
@@ -30,30 +28,30 @@ export class Image360UI {
     add: this.add360ImageSet.bind(this),
     premultipliedRotation: false,
     remove: this.removeAll360Images.bind(this),
-    saveToUrl: this.saveImage360SiteToUrl.bind(this),
+    saveToUrl: this.saveImage360SiteToUrl.bind(this)
   };
 
   private translation = {
     x: 0,
     y: 0,
-    z: 0,
+    z: 0
   };
 
   private rotation = {
     x: 0,
     y: 0,
     z: 0,
-    radians: 0,
+    radians: 0
   };
 
   private opacity = {
-    alpha: 1,
+    alpha: 1
   };
 
   private iconCulling = {
     radius: Infinity,
     limit: 50,
-    hideAll: false,
+    hideAll: false
   };
 
   private imageRevisions = {
@@ -85,12 +83,10 @@ export class Image360UI {
 
     this.gui.add(params, 'add').name('Add image set');
 
-    this.gui
-      .add(this.opacity, 'alpha', 0, 1, 0.01)
-      .onChange(() => {
-        this.entities.forEach((p) => (p.image360Visualization.opacity = this.opacity.alpha));
-        this.viewer.requestRedraw();
-      });
+    this.gui.add(this.opacity, 'alpha', 0, 1, 0.01).onChange(() => {
+      this.entities.forEach(p => (p.image360Visualization.opacity = this.opacity.alpha));
+      this.viewer.requestRedraw();
+    });
 
     this.gui
       .add(this.iconCulling, 'radius', 0, 10000, 1)
@@ -111,7 +107,7 @@ export class Image360UI {
       .name('Hide all 360 images')
       .onChange(() => {
         if (this.collections.length > 0) {
-          this.collections.forEach((p) => p.setIconsVisibility(!this.iconCulling.hideAll));
+          this.collections.forEach(p => p.setIconsVisibility(!this.iconCulling.hideAll));
           this.viewer.requestRedraw();
         }
       });
@@ -147,12 +143,11 @@ export class Image360UI {
         });
 
       gui.add(params, 'remove').name('Remove all 360 images');
-
     }
   }
 
   private async add360ImageSet() {
-   const { params, collections } = this;
+    const { params, collections } = this;
 
     if (params.siteId.length === 0) return;
 
@@ -160,7 +155,11 @@ export class Image360UI {
       new THREE.Vector3(this.rotation.x, this.rotation.y, this.rotation.z),
       this.rotation.radians
     );
-    const translationMatrix = new THREE.Matrix4().makeTranslation(this.translation.x, this.translation.y, this.translation.z);
+    const translationMatrix = new THREE.Matrix4().makeTranslation(
+      this.translation.x,
+      this.translation.y,
+      this.translation.z
+    );
     const collectionTransform = translationMatrix.multiply(rotationMatrix);
     const collection = await this.viewer.add360ImageSet(
       'events',
@@ -169,7 +168,7 @@ export class Image360UI {
     );
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
-    collection.on('image360Entered', (entity, _) => this.selectedEntity = entity);
+    collection.on('image360Entered', (entity, _) => (this.selectedEntity = entity));
     collection.on('image360AnnotationClicked', this.onAnnotationClicked.bind(this));
     collections.push(collection);
     this.entities = this.entities.concat(collection.image360Entities);
@@ -179,7 +178,7 @@ export class Image360UI {
 
   private async set360IconCullingRestrictions() {
     if (this.collections.length > 0) {
-      this.collections.forEach((p) => p.set360IconCullingRestrictions(this.iconCulling.radius, this.iconCulling.limit));
+      this.collections.forEach(p => p.set360IconCullingRestrictions(this.iconCulling.radius, this.iconCulling.limit));
       this.viewer.requestRedraw();
     }
   }
@@ -204,7 +203,7 @@ export class Image360UI {
     console.log('Clicked annotation with data: ', annotation.annotation.data, 'with direction ', direction);
     annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
     this._lastAnnotation = annotation;
-  };
+  }
 
   private saveImage360SiteToUrl() {
     const { params } = this;
