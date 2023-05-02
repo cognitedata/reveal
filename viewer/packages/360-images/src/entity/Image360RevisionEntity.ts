@@ -14,7 +14,7 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
-import { Box3, Intersection, Object3D, Vector3 } from 'three';
+import { Box3, Vector3 } from 'three';
 import minBy from 'lodash/minBy';
 
 export class Image360RevisionEntity implements Image360Revision {
