@@ -800,10 +800,10 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
-export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData) => void;
+export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
 
 // @public
-export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData) => void;
+export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
 
 // @public
 export interface Image360Collection {
