@@ -8,8 +8,12 @@ import {
   Image360,
   Image360Collection,
   Image360EnteredDelegate,
-  Image360AnnotationHoveredDelegate
+  Image360AnnotationHoveredDelegate,
+  Image360Annotation
 } from '@cognite/reveal';
+
+import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+
 import * as dat from 'dat.gui';
 
 export class Image360UI {

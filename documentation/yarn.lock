@@ -2142,23 +2142,23 @@ __metadata:
     "@docusaurus/core": 2.4.0
     "@docusaurus/preset-classic": 2.4.0
     "@docusaurus/remark-plugin-npm2yarn": 2.4.0
-    "@types/react": 18.0.37
+    "@types/react": 18.2.0
     "@types/styled-components": 5.1.26
     "@uiw/codemirror-theme-material": 4.19.16
     "@uiw/react-codemirror": 4.19.16
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
-    docusaurus-plugin-typedoc: 0.19.0
+    docusaurus-plugin-typedoc: 0.19.2
     ieee754: 1.2.1
     query-string: 8.1.0
     react: 18.2.0
     react-dom: 18.2.0
     replace: 1.2.2
     rimraf: 5.0.0
-    styled-components: 5.3.9
-    typedoc: 0.24.4
-    typedoc-plugin-markdown: 3.15.1
+    styled-components: 5.3.10
+    typedoc: 0.24.6
+    typedoc-plugin-markdown: 3.15.2
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.0.4
   languageName: unknown
@@ -3756,14 +3756,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.0.37":
-  version: 18.0.37
-  resolution: "@types/react@npm:18.0.37"
+"@types/react@npm:18.2.0":
+  version: 18.2.0
+  resolution: "@types/react@npm:18.2.0"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 6a6c8feada1d6aa2d01a38c44ce09598d93688e97ed21511d5e34fd7fe748b760dd957a5ac0725f5643d8d7e1a0ade6478ebd4be96c9605c5d6816b17ad35d2d
+  checksum: db3d92b423150222a666329f7aa3023e3e942044700557b8a7d161530847e621aec9f56c9e7f71761b06dd164c8a7b17ad52355863efe80963dffa5537e8e5fd
   languageName: node
   linkType: hard
 
@@ -6012,13 +6012,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:0.19.0":
-  version: 0.19.0
-  resolution: "docusaurus-plugin-typedoc@npm:0.19.0"
+"docusaurus-plugin-typedoc@npm:0.19.2":
+  version: 0.19.2
+  resolution: "docusaurus-plugin-typedoc@npm:0.19.2"
   peerDependencies:
     typedoc: ">=0.24.0"
     typedoc-plugin-markdown: ">=3.15.0"
-  checksum: fe4a186c2308a798f6eace5212ef5e56405baf53de80bb317679a48391ecaf6a78c3d7edb44e5a5ab3b30b9a7b23750d0d7d3f48287be0ef73b1e864fdf13dc0
+  checksum: 347c1b6b509e14dabbb8b4d1224682ea2281995a60b4cf48e456dbbdbcecb4b73cf4fe3e031f1e01ae72dfb3bec935c6eaac7e4ddf3f63587fad2ac8ea028cec
   languageName: node
   linkType: hard
 
@@ -12071,9 +12071,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:5.3.9":
-  version: 5.3.9
-  resolution: "styled-components@npm:5.3.9"
+"styled-components@npm:5.3.10":
+  version: 5.3.10
+  resolution: "styled-components@npm:5.3.10"
   dependencies:
     "@babel/helper-module-imports": ^7.0.0
     "@babel/traverse": ^7.4.5
@@ -12089,7 +12089,7 @@ __metadata:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
     react-is: ">= 16.8.0"
-  checksum: 404311cc7028259218674d3f9f39bdda2342fc02f2ebbba8f057ef560b2ad205c5bd63b82deed4d0bf217ac7eb960d0e1127510b0b606e32cbd5a48c10373ce8
+  checksum: 46dfea6c435516b22aae25798cf01f9b08423cfb517cfea9db760a18c941bddf79abaad9bedb9b3cca6faad24bd7eb4ef4dd21ae84b356ae29d279b2d571f7b7
   languageName: node
   linkType: hard
 
@@ -12502,14 +12502,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:3.15.1":
-  version: 3.15.1
-  resolution: "typedoc-plugin-markdown@npm:3.15.1"
+"typedoc-plugin-markdown@npm:3.15.2":
+  version: 3.15.2
+  resolution: "typedoc-plugin-markdown@npm:3.15.2"
   dependencies:
     handlebars: ^4.7.7
+    typedoc-plugin-mdn-links: ^3.0.3
   peerDependencies:
     typedoc: ">=0.24.0"
-  checksum: a80e43e8e8628fa6c65f44bfe20fc79b03e432e36c9a43c6dc419a0a0ec9658743ebb228cd05dd8491d2ad23e389d4903c00aef3d3de73340a86382b91db39b1
+  checksum: 231b3125498498249385e42fb5c3e24eed20e4fc72678ef3668a69df13ed4f5a7cd0e54610619ead99efb4a266f72c6658946acb83c3ab89bc034278bb8539a0
+  languageName: node
+  linkType: hard
+
+"typedoc-plugin-mdn-links@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "typedoc-plugin-mdn-links@npm:3.0.3"
+  peerDependencies:
+    typedoc: ">= 0.23.14 || 0.24.x"
+  checksum: 1682f8a65e1eff892f5ae0424919007d0673d9abda7c7f401b294fc73d64ce8fc4e1cbb35e5389170a8c48ed57efe6ee81403f870499c62decb016b689fa6522
   languageName: node
   linkType: hard
 
@@ -12522,9 +12532,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.24.4":
-  version: 0.24.4
-  resolution: "typedoc@npm:0.24.4"
+"typedoc@npm:0.24.6":
+  version: 0.24.6
+  resolution: "typedoc@npm:0.24.6"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12534,7 +12544,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x
   bin:
     typedoc: bin/typedoc
-  checksum: c6762aff2b40eb574fc348c82921471fa1c1dc8a83adc284457aab30ea61768770be469f424340ab646944472653290578fd8e6308d55ec2e611577472067dae
+  checksum: 3911ef6a7736ce6655a4b22fabc5be6df8812412e209d730fd168bfa7797847897f05fed797bc16558f11ce647b20746453748ff8afe85b1375c3efe2d7b57df
   languageName: node
   linkType: hard
 

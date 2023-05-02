@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger, PointerEventData } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
@@ -14,6 +14,8 @@ import {
 } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import { Image360AnnotationAppearance } from '../annotation/types';
+import { Vector3 } from 'three';
 
 type Image360Events = 'image360Entered' | 'image360Exited' | 'image360AnnotationHovered' | 'image360AnnotationClicked';
 
@@ -34,6 +36,8 @@ export class DefaultImage360Collection implements Image360Collection {
   private _targetRevisionDate: Date | undefined;
 
   private _needsRedraw: boolean = false;
+
+  private _defaultStyle: Image360AnnotationAppearance = {};
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
@@ -180,12 +184,20 @@ export class DefaultImage360Collection implements Image360Collection {
     this.image360Entities.forEach(entity => (entity.icon.selected = selected));
   }
 
-  public fireHoverEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationHovered.fire(annotationObject.annotation);
+  public fireHoverEvent(
+    annotationObject: ImageAnnotationObject,
+    pointerEvent: PointerEventData,
+    direction: Vector3
+  ): void {
+    this._events.annotationHovered.fire(annotationObject, pointerEvent, direction);
   }
 
-  public fireClickEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationClicked.fire(annotationObject.annotation);
+  public fireClickEvent(
+    annotationObject: ImageAnnotationObject,
+    pointerEvent: PointerEventData,
+    direction: Vector3
+  ): void {
+    this._events.annotationClicked.fire(annotationObject, pointerEvent, direction);
   }
 
   public setSelectedVisibility(visible: boolean): void {
@@ -215,5 +227,18 @@ export class DefaultImage360Collection implements Image360Collection {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+  }
+
+  get defaultStyle(): Image360AnnotationAppearance {
+    return this._defaultStyle;
+  }
+
+  public setDefaultStyle(defaultStyle: Image360AnnotationAppearance): void {
+    this._defaultStyle = defaultStyle;
+    this.image360Entities.forEach(entity =>
+      entity
+        .getRevisions()
+        .forEach(revision => revision.annotations.forEach(annotation => annotation.setDefaultStyle(defaultStyle)))
+    );
   }
 }

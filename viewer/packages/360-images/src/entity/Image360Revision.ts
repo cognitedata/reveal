@@ -2,6 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
+import { Image360Annotation } from '../annotation/Image360Annotation';
+
 /**
  * Interface used to manage historical revisions of {@link Image360}.
  * One instance represents one specific image revision.
@@ -12,4 +14,9 @@ export interface Image360Revision {
    * @returns Date | undefined
    */
   readonly date: Date | undefined;
+
+  /**
+   * The annotations associated with this revision
+   */
+  annotations: Image360Annotation[];
 }

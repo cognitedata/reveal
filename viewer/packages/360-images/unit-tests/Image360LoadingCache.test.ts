@@ -9,15 +9,18 @@ import { Image360Entity } from '../src/entity/Image360Entity';
 import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
 
 describe(Image360LoadingCache.name, () => {
+  const resolvedPromise = new DeferredPromise<void>();
+  resolvedPromise.resolve();
+
   test('preloading entites should properly queue file loading', async () => {
     const cacheSize = 5;
     const entityLoadingCache = new Image360LoadingCache(cacheSize);
 
     const deferredPromise = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
-    new DeferredPromise<{ fullResolutionCompleted: Promise<void> }>();
 
     const revisionMock1 = new Mock<Image360RevisionEntity>()
       .setup(p => p.loadTextures(It.IsAny()))
@@ -27,11 +30,14 @@ describe(Image360LoadingCache.name, () => {
 
     entityLoadingCache.cachedPreload(entityMock1, revisionMock1);
 
-    expect(entityLoadingCache.getDownloadInProgress(revisionMock1)).not.toBe(undefined);
+    const downloadInProgress = entityLoadingCache.getDownloadInProgress(revisionMock1);
+    expect(downloadInProgress).not.toBe(undefined);
     expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeFalsy();
 
     deferredPromise.fullResolutionCompleted.resolve();
-    await deferredPromise.fullResolutionCompleted;
+    deferredPromise.lowResolutionCompleted.reject();
+
+    await downloadInProgress?.allCompleted;
 
     expect(entityLoadingCache.getDownloadInProgress(revisionMock1)).toBe(undefined);
     expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeTruthy();
@@ -42,13 +48,14 @@ describe(Image360LoadingCache.name, () => {
     const entityLoadingCache = new Image360LoadingCache(cacheSize);
 
     const deferredPromise1 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revisionMock1 = new Mock<Image360RevisionEntity>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise1)
-      .setup(p => p.clearTextures())
+      .setup(p => p.dispose())
       .returns()
       .object();
 
@@ -62,8 +69,9 @@ describe(Image360LoadingCache.name, () => {
       .object();
 
     const deferredPromise2 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
 
     const revisionMock2 = new Mock<Image360RevisionEntity>()
@@ -78,18 +86,21 @@ describe(Image360LoadingCache.name, () => {
 
     const preLoad1 = entityLoadingCache.cachedPreload(entityMock1, revisionMock1);
 
-    deferredPromise1.firstCompleted.resolve();
+    deferredPromise1.lowResolutionCompleted.resolve();
     deferredPromise1.fullResolutionCompleted.resolve();
     await preLoad1;
 
     const preLoad2 = entityLoadingCache.cachedPreload(entityMock2, revisionMock2);
 
-    expect(entityLoadingCache.getDownloadInProgress(revisionMock2)).not.toBe(undefined);
+    const inProgressDownload2 = entityLoadingCache.getDownloadInProgress(revisionMock2);
+    expect(inProgressDownload2).not.toBe(undefined);
     expect(entityLoadingCache.cachedRevisions.includes(revisionMock1)).toBeTruthy();
 
-    deferredPromise2.firstCompleted.resolve();
+    deferredPromise2.lowResolutionCompleted.resolve();
     deferredPromise2.fullResolutionCompleted.resolve();
     await preLoad2;
+
+    await inProgressDownload2?.allCompleted;
 
     expect(entityLoadingCache.currentlyLoadingEntities.length).toBe(0);
     expect(entityLoadingCache.cachedRevisions.length).toBe(1);
@@ -101,8 +112,9 @@ describe(Image360LoadingCache.name, () => {
     const entityLoadingCache = new Image360LoadingCache(cacheSize);
 
     const deferredPromise1 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
 
     const revisionMock1 = new Mock<Image360RevisionEntity>()
@@ -120,14 +132,15 @@ describe(Image360LoadingCache.name, () => {
       .object();
 
     const deferredPromise2 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
 
     const revisionMock2 = new Mock<Image360RevisionEntity>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise2)
-      .setup(p => p.clearTextures())
+      .setup(p => p.dispose())
       .returns()
       .object();
 
@@ -141,8 +154,9 @@ describe(Image360LoadingCache.name, () => {
       .object();
 
     const deferredPromise3 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const entityMock3 = new Mock<Image360Entity>().object();
 
@@ -155,15 +169,15 @@ describe(Image360LoadingCache.name, () => {
     const preLoad2 = entityLoadingCache.cachedPreload(entityMock2, revisionMock2);
 
     deferredPromise1.fullResolutionCompleted.resolve();
-    deferredPromise1.firstCompleted.resolve();
+    deferredPromise1.lowResolutionCompleted.resolve();
 
     deferredPromise2.fullResolutionCompleted.resolve();
-    deferredPromise2.firstCompleted.resolve();
+    deferredPromise2.lowResolutionCompleted.resolve();
     await Promise.all([preLoad1, preLoad2]);
 
     const preLoad3 = entityLoadingCache.cachedPreload(entityMock3, revisionMock3);
     deferredPromise3.fullResolutionCompleted.resolve();
-    deferredPromise3.firstCompleted.resolve();
+    deferredPromise3.lowResolutionCompleted.resolve();
     await preLoad3;
 
     expect(entityLoadingCache.cachedRevisions.length).toBe(2);
@@ -178,8 +192,9 @@ describe(Image360LoadingCache.name, () => {
     const entity = new Mock<Image360Entity>().object();
 
     const promiseToFail = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revisionMockToFail = new Mock<Image360RevisionEntity>()
       .setup(p => p.loadTextures(It.IsAny()))
@@ -187,8 +202,9 @@ describe(Image360LoadingCache.name, () => {
       .object();
 
     const promiseToAbort = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revisionMockToAbort = new Mock<Image360RevisionEntity>()
       .setup(p => p.loadTextures(It.IsAny()))
@@ -196,8 +212,9 @@ describe(Image360LoadingCache.name, () => {
       .object();
 
     const promiseToResolve = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revisionMockToResolve = new Mock<Image360RevisionEntity>()
       .setup(p => p.loadTextures(It.IsAny()))
@@ -210,17 +227,17 @@ describe(Image360LoadingCache.name, () => {
 
     expect(loadingCache.currentlyLoadingEntities.length).toBe(3);
 
-    promiseToFail.firstCompleted.reject('Some other error');
-    promiseToFail.fullResolutionCompleted.reject();
+    promiseToFail.lowResolutionCompleted.reject('Some other error');
+    promiseToFail.fullResolutionCompleted.reject('Some other error');
 
-    promiseToAbort.firstCompleted.reject('Aborted');
-    promiseToAbort.fullResolutionCompleted.reject();
+    promiseToAbort.lowResolutionCompleted.reject('Aborted');
+    promiseToAbort.fullResolutionCompleted.reject('Aborted');
 
-    promiseToResolve.firstCompleted.resolve();
+    promiseToResolve.lowResolutionCompleted.resolve();
     promiseToResolve.fullResolutionCompleted.resolve();
 
     await expect(downloadToFail).rejects.toThrow();
-    await expect(downloadToAbort).resolves.not.toThrow();
+    await expect(downloadToAbort).rejects.toThrow();
     await expect(downloadToResolve).resolves.not.toThrow();
 
     expect(loadingCache.cachedRevisions.length).toBe(1);
@@ -233,32 +250,36 @@ describe(Image360LoadingCache.name, () => {
     const loadingCache = new Image360LoadingCache(cacheSize, cacheSize);
 
     const createMockRevision = (deferredPromise: {
-      firstCompleted: DeferredPromise<void>;
+      lowResolutionCompleted: DeferredPromise<void>;
       fullResolutionCompleted: DeferredPromise<void>;
+      annotationsCompleted: DeferredPromise<void>;
     }) => {
       return new Mock<Image360RevisionEntity>()
         .setup(p => p.loadTextures(It.IsAny()))
         .returns(deferredPromise)
-        .setup(p => p.clearTextures())
+        .setup(p => p.dispose())
         .returns()
         .object();
     };
 
     const deferredPromise1 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revision360Mock1 = createMockRevision(deferredPromise1);
 
     const deferredPromise2 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revision360Mock2 = createMockRevision(deferredPromise2);
 
     const deferredPromise3 = {
-      firstCompleted: new DeferredPromise<void>(),
-      fullResolutionCompleted: new DeferredPromise<void>()
+      lowResolutionCompleted: new DeferredPromise<void>(),
+      fullResolutionCompleted: new DeferredPromise<void>(),
+      annotationsCompleted: resolvedPromise
     };
     const revision360Mock3 = createMockRevision(deferredPromise3);
 
@@ -282,13 +303,13 @@ describe(Image360LoadingCache.name, () => {
     expect(loadingCache.getDownloadInProgress(revision360Mock2)).not.toBe(undefined);
     expect(loadingCache.getDownloadInProgress(revision360Mock3)).not.toBe(undefined);
 
-    deferredPromise1.firstCompleted.resolve();
+    deferredPromise1.lowResolutionCompleted.resolve();
     deferredPromise1.fullResolutionCompleted.resolve();
 
-    deferredPromise2.firstCompleted.resolve();
+    deferredPromise2.lowResolutionCompleted.resolve();
     deferredPromise2.fullResolutionCompleted.resolve();
 
-    deferredPromise3.firstCompleted.resolve();
+    deferredPromise3.lowResolutionCompleted.resolve();
     deferredPromise3.fullResolutionCompleted.resolve();
 
     await download1;

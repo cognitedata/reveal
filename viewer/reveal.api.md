@@ -787,10 +787,23 @@ export interface Image360 {
 }
 
 // @public
-export type Image360AnnotationClickedDelegate = (annotation: AnnotationModel) => void;
+export interface Image360Annotation {
+    readonly annotation: AnnotationModel;
+    setColor(color?: Color): void;
+    setVisible(visible?: boolean): void;
+}
 
 // @public
-export type Image360AnnotationHoveredDelegate = (annotation: AnnotationModel) => void;
+export type Image360AnnotationAppearance = {
+    color?: Color;
+    visible?: boolean;
+};
+
+// @public
+export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
+
+// @public
+export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
 
 // @public
 export interface Image360Collection {
@@ -810,6 +823,7 @@ export interface Image360Collection {
     // (undocumented)
     on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setDefaultStyle(appearance: Image360AnnotationAppearance): void;
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;
 }
@@ -829,6 +843,7 @@ export type Image360Metadata = {
 
 // @public
 export interface Image360Revision {
+    annotations: Image360Annotation[];
     readonly date: Date | undefined;
 }
 
