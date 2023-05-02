@@ -6,6 +6,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useTransformationList } from 'hooks/transformation';
+import { useFlowList } from 'hooks/files';
+import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
 import { ProcessNodeData, ProcessType } from 'types';
 
@@ -15,6 +17,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
   const {
+    nodes,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
     selectedNodeId,
@@ -22,11 +25,17 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     setSelectedNodeComponent,
     selectedNodeDescription,
     setSelectedNodeDescription,
+    selectedNodeItem,
+    setSelectedNodeItem,
     changeNodes,
   } = useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
+
+  const { data: flowData } = useFlowList({ staleTime: 0 });
+
+  const { data: functionsData } = useFunctions();
 
   const onClose = () => {
     setIsNodeConfigurationPanelOpen(false);
@@ -54,6 +63,93 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     },
   ];
 
+  const itemCreateNewOption = () => {
+    switch (selectedNodeComponent) {
+      case 'transformation': {
+        return (
+          <Option
+            key={'create-new-transformation'}
+            value={'Create new transformation'}
+          >
+            <Body level={2}>{'Create new transformation'}</Body>
+          </Option>
+        );
+      }
+      case 'workflow': {
+        return (
+          <Option key={'create-new-workflow'} value={'Create new workflow'}>
+            <Body level={2}>{'Create new workflow'}</Body>
+          </Option>
+        );
+      }
+      case 'function': {
+        return (
+          <Option key={'create-new-function'} value={'Create new function'}>
+            <Body level={2}>{'Create new function'}</Body>
+          </Option>
+        );
+      }
+      case 'webhook': {
+        return (
+          <Option key={'create-new-webhook'} value={'Create new webhook'}>
+            <Body level={2}>{'Create new webhook'}</Body>
+          </Option>
+        );
+      }
+    }
+  };
+
+  const itemOptions = () => {
+    switch (selectedNodeComponent) {
+      case 'transformation': {
+        return transformationList
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(({ externalId, name }) => (
+            <Option key={externalId} value={externalId}>
+              <Body level={2}>{name}</Body>
+            </Option>
+          ));
+      }
+      case 'workflow': {
+        if (flowData) {
+          return flowData
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(({ externalId, name }) => (
+              <Option key={externalId} value={externalId}>
+                <Body level={2}>{name}</Body>
+              </Option>
+            ));
+        }
+      }
+      case 'function': {
+        if (functionsData) {
+          return functionsData
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(({ externalId, name }) => (
+              <Option key={externalId} value={externalId}>
+                <Body level={2}>{name}</Body>
+              </Option>
+            ));
+        }
+      }
+      case 'webhook': {
+        const nodesData = nodes.map((node) => {
+          return node.data as ProcessNodeData;
+        });
+        const webhookList = nodesData.filter((node) => {
+          return node.processType === 'webhook';
+        });
+        return webhookList
+          .sort((a, b) => a.processType.localeCompare(b.processType))
+          .map(({ processType }) => (
+            <Option key={processType} value={processType}>
+              <Body level={2}>{processType}</Body>
+            </Option>
+          ));
+      }
+    }
+  };
+
   const handleComponentChange = (value: ProcessType) => {
     changeNodes((nodes) => {
       const node = nodes.find((node) => node.id === selectedNodeId);
@@ -61,6 +157,15 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       nodeData.processType = value;
     });
     setSelectedNodeComponent(value);
+  };
+
+  const handleItemChange = (value: string) => {
+    changeNodes((nodes) => {
+      const node = nodes.find((node) => node.id === selectedNodeId);
+      const nodeData = node?.data as ProcessNodeData;
+      nodeData.processItem = value;
+    });
+    setSelectedNodeItem(value);
   };
 
   return (
@@ -111,15 +216,12 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         </Body>
         <Select
           placeholder={t('node-configuration-panel-item-placeholder')}
+          value={selectedNodeItem}
+          onChange={handleItemChange}
           style={{ width: 326 }}
         >
-          {transformationList
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(({ externalId, name }) => (
-              <Option key={externalId} value={externalId}>
-                <Body level={2}>{name}</Body>
-              </Option>
-            ))}
+          {itemCreateNewOption()}
+          {itemOptions()}
         </Select>
       </Flex>
       <InputExp

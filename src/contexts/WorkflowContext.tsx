@@ -46,6 +46,8 @@ type FlowContextT = {
   setSelectedNodeComponent: Dispatch<SetStateAction<ProcessType>>;
   selectedNodeDescription: string;
   setSelectedNodeDescription: Dispatch<SetStateAction<string>>;
+  selectedNodeItem: string;
+  setSelectedNodeItem: Dispatch<SetStateAction<string>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -126,6 +128,10 @@ export const FlowContextProvider = ({
     const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
     return nodeData.processDescription as string;
   });
+  const [selectedNodeItem, setSelectedNodeItem] = useState(() => {
+    const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
+    return nodeData.processItem as string;
+  });
 
   return (
     <WorkflowContext.Provider
@@ -148,6 +154,8 @@ export const FlowContextProvider = ({
         setSelectedNodeComponent,
         selectedNodeDescription,
         setSelectedNodeDescription,
+        selectedNodeItem,
+        setSelectedNodeItem,
       }}
     >
       {children}
