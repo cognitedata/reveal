@@ -1,4 +1,5 @@
-import { Flex, InputExp, Body, IconType, Icon } from '@cognite/cogs.js';
+import { Flex, InputExp, Body, IconType, Icon, Link } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
 import { useMemo } from 'react';
@@ -67,31 +68,34 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     switch (selectedNodeComponent) {
       case 'transformation': {
         return (
-          <Option
-            key={'create-new-transformation'}
-            value={'Create new transformation'}
-          >
-            <Body level={2}>{'Create new transformation'}</Body>
+          <Option key={'create-new-item'} value={'Create new transformation'}>
+            <Link href={createLink('/transformations')} target="_blank">
+              {'Create new transformation'}
+            </Link>
           </Option>
         );
       }
       case 'workflow': {
         return (
-          <Option key={'create-new-workflow'} value={'Create new workflow'}>
-            <Body level={2}>{'Create new workflow'}</Body>
+          <Option key={'create-new-item'} value={'Create new workflow'}>
+            <Link href="./" target="_blank">
+              {'Create new workflow'}
+            </Link>
           </Option>
         );
       }
       case 'function': {
         return (
-          <Option key={'create-new-function'} value={'Create new function'}>
-            <Body level={2}>{'Create new function'}</Body>
+          <Option key={'create-new-item'} value={'Create new function'}>
+            <Link href={createLink('/functions')} target="_blank">
+              {'Create new function'}
+            </Link>
           </Option>
         );
       }
       case 'webhook': {
         return (
-          <Option key={'create-new-webhook'} value={'Create new webhook'}>
+          <Option key={'create-new-item'} value={'Create new webhook'}>
             <Body level={2}>{'Create new webhook'}</Body>
           </Option>
         );
@@ -160,10 +164,19 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   };
 
   const handleItemChange = (value: string) => {
+    let newValue = value;
+    if (value == `Create new ${selectedNodeComponent}`) {
+      newValue = '';
+      // switch(selectedNodeComponent){
+      //   case 'transformation': {
+
+      //   }
+      // }
+    }
     changeNodes((nodes) => {
       const node = nodes.find((node) => node.id === selectedNodeId);
       const nodeData = node?.data as ProcessNodeData;
-      nodeData.processItem = value;
+      nodeData.processItem = newValue;
     });
     setSelectedNodeItem(value);
   };
@@ -216,9 +229,9 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         </Body>
         <Select
           placeholder={t('node-configuration-panel-item-placeholder')}
-          value={selectedNodeItem}
+          value={selectedNodeItem === '' ? undefined : selectedNodeItem}
           onChange={handleItemChange}
-          style={{ width: 326 }}
+          style={{ width: 326, flex: 1 }}
         >
           {itemCreateNewOption()}
           {itemOptions()}
