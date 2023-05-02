@@ -1,6 +1,7 @@
 {
   "view": "View",
   "restore": "Restore",
+  "preview-warning": "Previewing old version",
   "history": "History",
   "cancel": "Cancel",
   "create": "Create",
