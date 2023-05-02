@@ -69,10 +69,17 @@ export const FlowContextProvider = ({
 }: FlowContextProviderProps) => {
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
-  const [isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen] =
-    useState(false);
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
+  const [isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen] =
+    useState(() => {
+      const nodesSelected = initialFlow.canvas.nodes.filter((node) => {
+        return node.selected;
+      });
+      const initialIsNodeConfigurationPanelOpen =
+        nodesSelected.length > 0 ? true : false;
+      return initialIsNodeConfigurationPanelOpen;
+    });
 
   const { mutate } = useUpdateFlow();
   const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
