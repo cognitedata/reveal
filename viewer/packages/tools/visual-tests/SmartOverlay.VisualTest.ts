@@ -34,7 +34,7 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
     const reusableVec = new THREE.Vector3();
 
     const boxSize = 10;
-    const overlaysOffset = new THREE.Vector3(0,-10,-10);
+    const overlaysOffset = new THREE.Vector3(0, -10, -10);
 
     for (let i = boxSize / -2; i < boxSize / 2; i++) {
       for (let x = boxSize / -2; x < boxSize / 2; x++) {
@@ -44,8 +44,7 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
             labels.push({
               text: 'Meow ' + id,
               id: i + x + y,
-              position: reusableVec.set(x, i, y)
-                .multiplyScalar(0.9).clone().add(overlaysOffset),
+              position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone().add(overlaysOffset),
               color: new THREE.Color(
                 Math.abs(i / (boxSize / 2)),
                 Math.abs(x / (boxSize / 2)),
