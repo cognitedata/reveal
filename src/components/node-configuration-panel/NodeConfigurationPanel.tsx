@@ -68,35 +68,49 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     switch (selectedNodeComponent) {
       case 'transformation': {
         return (
-          <Option key={'create-new-item'} value={'Create new transformation'}>
+          <Option
+            key={t('create-new-item', { item: selectedNodeComponent })}
+            value={t('create-new-item', { item: selectedNodeComponent })}
+          >
             <Link href={createLink('/transformations')} target="_blank">
-              {'Create new transformation'}
+              {t('create-new-item', { item: selectedNodeComponent })}
             </Link>
           </Option>
         );
       }
       case 'workflow': {
         return (
-          <Option key={'create-new-item'} value={'Create new workflow'}>
+          <Option
+            key={t('create-new-item', { item: selectedNodeComponent })}
+            value={t('create-new-item', { item: selectedNodeComponent })}
+          >
             <Link href="./" target="_blank">
-              {'Create new workflow'}
+              {t('create-new-item', { item: selectedNodeComponent })}
             </Link>
           </Option>
         );
       }
       case 'function': {
         return (
-          <Option key={'create-new-item'} value={'Create new function'}>
+          <Option
+            key={t('create-new-item', { item: selectedNodeComponent })}
+            value={t('create-new-item', { item: selectedNodeComponent })}
+          >
             <Link href={createLink('/functions')} target="_blank">
-              {'Create new function'}
+              {t('create-new-item', { item: selectedNodeComponent })}
             </Link>
           </Option>
         );
       }
       case 'webhook': {
         return (
-          <Option key={'create-new-item'} value={'Create new webhook'}>
-            <Body level={2}>{'Create new webhook'}</Body>
+          <Option
+            key={t('create-new-item', { item: selectedNodeComponent })}
+            value={t('create-new-item', { item: selectedNodeComponent })}
+          >
+            <Body level={2}>
+              {t('create-new-item', { item: selectedNodeComponent })}
+            </Body>
           </Option>
         );
       }

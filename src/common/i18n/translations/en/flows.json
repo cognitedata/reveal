@@ -1,6 +1,7 @@
 {
   "cancel": "Cancel",
   "create": "Create",
+  "create-new-item": "Create new {{item}}",
   "data-set": "Data set",
   "description": "Description",
   "enter-description": "Enter description",
