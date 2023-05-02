@@ -158,30 +158,39 @@ export const FlowBuilder = (): JSX.Element => {
   const onConnect: OnConnect = useCallback(
     (connection) => {
       if (!!connection.source && !!connection.target) {
-        changeFlow((f) => {
-          const newEdge: Edge<any> = {
-            ...connection,
-            source: connection.source!,
-            target: connection.target!,
-            type: 'customEdge',
-            animated: true,
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              height: 16,
-              width: 16,
-            },
-            style: {
-              strokeWidth: 1,
-            },
-            id: v4(),
-          };
-          // TODO: figure out this type issue
-          // @ts-ignore
-          f.canvas.edges.push(newEdge);
-        });
+        changeFlow(
+          (f) => {
+            const newEdge: Edge<any> = {
+              ...connection,
+              source: connection.source!,
+              target: connection.target!,
+              type: 'customEdge',
+              animated: true,
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+                height: 16,
+                width: 16,
+              },
+              style: {
+                strokeWidth: 1,
+              },
+              id: v4(),
+            };
+            // TODO: figure out this type issue
+            // @ts-ignore
+            f.canvas.edges.push(newEdge);
+          },
+          () => ({
+            time: Date.now(),
+            message: JSON.stringify({
+              message: `${connection.source} connected to ${connection.target}`,
+              user: userInfo?.displayName,
+            }),
+          })
+        );
       }
     },
-    [changeFlow]
+    [changeFlow, userInfo?.displayName]
   );
 
   const onDragOver: React.DragEventHandler = useCallback((event) => {
