@@ -167,5 +167,6 @@
   "vote_question": "When should we start working on that?",
   "vote_response": "Thanks for voting!",
   "yes_sure_to_delete_data_model": "Yes, I want to delete the data model.",
-  "yes_sure_to_delete_data_row": "Yes, I want to delete"
+  "yes_sure_to_delete_data_row": "Yes, I want to delete",
+  "data_quality_title": "Data quality"
 }
