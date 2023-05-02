@@ -37,7 +37,7 @@ export class Image360UI {
         this._lastAnnotation.setColor(undefined);
       }
 
-      console.log('Clicked annotation with data: ', annotation.annotation.data, 'width pointer event ', event);
+      console.log('Clicked annotation with data: ', annotation.annotation.data, 'with pointer event ', event);
       annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
       this._lastAnnotation = annotation;
     };
