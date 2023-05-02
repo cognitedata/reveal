@@ -775,7 +775,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.36.0
-    "@cognite/sdk": 8.0.1
+    "@cognite/sdk": 8.1.0
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
     "@types/dat.gui": 0.7.9
@@ -872,15 +872,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:8.0.1":
-  version: 8.0.1
-  resolution: "@cognite/sdk@npm:8.0.1"
+"@cognite/sdk@npm:8.1.0":
+  version: 8.1.0
+  resolution: "@cognite/sdk@npm:8.1.0"
   dependencies:
     "@cognite/sdk-core": ^4.8.3
     "@types/geojson": ^7946.0.8
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: e1a7bc284465236c11d5250d61eb8d60865b7b15dbc41b90a0902c3bc548087b8125e470979a1325a1887c19106a7a10179f0c1f76c7ccda9cd2c1b3abe98c33
+  checksum: 47afd9d5cae60195482b17d09d95eab81aaac0f8d339a32c278cefe64865b1a9c33bf71eed1fd5cba595ea89a489122f34b736360b2546d1575127ce2bd2c4f8
   languageName: node
   linkType: hard
 
