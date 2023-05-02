@@ -15,6 +15,8 @@ import ReactFlow, {
   SelectionMode,
   EdgeChange,
   NodeProps,
+  EdgeSelectionChange,
+  NodeSelectionChange,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -45,7 +47,12 @@ const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
 };
 
 export const FlowBuilder = (): JSX.Element => {
-  const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
+  const {
+    flow: flowState,
+    changeFlow,
+    setSelectedObject,
+    selectedObject,
+  } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
 
@@ -71,6 +78,10 @@ export const FlowBuilder = (): JSX.Element => {
             const e = f.canvas.edges.find((e) => e.id === change.id);
             if (e) {
               e.selected = change.selected;
+    const selectedEdgeChange = changes.find((c) => c.type === 'select');
+    if (selectedEdgeChange) {
+      setSelectedObject((selectedEdgeChange as EdgeSelectionChange).id);
+    }
             }
             break;
           }
@@ -98,6 +109,10 @@ export const FlowBuilder = (): JSX.Element => {
             if (n && change.position) {
               n.position.x = change.position.x;
               n.position.y = change.position.y;
+    const selectedNodeChange = changes.find((c) => c.type === 'select');
+    if (selectedNodeChange) {
+      setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
+    }
             }
             break;
           }
@@ -194,6 +209,25 @@ export const FlowBuilder = (): JSX.Element => {
     [reactFlowInstance, changeFlow]
   );
 
+  const nodes = useMemo(
+    () =>
+      flowState.canvas.nodes.map((n) => ({
+        ...n,
+        selected: n.id === selectedObject,
+        // FIXME: can we remove as
+      })) as WorkflowBuilderNode[],
+    [flowState.canvas.nodes, selectedObject]
+  );
+
+  const edges = useMemo(
+    () =>
+      flowState.canvas.edges.map((e) => ({
+        ...e,
+        selected: e.id === selectedObject,
+      })) as Edge[],
+    [flowState.canvas.edges, selectedObject]
+  );
+
   if (!flowState) {
     return <></>;
   }
@@ -210,8 +244,8 @@ export const FlowBuilder = (): JSX.Element => {
         selectionOnDrag
         panOnScroll
         deleteKeyCode={DELETE_KEY_CODES}
-        edges={flowState.canvas.edges as Edge[]} // FIXME: can we remove as
-        nodes={flowState.canvas.nodes as WorkflowBuilderNode[]}
+        edges={edges}
+        nodes={nodes}
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
         nodeTypes={NODE_TYPES}

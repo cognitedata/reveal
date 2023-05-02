@@ -30,6 +30,8 @@ type FlowContextT = {
   changeEdges: (fn: AutomergeChangeEdgesFn) => void;
   nodes: CanvasNodes;
   edges: CanvasEdges;
+  selectedObject?: string;
+  setSelectedObject: Dispatch<SetStateAction<string | undefined>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -49,6 +51,7 @@ export const FlowContextProvider = ({
   children,
   initialFlow,
 }: FlowContextProviderProps) => {
+  const [selectedObject, setSelectedObject] = useState<string | undefined>();
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
   const [flowState, setFlowState] = useState(initialFlow);
@@ -110,6 +113,8 @@ export const FlowContextProvider = ({
         changeEdges,
         nodes: flowState.canvas.nodes,
         edges: flowState.canvas.edges,
+        selectedObject,
+        setSelectedObject,
       }}
     >
       {children}
