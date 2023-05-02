@@ -48,6 +48,7 @@
   "run": "Run",
   "view": "View",
   "webhook": "Webhook",
+  "workflow": "Workflow",
   "floating-components-panel-title": "Add components",
   "floating-components-panel-description": "Drag and drop components to the canvas",
   "component-title-transformation": "Transformation",
@@ -58,5 +59,4 @@
   "component-description-workflow": "One workflow calls another",
   "component-title-function": "Function",
   "component-description-function": "Execute a Cognite Function"
-  "workflow": "Workflow"
 }
