@@ -9,19 +9,21 @@ import {
   Image360Collection,
   Image360EnteredDelegate,
   Image360AnnotationHoveredDelegate,
-  Image360Annotation
+  Image360Annotation,
+  PointerEventData
 } from '@cognite/reveal';
 
-import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
-
 import * as dat from 'dat.gui';
+import { Vector3 } from 'three';
 
 export class Image360UI {
   private viewer: Cognite3DViewer;
   private gui: dat.GUI;
   private entities: Image360[] = [];
-  private collections: Image360Collection[] = [];
   private selectedEntity: Image360 | undefined;
+  private _lastAnnotation: Image360Annotation | undefined = undefined;
+  
+  public collections: Image360Collection[] = [];
 
   private params = {
     siteId: this.getSideIdFromUrl() ?? '',
@@ -168,12 +170,11 @@ export class Image360UI {
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => this.selectedEntity = entity);
-    collection.on('image360AnnotationHovered', (annotation) => {
-      // TODO: Replace with styling when available 2023-04-19
-      console.log('Hovered annotation with data: ', annotation.data)
-    });
+    collection.on('image360AnnotationClicked', this.onAnnotationClicked);
     collections.push(collection);
     this.entities = this.entities.concat(collection.image360Entities);
+
+    this.viewer.requestRedraw();
   }
 
   private async set360IconCullingRestrictions() {
@@ -194,6 +195,16 @@ export class Image360UI {
     const siteId = url.searchParams.get('siteId');
     return siteId;
   }
+
+  private onAnnotationClicked(annotation: Image360Annotation, _event: PointerEventData, direction: Vector3): void {
+    if (this._lastAnnotation !== undefined) {
+      this._lastAnnotation.setColor(undefined);
+    }
+
+    console.log('Clicked annotation with data: ', annotation.annotation.data, 'with direction ', direction);
+    annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+    this._lastAnnotation = annotation;
+  };
 
   private saveImage360SiteToUrl() {
     const { params } = this;

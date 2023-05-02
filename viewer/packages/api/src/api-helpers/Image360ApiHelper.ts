@@ -231,7 +231,7 @@ export class Image360ApiHelper {
     if (lastEntered360ImageEntity) {
       lastEntered360ImageEntity.icon.visible = imageCollection.isCollectionVisible;
     }
-    
+
     image360Entity.icon.visible = false;
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
