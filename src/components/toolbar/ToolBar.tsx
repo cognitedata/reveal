@@ -53,8 +53,7 @@ const ToolbarContainer = styled(Flex)`
   padding: 2px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   position: absolute;
-  bottom: 0.5;
-  /* using bottom: 0.5 instead of TOOLBAR_MARGIN temporarily */
+  bottom: ${TOOLBAR_MARGIN}px;
   right: ${TOOLBAR_MARGIN}px;
   z-index: ${Z_INDEXES.TOOLBAR};
 `;
