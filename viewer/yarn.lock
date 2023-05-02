@@ -835,7 +835,7 @@ __metadata:
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
     resize-observer-polyfill: 1.5.1
-    rxjs: 7.8.0
+    rxjs: 7.8.1
     shx: 0.3.4
     skmeans: 0.11.3
     sparse-octree: 7.1.6
@@ -10353,7 +10353,16 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.8.0, rxjs@npm:^7.8.0":
+"rxjs@npm:7.8.1":
+  version: 7.8.1
+  resolution: "rxjs@npm:7.8.1"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: de4b53db1063e618ec2eca0f7965d9137cabe98cf6be9272efe6c86b47c17b987383df8574861bcced18ebd590764125a901d5506082be84a8b8e364bf05f119
+  languageName: node
+  linkType: hard
+
+"rxjs@npm:^7.8.0":
   version: 7.8.0
   resolution: "rxjs@npm:7.8.0"
   dependencies:
