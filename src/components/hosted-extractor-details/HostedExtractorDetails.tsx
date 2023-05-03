@@ -25,7 +25,7 @@ import {
 import Markdown from 'components/markdown';
 import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 import { trackUsage } from 'utils';
-import { ConnectToHostedExtractorModal } from 'components/connect-to-hosted-extractor-modal/ConnectToHostedExtractorModal';
+import { CreateConnectionModal } from 'components/create-connection-modal/CreateConnectionModal';
 
 export const HostedExtractorDetails = (): JSX.Element => {
   const { t } = useTranslation();
@@ -155,7 +155,7 @@ export const HostedExtractorDetails = (): JSX.Element => {
           </StyledLayoutGrid>
         </Layout.Container>
       </ContentContainer>
-      <ConnectToHostedExtractorModal
+      <CreateConnectionModal
         onCancel={() => setIsModalOpen(false)}
         visible={isModalOpen}
       />
