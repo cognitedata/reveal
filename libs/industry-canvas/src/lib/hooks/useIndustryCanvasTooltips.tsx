@@ -7,13 +7,14 @@ import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
 import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
 import { UseManagedStateReturnType } from './useManagedState';
+import { OnAddContainerReferences } from '../IndustryCanvasPage';
 
 export type UseTooltipsParams = {
   clickedContainer: IndustryCanvasContainerConfig | undefined;
   containerAnnotations: ExtendedAnnotation[];
-  selectedContainerAnnotation: ExtendedAnnotation | undefined;
+  clickedContainerAnnotation: ExtendedAnnotation | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
+  onAddContainerReferences: OnAddContainerReferences;
   onAddSummarizationSticky: (
     container: IndustryCanvasContainerConfig,
     text: string,
@@ -27,7 +28,7 @@ export type UseTooltipsParams = {
 
 const useIndustryCanvasTooltips = ({
   containerAnnotations,
-  selectedContainerAnnotation,
+  clickedContainerAnnotation,
   selectedCanvasAnnotation,
   onAddContainerReferences,
   onAddSummarizationSticky,
@@ -38,12 +39,12 @@ const useIndustryCanvasTooltips = ({
   onUpdateAnnotationStyleByType,
 }: UseTooltipsParams) => {
   const assetTooltips = useIndustryCanvasAssetTooltips(
-    selectedContainerAnnotation,
+    clickedContainerAnnotation,
     onAddContainerReferences
   );
   const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
     annotations: containerAnnotations,
-    selectedAnnotation: selectedContainerAnnotation,
+    selectedAnnotation: clickedContainerAnnotation,
     onAddContainerReferences,
   });
   const canvasAnnotationTooltips = useCanvasAnnotationTooltips({

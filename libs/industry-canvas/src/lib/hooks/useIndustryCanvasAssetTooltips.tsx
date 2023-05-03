@@ -10,11 +10,11 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
 import { ContainerReferenceType } from '../types';
-import { UseManagedStateReturnType } from './useManagedState';
+import { OnAddContainerReferences } from '../IndustryCanvasPage';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
-  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences']
+  onAddContainerReferences: OnAddContainerReferences
 ) => {
   return useMemo(() => {
     if (selectedAnnotation === undefined) {

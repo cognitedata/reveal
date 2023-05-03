@@ -25,10 +25,12 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
-import { TOAST_POSITION } from './constants';
+import {
+  SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
+  TOAST_POSITION,
+} from './constants';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
-import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 
 import { IndustryCanvas } from './IndustryCanvas';
 import {
@@ -38,6 +40,12 @@ import {
 import { ContainerReference } from './types';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
+import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
+
+export type OnAddContainerReferences = (
+  containerReferences: ContainerReference[]
+) => void;
 import useManagedTool from './utils/useManagedTool';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
@@ -79,8 +87,10 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     onUpdateRequest,
     undo,
     redo,
+    clickedContainerAnnotation,
     interactionState,
     setInteractionState,
+    containerAnnotations,
   } = useManagedState({
     unifiedViewer: unifiedViewerRef,
     setTool,
@@ -115,8 +125,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     );
   }, [unifiedViewerRef]);
 
-  const onAddContainerReferences = useCallback(
+  const onAddContainerReferences: OnAddContainerReferences = useCallback(
     (containerReferences: ContainerReference[]) => {
+      if (unifiedViewerRef === null) {
+        return;
+      }
+
       // Ensure that we don't add a container with an ID that already exists
       const currentContainerIds = new Set(
         (container?.children ?? []).map((c) => c.id)
@@ -143,7 +157,27 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       if (containerReferencesToAdd.length === 0) {
         return;
       }
-      addContainerReferences(containerReferences);
+
+      addContainerReferences(containerReferencesToAdd).then((containers) => {
+        // When we add new containers, we want to zoom to fit and select them.
+        // Since the new containers might not be rendered immediately, we need to wait a bit before we can do that.
+        setTimeout(() => {
+          zoomToFitAroundContainerIds({
+            unifiedViewer: unifiedViewerRef,
+            containerIds: [
+              selectedContainer?.id,
+              clickedContainerAnnotation?.containerId,
+              ...containers.map((c) => c.id),
+            ].filter(isNotUndefined),
+          });
+
+          unifiedViewerRef.selectByIds({
+            containerIds: containers.map((c) => c.id),
+            annotationIds: [],
+          });
+        }, SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS);
+      });
+
       toast.success(
         <div>
           <h4>Resource(s) added to your canvas</h4>
@@ -154,7 +188,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         }
       );
     },
-    [addContainerReferences, container]
+    [
+      addContainerReferences,
+      unifiedViewerRef,
+      selectedContainer?.id,
+      clickedContainerAnnotation,
+      container?.children,
+    ]
   );
 
   const onAddResourcePress = () => {
@@ -326,6 +366,8 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           onUpdateRequest={onUpdateRequest}
           interactionState={interactionState}
           setInteractionState={setInteractionState}
+          containerAnnotations={containerAnnotations}
+          clickedContainerAnnotation={clickedContainerAnnotation}
           container={container}
           updateContainerById={updateContainerById}
           removeContainerById={removeContainerById}

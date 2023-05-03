@@ -4,11 +4,9 @@ import ReactUnifiedViewer, {
   UnifiedViewer,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { useContainerAnnotations } from './hooks/useContainerAnnotations';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
@@ -20,13 +18,14 @@ import { useSDK } from '@cognite/sdk-provider';
 import getContainerSummarizationSticky from './utils/getSummarizationSticky';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
+import { OnAddContainerReferences } from './IndustryCanvasPage';
 import summarizeText from './utils/summarizeText';
 
 export type IndustryCanvasProps = {
   id: string;
   applicationId: string;
   currentZoomScale: number;
-  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
+  onAddContainerReferences: OnAddContainerReferences;
   onRef?: (ref: UnifiedViewer | null) => void;
   viewerRef: UnifiedViewer | null;
   selectedContainer: IndustryCanvasContainerConfig | undefined;
@@ -41,8 +40,10 @@ export type IndustryCanvasProps = {
   | 'onUpdateRequest'
   | 'updateContainerById'
   | 'removeContainerById'
+  | 'clickedContainerAnnotation'
   | 'interactionState'
   | 'setInteractionState'
+  | 'containerAnnotations'
 > &
   Pick<
     UseManagedToolsReturnType,
@@ -61,6 +62,8 @@ export const IndustryCanvas = ({
   removeContainerById,
   interactionState,
   setInteractionState,
+  containerAnnotations,
+  clickedContainerAnnotation,
   selectedContainer,
   selectedCanvasAnnotation,
   onAddContainerReferences,
@@ -72,54 +75,6 @@ export const IndustryCanvas = ({
   toolOptions,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
-
-  const onClickContainerAnnotation = useCallback(
-    (annotation: ExtendedAnnotation) =>
-      setInteractionState((prevInteractionState) => ({
-        clickedContainerId: undefined,
-        hoverId: undefined,
-        clickedContainerAnnotationId:
-          prevInteractionState.clickedContainerAnnotationId === annotation.id
-            ? undefined
-            : annotation.id,
-      })),
-    [setInteractionState]
-  );
-
-  const onMouseOverContainerAnnotation = useCallback(
-    (annotation: Annotation) => {
-      setInteractionState((prevInteractionState) => ({
-        ...prevInteractionState,
-        hoverId: annotation.id,
-      }));
-    },
-    [setInteractionState]
-  );
-
-  const onMouseOutContainerAnnotation = useCallback(() => {
-    setInteractionState((prevInteractionState) => ({
-      ...prevInteractionState,
-      hoverId: undefined,
-    }));
-  }, [setInteractionState]);
-
-  const containerAnnotations = useContainerAnnotations({
-    container,
-    selectedAnnotationId: interactionState.clickedContainerAnnotationId,
-    hoverId: interactionState.hoverId,
-    onClick: onClickContainerAnnotation,
-    onMouseOver: onMouseOverContainerAnnotation,
-    onMouseOut: onMouseOutContainerAnnotation,
-  });
-
-  const selectedContainerAnnotation = useMemo(
-    () =>
-      containerAnnotations.find(
-        (annotation) =>
-          annotation.id === interactionState.clickedContainerAnnotationId
-      ),
-    [containerAnnotations, interactionState.clickedContainerAnnotationId]
-  );
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({
@@ -161,7 +116,7 @@ export const IndustryCanvas = ({
   const tooltips = useIndustryCanvasTooltips({
     clickedContainer: selectedContainer,
     containerAnnotations,
-    selectedContainerAnnotation,
+    clickedContainerAnnotation,
     selectedCanvasAnnotation,
     onAddContainerReferences,
     onAddSummarizationSticky,
