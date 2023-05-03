@@ -14,6 +14,8 @@ import ReactFlow, {
   SelectionMode,
   EdgeChange,
   NodeProps,
+  EdgeSelectionChange,
+  NodeSelectionChange,
   NodePositionChange,
 } from 'reactflow';
 import styled from 'styled-components';
@@ -47,7 +49,12 @@ const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
 
 export const FlowBuilder = (): JSX.Element => {
   const { data: userInfo } = useUserInfo();
-  const { flow: flowState, changeFlow } = useWorkflowBuilderContext();
+  const {
+    flow: flowState,
+    changeFlow,
+    setSelectedObject,
+    selectedObject,
+  } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
 
@@ -66,65 +73,23 @@ export const FlowBuilder = (): JSX.Element => {
   );
 
   const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
-    changeFlow((f) => {
-      changes.forEach((change) => {
-        switch (change.type) {
-          case 'select': {
-            const e = f.canvas.edges.find((e) => e.id === change.id);
-            if (e) {
-              e.selected = change.selected;
-            }
-            break;
-          }
-          case 'remove': {
-            const eIndex = f.canvas.edges.findIndex((e) => e.id === change.id);
-            if (eIndex !== -1) {
-              f.canvas.edges.deleteAt(eIndex);
-            }
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      });
-    });
-  };
+    const selectedEdgeChange = changes.find((c) => c.type === 'select');
+    if (selectedEdgeChange) {
+      setSelectedObject((selectedEdgeChange as EdgeSelectionChange).id);
+    }
 
-  const onNodesChange = (changes: NodeChange[]) => {
-    changeFlow(
-      (flowDoc) => {
-        changes.forEach((change) => {
+    const amChanges = changes.filter((c) => ['remove'].includes(c.type));
+
+    if (amChanges.length > 0) {
+      changeFlow((f) => {
+        amChanges.forEach((change) => {
           switch (change.type) {
-            case 'position': {
-              const node = flowDoc.canvas.nodes.find((n) => n.id === change.id);
-              if (!node) {
-                break;
-              }
-              if (change.position && change.position.x !== node.position.x) {
-                node.position.x = change.position.x;
-              }
-              if (change.position && change.position.y !== node.position.y) {
-                node.position.y = change.position.y;
-              }
-              if (node.dragging !== change.dragging) {
-                node.dragging = change.dragging;
-              }
-              break;
-            }
-            case 'select': {
-              const n = flowDoc.canvas.nodes.find((n) => n.id === change.id);
-              if (n) {
-                n.selected = change.selected;
-              }
-              break;
-            }
             case 'remove': {
-              const nIndex = flowDoc.canvas.nodes.findIndex(
-                (n) => n.id === change.id
+              const eIndex = f.canvas.edges.findIndex(
+                (e) => e.id === change.id
               );
-              if (nIndex !== -1) {
-                flowDoc.canvas.nodes.deleteAt(nIndex);
+              if (eIndex !== -1) {
+                f.canvas.edges.deleteAt(eIndex);
               }
               break;
             }
@@ -133,26 +98,79 @@ export const FlowBuilder = (): JSX.Element => {
             }
           }
         });
-      },
-      () => {
-        const messages = changes.reduce((accl, change) => {
-          if (change.type === 'position' && !change.dragging) {
-            return [...accl, `Node ${(change as NodePositionChange).id} moved`];
-          }
-          return accl;
-        }, [] as string[]);
+      });
+    }
+  };
 
-        if (messages.length > 0) {
-          return {
-            message: JSON.stringify({
-              message: messages.join('\n * '),
-              user: userInfo?.displayName,
-            }),
-            time: Date.now(),
-          };
-        }
-      }
+  const onNodesChange = (changes: NodeChange[]) => {
+    const selectedNodeChange = changes.find((c) => c.type === 'select');
+    if (selectedNodeChange) {
+      setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
+    }
+    const amChanges = changes.filter(
+      (c) => c.type === 'remove' || (c.type === 'position' && c.position)
     );
+    if (amChanges.length > 0) {
+      changeFlow(
+        (flowDoc) => {
+          amChanges.forEach((change) => {
+            switch (change.type) {
+              case 'position': {
+                const node = flowDoc.canvas.nodes.find(
+                  (n) => n.id === change.id
+                );
+                if (!node) {
+                  break;
+                }
+                if (change.position && change.position.x !== node.position.x) {
+                  node.position.x = change.position.x;
+                }
+                if (change.position && change.position.y !== node.position.y) {
+                  node.position.y = change.position.y;
+                }
+                if (node.dragging !== change.dragging) {
+                  node.dragging = change.dragging;
+                }
+                break;
+              }
+              case 'remove': {
+                const nIndex = flowDoc.canvas.nodes.findIndex(
+                  (n) => n.id === change.id
+                );
+                if (nIndex !== -1) {
+                  flowDoc.canvas.nodes.deleteAt(nIndex);
+                }
+                break;
+              }
+              default: {
+                break;
+              }
+            }
+          });
+        },
+        () => {
+          const messages = amChanges.reduce((accl, change) => {
+            if (change.type === 'position' && !change.dragging) {
+              return [
+                ...accl,
+                `Node ${(change as NodePositionChange).id} moved`,
+              ];
+            }
+            return accl;
+          }, [] as string[]);
+
+          if (messages.length > 0) {
+            return {
+              message: JSON.stringify({
+                message: messages.join('\n * '),
+                user: userInfo?.displayName,
+              }),
+              time: Date.now(),
+            };
+          }
+        }
+      );
+    }
   };
 
   const onConnect: OnConnect = useCallback(
@@ -161,19 +179,9 @@ export const FlowBuilder = (): JSX.Element => {
         changeFlow(
           (f) => {
             const newEdge: Edge<any> = {
-              ...connection,
               source: connection.source!,
               target: connection.target!,
               type: 'customEdge',
-              animated: true,
-              markerEnd: {
-                type: MarkerType.ArrowClosed,
-                height: 16,
-                width: 16,
-              },
-              style: {
-                strokeWidth: 1,
-              },
               id: v4(),
             };
             // TODO: figure out this type issue
@@ -244,6 +252,34 @@ export const FlowBuilder = (): JSX.Element => {
     [reactFlowInstance, changeFlow, userInfo?.displayName]
   );
 
+  const nodes = useMemo(
+    () =>
+      flowState.canvas.nodes.map((n) => ({
+        ...n,
+        selected: n.id === selectedObject,
+        // FIXME: can we remove as
+      })) as WorkflowBuilderNode[],
+    [flowState.canvas.nodes, selectedObject]
+  );
+
+  const edges = useMemo(
+    () =>
+      flowState.canvas.edges.map((e) => ({
+        ...e,
+        selected: e.id === selectedObject,
+        animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          height: 16,
+          width: 16,
+        },
+        style: {
+          strokeWidth: 1,
+        },
+      })) as Edge[],
+    [flowState.canvas.edges, selectedObject]
+  );
+
   if (!flowState) {
     return <></>;
   }
@@ -260,8 +296,8 @@ export const FlowBuilder = (): JSX.Element => {
         selectionOnDrag
         panOnScroll
         deleteKeyCode={DELETE_KEY_CODES}
-        edges={flowState.canvas.edges as Edge[]} // FIXME: can we remove as
-        nodes={flowState.canvas.nodes as WorkflowBuilderNode[]}
+        edges={edges}
+        nodes={nodes}
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
         nodeTypes={NODE_TYPES}

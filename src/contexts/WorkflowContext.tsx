@@ -41,6 +41,8 @@ type FlowContextT = {
   restoreWorkflow: (heads: Automerge.Heads) => void;
   nodes: CanvasNodes;
   edges: CanvasEdges;
+  selectedObject?: string;
+  setSelectedObject: Dispatch<SetStateAction<string | undefined>>;
   isHistoryVisible: boolean;
   setHistoryVisible: Dispatch<SetStateAction<boolean>>;
   previewHash?: string;
@@ -64,6 +66,7 @@ export const FlowContextProvider = ({
   children,
   initialFlow,
 }: FlowContextProviderProps) => {
+  const [selectedObject, setSelectedObject] = useState<string | undefined>();
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
   const [isHistoryVisible, setHistoryVisible] = useState(false);
@@ -176,6 +179,8 @@ export const FlowContextProvider = ({
         changeEdges,
         nodes: flowState.canvas.nodes,
         edges: flowState.canvas.edges,
+        selectedObject,
+        setSelectedObject,
         isHistoryVisible,
         setHistoryVisible,
         previewHash,
