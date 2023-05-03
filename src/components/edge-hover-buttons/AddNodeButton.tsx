@@ -5,6 +5,7 @@ import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { Edge } from 'reactflow';
 import { Dropdown, Space } from 'antd';
 import { useTranslation } from 'common';
+import { useUserInfo } from 'utils/user';
 
 type Props = {
   className: string;
@@ -29,6 +30,7 @@ const AddNodeButton = ({
 }: Props) => {
   const { t } = useTranslation();
   const { changeEdges, changeNodes } = useWorkflowBuilderContext();
+  const { data: userInfo } = useUserInfo();
 
   const handleAddNode = (
     processType: ProcessType,
@@ -65,11 +67,20 @@ const AddNodeButton = ({
     changeNodes((nodes) => {
       nodes.push(node);
     });
-    changeEdges((edges) => {
-      edges.push(...newEdges);
-      const i = edges.findIndex((e) => e.id === id);
-      edges.deleteAt(i);
-    });
+    changeEdges(
+      (edges) => {
+        edges.push(...newEdges);
+        const i = edges.findIndex((e) => e.id === id);
+        edges.deleteAt(i);
+      },
+      () => ({
+        time: Date.now(),
+        message: JSON.stringify({
+          message: `${node.data.processType} added`,
+          user: userInfo?.displayName,
+        }),
+      })
+    );
   };
 
   return (
