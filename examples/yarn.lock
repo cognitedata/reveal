@@ -183,10 +183,6 @@
   dependencies:
     commander "^2.15.1"
 
-"@cognite/reveal-react-components@link:../react-components":
-  version "0.0.0"
-  uid ""
-
 "@cognite/reveal@link:../viewer":
   version "0.0.0"
   uid ""
