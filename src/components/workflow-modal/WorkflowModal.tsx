@@ -25,7 +25,7 @@ const WorkflowModal = ({
 }: Props) => {
   const [values, setValues] = useState({
     name: '',
-    id: '', //using id rather than externalId because data contains id
+    id: '', // Using id rather than externalId because data contains id. Need 'id' for handleIsUserEditing()
     description: '',
   });
   const { id } = useParams<{ id: string }>();
