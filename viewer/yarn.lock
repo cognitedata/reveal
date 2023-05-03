@@ -787,7 +787,7 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.194
     "@types/mixpanel-browser": 2.38.1
-    "@types/node": 18.16.2
+    "@types/node": 18.16.3
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -824,7 +824,7 @@ __metadata:
     jsdom: 21.1.1
     lodash: 4.17.21
     loglevel: 1.8.1
-    mixpanel-browser: 2.46.0
+    mixpanel-browser: 2.47.0
     moq.ts: 10.0.2
     nock: 13.3.1
     path-browserify: 1.0.1
@@ -835,7 +835,7 @@ __metadata:
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
     resize-observer-polyfill: 1.5.1
-    rxjs: 7.8.0
+    rxjs: 7.8.1
     shx: 0.3.4
     skmeans: 0.11.3
     sparse-octree: 7.1.6
@@ -2322,10 +2322,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.16.2":
-  version: 18.16.2
-  resolution: "@types/node@npm:18.16.2"
-  checksum: 7ad66d23b3b93885a9f879bff98e0196790ad35589b47a3d81b52db969ad17ee298082020296df5166c2d72d3cd6a4b9ab34d254483637d967944a4b3e6febdb
+"@types/node@npm:18.16.3":
+  version: 18.16.3
+  resolution: "@types/node@npm:18.16.3"
+  checksum: 816b39d45b05ebdc6f362b630970df3f6d82f71d418a2555353522f4eeeb078fa201de5299f02c09a09faa975e43b2745fe19c263d44069f87ddf37d6c37b717
   languageName: node
   linkType: hard
 
@@ -8734,10 +8734,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.46.0":
-  version: 2.46.0
-  resolution: "mixpanel-browser@npm:2.46.0"
-  checksum: 0d10c673443e795b6a3ff40064fb4aa6f7471c553262a8fe70bcb0f0d15125ee60a0515e8e011db8b108ea349c5702e25ba899a592a6c9277d718d4a095e9ce1
+"mixpanel-browser@npm:2.47.0":
+  version: 2.47.0
+  resolution: "mixpanel-browser@npm:2.47.0"
+  checksum: f44e0e0ac70b3772ed1be7c826d3cb0ffbf2dda35e6b927a3f7167795283745ae16573ae6ba303238bf776e3a5ed72c98c3c3f97e2a3c72bcbada15b956e9e9d
   languageName: node
   linkType: hard
 
@@ -10353,7 +10353,16 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.8.0, rxjs@npm:^7.8.0":
+"rxjs@npm:7.8.1":
+  version: 7.8.1
+  resolution: "rxjs@npm:7.8.1"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: de4b53db1063e618ec2eca0f7965d9137cabe98cf6be9272efe6c86b47c17b987383df8574861bcced18ebd590764125a901d5506082be84a8b8e364bf05f119
+  languageName: node
+  linkType: hard
+
+"rxjs@npm:^7.8.0":
   version: 7.8.0
   resolution: "rxjs@npm:7.8.0"
   dependencies:
