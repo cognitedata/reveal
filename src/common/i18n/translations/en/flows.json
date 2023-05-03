@@ -1,6 +1,7 @@
 {
   "cancel": "Cancel",
   "create": "Create",
+  "create-flow": "Create flow",
   "data-set": "Data set",
   "description": "Description",
   "enter-description": "Enter description",
@@ -14,6 +15,7 @@
   "extraction-pipeline": "Extraction pipeline",
   "external-id": "External ID",
   "enter-external-id": "Enter external ID",
+  "general-info": "General info",
   "last-edit-time": "Last edit was {{time}}",
   "list-create-flow": "Create flow",
   "list-delete": "Delete flow",
@@ -31,6 +33,7 @@
   "toolbox-description": "Drag and drop items to the canvas",
   "toolbox-title": "Toolbox",
   "transformation": "Transformation",
+  "save": "Save",
   "select-with-create-placeholder": "Select {{selectLabel}} or create new",
   "select-with-create-option": "Create {{selectLabel}} \"{{optionLabel}}\"",
   "select-label-with-colon": "<strong>{{selectLabel}}:</strong> {{optionLabel}}",

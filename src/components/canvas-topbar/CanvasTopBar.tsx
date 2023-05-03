@@ -9,8 +9,11 @@ import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
 import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
 import { toPng } from 'html-to-image';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useState } from 'react';
+import WorkflowModal from 'components/workflow-modal/WorkflowModal';
 
 export const CanvasTopBar = () => {
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { flow } = useWorkflowBuilderContext();
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
@@ -64,6 +67,13 @@ export const CanvasTopBar = () => {
           content: (
             <Menu>
               <Menu.Item
+                icon="Settings"
+                iconPlacement="left"
+                onClick={() => setShowUpdateModal(true)}
+              >
+                General info
+              </Menu.Item>
+              <Menu.Item
                 icon="Download"
                 iconPlacement="left"
                 onClick={handleDownloadToPNG}
@@ -73,6 +83,11 @@ export const CanvasTopBar = () => {
             </Menu>
           ),
         }}
+      />
+      <WorkflowModal
+        type="update"
+        showWorkflowModal={showUpdateModal}
+        setShowWorkflowModal={setShowUpdateModal}
       />
     </Container>
   );
