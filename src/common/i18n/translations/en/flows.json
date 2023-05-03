@@ -1,4 +1,8 @@
 {
+  "view": "View",
+  "restore": "Restore",
+  "preview-warning": "Previewing old version",
+  "history": "History",
   "cancel": "Cancel",
   "create": "Create",
   "create-new-item": "Create new {{item}}",

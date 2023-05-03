@@ -17,6 +17,7 @@ import { Edge, Handle, NodeProps, Position } from 'reactflow';
 import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { PROCESS_ICON, ProcessNode, ProcessNodeData, ProcessType } from 'types';
+import { useUserInfo } from 'utils/user';
 
 const BASE_NODE_HANDLE_SIZE = 16;
 
@@ -31,7 +32,7 @@ export const ProcessNodeRenderer = ({
 
   const [isLeftDropdownVisible, setIsLeftDropdownVisible] = useState(false);
   const [isRightDropdownVisible, setIsRightDropdownVisible] = useState(false);
-
+  const { data: userInfo } = useUserInfo();
   const { changeEdges, changeNodes, edges } = useWorkflowBuilderContext();
 
   const hasSource = edges.some((edge) => edge.target === id);
@@ -67,9 +68,18 @@ export const ProcessNodeRenderer = ({
     changeNodes((nodes) => {
       nodes.push(node);
     });
-    changeEdges((edges) => {
-      edges.push(edge);
-    });
+    changeEdges(
+      (edges) => {
+        edges.push(edge);
+      },
+      () => ({
+        time: Date.now(),
+        message: JSON.stringify({
+          message: `${node.data.processType} added`,
+          user: userInfo?.displayName,
+        }),
+      })
+    );
   };
 
   return (
