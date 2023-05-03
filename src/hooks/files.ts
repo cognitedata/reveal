@@ -10,6 +10,7 @@ import {
 import { AFlow, Flow } from 'types';
 import * as Automerge from '@automerge/automerge';
 import { isEqual } from 'lodash';
+import { getUserInfo } from 'utils/user';
 export const dbKey = (db: string) => [BASE_QUERY_KEY, db];
 export const databaseListKey = [BASE_QUERY_KEY, 'database-list'];
 export const tableListKey = (db: string) => [...dbKey(db), 'table-list'];
@@ -85,8 +86,16 @@ export function useCreateFlow() {
   return useMutation(
     async (flow: Flow) => {
       const { id } = flow;
+      const userInfo = await getUserInfo(qc);
+      let doc = Automerge.from(flow);
+      doc = Automerge.emptyChange(doc, {
+        time: Date.now(),
+        message: JSON.stringify({
+          message: 'Document created',
+          user: userInfo?.displayName,
+        }),
+      });
 
-      const doc = Automerge.from(flow);
       const binary = Automerge.save(doc);
       qc.setQueryData(getFlowItemKey(id), doc);
       const file = await sdk.files.upload(

@@ -1,5 +1,4 @@
 import { ComponentType, useCallback, useMemo, useRef, useState } from 'react';
-
 import { Extend as AutomergeExtend } from '@automerge/automerge';
 import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
@@ -17,6 +16,7 @@ import ReactFlow, {
   NodeProps,
   EdgeSelectionChange,
   NodeSelectionChange,
+  NodePositionChange,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -40,6 +40,7 @@ import {
   isProcessType,
 } from 'types';
 import { CustomEdge } from 'components/custom-edge';
+import { useUserInfo } from 'utils/user';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
   process: ProcessNodeRenderer,
@@ -47,6 +48,7 @@ const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
 };
 
 export const FlowBuilder = (): JSX.Element => {
+  const { data: userInfo } = useUserInfo();
   const {
     flow: flowState,
     changeFlow,
@@ -109,52 +111,94 @@ export const FlowBuilder = (): JSX.Element => {
       (c) => c.type === 'remove' || (c.type === 'position' && c.position)
     );
     if (amChanges.length > 0) {
-      changeFlow((f) => {
-        amChanges.forEach((change) => {
-          switch (change.type) {
-            case 'position': {
-              const n = f.canvas.nodes.find((n) => n.id === change.id);
-              if (n && change.position) {
-                n.position.x = change.position.x;
-                n.position.y = change.position.y;
+      changeFlow(
+        (flowDoc) => {
+          amChanges.forEach((change) => {
+            switch (change.type) {
+              case 'position': {
+                const node = flowDoc.canvas.nodes.find(
+                  (n) => n.id === change.id
+                );
+                if (!node) {
+                  break;
+                }
+                if (change.position && change.position.x !== node.position.x) {
+                  node.position.x = change.position.x;
+                }
+                if (change.position && change.position.y !== node.position.y) {
+                  node.position.y = change.position.y;
+                }
+                if (node.dragging !== change.dragging) {
+                  node.dragging = change.dragging;
+                }
+                break;
               }
-              break;
-            }
-            case 'remove': {
-              const nIndex = f.canvas.nodes.findIndex(
-                (n) => n.id === change.id
-              );
-              if (nIndex !== -1) {
-                f.canvas.nodes.deleteAt(nIndex);
+              case 'remove': {
+                const nIndex = flowDoc.canvas.nodes.findIndex(
+                  (n) => n.id === change.id
+                );
+                if (nIndex !== -1) {
+                  flowDoc.canvas.nodes.deleteAt(nIndex);
+                }
+                break;
               }
-              break;
+              default: {
+                break;
+              }
             }
-            default: {
-              break;
+          });
+        },
+        () => {
+          const messages = amChanges.reduce((accl, change) => {
+            if (change.type === 'position' && !change.dragging) {
+              return [
+                ...accl,
+                `Node ${(change as NodePositionChange).id} moved`,
+              ];
             }
+            return accl;
+          }, [] as string[]);
+
+          if (messages.length > 0) {
+            return {
+              message: JSON.stringify({
+                message: messages.join('\n * '),
+                user: userInfo?.displayName,
+              }),
+              time: Date.now(),
+            };
           }
-        });
-      });
+        }
+      );
     }
   };
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
       if (!!connection.source && !!connection.target) {
-        changeFlow((f) => {
-          const newEdge: Edge<any> = {
-            source: connection.source!,
-            target: connection.target!,
-            type: 'customEdge',
-            id: v4(),
-          };
-          // TODO: figure out this type issue
-          // @ts-ignore
-          f.canvas.edges.push(newEdge);
-        });
+        changeFlow(
+          (f) => {
+            const newEdge: Edge<any> = {
+              source: connection.source!,
+              target: connection.target!,
+              type: 'customEdge',
+              id: v4(),
+            };
+            // TODO: figure out this type issue
+            // @ts-ignore
+            f.canvas.edges.push(newEdge);
+          },
+          () => ({
+            time: Date.now(),
+            message: JSON.stringify({
+              message: `${connection.source} connected to ${connection.target}`,
+              user: userInfo?.displayName,
+            }),
+          })
+        );
       }
     },
-    [changeFlow]
+    [changeFlow, userInfo?.displayName]
   );
 
   const onDragOver: React.DragEventHandler = useCallback((event) => {
@@ -177,26 +221,35 @@ export const FlowBuilder = (): JSX.Element => {
           return;
         }
 
-        changeFlow((f) => {
-          const position = reactFlowInstance.project({
-            x: event.clientX - reactFlowBounds.left,
-            y: event.clientY - reactFlowBounds.top,
-          });
+        changeFlow(
+          (f) => {
+            const position = reactFlowInstance.project({
+              x: event.clientX - reactFlowBounds.left,
+              y: event.clientY - reactFlowBounds.top,
+            });
 
-          const node: AutomergeExtend<ProcessNode> = {
-            id: `${new Date().getTime()}`,
-            type: 'process',
-            position,
-            data: {
-              processType: type,
-              processProps: {},
-            },
-          };
-          f.canvas.nodes.push(node);
-        });
+            const node: AutomergeExtend<ProcessNode> = {
+              id: `${new Date().getTime()}`,
+              type: 'process',
+              position,
+              data: {
+                processType: type,
+                processProps: {},
+              },
+            };
+            f.canvas.nodes.push(node);
+          },
+          () => ({
+            message: JSON.stringify({
+              message: 'Node added',
+              user: userInfo?.displayName,
+            }),
+            time: Date.now(),
+          })
+        );
       }
     },
-    [reactFlowInstance, changeFlow]
+    [reactFlowInstance, changeFlow, userInfo?.displayName]
   );
 
   const nodes = useMemo(
