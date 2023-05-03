@@ -1,3 +1,10 @@
+## [0.7.0] - 3 May, 2022
+### Added
+- `remove-unused-keys` command
+
+### Fixed
+- `sort-local-keys` command adds a new line to the end of the file
+
 ## [0.6.0] - 9 Aug, 2022
 ### Added
 - `lowercase` and `uppercase` post processors
