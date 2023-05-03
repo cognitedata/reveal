@@ -59,7 +59,7 @@ export const FloatingComponentsPanel = (): JSX.Element => {
   );
 };
 
-const FloatingPanel = styled.div`
+export const FloatingPanel = styled.div<{ right?: boolean }>`
   background-color: ${Colors['surface--muted']};
   border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
@@ -68,7 +68,7 @@ const FloatingPanel = styled.div`
   flex-direction: column;
   gap: 12px;
   height: calc(100% - ${FLOATING_ELEMENT_MARGIN * 2}px);
-  left: ${FLOATING_ELEMENT_MARGIN}px;
+  ${({ right }) => (right ? 'right' : 'left')}: ${FLOATING_ELEMENT_MARGIN}px;
   padding: 12px;
   position: absolute;
   top: ${FLOATING_ELEMENT_MARGIN}px;

@@ -14,7 +14,8 @@ import WorkflowModal from 'components/workflow-modal/WorkflowModal';
 
 export const CanvasTopBar = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const { flow } = useWorkflowBuilderContext();
+
+  const { flow, setHistoryVisible } = useWorkflowBuilderContext();
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
@@ -79,6 +80,14 @@ export const CanvasTopBar = () => {
                 onClick={handleDownloadToPNG}
               >
                 {t('download-png')}
+              </Menu.Item>
+              <Menu.Item
+                icon="History"
+                iconPlacement="left"
+                key="history"
+                onClick={() => setHistoryVisible((visible) => !visible)}
+              >
+                {t('history')}
               </Menu.Item>
             </Menu>
           ),
