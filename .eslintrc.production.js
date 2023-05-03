@@ -19,6 +19,7 @@ module.exports = {
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
+    'eqeqeq': ['error'],
 
     '@typescript-eslint/no-unused-vars': [
       'error',

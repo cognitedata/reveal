@@ -2,9 +2,14 @@ import { Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Canvas } from 'components/canvas';
 import { useParams } from 'react-router-dom';
-import { FlowContextProvider } from 'contexts/WorkflowContext';
+import {
+  FlowContextProvider,
+  useWorkflowBuilderContext,
+} from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useFlow } from 'hooks/files';
+import { FloatingHistoryPanel } from 'components/floating-history-panel';
+import PreviewFeedback from 'components/preview-feedback';
 
 const Flow = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
@@ -30,10 +35,14 @@ const Flow = (): JSX.Element => {
 };
 
 function FlowContainer() {
+  const { isHistoryVisible, previewHash } = useWorkflowBuilderContext();
   return (
     <StyledFlowContainer>
       <CanvasTopBar />
+
       <Content>
+        {previewHash && <PreviewFeedback />}
+        {isHistoryVisible && <FloatingHistoryPanel />}
         <Canvas />
       </Content>
     </StyledFlowContainer>
