@@ -1,16 +1,42 @@
-import { Button, Input, ToolBar, Tooltip } from '@cognite/cogs.js';
+import { Button, InputExp, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { UseCurrentSearchResultState } from './hooks/useCurrentSearchResult';
 import { UseSearchBarState } from './hooks/useSearchBarState';
+import { useMemo } from 'react';
+import styled from 'styled-components';
+
+const getStatusAndStatusText = (
+  value: string,
+  hasOcrData: boolean,
+  numberOfPages: number
+): { status: 'critical' | 'warning'; statusText: string } | undefined => {
+  if (!hasOcrData && value.length > 0) {
+    return {
+      status: 'critical',
+      statusText: 'This document is not searchable',
+    };
+  }
+
+  if (numberOfPages > 50) {
+    return {
+      status: 'warning',
+      statusText: 'Only first 50 pages are searchable',
+    };
+  }
+
+  return undefined;
+};
 
 export type SearchBarProps = {
   isOpen: boolean;
   value: string;
   numberOfSearchResults: number;
   onChange: (value: string) => void;
+  hasOcrData: boolean;
+  numberOfPages: number;
 } & UseCurrentSearchResultState &
   Pick<
     UseSearchBarState,
-    'onSearchOpen' | 'onSearchClose' | 'setSearchBarInputRef'
+    'onSearchOpen' | 'onSearchClose' | 'searchBarInputRef'
   >;
 
 export const SearchBar = ({
@@ -19,11 +45,13 @@ export const SearchBar = ({
   onChange,
   onSearchOpen,
   onSearchClose,
-  setSearchBarInputRef,
+  searchBarInputRef,
   currentSearchResultIndex,
   numberOfSearchResults,
   onNextResult,
   onPreviousResult,
+  hasOcrData,
+  numberOfPages,
 }: SearchBarProps) => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
@@ -61,22 +89,34 @@ export const SearchBar = ({
     },
   ];
 
+  // We only want to show the error message after the user has typed something in the search bar.
+  // This is to gather "as real" metrics as possible (e.g. how many users are trying to search in documents that don't have OCR data).
+  // In the future we probably want to disable or hide the search bar for documents that don't have OCR data.
+  const statusAndStatusText = useMemo(
+    () => getStatusAndStatusText(value, hasOcrData, numberOfPages),
+    [value, hasOcrData, numberOfPages]
+  );
+
   if (isOpen) {
     return (
       <ToolBar direction="horizontal" style={{ gap: '4px' }}>
         <>
-          <Input
-            ref={setSearchBarInputRef}
-            iconPlacement="left"
-            icon="Search"
-            placeholder="Find in document..."
-            postfix={`${currentSearchResultIndex}/${numberOfSearchResults}`}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            // clearable={{ callback: () => onChange('') }} // TODO: Add this when the styling is fixed (currently it will be placed in the middle of the input field)
-            autoFocus
-          />
+          <RelativeWrapper>
+            <AbsoluteWrapper>
+              <InputExp
+                ref={searchBarInputRef as any}
+                icon="Search"
+                placeholder="Find in document..."
+                suffix={`${currentSearchResultIndex}/${numberOfSearchResults}`}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                status={statusAndStatusText?.status}
+                statusText={statusAndStatusText?.statusText}
+              />
+            </AbsoluteWrapper>
+          </RelativeWrapper>
           <ToolBar.ButtonGroup buttonGroup={NextPrevActions} />
         </>
         <Button
@@ -102,3 +142,15 @@ export const SearchBar = ({
     </ToolBar>
   );
 };
+
+const RelativeWrapper = styled.div`
+  position: relative;
+  min-width: 220px;
+  min-height: 36px;
+`;
+
+const AbsoluteWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;

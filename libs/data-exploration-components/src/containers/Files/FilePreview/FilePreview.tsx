@@ -126,7 +126,7 @@ export const FilePreview = ({
     isSearchOpen,
     onSearchOpen,
     onSearchClose,
-    setSearchBarInputRef,
+    searchBarInputRef,
   } = useSearchBarState({ file });
 
   const previousSearchQuery = usePrevious(searchQuery);
@@ -439,10 +439,12 @@ export const FilePreview = ({
           fileViewerRef={unifiedViewerRef}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          hasOcrData={searchResults !== null}
+          numberOfPages={numPages}
           isSearchOpen={isSearchOpen}
           onSearchOpen={onSearchOpen}
           onSearchClose={onSearchClose}
-          setSearchBarInputRef={setSearchBarInputRef}
+          searchBarInputRef={searchBarInputRef}
           currentSearchResultIndex={currentSearchResultIndex}
           numberOfSearchResults={searchResults?.length ?? 0}
           onNextResult={onNextResult}
