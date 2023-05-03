@@ -844,8 +844,8 @@ export type Image360Metadata = {
 
 // @public
 export interface Image360Revision {
-    annotations: Image360Annotation[];
     readonly date: Date | undefined;
+    getAnnotations(): Promise<Image360Annotation[]>;
 }
 
 // @public
