@@ -48,7 +48,7 @@ export const filterFlow = (
       (subQ) =>
         name.toLowerCase().includes(subQ) ||
         metadata?.description?.toLowerCase().includes(subQ)
-    ).length == queries.length
+    ).length === queries.length
   );
 };
 
