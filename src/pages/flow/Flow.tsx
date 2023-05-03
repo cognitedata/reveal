@@ -36,6 +36,7 @@ const Flow = (): JSX.Element => {
 
 function FlowContainer() {
   const { isHistoryVisible, previewHash } = useWorkflowBuilderContext();
+
   return (
     <StyledFlowContainer>
       <CanvasTopBar />
