@@ -55,14 +55,22 @@ const WorkflowModal = ({
   const handleEdit = useCallback(() => {
     changeFlow((f) => {
       const newFlow = {
+        id: values.id,
         name: values.name,
         description: values.description,
       };
+      f.id = newFlow.id;
       f.name = newFlow.name;
       f.description = newFlow.description;
     });
     setShowWorkflowModal(false);
-  }, [changeFlow, values.name, values.description, setShowWorkflowModal]);
+  }, [
+    changeFlow,
+    setShowWorkflowModal,
+    values.id,
+    values.name,
+    values.description,
+  ]);
 
   // Only show tr- prefix if name is changed
   useEffect(() => {
