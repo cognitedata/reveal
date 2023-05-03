@@ -35,8 +35,10 @@ const WorkflowModal = ({
   const { t } = useTranslation();
   const { mutateAsync, isLoading: isCreateLoading } = useCreateFlow();
   const { isLoading: isUpdateLoading } = useUpdateFlow();
+  const { changeFlow } = useWorkflowBuilderContext();
   const { data } = useFlow(id ?? '');
   const navigate = useNavigate();
+
   const handleCreate = () =>
     mutateAsync({
       id: values.id,
@@ -50,9 +52,7 @@ const WorkflowModal = ({
       navigate(createLink(`/${CANVAS_PATH}/${fileInfo.id}`));
     });
 
-  const { changeFlow } = useWorkflowBuilderContext();
-
-  const handleEdit = useCallback(() => {
+  const handleUpdate = useCallback(() => {
     changeFlow((f) => {
       const newFlow = {
         id: values.id,
@@ -122,7 +122,7 @@ const WorkflowModal = ({
       onCancel={() => setShowWorkflowModal(!showWorkflowModal)}
       cancelText={t('cancel')}
       okText={type === 'create' ? t('create') : t('save')}
-      onOk={type === 'create' ? handleCreate : handleEdit}
+      onOk={type === 'create' ? handleCreate : handleUpdate}
       okDisabled={!values.name && !values.id}
       title={type === 'create' ? t('create-flow') : t('general-info')}
       visible={showWorkflowModal}
