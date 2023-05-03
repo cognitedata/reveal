@@ -7,6 +7,8 @@ import {
 } from 'components/category-sidebar/CategorySidebarItem';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { ExtractorBase } from 'service/extractors';
+import { useFlag } from '@cognite/react-feature-flags';
+import { ALLOWED_EXTRACTOR_TYPES } from './useExtractorsList';
 
 export const getSourceSystemsQueryKey = () => ['source-systems', 'list'];
 export const getSourceSystemQueryKey = (externalId: string) => [
@@ -20,8 +22,11 @@ export type SourceSystem = SourceSystemBase & {
   category: ExtractorLibraryCategory;
 };
 
-const getSourceSystems = (sdk: CogniteClient): Promise<SourceSystem[]> => {
-  return sdk
+const getSourceSystems = async (
+  sdk: CogniteClient,
+  shouldShowUnreleased?: boolean
+): Promise<SourceSystem[]> => {
+  const sources = await sdk
     .get<{ items: SourceSystemBase[] }>(
       `api/v1/projects/${getProject()}/extractors/sources`,
       {
@@ -36,36 +41,63 @@ const getSourceSystems = (sdk: CogniteClient): Promise<SourceSystem[]> => {
         category: EXTRACTOR_LIBRARY_CATEGORIES.sourceSystem,
       }))
     );
+
+  const sourcesToShow = sources.filter(({ type }) =>
+    ALLOWED_EXTRACTOR_TYPES.includes(type)
+  );
+
+  if (shouldShowUnreleased) {
+    sources
+      .filter(({ type }) => type === 'unreleased')
+      .forEach((extractor) => {
+        sourcesToShow.push(extractor);
+      });
+  }
+
+  return sourcesToShow;
 };
 
 const fetchSourceSystemsQuery = (
+  sdk: CogniteClient,
   queryClient: QueryClient,
-  sdk: CogniteClient
+  shouldShowUnreleased?: boolean
 ) => {
   return queryClient.fetchQuery<SourceSystem[]>(
     getSourceSystemsQueryKey(),
-    async () => getSourceSystems(sdk)
+    async () => getSourceSystems(sdk, shouldShowUnreleased)
   );
 };
 
 export const useSourceSystems = () => {
   const sdk = useSDK();
 
+  const { isEnabled: shouldShowUnreleased } = useFlag(
+    'FUSION_UNRELEASED_EXTRACTORS'
+  );
+
   return useQuery<SourceSystem[]>(getSourceSystemsQueryKey(), async () => {
-    const sourceSystems = await getSourceSystems(sdk);
+    const sourceSystems = await getSourceSystems(sdk, shouldShowUnreleased);
 
     return sourceSystems;
   });
 };
 
 export const useSourceSystem = (externalId: string) => {
-  const queryClient = useQueryClient();
   const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  const { isEnabled: shouldShowUnreleased } = useFlag(
+    'FUSION_UNRELEASED_EXTRACTORS'
+  );
 
   return useQuery<SourceSystem | undefined>(
     getSourceSystemQueryKey(externalId),
     async () => {
-      const sourceSystems = await fetchSourceSystemsQuery(queryClient, sdk);
+      const sourceSystems = await fetchSourceSystemsQuery(
+        sdk,
+        queryClient,
+        shouldShowUnreleased
+      );
 
       return sourceSystems.find(({ externalId: tId }) => tId === externalId);
     }
