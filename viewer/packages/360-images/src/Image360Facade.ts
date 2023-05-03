@@ -60,7 +60,14 @@ export class Image360Facade<T> {
   }
 
   public preload(entity: Image360Entity, revision: Image360RevisionEntity, lockDownload?: boolean): Promise<void> {
-    return this._image360Cache.cachedPreload(entity, revision, lockDownload);
+    const annotationPromise = revision.getAnnotations();
+    const cacheLoadPromise = this._image360Cache.cachedPreload(entity, revision, lockDownload);
+
+    return awaitPromises();
+
+    async function awaitPromises(): Promise<void> {
+      await Promise.all([annotationPromise, cacheLoadPromise]);
+    }
   }
 
   public getCollectionContainingEntity(entity: Image360Entity): DefaultImage360Collection {
