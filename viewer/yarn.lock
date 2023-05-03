@@ -791,7 +791,7 @@ __metadata:
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
-    "@types/three": 0.150.0
+    "@types/three": 0.151.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.59.1
     "@typescript-eslint/parser": 5.59.1
@@ -840,7 +840,7 @@ __metadata:
     skmeans: 0.11.3
     sparse-octree: 7.1.6
     stats.js: 0.17.0
-    three: 0.150.1
+    three: 0.152.2
     three-stdlib: 2.21.8
     ts-jest: 29.1.0
     ts-loader: 9.4.2
@@ -855,7 +855,7 @@ __metadata:
     workerize-loader: 2.0.2
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.150.1
+    three: 0.152.2
   languageName: unknown
   linkType: soft
 
@@ -2452,15 +2452,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.150.0":
-  version: 0.150.0
-  resolution: "@types/three@npm:0.150.0"
+"@types/three@npm:0.151.0":
+  version: 0.151.0
+  resolution: "@types/three@npm:0.151.0"
   dependencies:
     "@types/stats.js": "*"
     "@types/webxr": "*"
     fflate: ~0.6.9
     lil-gui: ~0.17.0
-  checksum: 5adee83f58c8ae5cc86b37edc8633456318eb4c83c3fe9c6420d2cacac05dd3b5b721132765ac79155069694cf927a366a210be318b9356885a2203d1feb87e8
+  checksum: 7458b8be90e67743bdf31aee1237801678605df6a5af6f011b6bc091f563bb906ae2fad8c76296e1a4d75f8c94b17f767c82b1073ae6c5c914aa260b0ab51add
   languageName: node
   linkType: hard
 
@@ -11393,10 +11393,10 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.150.1":
-  version: 0.150.1
-  resolution: "three@npm:0.150.1"
-  checksum: b12a92a681a30e62640d90bdf074d039c05d8294ad40f437e7e1807ce0e698ad6728878a1e72dad22bf05d7a359843ecea8739d05f2f13143bc3a4ecdfdbdd7b
+"three@npm:0.152.2":
+  version: 0.152.2
+  resolution: "three@npm:0.152.2"
+  checksum: 6d2d990dbff60b99c7e58b7f1446bb4bd235c7db5dd848a671385e01ae5c72bec865265be7f5a82907ecc96186acc13177d7de1252bc9592f5c9ebaffd1da1e7
   languageName: node
   linkType: hard
 
