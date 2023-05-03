@@ -11,6 +11,8 @@ import { CanvasNode } from 'types';
 import { ContextMenuItem } from './ContextMenuItem';
 import { GroupNodes } from './GroupNodes';
 import { UngroupNodes } from './UngroupNodes';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useUserInfo } from 'utils/user';
 
 type WorkflowContextMenuPosition = {
   x: number;
@@ -42,7 +44,46 @@ const ContextMenu = ({
   contextMenu,
   onClose,
 }: ContextMenuProps): JSX.Element => {
-  const handleDelete = (): void => {};
+  const { data: userInfo } = useUserInfo();
+  const { changeEdges, changeNodes } = useWorkflowBuilderContext();
+  const handleDelete = (): void => {
+    const { id } = contextMenu?.items[0] || {};
+    if (id) {
+      if (contextMenu?.type === 'edge') {
+        changeEdges(
+          (edges) => {
+            const index = edges.findIndex((e) => e.id === id);
+            if (index) {
+              delete edges[index];
+            }
+          },
+          () => ({
+            time: Date.now(),
+            message: JSON.stringify({
+              message: 'Delete edge',
+              user: userInfo?.displayName,
+            }),
+          })
+        );
+      } else if (contextMenu?.type === 'node') {
+        changeNodes(
+          (nodes) => {
+            const index = nodes.findIndex((n) => n.id === id);
+            if (index) {
+              delete nodes[index];
+            }
+          },
+          () => ({
+            time: Date.now(),
+            message: JSON.stringify({
+              message: 'Delete node',
+              user: userInfo?.displayName,
+            }),
+          })
+        );
+      }
+    }
+  };
 
   return (
     <Dropdown

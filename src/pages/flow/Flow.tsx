@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import { FlowContextProvider } from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useFlow } from 'hooks/files';
+import { FloatingHistoryPanel } from 'components/floating-history-panel';
+import PreviewFeedback from 'components/preview-feedback';
 
 const Flow = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
@@ -30,10 +32,15 @@ const Flow = (): JSX.Element => {
 };
 
 function FlowContainer() {
+  const { isHistoryVisible, previewHash } = useWorkflowBuilderContext();
+
   return (
     <StyledFlowContainer>
       <CanvasTopBar />
+
       <Content>
+        {previewHash && <PreviewFeedback />}
+        {isHistoryVisible && <FloatingHistoryPanel />}
         <Canvas />
       </Content>
     </StyledFlowContainer>
