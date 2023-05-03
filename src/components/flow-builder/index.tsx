@@ -14,6 +14,7 @@ import ReactFlow, {
   SelectionMode,
   EdgeChange,
   NodeProps,
+  MiniMap,
   EdgeSelectionChange,
   NodeSelectionChange,
   NodePositionChange,
@@ -332,6 +333,7 @@ export const FlowBuilder = (): JSX.Element => {
       >
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        <MiniMap />
       </ReactFlow>
       <ContextMenu
         containerRef={reactFlowContainer}
