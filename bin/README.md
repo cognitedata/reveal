@@ -24,6 +24,7 @@ Commands:
   cdf-i18n-utils-cli save-missing-keys-to-remote [projectId] [namespace] [stagingVersion] [path]      saves missing keys to remote staging version (does not update the existing values in locize)
   cdf-i18n-utils-cli remove-deleted-keys-from-remote [projectId] [namespace] [stagingVersion] [path]  removes deleted keys from remote staging version
   cdf-i18n-utils-cli sort-local-keys [path] [sourceLanguage]                                          sorts local files
+  cdf-i18n-utils-cli.js remove-unused-keys [path] [sourceLanguage] [folders] [extensions]             remove unused keys
 
 Options:
   --help     Show help                                                                                                                                                                         [boolean]
@@ -121,6 +122,27 @@ Options:
       --verbose         Run with verbose logging                                                                                                                                               [boolean]
   -p, --path            The path to read local translations                                                                                         [string] [default: "./src/common/i18n/translations"]
       --sourceLanguage  The source language to sort files                                                                                                                       [string] [default: "en"]
+```
+
+### remove-unused-keys
+
+```sh
+$ cdf-i18n-utils-cli remove-unused-keys --help
+```
+
+Help output:
+```
+cdf-i18n-utils-cli.js remove-unused-keys [path] [sourceLanguage] [folders] [extensions]
+
+remove unused keys
+
+Options:
+      --help            Show help                                                                                                                                                       [boolean]
+      --verbose         Run with verbose logging                                                                                                                                        [boolean]
+  -p, --path            The path to read local translations                                                                                  [string] [default: "./src/common/i18n/translations"]
+      --sourceLanguage  The source language to sort files                                                                                                                [string] [default: "en"]
+      --folders         comma separated list of folders to search                                                                                                     [string] [default: "./src"]
+      --extensions      comma separated list of allowed extensions                                                                                                 [string] [default: ".ts,.tsx"]
 ```
 
 ## Environment Variables
