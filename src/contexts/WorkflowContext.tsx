@@ -126,6 +126,9 @@ export const FlowContextProvider = ({
         newFlow = Automerge.emptyChange(flowRef.current, msg);
         anythingChanged = true;
       }
+      const changes = anythingChanged
+        ? Automerge.getChanges(flowRef.current, newFlow)
+        : [];
       flowRef.current = newFlow;
       // `fn` could end up doing no changes. Since there are no actual changes, there is no point in
       // updating state or persisting the doc. In the current version of AM it also seems safe to
@@ -136,8 +139,11 @@ export const FlowContextProvider = ({
         setFlowState(newFlow);
         debouncedMutate(newFlow);
       }
+      if (changes.length > 0 && socket) {
+        changes.forEach((change) => socket.send(change.buffer));
+      }
     },
-    [debouncedMutate]
+    [debouncedMutate, socket]
   );
 
   const restoreWorkflow = useCallback(
