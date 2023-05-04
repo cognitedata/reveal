@@ -1166,6 +1166,29 @@ export class NumericRange {
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 // @public (undocumented)
+export type OverlayEventHandler = (event: {
+    targetOverlay: SmartOverlay;
+    mousePosition: {
+        clientX: number;
+        clientY: number;
+    };
+}) => void;
+
+// @public (undocumented)
+export type OverlayGroup = {
+    id: OverlayGroupId;
+};
+
+// @public (undocumented)
+export type OverlayGroupId = string;
+
+// @public (undocumented)
+export type OverlayId = number;
+
+// @public (undocumented)
+export type OverlayToolEvent = 'hover' | 'click';
+
+// @public (undocumented)
 export type PointCloudAppearance = {
     color?: Color;
     visible?: boolean;
@@ -1336,6 +1359,47 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
+
+// @public (undocumented)
+export type SmartOverlay = {
+    text: string;
+    id: OverlayId;
+    position: THREE_2.Vector3;
+    infoOverlay: HTMLElement;
+};
+
+// @public (undocumented)
+export class SmartOverlayTool {
+    constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters);
+    addOverlay(overlayData: OverlayInfo): void;
+    addOverlays(overlays: OverlayInfo[]): OverlayGroup;
+    clear(): void;
+    set enabled(enabled: boolean);
+    // (undocumented)
+    get enabled(): boolean;
+    // (undocumented)
+    off(event: 'hover', eventHandler: OverlayEventHandler): void;
+    // (undocumented)
+    off(event: 'click', eventHandler: OverlayEventHandler): void;
+    // (undocumented)
+    on(event: 'hover', eventHandler: OverlayEventHandler): void;
+    // (undocumented)
+    on(event: 'click', eventHandler: OverlayEventHandler): void;
+    removeOverlay(id: OverlayId): void;
+    removeOverlays(id: OverlayGroupId): void;
+    set textOverlayVisible(visible: boolean);
+    // (undocumented)
+    get textOverlayVisible(): boolean;
+    set visible(visible: boolean);
+    // (undocumented)
+    get visible(): boolean;
+}
+
+// @public (undocumented)
+export type SmartOverlayToolParameters = {
+    maxPointSize?: number;
+    defaultOverlayColor: THREE_2.Color;
+};
 
 // @public
 export class StyledPointCloudObjectCollection {
