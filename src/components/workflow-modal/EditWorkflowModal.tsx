@@ -23,11 +23,10 @@ export const WorkflowModal = ({
 }: Props) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-
-  const { id } = useParams<{ id: string }>();
   const [nameChanged, setNameChanged] = useState(false);
   const [descriptionChanged, setDescriptionChanged] = useState(false);
 
+  const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { isLoading: isUpdateLoading } = useUpdateFlow();
   const { changeFlow } = useWorkflowBuilderContext();
