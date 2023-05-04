@@ -26,7 +26,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
   const [caps, setCaps] = useState(group?.capabilities || []);
   const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
 
-  const { mutateAsync: updateGroup, isLoading } = useUpdateGroup(tenant!, {
+  const { mutateAsync: updateGroup, isLoading } = useUpdateGroup({
     onMutate() {
       notification.info({
         key: 'group-update',
