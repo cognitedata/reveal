@@ -19,6 +19,9 @@ import { useFlow, useUpdateFlow } from 'hooks/files';
 import { AFlow, CanvasEdges, CanvasNodes } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
+import { useSDK } from '@cognite/sdk-provider';
+import { useQuery } from '@tanstack/react-query';
+import { getToken } from '@cognite/cdf-sdk-singleton';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -58,6 +61,8 @@ export const FlowContextProvider = ({
   children,
   initialFlow,
 }: FlowContextProviderProps) => {
+  const sdk = useSDK();
+  const { data: token } = useQuery(['token'], getToken);
   const [selectedObject, setSelectedObject] = useState<string | undefined>();
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
@@ -68,6 +73,43 @@ export const FlowContextProvider = ({
   const { data: userInfo } = useUserInfo();
   const { mutate } = useUpdateFlow();
   const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
+
+  const [socket, setWS] = useState<WebSocket>();
+  useEffect(() => {
+    if (token) {
+      const { host } = new URL(sdk.getBaseUrl());
+      const ws = new WebSocket(
+        `wss://${host}/api/v1/${sdk.project}/document-changes/workflows/${externalId}?token=${token}`
+      );
+
+      ws.addEventListener('open', async () => {
+        setWS(ws);
+      });
+
+      ws.addEventListener('close', () => {
+        setWS(undefined);
+      });
+      ws.addEventListener('error', () => {
+        setWS(undefined);
+      });
+
+      ws.addEventListener('message', (e: MessageEvent<Blob>) => {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', () => {
+          if (reader.result) {
+            const data = new Uint8Array(reader.result as ArrayBuffer);
+            const [newFlow] = Automerge.applyChanges(flowRef.current, [data]);
+            flowRef.current = newFlow;
+            setFlowState(newFlow);
+          }
+        });
+        reader.readAsArrayBuffer(e.data);
+      });
+      return () => {
+        ws.close();
+      };
+    }
+  }, [externalId, token, sdk]);
 
   const changeFlow = useCallback(
     (fn: Automerge.ChangeFn<AFlow>, logger?: Logger) => {
