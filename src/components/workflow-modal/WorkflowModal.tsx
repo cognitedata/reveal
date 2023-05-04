@@ -5,11 +5,12 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Flex, InputExp, Modal } from '@cognite/cogs.js';
+import { Flex, Modal } from '@cognite/cogs.js';
 import { CANVAS_PATH, useTranslation } from 'common';
 import { useCreateFlow, useFlow, useUpdateFlow } from 'hooks/files';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
+import FormFieldInput from 'components/form-field-input';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 type Props = {
@@ -18,16 +19,22 @@ type Props = {
   setShowWorkflowModal: Dispatch<SetStateAction<boolean>>;
 };
 
+type WorkFlowModalTypes = {
+  externalId: string;
+  name: string;
+  description: string;
+  type: 'create' | 'update';
+};
+
 const WorkflowModal = ({
   type,
   showWorkflowModal,
   setShowWorkflowModal,
 }: Props) => {
-  const [values, setValues] = useState({
-    name: '',
-    id: '', // Using id rather than externalId because data contains id. Need 'id' for handleIsUserEditing()
-    description: '',
-  });
+  const [name, setName] = useState('');
+  const [externalId, setExternalId] = useState('');
+  const [description, setDescription] = useState('');
+
   const { id } = useParams<{ id: string }>();
   const [idChanged, setIdChanged] = useState(false);
   const [isUserEditing, setIsUserEditing] = useState(false);
@@ -35,15 +42,17 @@ const WorkflowModal = ({
   const { t } = useTranslation();
   const { mutateAsync, isLoading: isCreateLoading } = useCreateFlow();
   const { isLoading: isUpdateLoading } = useUpdateFlow();
-  const { changeFlow } = useWorkflowBuilderContext();
+  const context = useWorkflowBuilderContext();
+  const { changeFlow } = context;
   const { data } = useFlow(id ?? '');
   const navigate = useNavigate();
+  console.log('context: ', context);
 
   const handleCreate = () =>
     mutateAsync({
-      id: values.id,
-      name: values.name,
-      description: values.description,
+      id: externalId,
+      name: name,
+      description: description,
       canvas: {
         nodes: [] as any, // FIXME: any
         edges: [] as any, // FIXME: any
@@ -55,62 +64,55 @@ const WorkflowModal = ({
   const handleUpdate = useCallback(() => {
     changeFlow((f) => {
       const newFlow = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
+        name: name,
+        description: description,
       };
-      f.id = newFlow.id;
       f.name = newFlow.name;
       f.description = newFlow.description;
     });
     setShowWorkflowModal(false);
-  }, [
-    changeFlow,
-    setShowWorkflowModal,
-    values.id,
-    values.name,
-    values.description,
-  ]);
+  }, [changeFlow, setShowWorkflowModal, name, description]);
 
   // Only show tr- prefix if name is changed
   useEffect(() => {
     if (!idChanged) {
-      setValues((prevValues) => ({
-        ...prevValues,
-        id:
-          prevValues.name.length > 0
-            ? `tr-${prevValues.name.toLowerCase().replace(/ /g, '-')}`
-            : '',
-      }));
+      setExternalId(
+        name.length > 0 ? `tr-${name.toLowerCase().replace(/ /g, '-')}` : ''
+      );
     }
-  }, [values.name, idChanged]);
+  }, [name, idChanged]);
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (e: any) => {
     if (!idChanged) {
-      setValues({
-        ...values,
-        name: e.target.value,
-        id: `tr-${e.target.value.toLowerCase().replace(/ /g, '-')}`,
-      });
+      setName(e.target.value);
+      setExternalId(`tr-${e.target.value.toLowerCase().replace(/ /g, '-')}`);
       setIsUserEditing(true);
     } else {
-      setValues({ ...values, name: e.target.value });
+      setName(e.target.value);
     }
   };
 
-  const handleidChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, id: e.target.value });
+  const handleidChange = (e: any) => {
+    setExternalId(e.target.value);
     setIdChanged(
-      e.target.value !== `tr-${values.name.toLowerCase().replace(/ /g, '-')}`
+      e.target.value !== `tr-${name.toLowerCase().replace(/ /g, '-')}`
     );
   };
 
-  const handleIsUserEditing = (valueType: 'name' | 'id' | 'description') => {
+  const handleIsUserEditing = (valueType: 'name' | 'description') => {
     if (type === 'create') {
-      return values[valueType];
+      if (valueType === 'name') {
+        return name;
+      } else {
+        return description;
+      }
     } else {
       if (isUserEditing) {
-        return values[valueType];
+        if (valueType === 'name') {
+          return name;
+        } else {
+          return description;
+        }
       } else {
         return data?.[valueType];
       }
@@ -123,36 +125,33 @@ const WorkflowModal = ({
       cancelText={t('cancel')}
       okText={type === 'create' ? t('create') : t('save')}
       onOk={type === 'create' ? handleCreate : handleUpdate}
-      okDisabled={!values.name && !values.id}
+      okDisabled={!name && !externalId}
       title={type === 'create' ? t('create-flow') : t('general-info')}
       visible={showWorkflowModal}
     >
       <Flex direction="column" gap={10}>
-        <InputExp
-          label={t('name')}
-          fullWidth
+        <FormFieldInput
+          title={t('name')}
           disabled={type === 'create' ? isCreateLoading : isUpdateLoading}
           placeholder={t('enter-name')}
           value={handleIsUserEditing('name')}
           onChange={handleNameChange}
         />
-        <InputExp
-          label={t('external-id')}
-          fullWidth
-          disabled={'create' ? isCreateLoading : isUpdateLoading}
-          placeholder={t('enter-external-id')}
-          value={handleIsUserEditing('id')}
-          onChange={handleidChange}
-        />
-        <InputExp
-          label={t('description')}
-          fullWidth
+        {type === 'create' && (
+          <FormFieldInput
+            title={t('external-id')}
+            disabled={'create' ? isCreateLoading : isUpdateLoading}
+            placeholder={t('enter-external-id')}
+            value={externalId}
+            onChange={handleidChange}
+          />
+        )}
+        <FormFieldInput
+          title={t('description')}
           disabled={'create' ? isCreateLoading : isUpdateLoading}
           placeholder={t('enter-description')}
           value={handleIsUserEditing('description')}
-          onChange={(e) =>
-            setValues({ ...values, description: e.target.value })
-          }
+          onChange={(e: any) => setDescription(e.target.value)}
         />
       </Flex>
     </Modal>
