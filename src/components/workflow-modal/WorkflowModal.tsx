@@ -19,12 +19,12 @@ type Props = {
   setShowWorkflowModal: Dispatch<SetStateAction<boolean>>;
 };
 
-type WorkFlowModalTypes = {
-  externalId: string;
-  name: string;
-  description: string;
-  type: 'create' | 'update';
-};
+// type WorkFlowModalTypes = {
+//   externalId: string;
+//   name: string;
+//   description: string;
+//   type: 'create' | 'update';
+// };
 
 const WorkflowModal = ({
   type,
@@ -46,7 +46,6 @@ const WorkflowModal = ({
   const { changeFlow } = context;
   const { data } = useFlow(id ?? '');
   const navigate = useNavigate();
-  console.log('context: ', context);
 
   const handleCreate = () =>
     mutateAsync({
