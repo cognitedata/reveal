@@ -13,7 +13,7 @@ import {
 } from 'react';
 
 import * as Automerge from '@automerge/automerge';
-import { debounce } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 
 import { useFlow, useUpdateFlow } from 'hooks/files';
 import { AFlow, CanvasEdges, CanvasNodes } from 'types';
@@ -70,14 +70,30 @@ export const FlowContextProvider = ({
   const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
 
   const changeFlow = useCallback(
-      const newFlow = msg
     (fn: Automerge.ChangeFn<AFlow>, logger?: Logger) => {
       const msg = logger ? logger(flowRef.current) : undefined;
+      let newFlow = msg
         ? Automerge.change(flowRef.current, msg, fn)
         : Automerge.change(flowRef.current, fn);
+      let anythingChanged = !isEqual(
+        Automerge.getHeads(flowRef.current),
+        Automerge.getHeads(newFlow)
+      );
+
+      if (msg && !anythingChanged) {
+        newFlow = Automerge.emptyChange(flowRef.current, msg);
+        anythingChanged = true;
+      }
       flowRef.current = newFlow;
-      setFlowState(newFlow);
-      debouncedMutate(newFlow);
+      // `fn` could end up doing no changes. Since there are no actual changes, there is no point in
+      // updating state or persisting the doc. In the current version of AM it also seems safe to
+      // only update the ref if a change is detected, but I'm not sure if that will always be true
+      // (`AM.change(doc, noop); AM.change(doc, noop);` could possibly lead to an "Atempting to
+      // change an outdated document." error). Updating the ref shouldn't have any significant cost.
+      if (anythingChanged) {
+        setFlowState(newFlow);
+        debouncedMutate(newFlow);
+      }
     },
     [debouncedMutate]
   );
