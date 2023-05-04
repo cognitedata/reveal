@@ -23,6 +23,7 @@ export function SimulatorInformation({
     heartbeat,
     dataSetName,
     connectorVersion,
+    simulatorVersion,
   },
 }: SimulatorDetailsProps) {
   const project = useSelector(selectProject);
@@ -55,6 +56,8 @@ export function SimulatorInformation({
         <dd data-cy="data-set">{dataSetName}</dd>
         <dt>Connector version</dt>
         <dd data-cy="connector-version">{connectorVersion}</dd>
+        <dt>Simulator version</dt>
+        <dd data-cy="simulator-version">{simulatorVersion}</dd>
       </SimulatorInformationList>
 
       {isFetchingSimulatorDetails ? <Skeleton.Rectangle /> : null}
