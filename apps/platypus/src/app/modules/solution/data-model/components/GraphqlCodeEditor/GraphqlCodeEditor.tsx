@@ -84,6 +84,7 @@ type Props = {
   externalId: string;
   space: string;
   disabled?: boolean;
+  language?: string;
   errorsByGroup: ErrorsByGroup;
   setErrorsByGroup: (errors: ErrorsByGroup) => void;
   setEditorHasError: (hasError: boolean) => void;
@@ -99,6 +100,7 @@ export const GraphqlCodeEditor = React.memo(
     disabled = false,
     errorsByGroup,
     setErrorsByGroup,
+    language = 'graphql',
     onChange,
     setEditorHasError,
   }: Props) => {
@@ -187,13 +189,13 @@ export const GraphqlCodeEditor = React.memo(
             formatOnType: true,
             fixedOverflowWidgets: true,
           }}
-          language="graphql"
+          language={language}
           value={editorValue}
           loading={<Spinner />}
           beforeMount={editorWillMount}
           onMount={handleEditorDidMount}
           defaultValue={getSampleDataModel(space)}
-          defaultLanguage="graphql"
+          defaultLanguage={language}
           onValidate={(markers) => {
             setEditorHasError(
               markers.some(

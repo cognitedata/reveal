@@ -1,4 +1,4 @@
-import { Body, Chip, Colors, Flex, Icon, Menu } from '@cognite/cogs.js';
+import { Chip, Menu } from '@cognite/cogs.js';
 import {
   Graph,
   getLinkId,
@@ -14,6 +14,9 @@ import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
 import { getRelationLinkId, getRelationshipsForData } from './utils';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { SDKProvider } from '@cognite/sdk-provider';
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { RelationNode } from './RelationNode';
 
 const getColor = (key: string) => uniqolor(key);
 
@@ -84,7 +87,9 @@ export const RelationViewer = <
                 (el) => el.name === clickedTypeName
               );
               const fields =
-                itemType?.fields.filter((el) => el.type.custom) || [];
+                itemType?.fields.filter(
+                  (el) => el.type.custom || el.type.name === 'TimeSeries'
+                ) || [];
               const newNodes = new Map();
               const newLinks = new Map();
               for (const field of fields) {
@@ -230,7 +235,7 @@ export const RelationViewer = <
 
   const renderNode = useCallback(
     (node: T & { isSelected?: boolean }) => (
-      <NodeItem
+      <RelationNode
         key={node.externalId}
         node={node}
         onClick={(n) => {
@@ -322,159 +327,95 @@ export const RelationViewer = <
   }, [nodes, disabledFields.length, initialNodes, visibleLinks]);
 
   return (
-    <Graph<T>
-      nodes={visibleNodes}
-      links={visibleLinks}
-      useCache={false}
-      renderNode={renderNode}
-      renderLink={renderLink}
-      onLoadingStatus={setLoading}
-      style={{
-        position: 'relative',
-        backgroundImage: `radial-gradient(
+    <SDKProvider sdk={getCogniteSDKClient()}>
+      <Graph<T>
+        nodes={visibleNodes}
+        links={visibleLinks}
+        useCache={false}
+        renderNode={renderNode}
+        renderLink={renderLink}
+        onLoadingStatus={setLoading}
+        style={{
+          position: 'relative',
+          backgroundImage: `radial-gradient(
           var(--cogs-border-default) 1px,
           transparent 1px
         )`,
-        backgroundSize: '24px 24px',
-        backgroundColor: 'var(--cogs-bg-canvas)',
-        overflow: 'hidden',
-      }}
-    >
-      {isLoading && (
+          backgroundSize: '24px 24px',
+          backgroundColor: 'var(--cogs-bg-canvas)',
+          overflow: 'hidden',
+        }}
+      >
+        {isLoading && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'var(--cogs-bg-canvas)',
+            }}
+          >
+            <Spinner />
+          </div>
+        )}
         <div
           style={{
             position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'var(--cogs-bg-canvas)',
+            top: 12,
+            left: 12,
+            fontSize: 12,
           }}
         >
-          <Spinner />
-        </div>
-      )}
-      <div
-        style={{
-          position: 'absolute',
-          top: 12,
-          left: 12,
-          fontSize: 12,
-        }}
-      >
-        {Object.entries(selectedFields).map(([key, fields]) => (
-          <div key={key}>
-            <div style={{ marginTop: 12 }} key={`${key}-chip`}>
-              <Chip
-                hideTooltip
-                size="small"
-                key={key}
-                style={{ background: getColor(key).color }}
-                prominence={getColor(key).isLight ? 'muted' : 'strong'}
-                label={key}
-              />
+          {Object.entries(selectedFields).map(([key, fields]) => (
+            <div key={key}>
+              <div style={{ marginTop: 12 }} key={`${key}-chip`}>
+                <Chip
+                  hideTooltip
+                  size="small"
+                  key={key}
+                  style={{ background: getColor(key).color }}
+                  prominence={getColor(key).isLight ? 'muted' : 'strong'}
+                  label={key}
+                />
+              </div>
+              {fields && fields.length > 0 && (
+                <Menu key={`${key}-menu`}>
+                  {fields.map((field) => (
+                    <Menu.Item
+                      key={field.def.name}
+                      hasCheckbox
+                      checkboxProps={{
+                        checked: field.isToggled,
+                        onChange: (e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          setSelectedField({
+                            ...selectedFields,
+                            [key]: selectedFields[key].map((item) => {
+                              if (item.def.name === field.def.name) {
+                                track('Graph.Filter', {
+                                  item,
+                                  isToggled: !field.isToggled,
+                                });
+                                return { ...item, isToggled: !field.isToggled };
+                              }
+                              return item;
+                            }),
+                          });
+                        },
+                      }}
+                    >
+                      {field.def.name}: {field.def.type.name}
+                      {field.def.type.list ? '[]' : ''}
+                    </Menu.Item>
+                  ))}
+                </Menu>
+              )}
             </div>
-            {fields && fields.length > 0 && (
-              <Menu key={`${key}-menu`}>
-                {fields.map((field) => (
-                  <Menu.Item
-                    key={field.def.name}
-                    hasCheckbox
-                    checkboxProps={{
-                      checked: field.isToggled,
-                      onChange: (e: { stopPropagation: () => void }) => {
-                        e.stopPropagation();
-                        setSelectedField({
-                          ...selectedFields,
-                          [key]: selectedFields[key].map((item) => {
-                            if (item.def.name === field.def.name) {
-                              track('Graph.Filter', {
-                                item,
-                                isToggled: !field.isToggled,
-                              });
-                              return { ...item, isToggled: !field.isToggled };
-                            }
-                            return item;
-                          }),
-                        });
-                      },
-                    }}
-                  >
-                    {field.def.name}: {field.def.type.name}
-                    {field.def.type.list ? '[]' : ''}
-                  </Menu.Item>
-                ))}
-              </Menu>
-            )}
-          </div>
-        ))}
-      </div>
-    </Graph>
-  );
-};
-
-const NodeItem = <T extends { externalId: string }>({
-  node,
-  onClick,
-  isSelected,
-}: {
-  node: T & { __typename: string };
-  onClick: (node: T) => void;
-  isSelected?: boolean;
-}) => {
-  return (
-    <div
-      key={node.externalId}
-      style={{
-        padding: 8,
-        borderRadius: 4,
-        background: '#fff',
-        width: 160,
-        maxHeight: 120,
-        transform: 'translate(-50%, -50%)',
-        border: `1px solid ${getColor(node.__typename).color}`,
-      }}
-      onClick={() => {
-        onClick(node);
-      }}
-    >
-      <Chip
-        hideTooltip
-        size="small"
-        label={node.__typename}
-        style={{
-          position: 'absolute',
-          bottom: '100%',
-          fontSize: 12,
-          left: 0,
-          minHeight: 'auto',
-          backgroundColor: getColor(node.__typename).color,
-        }}
-        prominence={getColor(node.__typename).isLight ? 'muted' : 'strong'}
-      />
-      <Flex gap={2} alignItems="center">
-        <Body
-          level={3}
-          style={{
-            flex: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {node.externalId}
-        </Body>
-        {isSelected && (
-          <Flex
-            alignItems="center"
-            style={{
-              color: Colors['surface--status-success--strong--default'],
-            }}
-          >
-            <Icon type="EyeShow" />
-          </Flex>
-        )}
-      </Flex>
-    </div>
+          ))}
+        </div>
+      </Graph>
+    </SDKProvider>
   );
 };

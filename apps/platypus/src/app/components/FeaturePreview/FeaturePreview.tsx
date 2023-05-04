@@ -10,24 +10,36 @@ import {
   useUpdateSuggestionsFeatureFlag,
   useGraphViewerFeatureFlag,
   useUpdateGraphViewerFeatureFlag,
+  useGPTSearch,
+  useUpdateGPTSearch,
 } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
+import GPT_SEARCH_IMG from '../../../assets/images/gpt_search.gif';
+import GRAPH_IMG from '../../../assets/images/graph.gif';
+import MANUAL_POP_IMG from '../../../assets/images/manual_population.gif';
+import FILTER_BUILDER_IMG from '../../../assets/images/filter_builder.gif';
+import COLUMNS_IMG from '../../../assets/images/columns.gif';
+import SUGGESTIONS_IMG from '../../../assets/images/suggestions.gif';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 type FeatureKey =
   | 'population'
   | 'suggestions'
   | 'columns'
   | 'filters'
-  | 'graph';
+  | 'graph'
+  | 'gpt_search';
 
 export const FeaturePreview = ({
   onRequestClose,
 }: {
-  onRequestClose: () => void;
+  onRequestClose: (hasChanged: boolean) => void;
 }) => {
   const { track } = useMixpanel();
+  const { t } = useTranslation('FeaturePreview');
+  const [hasChanged, setHasChanged] = useState(false);
   const [selectedFeature, setFeature] = useState<FeatureKey>('population');
 
   const [featureStatus, setFeatureStatus] = useState<{
@@ -38,6 +50,7 @@ export const FeaturePreview = ({
     columns: useColumnSelectionFeatureFlag().isEnabled,
     filters: useFilterBuilderFeatureFlag().isEnabled,
     graph: useGraphViewerFeatureFlag().isEnabled,
+    gpt_search: useGPTSearch().isEnabled,
   });
 
   const setManualPopulation = useUpdateManualPopulationFeatureFlag();
@@ -45,6 +58,7 @@ export const FeaturePreview = ({
   const setColumnSelection = useUpdateColumnSelectionFeatureFlag();
   const setFilterBuilder = useUpdateFilterBuilderFeatureFlag();
   const setGraphViewer = useUpdateGraphViewerFeatureFlag();
+  const setGPTSearch = useUpdateGPTSearch();
 
   const updateStatusState = (key: FeatureKey, status: boolean) => {
     track('FeatureFlag.Toggle', { key, status });
@@ -69,7 +83,12 @@ export const FeaturePreview = ({
         setGraphViewer(status);
         break;
       }
+      case 'gpt_search': {
+        setGPTSearch(status);
+        break;
+      }
     }
+    setHasChanged(true);
     setFeatureStatus((currValue) => ({
       ...currValue,
       [key]: status,
@@ -78,81 +97,127 @@ export const FeaturePreview = ({
 
   const features: { [key in FeatureKey]: string } = useMemo(
     () => ({
-      population: 'Population',
-      suggestions: 'Smart Suggestions',
-      columns: 'Column Selection',
-      filters: 'Advanced Filters',
-      graph: 'Knowledge Graph',
+      population: t('feature_preview_population_header', 'Population'),
+      suggestions: t('feature_preview_suggestions_header', 'Smart Suggestions'),
+      columns: t('feature_preview_columns_header', 'Column Selection'),
+      filters: t('feature_preview_filters_header', 'Advanced Filters'),
+      graph: t('feature_preview_graph_header', 'Knowledge Graph'),
+      gpt_search: t('feature_preview_gpt_search_header', 'Copilot Search'),
     }),
-    []
+    [t]
   );
   const featuresDetails: { [key in FeatureKey]: React.ReactNode } = useMemo(
     () => ({
       population: (
         <>
-          <Body level="2">
-            Allows you to manually create new instances. As well you can edit
-            and delete existing instances.
-          </Body>
-          <Body level="2">Note: Not yet supported for list values.</Body>
+          <img src={MANUAL_POP_IMG} alt="Manual population" />
+          {t(
+            'feature_preview_population',
+            `Allows you to manually create new instances. As well you can edit and delete existing instances.
+
+Note: Not yet supported for list values.`
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
         </>
       ),
       suggestions: (
         <>
-          <Body level="2">
-            Provides smart suggestions for direct relations based on field
-            values of related instances.
-          </Body>
-          <Body level="2">
-            Recommend to be enabled alongside Population feature.
-          </Body>
+          <img src={SUGGESTIONS_IMG} alt="Suggestions population" />
+          {t(
+            'feature_preview_suggestions',
+            `Provides smart suggestions for direct relations based on field values of related instances.
+
+Recommend to be enabled alongside Population feature.`
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
         </>
       ),
       columns: (
         <>
-          <Body level="2">
-            Provides a way for you to choose which columns are visible in the
-            table.
-          </Body>
+          <img src={COLUMNS_IMG} alt="Column selection" />
+          {t(
+            'feature_preview_columns_selection',
+            `Provides a way for you to choose which columns are visible in the table.`
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
         </>
       ),
       filters: (
         <>
-          <Body level="2">
-            Build advanced filters right at home in the UI, with all the
-            complexities you need. No need to learn GraphQL to make complex
-            queries.
-          </Body>
-          <Body level="2">
-            Once you are happy with the result, use the "Copy to code" button to
-            copy the GraphQL query and variables for filter to use in your
-            solution.
-          </Body>
-          <Body level="2">
-            Note: This disables the basic column level filter within the table
-            in favor of the more robust filter builder.
-          </Body>
+          <img src={FILTER_BUILDER_IMG} alt="Filter builder" />
+          {t(
+            'feature_preview_filter_builder',
+            `Build advanced filters right at home in the UI, with all the complexities you need. No need to learn GraphQL to make complex queries.
+
+Once you are happy with the result, use the "Copy to code" button to copy the GraphQL query and variables for filter to use in your solution.
+
+Note: This disables the basic column level filter within the table in favor of the more robust filter builder.`
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
         </>
       ),
       graph: (
         <>
-          <Body level="2">
-            A way for you to explore data focusing on the relationship it has.
-            Start from an instance and explore connected instances.
-          </Body>
+          <img src={GRAPH_IMG} alt="Graph" />
+          {t(
+            'feature_preview_graph_explorer',
+            `A way for you to explore data focusing on the relationship it has.
+Start from an instance and explore connected instances.`
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
+        </>
+      ),
+      gpt_search: (
+        <>
+          <img src={GPT_SEARCH_IMG} alt="GPT demo" />
+          {t(
+            'feature_preview_gpt_search',
+            'Leveraging AI, get the ability to ask a question around data within your data model, and visualize it in graph, tabular and JSON format.'
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
         </>
       ),
     }),
-    []
+    [t]
   );
   return (
     <Modal
       showBorders
       visible
-      title="Feature Preview"
-      onCancel={() => onRequestClose()}
+      title={t('feature-preview-header', 'Feature Preview')}
+      onCancel={() => onRequestClose(hasChanged)}
       hideFooter
-      size="medium"
+      size="large"
       hidePaddings
     >
       <Flex
@@ -210,7 +275,7 @@ export const FeaturePreview = ({
             </ListItem>
           ))}
         </Flex>
-        <Flex
+        <FeatureContent
           style={{ flex: 1, overflow: 'auto', padding: '16px 16px 0px 8px' }}
           direction="column"
         >
@@ -226,21 +291,23 @@ export const FeaturePreview = ({
                   !featureStatus[selectedFeature]
                 )
               }
-              label="Enabled"
+              label={t('feature-preview-enabled', 'Enabled')}
             />
           </Flex>
           {featuresDetails[selectedFeature]}
-        </Flex>
+        </FeatureContent>
       </Flex>
       <Body level={3} style={{ padding: '12px 12px 0' }}>
-        Enabling these features may introduce additional bugs to your
-        experience. Please give any feedback or feature request you have via{' '}
+        {t(
+          'feature_preview_disclaimer',
+          'Enabling these features may introduce instability to your experience. Please give any feedback or feature request you have via '
+        )}
         <a
           href="https://hub.cognite.com"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Cognite Hub
+          {t('feature_preview_cognite_hub', 'Cognite Hub')}
         </a>
         .
       </Body>
@@ -271,5 +338,14 @@ const ListItem = styled(Flex)<{ $isSelected: boolean }>`
 const CustomSwitch = styled(Switch)`
   .cogs-switch__root.Mui-checked .cogs-switch__track {
     background: var(--cogs-decorative--gradient--dawn);
+  }
+`;
+
+const FeatureContent = styled(Flex)`
+  img {
+    margin-bottom: 16px;
+    max-height: 276px;
+    object-fit: cover;
+    object-position: top left;
   }
 `;

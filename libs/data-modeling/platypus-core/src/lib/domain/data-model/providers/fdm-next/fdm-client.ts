@@ -841,6 +841,13 @@ const autoPageToArray = async <T>(
   return items;
 };
 
+const RESERVED_KEYWORDS = [
+  'externalId',
+  'space',
+  'createdTime',
+  'lastUpdatedTime',
+];
+
 /*
 Replace relationships with correct ingestion format.
 Must be on the format {space, externalId} or null instead of {externalId} or null
@@ -856,8 +863,8 @@ const normalizeIngestionItem = (
         const fieldType = dataModelType.fields.find(
           (field) => field.name === key
         );
-        if (key === 'externalId') {
-          // remove if external id
+        if (RESERVED_KEYWORDS.includes(key)) {
+          // remove if reserved keywords
           return [key, undefined];
         }
         if (fieldType?.type.custom) {

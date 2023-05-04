@@ -13,6 +13,7 @@ import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { useDataQualityFeatureFlag } from '@platypus-app/flags';
 import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
+import { useGPTSearch } from '@platypus-app/flags';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({
@@ -37,9 +38,15 @@ const QueryExplorerPage = lazy<any>(() =>
     default: module.QueryExplorerPage,
   }))
 );
+const SearchPage = lazy<any>(() =>
+  import('./query-explorer/pages/SearchPage').then((module) => ({
+    default: module.SearchPage,
+  }))
+);
 
 export const DataLayout = () => {
   const { t } = useTranslation('SolutionDataModel');
+  const { isEnabled: isGPTEnabled } = useGPTSearch();
   const { dataModelExternalId, space } = useParams<{
     dataModelExternalId: string;
     space: string;
@@ -73,13 +80,25 @@ export const DataLayout = () => {
       }`,
       disabled: hasNoPublishedVersion,
     },
+    ...(isGPTEnabled
+      ? ([
+          {
+            icon: 'Search',
+            slug: 'search',
+            tooltip: `${t('gpt_search_title', 'Search')}${
+              hasNoPublishedVersion ? disabledText : ''
+            }`,
+            splitter: true,
+            disabled: hasNoPublishedVersion,
+          },
+        ] as SideBarItem[])
+      : []),
     {
       icon: 'CodeBraces',
       slug: 'query-explorer',
       tooltip: `${t('query_explorer_title', 'Query explorer')}${
         hasNoPublishedVersion ? disabledText : ''
       }`,
-      splitter: true,
       disabled: hasNoPublishedVersion,
     },
   ];
@@ -139,6 +158,15 @@ export const DataLayout = () => {
           />
         )}
 
+        <Route
+          path="search"
+          element={
+            <SearchPage
+              dataModelExternalId={dataModelExternalId}
+              space={space}
+            />
+          }
+        />
         <Route
           path="query-explorer"
           element={

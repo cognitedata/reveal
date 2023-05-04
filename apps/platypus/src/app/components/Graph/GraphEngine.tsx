@@ -375,7 +375,7 @@ export const Graph = <T,>({
           // transform the nodes
           d3Nodes
             .classed('invisible', true)
-            .filter((d) => nodeLocationMap[d.id].isVisible)
+            .filter((d) => nodeLocationMap[d.id]?.isVisible)
             .classed('invisible', false)
             .attr('style', (d: any) => {
               const nodeX = x / wrapperScale + nodeScale * d.x;

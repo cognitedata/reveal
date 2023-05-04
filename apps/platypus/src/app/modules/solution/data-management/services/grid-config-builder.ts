@@ -23,6 +23,7 @@ const colFiltersMap: KeyValueMap = {
   Int: 'agNumberColumnFilter',
   Float: 'agNumberColumnFilter',
   Int64: 'agNumberColumnFilter',
+  Int32: 'agNumberColumnFilter',
   Float32: 'agNumberColumnFilter',
   Float64: 'agNumberColumnFilter',
   Timestamp: 'agDateColumnFilter',
