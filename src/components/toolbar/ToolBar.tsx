@@ -101,7 +101,7 @@ const Toolbar = ({
                 onClick={(e) => {
                   button.onClick && button.onClick(e);
                 }}
-                active={button.activeButton}
+                toggled={button.activeButton}
                 plusButton={button.plusButton}
                 icon={button.icon}
                 iconPlacement={button.iconPlacement}
@@ -164,18 +164,15 @@ const getBackgroundColor = ({ active, plusButton }: BackgroundColorProps) => {
   if (plusButton) {
     return Colors['surface--action--strong--default'];
   } else if (active) {
-    return Colors['surface--interactive--toggled-default'];
+    return '';
   } else {
     return 'white';
   }
 };
 
-const getColor = ({ active, plusButton }: BackgroundColorProps) => {
+const getColor = ({ plusButton }: BackgroundColorProps) => {
   if (plusButton) {
     return 'white';
-  }
-  if (active) {
-    return Colors['text-icon--interactive--default'];
   }
 };
 
@@ -188,10 +185,9 @@ const onHover = ({ plusButton }: BackgroundColorProps) => {
 };
 
 const ToolbarButton = styled(Button)<BackgroundColorProps>`
-  background-color: ${({ active, plusButton }) =>
-    getBackgroundColor({ active, plusButton })} !important;
-  color: ${({ active, plusButton }) =>
-    getColor({ active, plusButton })} !important;
+  background-color: ${({ toggled, plusButton }) =>
+    getBackgroundColor({ active: toggled, plusButton })} !important;
+  color: ${({ plusButton }) => getColor({ plusButton })} !important;
   cursor: pointer;
   border-radius: 4px;
   &:hover {
