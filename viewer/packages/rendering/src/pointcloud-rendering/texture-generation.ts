@@ -10,9 +10,7 @@ import {
   RGBAFormat,
   Texture,
   Vector4,
-  LinearSRGBColorSpace,
-  SRGBColorSpace,
-  LinearEncoding
+  SRGBColorSpace
 } from 'three';
 import { PointClassification, IGradient } from './types';
 
