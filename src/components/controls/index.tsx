@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { useReactFlow, useStore } from 'reactflow';
 import styled from 'styled-components';
 import ToolBar, { ToolbarButtonProps } from 'components/toolbar/ToolBar';
+import { CANVAS_ZOOM_DURATION } from 'common';
 
 export const Controls = () => {
   const [dropdownVisible, setZoomDropdownVisible] = useState<boolean>(false);
@@ -17,14 +18,17 @@ export const Controls = () => {
 
   const handlePanToCenter = useCallback(() => {
     const viewport = getViewport();
-    setViewport({ x: viewport.x, y: viewport.y, zoom: 1 }, { duration: 800 });
+    setViewport(
+      { x: viewport.x, y: viewport.y, zoom: 1 },
+      { duration: CANVAS_ZOOM_DURATION }
+    );
   }, [getViewport, setViewport]);
 
   const handleZoomIn = useCallback(() => {
     const viewport = getViewport();
     setViewport(
       { x: viewport.x, y: viewport.y, zoom: viewport.zoom + 0.1 },
-      { duration: 500 }
+      { duration: CANVAS_ZOOM_DURATION }
     );
   }, [setViewport, getViewport]);
 
@@ -32,7 +36,7 @@ export const Controls = () => {
     const viewport = getViewport();
     setViewport(
       { x: viewport.x, y: viewport.y, zoom: viewport.zoom - 0.1 },
-      { duration: 500 }
+      { duration: CANVAS_ZOOM_DURATION }
     );
   }, [setViewport, getViewport]);
 

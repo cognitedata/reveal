@@ -20,3 +20,4 @@ export const DEFAULT_BUTTON_WIDTH = 28;
 export const DEFAULT_BUTTON_HEIGHT = 28;
 export const FOREIGN_OBJECT_WIDTH = DEFAULT_BUTTON_WIDTH * 2 + 10; // 10 is the space between the buttons
 export const FOREIGN_OBJECT_HEIGHT = DEFAULT_BUTTON_HEIGHT;
+export const CANVAS_ZOOM_DURATION = 500;
