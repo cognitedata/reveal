@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Colors, Flex, Radio } from '@cognite/cogs.js';
+import { Colors, Flex, FlexProps, Radio } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import FormFieldWrapper, {
@@ -8,6 +8,7 @@ import FormFieldWrapper, {
 } from 'components/form-field-wrapper/FormFieldWrapper';
 
 type FormFieldRadioGroupProps<V> = Omit<FormFieldWrapperProps, 'children'> & {
+  direction?: FlexProps['direction'];
   onChange: (value: V) => void;
   options: FormFieldRadioOption<V>[];
   value: V;
@@ -20,6 +21,7 @@ type FormFieldRadioOption<V> = {
 };
 
 const FormFieldRadioGroup = <V extends string>({
+  direction,
   isRequired,
   onChange,
   options,
@@ -28,7 +30,7 @@ const FormFieldRadioGroup = <V extends string>({
 }: FormFieldRadioGroupProps<V>): JSX.Element => {
   return (
     <FormFieldWrapper isRequired={isRequired} title={title}>
-      <Flex gap={16}>
+      <Flex direction={direction} gap={8}>
         {options.map(({ details, label, value }) => (
           <StyledRadio
             checked={selectedValue === value}

@@ -31,9 +31,9 @@ export const TopicFilters = ({
           <Button
             size="small"
             onClick={() => setIsCreateModalOpen(true)}
-            type="primary"
+            type="ghost"
           >
-            {t('create-jobs')}
+            {t('add-topic-filters')}
           </Button>
         )
       }

@@ -33,9 +33,14 @@ const MQTT_DESTINATION_TYPE_OPTIONS: {
   },
 ];
 
+type CreateJobsFormDestinationOptionType =
+  | 'use-existing'
+  | 'current-user'
+  | 'client-credentials';
+
 type CreateJobsFormValues = {
   topicFilters?: string[];
-  shouldUseExistingDestinationId: string;
+  destinationOption: CreateJobsFormDestinationOptionType;
   selectedDestinationExternalId?: string;
   destinationExternalIdToCreate?: string;
   clientId?: string;
@@ -76,13 +81,13 @@ export const CreateJobsModal = ({
       errors.topicFilters = t('validation-error-field-required');
     }
 
-    if (values.shouldUseExistingDestinationId === 'true') {
+    if (values.destinationOption === 'use-existing') {
       if (!values.selectedDestinationExternalId) {
         errors.selectedDestinationExternalId = t(
           'validation-error-field-required'
         );
       }
-    } else {
+    } else if (values.destinationOption === 'client-credentials') {
       if (!values.destinationExternalIdToCreate) {
         errors.destinationExternalIdToCreate = t(
           'validation-error-field-required'
@@ -97,6 +102,15 @@ export const CreateJobsModal = ({
       if (!values.type) {
         errors.type = t('validation-error-field-required');
       }
+    } else {
+      if (!values.destinationExternalIdToCreate) {
+        errors.destinationExternalIdToCreate = t(
+          'validation-error-field-required'
+        );
+      }
+      if (!values.type) {
+        errors.type = t('validation-error-field-required');
+      }
     }
 
     return errors;
@@ -105,7 +119,7 @@ export const CreateJobsModal = ({
   const { errors, handleSubmit, setFieldValue, values } =
     useFormik<CreateJobsFormValues>({
       initialValues: {
-        shouldUseExistingDestinationId: 'true',
+        destinationOption: 'use-existing',
         type: 'datapoints',
       },
       onSubmit: async (values) => {
@@ -115,20 +129,35 @@ export const CreateJobsModal = ({
 
         let destinationExternalId: string | undefined = undefined;
         if (
-          values.shouldUseExistingDestinationId === 'true' &&
+          values.destinationOption === 'use-existing' &&
           values.selectedDestinationExternalId
         ) {
           destinationExternalId = values.selectedDestinationExternalId;
         } else if (
-          values.shouldUseExistingDestinationId === 'false' &&
+          values.destinationOption === 'client-credentials' &&
           values.clientId &&
           values.clientSecret &&
           values.destinationExternalIdToCreate &&
           values.type
         ) {
           const destination = await createDestination({
-            clientId: values.clientId,
-            clientSecret: values.clientSecret,
+            credentials: {
+              clientId: values.clientId,
+              clientSecret: values.clientSecret,
+            },
+            externalId: values.destinationExternalIdToCreate,
+            type: values.type,
+          });
+          destinationExternalId = destination.externalId;
+        } else if (
+          values.destinationOption === 'current-user' &&
+          values.destinationExternalIdToCreate &&
+          values.type
+        ) {
+          const destination = await createDestination({
+            credentials: {
+              tokenExchange: true,
+            },
             externalId: values.destinationExternalIdToCreate,
             type: values.type,
           });
@@ -181,9 +210,9 @@ export const CreateJobsModal = ({
   return (
     <Modal
       onCancel={onCancel}
-      okText={t('create')}
+      okText={t('done')}
       onOk={handleSubmit}
-      title={t('create-jobs')}
+      title={t('add-topic-filters')}
       visible={visible}
     >
       <Flex direction="column" gap={16}>
@@ -235,21 +264,24 @@ export const CreateJobsModal = ({
           ))}
         </Flex>
         <FormFieldRadioGroup
+          direction="column"
           isRequired
-          onChange={(value) =>
-            setFieldValue('shouldUseExistingDestinationId', value)
-          }
+          onChange={(value) => setFieldValue('destinationOption', value)}
           options={[
-            { label: t('use-existing-destination'), value: 'true' },
+            { label: t('use-existing-destination'), value: 'use-existing' },
             {
-              label: t('create-new-destination'),
-              value: 'false',
+              label: t('create-new-destination-as-current-user'),
+              value: 'current-user',
+            },
+            {
+              label: t('create-new-destination-with-client-credentials'),
+              value: 'client-credentials',
             },
           ]}
           title={t('destination-option')}
-          value={values.shouldUseExistingDestinationId}
+          value={values.destinationOption}
         />
-        {values.shouldUseExistingDestinationId === 'true' ? (
+        {values.destinationOption === 'use-existing' ? (
           <FormFieldWrapper
             isRequired
             error={errors.selectedDestinationExternalId}
@@ -288,34 +320,40 @@ export const CreateJobsModal = ({
               placeholder={t('destination-external-id-placeholder')}
               value={values.destinationExternalIdToCreate}
             />
-            <InputExp
-              clearable
-              fullWidth
-              label={{
-                required: true,
-                info: undefined,
-                text: t('form-client-id'),
-              }}
-              onChange={(e) => setFieldValue('clientId', e.target.value)}
-              placeholder={t('form-client-id-placeholder')}
-              status={errors.clientId ? 'critical' : undefined}
-              statusText={errors.clientId}
-              value={values.clientId}
-            />
-            <InputExp
-              clearable
-              fullWidth
-              label={{
-                required: true,
-                info: undefined,
-                text: t('form-client-secret'),
-              }}
-              onChange={(e) => setFieldValue('clientSecret', e.target.value)}
-              placeholder={t('form-client-secret-placeholder')}
-              status={errors.clientSecret ? 'critical' : undefined}
-              statusText={errors.clientSecret}
-              value={values.clientSecret}
-            />
+            {values.destinationOption === 'client-credentials' && (
+              <>
+                <InputExp
+                  clearable
+                  fullWidth
+                  label={{
+                    required: true,
+                    info: undefined,
+                    text: t('form-client-id'),
+                  }}
+                  onChange={(e) => setFieldValue('clientId', e.target.value)}
+                  placeholder={t('form-client-id-placeholder')}
+                  status={errors.clientId ? 'critical' : undefined}
+                  statusText={errors.clientId}
+                  value={values.clientId}
+                />
+                <InputExp
+                  clearable
+                  fullWidth
+                  label={{
+                    required: true,
+                    info: undefined,
+                    text: t('form-client-secret'),
+                  }}
+                  onChange={(e) =>
+                    setFieldValue('clientSecret', e.target.value)
+                  }
+                  placeholder={t('form-client-secret-placeholder')}
+                  status={errors.clientSecret ? 'critical' : undefined}
+                  statusText={errors.clientSecret}
+                  value={values.clientSecret}
+                />
+              </>
+            )}
             <FormFieldWrapper isRequired title={t('form-destination-type')}>
               <Select
                 onChange={(e) => setFieldValue('type', e)}

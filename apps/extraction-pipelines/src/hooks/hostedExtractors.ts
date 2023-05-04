@@ -8,7 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query';
-import { useCreateSession } from './sessions';
+import { CreateSessionVariables, useCreateSession } from './sessions';
 
 type UpdateWithExternalId<T, P extends keyof T> = {
   externalId: string;
@@ -340,8 +340,7 @@ type CreateMQTTDestinationVariables = Omit<
   CreateMQTTDestination,
   'credentials'
 > & {
-  clientId: string;
-  clientSecret: string;
+  credentials: CreateSessionVariables;
 };
 
 export const useCreateMQTTDestination = () => {
@@ -350,10 +349,7 @@ export const useCreateMQTTDestination = () => {
   const { mutateAsync: createSession } = useCreateSession();
 
   return useMutation(async (destination: CreateMQTTDestinationVariables) => {
-    const session = await createSession({
-      clientId: destination.clientId,
-      clientSecret: destination.clientSecret,
-    });
+    const session = await createSession(destination.credentials);
 
     return sdk
       .post<{ items: ReadMQTTDestination[] }>(
