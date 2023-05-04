@@ -87,14 +87,14 @@ module.exports = async function (options) {
           });
 
           if (keysToRemove.length) {
-            console.log(
-              `keys will removed from source language file: ${keysToRemove.join(
-                ', '
-              )}`
-            );
             keysToRemove.forEach((key) => {
               delete data[key];
             });
+            console.log(
+              `keys are removed from source language file: ${keysToRemove.join(
+                ', '
+              )}`
+            );
           } else {
             console.log('not found any unused key');
           }
