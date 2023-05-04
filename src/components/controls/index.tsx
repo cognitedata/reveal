@@ -16,8 +16,9 @@ export const Controls = () => {
   const zoomPercentageArray = [50, 75, 100, 125, 150, 200];
 
   const handlePanToCenter = useCallback(() => {
-    setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 800 });
-  }, [setViewport]);
+    const viewport = getViewport();
+    setViewport({ x: viewport.x, y: viewport.y, zoom: 1 }, { duration: 800 });
+  }, [getViewport, setViewport]);
 
   const handleZoomIn = useCallback(() => {
     const viewport = getViewport();

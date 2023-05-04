@@ -39,7 +39,7 @@ import {
   WorkflowBuilderNodeType,
   isProcessType,
 } from 'types';
-import { Controls } from 'components/controls/Controls';
+import { Controls } from 'components/controls';
 import { CustomEdge } from 'components/custom-edge';
 import { useUserInfo } from 'utils/user';
 
