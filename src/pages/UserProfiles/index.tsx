@@ -1,17 +1,11 @@
 import React from 'react';
-import { Checkbox, Form, Input, Select, notification } from 'antd';
-import InputNumber from 'antd/lib/input-number';
-import { OidcConfiguration } from '@cognite/sdk';
+import { Checkbox, Form, notification } from 'antd';
 import { useSDK } from '@cognite/sdk-provider';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
+import { Icon, Button } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getContainer } from 'utils/utils';
 import { useRouteMatch } from 'react-router';
-import { useAuthConfiguration } from 'hooks';
-import { StyledHelpIcon } from 'pages/components/CustomInfo';
-import styled from 'styled-components';
 import { UserProfilesConfigurationWarning } from 'pages/components/UserProfilesConfigurationWarning';
-import { TranslationKeys, useTranslation } from 'common/i18n';
+import { useTranslation } from 'common/i18n';
 
 const formItemLayout = {
   labelCol: {
@@ -24,23 +18,6 @@ const formItemLayout = {
   },
 };
 
-const urlRules = (_t: (key: TranslationKeys) => string, required = true) => [
-  {
-    required,
-    message: _t('valid-url-info'),
-  },
-  () => ({
-    validator(_: any, value: string) {
-      if (!required && !value) {
-        return Promise.resolve();
-      }
-
-      const invalidUrlErrMessage = _t('valid-url-error');
-      return isValidURL(value, invalidUrlErrMessage);
-    },
-  }),
-];
-
 const noLabelItemLayout = {
   wrapperCol: {
     xs: { span: 24 },
@@ -48,7 +25,7 @@ const noLabelItemLayout = {
   },
 };
 
-export default function OIDCConfigContainer() {
+export default function UserProfilesConfigContainer() {
   const { t } = useTranslation();
   const cache = useQueryClient();
   const sdk = useSDK();
@@ -64,26 +41,25 @@ export default function OIDCConfigContainer() {
     {
       onMutate() {
         notification.info({
-          key: 'oidc-settings',
-          message: t('oidc-settings-update'),
+          key: 'user-profiles-settings',
+          message: t('user-profiles-settings-update'),
         });
       },
       onSuccess() {
         notification.success({
-          key: 'oidc-settings',
-          message: t('oidc-settings-update-success'),
+          key: 'user-profiles-settings',
+          message: t('user-profiles-settings-update-success'),
         });
       },
       onError() {
         notification.error({
-          key: 'oidc-settings',
-          message: t('oidc-settings-update-fail'),
-          description: t('oidc-settings-update-error'),
+          key: 'user-profiles-settings',
+          message: t('user-profiles-settings-update-fail'),
+          description: t('user-profiles-settings-update-error'),
         });
       },
       onSettled() {
         cache.invalidateQueries(['project-settings']);
-        cache.invalidateQueries(['auth-configuration']);
       },
     }
   );
@@ -92,40 +68,18 @@ export default function OIDCConfigContainer() {
     useQuery(['project-settings'], () => {
       return sdk.projects.retrieve(match?.params.tenant!);
     });
-  const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
-    useAuthConfiguration();
 
   const handleSubmit = (values: any) => {
     mutate({
-      isOidcEnabled: {
-        set: values.isOidcEnabled,
-      },
-      oidcConfiguration: {
+      userProfilesConfiguration: {
         set: {
-          jwksUrl: values.jwksUrl || null,
-          tokenUrl: values.tokenUrl || null,
-          issuer: values.issuer || null,
-          audience: values.audience || null,
-          scopeClaims:
-            values.scopeClaims?.map((claimName: string) => ({
-              claimName,
-            })) || [],
-          logClaims:
-            values.logClaims?.map((claimName: string) => ({
-              claimName,
-            })) || [],
-          accessClaims:
-            values.accessClaims?.map((claimName: string) => ({
-              claimName,
-            })) || [],
-          skewMs: values.skewMs,
-          isGroupCallbackEnabled: values.isGroupCallbackEnabled ?? null,
+          enabled: values.isUserProfilesEnabled,
         },
       },
     });
   };
 
-  if (!(areProjectSettingsFetched && isAuthConfigurationFetched)) {
+  if (!areProjectSettingsFetched) {
     return <Icon type="Loader" />;
   }
 
@@ -136,26 +90,12 @@ export default function OIDCConfigContainer() {
         {...formItemLayout}
         onFinish={handleSubmit}
         initialValues={{
-          ...projectSettings?.oidcConfiguration,
-          accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
-            (o) => o.claimName
-          ),
-          scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
-            (o) => o.claimName
-          ),
-          logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
-            (o) => o.claimName
-          ),
-          isOidcEnabled: authConfiguration?.isOidcEnabled,
-          isGroupCallbackEnabled: (
-            projectSettings?.oidcConfiguration as OidcConfiguration & {
-              isGroupCallbackEnabled?: boolean;
-            }
-          )?.isGroupCallbackEnabled,
+          isUserProfilesEnabled:
+            projectSettings?.userProfilesConfiguration.enabled,
         }}
       >
         <Form.Item
-          name="isOidcEnabled"
+          name="isUserProfilesEnabled"
           label={t('enabled')}
           valuePropName="checked"
         >
@@ -170,19 +110,4 @@ export default function OIDCConfigContainer() {
       </Form>
     </>
   );
-}
-
-const StyledFormItemLabel = styled.div`
-  align-items: center;
-  display: flex;
-`;
-
-function isValidURL(url: string, errMessage: string) {
-  try {
-    // eslint-disable-next-line no-new
-    new URL(url);
-    return Promise.resolve();
-  } catch {
-    return Promise.reject(new Error(errMessage));
-  }
 }
