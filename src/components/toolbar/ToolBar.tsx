@@ -41,7 +41,7 @@ const Toolbar = ({ buttons }: ToolbarProps) => {
               onClick={(e) => {
                 button.onClick(e);
               }}
-              active={button.activeButton}
+              toggled={button.activeButton}
               icon={button.icon}
               iconPlacement={button.iconPlacement}
               size="small"
@@ -71,13 +71,8 @@ const ToolbarContainer = styled(Flex)<{ $isHistoryVisible: boolean }>`
   z-index: ${Z_INDEXES.TOOLBAR};
 `;
 
-const ToolbarButton = styled(Button)<{ active: boolean | undefined }>`
-  background-color: ${({ active }) =>
-    active
-      ? Colors['surface--interactive--toggled-default']
-      : 'white'} !important;
-  color: ${({ active }) =>
-    active && Colors['text-icon--interactive--default']} !important;
+const ToolbarButton = styled(Button)`
+  background-color: ${(props) => (props.toggled ? '' : 'white')} !important;
   cursor: pointer;
   border-radius: 4px;
 
