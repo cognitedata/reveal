@@ -10,7 +10,7 @@ import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton
 import { toPng } from 'html-to-image';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useState } from 'react';
-import WorkflowModal from 'components/workflow-modal/WorkflowModal';
+import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
 
 export const CanvasTopBar = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -93,8 +93,7 @@ export const CanvasTopBar = () => {
           ),
         }}
       />
-      <WorkflowModal
-        type="update"
+      <EditWorkflowModal
         showWorkflowModal={showUpdateModal}
         setShowWorkflowModal={setShowUpdateModal}
       />

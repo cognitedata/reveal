@@ -6,7 +6,7 @@ import { useTranslation } from 'common';
 import SearchInput from './SearchInput';
 import Count from './Count';
 import { useState } from 'react';
-import WorkflowModal from 'components/workflow-modal/WorkflowModal';
+import CreateWorkflowModal from 'components/workflow-modal/CreateWorkflowModal';
 
 export default function FlowList() {
   const { t } = useTranslation();
@@ -33,8 +33,7 @@ export default function FlowList() {
         </Flex>
         <List />
       </ListLayoutWrapper>
-      <WorkflowModal
-        type="create"
+      <CreateWorkflowModal
         showWorkflowModal={showCreateModal}
         setShowWorkflowModal={setShowCreateModal}
       />

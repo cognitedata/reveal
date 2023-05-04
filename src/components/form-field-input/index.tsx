@@ -1,4 +1,4 @@
-import { ChangeEventHandler } from 'react';
+import { ChangeEvent, ChangeEventHandler } from 'react';
 
 import { Input, InputProps } from 'antd';
 
@@ -9,7 +9,7 @@ import FormFieldWrapper, {
 type FormFieldInputProps = Omit<FormFieldWrapperProps, 'children'> &
   Pick<InputProps, 'name' | 'onBlur' | 'placeholder' | 'value' | 'disabled'> & {
     error?: string;
-    onChange: (value: string) => void;
+    onChange: ChangeEventHandler<HTMLInputElement>;
     type?: string;
   };
 
@@ -25,10 +25,9 @@ const FormFieldInput = ({
   type,
   disabled,
 }: FormFieldInputProps): JSX.Element => {
-  const handleChange: ChangeEventHandler<HTMLInputElement> = (e): void => {
-    onChange(e.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChange(e);
   };
-
   return (
     <FormFieldWrapper error={error} isRequired={isRequired} title={title}>
       <Input
