@@ -5,7 +5,6 @@ import { Button } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import Section from 'components/section';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
-import { Timestamp } from '@cognite/cdf-utilities';
 import { EditSourceDetailsModal } from 'components/edit-source-details-modal/EditSourceDetailsModal';
 import { MQTT_SOURCE_TYPE_LABEL } from 'components/create-source-modal/CreateSourceModal';
 
@@ -54,29 +53,12 @@ export const SourceDetails = ({
             title: t('form-host-name'),
             value: source.host,
           },
-          { key: 'port', title: t('form-port'), value: source.port },
-          {
-            key: 'throughput',
-            title: t('throughput'),
-            value: t('datapoints-per-hour', {
-              count: source.throughput,
-            }),
-          },
           {
             key: 'protocol',
             title: t('form-protocol-version'),
             value: MQTT_SOURCE_TYPE_LABEL[source.type],
           },
-          {
-            key: 'createdTime',
-            title: t('created-time'),
-            value: <Timestamp timestamp={source.createdTime} />,
-          },
-          {
-            key: 'lastUpdatedTime',
-            title: t('last-modified'),
-            value: <Timestamp timestamp={source.lastUpdatedTime} />,
-          },
+          { key: 'port', title: t('form-port'), value: source.port },
         ]}
         title={t('details')}
       />
