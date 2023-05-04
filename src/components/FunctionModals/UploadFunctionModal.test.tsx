@@ -48,7 +48,6 @@ describe('UploadFunctionModal', () => {
       const allFormItemsLabels = allFormItems.map(i => i.text());
       expect(allFormItemsLabels).toContain('Function name');
       expect(allFormItemsLabels).toContain('Description');
-      expect(allFormItemsLabels).toContain('API Key');
       expect(allFormItemsLabels).toContain('Owner');
       expect(wrapper.find(Upload).exists()).toBe(true);
       expect(allFormItemsLabels).toContain('External Id');
@@ -203,23 +202,6 @@ describe('UploadFunctionModal', () => {
         expect(checkDescription(validDescription).error).toBeFalsy();
       });
     });
-    describe('apiKey', () => {
-      const { checkApiKey } = stuffForUnitTests;
-      it('error if > 50 char', () => {
-        const invalidApiKey =
-          '-really-really-really-really-really-really-really-really-long-function-apiKey';
-        expect(checkApiKey(invalidApiKey).error).toBeTruthy();
-      });
-
-      it('valid if empty', () => {
-        const validApiKey = '';
-        expect(checkApiKey(validApiKey).error).toBeFalsy();
-      });
-      it('valid example', () => {
-        const validApiKey = 'apiKey';
-        expect(checkApiKey(validApiKey).error).toBeFalsy();
-      });
-    });
     describe('owner', () => {
       const { checkOwner } = stuffForUnitTests;
       it('error if > 128 char', () => {
@@ -258,48 +240,32 @@ describe('UploadFunctionModal', () => {
     });
     describe('secret key', () => {
       const { checkSecretKey } = stuffForUnitTests;
-      const mockApiKey = 'apiKey';
       it('error if empty', () => {
         const invalidKey = '';
         const secretKeys = [invalidKey];
-        expect(
-          checkSecretKey(invalidKey, mockApiKey, secretKeys).error
-        ).toBeTruthy();
+        expect(checkSecretKey(invalidKey, secretKeys).error).toBeTruthy();
       });
       it('error if > 15 char', () => {
         const invalidKey = 'a-long-secret-key';
         const secretKeys = [invalidKey];
-        expect(
-          checkSecretKey(invalidKey, mockApiKey, secretKeys).error
-        ).toBeTruthy();
+        expect(checkSecretKey(invalidKey, secretKeys).error).toBeTruthy();
       });
       it('error if contains weird characters', () => {
         const invalidUpperCaseKey = 'KEY';
         const secretKeys = [invalidUpperCaseKey];
         expect(
-          checkSecretKey(invalidUpperCaseKey, mockApiKey, secretKeys).error
-        ).toBeTruthy();
-      });
-      it('error if equal to api key', () => {
-        const invalidKey = mockApiKey;
-        const secretKeys = [invalidKey];
-        expect(
-          checkSecretKey(invalidKey, mockApiKey, secretKeys).error
+          checkSecretKey(invalidUpperCaseKey, secretKeys).error
         ).toBeTruthy();
       });
       it('error if not unique', () => {
         const invalidKey = 'key';
         const mockSecretKeys = ['key', 'key'];
-        expect(
-          checkSecretKey(invalidKey, mockApiKey, mockSecretKeys).error
-        ).toBeTruthy();
+        expect(checkSecretKey(invalidKey, mockSecretKeys).error).toBeTruthy();
       });
       it('valid example', () => {
         const validKey = 'key-123';
         const secretKeys = [validKey];
-        expect(
-          checkSecretKey(validKey, mockApiKey, secretKeys).error
-        ).toBeFalsy();
+        expect(checkSecretKey(validKey, secretKeys).error).toBeFalsy();
       });
     });
     describe('secret value', () => {
