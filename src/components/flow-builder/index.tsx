@@ -333,7 +333,7 @@ export const FlowBuilder = (): JSX.Element => {
       >
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        <MiniMap />
+        <StyledMiniMap />
       </ReactFlow>
       <ContextMenu
         containerRef={reactFlowContainer}
@@ -343,6 +343,10 @@ export const FlowBuilder = (): JSX.Element => {
     </Container>
   );
 };
+
+const StyledMiniMap = styled(MiniMap)`
+  margin-bottom: 60px;
+`;
 
 const Container = styled.div`
   background-color: ${Colors['surface--strong']};

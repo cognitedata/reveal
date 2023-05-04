@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Button, Colors, Divider, Flex, IconType } from '@cognite/cogs.js';
 import { TOOLBAR_MARGIN, Z_INDEXES } from 'common/constants';
 import { MouseEventHandler } from 'react';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 export type ToolbarButtonProps = {
   children?: string | React.ReactNode;
@@ -18,9 +19,19 @@ type ToolbarProps = {
   buttons: ToolbarButtonProps[];
 };
 
+const HISTORY_DRAWER_WIDTH = 356;
+const TOOLBAR_IS_HISTORY_VISIBLE_WIDTH = TOOLBAR_MARGIN + HISTORY_DRAWER_WIDTH;
+
 const Toolbar = ({ buttons }: ToolbarProps) => {
+  const { isHistoryVisible } = useWorkflowBuilderContext();
+
   return (
-    <ToolbarContainer alignItems="center" justifyContent="space-between">
+    <ToolbarContainer
+      alignItems="center"
+      justifyContent="space-between"
+      className={isHistoryVisible ? 'toolbar-history-visible' : ''}
+      $isHistoryVisible={isHistoryVisible}
+    >
       {buttons.map((button, index) => {
         return (
           <>
@@ -45,7 +56,7 @@ const Toolbar = ({ buttons }: ToolbarProps) => {
   );
 };
 
-const ToolbarContainer = styled(Flex)`
+const ToolbarContainer = styled(Flex)<{ $isHistoryVisible: boolean }>`
   background-color: white;
   border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
@@ -54,7 +65,8 @@ const ToolbarContainer = styled(Flex)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   position: absolute;
   bottom: ${TOOLBAR_MARGIN}px;
-  right: ${TOOLBAR_MARGIN}px;
+  right: ${({ $isHistoryVisible }) =>
+    $isHistoryVisible ? TOOLBAR_IS_HISTORY_VISIBLE_WIDTH : TOOLBAR_MARGIN}px;
   z-index: ${Z_INDEXES.TOOLBAR};
 `;
 
