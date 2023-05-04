@@ -114,9 +114,10 @@ export const FlowBuilder = (): JSX.Element => {
     if (selectedNodeChange) {
       setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
     }
-    const amChanges = changes.filter(
-      (c) => c.type === 'remove' || (c.type === 'position' && c.position)
+    const amChanges = changes.filter((c) =>
+      ['remove', 'position'].includes(c.type)
     );
+
     if (amChanges.length > 0) {
       changeFlow(
         (flowDoc) => {
@@ -155,9 +156,13 @@ export const FlowBuilder = (): JSX.Element => {
             }
           });
         },
-        () => {
+        (oldDoc) => {
           const messages = amChanges.reduce((accl, change) => {
-            if (change.type === 'position' && !change.dragging) {
+            if (
+              change.type === 'position' &&
+              !change.dragging &&
+              oldDoc.canvas.nodes.find((n) => n.id === change.id)?.dragging
+            ) {
               return [
                 ...accl,
                 `Node ${(change as NodePositionChange).id} moved`,
