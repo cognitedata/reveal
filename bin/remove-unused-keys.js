@@ -83,7 +83,7 @@ module.exports = async function (options) {
           const dirs = options.folders.split(',');
           const extensions = options.extensions.split(',');
           const keysToRemove = keys.filter((key) => {
-            return dirs.some((dir) => !searchDir(dir, key, extensions));
+            return dirs.every((dir) => !searchDir(dir, key, extensions));
           });
 
           if (keysToRemove.length) {
