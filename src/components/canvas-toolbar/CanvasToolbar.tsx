@@ -37,7 +37,7 @@ export const CanvasToolbar = () => {
       tooltipContent: 'Format workflow',
     },
     {
-      icon: 'Report', // There's no icon for sticky notes at the moment
+      icon: 'Square', // There's no icon for sticky notes at the moment
       onClick: () => {},
       showTooltip: true,
       tooltipContent: 'Sticky note',
