@@ -9,6 +9,7 @@ const pull = require('./pull');
 const saveMissing = require('./save-missing');
 const removeDeleted = require('./remove-deleted');
 const sortLocalKeys = require('./sort-local-keys');
+const removeUnusedKeys = require('./remove-unused-keys');
 
 function main() {
   yargs(hideBin(process.argv))
@@ -150,6 +151,42 @@ function main() {
         sortLocalKeys({
           path: argv.path,
           sourceLanguage: argv.sourceLanguage,
+        });
+      }
+    )
+    .command(
+      'remove-unused-keys [path] [sourceLanguage] [folders] [extensions]',
+      'remove unused keys',
+      (yargs) => {
+        return yargs
+          .option('path', {
+            alias: 'p',
+            describe: 'The path to read local translations',
+            default: './src/common/i18n/translations',
+            type: 'string',
+          })
+          .option('sourceLanguage', {
+            describe: 'The source language to sort files',
+            default: 'en',
+            type: 'string',
+          })
+          .option('folders', {
+            describe: 'comma separated list of folders to search',
+            default: './src',
+            type: 'string',
+          })
+          .option('extensions', {
+            describe: 'comma separated list of allowed extensions',
+            default: '.ts,.tsx',
+            type: 'string',
+          });
+      },
+      (argv) => {
+        removeUnusedKeys({
+          path: argv.path,
+          sourceLanguage: argv.sourceLanguage,
+          folders: argv.folders,
+          extensions: argv.extensions,
         });
       }
     )
