@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Colors, Divider, Flex, IconType } from '@cognite/cogs.js';
-import { TOOLBAR_MARGIN, Z_INDEXES } from 'common/constants';
+import {
+  TOOLBAR_IS_HISTORY_VISIBLE_WIDTH,
+  TOOLBAR_MARGIN,
+  Z_INDEXES,
+} from 'common/constants';
 import { MouseEventHandler } from 'react';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
@@ -18,9 +22,6 @@ export type ToolbarButtonProps = {
 type ToolbarProps = {
   buttons: ToolbarButtonProps[];
 };
-
-const HISTORY_DRAWER_WIDTH = 356;
-const TOOLBAR_IS_HISTORY_VISIBLE_WIDTH = TOOLBAR_MARGIN + HISTORY_DRAWER_WIDTH;
 
 const Toolbar = ({ buttons }: ToolbarProps) => {
   const { isHistoryVisible } = useWorkflowBuilderContext();
