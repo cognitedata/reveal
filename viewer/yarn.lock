@@ -825,7 +825,7 @@ __metadata:
     lodash: 4.17.21
     loglevel: 1.8.1
     mixpanel-browser: 2.47.0
-    moq.ts: 10.0.2
+    moq.ts: 10.0.3
     nock: 13.3.1
     path-browserify: 1.0.1
     prettier: 2.8.8
@@ -8784,12 +8784,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moq.ts@npm:10.0.2":
-  version: 10.0.2
-  resolution: "moq.ts@npm:10.0.2"
+"moq.ts@npm:10.0.3":
+  version: 10.0.3
+  resolution: "moq.ts@npm:10.0.3"
   dependencies:
     tslib: "*"
-  checksum: cd8aded8e98a5c2f0ce37566dc0a719fafb930ed5d98145267f886d8ab36bbfb9b2d65a88be506df7fd804a2c0407c71cdbb03d2064d1aef4c586c91552c66da
+  checksum: 0cc04d11cd365f02be9c1eb83bafaa44a83de481a2d9f34df1cc437b8e5f94f731cc46d2897254d3b533ad34206d0d45be6b857e7b5fa23525196dd10edc1848
   languageName: node
   linkType: hard
 
