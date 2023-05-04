@@ -27,7 +27,6 @@ import {
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
 
-
 type FlowContextT = {
   externalId: string;
   isComponentsPanelVisible: boolean;
@@ -53,7 +52,7 @@ type FlowContextT = {
   edges: CanvasEdges;
   selectedNodeId: CanvasNode['id'];
   setSelectedNodeId: Dispatch<SetStateAction<CanvasNode['id']>>;
-  selectedNodeComponent: ProcessType;
+  selectedNodeComponent?: ProcessType;
   setSelectedNodeComponent: Dispatch<SetStateAction<ProcessType>>;
   selectedNodeDescription: string;
   setSelectedNodeDescription: Dispatch<SetStateAction<string>>;
@@ -195,6 +194,7 @@ export const FlowContextProvider = ({
     const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
     return nodeData.processType;
   });
+
   const [selectedNodeDescription, setSelectedNodeDescription] = useState(() => {
     const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
     return nodeData.processDescription as string;
@@ -203,7 +203,7 @@ export const FlowContextProvider = ({
     const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
     return nodeData.processItem as string;
   });
-  
+
   useEffect(() => {
     if (!isHistoryVisible) {
       setPreviewHash(undefined);

@@ -2,7 +2,7 @@ import { Flex, InputExp, Body, IconType, Icon, Link } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { Drawer, Select } from 'antd';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
@@ -10,7 +10,7 @@ import { useTransformationList } from 'hooks/transformation';
 import { useFlowList } from 'hooks/files';
 import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
-import { ProcessNodeData, ProcessType } from 'types';
+import { ProcessNodeData, ProcessType, CanvasNode } from 'types';
 
 const { Option } = Select;
 
@@ -19,6 +19,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const {
     nodes,
+    flow,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
     selectedNodeId,
@@ -29,7 +30,34 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     selectedNodeItem,
     setSelectedNodeItem,
     changeNodes,
+    selectedObject,
   } = useWorkflowBuilderContext();
+
+  const getSelectedNodeData = (selectedObject: string | undefined) => {
+    const selectedNode = nodes.find((node) => {
+      return node.id === selectedObject;
+    });
+    return selectedNode ? (selectedNode.data as ProcessNodeData) : undefined;
+  };
+
+  const selectedNodeData = useMemo(
+    () => getSelectedNodeData(selectedObject),
+    [selectedObject]
+  );
+
+  console.log(selectedObject);
+  console.log(selectedNodeData?.processType);
+  // const test2 = useCallback(() => {
+  //   const testing = getSelectedNodeData(selectedObject);
+  //   const newComponent = testing?.processType;
+  //   setSelectedNodeComponent(newComponent);
+  // }, [setSelectedNodeComponent]);
+
+  // const test = useCallback(
+  //   () => setIsNodeConfigurationPanelOpen(false),
+  //   [selectedObject]
+  // );
+  // console.log(test);
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
@@ -225,7 +253,8 @@ export const NodeConfigurationPanel = (): JSX.Element => {
           {t('node-configuration-panel-component')}
         </Body>
         <Select
-          value={selectedNodeComponent}
+          // value={selectedNodeComponent}
+          value={selectedNodeData?.processType}
           onChange={handleComponentChange}
           style={{ width: 326 }}
         >

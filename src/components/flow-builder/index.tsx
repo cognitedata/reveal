@@ -241,6 +241,8 @@ export const FlowBuilder = (): JSX.Element => {
               position,
               data: {
                 processType: type,
+                processDescription: '',
+                processItem: '',
                 processProps: {},
               },
             };
