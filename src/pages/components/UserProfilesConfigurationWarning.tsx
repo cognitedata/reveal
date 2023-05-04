@@ -6,7 +6,7 @@ export const UserProfilesConfigurationWarning = () => {
   const { t } = useTranslation();
   return (
     <CustomInfo
-      type="info"
+      type="neutral"
       alertTitle={t('info')}
       alertMessage={t(
         'enabling-user-profiles-collects-data-for-all-active-users'
