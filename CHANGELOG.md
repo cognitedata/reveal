@@ -1,3 +1,8 @@
+## [0.7.1] - 4 May, 2022
+### Fixed
+- `remove-unused-keys` commands checks all folders before removing keys
+
+
 ## [0.7.0] - 3 May, 2022
 ### Added
 - `remove-unused-keys` command
