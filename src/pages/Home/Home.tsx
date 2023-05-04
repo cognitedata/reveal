@@ -9,7 +9,7 @@ import {
 import styled from 'styled-components';
 import { Title, Loader, Button } from '@cognite/cogs.js';
 import Menu from 'antd/lib/menu';
-import { isProduction, createLink } from '@cognite/cdf-utilities';
+import { createLink, getCluster } from '@cognite/cdf-utilities';
 import APIKeys from 'pages/APIKeys';
 import Groups from 'pages/Groups';
 import IDP from 'pages/IDP';
@@ -47,6 +47,13 @@ export default function () {
   const { pathname, search, hash } = history.location;
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
+
+  const env = getCluster().split('.')[0];
+  const isProductionCluster = !(
+    env == 'azure-dev' ||
+    env == 'bluefield' ||
+    env == 'greenfield'
+  );
 
   if (!isFetched) {
     return <Loader />;
@@ -94,7 +101,7 @@ export default function () {
         <Menu.Item key="oidc" disabled={!projectsRead}>
           {t('open-id-connect')}
         </Menu.Item>
-        {!isProduction() && (
+        {!isProductionCluster && (
           <Menu.Item key="user-profiles">{t('user-profiles')}</Menu.Item>
         )}
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
