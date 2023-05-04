@@ -258,5 +258,8 @@
   "delete-source-checkbox": "I want to delete this source.",
   "pause": "Pause",
   "resume": "Resume",
-  "topic-filters-status": "Topic filters status"
+  "topic-filters-status": "Topic filters status",
+  "add-topic-filters-to-get-data-in": "Add topic filters to get data in",
+  "add-topic-filters": "Add topic filters",
+  "no-topic-filters": "No topic filters"
 }

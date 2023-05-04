@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-import { Body, Button, Illustrations } from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 import { useTranslation } from 'common';
+import { CreateJobsModal } from 'components/create-jobs-modal/CreateJobsModal';
 import Section from 'components/section';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
 import { TopicFilter } from './TopicFilter';
-import { CreateJobsModal } from 'components/create-jobs-modal/CreateJobsModal';
-import styled from 'styled-components';
 
 type TopicFiltersProps = {
   className?: string;
@@ -27,13 +27,15 @@ export const TopicFilters = ({
     <Section
       className={className}
       extra={
-        <Button
-          size="small"
-          onClick={() => setIsCreateModalOpen(true)}
-          type="primary"
-        >
-          {t('create-jobs')}
-        </Button>
+        source.jobs.length !== 0 && (
+          <Button
+            size="small"
+            onClick={() => setIsCreateModalOpen(true)}
+            type="primary"
+          >
+            {t('create-jobs')}
+          </Button>
+        )
       }
       icon="Columns"
       title={t('topic-filter', { count: 2 })}
@@ -52,17 +54,21 @@ export const TopicFilters = ({
           ))
         ) : (
           <EmptyContent>
-            <Illustrations.Solo type="ExtractorDataSources" />
-            <Body level={3} muted>
-              {t('create-jobs-to-start-listening-messages')}
-            </Body>
+            <Flex alignItems="center" direction="column" gap={8}>
+              <Icon size={24} type="ListSearch" />
+              <Flex alignItems="center" direction="column" gap={2}>
+                <Title level={5}>{t('no-topic-filters')}</Title>
+                <Body level={2} muted>
+                  {t('add-topic-filters-to-get-data-in')}
+                </Body>
+              </Flex>
+            </Flex>
             <Button
               onClick={() => setIsCreateModalOpen(true)}
-              type="ghost-accent"
-              size="small"
               icon="AddLarge"
+              type="primary"
             >
-              {t('create-jobs')}
+              {t('add-topic-filters')}
             </Button>
           </EmptyContent>
         )}
@@ -81,7 +87,7 @@ const EmptyContent = styled.div`
   align-items: center;
   height: 100%;
   justify-content: center;
-  gap: 8px;
+  gap: 24px;
   flex-direction: column;
   padding: 16px;
 `;
