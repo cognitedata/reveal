@@ -8,6 +8,7 @@ export default defineConfig({
     ...nxE2EPreset(__dirname),
     baseUrl: 'http://localhost:8080',
     chromeWebSecurity: false,
+    testIsolation: false,
     env: {
       OVERRIDE_URL: 'http://localhost:3010/data-exploration/index.js',
     },
