@@ -91,6 +91,7 @@
     "enquirer": "^2.3.6",
     "env-cmd": "^10.1.0",
     "express": "^4.17.2",
+    "gql-query-builder": "^3.8.0",
     "graphiql": "^2.4.1",
     "graphql": "^16.6.0",
     "graphql-extra": "^0.2.2",
