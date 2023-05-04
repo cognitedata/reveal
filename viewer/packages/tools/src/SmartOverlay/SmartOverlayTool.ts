@@ -37,9 +37,9 @@ export type OverlayEventHandler = (event: {
 
 export type SmartOverlayToolParameters = {
   /**
-   * Max circle size in pixels. Default is 64.
+   * Max point markers size in pixels. Default is 64.
    */
-  maxCircleSize?: number;
+  maxPointSize?: number;
   /**
    * Sets default overlay color for newly added labels.
    */
@@ -54,6 +54,7 @@ export class SmartOverlayTool {
   private readonly _textOverlay: HTMLElement;
 
   private readonly _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
+  private readonly _defaultTextOverlayToCursorOffset = 20;
   private readonly _temporaryVec = new THREE.Vector2();
   private readonly _raycaster = new THREE.Raycaster();
 
@@ -71,10 +72,12 @@ export class SmartOverlayTool {
     this._viewer = viewer;
     this._defaultOverlayColor = toolParameters?.defaultOverlayColor ?? this._defaultOverlayColor;
 
-    this._textOverlay = this.createTextOverlay('', toolParameters?.maxCircleSize ?? 20);
+    this._textOverlay = this.createTextOverlay('', this._defaultTextOverlayToCursorOffset);
     viewer.domElement.appendChild(this._textOverlay);
 
-    this._singeOverlayCollection = new Overlay3DCollection();
+    this._singeOverlayCollection = new Overlay3DCollection(undefined, {
+      maxPointSize: toolParameters?.maxPointSize
+    });
     this._overlayPoints.push(this._singeOverlayCollection);
     viewer.addObject3D(this._singeOverlayCollection);
 

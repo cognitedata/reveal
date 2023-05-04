@@ -10,7 +10,6 @@ import {
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 import { OverlayInfo, SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayTool';
 
-// Sanity test for loading model
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
   public setup(_: ViewerTestFixtureComponents): Promise<void> {
     const { viewer } = _;

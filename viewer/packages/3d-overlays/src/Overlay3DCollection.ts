@@ -9,6 +9,7 @@ import { IconOctree } from './IconOctree';
 
 export type Overlay3DOptions = {
   overlayTexture?: Texture;
+  maxPointSize?: number;
 };
 
 export type PointData = {
@@ -39,7 +40,7 @@ export class Overlay3DCollection extends Object3D {
     this._iconsPoints = new OverlayPointsObject(pointsData ? pointsData.length * 2 : this.DEFAULT_MAX_POINTS, {
       spriteTexture: this._sharedTexture,
       minPixelSize: this.MIN_PIXEL_SIZE,
-      maxPixelSize: this.MAX_PIXEL_SIZE,
+      maxPixelSize: options?.maxPointSize ?? this.MAX_PIXEL_SIZE,
       radius: this._iconRadius
     });
 
