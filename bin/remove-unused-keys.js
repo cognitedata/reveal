@@ -99,7 +99,10 @@ module.exports = async function (options) {
             console.log('not found any unused key');
           }
 
-          fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+          let fileContent = JSON.stringify(data, null, 2);
+          fileContent += '\n';
+
+          fs.writeFileSync(filePath, fileContent);
         } catch (error) {
           throw new Error(
             `error occurred while searching the keys: ${JSON.stringify(error)}`

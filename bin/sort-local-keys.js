@@ -42,7 +42,11 @@ module.exports = async function (options) {
             entryA[0].localeCompare(entryB[0])
           );
           const sortedData = Object.fromEntries(sortedEntries);
-          fs.writeFileSync(filePath, JSON.stringify(sortedData, null, 2));
+
+          let fileContent = JSON.stringify(sortedData, null, 2);
+          fileContent += '\n';
+
+          fs.writeFileSync(filePath, fileContent);
         } catch (sortError) {
           throw new Error(
             `error occurred while sorting the file "${filePath}": ${JSON.stringify(
