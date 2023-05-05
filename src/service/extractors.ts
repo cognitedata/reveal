@@ -23,7 +23,7 @@ export type ExtractorLink = {
   name: string;
 };
 
-export type ExtractorType = 'global' | 'unreleased';
+export type ExtractorType = 'global' | 'unreleased' | 'hosted';
 
 export type ExtractorBase = {
   imageUrl?: string;

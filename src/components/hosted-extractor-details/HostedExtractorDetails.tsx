@@ -1,11 +1,8 @@
 import { useState } from 'react';
 
-import { useParams } from 'react-router-dom';
-
 import { useTranslation } from 'common';
 import { DetailsHeader } from 'components/DetailsHeader';
 import { Layout } from 'components/Layout';
-import { useExtractorsList } from 'hooks/useExtractorsList';
 import {
   Button,
   Chip,
@@ -26,19 +23,17 @@ import Markdown from 'components/markdown';
 import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 import { trackUsage } from 'utils';
 import { CreateConnectionModal } from 'components/create-connection-modal/CreateConnectionModal';
+import { ExtractorWithReleases } from 'service/extractors';
 
-export const HostedExtractorDetails = (): JSX.Element => {
+type HostedExtractorDetailsProps = {
+  extractor: ExtractorWithReleases;
+};
+
+export const HostedExtractorDetails = ({
+  extractor,
+}: HostedExtractorDetailsProps): JSX.Element => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { hostedExtractorExternalId = '' } = useParams<{
-    hostedExtractorExternalId?: string;
-  }>();
-  const { data, status } = useExtractorsList();
-
-  const extractor = data?.find(
-    (extractor) => extractor.externalId === hostedExtractorExternalId
-  );
-
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
     latestRelease?.createdTime && formatDate(latestRelease?.createdTime);

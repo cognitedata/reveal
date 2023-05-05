@@ -80,6 +80,14 @@ const getExtractorList = async (
       });
   }
 
+  if (shouldShowHostedExtractors) {
+    extractorsWithReleases
+      .filter(({ type }) => type === 'hosted')
+      .forEach((extractor) => {
+        extractorsToShow.push(extractor);
+      });
+  }
+
   return extractorsToShow;
 };
 

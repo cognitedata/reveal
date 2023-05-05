@@ -26,6 +26,7 @@ import { ReleaseTag } from 'components/ReleaseTag';
 import { useSolutionsForExtractor } from 'hooks/useSolutions';
 import SolutionForExtractor from 'components/solution/SolutionForExtractor';
 import Markdown from 'components/markdown';
+import { HostedExtractorDetails } from 'components/hosted-extractor-details/HostedExtractorDetails';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
@@ -40,6 +41,14 @@ const ExtractorDetails = () => {
   );
 
   const { data: solutions } = useSolutionsForExtractor(extractorExternalId);
+
+  if (status === 'loading') {
+    return <Loader />;
+  }
+
+  if (extractor?.type === 'hosted') {
+    return <HostedExtractorDetails extractor={extractor} />;
+  }
 
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
@@ -65,10 +74,6 @@ const ExtractorDetails = () => {
 
   const genericLinks =
     extractor?.links?.filter((link) => link?.type === 'generic') ?? [];
-
-  if (status === 'loading') {
-    return <Loader />;
-  }
 
   return (
     <Layout>
@@ -357,6 +362,10 @@ const StyledBodyMuted = styled(Body).attrs({ level: 2 })`
 
 export const StyledLink = styled.a`
   color: ${Colors['text-icon--strong']};
+
+  :hover {
+    text-decoration: underline;
+  }
 `;
 
 export const StyledTagsContainer = styled.div`

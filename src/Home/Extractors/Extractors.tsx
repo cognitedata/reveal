@@ -43,14 +43,10 @@ const Extractors = () => {
   const { data: sourceSystems } = useSourceSystems();
 
   const extractors = useMemo(() => {
-    return extractorsRaw?.filter(
-      ({ externalId }) => externalId !== 'cognite-mqtt-extractor'
-    );
+    return extractorsRaw?.filter(({ type }) => type !== 'hosted');
   }, [extractorsRaw]);
   const hostedExtractors = useMemo(() => {
-    return extractorsRaw?.filter(
-      ({ externalId }) => externalId === 'cognite-mqtt-extractor'
-    );
+    return extractorsRaw?.filter(({ type }) => type === 'hosted');
   }, [extractorsRaw]);
 
   const [filteredExtractors, filteredHostedExtractors, filteredSourceSystems] =
