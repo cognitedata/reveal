@@ -986,7 +986,9 @@ export class Cognite3DViewer {
       return;
     }
 
-    const color = backgroundColor.color ?? this.renderer.getClearColor(new THREE.Color());
+    const srgbColor = backgroundColor.color?.clone().convertLinearToSRGB();
+
+    const color = srgbColor ?? this.renderer.getClearColor(new THREE.Color());
     const alpha = backgroundColor.alpha ?? this.renderer.getClearAlpha();
 
     this.renderer.setClearColor(color, alpha);

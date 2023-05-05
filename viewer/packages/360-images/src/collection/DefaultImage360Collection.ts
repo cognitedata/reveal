@@ -233,7 +233,7 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._defaultStyle;
   }
 
-  public setDefaultStyle(defaultStyle: Image360AnnotationAppearance): void {
+  public setDefaultAnnotationStyle(defaultStyle: Image360AnnotationAppearance): void {
     this._defaultStyle = defaultStyle;
     this.image360Entities.forEach(entity =>
       entity.getRevisions().forEach(revision => revision.setDefaultAppearance(defaultStyle))

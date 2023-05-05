@@ -824,7 +824,7 @@ export interface Image360Collection {
     // (undocumented)
     on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
-    setDefaultStyle(appearance: Image360AnnotationAppearance): void;
+    setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;
 }

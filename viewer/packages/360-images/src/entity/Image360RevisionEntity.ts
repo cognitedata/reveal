@@ -14,6 +14,8 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
+import { Box3, Vector3 } from 'three';
+import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
 
 export class Image360RevisionEntity implements Image360Revision {
@@ -60,14 +62,14 @@ export class Image360RevisionEntity implements Image360Revision {
       return undefined;
     }
 
-    for (const annotation of this._annotations) {
-      const intersections = raycaster.intersectObject(annotation.getObject());
-      if (intersections.length > 0) {
-        return annotation;
-      }
-    }
+    const intersectedAnnotations = this._annotations.filter(a => raycaster.intersectObject(a.getObject()).length > 0);
 
-    return undefined;
+    const smallestIntersectedBox = minBy(intersectedAnnotations, annotation => {
+      const boundSize = new Box3().setFromObject(annotation.getObject()).getSize(new Vector3());
+      return boundSize.x + boundSize.y + boundSize.z;
+    });
+
+    return smallestIntersectedBox;
   }
 
   /**
