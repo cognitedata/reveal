@@ -80,6 +80,10 @@ export class OverlayPointsObject extends Group {
   public setPoints(points: Vector3[], colors?: Color[]): void {
     if (colors && points.length !== colors?.length)
       throw new Error('Points positions and colors arrays must have the same length');
+    
+    if (points.length * 3 > this._positionBuffer.length) {
+      throw new Error('Points array length exceeds the maximum number of points');
+    }
 
     for (let index = 0; index < points.length; index++) {
       this._positionBuffer[index * 3 + 0] = points[index].x;
@@ -101,21 +105,6 @@ export class OverlayPointsObject extends Group {
 
     this._geometry.computeBoundingBox();
     this._geometry.computeBoundingSphere();
-  }
-
-  public addPoints(points: Vector3[]): void {
-    const lastDrawIndex = this._geometry.drawRange.count * 3;
-
-    if (lastDrawIndex + points.length * 3 > this._positionBuffer.length) return;
-
-    points.forEach((point, index) => {
-      this._positionBuffer[lastDrawIndex + index * 3 + 0] = point.x;
-      this._positionBuffer[lastDrawIndex + index * 3 + 1] = point.y;
-      this._positionBuffer[lastDrawIndex + index * 3 + 2] = point.z;
-    });
-    this._positionAttribute.updateRange = { offset: 0, count: lastDrawIndex + points.length * 3 };
-    this._positionAttribute.needsUpdate = true;
-    this._geometry.setDrawRange(0, lastDrawIndex + points.length);
   }
 
   public dispose(): void {

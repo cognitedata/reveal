@@ -11,10 +11,7 @@ export class Image360PointsObject extends Object3D {
 
   constructor(
     maxPoints: number,
-    materialParameters: Pick<
-      PointsMaterialParameters,
-      'spriteTexture' | 'minPixelSize' | 'maxPixelSize' | 'radius' | 'colorTint'
-    >
+    materialParameters: PointsMaterialParameters 
   ) {
     super();
 

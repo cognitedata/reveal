@@ -15,9 +15,9 @@ export type IconsOptions = {
 };
 
 export class IconCollection {
-  private readonly MIN_PIXEL_SIZE = 16;
-  private readonly DEFAULT_MAX_PIXEL_SIZE = 256;
-  private readonly MAX_PIXEL_SIZE: number;
+  private static readonly MinPixelSize = 16;
+  private static readonly DefaultMaxPixelSize = 256;
+  private readonly _maxPixelSize: number;
   private readonly _sceneHandler: SceneHandler;
   private readonly _sharedTexture: Texture;
   private readonly _hoverSprite: Sprite;
@@ -73,17 +73,17 @@ export class IconCollection {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     iconOptions?: IconsOptions
   ) {
-    this.MAX_PIXEL_SIZE = Math.min(
-      this.DEFAULT_MAX_PIXEL_SIZE,
-      iconOptions?.platformMaxPointsSize ?? this.DEFAULT_MAX_PIXEL_SIZE
+    this._maxPixelSize = Math.min(
+      IconCollection.DefaultMaxPixelSize,
+      iconOptions?.platformMaxPointsSize ?? IconCollection.DefaultMaxPixelSize
     );
 
     const sharedTexture = this.createOuterRingsTexture();
 
-    const iconsSprites = new Image360PointsObject(points.length * 2, {
+    const iconsSprites = new Image360PointsObject(points.length, {
       spriteTexture: sharedTexture,
-      minPixelSize: this.MIN_PIXEL_SIZE,
-      maxPixelSize: this.MAX_PIXEL_SIZE,
+      minPixelSize: IconCollection.MinPixelSize,
+      maxPixelSize: this._maxPixelSize,
       radius: this._iconRadius
     });
     iconsSprites.setPoints(points);
@@ -171,17 +171,13 @@ export class IconCollection {
   ): Overlay3DIcon[] {
     sceneHandler.addCustomObject(this._hoverSprite);
 
-    const icons = points.map(point => {
-      const icon = new Overlay3DIcon({
-        position: point,
-        minPixelSize: this.MIN_PIXEL_SIZE,
-        maxPixelSize: this.MAX_PIXEL_SIZE,
-        iconRadius: this._iconRadius,
-        hoverSprite: this._hoverSprite
-      });
-
-      return icon;
-    });
+    const icons = points.map(point => new Overlay3DIcon({
+      position: point,
+      minPixelSize: IconCollection.MinPixelSize,
+      maxPixelSize: this._maxPixelSize,
+      iconRadius: this._iconRadius,
+      hoverSprite: this._hoverSprite
+  }));
 
     const renderSize = new Vector2();
 
@@ -212,7 +208,7 @@ export class IconCollection {
 
   private createOuterRingsTexture(): CanvasTexture {
     const canvas = document.createElement('canvas');
-    const textureSize = this.MAX_PIXEL_SIZE;
+    const textureSize = this._maxPixelSize;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
@@ -244,7 +240,7 @@ export class IconCollection {
 
   private createHoverIconTexture(): CanvasTexture {
     const canvas = document.createElement('canvas');
-    const textureSize = this.MAX_PIXEL_SIZE;
+    const textureSize = this._maxPixelSize;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
