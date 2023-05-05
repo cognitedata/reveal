@@ -27,6 +27,10 @@ viewer/.yarn/*
 !/viewer/.yarn/releases
 !/viewer/.yarn/releases/*
 
+react-components/.yarn/*
+!/react-components/.yarn/releases
+!/react-components/.yarn/releases/*
+
 **/.env
 **/.cdf-env.json
 !**/.env.example
