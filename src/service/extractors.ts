@@ -1,4 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
+
 import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 
 export type Artifact = {
@@ -23,7 +24,7 @@ export type ExtractorLink = {
   name: string;
 };
 
-export type ExtractorType = 'global' | 'community' | 'unreleased';
+export type ExtractorType = 'global' | 'unreleased';
 
 export type ExtractorBase = {
   imageUrl?: string;
@@ -41,7 +42,7 @@ export type Extractor = ExtractorBase & {
   links?: ExtractorLink[];
 };
 
-type Items<T> = {
+export type Items<T> = {
   items: T[];
 };
 
@@ -56,42 +57,4 @@ type ExtractorDownload = {
 
 export const getDownloadUrl = async (artifact: Artifact) => {
   return (await sdk.get<ExtractorDownload>(artifact.link)).data.downloadUrl;
-};
-
-export const getExtractorsWithReleases = async () => {
-  const extractorsPromise = sdk
-    .get<Items<Extractor>>(
-      `/api/playground/projects/${sdk.project}/extractors`,
-      {
-        withCredentials: true,
-      }
-    )
-    .then((res) => res.data.items);
-  const releasesPromise = sdk
-    .get<Items<Release>>(
-      `/api/playground/projects/${sdk.project}/extractors/releases`,
-      {
-        withCredentials: true,
-      }
-    )
-    .then((res) => res.data.items);
-  const extractorMap: { [externalId: string]: ExtractorWithReleases } = {};
-  const [extractors, releases] = await Promise.all([
-    extractorsPromise,
-    releasesPromise,
-  ]);
-
-  extractors.forEach((extractor) => {
-    extractorMap[extractor.externalId] = {
-      ...extractor,
-      category: 'extractor',
-      releases: [],
-    };
-  });
-
-  releases.forEach((release) => {
-    extractorMap[release.externalId].releases.push(release);
-  });
-
-  return Object.values(extractorMap);
 };
