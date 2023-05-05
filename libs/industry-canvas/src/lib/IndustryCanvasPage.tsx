@@ -289,6 +289,14 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       undo.fn();
       return;
     }
+
+    if (event.key === 'Escape') {
+      unifiedViewerRef?.selectByIds({
+        containerIds: [],
+        annotationIds: [],
+      });
+      return;
+    }
   };
 
   return (
