@@ -2,10 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/api';
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger, DisposedDelegate, PointerEventDelegate, PointerEventData } from '@reveal/utilities';
 import * as THREE from 'three';
 import debounce from 'lodash/debounce';
 import { Overlay3DCollection, Overlay3DIcon } from '@reveal/3d-overlays';
+import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
 export type SmartOverlay = {
   text: string;
@@ -28,7 +29,7 @@ export type OverlayGroup = {
   id: OverlayGroupId;
 };
 
-export type OverlayToolEvent = 'hover' | 'click';
+export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
 export type OverlayEventHandler = (event: {
   targetOverlay: SmartOverlay;
@@ -37,7 +38,9 @@ export type OverlayEventHandler = (event: {
 
 export type SmartOverlayToolParameters = {
   /**
-   * Max point markers size in pixels. Default is 64.
+   * Max point markers size in pixels. Different platforms has limitations for this value.
+   * On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500. 
+   * Default is 64.
    */
   maxPointSize?: number;
   /**
@@ -46,7 +49,7 @@ export type SmartOverlayToolParameters = {
   defaultOverlayColor: THREE.Color;
 };
 
-export class SmartOverlayTool {
+export class SmartOverlayTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _labelIndexToLabelInfoMap = new Map<number, OverlayInfo>();
   private readonly _overlayPoints: Overlay3DCollection[] = [];
@@ -65,10 +68,13 @@ export class SmartOverlayTool {
 
   private readonly _events = {
     hover: new EventTrigger<OverlayEventHandler>(),
-    click: new EventTrigger<OverlayEventHandler>()
+    click: new EventTrigger<OverlayEventHandler>(),
+    disposed: new EventTrigger<DisposedDelegate>()
   };
 
   constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters) {
+    super();
+
     this._viewer = viewer;
     this._defaultOverlayColor = toolParameters?.defaultOverlayColor ?? this._defaultOverlayColor;
 
@@ -81,52 +87,9 @@ export class SmartOverlayTool {
     this._overlayPoints.push(this._singeOverlayCollection);
     viewer.addObject3D(this._singeOverlayCollection);
 
-    viewer.canvas.addEventListener(
-      'mousemove',
-      debounce((event: MouseEvent) => {
-        const { _textOverlay: textOverlay } = this;
+    viewer.canvas.addEventListener('mousemove', this.onMouseMove);
 
-        const intersection = this.intersectPointsMarkers(event);
-
-        if (intersection) {
-          const { intersectedOverlay } = intersection;
-
-          const targetOverlay: SmartOverlay = {
-            text: intersectedOverlay.text,
-            id: intersectedOverlay.id,
-            position: intersectedOverlay.position,
-            infoOverlay: textOverlay
-          };
-
-          this.positionTextOverlay(event);
-          textOverlay.innerText = targetOverlay.text;
-
-          this._events.hover.fire({ targetOverlay: targetOverlay, mousePosition: event });
-        } else {
-          textOverlay.style.opacity = '0';
-        }
-      }, 10)
-    );
-
-    viewer.on('click', event => {
-      const intersection = this.intersectPointsMarkers({ clientX: event.offsetX, clientY: event.offsetY });
-
-      if (intersection) {
-        const { intersectedOverlay } = intersection;
-
-        const targetOverlay: SmartOverlay = {
-          text: intersectedOverlay.text,
-          id: intersectedOverlay.id,
-          position: intersectedOverlay.position,
-          infoOverlay: this._textOverlay
-        };
-
-        this._events.click.fire({
-          targetOverlay: targetOverlay,
-          mousePosition: { clientX: event.offsetX, clientY: event.offsetY }
-        });
-      }
-    });
+    viewer.on('click', this.onMouseClick);
   }
 
   /**
@@ -259,24 +222,36 @@ export class SmartOverlayTool {
     this._singeOverlayCollection.removeAllOverlays();
 
     this._overlayPoints.forEach(points => {
+      if (points.uuid === this._singeOverlayCollection.uuid) return;
+
       this._viewer.removeObject3D(points);
       points.dispose();
     });
     this._overlayPoints.splice(0, this._overlayPoints.length);
+    this._overlayPoints.push(this._singeOverlayCollection);
 
     this._labelIndexToLabelInfoMap.clear();
   }
 
+  /**
+   * Subscribes to overlay events.
+   * @param event event to subscribe to.
+   * @param eventHandler 
+   */
   on(event: 'hover', eventHandler: OverlayEventHandler): void;
   on(event: 'click', eventHandler: OverlayEventHandler): void;
+  on(event: 'disposed', eventHandler: DisposedDelegate): void;
 
-  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler): void {
+  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler | DisposedDelegate): void {
     switch (event) {
       case 'hover':
         this._events.hover.subscribe(eventHandler);
         break;
       case 'click':
         this._events.click.subscribe(eventHandler);
+        break;
+      case 'disposed':
+        this._events.disposed.subscribe(eventHandler as DisposedDelegate);
         break;
       default:
         assertNever(event);
@@ -285,8 +260,9 @@ export class SmartOverlayTool {
 
   off(event: 'hover', eventHandler: OverlayEventHandler): void;
   off(event: 'click', eventHandler: OverlayEventHandler): void;
+  off(event: 'disposed', eventHandler: DisposedDelegate): void;
 
-  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler): void {
+  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler | DisposedDelegate): void {
     switch (event) {
       case 'hover':
         this._events.hover.unsubscribe(eventHandler);
@@ -294,8 +270,67 @@ export class SmartOverlayTool {
       case 'click':
         this._events.click.unsubscribe(eventHandler);
         break;
+      case 'disposed':
+        this._events.disposed.unsubscribe(eventHandler as DisposedDelegate);
+        break;
       default:
         assertNever(event);
+    }
+  }
+
+  dispose(): void {
+    this.clear();
+    this._viewer.domElement.removeEventListener('mousemove', this.onMouseMove);
+    this._viewer.off('click', this.onMouseClick);
+    this._events.disposed.fire();
+
+    this._events.hover.unsubscribeAll();
+    this._events.click.unsubscribeAll();
+
+    super.dispose();
+  }
+
+  private onMouseMove = (event: MouseEvent) => {
+    const { _textOverlay: textOverlay } = this;
+
+    const intersection = this.intersectPointsMarkers(event);
+
+    if (intersection) {
+      const { intersectedOverlay } = intersection;
+
+      const targetOverlay: SmartOverlay = {
+        text: intersectedOverlay.text,
+        id: intersectedOverlay.id,
+        position: intersectedOverlay.position,
+        infoOverlay: textOverlay
+      };
+
+      this.positionTextOverlay(event);
+      textOverlay.innerText = targetOverlay.text;
+
+      this._events.hover.fire({ targetOverlay: targetOverlay, mousePosition: event });
+    } else {
+      textOverlay.style.opacity = '0';
+    }
+  }
+
+  private onMouseClick = (event: PointerEventData) => {
+    const intersection = this.intersectPointsMarkers({ clientX: event.offsetX, clientY: event.offsetY });
+
+    if (intersection) {
+      const { intersectedOverlay } = intersection;
+
+      const targetOverlay: SmartOverlay = {
+        text: intersectedOverlay.text,
+        id: intersectedOverlay.id,
+        position: intersectedOverlay.position,
+        infoOverlay: this._textOverlay
+      };
+
+      this._events.click.fire({
+        targetOverlay: targetOverlay,
+        mousePosition: { clientX: event.offsetX, clientY: event.offsetY }
+      });
     }
   }
 
@@ -317,7 +352,7 @@ export class SmartOverlayTool {
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     _raycaster.setFromCamera(_temporaryVec.set(x, y), camera);
 
-    const intersection: [Overlay3DIcon, THREE.Vector3][] = [];
+    let intersection: [Overlay3DIcon, THREE.Vector3][] = [];
 
     for (const points of this._overlayPoints) {
       for (const icon of points.icons) {
@@ -335,7 +370,7 @@ export class SmartOverlayTool {
       }
     }
 
-    intersection.filter(([icon, _]) => icon.intersect(_raycaster.ray) !== null);
+    intersection = intersection.filter(([icon, _]) => icon.intersect(_raycaster.ray) !== null);
 
     intersection
       .map(([icon, intersection]) => [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon, THREE.Vector3])
@@ -395,7 +430,6 @@ export class SmartOverlayTool {
             transition: opacity 0.3s;
             opacity: 0;
             z-index: 10;
-            transition: top 0.1s, left 0.1s;
             `;
 
     return textOverlay;
