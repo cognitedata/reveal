@@ -38,9 +38,10 @@ export class CadNode extends Object3D {
 
   private _needsRedraw: boolean = false;
 
+  public readonly type = 'CadNode';
+
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
-    this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
