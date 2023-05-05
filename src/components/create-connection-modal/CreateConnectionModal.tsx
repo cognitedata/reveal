@@ -167,6 +167,7 @@ export const CreateConnectionModal = ({
           placeholder={t('form-port-placeholder')}
           status={errors.port ? 'critical' : undefined}
           statusText={errors.port}
+          type="number"
           value={values.port}
         />
         <InputExp
