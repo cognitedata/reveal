@@ -32,12 +32,12 @@ export class Image360UI {
       selectedEntity = entity;
     };
 
-    const onAnnotationClicked: Image360AnnotationHoveredDelegate = annotation => {
+    const onAnnotationClicked: Image360AnnotationHoveredDelegate = (annotation, _event, direction) => {
       if (this._lastAnnotation !== undefined) {
         this._lastAnnotation.setColor(undefined);
       }
 
-      console.log('Clicked annotation with data: ', annotation.annotation.data);
+      console.log('Clicked annotation with data: ', annotation.annotation.data, 'with direction ', direction);
       annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
       this._lastAnnotation = annotation;
     };
