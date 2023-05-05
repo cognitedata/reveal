@@ -790,20 +790,20 @@ export interface Image360 {
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
     setColor(color?: Color): void;
-    setVisibility(visible?: boolean): void;
+    setVisible(visible?: boolean): void;
 }
 
 // @public
 export type Image360AnnotationAppearance = {
     color?: Color;
-    visibility?: boolean;
+    visible?: boolean;
 };
 
 // @public
-export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation) => void;
+export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
 
 // @public
-export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation) => void;
+export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
 
 // @public
 export interface Image360Collection {
@@ -843,8 +843,8 @@ export type Image360Metadata = {
 
 // @public
 export interface Image360Revision {
-    annotations: Image360Annotation[];
     readonly date: Date | undefined;
+    getAnnotations(): Promise<Image360Annotation[]>;
 }
 
 // @public

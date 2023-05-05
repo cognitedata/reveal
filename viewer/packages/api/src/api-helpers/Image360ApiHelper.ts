@@ -147,6 +147,7 @@ export class Image360ApiHelper {
     }
 
     const point = this.getNormalizedOffset(event);
+    const direction = this._raycaster.ray.direction;
 
     this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
 
@@ -159,9 +160,9 @@ export class Image360ApiHelper {
     const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
 
     if (eventType === 'hover') {
-      collection.fireHoverEvent(annotation);
+      collection.fireHoverEvent(annotation, event, direction);
     } else if (eventType === 'click') {
-      collection.fireClickEvent(annotation);
+      collection.fireClickEvent(annotation, event, direction);
     }
   }
 
@@ -197,18 +198,21 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
+    if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
+      return;
+    }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
 
-    const fatalDownloadError = await this._image360Facade.preload(image360Entity, revisionToEnter, true).catch(e => {
-      return e;
-    });
-
-    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
+    try {
+      await this._image360Facade.preload(image360Entity, revisionToEnter, true);
+    } catch (error) {
+      if (this._interactionState.revisionSelectedForEntry === revisionToEnter) {
+        this._interactionState.revisionSelectedForEntry = undefined;
+      }
       return;
     }
 
-    if (fatalDownloadError) {
-      this._interactionState.revisionSelectedForEntry = undefined;
+    if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
       return;
     }
 
@@ -226,8 +230,6 @@ export class Image360ApiHelper {
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
     this._image360Facade.allHoverIconsVisibility = false;
-
-    revisionToEnter.annotations.forEach(annotation => annotation.setDefaultStyle(imageCollection.defaultStyle));
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).

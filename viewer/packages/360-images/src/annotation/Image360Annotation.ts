@@ -15,12 +15,12 @@ export interface Image360Annotation {
   readonly annotation: AnnotationModel;
 
   /**
-   * Set the display color of this annotation. Default: Color(1, 1, 0)
+   * Set the display color of this annotation. Default: Random, based on annotation label
    */
   setColor(color?: Color): void;
 
   /**
    * Set whether this annotation should be visible. Default: true
    */
-  setVisibility(visible?: boolean): void;
+  setVisible(visible?: boolean): void;
 }
