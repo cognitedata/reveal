@@ -129,7 +129,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
       clearAlpha: 1
     };
 
-    renderer.setClearColor(backgroundGuiData.clearColor);
+    renderer.setClearColor(new THREE.Color(backgroundGuiData.clearColor).convertLinearToSRGB());
     renderer.setClearAlpha(backgroundGuiData.clearAlpha);
     renderer.domElement.style.backgroundColor = backgroundGuiData.canvasColor;
 
@@ -137,13 +137,13 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     renderOptionsGUI.open();
 
     renderOptionsGUI.addColor(backgroundGuiData, 'clearColor').onChange(async () => {
-      renderer.setClearColor(backgroundGuiData.clearColor);
+      renderer.setClearColor(new THREE.Color(backgroundGuiData.clearColor).convertLinearToSRGB());
       renderer.setClearAlpha(backgroundGuiData.clearAlpha);
       this.render();
     });
 
     renderOptionsGUI.add(backgroundGuiData, 'clearAlpha', 0, 1).onChange(async () => {
-      renderer.setClearColor(backgroundGuiData.clearColor);
+      renderer.setClearColor(new THREE.Color(backgroundGuiData.clearColor).convertLinearToSRGB());
       renderer.setClearAlpha(backgroundGuiData.clearAlpha);
       this.render();
     });
@@ -185,7 +185,12 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
 
   private getGridFromBoundingBox(boundingBox: THREE.Box3): THREE.GridHelper {
     const gridSize = new THREE.Vector2(boundingBox.max.x - boundingBox.min.x, boundingBox.max.z - boundingBox.min.z);
-    const grid = new THREE.GridHelper(gridSize.x, 20); //THIS IS WRONG
+    const grid = new THREE.GridHelper(
+      gridSize.x,
+      20,
+      new THREE.Color('#444444').convertLinearToSRGB(),
+      new THREE.Color('#888888').convertLinearToSRGB()
+    ); //THIS IS WRONG
     grid.position.copy(boundingBox.getCenter(new THREE.Vector3()));
     grid.position.setY(boundingBox.min.y);
 
