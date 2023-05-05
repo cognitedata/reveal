@@ -775,7 +775,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.36.0
-    "@cognite/sdk": 8.1.0
+    "@cognite/sdk": 8.1.1
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
     "@types/dat.gui": 0.7.9
@@ -825,7 +825,7 @@ __metadata:
     lodash: 4.17.21
     loglevel: 1.8.1
     mixpanel-browser: 2.47.0
-    moq.ts: 10.0.2
+    moq.ts: 10.0.6
     nock: 13.3.1
     path-browserify: 1.0.1
     prettier: 2.8.8
@@ -841,7 +841,7 @@ __metadata:
     sparse-octree: 7.1.6
     stats.js: 0.17.0
     three: 0.152.2
-    three-stdlib: 2.21.8
+    three-stdlib: 2.21.10
     ts-jest: 29.1.0
     ts-loader: 9.4.2
     tsc-alias: 1.8.6
@@ -859,28 +859,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^4.8.3":
-  version: 4.8.3
-  resolution: "@cognite/sdk-core@npm:4.8.3"
+"@cognite/sdk-core@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "@cognite/sdk-core@npm:4.9.0"
   dependencies:
     cross-fetch: ^3.0.4
     is-buffer: ^2.0.5
     lodash: ^4.17.11
     query-string: ^5.1.1
     url: ^0.11.0
-  checksum: 186e3c08a2293b91f1d7c863f3838419cc7fb34e7bac0abecaed288ad302d952f052da813f4f9b1924fd098ad89cd92ff97c05978a95f8361ca46fc6fac02229
+  checksum: 257c627de952d8b6a1396c71f58c269d254d05648076072ab709708ba98495253062cb1299b113dc0fd9a40a228dddd9984e90b1ef2d2abb6aa926285cbe36ce
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:8.1.0":
-  version: 8.1.0
-  resolution: "@cognite/sdk@npm:8.1.0"
+"@cognite/sdk@npm:8.1.1":
+  version: 8.1.1
+  resolution: "@cognite/sdk@npm:8.1.1"
   dependencies:
-    "@cognite/sdk-core": ^4.8.3
+    "@cognite/sdk-core": ^4.9.0
     "@types/geojson": ^7946.0.8
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: 47afd9d5cae60195482b17d09d95eab81aaac0f8d339a32c278cefe64865b1a9c33bf71eed1fd5cba595ea89a489122f34b736360b2546d1575127ce2bd2c4f8
+  checksum: 6886fe2804f77e44332040f8447c7288259f61da9e659c7eeb685322426785d4fbf8ce892b5f8d81852d972ac03b25a4ddaeafe9f62c6ba70e6a7c36b5d392fd
   languageName: node
   linkType: hard
 
@@ -8792,12 +8792,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moq.ts@npm:10.0.2":
-  version: 10.0.2
-  resolution: "moq.ts@npm:10.0.2"
+"moq.ts@npm:10.0.6":
+  version: 10.0.6
+  resolution: "moq.ts@npm:10.0.6"
   dependencies:
     tslib: "*"
-  checksum: cd8aded8e98a5c2f0ce37566dc0a719fafb930ed5d98145267f886d8ab36bbfb9b2d65a88be506df7fd804a2c0407c71cdbb03d2064d1aef4c586c91552c66da
+  checksum: 94462c16c435c4e86d1eccc2960544cfdc35c4bc9c9791e4d9c8d74104cd0134ba766eb6f0881910cf403a5b16b8884cdbb59c9f4e143654077927f7525665e6
   languageName: node
   linkType: hard
 
@@ -11380,9 +11380,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.21.8":
-  version: 2.21.8
-  resolution: "three-stdlib@npm:2.21.8"
+"three-stdlib@npm:2.21.10":
+  version: 2.21.10
+  resolution: "three-stdlib@npm:2.21.10"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -11397,7 +11397,7 @@ resolve@~1.19.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: b83d1d72ce0249a69bdd11f005f06cd09a07e497867f5c539ea73cf941450cdccc11186f23f44278d2ac516244b3943d1f0e89e8406965d0bfb8427961c8133a
+  checksum: 3f26ab13a7dd700187cfc5e9c1cbd64cff7eb1465b45cfa5f7ff5296e054151212dbe14257b149b75775cef7060c8ea6b4a4620000c488cb448dcd9d48961ea9
   languageName: node
   linkType: hard
 

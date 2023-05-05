@@ -76,11 +76,11 @@
     "rxjs": "7.8.1",
     "skmeans": "0.11.3",
     "sparse-octree": "7.1.6",
-    "three-stdlib": "2.21.8"
+    "three-stdlib": "2.21.10"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.36.0",
-    "@cognite/sdk": "8.1.0",
+    "@cognite/sdk": "8.1.1",
     "@microsoft/api-extractor": "^7.33.6",
     "@types/dat.gui": "0.7.9",
     "@types/gl": "^6.0.2",
@@ -121,7 +121,7 @@
     "jest-image-snapshot": "6.1.0",
     "jest-puppeteer": "8.0.6",
     "jsdom": "21.1.1",
-    "moq.ts": "10.0.2",
+    "moq.ts": "10.0.6",
     "nock": "13.3.1",
     "prettier": "2.8.8",
     "process": "0.11.10",
