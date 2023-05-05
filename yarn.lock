@@ -2119,10 +2119,10 @@
     geojson "^0.5.0"
     lodash "^4.17.11"
 
-"@cognite/sdk@^7.19.0":
-  version "7.19.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.19.0.tgz#d6c1ec27c182e40fc064a835221ee3d1902ae59b"
-  integrity sha512-qnvmkdWu55ancUassrGbbwBsjfSY0auyR+vXqYn2EKwrYa5FyvraB8qlu9I11fRmfLGfFsuR2kEva8iIu/ra4A==
+"@cognite/sdk@^7.19.1":
+  version "7.19.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.19.1.tgz#9424286c508437eaa24125901e24971e04da809b"
+  integrity sha512-XlJbaLi/GTwuk9S4AkTdPhkUw+w8j3flcnqrEhtTS1eqI5AGdlKoyJ4TbZtedjeFxtfbPSC5O8uOzxEZQVpvgg==
   dependencies:
     "@cognite/sdk-core" "^4.8.2"
     "@types/geojson" "^7946.0.8"

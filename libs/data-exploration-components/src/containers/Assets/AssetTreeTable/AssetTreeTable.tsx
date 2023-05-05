@@ -2,10 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
-import {
-  useGetHiddenColumns,
-  usePrevious,
-} from '@data-exploration-components/hooks/CustomHooks';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks/CustomHooks';
 import {
   SelectableItemsProps,
   TableStateProps,
@@ -17,7 +14,7 @@ import {
   SubCellMatchingLabels,
   Table,
 } from '@data-exploration/components';
-import { useRootTree, useSearchTree, useRootPath } from './hooks';
+import { useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import {
   InternalAssetTreeData,
@@ -41,9 +38,7 @@ export const AssetTreeTable = ({
   onAssetClicked,
   onAssetSeeMoreClicked,
   selectedRows,
-  hierachyRootId,
   tableHeaders,
-  enableAdvancedFilters,
   scrollIntoViewRow,
   tableSubHeaders,
 }: {
@@ -54,7 +49,6 @@ export const AssetTreeTable = ({
   hierachyRootId?: number;
   disableScroll?: boolean;
   tableHeaders?: React.ReactElement;
-  enableAdvancedFilters?: boolean;
   selectedRows?: Record<string, boolean>;
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   tableSubHeaders?: React.ReactElement;
@@ -142,10 +136,7 @@ export const AssetTreeTable = ({
         Table.Columns.externalId(query),
         {
           id: 'childCount',
-          header:
-            enableAdvancedFilters || startFromRoot
-              ? 'Direct children'
-              : 'Results under asset',
+          header: startFromRoot ? 'Direct children' : 'Results under asset',
           accessorKey: 'aggregates',
           cell: ({ getValue }) => {
             return (
@@ -171,23 +162,6 @@ export const AssetTreeTable = ({
     [query, startFromRoot, metadataColumns]
   );
 
-  const previousRootExpandedKeys = usePrevious(rootExpandedKeys);
-
-  const { data: rootItems, isFetched: rootFetched } = useRootTree(
-    rootExpandedKeys,
-    {
-      enabled: startFromRoot,
-    }
-  );
-
-  const { data: oldRootItems } = useRootTree(previousRootExpandedKeys, {
-    enabled: startFromRoot,
-  });
-
-  const { data: searchItems } = useSearchTree(filter, query, {
-    enabled: !startFromRoot,
-  });
-
   const assetId = useMemo(() => {
     if (selectedRows && Object.keys(selectedRows).length === 1) {
       return Number(Object.keys(selectedRows)[0]);
@@ -212,66 +186,20 @@ export const AssetTreeTable = ({
   }, [rootPathFetched, rootPath, startFromRoot]);
 
   useEffect(() => {
-    if (searchItems) {
+    if (searchAssetTree) {
       // this automatically expands all rows
       setSearchExpanded(true);
     } else {
       setSearchExpanded({});
     }
-  }, [searchItems]);
-
-  // const isLoading = startFromRoot ? !rootFetched : !searchFetched;
-
-  const assets = useMemo(() => {
-    if (startFromRoot) {
-      if (rootFetched) {
-        if (hierachyRootId) {
-          return rootItems?.filter((item) => item.id === hierachyRootId);
-        }
-        return rootItems;
-      }
-      return oldRootItems;
-    }
-
-    const count = (
-      asset: Asset & {
-        children?: Asset[] | undefined;
-      }
-    ): number => {
-      if (asset.children) {
-        const childCount = asset.children.reduce(
-          (prev, el) => prev + count(el),
-          0
-        );
-        asset.aggregates = { childCount };
-        return childCount;
-      }
-      return 1;
-    };
-
-    return (searchItems || []).map((el: Asset) => ({
-      ...el,
-      aggregates: { childCount: count(el) },
-    }));
-  }, [
-    startFromRoot,
-    searchItems,
-    rootFetched,
-    oldRootItems,
-    hierachyRootId,
-    rootItems,
-  ]);
+  }, [searchAssetTree]);
 
   const getData = () => {
-    if (enableAdvancedFilters) {
-      if (startFromRoot) {
-        return rootAssetTree || [];
-      }
-
-      return searchAssetTree;
+    if (startFromRoot) {
+      return rootAssetTree || [];
     }
 
-    return assets as InternalAssetTreeData[];
+    return searchAssetTree;
   };
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);

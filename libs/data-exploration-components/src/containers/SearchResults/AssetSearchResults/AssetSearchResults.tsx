@@ -198,7 +198,6 @@ export const AssetSearchResults = ({
             onShowAllAssetsClick(asset);
           }}
           tableHeaders={currentView !== 'list' ? tableHeaders : undefined}
-          enableAdvancedFilters={enableAdvancedFilters}
           selectedRows={selectedRows}
           tableSubHeaders={
             <AppliedFiltersTags

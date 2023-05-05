@@ -3,6 +3,7 @@ import { Asset, ListResponse } from '@cognite/sdk';
 import { useCallback, useMemo } from 'react';
 import { QueryClient, useQueries, useQuery, useQueryClient } from 'react-query';
 import { queryKeys } from '../../../queryKeys';
+import { getAssetsList } from '../network';
 
 const getChildren = (
   parentAssetId: number,
@@ -45,12 +46,15 @@ export const useRootAssetsQuery = (
       return {
         queryKey: queryKeys.assetChildren(assetId),
         queryFn: () => {
-          return sdk.assets
-            .list({
-              filter: { parentIds: [assetId] },
-              aggregatedProperties: ['childCount'],
-            })
-            .then((res) => res.items);
+          return getAssetsList(sdk, {
+            filter: { parentIds: [assetId] },
+            aggregatedProperties: ['childCount'],
+            sort: [
+              {
+                property: ['name'],
+              },
+            ],
+          }).then((res) => res.items);
         },
       };
     })
