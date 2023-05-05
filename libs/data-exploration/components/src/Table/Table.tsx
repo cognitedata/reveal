@@ -21,7 +21,7 @@ import {
   RowSelectionState,
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
-import { ColumnToggle } from './components/ColumnToggle';
+import { ColumnToggle } from './components';
 import {
   DATA_EXPLORATION_COMPONENT,
   EMPTY_OBJECT,
@@ -53,9 +53,9 @@ import {
 
 import { Checkbox, Flex } from '@cognite/cogs.js';
 
-import { SortIcon } from './components/SortIcon';
+import { SortIcon } from './components';
 import { ResourceTableColumns } from './columns';
-import { LoadMore, LoadMoreProps } from './components/LoadMore';
+import { LoadMore, LoadMoreProps } from './components';
 import { EmptyState } from '../EmpyState';
 import noop from 'lodash/noop';
 

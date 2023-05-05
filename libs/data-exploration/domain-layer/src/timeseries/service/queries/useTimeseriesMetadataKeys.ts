@@ -14,7 +14,7 @@ export const useTimeseriesMetadataKeys = ({ query, enabled }: Props = {}) => {
   });
 
   const metadataKeys = useMemo(() => {
-    return data?.map(({ values }) => values);
+    return data?.map(({ values }) => values).flat();
   }, [data]);
 
   return {

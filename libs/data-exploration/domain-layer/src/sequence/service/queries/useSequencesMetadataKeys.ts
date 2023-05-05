@@ -13,7 +13,7 @@ export const useSequencesMetadataKeys = ({ query }: Props = {}) => {
   });
 
   const metadataKeys = useMemo(() => {
-    return data?.map(({ value }) => value);
+    return data?.map(({ values }) => values).flat();
   }, [data]);
 
   return {

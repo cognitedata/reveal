@@ -23,7 +23,7 @@ export const useDocumentsMetadataKeys = ({
   });
 
   const metadataKeys = useMemo(() => {
-    return data?.map(({ value }) => value);
+    return data?.map(({ values }) => values).flat();
   }, [data]);
 
   return { data: metadataKeys, ...rest };

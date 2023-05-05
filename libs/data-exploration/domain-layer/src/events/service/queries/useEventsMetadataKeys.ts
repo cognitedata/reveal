@@ -14,7 +14,7 @@ export const useEventsMetadataKeys = ({ query, enabled }: Props = {}) => {
   });
 
   const metadataKeys = useMemo(() => {
-    return data?.map(({ value }) => value);
+    return data?.map(({ values }) => values).flat();
   }, [data]);
 
   return {
