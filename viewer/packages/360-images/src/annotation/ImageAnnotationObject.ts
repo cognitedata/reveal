@@ -81,6 +81,7 @@ export class ImageAnnotationObject implements Image360Annotation {
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._mesh.matrix = transformation;
     this._mesh.matrixAutoUpdate = false;
+    this._mesh.updateWorldMatrix(false, false);
   }
 
   public getObject(): Object3D {
