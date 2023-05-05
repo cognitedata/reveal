@@ -167,6 +167,23 @@ To run them in the Cypress GUI:
 
 You can optionally run the e2e tests using the `Nx Console` VSCode extension by clicking to run `e2e` and then choosing the `platypus-e2e` project.
 
+### Deploy a NPM library
+
+You will have to update the `project.json` file for your library and add an executor which will be picked up by the Jenkins pipeline, consider that you will only get the package deployed when you change the version in the `package.json` file.
+
+Inside the project.json file you should add an entry like this in the targets object:
+
+```
+"npm": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "outputPath": "{--- outputPath. i.e: dist/libs/shared/myLib  ----}",
+        "commands": ["./scripts/npm.sh"]
+      }
+    },
+```
+
 ## Setup for M1 machines
 
 If you're on an Apple M1 machine, you need to do a bit of extra setup to get Cypress to run using Rosetta 2. You can follow [these instructions](https://www.cypress.io/blog/2021/01/20/running-cypress-on-the-apple-m1-silicon-arm-architecture-using-rosetta-2/) and then use the above commands from your terminal running Rosetta.
