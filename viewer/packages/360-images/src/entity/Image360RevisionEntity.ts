@@ -14,6 +14,7 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
+import { Image360AnnotationAppearance } from '../annotation/types';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;
@@ -22,6 +23,7 @@ export class Image360RevisionEntity implements Image360Revision {
   private _previewTextures: Image360Texture[];
   private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
+  private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private _annotations: ImageAnnotationObject[] | undefined = undefined;
 
@@ -45,8 +47,12 @@ export class Image360RevisionEntity implements Image360Revision {
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
   }
 
-  get annotations(): ImageAnnotationObject[] {
-    return this._annotations ?? [];
+  async getAnnotations(): Promise<ImageAnnotationObject[]> {
+    if (this._annotations !== undefined) {
+      return this._annotations;
+    }
+
+    return this.loadAndSetAnnotations();
   }
 
   intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
@@ -77,20 +83,13 @@ export class Image360RevisionEntity implements Image360Revision {
   public loadTextures(abortSignal?: AbortSignal): {
     lowResolutionCompleted: Promise<void>;
     fullResolutionCompleted: Promise<void>;
-    annotationsCompleted: Promise<void>;
   } {
     const lowResolutionCompleted = this.loadPreviewTextures(abortSignal);
     const fullResolutionCompleted = this.loadFullTextures(abortSignal);
 
     this._onFullResolutionCompleted = fullResolutionCompleted;
 
-    const annotationsCompleted = this.loadAnnotations();
-
-    return { lowResolutionCompleted, fullResolutionCompleted, annotationsCompleted: awaitAnnotationCompleted() };
-
-    async function awaitAnnotationCompleted(): Promise<void> {
-      await annotationsCompleted;
-    }
+    return { lowResolutionCompleted, fullResolutionCompleted };
   }
 
   private async loadPreviewTextures(abortSignal?: AbortSignal): Promise<void> {
@@ -115,11 +114,7 @@ export class Image360RevisionEntity implements Image360Revision {
     this._fullResolutionTextures = textures;
   }
 
-  private async loadAnnotations(): Promise<ImageAnnotationObject[]> {
-    if (this._annotations !== undefined) {
-      return this._annotations;
-    }
-
+  private async loadAndSetAnnotations(): Promise<ImageAnnotationObject[]> {
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
 
     const annotationObjects = annotationData
@@ -131,8 +126,18 @@ export class Image360RevisionEntity implements Image360Revision {
 
     this._image360VisualzationBox.setAnnotations(annotationObjects);
     this._annotations = annotationObjects;
+    this.propagateDefaultAppearanceToAnnotations();
 
     return annotationObjects;
+  }
+
+  public setDefaultAppearance(appearance: Image360AnnotationAppearance): void {
+    this._defaultAppearance = appearance;
+    this.propagateDefaultAppearanceToAnnotations();
+  }
+
+  private propagateDefaultAppearanceToAnnotations(): void {
+    this._annotations?.forEach(a => a.setDefaultStyle(this._defaultAppearance));
   }
 
   /**

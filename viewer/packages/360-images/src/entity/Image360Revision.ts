@@ -18,5 +18,5 @@ export interface Image360Revision {
   /**
    * The annotations associated with this revision
    */
-  annotations: Image360Annotation[];
+  getAnnotations(): Promise<Image360Annotation[]>;
 }

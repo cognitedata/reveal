@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger, PointerEventData } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
@@ -15,6 +15,7 @@ import {
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Vector3 } from 'three';
 
 type Image360Events = 'image360Entered' | 'image360Exited' | 'image360AnnotationHovered' | 'image360AnnotationClicked';
 
@@ -179,12 +180,20 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
-  public fireHoverEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationHovered.fire(annotationObject);
+  public fireHoverEvent(
+    annotationObject: ImageAnnotationObject,
+    pointerEvent: PointerEventData,
+    direction: Vector3
+  ): void {
+    this._events.annotationHovered.fire(annotationObject, pointerEvent, direction);
   }
 
-  public fireClickEvent(annotationObject: ImageAnnotationObject): void {
-    this._events.annotationClicked.fire(annotationObject);
+  public fireClickEvent(
+    annotationObject: ImageAnnotationObject,
+    pointerEvent: PointerEventData,
+    direction: Vector3
+  ): void {
+    this._events.annotationClicked.fire(annotationObject, pointerEvent, direction);
   }
 
   public setSelectedVisibility(visible: boolean): void {
@@ -223,9 +232,7 @@ export class DefaultImage360Collection implements Image360Collection {
   public setDefaultStyle(defaultStyle: Image360AnnotationAppearance): void {
     this._defaultStyle = defaultStyle;
     this.image360Entities.forEach(entity =>
-      entity
-        .getRevisions()
-        .forEach(revision => revision.annotations.forEach(annotation => annotation.setDefaultStyle(defaultStyle)))
+      entity.getRevisions().forEach(revision => revision.setDefaultAppearance(defaultStyle))
     );
   }
 }
