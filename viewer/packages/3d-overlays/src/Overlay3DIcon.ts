@@ -3,8 +3,7 @@
  */
 
 import { EventTrigger } from '@reveal/utilities';
-import * as THREE from 'three';
-import { PerspectiveCamera, Ray, Sphere, Vector3 } from 'three';
+import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4 } from 'three';
 import { clamp } from 'three/src/math/MathUtils';
 
 export type IconParameters = {
@@ -29,12 +28,13 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
   private readonly _iconRadius: number;
   private readonly _hoverSprite?: THREE.Sprite;
   private readonly _iconMetadata?: MetadataType;
+  private readonly _raycastBoundingSphere = new Sphere();
 
   private _adaptiveScale = 1;
   private _visible = true;
   private _culled = false;
   private _selected = false;
-  private readonly _ndcPosition = new THREE.Vector4();
+  private readonly _ndcPosition = new Vector4();
 
   private readonly _events = {
     selected: new EventTrigger<(value: boolean) => void>()
@@ -125,11 +125,14 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
   }
 
   public intersect(ray: Ray): Vector3 | null {
-    const sphere = new Sphere(this._position, this._adaptiveScale);
-    return ray.intersectSphere(sphere, new Vector3());
+    this._raycastBoundingSphere.set(this._position, this._adaptiveScale);
+
+    return ray.intersectSphere(this._raycastBoundingSphere, new Vector3());
   }
 
-  public dispose(): void {}
+  public dispose(): void {
+    this._events.selected.unsubscribeAll();
+  }
 
   private setupAdaptiveScaling(position: THREE.Vector3): SetAdaptiveScaleDelegate {
     return ({ camera, renderSize, domElement }) => {

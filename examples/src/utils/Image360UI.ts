@@ -14,15 +14,18 @@ export class Image360UI {
   private entities: Image360[] = [];
   private selectedEntity: Image360 | undefined;
   private _lastAnnotation: Image360Annotation | undefined = undefined;
+  private _collections: Image360Collection[] = [];
 
-  public collections: Image360Collection[] = [];
+  get collections(): Image360Collection[] {
+    return this._collections;
+  }
 
   private params = {
-    siteId: this.getSideIdFromUrl() ?? '',
-    add: this.add360ImageSet.bind(this),
+    siteId: getSiteIdFromUrl() ?? '',
+    add: () => this.add360ImageSet(),
     premultipliedRotation: false,
-    remove: this.removeAll360Images.bind(this),
-    saveToUrl: this.saveImage360SiteToUrl.bind(this)
+    remove: () => this.removeAll360Images(),
+    saveToUrl: () => this.saveImage360SiteToUrl()
   };
 
   private translation = {
@@ -54,7 +57,7 @@ export class Image360UI {
   };
 
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
-    const { params, imageRevisions, collections, selectedEntity } = this;
+    const { params, imageRevisions, _collections: collections, selectedEntity } = this;
     this.viewer = viewer;
     this.gui = gui;
 
@@ -100,8 +103,8 @@ export class Image360UI {
       .add(this.iconCulling, 'hideAll')
       .name('Hide all 360 images')
       .onChange(() => {
-        if (this.collections.length > 0) {
-          this.collections.forEach(p => p.setIconsVisibility(!this.iconCulling.hideAll));
+        if (this._collections.length > 0) {
+          this._collections.forEach(p => p.setIconsVisibility(!this.iconCulling.hideAll));
           this.viewer.requestRedraw();
         }
       });
@@ -141,7 +144,7 @@ export class Image360UI {
   }
 
   private async add360ImageSet() {
-    const { params, collections } = this;
+    const { params, _collections: collections } = this;
 
     if (params.siteId.length === 0) return;
 
@@ -163,7 +166,7 @@ export class Image360UI {
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => (this.selectedEntity = entity));
-    collection.on('image360AnnotationClicked', this.onAnnotationClicked.bind(this));
+    collection.on('image360AnnotationClicked', (annotation, event, direction) => this.onAnnotationClicked(annotation, event, direction));
     collections.push(collection);
     this.entities = this.entities.concat(collection.image360Entities);
 
@@ -171,8 +174,8 @@ export class Image360UI {
   }
 
   private async set360IconCullingRestrictions() {
-    if (this.collections.length > 0) {
-      this.collections.forEach(p => p.set360IconCullingRestrictions(this.iconCulling.radius, this.iconCulling.limit));
+    if (this._collections.length > 0) {
+      this._collections.forEach(p => p.set360IconCullingRestrictions(this.iconCulling.radius, this.iconCulling.limit));
       this.viewer.requestRedraw();
     }
   }
@@ -180,13 +183,7 @@ export class Image360UI {
   private async removeAll360Images() {
     await this.viewer.remove360Images(...this.entities);
     this.entities = [];
-    this.collections = [];
-  }
-
-  private getSideIdFromUrl() {
-    const url = new URL(window.location.href);
-    const siteId = url.searchParams.get('siteId');
-    return siteId;
+    this._collections = [];
   }
 
   private onAnnotationClicked(annotation: Image360Annotation, _event: PointerEventData, direction: Vector3): void {
@@ -207,4 +204,10 @@ export class Image360UI {
     url.searchParams.set('siteId', params.siteId);
     window.history.replaceState(null, document.title, url.toString());
   }
+}
+
+function getSiteIdFromUrl() {
+  const url = new URL(window.location.href);
+  const siteId = url.searchParams.get('siteId');
+  return siteId;
 }

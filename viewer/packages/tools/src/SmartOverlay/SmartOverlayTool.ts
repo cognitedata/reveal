@@ -2,9 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/api';
-import { assertNever, EventTrigger, DisposedDelegate, PointerEventDelegate, PointerEventData } from '@reveal/utilities';
+import { assertNever, EventTrigger, DisposedDelegate, PointerEventData } from '@reveal/utilities';
 import * as THREE from 'three';
-import debounce from 'lodash/debounce';
 import { Overlay3DCollection, Overlay3DIcon } from '@reveal/3d-overlays';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
@@ -63,7 +62,7 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
 
   private _isEnabled = true;
   private _isVisible = true;
-  private _textOverlayVisible: boolean = true;
+  private _textOverlayVisible = true;
   private _latestAddedPointIndex = 0;
 
   private readonly _events = {
