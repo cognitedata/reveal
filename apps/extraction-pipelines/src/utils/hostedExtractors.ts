@@ -5,10 +5,17 @@ const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
   'startup_error',
 ];
 
-const DAY_IN_MS = 1000 * 60 * 60 * 24;
+const MQTT_JOB_LOG_SUCCESS_TYPES: ReadMQTTJobLog['type'][] = ['ok'];
+
+const HOUR_IN_MS = 1000 * 60 * 60;
+const DAY_IN_MS = HOUR_IN_MS * 24;
 
 export const doesLogHaveErrorType = (log: ReadMQTTJobLog) => {
   return MQTT_JOB_LOG_ERROR_TYPES.includes(log.type);
+};
+
+export const doesLogHaveSuccessType = (log: ReadMQTTJobLog) => {
+  return MQTT_JOB_LOG_SUCCESS_TYPES.includes(log.type);
 };
 
 export const getErrorCountInLast30Days = (logs?: ReadMQTTJobLog[]): number => {
@@ -35,16 +42,21 @@ export type DailyLogAggregation = {
   logs: ReadMQTTJobLog[];
 };
 
-export const aggregateLogsInLast30Days = (
-  logs?: ReadMQTTJobLog[]
+export type AggregationInterval = 'hourly' | 'daily';
+
+export const aggregateLogs = (
+  logs: ReadMQTTJobLog[],
+  interval: AggregationInterval,
+  intervalCount: number
 ): DailyLogAggregation[] => {
   const now = new Date().getTime();
-  const before = now - DAY_IN_MS * 30;
-  const aggregations: DailyLogAggregation[] = Array(30)
+  const selectedInterval = interval === 'hourly' ? HOUR_IN_MS : DAY_IN_MS;
+  const before = now - selectedInterval * intervalCount;
+  const aggregations: DailyLogAggregation[] = Array(intervalCount)
     .fill(0)
     .map((_, index) => {
       return {
-        date: now - index * DAY_IN_MS,
+        date: now - index * selectedInterval,
         logs: [],
       };
     });
@@ -61,4 +73,24 @@ export const aggregateLogsInLast30Days = (
     });
 
   return aggregations;
+};
+
+export const aggregateLogsInLast30Days = (
+  logs?: ReadMQTTJobLog[]
+): DailyLogAggregation[] => {
+  if (!logs) {
+    return [];
+  }
+
+  return aggregateLogs(logs, 'daily', 30);
+};
+
+export const aggregateLogsInLast72Hours = (
+  logs?: ReadMQTTJobLog[]
+): DailyLogAggregation[] => {
+  if (!logs) {
+    return [];
+  }
+
+  return aggregateLogs(logs, 'hourly', 72);
 };
