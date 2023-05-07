@@ -19,16 +19,8 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const {
     nodes,
-    flow,
     isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
-    selectedNodeId,
-    selectedNodeComponent,
-    setSelectedNodeComponent,
-    selectedNodeDescription,
-    setSelectedNodeDescription,
-    selectedNodeItem,
-    setSelectedNodeItem,
     changeNodes,
     selectedObject,
     test,
@@ -96,15 +88,17 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   ];
 
   const itemCreateNewOption = () => {
-    switch (selectedNodeComponent) {
+    switch (selectedNodeData?.processType) {
       case 'transformation': {
         return (
           <Option
-            key={t('create-new-item', { item: selectedNodeComponent })}
-            value={t('create-new-item', { item: selectedNodeComponent })}
+            key={t('create-new-item', { item: selectedNodeData?.processType })}
+            value={t('create-new-item', {
+              item: selectedNodeData?.processType,
+            })}
           >
             <Link href={createLink('/transformations')} target="_blank">
-              {t('create-new-item', { item: selectedNodeComponent })}
+              {t('create-new-item', { item: selectedNodeData?.processType })}
             </Link>
           </Option>
         );
@@ -112,11 +106,13 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       case 'workflow': {
         return (
           <Option
-            key={t('create-new-item', { item: selectedNodeComponent })}
-            value={t('create-new-item', { item: selectedNodeComponent })}
+            key={t('create-new-item', { item: selectedNodeData?.processType })}
+            value={t('create-new-item', {
+              item: selectedNodeData?.processType,
+            })}
           >
             <Link href="./" target="_blank">
-              {t('create-new-item', { item: selectedNodeComponent })}
+              {t('create-new-item', { item: selectedNodeData?.processType })}
             </Link>
           </Option>
         );
@@ -124,11 +120,13 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       case 'function': {
         return (
           <Option
-            key={t('create-new-item', { item: selectedNodeComponent })}
-            value={t('create-new-item', { item: selectedNodeComponent })}
+            key={t('create-new-item', { item: selectedNodeData?.processType })}
+            value={t('create-new-item', {
+              item: selectedNodeData?.processType,
+            })}
           >
             <Link href={createLink('/functions')} target="_blank">
-              {t('create-new-item', { item: selectedNodeComponent })}
+              {t('create-new-item', { item: selectedNodeData?.processType })}
             </Link>
           </Option>
         );
@@ -136,11 +134,13 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       case 'webhook': {
         return (
           <Option
-            key={t('create-new-item', { item: selectedNodeComponent })}
-            value={t('create-new-item', { item: selectedNodeComponent })}
+            key={t('create-new-item', { item: selectedNodeData?.processType })}
+            value={t('create-new-item', {
+              item: selectedNodeData?.processType,
+            })}
           >
             <Body level={2}>
-              {t('create-new-item', { item: selectedNodeComponent })}
+              {t('create-new-item', { item: selectedNodeData?.processType })}
             </Body>
           </Option>
         );
@@ -149,7 +149,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   };
 
   const itemOptions = () => {
-    switch (selectedNodeComponent) {
+    switch (selectedNodeData?.processType) {
       case 'transformation': {
         return transformationList
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -208,20 +208,19 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     });
   };
 
-  console.log(nodes);
-
   const handleItemChange = (value: string) => {
     let newValue = value;
-    if (value === `Create new ${selectedNodeComponent}`) {
+    if (value === `Create new ${selectedNodeData?.processType}`) {
       newValue = '';
     }
     changeNodes((nodes) => {
-      const node = nodes.find((node) => node.id === selectedNodeId);
+      const node = nodes.find((node) => node.id === selectedObject);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processItem = newValue;
     });
-    setSelectedNodeItem(value);
   };
+
+  console.log(selectedNodeData?.processDescription);
 
   return (
     <StyledDrawer
@@ -251,7 +250,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
           {t('node-configuration-panel-component')}
         </Body>
         <Select
-          // value={selectedNodeComponent}
           value={selectedNodeData?.processType}
           onChange={handleComponentChange}
           style={{ width: 326 }}
@@ -272,7 +270,11 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         </Body>
         <Select
           placeholder={t('node-configuration-panel-item-placeholder')}
-          value={selectedNodeItem === '' ? undefined : selectedNodeItem}
+          value={
+            selectedNodeData?.processItem === ''
+              ? undefined
+              : selectedNodeData?.processItem
+          }
           onChange={handleItemChange}
           style={{ width: 326, flex: 1 }}
         >
@@ -284,15 +286,19 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         name="label"
         label={t('node-configuration-panel-label')}
         placeholder={t('node-configuration-panel-label-placeholder')}
-        value={selectedNodeDescription}
+        value={
+          selectedNodeData?.processDescription === '' ||
+          selectedNodeData?.processDescription === undefined
+            ? ''
+            : selectedNodeData?.processDescription
+        }
         onChange={(e) => {
           const value = e.target.value;
           changeNodes((nodes) => {
-            const node = nodes.find((node) => node.id === selectedNodeId);
+            const node = nodes.find((node) => node.id === selectedObject);
             const nodeData = node?.data as ProcessNodeData;
             nodeData.processDescription = value;
           });
-          setSelectedNodeDescription(value);
         }}
         variant="solid"
         style={{ width: 326 }}
