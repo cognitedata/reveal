@@ -111,8 +111,14 @@ export const FlowBuilder = (): JSX.Element => {
 
   const onNodesChange = (changes: NodeChange[]) => {
     const selectedNodeChange = changes.find((c) => c.type === 'select');
+    const selectedNodes = changes.filter((change) => {
+      return change.type === 'select' && change.selected;
+    });
+    // console.log('selectedNodeCHange', selectedNodeChange);
+    // console.log('selectedNodes', selectedNodes);
     if (selectedNodeChange) {
-      setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
+      // setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
+      setSelectedObject((selectedNodes[0] as NodeSelectionChange).id);
     }
     const amChanges = changes.filter((c) =>
       ['remove', 'position'].includes(c.type)

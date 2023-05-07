@@ -56,6 +56,7 @@ type FlowContextT = {
   setHistoryVisible: Dispatch<SetStateAction<boolean>>;
   previewHash?: string;
   setPreviewHash: Dispatch<SetStateAction<string | undefined>>;
+  test: CanvasNode | undefined;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -209,6 +210,15 @@ export const FlowContextProvider = ({
     }
   }, [isHistoryVisible]);
 
+  const test = useMemo(() => {
+    if (selectedObject) {
+      return flowState.canvas.nodes.find((node) => {
+        return node.id === selectedObject;
+      });
+    }
+    return flowState.canvas.nodes[0];
+  }, [flowState, selectedObject]);
+
   return (
     <WorkflowContext.Provider
       value={{
@@ -239,6 +249,7 @@ export const FlowContextProvider = ({
         previewHash,
         setPreviewHash,
         restoreWorkflow,
+        test,
       }}
     >
       {children}

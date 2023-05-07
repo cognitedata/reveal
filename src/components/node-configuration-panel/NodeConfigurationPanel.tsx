@@ -31,26 +31,24 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     setSelectedNodeItem,
     changeNodes,
     selectedObject,
+    test,
   } = useWorkflowBuilderContext();
 
-  const getSelectedNodeData = (selectedObject: string | undefined) => {
-    const selectedNode = nodes.find((node) => {
-      return node.id === selectedObject;
-    });
-    return selectedNode ? (selectedNode.data as ProcessNodeData) : undefined;
+  const getSelectedNodeData = (test: CanvasNode | undefined) => {
+    return test ? (test.data as ProcessNodeData) : undefined;
   };
 
-  const selectedNodeData = useMemo(
-    () => getSelectedNodeData(selectedObject),
-    [selectedObject]
-  );
+  const selectedNodeData = useMemo(() => getSelectedNodeData(test), [test]);
 
-  console.log(selectedObject);
-  console.log(selectedNodeData?.processType);
+  const selectedNodeProcessType = 'hi';
+  // console.log(selectedObject);
+  // console.log(selectedNodeData?.processType);
   // const test2 = useCallback(() => {
   //   const testing = getSelectedNodeData(selectedObject);
   //   const newComponent = testing?.processType;
-  //   setSelectedNodeComponent(newComponent);
+  //   if (newComponent) {
+  //     setSelectedNodeComponent(newComponent);
+  //   }
   // }, [setSelectedNodeComponent]);
 
   // const test = useCallback(
@@ -203,18 +201,18 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const handleComponentChange = (value: ProcessType) => {
     changeNodes((nodes) => {
-      const node = nodes.find((node) => node.id === selectedNodeId);
+      const node = nodes.find((node) => node.id === selectedObject);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processType = value;
       nodeData.processItem = '';
     });
-    setSelectedNodeComponent(value);
-    setSelectedNodeItem('');
   };
+
+  console.log(nodes);
 
   const handleItemChange = (value: string) => {
     let newValue = value;
-    if (value == `Create new ${selectedNodeComponent}`) {
+    if (value === `Create new ${selectedNodeComponent}`) {
       newValue = '';
     }
     changeNodes((nodes) => {
