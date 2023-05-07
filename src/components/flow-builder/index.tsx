@@ -57,10 +57,6 @@ export const FlowBuilder = (): JSX.Element => {
     setSelectedObject,
     selectedObject,
     setIsNodeConfigurationPanelOpen,
-    setSelectedNodeId,
-    setSelectedNodeComponent,
-    setSelectedNodeDescription,
-    setSelectedNodeItem,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -114,11 +110,9 @@ export const FlowBuilder = (): JSX.Element => {
     const selectedNodes = changes.filter((change) => {
       return change.type === 'select' && change.selected;
     });
-    // console.log('selectedNodeCHange', selectedNodeChange);
-    // console.log('selectedNodes', selectedNodes);
     if (selectedNodeChange) {
-      // setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
       setSelectedObject((selectedNodes[0] as NodeSelectionChange).id);
+      setIsNodeConfigurationPanelOpen(true);
     }
     const amChanges = changes.filter((c) =>
       ['remove', 'position'].includes(c.type)

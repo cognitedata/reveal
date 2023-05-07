@@ -56,7 +56,7 @@ type FlowContextT = {
   setHistoryVisible: Dispatch<SetStateAction<boolean>>;
   previewHash?: string;
   setPreviewHash: Dispatch<SetStateAction<string | undefined>>;
-  test: CanvasNode | undefined;
+  selectedObjectData: ProcessNodeData | undefined;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -85,12 +85,7 @@ export const FlowContextProvider = ({
   const flowRef = useRef(initialFlow);
   const [isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen] =
     useState(() => {
-      const nodesSelected = initialFlow.canvas.nodes.filter((node) => {
-        return node.selected;
-      });
-      const initialIsNodeConfigurationPanelOpen =
-        nodesSelected.length > 0 ? true : false;
-      return initialIsNodeConfigurationPanelOpen;
+      return selectedObject ? true : false;
     });
 
   const { data: userInfo } = useUserInfo();
@@ -210,13 +205,14 @@ export const FlowContextProvider = ({
     }
   }, [isHistoryVisible]);
 
-  const test = useMemo(() => {
+  const selectedObjectData = useMemo(() => {
     if (selectedObject) {
-      return flowState.canvas.nodes.find((node) => {
+      const node = flowState.canvas.nodes.find((node) => {
         return node.id === selectedObject;
       });
+      return node?.data as ProcessNodeData;
     }
-    return flowState.canvas.nodes[0];
+    return flowState.canvas.nodes[0].data as ProcessNodeData;
   }, [flowState, selectedObject]);
 
   return (
@@ -249,7 +245,7 @@ export const FlowContextProvider = ({
         previewHash,
         setPreviewHash,
         restoreWorkflow,
-        test,
+        selectedObjectData,
       }}
     >
       {children}
