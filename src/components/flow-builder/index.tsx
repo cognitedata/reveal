@@ -39,7 +39,6 @@ import {
   WorkflowBuilderNode,
   WorkflowBuilderNodeType,
   isProcessType,
-  ProcessNodeData,
 } from 'types';
 import { CustomEdge } from 'components/custom-edge';
 import { useUserInfo } from 'utils/user';

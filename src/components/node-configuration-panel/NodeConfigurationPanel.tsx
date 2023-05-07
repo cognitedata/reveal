@@ -10,7 +10,7 @@ import { useTransformationList } from 'hooks/transformation';
 import { useFlowList } from 'hooks/files';
 import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
-import { ProcessNodeData, ProcessType, CanvasNode } from 'types';
+import { ProcessNodeData, ProcessType } from 'types';
 
 const { Option } = Select;
 
@@ -25,23 +25,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     selectedObject,
     selectedObjectData,
   } = useWorkflowBuilderContext();
-
-  const selectedNodeProcessType = 'hi';
-  // console.log(selectedObject);
-  // console.log(selectedObjectData?.processType);
-  // const test2 = useCallback(() => {
-  //   const testing = getselectedObjectData(selectedObject);
-  //   const newComponent = testing?.processType;
-  //   if (newComponent) {
-  //     setSelectedNodeComponent(newComponent);
-  //   }
-  // }, [setSelectedNodeComponent]);
-
-  // const test = useCallback(
-  //   () => setIsNodeConfigurationPanelOpen(false),
-  //   [selectedObject]
-  // );
-  // console.log(test);
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
@@ -157,7 +140,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
           .sort((a, b) => a.name.localeCompare(b.name))
           .map(({ externalId, name }) => (
             <Option key={externalId} value={externalId}>
-              <Body level={2}>{name}</Body>
+              {name}
             </Option>
           ));
       }
@@ -167,7 +150,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
             .sort((a, b) => a.name.localeCompare(b.name))
             .map(({ externalId, name }) => (
               <Option key={externalId} value={externalId}>
-                <Body level={2}>{name}</Body>
+                {name}
               </Option>
             ));
         }
@@ -178,7 +161,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
             .sort((a, b) => a.name.localeCompare(b.name))
             .map(({ externalId, name }) => (
               <Option key={externalId} value={externalId}>
-                <Body level={2}>{name}</Body>
+                {name}
               </Option>
             ));
         }
@@ -194,7 +177,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
           .sort((a, b) => a.processType.localeCompare(b.processType))
           .map(({ processType }) => (
             <Option key={processType} value={processType}>
-              <Body level={2}>{processType}</Body>
+              {processType}
             </Option>
           ));
       }
@@ -221,8 +204,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       nodeData.processItem = newValue;
     });
   };
-
-  console.log(selectedObjectData?.processDescription);
 
   return (
     <StyledDrawer
