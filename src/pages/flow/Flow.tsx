@@ -41,6 +41,7 @@ function FlowContainer() {
   const {
     isComponentsPanelVisible,
     setIsComponentsPanelVisible,
+    isNodeConfigurationPanelOpen,
     isHistoryVisible,
     previewHash,
   } = useWorkflowBuilderContext();
@@ -60,7 +61,7 @@ function FlowContainer() {
         {previewHash && <PreviewFeedback />}
         {isHistoryVisible && <FloatingHistoryPanel />}
         <Canvas />
-        <NodeConfigurationPanel />
+        {isNodeConfigurationPanelOpen && <NodeConfigurationPanel />}
       </Content>
     </StyledFlowContainer>
   );

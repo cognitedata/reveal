@@ -1,7 +1,16 @@
-import { Flex, InputExp, Body, IconType, Icon, Link } from '@cognite/cogs.js';
+import {
+  Flex,
+  InputExp,
+  Body,
+  IconType,
+  Icon,
+  Link,
+  Title,
+  Button,
+} from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Drawer, Select } from 'antd';
+import { Select } from 'antd';
 import { useMemo } from 'react';
 
 import { useTranslation } from 'common';
@@ -11,6 +20,7 @@ import { useFlowList } from 'hooks/files';
 import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
 import { ProcessNodeData, ProcessType } from 'types';
+import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 
 const { Option } = Select;
 
@@ -19,7 +29,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const {
     nodes,
-    isNodeConfigurationPanelOpen,
     setIsNodeConfigurationPanelOpen,
     changeNodes,
     selectedObject,
@@ -32,10 +41,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { data: flowData } = useFlowList({ staleTime: 0 });
 
   const { data: functionsData } = useFunctions();
-
-  const onClose = () => {
-    setIsNodeConfigurationPanelOpen(false);
-  };
 
   const nodeOptions: {
     value: string;
@@ -206,32 +211,20 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   };
 
   return (
-    <StyledDrawer
-      title={t('node-configuration-panel-title')}
-      placement="right"
-      getContainer={false}
-      onClose={onClose}
-      open={isNodeConfigurationPanelOpen}
-      maskClosable={true}
-      mask={false}
-      destroyOnClose={true}
-      width="${FLOATING_COMPONENTS_PANEL_WIDTH}px"
-      headerStyle={{
-        padding: '12px',
-        border: 'none',
-      }}
-      bodyStyle={{
-        padding: '12px',
-        gap: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-      maskStyle={{ backgroundColor: 'transparent' }}
-    >
+    <FloatingPanel right>
+      <Flex alignItems="flex-start" justifyContent="space-between">
+        <Flex direction="column">
+          <Title level={6}>{t('node-configuration-panel-component')}</Title>
+        </Flex>
+        <Button
+          icon="CloseLarge"
+          onClick={() => {
+            setIsNodeConfigurationPanelOpen(false);
+          }}
+          type="ghost"
+        />
+      </Flex>
       <Flex direction="column">
-        <Body level={2} strong>
-          {t('node-configuration-panel-component')}
-        </Body>
         <Select
           value={selectedObjectData?.processType}
           onChange={handleComponentChange}
@@ -286,17 +279,9 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         variant="solid"
         style={{ width: 326 }}
       />
-    </StyledDrawer>
+    </FloatingPanel>
   );
 };
-
-const StyledDrawer = styled(Drawer)`
-  button.ant-drawer-close {
-    position: absolute;
-    right: 0px;
-    padding: 12px;
-  }
-`;
 
 const Container = styled(Flex).attrs({ alignItems: 'center', gap: 8 })`
   height: 100%;
