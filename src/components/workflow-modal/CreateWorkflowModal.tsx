@@ -1,22 +1,14 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Flex, Modal } from '@cognite/cogs.js';
+import { Flex, Modal, InputExp } from '@cognite/cogs.js';
 import { CANVAS_PATH, useTranslation } from 'common';
 import { useCreateFlow } from 'hooks/files';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import FormFieldInput from 'components/form-field-input';
 
 type Props = {
   showWorkflowModal: boolean;
   setShowWorkflowModal: Dispatch<SetStateAction<boolean>>;
 };
-
-// type WorkFlowModalTypes = {
-//   externalId: string;
-//   name: string;
-//   description: string;
-//   type: 'create' | 'update';
-// };
 
 export const WorkflowModal = ({
   showWorkflowModal,
@@ -80,22 +72,22 @@ export const WorkflowModal = ({
       visible={showWorkflowModal}
     >
       <Flex direction="column" gap={10}>
-        <FormFieldInput
-          title={t('name')}
+        <InputExp
+          label={t('name')}
           disabled={isCreateLoading}
           placeholder={t('enter-name')}
           value={name}
           onChange={handleNameChange}
         />
-        <FormFieldInput
-          title={t('external-id')}
+        <InputExp
+          label={t('external-id')}
           disabled={isCreateLoading}
           placeholder={t('enter-external-id')}
           value={externalId}
           onChange={handleidChange}
         />
-        <FormFieldInput
-          title={t('description')}
+        <InputExp
+          label={t('description')}
           disabled={isCreateLoading}
           placeholder={t('enter-description')}
           value={description}
