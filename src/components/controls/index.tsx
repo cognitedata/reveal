@@ -94,6 +94,7 @@ export const Controls = () => {
         handleZoomIn();
       },
       divider: true,
+      dividerDirection: 'vertical',
     },
     {
       icon: 'FullScreen',
@@ -101,7 +102,14 @@ export const Controls = () => {
     },
   ];
 
-  return <ToolBar buttons={buttons} />;
+  return (
+    <ToolBar
+      toolbarDirection="row"
+      buttons={buttons}
+      placement="topRight"
+      gap={4}
+    />
+  );
 };
 
 const ZoomPercentage = styled.div`
