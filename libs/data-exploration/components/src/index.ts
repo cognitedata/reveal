@@ -18,3 +18,4 @@ export * from './RootAsset';
 export * from './EmpyState';
 export * from './DragDropContainer';
 export * from './Graphics';
+export * from './Drawer';
