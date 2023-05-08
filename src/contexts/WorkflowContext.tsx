@@ -42,14 +42,6 @@ type FlowContextT = {
   restoreWorkflow: (heads: Automerge.Heads) => void;
   nodes: CanvasNodes;
   edges: CanvasEdges;
-  selectedNodeId: CanvasNode['id'];
-  setSelectedNodeId: Dispatch<SetStateAction<CanvasNode['id']>>;
-  selectedNodeComponent?: ProcessType;
-  setSelectedNodeComponent: Dispatch<SetStateAction<ProcessType>>;
-  selectedNodeDescription: string;
-  setSelectedNodeDescription: Dispatch<SetStateAction<string>>;
-  selectedNodeItem: string;
-  setSelectedNodeItem: Dispatch<SetStateAction<string>>;
   selectedObject?: string;
   setSelectedObject: Dispatch<SetStateAction<string | undefined>>;
   isHistoryVisible: boolean;
@@ -182,23 +174,6 @@ export const FlowContextProvider = ({
     }
   }, [data]);
 
-  const [selectedNodeId, setSelectedNodeId] = useState(
-    initialFlow.canvas.nodes[0].id
-  );
-  const [selectedNodeComponent, setSelectedNodeComponent] = useState(() => {
-    const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
-    return nodeData.processType;
-  });
-
-  const [selectedNodeDescription, setSelectedNodeDescription] = useState(() => {
-    const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
-    return nodeData.processDescription as string;
-  });
-  const [selectedNodeItem, setSelectedNodeItem] = useState(() => {
-    const nodeData = initialFlow.canvas.nodes[0].data as ProcessNodeData;
-    return nodeData.processItem as string;
-  });
-
   useEffect(() => {
     if (!isHistoryVisible) {
       setPreviewHash(undefined);
@@ -230,14 +205,6 @@ export const FlowContextProvider = ({
         changeEdges,
         nodes: flowState.canvas.nodes,
         edges: flowState.canvas.edges,
-        selectedNodeId,
-        setSelectedNodeId,
-        selectedNodeComponent,
-        setSelectedNodeComponent,
-        selectedNodeDescription,
-        setSelectedNodeDescription,
-        selectedNodeItem,
-        setSelectedNodeItem,
         selectedObject,
         setSelectedObject,
         isHistoryVisible,
