@@ -12,7 +12,7 @@ import { SimulationLinkDatum } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
-import { getRelationLinkId, getRelationshipsForData } from './utils';
+import { getNodeId, getRelationLinkId, getRelationshipsForData } from './utils';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
@@ -21,7 +21,12 @@ import { RelationNode } from './RelationNode';
 const getColor = (key: string) => uniqolor(key);
 
 export const RelationViewer = <
-  T extends { externalId: string; __typename: string }
+  T extends {
+    externalId: string;
+    id: string;
+    __typename: string;
+    space: string;
+  }
 >({
   initialNodes,
   initialEdges,
@@ -36,7 +41,9 @@ export const RelationViewer = <
 }) => {
   const { track } = useMixpanel();
   const [isLoading, setLoading] = useState(true);
-  const [nodes, setNodes] = useState(new Map());
+  const [nodes, setNodes] = useState(
+    new Map<string, T & { id: string; isSelected?: boolean }>()
+  );
   const [links, setLinks] = useState(new Map());
   const [_, setSelectedItem] = useState<Map<string, string[]>>(new Map());
   const [selectedFields, setSelectedField] = useState<{
@@ -61,11 +68,11 @@ export const RelationViewer = <
     space
   );
   const onClick = useCallback(
-    (node: T & { __typename?: string; x?: number; y?: number }) => {
+    (node: T & { __typename: string; id: string; x?: number; y?: number }) => {
       setSelectedItem((currentSelectedSet) => {
         const newSelectedItems = new Map(currentSelectedSet);
         // try and delete, if return a list of ids, it means it existed
-        const externalIdsToDelete = newSelectedItems.get(node.externalId);
+        const externalIdsToDelete = newSelectedItems.get(node.id);
 
         // at least 1 item needs to be selected
         if (newSelectedItems.size === 1 && externalIdsToDelete) {
@@ -78,7 +85,7 @@ export const RelationViewer = <
             getRelationshipsForData({
               dataModelTypeDefs,
               externalId: node.externalId,
-              space,
+              space: node.space,
               dataModelExternalId,
               version: selectedDataModelVersion.version,
               typeName: clickedTypeName,
@@ -90,7 +97,10 @@ export const RelationViewer = <
                 itemType?.fields.filter(
                   (el) => el.type.custom || el.type.name === 'TimeSeries'
                 ) || [];
-              const newNodes = new Map();
+              const newNodes = new Map<
+                string,
+                T & { id: string; isSelected?: boolean }
+              >();
               const newLinks = new Map();
               for (const field of fields) {
                 (field.type.list
@@ -100,26 +110,28 @@ export const RelationViewer = <
                   if (!el) {
                     return;
                   }
-                  newNodes.set(el.externalId, {
+                  const id = getNodeId(el);
+                  newNodes.set(id, {
                     ...el,
+                    id,
                     initialX: node.x,
                     initialY: node.y,
                   });
                   const linkId = getRelationLinkId(
                     `${itemType?.name}.${field.name}`,
-                    node.externalId,
-                    el.externalId
+                    node.id,
+                    id
                   );
                   newLinks.set(linkId, {
                     id: linkId,
-                    source: node.externalId,
-                    target: el.externalId,
+                    source: node.id,
+                    target: id,
                     type: `${clickedTypeName}.${field.name}`,
                   });
                 });
               }
               // update selected items with the new edges
-              newSelectedItems.set(node.externalId, [...newLinks.keys()]);
+              newSelectedItems.set(getNodeId(node), [...newLinks.keys()]);
 
               const types = new Set(
                 [...newNodes.values()].map((it) => it.__typename)
@@ -129,7 +141,10 @@ export const RelationViewer = <
               setSelectedField((currValue) => {
                 // update the nodes and edges
                 setNodes((currNodes) => {
-                  currNodes.set(node.externalId, { ...node, isSelected: true });
+                  currNodes.set(node.id, {
+                    ...node,
+                    isSelected: true,
+                  });
                   setLinks((currLinks) => new Map([...newLinks, ...currLinks]));
                   return new Map([...newNodes, ...currNodes]);
                 });
@@ -157,7 +172,7 @@ export const RelationViewer = <
         } else {
           // unchecking - remove links and nodes linked to id
           // update selected items
-          newSelectedItems.delete(node.externalId);
+          newSelectedItems.delete(node.id);
 
           // update nodes and edges
           setLinks((currLinks) => {
@@ -172,7 +187,7 @@ export const RelationViewer = <
                 nodesToDelete.delete(link.target);
               }
               const newNodesList = new Map(currNodes);
-              newNodesList.set(node.externalId, { ...node, isSelected: false });
+              newNodesList.set(node.id, { ...node, isSelected: false });
               for (const key of nodesToDelete) {
                 newNodesList.delete(key);
               }
@@ -199,12 +214,7 @@ export const RelationViewer = <
         return newSelectedItems;
       });
     },
-    [
-      dataModelExternalId,
-      dataModelTypeDefs,
-      selectedDataModelVersion.version,
-      space,
-    ]
+    [dataModelExternalId, dataModelTypeDefs, selectedDataModelVersion.version]
   );
 
   useEffect(() => {
@@ -212,10 +222,16 @@ export const RelationViewer = <
     if (
       initialEdges.length === 0 &&
       initialNodes.length === 1 &&
-      nodes.size === 1 &&
-      !nodes.get(initialNodes[0].externalId).isSelected
+      nodes.size === 1
     ) {
-      onClick({ ...initialNodes[0], fx: 0, fy: 0 });
+      const node = [...nodes.values()][0];
+      if (node && !node.isSelected) {
+        onClick({
+          ...node,
+          fx: 0,
+          fy: 0,
+        });
+      }
     }
   }, [initialEdges, nodes, onClick, initialNodes]);
 
@@ -224,9 +240,9 @@ export const RelationViewer = <
       new Map(
         initialNodes.map((el, i) => {
           if (i === 0) {
-            return [el.externalId, { fx: 0, fy: 0, ...el }];
+            return [el.id, { fx: 0, fy: 0, ...el }];
           }
-          return [el.externalId, el];
+          return [el.id, { ...el }];
         })
       )
     );
@@ -234,15 +250,15 @@ export const RelationViewer = <
   }, [initialEdges, initialNodes]);
 
   const renderNode = useCallback(
-    (node: T & { isSelected?: boolean }) => (
+    (node: T & { isSelected?: boolean; id: string }) => (
       <RelationNode
-        key={node.externalId}
+        key={node.id}
         node={node}
         onClick={(n) => {
           onClick(n);
 
           track('Graph.Expand', {
-            node: n.externalId,
+            node: getNodeId(n),
           });
         }}
         isSelected={node.isSelected}
@@ -308,20 +324,19 @@ export const RelationViewer = <
           node.isSelected ||
           // include nodes that are in the 'initialNodes' array
           initialNodes.some(
-            (initialNode) => initialNode.externalId === node.externalId
+            (initialNode) => getNodeId(initialNode) === node.id
           ) ||
           // include nodes that are connected to other visible nodes
           (disabledFields.length === 0
             ? true
             : visibleLinks.some(
                 (link) =>
-                  link.source === node.externalId ||
-                  link.target === node.externalId
+                  link.source === getNodeId(node) ||
+                  link.target === getNodeId(node)
               ))
       )
       .map((el) => ({
         ...el,
-        id: el.externalId,
         title: el.externalId,
       }));
   }, [nodes, disabledFields.length, initialNodes, visibleLinks]);

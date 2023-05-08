@@ -37,6 +37,7 @@ export const getRelationshipsForData = async ({
           items {
             __typename
             externalId
+            space
             ${fields
               .map((field) => {
                 const subFields = (
@@ -59,6 +60,7 @@ export const getRelationshipsForData = async ({
                     items { 
                       __typename
                       externalId
+                      space
                       ${subFields}
                     }
                   }`;
@@ -77,6 +79,7 @@ export const getRelationshipsForData = async ({
                     return `${field.name} { 
                       __typename
                       externalId
+                      space
                       ${subFields}
                     }`;
                 }
@@ -102,3 +105,9 @@ export const getRelationLinkId = (
 ) => {
   return `${startNode}-${type}-${endNode}`;
 };
+
+export const getNodeId = (node: {
+  externalId: string;
+  __typename: string;
+  space: string;
+}) => `${node.space}:${node.__typename}:${node.externalId}`;

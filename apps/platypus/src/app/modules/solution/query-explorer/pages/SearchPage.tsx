@@ -23,11 +23,15 @@ import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor
 import { noop } from 'lodash';
 import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
 import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
-import { getRelationLinkId } from '../../data-management/components/RelationViewer/utils';
+import {
+  getNodeId,
+  getRelationLinkId,
+} from '../../data-management/components/RelationViewer/utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import { fetchGptAutoQuery } from '@platypus-app/utils/gpt-query';
 import sdk from '@cognite/cdf-sdk-singleton';
 import zIndex from '@platypus-app/utils/zIndex';
+import { augmentQueryWithRequiredFields } from './util';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
@@ -80,7 +84,12 @@ export const SearchPage = ({
         searchText,
         query: graphQLQuery,
       });
-      setGraphQLQuery(query);
+
+      const augmentedQuery = augmentQueryWithRequiredFields(
+        query,
+        dataModelTypeDefs
+      );
+      setGraphQLQuery(augmentedQuery);
     }
     generateQuery();
   };
@@ -137,7 +146,7 @@ export const SearchPage = ({
   const { nodes, edges } = useMemo(() => {
     const newNodes = new Map<
       string,
-      { externalId: string; __typename: string }
+      { externalId: string; id: string; __typename: string; space: string }
     >();
     const newEdges = new Map<
       string,
@@ -337,9 +346,8 @@ const renderExpandable = (text: string) => {
     </Flex>
   );
 };
-
 const recurseAndCreateNodesAndEdges = <
-  T extends { externalId: string; __typename: string }
+  T extends { externalId: string; __typename: string; space: string }
 >(
   dataModelTypeDefs: DataModelTypeDefs,
   tableData: (T & any)[],
@@ -354,7 +362,9 @@ const recurseAndCreateNodesAndEdges = <
       return;
     }
 
-    nodes.set(el.externalId, el);
+    const id = getNodeId(el);
+
+    nodes.set(id, { ...el, id });
 
     const currentType = dataModelTypeDefs.types.find(
       (type) => type.name === el.__typename
@@ -376,15 +386,16 @@ const recurseAndCreateNodesAndEdges = <
           : [el[field.field]];
         // add a link for each relation
         for (const relation of relations) {
+          const relationNodeId = getNodeId(relation);
           const linkId = getRelationLinkId(
             `${currentType?.name}.${field.field}`,
-            el.externalId,
-            relation.externalId
+            id,
+            relationNodeId
           );
           edges.set(linkId, {
             id: linkId,
-            source: el.externalId,
-            target: relation.externalId,
+            source: id,
+            target: relationNodeId,
             type: `${currentType?.name}.${field.field}`,
           });
         }
