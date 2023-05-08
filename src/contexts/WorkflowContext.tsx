@@ -62,7 +62,9 @@ export const FlowContextProvider = ({
   initialFlow,
 }: FlowContextProviderProps) => {
   const sdk = useSDK();
-  const { data: token } = useQuery(['token'], getToken);
+  const { data: token } = useQuery(['token'], getToken, {
+    refetchInterval: 60000,
+  });
   const [selectedObject, setSelectedObject] = useState<string | undefined>();
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
