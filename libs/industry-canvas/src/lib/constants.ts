@@ -21,7 +21,7 @@ export const PERCENTAGE_VALUES = {
   '400%': 4.0,
 } as const;
 
-export const ZOOM_TO_FIT_MARGIN = 0.01;
+export const ZOOM_TO_FIT_MARGIN = 0.07;
 
 export const FONT_SIZE = {
   '8px': '8px',
@@ -39,3 +39,7 @@ export const LINE_STROKE_WIDTH = {
   MEDIUM: 6,
   LARGE: 10,
 };
+
+// TODO: These timeouts can be removed when we implement the appropriate event in UFV: https://cognitedata.atlassian.net/browse/UFV-587
+export const SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS = 100;
+export const SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS = 100;

@@ -24,7 +24,9 @@ export const convertFilterToDataType = (
     return itemValue.toString().toLowerCase() === 'true';
   }
 
-  if (['Int', 'Int64', 'Float', 'Float64', 'Float32'].includes(dataType)) {
+  if (
+    ['Int', 'Int32', 'Int64', 'Float', 'Float64', 'Float32'].includes(dataType)
+  ) {
     return +itemValue.toString().trim();
   }
 

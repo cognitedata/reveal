@@ -30,7 +30,8 @@ export const ChildOptionsMenu = ({
   useCustomMetadataValuesQuery,
   enableSorting,
 }: ChildOptionsMenuProps) => {
-  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
+  const [query, setQuery] = useDebouncedState<string>('');
+  const [totalOptionCount, setTotalOptionCount] = React.useState<number>(0);
 
   const isCustomOptions = customOptions === undefined;
 
@@ -46,6 +47,12 @@ export const ChildOptionsMenu = ({
 
     return data?.options || [];
   }, [isCustomOptions, data?.options, customOptions]);
+
+  React.useEffect(() => {
+    if (query === '') {
+      setTotalOptionCount(options.length);
+    }
+  }, [query, options.length]);
 
   // if (!options || isEmpty(options)) {
   //   return null;
@@ -79,9 +86,10 @@ export const ChildOptionsMenu = ({
       onSearchInputChange={(newValue) => setQuery(newValue)}
       onChange={(childOptionsSelection) => {
         const selectedOptions = Object.keys(childOptionsSelection);
+
         handleChildOptionChange(
           selectedOptions,
-          selectedOptions.length === options.length
+          selectedOptions.length === totalOptionCount
         );
       }}
       enableSorting={enableSorting}

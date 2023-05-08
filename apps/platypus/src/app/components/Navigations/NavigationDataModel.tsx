@@ -214,7 +214,7 @@ export const NavigationDataModel = () => {
           }
         >
           <NotificationDot>
-            <Button icon="EllipsisVertical" />
+            <Button icon="EllipsisVertical" aria-label="Overflow Menu" />
           </NotificationDot>
         </Dropdown>
       </StyledTopBarRight>
@@ -295,9 +295,11 @@ export const NavigationDataModel = () => {
       )}
       {showFeatureToggle && (
         <FeaturePreview
-          onRequestClose={() => {
+          onRequestClose={(hasChanged) => {
             setShowFeatureToggle(false);
-            window.location.reload();
+            if (hasChanged) {
+              window.location.reload();
+            }
           }}
         />
       )}

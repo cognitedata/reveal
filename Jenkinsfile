@@ -8,6 +8,14 @@ static final String[] APPLICATIONS = [
   'coding-conventions',
 ]
 
+/* 
+  This defines which NPM libraries will be deployed, to trigger a deployment increment
+  the version in the package.json file of your package. 
+*/
+static final Map<String, String> NPM_PACKAGES = [
+  'shared-plotting-components': "dist/libs/shared/plotting-components"
+]
+
 // This is the Firebase site mapping.
 // See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
@@ -137,6 +145,60 @@ def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, 
   return []
 }
 
+def getAffectedLibs(boolean isMaster = false){
+  if(!isMaster){
+    return [];
+  }
+
+  affected = sh(
+    script: "./node_modules/.bin/nx print-affected --type=lib --base=HEAD~1 --select=projects",
+    returnStdout: true
+  );
+
+  print "[AFFECTED:NX] Affected libraries: ${affected}";
+
+  return affected.split(",");
+}
+
+
+def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, boolean isMaster) {
+  if(NPM_PACKAGES[packageName] == null || !isMaster){
+    return false;
+  }
+
+  def packageJson = "${NPM_PACKAGES[packageName]}/package.json";
+
+  def packageJsonString = sh(
+    script: "cat ${packageJson}",
+    returnStdout: true
+  );
+
+  def packageDetails = readJSON text: packageJsonString;
+  print(packageDetails);
+
+  def npmPackageInfo = "npm view ${packageDetails.name} version";
+
+  def packageExistsStatus = sh(
+    script: npmPackageInfo,
+    returnStatus: true
+  );
+
+  if(packageExistsStatus != 0){
+    // Package does not exist in our NPM org, assuming first time deployment
+    return true;
+  }
+
+  def npmVersion = sh(
+    script: npmPackageInfo,
+    returnStdout: true
+  ) as int;
+
+  def packageVersion = packageDetails.version as int;
+
+  return packageVersion > npmVersion;
+}
+
+
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
@@ -220,6 +282,28 @@ pods {
       stage('Get affected projects') {
         container('apphosting') {
           projects = getAffectedProjects(isPullRequest, isMaster, isRelease, APPLICATIONS)
+        }
+      }
+
+      stage('Publish NPM') {
+        container('apphosting') {
+          if (!isMaster) {
+            print 'NPM package publish only runs in master branch'
+            return
+          }
+          def runAffectedTarget = sh(script: "./node_modules/.bin/nx affected --target=npm --base=HEAD~1", returnStdout: true);
+          print(runAffectedTarget)
+          def affectedLibraries = getAffectedLibs(isMaster);
+          print(affectedLibraries);
+          sh(script: "cp /npm-credentials/npm-public-credentials.txt ~/.npmrc");
+          sh(script: "npm whoami");
+          for (lib in affectedLibraries) {
+            if(shouldDeployPackage(lib, NPM_PACKAGES, isMaster)){
+              def libBuildPath = NPM_PACKAGES[lib];
+              sh(script: "npm publish ${libBuildPath}");
+            }
+
+          }
         }
       }
       

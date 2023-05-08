@@ -11,7 +11,9 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
+import { useDataQualityFeatureFlag } from '@platypus-app/flags';
 import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
+import { useGPTSearch } from '@platypus-app/flags';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({
@@ -25,14 +27,26 @@ const DataManagementPage = lazy<any>(() =>
   }))
 );
 
+const DataQualityPage = lazy<any>(() =>
+  import('./data-quality/DataQualityPage').then((module) => ({
+    default: module.DataQualityPage,
+  }))
+);
+
 const QueryExplorerPage = lazy<any>(() =>
   import('./query-explorer/pages/QueryExplorerPage').then((module) => ({
     default: module.QueryExplorerPage,
   }))
 );
+const SearchPage = lazy<any>(() =>
+  import('./query-explorer/pages/SearchPage').then((module) => ({
+    default: module.SearchPage,
+  }))
+);
 
 export const DataLayout = () => {
   const { t } = useTranslation('SolutionDataModel');
+  const { isEnabled: isGPTEnabled } = useGPTSearch();
   const { dataModelExternalId, space } = useParams<{
     dataModelExternalId: string;
     space: string;
@@ -45,10 +59,13 @@ export const DataLayout = () => {
 
   const hasNoPublishedVersion = versions.length === 0;
 
+  const { isEnabled: isDataQualityEnabled } = useDataQualityFeatureFlag();
+
   const disabledText = t(
     'disabled_text',
     ' (disabled until a data model is published)'
   );
+
   const sideBarMenuItems: SideBarItem[] = [
     {
       icon: 'GraphTree',
@@ -63,16 +80,41 @@ export const DataLayout = () => {
       }`,
       disabled: hasNoPublishedVersion,
     },
+    ...(isGPTEnabled
+      ? ([
+          {
+            icon: 'Search',
+            slug: 'search',
+            tooltip: `${t('gpt_search_title', 'Search')}${
+              hasNoPublishedVersion ? disabledText : ''
+            }`,
+            splitter: true,
+            disabled: hasNoPublishedVersion,
+          },
+        ] as SideBarItem[])
+      : []),
     {
       icon: 'CodeBraces',
       slug: 'query-explorer',
       tooltip: `${t('query_explorer_title', 'Query explorer')}${
         hasNoPublishedVersion ? disabledText : ''
       }`,
-      splitter: true,
       disabled: hasNoPublishedVersion,
     },
   ];
+
+  // Show the Data Quality tab only if the feature flag is enabled
+  if (isDataQualityEnabled) {
+    const dataQualityTab: SideBarItem = {
+      icon: 'Heartbeat',
+      slug: 'data-quality',
+      tooltip: `${t('data_quality_title', 'Data quality')}${
+        hasNoPublishedVersion ? disabledText : ''
+      }`,
+      disabled: hasNoPublishedVersion,
+    };
+    sideBarMenuItems.splice(2, 0, dataQualityTab);
+  }
 
   return (
     <Routes>
@@ -98,6 +140,28 @@ export const DataLayout = () => {
           path="data-management/:subSolutionPage"
           element={
             <DataManagementPage
+              dataModelExternalId={dataModelExternalId}
+              space={space}
+            />
+          }
+        />
+
+        {isDataQualityEnabled && (
+          <Route
+            path="data-quality"
+            element={
+              <DataQualityPage
+                dataModelExternalId={dataModelExternalId}
+                space={space}
+              />
+            }
+          />
+        )}
+
+        <Route
+          path="search"
+          element={
+            <SearchPage
               dataModelExternalId={dataModelExternalId}
               space={space}
             />

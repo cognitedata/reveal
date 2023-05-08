@@ -59,6 +59,9 @@ export type TRACKING_TOKENS =
   | 'ColumnSelection.Open'
   // extra path tracking
   | 'UIEditor'
+  | 'ChatGPTSearch.GeneratedQuery'
+  | 'ChatGPTSearch.RunQuery'
+  | 'ChatGPTSearch.Failed'
   | 'Navigate';
 
 mixpanel.init(config.MIXPANEL_TOKEN);

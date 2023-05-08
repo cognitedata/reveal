@@ -1,6 +1,9 @@
 import { CogniteClient } from '@cognite/sdk';
 import getAssetTableContainerConfig from './getAssetTableContainerConfig';
-import { IndustryCanvasContainerConfig } from '../../types';
+import {
+  AssetContainerReference,
+  IndustryCanvasContainerConfig,
+} from '../../types';
 import {
   DEFAULT_ASSET_HEIGHT,
   DEFAULT_ASSET_WIDTH,
@@ -9,23 +12,7 @@ import { v4 as uuid } from 'uuid';
 
 const resolveAssetContainerConfig = async (
   sdk: CogniteClient,
-  {
-    id,
-    resourceId,
-    x,
-    y,
-    width,
-    height,
-    label,
-  }: {
-    id?: string | undefined;
-    resourceId: number;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    label?: string;
-  }
+  { id, resourceId, x, y, width, height, label }: AssetContainerReference
 ): Promise<IndustryCanvasContainerConfig> => {
   const assets = await sdk.assets.retrieve([{ id: resourceId }]);
 

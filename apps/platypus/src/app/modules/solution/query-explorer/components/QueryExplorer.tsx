@@ -22,12 +22,14 @@ type QueryExplorerType = {
   space: string;
   schemaVersion: string;
   defaultQuery?: string;
+  onQueryChange?: (query?: string) => void;
 };
 
 export const QueryExplorer = ({
   dataModelExternalId,
   schemaVersion,
   space,
+  onQueryChange,
   defaultQuery,
 }: QueryExplorerType) => {
   const { t } = useTranslation('query_explorer');
@@ -57,6 +59,12 @@ export const QueryExplorer = ({
     onEdit: handleEditQuery,
     showAttribution: false,
   });
+
+  useEffect(() => {
+    if (onQueryChange) {
+      onQueryChange(explorerQuery);
+    }
+  }, [onQueryChange, explorerQuery]);
 
   useEffect(() => {
     if (isReady || !dataModelExternalId || !schemaVersion) {

@@ -1,45 +1,59 @@
 import React from 'react';
 import { Document, DocumentTable } from '@cognite/react-document-table';
-import { FileInfo } from '@cognite/sdk';
-import { useResourceResults } from '@data-exploration-components/containers';
-import { InternalFilesFilters } from '@data-exploration-lib/core';
+
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 import { docTypes } from './docTypes';
+import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
+import { FileInfo } from '@cognite/sdk/dist/src';
 
 type FileGroupingTableProps = {
   data?: FileInfo[];
   query?: string;
-  filter?: InternalFilesFilters;
+  filter?: InternalDocumentFilter;
   onItemClicked: (file: any) => void;
 };
-
-const convertFilesToDocs = (files: FileInfo[] = []): Document[] => {
+const convertFilesToDocs = <
+  T extends Pick<FileInfo, 'id' | 'name' | 'metadata' | 'directory' | 'source'>
+>(
+  files: T[] = []
+): Document[] => {
   return files?.map((file) => {
-    const { id, name: fileName, metadata, directory, source, uploaded } = file;
+    const { id, name: fileName, metadata, directory, source } = file;
     return {
       id,
       fileName,
       metadata,
       directory,
       source,
-      uploaded,
     };
   });
 };
 
 const FileGroupingTable = ({
-  data,
   query,
   filter,
+  data,
   onItemClicked,
 }: FileGroupingTableProps) => {
-  const { items: files } = useResourceResults<FileInfo>(
-    'files',
-    query,
-    filter,
-    1000
+  const { results: documents } = useDocumentSearchResultQuery(
+    {
+      filter,
+      query,
+      limit: 1000,
+    },
+    {
+      enabled: !data,
+    }
   );
 
-  const docs: Document[] = convertFilesToDocs(data || files);
+  const files = documents.map((document) => {
+    const {
+      id,
+      sourceFile: { metadata, directory, source, name },
+    } = document;
+    return { id, metadata, directory, source, name };
+  });
+  const docs: Document[] = convertFilesToDocs(files || data);
 
   return (
     <DocumentTable

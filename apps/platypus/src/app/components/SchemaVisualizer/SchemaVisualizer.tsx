@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import styled, { CSSProperties } from 'styled-components/macro';
 import { Body, Button, Colors, Flex, Modal, Title } from '@cognite/cogs.js';
-import { parse } from 'graphql';
+import { Kind, parse } from 'graphql';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
   Node,
@@ -43,6 +43,7 @@ import { Spinner } from '../Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType } from '@platypus/platypus-core';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { getConnectorHeight } from './utils';
 
 export interface SchemaVisualizerConfig {
   /* Set known types to control which types and field directives will be rendered and their styling */
@@ -73,7 +74,7 @@ export const SchemaVisualizer = React.memo(
     const [searchFilterValue, setSearchFilterValue] = useState('');
     const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const graphRef = useRef<GraphFns | null>(null);
 
@@ -86,7 +87,7 @@ export const SchemaVisualizer = React.memo(
     const schemaTypes = useMemo(() => {
       setErrorMessage('');
       if (!graphQLSchemaString || graphQLSchemaString.trim() === '') {
-        setIsLoaded(true);
+        setIsLoading(false);
         return [];
       }
 
@@ -97,7 +98,7 @@ export const SchemaVisualizer = React.memo(
             'Data model preview is currently turned off'
           )
         );
-        setIsLoaded(true);
+        setIsLoading(false);
         return [];
       }
 
@@ -112,10 +113,10 @@ export const SchemaVisualizer = React.memo(
             "There's a validation error in your data model."
           )
         );
-        setIsLoaded(true);
+        setIsLoading(false);
         return [];
       }
-    }, [graphQLSchemaString, setErrorMessage, isVisualizerOn]);
+    }, [t, graphQLSchemaString, setErrorMessage, isVisualizerOn]);
 
     const [popover, setPopover] = useState<React.ReactNode | undefined>(
       undefined
@@ -271,7 +272,7 @@ export const SchemaVisualizer = React.memo(
           style.stroke = Colors['border--muted--inverted'];
         }
         return (
-          <g className="path">
+          <g className="path" key={id}>
             <path
               markerStart="url(#indicator)"
               markerEnd="url(#indicator)"
@@ -285,9 +286,22 @@ export const SchemaVisualizer = React.memo(
       [highlightedIds]
     );
 
+    const getNodeWidthHeight = useCallback((node: SchemaDefinitionNode) => {
+      switch (node.kind) {
+        case Kind.OBJECT_TYPE_DEFINITION:
+        case Kind.INTERFACE_TYPE_DEFINITION:
+          return {
+            width: NODE_WIDTH,
+            height: getConnectorHeight((node.fields || []).length + 1),
+          };
+        default:
+          return { width: NODE_WIDTH, height: 0 };
+      }
+    }, []);
+
     const renderGraph = () => (
       <Wrapper direction="column">
-        {!isLoaded && (
+        {isLoading && (
           <WrappedSpinner>
             <Spinner />
           </WrappedSpinner>
@@ -343,7 +357,8 @@ export const SchemaVisualizer = React.memo(
             nodes={nodes}
             links={links}
             style={{ flex: 1 }}
-            onLoadingStatus={setIsLoaded}
+            onLoadingStatus={setIsLoading}
+            autoLayout={getNodeWidthHeight}
             useCurve
             offset={{ top: OFFSET_TOP }}
             getLinkEndOffset={(...params) =>

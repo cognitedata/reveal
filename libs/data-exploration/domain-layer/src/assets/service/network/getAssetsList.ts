@@ -17,12 +17,14 @@ export const getAssetsList = (
     limit,
     filter,
     sort,
+    aggregatedProperties,
   }: {
     advancedFilter?: AdvancedFilter<AssetsProperties>;
     cursor?: string;
     limit?: number;
     filter?: AssetFilterProps;
     sort?: InternalSortBy[];
+    aggregatedProperties?: string[];
   }
 ) => {
   return sdk
@@ -38,7 +40,7 @@ export const getAssetsList = (
           advancedFilter,
           filter,
           sort,
-          aggregatedProperties: ['path'],
+          aggregatedProperties: aggregatedProperties || ['path'],
         },
       }
     )

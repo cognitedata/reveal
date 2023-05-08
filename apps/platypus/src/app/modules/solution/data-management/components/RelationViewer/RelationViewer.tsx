@@ -1,4 +1,4 @@
-import { Body, Chip, Colors, Flex, Icon, Menu } from '@cognite/cogs.js';
+import { Chip, Menu } from '@cognite/cogs.js';
 import {
   Graph,
   getLinkId,
@@ -12,37 +12,33 @@ import { SimulationLinkDatum } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
-import { getRelationshipsForData } from './utils';
+import { getRelationLinkId, getRelationshipsForData } from './utils';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { SDKProvider } from '@cognite/sdk-provider';
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { RelationNode } from './RelationNode';
 
 const getColor = (key: string) => uniqolor(key);
 
 export const RelationViewer = <
   T extends { externalId: string; __typename: string }
 >({
-  typeName,
   initialNodes,
   initialEdges,
 }: {
-  typeName: string;
   initialNodes: T[];
   initialEdges: {
     id: string;
     source: string;
     target: string;
-    sourceField?: string;
-    sourceType?: string;
+    type: string;
   }[];
 }) => {
   const { track } = useMixpanel();
-  const [nodes, setNodes] = useState(
-    new Map(initialNodes.map((el) => [el.externalId, el]))
-  );
-  const [links, setLinks] = useState(
-    new Map(initialEdges.map((el) => [el.id, el]))
-  );
-  const [selectedItems, setSelectedItem] = useState<Map<string, string[]>>(
-    new Map()
-  );
+  const [isLoading, setLoading] = useState(true);
+  const [nodes, setNodes] = useState(new Map());
+  const [links, setLinks] = useState(new Map());
+  const [_, setSelectedItem] = useState<Map<string, string[]>>(new Map());
   const [selectedFields, setSelectedField] = useState<{
     [key in string]: {
       def: DataModelTypeDefsField;
@@ -64,14 +60,8 @@ export const RelationViewer = <
     version,
     space
   );
-
-  const dataModelType = useMemo(
-    () => dataModelTypeDefs.types.find((el) => el.name === typeName),
-    [dataModelTypeDefs, typeName]
-  );
-
   const onClick = useCallback(
-    (node: T & { __typename?: string }) => {
+    (node: T & { __typename?: string; x?: number; y?: number }) => {
       setSelectedItem((currentSelectedSet) => {
         const newSelectedItems = new Map(currentSelectedSet);
         // try and delete, if return a list of ids, it means it existed
@@ -83,7 +73,7 @@ export const RelationViewer = <
         }
         // first click for a new item, fetch and add nodes and edges
         if (!externalIdsToDelete) {
-          const clickedTypeName = node.__typename || dataModelType?.name;
+          const clickedTypeName = node.__typename;
           if (clickedTypeName) {
             getRelationshipsForData({
               dataModelTypeDefs,
@@ -93,10 +83,13 @@ export const RelationViewer = <
               version: selectedDataModelVersion.version,
               typeName: clickedTypeName,
             }).then((item) => {
+              const itemType = dataModelTypeDefs.types.find(
+                (el) => el.name === clickedTypeName
+              );
               const fields =
-                dataModelTypeDefs.types
-                  .find((el) => el.name === clickedTypeName)
-                  ?.fields.filter((el) => el.type.custom) || [];
+                itemType?.fields.filter(
+                  (el) => el.type.custom || el.type.name === 'TimeSeries'
+                ) || [];
               const newNodes = new Map();
               const newLinks = new Map();
               for (const field of fields) {
@@ -107,17 +100,22 @@ export const RelationViewer = <
                   if (!el) {
                     return;
                   }
-                  newNodes.set(el.externalId, el);
-                  newLinks.set(
-                    `${node.externalId}-${field.name}-${el.externalId}`,
-                    {
-                      id: `${node.externalId}-${field.name}-${el.externalId}`,
-                      source: node.externalId,
-                      target: el.externalId,
-                      sourceField: field.name,
-                      sourceType: clickedTypeName,
-                    }
+                  newNodes.set(el.externalId, {
+                    ...el,
+                    initialX: node.x,
+                    initialY: node.y,
+                  });
+                  const linkId = getRelationLinkId(
+                    `${itemType?.name}.${field.name}`,
+                    node.externalId,
+                    el.externalId
                   );
+                  newLinks.set(linkId, {
+                    id: linkId,
+                    source: node.externalId,
+                    target: el.externalId,
+                    type: `${clickedTypeName}.${field.name}`,
+                  });
                 });
               }
               // update selected items with the new edges
@@ -129,6 +127,12 @@ export const RelationViewer = <
 
               // update the sidebar menu
               setSelectedField((currValue) => {
+                // update the nodes and edges
+                setNodes((currNodes) => {
+                  currNodes.set(node.externalId, { ...node, isSelected: true });
+                  setLinks((currLinks) => new Map([...newLinks, ...currLinks]));
+                  return new Map([...newNodes, ...currNodes]);
+                });
                 return [clickedTypeName, ...types.values()].reduce(
                   (prev, type) => {
                     if (!prev[type] || prev[type].length === 0) {
@@ -148,10 +152,6 @@ export const RelationViewer = <
                   currValue
                 );
               });
-
-              // update the nodes and edges
-              setNodes((currNodes) => new Map([...currNodes, ...newNodes]));
-              setLinks((currLinks) => new Map([...currLinks, ...newLinks]));
             });
           }
         } else {
@@ -172,6 +172,7 @@ export const RelationViewer = <
                 nodesToDelete.delete(link.target);
               }
               const newNodesList = new Map(currNodes);
+              newNodesList.set(node.externalId, { ...node, isSelected: false });
               for (const key of nodesToDelete) {
                 newNodesList.delete(key);
               }
@@ -200,7 +201,6 @@ export const RelationViewer = <
     },
     [
       dataModelExternalId,
-      dataModelType?.name,
       dataModelTypeDefs,
       selectedDataModelVersion.version,
       space,
@@ -212,15 +212,31 @@ export const RelationViewer = <
     if (
       initialEdges.length === 0 &&
       initialNodes.length === 1 &&
-      !selectedItems.has(initialNodes[0].externalId)
+      nodes.size === 1 &&
+      !nodes.get(initialNodes[0].externalId).isSelected
     ) {
-      onClick(initialNodes[0]);
+      onClick({ ...initialNodes[0], fx: 0, fy: 0 });
     }
-  }, []);
+  }, [initialEdges, nodes, onClick, initialNodes]);
+
+  useEffect(() => {
+    setNodes(
+      new Map(
+        initialNodes.map((el, i) => {
+          if (i === 0) {
+            return [el.externalId, { fx: 0, fy: 0, ...el }];
+          }
+          return [el.externalId, el];
+        })
+      )
+    );
+    setLinks(new Map(initialEdges.map((el) => [el.id, el])));
+  }, [initialEdges, initialNodes]);
 
   const renderNode = useCallback(
-    (node: T) => (
-      <NodeItem
+    (node: T & { isSelected?: boolean }) => (
+      <RelationNode
+        key={node.externalId}
         node={node}
         onClick={(n) => {
           onClick(n);
@@ -229,19 +245,19 @@ export const RelationViewer = <
             node: n.externalId,
           });
         }}
-        isSelected={selectedItems.has(node.externalId)}
+        isSelected={node.isSelected}
       />
     ),
-    [onClick, selectedItems, track]
+    [onClick, track]
   );
   const renderLink = useCallback(
-    (el: SimulationLinkDatum<Node & T> & { sourceField?: string }) => {
+    (el: SimulationLinkDatum<Node & T> & { type?: string }) => {
       const id = getLinkId(el);
       return (
         <g key={`${id}`} className="path">
           <text>
-            <textPath href={`#${id}`} startOffset="50%" text-anchor="middle">
-              {el.sourceField}
+            <textPath href={`#${id}`} startOffset="50%" textAnchor="middle">
+              {el.type}
             </textPath>
           </text>
           <path key={id} id={id} />
@@ -265,7 +281,9 @@ export const RelationViewer = <
 
   // Represents a filtered list of visible links
   const visibleLinks = useMemo(() => {
-    const keys = [...selectedItems.keys()];
+    const keys = [...nodes.values()]
+      .filter((el) => el.isSelected)
+      .map((el) => el.externalId);
 
     // Return a new array containing filtered links from the `links` Map based on the following conditions:
     // 1. If `disabledFields` is empty, include all links
@@ -276,11 +294,10 @@ export const RelationViewer = <
         ? true
         : (keys.includes(link.source) && keys.includes(link.target)) ||
           !disabledFields.some(
-            (field) =>
-              link.sourceField === field.field && link.sourceType === field.type
+            (field) => link.type === `${field.type}.${field.field}`
           )
     );
-  }, [links, disabledFields, selectedItems]);
+  }, [links, disabledFields, nodes]);
 
   // Represents a filtered list of visible nodes
   const visibleNodes = useMemo(() => {
@@ -288,7 +305,7 @@ export const RelationViewer = <
       .filter(
         (node) =>
           // include nodes that are selected
-          [...selectedItems.keys()].includes(node.externalId) ||
+          node.isSelected ||
           // include nodes that are in the 'initialNodes' array
           initialNodes.some(
             (initialNode) => initialNode.externalId === node.externalId
@@ -307,147 +324,98 @@ export const RelationViewer = <
         id: el.externalId,
         title: el.externalId,
       }));
-  }, [nodes, disabledFields, visibleLinks, initialNodes, selectedItems]);
+  }, [nodes, disabledFields.length, initialNodes, visibleLinks]);
 
   return (
-    <Graph<T>
-      nodes={visibleNodes}
-      links={visibleLinks}
-      useCache={false}
-      renderNode={renderNode}
-      renderLink={renderLink}
-      autoLayout={false}
-      style={{
-        position: 'relative',
-        backgroundImage: `radial-gradient(
+    <SDKProvider sdk={getCogniteSDKClient()}>
+      <Graph<T>
+        nodes={visibleNodes}
+        links={visibleLinks}
+        useCache={false}
+        renderNode={renderNode}
+        renderLink={renderLink}
+        onLoadingStatus={setLoading}
+        style={{
+          position: 'relative',
+          backgroundImage: `radial-gradient(
           var(--cogs-border-default) 1px,
           transparent 1px
         )`,
-        backgroundSize: '24px 24px',
-        backgroundColor: 'var(--cogs-bg-canvas)',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: 12,
-          left: 12,
-          fontSize: 12,
+          backgroundSize: '24px 24px',
+          backgroundColor: 'var(--cogs-bg-canvas)',
+          overflow: 'hidden',
         }}
       >
-        {Object.entries(selectedFields).map(([key, fields]) => (
-          <>
-            <div style={{ marginTop: 12 }}>
-              <Chip
-                hideTooltip
-                size="small"
-                key={key}
-                style={{ background: getColor(key).color }}
-                prominence={getColor(key).isLight ? 'muted' : 'strong'}
-                label={key}
-              />
-            </div>
-            {fields && fields.length > 0 && (
-              <Menu key={`${key}-menu`}>
-                {fields.map((field) => (
-                  <Menu.Item
-                    key={field.def.name}
-                    hasCheckbox
-                    checkboxProps={{
-                      checked: field.isToggled,
-                      onChange: (e: { stopPropagation: () => void }) => {
-                        e.stopPropagation();
-                        setSelectedField({
-                          ...selectedFields,
-                          [key]: selectedFields[key].map((item) => {
-                            if (item.def.name === field.def.name) {
-                              track('Graph.Filter', {
-                                item,
-                                isToggled: !field.isToggled,
-                              });
-                              return { ...item, isToggled: !field.isToggled };
-                            }
-                            return item;
-                          }),
-                        });
-                      },
-                    }}
-                  >
-                    {field.def.name}: {field.def.type.name}
-                    {field.def.type.list ? '[]' : ''}
-                  </Menu.Item>
-                ))}
-              </Menu>
-            )}
-          </>
-        ))}
-      </div>
-    </Graph>
-  );
-};
-
-const NodeItem = <T extends { externalId: string }>({
-  node,
-  onClick,
-  isSelected,
-}: {
-  node: T & { __typename: string };
-  onClick: (node: T) => void;
-  isSelected: boolean;
-}) => {
-  return (
-    <div
-      key={node.externalId}
-      style={{
-        padding: 8,
-        borderRadius: 4,
-        background: '#fff',
-        width: 160,
-        maxHeight: 120,
-        transform: 'translate(-50%, -50%)',
-        border: `1px solid ${getColor(node.__typename).color}`,
-      }}
-      onClick={() => {
-        onClick(node);
-      }}
-    >
-      <Chip
-        hideTooltip
-        size="small"
-        label={node.__typename}
-        style={{
-          position: 'absolute',
-          bottom: '100%',
-          fontSize: 12,
-          left: 0,
-          minHeight: 'auto',
-          backgroundColor: getColor(node.__typename).color,
-        }}
-        prominence={getColor(node.__typename).isLight ? 'muted' : 'strong'}
-      />
-      <Flex gap={2} alignItems="center">
-        <Body
-          level={3}
-          style={{
-            flex: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {node.externalId}
-        </Body>
-        {isSelected && (
-          <Flex
-            alignItems="center"
+        {isLoading && (
+          <div
             style={{
-              color: Colors['surface--status-success--strong--default'],
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'var(--cogs-bg-canvas)',
             }}
           >
-            <Icon type="EyeShow" />
-          </Flex>
+            <Spinner />
+          </div>
         )}
-      </Flex>
-    </div>
+        <div
+          style={{
+            position: 'absolute',
+            top: 12,
+            left: 12,
+            fontSize: 12,
+          }}
+        >
+          {Object.entries(selectedFields).map(([key, fields]) => (
+            <div key={key}>
+              <div style={{ marginTop: 12 }} key={`${key}-chip`}>
+                <Chip
+                  hideTooltip
+                  size="small"
+                  key={key}
+                  style={{ background: getColor(key).color }}
+                  prominence={getColor(key).isLight ? 'muted' : 'strong'}
+                  label={key}
+                />
+              </div>
+              {fields && fields.length > 0 && (
+                <Menu key={`${key}-menu`}>
+                  {fields.map((field) => (
+                    <Menu.Item
+                      key={field.def.name}
+                      hasCheckbox
+                      checkboxProps={{
+                        checked: field.isToggled,
+                        onChange: (e: { stopPropagation: () => void }) => {
+                          e.stopPropagation();
+                          setSelectedField({
+                            ...selectedFields,
+                            [key]: selectedFields[key].map((item) => {
+                              if (item.def.name === field.def.name) {
+                                track('Graph.Filter', {
+                                  item,
+                                  isToggled: !field.isToggled,
+                                });
+                                return { ...item, isToggled: !field.isToggled };
+                              }
+                              return item;
+                            }),
+                          });
+                        },
+                      }}
+                    >
+                      {field.def.name}: {field.def.type.name}
+                      {field.def.type.list ? '[]' : ''}
+                    </Menu.Item>
+                  ))}
+                </Menu>
+              )}
+            </div>
+          ))}
+        </div>
+      </Graph>
+    </SDKProvider>
   );
 };

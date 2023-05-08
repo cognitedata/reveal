@@ -20,6 +20,7 @@ export const COL_TYPES_MAP: { [key: string]: string } = {
   Boolean: ColumnDataType.Boolean,
   Float: ColumnDataType.Decimal,
   Int: ColumnDataType.Number,
+  Int32: ColumnDataType.Number,
   Int64: ColumnDataType.Number,
   Float32: ColumnDataType.Number,
   Float64: ColumnDataType.Number,

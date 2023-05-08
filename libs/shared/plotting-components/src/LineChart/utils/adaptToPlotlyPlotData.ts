@@ -11,6 +11,7 @@ import {
 import { LineChartProps, Variant } from '../types';
 import { getDataAsArray } from './getDataAsArray';
 import { getLineName } from './getLineName';
+import { mapInterolationToPlotlyLineShape } from './mapInterolationToPlotlyLineShape';
 
 export const adaptToPlotlyPlotData = (
   data: LineChartProps['data'],
@@ -28,7 +29,7 @@ export const adaptToPlotlyPlotData = (
   }
 
   return getDataAsArray(data).map(
-    ({ x, y, color, name, customData }, index) => {
+    ({ x, y, color, name, customData, interpolation }, index) => {
       const lineColor = color || DEFAULT_LINE_COLOR;
       const markerSizes = times(x.length).map(() => markerSize);
       const markerLineColors = times(x.length).map(() => 'transparent');
@@ -40,6 +41,7 @@ export const adaptToPlotlyPlotData = (
         line: {
           width: LINE_WIDTH,
           color: lineColor,
+          shape: mapInterolationToPlotlyLineShape(interpolation),
         },
         marker: {
           size: markerSizes,

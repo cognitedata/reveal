@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { MutableRefObject, useRef, useState } from 'react';
 import { FileInfo } from '@cognite/sdk/dist/src';
 import { getCanonicalMimeType } from '@cognite/unified-file-viewer';
 import {
@@ -20,15 +20,14 @@ export type UseSearchBarState = {
   isSearchOpen: boolean;
   onSearchOpen: () => void;
   onSearchClose: () => void;
-  setSearchBarInputRef: (ref: HTMLInputElement | null) => void;
+  searchBarInputRef: MutableRefObject<HTMLInputElement | undefined>;
 };
 
 export const useSearchBarState = ({
   file,
 }: UseSearchBarProps): UseSearchBarState => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchBarInputRef, setSearchBarInputRef] =
-    useState<HTMLInputElement | null>();
+  const searchBarInputRef = useRef<HTMLInputElement>();
   const trackUsage = useMetrics();
 
   const fileUrl = useFileDownloadUrl(file?.id);
@@ -50,7 +49,7 @@ export const useSearchBarState = ({
     if (file === undefined) return;
 
     if (isSearchOpen) {
-      searchBarInputRef?.select();
+      searchBarInputRef.current?.select();
       return;
     }
 
@@ -71,7 +70,7 @@ export const useSearchBarState = ({
     isSearchOpen,
     onSearchOpen: handleSearchOpen,
     onSearchClose: handleSearchClose,
-    setSearchBarInputRef,
+    searchBarInputRef,
     fileUrl,
   };
 };

@@ -1,7 +1,10 @@
 import { CogniteClient } from '@cognite/sdk';
 import { ContainerType } from '@cognite/unified-file-viewer';
 import { v4 as uuid } from 'uuid';
-import { IndustryCanvasContainerConfig } from '../../types';
+import {
+  IndustryCanvasContainerConfig,
+  ThreeDContainerReference,
+} from '../../types';
 import {
   DEFAULT_THREE_D_HEIGHT,
   DEFAULT_THREE_D_WIDTH,
@@ -93,29 +96,7 @@ const resolveRevealContainerConfig = async (
     width,
     height,
     label,
-  }: {
-    id?: string | undefined;
-    modelId: number;
-    revisionId: number;
-    initialAssetId?: number;
-    camera?: {
-      position: {
-        x: number;
-        y: number;
-        z: number;
-      };
-      target: {
-        x: number;
-        y: number;
-        z: number;
-      };
-    };
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    label?: string;
-  }
+  }: ThreeDContainerReference
 ): Promise<IndustryCanvasContainerConfig> => {
   const { name: assetName, externalId: assetExternalId } =
     await getAssetProperties(sdk, initialAssetId);

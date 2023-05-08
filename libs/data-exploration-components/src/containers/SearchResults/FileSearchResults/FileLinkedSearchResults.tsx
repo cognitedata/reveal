@@ -1,20 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { FileInfo } from '@cognite/sdk';
-import { useList } from '@cognite/sdk-react-query-hooks';
 
-import {
-  AggregatedFilterV2,
-  MetadataFilterV2,
-} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
 import { useDebounce } from 'use-debounce';
-import { convertResourceType } from '@data-exploration-components/types';
-import { useResourceResults } from '../SearchResultLoader';
-import { FileTable } from '@data-exploration-components/containers/Files';
+
 import FileGroupingTable from '@data-exploration-components/containers/Files/FileGroupingTable/FileGroupingTable';
 import {
   GroupingTableHeader,
@@ -24,13 +15,19 @@ import {
 import { FileViewSwitcher } from './FileViewSwitcher';
 import {
   InternalCommonFilters,
-  InternalFilesFilters,
+  InternalDocumentFilter,
 } from '@data-exploration-lib/core';
+import { MetadataFilter, TypeFilter } from '@data-exploration/containers';
+import {
+  InternalDocument,
+  useDocumentSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
+import { DocumentsTable } from '@data-exploration-components/containers/Documents';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
   isGroupingFilesEnabled?: boolean;
-  onClick: (item: FileInfo) => void;
+  onClick: (item: InternalDocument) => void;
   onParentAssetClick: (assetId: number) => void;
 }
 
@@ -38,27 +35,22 @@ const LinkedFileFilter = ({
   filter,
   onFilterChange,
 }: {
-  filter: InternalFilesFilters;
-  onFilterChange: (newValue: InternalFilesFilters) => void;
+  filter: InternalDocumentFilter;
+  onFilterChange: (newValue: InternalDocumentFilter) => void;
 }) => {
-  const { data: items = [] } = useList<any>('files', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
-
   return (
     <PreviewFilterDropdown>
-      <AggregatedFilterV2
-        items={items}
-        aggregator="mimeType"
-        title="Mime type"
-        value={filter.mimeType}
-        setValue={(newValue) => onFilterChange({ mimeType: newValue })}
+      <TypeFilter.File
+        filter={filter}
+        value={filter.type}
+        onChange={(newValue) => onFilterChange({ type: newValue as any })}
       />
-      <MetadataFilterV2
-        items={items}
-        value={filter.metadata}
-        setValue={(newValue) => onFilterChange({ metadata: newValue })}
+      <MetadataFilter.Files
+        filter={filter}
+        values={filter.metadata}
+        onChange={(newMetadata) => {
+          onFilterChange({ metadata: newMetadata });
+        }}
       />
     </PreviewFilterDropdown>
   );
@@ -68,11 +60,10 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
   isGroupingFilesEnabled,
   onClick,
-  onParentAssetClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
-  const [filter, setFilter] = useState<InternalFilesFilters>({});
+  const [filter, setFilter] = useState<InternalDocumentFilter>({});
   const [currentView, setCurrentView] = useState<string>(
     isGroupingFilesEnabled ? 'tree' : 'list'
   );
@@ -85,16 +76,18 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
     };
   }, [filter, defaultFilter]);
 
-  const api = convertResourceType('file');
-  const { canFetchMore, fetchMore, items } = useResourceResults<FileInfo>(
-    api,
-    debouncedQuery,
-    filesFilter
-  );
+  const {
+    fetchNextPage,
+    results: items,
+    hasNextPage,
+  } = useDocumentSearchResultQuery({
+    filter: filesFilter,
+    query: debouncedQuery,
+  });
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
-  const handleFilterChange = (newValue: InternalFilesFilters) => {
+  const handleFilterChange = (newValue: InternalDocumentFilter) => {
     setFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
@@ -130,13 +123,10 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
         </>
       )}
       {currentView === 'list' && (
-        <FileTable
+        <DocumentsTable
           id="file-linked-search-results"
           query={debouncedQuery}
           onRowClick={(file) => onClick(file)}
-          onDirectAssetClick={(directAsset) => {
-            onParentAssetClick(directAsset.id);
-          }}
           data={items}
           // enableSorting
           // onSort={props => setSortBy(props)}
@@ -163,8 +153,8 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
               )}
             </>
           }
-          hasNextPage={canFetchMore}
-          fetchMore={fetchMore}
+          hasNextPage={hasNextPage}
+          fetchMore={fetchNextPage}
         />
       )}
     </>

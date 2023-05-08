@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { translations } from './app/common/i18n';
+import GlobalStyle from './app/utils/globalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'flexible-data-explorer';
@@ -36,6 +37,7 @@ export const AppWrapper = () => {
           </SubAppWrapper>
         </AuthWrapper>
       </I18nWrapper>
+      <GlobalStyle />
     </GlobalStyles>
   );
 };

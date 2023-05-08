@@ -18,6 +18,50 @@ import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageS
 import { isFDMv3 } from '@platypus-app/flags';
 import { StyledEditor } from './elements';
 
+const getSampleDataModel = (
+  space: string
+) => `# Welcome to the data model editor
+# Using GraphQL you can easily create a data model
+# You can start with the example below or delete everything and 
+# start from scratch
+# Documentation: https://docs.cognite.com/cdf/data_modeling/references/graphql_datamodeling_language_spec
+
+# Useful shortcuts:
+# "CTRL + /" or "CMD + /" to comment in/out code
+# "CTRL + SPACE" for auto complete
+
+# For quick start, comment everything below
+
+# "this is a description of the type Pump"
+# type Pump {
+#     # fields containing basic data, where "!" means it is required
+#     name: String!
+#     year: Int
+#     "this is a description of the field weight"
+#     weight: Float
+#     weightUnit: String
+#     # fields that contains CDF resources
+#     pressure: TimeSeries
+#     temperature: TimeSeries
+#     # fields that indicates a relationship to another custom defined types
+#     livesIn: Facility
+# }
+
+# type Facility {
+#     name: String!
+#     desc: String!
+#     # CDF has additional relations to make defining more complex cases easier
+#     # https://docs.cognite.com/cdf/data_modeling/concepts/bidirectional_relation
+#     # in this case, we want a bi-directional relationship of
+#     # Pump.livesIn <-> Facility.hasPumps
+#     hasPumps: [Pump] @relation(
+#         direction: INWARDS, 
+#         type: { externalId: "Pump.livesIn", space: "${space}" }
+#     )
+# }
+
+`;
+
 // point here so the context can be used
 declare const self: any;
 
@@ -38,7 +82,9 @@ type Props = {
   currentTypeName: string | null;
   typeDefs: DataModelTypeDefs | null;
   externalId: string;
+  space: string;
   disabled?: boolean;
+  language?: string;
   errorsByGroup: ErrorsByGroup;
   setErrorsByGroup: (errors: ErrorsByGroup) => void;
   setEditorHasError: (hasError: boolean) => void;
@@ -49,10 +95,12 @@ export const GraphqlCodeEditor = React.memo(
   ({
     code,
     currentTypeName,
+    space,
     typeDefs,
     disabled = false,
     errorsByGroup,
     setErrorsByGroup,
+    language = 'graphql',
     onChange,
     setEditorHasError,
   }: Props) => {
@@ -141,12 +189,13 @@ export const GraphqlCodeEditor = React.memo(
             formatOnType: true,
             fixedOverflowWidgets: true,
           }}
-          language="graphql"
+          language={language}
           value={editorValue}
           loading={<Spinner />}
           beforeMount={editorWillMount}
           onMount={handleEditorDidMount}
-          defaultLanguage="graphql"
+          defaultValue={getSampleDataModel(space)}
+          defaultLanguage={language}
           onValidate={(markers) => {
             setEditorHasError(
               markers.some(

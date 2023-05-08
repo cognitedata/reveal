@@ -33,6 +33,7 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
           className="network"
           icon="Network"
           type="secondary"
+          aria-label="Open graph"
           onClick={() => {
             track('Graph.Open');
             setIsRelationViewerOpen(true);
@@ -65,7 +66,6 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
           onOk={() => setIsRelationViewerOpen(false)}
         >
           <RelationViewer
-            typeName={dataModelType.name}
             initialNodes={[
               { externalId: props.value, __typename: dataModelType.name },
             ]}

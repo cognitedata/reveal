@@ -20,7 +20,9 @@ export const getRelationshipsForData = async ({
     (el) => el.name === typeName
   );
   if (currentType) {
-    const fields = currentType.fields.filter((field) => field.type.custom);
+    const fields = currentType.fields.filter(
+      (field) => field.type.custom || field.type.name === 'TimeSeries'
+    );
     const mixerAPI = new FdmMixerApiService(getCogniteSDKClient());
     return mixerAPI
       .runQuery({
@@ -37,10 +39,20 @@ export const getRelationshipsForData = async ({
             externalId
             ${fields
               .map((field) => {
-                const subFields = dataModelTypeDefs.types
-                  .find((type) => type.name === field.type.name)
-                  ?.fields.filter((el) => !el.type.custom)
-                  .map((el) => el.name)
+                const subFields = (
+                  dataModelTypeDefs.types
+                    .find((type) => type.name === field.type.name)
+                    ?.fields.filter((el) => !el.type.custom) || []
+                )
+                  .map((el) => {
+                    switch (el.type.name) {
+                      case 'TimeSeries':
+                        // no need for datapoints in nested level
+                        return `${el.name} { __typename externalId }`;
+                      default:
+                        return el.name;
+                    }
+                  })
                   .join('\n');
                 if (field.type.list) {
                   return `${field.name} { 
@@ -51,11 +63,23 @@ export const getRelationshipsForData = async ({
                     }
                   }`;
                 }
-                return `${field.name} { 
-                  __typename
-                  externalId
-                  ${subFields}
-                }`;
+                switch (field.type.name) {
+                  case 'TimeSeries':
+                    return `${field.name} {
+                      __typename
+                      externalId
+                      dataPoints(limit: 10) {
+                        timestamp
+                        value
+                      }
+                    }`;
+                  default:
+                    return `${field.name} { 
+                      __typename
+                      externalId
+                      ${subFields}
+                    }`;
+                }
               })
               .join('\n')}
           }
@@ -69,4 +93,12 @@ export const getRelationshipsForData = async ({
       });
   }
   return Promise.resolve(undefined);
+};
+
+export const getRelationLinkId = (
+  type: string,
+  startNode: string,
+  endNode: string
+) => {
+  return `${startNode}-${type}-${endNode}`;
 };

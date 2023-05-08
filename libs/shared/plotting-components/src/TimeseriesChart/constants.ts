@@ -1,28 +1,12 @@
-import { Aggregate } from '@cognite/sdk';
-
-import { Config, Data, Layout } from '../LineChart';
+import { Data } from '../LineChart';
 import { TimePeriod } from './types';
 
-export const AGGREGATES: Aggregate[] = ['average', 'max', 'min', 'count'];
-
-export const DEFAULT_DATAPOINTS_LIMIT = 20;
+export const DEFAULT_NUMBER_OF_POINTS = 500;
+export const DEFAULT_RAW_DATAPOINTS_LIMIT = 500;
 
 export const EMPTY_DATA: Data = {
   x: [],
   y: [],
-};
-
-export const LAYOUT: Partial<Layout> = {
-  showLegend: false,
-};
-
-export const CONFIG: Partial<Config> = {
-  scrollZoom: 'x',
-  selectionZoom: [
-    { trigger: 'default', direction: 'x+y' },
-    { trigger: 'Shift', direction: 'x' },
-  ],
-  buttonZoom: 'x',
 };
 
 export const TIME_PERIOD_OPTIONS: TimePeriod[] = [

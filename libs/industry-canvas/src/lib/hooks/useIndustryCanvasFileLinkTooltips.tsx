@@ -10,13 +10,12 @@ import { useMemo } from 'react';
 import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
 import { TooltipContainer } from '../TooltipContainer';
 import { ContainerReferenceType } from '../types';
-import { UseManagedStateReturnType } from './useManagedState';
-import { v4 as uuid } from 'uuid';
+import { OnAddContainerReferences } from '../IndustryCanvasPage';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];
   selectedAnnotation: ExtendedAnnotation | undefined;
-  onAddContainerReferences: UseManagedStateReturnType['addContainerReferences'];
+  onAddContainerReferences: OnAddContainerReferences;
 };
 
 const useIndustryCanvasFileLinkTooltips = ({
@@ -66,7 +65,6 @@ const useIndustryCanvasFileLinkTooltips = ({
         {
           type: ContainerReferenceType.FILE,
           resourceId: resourceId,
-          id: uuid(),
           page: 1,
         },
       ]);

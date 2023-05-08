@@ -92,11 +92,11 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
           </Tooltip>
         </>
 
-        <Tooltip content="Delete annotation">
+        <Tooltip content="Remove">
           <Button
             icon="Delete"
             type="ghost"
-            aria-label="Delete annotation"
+            aria-label="Remove annotation"
             onClick={onDeleteSelectedCanvasAnnotation}
           />
         </Tooltip>

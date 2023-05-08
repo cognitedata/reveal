@@ -29,7 +29,7 @@ export type DocumentTableProps = Omit<
 > & {
   query?: string;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
-  gptColumnName: string;
+  gptColumnName?: string;
   isDocumentsGPTEnabled?: boolean;
 };
 

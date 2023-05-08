@@ -13,8 +13,10 @@ export const ActionTools = ({
   fileUrl,
   fileViewerRef,
   searchQuery,
+  hasOcrData,
+  numberOfPages,
   setSearchQuery,
-  setSearchBarInputRef,
+  searchBarInputRef,
   currentSearchResultIndex,
   numberOfSearchResults,
   isSearchOpen,
@@ -36,6 +38,8 @@ export const ActionTools = ({
   fileViewerRef?: UnifiedViewer;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
+  hasOcrData: boolean;
+  numberOfPages: number;
   enableSearch?: boolean;
   enableDownload?: boolean;
   showSideBar?: boolean;
@@ -75,10 +79,12 @@ export const ActionTools = ({
           <SearchBar
             isOpen={isSearchOpen}
             value={searchQuery}
+            hasOcrData={hasOcrData}
+            numberOfPages={numberOfPages}
             onChange={setSearchQuery}
             onSearchOpen={onSearchOpen}
             onSearchClose={onSearchClose}
-            setSearchBarInputRef={setSearchBarInputRef}
+            searchBarInputRef={searchBarInputRef}
             currentSearchResultIndex={currentSearchResultIndex}
             numberOfSearchResults={numberOfSearchResults}
             onNextResult={onNextResult}

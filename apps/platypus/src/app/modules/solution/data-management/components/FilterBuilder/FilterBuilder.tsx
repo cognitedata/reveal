@@ -387,7 +387,8 @@ const processInputMap = (
 const filterMapToFields = (
   mapping: FilterMap,
   key: string,
-  omit = ['and', 'or', 'not']
+  omit = ['and', 'or', 'not'],
+  visitedKeys: string[] = []
 ): Config['fields'] => {
   return mapping[key].reduce((prev, el) => {
     if (omit.includes(el.key)) {
@@ -402,7 +403,13 @@ const filterMapToFields = (
             label: el.key,
             tooltip: el.key,
             type: '!struct',
-            subfields: filterMapToFields(mapping, el.field, omit),
+            // recurse only if not previously visited
+            subfields: visitedKeys.includes(el.key)
+              ? []
+              : filterMapToFields(mapping, el.field, omit, [
+                  ...visitedKeys,
+                  el.key,
+                ]),
           },
         };
       }
@@ -460,7 +467,7 @@ const getFieldType = (type: string): Type => {
   return InitialConfig.types.text;
 };
 
-const constructGraphQLFilterGroup = (tree: JsonTree) => {
+export const constructGraphQLFilterGroup = (tree: JsonTree) => {
   if (tree.type === 'group' && Array.isArray(tree.children1)) {
     const filters = tree.children1.filter(
       (item) =>
@@ -470,11 +477,11 @@ const constructGraphQLFilterGroup = (tree: JsonTree) => {
           item.properties.value.filter((el) => !!el))
     );
     if (filters.length === 0) {
-      return {};
+      return undefined;
     }
     const obj: any = {
-      [(tree.properties?.conjunction || 'and').toLowerCase()]: filters.map(
-        (item) => {
+      [(tree.properties?.conjunction || 'and').toLowerCase()]: filters
+        .map((item) => {
           switch (item.type) {
             case 'group':
               return constructGraphQLFilterGroup(item);
@@ -514,8 +521,8 @@ const constructGraphQLFilterGroup = (tree: JsonTree) => {
             default:
               throw new Error('Unable to build filter');
           }
-        }
-      ),
+        })
+        .filter((el) => !!el),
     };
     if (tree.properties?.not) {
       return { not: obj };

@@ -1,7 +1,10 @@
 import { CogniteClient } from '@cognite/sdk';
 import { getContainerConfigFromFileInfo } from '@cognite/unified-file-viewer';
 import { v4 as uuid } from 'uuid';
-import { IndustryCanvasContainerConfig } from '../../types';
+import {
+  FileContainerReference,
+  IndustryCanvasContainerConfig,
+} from '../../types';
 
 const resolveFileContainerConfig = async (
   sdk: CogniteClient,
@@ -16,18 +19,7 @@ const resolveFileContainerConfig = async (
     maxWidth,
     maxHeight,
     label,
-  }: {
-    id?: string | undefined;
-    resourceId: number;
-    page: number | undefined;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    maxWidth?: number;
-    maxHeight?: number;
-    label?: string;
-  }
+  }: FileContainerReference
 ): Promise<IndustryCanvasContainerConfig> => {
   const fileInfos = await sdk.files.retrieve([{ id: resourceId }]);
 
@@ -41,7 +33,7 @@ const resolveFileContainerConfig = async (
     {
       id: id || uuid(),
       label: label ?? fileInfo.name ?? fileInfo.externalId,
-      page: page,
+      page: page ?? 1,
       x: x,
       y: y,
       width: width,

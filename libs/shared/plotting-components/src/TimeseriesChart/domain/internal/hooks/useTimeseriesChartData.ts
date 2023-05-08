@@ -1,51 +1,45 @@
-import { DateRange } from '../../../types';
-import { calculateGranularity } from '../../../utils/calculateGranularity';
-import { DatapointsQueryBase } from '../../service/types';
-import { useDatapointAggregatesChartData } from './useDatapointAggregatesChartData';
-import { useStringDatapointsChartData } from './useStringDatapointsChartData';
+import { useMemo } from 'react';
 
-export interface Props {
-  timeseriesId: number;
-  dateRange?: DateRange;
-  numberOfPoints: number;
-  isString: boolean;
+import isEmpty from 'lodash/isEmpty';
+
+import { Data } from '../../../../LineChart';
+
+import { useTimeseriesDatapointsQuery } from '../../service/queries';
+import {
+  mapToChartData,
+  mapToTimeseriesDatapointsQuery,
+} from '../transformers';
+import { DataFetchOptions } from '../../../types';
+import { TimeseriesChartQuery } from '../types';
+import { useTimeseriesChartMetadata } from './useTimeseriesChartMetadata';
+import { EMPTY_DATA } from '../../../constants';
+
+interface Props {
+  query: TimeseriesChartQuery;
+  dataFetchOptions?: DataFetchOptions;
 }
 
-export const useTimeseriesChartData = ({
-  timeseriesId,
-  dateRange,
-  numberOfPoints,
-  isString,
-}: Props) => {
-  const queryBase: DatapointsQueryBase = {
-    timeseriesId,
-    start: dateRange?.[0],
-    end: dateRange?.[1],
-    limit: numberOfPoints,
+export const useTimeseriesChartData = ({ query, dataFetchOptions }: Props) => {
+  const { data: metadata, isFetched } = useTimeseriesChartMetadata({
+    query,
+    dataFetchOptions,
+  });
+
+  const { data: datapoints, isLoading } = useTimeseriesDatapointsQuery({
+    query: mapToTimeseriesDatapointsQuery({ query, metadata }),
+    enabled: isFetched,
+  });
+
+  const chartData: Data = useMemo(() => {
+    if (!datapoints || isEmpty(datapoints)) {
+      return EMPTY_DATA;
+    }
+    return mapToChartData({ datapoints, metadata });
+  }, [datapoints, metadata]);
+
+  return {
+    data: chartData,
+    metadata,
+    isLoading: !isFetched || isLoading,
   };
-
-  const granularity =
-    !isString && dateRange
-      ? calculateGranularity(dateRange, numberOfPoints)
-      : undefined;
-
-  const datapointAggregatesChartData = useDatapointAggregatesChartData({
-    query: {
-      ...queryBase,
-      aggregates: ['average', 'max', 'min', 'count'],
-      granularity,
-    },
-    enabled: !isString && Boolean(granularity),
-  });
-
-  const stringDatapointsChartData = useStringDatapointsChartData({
-    query: queryBase,
-    enabled: isString,
-  });
-
-  if (isString) {
-    return stringDatapointsChartData;
-  }
-
-  return datapointAggregatesChartData;
 };

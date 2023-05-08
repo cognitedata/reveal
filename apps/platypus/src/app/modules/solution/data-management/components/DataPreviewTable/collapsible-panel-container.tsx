@@ -16,6 +16,7 @@ import { CogDataList } from '@cognite/cog-data-grid';
 import { TimeseriesChart } from '@cognite/plotting-components';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { createLink } from '@cognite/cdf-utilities';
 
 export type DataPreviewSidebarData =
   | {
@@ -110,9 +111,9 @@ export const CollapsiblePanelContainer: React.FC<
             ]}
           />
           <a
-            href={`//${window.location.hostname}/${
-              getCogniteSDKClient().project
-            }/explore/timeSeries/${resourceId}${window.location.search}`}
+            href={createLink(
+              `/explore/timeSeries/${resourceId}${window.location.search}`
+            )}
             target="_blank"
             rel="noreferrer"
           >

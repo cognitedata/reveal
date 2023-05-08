@@ -64,6 +64,10 @@ export function Reveal({
     null
   );
 
+  const [image360CollectionSiteId, setImage360CollectionSiteId] = useState<
+    string[]
+  >([]);
+
   const handleMount = useCallback(
     (node: HTMLDivElement | null) => setRevealContainer(node),
     []
@@ -98,7 +102,7 @@ export function Reveal({
   }, [setViewer, viewer]);
 
   const { data: models, error } = useQuery(
-    ['reveal-model', modelId, revisionId],
+    ['reveal-model', modelId, revisionId, image360SiteId],
     async () => {
       if (!viewer) {
         return Promise.reject('Viewer missing');
@@ -134,31 +138,35 @@ export function Reveal({
         lastCameraPositionVec.set(x, y, z);
       }
 
-      if (image360SiteId) {
-        let images;
+      if (
+        image360SiteId &&
+        !image360CollectionSiteId.includes(image360SiteId)
+      ) {
+        let imageCollection;
         try {
-          images = await viewer.add360ImageSet(
+          imageCollection = await viewer.add360ImageSet(
             'events',
             {
               site_id: image360SiteId,
             },
             { preMultipliedRotation: false }
           );
+          image360CollectionSiteId.push(image360SiteId);
+          setImage360CollectionSiteId(image360CollectionSiteId);
         } catch {
           return Promise.reject({
-            message:
-              'The selected 360 Image is not supported and can not be loaded.',
+            message: 'The selected 360 image set is not supported',
           });
         }
 
         const currentImage360 = initialViewerState
-          ? images.image360Entities.find(
+          ? imageCollection.image360Entities.find(
               ({ transform }) =>
                 lastCameraPositionVec.distanceToSquared(
                   reusableVec.setFromMatrixPosition(transform)
                 ) < IMAGE_360_POSITION_THRESHOLD
             )
-          : images.image360Entities[0];
+          : imageCollection.image360Entities[0];
 
         if (currentImage360) {
           viewer.enter360Image(currentImage360);

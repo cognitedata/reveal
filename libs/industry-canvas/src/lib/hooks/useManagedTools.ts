@@ -12,7 +12,7 @@ import { ExactlyOneKey } from '../utils/ExactlyOneKey';
 import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
 import { UseManagedStateReturnType } from './useManagedState';
 
-const SHARED_STICKY_TOOL_OPTIONS = {
+export const SHARED_STICKY_TOOL_OPTIONS = {
   width: 200,
   height: 200,
   padding: 4,

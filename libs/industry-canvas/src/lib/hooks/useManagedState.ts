@@ -11,6 +11,7 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
+  Annotation,
   ContainerConfig,
   ContainerType,
   ToolType,
@@ -20,6 +21,7 @@ import {
   UnifiedViewerMouseEvent,
 } from '@cognite/unified-file-viewer';
 
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
   CanvasAnnotation,
@@ -38,6 +40,8 @@ import {
   useHistory,
 } from './useCanvasStateHistory';
 import resolveContainerConfig from './utils/resolveContainerConfig';
+import { useContainerAnnotations } from './useContainerAnnotations';
+import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
 
 export type InteractionState = {
   hoverId: string | undefined;
@@ -53,11 +57,11 @@ type DeleteHandlerFn =
 export type UseManagedStateReturnType = {
   container: IndustryCanvasContainerConfig;
   canvasAnnotations: CanvasAnnotation[];
-  addContainerReferences: (containerReference: ContainerReference[]) => void;
+  addContainerReferences: (
+    containerReference: ContainerReference[]
+  ) => Promise<IndustryCanvasContainerConfig[]>;
   onUpdateRequest: UpdateHandlerFn;
   onDeleteRequest: DeleteHandlerFn;
-  interactionState: InteractionState;
-  setInteractionState: Dispatch<SetStateAction<InteractionState>>;
   redo: UseCanvasStateHistoryReturnType['redo'];
   undo: UseCanvasStateHistoryReturnType['undo'];
   updateContainerById: (
@@ -65,6 +69,10 @@ export type UseManagedStateReturnType = {
     container: Partial<IndustryCanvasContainerConfig>
   ) => void;
   removeContainerById: (containerId: string) => void;
+  interactionState: InteractionState;
+  setInteractionState: Dispatch<SetStateAction<InteractionState>>;
+  clickedContainerAnnotation: ExtendedAnnotation | undefined;
+  containerAnnotations: ExtendedAnnotation[];
 };
 
 const transformRecursive = <T extends { children?: T[] }>(
@@ -290,7 +298,7 @@ const useManagedState = ({
                 annotationIds: [updatedAnnotations[0].id],
                 containerIds: [],
               });
-            }, 100);
+            }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
           });
         }
 
@@ -384,6 +392,8 @@ const useManagedState = ({
               },
             };
           });
+
+          return containerConfig;
         })
       );
     },
@@ -444,6 +454,54 @@ const useManagedState = ({
       };
     }, [attachContainerClickHandler, canvasState.container]);
 
+  const onClickContainerAnnotation = useCallback(
+    (annotation: ExtendedAnnotation) =>
+      setInteractionState((prevInteractionState) => ({
+        clickedContainerId: undefined,
+        hoverId: undefined,
+        clickedContainerAnnotationId:
+          prevInteractionState.clickedContainerAnnotationId === annotation.id
+            ? undefined
+            : annotation.id,
+      })),
+    [setInteractionState]
+  );
+
+  const onMouseOverContainerAnnotation = useCallback(
+    (annotation: Annotation) => {
+      setInteractionState((prevInteractionState) => ({
+        ...prevInteractionState,
+        hoverId: annotation.id,
+      }));
+    },
+    [setInteractionState]
+  );
+
+  const onMouseOutContainerAnnotation = useCallback(() => {
+    setInteractionState((prevInteractionState) => ({
+      ...prevInteractionState,
+      hoverId: undefined,
+    }));
+  }, [setInteractionState]);
+
+  const containerAnnotations = useContainerAnnotations({
+    container: containerWithClickHandlers,
+    selectedAnnotationId: interactionState.clickedContainerAnnotationId,
+    hoverId: interactionState.hoverId,
+    onClick: onClickContainerAnnotation,
+    onMouseOver: onMouseOverContainerAnnotation,
+    onMouseOut: onMouseOutContainerAnnotation,
+  });
+
+  const clickedContainerAnnotation = useMemo(
+    () =>
+      containerAnnotations.find(
+        (annotation) =>
+          annotation.id === interactionState.clickedContainerAnnotationId
+      ),
+    [containerAnnotations, interactionState.clickedContainerAnnotationId]
+  );
+
   return {
     container: containerWithClickHandlers,
     canvasAnnotations: canvasState.canvasAnnotations,
@@ -452,10 +510,12 @@ const useManagedState = ({
     updateContainerById,
     onUpdateRequest,
     onDeleteRequest,
-    interactionState,
-    setInteractionState,
     undo,
     redo,
+    interactionState,
+    setInteractionState,
+    clickedContainerAnnotation,
+    containerAnnotations,
   };
 };
 

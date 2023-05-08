@@ -1,22 +1,22 @@
 import {
-  DatapointAggregatesQuery,
-  StringDatapointsQuery,
+  TimeseriesDatapointsQuery,
+  TimeseriesSingleAggregateQuery,
 } from './service/types';
 
 export const queryKeys = {
   timeseriesChart: ['timeseries', 'chart'] as const,
 
-  datapointAggregates: (query: DatapointAggregatesQuery) => [
+  timeseriesSingleAggregate: (query: TimeseriesSingleAggregateQuery) => [
     ...queryKeys.timeseriesChart,
-    'datapoints',
+    'timeseries',
     'aggregates',
+    'single',
     query,
   ],
 
-  stringDatapoints: (query: StringDatapointsQuery) => [
+  datapoints: (query: TimeseriesDatapointsQuery) => [
     ...queryKeys.timeseriesChart,
     'datapoints',
-    'string',
     query,
   ],
 };
