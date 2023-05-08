@@ -1,11 +1,20 @@
-import { ReadMQTTJobLog } from 'hooks/hostedExtractors';
+import { ReadMQTTJob, ReadMQTTJobLog } from 'hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
   'error',
   'startup_error',
 ];
-
 const MQTT_JOB_LOG_SUCCESS_TYPES: ReadMQTTJobLog['type'][] = ['ok'];
+
+const MQTT_JOB_STATUS_ERROR_TYPES: ReadMQTTJob['status'][] = [
+  'error',
+  'startup_error',
+];
+const MQTT_JOB_STATUS_SUCCESS_TYPES: ReadMQTTJob['status'][] = ['running'];
+const MQTT_JOB_STATUS_NEUTRAL_TYPES: ReadMQTTJob['status'][] = [
+  'shutting_down',
+  'waiting',
+];
 
 const HOUR_IN_MS = 1000 * 60 * 60;
 const DAY_IN_MS = HOUR_IN_MS * 24;
@@ -16,6 +25,18 @@ export const doesLogHaveErrorType = (log: ReadMQTTJobLog) => {
 
 export const doesLogHaveSuccessType = (log: ReadMQTTJobLog) => {
   return MQTT_JOB_LOG_SUCCESS_TYPES.includes(log.type);
+};
+
+export const doesJobStatusHaveErrorType = (job: ReadMQTTJob) => {
+  return MQTT_JOB_STATUS_ERROR_TYPES.includes(job.status);
+};
+
+export const doesJobStatusHaveSuccessType = (job: ReadMQTTJob) => {
+  return MQTT_JOB_STATUS_SUCCESS_TYPES.includes(job.status);
+};
+
+export const doesJobStatusHaveNeutralType = (job: ReadMQTTJob) => {
+  return MQTT_JOB_STATUS_NEUTRAL_TYPES.includes(job.status);
 };
 
 export const getErrorCountInLast30Days = (logs?: ReadMQTTJobLog[]): number => {

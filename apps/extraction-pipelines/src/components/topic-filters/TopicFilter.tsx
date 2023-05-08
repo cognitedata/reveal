@@ -7,7 +7,7 @@ import {
   Dropdown,
   Menu,
   Status,
-  StatusType,
+  StatusProps,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -17,10 +17,30 @@ import {
   useDeleteMQTTJob,
   useUpdateMQTTJob,
 } from 'hooks/hostedExtractors';
+import {
+  doesJobStatusHaveErrorType,
+  doesJobStatusHaveNeutralType,
+  doesJobStatusHaveSuccessType,
+} from 'utils/hostedExtractors';
 
 type TopicFilterProps = {
   className?: string;
   job: MQTTJobWithMetrics;
+};
+
+const getJobStatusForCogs = (
+  job: MQTTJobWithMetrics
+): StatusProps['type'] | undefined => {
+  if (doesJobStatusHaveErrorType(job)) {
+    return 'critical';
+  }
+  if (doesJobStatusHaveNeutralType(job)) {
+    return 'neutral';
+  }
+  if (doesJobStatusHaveSuccessType(job)) {
+    return 'success';
+  }
+  return undefined;
 };
 
 export const TopicFilter = ({
@@ -59,7 +79,7 @@ export const TopicFilter = ({
         {job.status ? (
           <Status
             text={t(`mqtt-job-status-${job.status}`)}
-            type={StatusType.default}
+            type={getJobStatusForCogs(job)}
           />
         ) : (
           '-'
