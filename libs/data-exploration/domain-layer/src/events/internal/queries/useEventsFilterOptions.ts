@@ -40,12 +40,20 @@ export const useEventsFilterOptions = ({
     query,
   });
 
+  const omittedFilter = omit(filter, filterProperty || property);
+
   const { data: dynamicData = [] } = useEventsUniqueValuesByProperty({
     property,
     advancedFilter: mapFiltersToEventsAdvancedFilters(
-      omit(filter, filterProperty || property),
+      omittedFilter,
       searchQuery
     ),
+    /**
+     * In asset detailed view, we need to filter events according to selected assetSubtreeIds.
+     * But assetSubtreeIds not supported in advanced filter.
+     * so we have to use filter for that.
+     */
+    filter: omittedFilter,
     query,
   });
 

@@ -1,13 +1,6 @@
 import { Timeseries } from '@cognite/sdk';
-import {
-  AggregatedFilterV2,
-  DateFilterV2,
-} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import {
-  TableSortBy,
-  useTimeseriesList,
-} from '@data-exploration-lib/domain-layer';
+import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
@@ -23,6 +16,7 @@ import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { DateFilter, UnitFilter } from '@data-exploration/containers';
 import { MetadataFilter } from '@data-exploration/containers';
 
 interface Props {
@@ -39,23 +33,20 @@ const LinkedAssetFilter = ({
   filter: InternalTimeseriesFilters;
   onFilterChange: (newValue: InternalTimeseriesFilters) => void;
 }) => {
-  const { items } = useTimeseriesList(filter);
-
   return (
     <PreviewFilterDropdown>
-      <AggregatedFilterV2
-        items={items}
-        aggregator="unit"
-        title="Unit"
-        value={filter.unit ? String(filter.unit) : filter.unit}
-        setValue={(newValue) => onFilterChange({ unit: newValue })}
+      <UnitFilter.Timeseries
+        filter={filter}
+        value={filter.unit}
+        onChange={(newUnit) => onFilterChange({ unit: newUnit })}
       />
 
-      <DateFilterV2
-        title="Updated Time"
+      <DateFilter.Updated
         value={filter.lastUpdatedTime}
-        setValue={(newValue) =>
-          onFilterChange({ lastUpdatedTime: newValue || undefined })
+        onChange={(newValue) =>
+          onFilterChange({
+            lastUpdatedTime: newValue || undefined,
+          })
         }
       />
       <MetadataFilter.Timeseries
