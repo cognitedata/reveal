@@ -73,15 +73,16 @@ export const MetadataFilter = <TFilter,>({
   );
 };
 
-const AssetsMetadataFilter = (
-  props: BaseNestedFilterProps<InternalAssetFilters>
-) => {
+const AssetsMetadataFilter = ({
+  filter,
+  ...props
+}: BaseNestedFilterProps<InternalAssetFilters>) => {
   const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useAssetsMetadataFilterOptions({
     query,
     searchQuery: props.query,
-    filter: props.filter,
+    filter,
   });
 
   return (
@@ -92,22 +93,23 @@ const AssetsMetadataFilter = (
       isLoading={isLoading}
       useCustomMetadataValuesQuery={useAssetsMetadataValuesOptionsQuery({
         searchQuery: props.query,
-        filter: props.filter,
+        filter,
       })}
       {...props}
     />
   );
 };
 
-const EventsMetadataFilter = (
-  props: BaseNestedFilterProps<InternalEventsFilters>
-) => {
-  const [query, setQuery] = useDebouncedState<string>();
+const EventsMetadataFilter = ({
+  filter,
+  ...props
+}: BaseNestedFilterProps<InternalEventsFilters>) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
 
   const { options, isLoading, isError } = useEventsFilterOptionValues({
     query,
     searchQuery: props.query,
-    filter: props.filter,
+    filter,
   });
 
   return (
@@ -118,21 +120,22 @@ const EventsMetadataFilter = (
       isLoading={isLoading}
       useCustomMetadataValuesQuery={useEventsMetadataValuesOptionsQuery({
         searchQuery: props.query,
-        filter: props.filter,
+        filter,
       })}
       {...props}
     />
   );
 };
 
-const TimeseriesMetadataFilter = (
-  props: BaseNestedFilterProps<InternalTimeseriesFilters>
-) => {
-  const [query, setQuery] = useDebouncedState<string>();
+const TimeseriesMetadataFilter = ({
+  filter,
+  ...props
+}: BaseNestedFilterProps<InternalTimeseriesFilters>) => {
+  const [query, setQuery] = useDebouncedState<string | undefined>(undefined);
 
   const { options, isLoading, isError } = useTimeseriesMetadataFilterOptions({
     query,
-    filter: props.filter,
+    filter,
     searchQuery: props.query,
   });
 
@@ -141,7 +144,7 @@ const TimeseriesMetadataFilter = (
       options={options}
       onSearchInputChange={setQuery}
       useCustomMetadataValuesQuery={useTimeseriesMetadataValuesOptionsQuery({
-        filter: props.filter,
+        filter,
         searchQuery: props.query,
       })}
       isError={isError}
@@ -151,15 +154,16 @@ const TimeseriesMetadataFilter = (
   );
 };
 
-const FilesMetadataFilter = (
-  props: BaseNestedFilterProps<InternalDocumentFilter>
-) => {
+const FilesMetadataFilter = ({
+  filter,
+  ...props
+}: BaseNestedFilterProps<InternalDocumentFilter>) => {
   const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsMetadataFilterOptions({
     query,
     searchQuery: props.query,
-    filter: props.filter,
+    filter,
   });
 
   return (
@@ -170,21 +174,22 @@ const FilesMetadataFilter = (
       isLoading={isLoading}
       useCustomMetadataValuesQuery={useDocumentMetadataValuesOptionsQuery({
         searchQuery: props.query,
-        filter: props.filter,
+        filter,
       })}
       {...props}
     />
   );
 };
 
-const SequencesMetadataFilter = (
-  props: BaseNestedFilterProps<InternalSequenceFilters>
-) => {
+const SequencesMetadataFilter = ({
+  filter,
+  ...props
+}: BaseNestedFilterProps<InternalSequenceFilters>) => {
   const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useSequenceMetadataFilterOptions({
     query,
-    filter: props.filter,
+    filter,
     searchQuery: props.query,
   });
 
@@ -193,7 +198,7 @@ const SequencesMetadataFilter = (
       options={options}
       onSearchInputChange={setQuery}
       useCustomMetadataValuesQuery={useSequenceMetadataValuesOptionsQuery({
-        filter: props.filter,
+        filter,
         searchQuery: props.query,
       })}
       isError={isError}

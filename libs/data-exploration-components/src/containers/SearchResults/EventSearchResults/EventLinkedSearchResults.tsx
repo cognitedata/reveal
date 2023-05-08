@@ -1,14 +1,7 @@
 import { CogniteEvent } from '@cognite/sdk';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  AggregatedEventFilterV2,
-  MetadataFilterV2,
-} from '@data-exploration-components/components';
+import { AggregatedEventFilterV2 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import {
-  TableSortBy,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
+import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
@@ -24,6 +17,7 @@ import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { MetadataFilter } from '@data-exploration/containers';
 
 interface Props {
   enableAdvancedFilter?: boolean;
@@ -39,11 +33,6 @@ const LinkedEventFilter = ({
   filter: InternalEventsFilters;
   onFilterChange: (newValue: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList<any>('events', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
-
   return (
     <PreviewFilterDropdown>
       <AggregatedEventFilterV2
@@ -64,10 +53,12 @@ const LinkedEventFilter = ({
         title="Sub-type"
         value={filter.subtype}
       />
-      <MetadataFilterV2
-        items={items}
-        value={filter.metadata}
-        setValue={(newValue) => onFilterChange({ metadata: newValue })}
+      <MetadataFilter.Events
+        filter={filter}
+        values={filter.metadata}
+        onChange={(newMetadata) => {
+          onFilterChange({ metadata: newMetadata });
+        }}
       />
     </PreviewFilterDropdown>
   );

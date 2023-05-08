@@ -2,7 +2,6 @@ import { Timeseries } from '@cognite/sdk';
 import {
   AggregatedFilterV2,
   DateFilterV2,
-  MetadataFilterV2,
 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import {
@@ -24,6 +23,7 @@ import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { MetadataFilter } from '@data-exploration/containers';
 
 interface Props {
   enableAdvancedFilter?: boolean;
@@ -58,11 +58,12 @@ const LinkedAssetFilter = ({
           onFilterChange({ lastUpdatedTime: newValue || undefined })
         }
       />
-
-      <MetadataFilterV2
-        items={items}
-        value={filter.metadata}
-        setValue={(newValue) => onFilterChange({ metadata: newValue })}
+      <MetadataFilter.Timeseries
+        filter={filter}
+        values={filter.metadata}
+        onChange={(newMetadata) => {
+          onFilterChange({ metadata: newMetadata });
+        }}
       />
     </PreviewFilterDropdown>
   );
