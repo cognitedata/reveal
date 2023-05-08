@@ -5,6 +5,9 @@
 import { Image360Annotation } from './Image360Annotation';
 import { Vector3 } from 'three';
 
+/**
+ * Describes an intersection with a 360 image annotation
+ */
 export type Image360AnnotationIntersection = {
   /**
    * The intersection type.
