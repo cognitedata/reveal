@@ -1,5 +1,4 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-
 import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 
 export type Artifact = {
@@ -24,7 +23,7 @@ export type ExtractorLink = {
   name: string;
 };
 
-export type ExtractorType = 'global' | 'unreleased';
+export type ExtractorType = 'global' | 'unreleased' | 'hosted';
 
 export type ExtractorBase = {
   imageUrl?: string;

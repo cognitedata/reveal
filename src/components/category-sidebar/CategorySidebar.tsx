@@ -8,14 +8,17 @@ import CategorySidebarItem from './CategorySidebarItem';
 import { useExtractorsList } from 'hooks/useExtractorsList';
 import { ExtractorWithReleases } from 'service/extractors';
 import { SourceSystem, useSourceSystems } from 'hooks/useSourceSystems';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type CategorySidebarProps = {
   extractorsList: ExtractorWithReleases[];
+  hostedExtractorsList: ExtractorWithReleases[];
   sourceSystems: SourceSystem[];
 };
 
 const CategorySidebar = ({
   extractorsList,
+  hostedExtractorsList,
   sourceSystems,
 }: CategorySidebarProps): JSX.Element => {
   const { t } = useTranslation();
@@ -24,10 +27,15 @@ const CategorySidebar = ({
   const { isFetched: didFetchSourceSystems } = useSourceSystems();
 
   const extractorCount = extractorsList?.length;
+  const hostedExtractorCount = hostedExtractorsList?.length;
   const sourceSystemCount = sourceSystems?.length;
 
   const isLoading = !didFetchExtractorList || !didFetchSourceSystems;
-  const totalCount = extractorCount + sourceSystemCount;
+  const totalCount = extractorCount + sourceSystemCount + hostedExtractorCount;
+
+  const { isEnabled: shouldShowHostedExtractors } = useFlag(
+    'FUSION_HOSTED_EXTRACTORS'
+  );
 
   return (
     <StyledContainer>
@@ -44,6 +52,14 @@ const CategorySidebar = ({
           isLoading={!didFetchExtractorList}
           title={t('extractor_other')}
         />
+        {shouldShowHostedExtractors && (
+          <CategorySidebarItem
+            category="hosted-extractor"
+            count={hostedExtractorCount}
+            isLoading={!didFetchExtractorList}
+            title={t('hosted-extractor_other')}
+          />
+        )}
         <CategorySidebarItem
           category="source-system"
           count={sourceSystemCount}

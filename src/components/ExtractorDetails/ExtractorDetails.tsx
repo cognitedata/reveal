@@ -26,6 +26,7 @@ import { ReleaseTag } from 'components/ReleaseTag';
 import { useSolutionsForExtractor } from 'hooks/useSolutions';
 import SolutionForExtractor from 'components/solution/SolutionForExtractor';
 import Markdown from 'components/markdown';
+import { HostedExtractorDetails } from 'components/hosted-extractor-details/HostedExtractorDetails';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
@@ -40,6 +41,14 @@ const ExtractorDetails = () => {
   );
 
   const { data: solutions } = useSolutionsForExtractor(extractorExternalId);
+
+  if (status === 'loading') {
+    return <Loader />;
+  }
+
+  if (extractor?.type === 'hosted') {
+    return <HostedExtractorDetails extractor={extractor} />;
+  }
 
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
@@ -65,10 +74,6 @@ const ExtractorDetails = () => {
 
   const genericLinks =
     extractor?.links?.filter((link) => link?.type === 'generic') ?? [];
-
-  if (status === 'loading') {
-    return <Loader />;
-  }
 
   return (
     <Layout>
@@ -139,7 +144,6 @@ const ExtractorDetails = () => {
                         }
                         icon="Download"
                         iconPlacement="right"
-                        size="large"
                         onClick={() => {
                           trackUsage({
                             e: 'Download.Extractor.Click',
@@ -340,13 +344,13 @@ const ExtractorDetails = () => {
 
 export default ExtractorDetails;
 
-const StyledLayoutGrid = styled.div`
+export const StyledLayoutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 296px;
   gap: 56px;
 `;
 
-const StyledDivider = styled.div`
+export const StyledDivider = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${Colors['border--muted']};
@@ -356,11 +360,15 @@ const StyledBodyMuted = styled(Body).attrs({ level: 2 })`
   color: ${Colors['text-icon--muted']};
 `;
 
-const StyledLink = styled.a`
+export const StyledLink = styled.a`
   color: ${Colors['text-icon--strong']};
+
+  :hover {
+    text-decoration: underline;
+  }
 `;
 
-const StyledTagsContainer = styled.div`
+export const StyledTagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;

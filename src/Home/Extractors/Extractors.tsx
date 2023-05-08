@@ -39,52 +39,81 @@ const Extractors = () => {
     'category'
   ) as ExtractorLibraryCategory | null;
 
-  const { data: extractors, status } = useExtractorsList();
+  const { data: extractorsRaw, status } = useExtractorsList();
   const { data: sourceSystems } = useSourceSystems();
 
-  const [filteredExtractors, filteredSourceSystems] = useMemo(() => {
-    const querySet = prepareSearchString(searchQuery);
+  const extractors = useMemo(() => {
+    return extractorsRaw?.filter(({ type }) => type !== 'hosted');
+  }, [extractorsRaw]);
+  const hostedExtractors = useMemo(() => {
+    return extractorsRaw?.filter(({ type }) => type === 'hosted');
+  }, [extractorsRaw]);
 
-    const tempExtractors =
-      extractors?.filter((extractor) => {
-        const toSearch = [
-          extractor.description,
-          extractor.name,
-          ...(extractor?.tags ?? []),
-        ];
-        const contentSet = new Set<string>();
-        toSearch.forEach((s = '') => {
-          const sSet = prepareSearchString(s);
-          sSet.forEach((i) => {
-            contentSet.add(i);
+  const [filteredExtractors, filteredHostedExtractors, filteredSourceSystems] =
+    useMemo(() => {
+      const querySet = prepareSearchString(searchQuery);
+
+      const tempExtractors =
+        extractors?.filter((extractor) => {
+          const toSearch = [
+            extractor.description,
+            extractor.name,
+            ...(extractor?.tags ?? []),
+          ];
+          const contentSet = new Set<string>();
+          toSearch.forEach((s = '') => {
+            const sSet = prepareSearchString(s);
+            sSet.forEach((i) => {
+              contentSet.add(i);
+            });
           });
-        });
-        return grepContains(contentSet, querySet);
-      }, []) ?? [];
+          return grepContains(contentSet, querySet);
+        }, []) ?? [];
 
-    const tempSourceSystems =
-      sourceSystems?.filter((sourceSystem) => {
-        const toSearch = [
-          sourceSystem.description,
-          sourceSystem.name,
-          ...(sourceSystem?.tags ?? []),
-        ];
-        const contentSet = new Set<string>();
-        toSearch.forEach((s = '') => {
-          const sSet = prepareSearchString(s);
-          sSet.forEach((i) => {
-            contentSet.add(i);
+      const tempHostedExtractors =
+        hostedExtractors?.filter((extractor) => {
+          const toSearch = [
+            extractor.description,
+            extractor.name,
+            ...(extractor?.tags ?? []),
+          ];
+          const contentSet = new Set<string>();
+          toSearch.forEach((s = '') => {
+            const sSet = prepareSearchString(s);
+            sSet.forEach((i) => {
+              contentSet.add(i);
+            });
           });
-        });
-        return grepContains(contentSet, querySet);
-      }, []) ?? [];
+          return grepContains(contentSet, querySet);
+        }, []) ?? [];
 
-    return [tempExtractors, tempSourceSystems];
-  }, [extractors, sourceSystems, searchQuery]);
+      const tempSourceSystems =
+        sourceSystems?.filter((sourceSystem) => {
+          const toSearch = [
+            sourceSystem.description,
+            sourceSystem.name,
+            ...(sourceSystem?.tags ?? []),
+          ];
+          const contentSet = new Set<string>();
+          toSearch.forEach((s = '') => {
+            const sSet = prepareSearchString(s);
+            sSet.forEach((i) => {
+              contentSet.add(i);
+            });
+          });
+          return grepContains(contentSet, querySet);
+        }, []) ?? [];
+
+      return [tempExtractors, tempHostedExtractors, tempSourceSystems];
+    }, [extractors, hostedExtractors, sourceSystems, searchQuery]);
 
   const filteredExtractorLibraryItems = useMemo(() => {
     if (category === 'extractor') {
       return filteredExtractors;
+    }
+
+    if (category === 'hosted-extractor') {
+      return filteredHostedExtractors;
     }
 
     if (category === 'source-system') {
@@ -92,7 +121,12 @@ const Extractors = () => {
     }
 
     return [...filteredExtractors, ...filteredSourceSystems];
-  }, [category, filteredExtractors, filteredSourceSystems]);
+  }, [
+    category,
+    filteredExtractors,
+    filteredHostedExtractors,
+    filteredSourceSystems,
+  ]);
 
   const handleSearchQueryUpdate = (query: string) => {
     const updatedSearchParams = new URLSearchParams(searchParams);
@@ -126,6 +160,7 @@ const Extractors = () => {
             <Flex gap={40}>
               <CategorySidebar
                 extractorsList={filteredExtractors}
+                hostedExtractorsList={filteredHostedExtractors}
                 sourceSystems={filteredSourceSystems}
               />
               <StyledListContainer>

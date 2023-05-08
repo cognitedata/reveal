@@ -8,6 +8,7 @@ import { CATEGORY_SEARCH_PARAM_KEY } from 'common';
 
 export const EXTRACTOR_LIBRARY_CATEGORIES = {
   extractor: 'extractor',
+  hostedExtractor: 'hosted-extractor',
   sourceSystem: 'source-system',
 } as const;
 
@@ -50,7 +51,7 @@ const CategorySidebarItem = ({
     >
       <span>{title}</span>
       {count !== undefined && (
-        <Chip label={count} muted selectable size="x-small" />
+        <Chip label={`${count}`} selectable size="x-small" />
       )}
     </StyledButton>
   );
