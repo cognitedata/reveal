@@ -1,4 +1,5 @@
 {
+  "name": "data-exploration",
   "sourceRoot": "apps/data-exploration/src",
   "projectType": "application",
   "targets": {

@@ -3,8 +3,13 @@ import SplitterLayout from 'react-splitter-layout';
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { SIDEBAR_RESIZE_EVENT } from '@data-exploration-components/utils';
-import handle from '../../assets/handle.svg';
 import { zIndex } from '@data-exploration-lib/core';
+import handleSvg from './handle';
+
+// Create the CSS content URL from the SVG code
+const cssContentUrl = `url("data:image/svg+xml,${encodeURIComponent(
+  handleSvg
+)}")`;
 
 export type SplitterProps = {
   secondaryMinSize?: number;
@@ -97,7 +102,7 @@ const SplitterWrapper = styled.div(
     }
 
     .splitter-layout > .layout-splitter::before {
-      content: url(${handle});
+      content: ${cssContentUrl};
       position: absolute;
       isolation: isolate;
       z-index: ${zIndex.MINIMUM};

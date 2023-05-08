@@ -1,12 +1,10 @@
 const execSync = require('child_process').execSync;
 
 const runCmd = (cmd) => {
-  execSync(cmd,
-    {
-      stdio: [0, 1, 2]
-    }
-  );
-}
+  execSync(cmd, {
+    stdio: [0, 1, 2],
+  });
+};
 
 const target = process.argv[2];
 const jobIndex = Number(process.argv[3]);
@@ -20,11 +18,13 @@ const parseNxTargetString = (input) => {
     .tasks.map((t) => ({ project: t.target.project, outputs: t.outputs }))
     .slice()
     .sort();
-}
+};
 
 const affectedProjects = parseNxTargetString(
-  execSync(`npx nx print-affected --target=${target} --base=${baseSha} --head=${headSha}`).toString('utf-8')
-)
+  execSync(
+    `npx nx print-affected --target=${target} --base=${baseSha} --head=${headSha}`
+  ).toString('utf-8')
+);
 
 const main = () => {
   const sliceSize = Math.max(Math.floor(affectedProjects.length / jobCount), 1);
@@ -35,7 +35,7 @@ const main = () => {
       : affectedProjects.slice(sliceSize * (jobIndex - 1));
 
   if (projects.length > 0) {
-    const projectNames = projects.map(({ project }) => project)
+    const projectNames = projects.map(({ project }) => project);
 
     if (target === 'test') {
       runCmd(`yarn test ${projectNames}`);
@@ -47,14 +47,20 @@ const main = () => {
         console.log(`Uploading codecov for ${project} (path: ${basePath})`);
 
         // Upload codecov with specific flags, see: https://docs.codecov.com/docs/flags
-        runCmd(`./bin/codecov-linux -F ${project} -f ${files} -t ${codecovToken}`);
+        runCmd(
+          `./bin/codecov-linux -F ${project} -f ${files} -t ${codecovToken}`
+        );
       });
+    } else if (target === 'e2e') {
+      runCmd(
+        `yarn nx run-many --configuration=production --target=${target} --projects=${projectNames} --parallel --exclude="platypus*" --exclude="cdf-nx-plugin-e2e"  --env.DATA_EXPLORER_CLIENT_ID=${process.env.DATA_EXPLORER_CLIENT_ID} --env.DATA_EXPLORER_CLIENT_SECRET=${process.env.DATA_EXPLORER_CLIENT_SECRET}`
+      );
     } else {
       runCmd(
         `npx nx run-many --configuration=production --target=${target} --projects=${projectNames} --parallel`
       );
     }
   }
-}
+};
 
-main()
+main();
