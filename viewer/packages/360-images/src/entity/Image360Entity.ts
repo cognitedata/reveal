@@ -127,8 +127,14 @@ export class Image360Entity implements Image360 {
   }
 
   public activateAnnotations(): void {
-    this._image360VisualzationBox.setAnnotations(this._activeRevision.annotations);
-    this._image360VisualzationBox.setAnnotationsVisibility(true);
+    const setAndShowAnnotations = async () => {
+      const annotations = await this._activeRevision.getAnnotations();
+
+      this._image360VisualzationBox.setAnnotations(annotations);
+      this._image360VisualzationBox.setAnnotationsVisibility(true);
+    };
+
+    setAndShowAnnotations();
   }
 
   public deactivateAnnotations(): void {
