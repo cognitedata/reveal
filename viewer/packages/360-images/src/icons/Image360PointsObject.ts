@@ -1,8 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { OverlayPointsObject } from '@reveal/3d-overlays';
-import { PointsMaterialParameters } from '@reveal/3d-overlays/src/OverlayPointsObject';
+import { OverlayPointsObject, PointsMaterialParameters } from '@reveal/3d-overlays';
 import { LessEqualDepth, GreaterDepth, Object3D, Vector3 } from 'three';
 
 export class Image360PointsObject extends Object3D {

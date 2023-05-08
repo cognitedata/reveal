@@ -459,14 +459,9 @@ export class Image360ApiHelper {
       this._activeCameraManager.getCamera()
     );
 
-    if (entity === undefined) {
-      this._image360Facade.hoverIconVisibility = false;
-    }
-
     if (entity === this._interactionState.currentImage360Hovered) {
-      if (entity !== undefined) {
-        entity.icon.updateHoverSpriteScale();
-      }
+      entity?.icon.updateHoverSpriteScale();
+
       return;
     }
 
@@ -474,6 +469,8 @@ export class Image360ApiHelper {
       this._image360Facade.hoverIconVisibility = true;
       entity.icon.selected = true;
       this._debouncePreLoad(entity);
+    } else {
+      this._image360Facade.hoverIconVisibility = false;
     }
 
     this._needsRedraw = true;

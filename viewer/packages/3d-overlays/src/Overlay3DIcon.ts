@@ -3,8 +3,7 @@
  */
 
 import { EventTrigger } from '@reveal/utilities';
-import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4 } from 'three';
-import { clamp } from 'three/src/math/MathUtils';
+import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4, MathUtils } from 'three';
 
 export type IconParameters = {
   position: THREE.Vector3;
@@ -79,9 +78,10 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
   }
 
   updateHoverSpriteScale(): void {
-    if (this._hoverSprite) {
-      this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
-    }
+    if (!this._hoverSprite)
+      return;
+    
+    this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
   }
 
   updateAdaptiveScale(delegateArguments: {
@@ -168,7 +168,7 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
     }
     const pointSize = renderSize.y * camera.projectionMatrix.elements[5] * (iconRadius / _ndcPosition.w);
     const resolutionDownSampleFactor = renderSize.x / domElement.clientWidth;
-    const clampedSize = clamp(
+    const clampedSize = MathUtils.clamp(
       pointSize,
       minHeight * resolutionDownSampleFactor,
       maxHeight * resolutionDownSampleFactor
