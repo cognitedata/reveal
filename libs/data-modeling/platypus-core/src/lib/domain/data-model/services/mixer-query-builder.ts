@@ -61,9 +61,15 @@ export class MixerQueryBuilder {
     )}${paramString} {
       items {
         externalId
+        ${
+          isFDMv2
+            ? 'spaceExternalId'
+            : `
+        space 
         lastUpdatedTime
-        createdTime
-        ${isFDMv2 ? 'space: spaceExternalId' : 'space'}
+        createdTime`
+        }
+        __typename
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>
@@ -132,6 +138,15 @@ export class MixerQueryBuilder {
     }: "${spaceId}", externalId: "${externalId}" }) {
       items {
         externalId
+        ${
+          isFDMv2
+            ? 'spaceExternalId'
+            : `
+        space 
+        lastUpdatedTime
+        createdTime`
+        }
+        __typename
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>
@@ -177,8 +192,15 @@ export class MixerQueryBuilder {
     ${operationName}(first: $first, query: $query, filter: $filter) {
       items {
         externalId
+        ${
+          isFDMv2
+            ? 'spaceExternalId'
+            : `
+        space 
         lastUpdatedTime
-        createdTime
+        createdTime`
+        }
+        __typename
         ${dataModelType.fields
           .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>
@@ -233,7 +255,15 @@ export class MixerQueryBuilder {
         filterName,
         undefined
       );
-      return `${field.name} ${paramString} { items { externalId } ${
+      return `${field.name} ${paramString} { items { externalId
+        ${
+          isFDMv2
+            ? 'spaceExternalId'
+            : `space
+        lastUpdatedTime
+        createdTime
+        __typename`
+        } } ${
         pagination.pageInfo
           ? `
       pageInfo {
@@ -249,7 +279,14 @@ export class MixerQueryBuilder {
     return `
       ${field.name} {
         externalId
-        ${isFDMv2 ? 'space: spaceExternalId' : 'space'}
+        ${
+          isFDMv2
+            ? 'spaceExternalId'
+            : `space
+        lastUpdatedTime
+        createdTime
+        __typename`
+        }
       }
     `;
   }

@@ -5,7 +5,7 @@ import { NodeChip, NodeVisibleIcon, NodeWrapper } from './common';
 
 const getColor = (key: string) => uniqolor(key);
 
-export const RelationNode = <T extends { externalId: string }>({
+export const RelationNode = <T extends { externalId: string; id: string }>({
   node,
   onClick,
   isSelected,
@@ -16,7 +16,7 @@ export const RelationNode = <T extends { externalId: string }>({
 }) => {
   return (
     <NodeWrapper
-      key={node.externalId}
+      key={node.id}
       __typename={node.__typename}
       onClick={() => {
         if (node.__typename !== 'TimeSeries') {

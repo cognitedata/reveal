@@ -148,11 +148,16 @@ describe('MixerApiQueryBuilderServiceTest', () => {
       listPerson(filter: $filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          space
           lastUpdatedTime
           createdTime
-          space
+          __typename
           name
-posts (first: 2) { items { externalId } }
+posts (first: 2) { items { externalId
+  space
+  lastUpdatedTime
+  createdTime
+  __typename } }
 user { name }
         }
         pageInfo {
@@ -186,11 +191,16 @@ user { name }
       listPerson(filter: $filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          space
           lastUpdatedTime
           createdTime
-          space
+          __typename
           name
-posts (first: 2) { items { externalId } }
+posts (first: 2) { items { externalId
+  space
+  lastUpdatedTime
+  createdTime
+  __typename } }
 user { name }
         }
         pageInfo {
@@ -223,11 +233,16 @@ user { name }
       listPerson(filter: $filter, first: ${limit}, after: "${cursor}", sort: {title: ASC}) {
         items {
           externalId
+          space
           lastUpdatedTime
           createdTime
-          space
+          __typename
           name
-posts (first:2) { items { externalId } }
+posts (first:2) { items { externalId 
+  space
+  lastUpdatedTime
+  createdTime
+  __typename } }
 user { name }
         }
         pageInfo {
@@ -258,10 +273,16 @@ user { name }
         searchPerson(first: $first, query: $query, filter:$filter) {
           items {
             externalId
+            space
             lastUpdatedTime
             createdTime
+            __typename
             name
-            posts (first: 2){ items { externalId } }
+            posts (first: 2){ items { externalId
+              space
+              lastUpdatedTime
+              createdTime
+              __typename } }
             user { name }
           }
         }
@@ -304,9 +325,10 @@ user { name }
       listPerson(filter:$filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          space
           lastUpdatedTime
           createdTime
-          space
+          __typename
           myTimeSeries { externalId }
         }
         pageInfo {
@@ -367,9 +389,10 @@ user { name }
       listDemo(filter:$filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          space
           lastUpdatedTime
           createdTime
-          space
+          __typename
           ts { externalId }
           tsList { externalId }
         }
@@ -422,9 +445,10 @@ user { name }
       listPerson(filter:$filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
+          space
           lastUpdatedTime
           createdTime
-          space
+          __typename
         }
         pageInfo {
           startCursor
@@ -458,10 +482,18 @@ user { name }
       getPersonById(instance:{space:"a", externalId:"b"}) {
         items {
           externalId
+          space
+          lastUpdatedTime
+          createdTime
+          __typename
           name
           posts (first: 2) { 
             items { 
               externalId
+              space
+              lastUpdatedTime
+              createdTime
+              __typename
             } 
               pageInfo {
                 startCursor
@@ -495,10 +527,18 @@ user { name }
       getPersonById(instance:{space:"a", externalId:"b"}) {
         items {
           externalId
+          space
+          lastUpdatedTime
+          createdTime
+          __typename
           name
           posts (filter:$posts, first: 2, after:"abcd=") { 
             items { 
               externalId
+              space
+              lastUpdatedTime
+              createdTime
+              __typename
             } 
               pageInfo {
                 startCursor
@@ -534,9 +574,17 @@ user { name }
       getComplexTypeById(instance:{space:"a", externalId:"b"}) {
         items {
           externalId
+          space
+          lastUpdatedTime
+          createdTime
+          __typename
           c1 (filter:$c1, first: 2) { 
             items { 
               externalId
+              space
+              lastUpdatedTime
+              createdTime
+              __typename
             } 
             pageInfo {
               startCursor
@@ -548,6 +596,10 @@ user { name }
           post (first: 2, after:"abcd=") { 
             items { 
               externalId
+              space
+              lastUpdatedTime
+              createdTime
+              __typename
             } 
             pageInfo {
               startCursor

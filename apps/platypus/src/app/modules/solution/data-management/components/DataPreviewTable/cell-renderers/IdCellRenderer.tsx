@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { RelationViewer } from '../../RelationViewer/RelationViewer';
 import { useGraphViewerFeatureFlag } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { getNodeId } from '../../RelationViewer/utils';
 
 interface IdCellRendererProps extends ICellRendererParams {
   onRowAdd: (draftRowData: KeyValueMap) => void;
@@ -67,7 +68,12 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
         >
           <RelationViewer
             initialNodes={[
-              { externalId: props.value, __typename: dataModelType.name },
+              {
+                externalId: props.value,
+                __typename: dataModelType.name,
+                space: props.data.space,
+                id: getNodeId(props.data),
+              },
             ]}
             initialEdges={[]}
           />
