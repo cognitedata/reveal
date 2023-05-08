@@ -26,6 +26,9 @@ import {
 } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
+import { useSDK } from '@cognite/sdk-provider';
+import { useQuery } from '@tanstack/react-query';
+import { getToken } from '@cognite/cdf-sdk-singleton';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -68,6 +71,10 @@ export const FlowContextProvider = ({
   children,
   initialFlow,
 }: FlowContextProviderProps) => {
+  const sdk = useSDK();
+  const { data: token } = useQuery(['token'], getToken, {
+    refetchInterval: 60000,
+  });
   const [selectedObject, setSelectedObject] = useState<string | undefined>();
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
@@ -84,6 +91,44 @@ export const FlowContextProvider = ({
   const { mutate } = useUpdateFlow();
   const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
 
+  const [socket, setWS] = useState<WebSocket>();
+  useEffect(() => {
+    if (token) {
+      const { host } = new URL(sdk.getBaseUrl());
+      const ws = new WebSocket(
+        `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
+      );
+
+      ws.addEventListener('open', async () => {
+        ws.send(JSON.stringify({ jwt: token }));
+        setWS(ws);
+      });
+
+      ws.addEventListener('close', () => {
+        setWS(undefined);
+      });
+      ws.addEventListener('error', () => {
+        setWS(undefined);
+      });
+
+      ws.addEventListener('message', (e: MessageEvent<Blob>) => {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', () => {
+          if (reader.result) {
+            const data = new Uint8Array(reader.result as ArrayBuffer);
+            const [newFlow] = Automerge.applyChanges(flowRef.current, [data]);
+            flowRef.current = newFlow;
+            setFlowState(newFlow);
+          }
+        });
+        reader.readAsArrayBuffer(e.data);
+      });
+      return () => {
+        ws.close();
+      };
+    }
+  }, [externalId, token, sdk]);
+
   const changeFlow = useCallback(
     (fn: Automerge.ChangeFn<AFlow>, logger?: Logger) => {
       const msg = logger ? logger(flowRef.current) : undefined;
@@ -99,6 +144,9 @@ export const FlowContextProvider = ({
         newFlow = Automerge.emptyChange(flowRef.current, msg);
         anythingChanged = true;
       }
+      const changes = anythingChanged
+        ? Automerge.getChanges(flowRef.current, newFlow)
+        : [];
       flowRef.current = newFlow;
       // `fn` could end up doing no changes. Since there are no actual changes, there is no point in
       // updating state or persisting the doc. In the current version of AM it also seems safe to
@@ -109,8 +157,11 @@ export const FlowContextProvider = ({
         setFlowState(newFlow);
         debouncedMutate(newFlow);
       }
+      if (changes.length > 0 && socket) {
+        changes.forEach((change) => socket.send(change.buffer));
+      }
     },
-    [debouncedMutate]
+    [debouncedMutate, socket]
   );
 
   const restoreWorkflow = useCallback(
