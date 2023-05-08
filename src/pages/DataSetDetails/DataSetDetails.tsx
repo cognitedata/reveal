@@ -105,6 +105,7 @@ const DataSetDetails = (): JSX.Element => {
   const onDiscardClick = () => {
     setEditDrawerVisible(false);
     setChangesSaved(true);
+    setSelectedDataSet(undefined);
   };
 
   const openDiscardChangesToast = useDiscardChangesToast({ onDiscardClick });
@@ -112,6 +113,7 @@ const DataSetDetails = (): JSX.Element => {
   const onEditDrawerClose = () => {
     if (changesSaved) {
       setEditDrawerVisible(false);
+      setSelectedDataSet(undefined);
     } else {
       openDiscardChangesToast();
     }
@@ -119,6 +121,7 @@ const DataSetDetails = (): JSX.Element => {
 
   const handleModalClose = () => {
     setEditDrawerVisible(false);
+    setSelectedDataSet(undefined);
   };
 
   const { consoleLabels } = dataSet?.metadata || {

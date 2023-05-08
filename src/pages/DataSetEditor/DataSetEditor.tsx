@@ -100,6 +100,7 @@ const DataSetEditor = ({
       hideActions
     >
       <DataSetCreation
+        key={dataSetWithExtpipes?.dataSet?.id}
         loading={loading}
         createDataSet={createDataSet}
         dataSet={dataSetWithExtpipes?.dataSet}
