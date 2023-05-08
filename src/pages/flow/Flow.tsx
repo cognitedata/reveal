@@ -7,8 +7,6 @@ import {
   useWorkflowBuilderContext,
 } from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
-import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
-import { FloatingPlusButton } from 'components/floating-plus-button/FloatingPlusButton';
 import { useFlow } from 'hooks/files';
 import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
@@ -38,26 +36,13 @@ const Flow = (): JSX.Element => {
 };
 
 function FlowContainer() {
-  const {
-    isComponentsPanelVisible,
-    setIsComponentsPanelVisible,
-    isNodeConfigurationPanelOpen,
-    isHistoryVisible,
-    previewHash,
-  } = useWorkflowBuilderContext();
+  const { isHistoryVisible, previewHash, isNodeConfigurationPanelOpen, } = useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
       <CanvasTopBar />
 
       <Content>
-        {isComponentsPanelVisible ? (
-          <FloatingComponentsPanel />
-        ) : (
-          <FloatingPlusButton
-            onClick={() => setIsComponentsPanelVisible(true)}
-          />
-        )}
         {previewHash && <PreviewFeedback />}
         {isHistoryVisible && <FloatingHistoryPanel />}
         <Canvas />
