@@ -21,10 +21,10 @@ interface ErrorNotificationProps extends ApiError {
 const generateStatusMessage = (errorCode: number): string | null => {
   switch (errorCode) {
     case 401:
-      return 'Your account has insufficient access rights. Contact your project administrator.';
+      return 'Your account has insufficient access rights. Please contact your project administrator.';
     case 404:
     case 403:
-      return 'We could not find what you were looking for. Keep in mind that this may be due to insufficient access rights.';
+      return 'You have insufficient access rights to create a data set. Please contact your project administrator for necessary access and try again.';
     case 409:
       return 'External ID cannot be a duplicate. Please choose another external ID.';
     case 500:
