@@ -295,6 +295,8 @@ pods {
           print(runAffectedTarget)
           def affectedLibraries = getAffectedLibs(isMaster);
           print(affectedLibraries);
+          sh(script: "cp /npm-credentials/npm-public-credentials.txt ~/.npmrc");
+          sh(script: "npm whoami");
           for (lib in affectedLibraries) {
             if(shouldDeployPackage(lib, NPM_PACKAGES, isMaster)){
               def libBuildPath = NPM_PACKAGES[lib];
