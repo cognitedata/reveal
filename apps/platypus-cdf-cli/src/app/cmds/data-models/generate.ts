@@ -238,7 +238,9 @@ const SPACE="${args['space']}"`
       );
     } catch (error) {
       DEBUG(`got error: ${JSON.stringify(error)}`);
-      args.logger.error(error);
+      args.logger.error(
+        'message' in error ? error.message : JSON.stringify(error)
+      );
     }
   }
 }
