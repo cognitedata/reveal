@@ -77,12 +77,16 @@ export const FlowContextProvider = ({
   const [socket, setWS] = useState<WebSocket>();
   useEffect(() => {
     if (token) {
+      // const ws = new WebSocket(
+      //   `ws://localhost:8080/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
+      // );
       const { host } = new URL(sdk.getBaseUrl());
       const ws = new WebSocket(
-        `wss://${host}/api/v1/${sdk.project}/document-changes/workflows/${externalId}?token=${token}`
+        `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
       );
 
       ws.addEventListener('open', async () => {
+        ws.send(JSON.stringify({ jwt: token }));
         setWS(ws);
       });
 
