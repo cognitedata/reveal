@@ -5,6 +5,9 @@ import { useGlobalStyles } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import consoleStyle from './global.css';
 
+import antdStyle from 'antd/dist/antd.css';
+import antdTheme from './antd-theme.less';
+
 import { styleScope } from 'styles/styleScope';
 import { getContainer } from 'utils/shared';
 
@@ -17,7 +20,7 @@ CogsTooltip.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: ReactNode }) {
-  useGlobalStyles([cogsStyles, consoleStyle]);
+  useGlobalStyles([antdStyle, cogsStyles, antdTheme, consoleStyle]);
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
