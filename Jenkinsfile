@@ -287,7 +287,7 @@ pods {
 
       stage('Publish NPM') {
         container('apphosting') {
-          if (!isPullRequest) {
+          if (!isMaster) {
             print 'NPM package publish only runs in master branch'
             return
           }
