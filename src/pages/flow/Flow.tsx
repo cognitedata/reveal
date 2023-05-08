@@ -36,7 +36,8 @@ const Flow = (): JSX.Element => {
 };
 
 function FlowContainer() {
-  const { isHistoryVisible, previewHash, isNodeConfigurationPanelOpen, } = useWorkflowBuilderContext();
+  const { isHistoryVisible, previewHash, isNodeConfigurationPanelOpen } =
+    useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
