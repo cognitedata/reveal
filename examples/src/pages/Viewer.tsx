@@ -18,7 +18,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, Corner, AxisViewTool, SmartOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -37,9 +37,25 @@ import { Image360UI } from '../utils/Image360UI';
 import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
+import { Vector3 } from 'three';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
+
+type FDMQueryResponse = {
+  data: {
+    listAPM_Observation: {
+      items: {
+        description: string;
+        position: {
+          x: number;
+          y: number;
+          z: number;
+        }
+      } []
+    }
+  }
+};
 
 export function Viewer() {
   const url = new URL(window.location.href);
@@ -433,6 +449,18 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
+      // Points of interest stuff
+
+      const overlayTool = new SmartOverlayTool(viewer); 
+
+      const POIs = await listPOIs(client, project!);
+
+      const labels = POIs.map((poi, index) => {
+        const position = new THREE.Vector3(poi.position.x, poi.position.y, poi.position.z);
+        return { position, text: poi.description, id: index, color: new THREE.Color('red')}
+      });
+      overlayTool.addOverlays(labels);
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -448,6 +476,11 @@ export function Viewer() {
                   point,
                   `took ${(performance.now() - start).toFixed(1)} ms`
                 );
+                
+                const position = point.add(new THREE.Vector3(0, 0.2, 0));
+
+                overlayTool.addOverlay({ position, text: `Clicked node with treeIndex ${treeIndex}`, id: treeIndex, color: new THREE.Color('red')});
+                createPointOfInterest(client, project!, position, `Clicked node with treeIndex ${treeIndex}`);
 
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
@@ -498,4 +531,106 @@ export function Viewer() {
     };
   }, []);
   return <CanvasWrapper ref={canvasWrapperRef} />;
+}
+
+async function createPointOfInterest(client: CogniteClient, project: string, position: Vector3, description: string): Promise<void> {
+  const baseUrl = client.getBaseUrl();
+  const fdmSpace = 'Test_DMSv3';
+  const APMDataModelName = 'APM_Observation';
+  const vec3DataModelName = 'Vec3f'
+  const edgeExternalId = 'APM_Observation.position';
+  const dataModelVersion = '3';
+  
+  const fdmCreateEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances`;
+  
+  const externalId = performance.now();
+
+  const APMInstanceData = {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "node",
+          "space": fdmSpace,
+          externalId: externalId.toString(),
+          "sources": [
+            {
+              "source": {
+                "type": "view",
+                "space": fdmSpace,
+                "externalId": APMDataModelName,
+                "version": dataModelVersion
+              },
+              "properties": {
+                description: description,
+                position: {
+                  "externalId": externalId.toString() + 'vec3',
+                  space: fdmSpace
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  const createdVec3Instance = await client.post(fdmCreateEndpoint, {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "node",
+          "space": fdmSpace,
+          externalId: externalId.toString() + 'vec3',
+          "sources": [
+            {
+              "source": {
+                "type": "view",
+                "space": fdmSpace,
+                "externalId": vec3DataModelName,
+                "version": dataModelVersion
+              },
+              "properties": {
+                x: position.x,
+                y: position.y,
+                z: position.z
+              }
+            }
+          ]
+        }
+      ]
+    }
+  });
+
+  const createdAPMInstance = await client.post(fdmCreateEndpoint, APMInstanceData);
+
+  console.log("Finished creating instances");
+}
+
+async function listPOIs (sdk: CogniteClient, project: string) {
+  const baseUrl = sdk.getBaseUrl();
+  const fdmSpace = 'Test_DMSv3';
+  const dataModelVersion = '3';
+  
+  const fdmQueryEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${fdmSpace}/datamodels/${fdmSpace}/versions/${dataModelVersion}/graphql`;
+
+  const fdmData = await sdk.post(fdmQueryEndpoint, {
+    data: {
+      query: `query MyQuery {
+        listAPM_Observation {
+          items {
+            description
+            position {
+              x
+              y
+              z
+            }
+          }
+        }
+      }`
+    }
+  });
+  console.log(fdmData);
+  return (fdmData.data as FDMQueryResponse).data.listAPM_Observation.items;
 }
