@@ -3,43 +3,23 @@ import { BuiltInType } from './types';
 export const mixerApiInlineTypeDirectiveName = 'nested';
 
 export const mixerApiBuiltInTypes = [
-  {
-    name: 'String',
-    type: 'SCALAR',
-    dmsType: 'text',
-  },
-  {
-    name: 'Int',
-    type: 'SCALAR',
-    dmsType: 'int32',
-  },
+  { name: 'String', type: 'SCALAR', dmsType: 'text', tsType: 'string' },
+  { name: 'Int', type: 'SCALAR', dmsType: 'int32', tsType: 'number' },
   {
     name: 'Int32',
     type: 'SCALAR',
     dmsType: 'int32',
+    tsType: 'number',
   },
-  {
-    name: 'Int64',
-    type: 'SCALAR',
-    dmsType: 'int64',
-  },
-  { name: 'Float', type: 'SCALAR', dmsType: 'float64' },
-  { name: 'Float32', type: 'SCALAR', dmsType: 'float32' },
-  { name: 'Float64', type: 'SCALAR', dmsType: 'float64' },
-  {
-    name: 'Timestamp',
-    type: 'SCALAR',
-    dmsType: 'timestamp',
-  },
-  { name: 'JSONObject', type: 'SCALAR', dmsType: 'json' },
-  { name: 'Date', type: 'SCALAR', dmsType: 'date' },
-  {
-    name: 'Boolean',
-    type: 'SCALAR',
-    dmsType: 'boolean',
-    filterType: 'boolean',
-  },
-  { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text' },
+  { name: 'Int64', type: 'SCALAR', dmsType: 'int64', tsType: 'number' },
+  { name: 'Float', type: 'SCALAR', dmsType: 'float64', tsType: 'number' },
+  { name: 'Float32', type: 'SCALAR', dmsType: 'float32', tsType: 'number' },
+  { name: 'Float64', type: 'SCALAR', dmsType: 'float64', tsType: 'number' },
+  { name: 'Timestamp', type: 'SCALAR', dmsType: 'timestamp', tsType: 'Date' },
+  { name: 'JSONObject', type: 'SCALAR', dmsType: 'json', tsType: 'any' },
+  { name: 'Date', type: 'SCALAR', dmsType: 'date', tsType: 'Date' },
+  { name: 'Boolean', type: 'SCALAR', dmsType: 'boolean', tsType: 'boolean' },
+  { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text', tsType: 'string' },
   {
     name: 'readonly',
     type: 'DIRECTIVE',

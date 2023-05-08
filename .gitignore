@@ -37,6 +37,9 @@ junit.xml
 
 /.docz
 /dist
+
+generated/
+dm-client/
 #Cypress
 
 cypress/downloads

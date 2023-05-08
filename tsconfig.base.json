@@ -59,7 +59,8 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
-      ]
+      ],
+      "@platypus/@cognite/fdm-client": ["libs/@cognite/fdm-client/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

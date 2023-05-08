@@ -15,4 +15,5 @@ export default {
   coverageDirectory: '../../coverage/apps/platypus-cdf-cli',
   collectCoverage: true,
   collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
+  coveragePathIgnorePatterns: ['codegen-static'],
 };

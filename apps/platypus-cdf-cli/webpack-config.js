@@ -1,5 +1,6 @@
 const CopyPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
+const path = require('path');
 
 // tools/custom-webpack-configurations/platypus-cli-webpack-config.js
 module.exports = (config, context) => {
@@ -20,6 +21,10 @@ module.exports = (config, context) => {
           {
             from: './**/*.md',
             to: '[name][ext]',
+          },
+          {
+            from: './**/codegen-static/js/*',
+            to: 'js/[name][ext]',
           },
         ],
       }),
