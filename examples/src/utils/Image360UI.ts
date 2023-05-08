@@ -8,8 +8,8 @@ import {
   Image360,
   Image360Collection,
   Image360EnteredDelegate,
-  Image360AnnotationHoveredDelegate,
-  Image360Annotation
+  Image360Annotation,
+  PointerEventDelegate
 } from '@cognite/reveal';
 
 import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
@@ -32,14 +32,27 @@ export class Image360UI {
       selectedEntity = entity;
     };
 
-    const onAnnotationClicked: Image360AnnotationHoveredDelegate = (annotation, _event, direction) => {
+    const onAnnotationClicked: PointerEventDelegate = event => {
       if (this._lastAnnotation !== undefined) {
         this._lastAnnotation.setColor(undefined);
       }
 
-      console.log('Clicked annotation with data: ', annotation.annotation.data, 'with direction ', direction);
-      annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
-      this._lastAnnotation = annotation;
+      const intersectionPromise = viewer.get360AnnotationIntersectionFromPixel(event.offsetX, event.offsetY);
+
+      const ui = this;
+
+      handleIntersectionAsync();
+
+      async function handleIntersectionAsync() {
+        const int = await intersectionPromise;
+        if (int === null) {
+          return;
+        }
+
+        console.log('Clicked annotation with data: ', int.annotation.annotation.data);
+        int.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+        ui._lastAnnotation = int.annotation;
+      }
     };
 
     const translation = {
@@ -165,7 +178,7 @@ export class Image360UI {
       );
       collection.setIconsVisibility(!iconCulling.hideAll);
       collection.on('image360Entered', onImageEntered);
-      collection.on('image360AnnotationClicked', onAnnotationClicked);
+      viewer.on('click', onAnnotationClicked);
       collections.push(collection);
       entities = entities.concat(collection.image360Entities);
 
