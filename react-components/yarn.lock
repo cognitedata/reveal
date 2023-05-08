@@ -9,14 +9,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-react-components@workspace:."
   dependencies:
-    "@types/react": 18.2.0
+    "@types/react": 18.2.3
     react: 18.2.0
     ts-loader: 9.4.2
     typescript: 5.0.4
     webpack: 5.81.0
     webpack-cli: 5.0.2
   peerDependencies:
-    react: ">=17"
+    react: ">=18"
   languageName: unknown
   linkType: soft
 
@@ -134,14 +134,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.0":
-  version: 18.2.0
-  resolution: "@types/react@npm:18.2.0"
+"@types/react@npm:18.2.3":
+  version: 18.2.3
+  resolution: "@types/react@npm:18.2.3"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: db3d92b423150222a666329f7aa3023e3e942044700557b8a7d161530847e621aec9f56c9e7f71761b06dd164c8a7b17ad52355863efe80963dffa5537e8e5fd
+  checksum: 697e5b5a84a9a586e6e5aef01897677efcd4c5586d324e7c2a6219e0ac9dc8e1663e7ced0bdb576cc7f367ebc004cbf576eb142c9dc196b17062843ce1004011
   languageName: node
   linkType: hard
 
