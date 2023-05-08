@@ -44,6 +44,7 @@ import { useSelectedDataSet } from '../../context/index';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
+import useDiscardChangesToast from 'hooks/useDiscardChangesToast';
 
 const tabTypes = [
   'overview',
@@ -101,53 +102,18 @@ const DataSetDetails = (): JSX.Element => {
     }
   };
 
-  const discardChangesButton = (
-    <div style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}>
-      <Button
-        type="destructive"
-        size="small"
-        onClick={() => {
-          setEditDrawerVisible(false);
-          setChangesSaved(true);
-          toast.dismiss('navigateAway');
-        }}
-      >
-        {t('discard-changes')}
-      </Button>
-    </div>
-  );
+  const onDiscardClick = () => {
+    setEditDrawerVisible(false);
+    setChangesSaved(true);
+  };
 
-  const ButtonCloseDiscardChangesToast = ({
-    closeToast,
-  }: {
-    closeToast: () => void;
-  }) => (
-    <StyledToastCloseButton
-      aria-label="Keep editing"
-      onClick={closeToast}
-      size="small"
-      icon="Close"
-      type="ghost"
-    />
-  );
+  const openDiscardChangesToast = useDiscardChangesToast({ onDiscardClick });
 
   const onEditDrawerClose = () => {
     if (changesSaved) {
       setEditDrawerVisible(false);
     } else {
-      toast.warning(
-        <div>
-          <h3>Warning</h3>
-          {t('you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away')}
-          {discardChangesButton}
-        </div>,
-        {
-          autoClose: false,
-          closeButton: ButtonCloseDiscardChangesToast,
-          closeOnClick: false,
-          toastId: 'navigateAway',
-        }
-      );
+      openDiscardChangesToast();
     }
   };
 
@@ -449,24 +415,6 @@ const Wrapper = styled.div`
   }
   .ant-tabs-nav {
     margin: 0 !important;
-  }
-`;
-
-/* 
-Using two unfortunate hacks here to override the Toast's styles which set color on all
-icons inside the toast and make our close icon orange:
-1. && makes the styles more specific
-2. selecting .cogs-icon class sets the proper color on the close icon
-
-Fortunately there's a new Cogs Toast component in the works
-*/
-const StyledToastCloseButton = styled(Button)`
-  align-self: flex-start;
-
-  && {
-    .cogs-icon {
-      color: var(--cogs-text-icon--strong);
-    }
   }
 `;
 

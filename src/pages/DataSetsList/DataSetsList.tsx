@@ -33,6 +33,7 @@ import RowActions from 'components/data-sets-list/row-actions';
 import TableFilter, { GovernanceStatus } from 'components/table-filters';
 import { useSearchParamState } from 'hooks/useSearchParamState';
 import { CogsTableCellRenderer, trackUsage } from 'utils';
+import useDiscardChangesToast from 'hooks/useDiscardChangesToast';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -241,23 +242,6 @@ const DataSetsList = (): JSX.Element => {
     setCreationDrawerVisible(true);
   };
 
-  const discardChangesButton = (
-    <div style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}>
-      <Button
-        type="destructive"
-        size="small"
-        onClick={() => {
-          setCreationDrawerVisible(false);
-          setMode('create');
-          setSelectedDataSet(undefined);
-          toast.dismiss('navigateAway');
-        }}
-      >
-        {t('discard-changes')}
-      </Button>
-    </div>
-  );
-
   const CreateButton = (
     <Button
       type="primary"
@@ -273,27 +257,22 @@ const DataSetsList = (): JSX.Element => {
     </Button>
   );
 
+  const onDiscardClick = () => {
+    setCreationDrawerVisible(false);
+    setMode('create');
+    setSelectedDataSet(undefined);
+    setChangesSaved(true);
+  };
+
+  const openDiscardChangesToast = useDiscardChangesToast({ onDiscardClick });
+
   const onClose = () => {
     if (userWarned || changesSaved) {
       setCreationDrawerVisible(false);
       setMode('create');
       setSelectedDataSet(undefined);
     } else {
-      toast.warning(
-        <div>
-          <h3>Warning</h3>
-          {t('you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away')}
-          {discardChangesButton}
-        </div>,
-        {
-          toastId: 'navigateAway',
-          position: 'top-right',
-          autoClose: false,
-          closeOnClick: false,
-          closeButton: true,
-          type: 'warning',
-        }
-      );
+      openDiscardChangesToast();
     }
   };
 
