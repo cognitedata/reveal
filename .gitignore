@@ -39,6 +39,7 @@ junit.xml
 /dist
 
 generated/
+dm-client/
 #Cypress
 
 cypress/downloads

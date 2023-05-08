@@ -1,7 +1,6 @@
 import { Argv } from 'yargs';
 import * as storageCmds from './storage';
 import * as apiCmds from './api';
-import codegenJs from './codegen-js';
 import createCmd from './create';
 import deleteCmd from './delete';
 import publishCmd from './publish';
@@ -25,7 +24,6 @@ export const builder = (yargs: Argv) => {
     .command(listCmd)
     .command(deleteCmd)
     .command(generateCmd)
-    .command(codegenJs)
     .demandCommand(1)
     .version(false);
 
