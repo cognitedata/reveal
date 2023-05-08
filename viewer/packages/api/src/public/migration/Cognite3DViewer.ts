@@ -1361,7 +1361,9 @@ export class Cognite3DViewer {
   /**
    * Check for intersections with 360 annotations through the given pixel.
    * Similar to {getIntersectionFromPixel}, but checks 360 image annotations
-   * instead of models
+   * instead of models.
+   * @param offsetX
+   * @param offsetY
    */
   async get360AnnotationIntersectionFromPixel(
     offsetX: number,
