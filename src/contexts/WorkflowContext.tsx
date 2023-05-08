@@ -16,14 +16,7 @@ import * as Automerge from '@automerge/automerge';
 import { debounce, isEqual } from 'lodash';
 
 import { useFlow, useUpdateFlow } from 'hooks/files';
-import {
-  AFlow,
-  CanvasEdges,
-  CanvasNodes,
-  CanvasNode,
-  ProcessType,
-  ProcessNodeData,
-} from 'types';
+import { AFlow, CanvasEdges, CanvasNodes, ProcessNodeData } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
 
