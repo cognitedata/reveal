@@ -41,6 +41,7 @@ import {
 } from 'types';
 import { Controls } from 'components/controls';
 import { CustomEdge } from 'components/custom-edge';
+import { CanvasToolbar } from 'components/canvas-toolbar/CanvasToolbar';
 import { useUserInfo } from 'utils/user';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
@@ -337,6 +338,7 @@ export const FlowBuilder = (): JSX.Element => {
         }}
       >
         <Controls />
+        <CanvasToolbar />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <StyledMiniMap />
       </ReactFlow>
