@@ -77,9 +77,6 @@ export const FlowContextProvider = ({
   const [socket, setWS] = useState<WebSocket>();
   useEffect(() => {
     if (token) {
-      // const ws = new WebSocket(
-      //   `ws://localhost:8080/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
-      // );
       const { host } = new URL(sdk.getBaseUrl());
       const ws = new WebSocket(
         `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
