@@ -14,7 +14,7 @@ export type PointCloudIntersection = {
    */
   model: CognitePointCloudModel;
   /**
-   * Tree index of the intersected 3D node.
+   * Coordinate of the intersection.
    */
   point: THREE.Vector3;
   /**
