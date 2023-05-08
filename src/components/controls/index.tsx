@@ -106,7 +106,7 @@ export const Controls = () => {
     <ToolBar
       toolbarDirection="row"
       buttons={buttons}
-      placement="topRight"
+      placement="bottomRight"
       gap={4}
     />
   );
