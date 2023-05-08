@@ -5,7 +5,6 @@ import {
   useAggregate,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
-import { formatNumber } from '@data-exploration-components/utils';
 import { Chip } from '@cognite/cogs.js';
 import {
   getTitle,
@@ -18,6 +17,7 @@ import {
 } from '@data-exploration-components/hooks';
 import { Model3D } from '@cognite/sdk';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import { formatNumber } from '@data-exploration-lib/core';
 
 export type ResultProps = {
   api: 'list' | 'search';

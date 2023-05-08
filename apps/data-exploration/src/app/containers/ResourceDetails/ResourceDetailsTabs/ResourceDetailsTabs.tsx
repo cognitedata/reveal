@@ -14,11 +14,12 @@ import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
 import { useLocation } from 'react-router-dom';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { getTabCountLabel } from '@data-exploration-components/utils';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 import {
   formatNumber,
-  getTabCountLabel,
-} from '@data-exploration-components/utils';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+  withThousandSeparator,
+} from '@data-exploration-lib/core';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -112,6 +113,7 @@ export const ResourceDetailsTabs = ({
       chipRight={{
         label: getCountLabel(counts[key] || 0, key),
         size: 'x-small',
+        tooltipProps: { content: withThousandSeparator(counts[key], ',') },
       }}
     >
       <ResourceDetailTabContent

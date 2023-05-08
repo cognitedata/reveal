@@ -8,7 +8,6 @@ export * from './filters';
 export * from './getChipRightPropsForResourceCounter';
 export * from './getTimeseriesFilterUnit';
 export * from './mapMimeTypeToDocumentType';
-export * from './numbers';
 export * from './string';
 export * from './url';
 export * from './windowEvents';
