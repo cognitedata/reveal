@@ -81,6 +81,7 @@ export class ImageAnnotationObject implements Image360Annotation {
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._mesh.matrix = transformation;
     this._mesh.matrixAutoUpdate = false;
+    this._mesh.updateWorldMatrix(false, false);
   }
 
   public getObject(): Object3D {
@@ -89,14 +90,14 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   public updateMaterial(): void {
     this._material.color = this._defaultAppearance.color ?? getDefaultColor(this._annotation);
-    this._material.visible = this._defaultAppearance.visibility ?? true;
+    this._material.visible = this._defaultAppearance.visible ?? true;
 
     if (this._appearance.color !== undefined) {
       this._material.color = this._appearance.color;
     }
 
-    if (this._appearance.visibility !== undefined) {
-      this._material.visible = this._appearance.visibility;
+    if (this._appearance.visible !== undefined) {
+      this._material.visible = this._appearance.visible;
     }
 
     this._material.needsUpdate = true;
@@ -112,8 +113,8 @@ export class ImageAnnotationObject implements Image360Annotation {
     this.updateMaterial();
   }
 
-  public setVisibility(visible?: boolean): void {
-    this._appearance.visibility = visible;
+  public setVisible(visible?: boolean): void {
+    this._appearance.visible = visible;
     this.updateMaterial();
   }
 }

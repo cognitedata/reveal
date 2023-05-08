@@ -20,9 +20,9 @@ export class Image360StylingUI {
     const actions = {
       addStyle: () => {
         image360Ui.collections.forEach(coll =>
-          coll.setDefaultStyle({
+          coll.setDefaultAnnotationStyle({
             color: new THREE.Color(state.color as THREE.ColorRepresentation),
-            visibility: state.visible
+            visible: state.visible
           })
         );
       }

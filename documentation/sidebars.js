@@ -33,6 +33,7 @@ module.exports = {
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
         'examples/image360',
+        'examples/image360-annotations',
         'examples/node-visiting',
         'examples/clipping',
         'examples/cad-save-viewerstate',

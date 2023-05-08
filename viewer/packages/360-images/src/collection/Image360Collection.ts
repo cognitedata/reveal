@@ -67,5 +67,5 @@ export interface Image360Collection {
   /**
    * Assign a default style which affects all annotations
    */
-  setDefaultStyle(appearance: Image360AnnotationAppearance): void;
+  setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
 }
