@@ -27,13 +27,21 @@ export const useTimeseriesFilterOptions = ({
     isError,
   } = useTimeseriesUniqueValuesByProperty({ property, query, filter });
 
+  const omittedFilter = omit(filter, property);
+
   const { data: dynamicData = [] } = useTimeseriesUniqueValuesByProperty({
     property,
     query,
     advancedFilter: mapFiltersToTimeseriesAdvancedFilters(
-      omit(filter, property),
+      omittedFilter,
       searchQuery
     ),
+    /**
+     * In asset detailed view, we need to filter events according to selected assetSubtreeIds.
+     * But assetSubtreeIds not supported in advanced filter.
+     * so we have to use filter for that.
+     */
+    filter: omittedFilter,
   });
 
   const options = useMemo(() => {

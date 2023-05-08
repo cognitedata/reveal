@@ -1,14 +1,6 @@
 import { CogniteEvent } from '@cognite/sdk';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  AggregatedEventFilterV2,
-  MetadataFilterV2,
-} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import {
-  TableSortBy,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
+import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
@@ -24,6 +16,8 @@ import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { SubTypeFilter, TypeFilter } from '@data-exploration/containers';
+import { MetadataFilter } from '@data-exploration/containers';
 
 interface Props {
   enableAdvancedFilter?: boolean;
@@ -39,35 +33,25 @@ const LinkedEventFilter = ({
   filter: InternalEventsFilters;
   onFilterChange: (newValue: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList<any>('events', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
-
   return (
     <PreviewFilterDropdown>
-      <AggregatedEventFilterV2
-        field="type"
+      <TypeFilter.Event
         filter={filter}
-        setValue={(newValue) => {
-          onFilterChange({ type: newValue });
-        }}
-        title="Type"
         value={filter.type}
+        onChange={(newFilters) => onFilterChange({ type: newFilters })}
       />
-      <AggregatedEventFilterV2
-        field="subtype"
+
+      <SubTypeFilter.Event
         filter={filter}
-        setValue={(newValue) => {
-          onFilterChange({ subtype: newValue });
-        }}
-        title="Sub-type"
         value={filter.subtype}
+        onChange={(newFilters) => onFilterChange({ subtype: newFilters })}
       />
-      <MetadataFilterV2
-        items={items}
-        value={filter.metadata}
-        setValue={(newValue) => onFilterChange({ metadata: newValue })}
+      <MetadataFilter.Events
+        filter={filter}
+        values={filter.metadata}
+        onChange={(newMetadata) => {
+          onFilterChange({ metadata: newMetadata });
+        }}
       />
     </PreviewFilterDropdown>
   );

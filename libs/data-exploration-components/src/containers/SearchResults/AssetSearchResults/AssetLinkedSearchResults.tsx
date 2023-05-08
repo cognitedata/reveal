@@ -1,12 +1,7 @@
 import { Asset } from '@cognite/sdk';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import { MetadataFilterV2 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { AssetTable } from '@data-exploration-components/containers/Assets';
-import {
-  TableSortBy,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
+import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { useAssetsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
@@ -18,6 +13,7 @@ import {
   InternalAssetFilters,
   InternalCommonFilters,
 } from '@data-exploration-lib/core';
+import { MetadataFilter } from '@data-exploration/containers';
 
 interface Props {
   enableAdvancedFilter?: boolean;
@@ -32,17 +28,14 @@ const LinkedAssetFilter = ({
   filter: InternalAssetFilters;
   onFilterChange: (newValue: InternalAssetFilters) => void;
 }) => {
-  const { data: items = [] } = useList<any>('assets', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
-
   return (
     <PreviewFilterDropdown>
-      <MetadataFilterV2
-        items={items}
-        value={filter.metadata}
-        setValue={(newValue) => onFilterChange({ metadata: newValue })}
+      <MetadataFilter.Assets
+        filter={filter}
+        values={filter.metadata}
+        onChange={(newMetadata) => {
+          onFilterChange({ metadata: newMetadata });
+        }}
       />
     </PreviewFilterDropdown>
   );

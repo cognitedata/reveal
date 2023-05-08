@@ -5,7 +5,7 @@ export const formatNumber = new Intl.NumberFormat().format;
 export const decimalToPercent = (value: number) =>
   Math.round((value + Number.EPSILON) * 100);
 
-export const withThousandSeparator = (value: number, separator = SPACE) => {
+export const withThousandSeparator = (value?: number, separator = SPACE) => {
   if (value)
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
   return '0';

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Document, DocumentTable } from '@cognite/react-document-table';
-
 import { InternalDocumentFilter } from '@data-exploration-lib/core';
 import { docTypes } from './docTypes';
 import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';

@@ -1,5 +1,6 @@
 import { ChipProps } from '@cognite/cogs.js';
 import { getTabCountLabel } from './string';
+import { withThousandSeparator } from '@data-exploration-lib/core';
 
 export const getChipRightPropsForResourceCounter = (
   count: number,
@@ -14,7 +15,7 @@ export const getChipRightPropsForResourceCounter = (
       : {
           label: shortendCount,
           size: 'x-small',
-          tooltipProps: { content: count },
+          tooltipProps: { content: withThousandSeparator(count, ',') },
         },
   };
 };

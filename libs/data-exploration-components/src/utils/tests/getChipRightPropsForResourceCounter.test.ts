@@ -16,7 +16,7 @@ describe('getChipRightPropsForResourceCounter', () => {
     ).toStrictEqual({
       label: '10',
       size: 'x-small',
-      tooltipProps: { content: 10 },
+      tooltipProps: { content: '10' },
     });
   });
 });

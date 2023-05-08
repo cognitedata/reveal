@@ -1,9 +1,9 @@
 import { getTitle, ResourceType } from '@data-exploration-components/types';
 import {
+  formatBigNumbersWithSuffixStringExtended,
   withThousandSeparator,
   withThousandSeparatorStringExtended,
-  formatBigNumbersWithSuffixStringExtended,
-} from './numbers';
+} from '@data-exploration-lib/core';
 
 export const stringContains = (value?: string, searchText?: string) => {
   if (!searchText) {
