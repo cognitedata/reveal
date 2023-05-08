@@ -4,3 +4,4 @@ export * from './useDebouncedState';
 export * from './useMetrics';
 export * from './useClipboard';
 export * from './useDimensions';
+export * from './useDialog';
