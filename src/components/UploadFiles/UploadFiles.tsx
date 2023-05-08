@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { Popconfirm, Upload } from 'antd';
-import List from 'antd/lib/list';
-import { Button, Icon, toast } from '@cognite/cogs.js';
+import { Upload } from 'antd';
+import { Button, Icon, Popconfirm, toast } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import isString from 'lodash/isString';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -12,8 +11,9 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { TranslationKeys } from 'common/i18n';
 import { FileInfo } from 'utils/types';
-import { getContainer, nameToAclTypeMap } from 'utils/shared';
+import { nameToAclTypeMap } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
+import styled from 'styled-components';
 
 interface UploadFileProps {
   setFileList: Dispatch<SetStateAction<FileInfo[]>>;
@@ -211,9 +211,9 @@ const UploadFiles = ({
           <ErrorMessageBox>{t('upload-file-no-access')}</ErrorMessageBox>
         </div>
       )}
-      <List>
+      <StyledFileList>
         {fileList.map((file) => (
-          <List.Item key={file.id}>
+          <StyledFileListItem key={file.id}>
             <Button
               type="ghost-accent"
               disabled={isMissingReadAccess}
@@ -227,20 +227,35 @@ const UploadFiles = ({
               {file.name}
             </Button>
             <Popconfirm
-              getPopupContainer={getContainer}
               onConfirm={removeFileFromDataSet(file)}
-              placement="topLeft"
-              title={t('upload-file-remove-file-confirm', {
+              content={t('upload-file-remove-file-confirm', {
                 fileName: file.name,
               })}
+              placement="top-start"
             >
               <Button icon="Delete" type="ghost" />
             </Popconfirm>
-          </List.Item>
+          </StyledFileListItem>
         ))}
-      </List>
+      </StyledFileList>
     </div>
   );
 };
+
+const StyledFileList = styled.ul`
+  padding: 0;
+`;
+
+const StyledFileListItem = styled.li`
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
 
 export default UploadFiles;
