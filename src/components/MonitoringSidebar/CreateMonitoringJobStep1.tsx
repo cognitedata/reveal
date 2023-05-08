@@ -310,7 +310,9 @@ const CreateMonitoringJobStep1 = ({
         <NotificationEmail>{notificationEmail}</NotificationEmail>
       </NotificationBox>
 
-      {isDirty && !isValid && <FormError errors={errors} />}
+      {isDirty && !isValid && (
+        <FormError<CreateMonitoringJobFormData> errors={errors} />
+      )}
 
       <PortalWait elementId="monitoring-job-stepper">
         <Row>

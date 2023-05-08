@@ -43,7 +43,10 @@ const CreateMonitoringJobStep2 = ({
   return (
     <div>
       <FormProvider {...formMethods}>
-        <CredentialsForm onUpdateCredsValidated={setClientCredsValidated} />
+        <CredentialsForm
+          onUpdateCredsValidated={setClientCredsValidated}
+          uniqueFormId="monitoring"
+        />
       </FormProvider>
 
       <PortalWait elementId="monitoring-job-stepper">

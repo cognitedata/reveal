@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Divider, Row } from 'antd';
 import { Controller } from 'react-hook-form';
 
 import { Button, Icon, Select, toast } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
-import { delay, head } from 'lodash';
 import styled from 'styled-components';
 import { CogniteError } from '@cognite/sdk';
 import { trackUsage } from 'services/metrics';
+import debounce from 'lodash/debounce';
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -72,13 +72,6 @@ const MonitoringFolderSelect: React.FC<Props> = ({
     }
   }, [newFolderData, folderCreatedSuccess]);
 
-  const onNameChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setName(event.target.value);
-    },
-    []
-  );
-
   const handleCreateFolder = (
     e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
   ) => {
@@ -92,30 +85,6 @@ const MonitoringFolderSelect: React.FC<Props> = ({
       setName('');
     }
   };
-
-  /**
-   * Attaches a change event listener on the Cogs Select Input
-   */
-  const injectInputChangeListener = () => {
-    const intvl = setInterval(() => {
-      const inputs = document.querySelectorAll('#select-monitoring-input');
-      if (inputs.length > 0) {
-        clearInterval(intvl);
-        const inputElement: HTMLInputElement = head(inputs) as HTMLInputElement;
-        inputElement.addEventListener('input', (e) => {
-          delay(onNameChange, 300, e);
-        });
-
-        inputElement.addEventListener('blur', (e) => {
-          delay(onNameChange, 300, e);
-        });
-      }
-    }, 200);
-  };
-
-  useEffect(() => {
-    injectInputChangeListener();
-  }, []);
 
   const showCreateButton =
     !folderList?.find((folder) => {
@@ -143,6 +112,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
               });
               onChange(selectOption);
             }}
+            onInputChange={debounce(setName, 30)}
             options={
               folderList?.map((item) => ({
                 label: item.name,

@@ -8,7 +8,11 @@ import { ScheduledCalculationModal } from './ScheduledCalculationModal';
 
 const defaultTranslations = makeDefaultTranslations('Save and Schedule');
 
-export const ScheduledCalculationButton = () => {
+export const ScheduledCalculationButton = ({
+  workflowId,
+}: {
+  workflowId: string;
+}) => {
   const { t } = useTranslations(
     Object.keys(defaultTranslations),
     'ScheduledCalculation'
@@ -25,8 +29,8 @@ export const ScheduledCalculationButton = () => {
       </Button>
       {visible ? (
         <ScheduledCalculationModal
-          visible={visible}
           onClose={() => setVisible(false)}
+          workflowId={workflowId}
         />
       ) : null}
     </>

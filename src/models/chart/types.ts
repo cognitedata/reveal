@@ -14,8 +14,12 @@ export type Chart = {
   updatedAt: number;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
+  // TODO(DEGR-0000): Remove sourceCollection
+  // sourceCollection is complete garbage - its a merge copy of timeseries and workflow.
+  // Either remove the sourceCollection or remove timeSeriesCollection and workflowCollection
   sourceCollection?: SourceCollectionData[];
   thresholdCollection?: ChartThreshold[];
+  scheduledCalculationCollection?: ScheduledCalculation[];
   dateFrom: string;
   dateTo: string;
   public?: boolean;
@@ -24,10 +28,17 @@ export type Chart = {
   eventFilters?: ChartEventFilters[];
 };
 
+export type SourceType = 'timeseries' | 'workflow' | 'scheduledCalculation';
+
 export type SourceCollectionData = {
-  type: string;
+  type: SourceType;
   id: string;
 };
+
+export type CollectionType =
+  | 'timeSeriesCollection'
+  | 'workflowCollection'
+  | 'scheduledCalculationCollection';
 
 type ChartSettings = {
   showYAxis?: boolean;
@@ -41,7 +52,7 @@ export type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
 export type Interpolation = 'linear' | 'hv';
 
 export type ChartTimeSeries = {
-  type?: string;
+  type?: 'timeseries';
   id: string;
   name: string;
   color: string;
@@ -64,7 +75,7 @@ export type ChartTimeSeries = {
 };
 
 type ChartWorkflowBase = {
-  type?: string;
+  type?: 'workflow';
   id: string;
   name: string;
   lineWeight?: number;
@@ -103,6 +114,11 @@ export type ChartWorkflowV2 = ChartWorkflowBase & {
     autoAlign: boolean;
   };
 };
+
+export type ScheduledCalculation = Omit<
+  ChartWorkflowV2,
+  'type' | 'statisticsCalls' | 'dataProfilingCalls'
+> & { type: 'scheduledCalculation' };
 
 export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;
 

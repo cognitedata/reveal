@@ -3,8 +3,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { trackUsage } from 'services/metrics';
 import debounce from 'lodash/debounce';
 import head from 'lodash/head';
-import { useFormContext } from 'react-hook-form';
-import { Col, Row } from 'antd';
+import { useFormContext, Path, PathValue } from 'react-hook-form';
 import { useCreateSessionNonce } from 'domain/chart';
 import {
   ClientCredentialsWrapper,
@@ -20,7 +19,7 @@ import {
   ClientCredentialsDetails,
   ClientCredentialsOptionMessage,
 } from 'components/Form/elements';
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip, Flex, Body } from '@cognite/cogs.js';
 import { FormInputWithController } from '../Form/FormInputWithController';
 import { FormError } from '../Form/FormError';
 
@@ -38,25 +37,27 @@ const defaultTranslations = makeDefaultTranslations(
   'This option provides a more stable service'
 );
 
-/**
- * Fields:
-      useCdfCredentials: boolean;
-      clientSecret: string;
-      clientId: string;
- */
-
 type Props = {
   translations?: typeof defaultTranslations;
   onUpdateCredsValidated: (validted: boolean) => void;
+  uniqueFormId: string;
+};
+
+type CredentialsFormValues = {
+  cdfCredsMode: 'USER_CREDS' | 'CLIENT_SECRET';
+  clientId: string;
+  clientSecret: string;
 };
 
 type SessionCreationStatus = 'NONE' | 'CREATING' | 'CREATED' | 'ERROR';
 
-export const CredentialsForm = ({
+export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
   translations,
   onUpdateCredsValidated,
+  uniqueFormId,
 }: Props) => {
-  const { control, watch, formState, setValue } = useFormContext();
+  const { control, watch, formState, setValue } =
+    useFormContext<TFieldValues>();
   const t = {
     ...defaultTranslations,
     ...translations,
@@ -86,25 +87,34 @@ export const CredentialsForm = ({
     }
   }, 1000);
 
-  const { useCdfCredentials, clientId, clientSecret } = values;
+  const { cdfCredsMode, clientId, clientSecret } = values;
 
   useMemo(() => {
     if (clientId !== '' || clientSecret !== '') {
-      setValue('useCdfCredentials', false);
+      setValue(
+        'cdfCredsMode' as Path<TFieldValues>,
+        'CLIENT_SECRET' as PathValue<TFieldValues, Path<TFieldValues>>
+      );
     }
     setSessionStatus('NONE');
     checkCredentials(clientId, clientSecret);
   }, [clientId, clientSecret]);
 
   useEffect(() => {
-    if (useCdfCredentials === true) {
-      setValue('clientId', '');
-      setValue('clientSecret', '');
+    if (cdfCredsMode === 'USER_CREDS') {
+      setValue(
+        'clientId' as Path<TFieldValues>,
+        '' as PathValue<TFieldValues, Path<TFieldValues>>
+      );
+      setValue(
+        'clientSecret' as Path<TFieldValues>,
+        '' as PathValue<TFieldValues, Path<TFieldValues>>
+      );
     }
     trackUsage('Sidebar.Monitoring.LoginMethod', {
-      useCdfCredentials,
+      cdfCredsMode,
     });
-  }, [useCdfCredentials]);
+  }, [cdfCredsMode]);
 
   useEffect(() => {
     const nonceItem = head(sessionNonceResponse?.items);
@@ -117,54 +127,52 @@ export const CredentialsForm = ({
 
   useEffect(() => {
     onUpdateCredsValidated(
-      useCdfCredentials === false ? sessionStatus === 'CREATED' : true
+      cdfCredsMode === 'CLIENT_SECRET' ? sessionStatus === 'CREATED' : true
     );
-  }, [useCdfCredentials, sessionStatus]);
+  }, [cdfCredsMode, sessionStatus]);
 
   return (
     <div>
       <ClientCredentialsWrapper>
-        <Row>
-          <Col span={2}>
-            <FormInputWithController
-              type="radio"
-              control={control}
-              name="useCdfCredentials"
-              defaultValue
-              id="useCdfCredentials1"
-            />
-          </Col>
-          <Col span={22}>
-            <strong>{t['Use CDF sign-in credentials']}</strong>
-          </Col>
-        </Row>
+        <Flex gap={4}>
+          <FormInputWithController
+            type="radio"
+            control={control}
+            name="cdfCredsMode"
+            id={`userCredentials-${uniqueFormId}`}
+            radioValue="USER_CREDS"
+            key={`userCredentials-${uniqueFormId}`}
+          >
+            <Body level={2} strong>
+              {t['Use CDF sign-in credentials']}
+            </Body>
+          </FormInputWithController>
+        </Flex>
       </ClientCredentialsWrapper>
       <Divider>
         <Line />
         <DividerText>OR</DividerText>
       </Divider>
       <ClientCredentialsWrapper>
-        <Row>
-          <Col span={2}>
-            <FormInputWithController
-              type="radio"
-              control={control}
-              name="useCdfCredentials"
-              defaultValue={false}
-              id="useCdfCredentials2"
-            />
-          </Col>
-          <Col span={22}>
-            <strong>{t['Use CDF Client ID and Client secret']}</strong>
-          </Col>
-        </Row>
-        <Row>
-          <ClientCredentialsOptionMessage>
-            {t['This option provides a more stable service']}
-          </ClientCredentialsOptionMessage>
-        </Row>
+        <Flex gap={2}>
+          <FormInputWithController
+            type="radio"
+            control={control}
+            name="cdfCredsMode"
+            id={`clientSecret-${uniqueFormId}`}
+            radioValue="CLIENT_SECRET"
+            key={`clientSecret-${uniqueFormId}`}
+          >
+            <Body level={2} strong>
+              {t['Use CDF Client ID and Client secret']}
+            </Body>
+          </FormInputWithController>
+        </Flex>
+        <ClientCredentialsOptionMessage>
+          {t['This option provides a more stable service']}
+        </ClientCredentialsOptionMessage>
         <ClientCredentialsDetails
-          style={{ display: useCdfCredentials === true ? 'none' : 'block' }}
+          style={{ display: cdfCredsMode === 'USER_CREDS' ? 'none' : 'block' }}
         >
           <Tooltip content={t['Client ID']}>
             <FieldTitleInfo>{t['Client ID']}</FieldTitleInfo>
@@ -176,7 +184,7 @@ export const CredentialsForm = ({
             placeholder={t['Example: 2340-234-234-456-5332']}
             validate={{
               shouldBeSetIfNoCdfCreds: (value: string) =>
-                useCdfCredentials === false ? value.length > 0 : true,
+                cdfCredsMode === 'CLIENT_SECRET' ? value.length > 0 : true,
             }}
           />
           <Tooltip content={t['Client secret']}>
@@ -189,11 +197,11 @@ export const CredentialsForm = ({
             placeholder={t['Example: 2340-234-234-456-5332']}
             validate={{
               shouldBeSetIfNoCdfCreds: (value: string) =>
-                useCdfCredentials === false ? value.length > 0 : true,
+                cdfCredsMode === 'CLIENT_SECRET' ? value.length > 0 : true,
             }}
           />
 
-          {!useCdfCredentials && (
+          {cdfCredsMode === 'CLIENT_SECRET' && (
             <>
               {sessionStatus === 'CREATING' && (
                 <ClientCredentialsWrapper>
@@ -227,7 +235,7 @@ export const CredentialsForm = ({
         </ClientCredentialsDetails>
       </ClientCredentialsWrapper>
 
-      {isDirty && !isValid && <FormError errors={errors} />}
+      {isDirty && !isValid && <FormError<TFieldValues> errors={errors} />}
     </div>
   );
 };

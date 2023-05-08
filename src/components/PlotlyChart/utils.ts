@@ -506,8 +506,8 @@ export function generateLayout({
   dragmode,
   highlightedTimeseriesId,
 }: any): any {
-  const horizontalMargin = isPreview ? 0 : 20;
-  const verticallMargin = isPreview ? 0 : 30;
+  const horizontalMargin = isPreview && !showYAxis ? 0 : 20;
+  const verticallMargin = isPreview && !showYAxis ? 0 : 30;
 
   const layout = {
     margin: {

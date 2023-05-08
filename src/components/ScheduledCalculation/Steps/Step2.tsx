@@ -2,9 +2,12 @@ import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { Flex, Button, Title } from '@cognite/cogs.js';
 import { ScheduleClock } from 'components/Icons/ScheduleClock';
-// import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
+import { useFormContext } from 'react-hook-form';
+import FormError from 'components/Form/FormError';
 import { FormInputWithController } from '../../Form/FormInputWithController';
-import { Step2FormContainer, FlexGrow } from './elements';
+import { FlexGrow, Steps2Column } from './elements';
+import { CalculationPreview } from './CalculationPreview';
+import { ScheduleCalculationFieldValues } from '../../../domain/scheduled-calculation/internal/types';
 
 const defaultTranslations = makeDefaultTranslations(
   'Save result and schedule the calculation',
@@ -19,7 +22,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Day',
   'Type',
   'Input',
-  'Output'
+  'Output',
+  'Settings',
+  'Result preview'
 );
 
 export const Step2Header = () => {
@@ -37,15 +42,28 @@ export const Step2Header = () => {
   );
 };
 
-export const Step2Body = () => {
+export const Step2Body = ({ workflowId }: { workflowId: string }) => {
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'ScheduledCalculation')
       .t,
   };
+
+  const {
+    formState: { isValid, isDirty, errors },
+    watch,
+  } = useFormContext<ScheduleCalculationFieldValues>();
+
+  const formValues = watch();
+  const {
+    period,
+    periodType: { value: periodTypeUnit },
+  } = formValues;
+
   return (
-    <Flex gap={8}>
-      <Step2FormContainer direction="column">
+    <Flex gap={28} alignItems="stretch">
+      <Steps2Column direction="column">
+        <Title level={6}>{t.Settings}</Title>
         <FlexGrow>
           <FormInputWithController
             type="text"
@@ -69,9 +87,9 @@ export const Step2Body = () => {
               type="select"
               name="periodType"
               options={[
-                { value: 'minute', label: t['Minute(s)'] },
-                { value: 'hour', label: t['Hour(s)'] },
-                { value: 'day', label: t.Day },
+                { value: 'minutes', label: t['Minute(s)'] },
+                { value: 'hours', label: t['Hour(s)'] },
+                { value: 'days', label: t.Day },
               ]}
             />
           </FlexGrow>
@@ -82,22 +100,18 @@ export const Step2Body = () => {
           name="description"
           title={t.Description}
         />
-        {/* <UnitDropdown
-          onOverrideUnitClick={() => {}}
-          onConversionUnitClick={() => {}}
-          onCustomUnitLabelClick={() => {}}
-          onResetUnitClick={() => {}}
-          translations={t}
-        /> */}
-        <FormInputWithController
-          type="select"
-          name="unit"
-          title={t.Unit}
-          placeholder="Enter the description for your scheduled calculaiton"
-          options={[{ value: 'percentage', label: '%' }]}
+        <FormInputWithController type="unit" name="unit" title={t.Unit} />
+        {isDirty && !isValid && (
+          <FormError<ScheduleCalculationFieldValues> errors={errors} />
+        )}
+      </Steps2Column>
+      <Steps2Column direction="column">
+        <Title level={6}>{t['Result preview']}</Title>
+        <CalculationPreview
+          workflowId={workflowId}
+          period={{ length: period, type: periodTypeUnit! }}
         />
-      </Step2FormContainer>
-      <Flex>Preview Placeholder</Flex>
+      </Steps2Column>
     </Flex>
   );
 };
@@ -105,9 +119,10 @@ export const Step2Body = () => {
 type FooterProps = {
   onNext: () => void;
   onCancel: () => void;
+  loading: boolean;
 };
 
-export const Step2Footer = ({ onNext, onCancel }: FooterProps) => {
+export const Step2Footer = ({ onNext, onCancel, loading }: FooterProps) => {
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'ScheduledCalculation')
@@ -119,7 +134,7 @@ export const Step2Footer = ({ onNext, onCancel }: FooterProps) => {
       <Button onClick={onCancel} type="ghost">
         {t.Cancel}
       </Button>
-      <Button onClick={onNext} type="primary">
+      <Button onClick={onNext} type="primary" loading={loading}>
         {t['Start schedule']}
       </Button>
     </Flex>

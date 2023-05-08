@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { makeDefaultTranslations } from 'utils/translations';
+import { FieldErrors } from 'react-hook-form';
 import {
   InfoBoxHeadingContainer,
   InfoBoxHeadingIconRed,
@@ -8,11 +9,14 @@ import {
 
 const defaultTranslations = makeDefaultTranslations('Error validating data');
 
-type Props = {
+type Props<FieldValues> = {
   translations?: typeof defaultTranslations;
-  errors: any;
+  errors: FieldErrors<FieldValues>;
 };
-export const FormError = ({ errors, translations }: Props) => {
+export const FormError = <TFieldValues,>({
+  errors,
+  translations,
+}: Props<TFieldValues>) => {
   const t = {
     ...defaultTranslations,
     ...translations,

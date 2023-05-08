@@ -7,7 +7,6 @@ import {
   ChartWorkflowV2,
   SourceCollectionData,
   StorableNode,
-  UserInfo,
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
 import dayjs from 'dayjs';
@@ -30,20 +29,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
 import compareVersions from 'compare-versions';
 import { AxisUpdate } from 'components/PlotlyChart/utils';
-
-export function duplicate(chart: Chart, login: UserInfo): Chart {
-  const id = uuidv4();
-  return {
-    ...chart,
-    id,
-    updatedAt: Date.now(),
-    createdAt: Date.now(),
-    name: `${chart.name} Copy`,
-    public: false,
-    user: login.id,
-    userInfo: login,
-  };
-}
+import { removeItem, addItem } from './helpers';
 
 function updateCollItem<T extends ChartTimeSeries | ChartWorkflow>(
   chart: Chart,
@@ -62,36 +48,6 @@ function updateCollItem<T extends ChartTimeSeries | ChartWorkflow>(
           }
         : t
     ),
-  };
-}
-
-function removeItem(
-  chart: Chart,
-  collectionType: 'timeSeriesCollection' | 'workflowCollection',
-  collId: string
-): Chart {
-  return {
-    ...chart,
-    // @ts-ignore
-    [collectionType]: chart[collectionType]?.filter((t) => t.id !== collId),
-    sourceCollection: chart.sourceCollection?.filter((t) => t.id !== collId),
-  };
-}
-
-function addItem<T extends ChartWorkflow | ChartTimeSeries>(
-  chart: Chart,
-  collectionType: 'timeSeriesCollection' | 'workflowCollection',
-  item: T
-): Chart {
-  const type =
-    collectionType === 'timeSeriesCollection' ? 'timeseries' : 'workflow';
-  return {
-    ...chart,
-    [collectionType]: [...(chart[collectionType] || []), { ...item, type }],
-    sourceCollection: [
-      { id: item.id, type },
-      ...(chart.sourceCollection || []),
-    ],
   };
 }
 
@@ -139,8 +95,8 @@ export function updateChartSource(
     timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
       ts.id === id
         ? {
-            ...ts,
-            ...diff,
+            ...(ts as ChartTimeSeries),
+            ...(diff as Partial<ChartTimeSeries>),
           }
         : ts
     ),

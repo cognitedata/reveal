@@ -109,6 +109,7 @@ export const OpenInCharts: FC = () => {
   const loadTimeseries = useCallback(async () => {
     const timeseriesIds = compact(timeserieIds.split(',').map((id) => +id));
     const timeseriesExternalIds = compact(timeserieExternalIds.split(','));
+    // todo(DEGR-0000): use react-query to get cached results
     const timeseries = await sdk.timeseries.retrieve([
       ...timeseriesIds.map((id) => ({ id })),
       ...timeseriesExternalIds.map((id) => ({ externalId: id })),

@@ -24,11 +24,11 @@ export const getSourcesFromChart = (chart: Chart | undefined) => {
 
   const sourceOptions: (ChartWorkflow | ChartTimeSeries)[] = [
     ...(chart.timeSeriesCollection || []).map((ts) => ({
-      type: 'timeseries',
+      type: 'timeseries' as const,
       ...ts,
     })),
     ...(chart.workflowCollection || []).map((wf) => ({
-      type: 'workflow',
+      type: 'workflow' as const,
       ...wf,
     })),
   ];

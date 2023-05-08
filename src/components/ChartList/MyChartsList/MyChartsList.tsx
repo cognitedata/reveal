@@ -19,13 +19,12 @@ type Props = {
 const MyChartsList = ({ sortOption, searchTerm, viewOption }: Props) => {
   const move = useNavigate();
   const translations = useComponentTranslations(ChartList);
-  const { loading, error, list, duplicateChart, deleteChart } = useMyChartsList(
-    { order: sortOption.value, searchTerm }
-  );
+  const { loading, error, list, duplicatePrivateChart, deleteChart } =
+    useMyChartsList({ order: sortOption.value, searchTerm });
 
   const handleDuplicate = async (chartId: string) => {
-    trackUsage('ChartListPage.DuplicateChart', { chartId });
-    const newId = await duplicateChart(chartId);
+    trackUsage('ChartListPage.DuplicatePrivateChart', { chartId });
+    const newId = await duplicatePrivateChart(chartId);
     move(createInternalLink(newId));
   };
 

@@ -30,7 +30,7 @@ const PublicChartsList = ({ viewOption, sortOption, searchTerm }: Props) => {
   });
 
   const handleDuplicate = async (chartId: string) => {
-    trackUsage('ChartListPage.DuplicateChart', { chartId });
+    trackUsage('ChartListPage.DuplicatePublicChart', { chartId });
     const publicChart = list.find((c) => c.id === chartId);
     if (!publicChart) throw new Error('Public Chart not found');
     const newId = await duplicatePublicChart(publicChart.firebaseChart);

@@ -1,33 +1,38 @@
 import { Step1Footer } from './Steps/Step1';
 import { Step2Footer } from './Steps/Step2';
+import { Step3Footer } from './Steps/Step3';
 
 export const ModalFooter = ({
   currentStep,
-  setCurrentStep,
   credsValidated,
   onClose,
+  onNext,
+  loading,
 }: {
   currentStep: number;
-  setCurrentStep: (step: number) => void;
   credsValidated: boolean;
+  loading: boolean;
   onClose: () => void;
+  onNext: () => void;
 }) => {
   switch (currentStep) {
     case 1:
       return (
         <Step1Footer
-          onNext={() => setCurrentStep(currentStep + 1)}
+          onNext={onNext}
           onCancel={onClose}
           isNextDisabled={!credsValidated}
         />
       );
     case 2:
       return (
-        <Step2Footer
-          onNext={() => setCurrentStep(currentStep + 1)}
-          onCancel={onClose}
-        />
+        <Step2Footer onNext={onNext} onCancel={onClose} loading={loading} />
       );
+    case 3:
+      return (
+        <Step3Footer onNext={onNext} onCancel={onClose} loading={loading} />
+      );
+    case 4:
     default:
       return null;
   }

@@ -21,7 +21,7 @@ import { SidebarChip, SidebarCollapseWrapped, ExpandTitle } from './elements';
 import { MonitoringFolderJobs, MonitoringJob } from './types';
 import { useMonitoringFoldersWithJobs } from './hooks';
 import ListMonitoringJobPreview from './ListMonitoringJobPreview';
-import { getTsIds } from '../../domain/timeseries/internal/transformers/getTsIds';
+import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
 import EmptyState from './EmptyState';
 import {
   JobAndAlertsFilter,

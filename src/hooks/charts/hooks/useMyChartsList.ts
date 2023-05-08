@@ -2,7 +2,7 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { useUpdateChart } from 'hooks/charts-storage';
 import { filter, orderBy } from 'lodash';
 import { Chart } from 'models/chart/types';
-import { duplicate } from 'models/chart/updates';
+import { duplicateChart } from 'models/chart/helpers';
 import useDeleteMyChart from '../mutations/useDeleteMyChart';
 import useMyCharts from '../queries/useMyCharts';
 
@@ -19,10 +19,10 @@ const useMyChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
 
   const deleteChart = (chartId: string) => deleteChartInFirebase(chartId);
 
-  const duplicateChart = async (chartId: string) => {
+  const duplicatePrivateChart = async (chartId: string) => {
     const chartToDuplicate = data.find((chart) => chart.id === chartId);
     if (!chartToDuplicate) throw new Error('Chart to duplicate not found');
-    const newChart = duplicate(
+    const newChart = duplicateChart(
       chartToDuplicate.firebaseChart,
       chartToDuplicate.firebaseChart.userInfo!
     );
@@ -31,7 +31,7 @@ const useMyChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
   };
 
   const duplicatePublicChart = async (chart: Chart) => {
-    const newChart = duplicate(chart, login!);
+    const newChart = duplicateChart(chart, login!);
     await createChartInFirebase(newChart);
     return newChart.id;
   };
@@ -57,7 +57,7 @@ const useMyChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
     loading: !isFetched,
     error,
     deleteChart,
-    duplicateChart,
+    duplicatePrivateChart,
     duplicatePublicChart,
   };
 };

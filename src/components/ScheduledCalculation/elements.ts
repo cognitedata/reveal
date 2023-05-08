@@ -9,7 +9,7 @@ export const StyledModal = styled(Modal)`
     }
     .cogs-modal-footer {
       border-top: none;
-      padding: 0;
+      padding: 14px 16px;
     }
   }
 `;

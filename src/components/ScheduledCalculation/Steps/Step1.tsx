@@ -36,7 +36,12 @@ export const Step1Header = () => {
 };
 
 export const Step1Body = ({ onUpdateCredsValidated }: BodyProps) => {
-  return <CredentialsForm onUpdateCredsValidated={onUpdateCredsValidated} />;
+  return (
+    <CredentialsForm
+      onUpdateCredsValidated={onUpdateCredsValidated}
+      uniqueFormId="scheduling"
+    />
+  );
 };
 
 export const Step1Footer = ({
@@ -52,7 +57,9 @@ export const Step1Footer = ({
 
   return (
     <Flex alignItems="center" justifyContent="end" gap={8}>
-      <Button onClick={onCancel}>{t.Cancel}</Button>
+      <Button onClick={onCancel} type="ghost">
+        {t.Cancel}
+      </Button>
       <Button
         disabled={isNextDisabled}
         onClick={onNext}

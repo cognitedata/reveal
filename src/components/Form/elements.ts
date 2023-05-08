@@ -53,7 +53,6 @@ export const FormSelect = styled(Select)`
 
 export const FieldTitle = styled.div`
   &&& {
-    font-weight: 600;
     margin-bottom: 0.5em;
   }
 `;
@@ -131,7 +130,6 @@ export const StyledSuccess = styled.div`
 export const ClientCredentialsWrapper = styled.div`
   &&& {
     padding: 1em;
-    margin-bottom: 1em;
     background: var(--cogs-greyscale-grey2);
     border-radius: 8px;
   }
@@ -151,6 +149,7 @@ export const ClientCredentialsWrapperSuccess = styled(StyledSuccess)`
 
 export const Divider = styled.div`
   &&& {
+    margin-top: 1em;
     margin-bottom: 1em;
     text-align: center;
   }

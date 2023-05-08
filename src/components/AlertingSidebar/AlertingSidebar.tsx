@@ -20,7 +20,7 @@ import { useChartAtom } from 'models/chart/atom';
 import { trackUsage } from 'services/metrics';
 import { useSearchParam } from 'hooks/navigation';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
-import { getTsIds } from '../../domain/timeseries/internal/transformers/getTsIds';
+import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
 import { DisplayAlerts } from './DisplayAlerts';
 import { ALERTING_FILTER } from '../../utils/constants';
 

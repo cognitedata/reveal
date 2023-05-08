@@ -1,5 +1,7 @@
-import { Checkbox, Radio, OptionType, Tooltip } from '@cognite/cogs.js';
+import { Radio, OptionType, Tooltip } from '@cognite/cogs.js';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
+import { FC, PropsWithChildren } from 'react';
+import { UnitSelector } from 'components/UnitDropdown/UnitSelector';
 import {
   FormInput,
   FormTextarea,
@@ -19,17 +21,17 @@ type Props = RegisterOptions<any> & {
     | 'textarea'
     | 'select'
     | 'timeseries'
-    | 'checkbox'
-    | 'radio';
+    | 'radio'
+    | 'unit';
   control?: Control<any>;
   options?: OptionType<any>[];
   placeholder?: string;
   max?: number;
   suffix?: React.ReactNode;
-  defaultValue?: boolean;
   id?: string;
   title?: string;
   info?: string;
+  radioValue?: string;
 };
 
 const FieldLabel = ({
@@ -51,7 +53,7 @@ const FieldLabel = ({
   return <FieldTitle>{title}</FieldTitle>;
 };
 
-export const FormInputWithController = ({
+export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
   control,
   name,
   type,
@@ -63,11 +65,12 @@ export const FormInputWithController = ({
   deps,
   max,
   suffix,
-  defaultValue,
   id,
   title,
   info,
-}: Props) => (
+  radioValue,
+  children,
+}) => (
   <>
     <FieldLabel title={title} info={info} required={required} />
     <Controller
@@ -133,26 +136,24 @@ export const FormInputWithController = ({
                 options={options}
               />
             )}
-            {type === 'checkbox' && (
-              <Checkbox
-                ref={ref}
-                onBlur={onBlur} // notify when input is touched
-                onChange={onChange} // send value to hook form
-                checked={value === true}
-                name={name}
-              />
-            )}
             {type === 'radio' && (
               <Radio
                 id={id}
                 ref={ref}
                 onBlur={onBlur} // notify when input is touched
-                onClick={() => {
-                  onChange(defaultValue);
-                }}
-                // send value to hook form
-                checked={value === defaultValue}
-                name={name}
+                onClick={onChange}
+                checked={value === radioValue}
+                value={radioValue}
+              >
+                {children}
+              </Radio>
+            )}
+            {type === 'unit' && (
+              <UnitSelector
+                ref={ref}
+                onBlur={onBlur} // notify when input is touched
+                onChange={onChange} // send value to hook form
+                value={value}
               />
             )}
           </>

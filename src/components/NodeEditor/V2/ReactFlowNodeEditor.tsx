@@ -307,7 +307,7 @@ const ReactFlowNodeEditor = ({
             </EditorToolbar>
             {isPersistenceCalcEnabled ? (
               <ScheduleToolbar>
-                <ScheduledCalculationButton />
+                <ScheduledCalculationButton workflowId={id} />
               </ScheduleToolbar>
             ) : null}
           </>

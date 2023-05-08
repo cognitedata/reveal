@@ -40,7 +40,7 @@ export type CreateMonitoringJobFormData = {
   schedule: undefined | { label: string; value: number };
   scheduleDurationType: { label: string; value: string };
   minimumDuration: number;
-  useCdfCredentials: boolean;
+  cdfCredsMode: 'USER_CREDS' | 'CLIENT_SECRET';
   clientSecret: string;
   clientId: string;
   folder: undefined | { label: string; value: string };

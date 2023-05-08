@@ -131,7 +131,11 @@ const SourceRows = memo(
                   onCustomUnitLabelClick={onCustomUnitLabelClick(src)}
                   onStatusIconClick={onStatusIconClick(src)}
                   onRemoveSourceClick={onRemoveSourceClick(src)}
-                  onUpdateAppearance={onUpdateAppearance(src)}
+                  onUpdateAppearance={
+                    onUpdateAppearance(src) as ComponentProps<
+                      typeof TimeSeriesRow
+                    >['onUpdateAppearance']
+                  }
                   onUpdateName={onUpdateName(src)}
                 />
               ) : (
@@ -157,7 +161,11 @@ const SourceRows = memo(
                   onCustomUnitLabelClick={onCustomUnitLabelClick(src)}
                   onStatusIconClick={onStatusIconClick(src)}
                   onRemoveSourceClick={onRemoveSourceClick(src)}
-                  onUpdateAppearance={onUpdateAppearance(src)}
+                  onUpdateAppearance={
+                    onUpdateAppearance(src) as ComponentProps<
+                      typeof WorkflowRow
+                    >['onUpdateAppearance']
+                  }
                   onUpdateName={onUpdateName(src)}
                   onDuplicateCalculation={onDuplicateCalculation(src)}
                 />

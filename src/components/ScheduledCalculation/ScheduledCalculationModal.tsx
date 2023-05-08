@@ -1,45 +1,68 @@
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useScheduledCalculationCreateMutate } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
+import { useChartAtom } from 'models/chart/atom';
+import { useOperations } from 'models/operations/atom';
+import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
 import { StyledModal } from './elements';
 import { ModalHeader } from './ModalHeader';
 import { ModalBody } from './ModalBody';
 import { ModalFooter } from './ModalFooter';
+import {
+  ScheduleCalculationFieldValues,
+  ScheduledCalculationModalProps,
+  StepInfo,
+} from '../../domain/scheduled-calculation/internal/types';
+import { useGetWorkflow } from '../../domain/chart/internal/queries/useGetWorkflow';
+import {
+  DEFAULT_STEP_INFO,
+  STEP_WIDTH,
+  DEFAULT_VALUES,
+} from '../../domain/scheduled-calculation/internal/constants';
+import { handleNext } from './helpers';
 
-type Props = {
-  visible: boolean;
-  onClose: () => void;
-};
+export const ScheduledCalculationModal = ({
+  onClose,
+  workflowId,
+}: ScheduledCalculationModalProps) => {
+  const [stepInfo, setStepInfo] = useState<StepInfo>(DEFAULT_STEP_INFO);
+  const { loading, currentStep } = stepInfo;
+  const { mutateAsync: createScheduledCalculation } =
+    useScheduledCalculationCreateMutate();
+  const [chart, setChart] = useChartAtom();
+  const [, , operations] = useOperations();
+  const workflow = useGetWorkflow(workflowId);
+  const workflowSteps = getStepsFromWorkflow(chart!, workflow!, operations);
 
-const STEP_WIDTH: Record<number, number> = {
-  1: 620,
-  2: 908,
-};
-
-const DEFAULT_VALUES = {
-  clientId: '',
-  clientSecret: '',
-  useCdfCredentials: true,
-  period: 1,
-  periodType: { value: 'hour', label: 'Hour' },
-  unit: { value: 'percentage', label: '%' },
-};
-
-export const ScheduledCalculationModal = ({ visible, onClose }: Props) => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
   const [credsValidated, setCredsValidated] = useState<boolean>(false);
-  const formMethods = useForm({ mode: 'all', defaultValues: DEFAULT_VALUES });
+
+  const formMethods = useForm<ScheduleCalculationFieldValues>({
+    mode: 'onTouched',
+    defaultValues: DEFAULT_VALUES,
+  });
 
   return (
     <StyledModal
-      visible={visible}
+      visible
       onCancel={onClose}
       title={<ModalHeader currentStep={currentStep} />}
       footer={
         <ModalFooter
           currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
           credsValidated={credsValidated}
           onClose={onClose}
+          onNext={() =>
+            handleNext({
+              workflow: workflow!,
+              formMethods,
+              setStepInfo,
+              currentStep,
+              createScheduledCalculation,
+              workflowSteps,
+              setChart,
+            })
+          }
+          loading={loading}
         />
       }
       width={STEP_WIDTH[currentStep]}
@@ -48,6 +71,8 @@ export const ScheduledCalculationModal = ({ visible, onClose }: Props) => {
         <ModalBody
           currentStep={currentStep}
           onUpdateCredsValidated={setCredsValidated}
+          onClose={onClose}
+          workflowId={workflowId}
         />
       </FormProvider>
     </StyledModal>

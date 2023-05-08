@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useState } from 'react';
 import { Button, Dropdown, Popconfirm, toast } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
-import { duplicate, updateChartDateRange } from 'models/chart/updates';
+import { updateChartDateRange } from 'models/chart/updates';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useRecoilState } from 'recoil';
@@ -20,6 +20,7 @@ import CSVModal from 'components/CSVModal/CSVModal';
 import { createInternalLink } from 'utils/link';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
+import { duplicateChart } from 'models/chart/helpers';
 import {
   StyledMenu,
   HorizontalDivider,
@@ -103,7 +104,7 @@ export const ChartActions = () => {
 
   const handleDuplicateChart = async () => {
     if (chart && login?.id) {
-      const newChart = duplicate(chart, login);
+      const newChart = duplicateChart(chart, login);
       await updateChart(newChart);
       trackUsage('ChartView.DuplicateChart', { isOwner });
       move(createInternalLink(newChart.id));

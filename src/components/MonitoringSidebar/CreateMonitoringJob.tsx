@@ -82,7 +82,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       folder: undefined,
       clientId: '',
       clientSecret: '',
-      useCdfCredentials: true,
+      cdfCredsMode: 'USER_CREDS',
     } as CreateMonitoringJobFormData);
 
   const userInfo = useUserInfo();
@@ -111,7 +111,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
 
   const onStartMonitoring = (formData: any) => {
     const currentValues = formData; // gets the latest formValues
-    if (currentValues && currentValues.useCdfCredentials) {
+    if (currentValues && currentValues.cdfCredsMode === 'USER_CREDS') {
       createSessionNonce({
         items: [
           {

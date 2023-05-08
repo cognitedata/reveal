@@ -767,8 +767,8 @@ const ChartViewPage = () => {
         timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
           ts.id === source.id
             ? {
-                ...ts,
-                ...diff,
+                ...(ts as ChartTimeSeries),
+                ...(diff as Partial<ChartTimeSeries>),
               }
             : ts
         ),

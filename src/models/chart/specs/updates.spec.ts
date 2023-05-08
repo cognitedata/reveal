@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { fullListOfOperations } from 'models/operations/mocks';
+import { fullListOfOperations } from '../../operations/mocks';
 import {
   Chart,
   ChartTimeSeries,
@@ -9,7 +9,6 @@ import {
 import {
   addTimeseries,
   addWorkflow,
-  duplicate,
   removeSource,
   removeTimeseries,
   removeWorkflow,
@@ -21,6 +20,7 @@ import {
   updateWorkflowsToSupportVersions,
   addWorkflows,
 } from '../updates';
+import { duplicateChart } from '../helpers';
 
 describe('charts util', () => {
   const id = uuidv4();
@@ -73,33 +73,39 @@ describe('charts util', () => {
   describe('duplicate', () => {
     it('should update the appropriate fields', () => {
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).public
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' })
+          .public
       ).toBe(false);
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).user
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' }).user
       ).toEqual('12345');
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).name
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' }).name
       ).toEqual('test chart Copy');
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).id
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' }).id
       ).not.toEqual(id);
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).createdAt
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' })
+          .createdAt
       ).not.toEqual(chart.createdAt);
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).updatedAt
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' })
+          .updatedAt
       ).not.toEqual(chart.updatedAt);
     });
     it('should not update the other fields', () => {
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).dateFrom
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' })
+          .dateFrom
       ).toEqual('then');
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).dateTo
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' })
+          .dateTo
       ).toEqual('now');
       expect(
-        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).version
+        duplicateChart(chart, { email: 'user_2@example.org', id: '12345' })
+          .version
       ).toEqual(1);
     });
   });
