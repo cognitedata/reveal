@@ -15,7 +15,7 @@ import {
 import * as Automerge from '@automerge/automerge';
 import { debounce, isEqual } from 'lodash';
 
-import { useFlow, useUpdateFlow } from 'hooks/files';
+import { useUpdateFlow } from 'hooks/files';
 import { AFlow, CanvasEdges, CanvasNodes } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
@@ -56,6 +56,10 @@ type FlowContextProviderProps = {
 type AutomergeChangeNodesFn = Automerge.ChangeFn<CanvasNodes>;
 type AutomergeChangeEdgesFn = Automerge.ChangeFn<CanvasEdges>;
 
+type WSAuthenticationRequest = {
+  jwt: string;
+};
+
 export const FlowContextProvider = ({
   externalId,
   children,
@@ -73,19 +77,39 @@ export const FlowContextProvider = ({
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
   const { data: userInfo } = useUserInfo();
-  const { mutate } = useUpdateFlow();
-  const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
+  const { mutate: updateFlow } = useUpdateFlow();
 
   const [socket, setWS] = useState<WebSocket>();
+
+  const externalFlowRef = useRef(initialFlow);
+
+  const debouncedMutate = useMemo(() => {
+    const mutate = (newFlow: AFlow) => {
+      const changes = Automerge.getChanges(externalFlowRef.current, newFlow);
+      externalFlowRef.current = newFlow;
+
+      updateFlow(newFlow);
+
+      if (changes.length > 0 && socket) {
+        changes.forEach((change) => socket.send(change.buffer));
+      }
+    };
+
+    return debounce(mutate, 500);
+  }, [socket, updateFlow]);
+
   useEffect(() => {
     if (token) {
       const { host } = new URL(sdk.getBaseUrl());
       const ws = new WebSocket(
-        `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
+        `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/flows/${externalId}`
       );
 
       ws.addEventListener('open', async () => {
-        ws.send(JSON.stringify({ jwt: token }));
+        const authenticationRequest: WSAuthenticationRequest = {
+          jwt: token,
+        };
+        ws.send(JSON.stringify(authenticationRequest));
         setWS(ws);
       });
 
@@ -129,9 +153,6 @@ export const FlowContextProvider = ({
         newFlow = Automerge.emptyChange(flowRef.current, msg);
         anythingChanged = true;
       }
-      const changes = anythingChanged
-        ? Automerge.getChanges(flowRef.current, newFlow)
-        : [];
       flowRef.current = newFlow;
       // `fn` could end up doing no changes. Since there are no actual changes, there is no point in
       // updating state or persisting the doc. In the current version of AM it also seems safe to
@@ -142,11 +163,8 @@ export const FlowContextProvider = ({
         setFlowState(newFlow);
         debouncedMutate(newFlow);
       }
-      if (changes.length > 0 && socket) {
-        changes.forEach((change) => socket.send(change.buffer));
-      }
     },
-    [debouncedMutate, socket]
+    [debouncedMutate]
   );
 
   const restoreWorkflow = useCallback(
@@ -197,18 +215,6 @@ export const FlowContextProvider = ({
     },
     [changeFlow]
   );
-
-  const { data } = useFlow(externalId, {
-    staleTime: 0,
-    refetchInterval: 1000,
-  });
-
-  useEffect(() => {
-    if (data) {
-      flowRef.current = data;
-      setFlowState(data);
-    }
-  }, [data]);
 
   useEffect(() => {
     if (!isHistoryVisible) {
