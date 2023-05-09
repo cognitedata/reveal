@@ -97,7 +97,9 @@ function addLabelsFromAssetMappings(
   sdk: CogniteClient,
   overlayTool: SmartOverlayTool
 ) {
-  const assetMapped3DNodes = assetMappings.map((m) => m.nodeId);
+  const assetMapped3DNodes = assetMappings.flatMap((m) =>
+    m.nodeId !== undefined ? m.nodeId : []
+  );
 
   const bbsData = getBoundingBoxesByNodeIds(
     sdk,
@@ -107,7 +109,9 @@ function addLabelsFromAssetMappings(
 
   const assetMappedNodesMap = new Map<number, number>();
   assetMappings.forEach((m) => {
-    assetMappedNodesMap.set(m.nodeId, m.assetId);
+    if (m.nodeId !== undefined && m.assetId !== undefined) {
+      assetMappedNodesMap.set(m.nodeId, m.assetId);
+    }
   });
 
   bbsData.then((data) => {

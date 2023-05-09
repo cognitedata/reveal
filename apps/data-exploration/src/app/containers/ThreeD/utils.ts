@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import sdk from '@cognite/cdf-sdk-singleton';
 import * as THREE from 'three';
 import {
@@ -10,6 +11,9 @@ import {
   ViewerState,
   PointCloudIntersection,
   CognitePointCloudModel,
+  AnnotationIdPointCloudObjectCollection,
+  DefaultPointCloudAppearance,
+  CogniteModel,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -17,6 +21,8 @@ import {
   CogniteInternalId,
   Node3D,
   Model3D,
+  AnnotationFilterProps,
+  AnnotationModel,
 } from '@cognite/sdk';
 import {
   fetchAssetDetails,
@@ -45,6 +51,7 @@ export const THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY = 'images360';
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
 export const IMAGE_360_POSITION_THRESHOLD = 0.0001;
+export const CAMERA_ANIMATION_RADIUS = 3;
 
 export const SECONDARY_MODEL_DISPLAY_LIMIT = 20;
 
@@ -118,37 +125,60 @@ export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
-  threeDModel: CogniteCadModel,
+  threeDModel: CogniteModel,
   assetId: number
 ) => {
-  const { modelId, revisionId } = threeDModel;
-  const mappings = await fetchAssetMappingsByAssetIdQuery(
-    sdk,
-    queryClient,
-    modelId,
-    revisionId,
-    assetId,
-    100
-  );
+  if (threeDModel instanceof CogniteCadModel) {
+    const { modelId, revisionId } = threeDModel;
+    const mappings = await fetchAssetMappingsByAssetIdQuery(
+      sdk,
+      queryClient,
+      modelId,
+      revisionId,
+      assetId,
+      100
+    );
 
-  const boundingBoxNodes = await Promise.all(
-    mappings.items.map((m) =>
-      fetchBoundingBoxByNodeIdQuery(
-        sdk,
-        queryClient,
-        threeDModel,
-        modelId,
-        revisionId,
-        m.nodeId
+    const boundingBoxNodes = await Promise.all(
+      mappings.items.map((m) =>
+        fetchBoundingBoxByNodeIdQuery(
+          sdk,
+          queryClient,
+          threeDModel,
+          modelId,
+          revisionId,
+          m.nodeId
+        )
       )
-    )
-  );
+    );
 
-  const boundingBox = boundingBoxNodes.reduce((accl: THREE.Box3, box) => {
-    return box ? accl.union(box) : accl;
-  }, new THREE.Box3());
+    const boundingBox = boundingBoxNodes.reduce((accl: THREE.Box3, box) => {
+      return box ? accl.union(box) : accl;
+    }, new THREE.Box3());
 
-  viewer.fitCameraToBoundingBox(boundingBox, CAMERA_ANIMATION_DURATION, 3);
+    viewer.fitCameraToBoundingBox(
+      boundingBox,
+      CAMERA_ANIMATION_DURATION,
+      CAMERA_ANIMATION_RADIUS
+    );
+  }
+  if (threeDModel instanceof CognitePointCloudModel) {
+    const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
+    if (annotation === undefined) {
+      return;
+    }
+    const annotationId = annotation.id;
+
+    threeDModel.traverseStylableObjects((annotationMetadata) => {
+      if (annotationMetadata.annotationId === annotationId) {
+        viewer.fitCameraToBoundingBox(
+          annotationMetadata.boundingBox,
+          CAMERA_ANIMATION_DURATION,
+          CAMERA_ANIMATION_RADIUS
+        );
+      }
+    });
+  }
 };
 
 async function fetchAssetNodeCollection(
@@ -170,39 +200,89 @@ async function fetchAssetNodeCollection(
 
 export const highlightAsset = async (
   sdk: CogniteClient,
-  threeDModel: CogniteCadModel,
+  threeDModel: CogniteModel,
   assetId: number,
   queryClient: QueryClient
 ) => {
-  const assetNodes = await fetchAssetNodeCollection(
-    sdk,
-    queryClient,
-    threeDModel,
-    assetId
-  );
+  if (threeDModel instanceof CogniteCadModel) {
+    const assetNodes = await fetchAssetNodeCollection(
+      sdk,
+      queryClient,
+      threeDModel,
+      assetId
+    );
 
-  threeDModel.assignStyledNodeCollection(
-    assetNodes,
-    DefaultNodeAppearance.Highlighted
-  );
+    threeDModel.assignStyledNodeCollection(
+      assetNodes,
+      DefaultNodeAppearance.Highlighted
+    );
+  }
+
+  if (threeDModel instanceof CognitePointCloudModel) {
+    const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
+    if (annotation === undefined) {
+      return;
+    }
+    const annotationId = annotation.id;
+
+    const colorBoundingBoxObject = new AnnotationIdPointCloudObjectCollection([
+      annotationId,
+    ]);
+
+    const colorAppearance = { color: new THREE.Color('rgb(77, 106, 242)') };
+    threeDModel.assignStyledObjectCollection(
+      colorBoundingBoxObject,
+      colorAppearance
+    );
+  }
 };
 
 export const ghostAsset = async (
   sdk: CogniteClient,
-  threeDModel: CogniteCadModel,
+  threeDModel: CogniteModel,
   assetId: number,
   queryClient: QueryClient,
   secondaryModels?: (CogniteCadModel | CognitePointCloudModel)[]
 ) => {
-  const assetNodes = await fetchAssetNodeCollection(
-    sdk,
-    queryClient,
-    threeDModel,
-    assetId
-  );
+  if (threeDModel instanceof CogniteCadModel) {
+    const assetNodes = await fetchAssetNodeCollection(
+      sdk,
+      queryClient,
+      threeDModel,
+      assetId
+    );
 
-  threeDModel.removeAllStyledNodeCollections();
-  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+    threeDModel.removeAllStyledNodeCollections();
+    threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+    threeDModel.assignStyledNodeCollection(
+      assetNodes,
+      DefaultNodeAppearance.Default
+    );
+  }
+
+  if (threeDModel instanceof CognitePointCloudModel) {
+    threeDModel.setDefaultPointCloudAppearance({
+      color: new THREE.Color('#111111'),
+    });
+
+    if (assetId !== undefined) {
+      const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
+    if (annotation === undefined) {
+      return;
+    }
+    const annotationId = annotation.id;
+
+      const colorBoundingBoxObject = new AnnotationIdPointCloudObjectCollection(
+        [annotationId]
+      );
+      const colorAppearance = { color: new THREE.Color('rgb(0, 0, 0)') };
+      threeDModel.assignStyledObjectCollection(
+        colorBoundingBoxObject,
+        colorAppearance
+      );
+    }
+  }
+
   secondaryModels?.forEach((model) => {
     if (model instanceof CogniteCadModel) {
       model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
@@ -212,42 +292,45 @@ export const ghostAsset = async (
       });
     }
   });
-  threeDModel.assignStyledNodeCollection(
-    assetNodes,
-    DefaultNodeAppearance.Default
-  );
 };
 
 export const highlightAssetMappedNodes = async (
-  threeDModel: CogniteCadModel,
-  queryClient: QueryClient
+  threeDModel: CogniteModel,
+  queryClient: QueryClient,
 ) => {
-  const assetNodeCollection = await fetchAssetNodeCollection(
-    sdk,
-    queryClient,
-    threeDModel
-  );
-  const nonMappedNodeCollection = new InvertedNodeCollection(
-    threeDModel,
-    assetNodeCollection
-  );
+  if (threeDModel instanceof CogniteCadModel) {
+    const assetNodeCollection = await fetchAssetNodeCollection(
+      sdk,
+      queryClient,
+      threeDModel
+    );
+    const nonMappedNodeCollection = new InvertedNodeCollection(
+      threeDModel,
+      assetNodeCollection
+    );
 
-  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-  threeDModel.assignStyledNodeCollection(nonMappedNodeCollection, {
-    color: new THREE.Color(30, 30, 30),
-  });
+    threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+    threeDModel.assignStyledNodeCollection(nonMappedNodeCollection, {
+      color: new THREE.Color(30, 30, 30),
+    });
+  }
+
+  if (threeDModel instanceof CognitePointCloudModel) {
+    // TODO: functionality to be added here in a separate PR
+    return;
+  }
 };
 
-export const removeAllStyles = (threeDModel: CogniteCadModel) => {
-  threeDModel.removeAllStyledNodeCollections();
-  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-};
+export const removeAllStyles = (threeDModel: CogniteModel) => {
+  if (threeDModel instanceof CogniteCadModel) {
+    threeDModel.removeAllStyledNodeCollections();
+    threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+  }
 
-export const removeAllPointCloudStyles = (
-  pointCloudModel: CognitePointCloudModel
-) => {
-  pointCloudModel.removeAllStyledObjectCollections();
-  pointCloudModel.setDefaultPointCloudAppearance({ visible: true });
+  if (threeDModel instanceof CognitePointCloudModel) {
+    threeDModel.removeAllStyledObjectCollections();
+    threeDModel.setDefaultPointCloudAppearance(DefaultPointCloudAppearance);
+  }
 };
 
 export const fetchNodeIdByTreeIndex = (
@@ -265,6 +348,30 @@ export const fetchNodeIdByTreeIndex = (
     options
   );
 };
+
+export async function getAnnotationByAssetId(
+  sdk: CogniteClient,
+  model: CognitePointCloudModel,
+  assetId: number
+): Promise<AnnotationModel | undefined> {
+  const { modelId } = model;
+
+  const annotationFilterProps: AnnotationFilterProps = {
+    annotatedResourceType: 'threedmodel',
+    annotatedResourceIds: [{ id: modelId }],
+    annotationType: 'pointcloud.BoundingVolume',
+    data: {
+      assetRef: { id: assetId },
+    },
+  };
+
+  const annotations = await sdk.annotations.list({
+    limit: 1,
+    filter: annotationFilterProps,
+  });
+
+  return annotations.items[0];
+}
 
 export async function getBoundingBoxesByNodeIds(
   sdk: CogniteClient,

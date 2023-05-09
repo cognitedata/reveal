@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
-
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -133,15 +132,23 @@ export const AssetMappingsList = ({
                       <AssetListItem
                         key={uniqueFilteredAssets[index].assetId}
                         onClick={() => {
-                          onClick(uniqueFilteredAssets[index].assetId);
+                          const { assetId } = uniqueFilteredAssets[index];
+                          if (assetId === undefined) {
+                            return;
+                          }
+                          onClick(assetId);
                           trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
                             selectedAssetId,
                             resourceType: '3D',
                           });
                         }}
-                        onKeyDown={() =>
-                          onClick(uniqueFilteredAssets[index].assetId)
-                        }
+                        onKeyDown={() => {
+                          const { assetId } = uniqueFilteredAssets[index];
+                          if (assetId === undefined) {
+                            return;
+                          }
+                          onClick(assetId);
+                        }}
                         className={
                           selectedAssetId ===
                           uniqueFilteredAssets[index].assetId

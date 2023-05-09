@@ -30,7 +30,6 @@ import {
   highlightAsset,
   highlightAssetMappedNodes,
   isCadIntersection,
-  removeAllPointCloudStyles,
   removeAllStyles,
 } from './utils';
 
@@ -86,10 +85,10 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     }
   }, [image360SiteId]);
 
-  const context = useContext(ThreeDContext);
   const {
     viewer,
     threeDModel,
+    pointCloudModel,
     assetDetailsExpanded,
     assetHighlightMode,
     setAssetDetailsExpanded,
@@ -105,7 +104,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     selectedAssetId,
     setSelectedAssetId,
     overlayTool,
-  } = context;
+  } = useContext(ThreeDContext);
 
   // Changes to the view state in the url should not cause any updates
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -195,34 +194,30 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   );
 
   useEffect(() => {
-    if (!viewer || !threeDModel || !overlayTool) {
+    const model = threeDModel ?? pointCloudModel;
+    if (
+      viewer === undefined ||
+      model === undefined ||
+      overlayTool === undefined
+    ) {
       return;
     }
 
-    const hasAdded = (
-      viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
-    ).some(
+    const isAlreadyAdded = viewer.models.some(
       ({ modelId: tmId, revisionId: trId }) =>
-        threeDModel.modelId === tmId && threeDModel.revisionId === trId
+        model.modelId === tmId && model.revisionId === trId
     );
-    if (!hasAdded) {
+    if (!isAlreadyAdded) {
       return;
     }
-
-    removeAllStyles(threeDModel);
-    viewer.models.forEach((model) => {
-      if (model instanceof CogniteCadModel) {
-        removeAllStyles(model);
-      } else {
-        removeAllPointCloudStyles(model);
-      }
+    viewer.models.forEach((modelObject) => {
+      removeAllStyles(modelObject);
     });
-
     if (selectedAssetId) {
       if (assetDetailsExpanded) {
         ghostAsset(
           sdk,
-          threeDModel,
+          model,
           selectedAssetId,
           queryClient,
           loadedSecondaryModels
@@ -231,19 +226,20 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
       } else {
         overlayTool.visible = labelsVisibility;
         if (assetHighlightMode) {
-          highlightAssetMappedNodes(threeDModel, queryClient);
+          highlightAssetMappedNodes(model, queryClient);
         }
-        highlightAsset(sdk, threeDModel, selectedAssetId, queryClient);
+        highlightAsset(sdk, model, selectedAssetId, queryClient);
       }
     } else {
       if (assetHighlightMode) {
-        highlightAssetMappedNodes(threeDModel, queryClient);
+        highlightAssetMappedNodes(model, queryClient);
       }
       overlayTool.visible = labelsVisibility;
     }
   }, [
     assetHighlightMode,
     assetDetailsExpanded,
+    pointCloudModel,
     modelId,
     queryClient,
     revisionId,
@@ -257,19 +253,24 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   ]);
 
   useEffect(() => {
-    if (!viewer || !threeDModel) {
+    const model = threeDModel ?? pointCloudModel;
+    if (
+      viewer === undefined ||
+      model === undefined ||
+      selectedAssetId === undefined
+    ) {
       return;
     }
-
-    if (selectedAssetId) {
-      fitCameraToAsset(sdk, queryClient, viewer, threeDModel, selectedAssetId);
-    }
-  }, [queryClient, sdk, selectedAssetId, threeDModel, viewer]);
+    fitCameraToAsset(sdk, queryClient, viewer, model, selectedAssetId);
+  }, [queryClient, sdk, selectedAssetId, threeDModel, viewer, pointCloudModel]);
 
   if (!revisionId && !image360SiteId) {
     return null;
   }
-
+  const shouldShowAssetPreviewSidebar =
+    !!selectedAssetId &&
+    (threeDModel || pointCloudModel) &&
+    assetDetailsExpanded;
   return (
     <>
       <ThreeDTitle id={modelId} image360SiteId={image360SiteId} />
@@ -289,7 +290,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             onViewerClick={onViewerClick}
           >
             {({
-              pointCloudModel,
+              pointCloudModel: revealPointCloudModel,
               threeDModel: revealThreeDModel,
               viewer: revealViewer,
             }) => (
@@ -321,7 +322,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     <>
                       <ExpandButton
                         viewer={revealViewer}
-                        model={revealThreeDModel || pointCloudModel}
+                        model={revealThreeDModel ?? revealPointCloudModel}
                       />
                       <FocusAssetButton
                         selectedAssetId={selectedAssetId}
@@ -330,15 +331,15 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                       />
                       <StyledToolBarDivider />
                       <PointSizeSlider
-                        pointCloudModel={pointCloudModel}
+                        pointCloudModel={revealPointCloudModel}
                         viewer={revealViewer}
                       />
                       <Slicer
                         viewer={revealViewer}
-                        viewerModel={revealThreeDModel || pointCloudModel}
+                        viewerModel={revealThreeDModel ?? revealPointCloudModel}
                       />
                       <PointToPointMeasurementButton
-                        model={revealThreeDModel ?? pointCloudModel}
+                        model={revealThreeDModel ?? revealPointCloudModel}
                         viewer={revealViewer}
                         nodesSelectable={nodesSelectable}
                         setNodesSelectable={setNodesSelectable}
@@ -359,14 +360,14 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   <HelpButton />
                 </StyledToolBar>
                 <SidebarContainer gap={15}>
-                  {revealThreeDModel && (
+                  {(revealThreeDModel || revealPointCloudModel) && (
                     <AssetMappingsSidebar
                       modelId={modelId}
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
                       setSelectedAssetId={setSelectedAssetId}
                       viewer={revealViewer}
-                      threeDModel={revealThreeDModel}
+                      threeDModel={revealThreeDModel ?? revealPointCloudModel}
                     />
                   )}
                 </SidebarContainer>
@@ -387,7 +388,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
               </>
             )}
           </Reveal>
-          {!!selectedAssetId && threeDModel && assetDetailsExpanded && (
+          {shouldShowAssetPreviewSidebar && (
             <AssetPreviewSidebar
               assetId={selectedAssetId}
               onClose={() => {

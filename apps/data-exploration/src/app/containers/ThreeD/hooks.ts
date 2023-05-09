@@ -6,6 +6,10 @@ import {
   Model3D,
   Node3D,
   Revision3D,
+  AnnotationFilterProps,
+  AnnotationsBoundingVolume,
+  AnnotationFilterRequest,
+  CogniteInternalId,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import uniqBy from 'lodash/uniqBy';
@@ -43,10 +47,11 @@ type MappingResponse = {
   items: AssetMapping3D[];
   nextCursor?: string;
 };
-export interface AugmentedMapping extends AssetMapping3D {
+export interface AugmentedMapping extends Partial<AssetMapping3D> {
   assetName: string;
   assetDescription?: string;
   searchValue: Set<string>;
+  annotationId?: number;
 }
 export type AugmentedMappingResponse = {
   items: AugmentedMapping[];
@@ -252,34 +257,62 @@ export const useInfiniteAssetMappings = (
   modelId?: number,
   revisionId?: number,
   limit?: number,
+  isPointCloud?: boolean,
   config?: UseInfiniteQueryOptions<AugmentedMappingResponse, CogniteError>
 ) => {
   const sdk = useSDK();
-
   return useInfiniteQuery<AugmentedMappingResponse, CogniteError>(
     ['cdf', 'infinite', '3d', 'asset-mapping', modelId, revisionId],
     async ({ pageParam }) => {
-      const models = await getAssetMappingsQueryFn(sdk, modelId, revisionId, {
-        limit,
-        cursor: pageParam,
-      });
-      const uniqueAssets = uniqBy(models.items, 'assetId');
+      let mappings:
+        | Partial<AssetMapping3D>
+        | { assetId: CogniteInternalId; annotationId?: number }[];
+      let nextCursor: string | undefined;
+      if (modelId !== undefined && isPointCloud) {
+        const filter: AnnotationFilterProps = {
+          annotatedResourceType: 'threedmodel',
+          annotatedResourceIds: [{ id: modelId }],
+          annotationType: 'pointcloud.BoundingVolume',
+        };
+        const annotationFilter: AnnotationFilterRequest = {
+          filter: filter,
+        };
+        const annotations = await getAnnotationsQueryFn(sdk, {
+          cursor: pageParam,
+          limit: limit,
+          filter: annotationFilter,
+        });
 
-      // Query assets corresponding to the asset mappings
+        mappings = annotations.items.map((annotation) => ({
+          annotationId: annotation.id,
+          assetId: (annotation.data as AnnotationsBoundingVolume).assetRef
+            ?.id as number,
+        }));
+        nextCursor = annotations.nextCursor;
+      } else {
+        const models = await getAssetMappingsQueryFn(sdk, modelId, revisionId, {
+          limit,
+          cursor: pageParam,
+        });
+        mappings = models.items;
+        nextCursor = models.nextCursor;
+      }
+      const uniqueAssets = uniqBy(mappings, 'assetId');
       const assets =
         uniqueAssets.length > 0
           ? keyBy(
               await sdk.assets.retrieve(
-                uniqueAssets.map(({ assetId }) => ({ id: assetId })),
+                uniqueAssets.map(({ assetId }) => ({
+                  id: assetId,
+                })),
                 { ignoreUnknownIds: true }
               ),
               'id'
             )
           : {};
-
       return {
-        nextCursor: models.nextCursor,
-        items: models.items
+        nextCursor: nextCursor,
+        items: mappings
           .filter(({ assetId }) => !!assets[assetId])
           .map((mapping) => ({
             ...mapping,
@@ -315,6 +348,26 @@ const getAssetMappingsQueryKey = (
   'asset-mappings',
   params,
 ];
+
+export const getAnnotationsQueryFn = async (
+  sdk: CogniteClient,
+  opts: {
+    cursor?: string;
+    limit?: number;
+    filter: AnnotationFilterRequest;
+  }
+) => {
+  const { nextCursor, items } = await sdk.annotations.list({
+    limit: opts.limit,
+    cursor: opts.cursor,
+    filter: opts.filter.filter,
+  });
+
+  return {
+    nextCursor,
+    items,
+  };
+};
 
 export const getAssetMappingsQueryFn = async (
   sdk: CogniteClient,

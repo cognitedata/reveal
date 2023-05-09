@@ -16,7 +16,11 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
-import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  CognitePointCloudModel,
+  CogniteModel,
+} from '@cognite/reveal';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type ThreeDSidebarProps = {
@@ -25,7 +29,7 @@ type ThreeDSidebarProps = {
   selectedAssetId?: number;
   setSelectedAssetId: (assetId?: number) => void;
   viewer: Cognite3DViewer;
-  threeDModel: CogniteCadModel;
+  threeDModel?: CogniteModel;
 };
 
 export const AssetMappingsSidebar = ({
@@ -33,6 +37,7 @@ export const AssetMappingsSidebar = ({
   revisionId,
   selectedAssetId,
   setSelectedAssetId,
+  threeDModel,
 }: ThreeDSidebarProps) => {
   const { data: asset } = useCdfItem<Asset>(
     'assets',
@@ -44,6 +49,8 @@ export const AssetMappingsSidebar = ({
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
 
+  const isPointCloud = threeDModel instanceof CognitePointCloudModel;
+
   const {
     error,
     data,
@@ -51,7 +58,7 @@ export const AssetMappingsSidebar = ({
     fetchNextPage,
     isFetchingNextPage,
     isFetching,
-  } = useInfiniteAssetMappings(modelId, revisionId, 1000);
+  } = useInfiniteAssetMappings(modelId, revisionId, 1000, isPointCloud);
 
   useEffect(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -144,6 +151,7 @@ export const AssetMappingsSidebar = ({
           </StyledButton>
         )}
       </Flex>
+
       {expanded && (
         <AssetMappingsList
           error={error}
