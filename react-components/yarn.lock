@@ -6,14 +6,20 @@ __metadata:
   cacheKey: 8
 
 "@ampproject/remapping@npm:^2.2.0":
-  version: 2.2.1
+  version: 0.0.0-use.local
   resolution: "@ampproject/remapping@npm:2.2.1"
   dependencies:
-    "@jridgewell/gen-mapping": ^0.3.0
-    "@jridgewell/trace-mapping": ^0.3.9
+    "@types/react": 18.2.5
+    react: 18.2.0
+    ts-loader: 9.4.2
+    typescript: 5.0.4
+    webpack: 5.82.0
+    webpack-cli: 5.0.2
+  peerDependencies:
+    react: ">=18"
   checksum: 03c04fd526acc64a1f4df22651186f3e5ef0a9d6d6530ce4482ec9841269cf7a11dbb8af79237c282d721c5312024ff17529cd72cc4768c11e999b58e2302079
-  languageName: node
-  linkType: hard
+  languageName: unknown
+  linkType: soft
 
 "@aw-web-design/x-default-browser@npm:1.4.88":
   version: 1.4.88
@@ -1473,14 +1479,14 @@ __metadata:
     "@storybook/react": 7.0.9
     "@storybook/react-webpack5": 7.0.9
     "@storybook/testing-library": 0.0.14-next.2
-    "@types/react": 18.2.4
+    "@types/react": 18.2.5
     prop-types: 15.8.1
     react: 18.2.0
     react-dom: 18.2.0
     storybook: 7.0.9
     ts-loader: 9.4.2
     typescript: 5.0.4
-    webpack: 5.81.0
+    webpack: 5.82.0
     webpack-cli: 5.0.2
   peerDependencies:
     react: ">=18"
@@ -3366,14 +3372,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.4":
-  version: 18.2.4
-  resolution: "@types/react@npm:18.2.4"
+"@types/react@npm:18.2.5":
+  version: 18.2.5
+  resolution: "@types/react@npm:18.2.5"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: d920fc93832fe50d5e8175a0ba233086c97a9e238ff7327c8319b8dec57409618f491d6f71be2374c3132f40a8fc428b3e406c1e2a5f1dc32ccd6d47051786d2
+  checksum: 97c4534e849edf991be0820b0911d036e794b8e2599a1544f500c769acbcb4f443ccde1a3f22298f22ce368ee7757f746e4a529e889567fc142a627698e2de39
   languageName: node
   linkType: hard
 
@@ -10142,7 +10148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5":
+"webpack@npm:5, webpack@npm:5.82.0":
   version: 5.82.0
   resolution: "webpack@npm:5.82.0"
   dependencies:
@@ -10176,43 +10182,6 @@ __metadata:
   bin:
     webpack: bin/webpack.js
   checksum: 499e7f5f24fccaa76f64f2a01f91f371073416f568ef6171dc73187a89078f0c33410d4c9f40d411f0827bab8455f8476eabd803ef4d2920d9a2e5f17efa2703
-  languageName: node
-  linkType: hard
-
-"webpack@npm:5.81.0":
-  version: 5.81.0
-  resolution: "webpack@npm:5.81.0"
-  dependencies:
-    "@types/eslint-scope": ^3.7.3
-    "@types/estree": ^1.0.0
-    "@webassemblyjs/ast": ^1.11.5
-    "@webassemblyjs/wasm-edit": ^1.11.5
-    "@webassemblyjs/wasm-parser": ^1.11.5
-    acorn: ^8.7.1
-    acorn-import-assertions: ^1.7.6
-    browserslist: ^4.14.5
-    chrome-trace-event: ^1.0.2
-    enhanced-resolve: ^5.13.0
-    es-module-lexer: ^1.2.1
-    eslint-scope: 5.1.1
-    events: ^3.2.0
-    glob-to-regexp: ^0.4.1
-    graceful-fs: ^4.2.9
-    json-parse-even-better-errors: ^2.3.1
-    loader-runner: ^4.2.0
-    mime-types: ^2.1.27
-    neo-async: ^2.6.2
-    schema-utils: ^3.1.2
-    tapable: ^2.1.1
-    terser-webpack-plugin: ^5.3.7
-    watchpack: ^2.4.0
-    webpack-sources: ^3.2.3
-  peerDependenciesMeta:
-    webpack-cli:
-      optional: true
-  bin:
-    webpack: bin/webpack.js
-  checksum: 1a6eecaffac3226d80f4e8f330b32e0ff117d9dafd8700166d230afbc171d68ea1ff55a9939fa789307f7b9d11881889ccb8e6cd79d4ccbaeef916788ce73fdb
   languageName: node
   linkType: hard
 

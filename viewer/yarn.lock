@@ -14,19 +14,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.36.0":
-  version: 2.36.0
-  resolution: "@azure/msal-browser@npm:2.36.0"
+"@azure/msal-browser@npm:2.37.0":
+  version: 2.37.0
+  resolution: "@azure/msal-browser@npm:2.37.0"
   dependencies:
-    "@azure/msal-common": ^12.1.0
-  checksum: bfb6fdad074ae8b426bbae8713bebef9a28b2c447ce87bd50cee051c85c026a5568e235b1536c6a9cd3bb0abd14e46572b0af487f4a4c814b4f3e3787c45bda0
+    "@azure/msal-common": 13.0.0
+  checksum: e57d04517d51db4b608da6ca127c89e5c134b42743b00e95d8f1aae011d1cc6d5c02fb4f72cd0f96636e500a3eeee7c4884cd537ac8796bbd50f0ff9ac983b4e
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^12.1.0":
-  version: 12.1.0
-  resolution: "@azure/msal-common@npm:12.1.0"
-  checksum: 6ed6fa9d8303906617ad1f1d0e4805e297c5ca6fa72ff5095febed99daf5e0a5e9b59b6ec3baa62d996eb6356ecf8d104633a3c6a6414759c05e58e3fa82399b
+"@azure/msal-common@npm:13.0.0":
+  version: 13.0.0
+  resolution: "@azure/msal-common@npm:13.0.0"
+  checksum: 89f56f9fbf0edffa6023d46c6970dd37a9ad571b7d2952fdef41950ec2f3b4b3fd22d9841e2caaf52619ad97ab415ed22c30797cdb896f459eb665d3d97f778a
   languageName: node
   linkType: hard
 
@@ -774,7 +774,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.36.0
+    "@azure/msal-browser": 2.37.0
     "@cognite/sdk": 8.1.1
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
@@ -787,7 +787,7 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.194
     "@types/mixpanel-browser": 2.38.1
-    "@types/node": 18.16.3
+    "@types/node": 18.16.4
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -841,13 +841,13 @@ __metadata:
     sparse-octree: 7.1.6
     stats.js: 0.17.0
     three: 0.152.2
-    three-stdlib: 2.21.10
+    three-stdlib: 2.21.11
     ts-jest: 29.1.0
     ts-loader: 9.4.2
     tsc-alias: 1.8.6
     typescript: 5.0.4
     wasm-pack: 0.10.3
-    webpack: 5.81.0
+    webpack: 5.82.0
     webpack-cli: 5.0.2
     webpack-dev-server: 4.13.3
     webpack-node-externals: 3.0.0
@@ -2329,10 +2329,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.16.3":
-  version: 18.16.3
-  resolution: "@types/node@npm:18.16.3"
-  checksum: 816b39d45b05ebdc6f362b630970df3f6d82f71d418a2555353522f4eeeb078fa201de5299f02c09a09faa975e43b2745fe19c263d44069f87ddf37d6c37b717
+"@types/node@npm:18.16.4":
+  version: 18.16.4
+  resolution: "@types/node@npm:18.16.4"
+  checksum: 21d575391c88be9f3568675de59d571597cfc122efa32939ae2697c2218c6ccfb6ba0d4b5d9301905e6c4964f43add42569249b15d2e12d68b0aedaf891ec9a5
   languageName: node
   linkType: hard
 
@@ -11380,9 +11380,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.21.10":
-  version: 2.21.10
-  resolution: "three-stdlib@npm:2.21.10"
+"three-stdlib@npm:2.21.11":
+  version: 2.21.11
+  resolution: "three-stdlib@npm:2.21.11"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -11397,7 +11397,7 @@ resolve@~1.19.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: 3f26ab13a7dd700187cfc5e9c1cbd64cff7eb1465b45cfa5f7ff5296e054151212dbe14257b149b75775cef7060c8ea6b4a4620000c488cb448dcd9d48961ea9
+  checksum: f6baccce6ff10e74e8bdd4175b0eefa9df70db23622a227f5bf095c21e8223e7ae1aa67452e7ab9612ed9f17c17e55a9ee1f6c57b6dd1035a66aad68bb15639b
   languageName: node
   linkType: hard
 
@@ -11739,11 +11739,11 @@ resolve@~1.19.0:
 
 "typescript@patch:typescript@5.0.4#~builtin<compat/typescript>":
   version: 5.0.4
-  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"
+  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=b5f058"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: bb309d320c59a26565fb3793dba550576ab861018ff3fd1b7fccabbe46ae4a35546bc45f342c0a0b6f265c801ccdf64ffd68f548f117ceb7f0eac4b805cd52a9
+  checksum: d26b6ba97b6d163c55dbdffd9bbb4c211667ebebc743accfeb2c8c0154aace7afd097b51165a72a5bad2cf65a4612259344ff60f8e642362aa1695c760d303ac
   languageName: node
   linkType: hard
 
@@ -12171,9 +12171,9 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.81.0":
-  version: 5.81.0
-  resolution: "webpack@npm:5.81.0"
+"webpack@npm:5.82.0":
+  version: 5.82.0
+  resolution: "webpack@npm:5.82.0"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^1.0.0
@@ -12204,7 +12204,7 @@ typescript@~4.8.4:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 1a6eecaffac3226d80f4e8f330b32e0ff117d9dafd8700166d230afbc171d68ea1ff55a9939fa789307f7b9d11881889ccb8e6cd79d4ccbaeef916788ce73fdb
+  checksum: 499e7f5f24fccaa76f64f2a01f91f371073416f568ef6171dc73187a89078f0c33410d4c9f40d411f0827bab8455f8476eabd803ef4d2920d9a2e5f17efa2703
   languageName: node
   linkType: hard
 

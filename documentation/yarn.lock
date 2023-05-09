@@ -182,12 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.36.0":
-  version: 2.36.0
-  resolution: "@azure/msal-browser@npm:2.36.0"
+"@azure/msal-browser@npm:2.37.0":
+  version: 2.37.0
+  resolution: "@azure/msal-browser@npm:2.37.0"
   dependencies:
-    "@azure/msal-common": ^12.1.0
-  checksum: bfb6fdad074ae8b426bbae8713bebef9a28b2c447ce87bd50cee051c85c026a5568e235b1536c6a9cd3bb0abd14e46572b0af487f4a4c814b4f3e3787c45bda0
+    "@azure/msal-common": 13.0.0
+  checksum: e57d04517d51db4b608da6ca127c89e5c134b42743b00e95d8f1aae011d1cc6d5c02fb4f72cd0f96636e500a3eeee7c4884cd537ac8796bbd50f0ff9ac983b4e
   languageName: node
   linkType: hard
 
@@ -200,10 +200,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^12.1.0":
-  version: 12.1.0
-  resolution: "@azure/msal-common@npm:12.1.0"
-  checksum: 6ed6fa9d8303906617ad1f1d0e4805e297c5ca6fa72ff5095febed99daf5e0a5e9b59b6ec3baa62d996eb6356ecf8d104633a3c6a6414759c05e58e3fa82399b
+"@azure/msal-common@npm:13.0.0":
+  version: 13.0.0
+  resolution: "@azure/msal-common@npm:13.0.0"
+  checksum: 89f56f9fbf0edffa6023d46c6970dd37a9ad571b7d2952fdef41950ec2f3b4b3fd22d9841e2caaf52619ad97ab415ed22c30797cdb896f459eb665d3d97f778a
   languageName: node
   linkType: hard
 
@@ -2137,12 +2137,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.36.0
+    "@azure/msal-browser": 2.37.0
     "@codemirror/lang-javascript": 6.1.7
     "@docusaurus/core": 2.4.0
     "@docusaurus/preset-classic": 2.4.0
     "@docusaurus/remark-plugin-npm2yarn": 2.4.0
-    "@types/react": 18.2.4
+    "@types/react": 18.2.5
     "@types/styled-components": 5.1.26
     "@uiw/codemirror-theme-material": 4.19.16
     "@uiw/react-codemirror": 4.19.16
@@ -3756,14 +3756,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.4":
-  version: 18.2.4
-  resolution: "@types/react@npm:18.2.4"
+"@types/react@npm:18.2.5":
+  version: 18.2.5
+  resolution: "@types/react@npm:18.2.5"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: d920fc93832fe50d5e8175a0ba233086c97a9e238ff7327c8319b8dec57409618f491d6f71be2374c3132f40a8fc428b3e406c1e2a5f1dc32ccd6d47051786d2
+  checksum: 97c4534e849edf991be0820b0911d036e794b8e2599a1544f500c769acbcb4f443ccde1a3f22298f22ce368ee7757f746e4a529e889567fc142a627698e2de39
   languageName: node
   linkType: hard
 
