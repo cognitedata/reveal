@@ -1,10 +1,13 @@
 import {
   Annotation,
   ContainerConfig,
+  ContainerType,
   EllipseAnnotation,
   isEllipseAnnotation,
   isRectangleAnnotation,
+  Metadata,
   RectangleAnnotation,
+  TimeseriesContainerProps,
 } from '@cognite/unified-file-viewer';
 import { ResourceType } from '@data-exploration-lib/core';
 
@@ -131,6 +134,15 @@ type ResourceMetadata = {
   modelId?: number; // Used by RevealContainer
 };
 export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
+
+export type IndustryCanvasTimeSeriesContainerConfig =
+  Metadata<ResourceMetadata> & TimeseriesContainerProps<ResourceMetadata>;
+
+export const isIndustryCanvasTimeSeriesContainer = (
+  container: IndustryCanvasContainerConfig
+): container is IndustryCanvasTimeSeriesContainerConfig =>
+  container.type === ContainerType.TIMESERIES;
+
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
   container: IndustryCanvasContainerConfig;

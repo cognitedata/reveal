@@ -1,6 +1,11 @@
 import { useState } from 'react';
+import styled from 'styled-components';
 
-import { DateRange } from '@cognite/cogs.js';
+import { Checkbox, DateRange } from '@cognite/cogs.js';
+
+const StyledCheckbox = styled(Checkbox)`
+  margin-bottom: 8px;
+`;
 
 type Range = {
   startDate: Date;
@@ -9,7 +14,9 @@ type Range = {
 
 type DateRangePromptProps = {
   initialRange: Range;
-  onComplete: (dateRange: Range) => void;
+  shouldApplyToAllTimeSeries: boolean;
+  onToggleShouldApplyToAllTimeSeries: () => void;
+  onComplete: (dateRange: Range, shouldApplyToAllTimeSeries: boolean) => void;
 };
 
 /**
@@ -20,22 +27,32 @@ type DateRangePromptProps = {
  */
 const DateRangePrompt: React.FC<DateRangePromptProps> = ({
   initialRange,
+  shouldApplyToAllTimeSeries,
+  onToggleShouldApplyToAllTimeSeries,
   onComplete,
 }) => {
   const [dateRange, setDateRange] = useState<Range>(initialRange);
   return (
-    <DateRange
-      range={dateRange}
-      onChange={(nextDateRange) => {
-        setDateRange((prevDateRange) => ({
-          ...prevDateRange,
-          startDate: nextDateRange.startDate || prevDateRange.startDate,
-          endDate: nextDateRange.endDate || prevDateRange.endDate,
-        }));
-      }}
-      // This does nothing - just enables a button inside of the cogs Date Range component
-      onApplyClick={() => onComplete(dateRange)}
-    />
+    <>
+      <DateRange
+        range={dateRange}
+        onChange={(nextDateRange) => {
+          setDateRange((prevDateRange) => ({
+            ...prevDateRange,
+            startDate: nextDateRange.startDate || prevDateRange.startDate,
+            endDate: nextDateRange.endDate || prevDateRange.endDate,
+          }));
+        }}
+        appendComponent={() => (
+          <StyledCheckbox
+            label="Apply to all time series in canvas"
+            checked={shouldApplyToAllTimeSeries}
+            onChange={onToggleShouldApplyToAllTimeSeries}
+          />
+        )}
+        onApplyClick={() => onComplete(dateRange, shouldApplyToAllTimeSeries)}
+      />
+    </>
   );
 };
 

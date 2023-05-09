@@ -5,11 +5,18 @@ import dayjs from 'dayjs';
 import React, { useCallback, useState } from 'react';
 import DateRangePrompt from '../../components/DateRangePrompt';
 import { TooltipToolBarContainer } from '../../TooltipContainer';
-import { IndustryCanvasContainerConfig } from '../../types';
+import {
+  IndustryCanvasContainerConfig,
+  isIndustryCanvasTimeSeriesContainer,
+} from '../../types';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
 import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
 import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
+import {
+  OnUpdateTooltipsOptions,
+  TooltipsOptions,
+} from '../useTooltipsOptions';
 
 const navigateToPath = (path: string) => {
   const link = createLink(path);
@@ -17,7 +24,10 @@ const navigateToPath = (path: string) => {
 };
 
 type ContainerTooltipProps = {
-  container: IndustryCanvasContainerConfig;
+  selectedContainer: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
+  tooltipsOptions: TooltipsOptions;
+  onUpdateTooltipsOptions: OnUpdateTooltipsOptions;
   onUpdateContainer: (containerConfig: IndustryCanvasContainerConfig) => void;
   onRemoveContainer: () => void;
   onAddSummarizationSticky: (
@@ -33,10 +43,13 @@ type ContainerTooltipProps = {
 };
 
 const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
-  container,
+  selectedContainer,
+  containers,
   onUpdateContainer,
   onRemoveContainer,
   onAddSummarizationSticky,
+  tooltipsOptions,
+  onUpdateTooltipsOptions,
   shamefulNumPages,
   isOcrDataLoading,
   ocrData,
@@ -47,30 +60,30 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 
   const onSaveLabel = useCallback(
     (label: string) => {
-      if (container === undefined) {
+      if (selectedContainer === undefined) {
         return;
       }
 
       onUpdateContainer({
-        ...container,
-        label: label.trim() || getDefaultContainerLabel(container),
+        ...selectedContainer,
+        label: label.trim() || getDefaultContainerLabel(selectedContainer),
       });
       setIsInEditLabelMode(false);
     },
-    [container, onUpdateContainer]
+    [selectedContainer, onUpdateContainer]
   );
 
   const onClose = useCallback(() => {
     setIsInEditLabelMode(false);
   }, []);
 
-  if (container.type === ContainerType.TABLE) {
-    if (container.metadata.resourceType === undefined) {
+  if (selectedContainer.type === ContainerType.TABLE) {
+    if (selectedContainer.metadata.resourceType === undefined) {
       throw new Error('resourceType is undefined');
     }
     if (
-      container.metadata.resourceType !== 'asset' &&
-      container.metadata.resourceType !== 'event'
+      selectedContainer.metadata.resourceType !== 'asset' &&
+      selectedContainer.metadata.resourceType !== 'event'
     ) {
       throw new Error('resourceType must be one of event and asset');
     }
@@ -81,7 +94,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
           <LabelToolbar
             onClose={onClose}
             onSave={onSaveLabel}
-            initialValue={container.label}
+            initialValue={selectedContainer.label}
           />
         )}
         <ToolBar direction="horizontal">
@@ -99,11 +112,11 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(
-                    `/explore/${container.metadata.resourceType}/${container.metadata.resourceId}`
+                    `/explore/${selectedContainer.metadata.resourceType}/${selectedContainer.metadata.resourceId}`
                   );
                 }}
                 type="ghost"
-                aria-label={`Open ${container.metadata.resourceType} in Data Explorer`}
+                aria-label={`Open ${selectedContainer.metadata.resourceType} in Data Explorer`}
               />
             </Tooltip>
           </>
@@ -112,7 +125,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               icon="Delete"
               onClick={onRemoveContainer}
               type="ghost"
-              aria-label={`Remove ${container.metadata.resourceType}`}
+              aria-label={`Remove ${selectedContainer.metadata.resourceType}`}
             />
           </Tooltip>
         </ToolBar>
@@ -120,14 +133,14 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     );
   }
 
-  if (container.type === ContainerType.TIMESERIES) {
+  if (selectedContainer.type === ContainerType.TIMESERIES) {
     return (
       <TooltipToolBarContainer>
         {isInEditLabelMode && (
           <LabelToolbar
             onClose={onClose}
             onSave={onSaveLabel}
-            initialValue={container.label}
+            initialValue={selectedContainer.label}
           />
         )}
         <ToolBar direction="horizontal">
@@ -142,24 +155,40 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             </Tooltip>
             <DateRangePrompt
               initialRange={{
-                startDate: container.startDate,
-                endDate: container.endDate,
+                startDate: selectedContainer.startDate,
+                endDate: selectedContainer.endDate,
               }}
-              onComplete={(dateRange) =>
-                onUpdateContainer({
-                  // TODO: Enforce with types
-                  ...container,
-                  startDate: dayjs(dateRange.startDate).startOf('day').toDate(),
-                  endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
-                })
+              shouldApplyToAllTimeSeries={
+                tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll
               }
+              onToggleShouldApplyToAllTimeSeries={() => {
+                onUpdateTooltipsOptions(ContainerType.TIMESERIES, {
+                  shouldApplyToAll:
+                    !tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll,
+                });
+              }}
+              onComplete={(dateRange, shouldApplyToAllTimeSeries) => {
+                const containersToUpdate = (
+                  shouldApplyToAllTimeSeries ? containers : [selectedContainer]
+                ).filter(isIndustryCanvasTimeSeriesContainer);
+
+                containersToUpdate.forEach((container) => {
+                  onUpdateContainer({
+                    ...container,
+                    startDate: dayjs(dateRange.startDate)
+                      .startOf('day')
+                      .toDate(),
+                    endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
+                  });
+                });
+              }}
             />
             <Tooltip content="Open in Data Explorer">
               <Button
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(
-                    `/explore/timeSeries/${container.metadata.resourceId}`
+                    `/explore/timeSeries/${selectedContainer.metadata.resourceId}`
                   );
                 }}
                 type="ghost"
@@ -180,14 +209,14 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     );
   }
 
-  if (container.type === ContainerType.REVEAL) {
+  if (selectedContainer.type === ContainerType.REVEAL) {
     return (
       <TooltipToolBarContainer>
         {isInEditLabelMode && (
           <LabelToolbar
             onClose={onClose}
             onSave={onSaveLabel}
-            initialValue={container.label}
+            initialValue={selectedContainer.label}
           />
         )}
         <ToolBar direction="horizontal">
@@ -204,7 +233,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               <Button
                 icon="ExternalLink"
                 onClick={() => {
-                  navigateToPath(`/explore/threeD/${container.id}`);
+                  navigateToPath(`/explore/threeD/${selectedContainer.id}`);
                 }}
                 type="ghost"
                 aria-label="Open 3D-model"
@@ -225,16 +254,16 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   }
 
   if (
-    container.type === ContainerType.DOCUMENT ||
-    container.type === ContainerType.IMAGE ||
-    container.type === ContainerType.TEXT
+    selectedContainer.type === ContainerType.DOCUMENT ||
+    selectedContainer.type === ContainerType.IMAGE ||
+    selectedContainer.type === ContainerType.TEXT
   ) {
-    const ocrText = getContainerText(container, ocrData);
+    const ocrText = getContainerText(selectedContainer, ocrData);
     const onSummarizationClick = async () => {
       if (onAddSummarizationSticky) {
         setIsLoadingSummary(true);
         await onAddSummarizationSticky(
-          container,
+          selectedContainer,
           ocrText,
           shamefulNumPages !== undefined && shamefulNumPages > 1
         );
@@ -247,7 +276,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
           <LabelToolbar
             onClose={onClose}
             onSave={onSaveLabel}
-            initialValue={container.label}
+            initialValue={selectedContainer.label}
           />
         )}
         <ToolBar direction="horizontal">
@@ -260,17 +289,17 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 aria-label="Change label"
               />
             </Tooltip>
-            {container.type === ContainerType.DOCUMENT &&
+            {selectedContainer.type === ContainerType.DOCUMENT &&
               shamefulNumPages !== undefined &&
               shamefulNumPages > 1 && (
                 <Pagination
                   totalPages={shamefulNumPages}
                   hideItemsPerPage
-                  currentPage={container.page}
+                  currentPage={selectedContainer.page}
                   size="small"
                   onPageChange={(page) =>
                     onUpdateContainer({
-                      ...container,
+                      ...selectedContainer,
                       page,
                     })
                   }
@@ -280,8 +309,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             <Tooltip
               content={
                 ocrText.length === 0
-                  ? `Summarization is unavailable for this ${container.type} (Experimental)`
-                  : `Summarize the ${container.type} (Experimental)`
+                  ? `Summarization is unavailable for this ${selectedContainer.type} (Experimental)`
+                  : `Summarize the ${selectedContainer.type} (Experimental)`
               }
             >
               <Button
@@ -301,7 +330,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(
-                    `/explore/file/${container.metadata.resourceId}`
+                    `/explore/file/${selectedContainer.metadata.resourceId}`
                   );
                 }}
                 type="ghost"

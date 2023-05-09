@@ -20,6 +20,7 @@ import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanva
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import summarizeText from './utils/summarizeText';
+import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 
 export type IndustryCanvasProps = {
   id: string;
@@ -76,6 +77,8 @@ export const IndustryCanvas = ({
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
+  const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
+
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({
       hoverId: undefined,
@@ -114,10 +117,13 @@ export const IndustryCanvas = ({
   };
 
   const tooltips = useIndustryCanvasTooltips({
-    clickedContainer: selectedContainer,
+    selectedContainer,
+    containers: container.children ?? [],
     containerAnnotations,
     clickedContainerAnnotation,
     selectedCanvasAnnotation,
+    tooltipsOptions,
+    onUpdateTooltipsOptions,
     onAddContainerReferences,
     onAddSummarizationSticky,
     onDeleteSelectedCanvasAnnotation,

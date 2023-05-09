@@ -3,19 +3,30 @@ import {
   getPdfCache,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
 import { IndustryCanvasContainerConfig } from '../../types';
 import { UseManagedStateReturnType } from '../useManagedState';
 import ContainerTooltip from './ContainerTooltip';
 import useContainerOcrData from './useContainerOcrData';
+import {
+  OnUpdateTooltipsOptions,
+  TooltipsOptions,
+} from '../useTooltipsOptions';
 
 const useIndustryCanvasContainerTooltips = ({
-  clickedContainer,
+  selectedContainer,
+  containers,
+  tooltipsOptions,
+  onUpdateTooltipsOptions,
   updateContainerById,
   removeContainerById,
   onAddSummarizationSticky,
 }: {
-  clickedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  containers: IndustryCanvasContainerConfig[];
+  tooltipsOptions: TooltipsOptions;
+  onUpdateTooltipsOptions: OnUpdateTooltipsOptions;
   updateContainerById: UseManagedStateReturnType['updateContainerById'];
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onAddSummarizationSticky: (
@@ -30,46 +41,49 @@ const useIndustryCanvasContainerTooltips = ({
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
   const { isLoading: isOcrDataLoading, data: ocrData } =
-    useContainerOcrData(clickedContainer);
+    useContainerOcrData(selectedContainer);
 
   useEffect(() => {
     (async () => {
-      if (clickedContainer === undefined) {
+      if (selectedContainer === undefined) {
         return;
       }
 
-      if (clickedContainer.type !== ContainerType.DOCUMENT) {
+      if (selectedContainer.type !== ContainerType.DOCUMENT) {
         return;
       }
 
       try {
         const numPages = await getPdfCache().getPdfNumPages(
-          clickedContainer.url
+          selectedContainer.url
         );
         setNumberOfPages(numPages);
       } catch (e) {
         console.warn(e);
       }
     })();
-  }, [clickedContainer]);
+  }, [selectedContainer]);
 
   return useMemo(() => {
-    if (clickedContainer === undefined) {
+    if (selectedContainer === undefined) {
       return [];
     }
 
     return [
       {
-        targetId: clickedContainer.id,
+        targetId: selectedContainer.id,
         content: (
           <ContainerTooltip
-            key={clickedContainer.id}
-            container={clickedContainer}
+            key={selectedContainer.id}
+            selectedContainer={selectedContainer}
+            containers={containers}
             onAddSummarizationSticky={onAddSummarizationSticky}
+            tooltipsOptions={tooltipsOptions}
+            onUpdateTooltipsOptions={onUpdateTooltipsOptions}
             onUpdateContainer={(
               containerConfig: IndustryCanvasContainerConfig
             ) => updateContainerById(containerConfig.id, containerConfig)}
-            onRemoveContainer={() => removeContainerById(clickedContainer.id)}
+            onRemoveContainer={() => removeContainerById(selectedContainer.id)}
             shamefulNumPages={numberOfPages}
             isLoadingSummary={isLoadingSummary}
             setIsLoadingSummary={setIsLoadingSummary}
@@ -81,11 +95,17 @@ const useIndustryCanvasContainerTooltips = ({
       },
     ];
   }, [
-    clickedContainer,
+    containers,
+    selectedContainer,
     removeContainerById,
     onAddSummarizationSticky,
     updateContainerById,
     numberOfPages,
+    isLoadingSummary,
+    isOcrDataLoading,
+    ocrData,
+    tooltipsOptions,
+    onUpdateTooltipsOptions,
   ]);
 };
 
