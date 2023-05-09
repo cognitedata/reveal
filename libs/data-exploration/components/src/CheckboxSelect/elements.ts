@@ -55,11 +55,6 @@ export const OptionSecondaryLabel = styled.span`
   margin-top: 2px;
 `;
 
-export const AvailableResultsCount = styled(Chip)`
-  padding: 0px;
-  margin-left: auto;
-`;
-
 export const ChildOptionsIcon = styled(Icon).attrs({
   type: 'ChevronRightLarge',
 })`
@@ -94,4 +89,22 @@ export const OptionMenuLoadingWrapper = styled.div`
   padding: 36px 16px;
   gap: 8px;
   text-align: center;
+`;
+
+export const OptionCount = styled.div`
+  display: flex;
+  align-items: center;
+  background: var(--cogs-surface--status-neutral--muted--default);
+  color: var(--cogs-text-icon--status-neutral);
+  padding: 2px 6px;
+  margin-left: auto;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+`;
+
+export const OptionCountDisabled = styled(OptionCount)`
+  background: var(--cogs-surface--status-undefined--muted--default);
+  color: var(--cogs-text-icon--status-undefined);
 `;

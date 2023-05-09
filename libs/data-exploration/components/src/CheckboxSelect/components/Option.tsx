@@ -10,8 +10,9 @@ import {
   OptionSecondaryLabel,
   LabelWrapper,
   OptionWrapper,
-  AvailableResultsCount,
   ChildOptionsIcon,
+  OptionCountDisabled,
+  OptionCount,
 } from '../elements';
 import { OptionType } from '../types';
 import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
@@ -35,6 +36,8 @@ export const Option: React.FC<OptionProps> = ({
   hasOptionWithChildOptions = false,
 }) => {
   const { label, value, count, options } = option;
+  const isDisabled = count === 0;
+  const OptionCountChip = isDisabled ? OptionCountDisabled : OptionCount;
 
   return (
     <OptionWrapper data-testid="option">
@@ -57,12 +60,7 @@ export const Option: React.FC<OptionProps> = ({
       </LabelWrapper>
 
       {!isUndefined(count) && (
-        <AvailableResultsCount
-          data-testid="count"
-          label={`${formatBigNumbersWithSuffix(count)}`}
-          type="neutral"
-          size="x-small"
-        />
+        <OptionCountChip>{formatBigNumbersWithSuffix(count)}</OptionCountChip>
       )}
 
       {hasOptionWithChildOptions && (
