@@ -51,12 +51,13 @@ export const Controls = () => {
 
   const handleMenuItemClick = useCallback(
     (selectedPercentage: number) => {
+      const viewport = getViewport();
       setViewport(
-        { x: 0, y: 0, zoom: selectedPercentage / 100 },
+        { x: viewport.x, y: viewport.y, zoom: selectedPercentage / 100 },
         { duration: CANVAS_ZOOM_DURATION }
       );
     },
-    [setViewport]
+    [getViewport, setViewport]
   );
 
   useEffect(() => {
