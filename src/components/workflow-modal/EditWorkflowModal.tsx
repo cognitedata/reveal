@@ -97,7 +97,7 @@ export const WorkflowModal = ({
     >
       <Flex direction="column" gap={10}>
         <InputExp
-          title={t('name')}
+          label={t('name')}
           disabled={isUpdateLoading}
           placeholder={t('enter-name')}
           value={handleIsUserEditing('name')}
@@ -105,7 +105,7 @@ export const WorkflowModal = ({
           fullWidth
         />
         <InputExp
-          title={t('description')}
+          label={t('description')}
           disabled={isUpdateLoading}
           placeholder={t('enter-description')}
           value={handleIsUserEditing('description')}
