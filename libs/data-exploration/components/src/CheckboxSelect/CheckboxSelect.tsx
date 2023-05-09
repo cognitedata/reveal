@@ -58,6 +58,11 @@ export const CheckboxSelect = ({
 
   return (
     <Dropdown
+      onClickOutside={() => {
+        if (onSearchInputChange) {
+          onSearchInputChange('');
+        }
+      }}
       content={
         <OptionsMenu
           isLoading={isLoading}
