@@ -48,10 +48,10 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   private static createObjectData(detection: AnnotationData): ImageAnnotationObjectData | undefined {
     if (isAnnotationsObjectDetection(detection)) {
-      if (detection.boundingBox !== undefined) {
-        return new BoxAnnotationData(detection.boundingBox);
-      } else if (detection.polygon !== undefined) {
+      if (detection.polygon !== undefined) {
         return new PolygonAnnotationData(detection);
+      } else if (detection.boundingBox !== undefined) {
+        return new BoxAnnotationData(detection.boundingBox);
       } else {
         return undefined;
       }
