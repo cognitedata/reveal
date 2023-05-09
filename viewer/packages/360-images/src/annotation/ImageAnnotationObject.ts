@@ -21,8 +21,6 @@ type FaceType = Image360FileDescriptor['face'];
 
 import SeededRandom from 'random-seed';
 
-type SupportedAnnotationData = AnnotationsObjectDetection | AnnotationsCogniteAnnotationTypesImagesAssetLink;
-
 export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
 
