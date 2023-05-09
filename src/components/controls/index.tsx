@@ -53,7 +53,7 @@ export const Controls = () => {
     (selectedPercentage: number) => {
       setViewport(
         { x: 0, y: 0, zoom: selectedPercentage / 100 },
-        { duration: 800 }
+        { duration: CANVAS_ZOOM_DURATION }
       );
     },
     [setViewport]
@@ -77,7 +77,7 @@ export const Controls = () => {
         <StyledMenu className="custom-menu">
           {zoomPercentageArray.map((item) => (
             <Menu.Item key={item} onClick={() => handleMenuItemClick(item)}>
-              {`${item}%`}
+              {item}%
             </Menu.Item>
           ))}
         </StyledMenu>
@@ -88,7 +88,7 @@ export const Controls = () => {
       }}
       visible={dropdownVisible}
     >
-      <ZoomPercentage>{`${Math.round(zoomLevel * 100)}%`}</ZoomPercentage>
+      <ZoomPercentage>{Math.round(zoomLevel * 100)}%</ZoomPercentage>
     </Dropdown>
   );
 
