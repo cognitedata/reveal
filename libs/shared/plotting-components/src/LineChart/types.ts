@@ -4,6 +4,7 @@ import { TooltipDetailProps } from './components/Tooltip';
 
 export interface LineChartProps {
   data: Data | Data[];
+  dataRevision?: number | string;
   isLoading?: boolean;
   xAxis?: Axis;
   yAxis?: Axis;
@@ -19,6 +20,7 @@ export interface LineChartProps {
   renderFilters?: () => [JSX.Element, ...JSX.Element[]];
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
   formatHoverLineInfo?: (props: HoverLineData) => string;
+  onRangeChange?: (range: PlotRange) => void;
 }
 
 export interface Data {
@@ -111,8 +113,8 @@ export type AxisDirectionConfig =
   | [KeyTriggeredAxisDirection, ...KeyTriggeredAxisDirection[]];
 
 export interface PlotRange {
-  x?: AxisRange;
-  y?: AxisRange;
+  x: AxisRange;
+  y: AxisRange;
 }
 
 export interface Coordinate {

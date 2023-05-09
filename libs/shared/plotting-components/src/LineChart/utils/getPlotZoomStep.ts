@@ -4,13 +4,6 @@ import { PlotRange } from '../types';
 const BUTTON_ZOOM_STEP_SIZE_PERCENTAGE = BUTTON_ZOOM_STEP_SIZE / 100;
 
 export const getPlotZoomStep = (range: PlotRange) => {
-  if (!range.x || !range.y) {
-    return {
-      x: 0,
-      y: 0,
-    };
-  }
-
   const [xMin, xMax] = range.x;
   const [yMin, yMax] = range.y;
 

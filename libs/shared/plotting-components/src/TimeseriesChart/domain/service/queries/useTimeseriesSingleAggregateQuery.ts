@@ -19,6 +19,7 @@ export const useTimeseriesSingleAggregateQuery = ({ query }: Props) => {
       return getTimeseriesSingleAggregate(sdk, query);
     },
     {
+      keepPreviousData: true,
       onError: () => {
         return {
           id: query.id,

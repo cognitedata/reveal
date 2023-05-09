@@ -17,6 +17,7 @@ import { OpenInChartsButton } from './components/OpenInChartsButton';
 import { DateRangePicker } from './components/DateRangePicker';
 import { getChartByVariant } from './utils/getChartByVariant';
 import { useTimeseriesChartData } from './domain/internal/hooks/useTimeseriesChartData';
+import { PlotRange } from '../LineChart';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   timeseriesId,
@@ -57,6 +58,12 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     onChangeDateRange?.(newDateRange);
   };
 
+  const handleRangeChange = (range: PlotRange) => {
+    const [from, to] = range.x;
+    setSelectedTimePeriod(undefined);
+    setDateRange([new Date(from), new Date(to)]);
+  };
+
   useEffect(() => {
     if (dateRangeProp) {
       setSelectedTimePeriod(undefined);
@@ -70,8 +77,10 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     <Chart
       data={data}
       metadata={metadata}
+      dataRevision={timeseriesId}
       isLoading={isLoading}
       style={{ height }}
+      onRangeChange={handleRangeChange}
       renderFilters={() => [
         <TimePeriods
           options={quickTimePeriodOptions}

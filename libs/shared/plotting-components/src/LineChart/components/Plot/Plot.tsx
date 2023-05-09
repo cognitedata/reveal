@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { useImperativeHandle, useRef, useMemo, useCallback } from 'react';
+import {
+  useImperativeHandle,
+  useRef,
+  useMemo,
+  useCallback,
+  useEffect,
+} from 'react';
 
 import PlotlyPlot from 'react-plotly.js';
 import {
@@ -8,41 +14,46 @@ import {
   PlotHoverEvent,
   PlotMouseEvent,
   PlotSelectionEvent,
+  PlotRelayoutEvent,
 } from 'plotly.js';
 
 import debounce from 'lodash/debounce';
 
 import { getCommonAxisLayoutProps } from '../../utils/getCommonAxisLayoutProps';
-import {
-  AxisRange,
-  Config,
-  Data,
-  Layout,
-  LineChartProps,
-  PlotRange,
-  Variant,
-} from '../../types';
+import { Config, Layout, LineChartProps, PlotRange } from '../../types';
 import { useAxisTickCount } from '../../hooks/useAxisTickCount';
 import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
 import { useLayoutMargin } from '../../hooks/useLayoutMargin';
 import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
-import { usePlotDataRange } from '../../hooks/usePlotDataRange';
+import { usePlotDataRangeInitial } from '../../hooks/usePlotDataRangeInitial';
 import { getPlotlyHoverMode } from '../../utils/getPlotlyHoverMode';
+import {
+  getPlotRangeFromPlotSelectionEvent,
+  getPlotRangeFromRelayoutEvent,
+} from '../../utils/extractPlotRange';
+import { isUndefinedPlotRange } from '../../utils/isUndefinedPlotRange';
 
 import { PlotWrapper } from './elements';
 import { usePlotData } from '../../hooks/usePlotData';
 import { Loader } from '../Loader';
 
 export interface PlotElement {
-  getPlotRange: () => PlotRange;
+  getPlotRange: () => PlotRange | undefined;
   setPlotRange: (range: PlotRange) => void;
   resetPlotRange: () => void;
 }
 
-export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
-  data: Data | Data[];
-  isLoading?: boolean;
-  variant?: Variant;
+export interface PlotProps
+  extends Pick<
+    LineChartProps,
+    | 'data'
+    | 'dataRevision'
+    | 'isLoading'
+    | 'xAxis'
+    | 'yAxis'
+    | 'variant'
+    | 'onRangeChange'
+  > {
   layout: Layout;
   config: Config;
   isCursorOnPlot: boolean;
@@ -59,6 +70,7 @@ export const Plot = React.memo(
     (
       {
         data,
+        dataRevision,
         isLoading,
         variant,
         xAxis,
@@ -72,6 +84,7 @@ export const Plot = React.memo(
         onUnhover,
         onSelecting,
         onSelected,
+        onRangeChange,
       },
       ref
     ) => {
@@ -97,10 +110,16 @@ export const Plot = React.memo(
         yAxis,
       });
 
-      const initialRange = usePlotDataRange(data, showMarkers);
+      const initialRange = usePlotDataRangeInitial({
+        data,
+        showMarkers,
+        dataRevision,
+      });
 
-      const { range, setPlotRange, resetPlotRange } =
-        useHandlePlotRange(initialRange);
+      const { range, setPlotRange, resetPlotRange } = useHandlePlotRange({
+        initialRange,
+        onRangeChange,
+      });
 
       const { fixedRange, fixedRangeLayoutConfig, cursor } =
         useLayoutFixedRangeConfig(config, isCursorOnPlot);
@@ -122,13 +141,13 @@ export const Plot = React.memo(
           xaxis: {
             ...getCommonAxisLayoutProps('x', xAxis, layout),
             nticks: tickCount.x,
-            range: range.x,
+            range: range?.x,
             fixedrange: fixedRange.x,
           },
           yaxis: {
             ...getCommonAxisLayoutProps('y', yAxis, layout),
             nticks: tickCount.y,
-            range: range.y,
+            range: range?.y,
             fixedrange: fixedRange.y,
           },
           ...fixedRangeLayoutConfig,
@@ -159,41 +178,51 @@ export const Plot = React.memo(
         [height, width]
       );
 
-      const handleInitialized = useCallback(() => {
-        resetPlotRange();
+      const handleManualRelayout = useCallback(() => {
         updateAxisTickCount(plotRef.current, isEmptyData);
         updateLayoutMargin(plotRef.current);
-      }, [
-        isEmptyData,
-        resetPlotRange,
-        updateAxisTickCount,
-        updateLayoutMargin,
-      ]);
+      }, [isEmptyData, updateAxisTickCount, updateLayoutMargin]);
+
+      const handleInitialized = useCallback(() => {
+        resetPlotRange();
+        handleManualRelayout();
+      }, [resetPlotRange, handleManualRelayout]);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
       const handleRelayout = useCallback(
-        debounce(() => {
-          updateAxisTickCount(plotRef.current, isEmptyData);
-          updateLayoutMargin(plotRef.current);
-        }, 100),
-        [isEmptyData, updateAxisTickCount, updateLayoutMargin]
+        debounce((event: PlotRelayoutEvent) => {
+          if (initialRange) {
+            const plotRange = getPlotRangeFromRelayoutEvent(event);
+
+            if (!isUndefinedPlotRange(plotRange)) {
+              setPlotRange({
+                x: plotRange.x || initialRange.x,
+                y: plotRange.y || initialRange.y,
+              });
+            }
+          }
+          handleManualRelayout();
+        }, 500),
+        [initialRange, setPlotRange, handleManualRelayout]
       );
 
       const handleSelected = useCallback(
         (event?: PlotSelectionEvent) => {
+          const plotRange = getPlotRangeFromPlotSelectionEvent(event);
+          setPlotRange(plotRange);
           onSelected?.(event);
-          setPlotRange({
-            x: event?.range?.x as AxisRange | undefined,
-            y: event?.range?.y as AxisRange | undefined,
-          });
         },
-        [onSelected, setPlotRange]
+        [setPlotRange, onSelected]
       );
 
       const handleResetPlotZoom = useCallback(() => {
         resetPlotRange();
-        handleRelayout();
-      }, [handleRelayout, resetPlotRange]);
+        handleManualRelayout();
+      }, [resetPlotRange, handleManualRelayout]);
+
+      useEffect(() => {
+        handleManualRelayout();
+      }, [handleManualRelayout, plotData]);
 
       if (isLoading) {
         return <Loader variant={variant} style={{ height, width }} />;

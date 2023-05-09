@@ -20,15 +20,20 @@ interface Props {
 }
 
 export const useTimeseriesChartData = ({ query, dataFetchOptions }: Props) => {
-  const { data: metadata, isFetched } = useTimeseriesChartMetadata({
+  const {
+    data: metadata,
+    isFetched,
+    isInitialLoading: isInitialMetadataLoading,
+  } = useTimeseriesChartMetadata({
     query,
     dataFetchOptions,
   });
 
-  const { data: datapoints, isLoading } = useTimeseriesDatapointsQuery({
-    query: mapToTimeseriesDatapointsQuery({ query, metadata }),
-    enabled: isFetched,
-  });
+  const { data: datapoints, isInitialLoading: isInitialDatapointsLoading } =
+    useTimeseriesDatapointsQuery({
+      query: mapToTimeseriesDatapointsQuery({ query, metadata }),
+      enabled: isFetched,
+    });
 
   const chartData: Data = useMemo(() => {
     if (!datapoints || isEmpty(datapoints)) {
@@ -40,6 +45,6 @@ export const useTimeseriesChartData = ({ query, dataFetchOptions }: Props) => {
   return {
     data: chartData,
     metadata,
-    isLoading: !isFetched || isLoading,
+    isLoading: isInitialMetadataLoading || isInitialDatapointsLoading,
   };
 };

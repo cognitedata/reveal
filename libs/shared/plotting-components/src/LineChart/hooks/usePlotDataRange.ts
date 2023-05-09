@@ -2,14 +2,19 @@ import { useMemo } from 'react';
 import { Data, PlotRange } from '../types';
 import { getPlotRange } from '../utils/getPlotRange';
 
-export const usePlotDataRange = (
-  data: Data | Data[],
-  showMarkers: boolean
-): Required<PlotRange> => {
+interface Props {
+  data: Data | Data[];
+  showMarkers: boolean;
+}
+
+export const usePlotDataRange = ({
+  data,
+  showMarkers,
+}: Props): PlotRange | undefined => {
   const plotRange = useMemo(() => getPlotRange(data), [data]);
 
   return useMemo(() => {
-    if (!showMarkers) {
+    if (!plotRange || !showMarkers) {
       return plotRange;
     }
 

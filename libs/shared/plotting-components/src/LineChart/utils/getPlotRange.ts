@@ -4,7 +4,7 @@ import isDate from 'lodash/isDate';
 import { PlotRange, Data, ValueType } from '../types';
 import { getDataAsArray } from './getDataAsArray';
 
-export const getPlotRange = (data: Data | Data[]): Required<PlotRange> => {
+export const getPlotRange = (data: Data | Data[]): PlotRange => {
   const { x, y } = getDataAsArray(data).reduce<{
     x: number[];
     y: number[];

@@ -19,6 +19,7 @@ import { isContinuousHoverEnabled } from './utils/isContinuousHoverEnabled';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
+  dataRevision,
   isLoading,
   xAxis,
   yAxis,
@@ -33,6 +34,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   renderFilters,
   renderActions,
   formatHoverLineInfo,
+  onRangeChange,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
@@ -96,6 +98,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       <Plot
         ref={plotRef}
         data={data}
+        dataRevision={dataRevision}
         isLoading={isLoading}
         variant={variant}
         xAxis={xAxis}
@@ -109,6 +112,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         onUnhover={setPlotUnhovered}
         onSelecting={handlePlotSelecting}
         onSelected={handlePlotSelected}
+        onRangeChange={onRangeChange}
       />
 
       <HoverLayer

@@ -18,14 +18,15 @@ export const useTimeseriesChartMetadata = ({
 }: Props) => {
   const { timeseriesId, dateRange } = query;
 
-  const { data, isFetched } = useTimeseriesSingleAggregateQuery({
-    query: {
-      id: timeseriesId,
-      aggregates: ['count'],
-      start: dateRange?.[0].valueOf(),
-      end: dateRange?.[1].valueOf(),
-    },
-  });
+  const { data, isFetched, isInitialLoading } =
+    useTimeseriesSingleAggregateQuery({
+      query: {
+        id: timeseriesId,
+        aggregates: ['count'],
+        start: dateRange?.[0].valueOf(),
+        end: dateRange?.[1].valueOf(),
+      },
+    });
 
   const metadata: TimeseriesChartMetadata = useMemo(() => {
     const numberOfPoints =
@@ -50,5 +51,6 @@ export const useTimeseriesChartMetadata = ({
   return {
     data: metadata,
     isFetched,
+    isInitialLoading,
   };
 };
