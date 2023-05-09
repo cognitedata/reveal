@@ -4,8 +4,9 @@ import ReactUnifiedViewer, {
   UnifiedViewer,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+import useEditOnSelect from './hooks/useEditOnSelect';
 
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
@@ -77,6 +78,7 @@ export const IndustryCanvas = ({
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
+  const unifiedViewerRef = React.useRef<UnifiedViewer | null>(null);
   const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
@@ -145,10 +147,16 @@ export const IndustryCanvas = ({
     });
   }, [setInteractionState, tool]);
 
+  const { handleSelect, getAnnotationEditHandlers } = useEditOnSelect(
+    unifiedViewerRef,
+    setTool
+  );
+
   const canvasAnnotationWithEventHandlers = useMemo(
     () =>
       canvasAnnotations.map((canvasAnnotation) => ({
         ...canvasAnnotation,
+        ...getAnnotationEditHandlers(canvasAnnotation),
         onClick: (e: any, annotation: CanvasAnnotation) => {
           e.cancelBubble = true;
           setInteractionState({
@@ -157,7 +165,7 @@ export const IndustryCanvas = ({
           });
         },
       })),
-    [canvasAnnotations, setInteractionState]
+    [canvasAnnotations, setInteractionState, getAnnotationEditHandlers]
   );
 
   const enhancedAnnotations: Annotation[] = useMemo(
@@ -180,6 +188,14 @@ export const IndustryCanvas = ({
     ]
   );
 
+  const handleRef = useCallback(
+    (ref: UnifiedViewer | null) => {
+      unifiedViewerRef.current = ref;
+      onRef?.(ref);
+    },
+    [onRef]
+  );
+
   return (
     <FullHeightWrapper>
       <ReactUnifiedViewer
@@ -190,8 +206,9 @@ export const IndustryCanvas = ({
         tooltips={tooltips}
         onClick={onStageClick}
         shouldShowZoomControls={false}
-        setRef={onRef}
+        setRef={handleRef}
         tool={tool}
+        onSelect={handleSelect}
         toolOptions={toolOptions}
         onDeleteRequest={onDeleteRequest}
         onUpdateRequest={onUpdateRequest}
