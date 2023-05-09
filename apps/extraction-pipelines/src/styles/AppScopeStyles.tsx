@@ -14,6 +14,11 @@ Select.defaultProps = {
   getPopupContainer: getContainer,
 };
 
+CogsModal.defaultProps = {
+  ...CogsModal.defaultProps,
+  getContainer,
+};
+
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,

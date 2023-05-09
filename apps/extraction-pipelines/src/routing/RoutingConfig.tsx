@@ -31,6 +31,7 @@ interface ExtpipesRoute {
 }
 export type RouterParams = { id: string };
 export const EXT_PIPE_PATH = `extpipe`;
+export const HOSTED_EXTRACTION_PIPELINE_PATH = 'hosted-extraction-pipeline';
 export const HEALTH_PATH: Readonly<string> = 'health';
 
 export const CREATE_EXT_PIPE_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create`;

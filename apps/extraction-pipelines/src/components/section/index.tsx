@@ -1,18 +1,13 @@
 import React from 'react';
 
-import {
-  Colors,
-  Elevations,
-  Flex,
-  Icon,
-  IconType,
-  Title,
-} from '@cognite/cogs.js';
+import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import SectionItem, { SectionItemProps } from './SectionItem';
+import { Box } from 'components/box/Box';
 
 type SectionProps = {
+  className?: string;
   extra?: React.ReactNode;
   icon: IconType;
   title: string;
@@ -29,13 +24,14 @@ type SectionProps = {
 
 const Section = ({
   children,
+  className,
   extra,
   icon,
   items = [],
   title,
 }: SectionProps): JSX.Element => {
   return (
-    <StyledSectionContainer>
+    <StyledSectionContainer className={className}>
       <StyledSectionHeader $hasBorder={!!children || items.length > 0}>
         <Flex alignItems="center" gap={8}>
           <Icon type={icon} />
@@ -55,18 +51,16 @@ const Section = ({
   );
 };
 
-const StyledSectionContainer = styled.div`
-  background: ${Colors['surface--muted']};
-  box-shadow: ${Elevations['elevation--surface--interactive']};
-  border-radius: 8px;
-
+const StyledSectionContainer = styled(Box)`
+  display: flex;
+  flex-direction: column;
   margin-bottom: 12px;
 `;
 
 const StyledSectionHeader = styled.div<{ $hasBorder?: boolean }>`
   ${({ $hasBorder }) =>
     $hasBorder &&
-    `border-bottom: 1px solid ${Colors['border--interactive--default']}`};
+    `border-bottom: 1px solid ${Colors['border--interactive--disabled']}`};
 
   display: flex;
   justify-content: space-between;
