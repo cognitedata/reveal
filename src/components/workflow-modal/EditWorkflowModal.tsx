@@ -5,11 +5,10 @@ import {
   useCallback,
   useState,
 } from 'react';
-import { Flex, Modal } from '@cognite/cogs.js';
+import { Flex, InputExp, Modal } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { useFlow, useUpdateFlow } from 'hooks/files';
 import { useParams } from 'react-router-dom';
-import FormFieldInput from 'components/form-field-input';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 type Props = {
@@ -97,19 +96,21 @@ export const WorkflowModal = ({
       visible={showWorkflowModal}
     >
       <Flex direction="column" gap={10}>
-        <FormFieldInput
+        <InputExp
           title={t('name')}
           disabled={isUpdateLoading}
           placeholder={t('enter-name')}
           value={handleIsUserEditing('name')}
           onChange={handleNameChange}
+          fullWidth
         />
-        <FormFieldInput
+        <InputExp
           title={t('description')}
           disabled={isUpdateLoading}
           placeholder={t('enter-description')}
           value={handleIsUserEditing('description')}
           onChange={handleDescriptionChange}
+          fullWidth
         />
       </Flex>
     </Modal>
