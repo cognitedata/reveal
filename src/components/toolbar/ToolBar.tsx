@@ -8,8 +8,13 @@ import {
   IconType,
   Tooltip,
 } from '@cognite/cogs.js';
-import { TOOLBAR_MARGIN, Z_INDEXES } from 'common/constants';
+import {
+  TOOLBAR_IS_HISTORY_VISIBLE_WIDTH,
+  TOOLBAR_MARGIN,
+  Z_INDEXES,
+} from 'common/constants';
 import { MouseEventHandler } from 'react';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 export type ToolbarButtonProps = {
   children?: string | React.ReactNode;
@@ -46,6 +51,7 @@ const Toolbar = ({
     bottom: undefined,
     left: undefined,
   });
+  const { isHistoryVisible } = useWorkflowBuilderContext();
 
   useEffect(() => {
     switch (placement) {
@@ -85,6 +91,7 @@ const Toolbar = ({
       direction={toolbarDirection}
       gap={gap}
       $placement={toolbarPlacement}
+      $isHistoryVisible={isHistoryVisible}
     >
       {buttons.map((button, index) => {
         return (
@@ -128,6 +135,7 @@ const ToolbarContainer = styled(Flex)<{
     bottom?: number | undefined;
     left?: number | undefined;
   };
+  $isHistoryVisible?: boolean;
 }>`
   background-color: white;
   border: 1px solid ${Colors['border--interactive--default']};
@@ -142,7 +150,11 @@ const ToolbarContainer = styled(Flex)<{
       : ''};
   ${(props) =>
     props.$placement.right !== undefined
-      ? `right: ${props.$placement.right}px;`
+      ? `right: ${
+          props.$isHistoryVisible
+            ? TOOLBAR_IS_HISTORY_VISIBLE_WIDTH
+            : props.$placement.right
+        }px;`
       : ''};
   ${(props) =>
     props.$placement.bottom !== undefined
