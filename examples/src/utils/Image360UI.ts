@@ -9,6 +9,7 @@ import {
   Image360Collection,
   Image360EnteredDelegate,
   Image360Annotation,
+  Image360AnnotationIntersection,
   PointerEventDelegate
 } from '@cognite/reveal';
 
@@ -39,20 +40,7 @@ export class Image360UI {
 
       const intersectionPromise = viewer.get360AnnotationIntersectionFromPixel(event.offsetX, event.offsetY);
 
-      const ui = this;
-
-      handleIntersectionAsync();
-
-      async function handleIntersectionAsync() {
-        const int = await intersectionPromise;
-        if (int === null) {
-          return;
-        }
-
-        console.log('Clicked annotation with data: ', int.annotation.annotation.data);
-        int.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
-        ui._lastAnnotation = int.annotation;
-      }
+      this.handleIntersectionAsync(intersectionPromise);
     };
 
     const translation = {
@@ -197,6 +185,17 @@ export class Image360UI {
       entities = [];
       collections.splice(0);
     }
+  }
+
+  private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
+    const intersection = await intersectionPromise;
+    if (intersection === null) {
+      return;
+    }
+
+    console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
+    intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+    this._lastAnnotation = intersection.annotation;
   }
 
   get collections(): Image360Collection[] {
