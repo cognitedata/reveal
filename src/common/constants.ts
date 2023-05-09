@@ -21,3 +21,9 @@ export const DEFAULT_BUTTON_WIDTH = 28;
 export const DEFAULT_BUTTON_HEIGHT = 28;
 export const FOREIGN_OBJECT_WIDTH = DEFAULT_BUTTON_WIDTH * 2 + 10; // 10 is the space between the buttons
 export const FOREIGN_OBJECT_HEIGHT = DEFAULT_BUTTON_HEIGHT;
+export const CANVAS_ZOOM_DURATION = 500;
+export const HISTORY_DRAWER_WIDTH = 356;
+export const TOOLBAR_IS_HISTORY_VISIBLE_WIDTH =
+  TOOLBAR_MARGIN + HISTORY_DRAWER_WIDTH;
+export const MIN_ZOOM = 0.5;
+export const MAX_ZOOM = 2;

@@ -19,6 +19,7 @@ import { CANVAS_PATH } from 'common';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFeedback from 'common/ErrorFeedback';
 import React, { Suspense } from 'react';
+import { ReactFlowProvider } from 'reactflow';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,40 +44,42 @@ const App = () => {
     >
       <I18nWrapper translations={translations} defaultNamespace="flows">
         <QueryClientProvider client={queryClient}>
-          <GlobalStyles>
-            <SubAppWrapper title="Flows">
-              <AuthWrapper
-                loadingScreen={<Loader />}
-                login={() => loginAndAuthIfNeeded(project, env)}
-              >
-                <SDKProvider sdk={sdk}>
-                  <BrowserRouter>
-                    <ErrorBoundary FallbackComponent={ErrorFeedback}>
-                      <Routes>
-                        <Route
-                          path={ROOT_PATH}
-                          element={
-                            <Suspense fallback={<div>Loading...</div>}>
-                              <FlowList />
-                            </Suspense>
-                          }
-                        />
-                        <Route
-                          path={`${ROOT_PATH}/:id`}
-                          element={
-                            <Suspense fallback={<div>Loading...</div>}>
-                              <Flow />
-                            </Suspense>
-                          }
-                        />
-                      </Routes>
-                    </ErrorBoundary>
-                  </BrowserRouter>
-                </SDKProvider>
-              </AuthWrapper>
-            </SubAppWrapper>
-          </GlobalStyles>
-          <ReactQueryDevtools initialIsOpen={false} />
+          <ReactFlowProvider>
+            <GlobalStyles>
+              <SubAppWrapper title="Flows">
+                <AuthWrapper
+                  loadingScreen={<Loader />}
+                  login={() => loginAndAuthIfNeeded(project, env)}
+                >
+                  <SDKProvider sdk={sdk}>
+                    <BrowserRouter>
+                      <ErrorBoundary FallbackComponent={ErrorFeedback}>
+                        <Routes>
+                          <Route
+                            path={ROOT_PATH}
+                            element={
+                              <Suspense fallback={<div>Loading...</div>}>
+                                <FlowList />
+                              </Suspense>
+                            }
+                          />
+                          <Route
+                            path={`${ROOT_PATH}/:id`}
+                            element={
+                              <Suspense fallback={<div>Loading...</div>}>
+                                <Flow />
+                              </Suspense>
+                            }
+                          />
+                        </Routes>
+                      </ErrorBoundary>
+                    </BrowserRouter>
+                  </SDKProvider>
+                </AuthWrapper>
+              </SubAppWrapper>
+            </GlobalStyles>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </ReactFlowProvider>
         </QueryClientProvider>
       </I18nWrapper>
     </FlagProvider>

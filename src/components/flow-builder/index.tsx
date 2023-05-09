@@ -7,7 +7,6 @@ import ReactFlow, {
   OnConnect,
   ReactFlowInstance,
   OnEdgesChange,
-  Controls,
   BackgroundVariant,
   NodeChange,
   Edge,
@@ -24,6 +23,8 @@ import styled from 'styled-components';
 import {
   CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
   DELETE_KEY_CODES,
+  MAX_ZOOM,
+  MIN_ZOOM,
   Z_INDEXES,
 } from 'common';
 import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
@@ -40,6 +41,7 @@ import {
   WorkflowBuilderNodeType,
   isProcessType,
 } from 'types';
+import { Controls } from 'components/controls';
 import { CustomEdge } from 'components/custom-edge';
 import { CanvasToolbar } from 'components/canvas-toolbar/CanvasToolbar';
 import { useUserInfo } from 'utils/user';
@@ -336,11 +338,13 @@ export const FlowBuilder = (): JSX.Element => {
             type: 'node',
           });
         }}
+        minZoom={MIN_ZOOM}
+        maxZoom={MAX_ZOOM}
       >
         <Controls />
         <CanvasToolbar />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        <MiniMap />
+        <StyledMiniMap />
       </ReactFlow>
       <ContextMenu
         containerRef={reactFlowContainer}
@@ -350,6 +354,10 @@ export const FlowBuilder = (): JSX.Element => {
     </Container>
   );
 };
+
+const StyledMiniMap = styled(MiniMap)`
+  margin-bottom: 60px;
+`;
 
 const Container = styled.div`
   background-color: ${Colors['surface--strong']};
