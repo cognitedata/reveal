@@ -78,6 +78,7 @@ export const WorkflowModal = ({
           placeholder={t('enter-name')}
           value={name}
           onChange={handleNameChange}
+          fullWidth
         />
         <InputExp
           label={t('external-id')}
@@ -85,6 +86,7 @@ export const WorkflowModal = ({
           placeholder={t('enter-external-id')}
           value={externalId}
           onChange={handleidChange}
+          fullWidth
         />
         <InputExp
           label={t('description')}
@@ -92,6 +94,7 @@ export const WorkflowModal = ({
           placeholder={t('enter-description')}
           value={description}
           onChange={(e: any) => setDescription(e.target.value)}
+          fullWidth
         />
       </Flex>
     </Modal>
