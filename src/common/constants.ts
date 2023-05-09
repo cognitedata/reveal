@@ -25,3 +25,5 @@ export const CANVAS_ZOOM_DURATION = 500;
 export const HISTORY_DRAWER_WIDTH = 356;
 export const TOOLBAR_IS_HISTORY_VISIBLE_WIDTH =
   TOOLBAR_MARGIN + HISTORY_DRAWER_WIDTH;
+export const MIN_ZOOM = 0.5;
+export const MAX_ZOOM = 2;

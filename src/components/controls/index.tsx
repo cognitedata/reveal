@@ -1,5 +1,5 @@
 import { Dropdown, Menu } from '@cognite/cogs.js';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useReactFlow, useStore } from 'reactflow';
 import styled from 'styled-components';
 import ToolBar, { ToolbarButtonProps } from 'components/toolbar/ToolBar';
@@ -8,14 +8,14 @@ import { CANVAS_ZOOM_DURATION } from 'common';
 export const Controls = () => {
   const [dropdownVisible, setZoomDropdownVisible] = useState(false);
   const [active, setActive] = useState(false); // Keep track of whether the zoom percentage dropdown is active
-  const [zoomOutDisabled, setZoomOutDisabled] = useState(false);
-  const [zoomInDisabled, setZoomInDisabled] = useState(false);
 
   const { getViewport, setViewport } = useReactFlow();
   const zoomLevel = useStore((store) => store.transform[2]); // Trackpad zoom level
   const maxZoom = useStore((store) => store.maxZoom);
   const minZoom = useStore((store) => store.minZoom);
   const viewport = getViewport();
+  const zoomInDisabled = viewport?.zoom >= maxZoom;
+  const zoomOutDisabled = viewport?.zoom <= minZoom;
 
   const zoomPercentageArray = [50, 75, 100, 125, 150, 200];
 
@@ -29,24 +29,20 @@ export const Controls = () => {
 
   const handleZoomIn = useCallback(() => {
     const viewport = getViewport();
-    const newZoom = viewport.zoom + 0.1;
-    if (viewport.zoom < maxZoom) {
-      setViewport(
-        { x: viewport.x, y: viewport.y, zoom: newZoom },
-        { duration: CANVAS_ZOOM_DURATION }
-      );
-    }
+    const newZoom = Math.min(maxZoom, viewport.zoom + 0.1);
+    setViewport(
+      { x: viewport.x, y: viewport.y, zoom: newZoom },
+      { duration: CANVAS_ZOOM_DURATION }
+    );
   }, [getViewport, maxZoom, setViewport]);
 
   const handleZoomOut = useCallback(() => {
     const viewport = getViewport();
-    const newZoom = viewport.zoom - 0.1;
-    if (viewport.zoom > minZoom) {
-      setViewport(
-        { x: viewport.x, y: viewport.y, zoom: newZoom },
-        { duration: CANVAS_ZOOM_DURATION }
-      );
-    }
+    const newZoom = Math.max(minZoom, viewport.zoom - 0.1);
+    setViewport(
+      { x: viewport.x, y: viewport.y, zoom: newZoom },
+      { duration: CANVAS_ZOOM_DURATION }
+    );
   }, [getViewport, minZoom, setViewport]);
 
   const handleMenuItemClick = useCallback(
@@ -59,18 +55,6 @@ export const Controls = () => {
     },
     [getViewport, setViewport]
   );
-
-  useEffect(() => {
-    if (viewport?.zoom >= maxZoom) {
-      setZoomInDisabled(true);
-    } else if (viewport?.zoom <= minZoom + 0.1) {
-      // Add 0.1 to minZoom to prevent zooming out too much (for some reason, the zoom level is not exactly minZoom)
-      setZoomOutDisabled(true);
-    } else {
-      setZoomInDisabled(false);
-      setZoomOutDisabled(false);
-    }
-  }, [maxZoom, minZoom, viewport]);
 
   const renderZoomPercentage = () => (
     <Dropdown

@@ -23,6 +23,8 @@ import styled from 'styled-components';
 import {
   CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
   DELETE_KEY_CODES,
+  MAX_ZOOM,
+  MIN_ZOOM,
   Z_INDEXES,
 } from 'common';
 import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
@@ -336,6 +338,8 @@ export const FlowBuilder = (): JSX.Element => {
             type: 'node',
           });
         }}
+        minZoom={MIN_ZOOM}
+        maxZoom={MAX_ZOOM}
       >
         <Controls />
         <CanvasToolbar />
