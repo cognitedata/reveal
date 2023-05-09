@@ -14,6 +14,13 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   onChange,
   ...rest
 }) => {
+  const inputElement = React.useRef<HTMLInputElement>(null);
+
+  // this is used to focus the input default. autoFocus not functioning here
+  React.useEffect(() => {
+    inputElement.current?.focus();
+  }, []);
+
   return (
     <InputWrapper>
       <Input
@@ -32,6 +39,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         onTouchEnd={(event) => {
           event.stopPropagation();
         }}
+        ref={inputElement}
       />
     </InputWrapper>
   );

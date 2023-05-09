@@ -11,7 +11,10 @@ import {
 import { getChildOptionsSelection } from '../utils/getChildOptionsSelection';
 
 import { OptionsMenu } from './OptionsMenu';
-import { useDebouncedState } from '@data-exploration-lib/core';
+import {
+  NIL_FILTER_LABEL,
+  useDebouncedState,
+} from '@data-exploration-lib/core';
 
 export interface ChildOptionsMenuProps {
   parentOptionValue: string;
@@ -45,7 +48,14 @@ export const ChildOptionsMenu = ({
       return customOptions || [];
     }
 
-    return data?.options || [];
+    return (
+      data?.options.map((option) => {
+        if (!option.value) {
+          return { ...option, value: NIL_FILTER_LABEL };
+        }
+        return option;
+      }) || []
+    );
   }, [isCustomOptions, data?.options, customOptions]);
 
   React.useEffect(() => {

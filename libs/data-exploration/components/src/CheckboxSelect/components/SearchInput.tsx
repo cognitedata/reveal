@@ -22,6 +22,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         fullWidth
+        autoFocus
       />
     </SearchInputWrapper>
   );

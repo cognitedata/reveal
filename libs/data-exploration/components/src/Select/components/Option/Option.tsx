@@ -2,7 +2,10 @@ import { components, OptionProps, OptionTypeBase } from 'react-select';
 
 import { Checkbox } from '@cognite/cogs.js';
 
-import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
+import {
+  formatBigNumbersWithSuffix,
+  NIL_FILTER_LABEL,
+} from '@data-exploration-lib/core';
 
 import isUndefined from 'lodash/isUndefined';
 
@@ -18,9 +21,13 @@ export const Option = <OptionType extends OptionTypeBase>({
   isSelected,
   ...props
 }: OptionProps<OptionType>) => {
-  const { label, count } = data;
+  // eslint-disable-next-line prefer-const
+  let { label, count } = data;
   const isDisabled = count === 0;
 
+  if (!label) {
+    label = NIL_FILTER_LABEL;
+  }
   const OptionCountChip = isDisabled ? OptionCountDisabled : OptionCount;
 
   return (

@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
 
-import { EMPTY_ARRAY, useDeepEffect } from '@data-exploration-lib/core';
+import {
+  EMPTY_ARRAY,
+  NIL_FILTER_LABEL,
+  useDeepEffect,
+} from '@data-exploration-lib/core';
 
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
@@ -83,12 +87,17 @@ export const OptionsMenu = ({
       return <FilterEmptyState />;
     }
 
-    return displayOptions.map((option) => {
-      const { value, options: childOptions } = option;
+    return displayOptions.map((option, index) => {
+      const { options: childOptions } = option;
+      let { value } = option;
+
+      if (!value) {
+        value = NIL_FILTER_LABEL;
+      }
 
       return (
         <Dropdown
-          key={option.value}
+          key={`${option.value}_${index}`}
           placement="right-start"
           openOnHover
           content={
