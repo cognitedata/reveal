@@ -1,25 +1,25 @@
-import { createLink } from '@cognite/cdf-utilities';
 import {
   Button,
   Divider,
   Dropdown,
   InputExp,
   Menu,
-  Tooltip,
   toast,
+  Tooltip,
 } from '@cognite/cogs.js';
-import { v4 as uuid } from 'uuid';
+import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
+import { useDebounce } from 'use-debounce';
+import { v4 as uuid } from 'uuid';
+import { TOAST_POSITION } from '../constants';
+import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { SerializedCanvasDocument } from '../types';
-import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
-import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
-import { TOAST_POSITION } from '../constants';
-import CanvasSubmenu from './CanvasSubmenu';
+import { getCanvasLink } from '../utils/getCanvasLink';
 import CanvasDeletionModal from './CanvasDeletionModal';
-import { useDebounce } from 'use-debounce';
+import CanvasSubmenu from './CanvasSubmenu';
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -34,12 +34,10 @@ type CanvasDropdownProps = Pick<
   | 'isSavingCanvas'
   | 'isLoadingCanvas'
   | 'isCreatingCanvas'
+  | 'setCanvasId'
 > & {
   setIsEditingTitle: Dispatch<SetStateAction<boolean>>;
 };
-
-const getCanvasLink = (canvas: SerializedCanvasDocument) =>
-  createLink('/explore/industryCanvas', { canvasId: canvas.externalId });
 
 const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   activeCanvas,
@@ -52,8 +50,8 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   isSavingCanvas,
   isCreatingCanvas,
   setIsEditingTitle,
+  setCanvasId,
 }) => {
-  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
   const [debouncedSearchString] = useDebounce(searchString, SEARCH_DEBOUNCE_MS);
@@ -62,7 +60,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
     SerializedCanvasDocument | undefined
   >(undefined);
   const onCanvasItemClick = (canvas: SerializedCanvasDocument) => {
-    navigate(getCanvasLink(canvas));
+    setCanvasId(canvas.externalId);
     setIsMenuOpen(false);
   };
 
@@ -81,7 +79,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   };
 
   const onCopyLinkClick = (canvas: SerializedCanvasDocument) => {
-    onCopy(`${window.location.origin}${getCanvasLink(canvas)}`);
+    onCopy(`${window.location.origin}${getCanvasLink(canvas.externalId)}`);
     toast.success(COPIED_TEXT, {
       toastId: `canvas-link-copied-${uuid()}`,
       position: TOAST_POSITION,

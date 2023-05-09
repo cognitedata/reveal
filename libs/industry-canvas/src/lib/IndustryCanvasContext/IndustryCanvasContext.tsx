@@ -35,6 +35,7 @@ export type IndustryCanvasContextType = {
   isListingCanvases: boolean;
   isArchivingCanvas: boolean;
   initializeWithContainerReferences: ContainerReference[] | undefined;
+  setCanvasId: (canvasId: string) => void;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -49,6 +50,9 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
   },
   archiveCanvas: () => {
     throw new Error('archiveCanvas called before initialisation');
+  },
+  setCanvasId: () => {
+    throw new Error('setCanvasId called before initialisation');
   },
   isCreatingCanvas: false,
   isSavingCanvas: false,
@@ -90,8 +94,8 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     const createInitialCanvas = async () => {
       if (canvasId === undefined && !isCreatingCanvas) {
         const initialCanvas = canvasService.makeEmptyCanvas();
-        setCanvasId(initialCanvas.externalId);
-        await createCanvas(initialCanvas);
+        const createdCanvas = await createCanvas(initialCanvas);
+        setCanvasId(createdCanvas.externalId);
         refetchCanvases();
       }
     };
@@ -107,8 +111,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
 
   const saveCanvasWrapper = useCallback(
     async (canvasDocument: SerializedCanvasDocument) => {
-      const updatedCanvas = await saveCanvas(canvasDocument);
-      setCanvasId(updatedCanvas.externalId);
+      await saveCanvas(canvasDocument);
     },
     [saveCanvas, setCanvasId]
   );
@@ -133,7 +136,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         const nextCanvas = canvases?.find(
           (canvas) => canvas.externalId !== canvasToArchive.externalId
         );
-        setCanvasId(nextCanvas?.externalId);
+        setCanvasId(nextCanvas?.externalId, true);
       }
       await refetchCanvases();
     },
@@ -155,6 +158,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         saveCanvas: saveCanvasWrapper,
         archiveCanvas: archiveCanvasWrapper,
         initializeWithContainerReferences,
+        setCanvasId,
       }}
     >
       {children}

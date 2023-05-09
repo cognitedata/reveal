@@ -75,6 +75,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     saveCanvas,
     createCanvas,
     initializeWithContainerReferences,
+    setCanvasId,
   } = useIndustryCanvasContext();
 
   const {
@@ -324,6 +325,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
                 isLoadingCanvas={isLoadingCanvas}
                 isSavingCanvas={isSavingCanvas}
                 setIsEditingTitle={setIsEditingTitle}
+                setCanvasId={setCanvasId}
               />
             )}
           </Flex>

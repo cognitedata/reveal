@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import usePrevious from '../hooks/usePrevious';
 import { ContainerReference } from '../types';
+import { getCanvasLink } from '../utils/getCanvasLink';
 
 const getInitializeWithContainerReferencesFromSearchParams = (
   searchParams: URLSearchParams
@@ -42,60 +43,26 @@ const getCanvasIdFromSearchParams = (
 };
 
 const useIndustryCanvasSearchParameters = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [canvasId, setCanvasId] = useState<string | undefined>(
-    getCanvasIdFromSearchParams(searchParams)
-  );
-  const previousCanvasId = usePrevious(canvasId);
+  const [searchParams] = useSearchParams();
+  const canvasId = getCanvasIdFromSearchParams(searchParams);
   const initializeWithContainerReferences = useRef<
     ContainerReference[] | undefined
   >(getInitializeWithContainerReferencesFromSearchParams(searchParams)).current;
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!searchParams.has('initializeWithContainerReferences')) {
-      return;
-    }
-
-    setSearchParams(
-      (prevParams) => {
-        const nextParams = new URLSearchParams(prevParams);
-
-        if (nextParams.has('initializeWithContainerReferences')) {
-          nextParams.delete('initializeWithContainerReferences');
-        }
-
-        return nextParams;
-      },
-      {
-        replace: true,
-      }
-    );
-  }, [searchParams, setSearchParams]);
-
-  useEffect(() => {
-    setSearchParams(
-      (prevParams) => {
-        const nextParams = new URLSearchParams(prevParams);
-        if (nextParams.has('initializeWithContainerReferences')) {
-          nextParams.delete('initializeWithContainerReferences');
-        }
-
-        if (canvasId === undefined) {
-          nextParams.delete('canvasId');
-        } else {
-          nextParams.set('canvasId', canvasId);
-        }
-        return nextParams;
-      },
-      {
+  const setCanvasId = useCallback(
+    (nextCanvasId: string | undefined, shouldReplace?: boolean) => {
+      const url = getCanvasLink(nextCanvasId);
+      navigate(url, {
         replace:
-          previousCanvasId === undefined || canvasId === previousCanvasId,
-      }
-    );
-  }, [canvasId, previousCanvasId, setSearchParams]);
+          canvasId === undefined || nextCanvasId === canvasId || shouldReplace,
+      });
+    },
+    [navigate, canvasId]
+  );
 
   return {
-    canvasId,
+    canvasId: getCanvasIdFromSearchParams(searchParams),
     setCanvasId,
     initializeWithContainerReferences,
   };
