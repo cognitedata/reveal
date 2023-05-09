@@ -1,4 +1,4 @@
-Cypress.Commands.add('newLogin', () => {
+Cypress.Commands.add('fusionLogin', () => {
   cy.visit(
     `http://cog-dss.localhost:8080/dss-dev?env=greenfield&cluster=greenfield.cognitedata.com&externalOverride=@cognite/cdf-data-exploration&overrideUrl=${Cypress.env(
       'OVERRIDE_URL'
@@ -17,6 +17,6 @@ Cypress.Commands.add('navigateToExplora', () => {
 });
 
 export interface LoginCommand {
-  newLogin(): void;
+  fusionLogin(): void;
   navigateToExplora(): void;
 }
