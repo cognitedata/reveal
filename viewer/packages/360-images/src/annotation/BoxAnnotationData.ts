@@ -6,18 +6,13 @@ import { ImageAnnotationObjectData } from './ImageAnnotationData';
 
 import { BufferGeometry, Matrix4, PlaneGeometry } from 'three';
 
-import { AnnotationsBoundingBox, AnnotationsObjectDetection } from '@cognite/sdk';
-import assert from 'assert';
+import { AnnotationsBoundingBox } from '@cognite/sdk';
 
 export class BoxAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: PlaneGeometry;
   private readonly _initialTranslation: Matrix4;
 
-  constructor(annotation: AnnotationsObjectDetection) {
-    const annotationsBox = annotation.boundingBox;
-
-    assert(annotationsBox !== undefined);
-
+  constructor(annotationsBox: AnnotationsBoundingBox) {
     this._geometry = this.createGeometry(annotationsBox);
 
     this._initialTranslation = new Matrix4().makeTranslation(
