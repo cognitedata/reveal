@@ -221,6 +221,7 @@ export class Image360ApiHelper {
 
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
+    lastEntered360ImageEntity?.deactivateAnnotations();
     image360Entity.setActiveRevision(revisionToEnter);
 
     this.set360CameraManager();
@@ -239,6 +240,7 @@ export class Image360ApiHelper {
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
     if (lastEntered360ImageEntity === image360Entity) {
+      image360Entity.activateAnnotations();
       this._needsRedraw = true;
     } else {
       this._transitionInProgress = true;
@@ -252,7 +254,7 @@ export class Image360ApiHelper {
           this._image360Navigation.moveTo(position, transitionDuration),
           this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
         ]);
-        image360Entity.image360Visualization.setAnnotationsVisibility(true);
+        image360Entity.activateAnnotations();
         MetricsLogger.trackEvent('360ImageTransitioned', {});
       }
       this._transitionInProgress = false;
@@ -287,13 +289,13 @@ export class Image360ApiHelper {
 
     const currentFromOpacity = fromVisualizationCube.opacity;
 
-    from360Entity.image360Visualization.setAnnotationsVisibility(false);
+    from360Entity.deactivateAnnotations();
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
       this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
       this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
-    to360Entity.image360Visualization.setAnnotationsVisibility(true);
+    to360Entity.activateAnnotations();
 
     restorePostTransitionState(currentFromOpacity);
 
@@ -389,7 +391,7 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.icon.visible = imageCollection.isCollectionVisible;
       imageCollection.events.image360Exited.fire();
 
-      this._interactionState.currentImage360Entered.image360Visualization.setAnnotationsVisibility(false);
+      this._interactionState.currentImage360Entered.deactivateAnnotations();
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
       this._interactionState.revisionSelectedForEntry = undefined;
@@ -486,7 +488,7 @@ export class Image360ApiHelper {
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;
-      lastEntered.image360Visualization.setAnnotationsVisibility(false);
+      lastEntered.deactivateAnnotations();
       await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
