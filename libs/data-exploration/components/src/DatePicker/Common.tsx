@@ -150,6 +150,7 @@ export const renderCustomHeader = (
           onClick={decreaseMonth}
           disabled={prevMonthButtonDisabled}
           icon="ArrowLeft"
+          aria-label="arrow-left"
         />
         <YearWrapper>
           <YearSelect
@@ -160,7 +161,10 @@ export const renderCustomHeader = (
             className="cogs-select__control"
           >
             {years.map((currentYear) => (
-              <OptionStyle value={year} disabled={isYearDisabled(year)}>
+              <OptionStyle
+                value={currentYear}
+                disabled={isYearDisabled(currentYear)}
+              >
                 {currentYear}
               </OptionStyle>
             ))}
@@ -190,6 +194,7 @@ export const renderCustomHeader = (
           onClick={increaseMonth}
           disabled={nextMonthButtonDisabled}
           icon="ArrowRight"
+          aria-label="arrow-right"
         />
       </SpacedRowHeader>
     );
