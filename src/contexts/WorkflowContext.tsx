@@ -22,6 +22,7 @@ import { useUserInfo } from 'utils/user';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 import { getToken } from '@cognite/cdf-sdk-singleton';
+import { v4 } from 'uuid';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -42,6 +43,8 @@ type FlowContextT = {
   setHistoryVisible: Dispatch<SetStateAction<boolean>>;
   previewHash?: string;
   setPreviewHash: Dispatch<SetStateAction<string | undefined>>;
+  userState: UserState;
+  setUserState: Dispatch<SetStateAction<UserState>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -58,6 +61,13 @@ type AutomergeChangeEdgesFn = Automerge.ChangeFn<CanvasEdges>;
 
 type WSAuthenticationRequest = {
   jwt: string;
+};
+
+const USER_ID = v4();
+
+type UserState = {
+  userId: string;
+  selectedObjectIds: Set<string>;
 };
 
 export const FlowContextProvider = ({
@@ -82,6 +92,11 @@ export const FlowContextProvider = ({
   const [socket, setWS] = useState<WebSocket>();
 
   const externalFlowRef = useRef(initialFlow);
+
+  const [userState, setUserState] = useState<UserState>({
+    userId: USER_ID,
+    selectedObjectIds: new Set(),
+  });
 
   const debouncedMutate = useMemo(() => {
     const mutate = (newFlow: AFlow) => {
@@ -242,6 +257,8 @@ export const FlowContextProvider = ({
         previewHash,
         setPreviewHash,
         restoreWorkflow,
+        userState,
+        setUserState,
       }}
     >
       {children}
