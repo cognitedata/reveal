@@ -457,7 +457,7 @@ export const DataPreviewTable = forwardRef<
           If the cell is a direct relation, use the space from the cell value,
           else use the space from the instance in this row
           */
-          event.value.space || event.data.space,
+          event.value?.space || event.data?.space || space,
           event.value
         );
         // 400ms is animation time of side panel opening
@@ -466,7 +466,7 @@ export const DataPreviewTable = forwardRef<
             event.api.ensureColumnVisible(event.colDef.field);
         }, 400);
       },
-      [toggleSidebar]
+      [toggleSidebar, space]
     );
     /*
   We use this value-setter to handle editing of pinned draft rows and published rows.
