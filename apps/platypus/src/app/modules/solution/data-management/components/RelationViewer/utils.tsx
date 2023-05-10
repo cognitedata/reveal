@@ -5,12 +5,14 @@ export const getRelationshipsForData = async ({
   dataModelTypeDefs,
   typeName,
   dataModelExternalId,
+  instanceSpace,
   space,
   version,
   externalId,
 }: {
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelExternalId: string;
+  instanceSpace: string;
   space: string;
   version: string;
   typeName: string;
@@ -33,7 +35,7 @@ export const getRelationshipsForData = async ({
           query: `query {
         get${
           currentType.name
-        }ById(instance: {space: "${space}", externalId: "${externalId}"}) {
+        }ById(instance: {space: "${instanceSpace}", externalId: "${externalId}"}) {
           items {
             __typename
             externalId

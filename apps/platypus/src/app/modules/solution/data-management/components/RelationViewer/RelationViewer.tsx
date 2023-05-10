@@ -85,7 +85,8 @@ export const RelationViewer = <
             getRelationshipsForData({
               dataModelTypeDefs,
               externalId: node.externalId,
-              space: node.space,
+              space: space,
+              instanceSpace: node.space,
               dataModelExternalId,
               version: selectedDataModelVersion.version,
               typeName: clickedTypeName,
@@ -214,7 +215,12 @@ export const RelationViewer = <
         return newSelectedItems;
       });
     },
-    [dataModelExternalId, dataModelTypeDefs, selectedDataModelVersion.version]
+    [
+      dataModelExternalId,
+      dataModelTypeDefs,
+      selectedDataModelVersion.version,
+      space,
+    ]
   );
 
   useEffect(() => {
