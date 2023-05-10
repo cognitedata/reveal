@@ -10,6 +10,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { mapFiltersToAssetsAdvancedFilters } from '..';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   property: AssetProperty;
@@ -41,13 +42,16 @@ export const useAssetsFilterOptions = ({
     query,
   });
 
+  const omittedFilter = omit(filter, filterProperty || property);
+
   const { data: dynamicData = [] } = useAssetsUniqueValuesByProperty({
     property,
     searchQuery,
     advancedFilter: mapFiltersToAssetsAdvancedFilters(
-      omit(filter, filterProperty || property),
+      omittedFilter,
       searchQuery
     ),
+    filter: getAssetSubtreeIdFilter(omittedFilter),
     query,
   });
 

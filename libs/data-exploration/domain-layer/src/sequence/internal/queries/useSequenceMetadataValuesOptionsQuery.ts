@@ -5,6 +5,7 @@ import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   searchQuery?: string;
@@ -25,6 +26,8 @@ export const useSequenceMetadataValuesOptionsQuery =
       options,
     });
 
+    const omittedFilter = omit(filter, 'metadata');
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data: dynamicData = [] } = useSequencesMetadataValuesAggregateQuery(
       {
@@ -32,9 +35,10 @@ export const useSequenceMetadataValuesOptionsQuery =
         query,
         options,
         advancedFilter: mapFiltersToSequenceAdvancedFilters(
-          omit(filter, 'metadata'),
+          omittedFilter,
           searchQuery
         ),
+        filter: getAssetSubtreeIdFilter(omittedFilter),
       }
     );
 

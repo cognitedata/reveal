@@ -10,11 +10,13 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 interface Props {
   metadataKey?: string | null;
   query?: string;
   advancedFilter?: AdvancedFilter<EventsProperties>;
+  filter?: InternalEventsFilters;
   options?: UseQueryOptions<
     EventsMetadataAggregateResponse[],
     unknown,
@@ -27,15 +29,22 @@ export const useEventsMetadataValuesAggregateQuery = ({
   metadataKey,
   query,
   advancedFilter,
+  filter,
   options,
 }: Props) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.eventsMetadataValues(String(metadataKey), query, advancedFilter),
+    queryKeys.eventsMetadataValues(
+      String(metadataKey),
+      query,
+      advancedFilter,
+      filter
+    ),
     () => {
       return getEventsMetadataValuesAggregate(sdk, String(metadataKey), {
         advancedFilter,
+        filter: transformNewFilterToOldFilter(filter),
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },

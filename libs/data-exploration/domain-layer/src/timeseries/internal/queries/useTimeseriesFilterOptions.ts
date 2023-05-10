@@ -7,6 +7,7 @@ import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useMemo } from 'react';
 import omit from 'lodash/omit';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   property: TimeseriesProperty;
@@ -41,7 +42,7 @@ export const useTimeseriesFilterOptions = ({
      * But assetSubtreeIds not supported in advanced filter.
      * so we have to use filter for that.
      */
-    filter: omittedFilter,
+    filter: getAssetSubtreeIdFilter(omittedFilter),
   });
 
   const options = useMemo(() => {

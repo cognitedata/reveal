@@ -7,12 +7,15 @@ import {
   getTimeseriesMetadataKeysAggregate,
   queryKeys,
   TimeseriesProperties,
+  transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
 import { TimeseriesMetadataAggregateResponse } from '../types';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 interface Props {
   query?: string;
   advancedFilter?: AdvancedFilter<TimeseriesProperties>;
+  filter?: InternalTimeseriesFilters;
   options?: UseQueryOptions<
     TimeseriesMetadataAggregateResponse[],
     unknown,
@@ -24,15 +27,17 @@ interface Props {
 export const useTimeseriesMetadataKeysAggregateQuery = ({
   query,
   advancedFilter,
+  filter,
   options,
 }: Props = {}) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesMetadata(query, advancedFilter),
+    queryKeys.timeseriesMetadata(query, advancedFilter, filter),
     () => {
       return getTimeseriesMetadataKeysAggregate(sdk, {
         advancedFilter,
+        filter: transformNewFilterToOldFilter(filter),
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       });
     },

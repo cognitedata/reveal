@@ -7,11 +7,14 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import { AdvancedFilter } from '../../../builders';
 import { SequenceProperties } from '../../internal';
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import { transformNewFilterToOldFilter } from '../../../transformers';
 
 interface Props {
   metadataKey?: string | null;
   query?: string;
   advancedFilter?: AdvancedFilter<SequenceProperties>;
+  filter?: InternalSequenceFilters;
   options?: UseQueryOptions<
     SequencesMetadataAggregateResponse[],
     unknown,
@@ -24,6 +27,7 @@ export const useSequencesMetadataValuesAggregateQuery = ({
   metadataKey,
   query,
   advancedFilter,
+  filter,
   options,
 }: Props = {}) => {
   const sdk = useSDK();
@@ -32,11 +36,13 @@ export const useSequencesMetadataValuesAggregateQuery = ({
     queryKeys.sequencesMetadataValues(
       String(metadataKey),
       query,
-      advancedFilter
+      advancedFilter,
+      filter
     ),
     () =>
       getSequencesMetadataValuesAggregate(sdk, String(metadataKey), {
         advancedFilter,
+        filter: transformNewFilterToOldFilter(filter),
         aggregateFilter: query ? { prefix: { value: query } } : undefined,
       }),
     {

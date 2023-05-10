@@ -4,6 +4,7 @@ import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   filter?: InternalEventsFilters;
@@ -25,12 +26,15 @@ export const useEventsFilterOptionValues = ({
     options: { keepPreviousData: true },
   });
 
+  const omittedFilter = omit(filter, 'metadata');
+
   const { data: dynamicData = [] } = useEventsMetadataKeysAggregateQuery({
     query,
     advancedFilter: mapFiltersToEventsAdvancedFilters(
-      omit(filter, 'metadata'),
+      omittedFilter,
       searchQuery
     ),
+    filter: getAssetSubtreeIdFilter(omittedFilter),
     options: { keepPreviousData: true },
   });
 

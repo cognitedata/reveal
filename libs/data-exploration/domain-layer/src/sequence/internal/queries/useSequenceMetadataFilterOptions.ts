@@ -4,6 +4,7 @@ import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   filter?: InternalSequenceFilters;
@@ -24,12 +25,14 @@ export const useSequenceMetadataFilterOptions = ({
     query,
   });
 
+  const omittedFilter = omit(filter, 'metadata');
   const { data: dynamicData = [] } = useSequencesMetadataKeysAggregateQuery({
     query,
     advancedFilter: mapFiltersToSequenceAdvancedFilters(
-      omit(filter, 'metadata'),
+      omittedFilter,
       searchQuery
     ),
+    filter: getAssetSubtreeIdFilter(omittedFilter),
   });
 
   const options = useMemo(() => {
