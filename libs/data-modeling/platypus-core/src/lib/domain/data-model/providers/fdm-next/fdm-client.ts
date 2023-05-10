@@ -890,6 +890,9 @@ const normalizeIngestionItem = (
         ) {
           return [key, value.externalId];
         }
+        if (value === '' && fieldType?.type.name !== 'String') {
+          return [key, null];
+        }
         return [key, value];
       })
       .filter(([_key, val]) => val !== undefined)
