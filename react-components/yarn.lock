@@ -1478,7 +1478,7 @@ __metadata:
     "@storybook/blocks": 7.0.9
     "@storybook/react": 7.0.9
     "@storybook/react-webpack5": 7.0.9
-    "@storybook/testing-library": 0.0.14-next.2
+    "@storybook/testing-library": 0.1.0
     "@types/react": 18.2.5
     prop-types: 15.8.1
     react: 18.2.0
@@ -2965,16 +2965,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/testing-library@npm:0.0.14-next.2":
-  version: 0.0.14-next.2
-  resolution: "@storybook/testing-library@npm:0.0.14-next.2"
+"@storybook/testing-library@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@storybook/testing-library@npm:0.1.0"
   dependencies:
     "@storybook/client-logger": ^7.0.0-beta.0 || ^7.0.0-rc.0 || ^7.0.0
     "@storybook/instrumenter": ^7.0.0-beta.0 || ^7.0.0-rc.0 || ^7.0.0
     "@testing-library/dom": ^8.3.0
     "@testing-library/user-event": ^13.2.1
     ts-dedent: ^2.2.0
-  checksum: c471578493798e74e1f02f4a8cd046f24d1c387f32d5b3469f3331563d93c6dd872937aa9ce6a4dc12832e0c9f378639265c3b6862cbbc0b1887f6e26c102601
+  checksum: a413110dafe80f8fe64da912fddb653bc3c695c94bd023b8cb918e519e9f94119bae559909bfb8ad229041a4f17a12b33425c61572270702c116d0b727b4d4ba
   languageName: node
   linkType: hard
 
