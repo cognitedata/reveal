@@ -17,7 +17,8 @@ import {
 import { OptionType } from '../types';
 import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 
-export interface OptionProps {
+export interface OptionProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   option: OptionType;
   checked?: boolean;
   indeterminate?: boolean;
@@ -34,13 +35,14 @@ export const Option: React.FC<OptionProps> = ({
   indeterminate = false,
   onChange,
   hasOptionWithChildOptions = false,
+  ...rest
 }) => {
   const { label, value, count, options } = option;
   const isDisabled = count === 0;
   const OptionCountChip = isDisabled ? OptionCountDisabled : OptionCount;
 
   return (
-    <OptionWrapper data-testid="option">
+    <OptionWrapper data-testid="option" {...rest}>
       <LabelWrapper>
         <Checkbox
           data-testid="option-label"

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 
 import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
 
@@ -57,7 +57,9 @@ export const OptionsMenu = ({
   disableOptionsMenu,
   isLoading,
 }: OptionsMenuProps) => {
-  const [displayOptions, setDisplayOptions] = React.useState(options);
+  const [displayOptions, setDisplayOptions] = useState(options);
+
+  const [hoverOption, setHoverOption] = useState<OptionType>();
 
   useDeepEffect(() => {
     setDisplayOptions(options);
@@ -81,7 +83,6 @@ export const OptionsMenu = ({
 
     onChange(newSelection);
   };
-
   const renderOptions = () => {
     if (isEmpty(displayOptions)) {
       return <FilterEmptyState />;
@@ -99,7 +100,10 @@ export const OptionsMenu = ({
         <Dropdown
           key={`${option.value}_${index}`}
           placement="right-start"
-          openOnHover
+          visible={hoverOption && hoverOption?.value === option.value}
+          onClickOutside={() => {
+            setHoverOption(undefined);
+          }}
           content={
             <ChildOptionsMenu
               parentOptionValue={value}
@@ -113,6 +117,12 @@ export const OptionsMenu = ({
           disabled={disableOptionsMenu}
         >
           <Option
+            onMouseEnter={() => {
+              setHoverOption(option);
+            }}
+            onMouseLeave={() => {
+              setHoverOption(undefined);
+            }}
             option={option}
             checked={has(selection, value)}
             indeterminate={!isEmpty(selection[value])}
