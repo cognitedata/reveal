@@ -778,7 +778,7 @@ __metadata:
     "@cognite/sdk": 8.1.1
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
-    "@types/dat.gui": 0.7.9
+    "@types/dat.gui": 0.7.10
     "@types/gl": ^6.0.2
     "@types/glob": 8.1.0
     "@types/jest": 29.5.1
@@ -2078,10 +2078,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dat.gui@npm:0.7.9":
-  version: 0.7.9
-  resolution: "@types/dat.gui@npm:0.7.9"
-  checksum: 053e69c47175d98bac5f4994d9a35fad335e34d389e37e5645a91926630d8d9a9a8d7dab018d78a2abd3b83bc3dc7d5bbe9509810819a48e01e79cfea5a1aa1b
+"@types/dat.gui@npm:0.7.10":
+  version: 0.7.10
+  resolution: "@types/dat.gui@npm:0.7.10"
+  checksum: 1b5835edc213dd78b03a71c8fd1fe360eadee39b420ccb73c5dc9a04b09866bed099711b21b2c46f7b85b0d6e062564b617c9e610b147d74a81b77380d7c39ec
   languageName: node
   linkType: hard
 
