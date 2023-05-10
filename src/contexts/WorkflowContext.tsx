@@ -79,10 +79,10 @@ type WSUserStateRequest = WSUserStateRemoveRequest | WSUserStateUpdateRequest;
 
 const CONNECTION_ID = v4();
 
-type UserState = {
+export type UserState = {
   connectionId: string;
   name?: string;
-  selectedObjectIds: Set<string>;
+  selectedObjectIds: string[];
 };
 
 export const FlowContextProvider = ({
@@ -110,7 +110,7 @@ export const FlowContextProvider = ({
 
   const [userState, setUserState] = useState<UserState>({
     connectionId: CONNECTION_ID,
-    selectedObjectIds: new Set(),
+    selectedObjectIds: [],
   });
 
   const [otherUserStates, setOtherUserStates] = useState<UserState[]>([]);

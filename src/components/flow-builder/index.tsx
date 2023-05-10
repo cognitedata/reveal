@@ -85,9 +85,13 @@ export const FlowBuilder = (): JSX.Element => {
         const newState = { ...prevState };
         selectChanges.forEach(({ id, selected }) => {
           if (selected) {
-            newState?.selectedObjectIds?.add(id);
+            newState.selectedObjectIds = newState.selectedObjectIds
+              .filter((objectId) => objectId !== id)
+              .concat(id);
           } else {
-            newState?.selectedObjectIds?.delete(id);
+            newState.selectedObjectIds = newState.selectedObjectIds.filter(
+              (objectId) => objectId !== id
+            );
           }
         });
         return newState;
@@ -127,9 +131,13 @@ export const FlowBuilder = (): JSX.Element => {
         const newState = { ...prevState };
         selectChanges.forEach(({ id, selected }) => {
           if (selected) {
-            newState?.selectedObjectIds?.add(id);
+            newState.selectedObjectIds = newState.selectedObjectIds
+              .filter((objectId) => objectId !== id)
+              .concat(id);
           } else {
-            newState?.selectedObjectIds?.delete(id);
+            newState.selectedObjectIds = newState.selectedObjectIds.filter(
+              (objectId) => objectId !== id
+            );
           }
         });
         return newState;
@@ -290,7 +298,7 @@ export const FlowBuilder = (): JSX.Element => {
     () =>
       flowState.canvas.nodes.map((n) => ({
         ...n,
-        selected: userState?.selectedObjectIds?.has(n.id),
+        selected: userState?.selectedObjectIds.includes(n.id),
         // FIXME: can we remove as
       })) as WorkflowBuilderNode[],
     [flowState.canvas.nodes, userState]
@@ -300,7 +308,7 @@ export const FlowBuilder = (): JSX.Element => {
     () =>
       flowState.canvas.edges.map((e) => ({
         ...e,
-        selected: userState?.selectedObjectIds?.has(e.id),
+        selected: userState?.selectedObjectIds.includes(e.id),
         animated: true,
         markerEnd: {
           type: MarkerType.ArrowClosed,

@@ -54,8 +54,9 @@ export const CanvasTopBar = () => {
               <FlowSaveIndicator />
             </Flex>
             <SecondaryTopbar.Divider />
+            <Avatar text={userState.name ?? userState.connectionId} />
             <AvatarGroup>
-              {[userState, ...otherUserStates].map(({ connectionId, name }) => (
+              {otherUserStates.map(({ connectionId, name }) => (
                 <Avatar key={connectionId} text={name ?? connectionId} />
               ))}
             </AvatarGroup>
