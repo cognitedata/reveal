@@ -1,4 +1,4 @@
-@Library('jenkins-helpers@UX-408-update-jenkins-helpers') _
+@Library('jenkins-helpers') _
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String APP_ID = 'cdf-data-catalog'
