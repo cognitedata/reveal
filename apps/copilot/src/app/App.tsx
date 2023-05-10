@@ -11,20 +11,17 @@ const COPILOT_TOGGLE = 'COPILOT_TOGGLE';
 function App() {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
-    const listener = (ev: MessageEvent) => {
-      if (
-        ev.data &&
-        typeof ev.data === 'object' &&
-        'type' in ev.data &&
-        ev.data.type === COPILOT_TOGGLE &&
-        'active' in ev.data
-      ) {
-        setIsVisible(ev.data.active);
+    const listener = (ev: Event) => {
+      if ('detail' in ev) {
+        const toggleEvent = ev as CustomEvent<{ active?: boolean }>;
+        if ('active' in toggleEvent.detail) {
+          setIsVisible(toggleEvent.detail.active || false);
+        }
       }
     };
-    window.addEventListener('message', listener);
+    window.addEventListener(COPILOT_TOGGLE, listener);
     return () => {
-      window.removeEventListener('message', listener);
+      window.removeEventListener(COPILOT_TOGGLE, listener);
     };
   }, []);
 
