@@ -842,6 +842,7 @@ const autoPageToArray = async <T>(
 };
 
 const RESERVED_KEYWORDS = [
+  '__typename',
   'externalId',
   'space',
   'createdTime',
