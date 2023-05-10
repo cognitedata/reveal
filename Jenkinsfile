@@ -424,6 +424,7 @@ pods {
                   firebaseJson: "dist/apps/${project}/firebase.json",
                   buildCommand: "yarn build production ${project}",
                   buildFolder: "dist/apps/${project}",
+                  isFusionSubapp: true,
                 )
 
                 slack.send(
