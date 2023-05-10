@@ -43,7 +43,8 @@ window.THREE = THREE;
 (window as any).reveal = reveal;
 
 type FDMQueryResponse = {
-  data: {
+  data:
+  {
     listAPM_Observation: {
       items: {
         description: string;
@@ -451,7 +452,7 @@ export function Viewer() {
 
       // Points of interest stuff
 
-      const overlayTool = new SmartOverlayTool(viewer); 
+      const overlayTool = new SmartOverlayTool(viewer);
 
       const POIs = await listPOIs(client, project!);
 
@@ -476,7 +477,7 @@ export function Viewer() {
                   point,
                   `took ${(performance.now() - start).toFixed(1)} ms`
                 );
-                
+
                 const position = point.add(new THREE.Vector3(0, 0.2, 0));
 
                 overlayTool.addOverlay({ position, text: `Clicked node with treeIndex ${treeIndex}`, id: treeIndex, color: new THREE.Color('red')});
@@ -534,55 +535,38 @@ export function Viewer() {
 }
 
 async function createPointOfInterest(client: CogniteClient, project: string, position: Vector3, description: string): Promise<void> {
+  console.log("Trying to create POI");
   const baseUrl = client.getBaseUrl();
   const fdmSpace = 'Test_DMSv3';
-  const APMDataModelName = 'APM_Observation';
+
   const vec3DataModelName = 'Vec3f'
-  const edgeExternalId = 'APM_Observation.position';
+  const APMObservationDataModelName = 'APM_Observation';
+  const APMChecklistItemDataModelName = 'APM_ChecklistItem';
+  const APMChecklistDataModelName = 'APM_Checklist';
   const dataModelVersion = '3';
-  
+
   const fdmCreateEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances`;
-  
-  const externalId = performance.now();
 
-  const APMInstanceData = {
+  const externalId = performance.now().toString();
+  const vec3ExternalId = "vec3-" + externalId;
+  const observationExternalId = "observation-" + externalId;
+  const checklistItemExternalId = "checklistitem-3";
+  const checklistExternalId = "ivar-aasen";
+
+  const observationChecklistItemEdgeExternalId = checklistItemExternalId + observationExternalId;
+  const checklistChecklistItemEdgeExternalId = checklistExternalId + checklistItemExternalId;
+
+  const createNewChecklistItem = true;
+  const createNewChecklist = false;
+
+  const vec3fData = {
     data: {
       "replace": false,
       "items": [
         {
           "instanceType": "node",
           "space": fdmSpace,
-          externalId: externalId.toString(),
-          "sources": [
-            {
-              "source": {
-                "type": "view",
-                "space": fdmSpace,
-                "externalId": APMDataModelName,
-                "version": dataModelVersion
-              },
-              "properties": {
-                description: description,
-                position: {
-                  "externalId": externalId.toString() + 'vec3',
-                  space: fdmSpace
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  };
-
-  const createdVec3Instance = await client.post(fdmCreateEndpoint, {
-    data: {
-      "replace": false,
-      "items": [
-        {
-          "instanceType": "node",
-          "space": fdmSpace,
-          externalId: externalId.toString() + 'vec3',
+          externalId: vec3ExternalId,
           "sources": [
             {
               "source": {
@@ -601,9 +585,160 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
         }
       ]
     }
-  });
+  }
 
-  const createdAPMInstance = await client.post(fdmCreateEndpoint, APMInstanceData);
+  const APMObservationData = {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "node",
+          "space": fdmSpace,
+          externalId: observationExternalId,
+          "sources": [
+            {
+              "source": {
+                "type": "view",
+                "space": fdmSpace,
+                "externalId": APMObservationDataModelName,
+                "version": dataModelVersion
+              },
+              "properties": {
+                description: description,
+                position: {
+                  "externalId": vec3ExternalId,
+                  space: fdmSpace
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  const APMChecklistItemData = {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "node",
+          "space": fdmSpace,
+          "externalId": checklistItemExternalId,
+          "sources": [
+            {
+              "source": {
+                "type": "view",
+                "space": fdmSpace,
+                "externalId": APMChecklistItemDataModelName,
+                "version": dataModelVersion
+              },
+              "properties": {
+                "title": "Observation",
+                "description": "Found an issue in " + checklistExternalId, // checklistexternalid is site name
+                "order": 13,
+                "status": "Failure"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  const APMChecklistData = {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "node",
+          "space": fdmSpace,
+          "externalId": checklistExternalId,
+          "sources": [
+            {
+              "source": {
+                "type": "view",
+                "space": fdmSpace,
+                "externalId": APMChecklistDataModelName,
+                "version": dataModelVersion
+              },
+              "properties": {
+                "title": "Ivar Aasen checklist 1",
+                "description": "Inspection of Ivar Aasen cellar deck",
+                "type": "Routine inspection",
+                "status": "Success",
+                "rootLocationId": "North sea",
+                "assignedTo": ["Geir", "Ronny"],
+                "createdBy": "Anders"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  const APMChecklistItemObservationEdge = {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "edge",
+          "space": fdmSpace,
+          "externalId": observationChecklistItemEdgeExternalId,
+          "type": {
+            "space": fdmSpace,
+            "externalId": `${APMChecklistItemDataModelName}.observations`
+          },
+          "startNode": {
+            "space": fdmSpace,
+            "externalId": checklistItemExternalId
+          },
+          "endNode": {
+            "space": fdmSpace,
+            "externalId": observationExternalId
+          }
+        }
+      ]
+    }
+  };
+
+  const APMChecklistChecklistItemEdge = {
+    data: {
+      "replace": false,
+      "items": [
+        {
+          "instanceType": "edge",
+          "space": fdmSpace,
+          "externalId": checklistChecklistItemEdgeExternalId,
+          "type": {
+            "space": fdmSpace,
+            "externalId": `${APMChecklistDataModelName}.items`
+          },
+          "startNode": {
+            "space": fdmSpace,
+            "externalId": checklistExternalId
+          },
+          "endNode": {
+            "space": fdmSpace,
+            "externalId": checklistItemExternalId
+          }
+        }
+      ]
+    }
+  };
+
+  // Create new nodes
+  const createdVec3 = await client.post(fdmCreateEndpoint, vec3fData);
+  const createdAPMObservation = await client.post(fdmCreateEndpoint, APMObservationData);
+  if (createNewChecklistItem)
+    { const createdAPMChecklistItem = await client.post(fdmCreateEndpoint, APMChecklistItemData); }
+  if (createNewChecklist)
+    { const createdAPMChecklist = await client.post(fdmCreateEndpoint, APMChecklistData) }
+
+  // Create new edges
+  const createChecklistItemObservationEdge = await client.post(fdmCreateEndpoint, APMChecklistItemObservationEdge);
+  const createChecklistChecklistItemEdge = await client.post(fdmCreateEndpoint, APMChecklistChecklistItemEdge);
 
   console.log("Finished creating instances");
 }
@@ -612,7 +747,7 @@ async function listPOIs (sdk: CogniteClient, project: string) {
   const baseUrl = sdk.getBaseUrl();
   const fdmSpace = 'Test_DMSv3';
   const dataModelVersion = '3';
-  
+
   const fdmQueryEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${fdmSpace}/datamodels/${fdmSpace}/versions/${dataModelVersion}/graphql`;
 
   const fdmData = await sdk.post(fdmQueryEndpoint, {
