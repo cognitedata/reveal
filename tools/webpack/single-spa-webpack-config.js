@@ -6,6 +6,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const replaceStyleLoaders = (config, styleScope) => {
   const CSS_REGEX = /\.css$/;
+  const SASS_REGEX = /\.s[ac]ss$/i;
   const LESS_REGEX = /\.less$/;
   const cssRegex = /\.(css|less)$/;
 
@@ -72,6 +73,14 @@ const replaceStyleLoaders = (config, styleScope) => {
             test: CSS_REGEX,
             use: getStyleLoader(),
             sideEffects: true,
+          }, {
+            test: SASS_REGEX,
+            use: [
+              ...getStyleLoader().slice(0, 2),
+              {
+                loader: 'sass-loader',
+              },
+            ],
           },
           {
             test: LESS_REGEX,

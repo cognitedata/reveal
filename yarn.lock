@@ -1412,6 +1412,14 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@botui/react@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@botui/react/-/react-1.1.5.tgz#c01514843dfa8c9bbd456bfc5b9738fe5e778591"
+  integrity sha512-XspOup89RwnNSkO5QxTGXzNJbGudhVr/0Q2ESoxpvA5fV2WHGIxBxP04vNXLFDq3r0i8XaGyAU18tZiNtAINUQ==
+  dependencies:
+    react-transition-group "^4.4.5"
+    scroll-into-view-if-needed "^2.2.29"
+
 "@chevrotain/cst-dts-gen@10.4.2":
   version "10.4.2"
   resolved "https://registry.yarnpkg.com/@chevrotain/cst-dts-gen/-/cst-dts-gen-10.4.2.tgz#a3426dba2c48cf6c90e49a0676aea750e8f43e88"
@@ -1620,10 +1628,30 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^3.0.0", "@cognite/cdf-utilities@^3.0.1":
+"@cognite/cdf-utilities@^3.0.0":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.0.1.tgz#5830cc74d3a10bd41aab9952c10c5a6ccfa2c66e"
   integrity sha512-jCm/sAtCT8L5qOa27aCCutMpCDZU9Do65qf3Yp0g6rgxwoz88co7u+75Xo6X6krVhUJCuvgJgyQqAVIS4Iv8TQ==
+  dependencies:
+    "@codemirror/autocomplete" "^6.0.0"
+    "@codemirror/commands" "^6.0.0"
+    "@codemirror/lang-sql" "^6.3.0"
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/lint" "^6.0.0"
+    "@codemirror/search" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+    "@uiw/codemirror-themes" "^4.11.4"
+    "@uiw/react-codemirror" "^4.11.4"
+    antd "^4.22.4"
+    copy-to-clipboard "^3.3.2"
+    query-string "^7.0.1"
+    styled-components "^5.3.3"
+
+"@cognite/cdf-utilities@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.2.0.tgz#0016af77a6ade3d469bf7d10194afe9e6eadcf34"
+  integrity sha512-rMZHdQiwPZi7qR5isKiMciC6MHotbyTme8EnjxZEZ5vPwrPu/GFiP4A3NSBrA1FI+Vqsik/ikQg2u+cAVPHECA==
   dependencies:
     "@codemirror/autocomplete" "^6.0.0"
     "@codemirror/commands" "^6.0.0"
@@ -11035,6 +11063,11 @@ bottleneck@^2.18.1:
   version "2.19.5"
   resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.19.5.tgz#5df0b90f59fd47656ebe63c78a98419205cadd91"
   integrity sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw==
+
+botui@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/botui/-/botui-1.1.3.tgz#270fe9f84ac37b9e1f0c9a3db3a32639d809755c"
+  integrity sha512-jPg7nkkWDojSnYYO0jmXqOc6mevjgTMK2PSa/Tglf2jE0iPfRA8mJ/G43MCWVzycROfu6PWiHnCD2TOdpL4i/Q==
 
 boxen@7.0.0:
   version "7.0.0"
@@ -26372,7 +26405,7 @@ react-toastify@6.2.0, react-toastify@^6.0.9:
     prop-types "^15.7.2"
     react-transition-group "^4.4.1"
 
-react-transition-group@^4.3.0, react-transition-group@^4.4.1, react-transition-group@^4.4.2:
+react-transition-group@^4.3.0, react-transition-group@^4.4.1, react-transition-group@^4.4.2, react-transition-group@^4.4.5:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.5.tgz#e53d4e3f3344da8521489fbef8f2581d42becdd1"
   integrity sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==
@@ -27576,7 +27609,7 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
-scroll-into-view-if-needed@^2.2.25:
+scroll-into-view-if-needed@^2.2.25, scroll-into-view-if-needed@^2.2.29:
   version "2.2.31"
   resolved "https://registry.yarnpkg.com/scroll-into-view-if-needed/-/scroll-into-view-if-needed-2.2.31.tgz#d3c482959dc483e37962d1521254e3295d0d1587"
   integrity sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==

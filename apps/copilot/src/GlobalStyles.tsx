@@ -10,7 +10,7 @@ import {
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
+import botui from '@botui/react/default-theme';
 
 import styleScope from './styleScope';
 
@@ -38,7 +38,7 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([cogsStyles, monacoStyles]);
+  const isStyleLoaded = useGlobalStyles([cogsStyles, botui]);
 
   if (!isStyleLoaded) {
     return <Loader />;

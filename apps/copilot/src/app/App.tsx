@@ -1,23 +1,35 @@
-import React from 'react';
-// import { BrowserRouter as Router } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClientProvider } from '@tanstack/react-query';
-// import { getProject } from '@cognite/cdf-utilities';
 import { queryClient } from './queryClient';
+import { Copilot } from './pages/Copilot';
 
-// import Routes from './Routes';
+const COPILOT_TOGGLE = 'COPILOT_TOGGLE';
 
 function App() {
-  // const project = getProject();
-  // const basename = `${project}/copilot`;
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const listener = (ev: Event) => {
+      if ('detail' in ev) {
+        const toggleEvent = ev as CustomEvent<{ active?: boolean }>;
+        if ('active' in toggleEvent.detail) {
+          setIsVisible(toggleEvent.detail.active || false);
+        }
+      }
+    };
+    window.addEventListener(COPILOT_TOGGLE, listener);
+    return () => {
+      window.removeEventListener(COPILOT_TOGGLE, listener);
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       <ToastContainer />
-      <StyledWrapper id=""></StyledWrapper>
+      <StyledWrapper>{isVisible && <Copilot />}</StyledWrapper>
     </QueryClientProvider>
   );
 }
@@ -30,10 +42,3 @@ const StyledWrapper = styled.div`
   height: 100%;
   overflow: hidden;
 `;
-
-// const StyledPage = styled.div`
-//   display: flex;
-//   flex: 1;
-//   flex-direction: column;
-//   overflow: hidden;
-// `;
