@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Chip, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -12,14 +12,15 @@ export interface Image360HistoricalDetailsPanelProps {
 }
 
 export const Image360HistoricalDetailsPanel = ({historicalCount, onDetailsClick}: Image360HistoricalDetailsPanelProps) => {
+  const count = historicalCount?.toString();
+
   return (
     <Tooltip content="360 Image historical details">
       <StyledToolBar>
-        <Button icon='History' iconPlacement='right' onClick={onDetailsClick} aria-label="details-button"> Details
-        </Button>
-        <Button type="primary" disabled> {historicalCount} </Button>
+        <StyledChip icon='History' iconPlacement='right' onClick={onDetailsClick} label='Details'/>
+        <StyledChip label={count} type='neutral' hideTooltip/>
       </StyledToolBar>
-      </Tooltip>
+    </Tooltip>
   )
 };
 
@@ -30,7 +31,15 @@ const StyledToolBar = styled.div`
   flex-direction: row;
   width: fit-content;
   height: fit-content;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 4px, 10px, 4px, 10px;
+  border-radius: 6px;
   background-color: white;
+`;
+
+export const StyledChip = styled(Chip)`
+  && {
+    width: fit-content;
+    max-height: 28px;
+    background-color: white;
+  }
 `;
