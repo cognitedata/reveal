@@ -195,9 +195,9 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
   def npmVersion = sh(
     script: npmPackageInfo,
     returnStdout: true
-  ) as int;
+  ).replaceAll("\\.","") as int;
 
-  def packageVersion = packageDetails.version as int;
+  def packageVersion = packageDetails.version.replaceAll("\\.","") as int;
 
   return packageVersion > npmVersion;
 }
