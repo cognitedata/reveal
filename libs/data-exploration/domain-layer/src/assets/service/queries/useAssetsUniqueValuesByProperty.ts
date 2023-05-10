@@ -25,7 +25,12 @@ export const useAssetsUniqueValuesByProperty = ({
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetsUniqueValues(property, searchQuery, advancedFilter, query),
+    queryKeys.assetsUniqueValues(
+      property,
+      searchQuery,
+      advancedFilter,
+      query || ''
+    ),
     () => {
       return getAssetsUniqueValuesByProperty(sdk, property, {
         advancedFilter,

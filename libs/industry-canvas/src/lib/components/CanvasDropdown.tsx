@@ -9,7 +9,6 @@ import {
 } from '@cognite/cogs.js';
 import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { useDebounce } from 'use-debounce';
 import { v4 as uuid } from 'uuid';
