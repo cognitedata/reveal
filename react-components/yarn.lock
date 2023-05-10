@@ -1235,7 +1235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.20.2, @babel/preset-env@npm:^7.21.5, @babel/preset-env@npm:~7.21.0":
+"@babel/preset-env@npm:7.21.5, @babel/preset-env@npm:^7.20.2, @babel/preset-env@npm:~7.21.0":
   version: 7.21.5
   resolution: "@babel/preset-env@npm:7.21.5"
   dependencies:
@@ -1349,7 +1349,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-react@npm:^7.18.6":
+"@babel/preset-react@npm:7.18.6, @babel/preset-react@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/preset-react@npm:7.18.6"
   dependencies:
@@ -1365,7 +1365,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.13.0, @babel/preset-typescript@npm:^7.21.5":
+"@babel/preset-typescript@npm:7.21.5, @babel/preset-typescript@npm:^7.13.0":
   version: 7.21.5
   resolution: "@babel/preset-typescript@npm:7.21.5"
   dependencies:
@@ -1512,10 +1512,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-react-components@workspace:."
   dependencies:
-    "@babel/preset-env": ^7.21.5
-    "@babel/preset-react": ^7.18.6
-    "@babel/preset-typescript": ^7.21.5
-    "@cognite/cogs.js": ^9.13.4
+    "@babel/preset-env": 7.21.5
+    "@babel/preset-react": 7.18.6
+    "@babel/preset-typescript": 7.21.5
     "@storybook/addon-essentials": 7.0.9
     "@storybook/addon-interactions": 7.0.9
     "@storybook/addon-links": 7.0.9
@@ -1534,7 +1533,9 @@ __metadata:
     typescript: 5.0.4
     webpack: 5.82.0
     webpack-cli: 5.0.2
+    webpack-node-externals: 3.0.0
   peerDependencies:
+    "@cognite/cogs.js": ">=9"
     react: ">=18"
   languageName: unknown
   linkType: soft
@@ -11696,6 +11697,13 @@ __metadata:
     clone-deep: ^4.0.1
     wildcard: ^2.0.0
   checksum: 88786ab91013f1bd2a683834ff381be81c245a4b0f63304a5103e90f6653f44dab496a0768287f8531761f8ad957d1f9f3ccb2cb55df0de1bd9ee343e079da26
+  languageName: node
+  linkType: hard
+
+"webpack-node-externals@npm:3.0.0":
+  version: 3.0.0
+  resolution: "webpack-node-externals@npm:3.0.0"
+  checksum: 355080c35c821115b97dda8c93d9d0565a90a6012a532324eb0d6a64f8f0d609431fd29504fc7ce414755841ac14f601f3eef99472c2c5dc00233b504ebe73f2
   languageName: node
   linkType: hard
 

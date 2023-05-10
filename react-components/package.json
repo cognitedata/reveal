@@ -15,12 +15,13 @@
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
+    "@cognite/cogs.js": ">=9",
     "react": ">=18"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.21.5",
-    "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.21.5",
+    "@babel/preset-env": "7.21.5",
+    "@babel/preset-react": "7.18.6",
+    "@babel/preset-typescript": "7.21.5",
     "@storybook/addon-essentials": "7.0.9",
     "@storybook/addon-interactions": "7.0.9",
     "@storybook/addon-links": "7.0.9",
@@ -37,14 +38,11 @@
     "ts-loader": "9.4.2",
     "typescript": "5.0.4",
     "webpack": "5.82.0",
-    "webpack-cli": "5.0.2"
+    "webpack-cli": "5.0.2",
+    "webpack-node-externals": "3.0.0"
   },
   "packageManager": "yarn@3.5.1",
   "files": [
     "./dist/*"
-  ],
-  "dependencies": {
-    "@cognite/cogs.js": "^9.13.4",
-    "styled-components": "5.3.6"
-  }
+  ]
 }
