@@ -35,8 +35,8 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
             <Skeleton.Paragraph lines={2} />
           ) : (
             <>
-              <Body>{subtitle}</Body>
               <Title level={3}>{title}</Title>
+              <Body>{subtitle}</Body>
             </>
           )}
         </Wrapper>
@@ -62,8 +62,6 @@ const Header = styled.div`
   top: 0;
   left: 0;
   overflow: auto;
-  padding-right: 8px;
-  padding-left: 8px;
   background: linear-gradient(180deg, #fafafa 0%, rgba(243, 244, 248, 0) 100%);
   backdrop-filter: blur(8px);
   z-index: ${zIndex.PAGE_HEADER};

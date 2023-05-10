@@ -1,5 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import { Page } from '../components/page/Page';
+import { Page } from '../containers/page/Page';
 import { Preview } from '../components/preview/Preview';
 import { useNavigation } from '../hooks/useNavigation';
 
@@ -12,11 +12,19 @@ export const SearchPage = () => {
         <p>Actors</p>
         <Button
           onClick={() => {
-            navigate.toInstancePage('deep', 'MovieDM', 'Actor', 'Aamir Khan');
+            navigate.toInstancePage('Actor', 'Aamir Khan');
           }}
         >
           Amir Khan
           <Preview />
+        </Button>
+
+        <Button
+          onClick={() => {
+            navigate.toInstancePage('Movie', '1917');
+          }}
+        >
+          1917
         </Button>
       </Page.Body>
     </Page>

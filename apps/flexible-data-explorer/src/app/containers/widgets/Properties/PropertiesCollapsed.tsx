@@ -1,49 +1,49 @@
+import { Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Button } from '../../../components/buttons/Button';
-import { BaseWidgetProps, Widget } from '../../../components/widget/Widget';
+import { Widget } from '../../../components/widget/Widget';
+import { PropertiesProps } from './PropertiesWidget';
 
-export const PropertiesCollapsed: React.FC<BaseWidgetProps> = (
-  props: BaseWidgetProps
-) => {
+export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
+  id,
+  onExpandClick,
+  state,
+  data,
+  rows,
+  columns,
+}) => {
   return (
-    <>
+    <Widget rows={rows} columns={columns} id={id}>
       <Widget.Header
-        title={`Properties ${props.id}`}
+        title={`${id}`}
         subtitle="lorem ipsum ras pareru going to the moutain"
       >
-        <Button.Fullscreen onClick={() => props.onExpandClick?.(props.id)} />
+        <Button.Fullscreen onClick={() => onExpandClick?.(id)} />
       </Widget.Header>
 
-      <Widget.Body state={props.state}>
+      <Widget.Body state={state}>
         <Container>
-          <Content>
-            <p>Metadata</p>
-            <p>123</p>
-          </Content>
-          <Content>
-            <p>Metadata</p>
-            <p>123</p>
-          </Content>
-          <Content>
-            <p>Metadata</p>
-            <p>123</p>
-          </Content>
+          {Object.keys(data || {}).map((key) => {
+            const value = data?.[key];
 
-          <Content>
-            <p>Metadata</p>
-            <p>123</p>
-          </Content>
-          <Content>
-            <p>Metadata</p>
-            <p>123</p>
-          </Content>
+            return (
+              <Content>
+                <Body level={3}>{key}</Body>
+                <Body strong>{value}</Body>
+              </Content>
+            );
+          })}
         </Container>
       </Widget.Body>
-    </>
+    </Widget>
   );
 };
 
-const Content = styled.div``;
+const Content = styled.div`
+  width: 100%;
+  overflow: hidden;
+  word-break: break-word;
+`;
 
 const Container = styled.div`
   display: grid;

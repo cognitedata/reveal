@@ -1,101 +1,19 @@
-import { Button } from '../../../components/buttons/Button';
-import { BaseWidgetProps, Widget } from '../../../components/widget/Widget';
+import { GeneralDetails } from '../../../components/details';
+import { Widget } from '../../../components/widget/Widget';
+import { PropertiesProps } from './PropertiesWidget';
 
-export const PropertiesExpanded = (props: BaseWidgetProps) => {
+export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
   return (
-    <>
-      <Widget.Header
-        title={`Properties ${props.id}`}
-        subtitle="lorem ipsum ras pareru going to the moutain"
-      >
-        <Button.Fullscreen onClick={() => props.onExpandClick?.(undefined)} />
-      </Widget.Header>
-
+    <Widget expanded>
       <Widget.Body>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
+        <GeneralDetails>
+          {Object.keys(data || {}).map((key) => {
+            const value = data?.[key];
 
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
-        <p>HI!</p>
+            return <GeneralDetails.Item key={key} name={key} value={value} />;
+          })}
+        </GeneralDetails>
       </Widget.Body>
-    </>
+    </Widget>
   );
 };

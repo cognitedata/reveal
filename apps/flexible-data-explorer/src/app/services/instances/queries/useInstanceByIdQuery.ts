@@ -1,9 +1,8 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
-import head from 'lodash/head';
 import { useParams } from 'react-router-dom';
+import { extractFieldsFromSchema } from '../../extractors';
 import { FDMClient } from '../../FDMClient';
-import { getInstanceById } from '../network/getInstanceById';
 
 export const useInstancesQuery = () => {
   const sdk = useSDK();
@@ -18,15 +17,32 @@ export const useInstancesQuery = () => {
         return Promise.resolve();
       }
 
-      const result = await getInstanceById(client, {
+      const model = await client.getDataModelById({
         space,
         dataModel,
-        version: '1', // FIX_ME
+        version,
+      });
+      const schema = client.parseSchema(model?.graphQlDml);
+
+      const extractedFields = extractFieldsFromSchema(schema, dataType);
+
+      const fields = extractedFields
+        ?.filter((item) => !item.type.custom)
+        .map((item) => item.name);
+
+      if (!fields) {
+        return Promise.resolve();
+      }
+
+      const instance = await client.getInstanceById<any>(fields, {
+        space,
+        dataModel,
+        version, // FIX_ME
         dataType,
         externalId,
       });
 
-      return head(result.getActorById.items);
+      return instance;
     }
   );
 };
