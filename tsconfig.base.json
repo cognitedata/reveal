@@ -54,13 +54,16 @@
         "apps/platypus/src/environments/environment.ts"
       ],
       "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
+      "@platypus/@cognite/fdm-client": [
+        "libs/@cognite/fdm-client/src/index.ts"
+      ],
       "@platypus/platypus-common-utils": [
         "libs/data-modeling/platypus-common-utils/src/index.ts"
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@platypus/@cognite/fdm-client": ["libs/@cognite/fdm-client/src/index.ts"]
+      "@cognite/copilot/*": ["apps/copilot/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
