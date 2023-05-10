@@ -842,6 +842,7 @@ const autoPageToArray = async <T>(
 };
 
 const RESERVED_KEYWORDS = [
+  '__typename',
   'externalId',
   'space',
   'createdTime',
@@ -888,6 +889,9 @@ const normalizeIngestionItem = (
           'externalId' in value
         ) {
           return [key, value.externalId];
+        }
+        if (value === '' && fieldType?.type.name !== 'String') {
+          return [key, null];
         }
         return [key, value];
       })
