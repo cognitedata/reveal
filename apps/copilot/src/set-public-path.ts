@@ -5,4 +5,5 @@ import { setPublicPath } from 'systemjs-webpack-interop';
  * https://single-spa.js.org/docs/faq/#code-splits
  */
 
-setPublicPath('@cognite/cdf-copilot');
+// setPublicPath('@cognite/cdf-copilot');
+setPublicPath('@cognite/cdf-ui-notebook');

@@ -23,6 +23,11 @@ module.exports = composePlugins(
       return config;
     }
 
+    if (nodeEnv === 'development' && config.devServer) {
+      // Temp fix to devserver and hmr
+      config.devServer.port = 3012;
+    }
+
     return config;
   }
 );
