@@ -68,14 +68,16 @@ const CommonDataSetFilter = (
     filterArchivedItems: true,
   });
 
-  const options = datasetOptions.map((dataset: DataSetInternal) => {
-    const name = dataset?.name || '';
-    const label = name.length > 0 ? name : `${dataset.id}`;
-    return {
-      label: `${label}`,
-      value: dataset.id,
-    };
-  });
+  const options = datasetOptions
+    .map((dataset: DataSetInternal) => {
+      const name = dataset?.name || '';
+      const label = name.length > 0 ? name : `${dataset.id}`;
+      return {
+        label: `${label}`,
+        value: dataset.id,
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   return <DataSetFilter {...props} isError={isError} options={options} />;
 };
