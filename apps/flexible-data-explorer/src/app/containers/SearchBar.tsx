@@ -31,7 +31,6 @@ export const SearchBar = () => {
         <StyledInput
           onKeyUp={(e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
-              console.log('HEY');
               navigate.toSearchPage(query);
             }
           }}
@@ -44,20 +43,22 @@ export const SearchBar = () => {
             setQuery(e.target.value);
           }}
         />
-        {isFocused && <Container>Hi</Container>}
+        {/* {isFocused && <Container>Hi</Container>} */}
       </InputContent>
     </>
   );
 };
 
 const InputContent = styled.div<{ focused: boolean }>`
-  width: 100%;
+  width: 80%;
   background-color: white;
   height: 52px;
   border-radius: 64px;
-  display: flex;
+
+  margin: 24px;
+
   padding: 0 8px;
-  position: relative;
+  /* position: relative; */
   border: 1px solid rgba(210, 212, 218, 0.56);
 
   /* outline: ${(props) => (props.focused ? '1px solid red' : 'none')}; */
@@ -73,11 +74,4 @@ const StyledInput = styled.input.attrs({ type: 'search' })`
   &:focus {
     outline: none;
   }
-`;
-
-const Container = styled.div`
-  background-color: red;
-  position: absolute;
-  top: 54px;
-  width: 100%;
 `;

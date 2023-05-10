@@ -12,7 +12,6 @@ import {
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import styleScope from './styleScope';
 
@@ -50,7 +49,7 @@ Drawer.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([cogsStyles, monacoStyles]);
+  const isStyleLoaded = useGlobalStyles([cogsStyles]);
 
   if (!isStyleLoaded) {
     return <Loader />;

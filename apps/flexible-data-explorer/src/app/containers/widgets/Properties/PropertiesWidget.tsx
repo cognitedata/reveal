@@ -1,16 +1,15 @@
-import { Widget, BaseWidgetProps } from '../../../components/widget/Widget';
+import { BaseWidgetProps } from '../../../components/widget/Widget';
 import { PropertiesCollapsed } from './PropertiesCollapsed';
 import { PropertiesExpanded } from './PropertiesExpanded';
 
+export interface PropertiesProps extends BaseWidgetProps {
+  data?: Record<string, any>;
+}
+
 // NOTE: Generalize the toggle between expanded and collapse, somehow.
-export const PropertiesWidget = (props: BaseWidgetProps) => {
-  return (
-    <Widget id={props.id}>
-      {props.isExpanded ? (
-        <PropertiesExpanded {...props} />
-      ) : (
-        <PropertiesCollapsed {...props} />
-      )}
-    </Widget>
-  );
+export const PropertiesWidget: React.FC<PropertiesProps> = (props) => {
+  if (props.isExpanded) {
+    return <PropertiesExpanded {...props} />;
+  }
+  return <PropertiesCollapsed {...props} />;
 };

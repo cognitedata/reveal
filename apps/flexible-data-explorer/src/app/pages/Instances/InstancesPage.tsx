@@ -1,26 +1,17 @@
-import { useParams } from 'react-router-dom';
-import { Page } from '../../components/page/Page';
-import { Button } from '../../components/buttons/Button';
+import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets/Properties/PropertiesWidget';
 import { useInstancesQuery } from '../../services/instances/queries/useInstanceByIdQuery';
 
 export const InstancesPage = () => {
-  const { dataType, externalId } = useParams();
+  const { data, isLoading } = useInstancesQuery();
 
-  const { isLoading } = useInstancesQuery();
+  console.log('data', data);
 
   return (
-    <Page>
-      <Page.Header title={externalId} subtitle={dataType} loading={isLoading}>
-        <Button.OpenIn />
-        <Button.Favorite />
-      </Page.Header>
-
-      <Page.Body loading={isLoading}>
-        <Page.Dashboard>
-          <PropertiesWidget id="t" />
-        </Page.Dashboard>
-      </Page.Body>
-    </Page>
+    <Page.Dashboard loading={isLoading}>
+      <Page.Widgets>
+        <PropertiesWidget id="Properties" data={data} columns={2} />
+      </Page.Widgets>
+    </Page.Dashboard>
   );
 };

@@ -1,8 +1,9 @@
 import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { PageBody } from './components/PageBody';
-import { PageHeader } from './components/PageHeader';
 import { PageDashboard } from './components/PageDashboard';
+import { PageHeader } from './components/PageHeader';
+import { PageWidgets } from './components/PageWidgets';
 
 export const Page = ({ children }: PropsWithChildren) => {
   return <PageContainer>{children}</PageContainer>;
@@ -10,7 +11,9 @@ export const Page = ({ children }: PropsWithChildren) => {
 
 Page.Header = PageHeader;
 Page.Body = PageBody;
+
 Page.Dashboard = PageDashboard;
+Page.Widgets = PageWidgets;
 
 const PageContainer = styled.div`
   position: relative;

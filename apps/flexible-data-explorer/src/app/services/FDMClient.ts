@@ -2,6 +2,10 @@
 // https://github.com/cognitedata/industry-apps/blob/master/packages/e2e-fdm/src/fdm/fdm-client.ts
 
 import type { CogniteClient } from '@cognite/sdk';
+import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { query } from 'gql-query-builder';
+import Fields from 'gql-query-builder/build/Fields';
+import head from 'lodash/head';
 
 export interface FDMError {
   extensions: { classification: string };
@@ -16,121 +20,184 @@ export interface FDMError {
  * You can create your own class that extends from this one
  * and add methods that handle data that is specific to your application.
  */
-export class FDMClient {
-  private DMS_HEADERS: Record<string, string>;
+class BaseFDMClient {
+  // private DMS_HEADERS: Record<string, string>;
   protected BASE_URL: string;
   protected client: CogniteClient;
 
   constructor(client: CogniteClient) {
     this.client = client;
     this.BASE_URL = `${client.getBaseUrl()}/api/v1/projects/${client.project}`;
-    this.DMS_HEADERS = { 'cdf-version': 'alpha' };
+    // this.DMS_HEADERS = { 'cdf-version': 'alpha' };
   }
 
-  private get baseUrlDms(): string {
-    return `${this.BASE_URL}/models/instances`;
-  }
-
-  private getGraphQLBaseURL(
-    space: string,
-    dataModel: string,
-    version: string
-  ): string {
-    return `${this.BASE_URL}/userapis/spaces/${space}/datamodels/${dataModel}/versions/${version}/graphql`;
-  }
-
-  private get baseUrlDml(): string {
-    return `${this.BASE_URL}/dml/graphql`;
-  }
-
-  private async performRequest<T>(
-    { query, variables }: { query: string; variables?: Record<string, any> },
-    {
-      space,
-      dataModel,
-      version,
-    }: { space: string; dataModel: string; version: string }
-  ): Promise<T> {
+  private request<T>(
+    url: string,
+    data: { query: string; variables?: Record<string, any> }
+  ) {
     return this.client
-      .post<{ data: T; errors: FDMError[] }>(
-        this.getGraphQLBaseURL(space, dataModel, version),
-        {
-          data: {
-            query,
-            variables,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.errors) {
-          const { errors } = res.data;
+      .post<{ data: T; errors: FDMError[] }>(url, {
+        data,
+      })
+      .then((result) => {
+        if (result.data.errors) {
+          const { errors } = result.data;
           throw new Error(
             errors.length > 0
               ? JSON.stringify(errors.map((error) => error.message))
               : 'Error connecting to server'
           );
         }
-        return res.data.data;
-      });
-  }
-
-  // async introspectionQuery(
-  //   model: string,
-  //   type: 'CUSTOMER' | 'APP' = 'CUSTOMER'
-  // ): Promise<IntrospectionQueryField[]> {
-  //   // Assigning the function to a const makes it lose 'this' context. .bind() fixes that
-  //   const method =
-  //     type === 'CUSTOMER'
-  //       ? this.customerGraphQL.bind(this)
-  //       : this.appGraphQL.bind(this);
-
-  //   return this.method<{
-  //     allFields: { fields: { name: string; type: { name: string } }[] };
-  //   }>(
-  //     gql`
-  //       query Introspection($model: String!) {
-  //         allFields: __type(name: $model) {
-  //           name
-  //           fields {
-  //             name
-  //             type {
-  //               name
-  //             }
-  //           }
-  //         }
-  //       }
-  //     `,
-  //     { model }
-  //   ).then((res) =>
-  //     res.allFields.fields.map((field) => ({
-  //       field: field.name,
-  //       kind: field.type.name,
-  //     }))
-  //   );
-  // }
-
-  public async listDataModels<T>(
-    query: string,
-    variables: Record<string, any>
-  ) {
-    return this.client
-      .post<{ data: T; errors: FDMError[] }>(this.baseUrlDml, {
-        data: {
-          query,
-          variables,
-        },
-      })
-      .then((result) => {
         return result.data.data;
       });
   }
 
+  public gqlRequest<T>(
+    data: { query: string; variables?: Record<string, any> },
+    {
+      space,
+      dataModel,
+      version,
+    }: { space: string; dataModel: string; version: string }
+  ): Promise<T> {
+    const url = `${this.BASE_URL}/userapis/spaces/${space}/datamodels/${dataModel}/versions/${version}/graphql`;
+
+    return this.request<T>(url, data);
+  }
+
+  public dmlRequest<T>(data: {
+    query: string;
+    variables?: Record<string, any>;
+  }) {
+    const url = `${this.BASE_URL}/dml/graphql`;
+
+    return this.request<T>(url, data);
+  }
+
+  public async introspectionQuery(
+    dataType: string,
+    headers: { space: string; dataModel: string; version: string }
+  ) {
+    const result = query({
+      operation: { name: '__type', alias: 'allFields' },
+      fields: [
+        'name',
+        {
+          fields: [
+            'name',
+            { type: ['name', 'kind', { ofType: ['name', 'kind'] }] },
+          ],
+        },
+      ],
+      variables: {
+        name: {
+          value: dataType,
+          required: true,
+        },
+      },
+    });
+
+    return this.gqlRequest<IntrospectionResponse>(result, headers).then(
+      (data) => {
+        return data.allFields.fields.map((field) => ({
+          field: field.name,
+          kind: field.type.name || field.type.ofType.name,
+        }));
+      }
+    );
+  }
+
+  public parseSchema(graphQlDml?: string) {
+    if (!graphQlDml) {
+      return undefined;
+    }
+
+    return new GraphQlUtilsService().parseSchema(graphQlDml);
+  }
+}
+
+export class FDMClient extends BaseFDMClient {
+  public async listDataModels(limit = 100) {
+    const operation = 'listGraphQlDmlVersions';
+
+    const data = query({
+      operation,
+      fields: [
+        {
+          items: [
+            'space',
+            'externalId',
+            'version',
+            'name',
+            'description',
+            'createdTime',
+            'lastUpdatedTime',
+          ],
+        },
+      ],
+      variables: { limit },
+    });
+
+    const {
+      [operation]: { items },
+    } = await this.dmlRequest<{
+      listGraphQlDmlVersions: {
+        items: DataModelList[];
+      };
+    }>(data);
+
+    return items;
+  }
+
+  public async getDataModelById({
+    space,
+    dataModel,
+    version,
+  }: {
+    space: string;
+    dataModel: string;
+    version: string;
+  }) {
+    const operation = 'graphQlDmlVersionsById';
+
+    const data = query({
+      operation,
+      fields: [
+        {
+          items: ['name', 'description', 'graphQlDml', 'version'],
+        },
+      ],
+      variables: {
+        space: { value: space, required: true },
+        externalId: { value: dataModel, required: true },
+      },
+    });
+
+    const {
+      [operation]: { items },
+    } = await this.dmlRequest<{
+      [operation]: {
+        items: {
+          graphQlDml: string;
+          version: string;
+          name: string;
+          description: string;
+        }[];
+      };
+    }>(data);
+
+    const item = items.find((item) => item.version === String(version));
+
+    return item;
+  }
+
   public async getInstanceById<T>(
-    payload: {
-      query: string;
-      variables?: Record<string, unknown>;
-    },
-    headers: {
+    fields: Fields,
+    {
+      dataType,
+      externalId,
+      ...headers
+    }: {
       space: string;
       dataModel: string;
       version: string;
@@ -138,9 +205,52 @@ export class FDMClient {
       externalId: string;
     }
   ) {
-    return this.performRequest<T>(payload, headers);
+    const operation = `get${dataType}ById`;
+
+    const payload = query({
+      operation,
+      fields: [
+        {
+          items: fields,
+        },
+      ],
+      variables: {
+        instance: {
+          type: 'InstanceRef = {space: "", externalId: ""}',
+          value: { externalId, space: headers.space },
+        },
+      },
+    });
+
+    const {
+      [operation]: { items },
+    } = await this.gqlRequest<{
+      [operation in string]: {
+        items: T[];
+      };
+    }>(payload, headers);
+
+    return head(items);
+
+    // return this.gqlRequest<T>(payload, headers);
   }
 }
+
+type IntrospectionResponse = {
+  allFields: {
+    fields: {
+      name: string;
+      type: {
+        name: string;
+        kind: 'scalar' | 'object';
+        ofType: {
+          name: string;
+          kind: 'scalar' | 'object';
+        };
+      };
+    }[];
+  };
+};
 
 // public async upsertNodes<T extends { externalId?: string }>(
 //   modelName: string,
@@ -187,3 +297,13 @@ export class FDMClient {
 //     withCredentials: true,
 //   });
 // }
+
+export type DataModelList = {
+  space: string;
+  externalId: string;
+  version: string;
+  name?: string;
+  description?: string;
+  createdTime?: string | number;
+  lastUpdatedTime?: string | number;
+};

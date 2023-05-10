@@ -1,5 +1,6 @@
 import { Button as DefaultButton } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
+import { ButtonEsc } from './ButtonEsc';
 
 import { ButtonFavorite } from './ButtonFavorite';
 import { ButtonFullscreen } from './ButtonFullscreen';
@@ -12,3 +13,4 @@ export const Button = (props: ComponentProps<typeof DefaultButton>) => {
 Button.Favorite = ButtonFavorite;
 Button.Fullscreen = ButtonFullscreen;
 Button.OpenIn = ButtonOpenIn;
+Button.ButtonEsc = ButtonEsc;

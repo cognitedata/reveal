@@ -16,6 +16,7 @@ let lifecycles = {
 } as any;
 
 if (environment.APP_ENV === 'mock' || environment.APP_ENV === 'development') {
+  // For mock env, the app is running as standalone app so it is mounted on root el
   const container = document.getElementById('root');
   const root = ReactDOMClient.createRoot(container!);
   root.render(<AppWrapper />);
