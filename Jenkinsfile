@@ -6,6 +6,7 @@ static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
   'coding-conventions',
+  'copilot',
 ]
 
 /* 
@@ -22,12 +23,14 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
   'coding-conventions': 'coding-conventions',
+  'copilot': 'copilot',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
   'coding-conventions': "@cognite/cdf-coding-conventions",
+  'copilot': "@cognite/cdf-copilot",
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -85,6 +88,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'copilot': 'single-branch',
 ]
 
 // == End of customization. Everything below here is common. == \\
