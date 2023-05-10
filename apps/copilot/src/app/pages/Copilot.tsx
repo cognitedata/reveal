@@ -6,7 +6,6 @@ import {
   BotUIMessageList,
   BotUIAction,
   useBotUI,
-  useBotUIAction,
   // useBotUIAction,
 } from '@botui/react';
 import { Body, Button, Flex, Icon, Textarea, Title } from '@cognite/cogs.js';
