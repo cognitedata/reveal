@@ -4,6 +4,7 @@ import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   filter?: InternalTimeseriesFilters;
@@ -24,12 +25,15 @@ export const useTimeseriesMetadataFilterOptions = ({
     query,
   });
 
+  const omittedFilter = omit(filter, 'metadata');
+
   const { data: dynamicData = [] } = useTimeseriesMetadataKeysAggregateQuery({
     query,
     advancedFilter: mapFiltersToTimeseriesAdvancedFilters(
-      omit(filter, 'metadata'),
+      omittedFilter,
       searchQuery
     ),
+    filter: getAssetSubtreeIdFilter(omittedFilter),
   });
 
   const options = useMemo(() => {

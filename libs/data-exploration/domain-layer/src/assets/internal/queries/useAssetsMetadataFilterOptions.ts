@@ -7,6 +7,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   query?: string;
@@ -27,12 +28,15 @@ export const useAssetsMetadataFilterOptions = ({
     query,
   });
 
+  const omittedFilter = omit(filter, 'metadata');
+
   const { data: dynamicData = [] } = useAssetsMetadataKeysAggregateQuery({
     query,
     advancedFilter: mapFiltersToAssetsAdvancedFilters(
-      omit(filter, 'metadata'),
+      omittedFilter,
       searchQuery
     ),
+    filter: getAssetSubtreeIdFilter(omittedFilter),
   });
 
   const options = useMemo(() => {

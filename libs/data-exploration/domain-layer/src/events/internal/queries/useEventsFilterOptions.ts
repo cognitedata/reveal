@@ -10,6 +10,7 @@ import {
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   property: EventProperty;
@@ -53,7 +54,7 @@ export const useEventsFilterOptions = ({
      * But assetSubtreeIds not supported in advanced filter.
      * so we have to use filter for that.
      */
-    filter: omittedFilter,
+    filter: getAssetSubtreeIdFilter(omittedFilter),
     query,
   });
 

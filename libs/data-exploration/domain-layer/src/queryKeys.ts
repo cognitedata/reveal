@@ -9,20 +9,22 @@ export const queryKeys = {
   all: ['cdf'] as const,
   // SEQUENCE
   sequence: () => [...queryKeys.all, 'sequence'] as const,
-  sequencesMetadata: (query?: string, advancedFilter?: any) =>
+  sequencesMetadata: (query?: string, advancedFilter?: any, filter?: any) =>
     [
       ...queryKeys.sequence(),
       'metadata',
       'keys',
       query,
       advancedFilter,
+      filter,
     ] as const,
   listSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || [])] as const,
   sequencesMetadataValues: (
     metadataKey: string,
     query?: string,
-    advancedFilter?: any
+    advancedFilter?: any,
+    filter?: any
   ) =>
     [
       ...queryKeys.sequence(),
@@ -31,6 +33,7 @@ export const queryKeys = {
       metadataKey,
       query,
       advancedFilter,
+      filter,
     ] as const,
   aggregateSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || []), 'aggregate'] as const,
@@ -41,18 +44,20 @@ export const queryKeys = {
     [...queryKeys.timeseries(), ...(input || [])] as const,
   aggregateTimeseries: (input?: any[]) =>
     [...queryKeys.timeseries(), ...(input || []), 'aggregate'] as const,
-  timeseriesMetadata: (query?: string, advancedFilter?: any) =>
+  timeseriesMetadata: (query?: string, advancedFilter?: any, filter?: any) =>
     [
       ...queryKeys.timeseries(),
       'metadata',
       'keys',
       query,
       advancedFilter,
+      filter,
     ] as const,
   timeseriesMetadataValues: (
     metadataKey: string,
     query?: string,
-    advancedFilter?: any
+    advancedFilter?: any,
+    filter?: any
   ) =>
     [
       ...queryKeys.timeseries(),
@@ -61,6 +66,7 @@ export const queryKeys = {
       metadataKey,
       query,
       advancedFilter,
+      filter,
     ] as const,
   timeseriesUniqueValues: (
     property: string,
@@ -90,7 +96,8 @@ export const queryKeys = {
   eventsMetadataValues: (
     metadataKey: string,
     query?: string,
-    advancedFilter?: any
+    advancedFilter?: any,
+    filter?: any
   ) =>
     [
       ...queryKeys.events(),
@@ -99,6 +106,7 @@ export const queryKeys = {
       metadataKey,
       query,
       advancedFilter,
+      filter,
     ] as const,
   eventsUniqueValues: (
     property: string,
@@ -118,8 +126,15 @@ export const queryKeys = {
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || []), 'aggregate'] as const,
-  eventsMetadata: (query?: string, advancedFilter?: any) =>
-    [...queryKeys.events(), 'metadata', 'keys', query, advancedFilter] as const,
+  eventsMetadata: (query?: string, advancedFilter?: any, filter?: any) =>
+    [
+      ...queryKeys.events(),
+      'metadata',
+      'keys',
+      query,
+      advancedFilter,
+      filter,
+    ] as const,
 
   // ASSETS
   assets: () => [...queryKeys.all, 'assets'] as const,
@@ -137,7 +152,8 @@ export const queryKeys = {
     property: string,
     query?: string,
     advancedFilter?: any,
-    searchQuery?: string
+    searchQuery?: string,
+    filter?: any
   ) =>
     [
       ...queryKeys.assets(),
@@ -146,13 +162,22 @@ export const queryKeys = {
       query,
       advancedFilter,
       searchQuery,
+      filter,
     ] as const,
-  assetsMetadata: (query?: string, advancedFilter?: any) =>
-    [...queryKeys.assets(), 'metadata', 'keys', query, advancedFilter] as const,
+  assetsMetadata: (query?: string, advancedFilter?: any, filter?: any) =>
+    [
+      ...queryKeys.assets(),
+      'metadata',
+      'keys',
+      query,
+      advancedFilter,
+      filter,
+    ] as const,
   assetsMetadataValues: (
     metadataKey: string,
     query?: string,
-    advancedFilter?: any
+    advancedFilter?: any,
+    filter?: any
   ) =>
     [
       ...queryKeys.assets(),
@@ -161,6 +186,7 @@ export const queryKeys = {
       metadataKey,
       query,
       advancedFilter,
+      filter,
     ] as const,
   listBasicAssetMappings: (id: number) =>
     [...queryKeys.retrieveAsset(id), 'basic-mappings'] as const,
