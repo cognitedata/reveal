@@ -29,7 +29,7 @@ const App = () => {
   const appName = 'cdf-access-management';
   const projectName = getProject();
   const env = getEnv();
-  const flagProviderApiToken = "v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE";
+  const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
 
   return (
     <I18nWrapper
