@@ -14,7 +14,11 @@ const getU1Presence = ({
   identifier: string;
   docs: ListResponse<FileInfo[]>;
 }) =>
-  docs.items.some((doc) => doc.name.startsWith(identifier)) ? 'Yes' : 'No';
+  docs.items.some((doc) =>
+    doc.name.toUpperCase().startsWith(identifier.toUpperCase())
+  )
+    ? 'Yes'
+    : 'No';
 
 export const getEquipmentList = async (
   client: CogniteClient,
@@ -48,7 +52,7 @@ export const getEquipmentList = async (
       else if (equipmentState?.modifiedBy) status = EquipmentStatus.ONGOING;
       const type = getEquipmentType(eq.type);
       const u1doc = getU1Presence({
-        identifier: `${facility.name}_${unitId}_${eq.id}`,
+        identifier: `${facility.name}_${unitId}_${eq.id}_U1`,
         docs,
       });
 

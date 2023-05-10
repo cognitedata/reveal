@@ -34,8 +34,8 @@ export const facilityList = (project: string): Facility[] =>
     {
       id: '125095',
       path: 'u1test',
-      name: 'U1Test',
-      shortName: 'U1Test',
+      name: 'U1TEST',
+      shortName: 'U1TEST',
       datasetId: 1771976604628956,
       env: ['development', 'staging', 'production'],
       project: 'accenture-p66-aimi-dev',
