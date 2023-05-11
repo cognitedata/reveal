@@ -77,6 +77,7 @@ export const CreateJobsModal = ({
     onError: (e: any) => {
       notification.error({
         message: e.toString(),
+        description: e.message,
         key: 'delete-source',
       });
     },

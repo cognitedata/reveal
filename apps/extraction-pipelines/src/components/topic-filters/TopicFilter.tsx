@@ -65,6 +65,7 @@ export const TopicFilter = ({
     } catch (error: any) {
       notification.error({
         message: error.toString(),
+        description: error.message,
         key: 'delete-job',
       });
     }
@@ -90,6 +91,7 @@ export const TopicFilter = ({
     } catch (error: any) {
       notification.error({
         message: error.toString(),
+        description: error.message,
         key: 'update-job',
       });
     }

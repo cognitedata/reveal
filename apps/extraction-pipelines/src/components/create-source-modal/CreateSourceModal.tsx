@@ -63,6 +63,7 @@ export const CreateSourceModal = ({
     onError: (e: any) => {
       notification.error({
         message: e.toString(),
+        description: e.message,
         key: 'create-source',
       });
     },
