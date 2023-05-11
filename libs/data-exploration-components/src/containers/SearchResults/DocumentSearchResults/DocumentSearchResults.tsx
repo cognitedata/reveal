@@ -38,12 +38,10 @@ export interface DocumentSearchResultsProps {
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   onFileClicked?: (file: FileInfo) => boolean;
   selectedRow?: Record<string | number, boolean>;
-  enableAdvancedFilters?: boolean;
   isDocumentsGPTEnabled?: boolean;
 }
 
 export const DocumentSearchResults = ({
-  enableAdvancedFilters,
   isDocumentsGPTEnabled,
   query = '',
   filter = {},
@@ -160,7 +158,6 @@ export const DocumentSearchResults = ({
         tableHeaders={
           <>
             <SearchResultToolbar
-              enableAdvancedFilters={enableAdvancedFilters}
               type={resourceType}
               style={{ width: '100%' }}
               showCount={true}
@@ -178,7 +175,6 @@ export const DocumentSearchResults = ({
                 trackUsage &&
                   trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.UPLOAD, {
                     table: resourceType,
-                    isAdvanceFiltersEnabled: enableAdvancedFilters,
                   });
               }}
               disabled={!hasEditPermissions}

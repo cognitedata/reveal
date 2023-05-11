@@ -14,7 +14,6 @@ export const SearchResultToolbar = ({
   showCount?: boolean;
   resultCount?: React.ReactNode;
   style?: React.CSSProperties;
-  enableAdvancedFilters?: boolean;
 }) => {
   return (
     <StyledSpacedRow style={style}>
