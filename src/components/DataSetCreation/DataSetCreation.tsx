@@ -389,6 +389,11 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
     setIsEditing(true);
   }, []);
 
+  const createButtonTooltipContent =
+    dataSetName === '' || dataSetDescription === ''
+      ? t('dataset-creation-please-fill-in')
+      : '';
+
   return (
     <div>
       <Card style={{ marginBottom: '10px', padding: '24px' }}>
@@ -436,13 +441,9 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         {!props.dataSet && isEditing && (
           <span style={{ float: 'right' }}>
             <Tooltip
-              css={{ float: 'right' }}
-              content={
-                dataSetName === '' || dataSetDescription === ''
-                  ? t('dataset-creation-please-fill-in')
-                  : ''
-              }
+              content={createButtonTooltipContent}
               appendTo={getContainer}
+              disabled={!createButtonTooltipContent}
             >
               <CreateButton
                 onClick={() => createSet()}
