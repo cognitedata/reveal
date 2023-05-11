@@ -61,7 +61,9 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
       labels.splice(0, labels.length);
     }
 
-    //smartOverlayTool.removeOverlayCollection(overlays[0]);
+    // Testing proper removal of overlays
+    smartOverlayTool.removeOverlayCollection(overlays[2]);
+    overlays[5].removeOverlays(overlays[5].getOverlays().slice(0, 50));
 
     return Promise.resolve();
   }

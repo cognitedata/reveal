@@ -109,7 +109,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     const { _viewer: viewer } = this;
 
     const removedCollection = this._overlayCollections.find(collection => collection === overlayCollection);
-    this._overlayCollections = this._overlayCollections.filter(collection => collection === overlayCollection);
+    this._overlayCollections = this._overlayCollections.filter(collection => collection !== overlayCollection);
 
     if (removedCollection) {
       viewer.removeObject3D(removedCollection);
