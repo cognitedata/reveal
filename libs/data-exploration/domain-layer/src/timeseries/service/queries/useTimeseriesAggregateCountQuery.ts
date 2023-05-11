@@ -20,9 +20,8 @@ export const useTimeseriesAggregateCountQuery = (
     query?: string;
     timeseriesFilters: InternalTimeseriesFilters;
   },
-
-  options?: UseQueryOptions,
-  searchConfig?: TimeseriesConfigType
+  searchConfig?: TimeseriesConfigType,
+  options?: UseQueryOptions
 ) => {
   const sdk = useSDK();
 

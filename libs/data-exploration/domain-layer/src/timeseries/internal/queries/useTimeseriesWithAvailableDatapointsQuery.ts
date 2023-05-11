@@ -20,8 +20,8 @@ export const useTimeseriesWithAvailableDatapointsQuery = (
     sortBy?: TableSortBy[];
     dateRange?: [Date, Date];
   },
-  options?: UseInfiniteQueryOptions,
-  searchConfig?: TimeseriesConfigType
+  searchConfig?: TimeseriesConfigType,
+  options?: UseInfiniteQueryOptions
 ) => {
   const { data: timeseries, ...rest } =
     useTimeseriesSearchResultWithLabelsQuery(

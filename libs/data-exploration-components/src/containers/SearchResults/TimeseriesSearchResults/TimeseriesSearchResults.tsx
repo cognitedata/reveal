@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Asset, Timeseries } from '@cognite/sdk';
 import {
   ResourceItem,
-  convertResourceType,
   DateRangeProps,
 } from '@data-exploration-components/types';
 import { TimeseriesTable } from '@data-exploration-components/containers/Timeseries';
@@ -11,17 +10,13 @@ import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedR
 
 import { Flex } from '@cognite/cogs.js';
 
-import { useResourceResults } from '..';
-
 import {
-  InternalTimeseriesData,
   TableSortBy,
   useTimeseriesAggregateCountQuery,
   useTimeseriesWithAvailableDatapointsQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from '@data-exploration-components/components';
 import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
@@ -39,14 +34,11 @@ export const TimeseriesSearchResults = ({
   onFilterChange,
   selectedRow,
   relatedResourceType,
-  enableAdvancedFilters,
   showDatePicker = false,
   ...rest
 }: {
   query?: string;
   showCount?: boolean;
-
-  enableAdvancedFilters?: boolean;
   initialView?: string;
   filter?: InternalTimeseriesFilters;
   showRelatedResources?: boolean;
@@ -58,26 +50,8 @@ export const TimeseriesSearchResults = ({
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & DateRangeProps) => {
-  const api = convertResourceType('timeSeries');
-
   const timeseriesSearchConfig =
     useGetSearchConfigFromLocalStorage('timeSeries');
-
-  const { canFetchMore, fetchMore, isFetched, items } =
-    useResourceResults<InternalTimeseriesData>(
-      api,
-      query,
-      filter,
-      undefined,
-      dateRange
-    );
-
-  const { count: itemCount } = useResultCount({
-    type: 'timeSeries',
-    filter,
-    query,
-    api: query && query.length > 0 ? 'search' : 'list',
-  });
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [hideEmptyData, setHideEmptyData] = useState(false);
@@ -89,7 +63,6 @@ export const TimeseriesSearchResults = ({
         sortBy,
         dateRange,
       },
-      { enabled: enableAdvancedFilters },
       timeseriesSearchConfig
     );
 
@@ -98,18 +71,14 @@ export const TimeseriesSearchResults = ({
       timeseriesFilters: filter,
       query,
     },
-    { enabled: enableAdvancedFilters },
     timeseriesSearchConfig
   );
 
-  const totalDataCount = enableAdvancedFilters
-    ? countData?.count || 0
-    : itemCount;
-  const timeseries = enableAdvancedFilters ? data : items;
+  const totalDataCount = countData?.count || 0;
 
-  const filteredTimeseries = timeseries.filter((item) => item.hasDatapoints);
+  const filteredTimeseries = data.filter((item) => item.hasDatapoints);
 
-  const timeseriesData = hideEmptyData ? filteredTimeseries : timeseries;
+  const timeseriesData = hideEmptyData ? filteredTimeseries : data;
 
   return (
     <>
@@ -130,16 +99,14 @@ export const TimeseriesSearchResults = ({
             hideEmptyData={hideEmptyData}
             setHideEmptyData={setHideEmptyData}
             filteredTimeseriesLength={filteredTimeseries.length}
-            loadedCount={timeseries.length}
+            loadedCount={data.length}
             totalCount={totalDataCount}
           />
         }
         data={timeseriesData}
-        isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
-        fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-        hasNextPage={
-          enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
-        }
+        isDataLoading={isLoading}
+        fetchMore={fetchNextPage}
+        hasNextPage={!isPreviousData && hasNextPage}
         tableSubHeaders={
           <AppliedFiltersTags
             filter={filter}
@@ -150,7 +117,7 @@ export const TimeseriesSearchResults = ({
         showLoadButton
         onRowClick={(currentTimeseries) => onClick(currentTimeseries)}
         onRootAssetClick={onRootAssetClick}
-        enableSorting={enableAdvancedFilters}
+        enableSorting
         sorting={sortBy}
         onSort={setSortBy}
         relatedResourceType={relatedResourceType}
