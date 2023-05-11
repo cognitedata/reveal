@@ -44,7 +44,7 @@ export const Image360HistoricalOverviewToolbar = ({stationId, stationName, colle
 };
 
 const StyledFlex = styled(Flex)`
-  max-width: 100px;
+  max-width: 200px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
@@ -56,25 +56,20 @@ const StyledFlex = styled(Flex)`
 `;
 
 const StyledDetail = styled(Detail)`
-  max-width: 100px;
+  max-width: 200px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  /* or 143% */
-
   letter-spacing: -0.006em;
   font-feature-settings: 'ss04' on;
-
-  /* text-icon/strong */
-
   color: rgba(0, 0, 0, 0.9);
 `;
 
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
-  max-width: 100px;
+  max-width: 200px;
   height: 96px;
 `;
 
