@@ -1,20 +1,10 @@
 import { useMemo, useState } from 'react';
-import {
-  Button,
-  Flex,
-  Icon,
-  Chip,
-  Checkbox,
-  toast,
-  Table,
-} from '@cognite/cogs.js';
+import { Button, Flex, Icon, Chip, Checkbox, Table } from '@cognite/cogs.js';
 import { TableNoResults } from '@cognite/cdf-utilities';
 import DataSetEditor from 'pages/DataSetEditor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useHandleFilters } from 'utils/filterUtils';
-import { setItemInStorage } from 'utils/localStorage';
-import { getContainer } from 'utils/shared';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';

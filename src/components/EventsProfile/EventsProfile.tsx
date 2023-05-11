@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DrawerHeader, ItemLabel } from 'utils/styledComponents';
+import { ItemLabel } from 'utils/styledComponents';
 import Drawer from 'components/Drawer';
-import theme from 'styles/theme';
 import sdk from '@cognite/cdf-sdk-singleton';
 import Table from 'antd/lib/table';
 import handleError from 'utils/handleError';

@@ -37,7 +37,6 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
   const { t } = useTranslation();
   const { rawTablesColumnsWithExtpipe } = useRawTableColumns();
   const [rawList, setRawList] = useState<RawExtpipeWithUpdateTime[]>([]);
-  const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
 
   const getRawTableExtpipeLastUpdateTime = useCallback(async () => {
     const combinedRaws =
@@ -46,7 +45,6 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       combinedRaws.map((raw) => updateRawTableWithLastUpdate(raw, t))
     );
     setRawList(rawTables);
-    setLoadingRaw(false);
   }, [dataSet, t]);
 
   useEffect(() => {
