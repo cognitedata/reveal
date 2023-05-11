@@ -20,5 +20,6 @@ export const normalizeEvents = (
     metadata: item.metadata,
 
     description: item.description,
+    source: item.source,
   }));
 };
