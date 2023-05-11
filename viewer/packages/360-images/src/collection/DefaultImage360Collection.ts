@@ -43,7 +43,7 @@ export class DefaultImage360Collection implements Image360Collection {
 
   private _defaultStyle: Image360AnnotationAppearance = {};
 
-  private _image360DataProvider: Image360DataProvider;
+  private readonly _image360DataProvider: Image360DataProvider;
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
@@ -215,7 +215,7 @@ export class DefaultImage360Collection implements Image360Collection {
         entity
       }));
 
-      return await Promise.all(revisionsAndAnnotations);
+      return Promise.all(revisionsAndAnnotations);
     });
 
     const entityAnnotations = await Promise.all(entityAnnotationsPromises);

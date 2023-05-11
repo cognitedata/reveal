@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import { Image360Provider } from '../Image360Provider';
 import { Historical360ImageSet, Image360Face, Image360FileDescriptor } from '../types';
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk/dist/src';
-import { Image360Revision } from '@reveal/360-images';
 
 type Local360ImagesDescriptor = {
   translation: {
