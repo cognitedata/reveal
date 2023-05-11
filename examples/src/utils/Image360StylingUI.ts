@@ -21,7 +21,7 @@ export class Image360StylingUI {
       addStyle: () => {
         image360Ui.collections.forEach(coll =>
           coll.setDefaultAnnotationStyle({
-            color: new THREE.Color(state.color as THREE.ColorRepresentation),
+            color: new THREE.Color(state.color as THREE.ColorRepresentation).convertLinearToSRGB(),
             visible: state.visible
           })
         );

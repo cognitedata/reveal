@@ -346,6 +346,7 @@ export class Cognite3DViewer {
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
+    get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
     // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
     getGlobalClippingPlanes(): THREE_2.Plane[];
@@ -800,10 +801,11 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
-export type Image360AnnotationClickedDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
-
-// @public
-export type Image360AnnotationHoveredDelegate = (annotation: Image360Annotation, pointerEvent: PointerEventData, direction: Vector3) => void;
+export type Image360AnnotationIntersection = {
+    type: 'image360Annotation';
+    annotation: Image360Annotation;
+    direction: Vector3;
+};
 
 // @public
 export interface Image360Collection {
@@ -811,17 +813,9 @@ export interface Image360Collection {
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-    // (undocumented)
-    off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
-    // (undocumented)
-    off(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-    // (undocumented)
-    on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
-    // (undocumented)
-    on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
     setIconsVisibility(visible: boolean): void;

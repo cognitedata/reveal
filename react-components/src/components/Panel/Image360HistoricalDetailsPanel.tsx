@@ -7,17 +7,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 export interface Image360HistoricalDetailsPanelProps {
-  historicalCount?: number;
+  revisionCount?: number;
   onDetailsClick?: () => void;
 }
 
-export const Image360HistoricalDetailsPanel = ({historicalCount, onDetailsClick}: Image360HistoricalDetailsPanelProps) => {
-  const count = historicalCount?.toString();
+export const Image360HistoricalDetailsPanel = ({revisionCount, onDetailsClick}: Image360HistoricalDetailsPanelProps) => {
+  const count = revisionCount?.toString();
 
   return (
     <Tooltip content="360 Image historical details">
       <StyledToolBar>
-        <StyledChip icon='History' iconPlacement='right' onClick={onDetailsClick} label='Details'/>
+        <StyledChip icon='History' iconPlacement='right' onClick={onDetailsClick} label='Details' hideTooltip/>
         <StyledChip label={count} type='neutral' hideTooltip/>
       </StyledToolBar>
     </Tooltip>
@@ -36,7 +36,7 @@ const StyledToolBar = styled.div`
   background-color: white;
 `;
 
-export const StyledChip = styled(Chip)`
+const StyledChip = styled(Chip)`
   && {
     width: fit-content;
     max-height: 28px;
