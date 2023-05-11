@@ -203,9 +203,9 @@ export class Image360UI {
         return;
       }
 
-      const { entity, revision, annotation } = revisionsAndEntities[0];
+      const { image, revision, annotation } = revisionsAndEntities[0];
 
-      await viewer.enter360Image(entity, revision);
+      await viewer.enter360Image(image, revision);
 
       const rotation = new THREE.Quaternion().setFromUnitVectors(
         new THREE.Vector3(0, 0, -1),

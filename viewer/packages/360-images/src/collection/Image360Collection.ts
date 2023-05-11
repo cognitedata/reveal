@@ -10,9 +10,21 @@ import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk/dist/src';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 
+/**
+ * Result item from an asset annotation query
+ */
 export type Image360AnnotationAssetQueryResult = {
-  entity: Image360;
+  /**
+   * The Image360 to which the result annotation belongs
+   */
+  image: Image360;
+  /**
+   * The image revision to which the result annotation belongs
+   */
   revision: Image360Revision;
+  /**
+   * The found annotation
+   */
   annotation: Image360Annotation;
 };
 

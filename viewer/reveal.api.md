@@ -803,6 +803,13 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
+export type Image360AnnotationAssetQueryResult = {
+    image: Image360;
+    revision: Image360Revision;
+    annotation: Image360Annotation;
+};
+
+// @public
 export type Image360AnnotationIntersection = {
     type: 'image360Annotation';
     annotation: Image360Annotation;

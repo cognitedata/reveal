@@ -206,13 +206,13 @@ export class DefaultImage360Collection implements Image360Collection {
     const imageIds = await this._image360DataProvider.getFilesByAssetRef(assetRef);
     const imageIdSet = new Set<CogniteInternalId>(imageIds);
 
-    const entityAnnotationsPromises = this.image360Entities.map(async entity => {
-      const revisionAndAnnotationPromises = await getEntityAnnotationsForAsset(entity);
+    const entityAnnotationsPromises = this.image360Entities.map(async image => {
+      const revisionAndAnnotationPromises = await getEntityAnnotationsForAsset(image);
 
       const revisionsAndAnnotations = revisionAndAnnotationPromises.map(async ({ revision, annotation }) => ({
         annotation,
         revision,
-        entity
+        image
       }));
 
       return Promise.all(revisionsAndAnnotations);
