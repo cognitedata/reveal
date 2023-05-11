@@ -88,8 +88,8 @@ const HostedExtractionPipelineTable = ({
     },
     {
       title: '',
-      dataIndex: 'dropDown',
-      key: 'dropdown',
+      dataIndex: 'sourceOptions',
+      key: 'source-options',
       render: (_, record) => <SourceOptions source={record} />,
     },
   ];
