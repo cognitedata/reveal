@@ -58,6 +58,9 @@ export const OptionSecondaryLabel = styled.span`
 export const ChildOptionsIcon = styled(Icon).attrs({
   type: 'ChevronRightLarge',
 })`
+  & > svg {
+    width: 16px;
+  }
   margin-left: 8px;
   visibility: ${(props: { visible: boolean }) =>
     props.visible ? 'visible' : 'hidden'};
