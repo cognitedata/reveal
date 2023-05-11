@@ -44,9 +44,10 @@ const SourceStatusItemTooltipContent = ({
     } else if (aggregation.logs.some((log) => doesLogHaveErrorType(log))) {
       return {
         showDate: true,
-        text: `${
-          aggregation.logs.filter((log) => doesLogHaveErrorType(log)).length
-        } errors:`,
+        text: t('source-status-error', {
+          logCount: aggregation.logs.filter((log) => doesLogHaveErrorType(log))
+            .length,
+        }),
         textAlign: 'left',
         logs: aggregation.logs.filter((log) => doesLogHaveErrorType(log)),
         iconType: 'ErrorFilled',
@@ -55,7 +56,7 @@ const SourceStatusItemTooltipContent = ({
     } else {
       return {
         showDate: true,
-        text: `${aggregation.logs.length} errors:`,
+        text: t('source-status-other', { logCount: aggregation.logs.length }),
         textAlign: 'left',
         logs: aggregation.logs,
         iconType: 'InfoFilled',
@@ -66,12 +67,9 @@ const SourceStatusItemTooltipContent = ({
   const content = getContent();
 
   const getTopicFilter = (log: any) => {
-    console.log(log.externalId);
-    console.log(source);
     const sourceJob = source.jobs.find((job) => {
       return job.externalId === log.jobExternalId;
     });
-    console.log(sourceJob);
     return sourceJob?.topicFilter;
   };
 
