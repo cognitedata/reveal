@@ -1,8 +1,12 @@
 import React from 'react';
-import { formatTime } from '@cognite/cdf-utilities';
+import { formatTime, getAbsoluteTime } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { DailyLogAggregation } from 'utils/hostedExtractors';
+import {
+  DailyLogAggregation,
+  doesLogHaveSuccessType,
+} from 'utils/hostedExtractors';
+import { useTranslation } from 'common';
 
 type SourceStatusItemTooltipContentProps = {
   aggregation: DailyLogAggregation;
@@ -11,16 +15,43 @@ type SourceStatusItemTooltipContentProps = {
 const SourceStatusItemTooltipContent = ({
   aggregation,
 }: SourceStatusItemTooltipContentProps): JSX.Element => {
-  const content = () => {
+  const { t } = useTranslation();
+
+  const getContent = (): {
+    showDate: boolean;
+    text: string;
+    textAlign: any;
+  } => {
     if (aggregation.logs.length === 0) {
-      return 'No Data';
+      return {
+        showDate: false,
+        text: t('source-status-no-data'),
+        textAlign: 'center',
+      };
+    } else if (aggregation.logs.some((log) => doesLogHaveSuccessType(log))) {
+      return {
+        showDate: true,
+        text: t('source-status-success'),
+        textAlign: 'center',
+      };
     } else {
-      return formatTime(aggregation.date);
+      return {
+        showDate: true,
+        text: '',
+        textAlign: 'left',
+      };
     }
   };
+  const content = getContent();
+
   return (
-    <StyledTooltipContent direction="column" gap={8}>
-      {content()}
+    <StyledTooltipContent
+      direction="column"
+      gap={8}
+      style={{ textAlign: content.textAlign }}
+    >
+      {content.showDate && formatTime(aggregation.date)}
+      <div>{content.text}</div>
     </StyledTooltipContent>
   );
 };

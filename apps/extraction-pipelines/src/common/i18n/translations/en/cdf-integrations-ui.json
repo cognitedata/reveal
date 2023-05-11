@@ -185,6 +185,8 @@
   "source": "Source",
   "source-hint": "Enter the name of the extraction pipeline source system.",
   "source-placeholder": "Enter source",
+  "source-status-no-data": "No Data",
+  "source-status-success": "No errors",
   "success": "Success",
   "successful-runs-30-days": "Successful runs in the last 30 days",
   "successful-runs-30-days-percentage": "{{percentage}} of runs succeded in the last 30 days",
