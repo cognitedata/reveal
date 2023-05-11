@@ -27,23 +27,17 @@ export const fetchFirebaseToken = (
   sdk: CogniteClient,
   appsApiUrl: string,
   projectId: string,
-  firebaseAppName: string,
-  authFlow?: string
+  firebaseAppName: string
 ) => {
   return sdk
-    .get<LoginToFirebaseResponse>(
-      `${appsApiUrl}${
-        authFlow === 'AZURE_AD' ? `/${projectId}` : ''
-      }/login/firebase`,
-      {
-        params: {
-          tenant: projectId,
-          app: firebaseAppName,
-          json: true,
-        },
-        withCredentials: true,
-      }
-    )
+    .get<LoginToFirebaseResponse>(`${appsApiUrl}/${projectId}/login/firebase`, {
+      params: {
+        tenant: projectId,
+        app: firebaseAppName,
+        json: true,
+      },
+      withCredentials: true,
+    })
     .then((result) => {
       const {
         data: { firebaseToken: nextFirebaseToken },

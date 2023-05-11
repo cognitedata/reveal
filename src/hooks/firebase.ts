@@ -1,7 +1,6 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import config from 'config/config';
 import {
   fetchFirebaseEnvironment,
@@ -21,7 +20,6 @@ export const useFirebaseInit = (enabled: boolean) => {
   const sdkClientBaseUrl = sdk.httpClient.getBaseUrl();
   const url = useAppsApiBaseUrl(sdkClientBaseUrl);
   const project = getProject();
-  const { flow } = getFlow();
 
   return useQuery(
     ['firebase', 'init'],
@@ -30,8 +28,7 @@ export const useFirebaseInit = (enabled: boolean) => {
         sdk,
         url,
         project,
-        config.firebaseAppName,
-        flow
+        config.firebaseAppName
       );
       const env = await fetchFirebaseEnvironment(
         sdk,
