@@ -8,6 +8,7 @@ import {
 } from 'hooks/hostedExtractors';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
+import { notification } from 'antd';
 
 type DeleteSourceModalProps = {
   onCancel: () => void;
@@ -28,7 +29,17 @@ const DeleteSourceModal = ({
 
   const { mutate: deleteSource } = useDeleteMQTTSource({
     onSuccess: () => {
+      notification.success({
+        message: t('notification-success-source-delete'),
+        key: 'delete-source',
+      });
       navigate(createLink('/extpipes', { tab: 'hosted' }));
+    },
+    onError: (e: any) => {
+      notification.error({
+        message: e.toString(),
+        key: 'delete-source',
+      });
     },
   });
 
