@@ -9,6 +9,7 @@ import {
   MQTTSourceWithJobMetrics,
   useEditMQTTSource,
 } from 'hooks/hostedExtractors';
+import { notification } from 'antd';
 
 type EditSourceAuthenticationModalProps = {
   onCancel: () => void;
@@ -29,7 +30,18 @@ export const EditSourceAuthenticationModal = ({
 
   const { mutate: editMQTTSource } = useEditMQTTSource({
     onSuccess: () => {
+      notification.success({
+        message: t('notification-auth-source-update-success'),
+        key: 'create-source',
+      });
       onCancel();
+    },
+    onError: (e: any) => {
+      notification.error({
+        message: e.toString(),
+        description: e.message,
+        key: 'create-source',
+      });
     },
   });
 
