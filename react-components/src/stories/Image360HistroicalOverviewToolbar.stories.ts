@@ -14,9 +14,12 @@ type Story = StoryObj<typeof meta>;
 
 const revisionCollection = [
   {revisionDate: '2023.01.12 13:23', revisionImageUrl: ''},
-  {revisionDate: '2023.01.12 13:23', revisionImageUrl: ''},
-  {revisionDate: '2023.01.12 13:23', revisionImageUrl: ''},
-  {revisionDate: '2023.01.12 13:23', revisionImageUrl: ''}
+  {revisionDate: '2024.01.13 13:23', revisionImageUrl: ''},
+  {revisionDate: '2025.01.14 13:23', revisionImageUrl: ''},
+  {revisionDate: '2026.01.15 15:23', revisionImageUrl: ''},
+  {revisionDate: '2024.01.16 23:23', revisionImageUrl: ''},
+  {revisionDate: '2024.01.16 23:23', revisionImageUrl: ''},
+  {revisionDate: '2024.01.16 23:23', revisionImageUrl: ''}
 ];
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
