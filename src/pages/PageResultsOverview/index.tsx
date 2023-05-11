@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { message } from 'antd';
 import { landingPage, diagramSelection } from 'routes/paths';
 import { useActiveWorkflow, useJobStatus, useStartJobs } from 'hooks';

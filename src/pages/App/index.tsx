@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useContext, Suspense } from 'react';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   useRouteMatch,
   useHistory,

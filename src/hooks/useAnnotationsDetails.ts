@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { useEffect, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import uniqBy from 'lodash/uniqBy';
 import {
   getIdFilter,
@@ -65,7 +65,7 @@ export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
 
   const { data: annotationsById, isFetched: isAnnotationsByIdFetched } =
     useQuery(
-      `annotations-file-${fileId}`,
+      [`annotations-file-${fileId}`],
       () => listAnnotationsForFileFromAnnotationsApi(sdk, fileId),
       { enabled: isFileFetched }
     );
@@ -73,7 +73,7 @@ export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
   const refetchAnnotations = () => {
     if (refetchTime <= 0) return;
     client.resetQueries(['sdk-react-query-hooks', 'cdf', 'events', 'list']);
-    client.resetQueries(`annotations-file-${fileId}`);
+    client.resetQueries([`annotations-file-${fileId}`]);
     setRefetchTime(refetchTime - 1);
   };
 

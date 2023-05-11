@@ -1,6 +1,6 @@
 import { AnnotationModel } from '@cognite/sdk/dist/src';
 import React, { useEffect, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import chunk from 'lodash/chunk';
 import uniqBy from 'lodash/uniqBy';
 import { Modal, notification } from 'antd';
@@ -103,7 +103,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       ]);
 
       fileIds.forEach((fileId) => {
-        client.invalidateQueries(`annotations-file-${fileId}`);
+        client.invalidateQueries([`annotations-file-${fileId}`]);
       });
 
       client.invalidateQueries([
@@ -457,7 +457,7 @@ export const useDeleteTags = () => {
     isError: isAnnotationsByIdError,
     isFetched: isAnnotationsByIdFetched,
   } = useQuery(
-    `annotations-file-${fileId}`,
+    [`annotations-file-${fileId}`],
     () => listAnnotationsForFileFromAnnotationsApi(sdk, fileId!),
     { enabled: !!file && fileId !== undefined }
   );
