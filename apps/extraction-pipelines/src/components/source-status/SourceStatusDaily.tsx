@@ -7,37 +7,61 @@ import {
   DailyLogAggregation,
   doesLogHaveErrorType,
   doesLogHaveSuccessType,
+  AggregationInterval,
 } from 'utils/hostedExtractors';
+
+import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 
 type SourceStatusDailyProps = {
   aggregation: DailyLogAggregation;
+  aggregationInterval: AggregationInterval;
 };
 
 export const SourceStatusDaily = ({
   aggregation,
+  aggregationInterval,
 }: SourceStatusDailyProps): JSX.Element => {
+  const sourceStatusItemWidth =
+    aggregationInterval === 'hourly' ? '5px' : '18px';
   if (aggregation.logs.length === 0) {
-    return <AggregationItemNoData />;
+    return (
+      <SourceStatusItemTooltip aggregation={aggregation}>
+        <AggregationItemNoData style={{ width: sourceStatusItemWidth }} />
+      </SourceStatusItemTooltip>
+    );
   }
-
   if (aggregation.logs.some((log) => doesLogHaveErrorType(log))) {
-    return <AggregationItemError />;
+    return (
+      <SourceStatusItemTooltip aggregation={aggregation}>
+        <AggregationItemError style={{ width: sourceStatusItemWidth }} />
+      </SourceStatusItemTooltip>
+    );
   }
-
   if (aggregation.logs.every((log) => doesLogHaveSuccessType(log))) {
-    return <AggregationItemSuccess />;
+    return (
+      <SourceStatusItemTooltip aggregation={aggregation}>
+        <AggregationItemSuccess style={{ width: sourceStatusItemWidth }} />
+      </SourceStatusItemTooltip>
+    );
   }
-
-  return <AggregationItemUnknown />;
+  return (
+    <SourceStatusItemTooltip aggregation={aggregation}>
+      <AggregationItemUnknown style={{ width: sourceStatusItemWidth }} />
+    </SourceStatusItemTooltip>
+  );
 };
 
-const AggregationItemBase = styled.button`
+// const AggregationItemBase = styled.div<{
+//   $color: ColorStatus;
+// }>`
+
+const AggregationItemBase = styled.div`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  flex: 1;
   height: 32px;
   padding: 0;
+  display: block;
 `;
 
 const AggregationItemUnknown = styled(AggregationItemBase)`

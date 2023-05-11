@@ -66,9 +66,12 @@ export const SourceStatus = ({
       title={t('topic-filters-status')}
     >
       <Content>
-        <Flex direction="row-reverse" gap={4}>
+        <Flex direction="row-reverse" gap={4} style={{ overflow: 'hidden' }}>
           {aggregations.map((aggregation) => (
-            <SourceStatusDaily aggregation={aggregation} />
+            <SourceStatusDaily
+              aggregation={aggregation}
+              aggregationInterval={aggregationInterval}
+            />
           ))}
         </Flex>
         <DateAxis>
