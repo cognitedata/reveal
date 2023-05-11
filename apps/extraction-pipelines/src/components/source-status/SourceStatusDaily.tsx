@@ -7,50 +7,44 @@ import {
   DailyLogAggregation,
   doesLogHaveErrorType,
   doesLogHaveSuccessType,
-  AggregationInterval,
 } from 'utils/hostedExtractors';
 
 import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 
 type SourceStatusDailyProps = {
   aggregation: DailyLogAggregation;
-  aggregationInterval: AggregationInterval;
 };
 
 export const SourceStatusDaily = ({
   aggregation,
-  aggregationInterval,
 }: SourceStatusDailyProps): JSX.Element => {
-  const sourceStatusItemWidth =
-    aggregationInterval === 'hourly' ? '5px' : '18px';
   if (aggregation.logs.length === 0) {
     return (
       <SourceStatusItemTooltip aggregation={aggregation}>
-        <AggregationItemNoData style={{ width: sourceStatusItemWidth }} />
+        <AggregationItemNoData />
       </SourceStatusItemTooltip>
     );
   }
   if (aggregation.logs.some((log) => doesLogHaveErrorType(log))) {
     return (
       <SourceStatusItemTooltip aggregation={aggregation}>
-        <AggregationItemError style={{ width: sourceStatusItemWidth }} />
+        <AggregationItemError />
       </SourceStatusItemTooltip>
     );
   }
   if (aggregation.logs.every((log) => doesLogHaveSuccessType(log))) {
     return (
       <SourceStatusItemTooltip aggregation={aggregation}>
-        <AggregationItemSuccess style={{ width: sourceStatusItemWidth }} />
+        <AggregationItemSuccess />
       </SourceStatusItemTooltip>
     );
   }
   return (
     <SourceStatusItemTooltip aggregation={aggregation}>
-      <AggregationItemUnknown style={{ width: sourceStatusItemWidth }} />
+      <AggregationItemUnknown />
     </SourceStatusItemTooltip>
   );
 };
-
 
 const AggregationItemBase = styled.div`
   border: none;

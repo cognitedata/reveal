@@ -13,12 +13,14 @@ const SourceStatusItemTooltip = ({
   aggregation,
 }: SourceStatusItemTooltipProps): JSX.Element => {
   return (
-    <Tooltip
-      content={<SourceStatusItemTooltipContent aggregation={aggregation} />}
-      position="top"
-    >
-      {children}
-    </Tooltip>
+    <div style={{ flex: 1 }}>
+      <Tooltip
+        content={<SourceStatusItemTooltipContent aggregation={aggregation} />}
+        position="top"
+      >
+        {children}
+      </Tooltip>
+    </div>
   );
 };
 

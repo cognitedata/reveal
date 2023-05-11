@@ -68,10 +68,7 @@ export const SourceStatus = ({
       <Content>
         <Flex direction="row-reverse" gap={4} style={{ overflow: 'hidden' }}>
           {aggregations.map((aggregation) => (
-            <SourceStatusDaily
-              aggregation={aggregation}
-              aggregationInterval={aggregationInterval}
-            />
+            <SourceStatusDaily aggregation={aggregation} />
           ))}
         </Flex>
         <DateAxis>
