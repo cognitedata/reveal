@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
@@ -19,7 +18,7 @@ export const SourceOptions = ({ source }: TopicFilterProps): JSX.Element => {
 
   return (
     <>
-      <StyledDropdown
+      <Dropdown
         content={
           <Menu>
             <Menu.Item
@@ -45,7 +44,7 @@ export const SourceOptions = ({ source }: TopicFilterProps): JSX.Element => {
         }}
       >
         <Button icon="EllipsisHorizontal" type="ghost" />
-      </StyledDropdown>
+      </Dropdown>
 
       {openDeleteModal && (
         <DeleteSourceModal
@@ -64,10 +63,3 @@ export const SourceOptions = ({ source }: TopicFilterProps): JSX.Element => {
     </>
   );
 };
-
-const StyledDropdown = styled(Dropdown)`
-  .cogs-dropdown__content {
-    overflow: auto;
-  }
-  z-index: 100000;
-`;
