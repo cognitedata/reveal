@@ -2,22 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 
-import { assertNever, EventTrigger, PointerEventData } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import {
-  Image360AnnotationClickedDelegate,
-  Image360AnnotationHoveredDelegate,
-  Image360EnteredDelegate,
-  Image360ExitedDelegate
-} from '../types';
+import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
-import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Image360AnnotationAppearance } from '../annotation/types';
-import { Vector3 } from 'three';
 
-type Image360Events = 'image360Entered' | 'image360Exited' | 'image360AnnotationHovered' | 'image360AnnotationClicked';
+type Image360Events = 'image360Entered' | 'image360Exited';
 
 /**
  * Default implementation of {@link Image360Collection}. Used for events when entering
@@ -41,9 +34,7 @@ export class DefaultImage360Collection implements Image360Collection {
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
-    image360Exited: new EventTrigger<Image360ExitedDelegate>(),
-    annotationHovered: new EventTrigger<Image360AnnotationHoveredDelegate>(),
-    annotationClicked: new EventTrigger<Image360AnnotationClickedDelegate>()
+    image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
@@ -67,8 +58,6 @@ export class DefaultImage360Collection implements Image360Collection {
   get events(): {
     image360Entered: EventTrigger<Image360EnteredDelegate>;
     image360Exited: EventTrigger<Image360ExitedDelegate>;
-    annotationHovered: EventTrigger<Image360AnnotationHoveredDelegate>;
-    annotationClicked: EventTrigger<Image360AnnotationClickedDelegate>;
   } {
     return this._events;
   }
@@ -92,29 +81,18 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
   public on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-  public on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
-  public on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
   /**
    * Subscribe to the 360 Image events
    * @param event `Image360Events` event
    * @param callback Callback to 360 image events
    */
-  public on(
-    event: Image360Events,
-    callback: Image360EnteredDelegate | Image360ExitedDelegate | Image360AnnotationHoveredDelegate
-  ): void {
+  public on(event: Image360Events, callback: Image360EnteredDelegate | Image360ExitedDelegate): void {
     switch (event) {
       case 'image360Entered':
         this._events.image360Entered.subscribe(callback as Image360EnteredDelegate);
         break;
       case 'image360Exited':
         this._events.image360Exited.subscribe(callback as Image360ExitedDelegate);
-        break;
-      case 'image360AnnotationHovered':
-        this._events.annotationHovered.subscribe(callback as Image360AnnotationHoveredDelegate);
-        break;
-      case 'image360AnnotationClicked':
-        this._events.annotationClicked.subscribe(callback as Image360AnnotationClickedDelegate);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -146,22 +124,13 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
   public off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-  public off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
-  public off(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
 
   /**
    * Unsubscribe to the 360 Image events
    * @param event `Image360Events` event
    * @param callback Callback to 360 image events
    */
-  public off(
-    event: Image360Events,
-    callback:
-      | Image360EnteredDelegate
-      | Image360ExitedDelegate
-      | Image360AnnotationHoveredDelegate
-      | Image360AnnotationClickedDelegate
-  ): void {
+  public off(event: Image360Events, callback: Image360EnteredDelegate | Image360ExitedDelegate): void {
     switch (event) {
       case 'image360Entered':
         this._events.image360Entered.unsubscribe(callback as Image360EnteredDelegate);
@@ -169,31 +138,9 @@ export class DefaultImage360Collection implements Image360Collection {
       case 'image360Exited':
         this._events.image360Exited.unsubscribe(callback as Image360ExitedDelegate);
         break;
-      case 'image360AnnotationHovered':
-        this._events.annotationHovered.unsubscribe(callback as Image360AnnotationHoveredDelegate);
-        break;
-      case 'image360AnnotationClicked':
-        this._events.annotationClicked.unsubscribe(callback as Image360AnnotationClickedDelegate);
-        break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
     }
-  }
-
-  public fireHoverEvent(
-    annotationObject: ImageAnnotationObject,
-    pointerEvent: PointerEventData,
-    direction: Vector3
-  ): void {
-    this._events.annotationHovered.fire(annotationObject, pointerEvent, direction);
-  }
-
-  public fireClickEvent(
-    annotationObject: ImageAnnotationObject,
-    pointerEvent: PointerEventData,
-    direction: Vector3
-  ): void {
-    this._events.annotationClicked.fire(annotationObject, pointerEvent, direction);
   }
 
   public setSelectedVisibility(visible: boolean): void {
