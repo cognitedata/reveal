@@ -1487,7 +1487,7 @@ __metadata:
     ts-loader: 9.4.2
     typescript: 5.0.4
     webpack: 5.82.0
-    webpack-cli: 5.0.2
+    webpack-cli: 5.1.0
   peerDependencies:
     react: ">=18"
   languageName: unknown
@@ -3621,6 +3621,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webpack-cli/configtest@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@webpack-cli/configtest@npm:2.1.0"
+  peerDependencies:
+    webpack: 5.x.x
+    webpack-cli: 5.x.x
+  checksum: b875fccd8be9a936924e24986725823347703e3eb72ea884e74669ca20f007704e859855a6a05940d5d3805ce2fc08b183a0f1658d5395b5454b3f5f88293081
+  languageName: node
+  linkType: hard
+
 "@webpack-cli/info@npm:^2.0.1":
   version: 2.0.1
   resolution: "@webpack-cli/info@npm:2.0.1"
@@ -3641,6 +3651,19 @@ __metadata:
     webpack-dev-server:
       optional: true
   checksum: f74c8cc7d3e4de58e1261c6d09af0e8b8a23f53ada4ec336140f30fa16d57d9f56de954e87125947c090c06a30b10a243ca1e093c3e4bd60ba3f19c852cb20b7
+  languageName: node
+  linkType: hard
+
+"@webpack-cli/serve@npm:^2.0.3":
+  version: 2.0.4
+  resolution: "@webpack-cli/serve@npm:2.0.4"
+  peerDependencies:
+    webpack: 5.x.x
+    webpack-cli: 5.x.x
+  peerDependenciesMeta:
+    webpack-dev-server:
+      optional: true
+  checksum: 561ea2e6eb551415f0b1675393a8480e1201293fe37eae334cbb1fdc466986668cca76ca1ca327ada9b498eae27cbecef0793e3bb5677288f1a5216cad414efe
   languageName: node
   linkType: hard
 
@@ -10095,6 +10118,38 @@ __metadata:
   bin:
     webpack-cli: bin/cli.js
   checksum: 98816d84c51487b90e1008ddbcda8827dcb7ae9ab7892f4d742f0d7b93f90a4a18a6ec2671b380e5a7ee4b0917cf0c43921119419d8ba9e1b14ea060115684fd
+  languageName: node
+  linkType: hard
+
+"webpack-cli@npm:5.1.0":
+  version: 5.1.0
+  resolution: "webpack-cli@npm:5.1.0"
+  dependencies:
+    "@discoveryjs/json-ext": ^0.5.0
+    "@webpack-cli/configtest": ^2.1.0
+    "@webpack-cli/info": ^2.0.1
+    "@webpack-cli/serve": ^2.0.3
+    colorette: ^2.0.14
+    commander: ^10.0.1
+    cross-spawn: ^7.0.3
+    envinfo: ^7.7.3
+    fastest-levenshtein: ^1.0.12
+    import-local: ^3.0.2
+    interpret: ^3.1.1
+    rechoir: ^0.8.0
+    webpack-merge: ^5.7.3
+  peerDependencies:
+    webpack: 5.x.x
+  peerDependenciesMeta:
+    "@webpack-cli/generators":
+      optional: true
+    webpack-bundle-analyzer:
+      optional: true
+    webpack-dev-server:
+      optional: true
+  bin:
+    webpack-cli: bin/cli.js
+  checksum: 73749b9e27e16007011266dcd7b935168cc61cd4e346e4c09a697be066a310b822c1f386ba4a87417851eedd6df5812389918be68e275542c8a18e05ca1a719c
   languageName: node
   linkType: hard
 
