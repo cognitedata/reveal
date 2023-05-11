@@ -8,10 +8,7 @@ export class Image360PointsObject extends Object3D {
   private readonly _pointsFront: OverlayPointsObject;
   private readonly _pointsBack: OverlayPointsObject;
 
-  constructor(
-    maxPoints: number,
-    materialParameters: PointsMaterialParameters 
-  ) {
+  constructor(maxPoints: number, materialParameters: PointsMaterialParameters) {
     super();
 
     this._pointsFront = new OverlayPointsObject(maxPoints, {

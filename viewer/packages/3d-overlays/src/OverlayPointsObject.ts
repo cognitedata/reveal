@@ -80,7 +80,7 @@ export class OverlayPointsObject extends Group {
   public setPoints(points: Vector3[], colors?: Color[]): void {
     if (colors && points.length !== colors?.length)
       throw new Error('Points positions and colors arrays must have the same length');
-    
+
     if (points.length * 3 > this._positionBuffer.length) {
       throw new Error('Points array length exceeds the maximum number of points');
     }

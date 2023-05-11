@@ -3,10 +3,13 @@
  */
 
 import { EventTrigger } from '@reveal/utilities';
-import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4, MathUtils } from 'three';
+import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4, MathUtils, Color } from 'three';
+import { Overlay3D } from './Overlay3D';
+import { DefaultMetadataType } from './OverlayCollection';
 
 export type IconParameters = {
   position: THREE.Vector3;
+  color?: THREE.Color;
   minPixelSize: number;
   maxPixelSize: number;
   iconRadius: number;
@@ -19,7 +22,7 @@ export type SetAdaptiveScaleDelegate = (args: {
   domElement: HTMLElement;
 }) => void;
 
-export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
+export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overlay3D<MetadataType> {
   private readonly _position: THREE.Vector3;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
@@ -33,20 +36,23 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
   private _visible = true;
   private _culled = false;
   private _selected = false;
+  private _color = new Color('white');
   private readonly _ndcPosition = new Vector4();
 
   private readonly _events = {
-    selected: new EventTrigger<(value: boolean) => void>()
+    selected: new EventTrigger<(value: boolean) => void>(),
+    parametersChange: new EventTrigger<(event: { color: THREE.Color; visble: boolean }) => void>()
   };
 
   constructor(iconParameters: IconParameters, iconMetadata?: MetadataType) {
-    const { position, minPixelSize, maxPixelSize, iconRadius, hoverSprite } = iconParameters;
+    const { position, minPixelSize, maxPixelSize, iconRadius, hoverSprite, color } = iconParameters;
 
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
     this._iconRadius = iconRadius;
     this._hoverSprite = hoverSprite;
     this._iconMetadata = iconMetadata;
+    this._color = color ?? this._color;
 
     this._setAdaptiveScale = this.setupAdaptiveScaling(position);
 
@@ -78,9 +84,8 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
   }
 
   updateHoverSpriteScale(): void {
-    if (!this._hoverSprite)
-      return;
-    
+    if (!this._hoverSprite) return;
+
     this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
   }
 
@@ -96,7 +101,16 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
     }
   }
 
-  get iconMetadata(): MetadataType | undefined {
+  set color(color: Color) {
+    this._color = color;
+    this._events.parametersChange.fire({ color, visble: this.visible });
+  }
+
+  get color(): Color {
+    return this._color;
+  }
+
+  getMetadata(): MetadataType | undefined {
     return this._iconMetadata;
   }
 
@@ -114,6 +128,7 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
 
   set visible(visible: boolean) {
     this._visible = visible;
+    this._events.parametersChange.fire({ color: this._color, visble: visible });
   }
 
   get visible(): boolean {
@@ -132,6 +147,7 @@ export class Overlay3DIcon<MetadataType = { [key: string]: any }> {
 
   public dispose(): void {
     this._events.selected.unsubscribeAll();
+    this._events.parametersChange.unsubscribeAll();
   }
 
   private setupAdaptiveScaling(position: THREE.Vector3): SetAdaptiveScaleDelegate {

@@ -4,7 +4,14 @@
 import { Cognite3DViewer } from '@reveal/api';
 import { assertNever, EventTrigger, DisposedDelegate, PointerEventData } from '@reveal/utilities';
 import * as THREE from 'three';
-import { Overlay3DCollection, Overlay3DIcon } from '@reveal/3d-overlays';
+import {
+  Overlay3DCollection,
+  Overlay3DIcon,
+  OverlayInfo,
+  DefaultMetadataType,
+  OverlayCollection,
+  Overlay3D
+} from '@reveal/3d-overlays';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
 export type SmartOverlay = {
@@ -12,13 +19,6 @@ export type SmartOverlay = {
   id: OverlayId;
   position: THREE.Vector3;
   infoOverlay: HTMLElement;
-};
-
-export type OverlayInfo = {
-  text: string;
-  id: OverlayId;
-  position: THREE.Vector3;
-  color?: THREE.Color;
 };
 
 export type OverlayGroupId = string;
@@ -30,15 +30,16 @@ export type OverlayGroup = {
 
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
-export type OverlayEventHandler = (event: {
-  targetOverlay: SmartOverlay;
+export type OverlayEventHandler<MetadataType> = (event: {
+  targetOverlay: Overlay3D<MetadataType>;
+  htmlOverlay: HTMLElement;
   mousePosition: { clientX: number; clientY: number };
 }) => void;
 
 export type SmartOverlayToolParameters = {
   /**
    * Max point markers size in pixels. Different platforms has limitations for this value.
-   * On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500. 
+   * On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500.
    * Default is 64.
    */
   maxPointSize?: number;
@@ -48,11 +49,8 @@ export type SmartOverlayToolParameters = {
   defaultOverlayColor: THREE.Color;
 };
 
-export class SmartOverlayTool extends Cognite3DViewerToolBase {
+export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _labelIndexToLabelInfoMap = new Map<number, OverlayInfo>();
-  private readonly _overlayPoints: Overlay3DCollection[] = [];
-  private readonly _singeOverlayCollection: Overlay3DCollection;
   private readonly _textOverlay: HTMLElement;
 
   private readonly _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
@@ -60,14 +58,13 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
   private readonly _temporaryVec = new THREE.Vector2();
   private readonly _raycaster = new THREE.Raycaster();
 
-  private _isEnabled = true;
+  private _overlayCollections: Overlay3DCollection<MetadataType>[] = [];
   private _isVisible = true;
   private _textOverlayVisible = true;
-  private _latestAddedPointIndex = 0;
 
   private readonly _events = {
-    hover: new EventTrigger<OverlayEventHandler>(),
-    click: new EventTrigger<OverlayEventHandler>(),
+    hover: new EventTrigger<OverlayEventHandler<MetadataType>>(),
+    click: new EventTrigger<OverlayEventHandler<MetadataType>>(),
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
@@ -80,113 +77,51 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     this._textOverlay = this.createTextOverlay('', this._defaultTextOverlayToCursorOffset);
     viewer.domElement.appendChild(this._textOverlay);
 
-    this._singeOverlayCollection = new Overlay3DCollection(undefined, {
-      maxPointSize: toolParameters?.maxPointSize
-    });
-    this._overlayPoints.push(this._singeOverlayCollection);
-    viewer.addObject3D(this._singeOverlayCollection);
-
     viewer.canvas.addEventListener('mousemove', this.onMouseMove);
 
     viewer.on('click', this.onMouseClick);
   }
 
   /**
-   * Adds multiple overlay
-   * @param overlays Array of labels to add.
+   * Creates new OverlayCollection.
+   * @param overlays Array of overlays to add.
    * @returns Overlay group containing it's id.
    */
-  addOverlays(overlays: OverlayInfo[]): OverlayGroup {
+  createOverlayCollection(overlays: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType> {
     const { _viewer: viewer } = this;
 
-    const overlaysData = [];
+    const points = new Overlay3DCollection<MetadataType>(overlays, {
+      defaultOverlayColor: this._defaultOverlayColor
+    });
 
-    for (const label of overlays) {
-      overlaysData.push({
-        id: this._latestAddedPointIndex,
-        position: label.position,
-        color: label.color ?? this._defaultOverlayColor
-      });
-      this._labelIndexToLabelInfoMap.set(this._latestAddedPointIndex, label);
-      this._latestAddedPointIndex++;
-    }
-
-    const points = new Overlay3DCollection(overlaysData);
-
-    this._overlayPoints.push(points);
+    this._overlayCollections.push(points);
 
     viewer.addObject3D(points);
 
-    return {
-      id: points.uuid
-    };
-  }
-
-  /**
-   * Adds an overlay for specified bounding box.
-   * @param overlayData Data defining the overlay.
-   * @param overlayData.position Position of the overlay.
-   * @param overlayData.text Text to display on the overlay.
-   * @param overlayData.id Id of the overlay.
-   */
-  addOverlay(overlayData: OverlayInfo): void {
-    if (!this._isEnabled) return;
-
-    this._singeOverlayCollection.addOverlays([
-      {
-        id: this._latestAddedPointIndex,
-        position: overlayData.position,
-        color: overlayData.color ?? this._defaultOverlayColor
-      }
-    ]);
-
-    this._labelIndexToLabelInfoMap.set(this._latestAddedPointIndex, overlayData);
-    this._latestAddedPointIndex++;
-  }
-  /**
-   * Removes overlay with specified id. Works only for overlays added with addOverlay method.
-   * @param id Id supplied on overlay creation.
-   */
-  removeOverlay(id: OverlayId): void {
-    if (!true) {
-      throw new Error(`Label with id ${id} not found`);
-    }
-    const idsToRemove: number[] = [];
-
-    this._labelIndexToLabelInfoMap.forEach((overlayData, overlayIndex) => {
-      if (overlayData.id === id) {
-        this._labelIndexToLabelInfoMap.delete(overlayIndex);
-        idsToRemove.push(overlayIndex);
-      }
-    });
-
-    this._singeOverlayCollection.removeOverlays(idsToRemove);
+    return points;
   }
 
   /**
    * Removes overlays that were added with addOverlays method.
-   * @param id Id of the overlay group to remove.
+   * @param overlayCollection Id of the overlay group to remove.
    */
-  removeOverlays(id: OverlayGroupId): void {
+  removeOverlayCollection(overlayCollection: OverlayCollection<MetadataType>): void {
     const { _viewer: viewer } = this;
-    const points = this._overlayPoints.find(points => points.uuid === id);
-    this._overlayPoints.filter(points => points.uuid !== id);
 
-    if (points) {
-      viewer.removeObject3D(points);
-      points.dispose();
+    const removedCollection = this._overlayCollections.find(collection => collection === overlayCollection);
+    this._overlayCollections = this._overlayCollections.filter(collection => collection === overlayCollection);
+
+    if (removedCollection) {
+      viewer.removeObject3D(removedCollection);
+      removedCollection.dispose();
     }
   }
 
   /**
-   * Sets whether new overlays can be added.
+   * Gets all added overlay collections.
    */
-  set enabled(enabled: boolean) {
-    this._isEnabled = enabled;
-  }
-
-  get enabled(): boolean {
-    return this._isEnabled;
+  get collections(): Overlay3DCollection<MetadataType>[] {
+    return this._overlayCollections;
   }
 
   /**
@@ -194,7 +129,7 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
    */
   set visible(visible: boolean) {
     this._isVisible = visible;
-    this._overlayPoints.forEach(points => {
+    this._overlayCollections.forEach(points => {
       points.visible = visible;
     });
 
@@ -218,30 +153,23 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
    * Removes all overlays.
    */
   clear(): void {
-    this._singeOverlayCollection.removeAllOverlays();
-
-    this._overlayPoints.forEach(points => {
-      if (points.uuid === this._singeOverlayCollection.uuid) return;
-
-      this._viewer.removeObject3D(points);
-      points.dispose();
+    this._overlayCollections.forEach(overlayCollection => {
+      this._viewer.removeObject3D(overlayCollection);
+      overlayCollection.dispose();
     });
-    this._overlayPoints.splice(0, this._overlayPoints.length);
-    this._overlayPoints.push(this._singeOverlayCollection);
-
-    this._labelIndexToLabelInfoMap.clear();
+    this._overlayCollections.splice(0, this._overlayCollections.length);
   }
 
   /**
    * Subscribes to overlay events.
    * @param event event to subscribe to.
-   * @param eventHandler 
+   * @param eventHandler
    */
-  on(event: 'hover', eventHandler: OverlayEventHandler): void;
-  on(event: 'click', eventHandler: OverlayEventHandler): void;
+  on(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
+  on(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
   on(event: 'disposed', eventHandler: DisposedDelegate): void;
 
-  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler | DisposedDelegate): void {
+  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler<MetadataType> | DisposedDelegate): void {
     switch (event) {
       case 'hover':
         this._events.hover.subscribe(eventHandler);
@@ -257,11 +185,11 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     }
   }
 
-  off(event: 'hover', eventHandler: OverlayEventHandler): void;
-  off(event: 'click', eventHandler: OverlayEventHandler): void;
+  off(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
+  off(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
   off(event: 'disposed', eventHandler: DisposedDelegate): void;
 
-  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler | DisposedDelegate): void {
+  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler<MetadataType> | DisposedDelegate): void {
     switch (event) {
       case 'hover':
         this._events.hover.unsubscribe(eventHandler);
@@ -289,49 +217,33 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 
-  private onMouseMove = (event: MouseEvent) => {
+  private readonly onMouseMove = (event: MouseEvent) => {
     const { _textOverlay: textOverlay } = this;
 
-    const intersection = this.intersectPointsMarkers(event);
+    const intersectedOverlay = this.intersectPointsMarkers(event);
 
-    if (intersection) {
-      const { intersectedOverlay } = intersection;
-
-      const targetOverlay: SmartOverlay = {
-        text: intersectedOverlay.text,
-        id: intersectedOverlay.id,
-        position: intersectedOverlay.position,
-        infoOverlay: textOverlay
-      };
-
+    if (intersectedOverlay) {
       this.positionTextOverlay(event);
-      textOverlay.innerText = targetOverlay.text;
 
-      this._events.hover.fire({ targetOverlay: targetOverlay, mousePosition: event });
+      textOverlay.innerText = (intersectedOverlay.getMetadata() as DefaultMetadataType | undefined)?.text ?? '';
+
+      this._events.hover.fire({ targetOverlay: intersectedOverlay, mousePosition: event, htmlOverlay: textOverlay });
     } else {
       textOverlay.style.opacity = '0';
     }
-  }
+  };
 
-  private onMouseClick = (event: PointerEventData) => {
-    const intersection = this.intersectPointsMarkers({ clientX: event.offsetX, clientY: event.offsetY });
+  private readonly onMouseClick = (event: PointerEventData) => {
+    const intersectedOverlay = this.intersectPointsMarkers({ clientX: event.offsetX, clientY: event.offsetY });
 
-    if (intersection) {
-      const { intersectedOverlay } = intersection;
-
-      const targetOverlay: SmartOverlay = {
-        text: intersectedOverlay.text,
-        id: intersectedOverlay.id,
-        position: intersectedOverlay.position,
-        infoOverlay: this._textOverlay
-      };
-
+    if (intersectedOverlay) {
       this._events.click.fire({
-        targetOverlay: targetOverlay,
+        targetOverlay: intersectedOverlay,
+        htmlOverlay: this._textOverlay,
         mousePosition: { clientX: event.offsetX, clientY: event.offsetY }
       });
     }
-  }
+  };
 
   private positionTextOverlay(event: MouseEvent): void {
     const { _textOverlay, _textOverlayVisible } = this;
@@ -343,7 +255,7 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
   private intersectPointsMarkers(mouseCoords: {
     clientX: number;
     clientY: number;
-  }): { intersectedIcon: Overlay3DIcon; intersectedOverlay: OverlayInfo } | null {
+  }): Overlay3DIcon<MetadataType> | null {
     const { _viewer, _raycaster, _temporaryVec } = this;
 
     const { x, y } = this.convertPixelCoordinatesToNormalized(mouseCoords, _viewer.domElement);
@@ -351,10 +263,10 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     _raycaster.setFromCamera(_temporaryVec.set(x, y), camera);
 
-    let intersection: [Overlay3DIcon, THREE.Vector3][] = [];
+    let intersection: [Overlay3DIcon<MetadataType>, THREE.Vector3][] = [];
 
-    for (const points of this._overlayPoints) {
-      for (const icon of points.icons) {
+    for (const points of this._overlayCollections) {
+      for (const icon of points.getOverlays() as Overlay3DIcon<MetadataType>[]) {
         if (icon.visible) {
           const inter = icon.intersect(_raycaster.ray);
           if (inter) {
@@ -372,22 +284,17 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     intersection = intersection.filter(([icon, _]) => icon.intersect(_raycaster.ray) !== null);
 
     intersection
-      .map(([icon, intersection]) => [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon, THREE.Vector3])
+      .map(
+        ([icon, intersection]) =>
+          [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon<MetadataType>, THREE.Vector3]
+      )
       .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
       .sort((a, b) => a[1].length() - b[1].length());
 
     if (intersection.length > 0) {
-      const labelIntersec = intersection[intersection.length - 1][0];
-      const labelInfo = this._labelIndexToLabelInfoMap.get(labelIntersec.iconMetadata?.id ?? -1);
+      const intersectedOverlay = intersection[intersection.length - 1][0];
 
-      if (labelInfo === undefined)
-        //TODO: Do we want movement of the text overlay when hovering over the same point marker?
-        return null;
-
-      return {
-        intersectedIcon: labelIntersec,
-        intersectedOverlay: labelInfo
-      };
+      return intersectedOverlay;
     }
 
     return null;

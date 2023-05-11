@@ -2,123 +2,131 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Color, Texture, Vector3, Object3D } from 'three';
+import { CanvasTexture, Color, Texture, Object3D } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
+import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
+import { DefaultMetadataType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 
-export type Overlay3DOptions = {
+export type Overlay3DCollectionOptions = {
   overlayTexture?: Texture;
   maxPointSize?: number;
+  defaultOverlayColor?: Color;
 };
 
-export type PointData = {
-  position: Vector3;
-  id: number;
-  color?: Color;
-};
+export class Overlay3DCollection<MetadataType = DefaultMetadataType>
+  extends Object3D
+  implements OverlayCollection<MetadataType>
+{
+  private readonly MinPixelSize = 16;
+  private readonly MaxPixelSize = 64;
+  private readonly DefaultMaxPoints = 100000;
+  private readonly defaultOverlayColor = new Color('white');
 
-export class Overlay3DCollection extends Object3D {
-  private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 64;
-  private readonly DEFAULT_MAX_POINTS = 100000;
   private readonly _sharedTexture: Texture;
-  private readonly _iconsPoints: OverlayPointsObject;
+  private readonly _overlayPoints: OverlayPointsObject;
   private readonly _iconRadius = 0.4;
-  private _icons: Overlay3DIcon[];
-  private _pointsData: PointData[];
+  private _overlays: Overlay3DIcon<MetadataType>[];
   private _octree: IconOctree;
 
-  get icons(): Overlay3DIcon[] {
-    return this._icons;
-  }
-
-  constructor(pointsData?: PointData[], options?: Overlay3DOptions) {
+  constructor(overlayInfos?: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
     super();
 
+    this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
     this._sharedTexture = options?.overlayTexture ?? this.createCircleTexture();
-    this._iconsPoints = new OverlayPointsObject(pointsData ? pointsData.length * 2 : this.DEFAULT_MAX_POINTS, {
+    this._overlayPoints = new OverlayPointsObject(overlayInfos ? overlayInfos.length * 2 : this.DefaultMaxPoints, {
       spriteTexture: this._sharedTexture,
-      minPixelSize: this.MIN_PIXEL_SIZE,
-      maxPixelSize: options?.maxPointSize ?? this.MAX_PIXEL_SIZE,
+      minPixelSize: this.MinPixelSize,
+      maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
       radius: this._iconRadius
     });
 
-    this._pointsData = pointsData ?? [];
-    this.updatePointsData(this._pointsData);
+    this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
+    this.add(this._overlayPoints);
 
-    this._icons = this.initializeOverlay3DIcons(this._pointsData);
-
-    this.add(this._iconsPoints);
+    this.updatePointsObject();
 
     this._octree = this.rebuildOctree();
   }
 
-  get iconsOctree(): IconOctree {
-    return this._octree;
+  setVisibility(visibility: boolean): void {
+    this._overlayPoints.visible = visibility;
   }
 
-  public addOverlays(pointsData: PointData[]): void {
-    if (pointsData.length + this._pointsData.length > this.DEFAULT_MAX_POINTS)
-      throw new Error('Cannot add more than ' + this.DEFAULT_MAX_POINTS + ' points');
+  getOverlays(): Overlay3D<MetadataType>[] {
+    return this._overlays;
+  }
 
-    this.updatePointsData(pointsData);
+  /**
+   * Adds overlays to the collection.
+   * @param overlayInfos Array of overlays to add.
+   * @returns Overlay group containing it's id.
+   */
+  public addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[] {
+    if (overlayInfos.length + this._overlays.length > this.DefaultMaxPoints)
+      throw new Error('Cannot add more than ' + this.DefaultMaxPoints + ' points');
 
-    const newIcons = this.initializeOverlay3DIcons(pointsData);
-    this._icons.push(...newIcons);
+    const newIcons = this.initializeOverlay3DIcons(overlayInfos);
+    this._overlays.push(...newIcons);
 
+    this.updatePointsObject();
     this._octree = this.rebuildOctree();
+
+    return newIcons;
   }
+  /**
+   * Removes overlays that were added with addOverlays method.
+   * @param overlays Overlay3D object array to be removed.
+   */
+  public removeOverlays(overlays: Overlay3D<MetadataType>[]): void {
+    this._overlays = this._overlays.filter(overlay => !overlays.includes(overlay));
 
-  public removeOverlays(pointsIds: number[]): void {
-    this._pointsData = this._pointsData.filter(p => !pointsIds.includes(p.id));
-    this._icons = this._icons.filter(i => !pointsIds.includes(i.iconMetadata?.id));
-
-    this.updatePointsData();
+    this.updatePointsObject();
     this._octree = this.rebuildOctree();
   }
 
   public removeAllOverlays(): void {
-    this._pointsData = [];
-    this._icons = [];
+    this._overlays = [];
 
-    this.updatePointsData();
+    this.updatePointsObject();
     this._octree = this.rebuildOctree();
   }
 
   private rebuildOctree(): IconOctree {
-    const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
-    return new IconOctree(this._icons, octreeBounds, 2);
+    const icons = this._overlays as Overlay3DIcon[];
+    const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(icons);
+
+    return new IconOctree(icons, octreeBounds, 2);
   }
 
-  private updatePointsData(newPointsData?: PointData[]): void {
-    if (newPointsData) {
-      this._pointsData.push(...newPointsData);
-    }
+  private updatePointsObject(): void {
+    const pointsPositions = this._overlays.map(p => p.position);
+    const pointsColors = this._overlays.map(p => p.color ?? this.defaultOverlayColor);
 
-    const pointsPositions = this._pointsData.map(p => p.position);
-    const pointsColors = this._pointsData.map(p => p.color ?? new Color(1, 1, 1));
-
-    this._iconsPoints.setPoints(pointsPositions, pointsColors);
+    this._overlayPoints.setPoints(pointsPositions, pointsColors);
   }
 
-  private initializeOverlay3DIcons(points: PointData[]): Overlay3DIcon[] {
-    return points.map(
-      point =>
-        new Overlay3DIcon<{ id: number }>(
+  private initializeOverlay3DIcons(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3DIcon<MetadataType>[] {
+    return overlayInfos.map(
+      overlay =>
+        new Overlay3DIcon<MetadataType>(
           {
-            position: point.position,
-            minPixelSize: this.MIN_PIXEL_SIZE,
-            maxPixelSize: this.MAX_PIXEL_SIZE,
+            position: overlay.position,
+            color: overlay.color ?? this.defaultOverlayColor,
+            minPixelSize: this.MinPixelSize,
+            maxPixelSize: this.MaxPixelSize,
             iconRadius: this._iconRadius
           },
-          { id: point.id }
+          overlay.metadata
         )
     );
   }
 
   public dispose(): void {
-    this._iconsPoints.dispose();
+    this._overlays.forEach(overlay => overlay.dispose());
+
+    this._overlayPoints.dispose();
     this._sharedTexture.dispose();
   }
 

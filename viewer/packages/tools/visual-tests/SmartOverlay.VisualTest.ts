@@ -8,7 +8,8 @@ import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
-import { OverlayInfo, SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayTool';
+import { SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayTool';
+import { OverlayInfo } from '../../3d-overlays/src/OverlayCollection';
 
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
   public setup(_: ViewerTestFixtureComponents): Promise<void> {
@@ -18,17 +19,18 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: false });
 
-    const smartOverlayTool = new SmartOverlayTool(viewer);
+    const smartOverlayTool = new SmartOverlayTool<{ text: string; id: number }>(viewer);
 
-    smartOverlayTool.on('hover', ({ targetOverlay }) => {
-      targetOverlay.infoOverlay.innerText += ' hovered';
+    smartOverlayTool.on('hover', ({ htmlOverlay }) => {
+      htmlOverlay.innerText += ' hovered';
     });
 
-    smartOverlayTool.on('click', ({ targetOverlay }) => {
-      targetOverlay.infoOverlay.innerText = 'Haha, you clicked me!';
+    smartOverlayTool.on('click', ({ htmlOverlay }) => {
+      htmlOverlay.innerText = 'Haha, you clicked me!';
     });
 
-    const labels: OverlayInfo[] = [];
+    const labels: OverlayInfo<{ text: string; id: number }>[] = [];
+    const overlays = [];
 
     const reusableVec = new THREE.Vector3();
 
@@ -41,8 +43,10 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           if (x * x + y * y - 0.7 * i * i < 750) {
             const id = i + ' ' + x + ' ' + y;
             labels.push({
-              text: 'Meow ' + id,
-              id: i + x + y,
+              metadata: {
+                text: 'Meow ' + id,
+                id: i + x + y
+              },
               position: reusableVec.set(x, i, y).multiplyScalar(0.9).clone().add(overlaysOffset),
               color: new THREE.Color(
                 Math.abs(i / (boxSize / 2)),
@@ -53,9 +57,11 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           }
         }
       }
-      smartOverlayTool.addOverlays(labels);
+      overlays.push(smartOverlayTool.createOverlayCollection(labels));
       labels.splice(0, labels.length);
     }
+
+    //smartOverlayTool.removeOverlayCollection(overlays[0]);
 
     return Promise.resolve();
   }

@@ -171,13 +171,16 @@ export class IconCollection {
   ): Overlay3DIcon[] {
     sceneHandler.addCustomObject(this._hoverSprite);
 
-    const icons = points.map(point => new Overlay3DIcon({
-      position: point,
-      minPixelSize: IconCollection.MinPixelSize,
-      maxPixelSize: this._maxPixelSize,
-      iconRadius: this._iconRadius,
-      hoverSprite: this._hoverSprite
-  }));
+    const icons = points.map(
+      point =>
+        new Overlay3DIcon({
+          position: point,
+          minPixelSize: IconCollection.MinPixelSize,
+          maxPixelSize: this._maxPixelSize,
+          iconRadius: this._iconRadius,
+          hoverSprite: this._hoverSprite
+        })
+    );
 
     const renderSize = new Vector2();
 
@@ -187,12 +190,21 @@ export class IconCollection {
       )
     );
 
+    icons.forEach(icon =>
+      icon.on('selected', () => {
+        this._hoverSprite.position.copy(icon.position);
+        this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
+      })
+    );
+
     return icons;
   }
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
     this._sceneHandler.removeCustomObject(this._pointsObject);
+    this._icons.forEach(icon => icon.dispose());
+    this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
     this._sharedTexture.dispose();
   }
