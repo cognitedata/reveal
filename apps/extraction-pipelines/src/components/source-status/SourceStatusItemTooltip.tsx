@@ -15,7 +15,7 @@ const SourceStatusItemTooltip = ({
   return (
     <Tooltip
       content={<SourceStatusItemTooltipContent aggregation={aggregation} />}
-      position="bottom"
+      position="top"
     >
       {children}
     </Tooltip>
