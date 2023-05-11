@@ -8,7 +8,7 @@ import {
   Modal,
   ModalProps,
 } from '@cognite/cogs.js';
-import { Select } from 'antd';
+import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 import styled from 'styled-components';
 
@@ -68,7 +68,17 @@ export const CreateJobsModal = ({
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
   const { mutateAsync: createJob } = useCreateMQTTJob({
     onSuccess: () => {
+      notification.success({
+        message: t('notification-success-job-create'),
+        key: 'delete-source',
+      });
       onCancel();
+    },
+    onError: (e: any) => {
+      notification.error({
+        message: e.toString(),
+        key: 'delete-source',
+      });
     },
   });
 
