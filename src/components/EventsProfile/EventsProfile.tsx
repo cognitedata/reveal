@@ -77,12 +77,6 @@ const EventsProfile = (props: EventsProfileProps) => {
     <Drawer
       okHidden
       cancelHidden
-      // headerStyle={{
-      //   background: theme.primaryBackground,
-      //   color: 'white',
-      //   fontSize: '16px',
-      // }}
-      // title={<DrawerHeader>{t('events-profile')}</DrawerHeader>}
       width={700}
       visible={props.visible}
       onClose={() => props.closeDrawer()}

@@ -111,10 +111,6 @@ const Drawer = (props: DrawerProps): JSX.Element => {
     );
 
   const Content = title ? ContentWithTitle : ContentWithoutTitle;
-  // let drawerActions = props.footer || null;
-  // if (!props.footer && !hideActions) {
-  //   drawerActions = getActions();
-  // }
 
   return (
     <CogsDrawer
@@ -122,16 +118,10 @@ const Drawer = (props: DrawerProps): JSX.Element => {
       title={title}
       width={width}
       className={isPrimarySidebar ? 'primary-sidebar' : ''}
-      // bodyStyle={{ height: 'calc(100vh - 55px)', padding: 0 }}
       onClose={onCancel}
       getContainer={getContainer}
       {...otherProps}
       footer={null}
-      // footer={
-      //   drawerActions ? (
-      //     <div style={{ textAlign: 'right' }}>{drawerActions}</div>
-      //   ) : null
-      // }
     >
       <Content>{children}</Content>
       {!hideActions && <Actions>{getActions()}</Actions>}

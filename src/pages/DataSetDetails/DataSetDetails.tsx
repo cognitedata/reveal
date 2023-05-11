@@ -6,7 +6,6 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import copy from 'copy-to-clipboard';
 
 import {
-  Button,
   Flex,
   Icon,
   Chip,
@@ -169,13 +168,10 @@ const DataSetDetails = (): JSX.Element => {
     return <ErrorMessage error={error} />;
   };
 
-  // const { isEnabled } = useFlag('DATA_EXPLORATION_filters');
-
   const [selectedTab, setSelectedTab] = useState(
     searchParams.get('activeTab') || 'overview'
   );
   const activeTabChangeHandler = (tabKey: string) => {
-    console.log('activeTabChangeHandler', tabKey);
     // Navigate the user to the new data exploration UI if it's feature toggled.
     // After discussions, we decided not to have the link to data exploration from
     // here, instead we want to keep the tables in view, will comment out this code

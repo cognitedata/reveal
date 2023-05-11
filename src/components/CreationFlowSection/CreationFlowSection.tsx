@@ -49,7 +49,6 @@ const CreationFlowSection = (props: CreationFlowSectionProps): JSX.Element => {
         <Col span={18} className="status-table">
           <StatusTable
             pagination={false}
-            // bordered
             columns={props.columns}
             dataSource={getDataFields()}
           />
