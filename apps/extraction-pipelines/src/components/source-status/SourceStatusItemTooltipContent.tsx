@@ -1,7 +1,6 @@
 import React from 'react';
 import { formatTime } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { DailyLogAggregation } from 'utils/hostedExtractors';
 
 type SourceStatusItemTooltipContentProps = {
@@ -19,14 +18,10 @@ const SourceStatusItemTooltipContent = ({
     }
   };
   return (
-    <StyledTooltipContent direction="column" gap={8}>
+    <Flex direction="column" gap={8}>
       {content()}
-    </StyledTooltipContent>
+    </Flex>
   );
 };
-
-const StyledTooltipContent = styled(Flex)`
-  padding: 8px;
-`;
 
 export default SourceStatusItemTooltipContent;
