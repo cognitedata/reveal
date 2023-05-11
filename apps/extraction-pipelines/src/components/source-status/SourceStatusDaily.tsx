@@ -8,39 +8,42 @@ import {
   doesLogHaveErrorType,
   doesLogHaveSuccessType,
 } from 'utils/hostedExtractors';
+import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
 import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 
 type SourceStatusDailyProps = {
   aggregation: DailyLogAggregation;
+  source: MQTTSourceWithJobMetrics;
 };
 
 export const SourceStatusDaily = ({
   aggregation,
+  source,
 }: SourceStatusDailyProps): JSX.Element => {
   if (aggregation.logs.length === 0) {
     return (
-      <SourceStatusItemTooltip aggregation={aggregation}>
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
         <AggregationItemNoData />
       </SourceStatusItemTooltip>
     );
   }
   if (aggregation.logs.some((log) => doesLogHaveErrorType(log))) {
     return (
-      <SourceStatusItemTooltip aggregation={aggregation}>
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
         <AggregationItemError />
       </SourceStatusItemTooltip>
     );
   }
   if (aggregation.logs.every((log) => doesLogHaveSuccessType(log))) {
     return (
-      <SourceStatusItemTooltip aggregation={aggregation}>
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
         <AggregationItemSuccess />
       </SourceStatusItemTooltip>
     );
   }
   return (
-    <SourceStatusItemTooltip aggregation={aggregation}>
+    <SourceStatusItemTooltip aggregation={aggregation} source={source}>
       <AggregationItemUnknown />
     </SourceStatusItemTooltip>
   );
