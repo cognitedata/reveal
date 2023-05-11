@@ -4,59 +4,37 @@ import {
   SearchResultCountLabel,
   SearchResultToolbar,
 } from '@data-exploration-components/containers/SearchResults';
-import {
-  ResourceItem,
-  convertResourceType,
-} from '@data-exploration-components/types';
 import { SequenceTable } from '@data-exploration-components/containers/Sequences';
 
-import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
-import { useResourceResults } from '../SearchResultLoader';
 import {
   TableSortBy,
   useSequenceSearchAggregateQuery,
   useSequenceSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from '@data-exploration-components/components';
 import {
+  EMPTY_OBJECT,
   InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 
 export const SequenceSearchResults = ({
   query = '',
-  filter = {},
-  relatedResourceType,
+  filter = EMPTY_OBJECT,
   onFilterChange,
   onClick,
   onRootAssetClick,
   showCount = false,
-  enableAdvancedFilters,
   selectedRow,
-  ...rest
 }: {
   query?: string;
   filter?: InternalSequenceFilters;
-  showRelatedResources?: boolean;
-  relatedResourceType?: RelatedResourceType;
-  parentResource?: ResourceItem;
   showCount?: boolean;
-  enableAdvancedFilters?: boolean;
   onClick: (item: Sequence) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   selectedRow?: Record<string | number, boolean>;
 }) => {
-  const api = convertResourceType('sequence');
-  const { canFetchMore, fetchMore, isFetched, items } =
-    useResourceResults<Sequence>(api, query, filter);
-  const { count: itemCount } = useResultCount({
-    type: 'sequence',
-    filter,
-    query,
-    api: query && query.length > 0 ? 'search' : 'list',
-  });
   const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
@@ -67,7 +45,6 @@ export const SequenceSearchResults = ({
         filter,
         sortBy,
       },
-      { enabled: enableAdvancedFilters },
       sequenceSearchConfig
     );
 
@@ -76,14 +53,12 @@ export const SequenceSearchResults = ({
       query,
       filter,
     },
-    { enabled: enableAdvancedFilters },
     sequenceSearchConfig
   );
 
-  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
-  const totalDataCount = enableAdvancedFilters
-    ? aggregateData.count
-    : itemCount;
+  const loadedDataCount = data.length;
+  const totalDataCount = aggregateData.count;
+
   return (
     <SequenceTable
       id="sequence-search-results"
@@ -103,12 +78,10 @@ export const SequenceSearchResults = ({
         />
       }
       sorting={sortBy}
-      data={enableAdvancedFilters ? data : items}
-      isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
-      fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-      hasNextPage={
-        enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
-      }
+      data={data}
+      isDataLoading={isLoading}
+      fetchMore={fetchNextPage}
+      hasNextPage={!isPreviousData && hasNextPage}
       tableSubHeaders={
         <AppliedFiltersTags
           filter={filter}
@@ -119,10 +92,8 @@ export const SequenceSearchResults = ({
       showLoadButton
       onRowClick={(sequence) => onClick(sequence)}
       onRootAssetClick={onRootAssetClick}
-      enableSorting={enableAdvancedFilters}
+      enableSorting
       onSort={setSortBy}
-      relatedResourceType={relatedResourceType}
-      {...rest}
     />
   );
 };

@@ -16,7 +16,6 @@ export const SequenceTab = ({ query, filter, ...rest }: ResourceTabProps) => {
       filter,
       query,
     },
-    undefined,
     sequenceSearchConfig
   );
 

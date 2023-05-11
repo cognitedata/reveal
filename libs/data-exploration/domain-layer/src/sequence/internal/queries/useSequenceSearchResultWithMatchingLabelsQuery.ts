@@ -24,8 +24,8 @@ export const useSequenceSearchResultWithMatchingLabelsQuery = (
     filter: InternalSequenceFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions,
-  searchConfig: SequenceConfigType = getSearchConfig().sequence
+  searchConfig: SequenceConfigType = getSearchConfig().sequence,
+  options?: UseInfiniteQueryOptions
 ) => {
   const { data, ...rest } = useSequenceSearchResultQuery(
     { query, filter, sortBy },

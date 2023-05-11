@@ -5,7 +5,6 @@ import {
 } from '@data-exploration-app/containers/elements';
 import { SequenceSearchResults } from '@data-exploration-components/containers';
 import { useSequenceFilters } from '@data-exploration-app/store';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
@@ -20,7 +19,6 @@ import { Asset } from '@cognite/sdk';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const SequenceSearchResultView = () => {
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const [, openPreview] = useCurrentResourceId();
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
   const [query] = useQueryString(SEARCH_KEY);
@@ -52,7 +50,6 @@ export const SequenceSearchResultView = () => {
           selectedRow={selectedRow}
           onClick={handleRowClick}
           onRootAssetClick={handleRootAssetClick}
-          enableAdvancedFilters={isAdvancedFiltersEnabled}
           onFilterChange={(newValue: Record<string, unknown>) =>
             setSequenceFilter(newValue)
           }

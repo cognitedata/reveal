@@ -18,8 +18,8 @@ export const useSequenceSearchAggregateQuery = (
     query?: string;
     filter: InternalSequenceFilters;
   },
-  options?: UseQueryOptions,
-  searchConfig?: SequenceConfigType
+  searchConfig?: SequenceConfigType,
+  options?: UseQueryOptions
 ) => {
   const advancedFilter = useMemo(
     () => mapFiltersToSequenceAdvancedFilters(filter, query, searchConfig),

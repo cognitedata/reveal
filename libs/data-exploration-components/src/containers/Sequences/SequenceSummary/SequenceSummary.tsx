@@ -46,7 +46,6 @@ export const SequenceSummary = ({
       filter,
       query,
     },
-    undefined,
     sequenceSearchConfig
   );
 
