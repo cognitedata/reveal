@@ -78,5 +78,6 @@
   "form-source-external-id-placeholder": "Enter a unique identifier",
   "form-protocol-version": "Protocol version",
   "form-protocol-version-placeholder": "Select a protocol version",
-  "create-connection": "Create connection"
+  "create-connection": "Create connection",
+  "create-connection-success": "Connection created successfully"
 }
