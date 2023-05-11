@@ -21,6 +21,7 @@ import {
   doesJobStatusHaveNeutralType,
   doesJobStatusHaveSuccessType,
 } from 'utils/hostedExtractors';
+import { notification } from 'antd';
 
 type TopicFilterProps = {
   className?: string;
@@ -52,23 +53,47 @@ export const TopicFilter = ({
   const { mutate: updateJob } = useUpdateMQTTJob();
 
   const handleDelete = (): void => {
-    deleteJob({
-      externalId: job.externalId,
-    });
+    try {
+      deleteJob({
+        externalId: job.externalId,
+      });
+      notification.success({
+        message: t('job-delete-success'),
+        key: 'delete-job',
+      });
+    } catch (error: any) {
+      notification.error({
+        message: error.toString(),
+        description: error.message,
+        key: 'delete-job',
+      });
+    }
   };
 
   const handleUpdateTargetStatus = (): void => {
-    const nextTargetStatus: MQTTJobWithMetrics['targetStatus'] =
-      job.targetStatus === 'paused' ? 'running' : 'paused';
+    try {
+      const nextTargetStatus: MQTTJobWithMetrics['targetStatus'] =
+        job.targetStatus === 'paused' ? 'running' : 'paused';
 
-    updateJob({
-      externalId: job.externalId,
-      update: {
-        targetStatus: {
-          set: nextTargetStatus,
+      updateJob({
+        externalId: job.externalId,
+        update: {
+          targetStatus: {
+            set: nextTargetStatus,
+          },
         },
-      },
-    });
+      });
+      notification.success({
+        message: t('job-status-update-success', { status: nextTargetStatus }),
+        key: 'update-job',
+      });
+    } catch (error: any) {
+      notification.error({
+        message: error.toString(),
+        description: error.message,
+        key: 'update-job',
+      });
+    }
   };
 
   return (

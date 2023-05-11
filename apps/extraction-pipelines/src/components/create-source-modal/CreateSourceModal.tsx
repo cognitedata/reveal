@@ -2,7 +2,7 @@ import React from 'react';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
-import { Select } from 'antd';
+import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,12 +49,23 @@ export const CreateSourceModal = ({
 
   const { mutate: createMQTTSource } = useCreateMQTTSource({
     onSuccess: (_, variables) => {
+      notification.success({
+        message: t('notification-success-source-create'),
+        key: 'create-source',
+      });
       onCancel();
       navigate(
         createLink(
           `/extpipes/hosted-extraction-pipeline/${variables.externalId}`
         )
       );
+    },
+    onError: (e: any) => {
+      notification.error({
+        message: e.toString(),
+        description: e.message,
+        key: 'create-source',
+      });
     },
   });
 

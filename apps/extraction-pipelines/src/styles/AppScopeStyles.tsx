@@ -7,7 +7,7 @@ import {
 } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
-import { Select } from 'antd';
+import { Select, notification } from 'antd';
 
 Select.defaultProps = {
   ...Select.defaultProps,
@@ -33,6 +33,11 @@ CogsModal.defaultProps = {
   ...CogsModal.defaultProps,
   getContainer,
 };
+
+notification.config({
+  ...notification.defaultProps,
+  getContainer,
+});
 
 export default function AppScopeStyles(props: { children: React.Node }) {
   return <div className={styleScope}>{props.children}</div>;
