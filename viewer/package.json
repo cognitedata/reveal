@@ -140,7 +140,7 @@
     "wasm-pack": "0.10.3",
     "webpack": "5.82.0",
     "webpack-cli": "5.1.0",
-    "webpack-dev-server": "4.13.3",
+    "webpack-dev-server": "4.14.0",
     "webpack-node-externals": "3.0.0",
     "whatwg-fetch": "3.6.2",
     "workerize-loader": "2.0.2"
