@@ -26,7 +26,7 @@ export const useTimeseriesFilterOptions = ({
     data = [],
     isLoading,
     isError,
-  } = useTimeseriesUniqueValuesByProperty({ property, query, filter });
+  } = useTimeseriesUniqueValuesByProperty({ property, query });
 
   const omittedFilter = omit(filter, property);
 
