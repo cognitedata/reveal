@@ -28,7 +28,7 @@
     "@storybook/react": "7.0.9",
     "@storybook/react-webpack5": "7.0.9",
     "@storybook/testing-library": "0.1.0",
-    "@types/react": "18.2.5",
+    "@types/react": "18.2.6",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
