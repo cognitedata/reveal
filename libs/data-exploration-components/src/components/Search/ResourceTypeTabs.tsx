@@ -48,11 +48,7 @@ const ResourceTypeTab = ({
   });
 
   return (
-    <Tabs.Tab
-      label={resourceTypeMap[currentResourceType as ResourceType]}
-      chipRight={{ label: result.count, size: 'x-small' }}
-      {...rest}
-    />
+    <Tabs.Tab chipRight={{ label: result.count, size: 'x-small' }} {...rest} />
   );
 };
 export const ResourceTypeTabs = ({
@@ -70,6 +66,7 @@ export const ResourceTypeTabs = ({
         tabKey={resourceType}
         currentResourceType={resourceType}
         filter={globalFilters?.[resourceType] || {}}
+        label={resourceTypeMap[resourceType]}
         {...rest}
       />
     );
