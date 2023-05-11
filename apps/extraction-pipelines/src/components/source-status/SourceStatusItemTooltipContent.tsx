@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatTime, getAbsoluteTime } from '@cognite/cdf-utilities';
+import { formatTime } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
