@@ -8,9 +8,7 @@ import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk/dist/src';
-import { Image360Entity } from '../entity/Image360Entity';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 
 export type Image360AnnotationAssetQueryResult = {
   entity: Image360;
@@ -70,7 +68,7 @@ export interface Image360Collection {
   setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
 
   /**
-   * Find a 360 image associated with a asset with the given assetRef
+   * Find 360 images associated with a asset with the given assetRef
    */
   findAsset(assetRef: IdEither): Promise<Image360AnnotationAssetQueryResult[]>;
 }
