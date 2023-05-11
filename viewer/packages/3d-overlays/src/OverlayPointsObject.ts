@@ -9,6 +9,7 @@ import {
   Color,
   DepthModes,
   GLSL3,
+  GreaterDepth,
   Group,
   LessEqualDepth,
   Points,
@@ -22,7 +23,7 @@ import {
 import image360IconVert from './image360Icon.vert';
 import image360IconFrag from './image360Icon.frag';
 
-export type PointsMaterialParameters = {
+export type OverlayPointsParameters = {
   spriteTexture: Texture;
   minPixelSize: number;
   maxPixelSize: number;
@@ -40,7 +41,7 @@ export class OverlayPointsObject extends Group {
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
 
-  constructor(maxNumberOfPoints: number, materialParameters: PointsMaterialParameters) {
+  constructor(maxNumberOfPoints: number, materialParameters: OverlayPointsParameters) {
     super();
     const geometry = new BufferGeometry();
     this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
@@ -70,7 +71,21 @@ export class OverlayPointsObject extends Group {
       radius,
       colorTint
     );
+
+    const backMaterial = this.createIconsMaterial(
+      spriteTexture,
+      0.5,
+      GreaterDepth,
+      minPixelSize,
+      maxPixelSize,
+      radius,
+      colorTint
+    );
+
     const frontPoints = this.initializePoints(geometry, frontMaterial);
+    const backPoints = this.initializePoints(geometry, backMaterial);
+    
+    this.add(backPoints);
     this.add(frontPoints);
 
     this._geometry = geometry;

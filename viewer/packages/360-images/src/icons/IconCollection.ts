@@ -4,9 +4,8 @@
 
 import { CanvasTexture, Frustum, Matrix4, Sprite, SpriteMaterial, Texture, Vector2, Vector3 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
-import { IconOctree, Overlay3DIcon } from '@reveal/3d-overlays';
+import { IconOctree, Overlay3DIcon, OverlayPointsObject } from '@reveal/3d-overlays';
 import clamp from 'lodash/clamp';
-import { Image360PointsObject } from './Image360PointsObject';
 
 export type IconCullingScheme = 'clustered' | 'proximity';
 
@@ -22,7 +21,7 @@ export class IconCollection {
   private readonly _sharedTexture: Texture;
   private readonly _hoverSprite: Sprite;
   private readonly _icons: Overlay3DIcon[];
-  private readonly _pointsObject: Image360PointsObject;
+  private readonly _pointsObject: OverlayPointsObject;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
@@ -80,7 +79,7 @@ export class IconCollection {
 
     const sharedTexture = this.createOuterRingsTexture();
 
-    const iconsSprites = new Image360PointsObject(points.length, {
+    const iconsSprites = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
@@ -109,7 +108,7 @@ export class IconCollection {
     sceneHandler.addCustomObject(iconsSprites);
   }
 
-  private setIconClustersByLOD(octree: IconOctree, iconSprites: Image360PointsObject): BeforeSceneRenderedDelegate {
+  private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
     const screenSpaceAreaThreshold = 0.04;
@@ -138,7 +137,7 @@ export class IconCollection {
     };
   }
 
-  private computeProximityPoints(octree: IconOctree, iconSprites: Image360PointsObject): BeforeSceneRenderedDelegate {
+  private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     return ({ camera }) => {
       const points =
         this._proximityRadius === Infinity
