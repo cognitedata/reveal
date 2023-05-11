@@ -31,7 +31,7 @@ export default function ConfigurationEditor({
   });
 
   return (
-    <>
+    <div>
       {!editable && (
         <ConfigurationErrorFeedback error={error} onCreate={onCreate} />
       )}
@@ -51,6 +51,6 @@ export default function ConfigurationEditor({
             value={configuration?.config || ''}
           />
         ))}
-    </>
+    </div>
   );
 }
