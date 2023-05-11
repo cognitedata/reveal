@@ -41,6 +41,7 @@ type Props = {
   translations?: typeof defaultTranslations;
   onUpdateCredsValidated: (validted: boolean) => void;
   uniqueFormId: string;
+  trackingId?: string;
 };
 
 type CredentialsFormValues = {
@@ -55,6 +56,7 @@ export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
   translations,
   onUpdateCredsValidated,
   uniqueFormId,
+  trackingId = 'CredentialsForm.LoginMethod',
 }: Props) => {
   const { control, watch, formState, setValue } =
     useFormContext<TFieldValues>();
@@ -111,7 +113,7 @@ export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
         '' as PathValue<TFieldValues, Path<TFieldValues>>
       );
     }
-    trackUsage('Sidebar.Monitoring.LoginMethod', {
+    trackUsage(trackingId, {
       cdfCredsMode,
     });
   }, [cdfCredsMode]);

@@ -40,6 +40,7 @@ export const Step1Body = ({ onUpdateCredsValidated }: BodyProps) => {
     <CredentialsForm
       onUpdateCredsValidated={onUpdateCredsValidated}
       uniqueFormId="scheduling"
+      trackingId="ScheduledCalculation.LoginMethod"
     />
   );
 };

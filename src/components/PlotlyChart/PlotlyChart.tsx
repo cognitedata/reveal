@@ -6,6 +6,7 @@ import {
   ChartThreshold,
   ChartTimeSeries,
   ChartWorkflow,
+  ScheduledCalculation,
 } from 'models/chart/types';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
@@ -14,6 +15,7 @@ import {
   EventsCollection,
 } from 'models/event-results/types';
 import { InteractionData } from 'models/interactions/types';
+import { ScheduledCalculationsDataMap } from 'models/scheduled-calculation-results/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,
@@ -52,6 +54,8 @@ type Props = {
   timeseriesData?: TimeseriesEntry[];
   calculations?: ChartWorkflow[];
   calculationsData?: WorkflowState[];
+  scheduledCalculations?: ScheduledCalculation[];
+  scheduledCalculationsData?: ScheduledCalculationsDataMap;
   thresholds?: ChartThreshold[];
   eventData?: ChartEventResults[];
   storedSelectedEvents?: EventsCollection;
@@ -76,6 +80,8 @@ const PlotlyChart = ({
   timeseriesData = [],
   calculations = [],
   calculationsData = [],
+  scheduledCalculations = [],
+  scheduledCalculationsData = {},
   thresholds = [],
   eventData = [],
   storedSelectedEvents = [],
@@ -135,10 +141,12 @@ const PlotlyChart = ({
   const seriesData: SeriesData[] = useMemo(() => {
     const result = calculateSeriesData({
       timeseries,
-      calculations,
-      thresholds,
       timeseriesData,
+      calculations,
       calculationsData,
+      scheduledCalculations,
+      scheduledCalculationsData,
+      thresholds,
       mergeUnits,
     });
     return result;
@@ -147,6 +155,8 @@ const PlotlyChart = ({
     calculations,
     timeseriesData,
     calculationsData,
+    scheduledCalculations,
+    scheduledCalculationsData,
     thresholds,
     mergeUnits,
   ]);

@@ -11,6 +11,7 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   LineStyle,
+  ScheduledCalculation,
 } from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/numbers';
 import { DEFAULT_EVENT_COLOR, hexToRGBA } from 'utils/colors';
@@ -20,6 +21,7 @@ import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { isThresholdValid } from 'utils/threshold';
 import { ChartEventResults } from 'models/event-results/types';
 import { isEventSelected } from 'components/EventSidebar/helpers';
+import { ScheduledCalculationsDataMap } from 'models/scheduled-calculation-results/types';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -65,13 +67,17 @@ export function calculateSeriesData({
   thresholds = [],
   timeseriesData = [],
   calculationsData = [],
+  scheduledCalculations = [],
+  scheduledCalculationsData = {},
   mergeUnits = false,
 }: {
   timeseries: ChartTimeSeries[];
-  calculations: ChartWorkflow[];
-  thresholds: ChartThreshold[];
   timeseriesData: TimeseriesEntry[];
+  calculations: ChartWorkflow[];
   calculationsData: WorkflowState[];
+  scheduledCalculations: ScheduledCalculation[];
+  scheduledCalculationsData: ScheduledCalculationsDataMap;
+  thresholds: ChartThreshold[];
   mergeUnits: boolean;
 }): SeriesData[] {
   const seriesData: SeriesData[] = [
@@ -192,6 +198,60 @@ export function calculateSeriesData({
         };
       })
       .filter((t) => t.enabled),
+    // Todo(DEGR-0000): find a DRY way, almost repeating timeseries
+    ...scheduledCalculations
+      .map((scheduledCalculation) => {
+        const unitLabel =
+          units.find(
+            (unitOption) =>
+              unitOption.value ===
+              scheduledCalculation.preferredUnit?.toLowerCase()
+          )?.label || scheduledCalculation.customUnitLabel; // ||
+        // scheduledCalculation.originalUnit;
+
+        const scheduledCalculationState =
+          scheduledCalculationsData[scheduledCalculation.id];
+
+        const mode = getMode(
+          scheduledCalculation.displayMode,
+          hasRawPoints(scheduledCalculationState?.series?.datapoints)
+        );
+
+        const unitConvertedDatapoints = convertUnits(
+          scheduledCalculationState?.series?.datapoints || [],
+          scheduledCalculation.unit,
+          scheduledCalculation.preferredUnit
+        );
+
+        const unitConvertedThresolds = convertThresholdUnits(
+          thresholds || [],
+          scheduledCalculation.unit,
+          scheduledCalculation.preferredUnit
+        );
+
+        return {
+          enabled: scheduledCalculation.enabled,
+          range: scheduledCalculation.range,
+          unit: unitLabel,
+          series: [
+            {
+              ...scheduledCalculation,
+              type: 'scheduledCalculation',
+              width: scheduledCalculation.lineWeight,
+              name: scheduledCalculation.name,
+              outdatedData: scheduledCalculationState?.loading,
+              datapoints: unitConvertedDatapoints,
+              dash: convertLineStyle(scheduledCalculation.lineStyle),
+              mode,
+              shape: scheduledCalculation.interpolation,
+            },
+          ],
+          thresholds: unitConvertedThresolds.filter(
+            (th) => th.sourceId === scheduledCalculation.id
+          ),
+        };
+      })
+      .filter((scheduledCalculation) => scheduledCalculation.enabled),
   ];
 
   if (mergeUnits) {

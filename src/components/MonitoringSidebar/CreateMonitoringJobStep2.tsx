@@ -46,6 +46,7 @@ const CreateMonitoringJobStep2 = ({
         <CredentialsForm
           onUpdateCredsValidated={setClientCredsValidated}
           uniqueFormId="monitoring"
+          trackingId="Sidebar.Monitoring.LoginMethod"
         />
       </FormProvider>
 

@@ -7,11 +7,20 @@ export const chartSources = selector({
   get: ({ get }) => {
     const chart = get(chartAtom);
     const sources = (chart?.sourceCollection ?? [])
-      .map((x) =>
-        x.type === 'timeseries'
-          ? chart?.timeSeriesCollection?.find((ts) => ts.id === x.id)
-          : chart?.workflowCollection?.find((calc) => calc.id === x.id)
-      )
+      .map((x) => {
+        switch (x.type) {
+          case 'timeseries':
+            return chart?.timeSeriesCollection?.find((ts) => ts.id === x.id);
+          case 'workflow':
+            return chart?.workflowCollection?.find((calc) => calc.id === x.id);
+          case 'scheduledCalculation':
+            return chart?.scheduledCalculationCollection?.find(
+              (calc) => calc.id === x.id
+            );
+          default:
+            return undefined;
+        }
+      })
       .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
     return sources;
   },

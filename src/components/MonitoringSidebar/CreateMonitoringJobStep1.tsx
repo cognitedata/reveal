@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
@@ -142,7 +142,7 @@ const CreateMonitoringJobStep1 = ({
     );
   }, [formValues.alertThreshold]);
 
-  useMemo(() => {
+  useEffect(() => {
     const tsSource = timeseries.find((ts) => {
       return ts.tsExternalId === formValues.source?.tsExternalId;
     });

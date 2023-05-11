@@ -93,6 +93,8 @@ import { AlertingSidebar } from 'components/AlertingSidebar/AlertingSidebar';
 import interactionsAtom from 'models/interactions/atom';
 import { AccessDeniedModal } from 'components/AccessDeniedModal/AccessDeniedModal';
 import { useExperimentalCapabilitiesCheck } from 'domain/chart';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';
 import NotificationIndicator from './NotificationIndicator';
 import {
   BottomPaneWrapper,
@@ -197,6 +199,7 @@ const ChartViewPage = () => {
   const calculationData = useRecoilValue(availableWorkflows);
   const eventData = useRecoilValue(eventResultsAtom);
   const interactionData = useRecoilValue(interactionsAtom);
+  const scheduledCalculationsData = useScheduledCalculationDataValue();
 
   /**
    * Method for updating storage value of chart
@@ -828,6 +831,7 @@ const ChartViewPage = () => {
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
       <EventResultEffects />
+      <ScheduledCalculationCollectionEffects />
       <AccessDeniedModal
         visible={accessDeniedModal === 'monitoring'}
         capabilities={MONITORING_CAPABILITIES}
@@ -869,6 +873,7 @@ const ChartViewPage = () => {
                     mergeUnits={mergeUnits}
                     timeseriesData={timeseriesData}
                     calculationsData={calculationData}
+                    scheduledCalculationsData={scheduledCalculationsData}
                     eventData={eventData}
                     interactionData={interactionData}
                   />

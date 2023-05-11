@@ -6,6 +6,7 @@ import { ComputationStep } from '@cognite/calculation-backend';
 import { Chart, ChartWorkflow, ChartWorkflowV2 } from 'models/chart/types';
 import { toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
+import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
 import { ScheduleCalculationFieldValues } from '../../domain/scheduled-calculation/internal/types';
 import { addScheduledCalculation } from '../../models/chart/updates-calculation';
 import { STEPS } from '../../domain/scheduled-calculation/internal/constants';
@@ -30,7 +31,7 @@ export const handleNext = ({
   >;
   formMethods: UseFormReturn<ScheduleCalculationFieldValues>;
   createScheduledCalculation: UseMutateAsyncFunction<
-    unknown,
+    CalculationTaskSchedule,
     unknown,
     {
       calculation: ScheduleCalculationFieldValues;
@@ -79,7 +80,6 @@ export const handleNext = ({
                 adaptCalculationForClonedScheduledCalculation(
                   workflow as ChartWorkflowV2,
                   oldChart!.id,
-                  // @ts-ignore
                   scheduledCalculation.externalId
                 )
               )

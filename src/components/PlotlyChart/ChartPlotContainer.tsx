@@ -7,6 +7,7 @@ import { selectedEventsAtom } from 'models/event-results/atom';
 import { useRecoilValue } from 'recoil';
 import { ChartEventResults } from 'models/event-results/types';
 import { InteractionData } from 'models/interactions/types';
+import { ScheduledCalculationsDataMap } from 'models/scheduled-calculation-results/types';
 import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
@@ -23,6 +24,7 @@ type Props = {
   mergeUnits?: boolean;
   timeseriesData: TimeseriesEntry[];
   calculationsData: WorkflowState[];
+  scheduledCalculationsData: ScheduledCalculationsDataMap;
   eventData?: ChartEventResults[];
   interactionData?: InteractionData;
 };
@@ -37,6 +39,7 @@ const ChartPlotContainer = ({
   mergeUnits = false,
   timeseriesData = [],
   calculationsData = [],
+  scheduledCalculationsData = {},
   eventData = [],
   interactionData,
 }: Props) => {
@@ -67,6 +70,9 @@ const ChartPlotContainer = ({
     () => JSON.parse(wfCollectionAsString),
     [wfCollectionAsString]
   );
+
+  // no need to clean this as there are no call references in this
+  const scheduledCalculations = chart?.scheduledCalculationCollection;
 
   const thresholds = chart?.thresholdCollection;
 
@@ -103,6 +109,8 @@ const ChartPlotContainer = ({
     timeseriesData,
     calculations,
     calculationsData,
+    scheduledCalculations,
+    scheduledCalculationsData,
     eventData,
     thresholds,
     storedSelectedEvents,
