@@ -49,13 +49,22 @@ export class ImageAnnotationObject implements Image360Annotation {
   private static createObjectData(detection: AnnotationData): ImageAnnotationObjectData | undefined {
     if (isAnnotationsObjectDetection(detection)) {
       if (detection.polygon !== undefined) {
-        return new PolygonAnnotationData(detection);
+        return new PolygonAnnotationData(detection.polygon);
       } else if (detection.boundingBox !== undefined) {
         return new BoxAnnotationData(detection.boundingBox);
       } else {
         return undefined;
       }
     } else if (isAnnotationAssetLink(detection)) {
+      const objectRegion = (detection as any).objectRegion;
+      if (objectRegion !== undefined) {
+        if (objectRegion.polygon !== undefined) {
+          return new PolygonAnnotationData(objectRegion.polygon);
+        } else if (objectRegion.boundingBox !== undefined) {
+          return new BoxAnnotationData(objectRegion.boundingBox);
+        }
+      }
+
       return new BoxAnnotationData(detection.textRegion);
     } else {
       return undefined;
