@@ -62,7 +62,7 @@ export const DocumentSearchResults = ({
 
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearchResultWithMatchingLabelsQuery(
-      { filter, query: realQuery, sortBy },
+      { filter, query: isDocumentsGPTEnabled ? realQuery : query, sortBy },
       { keepPreviousData: true },
       documentSearchConfig
     );
