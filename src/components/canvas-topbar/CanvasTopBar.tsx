@@ -1,4 +1,4 @@
-import { Colors, Flex, Menu } from '@cognite/cogs.js';
+import { Avatar, AvatarGroup, Colors, Flex, Menu } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
@@ -15,7 +15,8 @@ import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
 export const CanvasTopBar = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const { flow, setHistoryVisible } = useWorkflowBuilderContext();
+  const { flow, setHistoryVisible, userState, otherUserStates } =
+    useWorkflowBuilderContext();
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
@@ -52,6 +53,13 @@ export const CanvasTopBar = () => {
             <Flex>
               <FlowSaveIndicator />
             </Flex>
+            <SecondaryTopbar.Divider />
+            <Avatar text={userState.name ?? userState.connectionId} />
+            <AvatarGroup>
+              {otherUserStates.map(({ connectionId, name }) => (
+                <Avatar key={connectionId} text={name ?? connectionId} />
+              ))}
+            </AvatarGroup>
             <SecondaryTopbar.Divider />
             <Flex gap={10}>
               <CanvasTopBarDiscardChangesButton />

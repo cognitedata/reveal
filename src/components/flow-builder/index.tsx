@@ -56,8 +56,8 @@ export const FlowBuilder = (): JSX.Element => {
   const {
     flow: flowState,
     changeFlow,
-    setSelectedObject,
-    selectedObject,
+    userState,
+    setUserState,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -77,9 +77,25 @@ export const FlowBuilder = (): JSX.Element => {
   );
 
   const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
-    const selectedEdgeChange = changes.find((c) => c.type === 'select');
-    if (selectedEdgeChange) {
-      setSelectedObject((selectedEdgeChange as EdgeSelectionChange).id);
+    const selectChanges = changes.filter(
+      (c) => c.type === 'select'
+    ) as EdgeSelectionChange[];
+    if (selectChanges) {
+      setUserState((prevState) => {
+        const newState = { ...prevState };
+        selectChanges.forEach(({ id, selected }) => {
+          if (selected) {
+            newState.selectedObjectIds = newState.selectedObjectIds
+              .filter((objectId) => objectId !== id)
+              .concat(id);
+          } else {
+            newState.selectedObjectIds = newState.selectedObjectIds.filter(
+              (objectId) => objectId !== id
+            );
+          }
+        });
+        return newState;
+      });
     }
 
     const amChanges = changes.filter((c) => ['remove'].includes(c.type));
@@ -107,10 +123,27 @@ export const FlowBuilder = (): JSX.Element => {
   };
 
   const onNodesChange = (changes: NodeChange[]) => {
-    const selectedNodeChange = changes.find((c) => c.type === 'select');
-    if (selectedNodeChange) {
-      setSelectedObject((selectedNodeChange as NodeSelectionChange).id);
+    const selectChanges = changes.filter(
+      (c) => c.type === 'select'
+    ) as NodeSelectionChange[];
+    if (selectChanges) {
+      setUserState((prevState) => {
+        const newState = { ...prevState };
+        selectChanges.forEach(({ id, selected }) => {
+          if (selected) {
+            newState.selectedObjectIds = newState.selectedObjectIds
+              .filter((objectId) => objectId !== id)
+              .concat(id);
+          } else {
+            newState.selectedObjectIds = newState.selectedObjectIds.filter(
+              (objectId) => objectId !== id
+            );
+          }
+        });
+        return newState;
+      });
     }
+
     const amChanges = changes.filter((c) =>
       ['remove', 'position'].includes(c.type)
     );
@@ -265,17 +298,17 @@ export const FlowBuilder = (): JSX.Element => {
     () =>
       flowState.canvas.nodes.map((n) => ({
         ...n,
-        selected: n.id === selectedObject,
+        selected: userState?.selectedObjectIds.includes(n.id),
         // FIXME: can we remove as
       })) as WorkflowBuilderNode[],
-    [flowState.canvas.nodes, selectedObject]
+    [flowState.canvas.nodes, userState]
   );
 
   const edges = useMemo(
     () =>
       flowState.canvas.edges.map((e) => ({
         ...e,
-        selected: e.id === selectedObject,
+        selected: userState?.selectedObjectIds.includes(e.id),
         animated: true,
         markerEnd: {
           type: MarkerType.ArrowClosed,
@@ -286,7 +319,7 @@ export const FlowBuilder = (): JSX.Element => {
           strokeWidth: 1,
         },
       })) as Edge[],
-    [flowState.canvas.edges, selectedObject]
+    [flowState.canvas.edges, userState]
   );
 
   if (!flowState) {
