@@ -11,6 +11,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
 import { EventDispatcher } from 'three';
+import { IdEither } from '@cognite/sdk/dist/src';
 import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { Node3D } from '@cognite/sdk';
@@ -790,6 +791,7 @@ export interface Image360 {
 // @public
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
+    getCenter(out?: Vector3): Vector3;
     setColor(color?: Color): void;
     setVisible(visible?: boolean): void;
 }
@@ -809,6 +811,7 @@ export type Image360AnnotationIntersection = {
 
 // @public
 export interface Image360Collection {
+    findAsset(assetRef: IdEither): Promise<Image360AnnotationAssetQueryResult[]>;
     readonly image360Entities: Image360[];
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
