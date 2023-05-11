@@ -21,6 +21,7 @@ import {
   numberSorter,
   stringSorter,
 } from 'utils/utils';
+import { SourceOptions } from 'components/source-options-dropdown/SourceOptions';
 
 export type HostedExtractionPipelineListTableRecord = {
   key: string;
@@ -84,6 +85,12 @@ const HostedExtractionPipelineTable = ({
       ),
       sorter: (recordA, recordB) =>
         dateSorter(recordA.lastUpdatedTime, recordB.lastUpdatedTime),
+    },
+    {
+      title: '',
+      dataIndex: 'dropDown',
+      key: 'dropdown',
+      render: (_, record) => <SourceOptions source={record} />,
     },
   ];
 
