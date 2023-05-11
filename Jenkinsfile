@@ -131,6 +131,7 @@ pods {
                 firebaseJson: 'build/firebase.json',
                 buildCommand: "yarn build",
                 buildFolder: 'build',
+                isFusionSubapp: true
               )
 
               slack.send(

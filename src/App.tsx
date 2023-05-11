@@ -30,6 +30,7 @@ const queryClient = new QueryClient({
 const App = () => {
   const appName = 'cdf-data-catalog';
   const projectName = getProject();
+  const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
 
   useEffect(() => {
     trackUsage({ e: 'data.sets.navigate' });
@@ -38,7 +39,7 @@ const App = () => {
   return (
     <I18nWrapper translations={translations} defaultNamespace="data-catalog">
       <FlagProvider
-        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        apiToken={flagProviderApiToken}
         appName={appName}
         projectName={projectName}
       >
