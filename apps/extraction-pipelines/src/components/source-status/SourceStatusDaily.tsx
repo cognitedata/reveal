@@ -51,9 +51,6 @@ export const SourceStatusDaily = ({
   );
 };
 
-// const AggregationItemBase = styled.div<{
-//   $color: ColorStatus;
-// }>`
 
 const AggregationItemBase = styled.div`
   border: none;
