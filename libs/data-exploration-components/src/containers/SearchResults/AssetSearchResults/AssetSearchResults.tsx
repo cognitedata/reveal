@@ -6,13 +6,8 @@ import {
   AssetTreeTable,
   SearchResultToolbar,
   AssetTable,
-  useResourceResults,
   SearchResultCountLabel,
 } from '@data-exploration-components/containers';
-import {
-  convertResourceType,
-  SelectableItemsProps,
-} from '@data-exploration-components/types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
@@ -21,7 +16,6 @@ import {
   useAssetsSearchAggregateQuery,
   TableSortBy,
 } from '@data-exploration-lib/domain-layer';
-import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
 import {
   InternalAssetFilters,
@@ -39,12 +33,10 @@ export const AssetSearchResults = ({
   view,
   onViewChange,
   isTreeEnabled,
-  enableAdvancedFilters,
   activeIds,
   onFilterChange,
-  ...extraProps
+  ...rest
 }: {
-  enableAdvancedFilters?: boolean;
   query?: string;
   view: AssetViewMode;
   onViewChange: (nextView: AssetViewMode) => void;
@@ -55,27 +47,14 @@ export const AssetSearchResults = ({
   onShowAllAssetsClick: (item: Asset) => void;
   activeIds?: (string | number)[];
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-} & SelectableItemsProps) => {
-  const api = convertResourceType('asset');
-  const { canFetchMore, fetchMore, items, isFetched } =
-    useResourceResults<Asset>(api, query, filter);
-  const { count: itemCount } = useResultCount({
-    type: 'asset',
-    filter,
-    query,
-    api: query && query.length > 0 ? 'search' : 'list',
-  });
-
+}) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useAssetsSearchResultWithLabelsQuery(
-      {
-        query,
-        assetFilter: filter,
-        sortBy,
-      },
-      { enabled: enableAdvancedFilters }
-    );
+    useAssetsSearchResultWithLabelsQuery({
+      query,
+      assetFilter: filter,
+      sortBy,
+    });
 
   const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
 
@@ -84,19 +63,13 @@ export const AssetSearchResults = ({
       assetsFilters: filter,
       query,
     },
-    { enabled: enableAdvancedFilters },
     assetSearchConfig
   );
 
-  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
-  const totalDataCount = enableAdvancedFilters
-    ? aggregateData.count
-    : itemCount;
+  const loadedDataCount = data.length;
+  const totalDataCount = aggregateData.count;
 
   const currentView = isTreeEnabled ? view : 'list';
-
-  const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
-  const treeProps = { onSelect, selectionMode, isSelected };
 
   const selectedRows = useMemo(() => {
     if (activeIds) {
@@ -159,9 +132,9 @@ export const AssetSearchResults = ({
           id="asset-search-results"
           query={query}
           onRowClick={(asset) => onClick(asset)}
-          data={enableAdvancedFilters ? data : items}
-          isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
-          enableSorting={enableAdvancedFilters}
+          data={data}
+          isDataLoading={isLoading}
+          enableSorting
           sorting={sortBy}
           selectedRows={selectedRows}
           scrollIntoViewRow={
@@ -179,12 +152,8 @@ export const AssetSearchResults = ({
             />
           }
           tableHeaders={currentView === 'list' ? tableHeaders : undefined}
-          hasNextPage={
-            enableAdvancedFilters
-              ? !isPreviousData && hasNextPage
-              : canFetchMore
-          }
-          fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+          hasNextPage={!isPreviousData && hasNextPage}
+          fetchMore={fetchNextPage}
           {...rest}
         />
       </KeepMounted>
@@ -211,7 +180,6 @@ export const AssetSearchResults = ({
               ? activeIds[0]
               : undefined
           }
-          {...treeProps}
         />
       </KeepMounted>
     </>

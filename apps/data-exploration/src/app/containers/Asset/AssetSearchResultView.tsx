@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   StyledSplitter,
@@ -14,17 +13,15 @@ import {
 } from '@data-exploration-app/store';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 import { ResourceItem } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
-  useQueryStringArray,
   useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
 import { useDebounce } from 'use-debounce';
-import { CART_KEY, SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import { routes } from '@data-exploration-app/containers/App';
 import { createLink } from '@cognite/cdf-utilities';
@@ -32,7 +29,6 @@ import { Asset } from '@cognite/sdk';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 export const AssetSearchResultView = () => {
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const [assetView, setAssetView] = useAssetViewState();
   const [, openPreview] = useCurrentResourceId();
   const [query] = useQueryString(SEARCH_KEY);
@@ -62,22 +58,6 @@ export const AssetSearchResultView = () => {
     }
   };
 
-  // TODO: Do we need cart and onSelect and selection context?
-  const [rawCart, setCart] = useQueryStringArray(CART_KEY, false);
-  const cart = rawCart
-    .map((s) => parseInt(s, 10))
-    .filter((n) => Number.isFinite(n));
-
-  const onSelect = (item: ResourceItem) => {
-    const newCart = cart.includes(item.id)
-      ? cart.filter((id) => id !== item.id)
-      : cart.concat([item.id]);
-    setCart(newCart);
-  };
-
-  const { mode } = useContext(ResourceSelectionContext);
-  const isSelected = (item: ResourceItem) => cart.includes(item.id);
-
   return (
     <StyledSplitter
       primaryMinSize={420}
@@ -91,16 +71,12 @@ export const AssetSearchResultView = () => {
           view={assetView}
           onViewChange={handleViewChange}
           filter={assetFilter}
-          enableAdvancedFilters={isAdvancedFiltersEnabled}
           onClick={handleRowClick}
           onShowAllAssetsClick={handleShowAllAssetsClick}
           onFilterChange={(newValue: Record<string, unknown>) =>
             setAssetFilter(newValue)
           }
           query={debouncedQuery}
-          onSelect={onSelect}
-          selectionMode={mode}
-          isSelected={isSelected}
           activeIds={selectedAssetId ? [selectedAssetId] : []}
         />
       </SearchResultWrapper>

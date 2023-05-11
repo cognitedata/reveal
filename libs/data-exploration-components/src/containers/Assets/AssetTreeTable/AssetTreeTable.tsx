@@ -3,10 +3,7 @@ import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks/CustomHooks';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-} from '@data-exploration-components/types';
+import { TableStateProps } from '@data-exploration-components/types';
 import {
   EmptyState,
   HighlightCell,
@@ -52,8 +49,7 @@ export const AssetTreeTable = ({
   selectedRows?: Record<string, boolean>;
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   tableSubHeaders?: React.ReactElement;
-} & SelectableItemsProps &
-  TableStateProps) => {
+} & TableStateProps) => {
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
   const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 

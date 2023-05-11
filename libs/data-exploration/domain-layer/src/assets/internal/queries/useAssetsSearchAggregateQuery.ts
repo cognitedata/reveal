@@ -18,8 +18,8 @@ export const useAssetsSearchAggregateQuery = (
     query?: string;
     assetsFilters: InternalAssetFilters;
   },
-  options?: UseQueryOptions,
-  searchConfig?: AssetConfigType
+  searchConfig?: AssetConfigType,
+  options?: UseQueryOptions
 ) => {
   const advancedFilter = useMemo(
     () => mapFiltersToAssetsAdvancedFilters(assetsFilters, query, searchConfig),

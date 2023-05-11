@@ -21,7 +21,6 @@ export const AssetsTab = ({ query, filter, ...rest }: Props) => {
       assetsFilters: filter,
       query,
     },
-    undefined,
     assetSearchConfig
   );
 

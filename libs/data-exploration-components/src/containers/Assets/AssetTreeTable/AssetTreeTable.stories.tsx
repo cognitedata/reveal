@@ -17,16 +17,13 @@ export const Example: ComponentStory<typeof AssetTreeTable> = (args) => (
 );
 Example.args = {
   onAssetClicked: action('onAssetClicked'),
-  isSelected: () => false,
 };
 
 export const ExampleSingleSelect: ComponentStory<typeof AssetTreeTable> = (
   args
 ) => <AssetTreeTable {...args} />;
 ExampleSingleSelect.args = {
-  selectionMode: 'single',
   onAssetClicked: action('onAssetClicked'),
-  isSelected: () => false,
 };
 
 const asset = assets[assets.length - 1];
@@ -34,7 +31,6 @@ export const ExampleFocusAsset: ComponentStory<typeof AssetTreeTable> = (
   args
 ) => <AssetTreeTable {...args} />;
 ExampleFocusAsset.args = {
-  selectionMode: 'single',
   activeIds: [asset.id],
   hierachyRootId: asset.rootId,
   filter:
@@ -42,7 +38,6 @@ ExampleFocusAsset.args = {
       ? { assetSubtreeIds: [{ label: asset.name, value: asset.id }] }
       : {},
   onAssetClicked: action('onAssetClicked'),
-  isSelected: () => false,
 };
 
 const Container = styled.div`

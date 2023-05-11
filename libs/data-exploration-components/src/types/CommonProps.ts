@@ -14,9 +14,6 @@ import {
   InternalEventsFilters,
   InternalSequenceFilters,
   InternalDocumentFilter,
-  OldTimeseriesFilters,
-  OldFilesFilters,
-  OldEventsFilters,
   OldSequenceFilters,
 } from '@data-exploration-lib/core';
 
