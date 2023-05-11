@@ -4,11 +4,22 @@
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
-import { Image360Collection } from './Image360Collection';
+import { Image360AnnotationAssetQueryResult, Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360Annotation } from '../annotation/Image360Annotation';
+import {
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  IdEither,
+  CogniteInternalId,
+  InternalId,
+  ExternalId
+} from '@cognite/sdk';
+
+import { Image360DataProvider } from '@reveal/data-providers';
+import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -31,6 +42,8 @@ export class DefaultImage360Collection implements Image360Collection {
   private _needsRedraw: boolean = false;
 
   private _defaultStyle: Image360AnnotationAppearance = {};
+
+  private _image360DataProvider: Image360DataProvider;
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
@@ -66,11 +79,17 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._isCollectionVisible;
   }
 
-  constructor(collectionId: string, entities: Image360Entity[], icons: IconCollection) {
+  constructor(
+    collectionId: string,
+    entities: Image360Entity[],
+    icons: IconCollection,
+    image360DataProvider: Image360DataProvider
+  ) {
     this._collectionId = collectionId;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;
+    this._image360DataProvider = image360DataProvider;
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -182,4 +201,61 @@ export class DefaultImage360Collection implements Image360Collection {
       entity.getRevisions().forEach(revision => revision.setDefaultAppearance(defaultStyle))
     );
   }
+
+  public async findAsset(assetRef: IdEither): Promise<Image360AnnotationAssetQueryResult[]> {
+    const imageIds = await this._image360DataProvider.getFilesByAssetRef(assetRef);
+    const imageIdSet = new Set<CogniteInternalId>(imageIds);
+
+    const entityAnnotationsPromises = this.image360Entities.map(async entity => {
+      const revisionAndAnnotationPromises = await getEntityAnnotationsForAsset(entity);
+
+      const revisionsAndAnnotations = revisionAndAnnotationPromises.map(async ({ revision, annotation }) => ({
+        annotation,
+        revision,
+        entity
+      }));
+
+      return await Promise.all(revisionsAndAnnotations);
+    });
+
+    const entityAnnotations = await Promise.all(entityAnnotationsPromises);
+
+    return entityAnnotations.flat();
+
+    async function getEntityAnnotationsForAsset(
+      entity: Image360Entity
+    ): Promise<{ revision: Image360RevisionEntity; annotation: Image360Annotation }[]> {
+      const revisionPromises = entity.getRevisions().map(async revision => {
+        const annotations = await getRevisionAnnotationsForAsset(revision);
+
+        return annotations.map(annotation => ({ revision, annotation }));
+      });
+
+      const revisionMatches = await Promise.all(revisionPromises);
+      return revisionMatches.flat();
+    }
+
+    async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity): Promise<Image360Annotation[]> {
+      const relevantDescriptors = revision.getDescriptors().faceDescriptors.filter(desc => imageIdSet.has(desc.fileId));
+
+      if (relevantDescriptors.length === 0) {
+        return [];
+      }
+
+      const annotations = await revision.getAnnotations();
+
+      return annotations.filter(a => {
+        const assetLink = a.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+        return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, assetRef);
+      });
+    }
+  }
+}
+
+function matchesAssetRef(assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink, matchRef: IdEither): boolean {
+  return (
+    ((matchRef as InternalId).id !== undefined && assetLink.assetRef.id === (matchRef as InternalId).id) ||
+    ((matchRef as ExternalId).externalId !== undefined &&
+      assetLink.assetRef.externalId === (matchRef as ExternalId).externalId)
+  );
 }

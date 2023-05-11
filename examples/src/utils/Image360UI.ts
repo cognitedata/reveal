@@ -13,8 +13,6 @@ import {
   PointerEventDelegate
 } from '@cognite/reveal';
 
-import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
-
 import * as dat from 'dat.gui';
 
 export class Image360UI {
@@ -75,7 +73,9 @@ export class Image360UI {
       siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
-      remove: removeAll360Images
+      remove: removeAll360Images,
+      assetId: '1234567890',
+      findAsset: () => findAsset()
     };
 
     optionsFolder.add(params, 'siteId').name('Site ID');
@@ -99,6 +99,8 @@ export class Image360UI {
       entities.forEach(p => (p.image360Visualization.opacity = opacity.alpha));
       viewer.requestRedraw();
     });
+    gui.add(params, 'assetId').name('Asset ID');
+    gui.add(params, 'findAsset').name('Find asset');
 
     gui
       .add(iconCulling, 'radius', 0, 10000, 1)
@@ -184,6 +186,32 @@ export class Image360UI {
       await viewer.remove360Images(...entities);
       entities = [];
       collections.splice(0);
+    }
+
+    async function findAsset() {
+      if (params.assetId.length === 0) {
+        return;
+      }
+
+      const assetId = Number(params.assetId);
+
+      const revisionsAndEntities = (
+        await Promise.all(collections.map(async coll => await coll.findAsset({ id: assetId })))
+      ).flat(1);
+
+      if (revisionsAndEntities.length === 0) {
+        return;
+      }
+
+      const { entity, revision, annotation } = revisionsAndEntities[0];
+
+      await viewer.enter360Image(entity, revision);
+
+      const rotation = new THREE.Quaternion().setFromUnitVectors(
+        new THREE.Vector3(0, 0, -1),
+        annotation.getCenter().clone().sub(viewer.cameraManager.getCameraState().position).normalize()
+      );
+      viewer.cameraManager.setCameraState({ rotation });
     }
   }
 
