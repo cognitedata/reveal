@@ -1,7 +1,7 @@
 import GlobalStyles from 'styles/GlobalStyles';
 import { lazy, Suspense, useEffect } from 'react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { createLink, getProject, SubAppWrapper } from '@cognite/cdf-utilities';
+import { createLink, getProject } from '@cognite/cdf-utilities';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
@@ -46,39 +46,37 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
             <ToastContainer style={{ zIndex: 99999 }} />
-            <SubAppWrapper title="Data Catalog">
-              <AuthContainer>
-                <DataSetsContextProvider>
-                  <BrowserRouter>
-                    <Suspense fallback={<Loader />}>
-                      <AccessCheck>
-                        <Routes>
-                          <Route
-                            path="/:tenant/:appPath"
-                            element={<DataSetsList />}
-                          />
-                          <Route
-                            path="/:tenant/:appPath/data-set/:dataSetId"
-                            element={<DataSetDetails />}
-                          />
-                          {/* We used to use the /data-sets route, now we're redirecting */}
-                          {/* to /data-catalog instead, this basically sets up a redirect. */}
-                          <Route
-                            path="/:tenant/data-sets"
-                            element={
-                              <Navigate
-                                replace
-                                to={createLink('/data-catalog')}
-                              />
-                            }
-                          />
-                        </Routes>
-                      </AccessCheck>
-                    </Suspense>
-                  </BrowserRouter>
-                </DataSetsContextProvider>
-              </AuthContainer>
-            </SubAppWrapper>
+            <AuthContainer>
+              <DataSetsContextProvider>
+                <BrowserRouter>
+                  <Suspense fallback={<Loader />}>
+                    <AccessCheck>
+                      <Routes>
+                        <Route
+                          path="/:tenant/:appPath"
+                          element={<DataSetsList />}
+                        />
+                        <Route
+                          path="/:tenant/:appPath/data-set/:dataSetId"
+                          element={<DataSetDetails />}
+                        />
+                        {/* We used to use the /data-sets route, now we're redirecting */}
+                        {/* to /data-catalog instead, this basically sets up a redirect. */}
+                        <Route
+                          path="/:tenant/data-sets"
+                          element={
+                            <Navigate
+                              replace
+                              to={createLink('/data-catalog')}
+                            />
+                          }
+                        />
+                      </Routes>
+                    </AccessCheck>
+                  </Suspense>
+                </BrowserRouter>
+              </DataSetsContextProvider>
+            </AuthContainer>
           </GlobalStyles>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
