@@ -76,7 +76,8 @@ import {
   Image360Entity,
   Image360,
   Image360Revision,
-  Image360RevisionEntity
+  Image360RevisionEntity,
+  Image360AnnotationIntersection
 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
@@ -1368,6 +1369,20 @@ export class Cognite3DViewer {
       }
     }
     return this.intersectModels(offsetX, offsetY);
+  }
+
+  /**
+   * Check for intersections with 360 annotations through the given pixel.
+   * Similar to {getIntersectionFromPixel}, but checks 360 image annotations
+   * instead of models.
+   * @param offsetX
+   * @param offsetY
+   */
+  async get360AnnotationIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number
+  ): Promise<null | Image360AnnotationIntersection> {
+    return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
   }
 
   /** @private */

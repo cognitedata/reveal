@@ -3,12 +3,7 @@
  */
 
 import { Image360 } from './../entity/Image360';
-import {
-  Image360AnnotationClickedDelegate,
-  Image360AnnotationHoveredDelegate,
-  Image360EnteredDelegate,
-  Image360ExitedDelegate
-} from '../types';
+import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
 import { Image360AnnotationAppearance } from '../annotation/types';
 
@@ -44,15 +39,11 @@ export interface Image360Collection {
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.
-   * 'image360AnnotationHovered - Subscribes to events indicating that the cursor hovered over an image annotation.
-   * 'image360AnnotationClicked - Subscribes to events indicating a click on an image annotation
    * @param event The event type.
    * @param callback Callback to be called when the event is fired.
    */
   on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
   on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-  on(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
-  on(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
 
   /**
    * Unsubscribes from 360 image dataset event.
@@ -61,8 +52,6 @@ export interface Image360Collection {
    */
   off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-  off(event: 'image360AnnotationHovered', callback: Image360AnnotationHoveredDelegate): void;
-  off(event: 'image360AnnotationClicked', callback: Image360AnnotationClickedDelegate): void;
 
   /**
    * Assign a default style which affects all annotations

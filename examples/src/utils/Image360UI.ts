@@ -3,10 +3,15 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360, Image360Collection, Image360Annotation, PointerEventData } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  Image360,
+  Image360Collection,
+  Image360Annotation,
+  Image360AnnotationIntersection
+} from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
-import { Vector3 } from 'three';
 
 export class Image360UI {
   private viewer: Cognite3DViewer;
@@ -15,6 +20,17 @@ export class Image360UI {
   private selectedEntity: Image360 | undefined;
   private _lastAnnotation: Image360Annotation | undefined = undefined;
   private _collections: Image360Collection[] = [];
+
+  private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
+    const intersection = await intersectionPromise;
+    if (intersection === null) {
+      return;
+    }
+
+    console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
+    intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+    this._lastAnnotation = intersection.annotation;
+  }
 
   get collections(): Image360Collection[] {
     return this._collections;
@@ -166,7 +182,7 @@ export class Image360UI {
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => (this.selectedEntity = entity));
-    collection.on('image360AnnotationClicked', (annotation, event, direction) => this.onAnnotationClicked(annotation, event, direction));
+    this.viewer.on('click', (event) => this.onAnnotationClicked(event));
     collections.push(collection);
     this.entities = this.entities.concat(collection.image360Entities);
 
@@ -186,14 +202,14 @@ export class Image360UI {
     this._collections = [];
   }
 
-  private onAnnotationClicked(annotation: Image360Annotation, _event: PointerEventData, direction: Vector3): void {
+  private onAnnotationClicked(event: { offsetX: number; offsetY: number; button?: number }): void {
     if (this._lastAnnotation !== undefined) {
       this._lastAnnotation.setColor(undefined);
     }
 
-    console.log('Clicked annotation with data: ', annotation.annotation.data, 'with direction ', direction);
-    annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
-    this._lastAnnotation = annotation;
+    const intersectionPromise = this.viewer.get360AnnotationIntersectionFromPixel(event.offsetX, event.offsetY);
+
+    this.handleIntersectionAsync(intersectionPromise);
   }
 
   private saveImage360SiteToUrl() {

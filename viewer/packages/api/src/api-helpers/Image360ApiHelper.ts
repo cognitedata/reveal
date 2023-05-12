@@ -13,7 +13,8 @@ import {
   Image360,
   IconsOptions,
   Image360RevisionEntity,
-  DefaultImage360Collection
+  DefaultImage360Collection,
+  Image360AnnotationIntersection
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -100,12 +101,6 @@ export class Image360ApiHelper {
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
 
-    const handleAnnotationHover = (event: PointerEventData) => this.handleAnnotationCursorEvent('hover', event);
-    inputHandler.on('hover', handleAnnotationHover);
-
-    const handleAnnotationClick = (event: PointerEventData) => this.handleAnnotationCursorEvent('click', event);
-    inputHandler.on('click', handleAnnotationClick);
-
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
     const updateHoverStateOnRender = () => {
@@ -135,38 +130,8 @@ export class Image360ApiHelper {
     this._image360Facade.collections.forEach(collection => collection.resetRedraw());
   }
 
-  private getNormalizedOffset(data: PointerEventData): THREE.Vector2 {
-    return new THREE.Vector2(
-      (data.offsetX / this._domElement.clientWidth) * 2 - 1,
-      1 - (data.offsetY / this._domElement.clientHeight) * 2
-    );
-  }
-
-  private handleAnnotationCursorEvent(eventType: 'hover' | 'click', event: PointerEventData): void {
-    const currentEntity = this._interactionState.currentImage360Entered;
-
-    if (currentEntity === undefined) {
-      return;
-    }
-
-    const point = this.getNormalizedOffset(event);
-    const direction = this._raycaster.ray.direction;
-
-    this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
-
-    const annotation = currentEntity.intersectAnnotations(this._raycaster);
-
-    if (annotation === undefined) {
-      return;
-    }
-
-    const collection = this._image360Facade.getCollectionContainingEntity(currentEntity);
-
-    if (eventType === 'hover') {
-      collection.fireHoverEvent(annotation, event, direction);
-    } else if (eventType === 'click') {
-      collection.fireClickEvent(annotation, event, direction);
-    }
+  private getNormalizedOffset(x: number, y: number): THREE.Vector2 {
+    return new THREE.Vector2((x / this._domElement.clientWidth) * 2 - 1, 1 - (y / this._domElement.clientHeight) * 2);
   }
 
   public async add360ImageSet(
@@ -447,6 +412,29 @@ export class Image360ApiHelper {
       this._activeCameraManager.getCamera()
     );
     return entity;
+  }
+
+  public intersect360ImageAnnotations(offsetX: number, offsetY: number): Image360AnnotationIntersection | undefined {
+    const currentEntity = this._interactionState.currentImage360Entered;
+
+    if (currentEntity === undefined) {
+      return undefined;
+    }
+
+    const point = this.getNormalizedOffset(offsetX, offsetY);
+    this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
+
+    const annotation = currentEntity.intersectAnnotations(this._raycaster);
+
+    if (annotation === undefined) {
+      return undefined;
+    }
+
+    return {
+      type: 'image360Annotation',
+      annotation,
+      direction: this._raycaster.ray.direction
+    };
   }
 
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {

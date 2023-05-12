@@ -10,13 +10,9 @@ export { Image360CollectionFactory } from './src/collection/Image360CollectionFa
 export { Image360Entity } from './src/entity/Image360Entity';
 export { Image360RevisionEntity } from './src/entity/Image360RevisionEntity';
 export { Image360Visualization } from './src/entity/Image360Visualization';
-export {
-  Image360EnteredDelegate,
-  Image360ExitedDelegate,
-  Image360AnnotationHoveredDelegate,
-  Image360AnnotationClickedDelegate
-} from './src/types';
+export { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
 export { Image360AnnotationAppearance } from './src/annotation/types';
+export { Image360AnnotationIntersection } from './src/annotation/Image360AnnotationIntersection';
 export { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
 export { IconsOptions } from './src/icons/IconCollection';

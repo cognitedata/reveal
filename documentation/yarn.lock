@@ -2142,7 +2142,7 @@ __metadata:
     "@docusaurus/core": 2.4.0
     "@docusaurus/preset-classic": 2.4.0
     "@docusaurus/remark-plugin-npm2yarn": 2.4.0
-    "@types/react": 18.2.5
+    "@types/react": 18.2.6
     "@types/styled-components": 5.1.26
     "@uiw/codemirror-theme-material": 4.19.16
     "@uiw/react-codemirror": 4.19.16
@@ -2157,7 +2157,7 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.0
     styled-components: 5.3.10
-    typedoc: 0.24.6
+    typedoc: 0.24.7
     typedoc-plugin-markdown: 3.15.3
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.0.4
@@ -3756,14 +3756,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.5":
-  version: 18.2.5
-  resolution: "@types/react@npm:18.2.5"
+"@types/react@npm:18.2.6":
+  version: 18.2.6
+  resolution: "@types/react@npm:18.2.6"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 97c4534e849edf991be0820b0911d036e794b8e2599a1544f500c769acbcb4f443ccde1a3f22298f22ce368ee7757f746e4a529e889567fc142a627698e2de39
+  checksum: dea9d232d8df7ac357367a69dcb557711ab3d5501807ffa77cebeee73d49ee94d095f298e36853c63ed47cce097eee4c7eae2aaa8c02fac3f0171ec1b523a819
   languageName: node
   linkType: hard
 
@@ -12522,9 +12522,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.24.6":
-  version: 0.24.6
-  resolution: "typedoc@npm:0.24.6"
+"typedoc@npm:0.24.7":
+  version: 0.24.7
+  resolution: "typedoc@npm:0.24.7"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12534,7 +12534,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x
   bin:
     typedoc: bin/typedoc
-  checksum: 3911ef6a7736ce6655a4b22fabc5be6df8812412e209d730fd168bfa7797847897f05fed797bc16558f11ce647b20746453748ff8afe85b1375c3efe2d7b57df
+  checksum: 9ae433566cb02b96deb9eb2a9f5b23d1b199f5aeb61ca8c7e2653ff5d339fbfb4d526e024febab4f3278332978814aaa0885f1d5925ba21a441d93a611510ac3
   languageName: node
   linkType: hard
 
