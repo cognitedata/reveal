@@ -8,13 +8,16 @@ import { PointCloudMaterialParameters } from './render-passes/types';
 
 export class PointCloudMaterialManager {
   private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
-  private _clippingPlanes: THREE.Plane[] = [];
 
   addModelMaterial(modelIdentifier: symbol, objectIdMaps: PointCloudObjectIdMaps): void {
     this._modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial({ objectsMaps: objectIdMaps }));
   }
 
   removeModelMaterial(modelIdentifier: symbol): void {
+    // Return when no point cloud material to remove.
+    if (this._modelsMaterialsMap.size < 1) {
+      return;
+    }
     const material = this._modelsMaterialsMap.get(modelIdentifier);
 
     if (material) {
@@ -35,27 +38,16 @@ export class PointCloudMaterialManager {
     return material;
   }
 
-  get clippingPlanes(): THREE.Plane[] {
-    return this._clippingPlanes;
-  }
-
-  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._clippingPlanes = clippingPlanes;
-    for (const modelIdentifier of this._modelsMaterialsMap.keys()) {
-      this.setClippingPlanesForPointCloud(modelIdentifier);
-    }
-  }
-
-  setClippingPlanesForPointCloud(modelIdentifier: symbol): void {
+  initializeClippingPlanesForPointCloud(modelIdentifier: symbol): void {
     const material = this.getModelMaterial(modelIdentifier);
 
     material.clipping = true;
     material.clipIntersection = false;
-    material.clippingPlanes = this._clippingPlanes;
+    material.clippingPlanes = [];
 
     material.defines = {
       ...material.defines,
-      NUM_CLIPPING_PLANES: this._clippingPlanes.length,
+      NUM_CLIPPING_PLANES: 0,
       UNION_CLIPPING_PLANES: 0
     };
   }

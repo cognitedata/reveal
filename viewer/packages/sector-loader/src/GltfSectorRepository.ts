@@ -3,7 +3,7 @@
  */
 
 import { MemoryRequestCache } from '@reveal/utilities';
-import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { ConsumedSector, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { SectorRepository } from './SectorRepository';
@@ -15,13 +15,20 @@ export class GltfSectorRepository implements SectorRepository {
 
   constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider, materialManager);
-    this._gltfCache = new MemoryRequestCache(200, async consumedSector => consumedSector.group?.dereference(), 50);
+    this._gltfCache = new MemoryRequestCache(
+      200,
+      async consumedSector => {
+        consumedSector.group?.dereference();
+        materialManager.removeTexturedMeshMaterial(consumedSector.modelIdentifier, consumedSector.metadata.id);
+      },
+      50
+    );
   }
 
   private async getEmptySectorWithLod(
     lod: LevelOfDetail,
     modelIdentifier: string,
-    metadata: V9SectorMetadata
+    metadata: SectorMetadata
   ): Promise<ConsumedSector> {
     return Promise.resolve({
       modelIdentifier,
@@ -32,16 +39,16 @@ export class GltfSectorRepository implements SectorRepository {
     });
   }
 
-  private async getEmptyDetailedSector(modelIdentifier: string, metadata: V9SectorMetadata) {
+  private async getEmptyDetailedSector(modelIdentifier: string, metadata: SectorMetadata) {
     return this.getEmptySectorWithLod(LevelOfDetail.Detailed, modelIdentifier, metadata);
   }
 
-  private async getEmptyDiscardedSector(modelIdentifier: string, metadata: V9SectorMetadata) {
+  private async getEmptyDiscardedSector(modelIdentifier: string, metadata: SectorMetadata) {
     return this.getEmptySectorWithLod(LevelOfDetail.Discarded, modelIdentifier, metadata);
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    const metadata = sector.metadata as V9SectorMetadata;
+  async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
+    const metadata = sector.metadata as SectorMetadata;
 
     if (metadata.sectorFileName === undefined || metadata.downloadSize === 0) {
       return this.getEmptyDetailedSector(sector.modelIdentifier, metadata);
@@ -56,7 +63,7 @@ export class GltfSectorRepository implements SectorRepository {
       return this._gltfCache.get(cacheKey);
     }
 
-    const consumedSector = await this._gltfSectorLoader.loadSector(sector).catch(() => {
+    const consumedSector = await this._gltfSectorLoader.loadSector(sector, abortSignal).catch(() => {
       return undefined;
     });
 

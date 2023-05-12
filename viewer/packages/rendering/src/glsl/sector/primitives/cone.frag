@@ -50,6 +50,7 @@ void main()
   mat3 basis = mat3(U.xyz, V.xyz, W.xyz);
   vec3 surfacePoint = vec3(U.w, V.w, W.w);
   vec3 rayTarget = surfacePoint;
+  float rayTargetDist = length(rayTarget);
 
   #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
     vec3 rayDirection = vec3(0.0, 0.0, -1.0);
@@ -106,19 +107,21 @@ void main()
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
       theta > v_angle + v_arcAngle ||
-      isClipped(appearance, p)
+      isClipped(appearance, p) ||
+      rayTargetDist + dist < 0.0
     ) {
       // Missed the first point, check the other point
       isInner = true;
       dist = dist2;
       intersectionPoint = E + dist * D;
       theta = atan(intersectionPoint.y, intersectionPoint.x);
-      p = rayTarget + dist*rayDirection;
+      p = rayTarget + dist * rayDirection;
       if (theta < v_angle) theta += 2.0 * PI;
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
         theta > v_angle + v_arcAngle ||
-        isClipped(appearance, p)
+        isClipped(appearance, p) ||
+        rayTargetDist + dist < 0.0
       ) {
         // Missed the other point too
         discard;
@@ -145,6 +148,11 @@ void main()
         // Regular cylinder has simpler normal vector in camera space
         vec3 p_local = p - v_centerB.xyz;
         normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
+      }
+
+
+      if (dot(normal, vec3(0.0, 0.0, 1.0)) < 0.0) {
+        normal *= -1.0;
       }
   #endif
 

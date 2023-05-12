@@ -94,7 +94,7 @@ export class PointCloudManager {
   }
 
   set clippingPlanes(planes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = planes;
+    this._pointCloudNodes.forEach(node => node.octree.setGlobalClippingPlane(planes));
     this.requestRedraw();
   }
 
@@ -131,7 +131,7 @@ export class PointCloudManager {
     this._loadingStateHandler.onModelAdded();
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });
-    this._materialManager.setClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
+    this._materialManager.initializeClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
 
     return pointCloudNode;
   }
@@ -141,7 +141,9 @@ export class PointCloudManager {
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');
     }
+    node.dispose();
     this._pointCloudNodes.splice(index, 1);
+    this._potreeInstance.reset();
 
     this._materialManager.removeModelMaterial(node.modelIdentifier);
 
@@ -150,6 +152,10 @@ export class PointCloudManager {
 
   dispose(): void {
     this._pointCloudFactory.dispose();
+    this._pointCloudNodes.forEach(n => {
+      this._materialManager.removeModelMaterial(n.modelIdentifier);
+      n.dispose();
+    });
   }
 
   private loadedModelsObservable() {

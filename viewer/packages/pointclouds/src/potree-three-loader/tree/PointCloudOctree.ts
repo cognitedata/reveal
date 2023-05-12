@@ -1,4 +1,4 @@
-import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
+import { Box3, Camera, Object3D, Plane, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { PointCloudOctreeNode } from './PointCloudOctreeNode';
@@ -35,6 +35,9 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
+  private _globalClippingPlanes: Plane[] = [];
+  private _localClippingPlanes: Plane[] = [];
+
   constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, material: PointCloudMaterial) {
     super();
 
@@ -54,6 +57,26 @@ export class PointCloudOctree extends PointCloudTree {
   private updateMaterial(): void {
     this.material.heightMin = this.pcoGeometry.tightBoundingBox.min.clone().applyMatrix4(this.matrixWorld).y;
     this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrixWorld).y;
+  }
+
+  public setGlobalClippingPlane(planes: Plane[]): void {
+    this._globalClippingPlanes = planes.map(p => p.clone());
+    this.updateClippingPlanes();
+  }
+
+  public setModelClippingPlane(planes: Plane[]): void {
+    this._localClippingPlanes = planes.map(p => p.clone());
+    this.updateClippingPlanes();
+  }
+
+  public updateClippingPlanes(): void {
+    this.material.clippingPlanes = [...this._globalClippingPlanes, ...this._localClippingPlanes];
+
+    this.material.defines = {
+      ...this.material.defines,
+      NUM_CLIPPING_PLANES: this.material.clippingPlanes.length
+    };
+    this.material.needsUpdate = true;
   }
 
   dispose(): void {
@@ -91,6 +114,7 @@ export class PointCloudOctree extends PointCloudTree {
     points.frustumCulled = false;
     points.onBeforeRender = makeOnBeforeRender(node, this.visibleNodes.indexOf(node));
     points.layers.set(RenderLayer.PointCloud);
+    points.updateMatrix();
 
     if (parent) {
       parent.sceneNode.add(points);
@@ -145,11 +169,15 @@ export class PointCloudOctree extends PointCloudTree {
     bbRoot.children = visibleBoxes;
   }
 
-  updateMatrixWorld(force: boolean): void {
-    if (this.matrixAutoUpdate === true) {
-      this.updateMatrix();
-    }
+  updateMatricesForDescendants(): void {
+    this.traverseVisible(node => node.matrixWorld.multiplyMatrices(this.matrixWorld, node.matrix));
+  }
 
+  /**
+   * Override updateMatrixWorld to not update children recursively. Child transformations
+   * are defined in relation to the base octree, and are instead updated using updateMatricesfordescendants()
+   */
+  override updateMatrixWorld(force: boolean): void {
     if (this.matrixWorldNeedsUpdate === true || force === true) {
       if (!this.parent) {
         this.matrixWorld.copy(this.matrix);
@@ -157,9 +185,10 @@ export class PointCloudOctree extends PointCloudTree {
         this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
       }
 
-      this.updateMaterial();
-
       this.matrixWorldNeedsUpdate = false;
+
+      this.updateMaterial();
+      this.updateMatricesForDescendants();
     }
   }
 

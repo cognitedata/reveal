@@ -6,7 +6,7 @@ import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@re
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
-import Log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
 describe(SectorDownloadScheduler.name, () => {
@@ -193,9 +193,109 @@ describe(SectorDownloadScheduler.name, () => {
       }
     });
   });
+
+  test('Sector downloads of downloading discarded sectors should abort', async () => {
+    // Setup
+    const abortedCount = 11;
+    const initalDownloadCount = 21;
+    const wantedSectors = createMockWantedSectors(initalDownloadCount, 'TestModelIdentifier');
+    const discardedSectors = createMockWantedSectors(abortedCount, 'TestModelIdentifier', LevelOfDetail.Discarded);
+    const abortSignals = new Array<AbortSignal>();
+
+    const stalledDownload = new DeferredPromise<void>();
+    const dowloadSectorMock = async (sector: WantedSector, abortSignal?: AbortSignal) => {
+      if (abortSignal) abortSignals.push(abortSignal);
+      await stalledDownload;
+      if (abortSignal?.aborted) {
+        // Simulate fetch failing due to abort
+        return createDiscardedConsumedSectorMock(sector);
+      }
+      return createConsumedSectorMock(sector).object();
+    };
+
+    // Act
+    const download1 = sectorDownloadScheduler.queueSectorBatchForDownload(
+      wantedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
+
+    const download2 = sectorDownloadScheduler.queueSectorBatchForDownload(
+      discardedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
+
+    stalledDownload.resolve();
+
+    const resolvedSectors1 = await Promise.all(download1);
+    await Promise.all(download2);
+
+    // Assert
+    expect(abortSignals.length).toEqual(initalDownloadCount);
+
+    abortSignals.forEach((abortSignal, index) => {
+      if (index < abortedCount) {
+        expect(abortSignal.aborted).toBe(true);
+      } else {
+        expect(abortSignal.aborted).toBe(false);
+      }
+    });
+
+    resolvedSectors1.forEach(sector => {
+      if (sector.metadata.id < abortedCount) {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+      } else {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Detailed);
+      }
+    });
+  });
+
+  test('Queued sector downloads should be removed from the queue when discarded', async () => {
+    // Setup
+    const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
+    const discardedSectors = createMockWantedSectors(21, 'TestModelIdentifier', LevelOfDetail.Discarded);
+
+    const stalledDownload = new DeferredPromise<void>();
+    const dowloadSectorMock = async (sector: WantedSector, abortSignal?: AbortSignal) => {
+      await stalledDownload;
+      if (abortSignal?.aborted) {
+        // Simulate fetch failing due to abort
+        return createDiscardedConsumedSectorMock(sector);
+      }
+      return createConsumedSectorMock(sector).object();
+    };
+
+    // Act
+    const firstDownload = sectorDownloadScheduler.queueSectorBatchForDownload(
+      wantedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
+
+    sectorDownloadScheduler.queueSectorBatchForDownload(
+      discardedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
+
+    // Assert
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
+
+    stalledDownload.resolve();
+    const resolvedSectors = await Promise.all(firstDownload);
+
+    resolvedSectors.forEach(sector => {
+      expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+    });
+  });
 });
 
-function createMockWantedSectors(numberOfSectors: number, modelIdentifier: string): WantedSector[] {
+function createMockWantedSectors(
+  numberOfSectors: number,
+  modelIdentifier: string,
+  levelOfDetail = LevelOfDetail.Detailed
+): WantedSector[] {
   return Array.from(Array(numberOfSectors).keys()).map((_, index) => {
     return new Mock<WantedSector>()
       .setup(p => p.metadata)
@@ -207,6 +307,8 @@ function createMockWantedSectors(numberOfSectors: number, modelIdentifier: strin
       )
       .setup(p => p.modelIdentifier)
       .returns(modelIdentifier)
+      .setup(p => p.levelOfDetail)
+      .returns(levelOfDetail)
       .object();
   });
 }
@@ -223,6 +325,16 @@ function createConsumedSectorMock(wantedSector: WantedSector): IMock<ConsumedSec
         .object()
     )
     .setup(p => p.levelOfDetail)
-    .returns(LevelOfDetail.Detailed);
+    .returns(wantedSector.levelOfDetail);
   return consumedSector;
+}
+
+function createDiscardedConsumedSectorMock(sector: WantedSector): ConsumedSector {
+  return {
+    modelIdentifier: sector.modelIdentifier,
+    metadata: sector.metadata,
+    levelOfDetail: LevelOfDetail.Discarded,
+    group: undefined,
+    instancedMeshes: undefined
+  };
 }

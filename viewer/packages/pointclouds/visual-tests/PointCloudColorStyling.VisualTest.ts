@@ -30,7 +30,7 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
     const cdfAnnotations = [
       {
         annotationId: 123,
-        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.04)]
+        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
 
@@ -45,7 +45,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
 
   override createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
-      this.modelDataProvider,
+      this.potreeInstance,
       new CustomAnnotationProvider(),
       new LocalPointClassificationsProvider(),
       this._pcMaterialManager

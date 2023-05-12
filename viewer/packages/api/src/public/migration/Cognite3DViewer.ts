@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import viewerPackageJson from '../../../../../package.json';
+import viewerPackageJson from '../../../../../package.json' assert { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
@@ -25,7 +25,7 @@ import {
   BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
-import { MetricsLogger } from '@reveal/metrics';
+import { SessionLogger, MetricsLogger } from '@reveal/metrics';
 import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
 import {
   PointCloudIntersection,
@@ -40,7 +40,8 @@ import {
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  CadIntersection
+  CadIntersection,
+  ResolutionOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -51,24 +52,43 @@ import { Spinner } from '../../utilities/Spinner';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager } from '@reveal/camera-manager';
+import {
+  DefaultCameraManager,
+  CameraManager,
+  CameraChangeDelegate,
+  ProxyCameraManager,
+  CameraStopDelegate
+} from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
-import log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import {
   determineAntiAliasingMode,
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Collection, Image360Entity } from '@reveal/360-images';
+import {
+  Image360Collection,
+  Image360Entity,
+  Image360,
+  Image360Revision,
+  Image360RevisionEntity,
+  Image360AnnotationIntersection
+} from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
-import { Image360 } from '@reveal/360-images/src/Image360';
 
-type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
+type Cognite3DViewerEvents =
+  | 'click'
+  | 'hover'
+  | 'cameraChange'
+  | 'cameraStop'
+  | 'beforeSceneRendered'
+  | 'sceneRendered'
+  | 'disposed';
 
 /**
  * @example
@@ -117,6 +137,7 @@ export class Cognite3DViewer {
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _ownsRenderer: boolean;
 
   private readonly _pickingHandler: PickingHandler;
   private readonly _pointCloudPickingHandler: PointCloudPickingHandler;
@@ -125,6 +146,7 @@ export class Cognite3DViewer {
 
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
+    cameraStop: new EventTrigger<CameraStopDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),
     hover: new EventTrigger<PointerEventDelegate>(),
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
@@ -134,13 +156,15 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModel[] = [];
-  private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
 
   private latestRequestId: number = -1;
-  private readonly clock = new THREE.Clock();
+  private readonly sessionLogger: SessionLogger;
+
+  private readonly cameraManagerClock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
+  private _forceStopRendering: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -209,13 +233,14 @@ export class Cognite3DViewer {
   constructor(options: Cognite3DViewerOptions) {
     const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
     if (threejsRequiredVersion != THREE.REVISION) {
-      log.warn(
+      Log.warn(
         `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
         In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
       );
     }
     this._renderer = options.renderer ?? createRenderer();
     this._renderer.localClippingEnabled = true;
+    this._ownsRenderer = options.renderer === undefined;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -223,11 +248,15 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
+    // Prevents scrolling for mobile devices.
+    this.canvas.style.touchAction = 'none';
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
     this._domElementResizeObserver = this.setupDomElementResizeListener(this._domElement);
+
+    this.sessionLogger = new SessionLogger();
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
@@ -245,6 +274,10 @@ export class Cognite3DViewer {
 
     this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
+    });
+
+    this._activeCameraManager.on('cameraStop', () => {
+      this._events.cameraStop.fire();
     });
 
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
@@ -283,7 +316,7 @@ export class Cognite3DViewer {
         this._domElement,
         this._activeCameraManager,
         this._mouseHandler,
-        () => this.requestRedraw()
+        this._events.beforeSceneRendered
       );
     }
 
@@ -334,6 +367,21 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Set options to control resolution of the viewer. This includes
+   * settings for max resolution and limiting resolution when moving the camera.
+   * @param options Options to apply.
+   */
+  setResolutionOptions(options: ResolutionOptions): void {
+    if (options.maxRenderResolution) {
+      this._revealManagerHelper.revealManager.setResolutionThreshold(options.maxRenderResolution);
+    }
+
+    if (options.movingCameraResolutionFactor) {
+      this._revealManagerHelper.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
+    }
+  }
+
+  /**
    * Returns reveal version installed.
    */
   getVersion(): string {
@@ -351,7 +399,7 @@ export class Cognite3DViewer {
         this.setLogLevel('silent');
         break;
       default:
-        log.setLevel(level);
+        Log.setLevel(level);
     }
   }
 
@@ -384,9 +432,12 @@ export class Cognite3DViewer {
     this._image360ApiHelper?.dispose();
     this.domElement.removeChild(this.canvas);
     this._domElementResizeObserver.disconnect();
-    this.renderer.dispose();
+    if (this._ownsRenderer) {
+      this.renderer.dispose();
+    }
 
     this.spinner.dispose();
+    this.sessionLogger.dispose();
 
     this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
@@ -420,6 +471,15 @@ export class Cognite3DViewer {
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
+   * @example
+   * ```js
+   * viewer.on('cameraStop', () => {
+   *   console.log('Camera stopped');
+   * });
+   * ```
+   */
+  on(event: 'cameraStop', callback: CameraStopDelegate): void;
+  /**
    * Event that is triggered immediately before the scene is rendered.
    * @param event Metadata about the rendering frame.
    * @param callback Callback to trigger when event occurs.
@@ -442,6 +502,7 @@ export class Cognite3DViewer {
     callback:
       | PointerEventDelegate
       | CameraChangeDelegate
+      | CameraStopDelegate
       | BeforeSceneRenderedDelegate
       | SceneRenderedDelegate
       | DisposedDelegate
@@ -457,6 +518,10 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'cameraStop':
+        this._events.cameraStop.subscribe(callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -491,6 +556,13 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
+   * @example
+   * ```js
+   * viewer.off('cameraStop', onCameraStop);
+   * ```
+   */
+  off(event: 'cameraStop', callback: CameraStopDelegate): void;
+  /**
    * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
@@ -520,6 +592,7 @@ export class Cognite3DViewer {
     callback:
       | PointerEventDelegate
       | CameraChangeDelegate
+      | CameraStopDelegate
       | BeforeSceneRenderedDelegate
       | SceneRenderedDelegate
       | DisposedDelegate
@@ -535,6 +608,10 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'cameraStop':
+        this._events.cameraStop.unsubscribe(callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -710,13 +787,20 @@ export class Cognite3DViewer {
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
-    const image360Entities = await this._image360ApiHelper.add360ImageSet(
+    const image360Collection = await this._image360ApiHelper.add360ImageSet(
       eventFilter,
       collectionTransform,
       preMultipliedRotation
     );
 
-    return { image360Entities };
+    const numberOf360Images = image360Collection.image360Entities.length;
+
+    MetricsLogger.trackEvent('360ImageCollectionAdded', {
+      datasource,
+      numberOf360Images
+    });
+
+    return image360Collection;
   }
 
   /**
@@ -732,13 +816,14 @@ export class Cognite3DViewer {
 
   /**
    * Enter visualization of a 360 image.
-   * @param image360
+   * @param image360 The 360 image to enter.
+   * @param revision The image revision to use. If not provided the newest revision will be shown.
    */
-  enter360Image(image360: Image360): Promise<void> {
+  enter360Image(image360: Image360, revision?: Image360Revision): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.enter360Image(image360 as Image360Entity);
+    return this._image360ApiHelper.enter360Image(image360 as Image360Entity, revision as Image360RevisionEntity);
   }
 
   /**
@@ -781,6 +866,7 @@ export class Cognite3DViewer {
         const pcModel = model as CognitePointCloudModel;
         this._sceneHandler.removePointCloudModel(pcModel.pointCloudNode);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
+        this._pointCloudPickingHandler.dispose();
         break;
 
       default:
@@ -853,7 +939,6 @@ export class Cognite3DViewer {
       return;
     }
     object.updateMatrixWorld(true);
-    this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
@@ -874,10 +959,6 @@ export class Cognite3DViewer {
       return;
     }
     this._sceneHandler.removeCustomObject(object);
-    const index = this._extraObjects.indexOf(object);
-    if (index >= 0) {
-      this._extraObjects.splice(index, 1);
-    }
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
@@ -893,7 +974,9 @@ export class Cognite3DViewer {
       return;
     }
 
-    const color = backgroundColor.color ?? this.renderer.getClearColor(new THREE.Color());
+    const srgbColor = backgroundColor.color?.clone().convertLinearToSRGB();
+
+    const color = srgbColor ?? this.renderer.getClearColor(new THREE.Color());
     const alpha = backgroundColor.alpha ?? this.renderer.getClearAlpha();
 
     this.renderer.setClearColor(color, alpha);
@@ -908,38 +991,55 @@ export class Cognite3DViewer {
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setClippingPlanes([xPlane, yPlane]);
+   * viewer.setGlobalClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Disable clipping planes
-   *  viewer.setClippingPlanes([]);
+   *  viewer.setGlobalClippingPlanes([]);
    * ```
    */
-  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     this.revealManager.clippingPlanes = clippingPlanes;
     this._clippingNeedsUpdate = true;
   }
 
   /**
-   * Returns the current active clipping planes.
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes
+   * @deprecated Use {@link Cognite3DViewer.setGlobalClippingPlanes} instead.
+   */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.setGlobalClippingPlanes(clippingPlanes);
+  }
+
+  /**
+   * Returns the current active global clipping planes.
+   * @deprecated Use {@link Cognite3DViewer.getGlobalClippingPlanes} instead.
    */
   getClippingPlanes(): THREE.Plane[] {
+    return this.getGlobalClippingPlanes();
+  }
+
+  /**
+   * Returns the current active global clipping planes.
+   */
+  getGlobalClippingPlanes(): THREE.Plane[] {
     return this.revealManager.clippingPlanes.map(p => p.clone());
   }
 
@@ -1039,7 +1139,7 @@ export class Cognite3DViewer {
 
   /**
    * Convert a point in world space to its coordinates in the canvas. This can be used to place HTML objects near 3D objects on top of the 3D viewer.
-   * @see {@link https://www.w3schools.com/graphics/canvas_coordinates.asp https://www.w3schools.com/graphics/canvas_coordinates.asp}.
+   * @see {@link https://www.w3schools.com/graphics/canvas_coordinates.asp} For details on HTML Canvas Coordinates.
    * @param point World space coordinate.
    * @param normalize Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, <canvas_size>).
    * @returns Returns 2D coordinates if the point is visible on screen, or `null` if object is outside screen.
@@ -1103,7 +1203,7 @@ export class Cognite3DViewer {
    * `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. See {@link https://html2canvas.hertzen.com/documentation the html2canvas documentation} for details.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
-   * @param includeUI If false the screenshot will include only the rendered 3D.
+   * @param includeUI If false the screenshot will include only the rendered 3D. Default is true.
    * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png').
    * @example
    * ```js
@@ -1123,17 +1223,30 @@ export class Cognite3DViewer {
       throw new Error('Viewer is disposed');
     }
 
+    const customRenderTarget = this.renderer.getRenderTarget();
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
-    const originalDomeStyle = { ...this.domElement.style };
+    const originalPixelRatio = this._renderer.getPixelRatio();
+
+    const originalDomeStyle = {
+      position: this.domElement.style.position,
+      width: this.domElement.style.width,
+      height: this.domElement.style.height,
+      margin: this.domElement.style.margin,
+      padding: this.domElement.style.padding,
+      left: this.domElement.style.left,
+      top: this.domElement.style.top
+    };
 
     try {
+      // Pause animate while the screenshot renders to stop changes to active camera aspect ratio
+      cancelAnimationFrame(this.latestRequestId);
+
       // Position and scale domElement to match requested resolution.
       // Remove observer temporarily to stop animate from running resize in the background.
       this._domElementResizeObserver.unobserve(this._domElement);
-      this.domElement.style.position = 'fixed';
+      this.domElement.style.position = 'absolute';
       this.domElement.style.width = width + 'px';
       this.domElement.style.height = height + 'px';
-      this.domElement.style.flexGrow = '1';
       this.domElement.style.margin = '0px';
       this.domElement.style.padding = '0px';
       this.domElement.style.left = '0px';
@@ -1145,6 +1258,11 @@ export class Cognite3DViewer {
       // Disregard pixelRatio to get the screenshot in requested resolution.
       const pixelRatioOverride = 1;
       this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
+      if (customRenderTarget) {
+        // To ensure that the render is done to the screenshot canvas, we clear the custom
+        // render target. This will make the renderer fall back to use the default canvas.
+        this.revealManager.setOutputRenderTarget(null);
+      }
       this.revealManager.render(screenshotCamera);
       if (!includeUI) return this.canvas.toDataURL();
 
@@ -1157,21 +1275,42 @@ export class Cognite3DViewer {
       });
 
       // Draw screenshot. Again disregarding pixel ratio.
-      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride });
+      const outCanvas = await html2canvas(this.domElement, {
+        scale: pixelRatioOverride,
+        windowHeight: width,
+        windowWidth: height,
+        width,
+        height,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0
+      });
+
       return outCanvas.toDataURL();
     } finally {
       this.domElement.style.position = originalDomeStyle.position;
       this.domElement.style.width = originalDomeStyle.width;
       this.domElement.style.height = originalDomeStyle.height;
-      this.domElement.style.flexGrow = originalDomeStyle.flexGrow;
       this.domElement.style.margin = originalDomeStyle.margin;
       this.domElement.style.padding = originalDomeStyle.padding;
       this.domElement.style.left = originalDomeStyle.left;
       this.domElement.style.top = originalDomeStyle.top;
       this._domElementResizeObserver.observe(this._domElement);
 
-      this.renderer.setSize(originalWidth, originalHeight);
+      if (customRenderTarget) {
+        //Restore render target and clear the default canvas.
+        this.revealManager.setOutputRenderTarget(customRenderTarget);
+        const context = this.renderer.getContext();
+        context?.clear(context.COLOR_BUFFER_BIT);
+        context?.clear(context.DEPTH_BUFFER_BIT);
+      }
+
+      this.renderer.setDrawingBufferSize(originalWidth, originalHeight, originalPixelRatio);
       this.revealManager.render(this.cameraManager.getCamera());
+
+      // Restart animate loop
+      this.latestRequestId = requestAnimationFrame(this._boundAnimate);
       this.requestRedraw();
     }
   }
@@ -1182,8 +1321,7 @@ export class Cognite3DViewer {
    * @param offsetY Y coordinate in pixels (relative to the domElement).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
-   * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
-   *
+   * @see {@link https://en.wikipedia.org/wiki/Ray_casting} For more details on Ray casting.
    * @example For CAD model
    * ```js
    * const offsetX = 50 // pixels from the left
@@ -1220,6 +1358,20 @@ export class Cognite3DViewer {
     return this.intersectModels(offsetX, offsetY);
   }
 
+  /**
+   * Check for intersections with 360 annotations through the given pixel.
+   * Similar to {getIntersectionFromPixel}, but checks 360 image annotations
+   * instead of models.
+   * @param offsetX
+   * @param offsetY
+   */
+  async get360AnnotationIntersectionFromPixel(
+    offsetX: number,
+    offsetY: number
+  ): Promise<null | Image360AnnotationIntersection> {
+    return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
+  }
+
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
@@ -1249,14 +1401,27 @@ export class Cognite3DViewer {
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
+    this.sessionLogger.updateCanvasVisibility(isVisible);
+
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
+      this._activeCameraManager.update(
+        this.cameraManagerClock.getDelta(),
+        this._updateNearAndFarPlaneBuffers.combinedBbox
+      );
       this.revealManager.update(camera);
 
-      if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
+      const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
+
+      const needsRedraw =
+        (this.revealManager.needsRedraw || this._clippingNeedsUpdate || image360NeedsRedraw) &&
+        !this._forceStopRendering;
+
+      this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
+
+      if (needsRedraw) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
 
@@ -1283,23 +1448,27 @@ export class Cognite3DViewer {
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const normalizedCoords = {
-      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-    };
+    const normalizedCoords = new THREE.Vector2(
+      (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+      (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+    );
 
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.cameraManager.getCamera(),
       renderer: this.renderer,
-      clippingPlanes: this.getClippingPlanes(),
+      clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: this.renderer.domElement
     };
+
+    // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
+    this._forceStopRendering = true;
     const cadResults = await this._pickingHandler.intersectCadNodes(
       cadNodes,
       input,
       options?.asyncCADIntersection ?? true
     );
+    this._forceStopRendering = false;
     const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];
@@ -1313,7 +1482,8 @@ export class Cognite3DViewer {
             point: result.point,
             pointIndex: result.pointIndex,
             distanceToCamera: result.distance,
-            annotationId: result.annotationId
+            annotationId: result.annotationId,
+            assetRef: result.assetRef
           };
           intersections.push(intersection);
           break;
@@ -1370,7 +1540,7 @@ export class Cognite3DViewer {
       }
     });
 
-    this._extraObjects.forEach(obj => {
+    this._sceneHandler.customObjects.forEach(obj => {
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);

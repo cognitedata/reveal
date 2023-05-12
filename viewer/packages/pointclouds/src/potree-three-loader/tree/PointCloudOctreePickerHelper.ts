@@ -128,7 +128,7 @@ export class PointCloudOctreePickerHelper {
       };
 
       PointCloudOctreePickerHelper.updatePickMaterial(pickMaterial, octree.material);
-      pickMaterial.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
+      pickMaterial.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
 
       if (params.onBeforePickRender) {
         params.onBeforePickRender(pickMaterial, pickState.renderTarget);
@@ -143,6 +143,8 @@ export class PointCloudOctreePickerHelper {
 
       renderer.render(pickState.scene, camera);
 
+      // Reset children, avoid keeping references to point cloud nodes
+      pickState.scene.children = [];
       nodes.forEach(node => renderedNodes.push({ node, octree }));
     }
     return renderedNodes;
@@ -205,6 +207,14 @@ export class PointCloudOctreePickerHelper {
     pickMaterial.minSize = nodeMaterial.minSize;
     pickMaterial.maxSize = nodeMaterial.maxSize;
     pickMaterial.classification = nodeMaterial.classification;
+    pickMaterial.objectAppearanceTexture = nodeMaterial.objectAppearanceTexture;
+
+    pickMaterial.clippingPlanes = nodeMaterial.clippingPlanes;
+    pickMaterial.clipping = nodeMaterial.clipping;
+    pickMaterial.clipIntersection = nodeMaterial.clipIntersection;
+    pickMaterial.defines = nodeMaterial.defines;
+
+    pickMaterial.visibleNodeTextureOffsets = nodeMaterial.visibleNodeTextureOffsets;
   }
 
   public static updatePickRenderTarget(pickState: IPickState, width: number, height: number): void {
@@ -319,7 +329,7 @@ export class PointCloudOctreePickerHelper {
     if (!points) throw new Error('Point cloud not found');
 
     return this.helperVec3
-      .fromBufferAttribute(points.geometry.attributes['position'], pIndex)
+      .fromBufferAttribute(points.geometry.attributes['position'] as THREE.BufferAttribute, pIndex)
       .applyMatrix4(points.matrixWorld);
   }
 

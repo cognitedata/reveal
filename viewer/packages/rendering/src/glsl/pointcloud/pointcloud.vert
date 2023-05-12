@@ -1,6 +1,8 @@
 precision highp float;
 precision highp int;
 
+#pragma glslify: import('../base/pointSizeRelativeToScreen.glsl');
+
 #define max_clip_boxes 30
 
 in vec3 position;
@@ -26,7 +28,6 @@ uniform float size; // pixel size factor
 uniform float minSize; // minimum pixel size
 uniform float maxSize; // maximum pixel size
 uniform float octreeSize;
-uniform float opacity;
 uniform float level;
 uniform float vnStart;
 uniform bool isLeafNode;
@@ -71,20 +72,17 @@ bool isClipped(vec3 point) {
 
 out vec3 vColor;
 
-#if !defined(color_type_point_index)
-	out float vOpacity;
-#endif
-
 #if defined(weighted_splats)
 	out float vLinearDepth;
 #endif
 
-#if !defined(paraboloid_point_shape) && defined(use_edl)
+#if defined(use_edl)
 	out float vLogDepth;
 #endif
 
 #if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 	out float vRadius;
+	out vec3 vViewPosition;
 #endif
 
 #if defined(adaptive_point_size) || defined(color_type_lod)
@@ -231,6 +229,9 @@ vec4 getClassification() {
 
 void main() {
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+		#if defined paraboloid_point_shape
+			vViewPosition = mvPosition.xyz;
+		#endif
 
     vec4 classification = getClassification();
     float outColorAlpha = classification.a;
@@ -241,7 +242,7 @@ void main() {
 		vLinearDepth = gl_Position.w;
 	#endif
 
-	#if !defined(paraboloid_point_shape) && defined(use_edl)
+	#if defined(use_edl)
 		// Division by 10 is added to make depth values more "flat" so that EDL effect is visible at distance.
 		vLogDepth = log2(-mvPosition.z)/10.0;
 	#endif
@@ -252,7 +253,12 @@ void main() {
 
 	float pointSize = 1.0;
 	float slope = tan(fov / 2.0);
-	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
+	float projFactor =  -0.5 / (point_size_relative_to_screen_height * slope * mvPosition.z);
+
+	// Scale point appropriately according to render size
+	float size = size * screenHeight * point_size_relative_to_screen_height;
+	float minSize = minSize * screenHeight * point_size_relative_to_screen_height;
+	float maxSize = maxSize * screenHeight * point_size_relative_to_screen_height;
 
 	#if defined fixed_point_size
 		pointSize = size;
@@ -271,14 +277,6 @@ void main() {
 	#endif
 
 	gl_PointSize = pointSize;
-
-	// ---------------------
-	// OPACITY
-	// ---------------------
-
-	#ifndef color_type_point_index
-                vOpacity = opacity;
-	#endif
 
 	// ---------------------
 	// POINT COLOR
@@ -345,8 +343,10 @@ void main() {
                 gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
                 return;
         }
-
+#if !defined(color_type_point_index)
         if (any(greaterThan(styleColor, vec3(0.0)))) {
-                vColor = 0.5 * (styleColor + vColor);
+					// Mix 20% color from original color & 80% from style color.
+					vColor = (styleColor * 0.8 + vColor * 0.2);
         }
+#endif
 }

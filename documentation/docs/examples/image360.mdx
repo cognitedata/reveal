@@ -68,5 +68,40 @@ The `Image360` declaration can be found here [here.](../api/interfaces/cognite_r
 The `transform` property from `Image360` represents the world transformation (rotation and translation) of the 360 image.
 The `Image360Visualization` object has convenience functionality related to the visualization of the 360 image such as setting the opacity of the given 360 image.
   
+## Events
+The `Image360Collection` exposes events `image360Entered` and `image360Exited` for subscribing to enter & exit from 360 image mode. The `image360Entered` event is also triggered when the [revision](#historical-images) of an image is changed.
+Subscribing to the events can look like
+```ts
+const image360Collection = await viewer.add360ImageSet('events', { site_id: 'site-S01-area-a03' });
+image360Collection.on('image360Entered', (image360: Image360, revision: Image360Revision) => {
+    const position = new THREE.Vector3();
+    position.setFromMatrixPosition(image360.transform);
+    alert(`360 Image mode entered at Image position: ${JSON.stringify(position)}`);
+  });
+image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mode'); });
+```
 
-  
+## Historical images
+Some image collections include 360 images with historical revisions. The `360Image` interface includes a `getRevisions` method used to obtain a list of all available revisions for that image. This list contains `Image360Revision` objects sorted by date, with the most recent revision at the beginning of the list.
+
+Each `Image360Revision` object has a `date` property that represents when the image was taken. If an image is undated, the `date` property will be `undefined`.
+```ts
+image360.getRevisions().forEach(availableRevision => console.log(availableRevision.date);
+```
+
+You can get the currently active revision for any `Image360` by using the `getActiveRevision` method. Optionally, you can retrieve the active revision when `image360Entered` is triggered, as the revision of the entered image is included in the event.
+```ts
+image360Collection.on('image360Entered', (image360: Image360, revision: Image360Revision) => {
+    const activeDate = image360.getActiveRevision().date;
+    const enteredDate = revision.date;
+    alert(`The result is the same: ${activeDate} is equal to ${enteredDate}`);
+};
+```
+
+To change the revision of an `Image360`, call the `enter360Image` method on `Cognite3DViewer`. Pass in the `Image360` you want to change, along with one of the available revisions for that image.
+```ts
+const revisions = image360.getRevisions();
+const newRevision = revisions[1];
+await viewer.enter360Image(image360, newRevision);
+alert(`Revision changed to ${newRevision.date}`);
+```

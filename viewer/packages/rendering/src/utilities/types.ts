@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import { IndexSet } from '@reveal/utilities';
 import * as THREE from 'three';
 
 /**
@@ -27,3 +28,10 @@ export class RevealColors {
   public static readonly Red = new THREE.Color('rgb(235,0,4)');
   public static readonly Green = new THREE.Color('rgb(46,164,79)');
 }
+
+export type StyledTreeIndexSets = {
+  back: IndexSet;
+  ghost: IndexSet;
+  inFront: IndexSet;
+  visible: IndexSet;
+};

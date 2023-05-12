@@ -13,6 +13,8 @@ import nock from 'nock';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { It, Mock } from 'moq.ts';
 
+import { jest } from '@jest/globals';
+
 describe('SinglePropertyFilterNodeCollection', () => {
   let mockClient: Mock<CogniteClient>;
   let mockModel: Mock<CdfModelNodeCollectionDataProvider>;

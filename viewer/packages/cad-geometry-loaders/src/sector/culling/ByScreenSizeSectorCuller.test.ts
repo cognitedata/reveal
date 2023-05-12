@@ -27,7 +27,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
     const root = createV9SectorMetadata([
       0,
       [
-        [1, [], new THREE.Box3().setFromArray([-1, -1, 0, 0, 1])],
+        [1, [], new THREE.Box3().setFromArray([-1, -1, 0, 0, 1, 1])],
         [2, [], new THREE.Box3().setFromArray([0, -1, 1, 0, 0, 1])],
         [3, [], new THREE.Box3().setFromArray([-1, 0, 1, 0, 1, 1])],
         [4, [], new THREE.Box3().setFromArray([0, 0, 1, 1, 1, 1])]
@@ -75,7 +75,7 @@ describe(ByScreenSizeSectorCuller.name, () => {
     budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
     const input = createDetermineSectorInput(camera, model, budget);
     const clipPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.5);
-    input.clippingPlanes = [clipPlane];
+    input.modelClippingPlanes = [[clipPlane]];
 
     const { wantedSectors } = culler.determineSectors(input);
     const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);

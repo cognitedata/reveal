@@ -17,8 +17,9 @@ import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
-export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
+export class DefaultRenderPipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _viewerScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: {
@@ -30,8 +31,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     modelIdentifier: symbol;
   }[];
   private readonly _customObjects: THREE.Object3D[];
-  private readonly _autoResizeOutputTarget: boolean;
-  private readonly _outputRenderTarget: THREE.WebGLRenderTarget | null;
+  private _autoResizeOutputTarget: boolean;
+  private _outputRenderTarget: THREE.WebGLRenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingPass: PostProcessingPass;
@@ -132,6 +133,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     this._blitToScreenMesh = createFullScreenTriangleMesh(this._blitToScreenMaterial);
 
     this.renderOptions = cloneDeep(renderOptions);
+  }
+
+  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
+    this._outputRenderTarget = target;
+    if (autoSizeRenderTarget) this._autoResizeOutputTarget = autoSizeRenderTarget;
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {

@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SectorCuller } from '@reveal/cad-geometry-loaders';
+import { SectorCuller } from './sector/culling/SectorCuller';
 
 /*
  * Part of the `internal` field of `RevealOptions`

@@ -58,7 +58,8 @@ export {
   SceneRenderedDelegate,
   PointerEventDelegate,
   PointerEventData,
-  DisposedDelegate
+  DisposedDelegate,
+  CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
 export { PointCloudObjectMetadata } from '../packages/data-providers';
@@ -76,4 +77,15 @@ export {
   StyledPointCloudObjectCollection
 } from '../packages/pointcloud-styling';
 
-export { Image360, Image360Visualization, Image360Collection } from '../packages/360-images';
+export {
+  Image360,
+  Image360Revision,
+  Image360Metadata,
+  Image360Visualization,
+  Image360Collection,
+  Image360EnteredDelegate,
+  Image360ExitedDelegate,
+  Image360AnnotationIntersection,
+  Image360AnnotationAppearance,
+  Image360Annotation
+} from '../packages/360-images';

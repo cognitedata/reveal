@@ -11,9 +11,9 @@ Provides data for 3D models.
 
 ## Hierarchy
 
-- `JsonFileProvider`
+- [`JsonFileProvider`](cognite_reveal_extensions_datasource.JsonFileProvider.md)
 
-- `BinaryFileProvider`
+- [`BinaryFileProvider`](cognite_reveal_extensions_datasource.BinaryFileProvider.md)
 
   ↳ **`ModelDataProvider`**
 
@@ -21,7 +21,7 @@ Provides data for 3D models.
 
 ### getBinaryFile
 
-▸ **getBinaryFile**(`baseUrl`, `fileName`): `Promise`<`ArrayBuffer`\>
+▸ **getBinaryFile**(`baseUrl`, `fileName`, `abortSignal?`): `Promise`<`ArrayBuffer`\>
 
 Downloads a binary blob.
 
@@ -31,6 +31,7 @@ Downloads a binary blob.
 | :------ | :------ | :------ |
 | `baseUrl` | `string` | Base URL of the model. |
 | `fileName` | `string` | Filename of binary file. |
+| `abortSignal?` | `AbortSignal` | Optional abort signal that can be used to cancel an in progress fetch. |
 
 #### Returns
 
@@ -38,11 +39,11 @@ Downloads a binary blob.
 
 #### Overrides
 
-BinaryFileProvider.getBinaryFile
+[BinaryFileProvider](cognite_reveal_extensions_datasource.BinaryFileProvider.md).[getBinaryFile](cognite_reveal_extensions_datasource.BinaryFileProvider.md#getbinaryfile)
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:22](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/data-providers/src/ModelDataProvider.ts#L22)
+[packages/data-providers/src/ModelDataProvider.ts:23](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelDataProvider.ts#L23)
 
 ___
 
@@ -65,8 +66,8 @@ Download and parse a JSON file and return the resulting struct.
 
 #### Overrides
 
-JsonFileProvider.getJsonFile
+[JsonFileProvider](cognite_reveal_extensions_datasource.JsonFileProvider.md).[getJsonFile](cognite_reveal_extensions_datasource.JsonFileProvider.md#getjsonfile)
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)
+[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)

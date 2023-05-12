@@ -373,6 +373,21 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * Sets the clipping planes for this model. They will be combined with the
+   * global clipping planes.
+   */
+  setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.cadNode.clippingPlanes = clippingPlanes;
+  }
+
+  /**
+   * Get the clipping planes for this model.
+   */
+  getModelClippingPlanes(): THREE.Plane[] {
+    return [...this.cadNode.clippingPlanes];
+  }
+
+  /**
    * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
    * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
@@ -380,6 +395,26 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    */
   getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
     return this.cadNode.getCdfToDefaultModelTransformation(out);
+  }
+
+  /**
+   * Map point from CDF to model space, taking the model's custom transformation into account
+   * @param point Point to compute transformation from
+   * @param out Optional pre-allocated point
+   */
+  mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out: THREE.Vector3 = new THREE.Vector3()): THREE.Vector3 {
+    const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
+    return out.copy(point).applyMatrix4(cdfToModelTransformation);
+  }
+
+  /**
+   * Map bounding box from CDF to model space, taking the model's custom transformation into account
+   * @param box Box to compute transformation from
+   * @param out Optional pre-allocated box
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
+    const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
+    return out.copy(box).applyMatrix4(cdfToModelTransformation);
   }
 
   /**

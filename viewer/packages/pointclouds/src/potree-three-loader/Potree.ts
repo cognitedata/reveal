@@ -66,11 +66,13 @@ export class Potree implements IPotree {
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _materialManager: PointCloudMaterialManager;
 
-  private readonly _throttledUpdateFunc = throttle(
+  private _throttledUpdateFunc = throttle(
     (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
       this.innerUpdatePointClouds(pointClouds, camera, renderer),
     UPDATE_THROTTLE_TIME_MS
   );
+
+  private _shouldLoad: boolean = true;
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   lru = new LRU(this._pointBudget);
@@ -78,6 +80,15 @@ export class Potree implements IPotree {
   constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
     this._modelDataProvider = modelDataProvider;
     this._materialManager = pointCloudMaterialManager;
+  }
+
+  reset(): void {
+    // Reset the throttle function, to make sure all references to a deleted model are released
+    this._throttledUpdateFunc = throttle(
+      (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
+        this.innerUpdatePointClouds(pointClouds, camera, renderer),
+      UPDATE_THROTTLE_TIME_MS
+    );
   }
 
   async loadPointCloud(
@@ -94,11 +105,27 @@ export class Potree implements IPotree {
     this._throttledUpdateFunc(pointClouds, camera, renderer);
   }
 
+  set shouldLoad(value: boolean) {
+    this._shouldLoad = value;
+  }
+
   private innerUpdatePointClouds(
     pointClouds: PointCloudOctree[],
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
+    if (!this._shouldLoad) {
+      return {
+        visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
+        numVisiblePoints: pointClouds
+          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
+          .reduce((a, b) => a + b),
+        exceededMaxLoadsToGPU: false,
+        nodeLoadFailed: false,
+        nodeLoadPromises: []
+      };
+    }
+
     const result = this.updateVisibility(pointClouds, camera, renderer);
 
     for (let i = 0; i < pointClouds.length; i++) {
@@ -117,7 +144,7 @@ export class Potree implements IPotree {
         spacing: pointCloud.pcoGeometry.spacing
       };
 
-      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
+      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
       pointCloud.updateVisibleBounds();
       pointCloud.updateBoundingBoxes();
     }
@@ -283,7 +310,6 @@ export class Potree implements IPotree {
     const sceneNode = node.sceneNode;
     sceneNode.visible = true;
     sceneNode.material = pointCloud.material;
-    sceneNode.updateMatrix();
     sceneNode.matrixWorld.multiplyMatrices(pointCloud.matrixWorld, sceneNode.matrix);
 
     visibleNodes.push(node);

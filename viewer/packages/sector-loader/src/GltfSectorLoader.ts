@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { ConsumedSector, V9SectorMetadata, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
+import { ConsumedSector, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
@@ -11,6 +11,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 
 import assert from 'assert';
+import { Log } from '@reveal/logger';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -23,12 +24,13 @@ export class GltfSectorLoader {
     this._materialManager = materialManager;
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    const metadata = sector.metadata as V9SectorMetadata;
+  async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
+    const { metadata } = sector;
     try {
       const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
         sector.modelBaseUrl,
-        metadata.sectorFileName!
+        metadata.sectorFileName!,
+        abortSignal
       );
 
       const group = new AutoDisposeGroup();
@@ -78,6 +80,14 @@ export class GltfSectorLoader {
           case RevealGeometryCollectionType.TriangleMesh:
             this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
             break;
+          case RevealGeometryCollectionType.TexturedTriangleMesh:
+            const material = this._materialManager.addTexturedMeshMaterial(
+              sector.modelIdentifier,
+              sector.metadata.id,
+              parsedGeometry.texture!
+            );
+            this.createMesh(group, parsedGeometry.geometryBuffer, material);
+            break;
           default:
             assertNever(type);
         }
@@ -91,9 +101,16 @@ export class GltfSectorLoader {
         modelIdentifier: sector.modelIdentifier,
         geometryBatchingQueue: geometryBatchingQueue
       };
-    } catch (error) {
-      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
-      throw error;
+    } catch (e) {
+      const error = e as Error;
+      if (error?.cause === 'InvalidModel') {
+        Log.info('Invalid Model:', error.message);
+      } else if (error?.name === 'AbortError') {
+        Log.info('Abort Error:', error.message);
+      } else {
+        MetricsLogger.trackError(error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
+      }
+      throw e;
     }
   }
 
@@ -104,7 +121,7 @@ export class GltfSectorLoader {
     const treeIndexSet = new Map<number, number>();
 
     for (let i = 0; i < treeIndexAttribute.count; i++) {
-      incrementOrInsertIndex(treeIndexSet, treeIndexAttribute.getX(i));
+      incrementOrInsertIndex(treeIndexSet, (treeIndexAttribute as THREE.BufferAttribute).getX(i));
     }
 
     return treeIndexSet;

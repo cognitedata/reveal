@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import { clickOrTouchEventOffset } from '@reveal/utilities';
+import remove from 'lodash/remove';
 import {
   EventDispatcher,
   MathUtils,
@@ -25,7 +26,7 @@ function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number
   return new Vector2(clientX - domElement.offsetLeft, clientY - domElement.offsetTop);
 }
 
-function getPinchInfo(domElement: HTMLElement, touches: TouchList) {
+function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   if (touches.length !== 2) {
     throw new Error('getPinchInfo only works if touches.length === 2');
   }
@@ -125,7 +126,7 @@ export class ComboControls extends EventDispatcher {
   private readonly _scrollTarget: Vector3 = new Vector3();
   private readonly _targetEnd: Vector3 = new Vector3();
   private readonly _spherical: Spherical = new Spherical();
-  private _sphericalEnd: Spherical = new Spherical();
+  private readonly _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
   private readonly _rawCameraRotation = new Quaternion();
   private readonly _keyboard: Keyboard;
@@ -135,6 +136,8 @@ export class ComboControls extends EventDispatcher {
   private readonly _raycaster: Raycaster = new Raycaster();
   private readonly _targetFPS: number = 30;
   private _targetFPSOverActualFPS: number = 1;
+
+  private readonly _pointEventCache: Array<PointerEvent> = [];
 
   private _enabled: boolean = true;
   private _options: ComboControlsOptions = ComboControls.DefaultControlsOptions;
@@ -155,7 +158,7 @@ export class ComboControls extends EventDispatcher {
     pointerRotationSpeedPolar: defaultPointerRotationSpeed,
     enableKeyboardNavigation: true,
     keyboardRotationSpeedAzimuth: defaultKeyboardRotationSpeed,
-    keyboardRotationSpeedPolar: defaultKeyboardRotationSpeed,
+    keyboardRotationSpeedPolar: defaultKeyboardRotationSpeed * 0.8,
     mouseFirstPersonRotationSpeed: defaultPointerRotationSpeed * 2,
     keyboardDollySpeed: 2,
     keyboardPanSpeed: 10,
@@ -201,8 +204,15 @@ export class ComboControls extends EventDispatcher {
   /**
    * Sets the enabled state of these controls.
    */
-  set enabled(enabled: boolean) {
-    this._enabled = enabled;
+  set enabled(newEnabledValue: boolean) {
+    if (newEnabledValue && !this._enabled) {
+      this.addEventListeners();
+    }
+    if (!newEnabledValue && this._enabled) {
+      this.removeEventListeners();
+    }
+
+    this._enabled = newEnabledValue;
   }
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
@@ -215,29 +225,10 @@ export class ComboControls extends EventDispatcher {
     // rotation
     this._spherical.setFromVector3(camera.position);
     this._sphericalEnd.copy(this._spherical);
-    domElement.addEventListener('pointerdown', this.onPointerDown);
-    domElement.addEventListener('touchstart', this.onTouchStart);
-    domElement.addEventListener('wheel', this.onMouseWheel);
-    domElement.addEventListener('contextmenu', this.onContextMenu);
-
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
-    // in that case events will be fired (we don't set tabindex here, but still support that case)
-    domElement.addEventListener('focus', this.onFocusChanged);
-    domElement.addEventListener('blur', this.onFocusChanged);
-
-    window.addEventListener('pointerup', this.onMouseUp);
-    window.addEventListener('pointerdown', this.onFocusChanged);
+    this.addEventListeners();
 
     this.dispose = () => {
-      domElement.removeEventListener('pointerdown', this.onPointerDown);
-      domElement.removeEventListener('wheel', this.onMouseWheel);
-      domElement.removeEventListener('touchstart', this.onTouchStart);
-      domElement.removeEventListener('contextmenu', this.onContextMenu);
-      domElement.removeEventListener('focus', this.onFocusChanged);
-      domElement.removeEventListener('blur', this.onFocusChanged);
-
-      window.removeEventListener('pointerup', this.onMouseUp);
-      window.removeEventListener('pointerdown', this.onFocusChanged);
+      this.removeEventListeners();
 
       // dipose all keyboard events registered. REV-461!
       this._keyboard.dispose();
@@ -349,6 +340,7 @@ export class ComboControls extends EventDispatcher {
 
   public setViewTarget = (target: Vector3) => {
     this._viewTarget.copy(target);
+    this.triggerCameraChangeEvent();
   };
 
   public setScrollTarget = (target: Vector3) => {
@@ -388,10 +380,20 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onPointerDown = (event: PointerEvent) => {
-    if (event.pointerType === 'mouse') this.onMouseDown(event);
+    switch (event.pointerType) {
+      case 'mouse':
+        this.onMouseDown(event);
+        break;
+      case 'touch':
+        this._pointEventCache.push(event);
+        this.onTouchStart(event);
+        break;
+      default:
+        break;
+    }
   };
 
-  private readonly onMouseDown = (event: MouseEvent) => {
+  private readonly onMouseDown = (event: PointerEvent) => {
     if (!this._enabled) {
       return;
     }
@@ -415,7 +417,20 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private readonly onMouseUp = (_event: MouseEvent) => {
+  private readonly onPointerUp = (event: PointerEvent) => {
+    switch (event.pointerType) {
+      case 'mouse':
+        this.onMouseUp();
+        break;
+      case 'touch':
+        remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
+        break;
+      default:
+        break;
+    }
+  };
+
+  private readonly onMouseUp = () => {
     this._accumulatedMouseMove.set(0, 0);
   };
 
@@ -453,7 +468,7 @@ export class ComboControls extends EventDispatcher {
     this.dolly(x, y, deltaDistance, false);
   };
 
-  private readonly onTouchStart = (event: TouchEvent) => {
+  private readonly onTouchStart = (event: PointerEvent) => {
     if (!this._enabled) {
       return;
     }
@@ -462,7 +477,7 @@ export class ComboControls extends EventDispatcher {
     this._firstPersonMode = false;
     this._sphericalEnd.copy(this._spherical);
 
-    switch (event.touches.length) {
+    switch (this._pointEventCache.length) {
       case 1: {
         this.startTouchRotation(event);
         break;
@@ -471,7 +486,6 @@ export class ComboControls extends EventDispatcher {
         this.startTouchPinch(event);
         break;
       }
-
       default:
         break;
     }
@@ -511,10 +525,10 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private readonly startMouseRotation = (initialEvent: MouseEvent) => {
+  private readonly startMouseRotation = (initialEvent: PointerEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
-    const onMouseMove = (event: MouseEvent) => {
+    const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       const deltaOffset = previousOffset.clone().sub(newOffset);
       this._accumulatedMouseMove.add(deltaOffset);
@@ -530,10 +544,10 @@ export class ComboControls extends EventDispatcher {
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   };
 
-  private readonly startMousePan = (initialEvent: MouseEvent) => {
+  private readonly startMousePan = (initialEvent: PointerEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
-    const onMouseMove = (event: MouseEvent) => {
+    const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       const xDifference = newOffset.x - previousOffset.x;
       const yDifference = newOffset.y - previousOffset.y;
@@ -550,23 +564,23 @@ export class ComboControls extends EventDispatcher {
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   };
 
-  private readonly startTouchRotation = (initialEvent: TouchEvent) => {
+  private readonly startTouchRotation = (initialEvent: PointerEvent) => {
     const { _domElement } = this;
 
-    let previousOffset = getHTMLOffset(_domElement, initialEvent.touches[0].clientX, initialEvent.touches[0].clientY);
+    let previousOffset = getHTMLOffset(_domElement, initialEvent.clientX, initialEvent.clientY);
 
-    const onTouchMove = (event: TouchEvent) => {
-      if (event.touches.length !== 1) {
+    const onTouchMove = (event: PointerEvent) => {
+      if (this._pointEventCache.length !== 1) {
         return;
       }
-      const newOffset = getHTMLOffset(_domElement, event.touches[0].clientX, event.touches[0].clientY);
+      const newOffset = getHTMLOffset(_domElement, event.clientX, event.clientY);
       this.rotate(previousOffset.x - newOffset.x, previousOffset.y - newOffset.y);
       previousOffset = newOffset;
     };
 
-    const onTouchStart = (event: TouchEvent) => {
+    const onTouchStart = (_event: PointerEvent) => {
       // if num fingers used don't equal 1 then we stop touch rotation
-      if (event.touches.length !== 1) {
+      if (this._pointEventCache.length !== 1) {
         dispose();
       }
     };
@@ -576,27 +590,32 @@ export class ComboControls extends EventDispatcher {
     };
 
     const dispose = () => {
-      document.removeEventListener('touchstart', onTouchStart);
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('pointerdown', onTouchStart);
+      document.removeEventListener('pointermove', onTouchMove);
+      document.removeEventListener('pointerup', onTouchEnd);
     };
 
-    document.addEventListener('touchstart', onTouchStart);
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onTouchEnd, { passive: false });
+    document.addEventListener('pointerdown', onTouchStart);
+    document.addEventListener('pointermove', onTouchMove, { passive: false });
+    document.addEventListener('pointerup', onTouchEnd, { passive: false });
   };
 
-  private readonly startTouchPinch = (initialEvent: TouchEvent) => {
+  private readonly startTouchPinch = (initialEvent: PointerEvent) => {
     const { _domElement } = this;
-    let previousPinchInfo = getPinchInfo(_domElement, initialEvent.touches);
-    const initialPinchInfo = getPinchInfo(_domElement, initialEvent.touches);
+    const index = this._pointEventCache.findIndex(cachedEvent => cachedEvent.pointerId === initialEvent.pointerId);
+    this._pointEventCache[index] = initialEvent;
+    let previousPinchInfo = getPinchInfo(_domElement, this._pointEventCache);
+    const initialPinchInfo = getPinchInfo(_domElement, this._pointEventCache);
     const initialRadius = this._spherical.radius;
 
-    const onTouchMove = (event: TouchEvent) => {
-      if (event.touches.length !== 2) {
+    const onTouchMove = (event: PointerEvent) => {
+      if (this._pointEventCache.length !== 2) {
         return;
       }
-      const pinchInfo = getPinchInfo(_domElement, event.touches);
+      // Find this event in the cache and update its record with this event
+      const index = this._pointEventCache.findIndex(cachedEvent => cachedEvent.pointerId === event.pointerId);
+      this._pointEventCache[index] = event;
+      const pinchInfo = getPinchInfo(_domElement, this._pointEventCache);
       // dolly
       const distanceFactor = initialPinchInfo.distance / pinchInfo.distance;
       // Min distance / 5 because on phones it is reasonable to get quite close to the target,
@@ -612,9 +631,9 @@ export class ComboControls extends EventDispatcher {
       previousPinchInfo = pinchInfo;
     };
 
-    const onTouchStart = (event: TouchEvent) => {
+    const onTouchStart = (_event: PointerEvent) => {
       // if num fingers used don't equal 2 then we stop touch pinch
-      if (event.touches.length !== 2) {
+      if (this._pointEventCache.length !== 2) {
         dispose();
       }
     };
@@ -624,14 +643,14 @@ export class ComboControls extends EventDispatcher {
     };
 
     const dispose = () => {
-      document.removeEventListener('touchstart', onTouchStart);
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('pointerdown', onTouchStart);
+      document.removeEventListener('pointermove', onTouchMove);
+      document.removeEventListener('pointerup', onTouchEnd);
     };
 
-    document.addEventListener('touchstart', onTouchStart);
-    document.addEventListener('touchmove', onTouchMove);
-    document.addEventListener('touchend', onTouchEnd);
+    document.addEventListener('pointerdown', onTouchStart);
+    document.addEventListener('pointermove', onTouchMove);
+    document.addEventListener('pointerup', onTouchEnd);
   };
 
   private readonly handleKeyboard = () => {
@@ -657,7 +676,9 @@ export class ComboControls extends EventDispatcher {
       _sphericalEnd.makeSafe();
       polarAngle = _sphericalEnd.phi - oldPhi;
       _sphericalEnd.phi = oldPhi;
-      this.rotateFirstPersonMode(azimuthAngle, polarAngle);
+
+      const compensationForPolarAngleFactor = Math.sin(Math.PI / 2 - Math.abs(_sphericalEnd.phi - Math.PI / 2));
+      this.rotateFirstPersonMode(azimuthAngle * compensationForPolarAngleFactor, polarAngle);
     }
 
     const speedFactor = _keyboard.isPressed('shift') ? this._options.keyboardSpeedFactor : 1;
@@ -760,7 +781,7 @@ export class ComboControls extends EventDispatcher {
     const distToTarget = cameraDirection.length();
     const isDollyOut = deltaDistance > 0 ? true : false;
 
-    _raycaster.setFromCamera({ x, y }, _reusableCamera);
+    _raycaster.setFromCamera(new Vector2(x, y), _reusableCamera);
 
     let radius = distToTarget + deltaDistance;
 
@@ -979,5 +1000,34 @@ export class ComboControls extends EventDispatcher {
 
   private isIdentityQuaternion(q: THREE.Quaternion) {
     return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
+  }
+
+  private addEventListeners() {
+    const { _domElement: domElement } = this;
+
+    domElement.addEventListener('pointerdown', this.onPointerDown);
+    domElement.addEventListener('wheel', this.onMouseWheel);
+    domElement.addEventListener('contextmenu', this.onContextMenu);
+
+    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
+    // in that case events will be fired (we don't set tabindex here, but still support that case)
+    domElement.addEventListener('focus', this.onFocusChanged);
+    domElement.addEventListener('blur', this.onFocusChanged);
+
+    window.addEventListener('pointerup', this.onPointerUp);
+    window.addEventListener('pointerdown', this.onFocusChanged);
+  }
+
+  private removeEventListeners() {
+    const { _domElement: domElement } = this;
+
+    domElement.removeEventListener('pointerdown', this.onPointerDown);
+    domElement.removeEventListener('wheel', this.onMouseWheel);
+    domElement.removeEventListener('contextmenu', this.onContextMenu);
+    domElement.removeEventListener('focus', this.onFocusChanged);
+    domElement.removeEventListener('blur', this.onFocusChanged);
+
+    window.removeEventListener('pointerup', this.onPointerUp);
+    window.removeEventListener('pointerdown', this.onFocusChanged);
   }
 }

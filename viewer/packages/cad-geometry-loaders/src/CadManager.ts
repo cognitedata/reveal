@@ -7,12 +7,12 @@ import * as THREE from 'three';
 import { Subscription, Observable } from 'rxjs';
 
 import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelBudget } from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { LoadingState } from '@reveal/model-base';
 import { CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
-import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
+import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
@@ -97,6 +97,11 @@ export class CadManager {
         sectorNode.add(sector.group);
       }
       sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
+
+      if (sector.group) {
+        cadModel.setModelRenderLayers(sectorNode.group);
+      }
+
       this.markNeedsRedraw();
 
       // Update mapping from tree indices to sector ids
@@ -140,10 +145,11 @@ export class CadManager {
 
   resetRedraw(): void {
     this._needsRedraw = false;
+    [...this._cadModelMap.values()].some(m => m.resetRedraw());
   }
 
   get needsRedraw(): boolean {
-    return this._needsRedraw;
+    return this._needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw);
   }
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {

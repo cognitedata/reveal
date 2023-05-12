@@ -69,6 +69,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _handlePointerClick = this.onPointerClick.bind(this);
   private readonly _handlePointerMove = this.onPointerMove.bind(this);
   private readonly _handleMeasurementCancel = this.onKeyDown.bind(this);
+  private readonly _handleClippingPlanes = this.onClipping.bind(this);
 
   private readonly _events = {
     measurementAdded: new EventTrigger<MeasurementAddedDelegate>(),
@@ -236,6 +237,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       throw new Error('Measurement mode is active, call exitMeasurementMode()');
     }
     this._viewer.on('click', this._handlePointerClick);
+    this._viewer.on('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementStarted.fire();
     this._measurementMode = true;
     this._showMeasurements = true;
@@ -250,6 +252,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     }
     this.cancelActiveMeasurement();
     this._viewer.off('click', this._handlePointerClick);
+    this._viewer.off('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
   }
@@ -395,7 +398,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
         intersection.point
       );
       this._viewer.domElement.addEventListener('pointermove', this._handlePointerMove);
-      window.addEventListener('keydown', this._handleMeasurementCancel);
+      this._viewer.domElement.addEventListener('keydown', this._handleMeasurementCancel);
     } else {
       this._activeMeasurement.endMeasurement(intersection.point);
       const measurement = this._activeMeasurement.getMeasurement();
@@ -405,7 +408,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       // To avoid issue when exiting measurement mode when a measurement 'added' event called
       this._events.measurementAdded.fire(this._measurements[this._measurements.length - 1].getMeasurement());
       this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
-      window.removeEventListener('keydown', this._handleMeasurementCancel);
+      this._viewer.domElement.removeEventListener('keydown', this._handleMeasurementCancel);
 
       MetricsLogger.trackEvent('measurementAdded', { measurement });
     }
@@ -464,5 +467,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       this._viewer.requestRedraw();
       this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
     }
+  }
+
+  private onClipping() {
+    const clippingPlanes = this._viewer.getGlobalClippingPlanes();
+    this._measurements.forEach(measurement => {
+      measurement.updateLineClippingPlanes(clippingPlanes);
+    });
   }
 }

@@ -5,9 +5,12 @@ import * as THREE from 'three';
 import { createGlContext } from '../../../test-utilities';
 import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
+const glContext = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+
+import { jest } from '@jest/globals';
+
 describe('WebGLRendererStateHelper', () => {
   let renderer: THREE.WebGLRenderer;
-  const glContext = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
@@ -24,9 +27,10 @@ describe('WebGLRendererStateHelper', () => {
 
     const helper = new WebGLRendererStateHelper(renderer);
     const setClearColorSpy = jest.spyOn(renderer, 'setClearColor');
+    const color = new THREE.Color('#112233');
 
-    helper.setClearColor('#112233', 0.8);
-    expect(setClearColorSpy).toBeCalledWith('#112233', 0.8);
+    helper.setClearColor(color, 0.8);
+    expect(setClearColorSpy).toBeCalledWith(color, 0.8);
 
     helper.resetState();
     expect(setClearColorSpy).toBeCalledWith(originalColor, originalAlpha);

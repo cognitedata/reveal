@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { AnnotationModel } from '@cognite/sdk';
 import * as THREE from 'three';
 
 export interface JsonFileProvider {
@@ -8,32 +9,61 @@ export interface JsonFileProvider {
 }
 
 export interface BinaryFileProvider {
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
+}
+
+export interface Image360AnnotationProvider {
+  get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
 }
 
 export interface Image360DescriptorProvider<T> {
-  get360ImageDescriptors(metadataFilter: T): Promise<Image360Descriptor[]>;
+  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Historical360ImageSet[]>;
 }
 
 export interface Image360FileProvider {
-  get360ImageFiles(image360Descriptor: Image360Descriptor): Promise<Image360Face[]>;
+  get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]>;
+
+  getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]>;
 }
 
+export type Historical360ImageSet = Image360EventDescriptor & {
+  imageRevisions: Image360Descriptor[];
+};
+
 export type Image360Descriptor = {
+  timestamp?: number;
+  faceDescriptors: Image360FileDescriptor[];
+};
+
+export type Image360EventDescriptor = {
   id: string;
   label: string;
   collectionId: string;
   collectionLabel: string;
-  transformations: {
-    translation: THREE.Matrix4;
-    rotation: THREE.Matrix4;
-  };
+  transform: THREE.Matrix4;
 };
 
 export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
+};
+
+export type Image360Texture = {
+  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  texture: THREE.Texture;
+};
+
+export type Image360FileDescriptor = {
+  fileId: number;
+  face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  mimeType: 'image/jpeg' | 'image/png';
 };
 
 export enum File3dFormat {

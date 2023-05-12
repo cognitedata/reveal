@@ -20,8 +20,8 @@ export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';
 export { IndexSet } from './src/IndexSet';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
+export { AttributeDataAccessor } from './src/three/AttributeDataAccessor';
 export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
-export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
 export { toThreeBox3 } from './src/three/toThreeBox3';
 export { fromThreeVector3 } from './src/three/fromThreeVector3';
 export { unionBoxes } from './src/three/unionBoxes';
@@ -45,6 +45,8 @@ export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUplo
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
 
+export { getApproximateProjectedBounds, getScreenArea } from './src/projectedBounds';
+
 export {
   worldToNormalizedViewportCoordinates,
   worldToViewportCoordinates,
@@ -54,6 +56,8 @@ export {
 export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
+
+export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
 export * from './src/workers/workerize-transferable';
 

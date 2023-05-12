@@ -4,10 +4,11 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, V9SectorMetadata } from '../types';
+import { SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import { BoundingBox, CadSceneRootMetadata, V9SceneSectorMetadata } from './types';
+import { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
+import { MetricsLogger } from '@reveal/metrics';
 
 export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScene {
   if (!metadata.sectors || metadata.sectors.length === 0) {
@@ -15,10 +16,16 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
   }
 
   // Create list of sectors and a map of child -> parent
-  const sectorsById = new Map<number, V9SectorMetadata>();
+  const sectorsById = new Map<number, SectorMetadata>();
   const parentIds: number[] = [];
+
+  const numTexturedSectors = metadata.sectors.filter(s => s.texturedFileName).length;
+  if (numTexturedSectors > 0) {
+    MetricsLogger.trackEvent('texturedModelLoaded', {});
+  }
+
   metadata.sectors.forEach(s => {
-    const sector = createSectorMetadata(s as V9SceneSectorMetadata);
+    const sector = createSectorMetadata(s);
     sectorsById.set(s.id, sector);
     parentIds[s.id] = s.parentId ?? -1;
   });
@@ -60,7 +67,7 @@ export function toThreeBoundingBox(box: BoundingBox): THREE.Box3 {
   );
 }
 
-function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata {
+function createSectorMetadata(metadata: SceneSectorMetadata): SectorMetadata {
   const metadataBoundingBox = toThreeBoundingBox(metadata.boundingBox);
 
   let geometryBoundingBox: THREE.Box3;
@@ -89,7 +96,7 @@ function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata
     downloadSize: metadata.downloadSize || 0,
     maxDiagonalLength: metadata.maxDiagonalLength || 0,
     minDiagonalLength: metadata.minDiagonalLength || 0,
-    sectorFileName: metadata.sectorFileName,
+    sectorFileName: metadata.texturedFileName ?? metadata.sectorFileName,
 
     // Populated later
     children: []
@@ -102,7 +109,7 @@ function computeSubtreeBoundingBoxRecursive(sector: SectorMetadata): void {
   }
 
   if (sector.children.length === 0) {
-    sector.subtreeBoundingBox.copy((sector as V9SectorMetadata).geometryBoundingBox);
+    sector.subtreeBoundingBox.copy(sector.geometryBoundingBox);
     return;
   }
 

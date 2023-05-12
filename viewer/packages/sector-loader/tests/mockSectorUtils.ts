@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { WantedSector, V9SectorMetadata } from '@reveal/cad-parsers';
+import { WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { IMock, Mock, It } from 'moq.ts';
 
@@ -10,10 +10,14 @@ import * as fs from 'fs';
 export const defaultBaseUrl = 'https://some_baseurl.com';
 const modelIdentifier = 'some_model_identifier';
 
+// https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
+import url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
 export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
   const wantedFile = 'wanted_file.glb';
 
-  const mockedSectorMetadata = new Mock<V9SectorMetadata>()
+  const mockedSectorMetadata = new Mock<SectorMetadata>()
     .setup(p => p.sectorFileName)
     .returns(wantedFile)
     .setup(p => p.id)
@@ -31,6 +35,6 @@ export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
 export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
   const fileBuffer = fs.readFileSync(__dirname + '/test.glb');
   return new Mock<BinaryFileProvider>()
-    .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny()))
+    .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
     .returnsAsync(fileBuffer.buffer);
 }

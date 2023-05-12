@@ -123,7 +123,9 @@ export function setNutGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   geometry.setAttribute('position', nutGeometry.getAttribute('position'));
   geometry.setAttribute('normal', nutGeometry.getAttribute('normal'));
 
-  return new THREE.Box3().setFromArray(nutGeometry.getAttribute('position').array);
+  return new THREE.Box3().setFromArray(
+    (nutGeometry.getAttribute('position') as THREE.InterleavedBufferAttribute).array
+  );
 }
 
 export function setPrimitiveTopology(
@@ -166,6 +168,7 @@ export function setPrimitiveTopology(
       break;
     case RevealGeometryCollectionType.InstanceMesh:
     case RevealGeometryCollectionType.TriangleMesh:
+    case RevealGeometryCollectionType.TexturedTriangleMesh:
       break;
     default:
       assertNever(primitiveCollectionName);

@@ -4,17 +4,11 @@
 
 // fetch() polyfill
 import 'whatwg-fetch';
-import { TextDecoder } from 'util';
+import { jest } from '@jest/globals';
+import { TextDecoder, TextEncoder } from 'util';
 import ResizeObserver from 'resize-observer-polyfill';
 
-// Create document.currentScript required by potree-core
-Object.defineProperty(document, 'currentScript', {
-  value: document.createElement('script')
-});
-(document.currentScript as any).src = 'http://localhost/iamdummy.html';
-
 // To avoid warnings from CogniteClient that checks whether we use SSL
-global.window = Object.create(window);
 const url = 'https://api.cognitedata.com';
 Object.defineProperty(window, 'location', {
   value: {
@@ -24,7 +18,7 @@ Object.defineProperty(window, 'location', {
   }
 });
 
-window.URL.createObjectURL = jest.fn();
+window.URL.createObjectURL = jest.fn<() => string>();
 
 // Mock Worker for web workers
 class StubWorker {
@@ -55,7 +49,10 @@ const consoleError = console.error.bind(console);
 };
 
 (window as any).TextDecoder = TextDecoder;
+(window as any).TextEncoder = TextEncoder;
+
+import packageObject from '../../package.json' assert { type: 'json' };
 
 Object.assign(process.env, {
-  VERSION: require('../../package.json').version
+  VERSION: packageObject.version
 });

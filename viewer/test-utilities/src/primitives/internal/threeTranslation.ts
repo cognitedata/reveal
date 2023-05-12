@@ -125,19 +125,21 @@ export function createPrimitiveInterleavedGeometry(
 }
 
 /* NB: Assumes BufferGeometry only uses one underlying buffer for interleaved attributes */
-function getBufferByteSize(geometryBuffer: THREE.BufferGeometry) {
-  let underlyingBuffer: ArrayBuffer | undefined = undefined;
+function getBufferByteSize(geometryBuffer: THREE.BufferGeometry): [number, number] {
+  let underlyingByteBufferLength: number | undefined = undefined;
+  let underlyingByteBufferOffset: number | undefined = undefined;
   for (const attr of Object.entries(geometryBuffer.attributes)) {
     if (attr[1] instanceof THREE.InterleavedBufferAttribute) {
-      underlyingBuffer = ((attr[1] as THREE.InterleavedBufferAttribute).array as TypedArray).buffer;
+      underlyingByteBufferLength = ((attr[1] as THREE.InterleavedBufferAttribute).array as TypedArray).byteLength;
+      underlyingByteBufferOffset = ((attr[1] as THREE.InterleavedBufferAttribute).array as TypedArray).byteOffset;
     }
   }
 
-  if (!underlyingBuffer) {
+  if (underlyingByteBufferLength === undefined) {
     throw Error('Could not find interleaved attribute buffer for BufferGeometry');
   }
 
-  return underlyingBuffer.byteLength;
+  return [underlyingByteBufferLength, underlyingByteBufferOffset!];
 }
 
 /**
@@ -147,7 +149,7 @@ function getBufferByteSize(geometryBuffer: THREE.BufferGeometry) {
 export function parseInterleavedGeometry(name: PrimitiveName, geometryBuffer: THREE.BufferGeometry): Primitive[] {
   const singleElementSize = computeTotalAttributeByteSize(name);
 
-  const byteLength = getBufferByteSize(geometryBuffer);
+  const [byteLength, byteOffset] = getBufferByteSize(geometryBuffer);
 
   const numElements = byteLength / singleElementSize;
 
@@ -156,7 +158,7 @@ export function parseInterleavedGeometry(name: PrimitiveName, geometryBuffer: TH
   }
 
   const result: Primitive[] = [];
-  let currentOffset = 0;
+  let currentOffset = byteOffset;
   for (let i = 0; i < numElements; i++) {
     const thisPrimitive: Primitive = readPrimitiveFromBuffer(geometryBuffer, currentOffset);
     result.push(thisPrimitive);

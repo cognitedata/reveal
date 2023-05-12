@@ -20,6 +20,9 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import { Cognite3DViewer } from '@reveal/api';
 
+import vertexShader from './shaders/axisTool.vert';
+import fragmentShader from './shaders/axisTool.frag';
+
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
 
@@ -246,8 +249,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const compass = new THREE.Mesh(
       compassPlaneGeometry,
       new THREE.RawShaderMaterial({
-        vertexShader: glsl(require('./shaders/axisTool.vert').default),
-        fragmentShader: glsl(require('./shaders/axisTool.frag').default),
+        vertexShader: glsl(vertexShader),
+        fragmentShader: glsl(fragmentShader),
         uniforms: {
           offset: { value: new THREE.Vector2() },
           scale: { value: new THREE.Vector2() },
@@ -339,8 +342,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const face = new THREE.Mesh(
       this._boxFaceGeometry,
       new THREE.RawShaderMaterial({
-        vertexShader: glsl(require('./shaders/axisTool.vert').default),
-        fragmentShader: glsl(require('./shaders/axisTool.frag').default),
+        vertexShader: glsl(vertexShader),
+        fragmentShader: glsl(fragmentShader),
         uniforms: {
           offset: { value: new THREE.Vector2() },
           scale: { value: new THREE.Vector2() },
@@ -370,12 +373,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const { position: currentCameraPosition, target: cameraTarget, rotation } = cameraManager.getCameraState();
 
-    const targetRelativeStartPosition = currentCameraPosition.clone().sub(cameraTarget);
-    const radius = targetRelativeStartPosition.length();
-
-    const normalizedFrom = targetRelativeStartPosition.clone().normalize();
-
-    const omega = Math.acos(normalizedFrom.dot(targetAxis));
+    const offsetInCameraSpace = currentCameraPosition
+      .clone()
+      .sub(cameraTarget)
+      .applyQuaternion(rotation.clone().conjugate());
 
     const from = { t: 0 };
     const to = { t: 1 };
@@ -401,19 +402,22 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const tween = animation
       .to(to, this._layoutConfig.animationSpeed)
       .onUpdate(() => {
-        tmpPosition
-          .copy(normalizedFrom)
-          .multiplyScalar(Math.sin((1 - from.t) * omega) / Math.sin(omega))
-          .add(targetAxis.clone().multiplyScalar(Math.sin(from.t * omega) / Math.sin(omega)));
-
-        tmpPosition.multiplyScalar(radius);
-        tmpPosition.add(cameraTarget);
-
         tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
+
+        tmpPosition.copy(offsetInCameraSpace);
+        tmpPosition.applyQuaternion(tmpRotation);
+        tmpPosition.add(cameraTarget);
 
         cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
       })
       .onComplete(() => {
+        if (targetAxis.y !== 0) {
+          // Camera will be looking straight up or down. By making sure the position and target is exactly on top of each other,
+          // the camera.lookAt() function used in ComboControls will pick another axis as the up-direction. This happens to coincide
+          // with targetUpAxis, but the latter really has no effect on the resulting "up" direction.
+          tmpPosition.x = cameraTarget.x;
+          tmpPosition.z = cameraTarget.z;
+        }
         cameraManager.setCameraState({ position: tmpPosition, target: cameraTarget });
       })
       .start(TWEEN.now());

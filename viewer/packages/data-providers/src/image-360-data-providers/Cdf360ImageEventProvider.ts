@@ -6,11 +6,23 @@ import * as THREE from 'three';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
+import range from 'lodash/range';
+import uniqBy from 'lodash/uniqBy';
 
-import { CogniteClient, FileInfo, Metadata } from '@cognite/sdk';
-import { Image360Descriptor, Image360Face } from '../types';
+import {
+  AnnotationModel,
+  CogniteClient,
+  CogniteEvent,
+  EventFilter,
+  FileFilterProps,
+  FileInfo,
+  FileLink,
+  IdEither,
+  Metadata
+} from '@cognite/sdk';
+import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
-import assert from 'assert';
+import { Log } from '@reveal/logger';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -33,96 +45,245 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     this._client = client;
   }
 
-  public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
-    const image360Events = await this._client.events.list({ filter: { metadata: metadataFilter }, limit: 1000 });
-    return image360Events.items
-      .map(image360Event => image360Event.metadata as Event360Metadata)
-      .map(eventMetadata => this.parseEventMetadata(eventMetadata));
+  public async get360ImageDescriptors(
+    metadataFilter: Metadata,
+    preMultipliedRotation: boolean
+  ): Promise<Historical360ImageSet[]> {
+    const [events, files] = await Promise.all([
+      this.listEvents({ metadata: metadataFilter }),
+      this.listFiles({ metadata: metadataFilter, uploaded: true })
+    ]);
+
+    const image360Descriptors = this.mergeDescriptors(files, events, preMultipliedRotation);
+    if (image360Descriptors.length === 0) {
+      return Promise.reject(`Error: Could not find any 360 images to load for the site_id "${metadataFilter.site_id}"`);
+    }
+
+    if (events.length !== image360Descriptors.length) {
+      Log.warn(
+        `WARNING: There are ${events.length - image360Descriptors.length} rejected 360 images due to invalid data.`,
+        '\nThis is typically due to duplicate events or missing files for the images of the cube map.'
+      );
+    }
+
+    return image360Descriptors;
   }
 
-  public async get360ImageFiles(image360Descriptor: Image360Descriptor): Promise<Image360Face[]> {
-    const { collectionId, id } = image360Descriptor;
-    const fileInfos = await this.getFileInfos(collectionId, id);
-    const fileIds = fileInfos.map(fileInfo => {
-      return { id: fileInfo.id };
-    });
-    const fileBuffers = await this.getFileBuffers(fileIds);
+  public async get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
+    const fileIds = descriptors.map(o => ({ id: o.fileId }));
 
-    const faces = zipWith(fileInfos, fileBuffers, (fileInfo, fileBuffer) => {
-      return {
-        face: fileInfo.metadata!.face,
-        mimeType: fileInfo.mimeType,
-        data: fileBuffer
-      } as Image360Face;
-    });
-
-    return faces;
-  }
-
-  private async getFileInfos(siteId: string, stationId: string): Promise<FileInfo[]> {
-    const fileInfos = await this._client.files.list({
+    const annotationsResult = this._client.annotations.list({
       filter: {
-        uploaded: true,
-        metadata: {
-          site_id: siteId,
-          station_id: stationId,
-          image_type: 'cubemap'
-        }
+        annotatedResourceType: 'file',
+        annotatedResourceIds: fileIds
       }
     });
 
-    assert(fileInfos.items.length > 0);
+    const annotationArray = await annotationsResult.autoPagingToArray();
 
-    if (hasTimestamp()) {
-      return getNewestTimestamp();
-    }
+    return annotationArray;
+  }
 
-    assert(fileInfos.items.length === 6);
+  public async get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    const fullResFileBuffers = await this.getFileBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
+    return this.createFaces(image360FaceDescriptors, fullResFileBuffers);
+  }
 
-    return fileInfos.items;
+  public async getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
+    const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
+    return this.createFaces(image360FaceDescriptors, lowResFileBuffers);
+  }
 
-    function hasTimestamp() {
-      return fileInfos.items[0].metadata?.timestamp !== undefined;
-    }
+  private getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
+    return image360FaceDescriptors.map(image360FaceDescriptor => {
+      return { id: image360FaceDescriptor.fileId };
+    });
+  }
 
-    function getNewestTimestamp() {
-      const sets = groupBy(fileInfos.items, fileInfo => fileInfo.metadata!.timestamp);
-      const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc');
-      assert(ordered[0][1].length === 6);
-      return ordered[0][1];
+  private createFaces(image360FaceDescriptors: Image360FileDescriptor[], fileBuffer: ArrayBuffer[]): Image360Face[] {
+    return zipWith(image360FaceDescriptors, fileBuffer, (image360FaceDescriptor, fileBuffer) => {
+      return {
+        face: image360FaceDescriptor.face,
+        mimeType: image360FaceDescriptor.mimeType,
+        data: fileBuffer
+      } as Image360Face;
+    });
+  }
+
+  private mergeDescriptors(
+    files: Map<string, FileInfo[]>,
+    events: CogniteEvent[],
+    preMultipliedRotation: boolean
+  ): Historical360ImageSet[] {
+    const eventDescriptors = events
+      .map(event => event.metadata)
+      .filter((metadata): metadata is Event360Metadata => !!metadata)
+      .map(metadata => this.parseEventMetadata(metadata, preMultipliedRotation));
+
+    const uniqueEventDescriptors = uniqBy(eventDescriptors, eventDescriptor => eventDescriptor.id);
+
+    return uniqueEventDescriptors
+      .map(eventDescriptor => {
+        const stationFileInfos = files.get(eventDescriptor.id);
+
+        if (stationFileInfos === undefined || stationFileInfos.length < 6) {
+          return { ...eventDescriptor, imageRevisions: [] };
+        }
+
+        const sortedFileInfoSet = this.sortFileInfoSetByNewest(stationFileInfos);
+
+        const imageRevisions = sortedFileInfoSet
+          .filter(imageSetInfo => imageSetInfo.length === 6)
+          .map(imageSetInfo => {
+            const timestamp = imageSetInfo[0].metadata?.timestamp;
+            return {
+              timestamp: timestamp ? Number(timestamp) : undefined,
+              faceDescriptors: imageSetInfo.map(imageInfo => {
+                return {
+                  face: imageInfo.metadata!.face,
+                  mimeType: imageInfo.mimeType!,
+                  fileId: imageInfo.id
+                } as Image360FileDescriptor;
+              })
+            };
+          });
+        return { ...eventDescriptor, imageRevisions };
+      })
+      .filter(historicalImages => historicalImages.imageRevisions.length > 0);
+  }
+
+  private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
+    const partitions = 10;
+    const partitionedRequests = range(1, partitions + 1).flatMap(async index =>
+      this._client.events
+        .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
+        .autoPagingToArray({ limit: Infinity })
+    );
+    const result = await Promise.all(partitionedRequests);
+    return result.flat();
+  }
+
+  private async listFiles(filter: FileFilterProps): Promise<Map<string, FileInfo[]>> {
+    const map = new Map<string, FileInfo[]>();
+    const partitions = 10;
+    const partitionedRequest = range(1, partitions + 1).flatMap(async index => {
+      const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
+      return this._client.files.list(req).autoPagingEach(fileInfo => {
+        const id = fileInfo.metadata?.station_id;
+        if (!id) return;
+        addToMap(id, fileInfo);
+      });
+    });
+
+    await Promise.all(partitionedRequest);
+    return map;
+
+    function addToMap(id: string, fileInfo: FileInfo) {
+      const existingEntry = map.get(id);
+      if (existingEntry) {
+        existingEntry.push(fileInfo);
+      } else {
+        map.set(id, [fileInfo]);
+      }
     }
   }
 
-  private async getFileBuffers(fileIds: { id: number }[]) {
-    const fileLinks = await this._client.files.getDownloadUrls(fileIds);
+  private sortFileInfoSetByNewest(fileInfos: FileInfo[]): FileInfo[][] {
+    if (hasTimestamp()) {
+      return sortedByAge();
+    }
+
+    return [fileInfos];
+
+    function hasTimestamp() {
+      return fileInfos[0].metadata?.timestamp !== undefined;
+    }
+
+    function sortedByAge() {
+      const sets = groupBy(fileInfos, fileInfo => fileInfo.metadata!.timestamp);
+
+      const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc')
+        .map(timeStampSets => timeStampSets[1])
+        .filter(fileInfoSets => fileInfoSets.length === 6);
+      return ordered;
+    }
+  }
+
+  private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
+    const fileLinks = await this.getDownloadUrls(fileIds, abortSignal);
     return Promise.all(
       fileLinks
-        .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET' }))
+        .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }))
         .map(async response => (await response).arrayBuffer())
     );
   }
 
-  private parseEventMetadata(eventMetadata: Event360Metadata): Image360Descriptor {
+  public async getIconBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon?id=`;
+    const headers = {
+      ...this._client.getDefaultRequestHeaders(),
+      Accept: '*/*'
+    };
+
+    const options: RequestInit = {
+      headers,
+      signal: abortSignal,
+      method: 'GET'
+    };
+
+    return Promise.all(
+      fileIds.map(fileId => fetch(url + fileId.id, options)).map(async response => (await response).arrayBuffer())
+    );
+  }
+
+  private async getDownloadUrls(
+    fileIds: { id: number }[],
+    abortSignal?: AbortSignal
+  ): Promise<(FileLink & IdEither)[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/downloadlink`;
+    const headers: HeadersInit = {
+      ...this._client.getDefaultRequestHeaders(),
+      Accept: 'application/json',
+      'Content-type': 'application/json'
+    };
+
+    const options: RequestInit = {
+      headers,
+      signal: abortSignal,
+      method: 'POST',
+      body: JSON.stringify({
+        items: fileIds
+      })
+    };
+
+    const result = await (await fetch(url, options)).json();
+    return result.items;
+  }
+
+  private parseEventMetadata(eventMetadata: Event360Metadata, preMultipliedRotation: boolean): Image360EventDescriptor {
     return {
       collectionId: eventMetadata.site_id,
       collectionLabel: eventMetadata.site_name,
       id: eventMetadata.station_id,
       label: eventMetadata.station_name,
-      transformations: parseTransform(eventMetadata)
+      transform: parseTransform(eventMetadata)
     };
 
-    function parseTransform(transformationData: Event360TransformationData): {
-      translation: THREE.Matrix4;
-      rotation: THREE.Matrix4;
-    } {
-      const translationComponents = transformationData.translation.split(' ').map(parseFloat);
+    function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
+      const translationComponents = transformationData.translation.split(',').map(parseFloat);
       const milimetersInMeters = 1000;
       const translation = new THREE.Vector3(
         translationComponents[0],
         translationComponents[2],
         -translationComponents[1]
       ).divideScalar(milimetersInMeters);
-      const rotationAxisComponents = transformationData.rotation_axis.split(' ').map(parseFloat);
+      const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
       const rotationAxis = new THREE.Vector3(
         rotationAxisComponents[0],
         rotationAxisComponents[2],
@@ -133,7 +294,19 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
 
-      return { translation: translationMatrix, rotation: rotationMatrix };
+      return adjustPreMultipliedTransform(translationMatrix, rotationMatrix);
+    }
+
+    function adjustPreMultipliedTransform(translation: THREE.Matrix4, rotation: THREE.Matrix4): THREE.Matrix4 {
+      const entityTransform = translation.clone();
+
+      if (!preMultipliedRotation) {
+        entityTransform.multiply(rotation.clone().multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2)));
+      } else {
+        entityTransform.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
+      }
+
+      return entityTransform;
     }
   }
 

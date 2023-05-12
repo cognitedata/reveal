@@ -58,7 +58,7 @@ export class DefaultCameraManager implements CameraManager {
   private isEnabled = true;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
-  private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
+  private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private static readonly AnimationDuration = 300;
@@ -233,7 +233,8 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isEnabled) return;
 
     this.isEnabled = true;
-    this.setupControls();
+    this.setCameraControlsOptions(this._cameraControlsOptions);
+    this._controls.enabled = true;
 
     if (cameraManager) {
       const previousState = cameraManager.getCameraState();
@@ -246,6 +247,7 @@ export class DefaultCameraManager implements CameraManager {
     if (!this.isEnabled) return;
 
     this.isEnabled = false;
+    this._controls.enabled = false;
     this.teardownControls(true);
   }
 
@@ -483,10 +485,7 @@ export class DefaultCameraManager implements CameraManager {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateNewTargetWithoutModel(
-    cursorPosition: { x: number; y: number },
-    modelsBoundingBox: THREE.Box3
-  ): THREE.Vector3 {
+  private calculateNewTargetWithoutModel(cursorPosition: THREE.Vector2, modelsBoundingBox: THREE.Box3): THREE.Vector3 {
     const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
 
     const lastScrollTargetDistance = this._controls.getScrollTarget().distanceTo(this._camera.position);
@@ -509,7 +508,7 @@ export class DefaultCameraManager implements CameraManager {
 
   /**
    * Calculates new camera target based on cursor position.
-   * @param event MouseEvent that contains pointer location data.
+   * @param event PointerEvent that contains pointer location data.
    */
   private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
     const { offsetX, offsetY } = event;
@@ -519,7 +518,7 @@ export class DefaultCameraManager implements CameraManager {
 
     const newTarget =
       modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
+      this.calculateNewTargetWithoutModel(new THREE.Vector2(x, y), modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }
@@ -613,23 +612,14 @@ export class DefaultCameraManager implements CameraManager {
 
       if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
-        let newTarget: THREE.Vector3;
 
-        // Disable controls to prevent camera from moving while picking is happening.
-        // await is not working as expected because event itself is not awaited.
-        try {
-          this._controls.enabled = false;
-          const pointerEventData = {
-            offsetX: domElementRelativeOffset.offsetX,
-            offsetY: domElementRelativeOffset.offsetY,
-            button: e.button
-          };
+        const pointerEventData = {
+          offsetX: domElementRelativeOffset.offsetX,
+          offsetY: domElementRelativeOffset.offsetY,
+          button: e.button
+        };
 
-          newTarget = await this.calculateNewTarget(pointerEventData);
-        } finally {
-          this._controls.enabled = this.isEnabled;
-        }
-
+        const newTarget = await this.calculateNewTarget(pointerEventData);
         this._controls.setScrollTarget(newTarget);
       }
     };

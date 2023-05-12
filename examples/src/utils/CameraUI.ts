@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Cognite3DViewer } from "@cognite/reveal";
+import { Cognite3DViewer } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export class CameraUI {
@@ -8,18 +8,30 @@ export class CameraUI {
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
     const params = {
-      flyDuration: 5000
+      flyDuration: 5000,
+      maxResolution: 1.4e6,
+      movingCameraResolutionFactor: 1.0
     };
     const actions = {
       saveCameraToUrl: () => this.saveCameraToUrl(),
       restoreCameraFromUrl: () => this.restoreCameraFromUrl(),
-      flyToSavedPositionFromUrl: () => this.flyToSavedPositionFromUrl(params.flyDuration),
+      flyToSavedPositionFromUrl: () => this.flyToSavedPositionFromUrl(params.flyDuration)
     };
 
     ui.add(actions, 'saveCameraToUrl').name('Save camera to URL');
     ui.add(actions, 'restoreCameraFromUrl').name('Restore camera from URL');
     ui.add(params, 'flyDuration', 0, 20000, 250).name('Fly duration');
     ui.add(actions, 'flyToSavedPositionFromUrl').name('Fly to saved position');
+    ui.add(params, 'maxResolution', 0, 4e6, 1e5)
+      .name('Max resolution')
+      .onChange(value => {
+        viewer.setResolutionOptions({ maxRenderResolution: value });
+      });
+    ui.add(params, 'movingCameraResolutionFactor', 0, 1.0, 0.05)
+      .name('Camera move resolution factor')
+      .onChange(value => {
+        viewer.setResolutionOptions({ movingCameraResolutionFactor: value });
+      });
 
     if (this.hasCameraInUrl()) {
       // Hack - since adding a model will load a camera in our examples
@@ -47,26 +59,23 @@ export class CameraUI {
     try {
       const { target, position } = this.getCameraStateFromUrl();
       this._viewer.cameraManager.setCameraState({ position, target });
-    }
-    catch (error) {
+    } catch (error) {
       alert('Could not restore camera from URL: ' + error);
     }
   }
 
-  private flyToSavedPositionFromUrl(durationInMs: number, stopDistance: number = .010): void {
+  private flyToSavedPositionFromUrl(durationInMs: number, stopDistance: number = 0.01): void {
     try {
       const { position } = this.getCameraStateFromUrl();
       // Fake a bbox
-      const bbox = new THREE.Box3().setFromCenterAndSize(position, new THREE.Vector3(0.1,0.1,0.1));
+      const bbox = new THREE.Box3().setFromCenterAndSize(position, new THREE.Vector3(0.1, 0.1, 0.1));
       this._viewer.cameraManager.fitCameraToBoundingBox(bbox, durationInMs, stopDistance);
-    }
-    catch (error) {
+    } catch (error) {
       alert('Could not fly to camera stored in URL: ' + error);
     }
-
   }
 
-  private getCameraStateFromUrl(): { position: THREE.Vector3, target: THREE.Vector3 } {
+  private getCameraStateFromUrl(): { position: THREE.Vector3; target: THREE.Vector3 } {
     if (!this.hasCameraInUrl()) {
       throw new Error('Must provide URL parameters "camPos" and "camTarget"');
     }

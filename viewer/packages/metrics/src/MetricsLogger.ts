@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import mixpanel from 'mixpanel-browser';
-import log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
 import throttle from 'lodash/throttle';
@@ -172,7 +172,7 @@ export class MetricsLogger {
   }
 
   static trackError(error: Error, eventProps: EventProps): void {
-    log.error(error);
+    Log.error(error);
 
     if (error !== undefined) {
       this.trackEvent('error', {

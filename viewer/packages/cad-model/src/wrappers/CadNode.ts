@@ -6,11 +6,18 @@ import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal
 import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
-import { CadMaterialManager, NodeTransformProvider, RenderMode } from '@reveal/rendering';
-import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
-import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
+import {
+  CadMaterialManager,
+  NodeTransformProvider,
+  RenderMode,
+  setModelRenderLayers,
+  StyledTreeIndexSets
+} from '@reveal/rendering';
 
 import { Group, Object3D, Plane, Matrix4 } from 'three';
+import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
+import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 
 export class CadNode extends Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -22,32 +29,51 @@ export class CadNode extends Object3D {
   // from the scene. Also possible to make the same thing only inside GeometryBatchingManager and RootSectorNode.
   private _rootSector: RootSectorNode;
   private _sectorScene: SectorScene;
-  private _geometryBatchingManager?: GeometryBatchingManager;
+  private _geometryBatchingManager?: DrawCallBatchingManager;
 
   private readonly _sourceTransform: Matrix4;
   private readonly _customTransform: Matrix4;
+  private readonly _setModelRenderLayers = () => this.setModelRenderLayers();
+  private readonly _batchedGeometryMeshGroup: Group;
+  private readonly _styledTreeIndexSets: StyledTreeIndexSets;
+
+  private _needsRedraw: boolean = false;
+
   readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
+
+  public readonly type = 'CadNode';
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
-    this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
 
-    const batchedGeometryMeshGroup = new Group();
-    batchedGeometryMeshGroup.name = 'Batched Geometry';
+    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier);
+    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier);
+    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier);
+    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier);
+
+    this._styledTreeIndexSets = {
+      back,
+      ghost,
+      inFront,
+      visible
+    };
+
+    this._batchedGeometryMeshGroup = new Group();
+    this._batchedGeometryMeshGroup.name = 'Batched Geometry';
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
-    this._geometryBatchingManager = new GeometryBatchingManager(
-      batchedGeometryMeshGroup,
+    this._geometryBatchingManager = new MultiBufferBatchingManager(
+      this._batchedGeometryMeshGroup,
       materials,
+      this._styledTreeIndexSets,
       this.treeIndexToSectorsMap
     );
-
     this._rootSector = new RootSectorNode(model);
 
-    this._rootSector.add(batchedGeometryMeshGroup);
+    this._rootSector.add(this._batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
@@ -62,6 +88,16 @@ export class CadNode extends Object3D {
 
     this._sourceTransform = new Matrix4().copy(model.modelMatrix);
     this._customTransform = new Matrix4();
+
+    this.nodeAppearanceProvider.on('changed', this._setModelRenderLayers);
+  }
+
+  get needsRedraw(): boolean {
+    return this._needsRedraw;
+  }
+
+  resetRedraw(): void {
+    this._needsRedraw = false;
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
@@ -78,14 +114,15 @@ export class CadNode extends Object3D {
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
     this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
+    this.setModelRenderLayers();
   }
 
   get clippingPlanes(): Plane[] {
-    return this._materialManager.clippingPlanes;
+    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier);
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.clippingPlanes = planes;
+    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier, planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
@@ -116,8 +153,8 @@ export class CadNode extends Object3D {
     return this._materialManager.getRenderMode();
   }
 
-  public loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    return this._sectorRepository.loadSector(sector);
+  public loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
+    return this._sectorRepository.loadSector(sector, abortSignal);
   }
 
   /**
@@ -129,6 +166,8 @@ export class CadNode extends Object3D {
     const customTransformFromSource = this._customTransform.clone().multiply(this._sourceTransform);
     this._rootSector.setModelTransformation(customTransformFromSource);
     this._cadModelMetadata.modelMatrix.copy(customTransformFromSource);
+
+    this._needsRedraw = true;
   }
 
   /**
@@ -141,6 +180,10 @@ export class CadNode extends Object3D {
 
   getCdfToDefaultModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this._sourceTransform);
+  }
+
+  public setModelRenderLayers(root: Object3D = this): void {
+    setModelRenderLayers(root, this._styledTreeIndexSets);
   }
 
   get prioritizedAreas(): PrioritizedArea[] {
@@ -160,6 +203,7 @@ export class CadNode extends Object3D {
   }
 
   public dispose(): void {
+    this.nodeAppearanceProvider.off('changed', this._setModelRenderLayers);
     this._sectorRepository.clearCache();
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
     this._geometryBatchingManager?.dispose();

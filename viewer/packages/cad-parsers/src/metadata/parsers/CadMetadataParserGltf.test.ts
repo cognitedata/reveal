@@ -5,13 +5,13 @@
 import * as THREE from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
-import { V9SectorMetadata } from '../types';
+import { SectorMetadata } from '../types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
 import { CadSceneRootMetadata } from './types';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 
 describe('CadMetadataParserGltf', () => {
   test('Metadata without sectors, throws', () => {
@@ -49,7 +49,7 @@ describe('CadMetadataParserGltf', () => {
       new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
     );
 
-    const expectedRoot: V9SectorMetadata = {
+    const expectedRoot: SectorMetadata = {
       id: sectorRoot.id,
       path: sectorRoot.path,
       subtreeBoundingBox,
@@ -61,7 +61,7 @@ describe('CadMetadataParserGltf', () => {
       downloadSize: 1000,
       maxDiagonalLength: 10,
       minDiagonalLength: 5,
-      sectorFileName: `${sectorRoot.id}.glb`
+      sectorFileName: `${sectorRoot.id}_textured.glb`
     };
 
     // Act

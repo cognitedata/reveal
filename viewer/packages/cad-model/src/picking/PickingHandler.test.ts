@@ -10,28 +10,25 @@ import { IntersectInput } from '@reveal/model-base';
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
-import { CadNode } from '../wrappers/CadNode';
-import { createGlContext } from '../../../../test-utilities';
+import { createCadModel, createGlContext } from '../../../../test-utilities';
+
+const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
 
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
 
   const camera = new THREE.PerspectiveCamera();
 
-  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
 
   const input: IntersectInput = {
-    normalizedCoords: {
-      x: 0.5,
-      y: 0.5
-    },
+    normalizedCoords: new THREE.Vector2(0.5, 0.5),
     renderer,
     camera,
     clippingPlanes: [],
     domElement: document.createElement('canvas')
   };
-  const cadNode: CadNode = new THREE.Object3D() as any;
+  const cadNode = createCadModel(1, 2).cadNode;
 
   beforeEach(() => {
     const materialManagerMock = new Mock<CadMaterialManager>().setup(p => p.setRenderMode(It.IsAny())).returns();

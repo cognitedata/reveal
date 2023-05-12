@@ -3,14 +3,45 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer, Image360 } from "@cognite/reveal";
+import {
+  Cognite3DViewer,
+  Image360,
+  Image360Collection,
+  Image360EnteredDelegate,
+  Image360Annotation,
+  Image360AnnotationIntersection,
+  PointerEventDelegate
+} from '@cognite/reveal';
+
+import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
+
 import * as dat from 'dat.gui';
 
 export class Image360UI {
-  constructor(viewer: Cognite3DViewer, gui: dat.GUI){
+  private _collections: Image360Collection[] = [];
+
+  private _lastAnnotation: Image360Annotation | undefined = undefined;
+
+  constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
     let entities: Image360[] = [];
+    const collections = this._collections;
+    let selectedEntity: Image360;
 
     const optionsFolder = gui.addFolder('Add Options');
+
+    const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
+      selectedEntity = entity;
+    };
+
+    const onAnnotationClicked: PointerEventDelegate = event => {
+      if (this._lastAnnotation !== undefined) {
+        this._lastAnnotation.setColor(undefined);
+      }
+
+      const intersectionPromise = viewer.get360AnnotationIntersectionFromPixel(event.offsetX, event.offsetY);
+
+      this.handleIntersectionAsync(intersectionPromise);
+    };
 
     const translation = {
       x: 0,
@@ -29,10 +60,22 @@ export class Image360UI {
       alpha: 1
     };
 
+    const iconCulling = {
+      radius: Infinity,
+      limit: 50,
+      hideAll: false
+    };
+
+    const imageRevisions = {
+      id: '0',
+      targetDate: ''
+    };
+
     const params = {
       siteId: '',
       add: add360ImageSet,
-      premultipliedRotation: true
+      premultipliedRotation: false,
+      remove: removeAll360Images
     };
 
     optionsFolder.add(params, 'siteId').name('Site ID');
@@ -57,14 +100,105 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
-    async function add360ImageSet(){
-      const rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(rotation.x, rotation.y, rotation.z), rotation.radians);
+    gui
+      .add(iconCulling, 'radius', 0, 10000, 1)
+      .name('Culling radius')
+      .onChange(() => {
+        set360IconCullingRestrictions();
+      });
+
+    gui
+      .add(iconCulling, 'limit', 0, 10000, 1)
+      .name('Number of points')
+      .onChange(() => {
+        set360IconCullingRestrictions();
+      });
+
+    gui
+      .add(iconCulling, 'hideAll')
+      .name('Hide all 360 images')
+      .onChange(() => {
+        if (collections.length > 0) {
+          collections.forEach(p => p.setIconsVisibility(!iconCulling.hideAll));
+          viewer.requestRedraw();
+        }
+      });
+
+    gui
+      .add(imageRevisions, 'targetDate')
+      .name('Revision date (Unix epoch time):')
+      .onChange(() => {
+        if (collections.length === 0) return;
+
+        const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
+        collections.forEach(p => (p.targetRevisionDate = date));
+        if (selectedEntity) viewer.enter360Image(selectedEntity);
+      });
+
+    gui
+      .add(imageRevisions, 'id')
+      .name('Current image revision')
+      .onChange(() => {
+        if (selectedEntity) {
+          const revisions = selectedEntity.getRevisions();
+          const index = Number(imageRevisions.id);
+          if (index >= 0 && index < revisions.length) {
+            viewer.enter360Image(selectedEntity, revisions[index]);
+          }
+        }
+      });
+
+    gui.add(params, 'remove').name('Remove all 360 images');
+
+    async function add360ImageSet() {
+      if (params.siteId.length === 0) return;
+
+      const rotationMatrix = new THREE.Matrix4().makeRotationAxis(
+        new THREE.Vector3(rotation.x, rotation.y, rotation.z),
+        rotation.radians
+      );
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
       const collectionTransform = translationMatrix.multiply(rotationMatrix);
-      const set = await viewer.add360ImageSet('events', {site_id: params.siteId}, {collectionTransform, preMultipliedRotation: params.premultipliedRotation});
-      entities = entities.concat(set.image360Entities);
+      const collection = await viewer.add360ImageSet(
+        'events',
+        { site_id: params.siteId },
+        { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
+      );
+      collection.setIconsVisibility(!iconCulling.hideAll);
+      collection.on('image360Entered', onImageEntered);
+      viewer.on('click', onAnnotationClicked);
+      collections.push(collection);
+      entities = entities.concat(collection.image360Entities);
+
       viewer.requestRedraw();
+    }
+
+    async function set360IconCullingRestrictions() {
+      if (collections.length > 0) {
+        collections.forEach(p => p.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit));
+        viewer.requestRedraw();
+      }
+    }
+
+    async function removeAll360Images() {
+      await viewer.remove360Images(...entities);
+      entities = [];
+      collections.splice(0);
     }
   }
 
+  private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
+    const intersection = await intersectionPromise;
+    if (intersection === null) {
+      return;
+    }
+
+    console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
+    intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+    this._lastAnnotation = intersection.annotation;
+  }
+
+  get collections(): Image360Collection[] {
+    return this._collections;
+  }
 }

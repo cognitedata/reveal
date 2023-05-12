@@ -3,13 +3,18 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata, V9SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
+import { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
 
 export type SectorTree = [id: number, subtree: SectorTree[], bounds?: THREE.Box3];
 
 const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
-export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V9SectorMetadata {
+export function createV9SectorMetadata(
+  tree: SectorTree,
+  depth: number = 0,
+  path: string = '0/',
+  renderCost: number = 1000
+): SectorMetadata {
   const id = tree[0];
   const childIds = tree[1];
   const subtreeBoundingBox = tree[2] || unitBox;
@@ -23,7 +28,7 @@ export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path
     depth,
     subtreeBoundingBox,
     estimatedDrawCallCount: 100,
-    estimatedRenderCost: 1000,
+    estimatedRenderCost: renderCost,
     downloadSize: 1024 * 1024,
     maxDiagonalLength: 1.0,
     minDiagonalLength: 0.5,
@@ -34,7 +39,7 @@ export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path
   return root;
 }
 
-export function generateV9SectorTree(depth: number, childrenPerLevel: number = 4): V9SectorMetadata {
+export function generateV9SectorTree(depth: number, childrenPerLevel: number = 4): SectorMetadata {
   const bounds = unitBox.clone(); // Bounds doesnt matter for this test
 
   const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);

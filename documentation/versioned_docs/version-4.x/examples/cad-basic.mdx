@@ -32,7 +32,7 @@ async function main() {
   const viewer = new Cognite3DViewer({ sdk: client, domElement });
 
   // load a model and add it on 3d scene
-  // https://console.cognitedata.com/publicdata/3d-models/4715379429968321/revisions/5688854005909501
+  // https://publicdata.fusion.cognite.com/publicdata/3d-models/3356984403684032/revisions/6664823881595566
   const model = await viewer.addModel({
     modelId: 3356984403684032,
     revisionId: 6664823881595566,
@@ -50,7 +50,7 @@ access the `publicdata` project used in the examples in this documentation, you 
 accessing data in other projects may require different authentication flows not supported by the LoginManager.
 You can read more about different types of authentication flows in [the CogniteClient documentation](https://docs.cognite.com/dev/guides/sdk/js/authentication/).
 
-Models can be temporarily hidden using `Cognite3DModel.visible`. Note that
+Models can be temporarily hidden using `CogniteCadModel.visible`. Note that
 the viewer must be explicitly re-rendered after setting the visibility flag:
 
 ```js runnable-4x
@@ -73,14 +73,43 @@ To also reclaim memory and permanently unloading the model, use
 viewer.removeModel(model)
 ```
 
+## Default CDF transformation
+
+On loading a model revision, Reveal automatically retrieves and applies the transformation stored in CDF for that revision. The transformation is composed of the `translation`, `rotation` and `scale` fields in the revision data, which may be set using the [CDF Rest API](https://docs.cognite.com/api/v1/#tag/3D-Model-Revisions/operation/update3DRevisions). The transformation is applied to every vertex/point in the input data; each vertex position is first scaled, then rotated, and finally translated.
+
+The `rotation` component is specified as an array of three floating point numbers. The elements are the rotation angles in radians around the X, Y and Z axes respectively. The vertices are first rotated around its X axis, then its Y axis (which has potentially been rotated by the first rotation), then its Z axis (which may have been rotated by the other two).
+
+Aftewards, the model is transformed from CDF coordinates to Reveal coordinates. Since the default CDF transformation described above is applied _before_ the CDF-to-Reveal coordinate transformation, it happens in [_CDF_ space](/docs/#a-note-on-coordinate-systems).
+
 ## Setting custom background image
 
-The recommended way to set a custom background image for Reveal is to add the image as background to the DOM and then setting the clear alpha of the renderer to 0.
+The recommended way to set a custom background image for Reveal is to add the image as background to the DOM and make the background color transparent by applying an alpha value of 0.
 See an example of this below.
 
 ```js runnable-4x
-viewer.renderer.setClearAlpha(0.0);
+viewer.setBackgroundColor({ alpha: 0.0 });
 viewer.domElement.style.backgroundImage = "url('https://i.imgur.com/8tcxHWh.jpeg')";
+```
+
+## Creating screenshots
+
+Use `getScreenshot` to create a screenshot from the current camera position. By default the resolution of the image is set to match the size of the render canvas, but a custom resolution can be provided.
+Whether or not to include UI in the screenshot can also be specified. When drawing UI, only the viewer DOM element and its children will be included in the image. The DOM is scaled to fit any provided resolution, 
+and as a result some elements can be positioned incorrectly in regards to the 3D render. 
+
+Note that `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. For details see [the html2canvas documentation](https://html2canvas.hertzen.com/documentation).
+
+```js runnable-4x
+async function createScreenshot() {
+  const url = await viewer.getScreenshot(1920, 1080, true);
+  if (url) {
+    const link = document.createElement('a');
+    link.download = 'test';
+    link.href = url;
+    link.click();
+  }
+}
+createScreenshot();
 ```
 
 ## Only loading a part of the model

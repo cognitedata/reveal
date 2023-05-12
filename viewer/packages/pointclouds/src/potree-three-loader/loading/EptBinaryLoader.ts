@@ -43,8 +43,12 @@ export class EptBinaryLoader implements ILoader {
   async load(node: PointCloudEptGeometryNode): Promise<void> {
     if (node.loaded) return;
 
-    const fullFileName = node.fileName() + this.extension();
-    const data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+    let data: ArrayBuffer = new ArrayBuffer(0);
+    // Skip loading sectors if number of points is zero.
+    if (node.getNumPoints() !== 0) {
+      const fullFileName = node.fileName() + this.extension();
+      data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
+    }
 
     const parsedResultOrError = await this.parse(node, data);
 
@@ -133,7 +137,7 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
   addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
 
-  geometry.attributes.indices.normalized = true;
+  (geometry.attributes.indices as THREE.BufferAttribute).normalized = true;
 
   return geometry;
 }

@@ -25,6 +25,7 @@ type PickingInput = {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
+  cadNodes: CadNode[];
 };
 
 type TreeIndexPickingInput = PickingInput & {
@@ -42,6 +43,7 @@ type IntersectCadNodesResult = {
 export class PickingHandler {
   private readonly _clearColor: THREE.Color;
   private readonly _clearAlpha: number;
+  private readonly _raycaster: THREE.Raycaster;
 
   private readonly _pickPixelColorStorage: {
     renderTarget: THREE.WebGLRenderTarget;
@@ -63,6 +65,7 @@ export class PickingHandler {
   constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this._clearColor = new THREE.Color('black');
     this._clearAlpha = 0;
+    this._raycaster = new THREE.Raycaster();
 
     this._pickPixelColorStorage = {
       renderTarget: new THREE.WebGLRenderTarget(1, 1),
@@ -91,18 +94,48 @@ export class PickingHandler {
     async = true
   ): Promise<IntersectCadNodesResult[]> {
     const results: IntersectCadNodesResult[] = [];
+
+    // Exit when no cadNode exists
+    if (cadNodes.length < 1) {
+      return results;
+    }
     const release = await this._mutex.acquire();
-    // Get CadNodes which are visible
+    const scene = new THREE.Scene();
+    const depthInput = { ...input, scene, cadNodes };
+
+    // Calculate depth position and distance.
+    const depthResult = await this.intersectCadNodeDepth(depthInput, async);
+
+    // Identify the treeIndex associated with the position.
+    // Get CadNodes which are visible.
     const visibleCadNodes = cadNodes.filter(node => node.visible);
+    // Filter nodes which cannot hit pick point.
+    const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
 
     try {
-      for (const cadNode of visibleCadNodes) {
+      for (const cadNodeData of filteredCadNodes) {
+        // Skip cad node when hit distance is larger than already hit node.
+        const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
+        if (results.some(cadNodeResult => cadNodeResult.distance < minIntersectCadNodeDistance)) {
+          continue;
+        }
+
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
-        cadNode.visible = true;
-        const result = await this.intersectCadNode(cadNode, input, async);
-        if (result) {
-          results.push(result);
+        cadNodeData.cadNode.visible = true;
+
+        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, async);
+        if (treeIndex) {
+          const result: IntersectCadNodesResult = {
+            distance: depthResult.distance,
+            point: depthResult.point,
+            treeIndex,
+            object: cadNodeData.cadNode,
+            cadNode: cadNodeData.cadNode
+          };
+          if (result) {
+            results.push(result);
+          }
         }
       }
       return results.sort((l, r) => l.distance - r.distance);
@@ -113,11 +146,72 @@ export class PickingHandler {
     }
   }
 
-  public async intersectCadNode(
+  private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput) {
+    // Ensure the ray overlaps any point on the given models bounding box.
+    this._raycaster.setFromCamera(input.normalizedCoords, input.camera);
+    const ray = this._raycaster.ray;
+    const cameraPosition = input.camera.position.clone();
+
+    // Remove all cadNodes that cannot be hit. Avoid a raycast against them
+    const candidateCadNodes = cadNodes
+      .map(cadNode => getIntersection(cadNode, ray))
+      .filter(hasIntersection)
+      .sort(byIntersectDistanceToCamera)
+      .map(data);
+
+    return candidateCadNodes;
+
+    function getIntersection(cadNode: CadNode, ray: THREE.Ray): [CadNode, THREE.Vector3 | null] {
+      return [cadNode, ray.intersectBox(getWorldSpaceNodeBounds(cadNode), new THREE.Vector3())];
+    }
+
+    function getWorldSpaceNodeBounds(node: CadNode): THREE.Box3 {
+      const cadNodeBoundingBox = node.cadModelMetadata.scene.root.subtreeBoundingBox.clone();
+      return cadNodeBoundingBox.applyMatrix4(node.cadModelMetadata.modelMatrix);
+    }
+
+    function hasIntersection(
+      cadNodeIntersection: [CadNode, THREE.Vector3 | null]
+    ): cadNodeIntersection is [CadNode, THREE.Vector3] {
+      const intersectPosition = cadNodeIntersection[1];
+      return intersectPosition !== null;
+    }
+
+    function byIntersectDistanceToCamera([_0, a]: [CadNode, THREE.Vector3], [_1, b]: [CadNode, THREE.Vector3]): number {
+      return a.distanceToSquared(cameraPosition) - b.distanceToSquared(cameraPosition);
+    }
+
+    function data(cadNodeData: [CadNode, THREE.Vector3]): { cadNode: CadNode; intersectPosition: THREE.Vector3 } {
+      return { cadNode: cadNodeData[0], intersectPosition: cadNodeData[1] };
+    }
+  }
+
+  private async intersectCadNodeDepth(input: PickingInput, async: boolean) {
+    const { camera, normalizedCoords, renderer, domElement, cadNodes, scene } = input;
+    const pickInput = {
+      normalizedCoords,
+      camera,
+      renderer,
+      domElement,
+      scene,
+      cadNodes
+    };
+    const depth = await this.pickDepth(pickInput, async);
+
+    const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
+    const point = this.getPosition(pickInput, viewZ);
+    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    return {
+      distance,
+      point
+    };
+  }
+
+  private async intersectCadNodeTreeIndex(
     cadNode: CadNode,
     input: IntersectInput,
     async: boolean
-  ): Promise<IntersectCadNodesResult | undefined> {
+  ): Promise<number | undefined> {
     const { camera, normalizedCoords, renderer, domElement } = input;
     const pickingScene = new THREE.Scene();
 
@@ -127,24 +221,14 @@ export class PickingHandler {
       renderer,
       domElement,
       scene: pickingScene,
+      cadNodes: [],
       cadNode
     };
     const treeIndex = await this.pickTreeIndex(pickInput, async);
     if (treeIndex === undefined) {
       return undefined;
     }
-    const depth = await this.pickDepth(pickInput, async);
-
-    const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
-    const point = this.getPosition(pickInput, viewZ);
-    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
-    return {
-      distance,
-      point,
-      treeIndex,
-      object: cadNode,
-      cadNode
-    };
+    return treeIndex;
   }
 
   private async pickTreeIndex(input: TreeIndexPickingInput, async: boolean): Promise<number | undefined> {
@@ -177,10 +261,10 @@ export class PickingHandler {
     return (near * far) / ((far - near) * invClipZ - far);
   }
 
-  private async pickDepth(input: TreeIndexPickingInput, async: boolean): Promise<number> {
-    const { cadNode } = input;
-    const previousRenderMode = cadNode.renderMode;
-    cadNode.renderMode = RenderMode.Depth;
+  private async pickDepth(input: PickingInput, async: boolean): Promise<number> {
+    const { cadNodes } = input;
+    const previousRenderMode = cadNodes[0].renderMode;
+    cadNodes.forEach(cadeNode => (cadeNode.renderMode = RenderMode.Depth));
     const pixelBuffer = await this.pickPixel(
       input,
       this._depthRenderPipeline,
@@ -188,13 +272,13 @@ export class PickingHandler {
       this._clearAlpha,
       async
     );
-    cadNode.renderMode = previousRenderMode;
+    cadNodes.forEach(cadeNode => (cadeNode.renderMode = previousRenderMode));
 
     const depth = this.unpackRGBAToDepth(pixelBuffer);
     return depth;
   }
 
-  private getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
+  private getPosition(input: PickingInput, viewZ: number): THREE.Vector3 {
     const { camera, normalizedCoords } = input;
     const position = new THREE.Vector3();
     position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(camera.projectionMatrixInverse);

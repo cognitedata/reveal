@@ -4,6 +4,8 @@
 
 ```ts
 
+import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationsAssetRef } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -139,7 +141,7 @@ export type BeforeSceneRenderedDelegate = (event: {
 // @public (undocumented)
 export interface BinaryFileProvider {
     // (undocumented)
-    getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+    getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
 // @public (undocumented)
@@ -237,7 +239,7 @@ export interface CameraManager {
 }
 
 // @public
-export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];
+export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
 
 // @public
 export class CameraManagerHelper {
@@ -339,12 +341,15 @@ export class Cognite3DViewer {
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
-    enter360Image(image360: Image360): Promise<void>;
+    enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
     exit360Image(): void;
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
+    get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
+    // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
+    getGlobalClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
@@ -355,6 +360,8 @@ export class Cognite3DViewer {
     off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    // (undocumented)
+    off(event: 'cameraStop', callback: CameraStopDelegate): void;
     off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     // (undocumented)
     off(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
@@ -365,6 +372,8 @@ export class Cognite3DViewer {
     on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
     on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    // (undocumented)
+    on(event: 'cameraStop', callback: CameraStopDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
@@ -378,8 +387,11 @@ export class Cognite3DViewer {
         alpha?: number;
     }): void;
     setCameraManager(cameraManager: CameraManager): void;
+    // @deprecated
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
+    setGlobalClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
+    setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
     worldToScreen(point: THREE_2.Vector3, normalize?: boolean): THREE_2.Vector2 | null;
 }
@@ -403,6 +415,7 @@ export interface Cognite3DViewerOptions {
         edlOptions?: Partial<EdlOptions> | 'disabled';
     };
     renderer?: THREE.WebGLRenderer;
+    // @deprecated
     rendererResolutionThreshold?: number;
     renderTargetOptions?: {
         target: THREE.WebGLRenderTarget;
@@ -430,12 +443,15 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
     getModelBoundingBox(outBbox?: THREE_2.Box3, restrictToMostGeometry?: boolean): THREE_2.Box3;
+    getModelClippingPlanes(): THREE_2.Plane[];
     getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
+    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
+    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
     mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId>;
     mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]>;
     readonly modelId: number;
@@ -447,6 +463,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren?: boolean): Promise<number>;
     readonly revisionId: number;
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
+    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
     setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4): void;
     setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
@@ -477,9 +494,12 @@ export class CognitePointCloudModel {
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
     getModelBoundingBox(outBbox?: THREE_2.Box3): THREE_2.Box3;
+    getModelClippingPlanes(): THREE_2.Plane[];
     getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
+    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
+    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
     // (undocumented)
     readonly modelId: number;
     get pointColorType(): PointColorType;
@@ -494,6 +514,7 @@ export class CognitePointCloudModel {
     readonly revisionId: number;
     setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void;
     setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void;
+    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(transformationMatrix: THREE_2.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
@@ -536,7 +557,7 @@ export class ComboControls extends EventDispatcher {
     // (undocumented)
     dispose: () => void;
     get enabled(): boolean;
-    set enabled(enabled: boolean);
+    set enabled(newEnabledValue: boolean);
     // (undocumented)
     getScrollTarget: () => Vector3;
     // (undocumented)
@@ -759,13 +780,65 @@ export type HtmlOverlayToolOptions = {
 
 // @public (undocumented)
 export interface Image360 {
+    getActiveRevision(): Image360Revision;
+    getImageMetadata(): Image360Metadata;
+    getRevisions(): Image360Revision[];
     readonly image360Visualization: Image360Visualization;
     readonly transform: THREE.Matrix4;
 }
 
 // @public
+export interface Image360Annotation {
+    readonly annotation: AnnotationModel;
+    setColor(color?: Color): void;
+    setVisible(visible?: boolean): void;
+}
+
+// @public
+export type Image360AnnotationAppearance = {
+    color?: Color;
+    visible?: boolean;
+};
+
+// @public
+export type Image360AnnotationIntersection = {
+    type: 'image360Annotation';
+    annotation: Image360Annotation;
+    direction: Vector3;
+};
+
+// @public
 export interface Image360Collection {
     readonly image360Entities: Image360[];
+    off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+    // (undocumented)
+    off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+    // (undocumented)
+    on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+    setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
+    setIconsVisibility(visible: boolean): void;
+    targetRevisionDate: Date | undefined;
+}
+
+// @public
+export type Image360EnteredDelegate = (image360: Image360, revision: Image360Revision) => void;
+
+// @public
+export type Image360ExitedDelegate = () => void;
+
+// @public (undocumented)
+export type Image360Metadata = {
+    station: string;
+    collection: string;
+    date?: Date;
+};
+
+// @public
+export interface Image360Revision {
+    readonly date: Date | undefined;
+    getAnnotations(): Promise<Image360Annotation[]>;
 }
 
 // @public
@@ -924,7 +997,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
 // @public
 export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
-    getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+    getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
@@ -1104,6 +1177,7 @@ export type PointCloudIntersection = {
     pointIndex: number;
     distanceToCamera: number;
     annotationId: number;
+    assetRef?: AnnotationsAssetRef;
 };
 
 // @public
@@ -1119,10 +1193,11 @@ export abstract class PointCloudObjectCollection {
     on(event: 'changed', listener: () => void): void;
 }
 
-// @public (undocumented)
+// @public
 export type PointCloudObjectMetadata = {
     annotationId: number;
     assetId?: number;
+    assetRef?: AnnotationsAssetRef;
     boundingBox: Box3;
 };
 
@@ -1204,6 +1279,12 @@ export function registerNodeCollectionType<T extends NodeCollection>(nodeCollect
 export type RelativePosition = {
     corner: Corner;
     padding: THREE_2.Vector2;
+};
+
+// @public
+export type ResolutionOptions = {
+    maxRenderResolution?: number;
+    movingCameraResolutionFactor?: number;
 };
 
 // @public (undocumented)

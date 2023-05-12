@@ -5,7 +5,6 @@ uniform mat4 viewMatrix;
 uniform vec3 cameraPosition;
 
 uniform mat4 projectionMatrix;
-uniform float opacity;
 
 uniform float spacing;
 uniform float pcIndex;
@@ -20,15 +19,11 @@ out vec4 outputColor;
 
 in vec3 vColor;
 
-#if !defined(color_type_point_index)
-	in float vOpacity;
-#endif
-
 #if defined(weighted_splats)
 	in float vLinearDepth;
 #endif
 
-#if !defined(paraboloid_point_shape) && defined(use_edl)
+#if defined(use_edl)
 	in float vLogDepth;
 #endif
 
@@ -61,7 +56,7 @@ void main() {
 	#if defined color_type_point_index
 		outputColor = vec4(color, pcIndex / 255.0);
 	#else
-		outputColor = vec4(color, vOpacity);
+		outputColor = vec4(color, 1.0);
 	#endif
 
 	#if defined paraboloid_point_shape
@@ -79,15 +74,11 @@ void main() {
 			outputColor.r = linearDepth;
 			outputColor.g = expDepth;
 		#endif
+	#endif
 
-		#if defined(use_edl)
-			outputColor.a = log2(linearDepth);
-		#endif
-
-	#else
-		#if defined(use_edl)
-			outputColor.a = vLogDepth;
-		#endif
+	#if defined(use_edl)
+		// Note: potree library use different depth value for Paraboloid shape namely log2(linearDepth).
+		outputColor.a = vLogDepth;
 	#endif
 
 	#if defined weighted_splats

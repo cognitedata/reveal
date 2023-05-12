@@ -21,8 +21,6 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"dbaeumer.vscode-eslint",
-		"rust-lang.rust",
-		"cadenas.vscode-glsllint",
 		"mhutchie.git-graph",
 		"eamodio.gitlens"
 	],
@@ -41,6 +39,7 @@
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "node",
 	"features": {
-		"github-cli": "latest",
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/rust:1": {}
 	}
 }

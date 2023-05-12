@@ -4,11 +4,11 @@
 
 import React, { ReactElement } from 'react';
 import { CogniteClient } from '@cognite/sdk';
-import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useColorMode } from '@docusaurus/theme-common';
 import styled from 'styled-components';
 import { REVEAL_VERSION } from '@cognite/reveal';
+import { loginManager } from '../utils/LoginManager';
 
 const Root = styled.div`
   padding: 16px;
@@ -64,7 +64,7 @@ export default function DemoLoginCover(props: Props): ReactElement {
     client.authenticate();
   }
 
-  (window as any).sdk = client;
+  window.sdk = client;
 
   const coverUrl = useBaseUrl('/img/login_cover.png');
 
@@ -114,4 +114,3 @@ export default function DemoLoginCover(props: Props): ReactElement {
 
   return props.children(client);
 }
-

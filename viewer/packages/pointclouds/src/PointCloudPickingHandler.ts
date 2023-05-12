@@ -8,6 +8,7 @@ import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
+import { AnnotationsAssetRef } from '@cognite/sdk';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -34,6 +35,10 @@ export interface IntersectPointCloudNodeResult {
    * annotationId of the clicked object within a pointcloud.
    */
   annotationId: number;
+  /**
+   * asset reference of the clicked object in the pointcloud, if any.
+   */
+  assetRef?: AnnotationsAssetRef;
 }
 
 export class PointCloudPickingHandler {
@@ -46,6 +51,10 @@ export class PointCloudPickingHandler {
 
   constructor(renderer: THREE.WebGLRenderer) {
     this._picker = new PointCloudOctreePicker(renderer);
+  }
+
+  dispose(): void {
+    this._picker.dispose();
   }
 
   intersectPointClouds(nodes: PointCloudNode[], input: IntersectInput): IntersectPointCloudNodeResult[] {
@@ -73,9 +82,9 @@ export class PointCloudPickingHandler {
           throw new Error(`Coulds not find PointCloudNode for intersected point`);
         }
 
-        const annotationId = pointCloudNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(
-          x.objectId
-        );
+        const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
+        const [annotationId, asset] =
+          pointCloudObject !== undefined ? [pointCloudObject.annotationId, pointCloudObject.assetRef] : [0, undefined];
 
         const result: IntersectPointCloudNodeResult = {
           distance: x.position.distanceTo(camera.position),
@@ -83,7 +92,8 @@ export class PointCloudPickingHandler {
           pointIndex: x.pointIndex,
           pointCloudNode,
           object: x.object,
-          annotationId: annotationId
+          annotationId: annotationId,
+          assetRef: asset
         };
         return result;
       });

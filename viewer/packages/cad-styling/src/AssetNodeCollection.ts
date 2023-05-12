@@ -136,6 +136,7 @@ export class AssetNodeCollection extends NodeCollection {
     if (this._fetchResultHelper !== undefined) {
       this._fetchResultHelper.interrupt();
     }
+    this._areas = EmptyAreaCollection.instance();
     this._indexSet.clear();
   }
 
