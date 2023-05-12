@@ -72,7 +72,7 @@ export class Image360UI {
     };
 
     const params = {
-      siteId: '',
+      siteId: 'c_RC_2',
       add: add360ImageSet,
       premultipliedRotation: false,
       remove: removeAll360Images
@@ -149,6 +149,8 @@ export class Image360UI {
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');
+
+    add360ImageSet();
 
     async function add360ImageSet() {
       if (params.siteId.length === 0) return;

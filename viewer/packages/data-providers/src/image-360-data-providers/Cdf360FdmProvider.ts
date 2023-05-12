@@ -2,9 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationModel, CogniteClient } from '@cognite/sdk';
-import { Image360Provider } from '../Image360Provider';
-import { Historical360ImageSet, Image360FileDescriptor, Image360Face, Image360EventDescriptor } from '../types';
+import { CogniteClient } from '@cognite/sdk';
+import {
+  Historical360ImageSet,
+  Image360FileDescriptor,
+  Image360EventDescriptor,
+  Image360DescriptorProvider
+} from '../types';
 import { listAll360ImageCollectionsQuery } from './listCollections';
 import { Matrix4 } from 'three';
 import zip from 'lodash/zip';
@@ -44,7 +48,7 @@ type ListConnectionsImage360Collection = { edges: Edge[] };
 
 type JSONData = { listConnectionsImage360Collection: ListConnectionsImage360Collection };
 
-export class Cdf360FdmProvider implements Image360Provider<FdmIdentifier> {
+export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifier> {
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
@@ -103,18 +107,5 @@ export class Cdf360FdmProvider implements Image360Provider<FdmIdentifier> {
     });
 
     return { ...entity, imageRevisions: [{ faceDescriptors: image360FileDescriptors }] };
-  }
-
-  public get360ImageFiles(_0: Image360FileDescriptor[], _1?: AbortSignal | undefined): Promise<Image360Face[]> {
-    throw new Error('Method not implemented.');
-  }
-  public getLowResolution360ImageFiles(
-    _0: Image360FileDescriptor[],
-    _1?: AbortSignal | undefined
-  ): Promise<Image360Face[]> {
-    throw new Error('Method not implemented.');
-  }
-  public get360ImageAnnotations(_: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
-    throw new Error('Method not implemented.');
   }
 }
