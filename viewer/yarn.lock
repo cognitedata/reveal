@@ -846,7 +846,7 @@ __metadata:
     ts-loader: 9.4.2
     tsc-alias: 1.8.6
     typescript: 5.0.4
-    wasm-pack: 0.11.0
+    wasm-pack: 0.11.1
     webpack: 5.82.0
     webpack-cli: 5.1.0
     webpack-dev-server: 4.14.0
@@ -12009,14 +12009,14 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"wasm-pack@npm:0.11.0":
-  version: 0.11.0
-  resolution: "wasm-pack@npm:0.11.0"
+"wasm-pack@npm:0.11.1":
+  version: 0.11.1
+  resolution: "wasm-pack@npm:0.11.1"
   dependencies:
     binary-install: ^1.0.1
   bin:
-    wasm-pack: node ./run.js
-  checksum: 08d53507604000cccd66da643aa1abc7cab0ac4ab0b61c04a2a0bd30be1920cb2596410fd8c482fdbacc2cd4b785f9182f3daba8ceb94151fe7ed4dc68919288
+    wasm-pack: run.js
+  checksum: 14849d054d7ef4e6498b4f8d44f8cb25dd93d5e84373798a26e4deb88edabadd467b2aa754ffa2c8976f718581fbb75a9da143cddd40e01fb871c27f59c12462
   languageName: node
   linkType: hard
 
