@@ -32,12 +32,13 @@ import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
 import { useLayoutMargin } from '../../hooks/useLayoutMargin';
 import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
 import { usePlotDataRangeInitial } from '../../hooks/usePlotDataRangeInitial';
+import { usePlotDataRange } from '../../hooks/usePlotDataRange';
+import { useDeepMemo } from '../../hooks/useDeep';
 import { getPlotlyHoverMode } from '../../utils/getPlotlyHoverMode';
 import {
   getPlotRangeFromPlotSelectionEvent,
   getPlotRangeFromRelayoutEvent,
 } from '../../utils/extractPlotRange';
-import { isUndefinedPlotRange } from '../../utils/isUndefinedPlotRange';
 
 import { PlotWrapper } from './elements';
 import { usePlotData } from '../../hooks/usePlotData';
@@ -119,9 +120,10 @@ export const Plot = React.memo(
         yAxis,
       });
 
+      const plotDataRange = usePlotDataRange({ data });
+
       const initialRange = usePlotDataRangeInitial({
-        data,
-        showMarkers,
+        plotDataRange,
         dataRevision,
       });
 
@@ -145,7 +147,7 @@ export const Plot = React.memo(
         [range, setPlotRange, resetPlotRange]
       );
 
-      const plotLayout: Partial<PlotlyLayout> = useMemo(
+      const plotLayout: Partial<PlotlyLayout> = useDeepMemo(
         () => ({
           xaxis: {
             ...getCommonAxisLayoutProps('x', xAxis, layout),
@@ -193,27 +195,14 @@ export const Plot = React.memo(
         updateLayoutMargin(plotRef.current);
       }, [isEmptyData, updateAxisTickCount, updateLayoutMargin]);
 
-      const handleInitialized = useCallback(() => {
-        resetPlotRange();
-        handleManualRelayout();
-      }, [resetPlotRange, handleManualRelayout]);
-
       // eslint-disable-next-line react-hooks/exhaustive-deps
       const handleRelayout = useCallback(
         debounce((event: PlotRelayoutEvent) => {
-          if (initialRange) {
-            const plotRange = getPlotRangeFromRelayoutEvent(event);
-
-            if (!isUndefinedPlotRange(plotRange)) {
-              setPlotRange({
-                x: plotRange.x || initialRange.x,
-                y: plotRange.y || initialRange.y,
-              });
-            }
-          }
+          const plotRange = getPlotRangeFromRelayoutEvent(event);
+          setPlotRange(plotRange);
           handleManualRelayout();
         }, 500),
-        [initialRange, setPlotRange, handleManualRelayout]
+        [plotDataRange, setPlotRange, handleManualRelayout]
       );
 
       const handleSelected = useCallback(
@@ -251,7 +240,7 @@ export const Plot = React.memo(
             config={plotConfig}
             style={plotStyle}
             useResizeHandler={responsive}
-            onInitialized={handleInitialized}
+            onInitialized={handleManualRelayout}
             onHover={onHover}
             onUnhover={onUnhover}
             onRelayout={handleRelayout}

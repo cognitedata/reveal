@@ -28,6 +28,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   dateRange: dateRangeProp,
   height,
   dataFetchOptions,
+  autoRange,
   onChangeTimePeriod,
   onChangeDateRange,
 }) => {
@@ -49,6 +50,15 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     return difference(TIME_PERIOD_OPTIONS, quickTimePeriodOptions);
   }, [quickTimePeriodOptions]);
 
+  const chartRange = useMemo(() => {
+    if (autoRange || !dateRange) {
+      return undefined;
+    }
+    return {
+      x: formatDateRangeForAxis(dateRange),
+    };
+  }, [autoRange, dateRange]);
+
   const handleChangeTimePeriod = (props: UpdateTimePeriodProps) => {
     setSelectedTimePeriod(props.timePeriod);
     setDateRange(props.dateRange);
@@ -68,7 +78,6 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   };
 
   useEffect(() => {
-    console.log('trigger');
     if (dateRangeProp) {
       setSelectedTimePeriod(undefined);
       setDateRange(dateRangeProp);
@@ -83,9 +92,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
       metadata={metadata}
       dataRevision={timeseriesId}
       isLoading={isLoading}
-      range={{
-        x: formatDateRangeForAxis(dateRange),
-      }}
+      range={chartRange}
       style={{ height }}
       onRangeChange={handleRangeChange}
       renderFilters={() => [

@@ -1,34 +1,27 @@
 import { useMemo } from 'react';
 import { Data, PlotRange } from '../types';
 import { getPlotRange } from '../utils/getPlotRange';
+import { getPlotRangeWithMargin } from '../utils/getPlotRangeWithMargin';
+import { isValidPlotRange } from '../utils/isValidPlotRange';
 
 interface Props {
   data: Data | Data[];
-  showMarkers: boolean;
 }
 
-export const usePlotDataRange = ({
-  data,
-  showMarkers,
-}: Props): PlotRange | undefined => {
+export const usePlotDataRange = ({ data }: Props): PlotRange | undefined => {
   const plotRange = useMemo(() => getPlotRange(data), [data]);
 
   return useMemo(() => {
-    if (!plotRange || !showMarkers) {
-      return plotRange;
+    if (!plotRange) {
+      return undefined;
     }
 
-    const {
-      x: [xMin, xMax],
-      y: [yMin, yMax],
-    } = plotRange;
+    const plotRangeWithMargin = getPlotRangeWithMargin(plotRange);
 
-    const marginX = (xMax - xMin) * 0.015;
-    const marginY = (yMax - yMin) * 0.055;
+    if (isValidPlotRange(plotRangeWithMargin)) {
+      return plotRangeWithMargin;
+    }
 
-    return {
-      x: [xMin - marginX, xMax + marginX],
-      y: [yMin - marginY, yMax + marginY],
-    };
-  }, [plotRange, showMarkers]);
+    return undefined;
+  }, [plotRange]);
 };

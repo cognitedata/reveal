@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-
-import isUndefined from 'lodash/isUndefined';
+import { useState } from 'react';
 
 import { PlotRange } from '../types';
+import { isUndefinedPlotRange } from '../utils/isUndefinedPlotRange';
+import { useDeepCallback, useDeepEffect } from './useDeep';
 
 interface Props {
   initialRange?: PlotRange;
@@ -12,17 +12,24 @@ interface Props {
 export const useHandlePlotRange = ({ initialRange, onRangeChange }: Props) => {
   const [range, setRange] = useState<PlotRange | undefined>(initialRange);
 
-  const setPlotRange = useCallback((newRange: Partial<PlotRange>) => {
-    if (isUndefined(newRange.x) || isUndefined(newRange.y)) {
-      return;
-    }
+  const setPlotRange = useDeepCallback(
+    (changedRange: Partial<PlotRange>) => {
+      if (isUndefinedPlotRange(changedRange) || !range) {
+        return;
+      }
 
-    setRange(newRange as PlotRange);
-    onRangeChange?.(newRange as PlotRange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      const newRange = {
+        x: changedRange.x || range.x,
+        y: changedRange.y || range.y,
+      };
 
-  const resetPlotRange = useCallback(() => {
+      setRange(newRange);
+      onRangeChange?.(newRange);
+    },
+    [range]
+  );
+
+  const resetPlotRange = useDeepCallback(() => {
     if (initialRange) {
       const initialRangeClone = {
         x: [...initialRange.x],
@@ -35,9 +42,14 @@ export const useHandlePlotRange = ({ initialRange, onRangeChange }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialRange]);
 
-  useEffect(() => {
-    resetPlotRange();
-  }, [resetPlotRange]);
+  useDeepEffect(() => {
+    if (initialRange) {
+      setRange({
+        x: [...initialRange.x],
+        y: [...initialRange.y],
+      });
+    }
+  }, [initialRange]);
 
   return {
     range,

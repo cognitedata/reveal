@@ -8,6 +8,7 @@ export interface TimeseriesChartProps {
   dateRange?: DateRange;
   height?: number;
   dataFetchOptions?: DataFetchOptions;
+  autoRange?: boolean;
   onChangeTimePeriod?: (props: UpdateTimePeriodProps) => void;
   onChangeDateRange?: (dateRange: DateRange) => void;
 }
