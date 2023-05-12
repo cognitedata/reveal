@@ -4,6 +4,8 @@ import { TimePeriod } from './types';
 export const DEFAULT_NUMBER_OF_POINTS = 500;
 export const DEFAULT_RAW_DATAPOINTS_LIMIT = 500;
 
+export const AXIS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
+
 export const EMPTY_DATA: Data = {
   x: [],
   y: [],

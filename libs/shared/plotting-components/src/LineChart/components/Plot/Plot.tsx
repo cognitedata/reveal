@@ -20,7 +20,13 @@ import {
 import debounce from 'lodash/debounce';
 
 import { getCommonAxisLayoutProps } from '../../utils/getCommonAxisLayoutProps';
-import { Config, Layout, LineChartProps, PlotRange } from '../../types';
+import {
+  Config,
+  Layout,
+  LineChartProps,
+  PlotRange,
+  PresetPlotRange,
+} from '../../types';
 import { useAxisTickCount } from '../../hooks/useAxisTickCount';
 import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
 import { useLayoutMargin } from '../../hooks/useLayoutMargin';
@@ -54,6 +60,7 @@ export interface PlotProps
     | 'variant'
     | 'onRangeChange'
   > {
+  presetRange?: PresetPlotRange;
   layout: Layout;
   config: Config;
   isCursorOnPlot: boolean;
@@ -75,6 +82,7 @@ export const Plot = React.memo(
         variant,
         xAxis,
         yAxis,
+        presetRange,
         layout,
         config,
         isCursorOnPlot,
@@ -97,6 +105,7 @@ export const Plot = React.memo(
         data,
         showMarkers,
         variant,
+        presetRange,
       });
 
       const { tickCount, updateAxisTickCount } = useAxisTickCount({
@@ -141,13 +150,13 @@ export const Plot = React.memo(
           xaxis: {
             ...getCommonAxisLayoutProps('x', xAxis, layout),
             nticks: tickCount.x,
-            range: range?.x,
+            range: presetRange?.x || range?.x,
             fixedrange: fixedRange.x,
           },
           yaxis: {
             ...getCommonAxisLayoutProps('y', yAxis, layout),
             nticks: tickCount.y,
-            range: range?.y,
+            range: presetRange?.y || range?.y,
             fixedrange: fixedRange.y,
           },
           ...fixedRangeLayoutConfig,
@@ -155,7 +164,7 @@ export const Plot = React.memo(
           hovermode: getPlotlyHoverMode(config.hoverMode),
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [tickCount, range, fixedRange, fixedRangeLayoutConfig]
+        [tickCount, presetRange, range, fixedRange, fixedRangeLayoutConfig]
       );
 
       const isScrollZoomEnabled = Boolean(scrollZoom);
@@ -163,11 +172,12 @@ export const Plot = React.memo(
 
       const plotConfig: Partial<PlotlyConfig> = useMemo(
         () => ({
+          staticPlot: isEmptyData,
           scrollZoom: isScrollZoomEnabled && isCursorOnPlot,
           showAxisDragHandles: isPanEnabled,
           displayModeBar: false,
         }),
-        [isScrollZoomEnabled, isPanEnabled, isCursorOnPlot]
+        [isEmptyData, isScrollZoomEnabled, isPanEnabled, isCursorOnPlot]
       );
 
       const plotStyle: React.CSSProperties = useMemo(

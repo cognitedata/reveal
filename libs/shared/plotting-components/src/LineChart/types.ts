@@ -8,6 +8,7 @@ export interface LineChartProps {
   isLoading?: boolean;
   xAxis?: Axis;
   yAxis?: Axis;
+  range?: PresetPlotRange;
   title?: string;
   subtitle?: string;
   backgroundColor?: string;
@@ -115,6 +116,11 @@ export type AxisDirectionConfig =
 export interface PlotRange {
   x: AxisRange;
   y: AxisRange;
+}
+
+export interface PresetPlotRange {
+  x?: [ValueType, ValueType];
+  y?: [ValueType, ValueType];
 }
 
 export interface Coordinate {

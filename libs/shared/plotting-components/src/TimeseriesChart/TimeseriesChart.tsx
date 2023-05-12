@@ -16,6 +16,7 @@ import { TimePeriodSelect } from './components/TimePeriodSelect';
 import { OpenInChartsButton } from './components/OpenInChartsButton';
 import { DateRangePicker } from './components/DateRangePicker';
 import { getChartByVariant } from './utils/getChartByVariant';
+import { formatDateRangeForAxis } from './utils/formatDateRangeForAxis';
 import { useTimeseriesChartData } from './domain/internal/hooks/useTimeseriesChartData';
 import { PlotRange } from '../LineChart';
 
@@ -31,7 +32,9 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   onChangeDateRange,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
-  const [dateRange, setDateRange] = useState<DateRange>();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    dateRangeProp
+  );
 
   const { data, metadata, isLoading } = useTimeseriesChartData({
     query: {
@@ -65,6 +68,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   };
 
   useEffect(() => {
+    console.log('trigger');
     if (dateRangeProp) {
       setSelectedTimePeriod(undefined);
       setDateRange(dateRangeProp);
@@ -79,6 +83,9 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
       metadata={metadata}
       dataRevision={timeseriesId}
       isLoading={isLoading}
+      range={{
+        x: formatDateRangeForAxis(dateRange),
+      }}
       style={{ height }}
       onRangeChange={handleRangeChange}
       renderFilters={() => [

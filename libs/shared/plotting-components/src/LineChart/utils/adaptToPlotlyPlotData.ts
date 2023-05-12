@@ -13,11 +13,17 @@ import { getDataAsArray } from './getDataAsArray';
 import { getLineName } from './getLineName';
 import { mapInterolationToPlotlyLineShape } from './mapInterolationToPlotlyLineShape';
 
-export const adaptToPlotlyPlotData = (
-  data: LineChartProps['data'],
-  showMarkers: boolean,
-  variant?: Variant
-): Partial<PlotData>[] => {
+interface Props {
+  data: LineChartProps['data'];
+  showMarkers: boolean;
+  variant?: Variant;
+}
+
+export const adaptToPlotlyPlotData = ({
+  data,
+  showMarkers,
+  variant,
+}: Props): Partial<PlotData>[] => {
   const mode = showMarkers ? 'lines+markers' : 'lines';
 
   let markerSize = showMarkers ? MARKER_SIZE : 0;

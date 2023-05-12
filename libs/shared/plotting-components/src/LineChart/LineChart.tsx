@@ -23,6 +23,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   isLoading,
   xAxis,
   yAxis,
+  range,
   title,
   subtitle,
   variant,
@@ -103,6 +104,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         variant={variant}
         xAxis={xAxis}
         yAxis={yAxis}
+        presetRange={range}
         layout={layout}
         config={config}
         isCursorOnPlot={isCursorOnPlot}
