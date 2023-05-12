@@ -28,6 +28,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
   private readonly _overlayPoints: OverlayPointsObject;
   private readonly _iconRadius = 0.4;
   private _overlays: Overlay3DIcon<MetadataType>[];
+  //@ts-ignore Will be removed when clustering is added.
   private _octree: IconOctree;
 
   constructor(overlayInfos?: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
