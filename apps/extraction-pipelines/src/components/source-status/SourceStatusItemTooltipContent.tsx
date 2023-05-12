@@ -80,7 +80,7 @@ const SourceStatusItemTooltipContent = ({
       css={{ textAlign: content.textAlign }}
     >
       {content.showDate && formatTime(aggregation.date)}
-      <Flex alignItems="center" gap={8}>
+      <Flex alignItems="center">
         {content.iconType && (
           <Icon
             type={content.iconType}
