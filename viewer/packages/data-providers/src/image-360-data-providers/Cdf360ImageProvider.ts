@@ -8,7 +8,7 @@ import { AnnotationModel, CogniteClient, FileLink, IdEither } from '@cognite/sdk
 import { Historical360ImageSet, Image360DescriptorProvider, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 
-export class Cdf360ImageEventProvider<T> implements Image360Provider<T> {
+export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   private readonly _client: CogniteClient;
   private readonly _descriptorProvider: Image360DescriptorProvider<T>;
   constructor(client: CogniteClient, descriptorProvider: Image360DescriptorProvider<T>) {

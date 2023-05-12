@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { Cdf360ImageEventProvider, Local360ImageProvider } from '@reveal/data-providers';
+import { Cdf360EventProvider, Cdf360ImageProvider, Local360ImageProvider } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
@@ -245,7 +245,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const cdf360EventProvider = new Cdf360EventProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventProvider);
     const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
@@ -270,7 +271,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const cdf360EventProvider = new Cdf360EventProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventProvider);
     const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
 
