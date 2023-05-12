@@ -689,6 +689,12 @@ export class DefaultCameraManager implements CameraManager {
     update(deltaTime: number, boundingBox: THREE_2.Box3): void;
 }
 
+// @public (undocumented)
+export type DefaultMetadataType = {
+    text?: string;
+    [key: string]: any;
+};
+
 // @public
 export const DefaultNodeAppearance: {
     Default: NodeAppearance;
@@ -1166,8 +1172,28 @@ export class NumericRange {
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 // @public (undocumented)
-export type OverlayEventHandler = (event: {
-    targetOverlay: SmartOverlay;
+export interface Overlay3D<MetadataType> {
+    get color(): THREE.Color;
+    getMetadata(): MetadataType | undefined;
+    get position(): THREE.Vector3;
+    setColor(color: THREE.Color): void;
+    set visible(visible: boolean);
+    get visible(): boolean;
+}
+
+// @public (undocumented)
+export interface OverlayCollection<MetadataType> {
+    addOverlays(overlays: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
+    getOverlays(): Overlay3D<MetadataType>[];
+    removeAllOverlays(): void;
+    removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
+    setVisibility(visibility: boolean): void;
+}
+
+// @public (undocumented)
+export type OverlayEventHandler<MetadataType> = (event: {
+    targetOverlay: Overlay3D<MetadataType>;
+    htmlOverlay: HTMLElement;
     mousePosition: {
         clientX: number;
         clientY: number;
@@ -1175,18 +1201,14 @@ export type OverlayEventHandler = (event: {
 }) => void;
 
 // @public (undocumented)
-export type OverlayGroup = {
-    id: OverlayGroupId;
+export type OverlayInfo<MetadataType = DefaultMetadataType> = {
+    position: THREE.Vector3;
+    metadata?: MetadataType;
+    color?: THREE.Color;
 };
 
 // @public (undocumented)
-export type OverlayGroupId = string;
-
-// @public (undocumented)
-export type OverlayId = number;
-
-// @public (undocumented)
-export type OverlayToolEvent = 'hover' | 'click';
+export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
 // @public (undocumented)
 export type PointCloudAppearance = {
@@ -1361,32 +1383,25 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
 }
 
 // @public (undocumented)
-export type SmartOverlay = {
-    text: string;
-    id: OverlayId;
-    position: THREE_2.Vector3;
-    infoOverlay: HTMLElement;
-};
-
-// @public (undocumented)
-export class SmartOverlayTool {
+export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters);
-    addOverlay(overlayData: OverlayInfo): void;
-    addOverlays(overlays: OverlayInfo[]): OverlayGroup;
     clear(): void;
-    set enabled(enabled: boolean);
+    get collections(): OverlayCollection<MetadataType>[];
+    createOverlayCollection(overlays: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType>;
     // (undocumented)
-    get enabled(): boolean;
+    dispose(): void;
     // (undocumented)
-    off(event: 'hover', eventHandler: OverlayEventHandler): void;
+    off(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
     // (undocumented)
-    off(event: 'click', eventHandler: OverlayEventHandler): void;
+    off(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
     // (undocumented)
-    on(event: 'hover', eventHandler: OverlayEventHandler): void;
+    off(event: 'disposed', eventHandler: DisposedDelegate): void;
+    on(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
     // (undocumented)
-    on(event: 'click', eventHandler: OverlayEventHandler): void;
-    removeOverlay(id: OverlayId): void;
-    removeOverlays(id: OverlayGroupId): void;
+    on(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
+    // (undocumented)
+    on(event: 'disposed', eventHandler: DisposedDelegate): void;
+    removeOverlayCollection(overlayCollection: OverlayCollection<MetadataType>): void;
     set textOverlayVisible(visible: boolean);
     // (undocumented)
     get textOverlayVisible(): boolean;

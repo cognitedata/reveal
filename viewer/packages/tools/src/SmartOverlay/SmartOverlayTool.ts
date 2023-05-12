@@ -14,20 +14,6 @@ import {
 } from '@reveal/3d-overlays';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
-export type SmartOverlay = {
-  text: string;
-  id: OverlayId;
-  position: THREE.Vector3;
-  infoOverlay: HTMLElement;
-};
-
-export type OverlayGroupId = string;
-export type OverlayId = number;
-
-export type OverlayGroup = {
-  id: OverlayGroupId;
-};
-
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
 export type OverlayEventHandler<MetadataType> = (event: {
@@ -124,7 +110,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
   /**
    * Gets all added overlay collections.
    */
-  get collections(): Overlay3DCollection<MetadataType>[] {
+  get collections(): OverlayCollection<MetadataType>[] {
     return this._overlayCollections;
   }
 

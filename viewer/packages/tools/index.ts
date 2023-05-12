@@ -22,13 +22,9 @@ export {
 } from './src/AxisView/types';
 export {
   SmartOverlayTool,
-  SmartOverlay,
   SmartOverlayToolParameters,
   OverlayEventHandler,
-  OverlayToolEvent,
-  OverlayGroup,
-  OverlayGroupId,
-  OverlayId
+  OverlayToolEvent
 } from './src/SmartOverlay/SmartOverlayTool';
 export { TimelineTool } from './src/Timeline/TimelineTool';
 export { Keyframe } from './src/Timeline/Keyframe';
