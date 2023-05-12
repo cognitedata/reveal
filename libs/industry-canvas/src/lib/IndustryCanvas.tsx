@@ -26,6 +26,7 @@ import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 export type IndustryCanvasProps = {
   id: string;
   applicationId: string;
+  shouldShowConnectionAnnotations: boolean;
   currentZoomScale: number;
   onAddContainerReferences: OnAddContainerReferences;
   onRef?: (ref: UnifiedViewer | null) => void;
@@ -74,6 +75,7 @@ export const IndustryCanvas = ({
   tool,
   setTool,
   onUpdateAnnotationStyleByType,
+  shouldShowConnectionAnnotations,
   toolOptions,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
@@ -176,6 +178,7 @@ export const IndustryCanvas = ({
         container,
         hoverId: interactionState.hoverId,
         annotations: containerAnnotations,
+        shouldShowAllConnectionAnnotations: shouldShowConnectionAnnotations,
       }),
       ...containerAnnotations,
       ...canvasAnnotationWithEventHandlers,
@@ -185,6 +188,7 @@ export const IndustryCanvas = ({
       interactionState.hoverId,
       containerAnnotations,
       canvasAnnotationWithEventHandlers,
+      shouldShowConnectionAnnotations,
     ]
   );
 

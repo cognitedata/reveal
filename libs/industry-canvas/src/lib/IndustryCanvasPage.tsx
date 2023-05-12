@@ -2,6 +2,8 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import {
   Button,
   Chip,
+  Dropdown,
+  Menu,
   Colors,
   Flex,
   Icon,
@@ -53,6 +55,8 @@ const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 const IndustryCanvasPageWithoutQueryClientProvider = () => {
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
+  const [shouldShowConnectionAnnotations, setShouldShowConnectionAnnotations] =
+    useState<boolean>(true);
   const { openResourceSelector } = useResourceSelector();
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -355,13 +359,29 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             <Icon type="Plus" /> Add data...
           </Button>
 
-          <Tooltip content="Download canvas as PDF" position="bottom">
-            <Button
-              icon="Download"
-              aria-label="Download"
-              onClick={onDownloadPress}
-            />
-          </Tooltip>
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Item onClick={onDownloadPress}>Download as PDF</Menu.Item>
+                <Menu.Item
+                  hasSwitch
+                  toggled={shouldShowConnectionAnnotations}
+                  aria-label="Always show connection lines"
+                  onChange={() => {
+                    setShouldShowConnectionAnnotations(
+                      !shouldShowConnectionAnnotations
+                    );
+                  }}
+                >
+                  Always show
+                  <br />
+                  connection lines
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button icon="EllipsisHorizontal" />
+          </Dropdown>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
       <PreviewTabWrapper onKeyDown={onKeyDown}>
@@ -369,6 +389,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           id={APPLICATION_ID_INDUSTRY_CANVAS}
           viewerRef={unifiedViewerRef}
           onRef={setUnifiedViewerRef}
+          shouldShowConnectionAnnotations={shouldShowConnectionAnnotations}
           currentZoomScale={currentZoomScale}
           applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
           onAddContainerReferences={onAddContainerReferences}
