@@ -58,11 +58,6 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
     return this._overlays;
   }
 
-  /**
-   * Adds overlays to the collection.
-   * @param overlayInfos Array of overlays to add.
-   * @returns Overlay group containing it's id.
-   */
   public addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[] {
     if (overlayInfos.length + this._overlays.length > this.DefaultMaxPoints)
       throw new Error('Cannot add more than ' + this.DefaultMaxPoints + ' points');
@@ -75,10 +70,15 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
 
     return newIcons;
   }
-  /**
-   * Removes overlays that were added with addOverlays method.
-   * @param overlays Overlay3D object array to be removed.
-   */
+
+  sortOverlaysRelativeToCamera(camera: THREE.Camera): void {
+    this._overlays = this._overlays.sort((a, b) => {
+      return b.position.distanceToSquared(camera.position) - a.position.distanceToSquared(camera.position);
+    });
+
+    this.updatePointsObject();
+  }
+
   public removeOverlays(overlays: Overlay3D<MetadataType>[]): void {
     this._overlays = this._overlays.filter(overlay => !overlays.includes(overlay));
 
@@ -101,26 +101,33 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
   }
 
   private updatePointsObject(): void {
-    const pointsPositions = this._overlays.map(p => p.position);
-    const pointsColors = this._overlays.map(p => p.color ?? this.defaultOverlayColor);
+    const filteredPoints = this._overlays.filter(p => p.visible);
+
+    const pointsPositions = filteredPoints.map(p => p.position);
+    const pointsColors = filteredPoints.map(p => p.color ?? this.defaultOverlayColor);
 
     this._overlayPoints.setPoints(pointsPositions, pointsColors);
   }
 
   private initializeOverlay3DIcons(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3DIcon<MetadataType>[] {
-    return overlayInfos.map(
-      overlay =>
-        new Overlay3DIcon<MetadataType>(
-          {
-            position: overlay.position,
-            color: overlay.color ?? this.defaultOverlayColor,
-            minPixelSize: this.MinPixelSize,
-            maxPixelSize: this.MaxPixelSize,
-            iconRadius: this._iconRadius
-          },
-          overlay.metadata
-        )
-    );
+    return overlayInfos.map(overlay => {
+      const icon = new Overlay3DIcon<MetadataType>(
+        {
+          position: overlay.position,
+          color: overlay.color ?? this.defaultOverlayColor,
+          minPixelSize: this.MinPixelSize,
+          maxPixelSize: this.MaxPixelSize,
+          iconRadius: this._iconRadius
+        },
+        overlay.metadata
+      );
+
+      icon.on('parametersChange', () => {
+        this.updatePointsObject();
+      });
+
+      return icon;
+    });
   }
 
   public dispose(): void {

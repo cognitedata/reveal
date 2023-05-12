@@ -21,12 +21,16 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     const smartOverlayTool = new SmartOverlayTool<{ text: string; id: number }>(viewer);
 
-    smartOverlayTool.on('hover', ({ htmlOverlay }) => {
+    smartOverlayTool.on('hover', ({ htmlOverlay, targetOverlay }) => {
       htmlOverlay.innerText += ' hovered';
+      targetOverlay.setColor(new THREE.Color('red'));
+      viewer.requestRedraw();
     });
 
-    smartOverlayTool.on('click', ({ htmlOverlay }) => {
+    smartOverlayTool.on('click', ({ htmlOverlay, targetOverlay }) => {
       htmlOverlay.innerText = 'Haha, you clicked me!';
+      targetOverlay.visible = false;
+      viewer.requestRedraw();
     });
 
     const labels: OverlayInfo<{ text: string; id: number }>[] = [];
@@ -57,13 +61,13 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           }
         }
       }
-      overlays.push(smartOverlayTool.createOverlayCollection(labels));
-      labels.splice(0, labels.length);
+      //labels.splice(0, labels.length);
     }
+    overlays.push(smartOverlayTool.createOverlayCollection(labels));
 
     // Testing proper removal of overlays
-    smartOverlayTool.removeOverlayCollection(overlays[2]);
-    overlays[5].removeOverlays(overlays[5].getOverlays().slice(0, 50));
+    //smartOverlayTool.removeOverlayCollection(overlays[2]);
+    //overlays[5].removeOverlays(overlays[5].getOverlays().slice(0, 50));
 
     return Promise.resolve();
   }

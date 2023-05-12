@@ -17,7 +17,7 @@ export interface Overlay3D<MetadataType> {
   /**
    * Set the display color of this overlay.
    * */
-  set color(color: THREE.Color);
+  setColor(color: THREE.Color): void;
   /**
    * Get the display color of this overlay.
    * */

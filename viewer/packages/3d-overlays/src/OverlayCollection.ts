@@ -23,6 +23,7 @@ export interface OverlayCollection<MetadataType> {
   /**
    * Add overlays to the collection.
    * @param overlays Overlays to add to the collection.
+   * @returns The added overlays.
    */
   addOverlays(overlays: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
 

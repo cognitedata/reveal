@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4, MathUtils, Color } from 'three';
 import { Overlay3D } from './Overlay3D';
 import { DefaultMetadataType } from './OverlayCollection';
@@ -22,6 +22,11 @@ export type SetAdaptiveScaleDelegate = (args: {
   domElement: HTMLElement;
 }) => void;
 
+export type ParametersChangeDelegate = (event: { color: THREE.Color; visble: boolean }) => void;
+export type SelectedDelegate = (event: { selected: boolean }) => void;
+
+export type IconEvent = 'selected' | 'parametersChange';
+
 export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overlay3D<MetadataType> {
   private readonly _position: THREE.Vector3;
   private readonly _minPixelSize: number;
@@ -40,8 +45,8 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
   private readonly _ndcPosition = new Vector4();
 
   private readonly _events = {
-    selected: new EventTrigger<(value: boolean) => void>(),
-    parametersChange: new EventTrigger<(event: { color: THREE.Color; visble: boolean }) => void>()
+    selected: new EventTrigger<SelectedDelegate>(),
+    parametersChange: new EventTrigger<ParametersChangeDelegate>()
   };
 
   constructor(iconParameters: IconParameters, iconMetadata?: MetadataType) {
@@ -58,18 +63,39 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
 
     this._position = position;
   }
-
-  on(_: 'selected', callback: (value: boolean) => void): void {
-    this._events.selected.subscribe(callback);
+  on(event: 'selected', callback: SelectedDelegate): void;
+  on(event: 'parametersChange', callback: ParametersChangeDelegate): void;
+  on(event: IconEvent, callback: SelectedDelegate | ParametersChangeDelegate): void {
+    switch (event) {
+      case 'selected':
+        this._events.selected.subscribe(callback as SelectedDelegate);
+        break;
+      case 'parametersChange':
+        this._events.parametersChange.subscribe(callback as ParametersChangeDelegate);
+        break;
+      default:
+        assertNever(event);
+    }
   }
 
-  off(_: 'selected', callback: (value: boolean) => void): void {
-    this._events.selected.unsubscribe(callback);
+  off(event: 'selected', callback: SelectedDelegate): void;
+  off(event: 'parametersChange', callback: ParametersChangeDelegate): void;
+  off(event: IconEvent, callback: SelectedDelegate | ParametersChangeDelegate): void {
+    switch (event) {
+      case 'selected':
+        this._events.selected.unsubscribe(callback as SelectedDelegate);
+        break;
+      case 'parametersChange':
+        this._events.parametersChange.unsubscribe(callback as ParametersChangeDelegate);
+        break;
+      default:
+        assertNever(event);
+    }
   }
 
   set selected(newValue: boolean) {
     if (this._selected !== newValue) {
-      this._events.selected.fire(newValue);
+      this._events.selected.fire({ selected: newValue });
       this._selected = newValue;
     }
 
@@ -101,7 +127,7 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
     }
   }
 
-  set color(color: Color) {
+  setColor(color: Color): void {
     this._color = color;
     this._events.parametersChange.fire({ color, visble: this.visible });
   }

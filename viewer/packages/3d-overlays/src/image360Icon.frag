@@ -9,7 +9,6 @@ in vec3 vColor;
 out vec4 fragmentColor;
 
 void main() {
-  vec2 coord = gl_PointCoord - vec2(0.5);
   vec4 textureSample = texture(map, gl_PointCoord); 
   
   if (textureSample.a <= 0.1) {

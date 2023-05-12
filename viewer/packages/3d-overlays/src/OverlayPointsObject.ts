@@ -69,7 +69,8 @@ export class OverlayPointsObject extends Group {
       minPixelSize,
       maxPixelSize,
       radius,
-      colorTint
+      colorTint,
+      false
     );
 
     const backMaterial = this.createIconsMaterial(
@@ -79,12 +80,13 @@ export class OverlayPointsObject extends Group {
       minPixelSize,
       maxPixelSize,
       radius,
-      colorTint
+      colorTint,
+      false
     );
 
     const frontPoints = this.initializePoints(geometry, frontMaterial);
     const backPoints = this.initializePoints(geometry, backMaterial);
-    
+
     this.add(backPoints);
     this.add(frontPoints);
 
@@ -155,7 +157,8 @@ export class OverlayPointsObject extends Group {
     minPixelSize: number,
     maxPixelSize: number,
     radius: number,
-    colorTint: Color
+    colorTint: Color,
+    depthTest: boolean
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
@@ -170,7 +173,7 @@ export class OverlayPointsObject extends Group {
       vertexShader: glsl(image360IconVert),
       fragmentShader: glsl(image360IconFrag),
       depthTest: true,
-      depthWrite: true,
+      depthWrite: depthTest,
       depthFunc: depthFunction,
       glslVersion: GLSL3,
       transparent: true

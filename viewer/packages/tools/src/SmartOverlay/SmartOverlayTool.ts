@@ -94,6 +94,10 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
       defaultOverlayColor: this._defaultOverlayColor
     });
 
+    viewer.on('cameraChange', () => {
+      points.sortOverlaysRelativeToCamera(viewer.cameraManager.getCamera());
+    });
+
     this._overlayCollections.push(points);
 
     viewer.addObject3D(points);
@@ -283,7 +287,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
 
     intersection = intersection.filter(([icon, _]) => icon.intersect(_raycaster.ray) !== null);
 
-    intersection
+    intersection = intersection
       .map(
         ([icon, intersection]) =>
           [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon<MetadataType>, THREE.Vector3]
@@ -292,7 +296,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
       .sort((a, b) => a[1].length() - b[1].length());
 
     if (intersection.length > 0) {
-      const intersectedOverlay = intersection[intersection.length - 1][0];
+      const intersectedOverlay = intersection[0][0];
 
       return intersectedOverlay;
     }
