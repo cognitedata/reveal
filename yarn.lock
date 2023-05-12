@@ -1204,10 +1204,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^9.13":
-  version "9.13.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.13.1.tgz#5f2104d0a078c9f7479acbb8eefe4c77e283bd24"
-  integrity sha512-1lrAqBanr8HeVdcUHr+DGZCZ6ftCLYN4cLO2km8zwl8zi2euLpCVNLqlMAeiQ3N45BX0Lku9Obx97V0osT1N8w==
+"@cognite/cogs.js@^9":
+  version "9.13.4"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.13.4.tgz#7a7a2647269bc4a59673f11150e50b849b6bf6e5"
+  integrity sha512-m+bFeluDcHrLO1ZK+K87gs6Ojxvf2wqPpNFCMGJFSft2+VpwkuuwsD34L1sIpCs9YGJXeLI8sd7meO75M410/g==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
