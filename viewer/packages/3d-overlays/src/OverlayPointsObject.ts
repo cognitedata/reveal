@@ -158,7 +158,7 @@ export class OverlayPointsObject extends Group {
     maxPixelSize: number,
     radius: number,
     colorTint: Color,
-    depthTest: boolean
+    depthWrite: boolean
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
@@ -173,7 +173,7 @@ export class OverlayPointsObject extends Group {
       vertexShader: glsl(image360IconVert),
       fragmentShader: glsl(image360IconFrag),
       depthTest: true,
-      depthWrite: depthTest,
+      depthWrite: depthWrite,
       depthFunc: depthFunction,
       glslVersion: GLSL3,
       transparent: true

@@ -61,13 +61,13 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           }
         }
       }
-      //labels.splice(0, labels.length);
+      overlays.push(smartOverlayTool.createOverlayCollection(labels));
+      labels.splice(0, labels.length);
     }
-    overlays.push(smartOverlayTool.createOverlayCollection(labels));
 
     // Testing proper removal of overlays
-    //smartOverlayTool.removeOverlayCollection(overlays[2]);
-    //overlays[5].removeOverlays(overlays[5].getOverlays().slice(0, 50));
+    smartOverlayTool.removeOverlayCollection(overlays[2]);
+    overlays[5].removeOverlays(overlays[5].getOverlays().slice(0, 50));
 
     return Promise.resolve();
   }
