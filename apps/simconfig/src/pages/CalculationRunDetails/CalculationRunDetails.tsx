@@ -24,6 +24,7 @@ import { CalculationTimeLabel } from 'components/models/CalculationList/Calculat
 import type { ValueUnitType } from 'components/shared/PropertyGrid';
 import { ValueUnitGrid } from 'components/shared/PropertyGrid';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { createCdfLink } from 'utils/createCdfLink';
 import { recordsToDsv } from 'utils/stringUtils';
 
 import { calculationSchema } from './constants';
@@ -348,15 +349,17 @@ export function CalculationRunDetails() {
 
         <div className="navigation">
           <Link
-            to={`/model-library/models/${encodeURIComponent(
-              metadata.simulator
-            )}/${encodeURIComponent(metadata.modelName)}`}
+            to={createCdfLink(
+              `/model-library/models/${encodeURIComponent(
+                metadata.simulator
+              )}/${encodeURIComponent(metadata.modelName)}`
+            )}
           >
             <Button icon="DataSource" type="tertiary">
               View model
             </Button>
           </Link>
-          <Link search={sourceQuery} to="..">
+          <Link search={sourceQuery} to={createCdfLink('/calculations/runs')}>
             <Button icon="ArrowLeft" type="secondary">
               Return to run browser
             </Button>

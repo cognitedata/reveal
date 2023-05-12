@@ -29,6 +29,7 @@ import {
   selectIsDeleteEnabled,
   selectIsLabelsEnabled,
 } from 'store/capabilities/selectors';
+import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
@@ -224,7 +225,15 @@ export function ModelDetails({
           )}
           <Divider />
           {!(selectedTab === 'new-version') && (
-            <Link to="../new-version">
+            <Link
+              to={createCdfLink(
+                `/model-library/models/${encodeURIComponent(
+                  modelFile.metadata.simulator
+                )}/${encodeURIComponent(
+                  modelFile.metadata.modelName
+                )}/new-version`
+              )}
+            >
               <Button
                 icon="Add"
                 size="large"
@@ -250,7 +259,13 @@ export function ModelDetails({
             simulator,
             modelName: decodeURI(modelName),
           });
-          navigate({ to: `../${tab}` });
+          navigate({
+            to: createCdfLink(
+              `/model-library/models/${encodeURIComponent(
+                modelFile.metadata.simulator
+              )}/${encodeURIComponent(modelFile.metadata.modelName)}/${tab}`
+            ),
+          });
         }}
       >
         <Tabs.TabPane

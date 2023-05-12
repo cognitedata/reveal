@@ -1,4 +1,5 @@
-import { Link } from 'react-location';
+import { useMemo } from 'react';
+import { Link, useMatch } from 'react-location';
 
 import format from 'date-fns/format';
 import styled from 'styled-components/macro';
@@ -7,6 +8,8 @@ import { Illustrations } from '@cognite/cogs.js-v9';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
 import { createCdfLink } from 'utils/createCdfLink';
+
+import type { AppLocationGenerics } from 'routes';
 
 interface ModelListProps {
   isModalLibraryEmpty: boolean;
@@ -25,6 +28,15 @@ export function ModelList({
   className,
   isModalLibraryEmpty,
 }: ModelListProps) {
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
+
+  const simulatorsConfig = useMemo(
+    () => definitions?.simulatorsConfig,
+    [definitions]
+  );
+
   if (!modelFiles.length && !isModalLibraryEmpty) {
     return (
       <EmptyState>
@@ -59,7 +71,11 @@ export function ModelList({
                   Version {modelFile.metadata.version}
                 </div>
                 <ul>
-                  <li>{modelFile.metadata.simulator}</li>
+                  <li>
+                    {simulatorsConfig?.filter(
+                      ({ key }) => key === modelFile.metadata.simulator
+                    )?.[0].name ?? modelFile.metadata.simulator}
+                  </li>
                   {modelFile.metadata.unitSystem && (
                     <li>{modelFile.metadata.unitSystem}</li>
                   )}

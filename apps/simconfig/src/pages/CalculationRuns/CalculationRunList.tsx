@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useRouter } from 'react-location';
+import { Link } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import {
@@ -31,8 +31,6 @@ export function CalculationRunList({
   isFetchingCalculationsRunList,
   onScroll,
 }: CalculationRunListProps) {
-  const router = useRouter();
-  const sourceQuery = JSON.stringify(router.state.location.search);
   return (
     <CalculationRunsListContainer onScroll={onScroll}>
       {calculationRuns.map((run) => {
@@ -73,9 +71,7 @@ export function CalculationRunList({
             </span>
 
             <div>
-              <Dropdown
-                content={<ExpansionMenu run={run} sourceQuery={sourceQuery} />}
-              >
+              <Dropdown content={<ExpansionMenu run={run} />}>
                 <Button
                   aria-label="Actions"
                   icon="EllipsisHorizontal"
@@ -91,13 +87,7 @@ export function CalculationRunList({
   );
 }
 
-function ExpansionMenu({
-  run,
-  sourceQuery,
-}: {
-  run: CalculationRun;
-  sourceQuery: string;
-}) {
+function ExpansionMenu({ run }: { run: CalculationRun }) {
   const project = useSelector(selectProject);
   const externalId = run.metadata.calcConfig;
   const eventId = run.id?.toString();
@@ -112,7 +102,7 @@ function ExpansionMenu({
 
   return (
     <Menu>
-      <Link search={{ sourceQuery }} to={run.id}>
+      <Link to={createCdfLink(`${run.id}`)}>
         <Menu.Item>
           <Icon type="Info" /> Calculation run details
         </Menu.Item>

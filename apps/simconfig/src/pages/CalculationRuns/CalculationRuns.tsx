@@ -11,7 +11,7 @@ import type { OptionType } from '@cognite/cogs.js';
 import { AutoComplete, DateRange, Skeleton } from '@cognite/cogs.js';
 import { Illustrations } from '@cognite/cogs.js-v9';
 import {
-  useGetCalculationRunListQuery,
+  useGetCalculationRunListV2Query,
   useGetModelFileListQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 import type {
@@ -51,7 +51,7 @@ export function CalculationRuns() {
     data: calculationsRunList,
     isFetching: isFetchingCalculationsRunList,
     isLoading: isLoadingCalculationsRunList,
-  } = useGetCalculationRunListQuery(
+  } = useGetCalculationRunListV2Query(
     {
       ...initialDateRange,
       project,
@@ -167,7 +167,6 @@ export function CalculationRuns() {
         <Filter
           currentValue={searchFilters.simulator}
           filterKey="simulator"
-          isClearable={false}
           label="Simulator"
           options={generateOptions('simulator', 'Simulator', simualtorKeys)}
           setSearchParams={setSearchParams}

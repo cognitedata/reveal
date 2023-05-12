@@ -394,16 +394,20 @@ export function CalculationList({
                       onClick={() => {
                         if (calculation.configuration.calcTypeUserDefined) {
                           navigate({
-                            to: `${encodeURIComponent(
-                              calculation.configuration.calculationType
-                            )}/${encodeURIComponent(
-                              calculation.configuration.calcTypeUserDefined
-                            )}`,
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/${encodeURIComponent(
+                                calculation.configuration.calcTypeUserDefined
+                              )}`
+                            ),
                           });
                         } else {
                           navigate({
-                            to: encodeURIComponent(
-                              calculation.configuration.calculationType
+                            to: createCdfLink(
+                              encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )
                             ),
                           });
                         }
@@ -426,12 +430,15 @@ export function CalculationList({
                         );
 
                         navigate({
-                          to: createCdfLink('/calculations/runs'),
-                          search: {
-                            modelName,
-                            simulator,
-                            calculationType,
-                          },
+                          to: createCdfLink(
+                            '/calculations/runs',
+                            undefined,
+                            new URLSearchParams({
+                              modelName,
+                              simulator,
+                              calculationType,
+                            })
+                          ),
                         });
                       }}
                     >
@@ -448,17 +455,21 @@ export function CalculationList({
                         });
                         if (calculation.configuration.calcTypeUserDefined) {
                           navigate({
-                            to: `${encodeURIComponent(
-                              calculation.configuration.calculationType
-                            )}/${encodeURIComponent(
-                              calculation.configuration.calcTypeUserDefined
-                            )}/configuration`,
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/${encodeURIComponent(
+                                calculation.configuration.calcTypeUserDefined
+                              )}/configuration`
+                            ),
                           });
                         } else {
                           navigate({
-                            to: `${encodeURIComponent(
-                              calculation.configuration.calculationType
-                            )}/configuration`,
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/configuration`
+                            ),
                           });
                         }
                       }}

@@ -30,6 +30,7 @@ import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { useTitle } from 'hooks/useTitle';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { createCdfLink } from 'utils/createCdfLink';
 
 import { LAYER } from '../../utils/zIndex';
 
@@ -201,9 +202,8 @@ export function CalculationConfiguration() {
     'BhpFromGradientTraverse',
   ];
   const nameFromConfiguration = modelCalculation?.configuration.calculationName;
-  const modelLibraryPath = modelCalculation?.configuration.calcTypeUserDefined
-    ? '../../..'
-    : '../..';
+
+  const modelLibraryPath = `/model-library/models/${simulator}/${modelName}/calculations`;
 
   return (
     <CalculationConfigurationContainer>
@@ -215,11 +215,15 @@ export function CalculationConfiguration() {
           </p>
           <div className="header-options">
             {isEditing ? (
-              <Link to="..">
+              <Link
+                to={createCdfLink(
+                  `/model-library/models/${simulator}/${modelName}/calculations/${calculationType}`
+                )}
+              >
                 <Button icon="Info">Calculation details</Button>
               </Link>
             ) : null}
-            <Link to={modelLibraryPath}>
+            <Link to={createCdfLink(modelLibraryPath)}>
               <Button icon="ArrowLeft">Return to model library</Button>
             </Link>
           </div>

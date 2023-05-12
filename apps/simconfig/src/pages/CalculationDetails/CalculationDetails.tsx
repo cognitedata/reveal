@@ -14,6 +14,7 @@ import { CalculationSummary } from 'components/calculation/CalculationSummary';
 import { Editor } from 'components/shared/Editor';
 import { useTitle } from 'hooks/useTitle';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { createCdfLink } from 'utils/createCdfLink';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -72,10 +73,10 @@ export function CalculationDetails() {
         >
           <span className="editor-text">JSON Preview</span>
         </Switch>
-        <Link to="configuration">
+        <Link to={createCdfLink('configuration')}>
           <Button icon="Settings">Edit configuration</Button>
         </Link>
-        <Link to={modelLibraryPath}>
+        <Link to={createCdfLink(modelLibraryPath)}>
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
       </h2>

@@ -1,9 +1,13 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
 import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
-import { useGetSimulatorsListV2Query } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  useGetDefinitionsQuery,
+  useGetSimulatorsListV2Query,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import {
   HEADER_VISIBLE_SIMULATORS_COUNT,
@@ -16,6 +20,15 @@ import { SimulatorStatusLabel } from './SimulatorStatusLabel';
 
 export function SimulatorStatus() {
   const project = useSelector(selectProject);
+
+  const { data: definitions } = useGetDefinitionsQuery({
+    project,
+  });
+
+  const simulatorsConfig = useMemo(
+    () => definitions?.simulatorsConfig,
+    [definitions]
+  );
 
   const { data: simulatorsList, isLoading: isLoadingSimulatorsList } =
     useGetSimulatorsListV2Query(
@@ -64,7 +77,11 @@ export function SimulatorStatus() {
           >
             <SimulatorStatusLabel
               simulator={simulator}
-              title={simulator.simulator}
+              title={
+                simulatorsConfig?.filter(
+                  ({ key }) => key === simulator.simulator
+                )?.[0].name ?? simulator.simulator
+              }
               isMain
             />
           </SimulatorTooltip>
