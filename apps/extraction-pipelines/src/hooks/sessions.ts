@@ -1,6 +1,6 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export type CreateSessionVariables =
   | {

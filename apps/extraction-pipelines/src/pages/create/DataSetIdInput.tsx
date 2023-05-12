@@ -2,7 +2,7 @@ import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { AutoComplete, Colors, Loader } from '@cognite/cogs.js';
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
-import { MutationStatus } from 'react-query';
+import { MutationStatus } from '@tanstack/react-query';
 import { DataSet } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
 import { InputController } from 'components/inputs/InputController';

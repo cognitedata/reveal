@@ -4,7 +4,7 @@ import { useCreateConfigRevision, useExtpipeConfig } from 'hooks/config';
 import Section from 'components/section';
 import ConfigurationEditor from './ConfigurationEditor';
 import CreatedTime from './CreatedTime';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Body, Button, Flex, Icon, toast } from '@cognite/cogs.js';
 
 type Props = {
