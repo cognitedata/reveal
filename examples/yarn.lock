@@ -233,9 +233,9 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/reveal-react-components@link:../react-components":
-  version "0.0.0"
-  uid ""
+"@cognite/reveal-react-components@file:../react-components/cognite-reveal-react-components-0.1.2.tgz":
+  version "0.1.0"
+  resolved "file:../react-components/cognite-reveal-react-components-0.1.2.tgz#01bf132385a1dad3acf57a168712853bb45a4cea"
 
 "@cognite/reveal@link:../viewer":
   version "0.0.0"

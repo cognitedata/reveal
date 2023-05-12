@@ -22,7 +22,7 @@
     "@azure/msal-browser": "^2.21.0",
     "@cognite/cogs.js": "^9.13.5",
     "@cognite/reveal": "link:../viewer",
-    "@cognite/reveal-react-components": "link:../react-components",
+    "@cognite/reveal-react-components": "C:\\Users\\chris\\reveal\\react-components\\cognite-reveal-react-components-0.1.2.tgz",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "buffer": "^6.0.3",
     "dat.gui": "^0.7.7",
