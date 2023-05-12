@@ -76,7 +76,7 @@ const SourceStatusItemTooltipContent = ({
   return (
     <StyledTooltipContent
       direction="column"
-      gap={8}
+      gap={2}
       css={{ textAlign: content.textAlign }}
     >
       {content.showDate && formatTime(aggregation.date)}
