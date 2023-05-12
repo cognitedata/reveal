@@ -20,8 +20,8 @@ import {
   Vector3,
   WebGLRenderer
 } from 'three';
-import image360IconVert from './image360Icon.vert';
-import image360IconFrag from './image360Icon.frag';
+import overlay3DIconVert from './overlay3DIcon.vert';
+import overlay3DIconFrag from './overlay3DIcon.frag';
 
 export type OverlayPointsParameters = {
   spriteTexture: Texture;
@@ -170,8 +170,8 @@ export class OverlayPointsObject extends Group {
         renderDownScale: { value: 1 },
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
       },
-      vertexShader: glsl(image360IconVert),
-      fragmentShader: glsl(image360IconFrag),
+      vertexShader: glsl(overlay3DIconVert),
+      fragmentShader: glsl(overlay3DIconFrag),
       depthTest: true,
       depthWrite: depthWrite,
       depthFunc: depthFunction,

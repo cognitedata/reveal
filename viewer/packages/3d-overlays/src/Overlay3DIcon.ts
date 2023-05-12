@@ -136,7 +136,7 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
     return this._color;
   }
 
-  getMetadata(): MetadataType | undefined {
+  getMetadata(): MetadataType | undefined{
     return this._iconMetadata;
   }
 

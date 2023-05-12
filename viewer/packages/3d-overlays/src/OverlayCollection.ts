@@ -5,7 +5,7 @@ import { Overlay3D } from './Overlay3D';
 
 export type DefaultMetadataType = {
   text?: string;
-  [key: string]: any;
+  [key: string]: string | undefined;
 };
 
 export type OverlayInfo<MetadataType = DefaultMetadataType> = {

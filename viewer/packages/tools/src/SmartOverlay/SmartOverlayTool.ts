@@ -73,7 +73,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
    * @param overlays Array of overlays to add.
    * @returns Overlay group containing it's id.
    */
-  createOverlayCollection(overlays: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType> {
+  createOverlayCollection(overlays?: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType> {
     const { _viewer: viewer } = this;
 
     const points = new Overlay3DCollection<MetadataType>(overlays, {

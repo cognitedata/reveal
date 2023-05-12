@@ -36,7 +36,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
 
     this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
     this._sharedTexture = options?.overlayTexture ?? this.createCircleTexture();
-    this._overlayPoints = new OverlayPointsObject(overlayInfos ? overlayInfos.length * 2 : this.DefaultMaxPoints, {
+    this._overlayPoints = new OverlayPointsObject(overlayInfos ? overlayInfos.length : this.DefaultMaxPoints, {
       spriteTexture: this._sharedTexture,
       minPixelSize: this.MinPixelSize,
       maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
@@ -120,7 +120,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
           maxPixelSize: this.MaxPixelSize,
           iconRadius: this._iconRadius
         },
-        overlay.metadata
+        overlay?.metadata
       );
 
       icon.on('parametersChange', () => {
