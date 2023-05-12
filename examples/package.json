@@ -20,6 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@azure/msal-browser": "^2.21.0",
+    "@cognite/cogs.js": "^9.13.5",
     "@cognite/reveal": "link:../viewer",
     "@cognite/reveal-react-components": "../react-components",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
@@ -31,7 +32,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.1",
     "stats.js": "^0.17.0",
-    "styled-components": "^5.3.10"
+    "styled-components": "5.3.6"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.5",
