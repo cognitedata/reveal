@@ -1,9 +1,10 @@
 import {
   isPolylineAnnotation,
   isTextAnnotation,
+  isConnectionAnnotation,
+  isStickyAnnotation,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
-import { isStickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import { LineAnnotationTooltip } from '../components/tooltips/LineAnnotationTooltip';
@@ -71,7 +72,10 @@ const useCanvasAnnotationTooltips = ({
       ];
     }
 
-    if (isPolylineAnnotation(selectedCanvasAnnotation)) {
+    if (
+      isPolylineAnnotation(selectedCanvasAnnotation) ||
+      isConnectionAnnotation(selectedCanvasAnnotation)
+    ) {
       return [
         {
           targetId: String(selectedCanvasAnnotation.id),

@@ -115,6 +115,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
                   ? LineType.RIGHT_ANGLES
                   : LineType.STRAIGHT,
               },
+              isSelectable: false,
             },
           ];
 

@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { startCase } from 'lodash';
 import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
-import { PolylineAnnotation } from '@cognite/unified-file-viewer';
+import {
+  ConnectionAnnotation,
+  PolylineAnnotation,
+} from '@cognite/unified-file-viewer';
 
 import { LINE_STROKE_WIDTH } from '../../constants';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
@@ -10,7 +13,7 @@ import { RightAlignedColorPalettePosition } from './elements';
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
 
 export type PolylineAnnotationTooltipProps = {
-  lineAnnotation: PolylineAnnotation;
+  lineAnnotation: PolylineAnnotation | ConnectionAnnotation;
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onDeleteSelectedCanvasAnnotation: () => void;
 };

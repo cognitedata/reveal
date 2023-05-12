@@ -83,6 +83,7 @@ const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
         },
       };
     }
+    case AnnotationType.CONNECTION:
     case AnnotationType.POLYLINE: {
       if (updatedAnnotationStyle.line === undefined) {
         throw new Error(
@@ -116,7 +117,7 @@ const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
 
     default:
       throw new Error(
-        'Unsupported annotation type for updating style' + annotation.type
+        'Unsupported annotation type for updating style ' + annotation.type
       );
   }
 };
@@ -157,7 +158,10 @@ const DEFAULT_TOOL_OPTIONS: ToolsOptionsByType = {
     isWorkspaceAnnotation: true,
   },
   [ToolType.SELECT]: DEFAULT_STYLE,
-  [ToolType.LINE]: DEFAULT_STYLE,
+  [ToolType.LINE]: {
+    ...DEFAULT_STYLE,
+    shouldGenerateConnections: true,
+  },
   [ToolType.IMAGE]: {},
   [ToolType.PAN]: {},
   [ToolType.STICKY]: {
