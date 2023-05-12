@@ -73,7 +73,6 @@ a:hover {
 /* This is a temporary solution while we move the app into fusion */
 /* I had to go this route, Cogs table does use the width property and I can not pass CSS class either */
 
-/* Align the pagination to the right so we keep the same look as antd theme */
 .data-sets-list-table .cogs-table tr > th:first-of-type, .cogs-table tr > td:first-of-type {
   width: auto;
 }
@@ -85,13 +84,6 @@ a:hover {
 .resource-table .cogs-table {
   table-layout: fixed;
 }
-
-.resource-table .cogs-table-pagination,
-.data-sets-list-table .cogs-table-pagination {
-  display: block;
-  float: right;
-}
-
 
 /* timeseries, sequence tables description column */
 .dataset-sequence-table .cogs-table th:nth-child(2),
