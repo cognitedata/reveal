@@ -35,7 +35,7 @@ const SourceStatusItemTooltipContent = ({
         text: t('source-status-no-data'),
         textAlign: 'center',
       };
-    } else if (aggregation.logs.some((log) => doesLogHaveSuccessType(log))) {
+    } else if (aggregation.logs.every((log) => doesLogHaveSuccessType(log))) {
       return {
         showDate: true,
         text: t('source-status-success'),
