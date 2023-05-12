@@ -3,10 +3,8 @@ import { Asset, CogniteEvent } from '@cognite/sdk';
 import {
   SearchResultCountLabel,
   SearchResultToolbar,
-  useResourceResults,
 } from '../../../containers/SearchResults';
-import { convertResourceType } from '../../../types';
-import { EventTable } from '../../../containers/Events';
+import { EventTable } from '../../Events';
 
 import {
   TableSortBy,
@@ -14,7 +12,6 @@ import {
   useEventsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { AppliedFiltersTags } from '../../../components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from '../../../components';
 import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
@@ -27,28 +24,16 @@ export const EventSearchResults = ({
   onDirectAssetClick,
   showCount = false,
   selectedRow,
-  enableAdvancedFilters,
   onFilterChange,
 }: {
   query?: string;
   filter?: InternalEventsFilters;
   showCount?: boolean;
-  enableAdvancedFilters?: boolean;
   onClick: (item: CogniteEvent) => void;
   onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
   selectedRow?: Record<string | number, boolean>;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 }) => {
-  const api = convertResourceType('event');
-  const { canFetchMore, fetchMore, isFetched, items } =
-    useResourceResults<CogniteEvent>(api, query, filter);
-  const { count: itemCount } = useResultCount({
-    type: 'event',
-    filter,
-    query,
-    api: query && query.length > 0 ? 'search' : 'list',
-  });
-
   const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
@@ -59,7 +44,6 @@ export const EventSearchResults = ({
         eventsFilters: filter,
         eventsSortBy: sortBy,
       },
-      { enabled: enableAdvancedFilters },
       eventSearchConfig
     );
   const { data: countData } = useEventsAggregateCountQuery(
@@ -67,14 +51,11 @@ export const EventSearchResults = ({
       eventsFilters: filter,
       query,
     },
-    { enabled: enableAdvancedFilters },
     eventSearchConfig
   );
 
-  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
-  const totalDataCount = enableAdvancedFilters
-    ? countData?.count || 0
-    : itemCount;
+  const loadedDataCount = data.length;
+  const totalDataCount = countData?.count || 0;
 
   return (
     <EventTable
@@ -101,16 +82,14 @@ export const EventSearchResults = ({
           icon="Events"
         />
       }
-      data={enableAdvancedFilters ? data : items}
-      isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
-      enableSorting={enableAdvancedFilters}
+      data={data}
+      isDataLoading={isLoading}
+      enableSorting
       sorting={sortBy}
       onSort={setSortBy}
-      fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+      fetchMore={fetchNextPage}
       showLoadButton
-      hasNextPage={
-        enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
-      }
+      hasNextPage={!isPreviousData && hasNextPage}
       onRowClick={(event: CogniteEvent) => onClick(event)}
       onDirectAssetClick={onDirectAssetClick}
     />

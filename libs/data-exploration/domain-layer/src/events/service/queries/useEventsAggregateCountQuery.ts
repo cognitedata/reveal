@@ -23,8 +23,8 @@ export const useEventsAggregateCountQuery = (
     query?: string;
     eventsFilters: InternalEventsFilters;
   },
-  options?: UseQueryOptions,
-  searchConfig?: EventConfigType
+  searchConfig?: EventConfigType,
+  options?: UseQueryOptions
 ) => {
   const sdk = useSDK();
 

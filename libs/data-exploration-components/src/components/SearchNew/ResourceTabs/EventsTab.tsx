@@ -9,8 +9,8 @@ export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
   const { data, isLoading } = useEventsAggregateCountQuery(
     { eventsFilters: filter, query },
-    { keepPreviousData: true },
-    eventSearchConfig
+    eventSearchConfig,
+    { keepPreviousData: true }
   );
 
   const chipRightProps = getChipRightPropsForResourceCounter(

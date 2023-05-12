@@ -5,7 +5,6 @@ import {
 } from '@data-exploration-app/containers/elements';
 import { EventSearchResults } from '@data-exploration-components/containers';
 import { useEventsFilters } from '@data-exploration-app/store';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
@@ -20,7 +19,6 @@ import { Asset } from '@cognite/sdk';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const EventSearchResultView = () => {
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const [, openPreview] = useCurrentResourceId();
   const [eventFilter, setEventFilter] = useEventsFilters();
   const [query] = useQueryString(SEARCH_KEY);
@@ -50,7 +48,6 @@ export const EventSearchResultView = () => {
         <EventSearchResults
           showCount
           selectedRow={selectedRow}
-          enableAdvancedFilters={isAdvancedFiltersEnabled}
           onClick={handleRowClick}
           onDirectAssetClick={handleDirectAssetClick}
           onFilterChange={(newValue: Record<string, unknown>) =>

@@ -23,8 +23,8 @@ export const useEventsSearchResultWithLabelsQuery = (
     eventsFilters: InternalEventsFilters;
     eventsSortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions,
-  searchConfig: EventConfigType = getSearchConfig().event
+  searchConfig: EventConfigType = getSearchConfig().event,
+  options?: UseInfiniteQueryOptions
 ) => {
   const { data, ...rest } = useEventsSearchResultQuery(
     { query, eventsFilters, eventsSortBy },

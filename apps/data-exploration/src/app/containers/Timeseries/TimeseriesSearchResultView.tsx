@@ -57,7 +57,6 @@ export const TimeseriesSearchResultView = () => {
         <TimeseriesSearchResults
           showCount
           selectedRow={selectedRow}
-          enableAdvancedFilters={isAdvancedFiltersEnabled}
           onClick={handleRowClick}
           onRootAssetClick={handleRootAssetClick}
           onFilterChange={(newValue: Record<string, unknown>) =>

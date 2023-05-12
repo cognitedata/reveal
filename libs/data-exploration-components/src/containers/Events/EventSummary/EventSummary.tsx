@@ -45,7 +45,6 @@ export const EventSummary = ({
       query,
       eventsFilters: filter,
     },
-    undefined,
     eventSearchConfig
   );
   const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();

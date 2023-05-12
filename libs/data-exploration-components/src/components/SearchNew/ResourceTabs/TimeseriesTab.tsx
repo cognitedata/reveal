@@ -13,7 +13,6 @@ export const TimeseriesTab = ({ query, filter, ...rest }: ResourceTabProps) => {
       timeseriesFilters: filter,
       query,
     },
-    undefined,
     timeseriesSearchConfig
   );
   const chipRightProps = getChipRightPropsForResourceCounter(
