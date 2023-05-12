@@ -5,10 +5,7 @@ import {
 } from '@data-exploration-app/containers/elements';
 import { TimeseriesSearchResults } from '@data-exploration-components/containers';
 import { useTimeseriesFilters } from '@data-exploration-app/store';
-import {
-  useDateRange,
-  useFlagAdvancedFilters,
-} from '@data-exploration-app/hooks';
+import { useDateRange } from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
@@ -23,7 +20,6 @@ import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPrevie
 import { Asset } from '@cognite/sdk/dist/src/types';
 
 export const TimeseriesSearchResultView = () => {
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const [, openPreview] = useCurrentResourceId();
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const [query] = useQueryString(SEARCH_KEY);
