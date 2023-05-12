@@ -84,7 +84,7 @@ const SourceStatusItemTooltipContent = ({
         {content.iconType && (
           <Icon
             type={content.iconType}
-            css={{ color: Colors[`text-icon--status-${content.iconColor}`] }}
+            css={{ color: Colors[`text-icon--status-${content.iconColor}--inverted`] }}
           />
         )}
         {content.text}
