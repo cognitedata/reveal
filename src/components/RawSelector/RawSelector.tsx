@@ -1,21 +1,17 @@
 import { useState } from 'react';
-import Menu from 'antd/lib/menu';
-import Col from 'antd/lib/col';
-import Table from 'antd/lib/table';
-import Checkbox from 'antd/lib/checkbox';
-import { Icon } from '@cognite/cogs.js';
+
+import { Icon, Checkbox, Table, Tooltip, Menu } from '@cognite/cogs.js';
 import { RawDB, RawDBTable } from '@cognite/sdk';
 import { getStringCdfEnv, getContainer } from 'utils/shared';
 import {
-  StyledMenuItem,
   RawCreateButton,
   ListBox,
   SearchField,
   SearchWrapper,
 } from 'utils/styledComponents';
-import { RawTable } from 'utils/types';
-import Tooltip from 'antd/lib/tooltip';
+import { CogsTableCellRenderer, RawTable } from 'utils/types';
 import { useTranslation } from 'common/i18n';
+import { Col, Row } from 'utils';
 
 type DatabaseWithTablesItem = {
   database: RawDB;
@@ -39,33 +35,39 @@ const useSelectionColumns = () => {
 
   const selectionColumns = [
     {
-      title: t('database-selected'),
-      key: 'databaseName',
-      render: (row: RawTable) => (
+      Header: t('database-selected'),
+      id: 'databaseName',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: rawTable },
+      }: CogsTableCellRenderer<RawTable>) => (
         <a
-          href={`raw/${row.databaseName}${
+          href={`raw/${rawTable.databaseName}${
             getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
           }`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {row.databaseName}
+          {rawTable.databaseName}
         </a>
       ),
     },
     {
-      title: t('table-selected'),
-      key: 'tableName',
-      render: (row: RawTable) => (
+      Header: t('table-selected'),
+      id: 'tableName',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: rawTable },
+      }: CogsTableCellRenderer<RawTable>) => (
         <a
           data-testid="selected-table"
-          href={`raw/${row.databaseName}/${row.tableName}${
+          href={`raw/${rawTable.databaseName}/${rawTable.tableName}${
             getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
           }`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {row.tableName}
+          {rawTable.tableName}
         </a>
       ),
     },
@@ -150,10 +152,20 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
           (db) => db.name.toUpperCase().search(dbSearch.toUpperCase()) >= 0
         )
         .map((item) => (
-          <StyledMenuItem key={item.name}>
+          <Menu.Item
+            key={item.name}
+            style={{
+              borderBottom: '1px solid var(--cogs-border--muted)',
+              fontWeight: 'bold',
+              borderRadius: 0,
+            }}
+            onClick={() => {
+              props.setSelectedDb(item.name);
+            }}
+          >
             <Tooltip
-              title={t('select-all-tables-in-this-database')}
-              getPopupContainer={getContainer}
+              content={t('select-all-tables-in-this-database')}
+              appendTo={getContainer}
             >
               <Checkbox
                 style={{ marginRight: '5px' }}
@@ -164,18 +176,29 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                     ? !allDbTableSelected(item)
                     : undefined
                 }
-                onClick={() => handleCheckboxChange(item)}
+                onChange={() => handleCheckboxChange(item)}
               />
             </Tooltip>
             {item.name}
-          </StyledMenuItem>
+          </Menu.Item>
         ));
     }
     return props.databaseList.map((item) => (
-      <StyledMenuItem key={item.name}>
+      <Menu.Item
+        key={item.name}
+        style={{
+          borderBottom: '1px solid var(--cogs-border--muted)',
+          fontWeight: 'bold',
+          borderRadius: 0,
+          backgroundColor: props.selectedDb === item.name ? '#e6f7ff' : 'white',
+        }}
+        onClick={() => {
+          props.setSelectedDb(item.name);
+        }}
+      >
         <Tooltip
-          title={t('select-all-tables-in-this-database')}
-          getPopupContainer={getContainer}
+          content={t('select-all-tables-in-this-database')}
+          appendTo={getContainer}
         >
           <Checkbox
             style={{ marginRight: '5px' }}
@@ -186,11 +209,11 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                 ? !allDbTableSelected(item)
                 : undefined
             }
-            onClick={() => handleCheckboxChange(item)}
+            onChange={() => handleCheckboxChange(item)}
           />
         </Tooltip>
         {item.name}
-      </StyledMenuItem>
+      </Menu.Item>
     ));
   };
 
@@ -216,7 +239,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
   return (
     <div>
       <div style={{ padding: '5px' }}>
-        <Col span={24}>
+        <Row>
           <Col span={12}>
             <h3>{t('database_other')}</h3>
             <RawCreateButton
@@ -231,20 +254,21 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
               <ListBox>
                 <SearchField
                   placeholder={t('filter-databases')}
+                  icon="Search"
+                  fullWidth
                   style={{ width: '100%' }}
-                  allowClear
+                  clearable={{
+                    callback: () => setDbSearch(''),
+                  }}
                   onChange={(val) => setDbSearch(val.currentTarget.value)}
                 />
-                <Menu
-                  selectedKeys={[props.selectedDb]}
-                  onSelect={(value) => props.setSelectedDb(value.key)}
-                  mode="inline"
-                >
-                  {getDatabasesMenu()}
-                </Menu>
+                <Menu>{getDatabasesMenu()}</Menu>
               </ListBox>
             )}
           </Col>
+        </Row>
+
+        <Row>
           <Col span={12}>
             <h3>{t('table_other')}</h3>
             <RawCreateButton
@@ -262,28 +286,25 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                   <SearchField
                     placeholder={t('filter-tables')}
                     style={{ width: '100%' }}
-                    allowClear
+                    fullWidth
+                    clearable={{
+                      callback: () => setTableSearch(''),
+                    }}
                     onChange={(val) => setTableSearch(val.currentTarget.value)}
                   />
                 </SearchWrapper>
-                <Menu
-                  multiple
-                  selectedKeys={
-                    (props.selectedTables &&
-                      props.selectedTables.map(
-                        (item) => `${item.databaseName}/${item.tableName}`
-                      )) ||
-                    []
-                  }
-                >
+                <Menu>
                   {selectedDBTables?.length ? (
                     selectedDBTables.map((table, index) => (
-                      <StyledMenuItem
+                      <Menu.Item
                         data-testid="raw-table"
                         key={`${props.selectedDb}/${table.name || ''}`}
-                        onClick={(e) => {
-                          e.domEvent.stopPropagation();
-                          e.domEvent.preventDefault();
+                        style={{
+                          borderBottom: '1px solid var(--cogs-border--muted)',
+                          fontWeight: 'bold',
+                          borderRadius: 0,
+                        }}
+                        onClick={() => {
                           onChangeTablesList(
                             `${props.selectedDb}/${table.name || ''}`
                           );
@@ -296,7 +317,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                               record.databaseName === props.selectedDb &&
                               record.tableName === table.name
                           )}
-                          onClick={(e) => {
+                          onChange={(e) => {
                             e.stopPropagation();
                             onChangeTablesList(
                               `${props.selectedDb}/${table.name || ''}`
@@ -313,8 +334,8 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                           }}
                         >
                           <Tooltip
-                            title={t('view-or-ingest-data-to-this-raw-table')}
-                            getPopupContainer={getContainer}
+                            content={t('view-or-ingest-data-to-this-raw-table')}
+                            appendTo={getContainer}
                           >
                             <a
                               href={`raw/${props.selectedDb}/${
@@ -332,7 +353,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
                             </a>
                           </Tooltip>
                         </div>
-                      </StyledMenuItem>
+                      </Menu.Item>
                     ))
                   ) : (
                     <div style={{ paddingTop: '20%' }}>
@@ -354,18 +375,19 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
             )}
           </Col>
           <Col span={24} style={{ marginTop: '10px' }}>
-            <Table
-              style={{ marginBottom: '20px' }}
-              pagination={{ pageSize: 4 }}
-              columns={selectionColumns}
-              dataSource={props.selectedTables}
-              rowKey={(record: RawTable) =>
-                `${record.databaseName}/${record.tableName}`
-              }
-              getPopupContainer={getContainer}
-            />
+            <div className="resource-table">
+              <Table
+                css={{ marginBottom: '20px' }}
+                pageSize={4}
+                columns={selectionColumns}
+                dataSource={props.selectedTables}
+                rowKey={(record: RawTable) =>
+                  `${record.databaseName}/${record.tableName}`
+                }
+              />
+            </div>
           </Col>
-        </Col>
+        </Row>
       </div>
     </div>
   );

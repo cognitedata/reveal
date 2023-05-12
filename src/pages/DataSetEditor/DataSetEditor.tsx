@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react';
 
 import Drawer from 'components/Drawer';
 import { Group } from '@cognite/sdk';
-import { DrawerHeader } from 'utils/styledComponents';
 import DataSetCreation from 'components/DataSetCreation';
 import useDebounce from 'hooks/useDebounce';
 
-import { notification } from 'antd';
 import {
   useCreateDataSetMutation,
   useDataSetOwners,
@@ -16,6 +14,7 @@ import {
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
+import { toast } from '@cognite/cogs.js';
 
 interface DataSetEditorProps {
   visible: boolean;
@@ -57,7 +56,7 @@ const DataSetEditor = ({
 
   useEffect(() => {
     if (datasetCreated) {
-      notification.success({ message: t('data-set-created') });
+      toast.success(t('data-set-created'));
     }
   }, [datasetCreated, t]);
 
@@ -92,24 +91,16 @@ const DataSetEditor = ({
 
   return (
     <Drawer
-      headerStyle={{
-        background: '#4a67fb',
-        color: 'white',
-        fontSize: '16px',
-      }}
-      title={
-        <DrawerHeader>
-          {dataSetWithExtpipes?.dataSet?.name ?? t('create-data-set')}
-        </DrawerHeader>
-      }
+      title={dataSetWithExtpipes?.dataSet?.name ?? t('create-data-set')}
       width="60%"
       visible={visible}
-      destroyOnClose
       onClose={onClose}
-      cancelHidden
-      okHidden
+      onCancel={onClose}
+      isPrimarySidebar
+      hideActions
     >
       <DataSetCreation
+        key={dataSetWithExtpipes?.dataSet?.id}
         loading={loading}
         createDataSet={createDataSet}
         dataSet={dataSetWithExtpipes?.dataSet}

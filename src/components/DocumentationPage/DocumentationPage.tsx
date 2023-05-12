@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import Col from 'antd/lib/col';
 import { Button } from '@cognite/cogs.js';
-import Radio from 'antd/lib/radio';
 import { FileInfo, DataSet, Documentation } from 'utils/types';
 import Drawer from 'components/Drawer';
 import {
@@ -18,6 +16,7 @@ import UploadFiles from '../UploadFiles';
 import LinksList from '../LinksList';
 import InfoTooltip from '../InfoTooltip';
 import { useTranslation } from 'common/i18n';
+import { Col } from 'utils';
 
 interface DocumentationProps {
   dataSet?: DataSet;
@@ -153,9 +152,10 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>{t('add-documentation')}</div>}
+      title={t('add-documentation')}
       width="50%"
-      onClose={() => props.closeModal()}
+      onClose={props.closeModal}
+      onCancel={props.closeModal}
       visible={props.visible}
       okText={props.changesSaved ? t('done') : t('save')}
       onOk={props.changesSaved ? props.closeModal : handleSaveChanges}
@@ -232,27 +232,30 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
               {t('learn-more-in-our-docs')}
             </a>
           </p>
-          <Radio.Group
-            style={{ width: '100%' }}
-            value={qualityAssessment}
-            buttonStyle="solid"
-            onChange={(e) => {
-              setQuality(e.target.value);
-              props.setChangesSaved(false);
-            }}
-          >
-            <Radio.Button value style={{ width: '50%', textAlign: 'center' }}>
+          <div className="governance-status-buttons">
+            <Button
+              toggled={qualityAssessment === true}
+              type="ghost"
+              onClick={() => {
+                setQuality(true);
+                props.setChangesSaved(false);
+              }}
+            >
               <ApprovedDot />
               {t('governed')}
-            </Radio.Button>
-            <Radio.Button
-              value={false}
-              style={{ width: '50%', textAlign: 'center' }}
+            </Button>
+            <Button
+              toggled={qualityAssessment === false}
+              type="ghost"
+              onClick={() => {
+                setQuality(false);
+                props.setChangesSaved(false);
+              }}
             >
               <UnApprovedDot />
               {t('ungoverned')}
-            </Radio.Button>
-          </Radio.Group>
+            </Button>
+          </div>
         </Col>
       </div>
     </Drawer>

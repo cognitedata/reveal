@@ -4,8 +4,6 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Table from 'antd/lib/table';
-import { getContainer } from 'utils/shared';
 import {
   LineageSubTitle,
   LineageTitle,
@@ -14,6 +12,7 @@ import {
 import { useConsumerTableColumns } from './ConsumerTableColumns';
 import { Consumer, DataSet } from '../../utils/types';
 import { useTranslation } from 'common/i18n';
+import { Table } from '@cognite/cogs.js';
 
 interface ConsumerTableProps {
   dataSet?: DataSet;
@@ -43,11 +42,10 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
       <Table
         columns={ConsumerTableColumns}
         dataSource={consumerList}
-        pagination={{ pageSize: 5 }}
+        pageSize={5}
         rowKey={(record: Consumer) =>
           `${record?.name}/${record?.contact?.email}`
         }
-        getPopupContainer={getContainer}
       />
     </LineageSection>
   );

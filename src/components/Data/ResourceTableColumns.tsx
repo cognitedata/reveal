@@ -10,8 +10,8 @@ import ResourceProperty from './ResourceProperty';
 import { useTranslation } from 'common/i18n';
 import moment from 'moment';
 import { useFlag } from '@cognite/react-feature-flags';
-import { trackUsage } from 'utils';
-import { TableColumnType } from 'antd';
+import { CogsTableCellRenderer, trackUsage } from 'utils';
+import { TableColumn } from '@cognite/cogs.js';
 
 export function useResourceTableColumns() {
   const { t } = useTranslation();
@@ -31,52 +31,62 @@ export function useResourceTableColumns() {
     }
   };
 
-  const assetColumns: TableColumnType<Asset>[] = [
+  const assetColumns: TableColumn<Asset>[] = [
     {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'dataset-assets-name',
-      render: (_value, record) => <ResourceProperty value={record.name} />,
+      Header: t('name'),
+      accessor: 'name',
+      id: 'dataset-assets-name',
+      disableSortBy: true,
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Asset>) => (
+        <ResourceProperty value={record.name} />
+      ),
     },
     {
-      title: t('source_one'),
-      dataIndex: 'source',
-      key: 'dataset-asset-source',
-      render: (_value, record) => <ResourceProperty value={record?.source} />,
+      Header: t('source_one'),
+      accessor: 'source',
+      id: 'dataset-asset-source',
+      disableSortBy: true,
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Asset>) => (
+        <ResourceProperty value={record.source} />
+      ),
     },
     {
-      title: t('external-id'),
-      dataIndex: 'external-id',
-      key: 'dataset-asset-external-id',
-      render: (_value, record) => (
+      Header: t('external-id'),
+      accessor: 'external-id',
+      id: 'dataset-asset-external-id',
+      disableSortBy: true,
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Asset>) => (
         <ResourceProperty value={record.externalId} />
       ),
     },
     {
-      title: t('last-updated'),
-      dataIndex: 'last-updated-time',
-      key: 'dataset-asset-last-updated-time',
-      render: (_value, record) => (
+      Header: t('last-updated'),
+      accessor: 'last-updated-time',
+      id: 'dataset-asset-last-updated-time',
+      disableSortBy: true,
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Asset>) => (
         <ResourceProperty
           value={moment(record.lastUpdatedTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('created'),
-      dataIndex: 'created-time',
-      key: 'dataset-asset-created-time',
-      render: (_value, record) => (
+      Header: t('created'),
+      accessor: 'created-time',
+      id: 'dataset-asset-created-time',
+      disableSortBy: true,
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Asset>) => (
         <ResourceProperty
           value={moment(record.createdTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'dataset-asset-id',
-      render: (_value, record) => (
+      Header: t('id'),
+      accessor: 'id',
+      id: 'dataset-asset-id',
+      disableSortBy: true,
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<Asset>) => (
         <ResourceProperty
           value={record.id}
           isLink
@@ -87,52 +97,74 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const eventColumns: TableColumnType<CogniteEvent>[] = [
+  const eventColumns: TableColumn<CogniteEvent>[] = [
     {
-      title: t('type'),
-      dataIndex: 'type',
-      key: 'dataset-event-type',
-      render: (_value, record) => <ResourceProperty value={record.type} />,
+      Header: t('type'),
+      accessor: 'type',
+      id: 'dataset-event-type',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
+        <ResourceProperty value={record.type} />
+      ),
     },
     {
-      title: t('subtype'),
-      dataIndex: 'sub-type',
-      key: 'dataset-event-sub-type',
-      render: (_value, record) => <ResourceProperty value={record.subtype} />,
+      Header: t('subtype'),
+      accessor: 'sub-type',
+      id: 'dataset-event-sub-type',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
+        <ResourceProperty value={record.subtype} />
+      ),
     },
     {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'dataset-event-description',
-      render: (_value, record) => (
+      Header: t('description'),
+      accessor: 'description',
+      id: 'dataset-event-description',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
         <ResourceProperty value={record.description} />
       ),
     },
     {
-      title: t('last-updated'),
-      dataIndex: 'last-updated-time',
-      key: 'dataset-event-last-updated-time',
-      render: (_value, record) => (
+      Header: t('last-updated'),
+      accessor: 'last-updated-time',
+      id: 'dataset-event-last-updated-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
         <ResourceProperty
           value={moment(record.lastUpdatedTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('created'),
-      dataIndex: 'created-time',
-      key: 'dataset-event-created-time',
-      render: (_value, record) => (
+      Header: t('created'),
+      accessor: 'created-time',
+      id: 'dataset-event-created-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
         <ResourceProperty
           value={moment(record.createdTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'dataset-event-id',
-      render: (_value, record) => (
+      Header: t('id'),
+      accessor: 'id',
+      id: 'dataset-event-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
         <ResourceProperty
           value={record.id}
           isLink
@@ -143,45 +175,64 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const fileColumns: TableColumnType<FileInfo>[] = [
+  const fileColumns: TableColumn<FileInfo>[] = [
     {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'dataset-file-name',
+      Header: t('name'),
+      accessor: 'name',
+      id: 'dataset-file-name',
       width: '20%',
-      render: (_value, record) => <ResourceProperty value={record.name} />,
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<FileInfo>) => (
+        <ResourceProperty value={record.name} />
+      ),
     },
     {
-      title: t('source_one'),
-      dataIndex: 'source',
-      key: 'dataset-file-source',
-      render: (_value, record) => <ResourceProperty value={record.source} />,
+      Header: t('source_one'),
+      accessor: 'source',
+      id: 'dataset-file-source',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<FileInfo>) => (
+        <ResourceProperty value={record.source} />
+      ),
     },
     {
-      title: t('last-updated'),
-      dataIndex: 'last-updated-time',
-      key: 'dataset-file-last-updated-time',
-      render: (_value, record) => (
+      Header: t('last-updated'),
+      accessor: 'last-updated-time',
+      id: 'dataset-file-last-updated-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<FileInfo>) => (
         <ResourceProperty
           value={moment(record.lastUpdatedTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('created'),
-      dataIndex: 'created-time',
-      key: 'dataset-file-created-time',
-      render: (_value, record) => (
+      Header: t('created'),
+      accessor: 'created-time',
+      id: 'dataset-file-created-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<FileInfo>) => (
         <ResourceProperty
           value={moment(record.createdTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'dataset-file-id',
-      render: (_value, record) => (
+      Header: t('id'),
+      accessor: 'id',
+      id: 'dataset-file-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<FileInfo>) => (
         <ResourceProperty
           value={record.id}
           isLink
@@ -192,47 +243,65 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const sequenceColumns: TableColumnType<Sequence>[] = [
+  const sequenceColumns: TableColumn<Sequence>[] = [
     {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'dataset-sequence-name',
-      render: (_value, record) => <ResourceProperty value={record.name} />,
+      Header: t('name'),
+      accessor: 'name',
+      id: 'dataset-sequence-name',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Sequence>) => (
+        <ResourceProperty value={record.name} />
+      ),
     },
     {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'dataset-sequence-description',
+      Header: t('description'),
+      accessor: 'description',
+      id: 'dataset-sequence-description',
+      // keep it here, we will need it once we move it into fusion
       width: '25%',
-      render: (_value, record) => (
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Sequence>) => (
         <ResourceProperty value={record.description} />
       ),
     },
     {
-      title: t('last-updated'),
-      dataIndex: 'last-updated-time',
-      key: 'dataset-sequence-last-updated-time',
-      render: (_value, record) => (
+      Header: t('last-updated'),
+      accessor: 'last-updated-time',
+      id: 'dataset-sequence-last-updated-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Sequence>) => (
         <ResourceProperty
           value={moment(record.lastUpdatedTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('created'),
-      dataIndex: 'created-time',
-      key: 'dataset-sequence-created-time',
-      render: (_value, record) => (
+      Header: t('created'),
+      accessor: 'created-time',
+      id: 'dataset-sequence-created-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Sequence>) => (
         <ResourceProperty
           value={moment(record.createdTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'dataset-sequence-id',
-      render: (_value, record) => (
+      Header: t('id'),
+      accessor: 'id',
+      id: 'dataset-sequence-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Sequence>) => (
         <ResourceProperty
           value={record.id}
           isLink
@@ -243,63 +312,87 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const timeseriesColumns: TableColumnType<Timeseries>[] = [
+  const timeseriesColumns: TableColumn<Timeseries>[] = [
     {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'dataset-timeseries-name',
-      render: (_value, record) => <ResourceProperty value={record.name} />,
+      Header: t('name'),
+      accessor: 'name',
+      id: 'dataset-timeseries-name',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
+        <ResourceProperty value={record.name} />
+      ),
     },
     {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'dataset-timeseries-description',
+      Header: t('description'),
+      accessor: 'description',
+      id: 'dataset-timeseries-description',
+      // keep it here, we will need it once we move it into fusion
       width: '25%',
-      render: (_value, record) => (
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
         <ResourceProperty value={record.description} />
       ),
     },
     {
-      title: t('external-id'),
-      dataIndex: 'external-id',
-      key: 'dataset-timeseries-external-id',
-      render: (_value, record) => (
+      Header: t('external-id'),
+      accessor: 'external-id',
+      id: 'dataset-timeseries-external-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
         <ResourceProperty value={record.externalId} />
       ),
     },
     {
-      title: t('asset-id'),
-      dataIndex: 'asset-id',
-      key: 'dataset-timeseries-asset-id',
-      render: (_value, record) => (
+      Header: t('asset-id'),
+      accessor: 'asset-id',
+      id: 'dataset-timeseries-asset-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
         <ResourceProperty value={record.assetId || '-'} />
       ),
     },
     {
-      title: t('last-updated'),
-      dataIndex: 'last-updated-time',
-      key: 'dataset-timeseries-last-updated-time',
-      render: (_value, record) => (
+      Header: t('last-updated'),
+      accessor: 'last-updated-time',
+      id: 'dataset-timeseries-last-updated-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
         <ResourceProperty
           value={moment(record.lastUpdatedTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('created'),
-      dataIndex: 'created-time',
-      key: 'dataset-timeseries-created-time',
-      render: (_value, record) => (
+      Header: t('created'),
+      accessor: 'created-time',
+      id: 'dataset-timeseries-created-time',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
         <ResourceProperty
           value={moment(record.createdTime).format('DD/MM/YYYY')}
         />
       ),
     },
     {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'dataset-timeseries-id',
-      render: (_value, record) => (
+      Header: t('id'),
+      accessor: 'id',
+      id: 'dataset-timeseries-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Timeseries>) => (
         <ResourceProperty
           value={record.id}
           isLink
@@ -312,28 +405,37 @@ export function useResourceTableColumns() {
 
   if (isEnabled) {
     eventColumns.splice(3, 0, {
-      title: t('external-id'),
-      dataIndex: 'external-id',
-      key: 'dataset-events-external-id',
-      render: (_value, record) => (
+      Header: t('external-id'),
+      accessor: 'external-id',
+      id: 'dataset-events-external-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<CogniteEvent>) => (
         <ResourceProperty value={record.externalId} />
       ),
     });
 
     fileColumns.splice(2, 0, {
-      title: t('external-id'),
-      dataIndex: 'external-id',
-      key: 'dataset-files-external-id',
-      render: (_value, record) => (
+      Header: t('external-id'),
+      accessor: 'external-id',
+      id: 'dataset-files-external-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<FileInfo>) => (
         <ResourceProperty value={record.externalId} />
       ),
     });
 
     sequenceColumns.splice(2, 0, {
-      title: t('external-id'),
-      dataIndex: 'external-id',
-      key: 'dataset-sequences-external-id',
-      render: (_value, record) => (
+      Header: t('external-id'),
+      accessor: 'external-id',
+      id: 'dataset-sequences-external-id',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Sequence>) => (
         <ResourceProperty value={record.externalId} />
       ),
     });

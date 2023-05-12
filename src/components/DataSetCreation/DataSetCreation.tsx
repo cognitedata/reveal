@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
-import Spin from 'antd/lib/spin';
-import Card from 'antd/lib/card';
-import Tooltip from 'antd/lib/tooltip';
-import { Icon } from '@cognite/cogs.js';
-import { CreationDataSet, DataSet } from 'utils/types';
+import { Icon, Tooltip } from '@cognite/cogs.js';
+import { CogsTableCellRenderer, CreationDataSet, DataSet } from 'utils/types';
 import theme from 'styles/theme';
 import {
   CreateButton,
@@ -29,6 +26,7 @@ import DataSetInfo from '../DataSetInfo';
 import CreationFlowSection from '../CreationFlowSection';
 import ConsumerPage from '../ConsumerPage';
 import { useTranslation } from 'common/i18n';
+import { Card } from 'utils';
 
 interface DataSetCreationProps {
   loading: boolean;
@@ -284,12 +282,20 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
 
   const StatusColumns = [
     {
-      title: t('status'),
-      key: 'key',
-      render: (row: { key: string }) => getFieldStatus(row.key),
+      Header: t('status'),
+      id: 'key',
+      Cell: ({ row: { original: record } }: CogsTableCellRenderer<any>) =>
+        getFieldStatus(record.key),
+      // this does not work!
       width: '250px',
+      disableSortBy: true,
     },
-    { title: t('what-you-need-to-do'), dataIndex: 'field', key: 'field' },
+    {
+      Header: t('what-you-need-to-do'),
+      accessor: 'field',
+      id: 'field',
+      disableSortBy: true,
+    },
   ];
 
   useEffect(() => {
@@ -383,9 +389,14 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
     setIsEditing(true);
   }, []);
 
+  const createButtonTooltipContent =
+    dataSetName === '' || dataSetDescription === ''
+      ? t('dataset-creation-please-fill-in')
+      : '';
+
   return (
     <div>
-      <Card style={{ marginBottom: '10px' }}>
+      <Card style={{ marginBottom: '10px', padding: '24px' }}>
         {props.dataSet && !isEditing ? (
           <DataSetInfo
             id={props.dataSet?.id}
@@ -430,13 +441,9 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         {!props.dataSet && isEditing && (
           <span style={{ float: 'right' }}>
             <Tooltip
-              style={{ float: 'right' }}
-              title={
-                dataSetName === '' || dataSetDescription === ''
-                  ? t('dataset-creation-please-fill-in')
-                  : ''
-              }
-              getPopupContainer={getContainer}
+              content={createButtonTooltipContent}
+              appendTo={getContainer}
+              disabled={!createButtonTooltipContent}
             >
               <CreateButton
                 onClick={() => createSet()}
@@ -543,9 +550,10 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           />
         )}
       </div>
+
       {props.loading && (
         <ChangesSavedWrapper style={{ background: theme.pillBackground }}>
-          <Spin /> {t('saving')}
+          <Icon type="Loader" /> {t('saving')}
         </ChangesSavedWrapper>
       )}
       {!props.changesSaved && !props.loading && (

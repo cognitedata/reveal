@@ -1,13 +1,11 @@
-import { Button, Input } from '@cognite/cogs.js';
-import Col from 'antd/lib/col';
+import { Button, Input, Table, toast } from '@cognite/cogs.js';
 
-import Table from 'antd/lib/table';
 import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
-import { DataSet } from 'utils/types';
-import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/shared';
+import { CogsTableCellRenderer, DataSet } from 'utils/types';
+import { getJetfireUrl, getStringCdfEnv } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
 import Drawer from 'components/Drawer';
 import {
@@ -19,8 +17,7 @@ import {
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import jetfireIcon from 'assets/jetfireIcon.svg';
 import useInterval from 'hooks/useInterval';
-import { Key } from 'antd/lib/table/interface';
-import { notification } from 'antd';
+import { Col } from 'utils';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -29,10 +26,12 @@ const useTransformColumns = () => {
 
   const transformColumns = [
     {
-      title: t('transform'),
-      key: 'name',
+      Header: t('transform'),
+      id: 'name',
+      accessor: 'name',
+      disableSortBy: false,
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      render: (_text: string, transform: any) => (
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => (
         <a
           href={`/${sdk.project}/transformations/${transform.id}${
             getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
@@ -45,16 +44,18 @@ const useTransformColumns = () => {
       ),
     },
     {
-      title: t('created'),
-      key: 'created',
-      render: (_text: string, transform: any) => (
+      Header: t('created'),
+      id: 'created',
+      disableSortBy: true,
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => (
         <p>{moment(transform.createdTime).toString()}</p>
       ),
     },
     {
-      title: t('updated'),
-      key: 'updated',
-      render: (_text: string, transform: any) => (
+      Header: t('updated'),
+      id: 'updated',
+      disableSortBy: true,
+      Cell: ({ row: { original: transform } }: CogsTableCellRenderer<any>) => (
         <p>{moment(transform.lastUpdatedTime).toString()}</p>
       ),
     },
@@ -102,14 +103,6 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
       });
   };
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: Key[]) => {
-      setSelectedTransforms(selectedRowKeys);
-      props.setChangesSaved(false);
-    },
-    selectedRowKeys: selectedTransforms,
-  };
-
   const cdfTransformations = () => (
     <>
       <MiniInfoTitle>{t('transform-select-transformations')}</MiniInfoTitle>
@@ -124,16 +117,35 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           marginBottom: '20px',
         }}
       />
-      <Table
-        rowKey="id"
-        columns={transformColumns}
-        dataSource={transformationsList}
-        rowSelection={rowSelection}
-        locale={{
-          emptyText: t('transform-no-transformations'),
-        }}
-        getPopupContainer={getContainer}
-      />
+      <div className="resource-table transformations-table">
+        <Table
+          rowKey={(d) => String(d.id)}
+          columns={transformColumns}
+          dataSource={transformationsList}
+          locale={{
+            emptyText: t('transform-no-transformations'),
+          }}
+          defaultSelectedIds={selectedTransforms.reduce(
+            (a, v) => ({ ...a, [v]: true }),
+            {}
+          )}
+          onSelectionChange={(selectedRows: any[]) => {
+            const selectedIds = selectedRows.map(
+              (selectedRow) => selectedRow.id
+            );
+
+            // need this otherwise it goes into infinite loop
+            if (
+              selectedTransforms.sort().toString() !==
+              selectedIds.sort().toString()
+            ) {
+              setSelectedTransforms(selectedIds);
+              props.setChangesSaved(false);
+            }
+          }}
+        />
+      </div>
+      <br />
       <Button onClick={() => handleNewTransform()}>
         {t('new-transformation')}
       </Button>
@@ -189,7 +201,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           )
         );
       } catch (e) {
-        notification.error({ message: t('invalid-search-value') });
+        toast.error({ message: t('invalid-search-value') });
         setSearchValue('');
       }
     } else {
@@ -245,9 +257,10 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
 
   return (
     <Drawer
-      title={<div>{t('transform-drawer-title')}</div>}
+      title={t('transform-drawer-title')}
       width="50%"
-      onClose={() => props.closeModal()}
+      onClose={props.closeModal}
+      onCancel={props.closeModal}
       visible={props.visible}
       okText={props.changesSaved ? 'Done' : 'Save'}
       onOk={props.changesSaved ? props.closeModal : handleSave}

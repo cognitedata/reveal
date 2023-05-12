@@ -5,8 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Icon } from '@cognite/cogs.js';
-import Table from 'antd/lib/table';
+import { Icon, Table } from '@cognite/cogs.js';
 import {
   LineageSection,
   LineageSubTitle,
@@ -15,7 +14,6 @@ import {
 import { useRawTableColumns } from 'components/Lineage/rawTableColumns';
 import { Extpipe, RawTable } from 'utils/types';
 import { DataSetWithExtpipes } from 'actions';
-import { getContainer } from 'utils/shared';
 import {
   combineDataSetAndExtpipesRawTables,
   updateRawTableWithLastUpdate,
@@ -39,7 +37,6 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
   const { t } = useTranslation();
   const { rawTablesColumnsWithExtpipe } = useRawTableColumns();
   const [rawList, setRawList] = useState<RawExtpipeWithUpdateTime[]>([]);
-  const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
 
   const getRawTableExtpipeLastUpdateTime = useCallback(async () => {
     const combinedRaws =
@@ -48,7 +45,6 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       combinedRaws.map((raw) => updateRawTableWithLastUpdate(raw, t))
     );
     setRawList(rawTables);
-    setLoadingRaw(false);
   }, [dataSet, t]);
 
   useEffect(() => {
@@ -62,16 +58,16 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       </LineageTitle>
       <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
       {isExtpipesFetched ? (
-        <Table
-          loading={loadingRaw}
-          columns={rawTablesColumnsWithExtpipe()}
-          dataSource={rawList}
-          pagination={{ pageSize: 5 }}
-          rowKey={(record: RawExtpipeWithUpdateTime) =>
-            `${record.databaseName}/${record.tableName}`
-          }
-          getPopupContainer={getContainer}
-        />
+        <div className="resource-table">
+          <Table
+            columns={rawTablesColumnsWithExtpipe()}
+            dataSource={rawList}
+            pageSize={5}
+            rowKey={(record: RawExtpipeWithUpdateTime) =>
+              `${record.databaseName}/${record.tableName}`
+            }
+          />
+        </div>
       ) : (
         <Icon type="Loader" />
       )}

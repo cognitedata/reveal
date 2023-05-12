@@ -1,9 +1,7 @@
-import Tag from 'antd/lib/tag';
 import { SectionTitle, TitleOrnament } from 'utils/styledComponents';
-import Typography from 'antd/lib/typography';
 import { useTranslation } from 'common/i18n';
-
-const { Text } = Typography;
+import { CopyButton } from '@cognite/cdf-utilities';
+import { Chip, Flex } from '@cognite/cogs.js';
 
 interface DataSetInfoProps {
   id?: string | number;
@@ -18,9 +16,9 @@ const DataSetInfo = (props: DataSetInfoProps): JSX.Element => {
     <div style={{ display: 'inline' }}>
       <SectionTitle>{props.name}</SectionTitle>
       <TitleOrnament />
-      <h3>
-        <span style={{ fontWeight: 'bold' }}>{t('id')}:</span>{' '}
-        <Text copyable={{ text: String(props?.id) }}>{props?.id}</Text>
+      <h3 style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <span style={{ fontWeight: 'bold' }}>{t('id')}:</span> {props?.id}{' '}
+        <CopyButton content={String(props?.id)} />
       </h3>
       <h3>
         <span style={{ fontWeight: 'bold' }}>{t('description')}:</span>{' '}
@@ -28,7 +26,11 @@ const DataSetInfo = (props: DataSetInfoProps): JSX.Element => {
       </h3>
       <br />
       {props.labels && props.labels.length ? (
-        props.labels.map((label) => <Tag key={label}>{label}</Tag>)
+        <Flex gap={8}>
+          {props.labels.map((label) => (
+            <Chip hideTooltip size="x-small" key={label} label={label} />
+          ))}
+        </Flex>
       ) : (
         <p style={{ fontStyle: 'italic' }}>{t('no-labels')}</p>
       )}

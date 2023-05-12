@@ -1,9 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { notification, Popconfirm, Upload } from 'antd';
-import List from 'antd/lib/list';
-import Spin from 'antd/lib/spin';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Upload } from 'antd';
+import { Button, Icon, Popconfirm, toast } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import isString from 'lodash/isString';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -13,8 +11,9 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { TranslationKeys } from 'common/i18n';
 import { FileInfo } from 'utils/types';
-import { getContainer, nameToAclTypeMap } from 'utils/shared';
+import { nameToAclTypeMap } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
+import styled from 'styled-components';
 
 interface UploadFileProps {
   setFileList: Dispatch<SetStateAction<FileInfo[]>>;
@@ -39,12 +38,11 @@ const updateFileWithDataSet = (fileId: number, dataSetId: number) => {
       },
     })
     .catch((error) => {
-      notification.error({
-        message:
-          error.message ||
+      toast.error(
+        error.message ||
           error.errors.map((err: any) => err.message) ||
-          'Something went wrong...',
-      });
+          'Something went wrong...'
+      );
     });
 };
 
@@ -132,13 +130,9 @@ const UploadFiles = ({
       }
       if (status === 'done') {
         // setFileList([{ name: file.name, id: info.file. }, ...fileList]);
-        notification.success({
-          message: t('upload-file-msg-success', { name: info.file.name }),
-        });
+        toast.success(t('upload-file-msg-success', { name: info.file.name }));
       } else if (status === 'error') {
-        notification.error({
-          message: t('upload-file-msg-failed', { name: info.file.name }),
-        });
+        toast.error(t('upload-file-msg-failed', { name: info.file.name }));
       }
     },
     customRequest: ({ file, onSuccess, onError }) => {
@@ -164,14 +158,12 @@ const UploadFiles = ({
               const { status } = xhr;
               if (status >= 200 && status < 300) {
                 setUploadError(null);
-                notification.success({
-                  message: t('upload-file-msg-uploaded'),
-                });
+                toast.success(t('upload-file-msg-uploaded'));
                 setIsUploading(false);
                 if (onSuccess) onSuccess('Ok', xhr);
                 setFileList([{ name: fileName, id: fileId }, ...fileList]);
               } else {
-                notification.error({ message: t('something-went-wrong') });
+                toast.error(t('something-went-wrong'));
               }
             };
             xhr.setRequestHeader('Content-Type', file.type);
@@ -211,7 +203,7 @@ const UploadFiles = ({
             <p className="ant-upload-text">{t('upload-file-click-or-drag')}</p>
           </>
         ) : (
-          <Spin />
+          <Icon size={24} type="Loader" />
         )}
       </Upload.Dragger>
       {isMissingReadAccess && (
@@ -219,9 +211,9 @@ const UploadFiles = ({
           <ErrorMessageBox>{t('upload-file-no-access')}</ErrorMessageBox>
         </div>
       )}
-      <List>
+      <StyledFileList>
         {fileList.map((file) => (
-          <List.Item key={file.id}>
+          <StyledFileListItem key={file.id}>
             <Button
               type="ghost-accent"
               disabled={isMissingReadAccess}
@@ -235,20 +227,35 @@ const UploadFiles = ({
               {file.name}
             </Button>
             <Popconfirm
-              getPopupContainer={getContainer}
               onConfirm={removeFileFromDataSet(file)}
-              placement="topLeft"
-              title={t('upload-file-remove-file-confirm', {
+              content={t('upload-file-remove-file-confirm', {
                 fileName: file.name,
               })}
+              placement="top-start"
             >
               <Button icon="Delete" type="ghost" />
             </Popconfirm>
-          </List.Item>
+          </StyledFileListItem>
         ))}
-      </List>
+      </StyledFileList>
     </div>
   );
 };
+
+const StyledFileList = styled.ul`
+  padding: 0;
+`;
+
+const StyledFileListItem = styled.li`
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
 
 export default UploadFiles;

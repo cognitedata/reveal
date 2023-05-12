@@ -1,13 +1,8 @@
-import Table from 'antd/lib/table';
-import Tag from 'antd/lib/tag';
-
 import { Group, SingleCogniteCapability } from '@cognite/sdk';
-import {
-  isCapScopedOnDataSets,
-  isGroupScopedOnDataSets,
-  getContainer,
-} from 'utils/shared';
+import { isCapScopedOnDataSets, isGroupScopedOnDataSets } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
+import { Chip, Table } from '@cognite/cogs.js';
+import { CogsTableCellRenderer } from 'utils';
 
 interface GroupsWithAccessProps {
   dataSetId: number;
@@ -80,22 +75,34 @@ const GroupsWithAccess = (props: GroupsWithAccessProps) => {
 
   const resourceColumns = [
     {
-      title: t('group'),
-      key: 'group',
-      dataIndex: 'groupName',
+      Header: t('group'),
+      id: 'group',
+      accessor: 'groupName',
+      disableSortBy: true,
     },
     {
-      title: t('capabilities'),
+      Header: t('capabilities'),
       key: 'capabilities',
-      render: (row: GroupWithResources) => (
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<GroupWithResources>) => (
         <div>
-          {row.capabilities &&
-            row.capabilities.length &&
-            row.capabilities.map((capItem: CapShape) =>
+          {record.capabilities &&
+            record.capabilities.length &&
+            record.capabilities.map((capItem: CapShape) =>
               capItem.actions.map((action: string) => {
                 const capLabel = `${capItem.resource}:${action.toLowerCase()}`;
-                const key = `${row.groupId}${capLabel}`;
-                return <Tag key={key}>{capLabel}</Tag>;
+                const key = `${record.groupId}${capLabel}`;
+                return (
+                  <Chip
+                    type="default"
+                    size="x-small"
+                    key={key}
+                    label={capLabel}
+                    css={{ marginRight: '5px' }}
+                  />
+                );
               })
             )}
         </div>
@@ -112,13 +119,14 @@ const GroupsWithAccess = (props: GroupsWithAccessProps) => {
   );
 
   return (
-    <Table
-      style={{ marginTop: '20px' }}
-      columns={resourceColumns}
-      dataSource={dataSource}
-      rowKey="groupId"
-      getPopupContainer={getContainer}
-    />
+    <div className="resource-table">
+      <Table
+        css={{ marginTop: '20px' }}
+        columns={resourceColumns}
+        dataSource={dataSource}
+        rowKey={(d) => `${d['groupId']}`}
+      />
+    </div>
   );
 };
 

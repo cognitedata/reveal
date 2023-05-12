@@ -5,7 +5,6 @@ import {
   SetStateAction,
   useState,
 } from 'react';
-import Tag from 'antd/lib/tag';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   FieldLabel,
@@ -14,18 +13,14 @@ import {
 } from 'utils/styledComponents';
 import RawSelector from 'components/RawSelector';
 import { RawTable } from 'utils/types';
-import { getContainer } from 'utils/shared';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import Input from 'antd/lib/input';
-import Modal from 'antd/lib/modal';
-import { notification } from 'antd';
+
 import { useRawList } from 'actions';
 import { useQueryClient } from 'react-query';
-import Spin from 'antd/lib/spin';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';
+import { Modal, Input, Icon, Chip, Flex, toast } from '@cognite/cogs.js';
+import { Col, Row } from 'utils';
 
 interface RawSectionProps {
   selectedDb: string;
@@ -69,16 +64,14 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
           setNameField('');
           setCreateModal('');
           setCreateVisible(false);
-          notification.success({
-            message: t('raw-section-database-created', { name: res[0].name }),
-          });
+          toast.success(
+            t('raw-section-database-created', { name: res[0].name })
+          );
           setSelectedDb(nameField);
           invalidateList();
         })
         .catch((err) => {
-          notification.error({
-            message: err.message || t('raw-section-database-created-error'),
-          });
+          toast.error(err.message || t('raw-section-database-created-error'));
         });
     } else {
       sdk.raw
@@ -91,21 +84,17 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
             ...selectedTables,
             { databaseName: selectedDb, tableName: nameField },
           ]);
-          notification.success({
-            message: t('raw-section-table-created', { name: res[0].name }),
-          });
+          toast.success(t('raw-section-table-created', { name: res[0].name }));
           invalidateList();
         })
         .catch((err) => {
-          notification.error({
-            message: err.message || t('raw-section-table-created-error'),
-          });
+          toast.error(err.message || t('raw-section-table-created-error'));
         });
     }
   };
 
   if (isLoading) {
-    return <Spin />;
+    return <Icon size={24} type="Loader" />;
   }
 
   return (
@@ -115,13 +104,14 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
         visible={createVisible}
         onOk={() => createItem()}
         onCancel={() => setCreateVisible(false)}
-        getContainer={getContainer}
+        getContainer={document.getElementById('getDataInPageContainer')!}
       >
         <Row>
           <Col span={6}>{t('unique-name')}</Col>
           <Col span={16}>
             <Input
               autoFocus
+              fullWidth
               value={nameField}
               onChange={(e) => setNameField(e.currentTarget.value)}
               placeholder={t('raw-section-enter-database-name')}
@@ -136,8 +126,10 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
             {t('raw-section-insufficient-rights-p1')}
             <br /> {t('raw-section-insufficient-rights-p2')}
             <br />
-            <Tag>raw:read</Tag>
-            <Tag>raw:list</Tag>
+            <Flex gap={8}>
+              <Chip label="raw:read" hideTooltip size="x-small" />
+              <Chip label="raw:list" hideTooltip size="x-small" />
+            </Flex>
           </p>
         </BlockedInformationWrapper>
       ) : (

@@ -1,6 +1,6 @@
 import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
-import { Consumer } from '../../utils/types';
+import { CogsTableCellRenderer, Consumer } from '../../utils/types';
 
 const LinksUl = styled.ul`
   margin: 0;
@@ -17,25 +17,31 @@ export const useConsumerTableColumns = () => {
 
   const ConsumerTableColumns = [
     {
-      title: t('data-consumer_one'),
-      key: 'name',
-      render: (row: Consumer) => {
-        return <p>{row?.name ?? '--'}</p>;
+      Header: t('data-consumer_one'),
+      id: 'name',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Consumer>) => {
+        return <p>{record?.name ?? '--'}</p>;
       },
     },
     {
-      title: t('contact'),
-      key: 'contact',
-      render: (row: Consumer) => {
-        if (!(row.contact && row?.contact?.email)) {
+      Header: t('contact'),
+      id: 'contact',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Consumer>) => {
+        if (!(record.contact && record?.contact?.email)) {
           return null;
         }
-        const mailtoLink = `mailto:${row.contact.email}`;
+        const mailtoLink = `mailto:${record.contact.email}`;
         return (
           <>
-            {row.contact.email && (
+            {record.contact.email && (
               <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
-                {row.contact.email}
+                {record.contact.email}
               </a>
             )}
           </>
@@ -43,13 +49,16 @@ export const useConsumerTableColumns = () => {
       },
     },
     {
-      title: t('connected-links'),
-      key: 'externalLinks',
-      render: (row: Consumer) => {
+      Header: t('connected-links'),
+      id: 'externalLinks',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<Consumer>) => {
         return (
           <LinksUl>
-            {row.externalLinks &&
-              row.externalLinks.map(({ rel, href }) => {
+            {record.externalLinks &&
+              record.externalLinks.map(({ rel, href }) => {
                 if (!(rel && href)) {
                   return null;
                 }

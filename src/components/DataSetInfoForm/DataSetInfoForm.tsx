@@ -1,8 +1,4 @@
-import { ReactNode } from 'react';
-import Select from 'antd/lib/select';
-import Col from 'antd/lib/col';
 import theme from 'styles/theme';
-import Switch from 'antd/lib/switch';
 import {
   SectionTitle,
   TitleOrnament,
@@ -10,22 +6,44 @@ import {
   OptionWrapper,
   OptionTitle,
   OptionDescription,
-  GroupLabel,
   FieldLabel,
   RequiredFieldLabel,
 } from 'utils/styledComponents';
 import { Group } from '@cognite/sdk';
-import Tag from 'antd/lib/tag';
-import { getReadableCapabilities, getContainer } from 'utils/shared';
+import { getReadableCapabilities } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
-import Collapse from 'antd/lib/collapse';
 import { useCdfGroups, useLabelSuggestions } from 'actions';
-import Alert from 'antd/lib/alert';
 
 import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
+import { Col } from 'utils';
+import { Switch, Collapse, Chip, Infobox } from '@cognite/cogs.js';
+import CreatableSelect from 'react-select/creatable';
+import Select, { components, OptionProps } from 'react-select';
 
 const { Panel } = Collapse;
+
+const OwnerOption = (props: OptionProps<Group, true>) => {
+  return (
+    <components.Option {...props}>
+      <OptionWrapper>
+        <OptionTitle>{props.data.name}</OptionTitle>
+        <OptionDescription>
+          {props.data.capabilities &&
+            getReadableCapabilities(props.data.capabilities).map(
+              (capability: string) => (
+                <Chip
+                  label={capability}
+                  size="x-small"
+                  css={{ margin: '5px' }}
+                />
+              )
+            )}
+        </OptionDescription>
+      </OptionWrapper>
+    </components.Option>
+  );
+};
 
 interface DataSetInfoFormProps {
   dataSetName: string;
@@ -43,14 +61,6 @@ interface DataSetInfoFormProps {
   setOwners(value: Group[]): void;
 }
 
-const { Option } = Select;
-
-declare module 'antd/lib/select' {
-  export interface OptionProps {
-    label?: ReactNode;
-  }
-}
-
 const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
   const { t } = useTranslation();
   const { groups: groupsList, isLoading, error } = useCdfGroups();
@@ -66,6 +76,13 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
           maxLength: DESC_MAX_LENGTH,
         })
       : false;
+
+  const onLabelsSelectChange = (selectedOptions: string[]) => {
+    props.setSelectedLabels(selectedOptions);
+    if (selectedOptions.length) {
+      props.setChangesSaved(false);
+    }
+  };
 
   return (
     <Col span={24}>
@@ -101,41 +118,41 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       />
 
       <FieldLabel>{t('label_other')}</FieldLabel>
-      <Select
-        mode="tags"
-        style={{ width: '600px', background: theme.blandColor }}
-        value={props.selectedLabels}
-        onChange={(selection: any) => {
-          props.setSelectedLabels(selection);
-          if (selection) {
-            props.setChangesSaved(false);
-          }
-        }}
-        notFoundContent={t('dataset-info-form-enter-labels')}
+      <CreatableSelect
+        isMulti
+        css={{ width: '600px', background: theme.blandColor }}
+        menuPlacement="auto"
+        value={props.selectedLabels?.map((label) => ({ label, value: label }))}
+        onChange={(selection: any) =>
+          onLabelsSelectChange(selection.map((option: any) => option.label))
+        }
+        onCreateOption={(textFromInput: string) =>
+          onLabelsSelectChange([...(props.selectedLabels || []), textFromInput])
+        }
         placeholder={t('label_other')}
-        getPopupContainer={getContainer}
-      >
-        {Array.isArray(props.selectedLabels) &&
-          props.selectedLabels?.length &&
-          props.selectedLabels?.map((label: string) => (
-            <Option key={label} value={label}>
-              {label}
-            </Option>
-          ))}
-        {labelSuggestions
-          ?.filter(
-            (label) =>
-              !(
-                Array.isArray(props.selectedLabels) &&
-                props.selectedLabels?.includes(label)
+        isClearable
+        closeMenuOnSelect
+        noOptionsMessage={() => t('dataset-info-form-enter-labels')}
+        options={(props.selectedLabels || [])
+          ?.map((label) => ({
+            label,
+            value: label,
+          }))
+          .concat(
+            labelSuggestions
+              ?.filter(
+                (label) =>
+                  !(
+                    Array.isArray(props.selectedLabels) &&
+                    props.selectedLabels?.includes(label)
+                  )
               )
-          )
-          ?.map((suggestion: string) => (
-            <Option key={suggestion} value={suggestion}>
-              {suggestion}
-            </Option>
-          ))}
-      </Select>
+              .map((label) => ({
+                label,
+                value: label,
+              }))
+          )}
+      />
       <FieldLabel>
         <InfoTooltip
           title={t('write-protected')}
@@ -147,9 +164,9 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
       </FieldLabel>
       <Switch
         checked={props.writeProtected}
-        onChange={(val) => {
+        onChange={() => {
           props.setChangesSaved(false);
-          props.setWriteProtected(val);
+          props.setWriteProtected(!props.writeProtected);
         }}
       />
 
@@ -157,66 +174,32 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         <div>
           <FieldLabel>{t('dataset-info-form-owners')}</FieldLabel>
           {error ? (
-            <Alert
-              type="error"
-              message={`${t('fetch-cdf-groups-failed')} ${t(
-                'please-try-again'
-              )}`}
-            />
+            <Infobox type="danger">
+              {`${t('fetch-cdf-groups-failed')} ${t('please-try-again')}`}
+            </Infobox>
           ) : (
-            <Select<any>
-              mode="multiple"
-              style={{ width: '100%', background: theme.blandColor }}
-              loading={isLoading || !props.owners}
-              onChange={(selection: string[]) => {
-                if (groupsList && groupsList.length) {
-                  props.setChangesSaved(false);
-                  props.setOwners(
-                    groupsList.filter((group: any) =>
-                      selection.includes(String(group.id))
-                    )
-                  );
-                }
+            <Select<Group, true>
+              isMulti
+              components={{ Option: OwnerOption }}
+              getOptionLabel={(group) => group.name}
+              getOptionValue={(group) => String(group.id)}
+              options={groupsList || []}
+              css={{ maxWidth: '600px', background: theme.blandColor }}
+              isLoading={isLoading || !props.owners}
+              onChange={(options) => {
+                props.setChangesSaved(false);
+                props.setOwners([...options]);
               }}
-              value={props.owners.map((group) => String(group.id))}
-              optionLabelProp="label"
-              filterOption={(input: string, option: any) =>
-                option.props.label.props.children &&
-                !!option.props.label.props.children
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              getPopupContainer={getContainer}
-            >
-              {groupsList?.map((group: any) => (
-                <Select.Option
-                  value={String(group.id)}
-                  label={<GroupLabel>{group.name}</GroupLabel>}
-                  key={group.name}
-                >
-                  <OptionWrapper>
-                    <OptionTitle>{group.name}</OptionTitle>
-                    <OptionDescription>
-                      {group.capabilities &&
-                        getReadableCapabilities(group.capabilities).map(
-                          (cap: string) => (
-                            <Tag style={{ margin: '5px' }}>{cap}</Tag>
-                          )
-                        )}
-                    </OptionDescription>
-                  </OptionWrapper>
-                </Select.Option>
-              ))}
-            </Select>
+              value={props.owners}
+              placeholder=""
+              menuPosition="fixed"
+            />
           )}
         </div>
       )}
       <Collapse
-        bordered={false}
-        style={{
-          padding: '0px',
-          marginLeft: '-16px',
-          background: 'transparent',
+        ghost
+        css={{
           marginTop: '20px',
         }}
       >

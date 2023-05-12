@@ -1,5 +1,5 @@
-import Col from 'antd/lib/col';
 import { useTranslation } from 'common/i18n';
+import { Col } from 'utils';
 import {
   IconWrapper,
   SectionCard,
@@ -39,14 +39,16 @@ const CreationFlowSection = (props: CreationFlowSectionProps): JSX.Element => {
     }
   };
   return (
-    <SectionCard onClick={() => props.setSelection()}>
+    <SectionCard
+      onClick={() => props.setSelection()}
+      className="with-extra-padding"
+    >
       <SectionTitle>{props.title}</SectionTitle>
       <TitleOrnament />
       <Col span={24}>
-        <Col span={18}>
+        <Col span={18} className="status-table">
           <StatusTable
             pagination={false}
-            bordered
             columns={props.columns}
             dataSource={getDataFields()}
           />

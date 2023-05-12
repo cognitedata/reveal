@@ -1,5 +1,4 @@
-import { Flex, Icon } from '@cognite/cogs.js';
-import Popover from 'antd/lib/popover';
+import { Flex, Icon, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
 import { TransformationDetails } from '../../utils/types';
 
@@ -20,16 +19,12 @@ const HiddenTransformation = ({
   );
   return (
     <Flex alignItems="center" style={{ fontStyle: 'italic' }}>
-      <Popover
-        content={message}
-        overlayStyle={{ width: '300px' }}
-        placement="left"
-      >
+      <Tooltip wrapped content={message}>
         <Icon
           type="WarningTriangle"
-          css={{ cursor: 'help', marginRight: '4px' }}
+          css={{ cursor: 'help', marginRight: '4px', marginTop: '6px' }}
         />
-      </Popover>
+      </Tooltip>
       {transformation?.name}
     </Flex>
   );

@@ -1,9 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { useState } from 'react';
 import styled from 'styled-components';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import Card from 'antd/lib/card';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { Title, Flex, Body, Button, Icon, Textarea } from '@cognite/cogs.js';
 import {
@@ -14,6 +11,9 @@ import {
   isEmptyDataset,
   EXPLORE_DATA_CATALOG,
   trackUsage,
+  Col,
+  Row,
+  Card,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
@@ -205,7 +205,7 @@ const DatasetOverview = ({
                   </Button>
                 </StyledActionTitle>
                 <Divider />
-                <Row style={{ padding: 12 }}>
+                <Row css={{ padding: 12 }}>
                   <Col span={24}>
                     {isDatasetResourceLoading() ? (
                       <Icon type="Loader" />
@@ -249,7 +249,7 @@ const DatasetOverview = ({
                             resource as keyof typeof resourceAggregates
                           ];
                         return (
-                          <Row style={{ padding: 12 }} key={resource}>
+                          <Row css={{ padding: 12 }} key={resource}>
                             <Col span={7}>
                               <Flex
                                 direction="row"

@@ -1,4 +1,3 @@
-import Typography from 'antd/lib/typography';
 import { Body, Flex, Icon, Chip } from '@cognite/cogs.js';
 import { CopyButton } from '@cognite/cdf-utilities';
 import {
@@ -65,16 +64,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             {t('description')}
           </Body>
         }
-        value={
-          <Body level={1}>
-            <Typography.Paragraph
-              ellipsis={{ rows: 2, expandable: true, symbol: 'view more' }}
-              style={{ margin: 0 }}
-            >
-              {description}
-            </Typography.Paragraph>
-          </Body>
-        }
+        value={<TruncatedText level={1}>{description}</TruncatedText>}
       />
       <DatasetProperty
         label={
@@ -261,6 +251,13 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
 const HelpIcon = styled(Icon)`
   margin-top: 3px;
+`;
+
+const TruncatedText = styled(Body)`
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 export default BasicInfoCard;

@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { RawTable } from 'utils/types';
-import Table from 'antd/lib/table';
-import Spin from 'antd/lib/spin';
-import Typography from 'antd/lib/typography';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Flex } from '@cognite/cogs.js';
-import { getJetfireUrl, getContainer } from 'utils/shared';
+import { Flex, Icon, Table } from '@cognite/cogs.js';
+import { getJetfireUrl } from 'utils/shared';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import {
   LineageSubTitle,
@@ -15,6 +12,7 @@ import {
   SectionLine,
   LineageSection,
   ContentWrapper,
+  ExpandableParagraph,
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -47,6 +45,8 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
+  const [externalTransformationExpanded, setExternalTransformationExpanded] =
+    useState<boolean>(false);
 
   const { isEnabled: isFlagConsumers } = useFlag(
     'EXTPIPES_CONSUMERS_allowlist',
@@ -71,9 +71,23 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
         return (
           <span>
             <strong>{t('lineage-documentation')}</strong>
-            <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
+            <ExpandableParagraph
+              className={externalTransformationExpanded ? 'expanded' : ''}
+            >
+              {!externalTransformationExpanded && (
+                <a
+                  href="#"
+                  className="expand-tag"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setExternalTransformationExpanded(true);
+                  }}
+                >
+                  {t('expand-paragraph-button')}
+                </a>
+              )}
               {externalTransformation[0].details}
-            </Typography.Paragraph>
+            </ExpandableParagraph>
           </span>
         );
       }
@@ -208,9 +222,8 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
                       onDeleteTransformationClick
                     )}
                     dataSource={transformationsData}
-                    pagination={{ pageSize: 5 }}
-                    rowKey="id"
-                    getPopupContainer={getContainer}
+                    pageSize={5}
+                    rowKey={(d: any) => `${d.id}`}
                   />
                 )}
                 {getExternalTransformations()}
@@ -230,7 +243,9 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
 
   return (
     <ContentWrapper>
-      <Spin />
+      <div className="loader-wrapper">
+        <Icon type="Loader" size={32} />
+      </div>
     </ContentWrapper>
   );
 };

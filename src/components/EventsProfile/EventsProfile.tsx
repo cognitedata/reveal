@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DrawerHeader, ItemLabel } from 'utils/styledComponents';
+import { ItemLabel } from 'utils/styledComponents';
 import Drawer from 'components/Drawer';
-import theme from 'styles/theme';
 import sdk from '@cognite/cdf-sdk-singleton';
 import Table from 'antd/lib/table';
 import handleError from 'utils/handleError';
@@ -77,12 +76,6 @@ const EventsProfile = (props: EventsProfileProps) => {
     <Drawer
       okHidden
       cancelHidden
-      headerStyle={{
-        background: theme.primaryBackground,
-        color: 'white',
-        fontSize: '16px',
-      }}
-      title={<DrawerHeader>{t('events-profile')}</DrawerHeader>}
       width={700}
       visible={props.visible}
       onClose={() => props.closeDrawer()}

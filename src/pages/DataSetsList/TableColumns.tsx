@@ -2,7 +2,12 @@ import styled from 'styled-components';
 import { Body, Flex, Icon, Chip, Tooltip, Colors } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import { getItemFromStorage } from 'utils/localStorage';
-import { DataSet, DataSetV3, Extpipe } from 'utils/types';
+import {
+  CogsTableCellRenderer,
+  DataSet,
+  DataSetV3,
+  Extpipe,
+} from 'utils/types';
 import isArray from 'lodash/isArray';
 import { useTranslation } from 'common/i18n';
 import DataSetName from 'components/data-sets-list/data-set-name';
@@ -170,11 +175,14 @@ export const useTableColumns = () => {
     isExtpipesFetched?: boolean
   ) => [
     {
-      title: t('name'),
+      Header: t('name'),
       dataIndex: 'name',
-      key: 'dataset-name-column',
+      id: 'dataset-name-column',
+      accessor: 'name',
       sorter: (a: DataSetRow, b: DataSetRow) => stringCompare(a.name, b.name),
-      render: (_value: string, record: DataSetRow) => (
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<DataSetRow>) => (
         <DataSetName
           id={record.id}
           name={record.name}
@@ -185,19 +193,21 @@ export const useTableColumns = () => {
       defaultSortOrder: getItemFromStorage('dataset-name-column') || undefined,
     },
     {
-      title: t('data-overview'),
-      key: 'data-overview',
+      Header: t('data-overview'),
+      id: 'data-overview',
       dataIndex: 'id',
-      width: '200px',
-      render: (value: number) => <ResourceCountColumn dataSetId={value} />,
+      width: 200,
+      accessor: 'id',
+      disableSortBy: true,
+      Cell: ({ value }: CogsTableCellRenderer<DataSetRow>) => (
+        <ResourceCountColumn dataSetId={value as number} />
+      ),
     },
     {
-      title: t('description'),
+      Header: t('description'),
       dataIndex: 'description',
-      key: 'dataset-description-column',
-      render: (_value: string, record: DataSetRow) => (
-        <span>{record.description}</span>
-      ),
+      accessor: 'description',
+      id: 'dataset-description-column',
       sorter: (a: DataSetRow, b: DataSetRow) =>
         stringCompare(a.description, b.description),
 
@@ -207,13 +217,18 @@ export const useTableColumns = () => {
     },
     ...(isExtpipeFlag ? [extpipeTableColumn(isExtpipesFetched)] : []),
     {
-      title: <div style={{ lineHeight: '32px' }}>{t('label_other')}</div>,
-      dataIndex: 'labels',
-      key: 'labels',
-      render: (field: []) => (
+      Header: <div style={{ lineHeight: '32px' }}>{t('label_other')}</div>,
+      accessor: 'labels',
+      id: 'labels',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<DataSetRow>) => (
         <Flex gap={8} wrap="wrap">
-          {field?.length ? (
-            field.map((label: string) => <Chip size="medium" label={label} />)
+          {record.labels?.length ? (
+            record.labels.map((label: string) => (
+              <Chip key={label} type="neutral" size="medium" label={label} />
+            ))
           ) : (
             <></>
           )}
@@ -221,20 +236,28 @@ export const useTableColumns = () => {
       ),
     },
     {
-      title: t('governance-status'),
-      key: 'quality',
-      render: (row: DataSetRow) => {
-        return <GovernanceStatus isGoverned={row.quality} />;
-      },
+      Header: t('governance-status'),
+      accessor: 'quality',
+      id: 'quality',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<DataSetRow>) => (
+        <GovernanceStatus isGoverned={record.quality} />
+      ),
     },
   ];
 
   const extpipeTableColumn = (isExtpipesFetched?: boolean) => {
     return {
-      title: t('extraction-pipelines'),
-      dataIndex: 'extpipes',
+      Header: t('extraction-pipelines'),
+      accessor: 'extpipes',
       key: 'extpipes',
-      render: (_value: string, record: DataSetRow) => {
+      id: 'extpipes',
+      disableSortBy: true,
+      Cell: ({
+        row: { original: record },
+      }: CogsTableCellRenderer<DataSetRow>) => {
         if (!isExtpipesFetched) {
           return <Icon type="Loader" />;
         }

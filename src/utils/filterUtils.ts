@@ -1,8 +1,8 @@
-import { notification } from 'antd';
 import isString from 'lodash/isString';
 import { DataSetWithExtpipes } from 'actions';
 import { useTranslation } from 'common/i18n';
 import { GovernanceStatus } from 'components/table-filters';
+import { toast } from '@cognite/cogs.js';
 
 export const useHandleFilters = () => {
   const { t } = useTranslation();
@@ -65,7 +65,7 @@ export const useHandleFilters = () => {
               ))
         );
       } catch (e) {
-        notification.error({ message: t('invalid-search-value') });
+        toast.error(t('invalid-search-value'));
         return dataSetsList;
       }
     }

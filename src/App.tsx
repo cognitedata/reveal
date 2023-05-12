@@ -45,7 +45,7 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <ToastContainer />
+            <ToastContainer style={{ zIndex: 99999 }} />
             <SubAppWrapper title="Data Catalog">
               <AuthContainer>
                 <DataSetsContextProvider>

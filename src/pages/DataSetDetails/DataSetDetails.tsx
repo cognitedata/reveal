@@ -5,18 +5,15 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import copy from 'copy-to-clipboard';
 
-import { notification } from 'antd';
-import Spin from 'antd/lib/spin';
-
-import Tabs from 'antd/lib/tabs';
 import {
-  Button,
   Flex,
   Icon,
   Chip,
   Title,
   Tooltip,
   Menu,
+  Tabs,
+  toast,
 } from '@cognite/cogs.js';
 
 import DataSetEditor from 'pages/DataSetEditor';
@@ -31,10 +28,10 @@ import { useTranslation } from 'common/i18n';
 import {
   DetailsPane,
   Divider,
-  getContainer,
   getGovernedStatus,
   trackUsage,
   DATASET_HELP_DOC,
+  LoaderWrapper,
 } from 'utils';
 
 import {
@@ -43,12 +40,10 @@ import {
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
-import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-
-const { TabPane } = Tabs;
+import useDiscardChangesToast from 'hooks/useDiscardChangesToast';
 
 const tabTypes = [
   'overview',
@@ -102,50 +97,30 @@ const DataSetDetails = (): JSX.Element => {
     trackUsage({ e: 'data.sets.detail.copy.id.click', dataSetId: copiedText });
     if (copiedText) {
       copy(copiedText.toString());
-      notification.success({
-        message: t('copy-notification'),
-      });
+      toast.success(t('copy-notification'));
     }
   };
 
-  const discardChangesButton = (
-    <div style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}>
-      <Button
-        type="destructive"
-        size="small"
-        onClick={() => {
-          setEditDrawerVisible(false);
-          setChangesSaved(true);
-          notification.close('navigateAway');
-        }}
-      >
-        {t('discard-changes')}
-      </Button>
-    </div>
-  );
+  const onDiscardClick = () => {
+    setEditDrawerVisible(false);
+    setChangesSaved(true);
+    setSelectedDataSet(undefined);
+  };
+
+  const openDiscardChangesToast = useDiscardChangesToast({ onDiscardClick });
 
   const onEditDrawerClose = () => {
     if (changesSaved) {
       setEditDrawerVisible(false);
+      setSelectedDataSet(undefined);
     } else {
-      notification.warn({
-        message: 'Warning',
-        description: (
-          <div>
-            {t(
-              'you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away'
-            )}
-            {discardChangesButton}
-          </div>
-        ),
-        key: 'navigateAway',
-        getContainer,
-      });
+      openDiscardChangesToast();
     }
   };
 
   const handleModalClose = () => {
     setEditDrawerVisible(false);
+    setSelectedDataSet(undefined);
   };
 
   const { consoleLabels } = dataSet?.metadata || {
@@ -184,12 +159,14 @@ const DataSetDetails = (): JSX.Element => {
 
   const renderLoadingError = (isLoading: boolean) => {
     if (isLoading) {
-      return <Spin />;
+      return (
+        <LoaderWrapper>
+          <Icon size={32} type="Loader" />
+        </LoaderWrapper>
+      );
     }
     return <ErrorMessage error={error} />;
   };
-
-  // const { isEnabled } = useFlag('DATA_EXPLORATION_filters');
 
   const [selectedTab, setSelectedTab] = useState(
     searchParams.get('activeTab') || 'overview'
@@ -313,47 +290,35 @@ const DataSetDetails = (): JSX.Element => {
           extraContent={
             <DetailsPane>
               <Tabs
-                animated={false}
                 defaultActiveKey="overview"
                 size="large"
                 activeKey={activeTab}
-                onChange={activeTabChangeHandler}
+                onTabClick={activeTabChangeHandler}
               >
-                <TabPane
-                  tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
-                  key="overview"
-                  style={{ height: '100%' }}
+                <Tabs.Tab
+                  tabKey="overview"
+                  label={t('tab-overview')}
+                  iconLeft="Info"
                 />
-                <TabPane
-                  tab={
-                    <TabTitle
-                      title={t('tab-explore-data')}
-                      iconType="DataSource"
-                    />
-                  }
-                  key="data"
+                <Tabs.Tab
+                  tabKey="data"
+                  label={t('tab-explore-data')}
+                  iconLeft="DataSource"
                 />
-                <TabPane
-                  tab={<TabTitle title={t('tab-lineage')} iconType="Lineage" />}
-                  key="lineage"
+                <Tabs.Tab
+                  tabKey="lineage"
+                  label={t('tab-lineage')}
+                  iconLeft="Lineage"
                 />
-                <TabPane
-                  tab={
-                    <TabTitle
-                      title={t('tab-documentation')}
-                      iconType="Documentation"
-                    />
-                  }
-                  key="documentation"
+                <Tabs.Tab
+                  tabKey="documentation"
+                  label={t('tab-documentation')}
+                  iconLeft="Documentation"
                 />
-                <TabPane
-                  tab={
-                    <TabTitle
-                      title={t('tab-access-control')}
-                      iconType="Users"
-                    />
-                  }
-                  key="access-control"
+                <Tabs.Tab
+                  tabKey="access-control"
+                  label={t('tab-access-control')}
+                  iconLeft="Users"
                 />
               </Tabs>
             </DetailsPane>

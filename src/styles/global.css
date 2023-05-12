@@ -55,3 +55,112 @@ a:hover {
 .clickableBox:hover {
   box-shadow: 0 2px 7px grey;
 }
+
+/* ANTD STYLE OVERRIDES */
+
+/* Loader */
+.loader-wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+
+}
+
+/* TABLE COMPONENTS */
+/* This is a temporary solution while we move the app into fusion */
+/* I had to go this route, Cogs table does use the width property and I can not pass CSS class either */
+
+.data-sets-list-table .cogs-table tr > th:first-of-type, .cogs-table tr > td:first-of-type {
+  width: auto;
+}
+
+.data-sets-list-table .cogs-table tr > th:last-of-type, .cogs-table tr > td:last-of-type {
+  width: 56px;
+}
+
+.resource-table .cogs-table {
+  table-layout: fixed;
+}
+
+/* timeseries, sequence tables description column */
+.dataset-sequence-table .cogs-table th:nth-child(2),
+.dataset-sequence-table .cogs-table td:nth-child(2),
+.dataset-timeseries-table .cogs-table th:nth-child(1),
+.dataset-timeseries-table .cogs-table td:nth-child(1),
+.dataset-timeseries-table .cogs-table th:nth-child(2),
+.dataset-timeseries-table .cogs-table td:nth-child(2) {
+  width: 25%;
+}
+
+
+/* files table name column */
+.dataset-files-table .cogs-table th:nth-child(1),
+.dataset-files-table .cogs-table td:nth-child(1) {
+  width: 20%;
+}
+
+
+/* status table */
+.status-table .cogs-table {
+  table-layout: fixed;
+  border: 1px solid var(--cogs-border-default);
+}
+.status-table tr, 
+.status-table tr td, 
+.status-table tr th, 
+.status-table tr:hover {
+  border-bottom: 1px solid var(--cogs-border-default);
+}
+.status-table tr th:first-child,
+.status-table tr td:first-child {
+  width: 250px;
+  border-right: 1px solid var(--cogs-border-default);
+  border-bottom: 1px solid var(--cogs-border-default);
+}
+
+/* Transformations table */
+.transformations-table .cogs-table tr > th:first-of-type, 
+.transformations-table .cogs-table tr > td:first-of-type {
+  width: 32px;
+}
+
+/* DRAWER */
+.cogs-drawer .cogs-drawer-content {
+  padding: 0;
+}
+
+.cogs-drawer .cogs-drawer-header {
+  border-bottom: 1px solid var(--cogs-border-default);
+}
+.cogs-drawer .cogs-drawer-header .cogs-drawer-title {
+  font-size: 16px;
+}
+
+.cogs-drawer.primary-sidebar .cogs-drawer-header {
+  background: #4a67fb;
+}
+
+
+.cogs-drawer.primary-sidebar .cogs-drawer-header .cogs-drawer-header {
+  border-bottom: 0;
+}
+.cogs-drawer.primary-sidebar .cogs-drawer-header .cogs-drawer-title {
+  color: white;
+  background: #4a67fb;
+  
+}
+
+
+/* governance-status-buttons */
+.governance-status-buttons .cogs-button {
+  width: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 0;
+  border: 1px solid var(--cogs-border-default);
+}

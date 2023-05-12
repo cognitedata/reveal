@@ -10,7 +10,6 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query';
-import { notification, Typography } from 'antd';
 import {
   getAllSetOwners,
   parseDataSet,
@@ -33,6 +32,8 @@ import {
   getListExtpipesKey,
 } from './keys';
 import { useTranslation } from 'common/i18n';
+import { toast } from '@cognite/cogs.js';
+import { StyledPre } from 'utils';
 
 export const invalidateDataSetQueries = (
   client: QueryClient,
@@ -123,26 +124,23 @@ export const useUpdateDataSetMutation = () => {
     },
     {
       onSuccess: (_, dataset: DataSet) => {
-        notification.success({
-          message: (
-            <p>{t('data-set-is-updated', { datasetName: dataset?.name })}</p>
-          ),
-        });
+        toast.success(
+          <span>
+            {t('data-set-is-updated', { datasetName: dataset?.name })}
+          </span>
+        );
       },
       onError: (error: any, dataset: DataSet) => {
-        notification.error({
-          message: (
-            <>
-              <p>
-                {t('data-set-is-not-updated', { datasetName: dataset?.name })}
-              </p>
-              <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
-                <pre>{JSON.stringify(error.errors, null, 2)}`</pre>
-              </Typography.Paragraph>
-            </>
-          ),
-          key: 'update-data-set-mutation',
-        });
+        toast.error(
+          <div>
+            <p>
+              {t('data-set-is-not-updated', { datasetName: dataset?.name })}
+            </p>
+            <div>
+              <StyledPre>{JSON.stringify(error.errors, null, 2)}</StyledPre>
+            </div>
+          </div>
+        );
       },
       onSettled: (_, __, dataset: DataSet) => {
         invalidateDataSetQueries(client, dataset.id);

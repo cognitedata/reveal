@@ -1,17 +1,16 @@
 import styled from 'styled-components';
 import theme from 'styles/theme';
-import Input from 'antd/lib/input';
-import Card from 'antd/lib/card';
-import Table from 'antd/lib/table';
-import { Button, Colors, Input as CogsInput } from '@cognite/cogs.js';
-import Tag from 'antd/lib/tag';
-import Select from 'antd/lib/select';
-import Menu from 'antd/lib/menu';
 
-import Row from 'antd/lib/row';
+import {
+  Button,
+  Colors,
+  Input as CogsInput,
+  Table,
+  Menu,
+} from '@cognite/cogs.js';
+
 import zIndex from 'utils/zIndex';
-
-const { Search } = Input;
+import { Card, Row } from './antdStyledComponents';
 
 export const InputField = styled(CogsInput)`
   width: 600px;
@@ -39,6 +38,10 @@ export const SectionCard = styled(Card)`
     transform: scale(1.01);
     box-shadow: 0 2px 7px grey;
   }
+
+  &.with-extra-padding {
+    padding: 34px;
+  }
 `;
 
 export const IconWrapper = styled.div`
@@ -49,16 +52,18 @@ export const StatusTable = styled(Table)`
   border: 2px solid ${theme.disabledColor};
   box-sizing: border-box;
   border-radius: 8px;
+  table-layout: fixed;
 `;
 
 export const ChangesSavedWrapper = styled.div`
   margin-bottom: 10px;
-  text-align: right;
   border-radius: 4px;
   color: white;
-  display: inline-block;
+  display: flex;
+  gap: 6px;
+  align-items: center;
   margin-right: 20px;
-  padding: 3px;
+  padding: 3px 8px;
   position: absolute;
   bottom: 0;
   text-align: center;
@@ -155,30 +160,6 @@ export const LabelOrnament = styled.div`
   margin-bottom: 20px;
 `;
 
-export const ValueTag = styled(Tag)`
-  background: #edf0ff;
-  border: 0px;
-  color: #4a67fb;
-  margin: 4px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 17px;
-  padding: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-`;
-
-export const EmptyValueTag = styled(ValueTag)`
-  background: #bfbfbf;
-  color: #595959;
-`;
-
-export const StyledSelect = styled(Select)`
-  background: #f5f5f5;
-  border-radius: 4px;
-  width: 90%;
-`;
-
 export const NoDataText = styled.p`
   font-style: italic;
 `;
@@ -196,13 +177,6 @@ export const LineageSubTitle = styled.p`
   align-items: center;
 `;
 
-export const LineageTag = styled(Tag)`
-  background: #f5f5f5;
-  border: 1px solid #dfdfdf;
-  box-sizing: border-box;
-  margin: 5px;
-`;
-
 export const ListBox = styled.div`
   border: 2px solid #d9d9d9;
   box-sizing: border-box;
@@ -216,7 +190,7 @@ export const SearchWrapper = styled.div`
   background: #f5f5f5;
 `;
 
-export const SearchField = styled(Search)`
+export const SearchField = styled(CogsInput).attrs({ type: 'search' })`
   border: 2px solid #e8e8e8;
   box-sizing: border-box;
 `;
@@ -251,9 +225,10 @@ export const DetailsPane = styled.div`
   height: 100%;
   display: inline-block;
   width: 100%;
+  margin-bottom: -4px;
 
-  .ant-card-body {
-    padding: 0 !important;
+  .cogs-tabs__list__tab {
+    padding-bottom: 17px !important;
   }
 
   .ant-tabs-nav::before {
@@ -269,26 +244,6 @@ export const PaneTitle = styled.h4`
 
 export const ItemValue = styled.div`
   font-size: 14px;
-`;
-
-export const LabelTag = styled(Tag)`
-  font-size: 12px;
-  border: 1px solid #4a67fb;
-  box-sizing: border-box;
-  border-radius: 20px;
-  color: #4a67fb;
-  background: white;
-  margin: 4px;
-`;
-
-export const LabelTagGrey = styled(Tag)`
-  font-size: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-sizing: border-box;
-  border-radius: 20px;
-  color: #595959;
-  background: rgba(0, 0, 0, 0.05);
-  margin: 4px;
 `;
 
 export const SelectorWrapper = styled.div`
@@ -362,10 +317,6 @@ export const OptionDescription = styled.div`
   white-space: normal;
 `;
 
-export const GroupLabel = styled.span`
-  font-size: 14px;
-`;
-
 export const TooltipLink = styled.a`
   font-weight: bold;
   text-decoration: underline;
@@ -430,6 +381,12 @@ export const SectionLine = styled.div`
   border: 6px solid rgba(83, 88, 127, 0.16);
 `;
 
+export const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+`;
+
 export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
   padding: 24px;
   min-height: 300px;
@@ -442,4 +399,29 @@ export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
   .margin-right-bottom {
     margin: 0 12px 12px 0;
   }
+`;
+
+export const ExpandableParagraph = styled.p`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  .expand-tag {
+    display: block;
+    float: right;
+  }
+
+  &.expanded {
+    overflow: visible;
+    white-space: normal;
+  }
+`;
+
+export const StyledPre = styled.pre`
+  padding: 6px 8px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: ${theme.backgroundColor};
+  border: 1px solid ${theme.borderColor};
+  border-radius: 3px;
 `;

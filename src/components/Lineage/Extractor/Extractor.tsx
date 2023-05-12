@@ -1,10 +1,7 @@
 import { useTranslation } from 'common/i18n';
 import { FunctionComponent, PropsWithChildren } from 'react';
-import {
-  LineageTag,
-  NoDataText,
-  NoStyleList,
-} from '../../../utils/styledComponents';
+import { NoDataText, NoStyleList } from '../../../utils/styledComponents';
+import { Chip } from '@cognite/cogs.js';
 
 export interface ExtractorProps {
   extractorAccounts: string[];
@@ -19,7 +16,7 @@ export const Extractor: FunctionComponent<ExtractorProps> = ({
       {extractorAccounts && extractorAccounts.length ? (
         extractorAccounts.map((account: any) => (
           <li key={account}>
-            <LineageTag>{account}</LineageTag>
+            <Chip size="x-small" hideTooltip label={account} />
           </li>
         ))
       ) : (
