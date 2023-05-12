@@ -693,7 +693,7 @@ export class DefaultCameraManager implements CameraManager {
 // @public (undocumented)
 export type DefaultMetadataType = {
     text?: string;
-    [key: string]: any;
+    [key: string]: string | undefined;
 };
 
 // @public
@@ -1381,7 +1381,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters);
     clear(): void;
     get collections(): OverlayCollection<MetadataType>[];
-    createOverlayCollection(overlays: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType>;
+    createOverlayCollection(overlays?: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType>;
     // (undocumented)
     dispose(): void;
     // (undocumented)
