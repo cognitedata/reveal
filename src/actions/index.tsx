@@ -34,6 +34,8 @@ import {
 import { useTranslation } from 'common/i18n';
 import { toast } from '@cognite/cogs.js';
 import { StyledPre } from 'utils';
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { useParams } from 'react-router-dom';
 
 export const invalidateDataSetQueries = (
   client: QueryClient,
@@ -63,23 +65,32 @@ export const onError = (error: any) => {
 /* MUTATIONS */
 export const useCreateDataSetMutation = () => {
   const client = useQueryClient();
+  const { appPath } = useParams<{ appPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
 
   const {
     mutate: createDataSet,
-    data: createdDataSetId,
+    data,
     ...rest
   } = useMutation(
     'data-set-creation',
     async (dataset: CreationDataSet) => {
       const res = await sdk.datasets.create([stringifyMetaData(dataset)]);
-      return res[0].id as number;
+      return res[0];
     },
     {
-      onSuccess: () => invalidateDataSetQueries(client),
+      onSuccess: (dataset) => {
+        userHistoryService.logNewResourceEdit({
+          application: appPath!,
+          name: dataset.name ?? '',
+          path: createLink(`/${appPath}/data-sets/${dataset.id}`),
+        });
+        invalidateDataSetQueries(client);
+      },
       onError,
     }
   );
-  return { createDataSet, createdDataSetId, ...rest };
+  return { createDataSet, createdDataSetId: data?.id, ...rest };
 };
 
 export const useUpdateDataSetOwners = () => {
@@ -101,6 +112,8 @@ export const useUpdateDataSetOwners = () => {
 export const useUpdateDataSetMutation = () => {
   const { t } = useTranslation();
   const client = useQueryClient();
+  const { appPath } = useParams<{ appPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
   const { mutate: updateDataSet, ...rest } = useMutation(
     'update-dataset',
     async (dataset: DataSet) => {
@@ -124,6 +137,11 @@ export const useUpdateDataSetMutation = () => {
     },
     {
       onSuccess: (_, dataset: DataSet) => {
+        userHistoryService.logNewResourceEdit({
+          application: appPath!,
+          name: dataset.name,
+          path: createLink(`/${appPath}/data-sets/${dataset.id}`),
+        });
         toast.success(
           <span>
             {t('data-set-is-updated', { datasetName: dataset?.name })}
