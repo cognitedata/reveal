@@ -7,11 +7,11 @@ import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 import { EditSourceDetailsModal } from 'components/edit-source-details-modal/EditSourceDetailsModal';
 import DeleteSourceModal from 'components/delete-source-modal/DeleteSourceModal';
 
-type TopicFilterProps = {
+type SourceOptionProps = {
   source: MQTTSourceWithJobMetrics;
 };
 
-export const SourceOptions = ({ source }: TopicFilterProps): JSX.Element => {
+export const SourceOptions = ({ source }: SourceOptionProps): JSX.Element => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const { t } = useTranslation();
