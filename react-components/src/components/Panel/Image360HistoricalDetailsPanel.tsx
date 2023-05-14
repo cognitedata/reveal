@@ -8,11 +8,20 @@ import styled from 'styled-components';
 
 export interface Image360HistoricalDetailsPanelProps {
   revisionCount?: number;
-  onDetailsClick?: () => void;
+  revisionDetailsMode?: boolean;
+  setRevisionDetailsMode?: (detailed: boolean) => void;
 }
 
-export const Image360HistoricalDetailsPanel = ({revisionCount, onDetailsClick}: Image360HistoricalDetailsPanelProps) => {
+export const Image360HistoricalDetailsPanel = ({
+  revisionCount,
+  revisionDetailsMode,
+  setRevisionDetailsMode
+}: Image360HistoricalDetailsPanelProps) => {
   const count = revisionCount?.toString();
+
+  const onDetailsClick = () => {
+    setRevisionDetailsMode!(!revisionDetailsMode);
+  };
 
   return (
     <Tooltip content="360 Image historical details">

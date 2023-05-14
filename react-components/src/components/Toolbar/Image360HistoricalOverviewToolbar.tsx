@@ -3,13 +3,16 @@
  */
 
 import { Detail, Flex } from '@cognite/cogs.js';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
+import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 
 export interface Image360RevisionDetails{
-  revisionDate?: string;
-  revisionImageUrl?: string;
+  date?: string;
+  imageUrl?: string;
+  index?: number;
+  image360Entity?: Image360;
 };
 
 export interface Image360HistoricalOverviewToolbarProps{
@@ -17,28 +20,49 @@ export interface Image360HistoricalOverviewToolbarProps{
   stationName?: string;
   collectionId?: string;
   revisionCollection?: Image360RevisionDetails[];
+  viewer: Cognite3DViewer;
 };
 
-export const Image360HistoricalOverviewToolbar = ({stationId, stationName, collectionId, revisionCollection}: Image360HistoricalOverviewToolbarProps) => {
+export const Image360HistoricalOverviewToolbar = ({
+  stationId,
+  stationName,
+  collectionId,
+  revisionCollection,
+  viewer
+}: Image360HistoricalOverviewToolbarProps) => {
+  const [activeRevision, setActiveRevision] = useState<number | null>(null);
+
   return(
     <OverviewContainer>
-
       <StyledSubFlex direction='column'>
         <StyledFlex>{stationName}</StyledFlex>
         <StyledDetail>Station: {stationId}</StyledDetail>
         <StyledDetail>Collection: {collectionId}</StyledDetail>
       </StyledSubFlex>
 
-    <StyledLayoutGrid>
-        { revisionCollection?.map((revisionDetails) => (
-          <RevisionItem onClick={()=>{alert(revisionDetails.revisionDate + ' is selected')}}>
-            <Thumbnail imageUrl={revisionDetails.revisionImageUrl} isLoading={false}/>
-            <Detail>{revisionDetails.revisionDate}</Detail>
+      <StyledLayoutGrid>
+        { revisionCollection?.map((revisionDetails, index) => (
+          <RevisionItem
+            key={index}
+            isActive={activeRevision === index}
+            onClick={ () => {
+              if(viewer && revisionDetails.image360Entity) {
+                setActiveRevision(index)
+                const revisions = revisionDetails.image360Entity.getRevisions();
+                const revisionIndex = revisionDetails.index!;
+                if (revisionIndex >= 0 && revisionIndex < revisions.length) {
+                  viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
+                }
+              }
+              }
+            }
+          >
+            <Thumbnail imageUrl={revisionDetails.imageUrl} isLoading={false}/>
+            <Detail>{revisionDetails.date}</Detail>
           </RevisionItem>
         ))
         }
-    </StyledLayoutGrid>
-
+      </StyledLayoutGrid>
     </OverviewContainer>
   )
 };
@@ -75,7 +99,7 @@ const StyledSubFlex = styled(Flex)`
 
 const OverviewContainer = styled.div`
   width: 100%;
-  height: 146px;
+  height: 136px;
   display: flex;
   flex-direction: column;
   padding: 16px 16px 8px 16px;
@@ -84,7 +108,7 @@ const OverviewContainer = styled.div`
   height: 146px;
 `;
 
-const RevisionItem = styled.div`
+const RevisionItem = styled.div<{ isActive: boolean }>`
   width: 160px;
   height: 90px;
   flex-direction: column;
@@ -96,12 +120,19 @@ const RevisionItem = styled.div`
   order: 0;
   flex-grow: 0;
   flex-basis: 90%;
+
+  ${({ isActive }) =>
+    isActive &&
+    `
+    border: 4px solid #4A67FB;
+  `}
 `;
 
-export const StyledLayoutGrid = styled.div`
+const StyledLayoutGrid = styled.div`
   position: absolute;
   width: 70%;
-  right: 40px;
+  height: 112px;
+  right: 20px;
   display: grid;
   align-items: center;
   grid-auto-flow: column;
