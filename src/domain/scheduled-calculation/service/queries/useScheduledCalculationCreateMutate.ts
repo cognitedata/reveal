@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import { useCreateSessionNonce, SessionAPIResponse } from 'domain/chart';
@@ -25,6 +25,7 @@ const PERIOD_MULTIPLIER: Record<string, number> = {
 
 export const useScheduledCalculationCreateMutate = () => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
   const { mutateAsync: createNonce } = useCreateSessionNonce();
   const { mutateAsync: createTimeseries } = useTimeseriesCreateMutate();
 
@@ -37,9 +38,11 @@ export const useScheduledCalculationCreateMutate = () => {
 
       return createTimeseries([
         {
-          name: `ScheduledCalculation: ${calculation.name}`,
+          name: calculation.name,
           externalId: `${adaptedNameForExternalId}_${now}_TS`,
-          unit: calculation.unit.value,
+          unit: calculation.unit?.value,
+          description: calculation.description,
+          metadata: { _auto_generated_source_: '__scheduled_calculation__' },
         },
       ])
         .catch(() => {
@@ -101,6 +104,11 @@ export const useScheduledCalculationCreateMutate = () => {
         .then(({ data }) => {
           return data.items?.[0];
         });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['scheduled-calculations']);
+      },
     }
   );
 };

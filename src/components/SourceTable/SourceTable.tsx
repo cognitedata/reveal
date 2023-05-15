@@ -2,19 +2,24 @@
  * Source Table
  */
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  ScheduledCalculation,
+} from 'models/chart/types';
 import SourceRows from 'components/SourceTable/SourceRows';
 import { Modes } from 'pages/types';
 import { ComponentProps, useCallback } from 'react';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
+import { ScheduledCalculationsDataMap } from 'models/scheduled-calculation-results/types';
 import { SourceTableWrapper, Table } from './elements';
 import { SourceTableHeader } from './SourceTableHeader';
 import TimeSeriesRows from './TimeSeriesRows';
 
 type Props = {
   mode: Modes;
-  sources: (ChartTimeSeries | ChartWorkflow)[];
+  sources: (ChartTimeSeries | ChartWorkflow | ScheduledCalculation)[];
   summaries: ComponentProps<typeof SourceRows>['summaries'];
   headerTranslations: ComponentProps<typeof SourceTableHeader>['translations'];
   onShowHideButtonClick?: ComponentProps<
@@ -24,6 +29,7 @@ type Props = {
   selectedSourceId?: ComponentProps<typeof SourceRows>['selectedSourceId'];
   timeseriesData?: TimeseriesEntry[];
   calculationData?: WorkflowState[];
+  scheduledCalculationsData?: ScheduledCalculationsDataMap;
   openNodeEditor?: ComponentProps<typeof SourceRows>['openNodeEditor'];
   onRowClick?: ComponentProps<typeof SourceRows>['onRowClick'];
   onInfoClick?: ComponentProps<typeof SourceRows>['onInfoClick'];
@@ -59,6 +65,7 @@ const SourceTable = ({
   selectedSourceId,
   timeseriesData = [],
   calculationData = [],
+  scheduledCalculationsData = {},
   openNodeEditor = () => {},
   onRowClick = () => {},
   onInfoClick = () => {},
@@ -121,6 +128,7 @@ const SourceTable = ({
                       onErrorIconClick={onErrorIconClick}
                       timeseriesData={timeseriesData}
                       calculationData={calculationData}
+                      scheduledCalculationsData={scheduledCalculationsData}
                       onOverrideUnitClick={onOverrideUnitClick}
                       onConversionUnitClick={onConversionUnitClick}
                       onResetUnitClick={onResetUnitClick}

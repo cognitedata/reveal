@@ -117,7 +117,7 @@ export type ChartWorkflowV2 = ChartWorkflowBase & {
 
 export type ScheduledCalculation = Omit<
   ChartWorkflowV2,
-  'type' | 'statisticsCalls' | 'dataProfilingCalls'
+  'type' | 'statisticsCalls' | 'dataProfilingCalls' | 'calls'
 > & { type: 'scheduledCalculation' };
 
 export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;
@@ -125,6 +125,11 @@ export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;
 export type StorableNode = Omit<Node, 'functionEffect'> & {
   functionEffectReference?: string;
 };
+
+export type ChartSource =
+  | ChartTimeSeries
+  | ChartWorkflow
+  | ScheduledCalculation;
 
 type CalculationCallRef = {
   id: string;

@@ -7,7 +7,7 @@ export type ScheduleCalculationFieldValues = {
   cdfCredsMode: 'USER_CREDS' | 'CLIENT_SECRET';
   period: number;
   periodType: OptionType<string>;
-  unit: OptionType<string>;
+  unit?: OptionType<string>;
   description?: string;
 };
 

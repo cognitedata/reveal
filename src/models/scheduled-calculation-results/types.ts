@@ -3,9 +3,9 @@ import {
   StringDatapoints,
   DoubleDatapoints,
 } from '@cognite/sdk';
+import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
 
-export type ScheduledCalculationData = {
-  externalId: string;
+export type ScheduledCalculationData = CalculationTaskSchedule & {
   loading: boolean;
   series?: DatapointAggregates | StringDatapoints | DoubleDatapoints;
 };

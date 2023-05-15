@@ -10,41 +10,42 @@ import { useDebounce } from 'use-debounce';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';
 import { calculateGranularity } from 'utils/timeseries';
 import { useScheduledCalculationData } from 'models/scheduled-calculation-results/atom';
-import { useTimeseriesFromScheduledCalculations } from '../domain/scheduled-calculation/internal/queries/useTimeseriesFromScheduledCalculations';
+import { useScheduledCalculationTasks } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
 
 export const ScheduledCalculationCollectionEffects = () => {
   const [chart] = useChartAtom();
   const taskExternalIds = chart?.scheduledCalculationCollection?.map(
     (scheduledCalculation) => scheduledCalculation.id
   );
-
-  const { data } = useTimeseriesFromScheduledCalculations(
+  const { data: tasks } = useScheduledCalculationTasks(
     taskExternalIds?.map((externalId) => ({ externalId })) || []
   );
 
-  const timeseriesEffectElements = data?.map((timeseries, index) => (
-    <ScheduledCalculationEffects
-      key={timeseries.id}
-      timeseries={timeseries}
-      taskExternalId={taskExternalIds?.[index]!}
-    />
+  const timeseriesEffectElements = tasks?.map((task) => (
+    <ScheduledCalculationEffects key={task.externalId} task={task} />
   ));
 
   return <>{timeseriesEffectElements}</>;
 };
 
 export const ScheduledCalculationEffects = ({
-  timeseries,
-  taskExternalId,
+  task,
 }: {
-  timeseries: Timeseries;
-  taskExternalId: string;
+  task: CalculationTaskSchedule;
 }) => {
-  const { externalId: tsExternalId } = timeseries;
   const [chart] = useChartAtom();
   const { dateFrom, dateTo } = chart!;
   const [, setScheduledCalculationData] = useScheduledCalculationData();
   const sdk = useSDK();
+  const { data: timeseries } = useCdfItem<Timeseries>(
+    'timeseries',
+    { externalId: task.targetTimeseriesExternalId },
+    { enabled: Boolean(task.targetTimeseriesExternalId) }
+  );
+
+  const { externalId: tsExternalId } = timeseries || {};
 
   const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 50, {
     equalityFn: (l, r) => isEqual(l, r),
@@ -81,8 +82,8 @@ export const ScheduledCalculationEffects = ({
     setScheduledCalculationData((scheduledCalculationData) => {
       return {
         ...scheduledCalculationData,
-        [taskExternalId]: {
-          externalId: taskExternalId,
+        [task.externalId]: {
+          ...task,
           loading: isFetching,
           series: isSuccess
             ? timeseriesData
@@ -95,7 +96,6 @@ export const ScheduledCalculationEffects = ({
     isFetching,
     timeseriesData,
     setScheduledCalculationData,
-    timeseries.id,
     tsExternalId,
   ]);
 

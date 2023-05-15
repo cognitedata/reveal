@@ -5,6 +5,7 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
+  ScheduledCalculation,
   SourceCollectionData,
   StorableNode,
 } from 'models/chart/types';
@@ -108,6 +109,15 @@ export function updateChartSource(
           }
         : wf
     ),
+    scheduledCalculationCollection: chart.scheduledCalculationCollection?.map(
+      (sc) =>
+        sc.id === id
+          ? {
+              ...(sc as ScheduledCalculation),
+              ...(diff as Partial<ScheduledCalculation>),
+            }
+          : sc
+    ),
   };
 }
 
@@ -124,6 +134,8 @@ export function removeSource(chart: Chart, sourceId: string): Chart {
     workflowCollection: chart.workflowCollection?.filter(
       ({ id }) => id !== sourceId
     ),
+    scheduledCalculationCollection:
+      chart.scheduledCalculationCollection?.filter(({ id }) => id !== sourceId),
     sourceCollection: chart.sourceCollection?.filter(
       ({ id }) => id !== sourceId
     ),

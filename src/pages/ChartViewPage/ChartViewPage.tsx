@@ -18,6 +18,8 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
+  ChartSource,
+  ScheduledCalculation,
 } from 'models/chart/types';
 import { useSearchParam } from 'hooks/navigation';
 import {
@@ -93,6 +95,7 @@ import { AlertingSidebar } from 'components/AlertingSidebar/AlertingSidebar';
 import interactionsAtom from 'models/interactions/atom';
 import { AccessDeniedModal } from 'components/AccessDeniedModal/AccessDeniedModal';
 import { useExperimentalCapabilitiesCheck } from 'domain/chart';
+import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
 import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
 import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';
 import NotificationIndicator from './NotificationIndicator';
@@ -652,7 +655,7 @@ const ChartViewPage = () => {
   );
 
   const handleOverrideUnitClick =
-    (source: ChartTimeSeries | ChartWorkflow) => (unitOption: any) => {
+    (source: ChartSource) => (unitOption: any) => {
       const currentInputUnit = source.unit;
       const currentOutputUnit = source.preferredUnit;
       const nextInputUnit = unitOption?.value;
@@ -678,7 +681,7 @@ const ChartViewPage = () => {
     };
 
   const handleConversionUnitClick =
-    (source: ChartTimeSeries | ChartWorkflow) => (unitOption: any) => {
+    (source: ChartSource) => (unitOption: any) => {
       const currentInputUnit = source.unit;
       const currentOutputUnit = source.preferredUnit;
       const nextOutputUnit = unitOption?.value;
@@ -705,7 +708,7 @@ const ChartViewPage = () => {
     };
 
   const handleCustomUnitLabelClick =
-    (source: ChartTimeSeries | ChartWorkflow) => (label: string) => {
+    (source: ChartSource) => (label: string) => {
       handleUpdateChartSource(source.id, {
         customUnitLabel: label,
         preferredUnit: '',
@@ -713,58 +716,63 @@ const ChartViewPage = () => {
       });
     };
 
-  const handleResetUnitClick =
-    (source: ChartTimeSeries | ChartWorkflow) => () => {
-      const currentInputUnit = source.unit;
-      const currentOutputUnit = source.preferredUnit;
+  const handleResetUnitClick = (source: ChartSource) => () => {
+    const currentInputUnit = source.unit;
+    const currentOutputUnit = source.preferredUnit;
 
-      const min = source.range?.[0];
-      const max = source.range?.[1];
-      const convertUnit = getUnitConverter(currentOutputUnit, currentInputUnit);
-      const hasValidRange = typeof min === 'number' && typeof max === 'number';
-      const range = hasValidRange ? [convertUnit(min), convertUnit(max)] : [];
+    const min = source.range?.[0];
+    const max = source.range?.[1];
+    const convertUnit = getUnitConverter(currentOutputUnit, currentInputUnit);
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+    const range = hasValidRange ? [convertUnit(min), convertUnit(max)] : [];
 
-      /**
-       * Update units and corresponding converted range
-       */
-      handleUpdateChartSource(source.id, {
-        unit: '',
-        preferredUnit: '',
-        customUnitLabel: '',
-        range,
-      });
-    };
+    /**
+     * Update units and corresponding converted range
+     */
+    handleUpdateChartSource(source.id, {
+      unit: '',
+      preferredUnit: '',
+      customUnitLabel: '',
+      range,
+    });
+  };
 
-  const handleStatusIconClick =
-    (source: ChartTimeSeries | ChartWorkflow) => () => {
-      setChart((oldChart) => ({
-        ...oldChart!,
-        timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
-          ts.id === source.id
+  const handleStatusIconClick = (source: ChartSource) => () => {
+    setChart((oldChart) => ({
+      ...oldChart!,
+      timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
+        ts.id === source.id
+          ? {
+              ...ts,
+              enabled: !ts.enabled,
+            }
+          : ts
+      ),
+      workflowCollection: oldChart!.workflowCollection?.map((wf) =>
+        wf.id === source.id
+          ? {
+              ...wf,
+              enabled: !wf.enabled,
+            }
+          : wf
+      ),
+      scheduledCalculationCollection:
+        oldChart!.scheduledCalculationCollection?.map((sc) =>
+          sc.id === source.id
             ? {
-                ...ts,
-                enabled: !ts.enabled,
+                ...sc,
+                enabled: !sc.enabled,
               }
-            : ts
+            : sc
         ),
-        workflowCollection: oldChart!.workflowCollection?.map((wf) =>
-          wf.id === source.id
-            ? {
-                ...wf,
-                enabled: !wf.enabled,
-              }
-            : wf
-        ),
-      }));
-    };
+    }));
+  };
 
-  const handleRemoveSourceClick =
-    (source: ChartTimeSeries | ChartWorkflow) => () =>
-      setChart((oldChart) => removeSource(oldChart!, source.id));
+  const handleRemoveSourceClick = (source: ChartSource) => () =>
+    setChart((oldChart) => removeSource(oldChart!, source.id));
 
   const handleUpdateAppearance =
-    (source: ChartTimeSeries | ChartWorkflow) =>
-    (diff: Partial<ChartTimeSeries | ChartWorkflow>) =>
+    (source: ChartSource) => (diff: Partial<ChartSource>) =>
       setChart((oldChart) => ({
         ...oldChart!,
         timeSeriesCollection: oldChart!.timeSeriesCollection?.map((ts) =>
@@ -783,6 +791,15 @@ const ChartViewPage = () => {
               }
             : wf
         ),
+        scheduledCalculationCollection:
+          oldChart!.scheduledCalculationCollection?.map((sc) =>
+            sc.id === source.id
+              ? {
+                  ...(sc as ScheduledCalculation),
+                  ...(diff as Partial<ScheduledCalculation>),
+                }
+              : sc
+          ),
       }));
 
   const handleUpdateName =
@@ -803,6 +820,7 @@ const ChartViewPage = () => {
   const summaries = {
     ...useRecoilValue(timeseriesSummaries),
     ...useRecoilValue(calculationSummaries),
+    ...useRecoilValue(scheduledCalculationSummaries),
   };
 
   if (isLoading) {
@@ -900,6 +918,7 @@ const ChartViewPage = () => {
                     onShowHideButtonClick={handleShowHideButtonClick}
                     timeseriesData={timeseriesData}
                     calculationData={calculationData}
+                    scheduledCalculationsData={scheduledCalculationsData}
                     onConversionUnitClick={handleConversionUnitClick}
                     onCustomUnitLabelClick={handleCustomUnitLabelClick}
                     onOverrideUnitClick={handleOverrideUnitClick}

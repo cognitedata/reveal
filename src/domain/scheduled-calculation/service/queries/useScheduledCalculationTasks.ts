@@ -13,6 +13,7 @@ export const useScheduledCalculationTasks = (externalIds: ExternalId[]) => {
       return fetchScheduledCalculationTasks(externalIds, sdk).then(
         ({ data }) => data.items
       );
-    }
+    },
+    { enabled: Boolean(externalIds?.length) }
   );
 };
