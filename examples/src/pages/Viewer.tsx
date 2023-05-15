@@ -433,6 +433,12 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
+      await viewer.add360ImageSet('datamodels', {
+        dataModelExternalId: 'Image360Space',
+        space: 'Connections_360',
+        image360CollectionExternalId: 'asd'
+      });
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);

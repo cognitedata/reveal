@@ -16,7 +16,13 @@ import {
   DefaultImage360Collection,
   Image360AnnotationIntersection
 } from '@reveal/360-images';
-import { Cdf360EventProvider, Cdf360ImageProvider } from '@reveal/data-providers';
+import {
+  Cdf360CombinedDescriptorProvider,
+  Cdf360EventProvider,
+  Cdf360FdmProvider,
+  Cdf360ImageProvider,
+  FdmIdentifier
+} from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
   determineCurrentDevice,
@@ -31,7 +37,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 
 export class Image360ApiHelper {
-  private readonly _image360Facade: Image360Facade<Metadata>;
+  private readonly _image360Facade: Image360Facade<Metadata | FdmIdentifier>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
@@ -76,8 +82,13 @@ export class Image360ApiHelper {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     iconsOptions?: IconsOptions
   ) {
-    const image360DescriptorProvider = new Cdf360EventProvider(cogniteClient);
-    const image360DataProvider = new Cdf360ImageProvider(cogniteClient, image360DescriptorProvider);
+    const image360EventDescriptorProvider = new Cdf360EventProvider(cogniteClient);
+    const image360FdmDescriptorProvider = new Cdf360FdmProvider(cogniteClient);
+    const combined = new Cdf360CombinedDescriptorProvider(
+      image360FdmDescriptorProvider,
+      image360EventDescriptorProvider
+    );
+    const image360DataProvider = new Cdf360ImageProvider(cogniteClient, combined);
     const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
@@ -136,11 +147,11 @@ export class Image360ApiHelper {
   }
 
   public async add360ImageSet(
-    eventFilter: Metadata,
+    eventFilter: Metadata | FdmIdentifier,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
-    const id: string | undefined = eventFilter.site_id;
+    const id: string | undefined = (eventFilter as Metadata)?.site_id ?? eventFilter.image360CollectionExternalId;
     if (id === undefined) {
       throw new Error('Image set filter must contain site_id');
     }
