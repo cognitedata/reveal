@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import isEqual from 'lodash/isEqual';
+
 import { PlotRange } from '../types';
 import { useDeepEffect } from './useDeep';
 
@@ -20,18 +22,16 @@ export const usePlotDataRangeInitial = ({
   }, [dataRevision]);
 
   /**
-   * This side-effect should be triggered ONLY when the plot range is changed.
-   * So, don't include any other dependencies.
-   *
-   * When the side-effect is triggered, AND `signal` is `true`,
-   * it should change the state.
+   * This side-effect should be executed only when,
+   * signal is `true` AND `plotDataRange` is changed.
+   * That's why the deep equality is checked below.
    */
   useDeepEffect(() => {
-    if (signal && plotDataRange) {
+    if (signal && plotDataRange && !isEqual(initialRange, plotDataRange)) {
       setInitialRange(plotDataRange);
       setSignal(false);
     }
-  }, [plotDataRange]);
+  }, [signal, plotDataRange]);
 
   return initialRange;
 };

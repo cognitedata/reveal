@@ -2,11 +2,19 @@ import * as React from 'react';
 import { useMemo } from 'react';
 
 import { Data, LineChart, LineChartProps, Layout } from '../../../LineChart';
+import { TimeseriesChartMetadata } from '../../domain/internal/types';
 
 import { CONFIG, LAYOUT } from './constants';
 import { formatTooltipContent } from './helpers/formatTooltipContent';
 
-export const TimeseriesChartSmall: React.FC<LineChartProps> = (props) => {
+export interface TimeseriesChartSmallProps extends LineChartProps {
+  metadata: TimeseriesChartMetadata;
+}
+
+export const TimeseriesChartSmall: React.FC<TimeseriesChartSmallProps> = ({
+  metadata,
+  ...props
+}) => {
   const layout: Partial<Layout> = useMemo(() => {
     const numberOfPoints = (props.data as Data).x.length;
 
@@ -25,13 +33,17 @@ export const TimeseriesChartSmall: React.FC<LineChartProps> = (props) => {
     return LAYOUT;
   }, [props.data]);
 
+  const { unit } = metadata;
+
   return (
     <LineChart
       {...props}
       variant="small"
       layout={layout}
       config={CONFIG}
-      formatTooltipContent={formatTooltipContent}
+      formatTooltipContent={(tooltipProps) =>
+        formatTooltipContent(tooltipProps, unit)
+      }
     />
   );
 };

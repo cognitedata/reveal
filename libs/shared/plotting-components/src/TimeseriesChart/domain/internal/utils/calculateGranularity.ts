@@ -7,8 +7,16 @@
 
 import { DateRange } from '../../../types';
 
-export const calculateGranularity = (domain: DateRange, pps: number) => {
-  const diff = domain[1].valueOf() - domain[0].valueOf();
+export const calculateGranularity = (
+  dateRange: DateRange | undefined,
+  pps: number
+) => {
+  if (!dateRange) {
+    return 'day';
+  }
+
+  const diff = dateRange[1].valueOf() - dateRange[0].valueOf();
+
   for (let i = 1; i <= 60; i += 1) {
     const points = diff / (1000 * i);
     if (points < pps) {

@@ -45,6 +45,7 @@ export const useTimeseriesChartMetadata = ({
       dataFetchMode,
       isStep: data?.isStep,
       isString,
+      unit: data?.unit,
     };
   }, [data, dataFetchOptions, query.numberOfPoints]);
 

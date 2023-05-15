@@ -15,16 +15,23 @@ export const TimeseriesChartLarge: React.FC<TimeseriesChartLargeProps> = ({
   metadata,
   ...props
 }) => {
+  const { dataFetchMode, unit } = metadata;
+
   return (
     <LineChart
       {...props}
       variant="large"
+      yAxis={{
+        name: unit,
+      }}
       layout={{
         ...LAYOUT,
-        showMarkers: metadata.dataFetchMode === 'raw',
+        showMarkers: dataFetchMode === 'raw',
       }}
       config={CONFIG}
-      formatTooltipContent={formatTooltipContent}
+      formatTooltipContent={(tooltipProps) =>
+        formatTooltipContent(tooltipProps, unit)
+      }
       formatHoverLineInfo={formatHoverLineInfo}
     />
   );

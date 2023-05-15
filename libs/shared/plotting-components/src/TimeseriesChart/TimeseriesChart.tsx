@@ -78,11 +78,9 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   };
 
   useEffect(() => {
-    if (dateRangeProp) {
-      setSelectedTimePeriod(undefined);
-      setDateRange(dateRangeProp);
-    }
-  }, [dateRangeProp]);
+    setSelectedTimePeriod(undefined);
+    setDateRange(dateRangeProp);
+  }, [dateRangeProp, timeseriesId]);
 
   const Chart = getChartByVariant(variant);
 

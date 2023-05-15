@@ -11,4 +11,5 @@ export interface TimeseriesChartMetadata {
   dataFetchMode: DataFetchMode;
   isStep?: boolean;
   isString?: boolean;
+  unit?: string;
 }

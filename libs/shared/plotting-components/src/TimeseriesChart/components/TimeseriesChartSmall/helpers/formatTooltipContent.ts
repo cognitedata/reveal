@@ -4,14 +4,17 @@ import { getFormattedDateWithTimezone } from '../../../utils/getFormattedDateWit
 import { getTooltipNumericValue } from '../../../utils/getTooltipNumericValue';
 import { getTooltipRawDatapointValue } from '../../../utils/getTooltipRawDatapointValue';
 
-export const formatTooltipContent = ({ customData }: TooltipRendererProps) => {
+export const formatTooltipContent = (
+  { customData }: TooltipRendererProps,
+  unit?: string
+) => {
   const datapoint = customData as TimeseriesDatapoint;
 
   if ('value' in datapoint) {
     return [
       {
         label: 'Value',
-        value: getTooltipRawDatapointValue(datapoint.value),
+        value: getTooltipRawDatapointValue(datapoint.value, unit),
       },
     ];
   }
@@ -19,7 +22,7 @@ export const formatTooltipContent = ({ customData }: TooltipRendererProps) => {
   const { average, timestamp } = datapoint;
 
   return [
-    { label: 'Average', value: getTooltipNumericValue(average) },
+    { label: 'Average', value: getTooltipNumericValue(average, unit) },
     { label: 'Date', value: getFormattedDateWithTimezone(timestamp) },
   ];
 };

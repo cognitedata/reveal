@@ -31,6 +31,6 @@ export const mapToTimeseriesDatapointsQuery = ({
   return {
     ...queryBase,
     aggregates: ['average', 'max', 'min', 'count'],
-    granularity: dateRange && calculateGranularity(dateRange, numberOfPoints),
+    granularity: calculateGranularity(dateRange, numberOfPoints),
   };
 };
