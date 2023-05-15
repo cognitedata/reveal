@@ -1,0 +1,13 @@
+{
+  "name": "@reveal/3d-overlays",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:serve --env testFixture=3dOverlays.VisualTest.ts",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/utilities": "workspace:*"
+  }
+}
