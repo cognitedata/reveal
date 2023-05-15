@@ -16,7 +16,7 @@ describe(Cdf360FdmProvider.name, () => {
 
     const provider = new Cdf360FdmProvider(sdk);
 
-    const result = await provider.get360ImageDescriptors(
+    await provider.get360ImageDescriptors(
       {
         dataModelExternalId: 'Image360Space',
         space: 'Connections_360',
@@ -24,7 +24,5 @@ describe(Cdf360FdmProvider.name, () => {
       },
       false
     );
-
-    console.log(JSON.stringify(result, null, 2));
   }, 10000);
 });
