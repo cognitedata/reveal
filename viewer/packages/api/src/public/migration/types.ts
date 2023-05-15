@@ -24,6 +24,16 @@ import { EdlOptions } from '@reveal/rendering';
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 /**
+ * Some parameters of THREE.WebGLRenderer initialized with {@link Cognite3DViewer}.
+ */
+export type RenderParameters = {
+  /**
+   * Current width and height of the renderer's output canvas, in pixels.
+   */
+  renderSize: THREE.Vector2;
+};
+
+/**
  * @module @cognite/reveal
  */
 export interface Cognite3DViewerOptions {

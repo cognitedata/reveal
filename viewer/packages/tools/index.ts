@@ -20,6 +20,12 @@ export {
   AbsolutePosition,
   RelativePosition
 } from './src/AxisView/types';
+export {
+  SmartOverlayTool,
+  SmartOverlayToolParameters,
+  OverlayEventHandler,
+  OverlayToolEvent
+} from './src/SmartOverlay/SmartOverlayTool';
 export { TimelineTool } from './src/Timeline/TimelineTool';
 export { Keyframe } from './src/Timeline/Keyframe';
 export { TimelineDateUpdateDelegate } from './src/Timeline/types';

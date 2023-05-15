@@ -8,6 +8,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/3d-overlays": "workspace:*",
     "@reveal/data-providers": "workspace:*",
     "@reveal/logger": "workspace:*",
     "@reveal/utilities": "workspace:*"

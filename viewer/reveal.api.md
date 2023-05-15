@@ -381,6 +381,7 @@ export class Cognite3DViewer {
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
+    get renderParameters(): RenderParameters;
     requestRedraw(): void;
     setBackgroundColor(backgroundColor: {
         color?: THREE_2.Color;
@@ -688,6 +689,12 @@ export class DefaultCameraManager implements CameraManager {
     // (undocumented)
     update(deltaTime: number, boundingBox: THREE_2.Box3): void;
 }
+
+// @public (undocumented)
+export type DefaultMetadataType = {
+    text?: string;
+    [key: string]: string | undefined;
+};
 
 // @public
 export const DefaultNodeAppearance: {
@@ -1159,6 +1166,45 @@ export class NumericRange {
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 // @public (undocumented)
+export interface Overlay3D<MetadataType> {
+    get color(): THREE.Color;
+    getMetadata(): MetadataType | undefined;
+    get position(): THREE.Vector3;
+    setColor(color: THREE.Color): void;
+    set visible(visible: boolean);
+    get visible(): boolean;
+}
+
+// @public (undocumented)
+export interface OverlayCollection<MetadataType> {
+    addOverlays(overlays: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
+    getOverlays(): Overlay3D<MetadataType>[];
+    removeAllOverlays(): void;
+    removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
+    setVisibility(visibility: boolean): void;
+}
+
+// @public (undocumented)
+export type OverlayEventHandler<MetadataType> = (event: {
+    targetOverlay: Overlay3D<MetadataType>;
+    htmlOverlay: HTMLElement;
+    mousePosition: {
+        clientX: number;
+        clientY: number;
+    };
+}) => void;
+
+// @public (undocumented)
+export type OverlayInfo<MetadataType = DefaultMetadataType> = {
+    position: THREE.Vector3;
+    metadata?: MetadataType;
+    color?: THREE.Color;
+};
+
+// @public (undocumented)
+export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
+
+// @public (undocumented)
 export type PointCloudAppearance = {
     color?: Color;
     visible?: boolean;
@@ -1282,6 +1328,11 @@ export type RelativePosition = {
 };
 
 // @public
+export type RenderParameters = {
+    renderSize: THREE.Vector2;
+};
+
+// @public
 export type ResolutionOptions = {
     maxRenderResolution?: number;
     movingCameraResolutionFactor?: number;
@@ -1324,6 +1375,40 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
+
+// @public (undocumented)
+export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognite3DViewerToolBase {
+    constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters);
+    clear(): void;
+    get collections(): OverlayCollection<MetadataType>[];
+    createOverlayCollection(overlays?: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType>;
+    // (undocumented)
+    dispose(): void;
+    // (undocumented)
+    off(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
+    // (undocumented)
+    off(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
+    // (undocumented)
+    off(event: 'disposed', eventHandler: DisposedDelegate): void;
+    on(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
+    // (undocumented)
+    on(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
+    // (undocumented)
+    on(event: 'disposed', eventHandler: DisposedDelegate): void;
+    removeOverlayCollection(overlayCollection: OverlayCollection<MetadataType>): void;
+    set textOverlayVisible(visible: boolean);
+    // (undocumented)
+    get textOverlayVisible(): boolean;
+    set visible(visible: boolean);
+    // (undocumented)
+    get visible(): boolean;
+}
+
+// @public (undocumented)
+export type SmartOverlayToolParameters = {
+    maxPointSize?: number;
+    defaultOverlayColor: THREE_2.Color;
+};
 
 // @public
 export class StyledPointCloudObjectCollection {
