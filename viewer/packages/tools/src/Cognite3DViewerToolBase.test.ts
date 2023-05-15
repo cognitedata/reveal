@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DisposedDelegate } from './types';
+import { DisposedDelegate } from '@reveal/utilities';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 import { jest } from '@jest/globals';

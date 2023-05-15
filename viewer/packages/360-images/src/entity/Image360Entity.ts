@@ -4,19 +4,19 @@
 
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360DataProvider } from '@reveal/data-providers';
-import { Image360Icon } from '../icons/Image360Icon';
 import { Image360, Image360Metadata } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
   private readonly _imageMetadata: Image360EventDescriptor;
   private readonly _transform: THREE.Matrix4;
-  private readonly _image360Icon: Image360Icon;
+  private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
 
@@ -34,7 +34,7 @@ export class Image360Entity implements Image360 {
    * image during normal visualization.
    * @returns Image360Icon
    */
-  get icon(): Image360Icon {
+  get icon(): Overlay3DIcon {
     return this._image360Icon;
   }
 
@@ -51,7 +51,7 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360DataProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon,
+    icon: Overlay3DIcon,
     device: DeviceDescriptor
   ) {
     this._transform = transform;
