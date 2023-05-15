@@ -787,7 +787,7 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.194
     "@types/mixpanel-browser": 2.38.1
-    "@types/node": 18.16.5
+    "@types/node": 18.16.7
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -1610,8 +1610,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/360-images@workspace:packages/360-images"
   dependencies:
+    "@reveal/3d-overlays": "workspace:*"
     "@reveal/data-providers": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/3d-overlays@workspace:*, @reveal/3d-overlays@workspace:packages/3d-overlays":
+  version: 0.0.0-use.local
+  resolution: "@reveal/3d-overlays@workspace:packages/3d-overlays"
+  dependencies:
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1811,6 +1820,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/tools@workspace:packages/tools"
   dependencies:
+    "@reveal/3d-overlays": "workspace:*"
     "@reveal/api": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/metrics": "workspace:*"
@@ -2329,10 +2339,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.16.5":
-  version: 18.16.5
-  resolution: "@types/node@npm:18.16.5"
-  checksum: b6df96a76a7655cd944794197cf63f5269e5034041bc355f4f243cb3f185ad3e1948011b6f0ac66c22434e50bc53a20ec3a9d95ad284f0e3819813d309d1650b
+"@types/node@npm:18.16.7":
+  version: 18.16.7
+  resolution: "@types/node@npm:18.16.7"
+  checksum: dbff7d41a050557cc81aa37cb186aaf3a799b3001bc4bb1015b240398abde1f9d0ac1e943959bba7f2ab2701292ae407a9ee2fc0f735a05b28bfc97d0b2b5e91
   languageName: node
   linkType: hard
 

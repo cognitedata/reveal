@@ -41,7 +41,8 @@ import {
   Intersection,
   CadModelBudget,
   CadIntersection,
-  ResolutionOptions
+  ResolutionOptions,
+  RenderParameters
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -119,6 +120,15 @@ export class Cognite3DViewer {
    */
   get domElement(): HTMLElement {
     return this._domElement;
+  }
+
+  /**
+   * Returns parameters of THREE.WebGLRenderer used by the viewer.
+   */
+  get renderParameters(): RenderParameters {
+    return {
+      renderSize: this._renderer.getSize(new THREE.Vector2())
+    };
   }
 
   /**
@@ -316,7 +326,10 @@ export class Cognite3DViewer {
         this._domElement,
         this._activeCameraManager,
         this._mouseHandler,
-        this._events.beforeSceneRendered
+        this._events.beforeSceneRendered,
+        {
+          platformMaxPointsSize: getMaxPointSize(this._renderer)
+        }
       );
     }
 
@@ -1645,4 +1658,10 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     }
   };
   return revealOptions;
+}
+
+function getMaxPointSize(renderer: THREE.WebGLRenderer): number {
+  const gl = renderer.getContext();
+  const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
+  return maxPointSize;
 }

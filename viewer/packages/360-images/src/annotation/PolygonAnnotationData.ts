@@ -4,32 +4,29 @@
 
 import { BufferGeometry, Matrix4, Shape, ShapeGeometry } from 'three';
 
-import { AnnotationsObjectDetection } from '@cognite/sdk';
+import { AnnotationsPolygon } from '@cognite/sdk';
 
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
-import assert from 'assert';
 
 export class PolygonAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: ShapeGeometry;
 
-  constructor(annotation: AnnotationsObjectDetection) {
-    this._geometry = this.createGeometry(annotation);
+  constructor(polygon: AnnotationsPolygon) {
+    this._geometry = this.createGeometry(polygon);
   }
 
-  createGeometry(annotation: AnnotationsObjectDetection): ShapeGeometry {
-    assert(annotation.polygon !== undefined);
+  createGeometry(polygon: AnnotationsPolygon): ShapeGeometry {
+    const points = polygon.vertices.map(({ x, y }) => ({ x: 0.5 - x, y: 0.5 - y }));
 
-    const points = annotation.polygon.vertices.map(({ x, y }) => ({ x: 0.5 - x, y: 0.5 - y }));
+    const polygonShape = new Shape();
 
-    const polygon = new Shape();
-
-    polygon.moveTo(points[0].x, points[0].y);
+    polygonShape.moveTo(points[0].x, points[0].y);
     points.forEach((v, ind) => {
       if (ind === 0) return;
-      polygon.lineTo(v.x, v.y);
+      polygonShape.lineTo(v.x, v.y);
     });
 
-    return new ShapeGeometry(polygon);
+    return new ShapeGeometry(polygonShape);
   }
 
   getGeometry(): BufferGeometry {
