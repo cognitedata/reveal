@@ -252,6 +252,12 @@ export const queryKeys = {
       filter,
       query,
     ] as const,
+  files: () => ['files'],
+  filePreviewURL: (fileId: number) => [
+    ...queryKeys.files(),
+    fileId,
+    'previewURL',
+  ],
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,

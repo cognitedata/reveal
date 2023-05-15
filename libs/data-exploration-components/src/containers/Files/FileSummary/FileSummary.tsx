@@ -13,8 +13,10 @@ import { Asset, FileInfo } from '@cognite/sdk';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { FileNamePreview } from '../FileTable/FileNamePreview';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { InternalFilesFilters } from '@data-exploration-lib/core';
+import {
+  getHiddenColumns,
+  InternalFilesFilters,
+} from '@data-exploration-lib/core';
 
 export const FileSummary = ({
   query = '',
@@ -73,7 +75,7 @@ export const FileSummary = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, metadataColumns]
   );
-  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
+  const hiddenColumns = getHiddenColumns(columns, ['name', 'content']);
 
   return (
     <SummaryCardWrapper>

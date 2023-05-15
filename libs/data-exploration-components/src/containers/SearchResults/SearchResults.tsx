@@ -1,19 +1,19 @@
+import { DateRangeProps } from '@data-exploration-lib/core';
+import {
+  AssetSearchResults,
+  AssetViewMode,
+  EventSearchResults,
+  SequenceSearchResults,
+  TimeseriesSearchResults,
+} from '@data-exploration/containers';
 import React, { useState } from 'react';
 import {
   ResourceType,
   ResourceItem,
   SelectableItemsProps,
-  DateRangeProps,
   OldResourceFilterProps,
 } from '@data-exploration-components/types';
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';
-import { EventSearchResults } from './EventSearchResults/EventSearchResults';
-import {
-  AssetSearchResults,
-  AssetViewMode,
-} from './AssetSearchResults/AssetSearchResults';
-import { SequenceSearchResults } from './SequenceSearchResults/SequenceSearchResults';
-import { TimeseriesSearchResults } from './TimeseriesSearchResults/TimeseriesSearchResults';
 
 export const SearchResults = ({
   allowEdit,

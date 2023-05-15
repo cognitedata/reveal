@@ -1,3 +1,4 @@
+import { DateRangeProps } from '@data-exploration-lib/core';
 import React from 'react';
 import { Card, Button, Dropdown, Menu, notification } from 'antd';
 import { Timeseries } from '@cognite/sdk';
@@ -8,7 +9,6 @@ import {
   GridCellProps,
   LatestDatapoint,
 } from '@data-exploration-components/components';
-import { DateRangeProps } from '@data-exploration-components/types';
 
 export const TimeseriesSparklineCard = ({
   item,

@@ -1,4 +1,3 @@
 export * from './Filters';
-export * from './SearchResultFilters';
-export * from './SearchResults';
+export * from './Search';
 export * from './ResourceSelector';

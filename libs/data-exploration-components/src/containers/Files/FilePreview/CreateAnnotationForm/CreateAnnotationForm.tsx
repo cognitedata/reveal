@@ -1,17 +1,12 @@
+import { Loader } from '@data-exploration/components';
 import React from 'react';
 import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import {
-  Loader,
-  SpacedRow,
-} from '@data-exploration-components/components/index';
-import {
-  renderTitle,
-  lightGrey,
-} from '@data-exploration-components/utils/index';
+import { SpacedRow } from '../../../../components';
+import { renderTitle, lightGrey } from '../../../../utils';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
-import { convertResourceType } from '@data-exploration-components/types/index';
+import { convertResourceType } from '../../../../types';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,
@@ -20,7 +15,7 @@ import {
   getResourceTypeFromExtendedAnnotation,
   setExtendedAnnotationDescription,
   setExtendedAnnotationLabel,
-} from '../migration/utils';
+} from '../migration';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const getResourceIdEither = (

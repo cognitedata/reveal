@@ -29,7 +29,6 @@ export * from './CdfCount/CdfCount';
 export * from './DatePicker';
 export * from './LatestDatapoint/LatestDatapoint';
 export * from './ListItem/ListItem';
-export * from './Loader';
 export * from './ResultCount/ResultCount';
 export * from './Select/Select';
 export * from './Select/MultiSelect';
@@ -41,6 +40,5 @@ export * from './FileDownloadAnchor';
 export * from './MultiSelectFilter';
 
 export * from './DataSetSelect';
-export * from './FileThumbnail';
 export * from './SearchQueryInfoPanel';
 export * from './FilesSyntaxButton';

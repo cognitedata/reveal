@@ -1,10 +1,11 @@
-import * as React from 'react';
 import {
   useImperativeHandle,
   useRef,
   useMemo,
   useCallback,
   useEffect,
+  memo,
+  forwardRef,
 } from 'react';
 
 import PlotlyPlot from 'react-plotly.js';
@@ -73,8 +74,8 @@ export interface PlotProps
   onSelected?: (event?: PlotSelectionEvent) => void;
 }
 
-export const Plot = React.memo(
-  React.forwardRef<PlotElement, PlotProps>(
+export const Plot = memo(
+  forwardRef<PlotElement, PlotProps>(
     (
       {
         data,

@@ -1,3 +1,8 @@
+import {
+  DocumentContentPreview,
+  DocumentNamePreview,
+  useDocumentsMetadataColumns,
+} from '@data-exploration/containers';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
@@ -14,20 +19,16 @@ import {
 import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import {
-  DocumentNamePreview,
-  DocumentContentPreview,
-} from '@data-exploration-components/containers';
+
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { Body } from '@cognite/cogs.js';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Asset } from '@cognite/sdk';
 import {
   DASH,
+  getHiddenColumns,
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { useDocumentsMetadataColumns } from '../hooks/useDocumentsMetadataColumns';
 
 export const DocumentSummary = ({
   query = '',
@@ -129,7 +130,7 @@ export const DocumentSummary = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, metadataColumns]
   );
-  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
+  const hiddenColumns = getHiddenColumns(columns, ['name', 'content']);
   return (
     <SummaryCardWrapper>
       <Table<InternalDocumentWithMatchingLabels>

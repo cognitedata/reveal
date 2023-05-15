@@ -1,12 +1,13 @@
+import {
+  AssetSearchResults,
+  AssetViewMode,
+} from '@data-exploration/containers';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import {
-  AssetSearchResults,
-  AssetViewMode,
-} from '@data-exploration-components/containers';
+
 import {
   useAssetFilters,
   useAssetViewState,

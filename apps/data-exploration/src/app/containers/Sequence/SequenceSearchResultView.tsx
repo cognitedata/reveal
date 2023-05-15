@@ -1,9 +1,9 @@
+import { SequenceSearchResults } from '@data-exploration/containers';
 import { Routes, Route } from 'react-router-dom';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import { SequenceSearchResults } from '@data-exploration-components/containers';
 import { useSequenceFilters } from '@data-exploration-app/store';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {

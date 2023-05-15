@@ -6,12 +6,14 @@ import {
   Table,
   TableProps,
 } from '@data-exploration/components';
-import { RelationshipLabels } from '@data-exploration-components/types';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
+import {
+  FileWithRelationshipLabels,
+  getHiddenColumns,
+  RelationshipLabels,
+} from '@data-exploration-lib/core';
 
 export type FileTableProps = Omit<
   TableProps<FileWithRelationshipLabels>,
@@ -73,7 +75,7 @@ export const FileTable = (props: FileTableProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, metadataColumns]
   );
-  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+  const hiddenColumns = getHiddenColumns(columns, visibleColumns);
 
   return (
     <Table<FileInfo>

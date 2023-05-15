@@ -12,3 +12,4 @@ export * from './zIndex';
 export * from './string';
 export * from './getMetadataValueByKey';
 export * from './files';
+export * from './getHiddenColumns';

@@ -214,7 +214,6 @@ export const useInfinite360Images = () => {
       },
       limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
     },
-    undefined,
     eventSearchConfig
   );
 

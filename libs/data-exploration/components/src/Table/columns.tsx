@@ -6,10 +6,10 @@ import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 import { StyledLabel } from './elements';
 import { RootAsset } from '../RootAsset';
-import { HighlightCell } from './components/HighlightCell';
+import { HighlightCell } from './components';
 import { TimeDisplay } from '../TimeDisplay';
 import { ResourceTableHashMap } from './types';
-import { DirectAssets } from './components/DirectAssets';
+import { DirectAssets } from './components';
 import {
   DASH,
   METADATA_KEY_SEPARATOR,

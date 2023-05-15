@@ -6,3 +6,5 @@ export * from './filters';
 export * from './files';
 export * from './sequences';
 export * from './timeseries';
+export * from './dateRange';
+export * from './document';

@@ -1,0 +1,34 @@
+import React from 'react';
+import styled from 'styled-components';
+import { action } from '@storybook/addon-actions';
+import { sequences } from '@data-exploration-lib/core';
+import { ComponentStory } from '@storybook/react';
+import { SequenceTable } from './SequenceTable';
+
+export default {
+  title: 'Sequences/SequenceTable',
+  component: SequenceTable,
+  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+  argTypes: { query: { control: 'text' } },
+};
+
+export const Example: ComponentStory<typeof SequenceTable> = (args) => (
+  <SequenceTable {...args} />
+);
+Example.args = {
+  data: sequences,
+  onRowClick: action('onItemClicked'),
+};
+
+const Container = styled.div`
+  padding: 20px;
+  width: 100%;
+  height: 600px;
+  background: grey;
+  display: flex;
+  position: relative;
+
+  && > * {
+    background: #fff;
+  }
+`;

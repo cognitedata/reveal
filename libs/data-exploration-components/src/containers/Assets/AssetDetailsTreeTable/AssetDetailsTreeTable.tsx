@@ -1,8 +1,12 @@
+import {
+  ThreeDModelCell,
+  useAssetsMetadataColumns,
+  useRootPath,
+} from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks/CustomHooks';
 import {
   SelectableItemsProps,
   TableStateProps,
@@ -11,13 +15,10 @@ import { HighlightCell, Table } from '@data-exploration/components';
 
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
 
-import { useRootPath } from '../AssetTreeTable/hooks';
-import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { InternalAssetTreeData } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
-import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
-import { DASH } from '@data-exploration-lib/core';
+import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -130,7 +131,7 @@ export const AssetDetailsTreeTable = ({
     }
   }, [rootPathFetched, rootPath]);
 
-  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+  const hiddenColumns = getHiddenColumns(columns, visibleColumns);
 
   return (
     <Table<InternalAssetTreeData>

@@ -1,4 +1,5 @@
 import { Asset, CogniteEvent } from '@cognite/sdk';
+import { useEventsMetadataColumns } from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
@@ -15,12 +16,11 @@ import {
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import noop from 'lodash/noop';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
+  getHiddenColumns,
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { useEventsMetadataColumns } from '../hooks/useEventsMetadataColumns';
 
 export const EventSummary = ({
   query = '',
@@ -70,7 +70,7 @@ export const EventSummary = ({
     [metadataColumns]
   );
 
-  const hiddenColumns = useGetHiddenColumns(columns, ['type', 'description']);
+  const hiddenColumns = getHiddenColumns(columns, ['type', 'description']);
 
   return (
     <SummaryCardWrapper>

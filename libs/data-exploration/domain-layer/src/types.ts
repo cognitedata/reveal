@@ -25,3 +25,9 @@ export interface MatchingLabels {
 export type AggregateFilters = {
   aggregateFilter?: { prefix: { value: string } };
 };
+
+export interface RelationshipLabels {
+  relationshipLabels?: string[];
+  relation?: string;
+  relatedResourceType?: string;
+}

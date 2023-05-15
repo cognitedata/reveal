@@ -1,19 +1,19 @@
+import {
+  AssetTable,
+  EventTable,
+  SequenceTable,
+  TimeseriesTable,
+} from '@data-exploration/containers';
 import React, { useMemo } from 'react';
 import uniqBy from 'lodash/uniqBy';
-import { Loader } from '@data-exploration-components/components';
+import { Loader } from '@data-exploration/components';
 import {
   SelectableItemsProps,
   ResourceType,
   convertResourceType,
 } from '@data-exploration-components/types';
 import { Alert } from 'antd';
-import {
-  AssetTable,
-  TimeseriesTable,
-  SequenceTable,
-  EventTable,
-  FileTable,
-} from '@data-exploration-components/containers';
+import { FileTable } from '@data-exploration-components/containers';
 
 import { IdEither } from '@cognite/sdk';
 import { useTaggedAnnotationsByResourceType } from '@data-exploration-components/hooks/RelationshipHooks';
@@ -21,7 +21,7 @@ import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import {
   getResourceExternalIdFromTaggedAnnotation,
   getResourceIdFromTaggedAnnotation,
-} from '../Files/FilePreview/migration/utils';
+} from '../Files';
 
 type Props = {
   fileId: number;

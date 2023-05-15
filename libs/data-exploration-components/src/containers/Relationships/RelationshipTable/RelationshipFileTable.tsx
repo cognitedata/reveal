@@ -1,3 +1,4 @@
+import { FileGroupingTable } from '@data-exploration/containers';
 import React, { useState } from 'react';
 import {
   useRelatedResourceResults,
@@ -14,7 +15,6 @@ import { RelationshipTableProps } from './RelationshipTable';
 import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
 import { FileViewSwitcher } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileViewSwitcher';
-import FileGroupingTable from '@data-exploration-components/containers/Files/FileGroupingTable/FileGroupingTable';
 import {
   GroupingTableContainer,
   GroupingTableHeader,

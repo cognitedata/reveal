@@ -1,9 +1,9 @@
+import { TimeseriesSearchResults } from '@data-exploration/containers';
 import { Routes, Route } from 'react-router-dom';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import { TimeseriesSearchResults } from '@data-exploration-components/containers';
 import { useTimeseriesFilters } from '@data-exploration-app/store';
 import { useDateRange } from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';

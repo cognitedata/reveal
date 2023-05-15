@@ -17,7 +17,6 @@ import {
 } from '@cognite/cogs.js';
 
 import {
-  Loader,
   InfoGrid,
   InfoCell,
   ListItem,
@@ -34,7 +33,7 @@ import { useSelectionButton } from '@data-exploration-components/hooks/useSelect
 import { createLink } from '@cognite/cdf-utilities';
 import { lightGrey } from '@data-exploration-components/utils';
 import styled from 'styled-components';
-import { EmptyState } from '@data-exploration/components';
+import { EmptyState, Loader } from '@data-exploration/components';
 
 const RowItemTitleContainer = styled.div`
   display: flex;

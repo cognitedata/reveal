@@ -28,8 +28,8 @@ export const useTimeseriesSearchResultWithLabelsQuery = (
 ) => {
   const { data, ...rest } = useTimeseriesSearchResultQuery(
     { query, filter, sortBy },
-    options,
-    searchConfig
+    searchConfig,
+    options
   );
 
   const properties = React.useMemo(() => {

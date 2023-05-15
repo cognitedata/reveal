@@ -1,3 +1,4 @@
+import { RelationshipLabels } from '@data-exploration-lib/core';
 import { useState, useEffect } from 'react';
 import {
   RelationshipTable,
@@ -12,16 +13,12 @@ import {
   AnnotatedWithTable,
   RelationshipFilters,
   useRelatedResourceResults,
-  RelationshipLabels,
 } from '@cognite/data-exploration';
 import { Select } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import {
-  useFlagAdvancedFilters,
-  useFlagFileCategorization,
-} from '@data-exploration-app/hooks/flags';
+import { useFlagFileCategorization } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
@@ -40,7 +37,6 @@ export const RelatedResources = ({
 }: RelationshipTableProps & SelectableItemsProps) => {
   const [selectedType, setSelectedType] = useState<TypeOption>();
   const isGroupingFilesEnabled = useFlagFileCategorization();
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const {
     relationshipCount,
@@ -171,7 +167,6 @@ export const RelatedResources = ({
         {selectedType?.value === 'linkedResource' && (
           <LinkedResourceTable
             isGroupingFilesEnabled={isGroupingFilesEnabled}
-            enableAdvancedFilter={isAdvancedFiltersEnabled}
             parentResource={parentResource}
             type={type}
             onItemClicked={onItemClicked}

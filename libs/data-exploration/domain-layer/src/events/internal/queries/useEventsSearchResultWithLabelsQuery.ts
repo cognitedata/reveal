@@ -28,8 +28,8 @@ export const useEventsSearchResultWithLabelsQuery = (
 ) => {
   const { data, ...rest } = useEventsSearchResultQuery(
     { query, eventsFilters, eventsSortBy },
-    options,
-    searchConfig
+    searchConfig,
+    options
   );
 
   const properties = React.useMemo(() => {

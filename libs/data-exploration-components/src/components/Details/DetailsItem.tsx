@@ -1,3 +1,7 @@
+import {
+  ThreeDModelCellDropdown,
+  ThreeDModelCellLink,
+} from '@data-exploration/containers';
 import React from 'react';
 import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -10,10 +14,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useClipboard } from '@data-exploration-components/hooks';
 import { DetailedMapping } from '@data-exploration-lib/domain-layer';
-import {
-  ThreeDModelCellDropdown,
-  ThreeDModelCellLink,
-} from '@data-exploration-components/containers/Assets/AssetTable/ThreeDModelCell';
+
 import {
   COPIED_TEXT,
   DASH,

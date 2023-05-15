@@ -1,3 +1,7 @@
+import {
+  SearchResultCountLabel,
+  SearchResultToolbar,
+} from '@data-exploration/containers';
 import React, { useContext, useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
@@ -5,13 +9,8 @@ import { FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
-import {
-  SearchResultToolbar,
-  FileUploaderModal,
-  SearchResultCountLabel,
-} from '@data-exploration-components/containers';
-import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
-import { AppContext } from '@data-exploration-lib/core';
+import { FileUploaderModal } from '@data-exploration-components/containers';
+import { AppContext, CLOSE_DROPDOWN_EVENT } from '@data-exploration-lib/core';
 
 export const FileToolbar = ({
   onFileClicked,
@@ -40,7 +39,6 @@ export const FileToolbar = ({
   return (
     <>
       <SearchResultToolbar
-        type="file"
         showCount={showCount}
         style={{ flex: 1, justifyContent: 'space-between' }}
         resultCount={

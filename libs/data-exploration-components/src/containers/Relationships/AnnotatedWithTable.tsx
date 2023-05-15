@@ -1,3 +1,4 @@
+import { FileGroupingTable } from '@data-exploration/containers';
 import React, { useState } from 'react';
 import {
   SelectableItemsProps,
@@ -11,7 +12,6 @@ import {
   GroupingTableHeader,
 } from './elements';
 import { FileViewSwitcher } from '../SearchResults/FileSearchResults/FileViewSwitcher';
-import FileGroupingTable from '../Files/FileGroupingTable/FileGroupingTable';
 
 export const AnnotatedWithTable = ({
   onItemClicked,

@@ -1,3 +1,4 @@
+import { AppliedFiltersTags } from '@data-exploration/containers';
 import React from 'react';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { FileTable } from '@data-exploration-components/containers/Files';
@@ -9,7 +10,6 @@ import { EmptyState } from '@data-exploration/components';
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 
-import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '@data-exploration-components/components';
 import { InternalFilesFilters } from '@data-exploration-lib/core';
 

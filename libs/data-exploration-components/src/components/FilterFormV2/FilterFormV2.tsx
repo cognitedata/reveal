@@ -1,6 +1,6 @@
+import { FilterChip } from '@data-exploration/containers';
 import React, { useState } from 'react';
 
-import { FilterChip } from '@data-exploration-components/components/AppliedFiltersTags/FilterChip';
 import { FilterItem } from './FilterItem';
 import { Tags, Wrapper } from './elements';
 

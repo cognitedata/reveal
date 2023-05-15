@@ -1,9 +1,9 @@
+import { Loader } from '@data-exploration/components';
 import React from 'react';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { Title, Body } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
-  Loader,
   InfoGrid,
   InfoCell,
   LatestDatapoint,

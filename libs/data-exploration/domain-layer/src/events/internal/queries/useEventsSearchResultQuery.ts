@@ -23,8 +23,8 @@ export const useEventsSearchResultQuery = (
     eventsSortBy?: TableSortBy[];
     limit?: number;
   },
-  options?: UseInfiniteQueryOptions,
-  searchConfig?: EventConfigType
+  searchConfig?: EventConfigType,
+  options?: UseInfiniteQueryOptions
 ) => {
   const filter = useMemo(
     () => mapInternalFilterToEventsFilter(eventsFilters),

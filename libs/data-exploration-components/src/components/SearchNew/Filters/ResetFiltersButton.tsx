@@ -1,7 +1,7 @@
+import { NewFiltersType } from '@data-exploration/containers';
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { NewFiltersType } from '@data-exploration-components/types';
 
 export const ResetFiltersButton = <T extends NewFiltersType>({
   setFilter,

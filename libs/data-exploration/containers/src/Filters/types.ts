@@ -1,3 +1,11 @@
+import {
+  InternalAssetFilters,
+  InternalDocumentFilter,
+  InternalEventsFilters,
+  InternalFilesFilters,
+  InternalSequenceFilters,
+  InternalTimeseriesFilters,
+} from '@data-exploration-lib/core';
 import { InputActionMeta } from 'react-select';
 
 export interface BaseFilter<TFilter> {
@@ -37,3 +45,11 @@ export interface MultiSelectOptionType<TValue> {
   count?: number;
   value: TValue;
 }
+
+export type NewFiltersType =
+  | InternalAssetFilters
+  | InternalTimeseriesFilters
+  | InternalFilesFilters
+  | InternalDocumentFilter
+  | InternalEventsFilters
+  | InternalSequenceFilters;

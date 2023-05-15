@@ -6,12 +6,12 @@ import {
   InternalId,
   ListResponse,
 } from '@cognite/sdk';
+import { Loader } from '@data-exploration/components';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { UseQueryResult } from 'react-query';
 import union from 'lodash/union';
 import Tree, { Node } from 'react-virtualized-tree';
-import { Loader } from '@data-exploration-components/components';
 
 import {
   useAssetBreadcrumbsQuery,

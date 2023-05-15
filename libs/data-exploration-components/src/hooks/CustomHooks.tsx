@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   useInfiniteQuery,
@@ -12,7 +12,6 @@ import { extractUniqueIds } from '@data-exploration-lib/core';
 import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import copy from 'copy-to-clipboard';
 import unionBy from 'lodash/unionBy';
-import { ColumnDef } from '@tanstack/react-table';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -227,22 +226,4 @@ export function useClipboard(
   }, [timeout, hasCopied]);
 
   return { onCopy, hasCopied };
-}
-
-export function useGetHiddenColumns<T>(
-  columns: ColumnDef<T>[],
-  visibleColumns: string[]
-): string[] {
-  return useMemo(() => {
-    return (
-      columns
-        .filter(
-          (column) =>
-            // @ts-ignore Don't know why `accessorKey` is not recognized from the type -_-
-            !visibleColumns.includes(column.accessorKey || column?.id)
-        )
-        // @ts-ignore
-        .map((column) => column.accessorKey || column.id)
-    );
-  }, [columns, visibleColumns]);
 }

@@ -94,20 +94,6 @@ export const useFileIcon = (file: FileInfo) => {
   );
 };
 
-export const useFilePreviewURL = (file: FileInfo | InternalDocument) => {
-  const sdk = useSDK();
-
-  return useQuery(
-    ['cdf', 'files', file.id, 'previewURL'],
-    () => fetchFilePreviewURL(sdk, file),
-    {
-      retry: false,
-      cacheTime: 1000,
-      refetchOnWindowFocus: false,
-    }
-  );
-};
-
 export interface DataSetWCount extends DataSet {
   count?: number;
 }

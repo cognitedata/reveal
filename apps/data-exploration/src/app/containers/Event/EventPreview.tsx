@@ -1,3 +1,4 @@
+import { Loader } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
@@ -6,7 +7,6 @@ import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow'
 import {
   EventDetails,
   ErrorFeedback,
-  Loader,
   Metadata,
 } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';

@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
-import { VerticalDivider } from '../Divider';
+import { VerticalDivider } from '@data-exploration/components';
 
 interface SummaryHeaderProps {
   icon?: IconType;

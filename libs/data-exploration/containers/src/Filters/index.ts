@@ -14,3 +14,4 @@ export * from './UnitFilter';
 export * from './LabelFilter';
 export * from './DateFilter';
 export * from './utils';
+export * from './types';

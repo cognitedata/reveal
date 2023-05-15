@@ -29,8 +29,8 @@ export const useSequenceSearchResultWithMatchingLabelsQuery = (
 ) => {
   const { data, ...rest } = useSequenceSearchResultQuery(
     { query, filter, sortBy },
-    options,
-    searchConfig
+    searchConfig,
+    options
   );
 
   const properties = React.useMemo(() => {

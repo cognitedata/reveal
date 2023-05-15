@@ -1,9 +1,9 @@
+import { EventSearchResults } from '@data-exploration/containers';
 import { Routes, Route } from 'react-router-dom';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import { EventSearchResults } from '@data-exploration-components/containers';
 import { useEventsFilters } from '@data-exploration-app/store';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {

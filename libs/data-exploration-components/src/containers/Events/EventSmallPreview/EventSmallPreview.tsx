@@ -1,9 +1,9 @@
+import { Loader } from '@data-exploration/components';
 import React from 'react';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
 import {
   ErrorFeedback,
-  Loader,
   InfoGrid,
   InfoCell,
   SpacedRow,

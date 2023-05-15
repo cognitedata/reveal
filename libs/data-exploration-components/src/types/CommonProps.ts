@@ -60,14 +60,6 @@ export type FiltersType =
   | EventFilter
   | Required<SequenceFilter>['filter'];
 
-export type NewFiltersType =
-  | InternalAssetFilters
-  | InternalTimeseriesFilters
-  | InternalFilesFilters
-  | InternalDocumentFilter
-  | InternalEventsFilters
-  | InternalSequenceFilters;
-
 export type ResourceFilterProps = {
   assetFilter?: InternalAssetFilters;
   timeseriesFilter?: InternalTimeseriesFilters;
@@ -104,11 +96,6 @@ export type SetOldResourceFilterProps = {
   setFileFilter: React.Dispatch<React.SetStateAction<InternalFilesFilters>>;
   setEventFilter: React.Dispatch<React.SetStateAction<InternalEventsFilters>>;
   setSequenceFilter: React.Dispatch<React.SetStateAction<OldSequenceFilters>>;
-};
-
-export type DateRangeProps = {
-  dateRange?: [Date, Date];
-  onDateRangeChange?: (newRange: [Date, Date]) => void;
 };
 
 export type AllowedTableStateId = number | string;

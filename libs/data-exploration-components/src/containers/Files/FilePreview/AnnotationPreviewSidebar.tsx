@@ -20,10 +20,7 @@ import {
   convertResourceType,
 } from '@data-exploration-components/types/index';
 import { useQueryClient } from 'react-query';
-import {
-  sleep,
-  SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-components/utils/index';
+import { sleep } from '@data-exploration-components/utils/index';
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
 import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -48,7 +45,10 @@ import {
 } from './migration/utils';
 import ReviewTagBar from './ReviewTagBar';
 import FilePreviewSidebar from './FilePreviewSidebar';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import {
+  ExtendedAnnotation,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-lib/core';
 
 type Props = {
   file?: FileInfo;

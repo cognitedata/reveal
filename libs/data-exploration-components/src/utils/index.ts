@@ -10,4 +10,3 @@ export * from './getTimeseriesFilterUnit';
 export * from './mapMimeTypeToDocumentType';
 export * from './string';
 export * from './url';
-export * from './windowEvents';

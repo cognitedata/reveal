@@ -1,9 +1,4 @@
-import { getTitle, ResourceType } from '@data-exploration-components/types';
-import {
-  formatBigNumbersWithSuffixStringExtended,
-  withThousandSeparator,
-  withThousandSeparatorStringExtended,
-} from '@data-exploration-lib/core';
+import { formatBigNumbersWithSuffixStringExtended } from '@data-exploration-lib/core';
 
 export const stringContains = (value?: string, searchText?: string) => {
   if (!searchText) {
@@ -25,17 +20,4 @@ export const capitalizeFirstLetter = (value?: string) => {
 
 export const getTabCountLabel = (count: number | string): string => {
   return `${formatBigNumbersWithSuffixStringExtended(count)}`;
-};
-
-export const getSearchResultCountLabel = (
-  loadedCount: number,
-  totalCount: number | string,
-  resourceType: ResourceType
-): string => {
-  return `${withThousandSeparator(
-    loadedCount
-  )} of ${withThousandSeparatorStringExtended(totalCount)} ${getTitle(
-    resourceType,
-    Number(totalCount) !== 1
-  ).toLowerCase()}`;
 };

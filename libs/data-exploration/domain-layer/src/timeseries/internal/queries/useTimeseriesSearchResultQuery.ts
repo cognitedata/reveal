@@ -23,8 +23,8 @@ export const useTimeseriesSearchResultQuery = (
     filter: InternalTimeseriesFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions,
-  searchConfig?: TimeseriesConfigType
+  searchConfig?: TimeseriesConfigType,
+  options?: UseInfiniteQueryOptions
 ) => {
   const advancedFilter = useMemo(
     () => mapFiltersToTimeseriesAdvancedFilters(filter, query, searchConfig),

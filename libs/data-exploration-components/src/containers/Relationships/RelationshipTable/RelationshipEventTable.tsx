@@ -1,3 +1,4 @@
+import { EventWithRelationshipLabels } from '@data-exploration/containers';
 import React from 'react';
 import {
   EmptyState,
@@ -9,7 +10,6 @@ import {
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 import { RelationshipTableProps } from './RelationshipTable';
-import { EventWithRelationshipLabels } from '@data-exploration-components/containers/Events/EventTable/EventTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { ResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 

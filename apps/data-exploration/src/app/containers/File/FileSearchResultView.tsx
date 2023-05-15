@@ -1,11 +1,11 @@
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { DocumentSearchResults } from '@data-exploration/containers';
 import { useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import { DocumentSearchResults } from '@data-exploration-components/containers';
 import { FilePreview } from '@data-exploration-app/containers/File/FilePreview';
 import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';

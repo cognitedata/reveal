@@ -2,7 +2,7 @@ import { Drawer } from '@data-exploration/components';
 
 import { useState } from 'react';
 import styled from 'styled-components';
-import { SidebarFilters } from '../SearchResultFilters';
+import { SidebarFilters } from '../Search';
 import { useFilterState } from './useFilterState';
 
 export const ResourceSelector = ({

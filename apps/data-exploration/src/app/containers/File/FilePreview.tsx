@@ -1,9 +1,9 @@
+import { Loader } from '@data-exploration/components';
 import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import {
   FilePreview as CogniteFilePreview,
   ErrorFeedback,
-  Loader,
   FileDetails,
   Metadata,
   ResourceType,

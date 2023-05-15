@@ -1,4 +1,5 @@
 import { Asset, Sequence } from '@cognite/sdk';
+import { useSequencesMetadataColumns } from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
@@ -14,13 +15,12 @@ import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
   EMPTY_OBJECT,
+  getHiddenColumns,
   InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { useSequencesMetadataColumns } from '../hooks/useSequencesMetadataColumns';
 
 export const SequenceSummary = ({
   query = '',
@@ -70,7 +70,7 @@ export const SequenceSummary = ({
     [metadataColumns]
   );
 
-  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
+  const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
   return (
     <SummaryCardWrapper>

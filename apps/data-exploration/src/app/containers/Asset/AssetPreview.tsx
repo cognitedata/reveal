@@ -1,10 +1,10 @@
+import { Loader } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useParams } from 'react-router-dom';
 
 import {
   AssetDetails,
-  Loader,
   ErrorFeedback,
   Metadata,
   ResourceTypes,

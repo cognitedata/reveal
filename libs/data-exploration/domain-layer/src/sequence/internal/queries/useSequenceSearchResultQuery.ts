@@ -24,8 +24,8 @@ export const useSequenceSearchResultQuery = (
     filter: InternalSequenceFilters;
     sortBy?: TableSortBy[];
   },
-  options?: UseInfiniteQueryOptions,
-  searchConfig?: SequenceConfigType
+  searchConfig?: SequenceConfigType,
+  options?: UseInfiniteQueryOptions
 ) => {
   const advancedFilter = useMemo(
     () => mapFiltersToSequenceAdvancedFilters(filter, query, searchConfig),

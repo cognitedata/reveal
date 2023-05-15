@@ -11,7 +11,7 @@ import ReactUnifiedViewer, {
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { Loader } from '@data-exploration-components/components';
+import { Loader } from '@data-exploration/components';
 import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';

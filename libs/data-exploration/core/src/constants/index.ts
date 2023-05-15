@@ -5,3 +5,4 @@ export * from './object';
 export * from './searchConfig';
 export * from './constants';
 export * from './timeseries';
+export * from './windowEvents';

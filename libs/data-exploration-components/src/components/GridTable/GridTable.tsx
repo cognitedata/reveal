@@ -10,7 +10,7 @@ import {
   SelectableItemsProps,
   AllowedTableStateId,
 } from '@data-exploration-components/types';
-import { Loader } from '@data-exploration-components/components';
+import { Loader } from '@data-exploration/components';
 
 export type GridCellProps<T> = {
   item: T;

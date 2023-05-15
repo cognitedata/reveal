@@ -1,4 +1,8 @@
 import { Asset } from '@cognite/sdk';
+import {
+  ThreeDModelCell,
+  useAssetsMetadataColumns,
+} from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
@@ -17,10 +21,10 @@ import { SummaryHeader } from '@data-exploration-components/components/SummaryHe
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import noop from 'lodash/noop';
 
-import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
-import { useAssetsMetadataColumns } from '../hooks/useAssetsMetadataColumns';
+import {
+  getHiddenColumns,
+  InternalSequenceFilters,
+} from '@data-exploration-lib/core';
 
 export const AssetSummary = ({
   query = '',
@@ -73,7 +77,7 @@ export const AssetSummary = ({
     [metadataColumns]
   );
 
-  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
+  const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
   return (
     <SummaryCardWrapper>

@@ -1,3 +1,4 @@
+import { Loader } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
@@ -7,7 +8,6 @@ import { CogniteError, Timeseries } from '@cognite/sdk';
 import { Tabs } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
-  Loader,
   Metadata,
   TimeseriesDetails,
 } from '@cognite/data-exploration';

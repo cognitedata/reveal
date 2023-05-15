@@ -1,3 +1,4 @@
+import { Loader } from '@data-exploration/components';
 import React from 'react';
 import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
 import styled from 'styled-components';
@@ -5,19 +6,15 @@ import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Icon, Title, Chip, Body, Colors } from '@cognite/cogs.js';
 import uniq from 'lodash/uniq';
 import {
-  Loader,
   ErrorFeedback,
   InfoGrid,
   InfoCell,
   ListItem,
   SpacedRow,
   ResourceIcons,
-} from '@data-exploration-components/components/index';
-import { isFilePreviewable } from '@data-exploration-components/utils/index';
-import {
-  SmallPreviewProps,
-  SelectableItemProps,
-} from '@data-exploration-components/types/index';
+} from '../../../components';
+import { isFilePreviewable } from '../../../utils';
+import { SmallPreviewProps, SelectableItemProps } from '../../../types';
 import {
   FileDetails,
   FilePreview,

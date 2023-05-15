@@ -12,9 +12,9 @@ import {
 import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
+  useDebounceTrackUsage,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 import { isValidUrl } from '@data-exploration-components/utils';
 
 // TODO  Needs to be removed once implemented in our library

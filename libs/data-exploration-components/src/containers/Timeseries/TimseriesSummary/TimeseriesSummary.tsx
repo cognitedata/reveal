@@ -1,4 +1,5 @@
 import { Asset, Timeseries } from '@cognite/sdk';
+import { useTimeseriesMetadataColumns } from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
@@ -11,17 +12,16 @@ import React, { useMemo } from 'react';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
 
 import {
+  getHiddenColumns,
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { useTimeseriesMetadataColumns } from '../hooks/useTimeseriesMetadataColumns';
 
 export const TimeseriesSummary = ({
   query = '',
@@ -77,7 +77,7 @@ export const TimeseriesSummary = ({
     ] as ColumnDef<Timeseries>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metadataColumns]);
-  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
+  const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
   return (
     <SummaryCardWrapper>

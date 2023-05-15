@@ -20,7 +20,7 @@ import {
   ResourcePreviewSidebar,
 } from '@data-exploration-components/containers';
 
-import { VerticalDivider } from '@data-exploration-components/components/Divider';
+import { VerticalDivider } from '@data-exploration/components';
 import {
   InternalEventsFilters,
   OldSequenceFilters,

@@ -1,8 +1,8 @@
+import { Loader } from '@data-exploration/components';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ids } from '../../../cogs-variables';
 import {
-  Loader,
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';

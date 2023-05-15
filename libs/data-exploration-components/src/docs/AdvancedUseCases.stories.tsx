@@ -1,9 +1,10 @@
+import { AssetTable } from '@data-exploration/containers';
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { assets } from '@data-exploration-components/stubs/assets';
 import { files } from '@data-exploration-components/stubs/files';
 import { PartialStoryFn } from '@storybook/addons';
-import { AssetTable, FileTable, Splitter } from '..';
+import { FileTable, Splitter } from '..';
 import { useResourcePreview, ResourcePreviewProvider } from '../context';
 import { Wrapper } from './utils';
 

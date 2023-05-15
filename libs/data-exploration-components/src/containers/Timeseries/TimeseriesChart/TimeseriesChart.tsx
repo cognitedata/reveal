@@ -1,8 +1,8 @@
+import { Loader } from '@data-exploration/components';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   LineChart,
   LineChartProps,
-  Loader,
   RangePicker,
   SpacedRow,
 } from '@data-exploration-components/components';
@@ -10,10 +10,7 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
-import {
-  DateRangeProps,
-  ResourceTypes,
-} from '@data-exploration-components/types';
+
 import { Button, OptionType, Select } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
 
@@ -21,6 +18,8 @@ import styled from 'styled-components';
 import { DatapointAggregates, Datapoints } from '@cognite/sdk';
 import {
   DATA_EXPLORATION_COMPONENT,
+  DateRangeProps,
+  ResourceTypes,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { calculateGranularity } from '../utils/calculateGranularity';
