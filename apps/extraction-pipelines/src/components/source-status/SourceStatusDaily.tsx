@@ -8,36 +8,54 @@ import {
   doesLogHaveErrorType,
   doesLogHaveSuccessType,
 } from 'utils/hostedExtractors';
+import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
+
+import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 
 type SourceStatusDailyProps = {
   aggregation: DailyLogAggregation;
+  source: MQTTSourceWithJobMetrics;
 };
 
 export const SourceStatusDaily = ({
   aggregation,
+  source,
 }: SourceStatusDailyProps): JSX.Element => {
   if (aggregation.logs.length === 0) {
-    return <AggregationItemNoData />;
+    return (
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
+        <AggregationItemNoData />
+      </SourceStatusItemTooltip>
+    );
   }
-
   if (aggregation.logs.some((log) => doesLogHaveErrorType(log))) {
-    return <AggregationItemError />;
+    return (
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
+        <AggregationItemError />
+      </SourceStatusItemTooltip>
+    );
   }
-
   if (aggregation.logs.every((log) => doesLogHaveSuccessType(log))) {
-    return <AggregationItemSuccess />;
+    return (
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
+        <AggregationItemSuccess />
+      </SourceStatusItemTooltip>
+    );
   }
-
-  return <AggregationItemUnknown />;
+  return (
+    <SourceStatusItemTooltip aggregation={aggregation} source={source}>
+      <AggregationItemUnknown />
+    </SourceStatusItemTooltip>
+  );
 };
 
-const AggregationItemBase = styled.button`
+const AggregationItemBase = styled.div`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  flex: 1;
   height: 32px;
   padding: 0;
+  display: block;
 `;
 
 const AggregationItemUnknown = styled(AggregationItemBase)`
