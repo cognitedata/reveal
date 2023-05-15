@@ -25,6 +25,7 @@ export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { toThreeBox3 } from './src/three/toThreeBox3';
 export { fromThreeVector3 } from './src/three/fromThreeVector3';
 export { unionBoxes } from './src/three/unionBoxes';
+export { ThickLine } from './src/three/ThickLine';
 export { determineCurrentDevice, DeviceDescriptor } from './src/device';
 export { createRenderTriangle } from './src/three/createFullScreenTriangleGeometry';
 
