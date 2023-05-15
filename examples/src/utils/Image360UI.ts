@@ -27,7 +27,7 @@ export class Image360UI {
 
     const optionsFolder = gui.addFolder('Add Options');
 
-    const onImageEntered: Image360EnteredDelegate = (entity, revision) => {
+    const onImageEntered: Image360EnteredDelegate = (entity, _revision) => {
       selectedEntity = entity;
     };
 
@@ -206,12 +206,7 @@ export class Image360UI {
       const { image, revision, annotation } = revisionsAndEntities[0];
 
       await viewer.enter360Image(image, revision);
-
-      const rotation = new THREE.Quaternion().setFromUnitVectors(
-        new THREE.Vector3(0, 0, -1),
-        annotation.getCenter().clone().sub(viewer.cameraManager.getCameraState().position).normalize()
-      );
-      viewer.cameraManager.setCameraState({ rotation });
+      viewer.cameraManager.setCameraState({ target: annotation.getCenter() });
     }
   }
 

@@ -46,9 +46,20 @@ export class StationaryCameraManager implements CameraManager {
     return this._defaultFOV;
   }
 
-  // Stationary camera only reacts to rotation being set
+  private getTargetRotation(target: THREE.Vector3 | undefined): THREE.Quaternion {
+    if (target === undefined) {
+      return this._camera.quaternion;
+    }
+
+    return new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 0, -1),
+      target.clone().sub(this._camera.position).normalize()
+    );
+  }
+
+  // Stationary camera only reacts to rotation or target being set
   setCameraState(state: CameraState): void {
-    const rotation = state.rotation ?? this._camera.quaternion;
+    const rotation = state.rotation ?? this.getTargetRotation(state.target);
     this._camera.quaternion.copy(rotation);
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   }
