@@ -20,39 +20,59 @@ import {
   Vector3,
   WebGLRenderer
 } from 'three';
-import image360IconVert from './image360Icon.vert';
-import image360IconFrag from './image360Icon.frag';
+import overlay3DIconVert from './overlay3DIcon.vert';
+import overlay3DIconFrag from './overlay3DIcon.frag';
 
-export class InstancedIconSprite extends Group {
+export type OverlayPointsParameters = {
+  spriteTexture: Texture;
+  minPixelSize: number;
+  maxPixelSize: number;
+  radius: number;
+  colorTint?: Color;
+  depthMode?: DepthModes;
+  collectionOpacity?: number;
+};
+
+export class OverlayPointsObject extends Group {
   private readonly _geometry: BufferGeometry;
   private readonly _frontMaterial: RawShaderMaterial;
-  private readonly _backMaterial: RawShaderMaterial;
   private readonly _positionBuffer: Float32Array;
   private readonly _positionAttribute: BufferAttribute;
-  constructor(
-    maxNumberOfPoints: number,
-    spriteTexture: Texture,
-    minPixelSize: number,
-    maxPixelSize: number,
-    radius: number,
-    colorTint = new Color(1, 1, 1)
-  ) {
+  private readonly _colorBuffer: Float32Array;
+  private readonly _colorAttribute: BufferAttribute;
+
+  constructor(maxNumberOfPoints: number, materialParameters: OverlayPointsParameters) {
     super();
     const geometry = new BufferGeometry();
     this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
     this._positionAttribute = new BufferAttribute(this._positionBuffer, 3);
+    this._colorBuffer = new Float32Array(maxNumberOfPoints * 3).fill(1);
+    this._colorAttribute = new BufferAttribute(this._colorBuffer, 3);
     geometry.setAttribute('position', this._positionAttribute);
+    geometry.setAttribute('color', this._colorAttribute);
     geometry.setDrawRange(0, 0);
 
-    const frontMaterial = this.createIconsMaterial(
+    const {
       spriteTexture,
-      1,
-      LessEqualDepth,
       minPixelSize,
       maxPixelSize,
       radius,
-      colorTint
+      colorTint = new Color(1, 1, 1),
+      depthMode = LessEqualDepth,
+      collectionOpacity = 1
+    } = materialParameters;
+
+    const frontMaterial = this.createIconsMaterial(
+      spriteTexture,
+      collectionOpacity,
+      depthMode,
+      minPixelSize,
+      maxPixelSize,
+      radius,
+      colorTint,
+      false
     );
+
     const backMaterial = this.createIconsMaterial(
       spriteTexture,
       0.5,
@@ -60,50 +80,62 @@ export class InstancedIconSprite extends Group {
       minPixelSize,
       maxPixelSize,
       radius,
-      colorTint
+      colorTint,
+      false
     );
-    const [frontPoints, backPoints] = this.initializePoints(geometry, frontMaterial, backMaterial);
-    this.add(frontPoints);
+
+    const frontPoints = this.initializePoints(geometry, frontMaterial);
+    const backPoints = this.initializePoints(geometry, backMaterial);
+
     this.add(backPoints);
+    this.add(frontPoints);
 
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
-    this._backMaterial = backMaterial;
   }
 
-  public setPoints(points: Vector3[]): void {
-    points.forEach((point, index) => {
-      this._positionBuffer[index * 3 + 0] = point.x;
-      this._positionBuffer[index * 3 + 1] = point.y;
-      this._positionBuffer[index * 3 + 2] = point.z;
-    });
+  public setPoints(points: Vector3[], colors?: Color[]): void {
+    if (colors && points.length !== colors?.length)
+      throw new Error('Points positions and colors arrays must have the same length');
+
+    if (points.length * 3 > this._positionBuffer.length) {
+      throw new Error('Points array length exceeds the maximum number of points');
+    }
+
+    for (let index = 0; index < points.length; index++) {
+      this._positionBuffer[index * 3 + 0] = points[index].x;
+      this._positionBuffer[index * 3 + 1] = points[index].y;
+      this._positionBuffer[index * 3 + 2] = points[index].z;
+
+      if (colors) {
+        this._colorBuffer[index * 3 + 0] = colors[index].r;
+        this._colorBuffer[index * 3 + 1] = colors[index].g;
+        this._colorBuffer[index * 3 + 2] = colors[index].b;
+      }
+    }
+
     this._positionAttribute.updateRange = { offset: 0, count: points.length * 3 };
     this._positionAttribute.needsUpdate = true;
+    this._colorAttribute.updateRange = { offset: 0, count: points.length * 3 };
+    this._colorAttribute.needsUpdate = true;
     this._geometry.setDrawRange(0, points.length);
+
+    this._geometry.computeBoundingBox();
+    this._geometry.computeBoundingSphere();
   }
 
   public dispose(): void {
     this._frontMaterial.dispose();
-    this._backMaterial.dispose();
     this._geometry.dispose();
   }
 
-  private initializePoints(
-    geometry: BufferGeometry,
-    frontMaterial: ShaderMaterial,
-    backMaterial: ShaderMaterial
-  ): [Points, Points] {
+  private initializePoints(geometry: BufferGeometry, frontMaterial: ShaderMaterial): Points {
     const frontPoints = createPoints(geometry, frontMaterial);
     frontPoints.onBeforeRender = renderer => {
       setUniforms(renderer, frontMaterial);
     };
 
-    const backPoints = createPoints(geometry, backMaterial);
-    backPoints.onBeforeRender = renderer => {
-      setUniforms(renderer, backMaterial);
-    };
-
-    return [frontPoints, backPoints];
+    return frontPoints;
 
     function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
       const points = new Points(geometry, material);
@@ -125,7 +157,8 @@ export class InstancedIconSprite extends Group {
     minPixelSize: number,
     maxPixelSize: number,
     radius: number,
-    colorTint: Color
+    colorTint: Color,
+    depthWrite: boolean
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
@@ -137,10 +170,10 @@ export class InstancedIconSprite extends Group {
         renderDownScale: { value: 1 },
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
       },
-      vertexShader: glsl(image360IconVert),
-      fragmentShader: glsl(image360IconFrag),
+      vertexShader: glsl(overlay3DIconVert),
+      fragmentShader: glsl(overlay3DIconFrag),
       depthTest: true,
-      depthWrite: false,
+      depthWrite: depthWrite,
       depthFunc: depthFunction,
       glslVersion: GLSL3,
       transparent: true

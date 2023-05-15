@@ -1,6 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import TerserPlugin from 'terser-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,8 +24,15 @@ export default (_, argv) => {
           loader: 'ts-loader',
           exclude: /node_modules/
         },
+        {
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+        }
       ]
     },
+    externals: [
+      nodeExternals()
+    ],
     resolve: {
       extensions: ['.tsx', '.ts'],
     },

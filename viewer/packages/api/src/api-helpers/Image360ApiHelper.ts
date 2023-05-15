@@ -11,6 +11,7 @@ import {
   Image360CollectionFactory,
   Image360Facade,
   Image360,
+  IconsOptions,
   Image360RevisionEntity,
   DefaultImage360Collection,
   Image360AnnotationIntersection
@@ -72,7 +73,8 @@ export class Image360ApiHelper {
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    iconsOptions?: IconsOptions
   ) {
     const image360DescriptorProvider = new Cdf360EventProvider(cogniteClient);
     const image360DataProvider = new Cdf360ImageProvider(cogniteClient, image360DescriptorProvider);
@@ -81,7 +83,8 @@ export class Image360ApiHelper {
       image360DataProvider,
       sceneHandler,
       onBeforeSceneRendered,
-      device
+      device,
+      iconsOptions
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
@@ -192,11 +195,13 @@ export class Image360ApiHelper {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
     this._interactionState.enteredCollection = imageCollection;
 
-    lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
-    image360Entity.icon.setVisibility(false);
+    if (lastEntered360ImageEntity) {
+      lastEntered360ImageEntity.icon.visible = imageCollection.isCollectionVisible;
+    }
+
+    image360Entity.icon.visible = false;
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
-    this._image360Facade.allHoverIconsVisibility = false;
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
@@ -349,7 +354,7 @@ export class Image360ApiHelper {
       const imageCollection = this._image360Facade.getCollectionContainingEntity(
         this._interactionState.currentImage360Entered
       );
-      this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
+      this._interactionState.currentImage360Entered.icon.visible = imageCollection.isCollectionVisible;
       imageCollection.events.image360Exited.fire();
 
       this._interactionState.currentImage360Entered.deactivateAnnotations();
@@ -435,7 +440,7 @@ export class Image360ApiHelper {
 
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
-    this._image360Facade.allHoverIconsVisibility = false;
+    this._image360Facade.allIconsSelected = false;
     const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
 
     const { x: width, y: height } = size;
@@ -445,17 +450,18 @@ export class Image360ApiHelper {
       this._activeCameraManager.getCamera()
     );
 
-    if (entity !== undefined) {
-      entity.icon.hoverSpriteVisible = true;
-    }
-
     if (entity === this._interactionState.currentImage360Hovered) {
+      entity?.icon.updateHoverSpriteScale();
+
       return;
     }
 
     if (entity !== undefined) {
-      entity.icon.hoverSpriteVisible = true;
+      this._image360Facade.hoverIconVisibility = true;
+      entity.icon.selected = true;
       this._debouncePreLoad(entity);
+    } else {
+      this._image360Facade.hoverIconVisibility = false;
     }
 
     this._needsRedraw = true;
