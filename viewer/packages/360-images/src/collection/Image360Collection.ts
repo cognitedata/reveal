@@ -7,8 +7,15 @@ import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
-import { IdEither } from '@cognite/sdk/dist/src';
+import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
+
+/**
+ * Filter for finding annotation related to asset
+ */
+export type Image360AnnotationAssetFilter = {
+  assetRef: IdEither;
+};
 
 /**
  * Result item from an asset annotation query
@@ -82,5 +89,5 @@ export interface Image360Collection {
   /**
    * Find 360 images associated with a asset with the given assetRef
    */
-  findAsset(assetRef: IdEither): Promise<Image360AnnotationAssetQueryResult[]>;
+  findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
 }

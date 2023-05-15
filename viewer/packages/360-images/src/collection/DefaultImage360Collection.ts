@@ -4,7 +4,11 @@
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
-import { Image360AnnotationAssetQueryResult, Image360Collection } from './Image360Collection';
+import {
+  Image360AnnotationAssetFilter,
+  Image360AnnotationAssetQueryResult,
+  Image360Collection
+} from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
@@ -202,17 +206,19 @@ export class DefaultImage360Collection implements Image360Collection {
     );
   }
 
-  public async findAsset(assetRef: IdEither): Promise<Image360AnnotationAssetQueryResult[]> {
-    const imageIds = await this._image360DataProvider.getFilesByAssetRef(assetRef);
+  public async findImageAnnotation(
+    filter: Image360AnnotationAssetFilter
+  ): Promise<Image360AnnotationAssetQueryResult[]> {
+    const imageIds = await this._image360DataProvider.getFilesByAssetRef(filter.assetRef);
     const imageIdSet = new Set<CogniteInternalId>(imageIds);
 
-    const entityAnnotationsPromises = this.image360Entities.map(async image => {
-      const revisionAndAnnotationPromises = await getEntityAnnotationsForAsset(image);
+    const entityAnnotationsPromises = this.image360Entities.map(async entity => {
+      const revisionAndAnnotationPromises = await getEntityAnnotationsForAsset(entity);
 
       const revisionsAndAnnotations = revisionAndAnnotationPromises.map(async ({ revision, annotation }) => ({
         annotation,
         revision,
-        image
+        image: entity
       }));
 
       return Promise.all(revisionsAndAnnotations);
@@ -246,7 +252,7 @@ export class DefaultImage360Collection implements Image360Collection {
 
       return annotations.filter(a => {
         const assetLink = a.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
-        return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, assetRef);
+        return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, filter.assetRef);
       });
     }
   }

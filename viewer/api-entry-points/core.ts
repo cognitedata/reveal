@@ -88,5 +88,6 @@ export {
   Image360AnnotationIntersection,
   Image360AnnotationAppearance,
   Image360Annotation,
+  Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult
 } from '../packages/360-images';
