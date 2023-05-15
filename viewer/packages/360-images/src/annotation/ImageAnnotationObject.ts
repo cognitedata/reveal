@@ -10,7 +10,20 @@ import {
 } from '@cognite/sdk';
 import { Image360FileDescriptor } from '@reveal/data-providers';
 
-import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import {
+  Color,
+  Matrix4,
+  Vector3,
+  Mesh,
+  MeshBasicMaterial,
+  DoubleSide,
+  Object3D,
+  Line,
+  LineBasicMaterial,
+  BufferGeometry,
+  Group,
+  Raycaster
+} from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
 import { PolygonAnnotationData } from './PolygonAnnotationData';
@@ -25,7 +38,10 @@ export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
 
   private readonly _mesh: Mesh;
-  private readonly _material: MeshBasicMaterial;
+  private readonly _meshMaterial: MeshBasicMaterial;
+  private readonly _line: Line;
+  private readonly _lineMaterial: LineBasicMaterial;
+  private readonly _objectGroup: Group;
 
   private _defaultAppearance: Image360AnnotationAppearance = {};
   private readonly _appearance: Image360AnnotationAppearance = {};
@@ -88,11 +104,21 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._material = createMaterial(annotation);
-    this._mesh = new Mesh(objectData.getGeometry(), this._material);
+    [this._meshMaterial, this._lineMaterial] = createMaterials(annotation);
+    this._mesh = new Mesh(objectData.getGeometry(), this._meshMaterial);
+    this._line = this.initializeLineObject(objectData.getLineGeometry());
+    this._objectGroup = new Group();
+
+    this._objectGroup.add(this._mesh);
+    this._objectGroup.add(this._line);
 
     this.initializeTransform(face, objectData.getNormalizationMatrix());
-    this._mesh.renderOrder = 4;
+
+    this._objectGroup.renderOrder = 4;
+  }
+
+  private initializeLineObject(lineGeometry: BufferGeometry): Line {
+    return new Line(lineGeometry, this._lineMaterial);
   }
 
   private getRotationFromFace(face: FaceType): Matrix4 {
@@ -121,51 +147,75 @@ export class ImageAnnotationObject implements Image360Annotation {
     this._mesh.matrix = transformation;
     this._mesh.matrixAutoUpdate = false;
     this._mesh.updateWorldMatrix(false, false);
+
+    this._line.matrix = transformation;
+    this._line.matrixAutoUpdate = false;
+    this._line.updateWorldMatrix(false, false);
   }
 
   public getObject(): Object3D {
-    return this._mesh;
+    return this._objectGroup;
   }
 
-  public updateMaterial(): void {
-    this._material.color = this._defaultAppearance.color ?? getDefaultColor(this._annotation);
-    this._material.visible = this._defaultAppearance.visible ?? true;
+  public intersects(raycaster: Raycaster): boolean {
+    return raycaster.intersectObject(this._mesh).length > 0;
+  }
+
+  private updateSingleMaterial(material: LineBasicMaterial | MeshBasicMaterial): void {
+    material.color = this._defaultAppearance.color ?? getDefaultColor(this._annotation);
+    material.visible = this._defaultAppearance.visible ?? true;
 
     if (this._appearance.color !== undefined) {
-      this._material.color = this._appearance.color;
+      material.color = this._appearance.color;
     }
 
     if (this._appearance.visible !== undefined) {
-      this._material.visible = this._appearance.visible;
+      material.visible = this._appearance.visible;
     }
 
-    this._material.needsUpdate = true;
+    material.needsUpdate = true;
+  }
+
+  public updateMaterials(): void {
+    this.updateSingleMaterial(this._meshMaterial);
+    this.updateSingleMaterial(this._lineMaterial);
   }
 
   public setDefaultStyle(appearance: Image360AnnotationAppearance): void {
     this._defaultAppearance = appearance;
-    this.updateMaterial();
+    this.updateMaterials();
   }
 
   public setColor(color?: Color): void {
-    this._appearance.color = color;
-    this.updateMaterial();
+    console.log('Got new color on annotation: ', color);
+    this._appearance.color = color?.clone();
+    this.updateMaterials();
   }
 
   public setVisible(visible?: boolean): void {
     this._appearance.visible = visible;
-    this.updateMaterial();
+    this.updateMaterials();
   }
 }
 
-function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {
-  return new MeshBasicMaterial({
+function createMaterials(annotation: AnnotationModel): [MeshBasicMaterial, LineBasicMaterial] {
+  const meshMaterial = new MeshBasicMaterial({
     color: getDefaultColor(annotation),
     side: DoubleSide,
     depthTest: false,
-    opacity: 0.7,
+    opacity: 0.4,
     transparent: true
   });
+
+  const lineMaterial = new LineBasicMaterial({
+    color: meshMaterial.color,
+    depthTest: false,
+    opacity: 1,
+    transparent: true,
+    linewidth: 1
+  });
+
+  return [meshMaterial, lineMaterial];
 }
 
 function getDefaultColor(annotation: AnnotationModel): Color {
