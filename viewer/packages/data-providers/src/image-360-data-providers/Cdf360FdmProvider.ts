@@ -10,7 +10,7 @@ import {
   Image360DescriptorProvider
 } from '../types';
 import { listAll360ImageCollectionsQuery } from './listCollections';
-import { Matrix4 } from 'three';
+import { Euler, Matrix4 } from 'three';
 import zip from 'lodash/zip';
 
 export type FdmIdentifier = {
@@ -80,13 +80,7 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifi
     collectionId: string,
     collectionLabel: string
   ): Promise<Historical360ImageSet> {
-    const entity: Image360EventDescriptor = {
-      collectionId,
-      collectionLabel,
-      id: image360EventResult.externalId,
-      label: image360EventResult.label,
-      transform: new Matrix4()
-    };
+    const descriptor = this.getImage360Descriptor(collectionId, collectionLabel, image360EventResult);
     const faceExternalIds = Object.entries(image360EventResult.cubeMap).map(([face, fileExternalId]) => {
       return { face, fileExternalId };
     });
@@ -106,6 +100,34 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifi
       return q;
     });
 
-    return { ...entity, imageRevisions: [{ faceDescriptors: image360FileDescriptors }] };
+    return { ...descriptor, imageRevisions: [{ faceDescriptors: image360FileDescriptors }] };
+  }
+
+  private getImage360Descriptor(
+    collectionId: string,
+    collectionLabel: string,
+    image360EventResult: Image360EntityResult
+  ): Image360EventDescriptor {
+    const transform = getTranslation();
+    transform.multiply(getEulerRotation());
+    // TODO: convert from CDF space to threejs;
+    return {
+      collectionId,
+      collectionLabel,
+      id: image360EventResult.externalId,
+      label: image360EventResult.label,
+      transform
+    };
+
+    function getEulerRotation(): Matrix4 {
+      const { x, y, z } = image360EventResult.eulerRotation;
+      const eulerRotation = new Euler(x, y, z, 'XYZ');
+      return new Matrix4().makeRotationFromEuler(eulerRotation);
+    }
+
+    function getTranslation(): Matrix4 {
+      const { x, y, z } = image360EventResult.translation;
+      return new Matrix4().makeTranslation(x, y, z);
+    }
   }
 }
