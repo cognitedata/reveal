@@ -1,8 +1,4 @@
-import {
-  FilterProps,
-  isObjectEmpty,
-  SPECIFIC_INFO_CONTENT,
-} from '@data-exploration-lib/core';
+import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import { MetadataFilter } from '../../../Filters';
@@ -15,10 +11,12 @@ export const SequenceFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const sequenceFIlter = filter.sequence;
+  const isResetButtonVisible = Boolean(sequenceFIlter.metadata);
   return (
     <BaseFilterCollapse.Panel
       title="Sequences"
-      hideResetButton={isObjectEmpty(filter.sequence as any)}
+      hideResetButton={!isResetButtonVisible}
       infoContent={SPECIFIC_INFO_CONTENT}
       onResetClick={() => onResetFilterClick('sequence')}
       {...rest}
@@ -26,8 +24,8 @@ export const SequenceFilters: React.FC<FilterProps> = ({
       <TempMultiSelectFix>
         <MetadataFilter.Sequences
           query={query}
-          filter={filter.sequence}
-          values={filter.sequence.metadata}
+          filter={sequenceFIlter}
+          values={sequenceFIlter.metadata}
           onChange={(newMetadata) => {
             onFilterChange('sequence', {
               metadata: newMetadata,

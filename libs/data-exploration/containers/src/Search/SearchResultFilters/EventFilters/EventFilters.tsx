@@ -1,8 +1,4 @@
-import {
-  FilterProps,
-  isObjectEmpty,
-  SPECIFIC_INFO_CONTENT,
-} from '@data-exploration-lib/core';
+import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
@@ -20,10 +16,19 @@ export const EventFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const eventFilter = filter.event;
+  const isResetButtonVisible = Boolean(
+    eventFilter.sources ||
+      eventFilter.metadata ||
+      eventFilter.startTime ||
+      eventFilter.endTime ||
+      eventFilter.subtype ||
+      eventFilter.type
+  );
   return (
     <BaseFilterCollapse.Panel
       title="Events"
-      hideResetButton={isObjectEmpty(filter.event as any)}
+      hideResetButton={!isResetButtonVisible}
       infoContent={SPECIFIC_INFO_CONTENT}
       onResetClick={() => onResetFilterClick('event')}
       {...rest}
@@ -31,24 +36,24 @@ export const EventFilters: React.FC<FilterProps> = ({
       <TempMultiSelectFix>
         <TypeFilter.Event
           query={query}
-          filter={filter.event}
-          value={filter.event.type}
+          filter={eventFilter}
+          value={eventFilter.type}
           onChange={(newFilters) =>
             onFilterChange('event', { type: newFilters })
           }
         />
 
         <DateFilter.StartTime
-          value={filter.event.startTime}
+          value={eventFilter.startTime}
           onChange={(newFilters) =>
             onFilterChange('event', { startTime: newFilters || undefined })
           }
         />
         <DateFilter.EndTime
           value={
-            filter.event.endTime && 'isNull' in filter.event.endTime
+            eventFilter.endTime && 'isNull' in eventFilter.endTime
               ? null
-              : filter.event.endTime
+              : eventFilter.endTime
           }
           onChange={(newDate) =>
             onFilterChange('event', {
@@ -60,8 +65,8 @@ export const EventFilters: React.FC<FilterProps> = ({
 
         <SubTypeFilter.Event
           query={query}
-          filter={filter.event}
-          value={filter.event.subtype}
+          filter={eventFilter}
+          value={eventFilter.subtype}
           onChange={(newFilters) =>
             onFilterChange('event', { subtype: newFilters })
           }
@@ -69,8 +74,8 @@ export const EventFilters: React.FC<FilterProps> = ({
 
         <SourceFilter.Event
           query={query}
-          filter={filter.event}
-          value={filter.event.sources}
+          filter={eventFilter}
+          value={eventFilter.sources}
           onChange={(newSources) =>
             onFilterChange('event', {
               sources: newSources,
@@ -79,8 +84,8 @@ export const EventFilters: React.FC<FilterProps> = ({
         />
         <MetadataFilter.Events
           query={query}
-          filter={filter.event}
-          values={filter.event.metadata}
+          filter={eventFilter}
+          values={eventFilter.metadata}
           onChange={(newMetadata) => {
             onFilterChange('event', {
               metadata: newMetadata,

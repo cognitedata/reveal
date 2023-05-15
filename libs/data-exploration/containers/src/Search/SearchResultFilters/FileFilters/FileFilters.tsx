@@ -1,8 +1,4 @@
-import {
-  FilterProps,
-  isObjectEmpty,
-  SPECIFIC_INFO_CONTENT,
-} from '@data-exploration-lib/core';
+import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
@@ -26,10 +22,18 @@ export const FileFilters: React.FC<FileFilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const documentFilter = filter.document;
+  const isResetButtonVisible = Boolean(
+    documentFilter.labels ||
+      documentFilter.metadata ||
+      documentFilter.type ||
+      documentFilter.author ||
+      documentFilter.source
+  );
   return (
     <BaseFilterCollapse.Panel
       title="Files"
-      hideResetButton={isObjectEmpty(filter.document as any)}
+      hideResetButton={!isResetButtonVisible}
       infoContent={SPECIFIC_INFO_CONTENT}
       onResetClick={() => onResetFilterClick('document')}
       {...rest}
@@ -38,8 +42,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         {enableDocumentLabelsFilter && (
           <LabelFilter.File
             query={query}
-            filter={filter.document}
-            value={filter.document.labels}
+            filter={documentFilter}
+            value={documentFilter.labels}
             onChange={(newFilters) =>
               onFilterChange('document', { labels: newFilters })
             }
@@ -48,8 +52,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
 
         <TypeFilter.File
           query={query}
-          filter={filter.document}
-          value={filter.document.type}
+          filter={documentFilter}
+          value={documentFilter.type}
           onChange={(newFilters) =>
             onFilterChange('document', { type: newFilters })
           }
@@ -57,8 +61,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
 
         <AuthorFilter.File
           query={query}
-          filter={filter.document}
-          value={filter.document.author}
+          filter={documentFilter}
+          value={documentFilter.author}
           onChange={(newFilters) =>
             onFilterChange('document', { author: newFilters })
           }
@@ -66,8 +70,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
 
         <SourceFilter.File
           query={query}
-          filter={filter.document}
-          value={filter.document.source}
+          filter={documentFilter}
+          value={documentFilter.source}
           onChange={(newSources) =>
             onFilterChange('document', {
               source: newSources,
@@ -77,8 +81,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
 
         <MetadataFilter.Files
           query={query}
-          filter={filter.document}
-          values={filter.document.metadata}
+          filter={documentFilter}
+          values={documentFilter.metadata}
           onChange={(newMetadata) => {
             onFilterChange('document', {
               metadata: newMetadata,

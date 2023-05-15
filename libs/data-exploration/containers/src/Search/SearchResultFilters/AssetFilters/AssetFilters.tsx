@@ -1,8 +1,4 @@
-import {
-  FilterProps,
-  isObjectEmpty,
-  SPECIFIC_INFO_CONTENT,
-} from '@data-exploration-lib/core';
+import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
@@ -14,10 +10,15 @@ export const AssetFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const assetFilter = filter.asset;
+  const isResetButtonVisible = Boolean(
+    assetFilter.labels || assetFilter.sources || assetFilter.metadata
+  );
+
   return (
     <BaseFilterCollapse.Panel
       title="Assets"
-      hideResetButton={isObjectEmpty(filter.asset as any)}
+      hideResetButton={!isResetButtonVisible}
       infoContent={SPECIFIC_INFO_CONTENT}
       onResetClick={() => onResetFilterClick('asset')}
       {...rest}
@@ -25,8 +26,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
       <TempMultiSelectFix>
         <LabelFilter.Asset
           query={query}
-          filter={filter.asset}
-          value={filter.asset.labels}
+          filter={assetFilter}
+          value={assetFilter.labels}
           onChange={(newFilters) =>
             onFilterChange('asset', { labels: newFilters })
           }
@@ -35,8 +36,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
 
         <SourceFilter.Asset
           query={query}
-          filter={filter.asset}
-          value={filter.asset.sources}
+          filter={assetFilter}
+          value={assetFilter.sources}
           onChange={(newSources) =>
             onFilterChange('asset', {
               sources: newSources,
@@ -46,8 +47,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
 
         <MetadataFilter.Assets
           query={query}
-          filter={filter.asset}
-          values={filter.asset.metadata}
+          filter={assetFilter}
+          values={assetFilter.metadata}
           onChange={(newMetadata) => {
             onFilterChange('asset', {
               metadata: newMetadata,
