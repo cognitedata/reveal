@@ -103,7 +103,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     };
     const response = await this._client.post(url, filterObject);
 
-    const ids = response.data.annotatedResourceIds.map((a: { id: number }) => a.id);
+    const ids = response.data.items.map((a: { id: number }) => a.id);
     return ids;
   }
 
