@@ -50,5 +50,5 @@ The reason for these changes is that when `@cognite/reveal-react-components` is 
 In addition, `@cognite/reveal-react-components` has a peer-dependency, so `cogs.js` must also be installed:
 
 ```
-yarn install @cognite/cogs.js
+yarn add @cognite/cogs.js
 ```
