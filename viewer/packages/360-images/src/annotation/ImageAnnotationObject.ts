@@ -56,6 +56,7 @@ export class ImageAnnotationObject implements Image360Annotation {
         return undefined;
       }
     } else if (isAnnotationAssetLink(detection)) {
+      // TODO: Use AssetLink region type from SDK when available (2023-15-05)
       const objectRegion = (detection as any).objectRegion;
       if (objectRegion !== undefined) {
         if (objectRegion.polygon !== undefined) {
