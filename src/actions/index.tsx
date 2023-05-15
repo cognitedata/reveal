@@ -82,7 +82,7 @@ export const useCreateDataSetMutation = () => {
       onSuccess: (dataset) => {
         userHistoryService.logNewResourceEdit({
           application: appPath!,
-          name: dataset.name ?? '',
+          name: dataset.name!,
           path: createLink(`/${appPath}/data-sets/${dataset.id}`),
         });
         invalidateDataSetQueries(client);
