@@ -86,14 +86,11 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   public async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
-    // TODO: Use SDK properly when support for 'reverselookup' arrives (Håkon, May 11th 2023)
-    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/annotations/reverselookup`;
-
-    const filterObject: object = {
+    const filterObject = {
       data: {
-        limit: 1000,
+        limit: -1,
         filter: {
-          annotatedResourceType: 'file',
+          annotatedResourceType: 'file' as const,
           annotationType: 'images.AssetLink',
           data: {
             assetRef
@@ -101,10 +98,9 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         }
       }
     };
-    const response = await this._client.post(url, filterObject);
 
-    const ids = response.data.items.map((a: { id: number }) => a.id);
-    return ids;
+    const response = this._client.annotations.reverseLookup(filterObject.data);
+    return response.autoPagingToArray();
   }
 
   public async get360ImageFiles(
