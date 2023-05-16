@@ -20,7 +20,8 @@ import {
   Object3D,
   Group,
   Raycaster,
-  Vector2
+  Vector2,
+  Material
 } from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
@@ -178,6 +179,13 @@ export class ImageAnnotationObject implements Image360Annotation {
   public setVisible(visible?: boolean): void {
     this._appearance.visible = visible;
     this.updateMaterials();
+  }
+
+  public dispose(): void {
+    this._meshMaterial.dispose();
+    this._mesh.geometry.dispose();
+
+    this._lines.forEach(l => l.dispose());
   }
 }
 
