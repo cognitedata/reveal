@@ -248,6 +248,7 @@ export class CameraManagerHelper {
         position: THREE_2.Vector3;
         target: THREE_2.Vector3;
     };
+    static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
     static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3): THREE_2.Vector3;
     static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
 }
