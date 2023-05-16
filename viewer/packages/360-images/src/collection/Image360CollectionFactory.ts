@@ -72,7 +72,7 @@ export class Image360CollectionFactory<T> {
 
     assert(collectionIds.length === 1);
 
-    return new DefaultImage360Collection(collectionIds[0], entities, collectionIcons);
+    return new DefaultImage360Collection(collectionIds[0], entities, collectionIcons, this._image360DataProvider);
 
     function isDefined(
       pair: [Historical360ImageSet | undefined, Overlay3DIcon | undefined]

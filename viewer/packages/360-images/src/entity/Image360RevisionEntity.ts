@@ -183,6 +183,10 @@ export class Image360RevisionEntity implements Image360Revision {
       }
     } catch (e) {}
   }
+
+  public getDescriptors(): Image360Descriptor {
+    return this._image360Descriptor;
+  }
 }
 
 function isDefined(obj: ImageAnnotationObject | undefined): obj is ImageAnnotationObject {
