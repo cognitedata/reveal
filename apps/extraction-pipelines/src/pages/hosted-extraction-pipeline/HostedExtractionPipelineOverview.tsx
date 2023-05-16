@@ -13,8 +13,7 @@ import {
   useMQTTJobLogs,
 } from 'hooks/hostedExtractors';
 import { getErrorCountInLast30Days } from 'utils/hostedExtractors';
-
-const PAGE_WIDTH = 1024;
+import { PAGE_WIDTH } from 'utils/constants';
 
 type HostedExtractionPipelineOverviewProps = {
   source: MQTTSourceWithJobMetrics;

@@ -280,5 +280,7 @@
   "seventy-two-hours-ago": "72 hours ago",
   "thirthy-days-ago": "30 days ago",
   "view-full-insight": "View full insight",
-  "uptime-with-percentage": "{{percentage}}% uptime"
+  "uptime-with-percentage": "{{percentage}}% uptime",
+  "number-of-messages": "Number of messages",
+  "status": "Status"
 }

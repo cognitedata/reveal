@@ -1,4 +1,9 @@
-import { ReadMQTTJob, ReadMQTTJobLog } from 'hooks/hostedExtractors';
+import { StatusProps } from '@cognite/cogs.js';
+import {
+  MQTTJobWithMetrics,
+  ReadMQTTJob,
+  ReadMQTTJobLog,
+} from 'hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
   'error',
@@ -37,6 +42,21 @@ export const doesJobStatusHaveSuccessType = (job: ReadMQTTJob) => {
 
 export const doesJobStatusHaveNeutralType = (job: ReadMQTTJob) => {
   return MQTT_JOB_STATUS_NEUTRAL_TYPES.includes(job.status);
+};
+
+export const getJobStatusForCogs = (
+  job: MQTTJobWithMetrics
+): StatusProps['type'] | undefined => {
+  if (doesJobStatusHaveErrorType(job)) {
+    return 'critical';
+  }
+  if (doesJobStatusHaveNeutralType(job)) {
+    return 'neutral';
+  }
+  if (doesJobStatusHaveSuccessType(job)) {
+    return 'success';
+  }
+  return undefined;
 };
 
 export const getErrorCountInLast30Days = (logs?: ReadMQTTJobLog[]): number => {
