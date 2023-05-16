@@ -83,6 +83,41 @@ export const AssetTreeTable = ({
     );
   }, [query, filter]);
 
+  const assetId = useMemo(() => {
+    if (selectedRows && Object.keys(selectedRows).length === 1) {
+      return Number(Object.keys(selectedRows)[0]);
+    }
+
+    return undefined;
+  }, [selectedRows]);
+
+  const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId);
+
+  useEffect(() => {
+    if (startFromRoot && rootPath && rootPathFetched) {
+      setRootExpanded(
+        rootPath.reduce((previousValue, currentValue) => {
+          return {
+            ...previousValue,
+            [currentValue]: true,
+          };
+        }, {})
+      );
+    }
+  }, [rootPathFetched, rootPath, startFromRoot]);
+
+  useEffect(() => {
+    if (
+      (!query || query === '') &&
+      Object.values(filter).filter(Boolean).length === 0
+    ) {
+      setSearchExpanded({});
+    } else {
+      // this automatically expands all rows
+      setSearchExpanded(true);
+    }
+  }, [query, filter]);
+
   const columns = React.useMemo(
     () =>
       [
@@ -156,38 +191,6 @@ export const AssetTreeTable = ({
       ] as ColumnDef<InternalAssetTreeData>[],
     [query, startFromRoot, metadataColumns]
   );
-
-  const assetId = useMemo(() => {
-    if (selectedRows && Object.keys(selectedRows).length === 1) {
-      return Number(Object.keys(selectedRows)[0]);
-    }
-
-    return undefined;
-  }, [selectedRows]);
-
-  const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId);
-
-  useEffect(() => {
-    if (startFromRoot && rootPath && rootPathFetched) {
-      setRootExpanded(
-        rootPath.reduce((previousValue, currentValue) => {
-          return {
-            ...previousValue,
-            [currentValue]: true,
-          };
-        }, {})
-      );
-    }
-  }, [rootPathFetched, rootPath, startFromRoot]);
-
-  useEffect(() => {
-    if (searchAssetTree) {
-      // this automatically expands all rows
-      setSearchExpanded(true);
-    } else {
-      setSearchExpanded({});
-    }
-  }, [searchAssetTree]);
 
   const getData = () => {
     if (startFromRoot) {
