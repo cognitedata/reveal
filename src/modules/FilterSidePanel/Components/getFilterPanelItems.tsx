@@ -101,18 +101,6 @@ export const getFilterPanelItems = (
   },
   {
     key: '6',
-    headerText: 'Source',
-    disableClear: !filter.source,
-    clear: () => {
-      setFilter({
-        ...filter,
-        source: undefined,
-      });
-    },
-    filterItem: <SourceFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
-    key: '7',
     headerText: 'Directory prefix',
     disableClear: !(filter as any).directoryPrefix,
     clear: () => {
@@ -134,16 +122,20 @@ export const getFilterPanelItems = (
     ),
   },
   {
-    key: '8',
+    key: '7',
     headerText: 'Additional filters',
     disableClear:
-      !filter.externalIdPrefix && !filter.labels && !filter.metadata,
+      !filter.externalIdPrefix &&
+      !filter.labels &&
+      !filter.metadata &&
+      !filter.source,
     clear: () => {
       setFilter({
         ...filter,
         externalIdPrefix: undefined,
         labels: undefined,
         metadata: undefined,
+        source: undefined,
       });
     },
     filterItem: (
@@ -151,6 +143,7 @@ export const getFilterPanelItems = (
         <ExternalIdFilter filter={filter} setFilter={setFilter} />
         <SelectLabelsFilter filter={filter} setFilter={setFilter} />
         <MetadataSelectFilter filter={filter} setFilter={setFilter} />
+        <SourceFilter filter={filter} setFilter={setFilter} />
       </>
     ),
   },
