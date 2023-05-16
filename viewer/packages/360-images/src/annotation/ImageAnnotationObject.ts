@@ -20,8 +20,7 @@ import {
   Object3D,
   Group,
   Raycaster,
-  Vector2,
-  Material
+  Vector2
 } from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
