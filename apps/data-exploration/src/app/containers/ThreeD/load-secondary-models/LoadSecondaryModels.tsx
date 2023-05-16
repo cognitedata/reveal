@@ -13,6 +13,7 @@ import {
   getSecondaryModelQueryFn,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
 
 type LoadSecondaryModelsProps = {
   secondaryModels: SecondaryModelOptions[];
@@ -30,10 +31,10 @@ const LoadSecondaryModels = ({
   setLoadedSecondaryModels,
 }: LoadSecondaryModelsProps): JSX.Element => {
   const queryClient = useQueryClient();
-  useQueries<
+  const result = useQueries<
     UseQueryOptions<
       boolean | undefined,
-      undefined,
+      { message: string },
       boolean | undefined,
       (string | number | boolean | undefined)[]
     >[]
@@ -55,6 +56,8 @@ const LoadSecondaryModels = ({
       ),
     }))
   );
+
+  useRevealError(result);
 
   useEffect(() => {
     return () => {

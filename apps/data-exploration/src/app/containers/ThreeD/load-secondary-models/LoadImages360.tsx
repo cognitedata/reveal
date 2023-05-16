@@ -10,6 +10,7 @@ import {
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import * as THREE from 'three';
+import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
 
 type LoadImages360Props = {
   images360: Image360DatasetOptions[];
@@ -31,10 +32,10 @@ const LoadImages360 = ({
   viewer,
 }: LoadImages360Props): JSX.Element => {
   const queryClient = useQueryClient();
-  useQueries<
+  const result = useQueries<
     UseQueryOptions<
       boolean | undefined,
-      undefined,
+      { message: string },
       boolean | undefined,
       (
         | string
@@ -68,6 +69,8 @@ const LoadImages360 = ({
       ),
     }))
   );
+
+  useRevealError(result);
 
   useEffect(() => {
     return () => {

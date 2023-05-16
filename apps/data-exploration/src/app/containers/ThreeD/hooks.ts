@@ -615,8 +615,15 @@ export const getSecondaryModelQueryFn =
     );
 
     if (applied && !hasAdded) {
-      await viewer.addModel({ modelId, revisionId });
-      setLoadedSecondaryModels(viewer.models.slice(1));
+      try {
+        await viewer.addModel({ modelId, revisionId });
+        setLoadedSecondaryModels(viewer.models.slice(1));
+      } catch {
+        return Promise.reject({
+          message:
+            'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.',
+        });
+      }
     } else if (!applied && hasAdded) {
       const modelToRemove = (
         viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
@@ -694,12 +701,19 @@ export const getImages360QueryFn =
 
     if (applied && !hasAdded) {
       const collectionTransform = translationMatrix?.multiply(rotationMatrix!);
-      // By default rotation are not premultiplied with models
-      const images360Set = await viewer.add360ImageSet(
-        'events',
-        { site_id: siteId },
-        { collectionTransform, preMultipliedRotation: false }
-      );
+      let images360Set;
+      try {
+        // By default rotation are not premultiplied with models
+        images360Set = await viewer.add360ImageSet(
+          'events',
+          { site_id: siteId },
+          { collectionTransform, preMultipliedRotation: false }
+        );
+      } catch {
+        return Promise.reject({
+          message: 'The selected 360 image set is not supported',
+        });
+      }
 
       const cameraPosition = viewer.cameraManager.getCameraState().position;
       const reusableVec = new Vector3();
