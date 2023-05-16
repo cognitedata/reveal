@@ -37,11 +37,11 @@ export const Image360HistoricalOverviewToolbar = ({
 
   return(
     <OverviewContainer>
-      <StyledSubFlex direction='column'>
-        <StyledFlex>{stationName}</StyledFlex>
+      <StyledFlex direction='column'>
+        <StyledSubFlex>{stationName}</StyledSubFlex>
         <StyledDetail>Station: {stationId}</StyledDetail>
         <StyledDetail>Collection: {collectionId}</StyledDetail>
-      </StyledSubFlex>
+      </StyledFlex>
 
       <StyledLayoutGrid>
         { revisionCollection?.map((revisionDetails, index) => (
@@ -72,6 +72,12 @@ export const Image360HistoricalOverviewToolbar = ({
   )
 };
 
+const StyledSubFlex = styled(Flex)`
+  align-items: flex-start;
+  max-width: 200px;
+  height: 96px;
+`;
+
 const StyledFlex = styled(Flex)`
   max-width: 200px;
   font-family: 'Inter';
@@ -94,21 +100,6 @@ const StyledDetail = styled(Detail)`
   letter-spacing: -0.006em;
   font-feature-settings: 'ss04' on;
   color: rgba(0, 0, 0, 0.9);
-`;
-
-const StyledSubFlex = styled(Flex)`
-  align-items: flex-start;
-  max-width: 200px;
-  height: 96px;
-`;
-
-const OverviewContainer = styled.div`
-  height: 136px;
-  display: flex;
-  flex-direction: column;
-  padding: 16px 16px 8px 16px;
-  background: #FFFFFF;
-  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.25);
 `;
 
 const RevisionItem = styled.div`
@@ -135,4 +126,13 @@ const StyledLayoutGrid = styled.div`
   grid-auto-flow: column;
   overflow: auto;
   gap: 6px;
+`;
+
+const OverviewContainer = styled.div`
+  height: 136px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 8px 16px;
+  background: #FFFFFF;
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.25);
 `;
