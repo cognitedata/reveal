@@ -4,10 +4,9 @@
 
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 
-import { BufferGeometry, Color, Group, Matrix4, Object3D, PlaneGeometry, Vector2, Vector3 } from 'three';
+import { BufferGeometry, Matrix4, PlaneGeometry, Vector2 } from 'three';
 
 import { AnnotationsBoundingBox } from '@cognite/sdk';
-import { ThickLine } from '@reveal/utilities/src/three/ThickLine';
 
 export class BoxAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: PlaneGeometry;
