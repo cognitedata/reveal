@@ -186,6 +186,12 @@ export class ImageAnnotationObject implements Image360Annotation {
 
     this._lines.forEach(l => l.dispose());
   }
+
+  public getCenter(out?: Vector3): Vector3 {
+    out = out ?? new Vector3();
+    this._mesh.geometry.computeBoundingBox();
+    return this._mesh.geometry.boundingBox!.getCenter(out).applyMatrix4(this._mesh.matrixWorld);
+  }
 }
 
 function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {

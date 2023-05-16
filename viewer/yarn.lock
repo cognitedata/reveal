@@ -787,7 +787,7 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.194
     "@types/mixpanel-browser": 2.38.1
-    "@types/node": 18.16.7
+    "@types/node": 18.16.8
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -809,7 +809,7 @@ __metadata:
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
     gl: 6.0.2
-    glob: 10.2.2
+    glob: 10.2.3
     glslify: 7.1.1
     glslify-import: 3.1.0
     glslify-loader: 2.0.0
@@ -821,7 +821,7 @@ __metadata:
     jest-extended: 3.2.4
     jest-image-snapshot: 6.1.0
     jest-puppeteer: 8.0.6
-    jsdom: 21.1.2
+    jsdom: 22.0.0
     lodash: 4.17.21
     loglevel: 1.8.1
     mixpanel-browser: 2.47.0
@@ -830,7 +830,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 2.8.8
     process: 0.11.10
-    puppeteer: 19.11.1
+    puppeteer: 20.1.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -1583,12 +1583,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@puppeteer/browsers@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@puppeteer/browsers@npm:0.5.0"
+"@puppeteer/browsers@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@puppeteer/browsers@npm:1.0.1"
   dependencies:
     debug: 4.3.4
     extract-zip: 2.0.1
+    http-proxy-agent: 5.0.0
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
@@ -1602,7 +1603,7 @@ __metadata:
       optional: true
   bin:
     browsers: lib/cjs/main-cli.js
-  checksum: d75fde03be4be106ca907834739251c2bb0b33a09fa23315c5dbe8b8b4cfed2f1b26af62e1dbe5fccc227e9bc87b51da0815461b982477eb01439bfdd6e7b01a
+  checksum: 0dc83d75b0799b8bcc077a17bff3f01d24e4bc3b4449a9fa3f30247eca3b9deb3e7a2fe2f31efb32ed75ca23bd0137ad28b86412a0c1fbce9bcd1aa2ed7bfeb0
   languageName: node
   linkType: hard
 
@@ -2339,10 +2340,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.16.7":
-  version: 18.16.7
-  resolution: "@types/node@npm:18.16.7"
-  checksum: dbff7d41a050557cc81aa37cb186aaf3a799b3001bc4bb1015b240398abde1f9d0ac1e943959bba7f2ab2701292ae407a9ee2fc0f735a05b28bfc97d0b2b5e91
+"@types/node@npm:18.16.8":
+  version: 18.16.8
+  resolution: "@types/node@npm:18.16.8"
+  checksum: d2ec9b61abd260b0fa1e33e4eca8f0089ebb6f6ec1ad2f036a4d01af11dba4f1dbff95b2a1f5dbe9eab3a6f38ed4bd8bf95eb2de9ad96b1caa1f67671e623c1d
   languageName: node
   linkType: hard
 
@@ -3078,16 +3079,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-globals@npm:^7.0.0":
-  version: 7.0.1
-  resolution: "acorn-globals@npm:7.0.1"
-  dependencies:
-    acorn: ^8.1.0
-    acorn-walk: ^8.0.2
-  checksum: 2a2998a547af6d0db5f0cdb90acaa7c3cbca6709010e02121fb8b8617c0fbd8bab0b869579903fde358ac78454356a14fadcc1a672ecb97b04b1c2ccba955ce8
-  languageName: node
-  linkType: hard
-
 "acorn-import-assertions@npm:^1.7.6":
   version: 1.8.0
   resolution: "acorn-import-assertions@npm:1.8.0"
@@ -3113,28 +3104,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-walk@npm:^8.0.2":
-  version: 8.2.0
-  resolution: "acorn-walk@npm:8.2.0"
-  checksum: 1715e76c01dd7b2d4ca472f9c58968516a4899378a63ad5b6c2d668bba8da21a71976c14ec5f5b75f887b6317c4ae0b897ab141c831d741dc76024d8745f1ad1
-  languageName: node
-  linkType: hard
-
 "acorn@npm:^7.1.1":
   version: 7.4.1
   resolution: "acorn@npm:7.4.1"
   bin:
     acorn: bin/acorn
   checksum: 1860f23c2107c910c6177b7b7be71be350db9e1080d814493fae143ae37605189504152d1ba8743ba3178d0b37269ce1ffc42b101547fdc1827078f82671e407
-  languageName: node
-  linkType: hard
-
-"acorn@npm:^8.1.0, acorn@npm:^8.8.0":
-  version: 8.8.0
-  resolution: "acorn@npm:8.8.0"
-  bin:
-    acorn: bin/acorn
-  checksum: 7270ca82b242eafe5687a11fea6e088c960af712683756abf0791b68855ea9cace3057bd5e998ffcef50c944810c1e0ca1da526d02b32110e13c722aa959afdc
   languageName: node
   linkType: hard
 
@@ -3156,12 +3131,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.8.2":
-  version: 8.8.2
-  resolution: "acorn@npm:8.8.2"
+"acorn@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "acorn@npm:8.8.0"
   bin:
     acorn: bin/acorn
-  checksum: f790b99a1bf63ef160c967e23c46feea7787e531292bb827126334612c234ed489a0dc2c7ba33156416f0ffa8d25bf2b0fdb7f35c2ba60eb3e960572bece4001
+  checksum: 7270ca82b242eafe5687a11fea6e088c960af712683756abf0791b68855ea9cace3057bd5e998ffcef50c944810c1e0ca1da526d02b32110e13c722aa959afdc
   languageName: node
   linkType: hard
 
@@ -4701,10 +4676,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devtools-protocol@npm:0.0.1107588":
-  version: 0.0.1107588
-  resolution: "devtools-protocol@npm:0.0.1107588"
-  checksum: 9064fd643f39ae0adabb8f425b746899ff24371d89a5047d38752653259e6afcb6bcb2d9759ff727eb5885cfc0f9ba8eb384850a2af00694135622e88080e3e5
+"devtools-protocol@npm:0.0.1120988":
+  version: 0.0.1120988
+  resolution: "devtools-protocol@npm:0.0.1120988"
+  checksum: 68eb7aa6a2fe20f8321168f9381849296b203355a5c052461b7ed95e8787b34458029dd64c8d4a8640d9fd329138a6d82f41237f5331ea4267c090dcbf6581f7
   languageName: node
   linkType: hard
 
@@ -6043,9 +6018,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.2.2":
-  version: 10.2.2
-  resolution: "glob@npm:10.2.2"
+"glob@npm:10.2.3":
+  version: 10.2.3
+  resolution: "glob@npm:10.2.3"
   dependencies:
     foreground-child: ^3.1.0
     jackspeak: ^2.0.3
@@ -6054,7 +6029,7 @@ __metadata:
     path-scurry: ^1.7.0
   bin:
     glob: dist/cjs/src/bin.js
-  checksum: 33cbbbea74deb605107715f2ee51937953271ff2f6ce712b57d95a714e2f1bf272fa2c2b0c5101097bf98d3e5d40856941af498b05bce07567aca1a6e3cc7ae9
+  checksum: 338c7522a60728397faa26a1197d6d1348444042d47de1456bbeae50228b32cd6c7423485f8f4e8eec577c6162b592a6098239752f8d4d03b8d2d2580c932666
   languageName: node
   linkType: hard
 
@@ -6595,6 +6570,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"http-proxy-agent@npm:5.0.0, http-proxy-agent@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "http-proxy-agent@npm:5.0.0"
+  dependencies:
+    "@tootallnate/once": 2
+    agent-base: 6
+    debug: 4
+  checksum: e2ee1ff1656a131953839b2a19cd1f3a52d97c25ba87bd2559af6ae87114abf60971e498021f9b73f9fd78aea8876d1fb0d4656aac8a03c6caa9fc175f22b786
+  languageName: node
+  linkType: hard
+
 "http-proxy-agent@npm:^4.0.1":
   version: 4.0.1
   resolution: "http-proxy-agent@npm:4.0.1"
@@ -6603,17 +6589,6 @@ __metadata:
     agent-base: 6
     debug: 4
   checksum: c6a5da5a1929416b6bbdf77b1aca13888013fe7eb9d59fc292e25d18e041bb154a8dfada58e223fc7b76b9b2d155a87e92e608235201f77d34aa258707963a82
-  languageName: node
-  linkType: hard
-
-"http-proxy-agent@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "http-proxy-agent@npm:5.0.0"
-  dependencies:
-    "@tootallnate/once": 2
-    agent-base: 6
-    debug: 4
-  checksum: e2ee1ff1656a131953839b2a19cd1f3a52d97c25ba87bd2559af6ae87114abf60971e498021f9b73f9fd78aea8876d1fb0d4656aac8a03c6caa9fc175f22b786
   languageName: node
   linkType: hard
 
@@ -8048,18 +8023,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:21.1.2":
-  version: 21.1.2
-  resolution: "jsdom@npm:21.1.2"
+"jsdom@npm:22.0.0":
+  version: 22.0.0
+  resolution: "jsdom@npm:22.0.0"
   dependencies:
     abab: ^2.0.6
-    acorn: ^8.8.2
-    acorn-globals: ^7.0.0
     cssstyle: ^3.0.0
     data-urls: ^4.0.0
     decimal.js: ^10.4.3
     domexception: ^4.0.0
-    escodegen: ^2.0.0
     form-data: ^4.0.0
     html-encoding-sniffer: ^3.0.0
     http-proxy-agent: ^5.0.0
@@ -8083,7 +8055,7 @@ __metadata:
   peerDependenciesMeta:
     canvas:
       optional: true
-  checksum: 6b3cf2d15e5a5712b3db5ff56eba82b97c9a879b52e95063cc8323bdf8837b6ca15cfec85b57ab71c95c6b4a4098bf67f274c6ff4e9ff519aa4811a04f290610
+  checksum: 5d554ccb1637035d1c3baa832ce6f6c66549b6fa43cc7c39295250092e74a10c2e6c674cb40a208ae850d80436dd109862f95d293528345ab5d6cc5213847f8e
   languageName: node
   linkType: hard
 
@@ -9857,15 +9829,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.11.1":
-  version: 19.11.1
-  resolution: "puppeteer-core@npm:19.11.1"
+"puppeteer-core@npm:20.1.1":
+  version: 20.1.1
+  resolution: "puppeteer-core@npm:20.1.1"
   dependencies:
-    "@puppeteer/browsers": 0.5.0
+    "@puppeteer/browsers": 1.0.1
     chromium-bidi: 0.4.7
     cross-fetch: 3.1.5
     debug: 4.3.4
-    devtools-protocol: 0.0.1107588
+    devtools-protocol: 0.0.1120988
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
     proxy-from-env: 1.1.0
@@ -9877,21 +9849,21 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 06126e478b8b653e83b98b51cec35dceef8ab576abd1369afd45360c5bac3711443e58ebe3b852d40801a118e4cb7ddf5d3154518b5a9294ee93f7a42d9f22d4
+  checksum: 60d1932c84b017694285568102360338c529e0cc7afe8a09e4ede3969db415ea6f3c115df009017876144a3a005a3e777a8d1b9e97baba25936f8fa44db55ebb
   languageName: node
   linkType: hard
 
-"puppeteer@npm:19.11.1":
-  version: 19.11.1
-  resolution: "puppeteer@npm:19.11.1"
+"puppeteer@npm:20.1.1":
+  version: 20.1.1
+  resolution: "puppeteer@npm:20.1.1"
   dependencies:
-    "@puppeteer/browsers": 0.5.0
+    "@puppeteer/browsers": 1.0.1
     cosmiconfig: 8.1.3
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.11.1
-  checksum: fd2b8ff106b21e5ea5b5552bc6f98e8b9b4c5b6fdb50d012268e21c1061d98f9f942cb606913376bc0cf29e80b81e0413ecbbfa8d642cb688fa96095d45c189e
+    puppeteer-core: 20.1.1
+  checksum: b97fbb7305471144648af45636c209c0a733b90612548f29f802ba90c759463e6dd13cefef915ea0891ad1c9bad1366814124b4d00a3b4ab8aee1df7370d419a
   languageName: node
   linkType: hard
 
