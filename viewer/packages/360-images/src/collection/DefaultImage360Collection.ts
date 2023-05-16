@@ -216,29 +216,15 @@ export class DefaultImage360Collection implements Image360Collection {
     const imageIds = await this._image360DataProvider.getFilesByAssetRef(filter.assetRef);
     const imageIdSet = new Set<CogniteInternalId>(imageIds);
 
-    const entityAnnotationsPromises = this.image360Entities.map(async entity => {
-      const revisionAndAnnotationPromises = await getEntityAnnotationsForAsset(entity);
-
-      const revisionsAndAnnotations = revisionAndAnnotationPromises.map(async ({ revision, annotation }) => ({
-        annotation,
-        revision,
-        image: entity
-      }));
-
-      return Promise.all(revisionsAndAnnotations);
-    });
-
+    const entityAnnotationsPromises = this.image360Entities.map(getEntityAnnotationsForAsset);
     const entityAnnotations = await Promise.all(entityAnnotationsPromises);
-
     return entityAnnotations.flat();
 
-    async function getEntityAnnotationsForAsset(
-      entity: Image360Entity
-    ): Promise<{ revision: Image360RevisionEntity; annotation: Image360Annotation }[]> {
+    async function getEntityAnnotationsForAsset(entity: Image360Entity): Promise<Image360AnnotationAssetQueryResult[]> {
       const revisionPromises = entity.getRevisions().map(async revision => {
         const annotations = await getRevisionAnnotationsForAsset(revision);
 
-        return annotations.map(annotation => ({ revision, annotation }));
+        return annotations.map(annotation => ({ image: entity, revision, annotation }));
       });
 
       const revisionMatches = await Promise.all(revisionPromises);
