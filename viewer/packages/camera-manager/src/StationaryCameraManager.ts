@@ -46,9 +46,13 @@ export class StationaryCameraManager implements CameraManager {
     return this._defaultFOV;
   }
 
-  // Stationary camera only reacts to rotation being set
+  // Stationary camera only reacts to rotation or target being set
   setCameraState(state: CameraState): void {
-    const rotation = state.rotation ?? this._camera.quaternion;
+    if (state.rotation === undefined && state.target === undefined) {
+      return;
+    }
+
+    const rotation = state.rotation ?? CameraManagerHelper.calculateNewRotationFromTarget(this._camera, state.target!);
     this._camera.quaternion.copy(rotation);
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   }

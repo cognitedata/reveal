@@ -4,7 +4,11 @@
 
 export { Image360, Image360Metadata } from './src/entity/Image360';
 export { Image360Revision } from './src/entity/Image360Revision';
-export { Image360Collection } from './src/collection/Image360Collection';
+export {
+  Image360Collection,
+  Image360AnnotationAssetFilter,
+  Image360AnnotationAssetQueryResult
+} from './src/collection/Image360Collection';
 export { Image360Facade } from './src/Image360Facade';
 export { Image360CollectionFactory } from './src/collection/Image360CollectionFactory';
 export { Image360Entity } from './src/entity/Image360Entity';
