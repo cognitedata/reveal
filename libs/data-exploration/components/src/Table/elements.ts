@@ -34,6 +34,15 @@ export const TableContainer = styled.div`
   flex-direction: column;
 `;
 
+export const Thead = styled.div<{ isStickyHeader?: boolean }>`
+  position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
+  top: 0;
+  background: inherit;
+  isolation: isolate;
+  z-index: ${zIndex.MINIMUM};
+  height: ${defaultRowHeight};
+`;
+
 export const ColumnSelectorWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -65,6 +74,14 @@ export const StyledTable = styled.div`
       max-width: 100%;
     }
   }
+
+  .sticky-column {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: ${zIndex.MAXIMUM};
+    background: inherit;
+  }
 `;
 
 export const ResizerWrapper = styled.div`
@@ -94,14 +111,6 @@ export const Th = styled.div`
 
 export const StyledFlex = styled.div`
   margin-left: auto;
-`;
-
-export const Thead = styled.div<{ isStickyHeader?: boolean }>`
-  position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
-  top: 0;
-  background: inherit;
-  z-index: ${zIndex.MINIMUM};
-  height: ${defaultRowHeight};
 `;
 
 export const Tr = styled.div`

@@ -4,3 +4,15 @@ export const SPACE = String.fromCharCode(32); // Space, the internationally reco
 export const METADATA_KEY_SEPARATOR = '-';
 export const COPIED_TEXT = 'Copied'; // The message to show in toast when something is copied
 export const DOCUMENT_ICON_FALLBACK_VALUE = 'file.txt'; // The fallback icon value when mimetype is undefined.
+
+export enum ViewType {
+  All = 'all',
+  Asset = 'asset',
+  Canvas = 'canvas',
+  IndustryCanvas = 'industryCanvas',
+  TimeSeries = 'timeSeries',
+  File = 'file',
+  Event = 'event',
+  Sequence = 'sequence',
+  ThreeD = 'threeD',
+}

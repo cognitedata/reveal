@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
 import {
   ThreeDModelsResponse,
-  useInfinite360Images,
-} from '@data-exploration-app/containers/ThreeD/hooks';
+  useInfinite3DModels,
+} from '@data-exploration-lib/domain-layer';
+import React, { useEffect } from 'react';
+import { useInfinite360Images } from '@data-exploration-app/containers/ThreeD/hooks';
 import { Body, Loader } from '@cognite/cogs.js';
 import {
   ThreeDGridPreview,
@@ -13,7 +14,6 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid as Grid } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
-import { useInfinite3DModels } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { useFlagNewThreeDView } from '@data-exploration-app/hooks/flags/useFlagNewThreeDView';
 

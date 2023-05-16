@@ -7,11 +7,13 @@ import {
   useAssetsSearchResultWithLabelsQuery,
   useAssetsSearchAggregateQuery,
   TableSortBy,
+  AssetWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
 import {
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { TableProps } from '@data-exploration/components';
 
 import { KeepMounted, VerticalDivider } from '@data-exploration/components';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
@@ -22,6 +24,14 @@ import { AssetTreeTable } from './AssetTreeTable';
 
 export type AssetViewMode = 'list' | 'tree';
 
+type AssetTreeView =
+  | { isTreeEnabled?: false; onViewChange?: never; view?: never }
+  | {
+      isTreeEnabled?: true;
+      onViewChange: (nextView: AssetViewMode) => void;
+      view: AssetViewMode;
+      onShowAllAssetsClick: (item: Asset) => void;
+    };
 export const AssetSearchResults = ({
   query = '',
   filter = {},
@@ -30,22 +40,23 @@ export const AssetSearchResults = ({
   onShowAllAssetsClick,
   view,
   onViewChange,
-  isTreeEnabled,
+  isTreeEnabled = false,
+  id,
   activeIds,
   onFilterChange,
   ...rest
 }: {
   query?: string;
-  view: AssetViewMode;
-  onViewChange: (nextView: AssetViewMode) => void;
-  isTreeEnabled?: boolean;
+  id?: string;
+
   showCount?: boolean;
   filter: InternalAssetFilters;
   onClick: (item: Asset) => void;
-  onShowAllAssetsClick: (item: Asset) => void;
+  onShowAllAssetsClick?: (item: Asset) => void;
   activeIds?: (string | number)[];
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-}) => {
+} & Omit<TableProps<AssetWithRelationshipLabels>, 'columns' | 'data' | 'id'> &
+  AssetTreeView) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
     useAssetsSearchResultWithLabelsQuery({
@@ -100,7 +111,7 @@ export const AssetSearchResults = ({
           <SegmentedControl
             currentKey={currentView}
             onButtonClicked={(nextView) =>
-              onViewChange(nextView as AssetViewMode)
+              onViewChange?.(nextView as AssetViewMode)
             }
           >
             <SegmentedControl.Button
@@ -126,7 +137,7 @@ export const AssetSearchResults = ({
     <>
       <KeepMounted isVisible={currentView === 'list'}>
         <AssetTable
-          id="asset-search-results"
+          id={id || 'asset-search-results'}
           query={query}
           onRowClick={(asset) => onClick(asset)}
           data={data}
@@ -161,7 +172,7 @@ export const AssetSearchResults = ({
           query={query}
           onAssetClicked={(asset) => onClick(asset)}
           onAssetSeeMoreClicked={(asset) => {
-            onShowAllAssetsClick(asset);
+            onShowAllAssetsClick?.(asset);
           }}
           tableHeaders={currentView !== 'list' ? tableHeaders : undefined}
           selectedRows={selectedRows}

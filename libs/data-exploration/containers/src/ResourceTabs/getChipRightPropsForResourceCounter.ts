@@ -1,6 +1,8 @@
 import { ChipProps } from '@cognite/cogs.js';
-import { getTabCountLabel } from './string';
-import { withThousandSeparator } from '@data-exploration-lib/core';
+import {
+  formatBigNumbersWithSuffixStringExtended,
+  withThousandSeparator,
+} from '@data-exploration-lib/core';
 
 export const getChipRightPropsForResourceCounter = (
   count: number,
@@ -8,7 +10,7 @@ export const getChipRightPropsForResourceCounter = (
 ): {
   chipRight?: ChipProps;
 } => {
-  const shortendCount = getTabCountLabel(count);
+  const shortendCount = `${formatBigNumbersWithSuffixStringExtended(count)}`;
   return {
     chipRight: isLoading
       ? { icon: 'Loader', size: 'x-small' }

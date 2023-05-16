@@ -1,11 +1,11 @@
+import { Model3D } from '@cognite/sdk';
 import {
   ThreeDModelsResponse,
   useInfinite3DModels,
-} from '@data-exploration-components/hooks';
-import { Model3D } from '@cognite/sdk';
+} from '@data-exploration-lib/domain-layer';
 
 import { CounterTab } from './elements';
-import { getChipRightPropsForResourceCounter } from '../../../utils';
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 import { ResourceTabProps } from './types';
 

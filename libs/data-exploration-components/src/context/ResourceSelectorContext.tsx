@@ -117,6 +117,7 @@ export const ResourceSelectorProvider = ({
       }}
     >
       {children}
+      {/* <ResourceSelector visible={isOpen} onClose={() => setIsOpen(false)} /> */}
       <ResourceSelectionSidebar
         onClose={(success) => {
           onClose(

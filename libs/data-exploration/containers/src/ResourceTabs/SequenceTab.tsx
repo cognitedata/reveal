@@ -1,7 +1,7 @@
 import { CounterTab } from './elements';
 
 import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
-import { getChipRightPropsForResourceCounter } from '../../../utils';
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 import { ResourceTabProps } from './types';
 import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';

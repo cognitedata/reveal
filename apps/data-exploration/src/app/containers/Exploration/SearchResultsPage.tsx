@@ -3,19 +3,21 @@ import { Routes, Route } from 'react-router-dom';
 
 import {
   ResourceTypeTabs,
-  ResourceTypeTabsV2,
   getTitle,
   ResourceType,
-  AssetsTab,
-  EventsTab,
-  DocumentsTab,
-  TimeseriesTab,
-  SequenceTab,
-  ThreeDTab,
 } from '@cognite/data-exploration';
 
 import { SearchConfigButton } from '@data-exploration/components';
-import { SearchConfig } from '@data-exploration/containers';
+import {
+  AssetsTab,
+  DocumentsTab,
+  EventsTab,
+  SearchConfig,
+  SequenceTab,
+  ThreeDTab,
+  TimeseriesTab,
+  ResourceTypeTabs as ResourceTypeTabsV2,
+} from '@data-exploration/containers';
 
 import {
   useAssetsMetadataKeys,
@@ -61,9 +63,10 @@ import { FileSearchResultView } from '@data-exploration-app/containers/File/File
 import { EventSearchResultView } from '@data-exploration-app/containers/Event/EventSearchResultView';
 import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
-import { routes, ViewType } from '@data-exploration-app/containers/App';
+import { routes } from '@data-exploration-app/containers/App';
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
+import { ViewType } from '@data-exploration-lib/core';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${

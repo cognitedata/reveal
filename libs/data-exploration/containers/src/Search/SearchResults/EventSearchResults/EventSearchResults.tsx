@@ -15,24 +15,28 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
 import { EventTable } from './EventTable';
+import { TableProps } from '@data-exploration/components';
 
 export const EventSearchResults = ({
   query = '',
   filter = {},
   onClick,
+  id,
   onDirectAssetClick,
   showCount = false,
   selectedRow,
   onFilterChange,
+  ...rest
 }: {
   query?: string;
+  id?: string;
   filter?: InternalEventsFilters;
   showCount?: boolean;
   onClick: (item: CogniteEvent) => void;
   onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
   selectedRow?: Record<string | number, boolean>;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-}) => {
+} & Omit<TableProps<CogniteEvent>, 'data' | 'columns' | 'id'>) => {
   const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
@@ -58,7 +62,7 @@ export const EventSearchResults = ({
 
   return (
     <EventTable
-      id="event-search-results"
+      id={id || 'event-search-results'}
       query={query}
       selectedRows={selectedRow}
       tableHeaders={
@@ -90,6 +94,7 @@ export const EventSearchResults = ({
       hasNextPage={!isPreviousData && hasNextPage}
       onRowClick={(event: CogniteEvent) => onClick(event)}
       onDirectAssetClick={onDirectAssetClick}
+      {...rest}
     />
   );
 };

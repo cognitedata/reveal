@@ -11,12 +11,13 @@ import {
   ResourceType,
   convertResourceType,
 } from '@data-exploration-components/types';
+
+import { Model3D } from '@cognite/sdk';
 import {
   ThreeDModelsResponse,
+  transformNewFilterToOldFilter,
   useInfinite3DModels,
-} from '@data-exploration-components/hooks';
-import { Model3D } from '@cognite/sdk';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+} from '@data-exploration-lib/domain-layer';
 import { formatNumber } from '@data-exploration-lib/core';
 
 export type ResultProps = {

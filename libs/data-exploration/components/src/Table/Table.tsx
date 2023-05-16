@@ -59,7 +59,7 @@ import { LoadMore, LoadMoreProps } from './components';
 import { EmptyState } from '../EmpyState';
 import noop from 'lodash/noop';
 
-import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
+import { CopyToClipboardIconButton } from './components/CopyToClipboardIconButton';
 
 export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;
@@ -93,11 +93,11 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   onRowSelection?: OnChangeFn<RowSelectionState>;
   enableCopying?: boolean;
   enableSelection?: boolean;
-  // This is to render a sub component inside the row
+  // This is to render a subcomponent inside the row
   renderRowSubComponent?: (row: Row<T>) => React.ReactNode;
   // This is to render an additional row after, depending on the row's value
   renderSubRowComponent?: (row: Row<T>) => React.ReactNode;
-  // This is to render a sub component inside a cell of a row
+  // This is to render a subcomponent inside a cell of a row
   renderCellSubComponent?: (cell: Cell<T, unknown>) => React.ReactNode;
   onChangeSearchInput?: (value: string) => void;
 };
@@ -152,6 +152,8 @@ export function Table<T extends TableData>({
 
   const checkboxColumn: ColumnDef<T> = {
     id: 'select',
+    enableResizing: false,
+    maxSize: 50,
     header: ({ table }) => {
       return (
         <Checkbox
@@ -178,9 +180,9 @@ export function Table<T extends TableData>({
     },
   };
 
-  const updatedColumns = enableSelection
-    ? [checkboxColumn, ...columns]
-    : columns;
+  const updatedColumns = useMemo(() => {
+    return enableSelection ? [checkboxColumn, ...columns] : columns;
+  }, [columns, enableSelection]);
 
   const tbodyRef = useRef<HTMLDivElement>(null);
   const trackUsage = useMetrics();
@@ -236,6 +238,7 @@ export function Table<T extends TableData>({
     `${id}-column-order`,
     { defaultValue: [] }
   );
+
   const [columnSizing, setColumnSizing] =
     useLocalStorageState<ColumnSizingState>(`${id}-column-sizing`, {
       defaultValue: {},
@@ -352,6 +355,8 @@ export function Table<T extends TableData>({
                       style: {
                         width: header.getSize(),
                       },
+                      className:
+                        header.column.id === 'select' ? 'sticky-column' : '',
                     }}
                   >
                     <ThWrapper>
@@ -419,6 +424,10 @@ export function Table<T extends TableData>({
                               style: {
                                 width: cell.column.getSize(),
                               },
+                              className:
+                                cell.column.columnDef.id === 'select'
+                                  ? 'sticky-column'
+                                  : '',
                             }}
                           >
                             <TableDataBody level={3}>

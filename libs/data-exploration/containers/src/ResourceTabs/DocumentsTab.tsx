@@ -1,5 +1,4 @@
-import { getChipRightPropsForResourceCounter } from '../../../utils';
-
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 import { ResourceTabProps } from './types';
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { CounterTab } from './elements';

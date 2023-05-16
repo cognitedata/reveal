@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
+
 import {
   EmptyState,
   HighlightCell,

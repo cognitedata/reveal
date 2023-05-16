@@ -42,7 +42,7 @@ export const SearchResults = ({
     case 'asset':
       return (
         <AssetSearchResults
-          isTreeEnabled={isAssetTreeEnabled}
+          isTreeEnabled={isAssetTreeEnabled ? true : undefined}
           view={assetView}
           onViewChange={setAssetView}
           onClick={(item) => onClick({ id: item.id, type: 'asset' })}

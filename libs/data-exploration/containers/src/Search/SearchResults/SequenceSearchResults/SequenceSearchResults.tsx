@@ -15,6 +15,7 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
 import { SequenceTable } from './SequenceTable/SequenceTable';
+import { TableProps } from '@data-exploration/components';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -24,15 +25,17 @@ export const SequenceSearchResults = ({
   onRootAssetClick,
   showCount = false,
   selectedRow,
+  id,
 }: {
   query?: string;
+  id?: string;
   filter?: InternalSequenceFilters;
   showCount?: boolean;
   onClick: (item: Sequence) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   selectedRow?: Record<string | number, boolean>;
-}) => {
+} & Omit<TableProps<Sequence>, 'data' | 'columns' | 'id'>) => {
   const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
@@ -59,7 +62,7 @@ export const SequenceSearchResults = ({
 
   return (
     <SequenceTable
-      id="sequence-search-results"
+      id={id || 'sequence-search-results'}
       query={query}
       selectedRows={selectedRow}
       tableHeaders={

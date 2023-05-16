@@ -19,13 +19,16 @@ import {
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
 import { useSDK } from '@cognite/sdk-provider';
+import { TableProps } from '@data-exploration/components';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
 import { DocumentsTable } from './DocumentsTable';
 import { DocumentUploaderModal } from './DocumentUploader';
 
-export interface DocumentSearchResultsProps {
+export interface DocumentSearchResultsProps
+  extends Omit<TableProps<InternalDocument>, 'id' | 'data' | 'columns'> {
+  id?: string;
   query?: string;
   filter: InternalDocumentFilter;
   onClick: (item: InternalDocument) => void;
@@ -42,9 +45,11 @@ export const DocumentSearchResults = ({
   filter = {},
   onClick,
   onRootAssetClick,
+  id,
   selectedRow,
   onFilterChange,
   onFileClicked,
+  ...rest
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [realQuery, setRealQuery] = useState<string>();
@@ -141,7 +146,7 @@ export const DocumentSearchResults = ({
   return (
     <DocumentSearchResultWrapper>
       <DocumentsTable
-        id="documents-search-results"
+        id={id || 'documents-search-results'}
         enableSorting
         selectedRows={selectedRow}
         onSort={setSortBy}
@@ -195,6 +200,7 @@ export const DocumentSearchResults = ({
         }}
         hasNextPage={hasNextPage}
         isLoadingMore={isLoading}
+        {...rest}
       />
       {modalVisible && (
         <DocumentUploaderModal

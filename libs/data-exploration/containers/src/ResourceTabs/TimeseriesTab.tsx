@@ -1,5 +1,5 @@
 import { useTimeseriesAggregateCountQuery } from '@data-exploration-lib/domain-layer';
-import { getChipRightPropsForResourceCounter } from '../../../utils';
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 import { ResourceTabProps } from './types';
 import { CounterTab } from './elements';

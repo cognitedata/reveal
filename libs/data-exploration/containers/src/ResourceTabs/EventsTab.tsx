@@ -1,7 +1,7 @@
 import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 import { ResourceTabProps } from './types';
-import { getChipRightPropsForResourceCounter } from '../../../utils';
 import { CounterTab } from './elements';
 import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 

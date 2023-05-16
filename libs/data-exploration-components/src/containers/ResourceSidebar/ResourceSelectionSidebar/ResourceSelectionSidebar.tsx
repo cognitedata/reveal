@@ -229,7 +229,7 @@ export const ResourceSelectionSidebar = ({
                       closable={true}
                       onClose={() => setPreviewItem(undefined)}
                       selectionMode={selectionMode}
-                      onSelect={() => onSelect(previewItem)}
+                      onSelect={() => onSelect?.(previewItem)}
                       isSelected={isSelected(previewItem)}
                     />
                   </ResourcePreviewSidebarWrapper>
@@ -247,7 +247,7 @@ export const ResourceSelectionSidebar = ({
                       onClick={() => {
                         if (selectionMode === 'single') {
                           if (previewItem) {
-                            onSelect(previewItem);
+                            onSelect?.(previewItem);
                             return;
                           }
                         }

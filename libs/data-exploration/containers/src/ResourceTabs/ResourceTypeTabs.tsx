@@ -7,7 +7,7 @@ export interface Props {
   children: React.ReactElement<TabProps, string | JSXElementConstructor<any>>[];
 }
 
-export const ResourceTypeTabsV2 = ({
+export const ResourceTypeTabs = ({
   currentResourceType = 'all',
   setCurrentResourceType,
   ...rest

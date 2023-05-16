@@ -17,6 +17,7 @@ import {
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { TimeseriesTable } from './TimeseriesTable';
 import { TimeseriesTableHeader } from './TimeseriesTableHeader';
+import { TableProps } from '@data-exploration/components';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -25,6 +26,7 @@ export const TimeseriesSearchResults = ({
   onClick,
   onRootAssetClick,
   dateRange,
+  id,
   onDateRangeChange,
   onFilterChange,
   selectedRow,
@@ -33,6 +35,7 @@ export const TimeseriesSearchResults = ({
 }: {
   query?: string;
   showCount?: boolean;
+  id?: string;
   initialView?: string;
   filter?: InternalTimeseriesFilters;
   selectedRow?: Record<string | number, boolean>;
@@ -40,7 +43,8 @@ export const TimeseriesSearchResults = ({
   onClick: (item: Timeseries) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-} & DateRangeProps) => {
+} & DateRangeProps &
+  Omit<TableProps<Timeseries>, 'data' | 'columns' | 'id'>) => {
   const timeseriesSearchConfig =
     useGetSearchConfigFromLocalStorage('timeSeries');
 
@@ -76,7 +80,7 @@ export const TimeseriesSearchResults = ({
       <Flex justifyContent="space-between" alignItems="center"></Flex>
 
       <TimeseriesTable
-        id="timeseries-search-results"
+        id={id || 'timeseries-search-results'}
         selectedRows={selectedRow}
         query={query}
         dateRange={dateRange}

@@ -12,13 +12,6 @@ export {
   ByAssetFilterV2,
   MetadataFilterV2,
   AggregatedEventFilterV2,
-  ResourceTypeTabsV2,
-  AssetsTab,
-  EventsTab,
-  DocumentsTab,
-  TimeseriesTab,
-  SequenceTab,
-  ThreeDTab,
   NumberFilter,
   SourceFilter,
 } from './SearchNew';

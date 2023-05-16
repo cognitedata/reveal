@@ -1,9 +1,9 @@
 import { TabProps } from '@cognite/cogs.js';
 
-import { getChipRightPropsForResourceCounter } from '../../../utils';
 import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
 import { CounterTab } from './elements';
 import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 interface Props extends TabProps {
   query?: string;

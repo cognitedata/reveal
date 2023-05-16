@@ -7,10 +7,7 @@ import React, {
 } from 'react';
 
 import { Button, Input, Menu } from '@cognite/cogs.js';
-import {
-  ThreeDModelsResponse,
-  useInfinite3DModels,
-} from '@cognite/data-exploration';
+
 import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
@@ -30,7 +27,11 @@ import { TableNoResults } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
-import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
+import {
+  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+  ThreeDModelsResponse,
+  useInfinite3DModels,
+} from '@data-exploration-lib/domain-layer';
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../utils';
 
 type SecondaryModelDropdownProps = {
