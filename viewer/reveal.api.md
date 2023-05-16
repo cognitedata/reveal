@@ -1429,11 +1429,11 @@ export class ThickLine {
     getLineLength(): number;
     getMidPointOnLine(): THREE_2.Vector3;
     get meshes(): THREE_2.Group;
-    updateLineClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
-    updateLineColor(color: THREE_2.Color): void;
-    updateLineEndPoint(endPoint: THREE_2.Vector3): void;
-    updateLineWidth(lineWidth: number): void;
-    set visibility(visible: boolean);
+    setLineClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
+    setLineColor(color: THREE_2.Color): void;
+    setLineEndPoint(endPoint: THREE_2.Vector3): void;
+    setLineWidth(lineWidth: number): void;
+    setVisibility(visible: boolean): void;
 }
 
 // @public

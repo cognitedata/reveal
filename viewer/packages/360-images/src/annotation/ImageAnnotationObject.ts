@@ -160,8 +160,8 @@ export class ImageAnnotationObject implements Image360Annotation {
     this._meshMaterial.needsUpdate = true;
 
     this._lines.forEach(l => {
-      l.updateLineColor(color);
-      l.visibility = visibility;
+      l.setLineColor(color);
+      l.setVisibility(visibility);
     });
   }
 

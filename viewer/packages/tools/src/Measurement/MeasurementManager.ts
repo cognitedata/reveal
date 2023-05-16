@@ -58,7 +58,7 @@ export class MeasurementManager {
    */
   update(mouseEvent: { offsetX: number; offsetY: number }): void {
     const { offsetX, offsetY } = mouseEvent;
-    this._line.updateLineEndPoint(this.pointerTo3DPosition(offsetX, offsetY));
+    this._line.setLineEndPoint(this.pointerTo3DPosition(offsetX, offsetY));
   }
 
   /**
@@ -68,7 +68,7 @@ export class MeasurementManager {
   endMeasurement(point: THREE.Vector3): void {
     const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
-    this._line.updateLineEndPoint(point);
+    this._line.setLineEndPoint(point);
     const label = distanceToLabelCallback(this._line.getLineLength());
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
@@ -104,7 +104,7 @@ export class MeasurementManager {
    * @param clippingPlanes current active global clipping planes.
    */
   updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
-    this._line.updateLineClippingPlanes(clippingPlanes);
+    this._line.setLineClippingPlanes(clippingPlanes);
     if (this._labelElement) {
       this._labelElement.hidden = !this._line.meshes.visible;
     }
@@ -115,7 +115,7 @@ export class MeasurementManager {
    * @param lineWidth Width of the measuring line mesh.
    */
   updateLineWidth(lineWidth: number): void {
-    this._line.updateLineWidth(lineWidth);
+    this._line.setLineWidth(lineWidth);
   }
 
   /**
@@ -123,7 +123,7 @@ export class MeasurementManager {
    * @param color Color of the measuring line mesh.
    */
   updateLineColor(color: THREE.Color): void {
-    this._line.updateLineColor(color);
+    this._line.setLineColor(color);
   }
 
   /**

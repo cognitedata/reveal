@@ -54,7 +54,7 @@ export class ThickLine {
     };
     this._meshes.add(onBeforeRenderTrigger);
     this.initializeMeshes();
-    this.updateLineEndPoint(this._endPosition);
+    this.setLineEndPoint(this._endPosition);
   }
 
   /**
@@ -81,7 +81,7 @@ export class ThickLine {
    * Update the line end point.
    * @param endPoint Second point of the line
    */
-  updateLineEndPoint(endPoint: THREE.Vector3): void {
+  setLineEndPoint(endPoint: THREE.Vector3): void {
     this._endPosition.copy(endPoint);
     this._meshes.position.copy(this.getMidPointOnLine());
     this._meshes.lookAt(endPoint);
@@ -92,7 +92,7 @@ export class ThickLine {
    * Updates the line clipping planes
    * @param clippingPlanes current active global clipping planes.
    */
-  updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     const visible =
       !this.clippingPlanesContainPoint(clippingPlanes, this._startPosition) ||
       !this.clippingPlanesContainPoint(clippingPlanes, this._endPosition);
@@ -119,7 +119,7 @@ export class ThickLine {
    * Update current line width.
    * @param lineWidth Width of the line mesh.
    */
-  updateLineWidth(lineWidth: number): void {
+  setLineWidth(lineWidth: number): void {
     this._adaptiveWidthLineMaterial.linewidth = lineWidth;
   }
 
@@ -127,14 +127,14 @@ export class ThickLine {
    * Update current line color.
    * @param color Color of the line mesh.
    */
-  updateLineColor(color: THREE.Color): void {
+  setLineColor(color: THREE.Color): void {
     this._fixedWidthLineMaterial.color = this._adaptiveWidthLineMaterial.color = color;
   }
 
   /**
    * Set visibility
    */
-  set visibility(visible: boolean) {
+  setVisibility(visible: boolean): void {
     this._fixedWidthLineMaterial.visible = this._adaptiveWidthLineMaterial.visible = visible;
   }
 
