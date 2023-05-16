@@ -87,7 +87,9 @@ export {
   Image360ExitedDelegate,
   Image360AnnotationIntersection,
   Image360AnnotationAppearance,
-  Image360Annotation
+  Image360Annotation,
+  Image360AnnotationAssetFilter,
+  Image360AnnotationAssetQueryResult
 } from '../packages/360-images';
 
 export { OverlayCollection, OverlayInfo, Overlay3D, DefaultMetadataType } from '../packages/3d-overlays';

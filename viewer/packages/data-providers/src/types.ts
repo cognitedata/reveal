@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
 
 export interface JsonFileProvider {
@@ -14,6 +14,7 @@ export interface BinaryFileProvider {
 
 export interface Image360AnnotationProvider {
   get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
+  getFilesByAssetRef(assetId: IdEither): Promise<CogniteInternalId[]>;
 }
 
 export interface Image360DescriptorProvider<T> {
