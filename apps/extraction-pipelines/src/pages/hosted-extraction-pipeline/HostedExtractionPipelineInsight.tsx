@@ -28,5 +28,5 @@ const InsightGrid = styled.div`
 `;
 
 const JobsTableSection = styled(JobsTable)`
-  grid-row: first / end;
+  grid-row: start / end;
 `;
