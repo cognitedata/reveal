@@ -12,7 +12,12 @@ import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { MetadataFilter, SubTypeFilter, TypeFilter } from '../../../Filters';
+import {
+  MetadataFilter,
+  SourceFilter,
+  SubTypeFilter,
+  TypeFilter,
+} from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { EventTable } from './EventTable';
 
@@ -31,6 +36,15 @@ const LinkedEventFilter = ({
 }) => {
   return (
     <PreviewFilterDropdown>
+      <SourceFilter.Event
+        filter={filter}
+        value={filter.sources}
+        onChange={(newSources) =>
+          onFilterChange({
+            sources: newSources,
+          })
+        }
+      />
       <TypeFilter.Event
         filter={filter}
         value={filter.type}

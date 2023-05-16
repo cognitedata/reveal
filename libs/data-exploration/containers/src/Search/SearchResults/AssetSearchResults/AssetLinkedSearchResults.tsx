@@ -12,7 +12,7 @@ import {
   InternalAssetFilters,
   InternalCommonFilters,
 } from '@data-exploration-lib/core';
-import { MetadataFilter } from '../../../Filters';
+import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { AssetTable } from './AssetTable';
 
@@ -30,6 +30,21 @@ const LinkedAssetFilter = ({
 }) => {
   return (
     <PreviewFilterDropdown>
+      <LabelFilter.Asset
+        filter={filter}
+        value={filter.labels}
+        onChange={(newFilters) => onFilterChange({ labels: newFilters })}
+        addNilOption
+      />
+      <SourceFilter.Asset
+        filter={filter}
+        value={filter.sources}
+        onChange={(newSources) =>
+          onFilterChange({
+            sources: newSources,
+          })
+        }
+      />
       <MetadataFilter.Assets
         filter={filter}
         values={filter.metadata}

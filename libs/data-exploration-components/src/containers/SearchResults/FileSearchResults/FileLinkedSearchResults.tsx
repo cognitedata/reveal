@@ -20,7 +20,9 @@ import {
   AppliedFiltersTags,
   DocumentsTable,
   FileGroupingTable,
+  LabelFilter,
   MetadataFilter,
+  SourceFilter,
   TypeFilter,
 } from '@data-exploration/containers';
 import {
@@ -44,6 +46,20 @@ const LinkedFileFilter = ({
 }) => {
   return (
     <PreviewFilterDropdown>
+      <LabelFilter.File
+        filter={filter}
+        value={filter.labels}
+        onChange={(newFilters) => onFilterChange({ labels: newFilters })}
+      />
+      <SourceFilter.File
+        filter={filter}
+        value={filter.source}
+        onChange={(newSources) =>
+          onFilterChange({
+            source: newSources,
+          })
+        }
+      />
       <TypeFilter.File
         filter={filter}
         value={filter.type}
