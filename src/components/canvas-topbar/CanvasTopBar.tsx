@@ -1,4 +1,4 @@
-import { Colors, Flex, Menu } from '@cognite/cogs.js';
+import { Avatar, AvatarGroup, Colors, Flex, Menu } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
@@ -9,9 +9,14 @@ import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
 import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
 import { toPng } from 'html-to-image';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useState } from 'react';
+import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
 
 export const CanvasTopBar = () => {
-  const { flow, setHistoryVisible } = useWorkflowBuilderContext();
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const { flow, setHistoryVisible, userState, otherUserStates } =
+    useWorkflowBuilderContext();
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
@@ -49,6 +54,13 @@ export const CanvasTopBar = () => {
               <FlowSaveIndicator />
             </Flex>
             <SecondaryTopbar.Divider />
+            <Avatar text={userState.name ?? userState.connectionId} />
+            <AvatarGroup>
+              {otherUserStates.map(({ connectionId, name }) => (
+                <Avatar key={connectionId} text={name ?? connectionId} />
+              ))}
+            </AvatarGroup>
+            <SecondaryTopbar.Divider />
             <Flex gap={10}>
               <CanvasTopBarDiscardChangesButton />
               <CanvasTopbarPublishButton />
@@ -63,6 +75,13 @@ export const CanvasTopBar = () => {
           },
           content: (
             <Menu>
+              <Menu.Item
+                icon="Settings"
+                iconPlacement="left"
+                onClick={() => setShowUpdateModal(true)}
+              >
+                General info
+              </Menu.Item>
               <Menu.Item
                 icon="Download"
                 iconPlacement="left"
@@ -81,6 +100,10 @@ export const CanvasTopBar = () => {
             </Menu>
           ),
         }}
+      />
+      <EditWorkflowModal
+        showWorkflowModal={showUpdateModal}
+        setShowWorkflowModal={setShowUpdateModal}
       />
     </Container>
   );

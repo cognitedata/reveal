@@ -22,6 +22,7 @@ import { useUserInfo } from 'utils/user';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 import { getToken } from '@cognite/cdf-sdk-singleton';
+import { v4 } from 'uuid';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -44,7 +45,12 @@ type FlowContextT = {
   setHistoryVisible: Dispatch<SetStateAction<boolean>>;
   previewHash?: string;
   setPreviewHash: Dispatch<SetStateAction<string | undefined>>;
+
   selectedObjectData: ProcessNodeData | undefined;
+  userState: UserState;
+  setUserState: Dispatch<SetStateAction<UserState>>;
+  otherUserStates: UserState[];
+  setOtherUserStates: Dispatch<SetStateAction<UserState[]>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -58,6 +64,30 @@ type FlowContextProviderProps = {
 
 type AutomergeChangeNodesFn = Automerge.ChangeFn<CanvasNodes>;
 type AutomergeChangeEdgesFn = Automerge.ChangeFn<CanvasEdges>;
+
+type WSAuthenticationRequest = {
+  connectionId: string;
+  jwt: string;
+};
+
+type WSUserStateUpdateRequest = UserState & {
+  type: 'UPDATE';
+};
+
+type WSUserStateRemoveRequest = {
+  connectionId: string;
+  type: 'REMOVE';
+};
+
+type WSUserStateRequest = WSUserStateRemoveRequest | WSUserStateUpdateRequest;
+
+const CONNECTION_ID = v4();
+
+export type UserState = {
+  connectionId: string;
+  name?: string;
+  selectedObjectIds: string[];
+};
 
 export const FlowContextProvider = ({
   externalId,
@@ -81,19 +111,54 @@ export const FlowContextProvider = ({
     });
 
   const { data: userInfo } = useUserInfo();
-  const { mutate } = useUpdateFlow();
-  const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
+  const { mutate: updateFlow } = useUpdateFlow();
 
   const [socket, setWS] = useState<WebSocket>();
+
+  const externalFlowRef = useRef(initialFlow);
+
+  const [userState, setUserState] = useState<UserState>({
+    connectionId: CONNECTION_ID,
+    selectedObjectIds: [],
+  });
+
+  const [otherUserStates, setOtherUserStates] = useState<UserState[]>([]);
+
+  const debouncedMutate = useMemo(() => {
+    const mutate = (newFlow: AFlow) => {
+      const changes = Automerge.getChanges(externalFlowRef.current, newFlow);
+      externalFlowRef.current = newFlow;
+
+      updateFlow(newFlow);
+
+      if (changes.length > 0 && socket) {
+        changes.forEach((change) => socket.send(change.buffer));
+      }
+    };
+
+    return debounce(mutate, 500);
+  }, [socket, updateFlow]);
+
+  useEffect(() => {
+    setUserState((prevState) => ({
+      ...prevState,
+      name: userInfo?.displayName,
+    }));
+  }, [userInfo]);
+
   useEffect(() => {
     if (token) {
       const { host } = new URL(sdk.getBaseUrl());
       const ws = new WebSocket(
-        `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/file/${externalId}`
+        `wss://${host}/apps/v1/projects/${sdk.project}/automerge-sync/flows/${externalId}`
       );
 
       ws.addEventListener('open', async () => {
-        ws.send(JSON.stringify({ jwt: token }));
+        const authenticationRequest: WSAuthenticationRequest = {
+          connectionId: CONNECTION_ID,
+          jwt: token,
+        };
+        ws.send(JSON.stringify(authenticationRequest));
         setWS(ws);
       });
 
@@ -105,22 +170,65 @@ export const FlowContextProvider = ({
       });
 
       ws.addEventListener('message', (e: MessageEvent<Blob>) => {
-        const reader = new FileReader();
-        reader.addEventListener('loadend', () => {
-          if (reader.result) {
-            const data = new Uint8Array(reader.result as ArrayBuffer);
-            const [newFlow] = Automerge.applyChanges(flowRef.current, [data]);
-            flowRef.current = newFlow;
-            setFlowState(newFlow);
-          }
-        });
-        reader.readAsArrayBuffer(e.data);
+        if (e.data instanceof Blob) {
+          const reader = new FileReader();
+          reader.addEventListener('loadend', () => {
+            if (reader.result) {
+              const data = new Uint8Array(reader.result as ArrayBuffer);
+              const [newFlow] = Automerge.applyChanges(flowRef.current, [data]);
+              flowRef.current = newFlow;
+              setFlowState(newFlow);
+            }
+          });
+          reader.readAsArrayBuffer(e.data);
+        } else if (typeof e.data === 'string') {
+          try {
+            // TODO: add validation for data
+            const data: WSUserStateRequest = JSON.parse(e.data);
+            if (data) {
+              if (data.type === 'REMOVE') {
+                setOtherUserStates((prevState) =>
+                  prevState.filter(
+                    ({ connectionId }) => connectionId !== data.connectionId
+                  )
+                );
+              } else if (data.type === 'UPDATE') {
+                setOtherUserStates((prevState) =>
+                  prevState
+                    .filter(
+                      ({ connectionId }) => connectionId !== data.connectionId
+                    )
+                    .concat({
+                      connectionId: data.connectionId,
+                      selectedObjectIds: data.selectedObjectIds,
+                      name: data.name,
+                    })
+                );
+              } else {
+                throw new Error(
+                  `unknown user state request type: ${(data as any)?.type}`
+                );
+              }
+            }
+          } catch {}
+        }
       });
       return () => {
         ws.close();
       };
     }
   }, [externalId, token, sdk]);
+
+  useEffect(() => {
+    if (socket) {
+      // FIXME: changes sent twice
+      const userStateMessage: WSUserStateUpdateRequest = {
+        ...userState,
+        type: 'UPDATE',
+      };
+      socket.send(JSON.stringify(userStateMessage));
+    }
+  }, [socket, userState]);
 
   const changeFlow = useCallback(
     (fn: Automerge.ChangeFn<AFlow>, logger?: Logger) => {
@@ -137,9 +245,6 @@ export const FlowContextProvider = ({
         newFlow = Automerge.emptyChange(flowRef.current, msg);
         anythingChanged = true;
       }
-      const changes = anythingChanged
-        ? Automerge.getChanges(flowRef.current, newFlow)
-        : [];
       flowRef.current = newFlow;
       // `fn` could end up doing no changes. Since there are no actual changes, there is no point in
       // updating state or persisting the doc. In the current version of AM it also seems safe to
@@ -150,11 +255,8 @@ export const FlowContextProvider = ({
         setFlowState(newFlow);
         debouncedMutate(newFlow);
       }
-      if (changes.length > 0 && socket) {
-        changes.forEach((change) => socket.send(change.buffer));
-      }
     },
-    [debouncedMutate, socket]
+    [debouncedMutate]
   );
 
   const restoreWorkflow = useCallback(
@@ -206,18 +308,6 @@ export const FlowContextProvider = ({
     [changeFlow]
   );
 
-  const { data } = useFlow(externalId, {
-    staleTime: 0,
-    refetchInterval: 1000,
-  });
-
-  useEffect(() => {
-    if (data) {
-      flowRef.current = data;
-      setFlowState(data);
-    }
-  }, [data]);
-
   useEffect(() => {
     if (!isHistoryVisible) {
       setPreviewHash(undefined);
@@ -257,6 +347,10 @@ export const FlowContextProvider = ({
         setPreviewHash,
         restoreWorkflow,
         selectedObjectData,
+        userState,
+        setUserState,
+        otherUserStates,
+        setOtherUserStates,
       }}
     >
       {children}

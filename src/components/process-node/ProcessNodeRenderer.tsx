@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import {
+  Body,
   Button,
   Colors,
   Dropdown,
@@ -15,11 +16,26 @@ import styled from 'styled-components';
 import { Edge, Handle, NodeProps, Position } from 'reactflow';
 
 import { useTranslation } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { UserState, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { PROCESS_ICON, ProcessNode, ProcessNodeData, ProcessType } from 'types';
 import { useUserInfo } from 'utils/user';
 
 const BASE_NODE_HANDLE_SIZE = 16;
+
+const getFocusedUserNames = (
+  otherUsers: UserState[],
+  isSelectedByCurrentUser: boolean
+): string => {
+  const names = isSelectedByCurrentUser ? ['You'] : [];
+  otherUsers.forEach(({ name, connectionId }) => {
+    const identifier = name ?? connectionId;
+    if (!names.includes(identifier)) {
+      names.push(identifier);
+    }
+  });
+
+  return names.join(', ');
+};
 
 export const ProcessNodeRenderer = ({
   data,
@@ -33,7 +49,12 @@ export const ProcessNodeRenderer = ({
   const [isLeftDropdownVisible, setIsLeftDropdownVisible] = useState(false);
   const [isRightDropdownVisible, setIsRightDropdownVisible] = useState(false);
   const { data: userInfo } = useUserInfo();
-  const { changeEdges, changeNodes, edges } = useWorkflowBuilderContext();
+  const { changeEdges, changeNodes, edges, otherUserStates } =
+    useWorkflowBuilderContext();
+
+  const otherUsers = otherUserStates.filter(({ selectedObjectIds }) =>
+    selectedObjectIds.includes(id)
+  );
 
   const hasSource = edges.some((edge) => edge.target === id);
   const hasTarget = edges.some((edge) => edge.source === id);
@@ -84,7 +105,14 @@ export const ProcessNodeRenderer = ({
 
   return (
     <ProcessNodeContainer
-      className={selected ? 'workflow-builder-node-selected' : undefined}
+      className={[
+        selected ? 'workflow-builder-node-selected' : undefined,
+        otherUsers.length > 0
+          ? 'workflow-builder-node-other-user-selected'
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
       <ProcessNodeContent>
         <BaseHandleLeft position={Position.Left} type="target" />
@@ -104,6 +132,11 @@ export const ProcessNodeRenderer = ({
             <div>{data.processDescription}</div>
           </Flex>
         </Flex>
+        {otherUsers.length > 0 && (
+          <FocusedUsers>
+            {getFocusedUserNames(otherUsers, selected)}
+          </FocusedUsers>
+        )}
       </ProcessNodeContent>
       {!hasSource && (
         <AddButtonLeftContainer
@@ -305,6 +338,24 @@ const ProcessNodeContainer = styled.div`
       opacity: 1;
     }
   }
+
+  &.workflow-builder-node-other-user-selected {
+    ${ProcessNodeContent} {
+      border-color: ${Colors['decorative--pink--400']};
+    }
+
+    ${BaseHandleRight}, ${BaseHandleLeft} {
+      opacity: 1;
+
+      ::after {
+        background-color: ${Colors['decorative--pink--400']};
+      }
+
+      :hover::after {
+        background-color: ${Colors['decorative--pink--500']};
+      }
+    }
+  }
 `;
 
 const ProcessNodeIconContainer = styled.div`
@@ -323,4 +374,17 @@ const ProcessNodeIcon = styled(Icon)`
 
 const ProcessNodeTitle = styled(Overline)`
   color: ${Colors['text-icon--interactive--default']};
+`;
+
+const FocusedUsers = styled(Body).attrs({ level: 3, strong: true })`
+  background-color: ${Colors['decorative--pink--400']};
+  color: ${Colors['text-icon--strong--inverted']};
+  border-radius: 2px;
+  height: 20px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: -24px;
 `;
