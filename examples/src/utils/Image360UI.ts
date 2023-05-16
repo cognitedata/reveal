@@ -37,7 +37,7 @@ export class Image360UI {
   }
 
   private params = {
-    siteId: getSiteIdFromUrl() ?? 'helideck-site-2-jpeg',
+    siteId: getSiteIdFromUrl() ?? '',
     add: () => this.add360ImageSet(),
     premultipliedRotation: false,
     remove: () => this.removeAll360Images(),
