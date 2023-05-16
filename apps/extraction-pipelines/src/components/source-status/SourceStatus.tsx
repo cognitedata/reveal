@@ -12,11 +12,10 @@ import {
 } from 'hooks/hostedExtractors';
 import {
   AggregationInterval,
-  aggregateLogsInLast30Days,
-  aggregateLogsInLast72Hours,
+  getUptimeAggregations,
 } from 'utils/hostedExtractors';
 
-import { SourceStatusDaily } from './SourceStatusDaily';
+import { SourceStatusAggregationItem } from './SourceStatusAggregationItem';
 
 type SourceStatusProps = {
   className?: string;
@@ -35,9 +34,11 @@ export const SourceStatus = ({
     useState<AggregationInterval>('hourly');
 
   const aggregations = useMemo(() => {
-    return aggregationInterval === 'hourly'
-      ? aggregateLogsInLast72Hours(logs)
-      : aggregateLogsInLast30Days(logs);
+    return getUptimeAggregations(
+      logs,
+      aggregationInterval,
+      aggregationInterval === 'hourly' ? 72 : 30
+    );
   }, [aggregationInterval, logs]);
 
   const [_, setSearchParams] = useSearchParams();
@@ -68,7 +69,7 @@ export const SourceStatus = ({
       <Content>
         <Flex direction="row-reverse" gap={4}>
           {aggregations.map((aggregation) => (
-            <SourceStatusDaily aggregation={aggregation} source={source} />
+            <SourceStatusAggregationItem aggregation={aggregation} />
           ))}
         </Flex>
         <DateAxis>

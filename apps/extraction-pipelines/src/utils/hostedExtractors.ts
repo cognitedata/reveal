@@ -115,3 +115,127 @@ export const aggregateLogsInLast72Hours = (
 
   return aggregateLogs(logs, 'hourly', 72);
 };
+
+type StatusChangeBucket = {
+  startTime: number;
+  endTime: number;
+  isUp: boolean;
+};
+
+export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
+  if (!logs || logs.length === 0) {
+    return [];
+  }
+
+  const buckets: StatusChangeBucket[] = [
+    {
+      startTime: logs[0].createdTime,
+      endTime: Number.MAX_SAFE_INTEGER,
+      isUp: doesLogHaveSuccessType(logs[0]),
+    },
+  ];
+
+  logs.slice(1).forEach((log, index) => {
+    const prevItem = logs[index];
+    buckets.push({
+      startTime: log.createdTime,
+      endTime: prevItem.createdTime,
+      isUp: doesLogHaveSuccessType(log),
+    });
+  });
+
+  return buckets;
+};
+
+const getIntervalInMs = (interval: AggregationInterval): number => {
+  switch (interval) {
+    case 'daily':
+      return DAY_IN_MS;
+    case 'hourly':
+      return HOUR_IN_MS;
+  }
+};
+
+export const getEndOfCurrentInterval = (
+  interval: AggregationInterval
+): number => {
+  const now = new Date();
+  const date = new Date(now.getTime() + getIntervalInMs(interval));
+
+  date.setMilliseconds(0);
+  date.setSeconds(0);
+  date.setMinutes(0);
+
+  if (interval === 'daily') {
+    date.setHours(0);
+  }
+
+  return date.getTime();
+};
+
+export type UptimeAggregation = {
+  startTime: number;
+  endTime: number;
+  uptimePercentage: number;
+};
+
+export const getUptimeAggregations = (
+  logs: ReadMQTTJobLog[] = [],
+  interval: AggregationInterval,
+  intervalCount: number
+): UptimeAggregation[] => {
+  if (logs.length === 0) {
+    return [];
+  }
+
+  const buckets = getStatusChangeBuckets(logs);
+  const intervalInMs = getIntervalInMs(interval);
+
+  const endOfCurrentInterval = getEndOfCurrentInterval(interval);
+  const now = new Date().getTime();
+
+  const firstLogTime = buckets[buckets.length - 1].startTime;
+
+  const aggregations: UptimeAggregation[] = Array(intervalCount)
+    .fill(0)
+    .map((_, index) => {
+      const endTime =
+        index === 0 ? now : endOfCurrentInterval - index * intervalInMs;
+      const startTime = endTime - intervalInMs;
+
+      if (endTime <= firstLogTime) {
+        return {
+          endTime,
+          startTime,
+          uptimePercentage: -1,
+        };
+      }
+
+      const bucketsForCurrentInterval = buckets.filter(
+        ({ startTime: bucketStartTime, endTime: bucketEndTime }) => {
+          return (
+            bucketStartTime <= endTime &&
+            bucketEndTime > Math.max(startTime, firstLogTime)
+          );
+        }
+      );
+
+      let uptime = bucketsForCurrentInterval.reduce((acc, cur) => {
+        if (cur.isUp) {
+          const uptimeInCurrentInterval =
+            Math.min(endTime, cur.endTime) - Math.max(startTime, cur.startTime);
+          return uptimeInCurrentInterval + acc;
+        }
+        return acc;
+      }, 0);
+
+      return {
+        endTime,
+        startTime,
+        uptimePercentage:
+          (uptime / (endTime - Math.max(startTime, firstLogTime))) * 100,
+      };
+    });
+
+  return aggregations;
+};
