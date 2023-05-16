@@ -52,7 +52,10 @@ import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools
 import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
 import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
-import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
+import {
+  useFlagAssetMappingsOverlays,
+  useFlagPointCloudSearch,
+} from '@data-exploration-app/hooks/flags';
 import LoadImages360 from './load-secondary-models/LoadImages360';
 import zIndex from '../../utils/zIndex';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -66,6 +69,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
   const useOverlays = useFlagAssetMappingsOverlays();
+  const pointCloudSearchFeatureFlag = useFlagPointCloudSearch();
 
   useEffect(() => {
     if (modelId) {
@@ -360,7 +364,8 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   <HelpButton />
                 </StyledToolBar>
                 <SidebarContainer gap={15}>
-                  {(revealThreeDModel || revealPointCloudModel) && (
+                  {(revealThreeDModel ||
+                    (revealPointCloudModel && pointCloudSearchFeatureFlag)) && (
                     <AssetMappingsSidebar
                       modelId={modelId}
                       revisionId={revisionId}
