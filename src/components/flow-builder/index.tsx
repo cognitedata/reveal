@@ -57,7 +57,6 @@ export const FlowBuilder = (): JSX.Element => {
     flow: flowState,
     changeFlow,
     setSelectedObject,
-    selectedObject,
     setIsNodeConfigurationPanelOpen,
     userState,
     setUserState,
@@ -144,6 +143,14 @@ export const FlowBuilder = (): JSX.Element => {
           }
         });
         return newState;
+      });
+      selectChanges.forEach(({ id, selected }) => {
+        if (selected) {
+          setSelectedObject(id);
+          setIsNodeConfigurationPanelOpen(true);
+        } else if (selectChanges.every((c) => !c.selected)) {
+          setIsNodeConfigurationPanelOpen(false);
+        }
       });
     }
 
