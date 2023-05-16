@@ -11,6 +11,7 @@ import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 import { AnnotationFilter } from './Filters/AnnotationFilter';
 import { TimeFilter } from './Filters/TimeFilter';
 import { MediaTypeFilter } from './Filters/MediaTypeFilter';
+import { SourceFilter } from './Filters/SourceFilter';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -100,6 +101,18 @@ export const getFilterPanelItems = (
   },
   {
     key: '6',
+    headerText: 'Source',
+    disableClear: !filter.source,
+    clear: () => {
+      setFilter({
+        ...filter,
+        source: undefined,
+      });
+    },
+    filterItem: <SourceFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '7',
     headerText: 'Directory prefix',
     disableClear: !(filter as any).directoryPrefix,
     clear: () => {
@@ -121,7 +134,7 @@ export const getFilterPanelItems = (
     ),
   },
   {
-    key: '7',
+    key: '8',
     headerText: 'Additional filters',
     disableClear:
       !filter.externalIdPrefix && !filter.labels && !filter.metadata,
