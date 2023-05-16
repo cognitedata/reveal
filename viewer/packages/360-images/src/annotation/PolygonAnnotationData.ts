@@ -10,12 +10,10 @@ import { ImageAnnotationObjectData } from './ImageAnnotationData';
 
 export class PolygonAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: ShapeGeometry;
-  private readonly _lineGeometry: BufferGeometry;
   private readonly _outlinePoints: Vector2[];
 
   constructor(polygon: AnnotationsPolygon) {
     this._geometry = this.createGeometry(polygon);
-    this._lineGeometry = createLineGeometry(polygon);
     this._outlinePoints = getBoundPoints(polygon);
   }
 
@@ -41,20 +39,9 @@ export class PolygonAnnotationData implements ImageAnnotationObjectData {
     return new Matrix4().makeTranslation(0, 0, 0.5);
   }
 
-  getLineGeometry(): BufferGeometry {
-    return this._lineGeometry;
-  }
-
   getOutlinePoints(): Vector2[] {
     return this._outlinePoints;
   }
-}
-
-function createLineGeometry(polygon: AnnotationsPolygon) {
-  const cyclicVertices = [...polygon.vertices, polygon.vertices[0]];
-  const points = cyclicVertices.map(v => new Vector2(0.5 - v.x, 0.5 - v.y));
-
-  return new BufferGeometry().setFromPoints(points);
 }
 
 function getBoundPoints(polygon: AnnotationsPolygon): Vector2[] {
