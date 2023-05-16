@@ -28,7 +28,7 @@ export const SourceFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
   return (
     <StringFilter
       title="Source"
-      placeholder="Exact match"
+      placeholder="Exact match..."
       value={sourceInput}
       setValue={handleSourceInputChange}
     />
