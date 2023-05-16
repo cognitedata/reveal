@@ -16,8 +16,8 @@ export class ThickLine {
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3, endPoint: THREE.Vector3) {
     this._geometry = new LineGeometry();
 
-    this._startPosition = startPoint;
-    this._endPosition = endPoint;
+    this._startPosition = startPoint.clone();
+    this._endPosition = endPoint.clone();
 
     // Adaptive line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
