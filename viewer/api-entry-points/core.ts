@@ -59,6 +59,7 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  ThickLine,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 

@@ -10,16 +10,16 @@ export class ThickLine {
   private readonly _meshes: THREE.Group;
   private readonly _fixedWidthLineMaterial: LineMaterial;
   private readonly _adaptiveWidthLineMaterial: LineMaterial;
-  private readonly _startPos: THREE.Vector3;
-  private readonly _endpoint: THREE.Vector3;
+  private readonly _startPosition: THREE.Vector3;
+  private readonly _endPosition: THREE.Vector3;
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3, endPoint: THREE.Vector3) {
     this._geometry = new LineGeometry();
 
-    this._startPos = startPoint;
-    this._endpoint = endPoint;
+    this._startPosition = startPoint;
+    this._endPosition = endPoint;
 
-    //Adaptive Line width
+    // Adaptive line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
       linewidth: lineWidth,
@@ -28,17 +28,17 @@ export class ThickLine {
       transparent: true
     });
 
-    //Fixed line Width.
+    // Fixed line width
     this._fixedWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
-      linewidth: 1, // Tests have shown this to work reasonable on tested devices
+      linewidth: 2,
       worldUnits: false,
       depthTest: false,
       transparent: true
     });
 
     this._meshes = new THREE.Group();
-    this._meshes.name = 'Measurement';
+    this._meshes.name = 'Thick line';
 
     const onBeforeRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
     onBeforeRenderTrigger.name = 'onBeforeRenderTrigger trigger (no geometry)';
@@ -51,7 +51,7 @@ export class ThickLine {
     };
     this._meshes.add(onBeforeRenderTrigger);
     this.initializeMeshes();
-    this.updateLine(this._endpoint);
+    this.updateLineEndPoint(this._endPosition);
   }
 
   dispose(): void {
@@ -69,33 +69,33 @@ export class ThickLine {
   }
 
   /**
-   * Update the measuring line end point.
-   * @param endPoint Second point of the line to end the measurement.
+   * Update the line end point.
+   * @param endPoint Second point of the line
    */
-  updateLine(endPoint: THREE.Vector3): void {
-    this._endpoint.copy(endPoint);
+  updateLineEndPoint(endPoint: THREE.Vector3): void {
+    this._endPosition.copy(endPoint);
     this._meshes.position.copy(this.getMidPointOnLine());
     this._meshes.lookAt(endPoint);
-    this._meshes.scale.set(0, 0, endPoint.distanceTo(this._startPos));
+    this._meshes.scale.set(0, 0, endPoint.distanceTo(this._startPosition));
   }
 
   /**
-   * Updates the measuring line clipping planes
+   * Updates the line clipping planes
    * @param clippingPlanes current active global clipping planes.
    */
   updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     const visible =
-      !this.clippingPlanesContainPoint(clippingPlanes, this._startPos) ||
-      !this.clippingPlanesContainPoint(clippingPlanes, this._endpoint);
+      !this.clippingPlanesContainPoint(clippingPlanes, this._startPosition) ||
+      !this.clippingPlanesContainPoint(clippingPlanes, this._endPosition);
     this._meshes.visible = !visible;
   }
 
   /**
-   * Get the distance between the measuring line start point & end point.
+   * Get the distance between the line start point & end point.
    * @returns Return distance between start & end point of the line.
    */
-  getMeasuredDistance(): number {
-    return this._endpoint.distanceTo(this._startPos);
+  getLineLength(): number {
+    return this._endPosition.distanceTo(this._startPosition);
   }
 
   /**
@@ -103,12 +103,12 @@ export class ThickLine {
    * @returns Returns mid point between start and end points.
    */
   getMidPointOnLine(): THREE.Vector3 {
-    return this._endpoint.clone().add(this._startPos).multiplyScalar(0.5);
+    return this._endPosition.clone().add(this._startPosition).multiplyScalar(0.5);
   }
 
   /**
    * Update current line width.
-   * @param lineWidth Width of the measuring line mesh.
+   * @param lineWidth Width of the line mesh.
    */
   updateLineWidth(lineWidth: number): void {
     this._adaptiveWidthLineMaterial.linewidth = lineWidth;
@@ -116,7 +116,7 @@ export class ThickLine {
 
   /**
    * Update current line color.
-   * @param color Color of the measuring line mesh.
+   * @param color Color of the line mesh.
    */
   updateLineColor(color: THREE.Color): void {
     this._fixedWidthLineMaterial.color = this._adaptiveWidthLineMaterial.color = color;
@@ -138,10 +138,8 @@ export class ThickLine {
     const adaptiveMesh = new Line2(this._geometry, this._adaptiveWidthLineMaterial);
     //Assign bounding sphere & box for the line to support raycasting.
     adaptiveMesh.computeLineDistances();
-    //Make sure line are rendered in-front of other objects.
     adaptiveMesh.renderOrder = 100;
 
-    //Fixed line width when camera is zoom out or far away from the line.
     const fixedMesh = new Line2(this._geometry, this._fixedWidthLineMaterial);
     fixedMesh.computeLineDistances();
     fixedMesh.renderOrder = 100;

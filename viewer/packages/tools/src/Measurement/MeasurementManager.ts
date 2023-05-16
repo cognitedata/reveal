@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
-import { MeasurementLine } from './MeasurementLine';
 import { MeasurementOptions } from './types';
+import { ThickLine } from '@reveal/utilities';
 
 export type Measurement = {
   readonly measurementId: number;
@@ -17,7 +17,7 @@ export type Measurement = {
 
 export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
-  private readonly _line: MeasurementLine;
+  private readonly _line: ThickLine;
   private readonly _options: Required<MeasurementOptions>;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
@@ -58,7 +58,7 @@ export class MeasurementManager {
    */
   update(mouseEvent: { offsetX: number; offsetY: number }): void {
     const { offsetX, offsetY } = mouseEvent;
-    this._line.updateLine(this.pointerTo3DPosition(offsetX, offsetY));
+    this._line.updateLineEndPoint(this.pointerTo3DPosition(offsetX, offsetY));
   }
 
   /**
@@ -68,15 +68,15 @@ export class MeasurementManager {
   endMeasurement(point: THREE.Vector3): void {
     const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
-    this._line.updateLine(point);
-    const label = distanceToLabelCallback(this._line.getMeasuredDistance());
+    this._line.updateLineEndPoint(point);
+    const label = distanceToLabelCallback(this._line.getLineLength());
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
     this._measurement = {
       measurementId: Date.now(),
       startPoint: this._startPoint,
       endPoint: point,
-      distanceInMeters: this._line.getMeasuredDistance()
+      distanceInMeters: this._line.getLineLength()
     };
   }
 
@@ -140,8 +140,8 @@ export class MeasurementManager {
    * Start the measurement.
    * @param point World position to start measurement operation from.
    */
-  private startMeasurement(point: THREE.Vector3): MeasurementLine {
-    return new MeasurementLine(this._options.lineWidth, this._options.color, point);
+  private startMeasurement(point: THREE.Vector3): ThickLine {
+    return new ThickLine(this._options.lineWidth, this._options.color, point, point);
   }
 
   /**
