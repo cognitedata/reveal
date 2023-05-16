@@ -3,7 +3,7 @@
  */
 
 import { Detail, Flex } from '@cognite/cogs.js';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
@@ -20,7 +20,9 @@ export interface Image360HistoricalOverviewToolbarProps{
   stationName?: string;
   collectionId?: string;
   revisionCollection?: Image360RevisionDetails[];
-  viewer: Cognite3DViewer;
+  activeRevision?: number | null;
+  setActiveRevision?: (index: number | null) => void;
+  viewer?: Cognite3DViewer;
 };
 
 export const Image360HistoricalOverviewToolbar = ({
@@ -28,9 +30,10 @@ export const Image360HistoricalOverviewToolbar = ({
   stationName,
   collectionId,
   revisionCollection,
+  activeRevision,
+  setActiveRevision,
   viewer
 }: Image360HistoricalOverviewToolbarProps) => {
-  const [activeRevision, setActiveRevision] = useState<number | null>(null);
 
   return(
     <OverviewContainer>
@@ -43,11 +46,9 @@ export const Image360HistoricalOverviewToolbar = ({
       <StyledLayoutGrid>
         { revisionCollection?.map((revisionDetails, index) => (
           <RevisionItem
-            key={index}
-            isActive={activeRevision === index}
             onClick={ () => {
               if(viewer && revisionDetails.image360Entity) {
-                setActiveRevision(index)
+                setActiveRevision!(index)
                 const revisions = revisionDetails.image360Entity.getRevisions();
                 const revisionIndex = revisionDetails.index!;
                 if (revisionIndex >= 0 && revisionIndex < revisions.length) {
@@ -57,7 +58,11 @@ export const Image360HistoricalOverviewToolbar = ({
               }
             }
           >
-            <Thumbnail imageUrl={revisionDetails.imageUrl} isLoading={false}/>
+            <Thumbnail
+              key={index}
+              isActive={activeRevision === index}
+              imageUrl={revisionDetails.imageUrl}
+              isLoading={false}/>
             <Detail>{revisionDetails.date}</Detail>
           </RevisionItem>
         ))
@@ -98,17 +103,15 @@ const StyledSubFlex = styled(Flex)`
 `;
 
 const OverviewContainer = styled.div`
-  width: 100%;
   height: 136px;
   display: flex;
   flex-direction: column;
   padding: 16px 16px 8px 16px;
   background: #FFFFFF;
   box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.25);
-  height: 146px;
 `;
 
-const RevisionItem = styled.div<{ isActive: boolean }>`
+const RevisionItem = styled.div`
   width: 160px;
   height: 90px;
   flex-direction: column;
@@ -120,12 +123,6 @@ const RevisionItem = styled.div<{ isActive: boolean }>`
   order: 0;
   flex-grow: 0;
   flex-basis: 90%;
-
-  ${({ isActive }) =>
-    isActive &&
-    `
-    border: 4px solid #4A67FB;
-  `}
 `;
 
 const StyledLayoutGrid = styled.div`

@@ -8,9 +8,11 @@ import { Icon } from '@cognite/cogs.js';
 
 export const Thumbnail = ({
   imageUrl,
+  isActive,
   isLoading,
 }: {
   imageUrl?: string;
+  isActive: boolean;
   isLoading: boolean;
 }) => {
   const image = useMemo(() => {
@@ -29,10 +31,14 @@ export const Thumbnail = ({
     return <Icon type="ImageOff" />;
   }, [imageUrl, isLoading]);
 
-  return <StyledThumbnail>{image}</StyledThumbnail>;
+  return <StyledThumbnail
+            isActive={isActive}
+          >
+            {image}
+          </StyledThumbnail>;
 };
 
-const StyledThumbnail = styled.div`
+const StyledThumbnail = styled.div<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -52,4 +58,10 @@ const StyledThumbnail = styled.div`
   svg {
     color: #0000008c;
   }
+
+  ${({ isActive }) =>
+    isActive &&
+    `
+    border: 4px solid #4A67FB;
+  `}
 `;

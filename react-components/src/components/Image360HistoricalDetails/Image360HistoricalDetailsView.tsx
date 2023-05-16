@@ -5,6 +5,7 @@
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 import React, { useMemo, useState } from 'react';
 import { Image360HistoricalDetailsPanel, Image360HistoricalOverviewToolbar } from '..';
+import { formatDate } from '../utils/FormatDate';
 
 export interface Image360HistoricalDetailsViewProps{
   viewer?: Cognite3DViewer;
@@ -12,7 +13,7 @@ export interface Image360HistoricalDetailsViewProps{
   stationName?: string;
   collectionId?: string;
   revision?: {
-    date: (Date | undefined)[];
+    details: { date: (Date | undefined), imageUrl: string } [];
     image: Image360;
   }
 };
@@ -24,7 +25,8 @@ export const Image360HistoricalDetailsView = ({
   collectionId,
   revision
 }: Image360HistoricalDetailsViewProps) => {
-  const [revisionDetailsMode, setRevisionDetailsMode] = useState<boolean>(false);
+  const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
+  const [activeRevision, setActiveRevision] = useState<number | null>(null);
   const [revisionCollection, setRevisionCollection] = useState<
     {
       date: string;
@@ -42,11 +44,11 @@ export const Image360HistoricalDetailsView = ({
         index: number;
         image360Entity: Image360;
       }[] = [];
-      revision.date.forEach((date, index) => {
-        if (date) {
+      revision.details.forEach((details, index) => {
+        if (details.date) {
           revisionCollection.push({
-            date: date.toString(),
-            imageUrl: '',
+            date: formatDate(details.date),
+            imageUrl: details.imageUrl,
             index: index,
             image360Entity: revision.image,
           });
@@ -62,15 +64,17 @@ export const Image360HistoricalDetailsView = ({
         <>
         <Image360HistoricalDetailsPanel
             key={`${stationId}`}
-            revisionDetailsMode={revisionDetailsMode}
-            setRevisionDetailsMode={setRevisionDetailsMode}
+            revisionDetailsExpanded={revisionDetailsExpanded}
+            setRevisionDetailsExpanded={setRevisionDetailsExpanded}
         />
-        {revisionDetailsMode && (
+        {revisionDetailsExpanded && (
           <Image360HistoricalOverviewToolbar
             viewer={viewer}
             stationId={stationId}
             stationName={stationName}
             collectionId={collectionId}
+            activeRevision={activeRevision ?? 0}
+            setActiveRevision={setActiveRevision}
             revisionCollection={revisionCollection}
           />
         )}

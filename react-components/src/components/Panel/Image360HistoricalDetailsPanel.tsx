@@ -8,19 +8,19 @@ import styled from 'styled-components';
 
 export interface Image360HistoricalDetailsPanelProps {
   revisionCount?: number;
-  revisionDetailsMode?: boolean;
-  setRevisionDetailsMode?: (detailed: boolean) => void;
+  revisionDetailsExpanded?: boolean;
+  setRevisionDetailsExpanded?: (detailed: boolean) => void;
 }
 
 export const Image360HistoricalDetailsPanel = ({
   revisionCount,
-  revisionDetailsMode,
-  setRevisionDetailsMode
+  revisionDetailsExpanded,
+  setRevisionDetailsExpanded
 }: Image360HistoricalDetailsPanelProps) => {
   const count = revisionCount?.toString();
 
   const onDetailsClick = () => {
-    setRevisionDetailsMode!(!revisionDetailsMode);
+    setRevisionDetailsExpanded!(!revisionDetailsExpanded);
   };
 
   return (
