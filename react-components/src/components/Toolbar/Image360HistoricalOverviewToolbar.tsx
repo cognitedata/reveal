@@ -75,7 +75,6 @@ export const Image360HistoricalOverviewToolbar = ({
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
   max-width: 200px;
-  height: 96px;
 `;
 
 const StyledFlex = styled(Flex)`
