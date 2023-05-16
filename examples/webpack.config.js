@@ -29,8 +29,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: 'css-loader',
-        exclude: /node_modules/
+        use: 'css-loader'
       },
       {
         test: /\.svg?/,

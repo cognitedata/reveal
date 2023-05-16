@@ -48,15 +48,39 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   private static createObjectData(detection: AnnotationData): ImageAnnotationObjectData | undefined {
     if (isAnnotationsObjectDetection(detection)) {
-      if (detection.polygon !== undefined) {
-        return new PolygonAnnotationData(detection);
-      } else if (detection.boundingBox !== undefined) {
-        return new BoxAnnotationData(detection.boundingBox);
-      } else {
-        return undefined;
-      }
+      return this.createObjectDetectionAnnotationData(detection);
     } else if (isAnnotationAssetLink(detection)) {
-      return new BoxAnnotationData(detection.textRegion);
+      return this.createAssetLinkAnnotationData(detection);
+    } else {
+      return undefined;
+    }
+  }
+
+  private static createObjectDetectionAnnotationData(
+    detection: AnnotationsObjectDetection
+  ): ImageAnnotationObjectData | undefined {
+    if (detection.polygon !== undefined) {
+      return new PolygonAnnotationData(detection.polygon);
+    } else if (detection.boundingBox !== undefined) {
+      return new BoxAnnotationData(detection.boundingBox);
+    } else {
+      return undefined;
+    }
+  }
+
+  private static createAssetLinkAnnotationData(
+    assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink
+  ): ImageAnnotationObjectData | undefined {
+    // TODO: Use AssetLink region type from SDK when available (2023-15-05)
+    const objectRegion = (assetLink as any).objectRegion;
+    if (objectRegion === undefined) {
+      return new BoxAnnotationData(assetLink.textRegion);
+    }
+
+    if (objectRegion.polygon !== undefined) {
+      return new PolygonAnnotationData(objectRegion.polygon);
+    } else if (objectRegion.boundingBox !== undefined) {
+      return new BoxAnnotationData(objectRegion.boundingBox);
     } else {
       return undefined;
     }

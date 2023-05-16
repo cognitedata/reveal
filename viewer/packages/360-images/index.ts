@@ -19,3 +19,4 @@ export { Image360AnnotationAppearance } from './src/annotation/types';
 export { Image360AnnotationIntersection } from './src/annotation/Image360AnnotationIntersection';
 export { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
+export { IconsOptions } from './src/icons/IconCollection';
