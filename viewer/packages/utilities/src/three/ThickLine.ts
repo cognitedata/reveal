@@ -5,6 +5,9 @@
 import * as THREE from 'three';
 import { LineGeometry, LineMaterial, Line2 } from 'three-stdlib';
 
+/**
+ * A class representing 3D objects constituting a line supporting widths larger than 1
+ */
 export class ThickLine {
   private readonly _geometry: LineGeometry;
   private readonly _meshes: THREE.Group;
@@ -54,6 +57,9 @@ export class ThickLine {
     this.updateLineEndPoint(this._endPosition);
   }
 
+  /**
+   * Release resources associated with this instance
+   */
   dispose(): void {
     if (this._geometry) {
       this._geometry.dispose();
@@ -64,6 +70,9 @@ export class ThickLine {
     this._meshes.removeFromParent();
   }
 
+  /**
+   * Get the threejs object representing the line
+   */
   get meshes(): THREE.Group {
     return this._meshes;
   }
