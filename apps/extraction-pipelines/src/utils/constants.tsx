@@ -112,3 +112,7 @@ export const CRON_LINK = 'https://crontab.guru/';
 export const BASE_QUERY_KEY = 'extraction-pipelines';
 
 export const PAGE_WIDTH = 1024;
+
+export const PAGINATION_SETTINGS = {
+  defaultPageSize: 10,
+};

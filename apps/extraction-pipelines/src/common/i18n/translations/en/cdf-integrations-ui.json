@@ -33,6 +33,7 @@
   "create-ext-pipeline": "Create extraction pipeline",
   "created-by": "Created by",
   "created-time": "Created time",
+  "created-at": "Created at",
   "cron-info": "Enter a cron expression for when the extraction pipeline is scheduled to run.",
   "cron-learn-more": "How do I write a cron expression?",
   "cron-title": "Cron expression",
@@ -227,6 +228,11 @@
   "mqtt-job-status-error": "Error",
   "mqtt-job-status-startup_error": "Startup error",
   "mqtt-job-status-waiting": "Waiting",
+  "mqtt-log-type-ok": "Ok",
+  "mqtt-log-type-stopped": "Stopped",
+  "mqtt-log-type-debug": "Debug",
+  "mqtt-log-type-error": "Error",
+  "mqtt-log-type-startup_error": "Startup error",
   "checked-with-date": "checked {{relativeTime}}",
   "create-source": "Create source",
   "validation-error-field-required": "You must enter a value in this field",
@@ -282,5 +288,6 @@
   "view-full-insight": "View full insight",
   "uptime-with-percentage": "{{percentage}}% uptime",
   "number-of-messages": "Number of messages",
-  "status": "Status"
+  "status": "Status",
+  "type": "Type"
 }

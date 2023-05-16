@@ -1,10 +1,14 @@
+import React, { useMemo, useState } from 'react';
+
 import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Status } from '@cognite/cogs.js';
+import { Button, Status } from '@cognite/cogs.js';
+import styled from 'styled-components';
+
 import { useTranslation } from 'common';
 import { Box } from 'components/box/Box';
+import { LogsTable } from 'components/logs-table/LogsTable';
 import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
-import React, { useMemo } from 'react';
-import styled from 'styled-components';
+import { PAGINATION_SETTINGS } from 'utils/constants';
 import { getJobStatusForCogs } from 'utils/hostedExtractors';
 import { getContainer } from 'utils/utils';
 
@@ -20,6 +24,16 @@ export const JobsTable = ({
   jobs = [],
 }: JobsTableProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+
+  const handleClickExpandButton = (clickedRowKey: string) => {
+    setExpandedRowKeys((prevState) =>
+      prevState.includes(clickedRowKey)
+        ? prevState.filter((key) => key !== clickedRowKey)
+        : prevState.concat(clickedRowKey)
+    );
+  };
 
   const columns: (ColumnType<JobsTableRecord> & { title: string })[] = useMemo(
     () => [
@@ -46,7 +60,7 @@ export const JobsTable = ({
       },
       {
         key: 'status',
-        dataIndex: 'topicFilter',
+        dataIndex: 'status',
         title: t('status'),
         render: (_, job) =>
           job.status ? (
@@ -58,8 +72,24 @@ export const JobsTable = ({
             '-'
           ),
       },
+      {
+        key: 'expandable',
+        dataIndex: 'matches',
+        title: '',
+        render: (_, record) => (
+          <Button
+            icon={
+              expandedRowKeys.includes(record.key) ? 'ChevronUp' : 'ChevronDown'
+            }
+            onClick={() => handleClickExpandButton(record.key)}
+            size="small"
+            type="ghost"
+          />
+        ),
+        width: 48,
+      },
     ],
-    [t]
+    [expandedRowKeys, t]
   );
 
   const dataSource = useMemo(
@@ -75,6 +105,12 @@ export const JobsTable = ({
           dataSource={dataSource}
           emptyContent={null}
           appendTooltipTo={getContainer()}
+          pagination={PAGINATION_SETTINGS}
+          expandable={{
+            showExpandColumn: false,
+            expandedRowKeys,
+            expandedRowRender: (job) => <LogsTable job={job} />,
+          }}
         />
       </Content>
     </Box>
@@ -83,4 +119,8 @@ export const JobsTable = ({
 
 const Content = styled.div`
   padding: 8px 16px 0;
+
+  .ant-table-expanded-row > .ant-table-cell {
+    padding: 0;
+  }
 `;
