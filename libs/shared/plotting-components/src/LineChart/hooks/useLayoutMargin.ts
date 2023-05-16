@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { Layout as PlotlyLayout } from 'plotly.js';
 import { Axis, Layout } from '../types';
 import { getLayoutMargin } from '../utils/getLayoutMargin';
+import { useDeepCallback } from './useDeep';
 
 export interface Props {
   layout: Layout;
@@ -13,11 +14,13 @@ export interface Props {
 export const useLayoutMargin = (props: Props) => {
   const [margin, setMargin] = useState<PlotlyLayout['margin']>();
 
-  const updateLayoutMargin = useCallback((graph: HTMLElement | null) => {
-    const margin = getLayoutMargin({ graph, ...props });
-    setMargin(margin);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const updateLayoutMargin = useDeepCallback(
+    (graph: HTMLElement | null) => {
+      const margin = getLayoutMargin({ graph, ...props });
+      setMargin(margin);
+    },
+    [props]
+  );
 
   return { margin, updateLayoutMargin };
 };
