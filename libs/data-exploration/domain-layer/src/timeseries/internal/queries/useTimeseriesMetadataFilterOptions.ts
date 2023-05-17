@@ -23,6 +23,7 @@ export const useTimeseriesMetadataFilterOptions = ({
     isError,
   } = useTimeseriesMetadataKeysAggregateQuery({
     query,
+    options: { keepPreviousData: true },
   });
 
   const omittedFilter = omit(filter, 'metadata');
@@ -34,6 +35,7 @@ export const useTimeseriesMetadataFilterOptions = ({
       searchQuery
     ),
     filter: getAssetSubtreeIdFilter(omittedFilter),
+    options: { keepPreviousData: true },
   });
 
   const options = useMemo(() => {

@@ -6,6 +6,6 @@ export const filterOptions = <T extends Pick<OptionType, 'label' | 'value'>>(
 ) => {
   return options.filter(({ label, value }) => {
     const name = label || value;
-    return new RegExp(searchValue).test(name);
+    return new RegExp(searchValue.toLowerCase()).test(name.toLowerCase());
   });
 };
