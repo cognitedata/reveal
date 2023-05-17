@@ -45,6 +45,8 @@ export const CheckboxSelect = ({
     customSelection || EMPTY_OBJECT
   );
 
+  const [visible, setVisible] = React.useState<boolean>(false);
+
   // Trigger local state when the metadata filter selection is
   // changed from "outside sources" (e.g., filter tag, url, etc...)
   useDeepEffect(() => {
@@ -56,13 +58,19 @@ export const CheckboxSelect = ({
     onChange?.(newSelection);
   };
 
+  const onCloseMenuHandler = () => {
+    setVisible(false);
+  };
+
   return (
     <Dropdown
       onClickOutside={() => {
         if (onSearchInputChange) {
           onSearchInputChange('');
         }
+        setVisible(false);
       }}
+      visible={visible}
       content={
         <OptionsMenu
           isLoading={isLoading}
@@ -71,6 +79,7 @@ export const CheckboxSelect = ({
           onChange={handleChange}
           useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
           onSearchInputChange={onSearchInputChange}
+          onCloseMenu={onCloseMenuHandler}
           footer={
             onClickApply && (
               <ApplyButton
@@ -101,6 +110,7 @@ export const CheckboxSelect = ({
                 ? 'var(--cogs-text-icon--muted)'
                 : 'initial',
           }}
+          onClick={() => setVisible((prevState) => !prevState)}
         >
           <FilterButtonText data-testid="filter-button">
             {getFilterButtonText(selection)}

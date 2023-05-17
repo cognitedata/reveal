@@ -23,6 +23,7 @@ export interface ChildOptionsMenuProps {
   onChange: (selection: OptionSelection) => void;
   enableSorting?: boolean;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  onCloseMenu?: () => void;
 }
 
 export const ChildOptionsMenu = ({
@@ -32,6 +33,7 @@ export const ChildOptionsMenu = ({
   onChange,
   useCustomMetadataValuesQuery,
   enableSorting,
+  onCloseMenu,
 }: ChildOptionsMenuProps) => {
   const [query, setQuery] = useDebouncedState<string>('');
   const [totalOptionCount, setTotalOptionCount] = React.useState<number>(0);
@@ -104,6 +106,7 @@ export const ChildOptionsMenu = ({
       }}
       enableSorting={enableSorting}
       disableOptionsMenu
+      onCloseMenu={onCloseMenu}
     />
   );
 };

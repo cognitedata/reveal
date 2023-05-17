@@ -5,6 +5,7 @@ import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
 import {
   EMPTY_ARRAY,
   NIL_FILTER_LABEL,
+  isEscapeButton,
   useDeepEffect,
 } from '@data-exploration-lib/core';
 
@@ -33,6 +34,7 @@ import {
   OptionMenuContainer,
   OptionMenuLoadingWrapper,
 } from '../elements';
+import noop from 'lodash/noop';
 
 export interface OptionsMenuProps {
   options: Array<OptionType>;
@@ -41,6 +43,7 @@ export interface OptionsMenuProps {
   footer?: React.ReactNode;
   enableSorting?: boolean;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  onCloseMenu?: () => void;
   onSearchInputChange?: (newValue: string) => void;
   disableOptionsMenu?: boolean;
   isLoading?: boolean;
@@ -53,6 +56,7 @@ export const OptionsMenu = ({
   footer,
   enableSorting,
   onSearchInputChange,
+  onCloseMenu = noop,
   useCustomMetadataValuesQuery,
   disableOptionsMenu,
   isLoading,
@@ -64,6 +68,12 @@ export const OptionsMenu = ({
   useDeepEffect(() => {
     setDisplayOptions(options);
   }, [options]);
+
+  const onKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isEscapeButton(event.key)) {
+      onCloseMenu();
+    }
+  };
 
   const handleFilterOptions = (searchInputValue: string) => {
     onSearchInputChange?.(searchInputValue);
@@ -112,6 +122,7 @@ export const OptionsMenu = ({
               selection={selection}
               onChange={onChange}
               enableSorting={enableSorting}
+              onCloseMenu={onCloseMenu}
             />
           }
           disabled={disableOptionsMenu}
@@ -151,7 +162,10 @@ export const OptionsMenu = ({
 
   return (
     <OptionMenuContainer>
-      <SearchInput onChange={handleFilterOptions} />
+      <SearchInput
+        onChange={handleFilterOptions}
+        onKeyDown={onKeyDownHandler}
+      />
 
       <SortAction
         isVisible={enableSorting && !isEmpty(displayOptions)}

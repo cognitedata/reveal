@@ -9,6 +9,7 @@ import {
 import noop from 'lodash/noop';
 
 import { SearchInput } from '../SearchInput';
+import { isEscapeButton } from '@data-exploration-lib/core';
 
 export const MenuList = <OptionType extends OptionTypeBase>({
   children,
@@ -40,6 +41,12 @@ export const MenuList = <OptionType extends OptionTypeBase>({
     setFilterInput({ input: newValue, action });
   };
 
+  const onKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isEscapeButton(event.key)) {
+      onMenuInputBlur();
+    }
+  };
+
   return (
     <>
       {showMenuInput && (
@@ -48,6 +55,7 @@ export const MenuList = <OptionType extends OptionTypeBase>({
           onChange={onChangeHandler}
           onFocus={onMenuInputFocus}
           onBlur={onMenuInputBlur}
+          onKeyDown={onKeyDownHandler}
         />
       )}
       <components.MenuList {...props} maxHeight={maxHeight}>
