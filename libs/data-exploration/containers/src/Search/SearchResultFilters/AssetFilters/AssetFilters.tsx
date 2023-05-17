@@ -1,4 +1,8 @@
-import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
+import {
+  FilterProps,
+  SPECIFIC_INFO_CONTENT,
+  hasObjectAnyProperty,
+} from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
@@ -11,9 +15,11 @@ export const AssetFilters: React.FC<FilterProps> = ({
   ...rest
 }) => {
   const assetFilter = filter.asset;
-  const isResetButtonVisible = Boolean(
-    assetFilter.labels || assetFilter.sources || assetFilter.metadata
-  );
+  const isResetButtonVisible = hasObjectAnyProperty(assetFilter, [
+    'labels',
+    'sources',
+    'metadata',
+  ]);
 
   return (
     <BaseFilterCollapse.Panel

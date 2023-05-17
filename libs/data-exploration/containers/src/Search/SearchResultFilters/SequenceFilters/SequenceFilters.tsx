@@ -1,4 +1,8 @@
-import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
+import {
+  FilterProps,
+  SPECIFIC_INFO_CONTENT,
+  hasObjectAnyProperty,
+} from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import { MetadataFilter } from '../../../Filters';
@@ -12,7 +16,9 @@ export const SequenceFilters: React.FC<FilterProps> = ({
   ...rest
 }) => {
   const sequenceFIlter = filter.sequence;
-  const isResetButtonVisible = Boolean(sequenceFIlter.metadata);
+  const isResetButtonVisible = hasObjectAnyProperty(sequenceFIlter, [
+    'metadata',
+  ]);
   return (
     <BaseFilterCollapse.Panel
       title="Sequences"

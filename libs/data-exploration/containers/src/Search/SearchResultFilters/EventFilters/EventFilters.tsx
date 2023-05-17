@@ -1,4 +1,8 @@
-import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
+import {
+  FilterProps,
+  SPECIFIC_INFO_CONTENT,
+  hasObjectAnyProperty,
+} from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
@@ -17,14 +21,14 @@ export const EventFilters: React.FC<FilterProps> = ({
   ...rest
 }) => {
   const eventFilter = filter.event;
-  const isResetButtonVisible = Boolean(
-    eventFilter.sources ||
-      eventFilter.metadata ||
-      eventFilter.startTime ||
-      eventFilter.endTime ||
-      eventFilter.subtype ||
-      eventFilter.type
-  );
+  const isResetButtonVisible = hasObjectAnyProperty(eventFilter, [
+    'sources',
+    'metadata',
+    'startTime',
+    'endTime',
+    'subtype',
+    'type',
+  ]);
   return (
     <BaseFilterCollapse.Panel
       title="Events"

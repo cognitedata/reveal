@@ -1,4 +1,8 @@
-import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
+import {
+  FilterProps,
+  SPECIFIC_INFO_CONTENT,
+  hasObjectAnyProperty,
+} from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
@@ -16,12 +20,12 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
   ...rest
 }) => {
   const timeseriesFilter = filter.timeseries;
-  const isResetButtonVisible = Boolean(
-    timeseriesFilter.metadata ||
-      timeseriesFilter.isStep ||
-      timeseriesFilter.isString ||
-      timeseriesFilter.unit
-  );
+  const isResetButtonVisible = hasObjectAnyProperty(timeseriesFilter, [
+    'metadata',
+    'isStep',
+    'isString',
+    'unit',
+  ]);
   return (
     <BaseFilterCollapse.Panel
       title="Time series"

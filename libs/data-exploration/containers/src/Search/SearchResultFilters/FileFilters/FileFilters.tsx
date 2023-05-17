@@ -1,4 +1,8 @@
-import { FilterProps, SPECIFIC_INFO_CONTENT } from '@data-exploration-lib/core';
+import {
+  FilterProps,
+  SPECIFIC_INFO_CONTENT,
+  hasObjectAnyProperty,
+} from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import { TempMultiSelectFix } from '../elements';
 import {
@@ -23,13 +27,13 @@ export const FileFilters: React.FC<FileFilterProps> = ({
   ...rest
 }) => {
   const documentFilter = filter.document;
-  const isResetButtonVisible = Boolean(
-    documentFilter.labels ||
-      documentFilter.metadata ||
-      documentFilter.type ||
-      documentFilter.author ||
-      documentFilter.source
-  );
+  const isResetButtonVisible = hasObjectAnyProperty(documentFilter, [
+    'labels',
+    'metadata',
+    'type',
+    'author',
+    'source',
+  ]);
   return (
     <BaseFilterCollapse.Panel
       title="Files"
