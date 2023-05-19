@@ -11,6 +11,7 @@ import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilterer';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
@@ -50,6 +51,7 @@ export class Image360Entity implements Image360 {
     image360Metadata: Historical360ImageSet,
     sceneHandler: SceneHandler,
     imageProvider: Image360DataProvider,
+    annotationFilterer: Image360AnnotationFilter,
     transform: THREE.Matrix4,
     icon: Overlay3DIcon,
     device: DeviceDescriptor
@@ -62,7 +64,8 @@ export class Image360Entity implements Image360 {
     this._image360VisualzationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
-      descriptor => new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualzationBox)
+      descriptor =>
+        new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualzationBox, annotationFilterer)
     );
     this._activeRevision = this.getMostRecentRevision();
   }

@@ -17,6 +17,7 @@ import assert from 'assert';
 import { Box3, Vector3 } from 'three';
 import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilterer';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;
@@ -28,17 +29,20 @@ export class Image360RevisionEntity implements Image360Revision {
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private _annotations: ImageAnnotationObject[] | undefined = undefined;
+  private _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
     imageProvider: Image360DataProvider,
     image360Descriptor: Image360Descriptor,
-    image360VisualzationBox: Image360VisualizationBox
+    image360VisualzationBox: Image360VisualizationBox,
+    annotationFilterer: Image360AnnotationFilter
   ) {
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
     this._image360VisualzationBox = image360VisualzationBox;
     this._previewTextures = [];
     this._fullResolutionTextures = [];
+    this._annotationFilterer = annotationFilterer;
   }
 
   /**
@@ -119,7 +123,9 @@ export class Image360RevisionEntity implements Image360Revision {
   private async loadAndSetAnnotations(): Promise<ImageAnnotationObject[]> {
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
 
-    const annotationObjects = annotationData
+    const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
+
+    const annotationObjects = filteredAnnotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
         return ImageAnnotationObject.createAnnotationObject(data, faceDescriptor.face);

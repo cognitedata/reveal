@@ -12,6 +12,7 @@ import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox
 import { SceneHandler } from '@reveal/utilities';
 
 import { Matrix4, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
+import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilterer';
 
 describe(Image360RevisionEntity.name, () => {
   test('.annotation returns input annotation', () => {
@@ -28,6 +29,7 @@ describe(Image360RevisionEntity.name, () => {
     const annotations: AnnotationModel[] = [
       {
         annotatedResourceId: 1,
+        status: 'approved',
         data: {
           label: 'bigger annotation',
           boundingBox: {
@@ -40,6 +42,7 @@ describe(Image360RevisionEntity.name, () => {
       } as AnnotationModel,
       {
         annotatedResourceId: 1,
+        status: 'approved',
         data: {
           label: 'smaller annotation',
           polygon: {
@@ -62,13 +65,15 @@ describe(Image360RevisionEntity.name, () => {
     const revision = new Image360RevisionEntity(
       createMockDataProvider(annotations),
       imageDescriptor,
-      createImage360VisualizationBox()
+      createImage360VisualizationBox(),
+      new Image360AnnotationFilter({})
     );
 
     const revisionWithReversedAnnotations = new Image360RevisionEntity(
       createMockDataProvider([...annotations].reverse()),
       imageDescriptor,
-      createImage360VisualizationBox()
+      createImage360VisualizationBox(),
+      new Image360AnnotationFilter({})
     );
 
     await revision.getAnnotations();

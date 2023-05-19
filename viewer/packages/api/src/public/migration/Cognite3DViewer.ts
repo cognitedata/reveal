@@ -803,7 +803,8 @@ export class Cognite3DViewer {
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
       eventFilter,
       collectionTransform,
-      preMultipliedRotation
+      preMultipliedRotation,
+      add360ImageOptions?.annotationFilter
     );
 
     const numberOf360Images = image360Collection.image360Entities.length;
