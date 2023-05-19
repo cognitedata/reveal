@@ -1439,20 +1439,6 @@ export class StyledPointCloudObjectCollection {
 export type SupportedModelTypes = 'pointcloud' | 'cad';
 
 // @public
-export class ThickLine {
-    constructor(lineWidth: number, lineColor: THREE_2.Color, startPoint: THREE_2.Vector3, endPoint: THREE_2.Vector3);
-    dispose(): void;
-    getLineLength(): number;
-    getMidPointOnLine(): THREE_2.Vector3;
-    get meshes(): THREE_2.Group;
-    setLineClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
-    setLineColor(color: THREE_2.Color): void;
-    setLineEndPoint(endPoint: THREE_2.Vector3): void;
-    setLineWidth(lineWidth: number): void;
-    setVisibility(visible: boolean): void;
-}
-
-// @public
 export type TimelineDateUpdateDelegate = (event: {
     date: Date;
     activeKeyframe: Keyframe_2 | undefined;
