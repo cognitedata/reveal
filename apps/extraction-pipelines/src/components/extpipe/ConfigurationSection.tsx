@@ -16,7 +16,7 @@ export default function ConfigurationSection({ externalId }: Props) {
   const [editMode, setEditMode] = useState(false);
   const [newConfig, setNewConfig] = useState('');
 
-  const { data: configuration, isLoading } = useExtpipeConfig({
+  const { data: configuration, isInitialLoading } = useExtpipeConfig({
     externalId,
   });
 
@@ -47,7 +47,7 @@ export default function ConfigurationSection({ externalId }: Props) {
     <div>
       <Section
         title={t('configuration-file-for-extractor')}
-        icon={isLoading ? 'Loader' : 'Document'}
+        icon={isInitialLoading ? 'Loader' : 'Document'}
         data-testid="configuration"
         extra={
           <Flex style={{ gap: 10 }} alignItems="center">

@@ -11,11 +11,16 @@ type Props = {
 
 export const DataSet = ({ dataSetId }: Props) => {
   const { t } = useTranslation();
-  const { data: dataSet, isLoading, isError, error } = useDataSet(dataSetId);
+  const {
+    data: dataSet,
+    isInitialLoading,
+    isError,
+    error,
+  } = useDataSet(dataSetId);
 
   const body = (
     <>
-      {isLoading && <Icon type="Loader" />}
+      {isInitialLoading && <Icon type="Loader" />}
       <Body level={2} strong>
         <Link to={createLink(`/data-sets/data-set/${dataSetId}`)}>
           {dataSet ? dataSet?.name || dataSet?.externalId : dataSetId}
