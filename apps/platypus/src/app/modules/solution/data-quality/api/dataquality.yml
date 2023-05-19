@@ -1,0 +1,375 @@
+openapi: 3.0.1
+info:
+  title: Cognite API
+  version: v1 alpha
+servers:
+  - url: "https://api.cognitedata.com"
+tags:
+  - name: Data Quality
+    description: Cerberus
+paths:
+  #
+  # Data Sources
+  #
+  "/api/v1/projects/{project}/data-validation/datasources":
+    post:
+      tags:
+        - DataSources
+      summary: Create or update data sources
+      description: >-
+        Add or update (upsert) data sources.
+      operationId: createDataSources
+      parameters:
+        - $ref: "#/components/parameters/project"
+      requestBody:
+        description: DataSources to add or update.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataSourceCreateRequest"
+        required: true
+      x-capability:
+        - "DataSourcesAdminAcl:WRITE"
+      responses:
+        "200":
+          $ref: "#/components/responses/DataSourceCollectionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: DataSource conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpsertConflict"
+    get:
+      tags:
+        - DataSources
+      summary: List data sources defined in the project
+      description: >-
+        List data sources defined in the current project.
+      operationId: listDataSources
+      parameters:
+        - $ref: "#/components/parameters/project"
+        - $ref: "#/components/parameters/Cursor"
+      x-capability:
+        - "DataSourcesAclAdmin:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/DataSourceCollectionResponseWithCursor"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/byids":
+    post:
+      tags:
+        - DataSources
+      summary: Retrieve data sources by their ids
+      description: >-
+        Retrieve up to 100 data sources by specifying their ids.
+      operationId: listByIdsDataSources
+      parameters:
+        - $ref: "#/components/parameters/project"
+      requestBody:
+        description: List of ids for the data sources to return.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListOfDataSourceIdsRequest"
+        required: true
+      x-capability:
+        - "DataSourcesAdminAcl:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/DataSourceCollectionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/delete":
+    post:
+      tags:
+        - DataSources
+      summary: Delete data sources
+      description: "Delete one or more data sources"
+      operationId: deleteDataSources
+      parameters:
+        - $ref: "#/components/parameters/project"
+      requestBody:
+        description: List of data sources ids to delete.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListOfDataSourceIdsRequest"
+        required: true
+      x-capability:
+        - "DataSourcesAclAdmin:WRITE"
+      responses:
+        "200":
+          $ref: "#/components/responses/ListOfDataSourceIdsResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+###
+
+components:
+  parameters:
+    project:
+      in: path
+      name: project
+      # required: true | TODO this had be skipped due to an issue https://github.com/fabien0102/openapi-codegen/issues/135
+      description: The project name.
+      schema:
+        type: string
+        example: publicdata
+
+    Limit:
+      name: limit
+      description: >-
+        Limits the number of results to be returned. The maximum results returned by the server is 1000 even if you specify a higher limit.
+      in: query
+      schema:
+        type: integer
+        default: 100
+        minimum: 1
+        maximum: 1000
+    Cursor:
+      name: cursor
+      description: Cursor for paging through results.
+      in: query
+      schema:
+        type: string
+        example: "4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo"
+
+  responses:
+    ErrorResponse:
+      description: The response for a failed request.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error
+            properties:
+              error:
+                $ref: "#/components/schemas/Error"
+
+    DataSourceCollectionResponse:
+      description: "List of data sources"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                description: "List of data sources"
+                items:
+                  $ref: "#/components/schemas/DataSourceDTO"
+
+    DataSourceCollectionResponseWithCursor:
+      description: "List of data sources"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                description: "List of data sources"
+                items:
+                  $ref: "#/components/schemas/DataSourceDTO"
+              nextCursor:
+                $ref: "#/components/schemas/NextCursorV3"
+
+    ListOfDataSourceIdsResponse:
+      description: "List of data source id(s) affected by the request"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                minItems: 1
+                maxItems: 100
+                items:
+                  type: object
+                  required: [externalId]
+                  properties:
+                    externalId:
+                      description: "List of data source ids for the requested item(s)"
+                      allOf:
+                        - $ref: "#/components/schemas/DataSourceDTO"
+
+  schemas:
+    # Generic error object. Shared across all CDF APIs
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      description: Cognite API error.
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          format: int32
+          example: 401
+        message:
+          type: string
+          description: Error message.
+          example: "Could not authenticate."
+
+    EpochTimestamp:
+      description: >-
+        The number of milliseconds since 00:00:00 Thursday, 1 January 1970, Coordinated Universal Time (UTC), minus leap seconds.
+      type: integer
+      minimum: 0
+      format: int64
+
+    Cursor:
+      description: >-
+        Cursor for paging through results.
+      type: object
+      properties:
+        cursor:
+          type: string
+          example: 4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo
+
+    #############
+
+    DataModelId:
+      type: string
+      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 255
+
+    DataModelSpace:
+      type: string
+      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 255
+
+    DataModelVersion:
+      type: string
+      pattern: "^[a-zA-Z0-9]([a-zA-Z0-9_-]{0,41}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 43
+
+    DataSourceId:
+      type: string
+      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 255
+
+    DataSourceDraft:
+      allOf:
+      type: object
+      required: [dataModelId, dataModelSpaceId, dataModelVersion, externalId]
+      properties:
+        dataModelId:
+          description: "Id of the data model that the data source belongs to"
+          allOf:
+            - $ref: "#/components/schemas/DataModelId"
+        dataModelSpaceId:
+          description: "The data model space that the data source belongs to"
+          allOf:
+            - $ref: "#/components/schemas/DataModelSpace"
+        dataModelVersion:
+          description: "The data model version that the data source belongs to"
+          allOf:
+            - $ref: "#/components/schemas/DataModelVersion"
+        externalId:
+          description: "External-id of the data source"
+          allOf:
+            - $ref: "#/components/schemas/DataSourceId"
+
+    DataSourceDTO:
+      allOf:
+      type: object
+      required:
+        [
+          createdTime,
+          dataModelId,
+          dataModelSpaceId,
+          dataModelVersion,
+          externalId,
+          lastUpdatedTime,
+        ]
+      properties:
+        createdTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        dataModelId:
+          description: "Id of the data model that the data source belongs to"
+          allOf:
+            - $ref: "#/components/schemas/DataModelId"
+        dataModelSpaceId:
+          description: "The data model space that the data source belongs to"
+          allOf:
+            - $ref: "#/components/schemas/DataModelSpace"
+        dataModelVersion:
+          description: "The data model version that the data source belongs to"
+          allOf:
+            - $ref: "#/components/schemas/DataModelVersion"
+        externalId:
+          description: "External-id of the data source"
+          allOf:
+            - $ref: "#/components/schemas/DataSourceId"
+        lastUpdatedTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+
+    DataSourceCreateRequest:
+      type: object
+      required: [items]
+      description: List of data sources to create/update
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: "#/components/schemas/DataSourceDraft"
+
+    ListOfDataSourceIdsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required: [externalId]
+            properties:
+              externalId:
+                description: Ids for the data sources
+                type: string
+
+    UpsertConflict:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          description: Details about the error caused by the upsert/update.
+          required: [code, message]
+          properties:
+            code:
+              type: integer
+              description: The HTTP status code returned
+              format: int32
+              example: 409
+            message:
+              type: string
+              description: The error message returned from the service.
+
+    NextCursorV3:
+      description: The cursor value used to return (paginate to) the next page of results, when more data is available.
+      type: string

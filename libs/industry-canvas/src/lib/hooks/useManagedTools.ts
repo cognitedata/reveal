@@ -83,7 +83,6 @@ const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
         },
       };
     }
-    case AnnotationType.CONNECTION:
     case AnnotationType.POLYLINE: {
       if (updatedAnnotationStyle.line === undefined) {
         throw new Error(

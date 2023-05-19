@@ -97,9 +97,9 @@ export const getCanvasConnectionAnnotations = ({
         : [
             {
               id: 'connection',
-              type: AnnotationType.CONNECTION,
-              fromAnnotationId: hoveredAnnotation.id,
-              toAnnotationId: CONNECTION_TARGET_ID,
+              type: AnnotationType.POLYLINE,
+              fromId: hoveredAnnotation.id,
+              toId: CONNECTION_TARGET_ID,
               style: {
                 stroke: 'blue',
                 strokeWidth: 20,

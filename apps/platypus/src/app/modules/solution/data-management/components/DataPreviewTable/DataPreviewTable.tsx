@@ -831,6 +831,7 @@ export const DataPreviewTable = forwardRef<
                 enableCellChangeFlash: true,
                 enableCellTextSelection: true,
                 rowModelType: 'infinite',
+                enableCellExpressions: false,
                 rowBuffer: pageSizeLimit / 2,
                 // how big each page in our page cache will be, default is 100
                 cacheBlockSize: pageSizeLimit,

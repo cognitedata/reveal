@@ -74,7 +74,7 @@ export class GridConfigService {
       // groupUseEntireRow: true,
       // readOnlyEdit: true,
       suppressCellSelection: false,
-      enableCellExpressions: true,
+      enableCellExpressions: false,
       suppressAggFuncInHeader: true,
       rowHeight: 48,
       headerHeight: 44,

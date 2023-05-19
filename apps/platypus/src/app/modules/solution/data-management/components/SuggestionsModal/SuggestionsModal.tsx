@@ -413,6 +413,7 @@ export const SuggestionsModal = ({
                     }}
                     gridOptions={{
                       enableCellTextSelection: true,
+                      enableCellExpressions: false,
                       getRowId: (params: GetRowIdParams) => {
                         const key = params.data.id;
                         return key || 'undefined';

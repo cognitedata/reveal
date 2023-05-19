@@ -1,7 +1,6 @@
 import { isNotUndefined } from '@cognite/data-exploration';
 import {
   UnifiedViewer,
-  isConnectionAnnotation,
   isEllipseAnnotation,
   isImageAnnotation,
   isLabelAnnotation,
@@ -87,10 +86,9 @@ const getRightMostPointOfCanvasAnnotation = (
   canvasAnnotation: CanvasAnnotation
 ): number | undefined => {
   if (isPolylineAnnotation(canvasAnnotation)) {
-    return max(canvasAnnotation.vertices.map((point) => point.x)) ?? 0;
-  }
-
-  if (isConnectionAnnotation(canvasAnnotation)) {
+    if (canvasAnnotation.vertices !== undefined) {
+      return max(canvasAnnotation.vertices.map((point) => point.x)) ?? 0;
+    }
     return undefined;
   }
 

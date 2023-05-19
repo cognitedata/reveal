@@ -1,7 +1,6 @@
 import {
   isPolylineAnnotation,
   isTextAnnotation,
-  isConnectionAnnotation,
   isStickyAnnotation,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
@@ -72,10 +71,7 @@ const useCanvasAnnotationTooltips = ({
       ];
     }
 
-    if (
-      isPolylineAnnotation(selectedCanvasAnnotation) ||
-      isConnectionAnnotation(selectedCanvasAnnotation)
-    ) {
+    if (isPolylineAnnotation(selectedCanvasAnnotation)) {
       return [
         {
           targetId: String(selectedCanvasAnnotation.id),

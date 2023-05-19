@@ -8,9 +8,9 @@ import {
 import {
   Annotation,
   AnnotationType,
-  ConnectionAnnotation,
   ContainerType,
   LineType,
+  PolylineAnnotation,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
@@ -45,11 +45,11 @@ const getAnnotationToRegionConnection = ({
     },
   };
 
-  const connection: ConnectionAnnotation = {
+  const connection: PolylineAnnotation = {
     id: `connection-${sourceAnnotation.id}}`,
-    type: AnnotationType.CONNECTION,
-    fromAnnotationId: sourceAnnotation.id,
-    toAnnotationId: hightlightingRectangleId,
+    type: AnnotationType.POLYLINE,
+    fromId: sourceAnnotation.id,
+    toId: hightlightingRectangleId,
     style: {
       stroke: CONNECTION_STROKE,
       strokeWidth: CONNECTION_STROKE_WIDTH,
@@ -129,12 +129,12 @@ const getConnectionAnnotations = ({
 
       targetAnnotationIds.push(...targetAnnotations.map((a) => a.id));
 
-      return targetAnnotations.map((targetAnnotation) => {
-        return {
+      return targetAnnotations.map(
+        (targetAnnotation): PolylineAnnotation => ({
           id: `connection-${sourceAnnotation.id}-${targetAnnotation.id}`,
-          type: AnnotationType.CONNECTION,
-          fromAnnotationId: sourceAnnotation.id,
-          toAnnotationId: targetAnnotation.id,
+          type: AnnotationType.POLYLINE,
+          fromId: sourceAnnotation.id,
+          toId: targetAnnotation.id,
           style: {
             stroke: CONNECTION_STROKE,
             strokeWidth: CONNECTION_STROKE_WIDTH,
@@ -142,8 +142,8 @@ const getConnectionAnnotations = ({
             lineType: LineType.RIGHT_ANGLES,
           },
           isSelectable: false,
-        };
-      });
+        })
+      );
     }
   );
 
