@@ -280,5 +280,5 @@
   "seventy-two-hours-ago": "72 hours ago",
   "thirthy-days-ago": "30 days ago",
   "view-full-insight": "View full insight",
-  "uptime-with-percentage": "Uptime: {{percentage}}%"
+  "uptime-with-percentage": "{{percentage}}% uptime"
 }

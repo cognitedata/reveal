@@ -239,3 +239,8 @@ export const getUptimeAggregations = (
 
   return aggregations;
 };
+
+export const formatUptime = (uptime: number): string => {
+  const fixed = uptime.toFixed(2);
+  return fixed === '100.00' && uptime !== 100 ? '99.99' : fixed;
+};

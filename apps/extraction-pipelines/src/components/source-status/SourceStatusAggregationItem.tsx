@@ -3,7 +3,7 @@ import React from 'react';
 import { Colors, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { UptimeAggregation } from 'utils/hostedExtractors';
+import { UptimeAggregation, formatUptime } from 'utils/hostedExtractors';
 import { useTranslation } from 'common';
 
 type SourceStatusAggregationItemProps = {
@@ -34,7 +34,7 @@ export const SourceStatusAggregationItem = ({
           aggregation.uptimePercentage === -1
             ? t('source-status-no-data')
             : t('uptime-with-percentage', {
-                percentage: aggregation.uptimePercentage.toFixed(5),
+                percentage: formatUptime(aggregation.uptimePercentage),
               })
         }
       >
