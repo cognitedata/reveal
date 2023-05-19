@@ -104,14 +104,7 @@
   dependencies:
     "@azure/msal-common" "^3.1.0"
 
-"@azure/msal-browser@2.22.0":
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.22.0.tgz#acb3ef455d8ca7b143c7fde0a638097add11a218"
-  integrity sha512-ZpnbnzjYGRGHjWDPOLjSp47CQvhK927+W9avtLoNNCMudqs2dBfwj76lnJwObDE7TAKmCUueTiieglBiPb1mgQ==
-  dependencies:
-    "@azure/msal-common" "^6.1.0"
-
-"@azure/msal-browser@^2.11.0", "@azure/msal-browser@^2.8.0":
+"@azure/msal-browser@^2.11.0":
   version "2.32.1"
   resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.32.1.tgz#785670d5bd066690e313ba32cd4638a473675598"
   integrity sha512-2G3B12ZEIpiimi6/Yqq7KLk4ud1zZWoHvVd2kJ2VthN1HjMsZjdMUxeHkwMWaQ6RzO6mv9rZiuKmRX64xkXW9g==
@@ -124,11 +117,6 @@
   integrity sha512-ktV/ns+KL1FBinfnLMdz+zzfgocoAs3gxBK5DqlSfLIR1Y+RjQ9q5zoP/JyodW8611JfqKzdwRwkabY4OeBV6w==
   dependencies:
     debug "^4.1.1"
-
-"@azure/msal-common@^6.1.0":
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-6.4.0.tgz#434a55be9639cb5c7910c0cc1a46555ff0bc6c39"
-  integrity sha512-WZdgq9f9O8cbxGzdRwLLMM5xjmLJ2mdtuzgXeiGxIRkVVlJ9nZ6sWnDFKa2TX8j72UXD1IfL0p/RYNoTXYoGfg==
 
 "@azure/msal-common@^9.0.1":
   version "9.0.1"
@@ -1566,16 +1554,6 @@
     jwt-decode "3.1.2"
     lodash "4.17.21"
 
-"@cognite/auth-utils@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.7.2.tgz#c5c77ab48155cdacb3048070b87477c002d4cf2a"
-  integrity sha512-WMnfVCiWSucAcsudB2gZ8PzlDIf7OrRR/GOy+TYSLc2hRAfeZDKQfAI2BPUXVcM/ssXxP4zwvMphMxRuCIvLxg==
-  dependencies:
-    "@azure/msal-browser" "^2.8.0"
-    "@cognite/sdk" "^3.3.0"
-    jwt-decode "^3.1.2"
-    lodash "^4.17.20"
-
 "@cognite/babel-plugin-styled-components@^1.10.7":
   version "1.10.7"
   resolved "https://registry.yarnpkg.com/@cognite/babel-plugin-styled-components/-/babel-plugin-styled-components-1.10.7.tgz#0674317cfca31a9d7d99e9c4fd99e492d663341d"
@@ -1602,21 +1580,6 @@
     react-i18next "^11.15.6"
     yargs "^17.4.1"
 
-"@cognite/cdf-sdk-singleton@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-sdk-singleton/-/cdf-sdk-singleton-0.8.2.tgz#afc8d779513895f2d31204081862c30501a455d8"
-  integrity sha512-H5cvMzYySveaUDG+TMDpbO39DkxeV0E9mH6x45ndOPWdnIqr9+XpHD/1UF/cRaiQca+AQ3PWWSS4znKsqInGWA==
-  dependencies:
-    "@cognite/auth-utils" "^0.7.2"
-    "@cognite/sdk" "^3.3.0"
-    axios "^0.21.1"
-    dotenv "^8.2.0"
-    dotenv-webpack "^6.0.0"
-    isomorphic-fetch "^2.2.1"
-    jwt-decode "^3.1.2"
-    query-string "^6.13.8"
-    single-spa "^5.5.5"
-
 "@cognite/cdf-ui-cli@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-1.1.1.tgz#f2075021763d102aef18fc2b83d295c2622a56a5"
@@ -1632,26 +1595,6 @@
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.0.1.tgz#5830cc74d3a10bd41aab9952c10c5a6ccfa2c66e"
   integrity sha512-jCm/sAtCT8L5qOa27aCCutMpCDZU9Do65qf3Yp0g6rgxwoz88co7u+75Xo6X6krVhUJCuvgJgyQqAVIS4Iv8TQ==
-  dependencies:
-    "@codemirror/autocomplete" "^6.0.0"
-    "@codemirror/commands" "^6.0.0"
-    "@codemirror/lang-sql" "^6.3.0"
-    "@codemirror/language" "^6.0.0"
-    "@codemirror/lint" "^6.0.0"
-    "@codemirror/search" "^6.0.0"
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.0.0"
-    "@uiw/codemirror-themes" "^4.11.4"
-    "@uiw/react-codemirror" "^4.11.4"
-    antd "^4.22.4"
-    copy-to-clipboard "^3.3.2"
-    query-string "^7.0.1"
-    styled-components "^5.3.3"
-
-"@cognite/cdf-utilities@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.2.0.tgz#0016af77a6ade3d469bf7d10194afe9e6eadcf34"
-  integrity sha512-rMZHdQiwPZi7qR5isKiMciC6MHotbyTme8EnjxZEZ5vPwrPu/GFiP4A3NSBrA1FI+Vqsik/ikQg2u+cAVPHECA==
   dependencies:
     "@codemirror/autocomplete" "^6.0.0"
     "@codemirror/commands" "^6.0.0"
@@ -1841,15 +1784,6 @@
   dependencies:
     axios "0.25.0"
 
-"@cognite/login-utils@^2.0.0":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/login-utils/-/login-utils-2.1.1.tgz#71e35ab5c6e39ab3428117ab11e471c41ad850b8"
-  integrity sha512-XLdGPPhUpO1Unp+kAMaQk8osa37ppqFf2/rCw42Sa24uU1fjM7LeFFYCRJPciCz2ScoLR7KeGD4AZpAa+Zgngg==
-  dependencies:
-    "@auth0/auth0-spa-js" "1.20.0"
-    "@azure/msal-browser" "2.22.0"
-    "@cognite/sdk-core" "4.1.1"
-
 "@cognite/metrics@1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.2.2.tgz#3aafe9fa339b146c44c3c938a33e6f2d7237f2ce"
@@ -2028,29 +1962,6 @@
     sparse-octree "7.1.6"
     three-stdlib "2.21.8"
 
-"@cognite/sdk-core@4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.1.tgz#c0793c68be3c965707a1b7948669f9401885951e"
-  integrity sha512-4/7f0xgIVN/tJXD+0fyEu0mOZeAg0tRiYucx3IngLT9jXAjMuk1SeJbrQPWk3lRyuNj8BkW/2SlUtsvGnleljQ==
-  dependencies:
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
-"@cognite/sdk-core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.2.tgz#be6378ffee45c5da6d0186ce97246eb19a9d9dd4"
-  integrity sha512-ePu4q1UGa4mIKDz0cxR2WzBjImtLlLQRwWY7R38IHfBXOFMJuFUxgHcKgoSP5bonGPGLHWP7UaTW+41+IsyGOw==
-  dependencies:
-    "@azure/msal-browser" "^2.11.0"
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk-core@^3.4.1":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.4.1.tgz#1a7552f1babe441bd26f48993584bbbc7b98a8d1"
@@ -2080,14 +1991,6 @@
   resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-2.0.6.tgz#170f6c8d6b78f5b8b9600be9b2e0bba1cf0f1a32"
   integrity sha512-virwJdy9NuthuS6UQ75hzIbeAtTp8mbxPFJsVehIm6DBXd0AwTggbG0TQVkPqO9OayImjEVk5HCv+9fXrjXM2Q==
 
-"@cognite/sdk-react-query-hooks@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-7.1.0.tgz#304bd3d797b94055e3c1c9f92d350befb694f4f3"
-  integrity sha512-6x9NEMtlNgyHJf3qxM5FxUYJfoLcu519tuSKmuReedrnMtYniDJLHf/L08z7z6r4XcY09gZxfmrw+4oib/MC8Q==
-  dependencies:
-    "@cognite/login-utils" "^2.0.0"
-    deep-equal "^2.0.5"
-
 "@cognite/sdk-v5@npm:@cognite/sdk@5.6.2", "@cognite/sdk@5.6.2":
   name "@cognite/sdk-v5"
   version "5.6.2"
@@ -2104,14 +2007,6 @@
   dependencies:
     "@cognite/sdk-core" "^4.6.0"
     geojson "^0.5.0"
-    lodash "^4.17.11"
-
-"@cognite/sdk@^3.3.0":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.2.tgz#4a1f154c0b8ca29e2231d202ec1a279810328844"
-  integrity sha512-rK7IajwtSEg1DkuqZ88F7hvvZG8cG7bwQx8eN0uMJilNJNnWGqjnLyOJHsIlB/K0bkhbccur4GrPDPu3Fe1fjg==
-  dependencies:
-    "@cognite/sdk-core" "^1.2.2"
     lodash "^4.17.11"
 
 "@cognite/sdk@^7.13.0":
@@ -11196,9 +11091,9 @@ browser-process-hrtime@^1.0.0:
   integrity sha512-9o5UecI3GhkpM6DrXr69PblIuWxPKk9Y0jHBRhdocZ2y7YECBFCsHm79Pr3OyR2AvjhDkabFJaDJMYRazHgsow==
 
 browser-tabs-lock@^1.2.15:
-  version "1.2.15"
-  resolved "https://registry.yarnpkg.com/browser-tabs-lock/-/browser-tabs-lock-1.2.15.tgz#d5012e652e2a0cb4eba471b0a2300c2fa5d92788"
-  integrity sha512-J8K9vdivK0Di+b8SBdE7EZxDr88TnATing7XoLw6+nFkXMQ6sVBh92K3NQvZlZU91AIkFRi0w3sztk5Z+vsswA==
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/browser-tabs-lock/-/browser-tabs-lock-1.3.0.tgz#4c0381b47b55cd29feaaea5846b7bb97aac76053"
+  integrity sha512-g6nHaobTiT0eMZ7jh16YpD2kcjAp+PInbiVq3M1x6KKaEIVhT4v9oURNIpZLOZ3LQbQ3XYfNhMAb/9hzNLIWrw==
   dependencies:
     lodash ">=4.17.21"
 
@@ -12686,10 +12581,15 @@ core-js@^2.4.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
-core-js@^3.0.4, core-js@^3.19.2, core-js@^3.20.3, core-js@^3.6.5, core-js@^3.8.2, core-js@^3.8.3:
+core-js@^3.0.4, core-js@^3.19.2, core-js@^3.6.5, core-js@^3.8.2, core-js@^3.8.3:
   version "3.27.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.27.1.tgz#23cc909b315a6bb4e418bf40a52758af2103ba46"
   integrity sha512-GutwJLBChfGCpwwhbYoqfv03LAfmiz7e7D/BNxzeMxwQf10GRSzqiOjx7AmtEk+heiD/JWmBuyBPgFtx0Sg1ww==
+
+core-js@^3.20.3:
+  version "3.30.2"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.30.2.tgz#6528abfda65e5ad728143ea23f7a14f0dcf503fc"
+  integrity sha512-uBJiDmwqsbJCWHAwjrx3cvjbMXP7xD72Dmsn5LOJpiRmE3WbBbN5rCqQ2Qh6Ek6/eOrjlWngEynBWo4VxerQhg==
 
 core-util-is@1.0.2:
   version "1.0.2"
@@ -12882,7 +12782,7 @@ crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto-js@^4.0.0:
+crypto-js@^4.0.0, crypto-js@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
   integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
@@ -14356,13 +14256,6 @@ dot-prop@^6.0.1:
   dependencies:
     is-obj "^2.0.0"
 
-dotenv-defaults@^2.0.1:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/dotenv-defaults/-/dotenv-defaults-2.0.2.tgz#6b3ec2e4319aafb70940abda72d3856770ee77ac"
-  integrity sha512-iOIzovWfsUHU91L5i8bJce3NYK5JXeAwH50Jh6+ARUdLiiGlYWfGw6UkzsYqaXZH/hjE/eCd/PlfM/qqyK0AMg==
-  dependencies:
-    dotenv "^8.2.0"
-
 dotenv-expand@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
@@ -14375,13 +14268,6 @@ dotenv-flow@3.2.0:
   dependencies:
     dotenv "^8.0.0"
 
-dotenv-webpack@^6.0.0:
-  version "6.0.4"
-  resolved "https://registry.yarnpkg.com/dotenv-webpack/-/dotenv-webpack-6.0.4.tgz#4874045d408598e45a95519d3cc71017c91c9104"
-  integrity sha512-WiTPNLanDNJ1O8AvgkBpsbarw78a4PMYG2EfJcQoxTHFWy+ji213HR+3f4PhWB1RBumiD9cbiuC3SNxJXbBp9g==
-  dependencies:
-    dotenv-defaults "^2.0.1"
-
 dotenv@^10.0.0, dotenv@~10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
@@ -14392,7 +14278,7 @@ dotenv@^16.0.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
   integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
-dotenv@^8.0.0, dotenv@^8.2.0:
+dotenv@^8.0.0:
   version "8.6.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
   integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
@@ -18991,14 +18877,6 @@ isobject@^4.0.0:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-4.0.0.tgz#3f1c9155e73b192022a80819bacd0343711697b0"
   integrity sha512-S/2fF5wH8SJA/kmwr6HYhK/RI/OkhD84k8ntalo0iJjZikgq1XFvR5M8NPT1x5F7fBwCG3qHfnzeP/Vh/ZxCUA==
 
-isomorphic-fetch@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz#611ae1acf14f5e81f729507472819fe9733558a9"
-  integrity sha512-9c4TNAKYXM5PRyVcwUZrF3W09nQ+sO7+jydgs4ZGW9dhsLG2VOlISJABombdQqQRXCwuYG3sYV/puGf5rp0qmA==
-  dependencies:
-    node-fetch "^1.0.1"
-    whatwg-fetch ">=0.10.0"
-
 isomorphic-unfetch@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/isomorphic-unfetch/-/isomorphic-unfetch-3.1.0.tgz#87341d5f4f7b63843d468438128cb087b7c3e98f"
@@ -22556,7 +22434,7 @@ node-emoji@^1.11.0:
   dependencies:
     lodash "^4.17.21"
 
-node-fetch@2.6.1, node-fetch@2.6.7, node-fetch@2.6.8, node-fetch@^1.0.1, node-fetch@^2.6.1, node-fetch@^2.6.7:
+node-fetch@2.6.1, node-fetch@2.6.7, node-fetch@2.6.8, node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -23198,6 +23076,14 @@ obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
+
+oidc-client-ts@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-2.2.4.tgz#7d86b5efe2248f3637a6f3a0ee1af86764aea125"
+  integrity sha512-nOZwIomju+AmXObl5Oq5PjrES/qTt8bLsENJCIydVgi9TEWk7SCkOU6X3RNkY7yfySRM1OJJvDKdREZdmnDT2g==
+  dependencies:
+    crypto-js "^4.1.1"
+    jwt-decode "^3.1.2"
 
 oidc-client@^1.11.5:
   version "1.11.5"
@@ -24975,9 +24861,9 @@ promise-inflight@^1.0.1:
   integrity sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==
 
 promise-polyfill@^8.2.1:
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/promise-polyfill/-/promise-polyfill-8.2.3.tgz#2edc7e4b81aff781c88a0d577e5fe9da822107c6"
-  integrity sha512-Og0+jCRQetV84U8wVjMNccfGCnMQ9mGs9Hv78QFe+pSDD3gWTpz0y+1QCuxy5d/vBFuZ3iwP2eycAkvqIMPmWg==
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/promise-polyfill/-/promise-polyfill-8.3.0.tgz#9284810268138d103807b11f4e23d5e945a4db63"
+  integrity sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg==
 
 promise-retry@^2.0.1:
   version "2.0.1"
@@ -25229,7 +25115,7 @@ query-string@^5.1.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.13.8, query-string@^6.14.1:
+query-string@^6.14.1:
   version "6.14.1"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
   integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
@@ -28038,11 +27924,6 @@ single-spa-react@^5.0.0:
   integrity sha512-gObC4D5tiu+dXty03y7hiFN/mvW8pjemww0UiM7mO8DWBS8JU+Y6L/Mlt9GptcD6kVu/mI+66IvhtQ736C0bVg==
   dependencies:
     browserslist-config-single-spa "^1.0.1"
-
-single-spa@^5.5.5:
-  version "5.9.4"
-  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-5.9.4.tgz#2a995b0784867a3f60ceb458de295ee67f045077"
-  integrity sha512-QkEoh0AzGuU82qnbUUk0ydF78QbU5wMKqKKJn7uUQfBiOYlRQEfIOpLM4m23Sab+kTOLI1kbYhYeiQ7fX5KVVw==
 
 sinon@^12.0.1:
   version "12.0.1"
@@ -31308,7 +31189,7 @@ whatwg-encoding@^2.0.0:
   dependencies:
     iconv-lite "0.6.3"
 
-whatwg-fetch@>=0.10.0, whatwg-fetch@^3.6.2:
+whatwg-fetch@^3.6.2:
   version "3.6.2"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.6.2.tgz#dced24f37f2624ed0281725d51d0e2e3fe677f8c"
   integrity sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==

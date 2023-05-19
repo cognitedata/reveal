@@ -63,7 +63,22 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@cognite/copilot/*": ["apps/copilot/src/*"]
+      "@cognite/copilot/*": ["apps/copilot/src/*"],
+      "@cognite/cdf-sdk-singleton": [
+        "libs/cdf-sdk-singleton/src/index.ts"
+      ],
+      "@cognite/login-utils": [
+        "libs/cdf-login-utils/src/index.ts"
+      ],
+      "@cognite/cdf-route-tracker": [
+        "libs/cdf-route-tracker/src/index.ts"
+      ],
+      "@cognite/sdk-react-query-hooks": [
+        "libs/cdf-sdk-react-query-hooks/src/index.ts"
+      ],
+      "@cognite/cdf-utilities": [
+        "libs/cdf-utilities/src/index.ts"
+      ],
     }
   },
   "exclude": ["node_modules", "tmp"]
