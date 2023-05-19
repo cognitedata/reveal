@@ -99,10 +99,10 @@ const StyledBaseTable = styled(BaseTable)`
   }
   .${TABLE_PREFIX}header-cell {
     padding: 0;
-    border-top: 1px solid ${Colors['greyscale-grey3'].hex()};
-    background-color: ${Colors['greyscale-grey1'].hex()};
+    border-top: 1px solid ${Colors['border--interactive--default']};
+    background-color: ${Colors['surface--medium']};
     &:hover {
-      background-color: ${Colors['greyscale-grey2'].hex()};
+      background-color: ${Colors['surface--strong']};
     }
     &:last-child {
       padding-right: 0;
@@ -118,12 +118,12 @@ const StyledBaseTable = styled(BaseTable)`
     }
   }
   .${TABLE_PREFIX}header-cell, .${TABLE_PREFIX}row-cell {
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
-    border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${Colors['border--interactive--default']};
+    border-right: 1px solid ${Colors['border--interactive--default']};
   }
   .${TABLE_PREFIX}header-cell:first-child,
     .${TABLE_PREFIX}row-cell:first-child {
     padding: 0;
-    background-color: ${Colors['greyscale-grey1'].hex()};
+    background-color: ${Colors['surface--medium']};
   }
 `;

@@ -52,7 +52,11 @@ const SidePanelTableList = (): JSX.Element => {
         searchQuery={query}
         tables={tables}
       />
-      <Button block icon="Add" onClick={() => setIsCreateModalOpen(true)}>
+      <Button
+        css={{ display: 'block' }}
+        icon="Add"
+        onClick={() => setIsCreateModalOpen(true)}
+      >
         {t('explorer-side-panel-tables-button-create-table')}
       </Button>
       {isCreateModalOpen && (

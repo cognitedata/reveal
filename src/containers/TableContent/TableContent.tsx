@@ -22,31 +22,31 @@ const TableContent = () => {
     <Wrapper>
       <StyledTabs
         key={`${database}_${table}`}
-        onChange={(view) => update([database, table, view])}
+        // onChange={(view) => update([database, table, view])}
         activeKey={view || 'spreadsheet'}
         tabPosition="top"
-        renderTabBar={(props, TabBarComponent) => (
-          <TopBar justifyContent="space-between" alignItems="center">
-            <TableHeader title={database} subtitle={table} />
-            <TabBarComponent {...props} />
-          </TopBar>
-        )}
+        // renderTabBar={(props, TabBarComponent) => (
+        //   <TopBar justifyContent="space-between" alignItems="center">
+        //     <TableHeader title={database} subtitle={table} />
+        //     <TabBarComponent {...props} />
+        //   </TopBar>
+        // )}
       >
-        <Tabs.TabPane
+        {/* <Tabs.TabPane
           key="spreadsheet"
           tab={<TabSpreadsheet key={`${database}_${table}`} />}
           style={{ overflow: 'auto' }}
-        >
-          <Spreadsheet />
-        </Tabs.TabPane>
+        > */}
+        <Spreadsheet />
+        {/* </Tabs.TabPane>
         <Tabs.TabPane
           key="profiling"
           tab={<TabProfiling isFetching={isFetching} isEmpty={isEmpty} />}
           style={{ overflow: 'auto' }}
           disabled={isEmpty}
-        >
-          <Profiling key={`${database}_${table}`} />
-        </Tabs.TabPane>
+        > */}
+        <Profiling key={`${database}_${table}`} />
+        {/* </Tabs.TabPane> */}
       </StyledTabs>
     </Wrapper>
   );
@@ -86,7 +86,7 @@ const Wrapper = styled(Flex)`
 const TopBar = styled(Flex)`
   height: 64px;
   box-sizing: border-box;
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
 `;
 
 const Tab = styled.span<{ $isEmpty?: boolean }>`
@@ -97,8 +97,8 @@ const Tab = styled.span<{ $isEmpty?: boolean }>`
   font-size: 14px;
   color: ${({ $isEmpty = false }) =>
     $isEmpty
-      ? Colors['greyscale-grey5'].hex()
-      : Colors['greyscale-grey7'].hex()};
+      ? Colors['text-icon--interactive--disabled']
+      : Colors['text-icon--medium']};
 `;
 
 const StyledTabs = styled(Tabs)`

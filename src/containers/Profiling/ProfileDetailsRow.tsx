@@ -177,9 +177,9 @@ const NumberOrMissingSummary = ({
 );
 
 const ExpandedRow = styled.div`
-  border: 1px solid ${Colors['border-default'].hex()};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-top: none;
-  background-color: ${Colors['greyscale-grey1'].hex()};
+  background-color: ${Colors['surface--medium']};
   padding: 24px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);

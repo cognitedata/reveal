@@ -38,7 +38,7 @@ const getAxisTickLabelStyle = (
   }
 
   return {
-    fill: Colors['text-primary'].hex(),
+    fill: Colors['text-icon--strong'],
     fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: 500,
@@ -282,7 +282,7 @@ export function Graph({
                             height={height}
                             fill={
                               tooltipData?.index === barIndex
-                                ? Colors['bg-control--secondary']
+                                ? Colors['surface--action--muted--default--alt']
                                 : 'transparent'
                             }
                             onMouseLeave={handleMouseLeave}
@@ -307,7 +307,7 @@ export function Graph({
                 width={xMax}
                 height={yMax}
                 numTicks={5}
-                stroke={Colors['border-default'].hex()}
+                stroke={Colors['border--interactive--default']}
                 strokeDasharray="6,6"
                 strokeWidth={1}
                 dy={1}
@@ -321,7 +321,7 @@ export function Graph({
                 tickValues={tickValues}
                 strokeWidth={0}
                 tickLineProps={{
-                  stroke: Colors['border-default'].hex(),
+                  stroke: Colors['border--interactive--default'],
                   strokeWidth: 1,
                   y2: 6,
                 }}
@@ -378,7 +378,7 @@ const StyledTooltipContent = styled.div`
 `;
 
 const StyledTooltipBody = styled(Body)`
-  color: ${Colors.white.hex()};
+  color: ${Colors['surface--muted']};
   font-family: Inter;
 `;
 

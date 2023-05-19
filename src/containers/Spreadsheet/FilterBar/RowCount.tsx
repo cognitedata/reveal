@@ -28,8 +28,8 @@ export default function RowCount() {
     return (
       <Icon
         type="Loader"
-        style={{
-          color: Colors['greyscale-grey4'].hex(),
+        css={{
+          color: Colors['text-icon--muted'],
           margin: '0 5px',
         }}
       />

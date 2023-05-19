@@ -103,7 +103,7 @@ const StyledDrawerSection = styled.div`
   padding: 8px 16px;
   width: 100%;
   padding: 8px 16px;
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
 `;
 
 const StyledDrawerHeader = styled(StyledDrawerSection)`
@@ -125,7 +125,7 @@ const StyledDrawerSectionColumnType = styled(StyledDrawerSection)`
   padding: 16px;
   align-items: center;
   justify-content: flex-start;
-  color: ${Colors['greyscale-grey7'].hex()};
+  color: ${Colors['text-icon--medium']};
   border-bottom: none;
   & > :first-child {
     width: 90px;

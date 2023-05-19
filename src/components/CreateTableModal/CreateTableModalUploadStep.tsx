@@ -74,7 +74,7 @@ const StyledDocumentIcon = styled(Icon)`
 
 const StyledUploadStepWrapper = styled.div`
   align-items: center;
-  border: 1px solid ${Colors['border-default']};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
   display: flex;
   margin-top: 16px;
@@ -94,16 +94,16 @@ const StyledProgressionInfo = styled.div`
 `;
 
 const StyledFileName = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
 `;
 
 const StyledUploadPercentage = styled(Overline)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
   margin-left: auto;
 `;
 
 const StyledProgressionBarWrapper = styled.div`
-  background-color: ${Colors['bg-control--disabled'].hex()};
+  background-color: ${Colors['surface--interactive--disabled']};
   border-radius: 4px;
   height: 8px;
   width: 100%;
@@ -114,7 +114,9 @@ const StyledProgressionBar = styled.div<{
   $percentage: number;
 }>`
   background-color: ${({ $isUploadSuccess }) =>
-    $isUploadSuccess ? '#2E8551' : Colors['bg-status-small--accent'].hex()};
+    $isUploadSuccess
+      ? '#2E8551'
+      : Colors['surface--status-neutral--muted--default']};
   border-radius: 4px;
   height: 8px;
   transition: width ${SIDE_PANEL_TRANSITION_DURATION}s

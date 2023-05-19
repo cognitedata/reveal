@@ -15,7 +15,7 @@ type DeleteDatabaseModalProps = {
 } & Omit<ModalProps, 'children' | 'onOk' | 'title'>;
 
 const StyledDeleteDatabaseModalBody = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
 `;
 
 const StyledCancelButton = styled(Button)`
@@ -83,7 +83,7 @@ const DeleteDatabaseModal = ({
           disabled={isLoading}
           loading={isLoading}
           onClick={handleDelete}
-          type="danger"
+          type="destructive"
         >
           {t('delete-database-modal-button-delete')}
         </Button>,

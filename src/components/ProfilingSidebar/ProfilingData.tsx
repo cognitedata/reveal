@@ -269,7 +269,7 @@ const ColumnNumber = ({ data, profile }: PropsNumber) => {
 const StyledProfilingData = styled.div`
   display: flex;
   width: 100%;
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
   flex-direction: column;
   flex: 1 1 auto;
   overflow: auto;

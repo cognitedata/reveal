@@ -4,7 +4,7 @@ import { Colors, Detail, Icon, Title } from '@cognite/cogs.js';
 import { Carousel } from 'antd';
 import styled from 'styled-components';
 
-import graphics from 'assets/graphics';
+import graphics from 'common/assets/graphics';
 import { useTranslation } from 'common/i18n';
 
 const FIRST_TIME_CAROUSEL_HEIGHT = 330;
@@ -59,7 +59,7 @@ const RawExplorerFirstTimeUser = (): JSX.Element => {
 
 const StyledRawExplorerFirstTimeWrapper = styled.div`
   align-items: center;
-  background-color: ${Colors['bg-accent'].hex()};
+  background-color: ${Colors['surface--medium']};
   display: flex;
   justify-content: center;
   height: 100%;
@@ -76,12 +76,12 @@ const StyledRawExplorerFirstTimeContent = styled.div`
   &&& {
     .first-time-carousel-dot {
       li button {
-        background-color: ${Colors['bg-control--disabled-hover'].hex()};
+        background-color: ${Colors['surface--interactive--disabled--alt']};
         border-radius: 8px;
         height: 8px;
       }
       li.slick-active button {
-        background-color: ${Colors['text-hint'].hex()};
+        background-color: ${Colors['text-icon--muted']};
       }
     }
 
@@ -106,7 +106,7 @@ const StyledRawExplorerFirstTimeContent = styled.div`
 `;
 
 const StyledCarouselPage = styled.div`
-  background-color: ${Colors.white};
+  background-color: ${Colors['surface--muted']};
   border-radius: 16px;
   display: flex !important; /* overrides antd style */
   height: ${FIRST_TIME_CAROUSEL_HEIGHT}px;
@@ -122,12 +122,12 @@ const StyledCarouselPageContent = styled.div`
 `;
 
 const StyledCarouselPageTitle = styled(Title)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
   margin-bottom: 16px;
 `;
 
 const StyledCarouselPageDetail = styled(Detail)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
 `;
 
 const StyledCarouselPageImage = styled.img`

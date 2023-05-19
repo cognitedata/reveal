@@ -5,14 +5,14 @@ import { getActionLabel, getContainer } from 'utils/utils';
 import { AccessPermission } from 'utils/types';
 import { useTranslation } from 'common/i18n';
 
-interface AccessButtonProps extends ButtonProps {
+type AccessButtonProps = ButtonProps & {
   permissions?: AccessPermission[];
   hasWriteAccess?: boolean;
   children?: any;
   confirmationMessage?: string;
   disabledMessage?: string;
   tooltipMessage?: string;
-}
+};
 
 const AccessButton = ({
   permissions,

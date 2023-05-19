@@ -15,7 +15,7 @@ const Loading = styled.p<{ $visible: boolean }>`
   bottom: 24px;
   left: 50%;
   text-align: center;
-  background-color: ${Colors.midblue.hex()};
+  background-color: ${Colors['surface--interactive--toggled-default']};
   color: white;
   font-weight: 500;
   padding: 8px 16px;
@@ -66,7 +66,7 @@ export const Spreadsheet = (): JSX.Element => {
             }}
           />
           <Loading $visible={isFetched && isFetching}>
-            <Icon type="Loader" size={12} style={{ marginRight: 8 }} />
+            <Icon type="Loader" size={12} css={{ marginRight: 8 }} />
             {t('spreadsheet-loading-more-data')}
           </Loading>
         </>

@@ -24,7 +24,12 @@ export const ProfilingSidebar = (): JSX.Element => {
   const onClickHide = () => setIsProfilingSidebarOpen(false);
 
   const footer = (
-    <Button block icon="PanelRight" type="secondary" onClick={onClickHide}>
+    <Button
+      css={{ display: 'block' }}
+      icon="PanelRight"
+      type="secondary"
+      onClick={onClickHide}
+    >
       {t('profiling-sidebar-button-hide')}
     </Button>
   );
@@ -40,7 +45,7 @@ export const ProfilingSidebar = (): JSX.Element => {
       onClose={onClickHide}
       style={{
         position: 'absolute',
-        borderTop: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+        borderTop: `1px solid ${Colors['border--interactive--default']}`,
       }}
       bodyStyle={{ padding: 0 }}
       headerStyle={{ padding: 0 }}

@@ -24,7 +24,9 @@ const StyledSidePanelTableListItemWrapper = styled.button<{
 }>`
   align-items: center;
   background-color: ${({ $isSelected }) =>
-    $isSelected ? Colors['bg-selected'] : Colors['bg-accent']};
+    $isSelected
+      ? Colors['surface--interactive--toggled-default']
+      : Colors['surface--medium']};
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -36,7 +38,9 @@ const StyledSidePanelTableListItemWrapper = styled.button<{
 
   &:hover {
     background-color: ${({ $isSelected }) =>
-      $isSelected ? Colors['bg-selected'] : Colors['bg-hover']};
+      $isSelected
+        ? Colors['surface--interactive--toggled-default']
+        : Colors['surface--interactive--toggled-default']};
 
     ${StyledTableListDropdownButton} {
       visibility: visible;
@@ -44,12 +48,12 @@ const StyledSidePanelTableListItemWrapper = styled.button<{
   }
 
   &:active {
-    background-color: ${Colors['bg-selected']};
+    background-color: ${Colors['surface--interactive--pressed']};
   }
 `;
 
 const StyledTableIcon = styled(Icon)`
-  color: ${Colors['green-2']};
+  color: ${Colors['text-icon--status-success']};
   margin-right: 8px;
 `;
 
@@ -101,7 +105,7 @@ const SidePanelTableListItem = ({
                 stopPropagation(e);
                 setIsDeleteModalOpen(true);
               }}
-              type="ghost-danger"
+              type="ghost-destructive"
             >
               {t('explorer-side-panel-tables-delete-button')}
             </Button>

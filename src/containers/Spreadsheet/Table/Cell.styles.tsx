@@ -15,7 +15,7 @@ export const StyledCellIndexColumn = styled.div`
   width: 100%;
   font-size: 0.9em;
   font-weight: 600;
-  background-color: ${Colors['greyscale-grey1'].hex()};
+  background-color: ${Colors['surface--medium']};
 `;
 
 export const StyledCellUnselected = styled(StyledCell)`
@@ -39,7 +39,7 @@ export const StyledCellSelected = styled(StyledCell)`
   z-index: 10;
   padding: 6px 14px;
   border-radius: 4px;
-  border: 2px solid ${Colors.midblue.hex()};
+  border: 2px solid ${Colors['surface--interactive--toggled-default']};
   background-color: white;
 `;
 

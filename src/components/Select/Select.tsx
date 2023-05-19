@@ -12,7 +12,7 @@ const StyledSelect = styled(AntdSelect)`
 
   && {
     .ant-select-selector {
-      border: 2px solid var(--cogs-greyscale-grey4);
+      border: 2px solid var(--cogs-border--interactive--default);
       border-width: 2px !important; /* overrides antd style */
       border-radius: 6px;
       box-shadow: none;
@@ -21,12 +21,12 @@ const StyledSelect = styled(AntdSelect)`
     }
 
     &:hover .ant-select-selector {
-      border-color: var(--cogs-midblue-4) !important;
+      border-color: var(--border--interactive--toggled-hover) !important;
     }
 
     &.ant-select-focused .ant-select-selector {
-      border-color: var(--cogs-midblue-4) !important;
-      box-shadow: 0 0 0 1px var(--cogs-midblue-4) inset;
+      border-color: var(--border--interactive--toggled-hover) !important;
+      box-shadow: 0 0 0 1px var(--border--interactive--toggled-hover) inset;
     }
   }
 `;

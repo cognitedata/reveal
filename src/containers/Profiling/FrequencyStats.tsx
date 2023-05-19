@@ -82,15 +82,15 @@ function Percent({ p }: { p: number }) {
 
 const FrequencyTable = styled.table`
   tr.other {
-    border-top: 1px dashed ${Colors['greyscale-grey4'].hex()};
+    border-top: 1px dashed ${Colors['border--muted']};
   }
 
   table-layout: fixed;
 `;
 
 const TableHeader = styled.thead`
-  color: ${Colors['greyscale-grey6'].hex()};
-  border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+  color: ${Colors['text-icon--strong']};
+  border-bottom: 1px solid ${Colors['border--muted']};
 `;
 const TableData = styled.td`
   padding: 4px 0;

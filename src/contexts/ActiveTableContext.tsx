@@ -12,7 +12,7 @@ import { useTableRows } from 'hooks/sdk-queries';
 import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
 import { DEFAULT_FILTER } from 'hooks/table-filters';
 
-import { graphics } from 'assets';
+import graphics from 'common/assets/graphics';
 import { useTranslation } from 'common/i18n';
 
 type ActiveTableState = {
@@ -96,7 +96,7 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
 };
 
 const StyledRawExplorerNotSelectedWrapper = styled.div`
-  background-color: ${Colors['bg-accent'].hex()};
+  background-color: ${Colors['surface--medium']};
   height: 100%;
   padding: 300px 210px;
   position: relative;
@@ -108,11 +108,11 @@ const StyledRawExplorerNotSelectedContent = styled.div`
 `;
 
 const StyledRawExplorerNotSelectedTitle = styled(Title)`
-  color: ${Colors['text-secondary'].hex()};
+  color: ${Colors['text-icon--medium']};
 `;
 
 const StyledRawExplorerNotSelectedBody = styled(Body)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
   margin-top: 12px;
 `;
 

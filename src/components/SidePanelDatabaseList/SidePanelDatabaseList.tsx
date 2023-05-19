@@ -9,6 +9,7 @@ import { useAllDatabases } from 'hooks/sdk-queries';
 
 import SidePanelDatabaseListContent from './SidePanelDatabaseListContent';
 import { useTranslation } from 'common/i18n';
+import styled from 'styled-components';
 
 const SidePanelDatabaseList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -43,9 +44,13 @@ const SidePanelDatabaseList = (): JSX.Element => {
         searchQuery={query}
       />
       {!!databases.length && (
-        <Button block icon="Add" onClick={() => setIsCreateModalOpen(true)}>
+        <StyledButton
+          // style={{ display: 'block' }}
+          icon="Add"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
           {t('explorer-side-panel-databases-button-create-database')}
-        </Button>
+        </StyledButton>
       )}
       <CreateDatabaseModal
         databases={databases}
@@ -55,5 +60,10 @@ const SidePanelDatabaseList = (): JSX.Element => {
     </SidePanelLevelWrapper>
   );
 };
+
+const StyledButton = styled(Button)`
+  &&&
+    display: block !important;
+`;
 
 export default SidePanelDatabaseList;

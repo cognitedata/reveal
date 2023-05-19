@@ -171,7 +171,7 @@ const CreateDatabaseModal = ({
 };
 
 const StyledNameInputDetail = styled(Detail)`
-  color: ${Colors['text-secondary'].hex()};
+  color: ${Colors['text-icon--medium']};
 `;
 
 const StyledCancelButton = styled(Button)`

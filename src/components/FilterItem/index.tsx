@@ -33,7 +33,7 @@ export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
     >
       {icon ? (
         <FilterContent level={2} strong>
-          <Icon type={icon} style={{ marginRight: '8px' }} />
+          <Icon type={icon} css={{ marginRight: '8px' }} />
           {value ?? 0}
         </FilterContent>
       ) : (

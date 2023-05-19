@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Body, Button, Colors, Flex, Icon, Label } from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
@@ -107,12 +107,12 @@ export default function ProfileRow({ allCount, profile }: Props) {
             columnType={columnType}
             value={nullCount}
           >
-            <Label
+            {/* <Label
               size="small"
               variant={getLabelVariant(emptyPercent, 'empty')}
             >
               {emptyPercent}%
-            </Label>
+            </Label> */}
           </NumberOrMissingTd>
         </TableCell>
         <TableCell>
@@ -121,12 +121,12 @@ export default function ProfileRow({ allCount, profile }: Props) {
             columnType={columnType}
             value={distinctCount}
           >
-            <Label
+            {/* <Label
               size="small"
               variant={getLabelVariant(distinctPercent, 'distinct')}
             >
               {distinctPercent}%
-            </Label>
+            </Label> */}
           </NumberOrMissingTd>
         </TableCell>
         <TableCell style={{ padding: '4px 4px 0' }}>
@@ -250,11 +250,11 @@ const StyledExpandButton = styled(Button)`
 const StyledTableRow = styled.tr`
   cursor: pointer;
   .styled-cell {
-    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
-    border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-bottom: 1px solid ${Colors['border--muted']};
+    border-left: 1px solid ${Colors['border--muted']};
   }
   .styled-cell:last-child {
-    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-right: 1px solid ${Colors['border--muted']};
   }
   &:last-child {
     .styled-cell:first-child {
@@ -265,7 +265,7 @@ const StyledTableRow = styled.tr`
     }
   }
   &:hover {
-    background-color: ${Colors['bg-accent'].hex()};
+    background-color: ${Colors['surface--medium']};
 
     ${StyledExpandButton} {
       display: block;
@@ -282,7 +282,7 @@ const StyledInfoFilledIcon = styled(Icon).attrs({
   size: 16,
   type: 'InfoFilled',
 })`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
 `;
 
 const StyledChildrenWrapper = styled.div`
