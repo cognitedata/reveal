@@ -31,14 +31,14 @@ import { Image360AnnotationAppearance } from './types';
 type FaceType = Image360FileDescriptor['face'];
 
 import SeededRandom from 'random-seed';
-import { ThickLine } from '@reveal/utilities';
+import { VariableWidthLine } from '@reveal/utilities';
 
 export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
 
   private readonly _mesh: Mesh;
   private readonly _meshMaterial: MeshBasicMaterial;
-  private readonly _lines: ThickLine[];
+  private readonly _line: VariableWidthLine;
   private readonly _objectGroup: Group;
 
   private _defaultAppearance: Image360AnnotationAppearance = {};
@@ -104,10 +104,10 @@ export class ImageAnnotationObject implements Image360Annotation {
     this._annotation = annotation;
     this._meshMaterial = createMaterial(annotation);
     this._mesh = new Mesh(objectData.getGeometry(), this._meshMaterial);
-    this._lines = createOutlines(objectData.getOutlinePoints(), this._meshMaterial.color);
+    this._line = createOutline(objectData.getOutlinePoints(), this._meshMaterial.color);
     this._objectGroup = new Group();
 
-    this._objectGroup.add(...this._lines.map(l => l.meshes));
+    this._objectGroup.add(this._line.mesh);
     this._objectGroup.add(this._mesh);
 
     this.initializeTransform(face, objectData.getNormalizationMatrix());
@@ -159,10 +159,8 @@ export class ImageAnnotationObject implements Image360Annotation {
     this._meshMaterial.visible = visibility;
     this._meshMaterial.needsUpdate = true;
 
-    this._lines.forEach(l => {
-      l.setLineColor(color);
-      l.setVisibility(visibility);
-    });
+    this._line.setLineColor(color);
+    this._line.setVisibility(visibility);
   }
 
   public setDefaultStyle(appearance: Image360AnnotationAppearance): void {
@@ -184,7 +182,7 @@ export class ImageAnnotationObject implements Image360Annotation {
     this._meshMaterial.dispose();
     this._mesh.geometry.dispose();
 
-    this._lines.forEach(l => l.dispose());
+    this._line.dispose();
   }
 
   public getCenter(out?: Vector3): Vector3 {
@@ -237,12 +235,10 @@ function isAnnotationAssetLink(
   return link.text !== undefined && link.textRegion !== undefined;
 }
 
-function createOutlines(outlinePoints: Vector2[], color: Color): ThickLine[] {
+function createOutline(outlinePoints: Vector2[], color: Color): VariableWidthLine {
   const e = 1e-4;
 
   const points = [...outlinePoints, outlinePoints[0]].map(p => new Vector3(p.x, p.y, -e));
 
-  const lines = points.map((_, ind) => new ThickLine(0.002, color, points[ind], points[(ind + 1) % points.length]));
-
-  return lines;
+  return new VariableWidthLine(0.002, color, points);
 }
