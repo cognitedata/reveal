@@ -11,7 +11,7 @@ import {
 import { createLink } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   distancesInFeetAndMeters,
   fitCameraToAsset,

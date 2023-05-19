@@ -1,5 +1,8 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
 import { ThreeDModelsResponse } from '../types';
 
 export const useInfinite3DModels = (

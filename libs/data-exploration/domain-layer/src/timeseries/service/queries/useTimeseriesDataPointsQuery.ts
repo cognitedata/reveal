@@ -6,7 +6,7 @@ import {
 } from '@cognite/sdk/dist/src';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
-import { UseQueryOptions, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../../../queryKeys';
 import { getTimeseriesDatapoints } from '../network';
 

@@ -4,7 +4,7 @@ import {
   InternalAssetFilters,
   useDeepMemo,
 } from '@data-exploration-lib/core';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
 import {

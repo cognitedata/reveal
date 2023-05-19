@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Tooltip, Menu } from '@cognite/cogs.js';
 import { IdEither, FileInfo } from '@cognite/sdk';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 

@@ -5,7 +5,7 @@ import {
   configure,
   RenderOptions,
 } from '@testing-library/react';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { ids } from '../cogs-variables';
 

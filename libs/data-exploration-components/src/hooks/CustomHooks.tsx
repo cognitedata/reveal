@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { IdEither } from '@cognite/sdk';

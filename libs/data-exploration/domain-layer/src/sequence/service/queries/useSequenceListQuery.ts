@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { SequenceFilter } from '@cognite/sdk/dist/src';
 import { AdvancedFilter } from '@data-exploration-lib/domain-layer';

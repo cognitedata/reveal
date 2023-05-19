@@ -8,7 +8,7 @@ import {
   mapTableSortByToSequenceSortFields,
   useSequenceListQuery,
 } from '@data-exploration-lib/domain-layer';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   InternalSequenceFilters,
   SequenceConfigType,

@@ -4,11 +4,11 @@ import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClientProvider as TanstackProvider } from '@tanstack/react-query';
-import { QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './queryClient';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 
 import { getProject } from '@cognite/cdf-utilities';
 

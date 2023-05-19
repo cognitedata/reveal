@@ -42,7 +42,7 @@ import {
 import { AssetPreviewSidebar } from './AssetPreviewSidebar';
 import { StyledSplitter } from '../elements';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 

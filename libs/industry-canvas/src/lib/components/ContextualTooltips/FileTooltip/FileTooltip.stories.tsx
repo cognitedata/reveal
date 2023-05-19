@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SDKProvider } from '@cognite/sdk-provider';
 import { FileInfo, CogniteClient } from '@cognite/sdk';

@@ -9,7 +9,7 @@ import {
 import { Loader } from '@data-exploration/components';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { UseQueryResult } from 'react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 import union from 'lodash/union';
 import Tree, { Node } from 'react-virtualized-tree';
 

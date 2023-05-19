@@ -2,7 +2,7 @@ import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { makeDecorator, WrapperSettings } from '@storybook/addons';
 import { ToastContainer } from '@cognite/cogs.js';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Container, sdkMock } from '../src/docs/stub';
 import { DataExplorationProvider } from '../src';

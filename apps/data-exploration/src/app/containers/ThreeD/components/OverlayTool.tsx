@@ -8,7 +8,7 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import * as THREE from 'three';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { getAssetQueryKey } from '@data-exploration-app/containers/ThreeD/utils';
 import noop from 'lodash/noop';
 

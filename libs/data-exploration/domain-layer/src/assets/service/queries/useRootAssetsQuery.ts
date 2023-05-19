@@ -1,7 +1,12 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { Asset, ListResponse } from '@cognite/sdk';
 import { useCallback, useMemo } from 'react';
-import { QueryClient, useQueries, useQuery, useQueryClient } from 'react-query';
+import {
+  QueryClient,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { queryKeys } from '../../../queryKeys';
 import { getAssetsList } from '../network';
 
@@ -41,8 +46,8 @@ export const useRootAssetsQuery = (
     [rootAssetId]
   );
 
-  const childAssets = useQueries(
-    expandedRootIds.map((assetId) => {
+  const childAssets = useQueries({
+    queries: expandedRootIds.map((assetId) => {
       return {
         queryKey: queryKeys.assetChildren(assetId),
         queryFn: () => {
@@ -57,8 +62,8 @@ export const useRootAssetsQuery = (
           }).then((res) => res.items);
         },
       };
-    })
-  );
+    }),
+  });
 
   const rootAssets = useQuery(
     queryKeys.rootAssets(),

@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { FileInfo } from '@cognite/sdk';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useFileInfos = (fileIds: number[]) => {
   const sdk = useSDK();

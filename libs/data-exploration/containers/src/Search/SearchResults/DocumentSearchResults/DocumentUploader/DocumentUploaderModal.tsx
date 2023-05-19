@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';

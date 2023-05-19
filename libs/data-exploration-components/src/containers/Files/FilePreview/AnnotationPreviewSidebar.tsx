@@ -19,7 +19,7 @@ import {
   ResourceItem,
   convertResourceType,
 } from '@data-exploration-components/types/index';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { sleep } from '@data-exploration-components/utils/index';
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
 import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
@@ -126,7 +126,7 @@ const AnnotationPreviewSidebar = ({
   const onSuccess = (action: string) => {
     const invalidate = () => {
       if (file !== undefined) {
-        client.invalidateQueries(`annotations-file-${file.id}`);
+        client.invalidateQueries([`annotations-file-${file.id}`]);
       }
 
       client.invalidateQueries([

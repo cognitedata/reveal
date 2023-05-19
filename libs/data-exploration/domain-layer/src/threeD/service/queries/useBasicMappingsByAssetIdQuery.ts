@@ -1,6 +1,9 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useMemo } from 'react';
-import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
+import {
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import {
   queryKeys,
   getBasicMappingsByAssetId,

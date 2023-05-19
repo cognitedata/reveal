@@ -4,7 +4,7 @@ import {
   mapInternalFilterToAssetFilter,
   useAssetsAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-import { UseQueryOptions } from 'react-query';
+import { UseQueryOptions } from '@tanstack/react-query';
 import {
   AssetConfigType,
   InternalAssetFilters,

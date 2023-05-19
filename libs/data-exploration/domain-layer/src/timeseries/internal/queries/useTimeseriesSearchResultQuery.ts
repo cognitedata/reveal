@@ -7,7 +7,7 @@ import {
   mapTableSortByToTimeseriesSortFields,
   useTimeseriesListQuery,
 } from '@data-exploration-lib/domain-layer';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   InternalTimeseriesFilters,
   TimeseriesConfigType,

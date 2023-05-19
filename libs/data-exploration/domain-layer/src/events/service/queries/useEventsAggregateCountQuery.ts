@@ -3,7 +3,7 @@ import {
   getEventsAggregateCount,
   queryKeys,
 } from '@data-exploration-lib/domain-layer';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import {
   mapFiltersToEventsAdvancedFilters,
