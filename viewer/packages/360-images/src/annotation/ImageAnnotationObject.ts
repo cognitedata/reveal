@@ -10,7 +10,18 @@ import {
 } from '@cognite/sdk';
 import { Image360FileDescriptor } from '@reveal/data-providers';
 
-import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D } from 'three';
+import {
+  Color,
+  Matrix4,
+  Vector3,
+  Mesh,
+  MeshBasicMaterial,
+  DoubleSide,
+  Object3D,
+  Group,
+  Raycaster,
+  Vector2
+} from 'three';
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
 import { BoxAnnotationData } from './BoxAnnotationData';
 import { PolygonAnnotationData } from './PolygonAnnotationData';
@@ -20,12 +31,15 @@ import { Image360AnnotationAppearance } from './types';
 type FaceType = Image360FileDescriptor['face'];
 
 import SeededRandom from 'random-seed';
+import { VariableWidthLine } from '@reveal/utilities';
 
 export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
 
   private readonly _mesh: Mesh;
-  private readonly _material: MeshBasicMaterial;
+  private readonly _meshMaterial: MeshBasicMaterial;
+  private readonly _line: VariableWidthLine;
+  private readonly _objectGroup: Group;
 
   private _defaultAppearance: Image360AnnotationAppearance = {};
   private readonly _appearance: Image360AnnotationAppearance = {};
@@ -88,11 +102,17 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._material = createMaterial(annotation);
-    this._mesh = new Mesh(objectData.getGeometry(), this._material);
+    this._meshMaterial = createMaterial(annotation);
+    this._mesh = new Mesh(objectData.getGeometry(), this._meshMaterial);
+    this._line = createOutline(objectData.getOutlinePoints(), this._meshMaterial.color);
+    this._objectGroup = new Group();
+
+    this._objectGroup.add(this._line.mesh);
+    this._objectGroup.add(this._mesh);
 
     this.initializeTransform(face, objectData.getNormalizationMatrix());
-    this._mesh.renderOrder = 4;
+
+    this._objectGroup.renderOrder = 4;
   }
 
   private getRotationFromFace(face: FaceType): Matrix4 {
@@ -118,43 +138,51 @@ export class ImageAnnotationObject implements Image360Annotation {
     const rotationMatrix = this.getRotationFromFace(face);
 
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
-    this._mesh.matrix = transformation;
-    this._mesh.matrixAutoUpdate = false;
-    this._mesh.updateWorldMatrix(false, false);
+    this._objectGroup.matrix = transformation;
+    this._objectGroup.matrixAutoUpdate = false;
+    this._objectGroup.updateWorldMatrix(false, true);
   }
 
   public getObject(): Object3D {
-    return this._mesh;
+    return this._objectGroup;
   }
 
-  public updateMaterial(): void {
-    this._material.color = this._defaultAppearance.color ?? getDefaultColor(this._annotation);
-    this._material.visible = this._defaultAppearance.visible ?? true;
+  public intersects(raycaster: Raycaster): boolean {
+    return raycaster.intersectObject(this._mesh).length > 0;
+  }
 
-    if (this._appearance.color !== undefined) {
-      this._material.color = this._appearance.color;
-    }
+  private updateMaterials(): void {
+    const color = this._appearance.color ?? this._defaultAppearance.color ?? getDefaultColor(this._annotation);
+    const visibility = this._appearance.visible ?? this._defaultAppearance.visible ?? true;
 
-    if (this._appearance.visible !== undefined) {
-      this._material.visible = this._appearance.visible;
-    }
+    this._meshMaterial.color = color;
+    this._meshMaterial.visible = visibility;
+    this._meshMaterial.needsUpdate = true;
 
-    this._material.needsUpdate = true;
+    this._line.setLineColor(color);
+    this._line.setVisibility(visibility);
   }
 
   public setDefaultStyle(appearance: Image360AnnotationAppearance): void {
     this._defaultAppearance = appearance;
-    this.updateMaterial();
+    this.updateMaterials();
   }
 
   public setColor(color?: Color): void {
-    this._appearance.color = color;
-    this.updateMaterial();
+    this._appearance.color = color?.clone();
+    this.updateMaterials();
   }
 
   public setVisible(visible?: boolean): void {
     this._appearance.visible = visible;
-    this.updateMaterial();
+    this.updateMaterials();
+  }
+
+  public dispose(): void {
+    this._meshMaterial.dispose();
+    this._mesh.geometry.dispose();
+
+    this._line.dispose();
   }
 
   public getCenter(out?: Vector3): Vector3 {
@@ -169,7 +197,7 @@ function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {
     color: getDefaultColor(annotation),
     side: DoubleSide,
     depthTest: false,
-    opacity: 0.7,
+    opacity: 0.4,
     transparent: true
   });
 }
@@ -205,4 +233,12 @@ function isAnnotationAssetLink(
 ): annotation is AnnotationsCogniteAnnotationTypesImagesAssetLink {
   const link = annotation as AnnotationsCogniteAnnotationTypesImagesAssetLink;
   return link.text !== undefined && link.textRegion !== undefined;
+}
+
+function createOutline(outlinePoints: Vector2[], color: Color): VariableWidthLine {
+  const e = 1e-4;
+
+  const points = [...outlinePoints, outlinePoints[0]].map(p => new Vector3(p.x, p.y, -e));
+
+  return new VariableWidthLine(0.002, color, points);
 }
