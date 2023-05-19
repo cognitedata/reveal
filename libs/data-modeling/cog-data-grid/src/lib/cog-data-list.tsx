@@ -52,7 +52,10 @@ export const CogDataList = forwardRef<AgGridReact, CogDataListProps>(
         headerHeight={0}
         rowData={rowData}
         rowHeight={44}
-        gridOptions={{ enableCellTextSelection: true }}
+        gridOptions={{
+          enableCellExpressions: false,
+          enableCellTextSelection: true,
+        }}
         rowStyle={{
           borderBottom: '1px solid var(--cogs-border--muted)',
         }}

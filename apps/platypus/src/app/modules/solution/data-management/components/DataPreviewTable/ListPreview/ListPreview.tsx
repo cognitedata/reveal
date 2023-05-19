@@ -124,6 +124,7 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
         onGridReady={onGridReady}
         gridOptions={{
           enableCellTextSelection: true,
+          enableCellExpressions: false,
           rowModelType: 'infinite',
           rowBuffer: PAGE_LIMIT / 2,
           // how big each page in our page cache will be, default is 100
