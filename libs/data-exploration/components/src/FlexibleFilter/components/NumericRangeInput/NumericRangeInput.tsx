@@ -3,16 +3,16 @@ import { useState } from 'react';
 
 import { Chip } from '@cognite/cogs.js';
 
+import isUndefined from 'lodash/isUndefined';
+
 import { NumberInput } from '../NumberInput';
 
 import { Container } from './elements';
+import { InputControlProps } from '../../types';
 
 const PLACEHOLDER = '...';
 
-export interface NumericRangeInputProps {
-  value?: [number, number];
-  onChange: (range: [number | undefined, number | undefined]) => void;
-}
+export type NumericRangeInputProps = InputControlProps<'numeric-range'>;
 
 export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   value,
@@ -28,7 +28,10 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         value={min}
         onChange={(newMin) => {
           setMin(newMin);
-          onChange([newMin, max]);
+
+          if (!isUndefined(max)) {
+            onChange([newMin, max]);
+          }
         }}
       />
 
@@ -39,7 +42,10 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         value={max}
         onChange={(newMax) => {
           setMax(newMax);
-          onChange([min, newMax]);
+
+          if (!isUndefined(min)) {
+            onChange([min, newMax]);
+          }
         }}
       />
     </Container>

@@ -21,7 +21,7 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({
           type="ghost"
           size="small"
           aria-label="menu-title-back"
-          onClick={onBackClick}
+          onClick={() => onBackClick()}
         />
       )}
 

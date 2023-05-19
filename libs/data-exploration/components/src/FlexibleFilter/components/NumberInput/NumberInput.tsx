@@ -1,13 +1,12 @@
 import * as React from 'react';
 
 import { Input } from '../Input';
+import { InputControlProps } from '../../types';
 
 export const DEFAULT_NUMBER_INPUT_PLACEHOLDER = 'Enter value...';
 
-export interface NumberInputProps {
+export interface NumberInputProps extends InputControlProps<'number'> {
   placeholder?: string;
-  value?: number;
-  onChange: (value: number) => void;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({

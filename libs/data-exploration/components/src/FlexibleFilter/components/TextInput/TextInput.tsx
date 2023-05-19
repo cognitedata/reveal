@@ -1,13 +1,12 @@
 import * as React from 'react';
 
 import { Input } from '../Input';
+import { InputControlProps } from '../../types';
 
 export const DEFAULT_TEXT_INPUT_PLACEHOLDER = 'Enter value...';
 
-export interface TextInputProps {
+export interface TextInputProps extends InputControlProps<'string'> {
   placeholder?: string;
-  value?: string;
-  onChange: (value: string) => void;
 }
 
 export const TextInput: React.FC<TextInputProps> = ({

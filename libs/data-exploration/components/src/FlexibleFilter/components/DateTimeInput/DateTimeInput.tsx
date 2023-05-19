@@ -4,11 +4,9 @@ import { Input } from '@cognite/cogs.js';
 
 import { InputWrapper } from './elements';
 import { getDateTimeInputValue } from './utils';
+import { InputControlProps } from '../../types';
 
-export interface DateTimeInputProps {
-  value?: Date;
-  onChange: (date: Date) => void;
-}
+export type DateTimeInputProps = InputControlProps<'date'>;
 
 export const DateTimeInput: React.FC<DateTimeInputProps> = ({
   value,

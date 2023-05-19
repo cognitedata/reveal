@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
 
+import isUndefined from 'lodash/isUndefined';
+
 import { DateTimeInput } from '../DateTimeInput';
 import { Chip, Container } from './elements';
+import { InputControlProps } from '../../types';
 
-export interface DateTimeRangeInputProps {
-  value?: [Date, Date];
-  onChange: (range: [Date | undefined, Date | undefined]) => void;
-}
+export type DateTimeRangeInputProps = InputControlProps<'date-range'>;
 
 export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
   value,
@@ -22,7 +22,10 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
         value={min}
         onChange={(newMin) => {
           setMin(newMin);
-          onChange([newMin, max]);
+
+          if (!isUndefined(max)) {
+            onChange([newMin, max]);
+          }
         }}
       />
 
@@ -32,7 +35,10 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
         value={max}
         onChange={(newMax) => {
           setMax(newMax);
-          onChange([min, newMax]);
+
+          if (!isUndefined(min)) {
+            onChange([min, newMax]);
+          }
         }}
       />
     </Container>

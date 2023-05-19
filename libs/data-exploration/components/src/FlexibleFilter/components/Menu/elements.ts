@@ -4,5 +4,6 @@ import styled from 'styled-components/macro';
 
 export const MenuWrapper = styled(CogsMenu)`
   width: fit-content;
-  min-width: 256px;
+  width: 256px;
+  gap: 8px;
 `;

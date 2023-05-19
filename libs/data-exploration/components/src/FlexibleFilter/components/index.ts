@@ -5,6 +5,7 @@ export * from './Input';
 export * from './Menu';
 export * from './MenuHeader';
 export * from './MenuItem';
+export * from './NoInput';
 export * from './NumberInput';
 export * from './NumericRangeInput';
 export * from './SearchInput';
