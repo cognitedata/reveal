@@ -1,11 +1,11 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import React from 'react';
 
-interface RegisterExtpipeLayoutProps {
-  backPath?: string;
-}
+type RegisterExtpipeLayoutProps = {
+  children: React.ReactNode;
+};
 
-export const RegisterExtpipeLayout: FunctionComponent<
-  RegisterExtpipeLayoutProps
-> = ({ children }: PropsWithChildren<RegisterExtpipeLayoutProps>) => {
+export const RegisterExtpipeLayout = ({
+  children,
+}: RegisterExtpipeLayoutProps): JSX.Element => {
   return <>{children}</>;
 };

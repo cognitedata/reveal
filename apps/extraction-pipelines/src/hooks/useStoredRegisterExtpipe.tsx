@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { RegisterExtpipeInfo } from 'model/Extpipe';
 
 interface ContextProps {
@@ -12,14 +12,15 @@ const RegisterExtpipeContext = React.createContext<ContextProps | undefined>(
   undefined
 );
 
-interface Props {
+interface RegisterExtpipeProviderProps {
+  children: React.ReactNode;
   initExtpipe?: Partial<RegisterExtpipeInfo>;
 }
 
 const RegisterExtpipeProvider = ({
   initExtpipe,
   children,
-}: PropsWithChildren<Props>) => {
+}: RegisterExtpipeProviderProps): JSX.Element => {
   const [storedExtpipe, setStoredExtpipe] = useState<
     Partial<RegisterExtpipeInfo>
   >(initExtpipe ?? {});
