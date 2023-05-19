@@ -21,6 +21,8 @@ module.exports = composePlugins(
     // (config, { options, context }) - options and context are available here as well
     console.log(`Custom webpack config(${nodeEnv}) for Platypus was loaded...`);
 
+    config.resolve.fallback = { path: require.resolve('path-browserify') };
+
     if (useMockEnv) {
       // add your own webpack tweaks if needed
       config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
