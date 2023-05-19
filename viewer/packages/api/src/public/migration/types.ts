@@ -209,7 +209,7 @@ export type AddImage360Options = {
    */
   preMultipliedRotation?: boolean;
   /**
-   * Annotation options
+   * Annotation options.
    */
   annotationFilter?: Image360AnnotationFilterOptions;
 };

@@ -29,7 +29,7 @@ export class Image360RevisionEntity implements Image360Revision {
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private _annotations: ImageAnnotationObject[] | undefined = undefined;
-  private _annotationFilterer: Image360AnnotationFilter;
+  private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
     imageProvider: Image360DataProvider,
