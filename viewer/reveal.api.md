@@ -6,6 +6,7 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -31,6 +32,7 @@ export type AbsolutePosition = {
 export type AddImage360Options = {
     collectionTransform?: THREE.Matrix4;
     preMultipliedRotation?: boolean;
+    annotationFilter?: Image360AnnotationFilterOptions;
 };
 
 // @public
@@ -820,6 +822,11 @@ export type Image360AnnotationAssetQueryResult = {
     image: Image360;
     revision: Image360Revision;
     annotation: Image360Annotation;
+};
+
+// @public
+export type Image360AnnotationFilterOptions = {
+    status?: 'all' | AnnotationStatus | AnnotationStatus[];
 };
 
 // @public
