@@ -1,7 +1,7 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExtractorType } from 'service/extractors';
 
 export const getSolutionsQueryKey = () => ['solutions', 'list'];

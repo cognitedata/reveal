@@ -5,7 +5,7 @@ import {
   ExtractorLibraryCategory,
   EXTRACTOR_LIBRARY_CATEGORIES,
 } from 'components/category-sidebar/CategorySidebarItem';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ExtractorBase } from 'service/extractors';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ALLOWED_EXTRACTOR_TYPES } from './useExtractorsList';

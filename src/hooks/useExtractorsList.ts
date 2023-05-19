@@ -1,7 +1,7 @@
 import { useFlag } from '@cognite/react-feature-flags';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   Extractor,

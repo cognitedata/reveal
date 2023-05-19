@@ -23,14 +23,17 @@ const CategorySidebar = ({
 }: CategorySidebarProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { isFetched: didFetchExtractorList } = useExtractorsList();
-  const { isFetched: didFetchSourceSystems } = useSourceSystems();
+  const { isInitialLoading: isInitialLoadingExtractorsList } =
+    useExtractorsList();
+  const { isInitialLoading: isInitialLoadingSourceSystems } =
+    useSourceSystems();
 
   const extractorCount = extractorsList?.length;
   const hostedExtractorCount = hostedExtractorsList?.length;
   const sourceSystemCount = sourceSystems?.length;
 
-  const isLoading = !didFetchExtractorList || !didFetchSourceSystems;
+  const isLoading =
+    isInitialLoadingExtractorsList || isInitialLoadingSourceSystems;
   const totalCount = extractorCount + sourceSystemCount + hostedExtractorCount;
 
   const { isEnabled: shouldShowHostedExtractors } = useFlag(
@@ -49,21 +52,21 @@ const CategorySidebar = ({
         <CategorySidebarItem
           category="extractor"
           count={extractorCount}
-          isLoading={!didFetchExtractorList}
+          isLoading={isInitialLoadingExtractorsList}
           title={t('extractor_other')}
         />
         {shouldShowHostedExtractors && (
           <CategorySidebarItem
             category="hosted-extractor"
             count={hostedExtractorCount}
-            isLoading={!didFetchExtractorList}
+            isLoading={isInitialLoadingExtractorsList}
             title={t('hosted-extractor_other')}
           />
         )}
         <CategorySidebarItem
           category="source-system"
           count={sourceSystemCount}
-          isLoading={!didFetchSourceSystems}
+          isLoading={isInitialLoadingSourceSystems}
           title={t('source-system_other')}
         />
       </Flex>

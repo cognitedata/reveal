@@ -1,6 +1,6 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
-import { UseMutationOptions, useMutation } from 'react-query';
+import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 
 export type MQTTSourceType = 'mqtt3' | 'mqtt5';
 

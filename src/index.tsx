@@ -1,15 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './set-public-path';
-import singleSpaReact from 'single-spa-react';
-
+import ReactDOMClient from 'react-dom/client';
 import App from './App';
+
+import singleSpaReact from 'single-spa-react';
+import './set-public-path';
 
 const lifecycles = singleSpaReact({
   React,
-  ReactDOM,
+  ReactDOMClient,
   rootComponent: App,
-  // @ts-ignore
   errorBoundary() {
     // eslint-disable-line
     // Customize the root error boundary for your microfrontend here.

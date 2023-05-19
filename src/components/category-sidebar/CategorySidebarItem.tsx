@@ -13,7 +13,7 @@ export const EXTRACTOR_LIBRARY_CATEGORIES = {
 } as const;
 
 export type ExtractorLibraryCategory =
-  typeof EXTRACTOR_LIBRARY_CATEGORIES[keyof typeof EXTRACTOR_LIBRARY_CATEGORIES];
+  (typeof EXTRACTOR_LIBRARY_CATEGORIES)[keyof typeof EXTRACTOR_LIBRARY_CATEGORIES];
 
 type CategorySidebarItemProps = {
   category?: ExtractorLibraryCategory;

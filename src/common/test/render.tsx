@@ -6,7 +6,7 @@ import {
   render as testingLibraryRender,
   RenderOptions,
 } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { styleScope } from 'utils/styleScope';
 
