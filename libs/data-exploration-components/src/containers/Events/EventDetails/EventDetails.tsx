@@ -17,7 +17,11 @@ export const EventDetails = ({ event }: { event: CogniteEvent }) => (
       value={event.subtype}
       copyable
     />
-    <GeneralDetails.Item name="Description" value={event.description} />
+    <GeneralDetails.Item
+      name="Description"
+      value={event.description}
+      copyable
+    />
     <GeneralDetails.Item key={event.id} name="ID" value={event.id} copyable />
     <GeneralDetails.Item
       key={event.externalId}

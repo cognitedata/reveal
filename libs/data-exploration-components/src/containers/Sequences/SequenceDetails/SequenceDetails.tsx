@@ -11,7 +11,11 @@ export const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
       value={sequence.name}
       copyable
     />
-    <GeneralDetails.Item name="Description" value={sequence.description} />
+    <GeneralDetails.Item
+      name="Description"
+      value={sequence.description}
+      copyable
+    />
     <GeneralDetails.Item
       key={sequence.id}
       name="ID"

@@ -21,7 +21,11 @@ export const AssetDetails = ({ asset }: Props) => {
         value={asset.name}
         copyable
       />
-      <GeneralDetails.Item name="Description" value={asset.description} />
+      <GeneralDetails.Item
+        name="Description"
+        value={asset.description}
+        copyable
+      />
       <GeneralDetails.Item
         key={`id-${asset.id}`}
         name="ID"

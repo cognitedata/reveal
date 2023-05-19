@@ -13,7 +13,11 @@ export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
         value={timeseries.name}
         copyable
       />
-      <GeneralDetails.Item name="Description" value={timeseries.description} />
+      <GeneralDetails.Item
+        name="Description"
+        value={timeseries.description}
+        copyable
+      />
       <GeneralDetails.Item name="Unit" value={timeseries.unit} />
       <GeneralDetails.Item
         name="ID"
