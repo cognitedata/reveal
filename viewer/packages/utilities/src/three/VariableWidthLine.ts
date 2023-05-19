@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferGeometry, Color, Mesh, Vector2, Vector3 } from 'three';
+import { Color, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 
 export class VariableWidthLine {
@@ -23,17 +23,6 @@ export class VariableWidthLine {
     this._geometry.setPositions(points.map(p => p.toArray()).flat());
     this._mesh = new Line2(this._geometry, this._lineMaterial);
     this._mesh.renderOrder = 100;
-
-    const onBeforeRenderTrigger = new Mesh(new BufferGeometry());
-    onBeforeRenderTrigger.name = 'onBeforeRenderTrigger trigger (no geometry)';
-    onBeforeRenderTrigger.frustumCulled = false;
-    const resolution = new Vector2();
-    onBeforeRenderTrigger.onBeforeRender = renderer => {
-      const { width, height } = renderer.domElement.getBoundingClientRect();
-      resolution.set(width, height);
-      this._lineMaterial.resolution = resolution;
-    };
-    this._mesh.add(onBeforeRenderTrigger);
   }
 
   get mesh(): Line2 {
