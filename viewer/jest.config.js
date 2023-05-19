@@ -38,6 +38,7 @@ module.exports = () => {
     automock: false,
     setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock'],
     setupFilesAfterEnv: ['jest-extended/all'],
-    testEnvironment: 'jsdom'
+    testEnvironment: 'jsdom',
+    workerIdleMemoryLimit: '400MB'
   };
 };
