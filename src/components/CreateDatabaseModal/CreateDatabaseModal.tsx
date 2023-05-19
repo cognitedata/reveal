@@ -1,12 +1,11 @@
 import React, { useContext, useEffect } from 'react';
 
-import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
+import { Colors, Detail, Input, Modal, ModalProps } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 import { notification } from 'antd';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
 
-import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useCreateDatabase } from 'hooks/sdk-queries';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
@@ -24,7 +23,6 @@ const CreateDatabaseModal = ({
   databases,
   onCancel,
   visible,
-  ...modalProps
 }: CreateDatabaseModalProps): JSX.Element => {
   const { t } = useTranslation();
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
@@ -67,7 +65,6 @@ const CreateDatabaseModal = ({
             }),
             key: 'create-database',
           });
-          onCancel();
           setSelectedSidePanelDatabase(databaseName);
         },
         onError: (e) => {
@@ -121,24 +118,13 @@ const CreateDatabaseModal = ({
   return (
     <form onSubmit={handleSubmit}>
       <Modal
-        footer={[
-          <StyledCancelButton onClick={onCancel} type="ghost">
-            {t('cancel')}
-          </StyledCancelButton>,
-          <Button
-            disabled={isDisabled}
-            htmlType="submit"
-            loading={isLoading}
-            onClick={() => handleSubmit()}
-            type="primary"
-          >
-            {t('create-database-modal-button-create')}
-          </Button>,
-        ]}
+        okText={t('create-database-modal-button-create')}
+        onOk={() => handleSubmit()}
+        okDisabled={isDisabled}
         onCancel={onCancel}
-        title={<Title level={5}>{t('create-database-modal-title')}</Title>}
+        title={t('create-database-modal-title')}
         visible={visible}
-        {...modalProps}
+        size={'small'}
       >
         <FormFieldWrapper
           isRequired
@@ -172,10 +158,6 @@ const CreateDatabaseModal = ({
 
 const StyledNameInputDetail = styled(Detail)`
   color: ${Colors['text-icon--medium']};
-`;
-
-const StyledCancelButton = styled(Button)`
-  margin-right: 8px;
 `;
 
 export default CreateDatabaseModal;

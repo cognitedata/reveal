@@ -1,10 +1,16 @@
 import React, { useContext } from 'react';
 
-import { Body, Button, Colors, Title } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Colors,
+  Title,
+  Modal,
+  ModalProps,
+} from '@cognite/cogs.js';
 import { notification } from 'antd';
 import styled from 'styled-components';
 
-import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useDeleteDatabase } from 'hooks/sdk-queries';
 import { useCloseDatabase } from 'hooks/table-tabs';
@@ -18,21 +24,10 @@ const StyledDeleteDatabaseModalBody = styled(Body)`
   color: ${Colors['text-icon--strong']};
 `;
 
-const StyledCancelButton = styled(Button)`
-  margin-right: 8px;
-`;
-
-const StyledDeleteDatabaseModalTitle = styled(Title)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 312px;
-`;
-
 const DeleteDatabaseModal = ({
   databaseName,
   onCancel,
-  ...modalProps
+  visible,
 }: DeleteDatabaseModalProps): JSX.Element => {
   const { t } = useTranslation();
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
@@ -51,7 +46,6 @@ const DeleteDatabaseModal = ({
             }),
             key: 'database-delete',
           });
-          onCancel();
           setSelectedSidePanelDatabase(undefined);
           closeDatabase([databaseName]);
         },
@@ -75,26 +69,14 @@ const DeleteDatabaseModal = ({
 
   return (
     <Modal
-      footer={[
-        <StyledCancelButton onClick={onCancel} type="ghost">
-          {t('cancel')}
-        </StyledCancelButton>,
-        <Button
-          disabled={isLoading}
-          loading={isLoading}
-          onClick={handleDelete}
-          type="destructive"
-        >
-          {t('delete-database-modal-button-delete')}
-        </Button>,
-      ]}
+      onOk={handleDelete}
+      okText={t('delete-database-modal-button-delete')}
+      okDisabled={isLoading}
       onCancel={onCancel}
-      title={
-        <StyledDeleteDatabaseModalTitle level={5}>
-          {t('delete-database-modal-title', { name: databaseName })}
-        </StyledDeleteDatabaseModalTitle>
-      }
-      {...modalProps}
+      title={t('delete-database-modal-title', { name: databaseName })}
+      visible={visible}
+      size={'small'}
+      destructive
     >
       <StyledDeleteDatabaseModalBody level={2}>
         <Trans
