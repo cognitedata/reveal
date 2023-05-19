@@ -11,6 +11,7 @@ import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 import { AnnotationFilter } from './Filters/AnnotationFilter';
 import { TimeFilter } from './Filters/TimeFilter';
 import { MediaTypeFilter } from './Filters/MediaTypeFilter';
+import { SourceFilter } from './Filters/SourceFilter';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -124,13 +125,17 @@ export const getFilterPanelItems = (
     key: '7',
     headerText: 'Additional filters',
     disableClear:
-      !filter.externalIdPrefix && !filter.labels && !filter.metadata,
+      !filter.externalIdPrefix &&
+      !filter.labels &&
+      !filter.metadata &&
+      !filter.source,
     clear: () => {
       setFilter({
         ...filter,
         externalIdPrefix: undefined,
         labels: undefined,
         metadata: undefined,
+        source: undefined,
       });
     },
     filterItem: (
@@ -138,6 +143,7 @@ export const getFilterPanelItems = (
         <ExternalIdFilter filter={filter} setFilter={setFilter} />
         <SelectLabelsFilter filter={filter} setFilter={setFilter} />
         <MetadataSelectFilter filter={filter} setFilter={setFilter} />
+        <SourceFilter filter={filter} setFilter={setFilter} />
       </>
     ),
   },
