@@ -4,7 +4,7 @@ static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String APP_ID = 'cdf-data-catalog'
 static final String FIREBASE_APP_SITE = 'data-catalog'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-catalog'
-static final String NODE_VERSION = 'node:14'
+static final String NODE_VERSION = 'node:16'
 
 final boolean isMaster = env.BRANCH_NAME == 'master'
 final boolean isRelease = env.BRANCH_NAME == 'release-data-catalog'
