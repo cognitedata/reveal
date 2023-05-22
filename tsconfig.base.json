@@ -73,13 +73,13 @@
       ],
       "@cognite/copilot/*": ["apps/copilot/src/*"],
       "@cognite/cdf-sdk-singleton": [
-        "libs/cdf-sdk-singleton/src/index.ts"
+        "libs/shared/cdf-sdk-singleton/src/index.ts"
       ],
       "@cognite/login-utils": [
         "libs/shared/cdf-login-utils/src/index.ts"
       ],
       "@cognite/cdf-route-tracker": [
-        "libs/cdf-route-tracker/src/index.ts"
+        "libs/shared/cdf-route-tracker/src/index.ts"
       ]
     }
   },

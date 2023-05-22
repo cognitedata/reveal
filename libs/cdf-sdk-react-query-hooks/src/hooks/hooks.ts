@@ -5,7 +5,7 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { isEqual as equal } from 'lodash';
-import { IDPType } from '../../../cdf-login-utils';
+import { IDPType } from '@cognite/login-utils';
 import {
   AggregateResponse,
   CogniteClient,
