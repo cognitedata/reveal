@@ -182,7 +182,11 @@ export class Image360UI {
     const collection = await this.viewer.add360ImageSet(
       'events',
       { site_id: params.siteId },
-      { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
+      {
+        collectionTransform,
+        preMultipliedRotation: params.premultipliedRotation,
+        annotationFilter: { status: 'all' }
+      }
     );
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);

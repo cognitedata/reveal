@@ -11,6 +11,7 @@ import { Image360CollectionFactory } from './collection/Image360CollectionFactor
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import { IconCullingScheme } from './icons/IconCollection';
 import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
+import { Image360AnnotationFilterOptions } from './annotation/types';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -45,10 +46,16 @@ export class Image360Facade<T> {
 
   public async create(
     dataProviderFilter: T,
+    annotationFilter: Image360AnnotationFilterOptions = {},
     postTransform = new THREE.Matrix4(),
     preComputedRotation = true
   ): Promise<DefaultImage360Collection> {
-    const image360Collection = await this._entityFactory.create(dataProviderFilter, postTransform, preComputedRotation);
+    const image360Collection = await this._entityFactory.create(
+      dataProviderFilter,
+      postTransform,
+      preComputedRotation,
+      annotationFilter
+    );
     this._image360Collections.push(image360Collection);
     return image360Collection;
   }

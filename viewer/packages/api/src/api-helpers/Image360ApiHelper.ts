@@ -14,7 +14,8 @@ import {
   IconsOptions,
   Image360RevisionEntity,
   DefaultImage360Collection,
-  Image360AnnotationIntersection
+  Image360AnnotationIntersection,
+  Image360AnnotationFilterOptions
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -137,7 +138,8 @@ export class Image360ApiHelper {
   public async add360ImageSet(
     eventFilter: Metadata,
     collectionTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean
+    preMultipliedRotation: boolean,
+    annotationOptions?: Image360AnnotationFilterOptions
   ): Promise<Image360Collection> {
     const id: string | undefined = eventFilter.site_id;
     if (id === undefined) {
@@ -146,7 +148,13 @@ export class Image360ApiHelper {
     if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
       throw new Error(`Image set with id=${id} has already been added`);
     }
-    const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+
+    const imageCollection = await this._image360Facade.create(
+      eventFilter,
+      annotationOptions,
+      collectionTransform,
+      preMultipliedRotation
+    );
 
     this._needsRedraw = true;
     return imageCollection;

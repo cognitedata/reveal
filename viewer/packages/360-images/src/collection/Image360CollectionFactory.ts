@@ -13,6 +13,8 @@ import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import uniq from 'lodash/uniq';
 import assert from 'assert';
+import { Image360AnnotationFilterOptions } from '../annotation/types';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
@@ -38,7 +40,8 @@ export class Image360CollectionFactory<T> {
   public async create(
     dataProviderFilter: T,
     postTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean
+    preMultipliedRotation: boolean,
+    annotationFilter: Image360AnnotationFilterOptions
   ): Promise<DefaultImage360Collection> {
     const historicalDescriptors = await this._image360DataProvider.get360ImageDescriptors(
       dataProviderFilter,
@@ -55,6 +58,8 @@ export class Image360CollectionFactory<T> {
     );
     const icons = collectionIcons.icons;
 
+    const annotationFilterer = new Image360AnnotationFilter(annotationFilter);
+
     const entities = zip(historicalDescriptors, icons)
       .filter(isDefined)
       .map(([descriptor, icon]) => {
@@ -62,6 +67,7 @@ export class Image360CollectionFactory<T> {
           descriptor,
           this._sceneHandler,
           this._image360DataProvider,
+          annotationFilterer,
           descriptor.transform,
           icon,
           this._device
