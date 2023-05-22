@@ -24,4 +24,5 @@ export * from './KeepMounted';
 export * from './PreviewFilter';
 export * from './UploadButton';
 export * from './Loader';
+export * from './ResourceDetails';
 export * from './Details';
