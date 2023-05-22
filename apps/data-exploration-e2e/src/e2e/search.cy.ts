@@ -17,7 +17,7 @@ import {
 describe('Search function - Exact match', () => {
   before(() => {
     cy.fusionLogin();
-    cy.navigateToExplora();
+    cy.navigateToExplorer();
   });
 
   it('Disable fuzzy search & enable "Name" parameter', () => {
@@ -82,7 +82,7 @@ describe('Search function - Exact match', () => {
 describe('Search Parameters', () => {
   beforeEach(() => {
     cy.fusionLogin();
-    cy.navigateToExplora();
+    cy.navigateToExplorer();
   });
 
   it('exclude asset name parameter and check results', () => {

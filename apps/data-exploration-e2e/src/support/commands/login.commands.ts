@@ -11,12 +11,12 @@ Cypress.Commands.add('fusionLogin', () => {
   );
 });
 
-Cypress.Commands.add('navigateToExplora', () => {
+Cypress.Commands.add('navigateToExplorer', () => {
   cy.contains('Explore data').click();
   cy.url().should('include', 'http://cog-dss.localhost:8080/dss-dev/explore');
 });
 
 export interface LoginCommand {
   fusionLogin(): void;
-  navigateToExplora(): void;
+  navigateToExplorer(): void;
 }
