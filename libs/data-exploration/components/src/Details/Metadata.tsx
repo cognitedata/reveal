@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Title, Link } from '@cognite/cogs.js';
-import { TooltipCell, Table } from '@data-exploration/components';
+import { TooltipCell, Table } from '..';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
   FilterContainer,
@@ -12,10 +12,10 @@ import {
 import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
+  isValidUrl,
   useDebounceTrackUsage,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { isValidUrl } from '@data-exploration-components/utils';
 
 // TODO  Needs to be removed once implemented in our library
 interface DataSource {

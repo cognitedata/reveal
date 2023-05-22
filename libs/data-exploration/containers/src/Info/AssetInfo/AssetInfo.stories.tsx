@@ -1,7 +1,7 @@
 import React from 'react';
-import { assets } from '@data-exploration-components/stubs/assets';
-import { threeDModels } from '@data-exploration-components/stubs/threeDModels';
-import { AssetDetails } from './AssetDetails';
+
+import { AssetInfo } from './AssetInfo';
+import { assetsFixture, threeDModels } from '@data-exploration-lib/core';
 
 const sdkMock = {
   models3D: {
@@ -12,21 +12,21 @@ const sdkMock = {
 };
 
 export default {
-  title: 'Assets/AssetDetails',
-  component: AssetDetails,
+  title: 'Assets/AssetInfo',
+  component: AssetInfo,
   parameters: {
     explorerConfig: { sdkMockOverride: sdkMock },
   },
 };
 
 export const ExampleWithoutLinked3DModel = () => (
-  <AssetDetails asset={assets[0]} />
+  <AssetInfo asset={assetsFixture[0]} />
 );
 
 export const ExampleWithOneLinked3DModel = () => (
-  <AssetDetails asset={assets[1]} />
+  <AssetInfo asset={assetsFixture[1]} />
 );
 
 export const ExampleWithTwoLinked3DModel = () => (
-  <AssetDetails asset={assets[2]} />
+  <AssetInfo asset={assetsFixture[2]} />
 );

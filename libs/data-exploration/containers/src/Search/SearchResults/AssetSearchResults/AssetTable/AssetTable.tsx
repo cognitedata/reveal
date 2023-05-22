@@ -6,6 +6,7 @@ import {
   SubCellMatchingLabels,
   Table,
   TableProps,
+  ThreeDModelCell,
 } from '@data-exploration/components';
 
 import {
@@ -14,7 +15,6 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
 
-import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
 
 const visibleColumns = ['name', 'rootId'];

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Timeseries } from '@cognite/sdk';
-import { GeneralDetails } from '@data-exploration-components/components';
-import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-import { TimeDisplay } from '@data-exploration/components';
 
-export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
+import { GeneralDetails, TimeDisplay } from '@data-exploration/components';
+import { TimeseriesLastReading } from '../../Timeseries';
+
+export function TimeseriesInfo({ timeseries }: { timeseries: Timeseries }) {
   return (
     <GeneralDetails>
       <GeneralDetails.Item

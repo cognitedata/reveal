@@ -1,9 +1,9 @@
 import React from 'react';
-import { FileInfo } from '@cognite/sdk';
-import { GeneralDetails } from '@data-exploration-components/components';
-import { TimeDisplay } from '@data-exploration/components';
+import { FileInfo as FileInfoProps } from '@cognite/sdk';
 
-export const FileDetails = ({ file }: { file: FileInfo }) => (
+import { TimeDisplay, GeneralDetails } from '@data-exploration/components';
+
+export const FileInfo = ({ file }: { file: FileInfoProps }) => (
   <GeneralDetails>
     <GeneralDetails.Item
       key={file.name}
