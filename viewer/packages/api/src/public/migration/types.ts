@@ -11,6 +11,7 @@ import { CameraManager } from '@reveal/camera-manager';
 import { GeometryFilter, CogniteCadModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 import { EdlOptions } from '@reveal/rendering';
+import { Image360AnnotationFilterOptions } from '@reveal/360-images';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -207,6 +208,10 @@ export type AddImage360Options = {
    * @default true
    */
   preMultipliedRotation?: boolean;
+  /**
+   * Annotation options.
+   */
+  annotationFilter?: Image360AnnotationFilterOptions;
 };
 
 export type CadIntersection = {
