@@ -1,6 +1,7 @@
 import {
   DataSetFilter,
   DocumentSortItem,
+  FileInfo,
   IdEither,
   LatestDataBeforeRequest,
 } from '@cognite/sdk/dist/src';
@@ -252,7 +253,9 @@ export const queryKeys = {
       filter,
       query,
     ] as const,
-  files: () => ['files'],
+
+  // FILE
+  files: () => [...queryKeys.all, 'file'] as const,
   filePreviewURL: (fileId: number) => [
     ...queryKeys.files(),
     fileId,
@@ -268,4 +271,20 @@ export const queryKeys = {
   canvas: () => [...queryKeys.all, 'canvas'] as const,
   supportedResourceItem: (item: { id: number; type: string }) =>
     [...queryKeys.canvas(), item.type, item.id] as const,
+
+  // 3D
+  threeD: () => [...queryKeys.all, '3d'] as const,
+  threeDModels: () => [...queryKeys.threeD(), 'models'] as const,
+  listThreeDModels: (...input: any[]) => [
+    ...queryKeys.threeDModels(),
+    ...(input || []),
+  ],
+  listThreeDRevisions: (input?: any[]) =>
+    [...queryKeys.threeD(), 'revisions', ...(input || [])] as const,
+  fileBySiteId: (siteId: string | undefined) =>
+    [...queryKeys.files(), 'search', siteId] as const,
+  fileIconQuery: (file: FileInfo | undefined) =>
+    [...queryKeys.all, '360Image', 'icon', file?.id] as const,
+  filesAggregateBySiteId: (siteId: string | undefined) =>
+    [...queryKeys.files(), 'aggregate', siteId] as const,
 } as const;

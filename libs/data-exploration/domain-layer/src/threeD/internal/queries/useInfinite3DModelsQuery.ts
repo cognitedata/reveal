@@ -1,31 +1,31 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import { useSDK } from '@cognite/sdk-provider';
 import { ThreeDModelsResponse } from '../types';
+import { list3DModelQuery } from '../../service';
+import { queryKeys } from '../../../queryKeys';
 
-export const useInfinite3DModels = (
-  limit?: number,
+export const useInfinite3DModelsQuery = (
+  limit = 1000,
   config?: UseInfiniteQueryOptions<
     ThreeDModelsResponse,
     unknown,
     ThreeDModelsResponse,
     ThreeDModelsResponse,
     string[]
-  >
+  >,
+  filter = {}
 ) => {
   const sdk = useSDK();
 
   return useInfiniteQuery(
-    ['cdf', 'infinite', '3d', 'models', 'list'],
+    queryKeys.listThreeDModels(limit),
     async ({ pageParam }) => {
-      const models = await sdk.get<ThreeDModelsResponse>(
-        `/api/v1/projects/${sdk.project}/3d/models`,
-        { params: { limit: limit || 1000, cursor: pageParam } }
-      );
-      return models.data;
+      return list3DModelQuery(sdk, filter, limit, pageParam);
     },
     {
       getNextPageParam: (r) => r.nextCursor,
       ...config,
+      keepPreviousData: true,
     }
   );
 };

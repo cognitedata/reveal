@@ -1,4 +1,5 @@
 export * from './Table';
+export * from './components/FileTypeToggle';
 export * from './columns';
 export * from './components';
 export * from './constants';
