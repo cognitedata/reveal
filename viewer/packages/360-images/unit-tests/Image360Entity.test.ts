@@ -10,7 +10,7 @@ import { It, Mock } from 'moq.ts';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
-import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilterer';
+import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 describe(Image360Entity.name, () => {
   test('transformation should be respected', () => {

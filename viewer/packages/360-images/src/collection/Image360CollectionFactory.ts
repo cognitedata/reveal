@@ -14,7 +14,7 @@ import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import uniq from 'lodash/uniq';
 import assert from 'assert';
 import { Image360AnnotationFilterOptions } from '../annotation/types';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilterer';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
