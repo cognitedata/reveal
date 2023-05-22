@@ -115,4 +115,5 @@ export const PAGE_WIDTH = 1024;
 
 export const PAGINATION_SETTINGS = {
   defaultPageSize: 10,
+  hideOnSinglePage: true,
 };

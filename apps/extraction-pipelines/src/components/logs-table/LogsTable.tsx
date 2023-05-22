@@ -73,10 +73,14 @@ export const LogsTable = ({ job }: LogsTableProps): JSX.Element => {
 
 const Container = styled.div`
   background-color: ${Colors['surface--medium']};
-  padding: 8px 16px 0 36px;
+  padding: 0 8px 8px 36px;
 
   .ant-table,
   .ant-table-cell {
     background: inherit;
+  }
+
+  .ant-pagination {
+    margin-bottom: 0;
   }
 `;

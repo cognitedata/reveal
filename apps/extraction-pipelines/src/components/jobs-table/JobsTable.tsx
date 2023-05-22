@@ -118,9 +118,8 @@ export const JobsTable = ({
 };
 
 const Content = styled.div`
-  padding: 8px 16px 0;
+  padding: 8px 16px 16px;
 
   .ant-table-expanded-row > .ant-table-cell {
-    padding: 0;
   }
 `;
