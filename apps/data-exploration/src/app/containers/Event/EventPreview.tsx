@@ -1,14 +1,10 @@
-import { Loader } from '@data-exploration/components';
+import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import {
-  EventDetails,
-  ErrorFeedback,
-  Metadata,
-} from '@cognite/data-exploration';
+import { ErrorFeedback } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';
 import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -21,6 +17,7 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import { EventInfo } from '@data-exploration/containers';
 
 export type EventPreviewTabType =
   | 'details'
@@ -102,7 +99,7 @@ export const EventPreview = ({
         additionalTabs={[
           <Tabs.Tab key="details" label="Details" tabKey="details">
             <DetailsTabWrapper>
-              <EventDetails event={event} />
+              <EventInfo event={event} />
               <Metadata metadata={event.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,

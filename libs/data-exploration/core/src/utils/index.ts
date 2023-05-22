@@ -15,3 +15,4 @@ export * from './undefined';
 export * from './useCompare';
 export * from './useDeep';
 export * from './zIndex';
+export * from './url';

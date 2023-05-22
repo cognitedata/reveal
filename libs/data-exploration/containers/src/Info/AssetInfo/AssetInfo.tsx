@@ -1,14 +1,14 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
-import { GeneralDetails } from '@data-exploration-components/components';
+
 import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
-import { TimeDisplay } from '@data-exploration/components';
+import { GeneralDetails, TimeDisplay } from '@data-exploration/components';
 
 type Props = {
   asset: Asset;
 };
 
-export const AssetDetails = ({ asset }: Props) => {
+export const AssetInfo = ({ asset }: Props) => {
   const { data: mappings, isFetched } = useDetailedMappingsByAssetIdQuery(
     asset.id
   );

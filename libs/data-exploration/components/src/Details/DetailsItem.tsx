@@ -1,24 +1,24 @@
 import {
   ThreeDModelCellDropdown,
   ThreeDModelCellLink,
-} from '@data-exploration/containers';
+} from './ThreeDModelCell';
 import React from 'react';
 import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import {
-  convertResourceType,
-  ResourceType,
-} from '@data-exploration-components/types';
+
 import { DataSet } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { useClipboard } from '@data-exploration-components/hooks';
+
 import { DetailedMapping } from '@data-exploration-lib/domain-layer';
 
 import {
+  convertResourceType,
   COPIED_TEXT,
   DASH,
   DATA_EXPLORATION_COMPONENT,
+  ResourceType,
+  useClipboard,
   useMetrics,
 } from '@data-exploration-lib/core';
 
@@ -102,6 +102,7 @@ export const DataSetItem = ({
 
   const { data: dataSet } = useCdfItem<DataSet>(
     'datasets',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     { id: item?.dataSetId! },
     {
       enabled: isFetched && Number.isFinite(item?.dataSetId),
@@ -145,15 +146,15 @@ export const AssetItem = ({ id }: { id: number }) => {
 };
 
 export const AssetsItem = ({
-  assetIds,
+  assetIds = [],
   linkId,
   type,
 }: {
-  assetIds: number[] | undefined;
+  assetIds?: number[];
   linkId: number;
   type: ResourceType;
 }) => {
-  if (!assetIds) {
+  if (!assetIds || assetIds?.length === 0) {
     return <DetailsItem name="Linked asset(s)" />;
   }
 

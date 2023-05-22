@@ -1,8 +1,5 @@
 import { Asset } from '@cognite/sdk';
-import {
-  ThreeDModelCell,
-  useAssetsMetadataColumns,
-} from '@data-exploration/containers';
+import { useAssetsMetadataColumns } from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
@@ -14,6 +11,7 @@ import {
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
+  ThreeDModelCell,
 } from '@data-exploration/components';
 import React, { useMemo } from 'react';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';

@@ -59,6 +59,11 @@ export interface BaseFilterProps<TConfig extends BaseConfig> {
   onApplyClick: ApplyFilterCallback<TConfig>;
 }
 
+export interface DataModel {
+  name: string;
+  description?: string;
+}
+
 export interface Field {
   name: string;
   type: FieldType;

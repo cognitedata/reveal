@@ -1,7 +1,6 @@
+import { AssetDetails } from '@data-exploration/containers';
 import React from 'react';
 import styled from 'styled-components';
-import { Button } from '@cognite/cogs.js';
-import { AssetSmallPreview } from '@data-exploration-components/containers/Assets';
 import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
 import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
@@ -44,7 +43,6 @@ const ResourcePreviewPlaceholder = () => {
 
 export const ResourcePreviewSidebar = ({
   item,
-  closable = true,
   placeholder = ResourcePreviewPlaceholder(),
   header,
   actions,
@@ -63,10 +61,10 @@ export const ResourcePreviewSidebar = ({
     switch (item.type) {
       case 'asset': {
         content = (
-          <AssetSmallPreview
-            hideTitle={hideTitle}
+          <AssetDetails
             assetId={item.id}
-            {...commonProps}
+            isSelected={isSelected}
+            onClose={onClose}
           />
         );
         break;
@@ -110,7 +108,6 @@ export const ResourcePreviewSidebar = ({
 
   return (
     <ResourcePreviewSidebarContainer>
-      {closable && <CloseButton icon="Close" type="ghost" onClick={onClose} />}
       {header}
       {!hideContent && (propContent || content)}
       {footer}
@@ -120,10 +117,4 @@ export const ResourcePreviewSidebar = ({
 
 const ResourcePreviewSidebarContainer = styled.div`
   min-width: 360px;
-`;
-
-const CloseButton = styled(Button)`
-  position: absolute;
-  top: 16px;
-  right: 20px;
 `;

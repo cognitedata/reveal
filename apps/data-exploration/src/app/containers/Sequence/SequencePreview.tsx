@@ -1,13 +1,11 @@
-import { Loader } from '@data-exploration/components';
+import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { Tabs } from '@cognite/cogs.js';
 import {
-  SequenceDetails,
   SequencePreview as SequenceTabPreview,
   ErrorFeedback,
-  Metadata,
 } from '@cognite/data-exploration';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { CogniteError, Sequence } from '@cognite/sdk';
@@ -20,6 +18,7 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import { SequenceInfo } from '@data-exploration/containers';
 
 export type SequencePreviewType =
   | 'details'
@@ -104,7 +103,7 @@ export const SequencePreview = ({
           </Tabs.Tab>,
           <Tabs.Tab label="Details" tabKey="details" key="details">
             <DetailsTabWrapper>
-              <SequenceDetails sequence={sequence} />
+              <SequenceInfo sequence={sequence} />
               <Metadata metadata={sequence.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,
