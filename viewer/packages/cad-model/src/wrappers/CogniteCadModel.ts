@@ -103,6 +103,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
     this.cadNode = cadNode;
     this.customSectorBounds = new CustomSectorBounds(this.cadNode);
+    this.cadNode.treeIndexToSectorsMap.onChange = (treeIndex: number, newSectorId: number) => {
+      if (this.customSectorBounds.isRegistered(treeIndex)) {
+        this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
+      }
+    };
   }
 
   /**
@@ -219,22 +224,25 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
     // Update sector bounds
     for (const treeIndex of treeIndices.toArray()) {
-      // Compute the original bounding box in CDF space
-      const nodeBoundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
-      nodeBoundingBox.applyMatrix4(modelToCdfTransform);
+      if (!this.customSectorBounds.isRegistered(treeIndex)) {
+        // Compute the original bounding box in CDF space
+        const nodeBoundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
+        nodeBoundingBox.applyMatrix4(modelToCdfTransform);
 
-      // Get the sectors that contain this node. Ideally, this should be a lookup performed by the server, but as of now
-      // this map is built from loaded sectors. This means it will not work for objects that are not loaded yet.
-      const sectorIds = this.cadNode.treeIndexToSectorsMap.get(treeIndex);
+        // Register node as transformed
+        this.customSectorBounds.registerTransformedNode(treeIndex, nodeBoundingBox);
 
-      if (sectorIds && sectorIds.size) {
-        this.customSectorBounds.registerTransformedNode(
-          treeIndex,
-          transformMatrixCdf,
-          nodeBoundingBox,
-          Array.from(sectorIds)
-        );
+        // Get the sectors that this node is currently known to have geometry in. As the mapping from tree index to sectors is built
+        // when sectors are loaded, this node may have geometry in more sectors than what is currently known. If new sectors with geometry
+        // from this node are discovered at a later point, customSectorBounds.updateNodeSectors will be called through the
+        // treeIndexToSectorsMap.onChange callback, which is setup in the constructor.
+        const sectorIds = this.cadNode.treeIndexToSectorsMap.get(treeIndex);
+        if (sectorIds?.size) {
+          this.customSectorBounds.updateNodeSectors(treeIndex, Array.from(sectorIds));
+        }
       }
+
+      this.customSectorBounds.updateNodeTransform(treeIndex, transformMatrixCdf);
     }
     this.customSectorBounds.recomputeSectorBounds();
   }

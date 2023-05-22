@@ -39,7 +39,7 @@ export class CadNode extends Object3D {
 
   private _needsRedraw: boolean = false;
 
-  readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
+  public readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
 
   public readonly type = 'CadNode';
 
