@@ -15,6 +15,10 @@ const renderAggregationItem = (uptimePercentage: number) => {
     return <AggregationItemSuccess />;
   }
 
+  if (uptimePercentage >= 99.5) {
+    return <AggregationItemWarning />;
+  }
+
   if (uptimePercentage === -1) {
     return <AggregationItemNoData />;
   }
@@ -84,5 +88,17 @@ const AggregationItemSuccess = styled(AggregationItemBase)`
 
   :active {
     background-color: ${Colors['decorative--green--600']};
+  }
+`;
+
+const AggregationItemWarning = styled(AggregationItemBase)`
+  background-color: ${Colors['decorative--yellow--500']};
+
+  :hover {
+    background-color: ${Colors['decorative--yellow--600']};
+  }
+
+  :active {
+    background-color: ${Colors['decorative--yellow--700']};
   }
 `;
