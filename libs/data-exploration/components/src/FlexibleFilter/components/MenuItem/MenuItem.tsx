@@ -1,30 +1,34 @@
 import * as React from 'react';
 
-import { Icon, IconType } from '@cognite/cogs.js';
+import { Icon, IconType, Menu } from '@cognite/cogs.js';
 
-import { Container, Subtitle, TextContent, Title } from './elements';
+import { Content, Subtitle, TextContent, Title } from './elements';
 
 export interface MenuItemProps {
   title: string;
   subtitle?: string;
   icon?: IconType;
+  onClick?: () => void;
 }
 
 export const MenuItem: React.FC<MenuItemProps> = ({
   title,
   subtitle,
   icon,
+  onClick,
 }) => {
   return (
-    <Container>
-      {icon && <Icon type={icon} />}
+    <Menu.Item onClick={() => onClick?.()}>
+      <Content>
+        {icon && <Icon type={icon} />}
 
-      <TextContent>
-        <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
-      </TextContent>
+        <TextContent>
+          <Title>{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
+        </TextContent>
 
-      <Icon type="ChevronRight" />
-    </Container>
+        <Icon type="ChevronRight" />
+      </Content>
+    </Menu.Item>
   );
 };

@@ -1,10 +1,9 @@
 import styled from 'styled-components/macro';
 
-export const Container = styled.div`
+export const Content = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 6px 8px;
   gap: 8px;
 `;
 
@@ -12,7 +11,7 @@ export const TextContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 200px;
+  margin-right: auto;
 `;
 
 export const Title = styled.span`
