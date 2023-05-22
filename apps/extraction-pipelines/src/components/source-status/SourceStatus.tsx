@@ -16,7 +16,7 @@ import {
   getUptimeAggregations,
 } from 'utils/hostedExtractors';
 
-import { SourceStatusAggregationItem } from './SourceStatusAggregationItem';
+import { SourceStatusItem } from './SourceStatusItem';
 
 type SourceStatusProps = {
   className?: string;
@@ -84,7 +84,7 @@ export const SourceStatus = ({
       <Content>
         <Flex direction="row-reverse" gap={4}>
           {aggregations.map((aggregation) => (
-            <SourceStatusAggregationItem aggregation={aggregation} />
+            <SourceStatusItem aggregation={aggregation} />
           ))}
         </Flex>
         <DateAxis>

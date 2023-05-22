@@ -1,16 +1,17 @@
 import React from 'react';
 
-import { Colors, Tooltip } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { UptimeAggregation, formatUptime } from 'utils/hostedExtractors';
-import { useTranslation } from 'common';
+import { UptimeAggregation } from 'utils/hostedExtractors';
 
-type SourceStatusAggregationItemProps = {
+import SourceStatusItemTooltip from './SourceStatusItemTooltip';
+
+type SourceStatusItemProps = {
   aggregation: UptimeAggregation;
 };
 
-const renderAggregationItem = (uptimePercentage: number) => {
+const renderItem = (uptimePercentage: number) => {
   if (uptimePercentage === 100) {
     return <AggregationItemSuccess />;
   }
@@ -26,24 +27,14 @@ const renderAggregationItem = (uptimePercentage: number) => {
   return <AggregationItemError />;
 };
 
-export const SourceStatusAggregationItem = ({
+export const SourceStatusItem = ({
   aggregation,
-}: SourceStatusAggregationItemProps): JSX.Element => {
-  const { t } = useTranslation();
-
+}: SourceStatusItemProps): JSX.Element => {
   return (
     <div style={{ flex: 1 }}>
-      <Tooltip
-        content={
-          aggregation.uptimePercentage === -1
-            ? t('source-status-no-data')
-            : t('uptime-with-percentage', {
-                percentage: formatUptime(aggregation.uptimePercentage),
-              })
-        }
-      >
-        {renderAggregationItem(aggregation.uptimePercentage)}
-      </Tooltip>
+      <SourceStatusItemTooltip aggregation={aggregation}>
+        {renderItem(aggregation.uptimePercentage)}
+      </SourceStatusItemTooltip>
     </div>
   );
 };
