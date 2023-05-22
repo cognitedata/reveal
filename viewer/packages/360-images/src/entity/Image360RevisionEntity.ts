@@ -17,7 +17,7 @@ import assert from 'assert';
 import { Box3, Vector3 } from 'three';
 import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilterer';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;

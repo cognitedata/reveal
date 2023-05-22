@@ -11,7 +11,7 @@ import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
-import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilterer';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];

@@ -12,7 +12,7 @@ import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox
 import { SceneHandler } from '@reveal/utilities';
 
 import { Matrix4, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
-import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilterer';
+import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 describe(Image360RevisionEntity.name, () => {
   test('.annotation returns input annotation', () => {
