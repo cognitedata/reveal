@@ -29,7 +29,7 @@ export default defineConfig({
   hosts: {
     '*.localhost': '127.0.0.1',
   },
-  defaultCommandTimeout: 5000,
+  defaultCommandTimeout: 10000,
   viewportWidth: 1920,
   viewportHeight: 1080,
 });

@@ -5,6 +5,7 @@ import {
   EVENT_ID,
   SEQUENCE_NAME,
   NO_RESULTS_TEXT,
+  FUZZY_SEARCH_PHRASE,
 } from '../support/constant';
 import {
   ASSET_LIST_ALIAS,
@@ -111,7 +112,7 @@ describe('Search Parameters', () => {
     cy.log('save changes');
     cy.clickButton('Save');
 
-    cy.log('perform time series search by name');
+    cy.log('perform asset search by name');
     cy.goToTab('Assets');
     cy.performSearch(ASSET_NAME);
 
@@ -124,5 +125,22 @@ describe('Search Parameters', () => {
 
     cy.log('no result text should display');
     cy.findAllByText(NO_RESULTS_TEXT).should('be.visible');
+  });
+
+  it('Fuzzy search should work', () => {
+    cy.log('enable fuzzy search & relevent search parameters');
+    cy.clickButton('Config');
+    cy.includeSearchParameter('common-column-checkbox-Name');
+    cy.fuzzySearchEnable();
+    cy.clickButton('Save');
+
+    cy.log('perform fuzzy search for asset tab');
+    cy.goToTab('Assets');
+    cy.performSearch(FUZZY_SEARCH_PHRASE);
+
+    cy.log('fuzzy search result should appear');
+    cy.get('[id="asset-tree-table"]')
+      .contains('Fuzzy match: Name or Description')
+      .should('be.visible');
   });
 });

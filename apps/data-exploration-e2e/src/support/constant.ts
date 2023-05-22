@@ -4,3 +4,4 @@ export const FILE_NAME = 'PID-ME-P-0021-SVG.svg';
 export const EVENT_ID = '8973980073298523';
 export const SEQUENCE_NAME = 'Andromeda sequence tvd 2';
 export const NO_RESULTS_TEXT = 'No results available';
+export const FUZZY_SEARCH_PHRASE = 'Noway';

@@ -30,7 +30,7 @@ Cypress.Commands.add('fuzzySearchDisable', () => {
 
 Cypress.Commands.add('fuzzySearchEnable', () => {
   cy.get('input[role="switch"]').then(($toggle) => {
-    if ($toggle.is(':not.checked')) {
+    if ($toggle.is(':not(:checked)')) {
       cy.findAllByTestId('fuzzy-search-toggle').click({ multiple: true });
     }
   });
