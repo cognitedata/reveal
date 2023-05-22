@@ -1,31 +1,36 @@
-import { Button } from '@cognite/cogs.js';
 import { Page } from '../containers/page/Page';
-import { Preview } from '../components/preview/Preview';
 import { useNavigation } from '../hooks/useNavigation';
+import { useSearchDataTypesQuery } from '../services/dataTypes/queries/useSearchDataTypesQuery';
+import { SearchResults } from '../components/search/SearchResults';
 
 export const SearchPage = () => {
   const navigate = useNavigation();
 
+  const { data, isLoading } = useSearchDataTypesQuery();
+
   return (
     <Page>
-      <Page.Body>
-        <p>Actors</p>
-        <Button
-          onClick={() => {
-            navigate.toInstancePage('Actor', 'Aamir Khan');
-          }}
-        >
-          Amir Khan
-          <Preview />
-        </Button>
+      <Page.Body loading={isLoading}>
+        {Object.keys(data || {}).map((key) => {
+          const values = data?.[key];
 
-        <Button
-          onClick={() => {
-            navigate.toInstancePage('Movie', '1917');
-          }}
-        >
-          1917
-        </Button>
+          return (
+            <SearchResults>
+              <SearchResults.Header title={key} />
+              <ul>
+                {values.items.map((item: any) => (
+                  <li
+                    onClick={() => {
+                      navigate.toInstancePage(key, item.space, item.externalId);
+                    }}
+                  >
+                    {JSON.stringify(item)}
+                  </li>
+                ))}
+              </ul>
+            </SearchResults>
+          );
+        })}
       </Page.Body>
     </Page>
   );

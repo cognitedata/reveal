@@ -4,6 +4,7 @@ import { SearchBar } from './containers/SearchBar';
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { HomePage } from './pages/HomePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
+import { ListPage } from './pages/ListPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { SearchPage } from './pages/SearchPage';
 
@@ -14,10 +15,8 @@ const Routes = () => {
     <ReactRoutes>
       <Route index element={<OnboardingPage />} />
 
-      <Route path="/:space/:dataModel/:version/" element={<Outlet />}>
+      <Route path="/:dataModel/:space/:version/" element={<Outlet />}>
         <Route index element={<HomePage />} />
-
-        {/* <Route path=":dataType" element={<p>Profile page</p>} /> */}
 
         <Route
           element={
@@ -28,19 +27,20 @@ const Routes = () => {
           }
         >
           <Route path="search" element={<SearchPage />} />
-
-          <Route path="files/:externalId/overview?" element={<p>Files</p>} />
-          <Route
-            path="timeseries/:externalId/overview?"
-            element={<p>Timeseries</p>}
-          />
+          <Route path="list/:dataType" element={<ListPage />} />
 
           <Route
-            path=":dataType/:externalId/overview?"
+            path=":dataType/:nodeSpace/:externalId/overview?"
             element={<InstancesPage />}
           />
-          <Route path=":dataType/:externalId/3d" element={<p>3D</p>} />
-          <Route path=":dataType/:externalId/map" element={<p>Map</p>} />
+          <Route
+            path=":dataType/:nodeSpace/:externalId/3d"
+            element={<p>3D</p>}
+          />
+          <Route
+            path=":dataType/:nodeSpace/:externalId/map"
+            element={<p>Map</p>}
+          />
         </Route>
       </Route>
 
