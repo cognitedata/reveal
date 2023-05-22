@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
 
-import { ModalWidth } from '../..';
+import { ModalWidth } from '@cognite/cdf-utilities';
 import 'antd/es/style/index.css';
 import 'antd/es/modal/style/index.css';
 

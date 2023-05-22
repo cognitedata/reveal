@@ -10,7 +10,7 @@ import {
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { TOOLTIP_DELAY_IN_MS } from '../..';
+import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 
 type BulkActionBarProps = {
   actions: Omit<ButtonProps, 'variant'>[];

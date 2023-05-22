@@ -3,7 +3,7 @@ import { Body, Button, Flex, Tooltip, TooltipProps } from '@cognite/cogs.js';
 import { ColumnType, SortOrder } from 'antd/lib/table/interface';
 import styled from 'styled-components';
 
-import { TOOLTIP_DELAY_IN_MS } from '../..';
+import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 
 type TableColumnTitleProps<RecordType> = {
   _key: ColumnType<RecordType>['key'];

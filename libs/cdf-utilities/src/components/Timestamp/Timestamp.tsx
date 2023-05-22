@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { CogsTooltipProps, Icon, Tooltip } from '@cognite/cogs.js';
 
-import { formatTime, getDetailedTime, TOOLTIP_DELAY_IN_MS } from '../..';
+import {
+  formatTime,
+  getDetailedTime,
+  TOOLTIP_DELAY_IN_MS,
+} from '@cognite/cdf-utilities';
 
 type TimestampProps = {
   absolute?: boolean;

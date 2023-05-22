@@ -1,6 +1,9 @@
 import { formatDate, formatDateCustom } from '@cognite/cogs.js';
 
-import { ABSOLUTE_TIME_FORMAT, RELATIVE_TIME_THRESHOLD_IN_HOURS } from '..';
+import {
+  ABSOLUTE_TIME_FORMAT,
+  RELATIVE_TIME_THRESHOLD_IN_HOURS,
+} from '@cognite/cdf-utilities';
 
 export const formatTime = (timestamp: number, absolute?: boolean) => {
   const shouldUseAbsolute =
