@@ -25,8 +25,8 @@ export const Image360HistoricalDetailsPanel = ({
 
   return (
     <Tooltip content="360 Image historical details">
-      <StyledToolBar>
-        <StyledChip icon='History' iconPlacement='right' onClick={onDetailsClick} label='Details' hideTooltip/>
+      <StyledToolBar onClick={onDetailsClick}>
+        <StyledChip icon='History' iconPlacement='right' label='Details' hideTooltip/>
         <StyledChip label={count} type='neutral' hideTooltip/>
       </StyledToolBar>
     </Tooltip>

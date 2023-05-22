@@ -45,14 +45,13 @@ export const Image360HistoricalDetailsView = ({
         image360Entity: Image360;
       }[] = [];
       revision.details.forEach((details, index) => {
-        if (details.date) {
-          revisionCollection.push({
-            date: formatDate(details.date),
-            imageUrl: details.imageUrl,
-            index: index,
-            image360Entity: revision.image,
-          });
-        }
+        console.log('Date is ', details.date);
+        revisionCollection.push({
+          date: formatDate(details.date!),
+          imageUrl: details.imageUrl,
+          index: index,
+          image360Entity: revision.image,
+        });
       });
       setRevisionCollection(revisionCollection);
     }
@@ -64,6 +63,7 @@ export const Image360HistoricalDetailsView = ({
         <>
         <Image360HistoricalDetailsPanel
             key={`${stationId}`}
+            revisionCount={revisionCollection?.length}
             revisionDetailsExpanded={revisionDetailsExpanded}
             setRevisionDetailsExpanded={setRevisionDetailsExpanded}
         />

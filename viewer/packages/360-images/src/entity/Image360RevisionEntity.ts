@@ -62,7 +62,7 @@ export class Image360RevisionEntity implements Image360Revision {
       return undefined;
     }
 
-    const intersectedAnnotations = this._annotations.filter(a => raycaster.intersectObject(a.getObject()).length > 0);
+    const intersectedAnnotations = this._annotations.filter(a => a.intersects(raycaster));
 
     const smallestIntersectedBox = minBy(intersectedAnnotations, annotation => {
       const boundSize = new Box3().setFromObject(annotation.getObject()).getSize(new Vector3());
