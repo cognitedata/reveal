@@ -75,6 +75,11 @@ export class Image360VisualizationBox implements Image360Visualization {
 
   setAnnotations(annotations: ImageAnnotationObject[]): void {
     this._annotationsGroup.remove(...this._annotationsGroup.children);
+
+    if (annotations.length === 0) {
+      return;
+    }
+
     this._annotationsGroup.add(...annotations.map(a => a.getObject()));
   }
 

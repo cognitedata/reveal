@@ -76,8 +76,8 @@ describe(Image360RevisionEntity.name, () => {
       new Image360AnnotationFilter({})
     );
 
-    await revision.getAnnotations();
-    await revisionWithReversedAnnotations.getAnnotations();
+    const annotationObjects = await revision.getAnnotations();
+    const reverseAnnotationObjects = await revisionWithReversedAnnotations.getAnnotations();
 
     const raycaster = new Raycaster();
     const camera = new PerspectiveCamera(90, 1, 0.1, 100);
@@ -92,6 +92,9 @@ describe(Image360RevisionEntity.name, () => {
     expect((intersectedAnnotationReversed!.annotation.data as AnnotationsObjectDetection).label).toBe(
       'smaller annotation'
     );
+
+    annotationObjects.forEach(a => a.dispose());
+    reverseAnnotationObjects.forEach(a => a.dispose());
   });
 });
 
