@@ -1,0 +1,1 @@
+export default "default-src 'self' https: localhost:*; script-src 'self' https://cdf-hub-bundles.cogniteapp.com https://localhost:*; connect-src https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';";

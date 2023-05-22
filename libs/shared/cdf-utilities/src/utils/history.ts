@@ -1,0 +1,141 @@
+export type CdfResourceUsage = {
+  path: string;
+  name: string;
+  application: string;
+  timestamp: string;
+};
+
+export type CdfApplicationUsage = {
+  name: string;
+  count: number;
+  timestamp: string;
+};
+
+export type CdfHistoryUser = {
+  id: string;
+  cluster: string;
+  project: string;
+};
+
+interface CdfUserHistoryStorage {
+  editedResources: CdfResourceUsage[];
+  viewedResources: CdfResourceUsage[];
+  usedApplications: CdfApplicationUsage[];
+}
+
+class LocalStorageHistoryProvider implements CdfUserHistoryStorage {
+  constructor(user: CdfHistoryUser) {
+    this.localStorageKey = `@cognite/fusion/browsing-history-${user.id}-${user.cluster}-${user.project}`;
+    const lsValue = localStorage.getItem(this.localStorageKey);
+    this.dataCache = lsValue
+      ? JSON.parse(lsValue)
+      : { editedResources: [], viewedResources: [], usedApplications: [] };
+  }
+
+  private localStorageKey: string;
+  private dataCache: CdfUserHistoryStorage;
+
+  private writeToLocalStorage() {
+    localStorage.setItem(this.localStorageKey, JSON.stringify(this.dataCache));
+  }
+
+  get editedResources() {
+    return this.dataCache.editedResources;
+  }
+
+  set editedResources(arr: CdfResourceUsage[]) {
+    this.dataCache.editedResources = arr;
+    this.writeToLocalStorage();
+  }
+
+  get viewedResources() {
+    return this.dataCache.viewedResources;
+  }
+
+  set viewedResources(arr: CdfResourceUsage[]) {
+    this.dataCache.viewedResources = arr;
+    this.writeToLocalStorage();
+  }
+
+  get usedApplications() {
+    return this.dataCache.usedApplications;
+  }
+
+  set usedApplications(arr: CdfApplicationUsage[]) {
+    this.dataCache.usedApplications = arr;
+    this.writeToLocalStorage();
+  }
+}
+
+export class CdfUserHistoryService {
+  constructor(user: CdfHistoryUser) {
+    this.data = new LocalStorageHistoryProvider(user);
+  }
+
+  private data: CdfUserHistoryStorage;
+
+  logNewApplicationUsage(appPath: string) {
+    const timestamp = new Date().getTime().toString();
+    const count =
+      this.data.usedApplications.find((ele) => ele.name === appPath)?.count ||
+      0;
+    const application: CdfApplicationUsage = {
+      name: appPath,
+      count: count + 1,
+      timestamp,
+    };
+    this.data.usedApplications = [
+      application,
+      ...this.data.usedApplications.filter((ele) => ele.name === appPath),
+    ];
+  }
+
+  logNewResourceEdit(resource: Omit<CdfResourceUsage, 'timestamp'>) {
+    const timestamp = new Date().getTime().toString();
+    const resourceList = this.data.editedResources.filter(
+      (ele) =>
+        ele.name !== resource.name || ele.application !== resource.application
+    );
+    this.data.editedResources = [
+      {
+        timestamp,
+        ...resource,
+      },
+      ...resourceList,
+    ].slice(0, 9);
+  }
+
+  logNewResourceView(resource: Omit<CdfResourceUsage, 'timestamp'>) {
+    const timestamp = new Date().getTime().toString();
+    const resourceList = this.data.viewedResources.filter(
+      (ele) =>
+        ele.name !== resource.name || ele.application !== resource.application
+    );
+    this.data.viewedResources = [
+      {
+        timestamp,
+        ...resource,
+      },
+      ...resourceList,
+    ].slice(0, 9);
+  }
+
+  // read user history resources from localStorage
+  getCdfUserHistoryResources() {
+    return this.data;
+  }
+
+  isResourcesEmpty() {
+    return (
+      !this.data.editedResources.length && !this.data.viewedResources.length
+    );
+  }
+
+  isEditedResourcesEmpty() {
+    return !this.data.editedResources.length;
+  }
+
+  isViewedResourcesEmpty() {
+    return !this.data.viewedResources.length;
+  }
+}
