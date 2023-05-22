@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "0.6.1",
-    "@cognite/cdf-utilities": "^3.2.0",
+    "@cognite/cdf-utilities": "^4.0.0-beta.1",
     "@cognite/cogs.js": "9.8.0",
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",
@@ -89,6 +89,6 @@
     ]
   },
   "engines": {
-    "node": "14"
+    "node": ">=14"
   }
 }

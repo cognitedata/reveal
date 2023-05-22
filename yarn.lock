@@ -1972,10 +1972,10 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cdf-utilities@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.2.0.tgz#0016af77a6ade3d469bf7d10194afe9e6eadcf34"
-  integrity sha512-rMZHdQiwPZi7qR5isKiMciC6MHotbyTme8EnjxZEZ5vPwrPu/GFiP4A3NSBrA1FI+Vqsik/ikQg2u+cAVPHECA==
+"@cognite/cdf-utilities@^4.0.0-beta.1":
+  version "4.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-4.0.0-beta.1.tgz#61c9f270c9da9eb52d1bf45a4ba2baac4cfe96b1"
+  integrity sha512-b/wDWU2MXHgFqTnqHzAAl1whBvy1ybtTOgJlBOLw17OgfOxGoBgKq8QqrbQUdiv9W38c8k99JeU/y0ps+13PjQ==
   dependencies:
     "@codemirror/autocomplete" "^6.0.0"
     "@codemirror/commands" "^6.0.0"
@@ -5142,15 +5142,10 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001265, caniuse-lite@^1.0.30001286, caniuse-lite@^1.0.30001317:
-  version "1.0.30001418"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001418.tgz"
-  integrity sha512-oIs7+JL3K9JRQ3jPZjlH6qyYDp+nBTCais7hjh0s+fuBwufc7uZ7hPYMXrDOJhV360KGMTcczMRObk0/iMqZRg==
-
-caniuse-lite@^1.0.30001449:
-  version "1.0.30001450"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001450.tgz#022225b91200589196b814b51b1bbe45144cf74f"
-  integrity sha512-qMBmvmQmFXaSxexkjjfMvD5rnDL0+m+dUMZKoDYsGG8iZN29RuYh9eRoMvKsT6uMAWlyUUGDEQGJJYjzCIO9ew==
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001265, caniuse-lite@^1.0.30001286, caniuse-lite@^1.0.30001317, caniuse-lite@^1.0.30001449:
+  version "1.0.30001486"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001486.tgz"
+  integrity sha512-uv7/gXuHi10Whlj0pp5q/tsK/32J2QSqVRKQhs2j8VsDCjgyruAh/eEXHF822VqO9yT6iZKw3nRwZRSPBE9OQg==
 
 case-sensitive-paths-webpack-plugin@^2.4.0:
   version "2.4.0"
