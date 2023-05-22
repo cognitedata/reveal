@@ -51,7 +51,8 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
   /**
    * Loops through all the pages of the provided response and populated the IndexSet provided.
    * @param request
-   * @returns True if the operation was completed, false if it was interrupted using {@link interrupt}.
+   * @returns True if the operation was completed, false if it was interrupted using
+   * {@link PopulateIndexSetFromPagedResponseHelper} interrupt}.
    */
   public async pageResults(request: Promise<ListResponse<T[]>>): Promise<boolean> {
     const indexSet = this._indexSet;

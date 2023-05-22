@@ -4,6 +4,8 @@
 import * as THREE from 'three';
 import range from 'lodash/range';
 
+import { HtmlOverlayTool } from './HtmlOverlayTool';
+
 type SimpleGrid2DElement<T> = {
   bounds: THREE.Box2;
   element: T;
@@ -23,7 +25,7 @@ export class BucketGrid2D<T> {
   private readonly _bounds: THREE.Box2;
   private readonly _cells: SimpleGrid2DElement<T>[][];
   /**
-   * Holds elements that has been removed from the collection using {@link removeOverlappingElements}.
+   * Holds elements that has been removed from the collection using {@link BucketGrid2D.removeOverlappingElements}.
    * This is used to avoid expensive re-allocations of cells when removing elements.
    */
   private readonly _removedElements = new Set<T>();
