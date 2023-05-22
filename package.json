@@ -228,6 +228,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@rescripts/utilities": "^0.0.8",
+    "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-url": "^7.0.0",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.15",
