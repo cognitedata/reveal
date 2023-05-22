@@ -1,5 +1,11 @@
-import { Input, Modal, Textarea } from '@cognite/cogs.js';
-import { useState } from 'react';
+import {
+  Divider,
+  Input,
+  Modal,
+  SegmentedControl,
+  Textarea,
+} from '@cognite/cogs.js';
+import { useEffect, useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { NameWrapper, StyledEditableChip } from './elements';
 import { DataSet } from '@cognite/sdk';
@@ -8,17 +14,15 @@ import {
   Validator,
 } from '@platypus/platypus-core';
 import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
-import {
-  DataModelSpaceSelect,
-  OptionType,
-} from '../DataModelSpaceSelect/DataModelSpaceSelect';
+import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSelect';
 import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
 import { isFDMv3 } from '@platypus-app/flags';
 import { FormLabel } from '../FormLabel/FormLabel';
 import { DataModelExternalIdValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-external-id-validator-v2';
 import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
-
-export { OptionType };
+import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
+import { DataModelLibrary } from '../DataModelLibrary/DataModelLibrary';
+import { DataModelLibraryItem } from '../DataModelLibrary/library';
 
 export type DataModelDetailModalProps = {
   description: string;
@@ -37,8 +41,9 @@ export type DataModelDetailModalProps = {
   onDescriptionChange: (value: string) => void;
   onExternalIdChange?: (value: string) => void;
   onNameChange: (value: string) => void;
-  onSpaceChange?: (value: OptionType<string>) => void;
-  space?: OptionType<string>;
+  onSpaceChange?: (value?: string) => void;
+  onDMLChange?: (value?: string) => void;
+  space?: string;
   title: string;
   visible?: boolean;
 };
@@ -50,6 +55,20 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const [nameErrorMessage, setNameErrorMessage] = useState();
   const [isCreateSpaceModalVisible, setIsCreateSpaceModalVisible] =
     useState(false);
+  const [isLibraryVisible, setIsLibraryVisible] = useState(false);
+  const [selectedLibrary, setSelectedLibrary] = useState<
+    DataModelLibraryItem | undefined
+  >(undefined);
+
+  const { onDMLChange } = props;
+
+  useEffect(() => {
+    if (onDMLChange) {
+      onDMLChange(selectedLibrary?.versions[0].dml);
+    }
+  }, [selectedLibrary, onDMLChange]);
+
+  const { data: dataModels } = useDataModels();
 
   const validateName = (value: string) => {
     const validator = new Validator({ name: value });
@@ -88,7 +107,9 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
     <>
       <Modal
         closable={!props.isLoading}
-        visible={props.visible && !isCreateSpaceModalVisible}
+        visible={
+          props.visible && !isCreateSpaceModalVisible && !isLibraryVisible
+        }
         title={props.title}
         onCancel={props.onCancel}
         onOk={props.onSubmit}
@@ -163,14 +184,49 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             ></Textarea>
           </label>
 
+          {isFDMV3 && props.onDMLChange && (
+            <>
+              <Divider style={{ margin: '16px 0px' }} />
+              <FormLabel level={2} strong>
+                {t('modal_how_to_start', 'How would you like to get started')}
+              </FormLabel>
+              <SegmentedControl
+                onButtonClicked={(key) => {
+                  if (key === 'library') {
+                    setIsLibraryVisible(true);
+                  } else {
+                    setSelectedLibrary(undefined);
+                  }
+                }}
+                currentKey={selectedLibrary ? 'library' : 'scratch'}
+              >
+                <SegmentedControl.Button key="scratch" icon="Edit">
+                  {t('modal_how_to_start_scratch', 'From scratch')}
+                </SegmentedControl.Button>
+                <SegmentedControl.Button key="library" icon="Bookmarks">
+                  {selectedLibrary
+                    ? `${t(
+                        'modal_how_to_start_using_library',
+                        `Starting from `
+                      )} "${selectedLibrary.name}"`
+                    : t('modal_how_to_start_library', 'Browse Library')}
+                </SegmentedControl.Button>
+              </SegmentedControl>
+            </>
+          )}
+
           {isFDMV3 && (
             <DataModelSpaceSelect
               isDisabled={props.isSpaceDisabled || props.isLoading}
               onChange={(selectedSpaceOption) =>
-                props.onSpaceChange?.(selectedSpaceOption)
+                props.onSpaceChange?.(selectedSpaceOption.value)
               }
               onRequestCreateSpace={() => setIsCreateSpaceModalVisible(true)}
-              value={props.space}
+              value={
+                props.space
+                  ? { label: props.space, value: props.space }
+                  : undefined
+              }
             />
           )}
         </div>
@@ -180,11 +236,43 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
           visible
           onCancel={() => setIsCreateSpaceModalVisible(false)}
           onSubmit={(newSpace) => {
-            props.onSpaceChange?.({
-              label: newSpace,
-              value: newSpace,
-            });
+            props.onSpaceChange?.(newSpace);
             setIsCreateSpaceModalVisible(false);
+          }}
+        />
+      )}
+      {isCreateSpaceModalVisible && (
+        <CreateNewSpaceModal
+          visible
+          onCancel={() => setIsCreateSpaceModalVisible(false)}
+          onSubmit={(newSpace) => {
+            props.onSpaceChange?.(newSpace);
+            setIsCreateSpaceModalVisible(false);
+          }}
+        />
+      )}
+      {isLibraryVisible && (
+        <DataModelLibrary
+          dataModels={
+            dataModels?.map((el) => ({
+              id: el.id,
+              name: el.name,
+              tags: [],
+              versions: [
+                {
+                  version: el.version,
+                  dml: el.graphQlDml,
+                  date: new Date(el.createdTime),
+                },
+              ],
+            })) || []
+          }
+          onConfirm={(selected) => {
+            setSelectedLibrary(selected);
+            setIsLibraryVisible(false);
+          }}
+          onCancel={() => {
+            setIsLibraryVisible(false);
           }}
         />
       )}

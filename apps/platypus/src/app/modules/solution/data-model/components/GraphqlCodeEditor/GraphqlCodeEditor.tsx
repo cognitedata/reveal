@@ -2,6 +2,7 @@ import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
+import noop from 'lodash/noop';
 import {
   Environment as MonacoEditorEnvironment,
   editor as MonacoEditor,
@@ -19,7 +20,7 @@ import { isFDMv3 } from '@platypus-app/flags';
 import { StyledEditor } from './elements';
 
 const getSampleDataModel = (
-  space: string
+  space = 'your-space'
 ) => `# Welcome to the data model editor
 # Using GraphQL you can easily create a data model
 # You can start with the example below or delete everything and 
@@ -79,16 +80,15 @@ declare const self: any;
 
 type Props = {
   code: string;
-  currentTypeName: string | null;
-  typeDefs: DataModelTypeDefs | null;
-  externalId: string;
-  space: string;
+  currentTypeName?: string;
+  typeDefs?: DataModelTypeDefs;
+  space?: string;
   disabled?: boolean;
   language?: string;
-  errorsByGroup: ErrorsByGroup;
-  setErrorsByGroup: (errors: ErrorsByGroup) => void;
-  setEditorHasError: (hasError: boolean) => void;
-  onChange: (code: string) => void;
+  errorsByGroup?: ErrorsByGroup;
+  setErrorsByGroup?: (errors: ErrorsByGroup) => void;
+  setEditorHasError?: (hasError: boolean) => void;
+  onChange?: (code: string) => void;
 };
 
 export const GraphqlCodeEditor = React.memo(
@@ -98,11 +98,11 @@ export const GraphqlCodeEditor = React.memo(
     space,
     typeDefs,
     disabled = false,
-    errorsByGroup,
-    setErrorsByGroup,
+    errorsByGroup = {},
+    setErrorsByGroup = noop,
     language = 'graphql',
-    onChange,
-    setEditorHasError,
+    onChange = noop,
+    setEditorHasError = noop,
   }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
     const langProviders = useRef<any>(null);

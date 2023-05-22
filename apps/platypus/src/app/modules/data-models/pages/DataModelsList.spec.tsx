@@ -12,6 +12,12 @@ jest.mock('@platypus-app/hooks/useMixpanel');
 jest.mock('@platypus-app/hooks/useCapabilities');
 jest.mock('@platypus-app/hooks/useDataModelActions');
 
+jest.mock('@platypus-app/components/DataModelLibrary/DataModelLibrary', () => {
+  return {
+    DataModelLibrary: () => <p>Mock</p>,
+  };
+});
+
 /*
 These are cast to jest.Mock<unknown> because otherwise our mock implementations would
 have to match the return type of useQuery which is 20 or so properties.
@@ -28,6 +34,7 @@ const dataModels: DataModel[] = [
     owners: ['Ola Nordmann'],
     space: 'my-space',
     updatedTime: 1636107405779,
+    graphQlDml: '',
     version: '1',
   },
   {
@@ -38,6 +45,7 @@ const dataModels: DataModel[] = [
     owners: ['Ola Nordmann'],
     space: 'my-space',
     updatedTime: 1636107405779,
+    graphQlDml: '',
     version: '1',
   },
   {
@@ -48,6 +56,7 @@ const dataModels: DataModel[] = [
     owners: ['Ola Nordmann'],
     space: 'my-space',
     updatedTime: 1636107405779,
+    graphQlDml: '',
     version: '1',
   },
 ];

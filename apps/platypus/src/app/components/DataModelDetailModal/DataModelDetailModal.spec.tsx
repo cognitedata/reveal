@@ -13,6 +13,14 @@ import { useState } from 'react';
 
 jest.mock('@platypus-app/flags/isFDMv3');
 
+jest.mock('../DataModelLibrary/DataModelLibrary', () => {
+  return {
+    DataModelLibrary: () => <p>Mock</p>,
+  };
+});
+
+jest.mock('@platypus-app/hooks/useDataModelActions');
+
 const mockedIsFDMv3 = jest.mocked(isFDMv3);
 
 const Container = (

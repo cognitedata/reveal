@@ -22,6 +22,14 @@ jest.mock(
   }
 );
 
+jest.mock('@platypus-app/hooks/useDataModelActions');
+
+jest.mock('../DataModelLibrary/DataModelLibrary', () => {
+  return {
+    DataModelLibrary: () => <p>Mock</p>,
+  };
+});
+
 describe('DataModelSettingsModal', () => {
   beforeEach(() => {
     mockMutate.mockClear();
@@ -37,6 +45,7 @@ describe('DataModelSettingsModal', () => {
       updatedTime: 1635936707155,
       version: '1',
       space: 'testDataModel-1',
+      graphQlDml: '',
     };
     const newName = 'New_Name';
     const newDescription = 'New description';

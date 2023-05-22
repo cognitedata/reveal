@@ -11,6 +11,7 @@ export interface CreateDataModelDTO {
   name: string;
   externalId?: string;
   description?: string;
+  graphQlDml?: string;
   owner?: string;
   metadata?: {
     [key: string]: string | number | boolean;

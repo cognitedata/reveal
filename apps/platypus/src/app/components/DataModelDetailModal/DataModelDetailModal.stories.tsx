@@ -4,6 +4,7 @@ import {
 } from './DataModelDetailModal';
 import noop from 'lodash/noop';
 import { Story } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Basic components/DataModelDetailModal',
@@ -37,3 +38,10 @@ LockedExternalId.args = {
 
 export const SpacesDisabled = Template.bind({});
 SpacesDisabled.args = { ...Base.args, isSpaceDisabled: true, visible: true };
+
+export const LibraryEnabled = Template.bind({});
+LibraryEnabled.args = {
+  ...Base.args,
+  visible: true,
+  onDMLChange: action('template DML selected'),
+};

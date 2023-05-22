@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const StyledEditor = styled.div`
-  height: calc(100% - 56px);
+  height: 100%;
 
   table {
     width: 100%;

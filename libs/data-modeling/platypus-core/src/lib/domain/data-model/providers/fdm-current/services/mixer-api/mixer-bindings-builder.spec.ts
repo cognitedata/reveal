@@ -15,6 +15,7 @@ const dataModelMock: DataModel = {
   createdTime: 0,
   updatedTime: 0,
   owners: [''],
+  graphQlDml: '',
   version: '1',
 };
 const dataModelVersionMock: DataModelVersion = {

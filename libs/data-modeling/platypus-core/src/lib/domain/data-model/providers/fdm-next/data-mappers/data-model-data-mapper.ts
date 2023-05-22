@@ -24,6 +24,7 @@ export class DataModelDataMapper {
       version: dto.version,
       owners: [],
       space: dto.space,
+      graphQlDml: dto.graphQlDml,
     } as DataModel;
   }
 }

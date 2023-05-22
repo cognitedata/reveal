@@ -6,6 +6,7 @@ export interface DataModelDTO {
   externalId: string;
   name?: string;
   description?: string;
+  graphQlDml?: string;
   version: string;
   views?: Array<ViewCreateDefinition | ViewReference>;
 }

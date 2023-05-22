@@ -22,6 +22,7 @@ describe('DataModelDataMapper Test', () => {
     owners: [],
     updatedTime: 1635936707155,
     version: '',
+    graphQlDml: '',
     space: 'testDataModel',
   };
 
