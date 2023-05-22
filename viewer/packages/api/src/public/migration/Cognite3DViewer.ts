@@ -576,7 +576,7 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraStop', callback: CameraStopDelegate): void;
   /**
-   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
+   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link Cognite3DViewer.on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
   /**

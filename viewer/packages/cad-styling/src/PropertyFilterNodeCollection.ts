@@ -10,6 +10,7 @@ import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionData
 import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
+import { NodeCollection } from './NodeCollection';
 
 /**
  * Options for {@link PropertyFilterNodeCollection}.
