@@ -1688,10 +1688,10 @@
     "@azure/msal-browser" "2.22.0"
     "@cognite/sdk-core" "4.1.1"
 
-"@cognite/login-utils@^3.4.1":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@cognite/login-utils/-/login-utils-3.4.1.tgz#5521d47ddbda245455c988e22210011ba3848f14"
-  integrity sha512-Ole00c0rwHImZQIa8GvSkIDs1qLf7IpqDnVVxC0CNWOskiiseOSAEDmDUrbKBHYGlDDEVp9rzrACVcVYE5NJTA==
+"@cognite/login-utils@^5.0.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/login-utils/-/login-utils-5.1.0.tgz#d76dd48433fd9d866a5e67245e6918dff3ce8834"
+  integrity sha512-EcKsU4hLZu/1DrjXeE4lBo0OODCYZTUNMeGUWrMyveIE5IsiALfJaasDJVNu7EFtNgOYLHZ/VuvUhdS2U+CiqQ==
   dependencies:
     "@auth0/auth0-spa-js" "1.20.0"
     "@azure/msal-browser" "2.22.0"
@@ -5110,6 +5110,19 @@
   integrity sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==
   dependencies:
     defer-to-connect "^2.0.0"
+
+"@tanstack/query-core@4.29.7":
+  version "4.29.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.29.7.tgz#9fe4587e23cb9566b937c518ffa44226041d388d"
+  integrity sha512-GXG4b5hV2Loir+h2G+RXhJdoZhJLnrBWsuLB2r0qBRyhWuXq9w/dWxzvpP89H0UARlH6Mr9DiVj4SMtpkF/aUA==
+
+"@tanstack/react-query@^4.29.7":
+  version "4.29.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.29.7.tgz#772996905a81ca64172582891c5a82e88dbafccd"
+  integrity sha512-ijBWEzAIo09fB1yd22slRZzprrZ5zMdWYzBnCg5qiXuFbH78uGN1qtGz8+Ed4MuhaPaYSD+hykn+QEKtQviEtg==
+  dependencies:
+    "@tanstack/query-core" "4.29.7"
+    use-sync-external-store "^1.2.0"
 
 "@testing-library/dom@^7.28.1":
   version "7.31.2"
@@ -24994,6 +25007,11 @@ use-screenshot-hook@1.0.2:
   integrity sha512-H4/OCjh+lF3t3++lHChfldQ+muTVGvUUJMdfIQab//oSbi2mzIZa+mO1I5IOAgSYnzwib3JBWO597PBZAlckSg==
   dependencies:
     html-to-image "^0.1.1"
+
+use-sync-external-store@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
+  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
 
 use@^3.1.0:
   version "3.1.1"
