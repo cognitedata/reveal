@@ -33,10 +33,6 @@ export class Image360AnnotationFilter {
   }
 
   filter(annotation: AnnotationModel): boolean {
-    let accepted = true;
-
-    accepted &&= this.filterStatus(annotation);
-
-    return accepted;
+    return this.filterStatus(annotation);
   }
 }
