@@ -21,7 +21,9 @@ const Routes = () => {
         <Route
           element={
             <Container>
-              <SearchBar />
+              <Content>
+                <SearchBar width="1024px" inverted />
+              </Content>
               <Outlet />
             </Container>
           }
@@ -55,4 +57,11 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const Content = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
