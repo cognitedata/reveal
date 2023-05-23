@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { useTranslation } from 'common/i18n';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { handleError } from 'utils';
 
 type ResourceSearchParams = {

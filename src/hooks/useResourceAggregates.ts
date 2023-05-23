@@ -1,5 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 
 const getDataSetFilter = (id: number) => ({
   filter: { dataSetIds: [{ id }] },
@@ -8,26 +8,22 @@ const getDataSetFilter = (id: number) => ({
 export function useResourceAggregates(dataSetId: number) {
   const getQueryKey = (resource: string) => [resource, 'aggregate', dataSetId];
 
-  return useQueries([
-    {
+  return useQueries({
+    queries: [{
       queryKey: getQueryKey('assets'),
-      queryFn: () => sdk.assets.aggregate(getDataSetFilter(dataSetId)),
-    },
-    {
+      queryFn: () => sdk.assets.aggregate(getDataSetFilter(dataSetId))
+    }, {
       queryKey: getQueryKey('timeseries'),
-      queryFn: () => sdk.timeseries.aggregate(getDataSetFilter(dataSetId)),
-    },
-    {
+      queryFn: () => sdk.timeseries.aggregate(getDataSetFilter(dataSetId))
+    }, {
       queryKey: getQueryKey('files'),
-      queryFn: () => sdk.files.aggregate(getDataSetFilter(dataSetId)),
-    },
-    {
+      queryFn: () => sdk.files.aggregate(getDataSetFilter(dataSetId))
+    }, {
       queryKey: getQueryKey('events'),
-      queryFn: () => sdk.events.aggregate.count(getDataSetFilter(dataSetId)),
-    },
-    {
+      queryFn: () => sdk.events.aggregate.count(getDataSetFilter(dataSetId))
+    }, {
       queryKey: getQueryKey('sequences'),
-      queryFn: () => sdk.sequences.aggregate(getDataSetFilter(dataSetId)),
-    },
-  ]);
+      queryFn: () => sdk.sequences.aggregate(getDataSetFilter(dataSetId))
+    }]
+  });
 }

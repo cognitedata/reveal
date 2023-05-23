@@ -15,7 +15,7 @@ import RawSelector from 'components/RawSelector';
 import { RawTable } from 'utils/types';
 
 import { useRawList } from 'actions';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';

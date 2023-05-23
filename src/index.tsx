@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';
 
@@ -7,7 +7,7 @@ import App from './App';
 
 const lifecycles = singleSpaReact({
   React,
-  ReactDOM,
+  ReactDOMClient,
   rootComponent: App,
   // @ts-ignore
   errorBoundary() {

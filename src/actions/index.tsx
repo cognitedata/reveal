@@ -9,7 +9,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
-} from 'react-query';
+} from '@tanstack/react-query';
 import {
   getAllSetOwners,
   parseDataSet,
@@ -73,7 +73,7 @@ export const useCreateDataSetMutation = () => {
     data,
     ...rest
   } = useMutation(
-    'data-set-creation',
+    ['data-set-creation'],
     async (dataset: CreationDataSet) => {
       const res = await sdk.datasets.create([stringifyMetaData(dataset)]);
       return res[0];
@@ -97,7 +97,7 @@ export const useUpdateDataSetOwners = () => {
   const { t } = useTranslation();
   const client = useQueryClient();
   const { mutate: updateOwners, ...rest } = useMutation(
-    'update-owners',
+    ['update-owners'],
     async (options: { owners: Group[]; dataSetId: number }) => {
       await updateDataSetOwners(options.dataSetId, options.owners, t);
       invalidateDataSetQueries(client, options.dataSetId, true);
@@ -115,7 +115,7 @@ export const useUpdateDataSetMutation = () => {
   const { appPath } = useParams<{ appPath?: string }>();
   const userHistoryService = useCdfUserHistoryService();
   const { mutate: updateDataSet, ...rest } = useMutation(
-    'update-dataset',
+    ['update-dataset'],
     async (dataset: DataSet) => {
       const updatedDataSet = omit(dataset, [
         'id',
