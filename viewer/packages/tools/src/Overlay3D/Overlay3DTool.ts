@@ -217,7 +217,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   }
 
   /**
-   * @obvious
+   * Dispose of resources used by this tool
    */
   dispose(): void {
     this.clear();

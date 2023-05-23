@@ -1198,6 +1198,37 @@ export interface Overlay3D<ContentType> {
 }
 
 // @public
+export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
+    constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
+    clear(): void;
+    get collections(): OverlayCollection<ContentType>[];
+    createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType>;
+    dispose(): void;
+    getTextOverlayVisible(): boolean;
+    getVisible(): boolean;
+    // (undocumented)
+    off(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    off(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    off(event: 'disposed', eventHandler: DisposedDelegate): void;
+    on(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    on(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    on(event: 'disposed', eventHandler: DisposedDelegate): void;
+    removeOverlayCollection(overlayCollection: OverlayCollection<ContentType>): void;
+    setTextOverlayVisible(visible: boolean): void;
+    setVisible(visible: boolean): void;
+}
+
+// @public
+export type Overlay3DToolParameters = {
+    maxPointSize?: number;
+    defaultOverlayColor: THREE_2.Color;
+};
+
+// @public
 export interface OverlayCollection<ContentType> {
     addOverlays(overlays: OverlayInfo<ContentType>[]): Overlay3D<ContentType>[];
     getOverlays(): Overlay3D<ContentType>[];
@@ -1397,38 +1428,6 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
-
-// @public
-export class SmartOverlayTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
-    constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters);
-    clear(): void;
-    get collections(): OverlayCollection<ContentType>[];
-    createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType>;
-    // (undocumented)
-    dispose(): void;
-    getTextOverlayVisible(): boolean;
-    getVisible(): boolean;
-    // (undocumented)
-    off(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
-    // (undocumented)
-    off(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
-    // (undocumented)
-    off(event: 'disposed', eventHandler: DisposedDelegate): void;
-    on(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
-    // (undocumented)
-    on(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
-    // (undocumented)
-    on(event: 'disposed', eventHandler: DisposedDelegate): void;
-    removeOverlayCollection(overlayCollection: OverlayCollection<ContentType>): void;
-    setTextOverlayVisible(visible: boolean): void;
-    setVisible(visible: boolean): void;
-}
-
-// @public
-export type SmartOverlayToolParameters = {
-    maxPointSize?: number;
-    defaultOverlayColor: THREE_2.Color;
-};
 
 // @public
 export class StyledPointCloudObjectCollection {
