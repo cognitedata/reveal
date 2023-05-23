@@ -166,10 +166,19 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   return (
     <ModelVersionDetailsContainer>
       {simulatorConfigDetails?.isBoundaryConditionsEnabled &&
-      !errorMessageBoundaryConditions ? (
+      boundaryConditions?.status === 'success' &&
+      !boundaryConditions.modelBoundaryConditionList.length ? (
+        <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
+          There are no boundary conditions extracted for this model version
+        </ProcessingStatus>
+      ) : undefined}
+
+      {simulatorConfigDetails?.isBoundaryConditionsEnabled &&
+      !errorMessageBoundaryConditions &&
+      boundaryConditions?.modelBoundaryConditionList.length ? (
         <BoundaryConditionsContainer>
           <BoundaryConditionTable
-            boundaryConditions={boundaryConditions?.modelBoundaryConditionList}
+            boundaryConditions={boundaryConditions.modelBoundaryConditionList}
             modelFile={modelFileItem}
           />
         </BoundaryConditionsContainer>
