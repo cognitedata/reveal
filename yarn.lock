@@ -2068,10 +2068,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^13.1.1":
-  version "13.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.1.1.tgz#5a46e395d9204871d81ef346edf8ca81aabee107"
-  integrity sha512-6mscCsJDgNxy4G8N1v/sSownlGcVI0oPlQ0Mwu5JpXpslbDNg75pupNmU9KjCz9xRFFbm7jO9wQ5w3Sxh89Gpw==
+"@cognite/unified-file-viewer@^13.2.0":
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.2.0.tgz#8871d5b8e240994ea7ad3daa012b793f69d51c84"
+  integrity sha512-Gt3RNTL3R/wT4vNPPVpSjedPNeUltzStLauT8Vm/qL0NwXfz2s19/cRiPERsfMCqtpKFHZxW/NvuvBPxXJRMMQ==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
     "@cognite/reveal" "^4.1.2"
@@ -15790,6 +15790,11 @@ exenv@^1.2.0:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/exenv/-/exenv-1.2.2.tgz#2ae78e85d9894158670b03d47bec1f03bd91bb9d"
   integrity sha512-Z+ktTxTwv9ILfgKCk32OX3n/doe+OcLTRtqK9pcL+JsP3J1/VW8Uvl4ZjLlKqeW4rzK4oesDOGMEMRIZqtP4Iw==
+
+exifr@^7.1.3:
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/exifr/-/exifr-7.1.3.tgz#f6218012c36dbb7d843222011b27f065fddbab6f"
+  integrity sha512-g/aje2noHivrRSLbAUtBPWFbxKdKhgj/xr1vATDdUXPOFYJlQ62Ft0oy+72V6XLIpDJfHs6gXLbBLAolqOXYRw==
 
 exit@^0.1.2:
   version "0.1.2"
