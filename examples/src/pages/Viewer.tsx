@@ -436,7 +436,7 @@ export function Viewer() {
       await viewer.add360ImageSet('datamodels', {
         dataModelExternalId: 'Image360Space',
         space: 'Connections_360',
-        image360CollectionExternalId: 'asd'
+        image360CollectionExternalId: '6e61fd45-f4a5-45c4-a381-c6cadccb6200'
       });
 
       viewer.on('click', async event => {

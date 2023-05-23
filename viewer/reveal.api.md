@@ -330,6 +330,7 @@ export class ClusteredAreaCollection implements AreaCollection {
 // @public (undocumented)
 export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: FdmIdentifier): Promise<Image360Collection>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
@@ -730,6 +731,13 @@ export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 export type EdlOptions = {
     strength: number;
     radius: number;
+};
+
+// @public (undocumented)
+export type FdmIdentifier = {
+    space: string;
+    dataModelExternalId: string;
+    image360CollectionExternalId: string;
 };
 
 // @public (undocumented)

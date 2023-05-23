@@ -9,7 +9,7 @@ import {
   Image360EventDescriptor,
   Image360DescriptorProvider
 } from '../types';
-import { listAll360ImageCollectionsQuery } from './listCollections';
+import { get360ImageCollectionsQuery } from './listCollections';
 import { Euler, Matrix4 } from 'three';
 import zip from 'lodash/zip';
 
@@ -44,9 +44,9 @@ type Image360CollectionResult = {
 
 type Edge = { node: Image360CollectionResult };
 
-type ListConnectionsImage360Collection = { edges: Edge[] };
+type Image360CollectionJsonData = { edges: Edge[]; items: { label: string }[] };
 
-type JSONData = { listConnectionsImage360Collection: ListConnectionsImage360Collection };
+type JSONData = { getConnectionsImage360CollectionById: Image360CollectionJsonData };
 
 export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifier> {
   private readonly _sdk: CogniteClient;
@@ -55,19 +55,23 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifi
     this._sdk = sdk;
   }
   public async get360ImageDescriptors(metadataFilter: FdmIdentifier, _: boolean): Promise<Historical360ImageSet[]> {
-    const { dataModelExternalId, space } = metadataFilter;
+    const { dataModelExternalId, space, image360CollectionExternalId } = metadataFilter;
 
     const baseUrl = this._sdk.getBaseUrl();
     const project = this._sdk.project;
     const graphQlEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/1/graphql`;
 
-    const result = await this._sdk.post(graphQlEndpoint, { data: { query: listAll360ImageCollectionsQuery } });
+    const result = await this._sdk.post(graphQlEndpoint, {
+      data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space) }
+    });
+
     const data = result.data.data as JSONData;
+    console.log(data, null, 2);
 
-    const collectionId = data.listConnectionsImage360Collection.edges[0].node.externalId;
-    const collectionLabel = data.listConnectionsImage360Collection.edges[0].node.label;
+    const collectionId = data.getConnectionsImage360CollectionById.edges[0].node.externalId;
+    const collectionLabel = data.getConnectionsImage360CollectionById.edges[0].node.label;
 
-    const image360Entities = data.listConnectionsImage360Collection.edges[0].node.entities.items;
+    const image360Entities = data.getConnectionsImage360CollectionById.edges[0].node.entities.items;
 
     const imgs = await Promise.all(
       image360Entities.map(p => this.createHistorical360ImageSet(p, collectionId, collectionLabel))
