@@ -58,7 +58,7 @@ const OverviewGrid = styled.div`
   display: grid;
   gap: 16px;
   grid-template-columns: [start] 1fr [first] 1fr [second] 1fr [end];
-  grid-template-rows: [start] 72px [first] 408px [second] auto [end];
+  grid-template-rows: [start] 72px [first] auto [second] auto [third] auto [end];
   width: ${PAGE_WIDTH}px;
 `;
 
@@ -69,24 +69,24 @@ const HostedExtractionPipelineSummaryBox = styled(SummaryBox)`
 
 const TopicFiltersSection = styled(TopicFilters)`
   grid-column: start / second;
-  grid-row: first / second;
+  grid-row: second / end;
   margin-bottom: 0;
 `;
 
 const SourceDetailsSection = styled(SourceDetails)`
   grid-column: second / end;
-  grid-row: first / second;
+  grid-row: first / third;
   margin-bottom: 0;
 `;
 
 const SourceAuthenticationSection = styled(SourceAuthentication)`
   grid-column: second / end;
-  grid-row: second / end;
+  grid-row: third / end;
   margin-bottom: 0;
 `;
 
 const SourceStatusSection = styled(SourceStatus)`
   grid-column: start / second;
-  grid-row: second / row;
+  grid-row: first / second;
   margin-bottom: 0;
 `;

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
+import isString from 'lodash/isString';
 import styled from 'styled-components';
 
 import SectionItem, { SectionItemProps } from './SectionItem';
@@ -8,9 +9,10 @@ import { Box } from 'components/box/Box';
 
 type SectionProps = {
   className?: string;
+  borderless?: boolean;
   extra?: React.ReactNode;
-  icon: IconType;
-  title: string;
+  icon?: IconType;
+  title: React.ReactNode;
 } & (
   | {
       children?: React.ReactNode;
@@ -23,6 +25,7 @@ type SectionProps = {
 );
 
 const Section = ({
+  borderless,
   children,
   className,
   extra,
@@ -32,10 +35,12 @@ const Section = ({
 }: SectionProps): JSX.Element => {
   return (
     <StyledSectionContainer className={className}>
-      <StyledSectionHeader $hasBorder={!!children || items.length > 0}>
+      <StyledSectionHeader
+        $hasBorder={!borderless && (!!children || items.length > 0)}
+      >
         <Flex alignItems="center" gap={8}>
-          <Icon type={icon} />
-          <Title level={6}>{title}</Title>
+          {icon && <Icon type={icon} />}
+          {isString(title) ? <Title level={6}>{title}</Title> : title}
         </Flex>
         {extra}
       </StyledSectionHeader>
@@ -64,7 +69,7 @@ const StyledSectionHeader = styled.div<{ $hasBorder?: boolean }>`
 
   display: flex;
   justify-content: space-between;
-  height: 52px;
+  min-height: 53px;
   padding: 12px 16px;
 `;
 

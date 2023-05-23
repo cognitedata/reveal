@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Body, Colors, Flex, SegmentedControl } from '@cognite/cogs.js';
+import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -12,11 +12,11 @@ import {
 } from 'hooks/hostedExtractors';
 import {
   AggregationInterval,
-  aggregateLogsInLast30Days,
-  aggregateLogsInLast72Hours,
+  formatUptime,
+  getUptimeAggregations,
 } from 'utils/hostedExtractors';
 
-import { SourceStatusDaily } from './SourceStatusDaily';
+import { SourceStatusItem } from './SourceStatusItem';
 
 type SourceStatusProps = {
   className?: string;
@@ -34,16 +34,25 @@ export const SourceStatus = ({
   const [aggregationInterval, setAggregationInterval] =
     useState<AggregationInterval>('hourly');
 
-  const aggregations = useMemo(() => {
-    return aggregationInterval === 'hourly'
-      ? aggregateLogsInLast72Hours(logs)
-      : aggregateLogsInLast30Days(logs);
+  const [aggregations, averageUptime] = useMemo(() => {
+    const intervalCount = aggregationInterval === 'hourly' ? 72 : 30;
+    const arr = getUptimeAggregations(logs, aggregationInterval, intervalCount);
+    const [sum, count] = arr.reduce(
+      (acc, cur) =>
+        cur.uptimePercentage !== -1
+          ? [acc[0] + cur.uptimePercentage, acc[1] + 1]
+          : acc,
+      [0, 0]
+    );
+    const average = sum / count;
+    return [arr, average];
   }, [aggregationInterval, logs]);
 
   const [_, setSearchParams] = useSearchParams();
 
   return (
     <Section
+      borderless
       className={className}
       extra={
         <SegmentedControl
@@ -52,7 +61,6 @@ export const SourceStatus = ({
           onButtonClicked={(interval) => {
             setAggregationInterval(interval as AggregationInterval);
           }}
-          size="small"
         >
           <SegmentedControl.Button key="hourly">
             {t('hourly')}
@@ -62,13 +70,21 @@ export const SourceStatus = ({
           </SegmentedControl.Button>
         </SegmentedControl>
       }
-      icon="BarChart"
-      title={t('topic-filters-status')}
+      title={
+        <Flex direction="column">
+          <Title level={6}>{t('topic-filters-status')}</Title>
+          <Body muted level={3}>
+            {t('uptime-with-percentage', {
+              percentage: formatUptime(averageUptime),
+            })}
+          </Body>
+        </Flex>
+      }
     >
       <Content>
         <Flex direction="row-reverse" gap={4}>
           {aggregations.map((aggregation) => (
-            <SourceStatusDaily aggregation={aggregation} source={source} />
+            <SourceStatusItem aggregation={aggregation} />
           ))}
         </Flex>
         <DateAxis>
@@ -107,7 +123,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 16px;
+  padding: 0 16px 16px;
 `;
 
 const DateAxis = styled.div`

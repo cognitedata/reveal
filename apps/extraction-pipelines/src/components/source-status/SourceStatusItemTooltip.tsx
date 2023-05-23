@@ -1,32 +1,40 @@
-import { Tooltip } from '@cognite/cogs.js';
 import React from 'react';
-import { DailyLogAggregation } from 'utils/hostedExtractors';
-import SourceStatusItemTooltipContent from './SourceStatusItemTooltipContent';
-import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
+
+import { Flex, Tooltip } from '@cognite/cogs.js';
+
+import { useTranslation } from 'common';
+import { UptimeAggregation, formatUptime } from 'utils/hostedExtractors';
+import { formatTime } from '@cognite/cdf-utilities';
 
 type SourceStatusItemTooltipProps = {
-  children: React.ReactElement<any>;
-  aggregation: DailyLogAggregation;
-  source: MQTTSourceWithJobMetrics;
+  children: React.ReactNode;
+  aggregation: UptimeAggregation;
 };
 
 const SourceStatusItemTooltip = ({
   children,
   aggregation,
-  source,
 }: SourceStatusItemTooltipProps): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <div css={{ flex: 1 }}>
       <Tooltip
         content={
-          <SourceStatusItemTooltipContent
-            aggregation={aggregation}
-            source={source}
-          />
+          <Flex direction="column">
+            <span>{formatTime(aggregation.endTime, true)}</span>
+            <span>
+              {aggregation.uptimePercentage === -1
+                ? t('source-status-no-data')
+                : t('uptime-with-percentage', {
+                    percentage: formatUptime(aggregation.uptimePercentage),
+                  })}
+            </span>
+          </Flex>
         }
         position="top"
       >
-        {children}
+        <>{children}</>
       </Tooltip>
     </div>
   );
