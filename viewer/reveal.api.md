@@ -1201,9 +1201,9 @@ export interface Overlay3D<ContentType> {
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
     clear(): void;
-    get collections(): OverlayCollection<ContentType>[];
     createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType>;
     dispose(): void;
+    getCollections(): OverlayCollection<ContentType>[];
     getTextOverlayVisible(): boolean;
     getVisible(): boolean;
     // (undocumented)

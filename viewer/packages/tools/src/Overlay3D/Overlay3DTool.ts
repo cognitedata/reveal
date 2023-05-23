@@ -122,7 +122,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   /**
    * Gets all added overlay collections.
    */
-  get collections(): OverlayCollection<ContentType>[] {
+  getCollections(): OverlayCollection<ContentType>[] {
     return this._overlayCollections;
   }
 
