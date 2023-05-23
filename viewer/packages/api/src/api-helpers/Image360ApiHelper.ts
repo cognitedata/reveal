@@ -22,7 +22,9 @@ import {
   Cdf360EventProvider,
   Cdf360FdmProvider,
   Cdf360ImageProvider,
-  FdmIdentifier
+  DM360CollectionIdentifier,
+  DM360Identifier,
+  DM360SiteIdentifier
 } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
@@ -38,7 +40,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 
 export class Image360ApiHelper {
-  private readonly _image360Facade: Image360Facade<Metadata | FdmIdentifier>;
+  private readonly _image360Facade: Image360Facade<Metadata | DM360Identifier>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
@@ -148,12 +150,15 @@ export class Image360ApiHelper {
   }
 
   public async add360ImageSet(
-    eventFilter: Metadata | FdmIdentifier,
+    eventFilter: Metadata | DM360Identifier,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean,
     annotationOptions?: Image360AnnotationFilterOptions
   ): Promise<Image360Collection> {
-    const id: string | undefined = (eventFilter as Metadata)?.site_id ?? eventFilter.image360CollectionExternalId;
+    const id: string | undefined =
+      (eventFilter as Metadata)?.site_id ??
+      (eventFilter as DM360CollectionIdentifier)?.image360CollectionExternalId ??
+      (eventFilter as DM360SiteIdentifier).image360SiteExternalId;
     if (id === undefined) {
       throw new Error('Image set filter must contain site_id');
     }

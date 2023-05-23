@@ -13,10 +13,18 @@ import { get360ImageCollectionsQuery } from './listCollections';
 import { Euler, Matrix4 } from 'three';
 import zip from 'lodash/zip';
 
-export type FdmIdentifier = {
+export type DM360Identifier = DM360CollectionIdentifier | DM360SiteIdentifier;
+
+export type DM360CollectionIdentifier = {
   space: string;
   dataModelExternalId: string;
   image360CollectionExternalId: string;
+};
+
+export type DM360SiteIdentifier = {
+  space: string;
+  dataModelExternalId: string;
+  image360SiteExternalId: string;
 };
 
 type CubeMap = {
@@ -48,13 +56,17 @@ type Image360CollectionJsonData = { edges: Edge[]; items: { label: string }[] };
 
 type JSONData = { getConnectionsImage360CollectionById: Image360CollectionJsonData };
 
-export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifier> {
+export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Identifier> {
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
   }
-  public async get360ImageDescriptors(metadataFilter: FdmIdentifier, _: boolean): Promise<Historical360ImageSet[]> {
+  public async get360ImageDescriptors(metadataFilter: DM360Identifier, _: boolean): Promise<Historical360ImageSet[]> {
+    if (isSiteIdentifier(metadataFilter)) {
+      throw new Error('Not implemented');
+    }
+
     const { dataModelExternalId, space, image360CollectionExternalId } = metadataFilter;
 
     const baseUrl = this._sdk.getBaseUrl();
@@ -66,7 +78,6 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifi
     });
 
     const data = result.data.data as JSONData;
-    console.log(data, null, 2);
 
     const collectionId = data.getConnectionsImage360CollectionById.edges[0].node.externalId;
     const collectionLabel = data.getConnectionsImage360CollectionById.edges[0].node.label;
@@ -77,6 +88,12 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<FdmIdentifi
       image360Entities.map(p => this.createHistorical360ImageSet(p, collectionId, collectionLabel))
     );
     return imgs;
+
+    function isSiteIdentifier(
+      metadataFilter: DM360CollectionIdentifier | DM360SiteIdentifier
+    ): metadataFilter is DM360SiteIdentifier {
+      return (metadataFilter as DM360SiteIdentifier).image360SiteExternalId !== undefined;
+    }
   }
 
   private async createHistorical360ImageSet(
