@@ -148,7 +148,7 @@ export class SmartOverlayTool<ContentType = DefaultOverlay3DContentType> extends
   /**
    * Sets whether text overlay is visible.
    */
-  setTextOverlayVisible(visible: boolean) {
+  setTextOverlayVisible(visible: boolean): void {
     this._textOverlayVisible = visible;
     this._textOverlay.style.opacity = visible ? '1' : '0';
   }

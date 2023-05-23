@@ -152,7 +152,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     return this._culled;
   }
 
-  setVisible(visible: boolean) {
+  setVisible(visible: boolean): void {
     this._visible = visible;
     this._events.parametersChange.fire({ color: this._color, visble: visible });
   }
