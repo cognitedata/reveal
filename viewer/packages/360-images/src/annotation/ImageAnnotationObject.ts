@@ -152,8 +152,8 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 
   private updateMaterials(): void {
-    const color = this._appearance.color ?? this._defaultAppearance.color ?? getDefaultColor(this._annotation);
-    const visibility = this._appearance.visible ?? this._defaultAppearance.visible ?? true;
+    const color = this.getColor();
+    const visibility = this.getVisible();
 
     this._meshMaterial.color = color;
     this._meshMaterial.visible = visibility;
@@ -168,9 +168,17 @@ export class ImageAnnotationObject implements Image360Annotation {
     this.updateMaterials();
   }
 
+  public getColor(): Color {
+    return this._appearance.color ?? this._defaultAppearance.color ?? getDefaultColor(this._annotation);
+  }
+
   public setColor(color?: Color): void {
     this._appearance.color = color?.clone();
     this.updateMaterials();
+  }
+
+  public getVisible(): boolean {
+    return this._appearance.visible ?? this._defaultAppearance.visible ?? true;
   }
 
   public setVisible(visible?: boolean): void {
