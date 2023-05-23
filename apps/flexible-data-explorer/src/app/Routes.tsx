@@ -1,6 +1,6 @@
 import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 import styled from 'styled-components';
-import { SearchBar } from './containers/SearchBar';
+import { SearchBar } from './containers/search/SearchBar';
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { HomePage } from './pages/HomePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
