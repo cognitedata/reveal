@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Body, Button, Colors, Flex, Icon } from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Icon, Chip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
@@ -86,7 +86,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
     if (type === 'distinct') {
       if (percentage === 100) return 'success';
     }
-    return 'unknown';
+    return 'default';
   };
   const columnType = useMemo(
     () => (isFetched ? getColumnType(label) : undefined),
@@ -107,12 +107,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
             columnType={columnType}
             value={nullCount}
           >
-            {/* <Label
-              size="small"
-              variant={getLabelVariant(emptyPercent, 'empty')}
-            >
-              {emptyPercent}%
-            </Label> */}
+            <Chip
+              label={`${emptyPercent}%`}
+              type={getLabelVariant(emptyPercent, 'empty')}
+            />
           </NumberOrMissingTd>
         </TableCell>
         <TableCell>
@@ -121,12 +119,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
             columnType={columnType}
             value={distinctCount}
           >
-            {/* <Label
-              size="small"
-              variant={getLabelVariant(distinctPercent, 'distinct')}
-            >
-              {distinctPercent}%
-            </Label> */}
+            <Chip
+              label={`${distinctPercent}%`}
+              type={getLabelVariant(distinctPercent, 'distinct')}
+            />
           </NumberOrMissingTd>
         </TableCell>
         <TableCell style={{ padding: '4px 4px 0' }}>

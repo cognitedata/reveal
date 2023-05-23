@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, Flex } from '@cognite/cogs.js';
+import { Body, Flex, Chip } from '@cognite/cogs.js';
 
 import { Section } from 'components/ProfilingSection';
 import { useTranslation } from 'common/i18n';
@@ -35,9 +35,10 @@ export const SectionDistinctValues = ({
         style={{ width: '100%' }}
       >
         <Body level={2}>{distinctCount}</Body>
-        {/* <Label size="small" variant={variant}>
-          {t('profiling-sidebar-distinct-values-value', { percentage })}
-        </Label> */}
+        <Chip
+          label={t('profiling-sidebar-distinct-values-value', { percentage })}
+          type={variant}
+        ></Chip>
       </Flex>
     </Section>
   );

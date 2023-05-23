@@ -98,11 +98,12 @@ const TableTabListTitle = ({
       <Flex alignItems="center" gap={6}>
         <Icon
           type="DataTable"
-          // css={{
-          //   ...(activeDb === db && activeTable === table
-          //     ? { color: Colors['text-icon--status-success'] }
-          //     : {}),
-          // }}
+          css={{
+            color:
+              activeDb === db && activeTable === table
+                ? Colors['text-icon--status-success']
+                : '',
+          }}
         />
         {table}
       </Flex>

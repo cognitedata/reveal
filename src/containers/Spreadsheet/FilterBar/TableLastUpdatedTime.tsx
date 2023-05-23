@@ -55,7 +55,7 @@ const Wrapper = styled(Flex)`
   white-space: nowrap;
   margin-top: 18px;
   .detail--last-update-info {
-    color: ${Colors['text-icon--strong']};
+    color: ${Colors['text-icon--muted']};
   }
 `;
 

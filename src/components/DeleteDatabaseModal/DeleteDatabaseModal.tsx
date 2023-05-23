@@ -1,13 +1,6 @@
 import React, { useContext } from 'react';
 
-import {
-  Body,
-  Button,
-  Colors,
-  Title,
-  Modal,
-  ModalProps,
-} from '@cognite/cogs.js';
+import { Body, Colors, Modal, ModalProps } from '@cognite/cogs.js';
 import { notification } from 'antd';
 import styled from 'styled-components';
 

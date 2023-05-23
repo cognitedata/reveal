@@ -26,13 +26,12 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
     <StyledTableHeader>
       <tr>
         <TableCell $width={44}>
-          <Icon
-            type="ReorderDefault"
-            // onClick={() => onSortClick('type')}
-          />
+          <Icon type="ReorderDefault" onClick={() => onSortClick('type')} />
+          <div></div>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-column')}
+
           <Icon
             type="ReorderDefault"
             // onClick={() => onSortClick('label')}

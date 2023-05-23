@@ -39,7 +39,7 @@ export const StyledCellSelected = styled(StyledCell)`
   z-index: 10;
   padding: 6px 14px;
   border-radius: 4px;
-  border: 2px solid ${Colors['surface--interactive--toggled-default']};
+  border: 2px solid ${Colors['border--interactive--toggled-default']};
   background-color: white;
 `;
 
