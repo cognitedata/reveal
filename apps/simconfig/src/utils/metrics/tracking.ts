@@ -1,7 +1,5 @@
 import { Metrics } from '@cognite/metrics';
 
-import sidecar from 'utils/sidecar';
-
 import type { TrackingEventNames } from './constants';
 
 const metrics = Metrics.create('SIMCONFIG');
@@ -20,7 +18,9 @@ const isStagingOrProductionEnv = () =>
   ['staging', 'production'].includes(process.env.REACT_APP_ENV ?? '');
 
 const SHOULD_TRACK_METRICS = Boolean(
-  sidecar.mixpanel && isTrackingEnabledForDomain() && isStagingOrProductionEnv()
+  process.env.REACT_APP_MIXPANEL_TOKEN &&
+    isTrackingEnabledForDomain() &&
+    isStagingOrProductionEnv()
 );
 
 export const identifyUser = ({
@@ -36,9 +36,9 @@ export const identifyUser = ({
     } = process.env;
 
     Metrics.init({
-      applicationId: sidecar.applicationId,
+      // applicationId: sidecar.applicationId,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      mixpanelToken: sidecar.mixpanel!,
+      mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN!,
       userId,
       release,
       versionName,

@@ -101,6 +101,7 @@
     "classnames": "^2.2.6",
     "color": "^3.1.2",
     "convert-units": "^2.3.4",
+    "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.4.7",
     "customize-cra": "^1.0.0",
     "d3": "^6.2.0",

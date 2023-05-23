@@ -15,6 +15,7 @@ static final Map<String, String> CONTEXTS = [
   bazelTests: 'continuous-integration/jenkins/bazel-tests',
   publishStorybook: 'continuous-integration/jenkins/publish-storybook',
   publishFAS: 'continuous-integration/jenkins/publish-fas',
+  publishFirebase: 'continuous-integration/jenkins/publish-firebase',
   publishPackages: 'continuous-integration/jenkins/publish-packages',
 ]
 
@@ -98,27 +99,29 @@ def pods = { body ->
     bazelPod() {
       yarn.pod(nodeVersion: NODE_VERSION) {
         previewServer.pod(nodeVersion: NODE_VERSION) {
-          fas.pod(
-            nodeVersion: NODE_VERSION,
-            envVars: [
-              envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
-              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
-            ]
-          ) {
-            codecov.pod {
-              fakeIdp.pod(
-                fakeIdpEnvVars: fakeIdpEnvVars,
-              ) {
-                properties([
+          appHosting.pod(nodeVersion: NODE_VERSION){
+            fas.pod(
+              nodeVersion: NODE_VERSION,
+              envVars: [
+                envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+                envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
+              ]
+            ) {
+              codecov.pod {
+                fakeIdp.pod(
+                  fakeIdpEnvVars: fakeIdpEnvVars,
+                ) {
+                  properties([
 
-                ])
+                  ])
 
-                node(POD_LABEL) {
-                    stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                      checkout(scm)
-                      sh('./rules/test/version_info.sh > ./rules/test/version_info.bzl')
-                    }
-                  body()
+                  node(POD_LABEL) {
+                      stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                        checkout(scm)
+                        sh('./rules/test/version_info.sh > ./rules/test/version_info.bzl')
+                      }
+                    body()
+                  }
                 }
               }
             }
@@ -217,6 +220,7 @@ pods {
 
     def changedPackageInfos = [];
     def changedPublishFas = [];
+    def changedPublishFirebase = [];
     def changedPublishStorybook = [];
     def changedPublishChromatic = [];
 
@@ -233,6 +237,9 @@ pods {
             returnStdout: true,
         ).trim()
 
+        print('diffStr')
+        print(diffStr)
+
         def diff = readJSON text: diffStr
         diff.sort { a, b -> a.label < b.label ? -1 : 1 }
 
@@ -244,6 +251,7 @@ pods {
           changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
           changedPublishStorybook = changedOrAdded.findAll(changeHasTag('publish_storybook'))
           changedPublishChromatic = changedOrAdded.findAll(changeHasTag('publish_chromatic'))
+          changedPublishFirebase = changedOrAdded.findAll(changeHasTag('publish_firebase'))
         } else {
           String branchName = env.BRANCH_NAME.substring(8)
           String versionRegex = ".\\d+\\.\\d+\\.\\d+.*"
@@ -450,6 +458,55 @@ pods {
               print('FAS production published')
               slackMessages.add("- `${params.production_app_id}`")
             }
+          }
+        }
+      }
+    }
+
+    stageWithNotify('Publish to Firebase', CONTEXTS.publishFirebase){
+      container('bazel'){
+        changedPublishFirebase.each { change ->
+          change.run.each { cmd ->
+            def firebaseJSONString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
+            def params = readJSON text: firebaseJSONString
+            def isFusionSubApp = params.is_fusion_subapp == 'true'
+            def target = cmd.split(':')[0].split('//')[1]
+            print(params)
+
+            def publishFirebase = { args ->
+              def performBuildFirebase = { p ->
+                container('bazel') {
+                  // clean up after the previous run
+                  sh("rm -rf build && cp -r `readlink dist/bin`/${args.src}/build build")
+                  // We are setting REACT_APP_ENV/NODE_ENV based on the build target, similarly to scripts/build.sh
+                  def variant = args.variant ?: 'development'
+                  sh("find build -type f | xargs sed -i 's,REACT_APP_ENV_VALUE,${variant},g'")
+                  sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")
+                }
+              }
+              appHosting(
+                 appName: args.firebaseAppSite,
+                 environment: args.variant,
+                 firebaseJson: args.firebaseJsonPath,
+                 build: performBuildFirebase,
+                 buildFolder: args.buildFolder,
+               )
+
+               previewServer(
+                buildFolder: 'build',
+                commentPrefix: '[pr-preview-firebase]\n',
+                prefix: 'pr',
+                repo: params.sub_domain
+              )
+            }
+
+            publishFirebase(
+              src: target,
+              variant: isReleaseBranch ? 'production' : 'staging',
+              firebaseAppSite: params.firebase_app_site,
+              firebaseJsonPath: params.firebase_json_path,
+              buildFolder: params.build_folder
+            )
           }
         }
       }

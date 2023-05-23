@@ -1,5 +1,6 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const STYLE_SCOPE = 'cdf-simint-ui-style-scope';
 
@@ -111,6 +112,13 @@ module.exports = {
 
     config.plugins = config.plugins.filter(
       (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+    );
+
+    // Copy firebase.json to the build folder to deploy to firebase
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: ['./firebase.json'],
+      })
     );
 
     // Setting shared in-browser modules as webpack externals. This will
