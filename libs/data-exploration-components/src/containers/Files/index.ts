@@ -1,4 +1,3 @@
-export * from './FileDetails/FileDetails';
 export * from './FileSmallPreview/FileSmallPreview';
 export { FileTable } from './FileTable/FileTable';
 export * from './FileTable/FileTable';

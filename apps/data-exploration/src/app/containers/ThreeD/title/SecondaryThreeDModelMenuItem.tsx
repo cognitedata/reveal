@@ -5,8 +5,8 @@ import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import { formatTime } from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
-import { useRevisions } from '@data-exploration-app/containers/ThreeD/hooks';
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 
 export const SecondaryThreeDModelMenuItem = ({
   model,
@@ -17,7 +17,7 @@ export const SecondaryThreeDModelMenuItem = ({
   onChange: (nextState: SecondaryModelOptions) => void;
   options?: SecondaryModelOptions;
 }) => {
-  const { data: revisions = [], isFetched } = useRevisions(model.id);
+  const { data: revisions = [], isFetched } = use3DRevisionsQuery(model.id);
   const defaultRevision = revisions
     ? revisions.find(({ published }) => published) ?? revisions[0]
     : undefined;

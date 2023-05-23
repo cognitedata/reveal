@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export const useNavigation = () => {
@@ -5,34 +6,54 @@ export const useNavigation = () => {
   const { search } = useLocation(); // <-- current location being accessed
   const params = useParams();
 
-  const toSearchPage = (query?: string) => {
-    navigate({
-      pathname: `search`,
-      search: `?searchQuery=${query}`,
-    });
-  };
+  const toSearchPage = useCallback(
+    (query?: string) => {
+      navigate({
+        pathname: `search`,
+        search: `?searchQuery=${query}`,
+      });
+    },
+    [navigate]
+  );
 
-  const toHomePage = (space: string, dataModel: string, version: string) => {
-    navigate({
-      pathname: `/${space}/${dataModel}/${version}`,
-    });
-  };
+  const toListPage = useCallback(
+    (dataType: string) => {
+      navigate({
+        pathname: `list/${dataType}`,
+        // search: `?searchQuery=${query}`,
+      });
+    },
+    [navigate]
+  );
 
-  const redirectSearchPage = (
-    space: string,
-    dataModel: string,
-    version: string
+  const toHomePage = useCallback(
+    (space: string, dataModel: string, version: string) => {
+      navigate({
+        pathname: `/${dataModel}/${space}/${version}`,
+      });
+    },
+    [navigate]
+  );
+
+  // const redirectSearchPage = (
+  //   space: string,
+  //   dataModel: string,
+  //   version: string
+  // ) => {
+  //   navigate(
+  //     { pathname: `${space}/${dataModel}/${version}/search`, search },
+  //     { replace: true }
+  //   );
+  // };
+
+  const toInstancePage = (
+    dataType: string,
+    nodeSpace: string,
+    externalId: string
   ) => {
-    navigate(
-      { pathname: `${space}/${dataModel}/${version}/search`, search },
-      { replace: true }
-    );
-  };
-
-  const toInstancePage = (dataType: string, externalId: string) => {
     const { space, dataModel, version } = params;
     navigate({
-      pathname: `/${space}/${dataModel}/${version}/${dataType}/${externalId}`,
+      pathname: `/${dataModel}/${space}/${version}/${dataType}/${nodeSpace}/${externalId}`,
       search,
     });
   };
@@ -48,8 +69,8 @@ export const useNavigation = () => {
   return {
     toLandingPage,
     toSearchPage,
+    toListPage,
     toHomePage,
-    redirectSearchPage,
 
     toInstancePage,
     goBack,

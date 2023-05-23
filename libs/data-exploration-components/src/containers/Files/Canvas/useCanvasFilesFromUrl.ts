@@ -1,7 +1,7 @@
-import { useSearchParam } from '@cognite/data-exploration';
 import { useCallback } from 'react';
 
 import isEqual from 'lodash/isEqual';
+import { useSearchParam } from '@data-exploration-lib/core';
 
 export type PagedFileReference = {
   id: number;

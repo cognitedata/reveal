@@ -1,4 +1,4 @@
-import { Loader } from '@data-exploration/components';
+import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
@@ -6,11 +6,7 @@ import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow'
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { Tabs } from '@cognite/cogs.js';
-import {
-  ErrorFeedback,
-  Metadata,
-  TimeseriesDetails,
-} from '@cognite/data-exploration';
+import { ErrorFeedback } from '@cognite/data-exploration';
 import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 
 import {
@@ -23,6 +19,7 @@ import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadc
 import { usePreviewDateRange } from '@data-exploration-app/hooks';
 
 import { TimeseriesChart } from '@cognite/plotting-components';
+import { TimeseriesInfo } from '@data-exploration/containers';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -127,7 +124,7 @@ export const TimeseriesPreview = ({
                     dateRange={dateRange}
                     onChangeDateRange={setDateRange}
                   />
-                  <TimeseriesDetails timeseries={timeseries} />
+                  <TimeseriesInfo timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />
                 </DetailsTabWrapper>
               </Tabs.Tab>,

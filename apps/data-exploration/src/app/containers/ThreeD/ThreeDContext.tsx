@@ -24,11 +24,11 @@ import {
   THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY as HL_MODE_KEY,
   THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY as CUBEMAP_360_IMAGES_KEY,
 } from './utils';
-import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import noop from 'lodash/noop';
+import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 
 export type SecondaryModelOptions = {
   modelId: number;

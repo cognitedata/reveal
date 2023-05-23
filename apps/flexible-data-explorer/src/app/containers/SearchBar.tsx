@@ -36,7 +36,7 @@ export const SearchBar = () => {
           }}
           value={query ?? ''}
           // icon="Search"
-          placeholder={t('search_button', 'Start exploring your data...')}
+          placeholder={t('search_button', 'Search...')}
           onChange={(e) => {
             e.preventDefault();
 

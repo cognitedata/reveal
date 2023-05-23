@@ -29,7 +29,7 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
             return (
               <Content>
                 <Body level={3}>{key}</Body>
-                <Body strong>{value}</Body>
+                <Body strong>{JSON.stringify(value)}</Body>
               </Content>
             );
           })}

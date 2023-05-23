@@ -9,9 +9,9 @@ static final String[] APPLICATIONS = [
   'copilot',
 ]
 
-/* 
+/*
   This defines which NPM libraries will be deployed, to trigger a deployment increment
-  the version in the package.json file of your package. 
+  the version in the package.json file of your package.
 */
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components"
@@ -310,7 +310,7 @@ pods {
           }
         }
       }
-      
+
 
       parallel(
         'Storybook': {
@@ -374,7 +374,7 @@ pods {
                 )
                 deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}")
+                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}<br><br>![AppBadge](https://img.shields.io/static/v1?label=Application&message=${project}&color=orange)")
               }
             }
           }

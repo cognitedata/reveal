@@ -63,10 +63,10 @@ import { CopyToClipboardIconButton } from './components/CopyToClipboardIconButto
 
 export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;
-  query?: string;
-  data: T[];
-  isDataLoading?: boolean;
   columns: ColumnDef<T>[];
+  data: T[];
+  query?: string;
+  isDataLoading?: boolean;
   selectedRows?: Record<string, boolean>;
   expandedRows?: ExpandedState;
   enableSorting?: boolean;
@@ -108,10 +108,10 @@ Table.Columns = ResourceTableColumns;
 
 export function Table<T extends TableData>({
   id,
+  columns,
   data,
   enableCopying = false,
   enableSelection = false,
-  columns,
   onRowClick = noop,
   onRowSelection,
   selectedRows = EMPTY_OBJECT,

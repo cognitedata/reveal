@@ -15,6 +15,6 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/data-exploration/components',
   collectCoverage: true,
-  setupFilesAfterEnv: ['./src/setupTests.js'],
+  setupFilesAfterEnv: ['./setupTests.js'],
   collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
 };

@@ -1,14 +1,9 @@
-import { Loader } from '@data-exploration/components';
+import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useParams } from 'react-router-dom';
 
-import {
-  AssetDetails,
-  ErrorFeedback,
-  Metadata,
-  ResourceTypes,
-} from '@cognite/data-exploration';
+import { ErrorFeedback, ResourceTypes } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { Asset, CogniteError } from '@cognite/sdk';
@@ -22,6 +17,7 @@ import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/eleme
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { AssetHierarchyTab } from './AssetHierarchyTab';
+import { AssetInfo } from '@data-exploration/containers';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -112,7 +108,7 @@ export const AssetPreview = ({
         additionalTabs={[
           <Tabs.Tab label="Details" key="details" tabKey="details">
             <DetailsTabWrapper>
-              <AssetDetails asset={asset} />
+              <AssetInfo asset={asset} />
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,

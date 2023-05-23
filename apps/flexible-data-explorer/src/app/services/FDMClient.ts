@@ -3,6 +3,7 @@
 
 import type { CogniteClient } from '@cognite/sdk';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { query } from 'gql-query-builder';
 import Fields from 'gql-query-builder/build/Fields';
 import head from 'lodash/head';
@@ -19,16 +20,30 @@ export interface FDMError {
  * This class can be used for interactions with CDF
  * You can create your own class that extends from this one
  * and add methods that handle data that is specific to your application.
+ *
+ * TODO: init the class once and use context to consume...
  */
 class BaseFDMClient {
   // private DMS_HEADERS: Record<string, string>;
   protected BASE_URL: string;
   protected client: CogniteClient;
 
-  constructor(client: CogniteClient) {
+  private headers:
+    | { dataModel?: string; space?: string; version?: string }
+    | undefined;
+
+  constructor(
+    client: CogniteClient,
+    headers?: { dataModel?: string; space?: string; version?: string }
+  ) {
     this.client = client;
     this.BASE_URL = `${client.getBaseUrl()}/api/v1/projects/${client.project}`;
-    // this.DMS_HEADERS = { 'cdf-version': 'alpha' };
+    this.headers = headers;
+  }
+
+  // TODO: Start using this helper method
+  public get getHeaders() {
+    return this.headers;
   }
 
   private request<T>(
@@ -196,12 +211,14 @@ export class FDMClient extends BaseFDMClient {
     {
       dataType,
       externalId,
+      nodeSpace,
       ...headers
     }: {
       space: string;
       dataModel: string;
       version: string;
       dataType: string;
+      nodeSpace: string;
       externalId: string;
     }
   ) {
@@ -217,7 +234,7 @@ export class FDMClient extends BaseFDMClient {
       variables: {
         instance: {
           type: 'InstanceRef = {space: "", externalId: ""}',
-          value: { externalId, space: headers.space },
+          value: { externalId, space: nodeSpace },
         },
       },
     });
@@ -231,10 +248,97 @@ export class FDMClient extends BaseFDMClient {
     }>(payload, headers);
 
     return head(items);
+  }
 
-    // return this.gqlRequest<T>(payload, headers);
+  public async searchDataTypes(
+    queryString: string,
+    types: DataModelTypeDefsType[] = [],
+    headers: {
+      space: string;
+      dataModel: string;
+      version: string;
+    }
+  ) {
+    const constructPayload = types.map((item) => {
+      const dataType = item.name;
+
+      const fields = item.fields.reduce((acc, item) => {
+        if (!item.type.custom) {
+          return [...acc, item.name];
+        }
+
+        return acc;
+      }, [] as string[]);
+
+      return {
+        operation: { name: `search${dataType}`, alias: dataType },
+        fields: [
+          {
+            items: [...fields, ...BASE_FIELDS],
+          },
+        ],
+        variables: {
+          query: { value: queryString, required: true },
+          //todo: add filters here for data types
+        },
+      };
+    });
+
+    const payload = query(constructPayload);
+
+    const result = await this.gqlRequest<Record<string, any>>(payload, headers);
+
+    return result;
+  }
+
+  public async listDataTypes<T>(
+    dataType: string,
+    {
+      cursor,
+      sort,
+      ...headers
+    }: {
+      space: string;
+      dataModel: string;
+      version: string;
+      cursor?: string;
+      sort?: Record<string, string>;
+    }
+  ) {
+    const operation = `list${dataType}`;
+
+    const payload = query({
+      operation,
+      fields: [
+        {
+          items: ['name', ...BASE_FIELDS],
+          pageInfo: ['hasNextPage', 'endCursor'],
+        },
+      ],
+      variables: {
+        after: cursor,
+        sort: {
+          type: `[_${dataType}Sort!]`,
+          value: sort,
+        },
+      },
+    });
+
+    const { [operation]: data } = await this.gqlRequest<{
+      [operation in string]: {
+        items: T[];
+        pageInfo: {
+          hasNextPage: boolean;
+          endCursor?: string;
+        };
+      };
+    }>(payload, headers);
+
+    return data;
   }
 }
+
+const BASE_FIELDS = ['space', 'externalId', 'createdTime', 'lastUpdatedTime'];
 
 type IntrospectionResponse = {
   allFields: {

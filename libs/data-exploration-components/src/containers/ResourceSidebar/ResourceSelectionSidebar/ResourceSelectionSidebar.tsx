@@ -312,7 +312,6 @@ const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
 
 const ResourcePreviewSidebarWrapper = styled.div`
   width: 360px;
-  margin: 12px;
   flex: 1;
   border-left: 1px solid var(--cogs-border--muted);
 `;

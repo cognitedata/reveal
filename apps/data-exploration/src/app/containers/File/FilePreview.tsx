@@ -1,17 +1,15 @@
-import { Loader } from '@data-exploration/components';
+import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import {
   FilePreview as CogniteFilePreview,
   ErrorFeedback,
-  FileDetails,
-  Metadata,
   ResourceType,
 } from '@cognite/data-exploration';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
-import { CogniteError, FileInfo } from '@cognite/sdk';
+import { CogniteError, FileInfo as FileInfoType } from '@cognite/sdk';
 import styled from 'styled-components';
 import { Tabs, Infobar } from '@cognite/cogs.js';
 import qs from 'query-string';
@@ -26,6 +24,7 @@ import {
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
+import { FileInfo } from '@data-exploration/containers';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -98,7 +97,7 @@ export const FilePreview = ({
     isLoading,
     isError,
     error,
-  } = useCdfItem<FileInfo>('files', {
+  } = useCdfItem<FileInfoType>('files', {
     id: fileId!,
   });
 
@@ -181,7 +180,7 @@ export const FilePreview = ({
           </Tabs.Tab>,
           <Tabs.Tab label="Details" key="info" tabKey="info">
             <DetailsTabWrapper>
-              <FileDetails file={fileInfo} />
+              <FileInfo file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,

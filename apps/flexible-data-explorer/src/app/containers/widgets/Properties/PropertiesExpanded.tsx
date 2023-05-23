@@ -10,7 +10,13 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
           {Object.keys(data || {}).map((key) => {
             const value = data?.[key];
 
-            return <GeneralDetails.Item key={key} name={key} value={value} />;
+            return (
+              <GeneralDetails.Item
+                key={key}
+                name={key}
+                value={JSON.stringify(value)}
+              />
+            );
           })}
         </GeneralDetails>
       </Widget.Body>

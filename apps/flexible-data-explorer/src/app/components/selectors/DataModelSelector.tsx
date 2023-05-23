@@ -6,6 +6,7 @@ import {
   Skeleton,
   Title,
 } from '@cognite/cogs.js';
+import React from 'react';
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -16,6 +17,27 @@ interface Props {
   dataModels?: DataModelList[];
   onSelectionClick?: (dataModel: DataModelList) => void;
 }
+
+const Sidebar = React.memo(() => {
+  const { t } = useTranslation();
+  return (
+    <InfoContent>
+      <Overline level={3}>{t('get_started_header', 'Get started')}</Overline>
+      <Title level={4}>
+        {t(
+          'get_started_title',
+          'Get started working with your data right now by selecting a Data Model'
+        )}
+      </Title>
+      <Body level={3}>
+        {t(
+          'get_started_body',
+          'Cognite Data Fusion has a large range of possibilities, we recommend starting testing one of the following.'
+        )}
+      </Body>
+    </InfoContent>
+  );
+});
 
 export const DataModelSelector: React.FC<Props> = ({
   loading,
@@ -31,23 +53,7 @@ export const DataModelSelector: React.FC<Props> = ({
   return (
     <Container>
       <Content>
-        <InfoContent>
-          <Overline level={3}>
-            {t('get_started_header', 'Get started')}
-          </Overline>
-          <Title level={4}>
-            {t(
-              'get_started_title',
-              'Get started working with your data right now by selecting a Data Model'
-            )}
-          </Title>
-          <Body level={3}>
-            {t(
-              'get_started_body',
-              'Cognite Data Fusion has a large range of possibilities, we recommend starting testing one of the following.'
-            )}
-          </Body>
-        </InfoContent>
+        <Sidebar />
         <ListContent>
           {loading && <Skeleton.List lines={7} />}
           {dataModels?.map((item) => (

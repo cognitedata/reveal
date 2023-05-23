@@ -9,8 +9,9 @@ import {
   HierarchyExtraRow,
   SubCellMatchingLabels,
   Table,
+  ThreeDModelCell,
 } from '@data-exploration/components';
-import { ThreeDModelCell } from '../AssetTable';
+
 import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
 import { useRootPath } from './hooks';
 import {

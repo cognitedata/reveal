@@ -1,4 +1,4 @@
-import { useSearchParamString } from '@cognite/data-exploration';
+import { useSearchParamString } from '@data-exploration-lib/core';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { ThreeDContextProvider } from './ThreeDContext';
