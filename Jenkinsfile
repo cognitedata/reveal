@@ -492,12 +492,14 @@ pods {
                  buildFolder: args.buildFolder,
                )
 
-               previewServer(
-                buildFolder: 'build',
-                commentPrefix: '[pr-preview-firebase]\n',
-                prefix: 'pr',
-                repo: params.sub_domain
-              )
+               if(isPullRequest){
+                previewServer(
+                  buildFolder: 'build',
+                  commentPrefix: '[pr-preview-firebase]\n',
+                  prefix: 'pr',
+                  repo: params.sub_domain
+                )
+               }
             }
 
             publishFirebase(
