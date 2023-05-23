@@ -19,7 +19,6 @@ describe('useAssetsMetadataValuesOptionsQuery', () => {
     );
 
     await waitForNextUpdate();
-
     expect(result.current.data.count).toEqual(43);
   });
 });

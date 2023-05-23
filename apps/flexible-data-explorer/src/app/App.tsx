@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, useParams } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from '@cognite/cogs.js';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -13,8 +13,6 @@ import { SDKProvider } from '@cognite/sdk-provider';
 function App() {
   const project = getProject();
   const basename = `${project}/explore`;
-  const params = useParams();
-  console.log(params);
 
   return (
     <SDKProvider sdk={sdk}>

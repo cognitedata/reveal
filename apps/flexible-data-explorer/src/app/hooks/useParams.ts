@@ -8,7 +8,7 @@ export const useExpandedIdParams = (): [
   string | undefined,
   (id?: string) => void
 ] => {
-  let [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const expandedId = searchParams.get(ParamKeys.ExpandedId) ?? undefined;
 
   const setExpandedId = (id?: string) => {
@@ -26,4 +26,10 @@ export const useExpandedIdParams = (): [
   };
 
   return [expandedId, setExpandedId];
+};
+
+export const useSearchQueryParams = () => {
+  const [searchParams] = useSearchParams();
+
+  return searchParams.get('searchQuery') || '';
 };

@@ -14,9 +14,10 @@ import {
   SmallPreviewProps,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-import { SequenceDetails } from '@data-exploration-components/containers/Sequences';
+
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import noop from 'lodash/noop';
+import { SequenceInfo } from '@data-exploration/containers';
 
 export const SequenceSmallPreview = ({
   sequenceId,
@@ -110,7 +111,7 @@ export const SequenceSmallPreview = ({
           {actions}
         </SpacedRow>
       </InfoCell>
-      <SequenceDetails sequence={sequence} />
+      <SequenceInfo sequence={sequence} />
       {children}
     </InfoGrid>
   );

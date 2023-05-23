@@ -19,18 +19,16 @@ import {
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MainThreeDModelMenuItem';
 import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-import {
-  Revision3DWithIndex,
-  useInfinite360Images,
-} from '@data-exploration-app/containers/ThreeD/hooks';
 import { TableNoResults } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+  Revision3DWithIndex,
+  useInfinite360Images,
   ThreeDModelsResponse,
-  useInfinite3DModels,
+  useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../utils';
 
@@ -112,7 +110,7 @@ const SecondaryModelDropdown = ({
     fetchNextPage: fetchMore,
     hasNextPage: canFetchMore,
     isFetchingNextPage: isFetchingMore,
-  } = useInfinite3DModels(DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT);
+  } = useInfinite3DModelsQuery(DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT);
 
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {

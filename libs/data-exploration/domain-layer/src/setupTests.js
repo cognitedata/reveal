@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { jest } from '@jest/globals';
-import { mockCogniteClient } from '../src/__mocks/MockedCogniteClient';
+import { mockCogniteClient } from './__mocks';
 
 jest.mock('@cognite/unified-file-viewer', () => ({}));
 

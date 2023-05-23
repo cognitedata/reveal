@@ -16,7 +16,7 @@ import { Model3D } from '@cognite/sdk';
 import {
   ThreeDModelsResponse,
   transformNewFilterToOldFilter,
-  useInfinite3DModels,
+  useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { formatNumber } from '@data-exploration-lib/core';
 
@@ -77,7 +77,7 @@ export const useResultCount = ({
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
     isLoading: is3DModelLoading,
-  } = useInfinite3DModels(undefined, {
+  } = useInfinite3DModelsQuery(undefined, {
     enabled: type === 'threeD',
   });
   const { data: list, isFetched: listDone } = useAggregate(

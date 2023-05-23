@@ -1,4 +1,4 @@
-import { getCogniteSDKClient } from 'apps/platypus/src/environments/cogniteSdk';
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 import { DataQualityContext } from './dataQualityContext';
 import { getTenant } from '@platypus-app/utils/tenant-utils';
 import { getCluster } from '@cognite/cdf-utilities';
@@ -44,10 +44,10 @@ export async function dataQualityFetch<
   TPathParams
 >): Promise<TData> {
   const cdfClient = getCogniteSDKClient();
-  const cluster = getCluster()
+  const cluster = getCluster();
   const tenant = getTenant();
 
-  const baseUrl = `https://${cluster}`
+  const baseUrl = `https://${cluster}`;
 
   try {
     const tokenCDF = await cdfClient.authenticate();
@@ -58,7 +58,7 @@ export async function dataQualityFetch<
       ...headers,
     };
 
-    const pathParams =  { project: tenant }
+    const pathParams = { project: tenant };
 
     /**
      * As the fetch API is being used, when multipart/form-data is specified

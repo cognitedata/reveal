@@ -5,7 +5,7 @@ import {
   NullableProperty,
 } from '@cognite/sdk';
 
-import { METADATA_ALL_VALUE } from '../constants/filters';
+import { METADATA_ALL_VALUE } from '../constants';
 import { ResourceType } from './resource';
 
 export type FilterResourceType = ResourceType | 'document' | 'common';
@@ -106,6 +106,12 @@ export type InternalFilesFilters = Omit<
   labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string }[];
 };
+
+export interface InternalThreedFilters extends InternalCommonFilters {
+  labels?: { label?: string; value: string }[];
+  metadata?: { key: string; value: string | typeof METADATA_ALL_VALUE }[];
+  sources?: { label?: string; value: string }[];
+}
 
 export interface OldFilesFilters
   extends Omit<InternalFilesFilters, 'metadata'> {

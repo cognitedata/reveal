@@ -1,8 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  useDefault3DModelRevision,
-  use3DModelThumbnail,
-} from '@data-exploration-app/containers/ThreeD/hooks';
 import styled from 'styled-components';
 import {
   Body,
@@ -15,9 +11,15 @@ import {
 } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
-import { ResourceType, ThreeDModel } from '@cognite/data-exploration';
+import { ResourceType } from '@cognite/data-exploration';
 
 import { PartialBy } from './utils';
+import { ThreeDModel } from '@data-exploration/components';
+import { getObjectURL } from '@data-exploration-lib/core';
+import {
+  use3DModelThumbnailQuery,
+  useDefault3DModelRevision,
+} from '@data-exploration-lib/domain-layer';
 
 export type Model3DWithType = PartialBy<
   Model3D,
@@ -44,15 +46,14 @@ export const ThreeDGridPreview = ({
   onClick,
 }: ThreeDGridPreviewProps) => {
   const { data: revision, isLoading } = useDefault3DModelRevision(modelId);
-  const { data, isFetched } = use3DModelThumbnail(revision?.thumbnailURL);
+  const { data, isFetched } = use3DModelThumbnailQuery(revision?.thumbnailURL);
 
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (data) {
-      const arrayBufferView = new Uint8Array(data);
-      const blob = new Blob([arrayBufferView]);
-      setImage(URL.createObjectURL(blob));
+      const objectURL = getObjectURL(data);
+      setImage(objectURL);
     }
     return () => {
       setImage((url) => {

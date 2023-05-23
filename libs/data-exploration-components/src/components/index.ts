@@ -28,7 +28,6 @@ export * from './Select/MultiSelect';
 export * from './ErrorFeedback/ErrorFeedback';
 export * from './ResourceIcons/ResourceIcons';
 export * from './GridTable/GridTable';
-export * from './Details';
 export * from './FileDownloadAnchor';
 export * from './MultiSelectFilter';
 

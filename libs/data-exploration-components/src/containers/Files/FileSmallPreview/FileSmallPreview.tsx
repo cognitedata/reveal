@@ -1,6 +1,6 @@
 import { Loader } from '@data-exploration/components';
 import React from 'react';
-import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
+import { FileInfo as FileInfoType, Asset, CogniteError } from '@cognite/sdk';
 import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Icon, Title, Chip, Body, Colors } from '@cognite/cogs.js';
@@ -15,13 +15,11 @@ import {
 } from '../../../components';
 import { isFilePreviewable } from '../../../utils';
 import { SmallPreviewProps, SelectableItemProps } from '../../../types';
-import {
-  FileDetails,
-  FilePreview,
-} from '@data-exploration-components/containers/Files/index';
+import { FilePreview } from '@data-exploration-components/containers/Files/index';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { getIdParam } from '@data-exploration-lib/core';
+import { FileInfo } from '@data-exploration/containers';
 
 export const FileSmallPreview = ({
   fileId,
@@ -41,7 +39,7 @@ export const FileSmallPreview = ({
     data: file,
     isFetched,
     error,
-  } = useCdfItem<FileInfo>('files', {
+  } = useCdfItem<FileInfoType>('files', {
     id: fileId,
   });
 
@@ -77,7 +75,7 @@ export const FileSmallPreview = ({
     })
     .filter((assetId) => Boolean(assetId));
 
-  const { data: files } = useCdfItems<FileInfo>(
+  const { data: files } = useCdfItems<FileInfoType>(
     'files',
     uniq(fileIds).map(getIdParam),
     false,
@@ -212,7 +210,7 @@ export const FileSmallPreview = ({
         )}
         {!assets && !files && <p>No Tags Detected</p>}
       </InfoCell>
-      <FileDetails file={file} />
+      <FileInfo file={file} />
       {children}
     </InfoGrid>
   );

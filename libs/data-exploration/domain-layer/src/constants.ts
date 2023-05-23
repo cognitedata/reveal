@@ -30,3 +30,7 @@ export const DEFAULT_SCORE_SORTING = [
     property: ['_score_'],
   },
 ];
+
+export const DEFAULT_SEARCH_RESULTS_PAGE_SIZE = 50;
+
+export const VALID_IMAGE_TYPES = ['png', 'jpg', 'jpeg', 'tiff', 'gif'];

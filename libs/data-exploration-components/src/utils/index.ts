@@ -8,4 +8,3 @@ export * from './filters';
 export * from './getTimeseriesFilterUnit';
 export * from './mapMimeTypeToDocumentType';
 export * from './string';
-export * from './url';

@@ -1,7 +1,7 @@
 import { Model3D } from '@cognite/sdk';
 import {
   ThreeDModelsResponse,
-  useInfinite3DModels,
+  useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import { CounterTab } from './elements';
@@ -13,7 +13,7 @@ export const ThreeDTab = ({ query, ...rest }: ResourceTabProps) => {
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
     isLoading,
-  } = useInfinite3DModels(undefined, {
+  } = useInfinite3DModelsQuery(undefined, {
     enabled: true,
   });
 
