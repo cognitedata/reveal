@@ -1,4 +1,4 @@
-import { parseEnvFromCluster, parseEnvLabelFromCluster } from '.';
+import { parseEnvFromCluster, parseEnvLabelFromCluster } from './shared';
 
 describe('Shared utils', () => {
   describe('parseEnvFromCluster', () => {

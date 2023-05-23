@@ -36,7 +36,7 @@ export const createLink = (
   opts?: queryString.StringifyOptions
 ): string => {
   // No more base project name
-  // const project = getProject() || '';
+  const project = getProject() || '';
   const env = getEnv();
   const cluster = getCluster();
   const query = queryString.stringify(
@@ -44,12 +44,12 @@ export const createLink = (
     opts
   );
   if (query.length > 0) {
-    return `/${path}?${query}`;
+    return `/${project}${path}?${query}`;
   }
   if (path.length > 0 && path !== '/') {
-    return `${path}`;
+    return `/${project}${path}`;
   }
-  return `/`;
+  return `/${project}`;
 };
 
 /**
