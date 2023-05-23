@@ -3,6 +3,7 @@
  */
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
+import { Cognite3DViewer } from '@reveal/api';
 
 /**
  * Base class for tools attaching to a {@link Cognite3DViewer}.

@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
-import { ConsumedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import {

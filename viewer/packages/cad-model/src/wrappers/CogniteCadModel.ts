@@ -35,7 +35,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Returns the unit the coordinates for the model is stored. Returns an empty string
    * if no unit has been stored.
-   * Note that coordinates in Reveal always are converted to meters using {@link modelUnitToMetersFactor}.
+   * Note that coordinates in Reveal always are converted to meters using {@link CogniteCadModel.modelUnitToMetersFactor}.
    */
   get modelUnit(): WellKnownUnit | '' {
     // Note! Returns union type, because we expect it to be a value in WellKnownUnit, but we
@@ -104,7 +104,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Sets the default appearance for nodes that are not styled using
-   * {@link assignStyledNodeCollection}. Updating the default style can be an
+   * {@link CogniteCadModel.assignStyledNodeCollection}. Updating the default style can be an
    * expensive operation, so use with care.
    *
    * @param appearance  Default node appearance.
@@ -115,7 +115,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Gets the default appearance for nodes that are not styled using
-   * {@link assignStyledNodeCollection}.
+   * {@link CogniteCadModel.assignStyledNodeCollection}.
    */
   getDefaultNodeAppearance(): NodeAppearance {
     return this.cadNode.defaultNodeAppearance;
@@ -170,7 +170,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Removes styling for previously added styled collection, resetting the style to the default (or
    * the style imposed by other styled collections).
-   * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
+   * @param nodeCollection   Node collection previously added using {@link CogniteCadModel.assignStyledNodeCollection}.
    * @throws Error if node collection isn't assigned to the model.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollection): void {
@@ -353,7 +353,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
-   * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
+   * Does not include any custom transformations set by {@link CogniteCadModel.setModelTransformation}
    * @param out Preallocated `THREE.Matrix4` (optional)
    */
   getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
@@ -496,7 +496,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Maps a single node ID to tree index. This is useful when you e.g. have a
    * node ID from an asset mapping and want to highlight the given asset using
-   * {@link mapNodeIdsToTreeIndices} is recommended for better performance when
+   * {@link CogniteCadModel.mapNodeIdsToTreeIndices} is recommended for better performance when
    * mapping multiple IDs.
    *
    * @param nodeId A Node ID to map to a tree index.
@@ -523,7 +523,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Maps a single tree index to node ID for use with the API. If you have multiple
-   * tree indices to map, {@link mapNodeIdsToTreeIndices} is recommended for better
+   * tree indices to map, {@link CogniteCadModel.mapNodeIdsToTreeIndices} is recommended for better
    * performance.
    * @param treeIndex A tree index to map to a Node ID.
    * @returns TreeIndex of the provided node.

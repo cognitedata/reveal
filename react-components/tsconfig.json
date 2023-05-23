@@ -14,5 +14,11 @@
     "outDir": "dist",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-  }
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/*.stories.ts"
+  ]
 }

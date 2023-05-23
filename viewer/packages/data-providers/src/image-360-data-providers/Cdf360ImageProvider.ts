@@ -4,7 +4,7 @@
 
 import zipWith from 'lodash/zipWith';
 
-import { AnnotationModel, CogniteClient, FileLink, IdEither } from '@cognite/sdk';
+import { AnnotationModel, CogniteClient, CogniteInternalId, FileLink, IdEither } from '@cognite/sdk';
 import { Historical360ImageSet, Image360DescriptorProvider, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 
@@ -44,6 +44,28 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   ): Promise<Image360Face[]> {
     const fullResFileBuffers = await this.getFileBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
     return this.createFaces(image360FaceDescriptors, fullResFileBuffers);
+  }
+
+  public async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
+    // TODO: Use SDK properly when support for 'reverselookup' arrives (Håkon, May 11th 2023)
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/annotations/reverselookup`;
+
+    const filterObject: object = {
+      data: {
+        limit: 1000,
+        filter: {
+          annotatedResourceType: 'file',
+          annotationType: 'images.AssetLink',
+          data: {
+            assetRef
+          }
+        }
+      }
+    };
+    const response = await this._client.post(url, filterObject);
+
+    const ids = response.data.items.map((a: { id: number }) => a.id);
+    return ids;
   }
 
   public async getLowResolution360ImageFiles(

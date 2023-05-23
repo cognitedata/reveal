@@ -6,11 +6,13 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
 import { EventDispatcher } from 'three';
+import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { Node3D } from '@cognite/sdk';
@@ -30,6 +32,7 @@ export type AbsolutePosition = {
 export type AddImage360Options = {
     collectionTransform?: THREE.Matrix4;
     preMultipliedRotation?: boolean;
+    annotationFilter?: Image360AnnotationFilterOptions;
 };
 
 // @public
@@ -247,6 +250,7 @@ export class CameraManagerHelper {
         position: THREE_2.Vector3;
         target: THREE_2.Vector3;
     };
+    static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
     static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3): THREE_2.Vector3;
     static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
 }
@@ -797,6 +801,7 @@ export interface Image360 {
 // @public
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
+    getCenter(out?: Vector3): Vector3;
     setColor(color?: Color): void;
     setVisible(visible?: boolean): void;
 }
@@ -808,6 +813,23 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
+export type Image360AnnotationAssetFilter = {
+    assetRef: IdEither;
+};
+
+// @public
+export type Image360AnnotationAssetQueryResult = {
+    image: Image360;
+    revision: Image360Revision;
+    annotation: Image360Annotation;
+};
+
+// @public
+export type Image360AnnotationFilterOptions = {
+    status?: 'all' | AnnotationStatus | AnnotationStatus[];
+};
+
+// @public
 export type Image360AnnotationIntersection = {
     type: 'image360Annotation';
     annotation: Image360Annotation;
@@ -816,6 +838,7 @@ export type Image360AnnotationIntersection = {
 
 // @public
 export interface Image360Collection {
+    findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
     readonly image360Entities: Image360[];
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)

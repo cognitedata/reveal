@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { AxisViewTool } from './AxisViewTool';
 
 /**
  * Configuration of {@link AxisViewTool}.

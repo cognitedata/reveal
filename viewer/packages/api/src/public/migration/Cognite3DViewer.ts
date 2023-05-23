@@ -576,7 +576,7 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraStop', callback: CameraStopDelegate): void;
   /**
-   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
+   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link Cognite3DViewer.on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
   /**
@@ -816,7 +816,8 @@ export class Cognite3DViewer {
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
       sourceParameters,
       collectionTransform,
-      preMultipliedRotation
+      preMultipliedRotation,
+      add360ImageOptions?.annotationFilter
     );
 
     const numberOf360Images = image360Collection.image360Entities.length;

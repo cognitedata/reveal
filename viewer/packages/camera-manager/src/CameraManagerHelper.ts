@@ -58,6 +58,19 @@ export class CameraManagerHelper {
 
     return newTarget;
   }
+
+  /**
+   * Calculates camera rotation from target
+   * @param camera Used Camera instance
+   * @param newTarget The target to compute rotation from
+   * @returns New camera rotationg
+   */
+  static calculateNewRotationFromTarget(camera: THREE.PerspectiveCamera, newTarget: THREE.Vector3): THREE.Quaternion {
+    return new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 0, -1),
+      newTarget.clone().sub(camera.position).normalize()
+    );
+  }
   /**
    * Updates near and far plane of the camera based on the bounding box.
    * @param camera Used camera instance.

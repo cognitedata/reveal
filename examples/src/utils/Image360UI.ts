@@ -41,7 +41,9 @@ export class Image360UI {
     add: () => this.add360ImageSet(),
     premultipliedRotation: false,
     remove: () => this.removeAll360Images(),
-    saveToUrl: () => this.saveImage360SiteToUrl()
+    saveToUrl: () => this.saveImage360SiteToUrl(),
+    assetId: '',
+    findAsset: () => this.findAsset()
   };
 
   private translation = {
@@ -100,6 +102,9 @@ export class Image360UI {
       this.entities.forEach(p => (p.image360Visualization.opacity = this.opacity.alpha));
       this.viewer.requestRedraw();
     });
+
+    gui.add(params, 'assetId').name('Asset ID');
+    gui.add(params, 'findAsset').name('Find asset');
 
     this.gui
       .add(this.iconCulling, 'radius', 0, 10000, 1)
@@ -177,7 +182,11 @@ export class Image360UI {
     const collection = await this.viewer.add360ImageSet(
       'events',
       { site_id: params.siteId },
-      { collectionTransform, preMultipliedRotation: params.premultipliedRotation }
+      {
+        collectionTransform,
+        preMultipliedRotation: params.premultipliedRotation,
+        annotationFilter: { status: 'all' }
+      }
     );
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
@@ -219,6 +228,29 @@ export class Image360UI {
     const url = new URL(window.location.href);
     url.searchParams.set('siteId', params.siteId);
     window.history.replaceState(null, document.title, url.toString());
+  }
+
+  async findAsset() {
+    if (this.params.assetId.length === 0) {
+      return;
+    }
+
+    const assetId = Number(this.params.assetId);
+
+    const revisionsAndEntities = (
+      await Promise.all(
+        this.collections.map(async coll => await coll.findImageAnnotation({ assetRef: { id: assetId } }))
+      )
+    ).flat(1);
+
+    if (revisionsAndEntities.length === 0) {
+      return;
+    }
+
+    const { image, revision, annotation } = revisionsAndEntities[0];
+
+    await this.viewer.enter360Image(image, revision);
+    this.viewer.cameraManager.setCameraState({ target: annotation.getCenter() });
   }
 }
 

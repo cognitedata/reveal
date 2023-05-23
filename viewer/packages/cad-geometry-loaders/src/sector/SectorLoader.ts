@@ -22,7 +22,7 @@ const SectorLoadingBatchSize = 20;
 
 /**
  * Loads sector based on a given camera pose, a set of models and budget.
- * Uses {@link SectorCuller} to determine what to load, {@link Repository} to
+ * Uses {@link SectorCuller} to determine what to load, {@link SectorDownloadScheduler} to
  * load sectors and {@link ModelStateHandler} to keep track of what has been
  * loaded to avoid loading data that's already available.
  *

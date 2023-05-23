@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferGeometry, Matrix4, Shape, ShapeGeometry } from 'three';
+import { BufferGeometry, Matrix4, Shape, ShapeGeometry, Vector2 } from 'three';
 
 import { AnnotationsPolygon } from '@cognite/sdk';
 
@@ -10,9 +10,11 @@ import { ImageAnnotationObjectData } from './ImageAnnotationData';
 
 export class PolygonAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: ShapeGeometry;
+  private readonly _outlinePoints: Vector2[];
 
   constructor(polygon: AnnotationsPolygon) {
     this._geometry = this.createGeometry(polygon);
+    this._outlinePoints = getBoundPoints(polygon);
   }
 
   createGeometry(polygon: AnnotationsPolygon): ShapeGeometry {
@@ -36,4 +38,12 @@ export class PolygonAnnotationData implements ImageAnnotationObjectData {
   getNormalizationMatrix(): Matrix4 {
     return new Matrix4().makeTranslation(0, 0, 0.5);
   }
+
+  getOutlinePoints(): Vector2[] {
+    return this._outlinePoints;
+  }
+}
+
+function getBoundPoints(polygon: AnnotationsPolygon): Vector2[] {
+  return polygon.vertices.map(v => new Vector2(0.5 - v.x, 0.5 - v.y));
 }

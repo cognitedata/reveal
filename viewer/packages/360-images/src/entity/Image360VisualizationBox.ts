@@ -75,6 +75,11 @@ export class Image360VisualizationBox implements Image360Visualization {
 
   setAnnotations(annotations: ImageAnnotationObject[]): void {
     this._annotationsGroup.remove(...this._annotationsGroup.children);
+
+    if (annotations.length === 0) {
+      return;
+    }
+
     this._annotationsGroup.add(...annotations.map(a => a.getObject()));
   }
 
@@ -143,6 +148,10 @@ export class Image360VisualizationBox implements Image360Visualization {
         ) {
           faceTexture = await this.getScaledImageTexture(faceTexture, this.MAX_MOBILE_IMAGE_SIZE);
         }
+
+        // Expecting the object-url to have been loaded into the texture, so we can revoke its blob reference, allowing the release of the blob from memory.
+        window.URL.revokeObjectURL(url);
+
         // Need to horizontally flip the texture since it is being rendered inside a cube
         faceTexture.center.set(0.5, 0.5);
         faceTexture.repeat.set(-1, 1);

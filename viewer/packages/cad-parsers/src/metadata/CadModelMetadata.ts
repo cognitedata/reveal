@@ -20,7 +20,7 @@ export interface CadModelMetadata {
   readonly format: File3dFormat;
 
   /**
-   * Revision of the {@link format} (e.g. 8 for "legacy models" or
+   * Revision of the {@link CadModelMetadata.format} (e.g. 8 for "legacy models" or
    * 9 for GLTF).
    */
   readonly formatVersion: number;
