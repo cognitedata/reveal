@@ -207,6 +207,7 @@ export function loginAndAuthIfNeeded(): Promise<void> {
   if (!authInit) {
     authInit = sdk
       .authenticate()
+      // eslint-disable-next-line lodash/prefer-noop
       .then(() => {})
       .catch(() => {
         window.location.href = '/';

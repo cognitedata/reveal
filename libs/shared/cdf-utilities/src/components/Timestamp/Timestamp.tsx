@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CogsTooltipProps, Icon, Tooltip } from '@cognite/cogs.js';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   formatTime,
   getDetailedTime,

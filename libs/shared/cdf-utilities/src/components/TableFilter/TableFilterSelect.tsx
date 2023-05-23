@@ -37,7 +37,7 @@ export const TableFilterSelect = ({
   };
 
   const handleFilterOptions = (input: string, option: any) =>
-    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    option.children.toLowerCase().includes(input.toLowerCase());
 
   return (
     <div ref={ref}>

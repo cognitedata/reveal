@@ -48,6 +48,7 @@ const DeleteModal = ({
         {cancelText}
       </Button>
       <Button
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         type={okType}
         disabled={!isConfirmed}

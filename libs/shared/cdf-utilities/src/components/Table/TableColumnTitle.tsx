@@ -3,6 +3,7 @@ import { Body, Button, Flex, Tooltip, TooltipProps } from '@cognite/cogs.js';
 import { ColumnType, SortOrder } from 'antd/lib/table/interface';
 import styled from 'styled-components';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 
 type TableColumnTitleProps<RecordType> = {
@@ -20,8 +21,8 @@ export const TableColumnTitle = <RecordType extends Record<string, unknown>>({
   title,
   appendTo,
 }: TableColumnTitleProps<RecordType>): JSX.Element => {
-  const getSortIcon = (sortOrder?: SortOrder) => {
-    switch (sortOrder) {
+  const getSortIcon = (sortOrderParam?: SortOrder) => {
+    switch (sortOrderParam) {
       case 'ascend':
         return 'ReorderAscending';
       case 'descend':
@@ -31,8 +32,8 @@ export const TableColumnTitle = <RecordType extends Record<string, unknown>>({
     }
   };
 
-  const getSortTooltip = (sortOrder?: SortOrder) => {
-    switch (sortOrder) {
+  const getSortTooltip = (sortOrderParam?: SortOrder) => {
+    switch (sortOrderParam) {
       case 'ascend':
         return 'Sort descending';
       case 'descend':

@@ -10,6 +10,7 @@ import {
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 
 type BulkActionBarProps = {
@@ -37,6 +38,7 @@ const BulkActionBar = ({
       <StyledActionBarButtonGroup>
         <StyledActionBarDivider />
         {actions.map((props) => (
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           <Button
             key={JSON.stringify(props)}
