@@ -7,11 +7,13 @@ import {
   useDocumentSearchResultQuery,
   useEventsSearchResultQuery,
   useTimeseriesSearchResultQuery,
+  useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 import { ResourceDetailsTemplate } from '@data-exploration/components';
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import {
+  AssetDetailsTable,
   EventDetailsTable,
   FileDetailsTable,
   TimeseriesDetailsTable,
@@ -69,6 +71,16 @@ export const AssetDetails: FC<Props> = ({
     limit: 10,
   });
 
+  const {
+    data: relatedAssets = [],
+    hasNextPage: assetsHasNextPage,
+    fetchNextPage: assetsFetchNextPage,
+    isLoading: isAssetsLoading,
+  } = useAssetsSearchResultQuery({
+    assetFilter: filter,
+    limit: 10,
+  });
+
   return (
     <ResourceDetailsTemplate
       title={asset ? asset.name : ''}
@@ -77,7 +89,7 @@ export const AssetDetails: FC<Props> = ({
       onClose={onClose}
       onSelectClicked={onSelectClicked}
     >
-      <Collapse accordion ghost defaultActiveKey="details">
+      <StyledCollapse accordion ghost defaultActiveKey="details">
         <Collapse.Panel key="details" header={<h4>Details</h4>}>
           {asset ? (
             <AssetInfo asset={asset} />
@@ -85,19 +97,20 @@ export const AssetDetails: FC<Props> = ({
             <Title level={5}>No Details Available</Title>
           )}
         </Collapse.Panel>
-        <Collapse.Panel header={<h4>Files</h4>}>
+        <Collapse.Panel header={<h4>Assets</h4>}>
           <Wrapper>
-            <FileDetailsTable
-              id="related-file-asset-details"
-              data={relatedFiles}
-              hasNextPage={fileHasNextPage}
-              fetchMore={fileFetchNextPage}
-              isLoadingMore={isFileLoading}
-              onRowClick={(file) => onOpenResources('file', file.id)}
+            <AssetDetailsTable
+              id="related-asset-asset-details"
+              data={relatedAssets}
+              hasNextPage={assetsHasNextPage}
+              fetchMore={assetsFetchNextPage}
+              isLoadingMore={isAssetsLoading}
+              onRowClick={(currentAsset) =>
+                onOpenResources('asset', currentAsset.id)
+              }
             />
           </Wrapper>
         </Collapse.Panel>
-
         <Collapse.Panel header={<h4>Timeseries</h4>}>
           <Wrapper>
             <TimeseriesDetailsTable
@@ -109,6 +122,18 @@ export const AssetDetails: FC<Props> = ({
               fetchMore={timeseriesFetchNextPage}
               hasNextPage={timeseriesHasNextPage}
               isLoadingMore={isTimeseriesLoading}
+            />
+          </Wrapper>
+        </Collapse.Panel>
+        <Collapse.Panel header={<h4>Files</h4>}>
+          <Wrapper>
+            <FileDetailsTable
+              id="related-file-asset-details"
+              data={relatedFiles}
+              hasNextPage={fileHasNextPage}
+              fetchMore={fileFetchNextPage}
+              isLoadingMore={isFileLoading}
+              onRowClick={(file) => onOpenResources('file', file.id)}
             />
           </Wrapper>
         </Collapse.Panel>
@@ -124,12 +149,16 @@ export const AssetDetails: FC<Props> = ({
             />
           </Wrapper>
         </Collapse.Panel>
-      </Collapse>
+      </StyledCollapse>
     </ResourceDetailsTemplate>
   );
 };
 
 const Wrapper = styled.div`
   max-height: 240px;
+  overflow: auto;
+`;
+
+const StyledCollapse = styled(Collapse)`
   overflow: auto;
 `;

@@ -117,4 +117,5 @@ export const ResourcePreviewSidebar = ({
 
 const ResourcePreviewSidebarContainer = styled.div`
   min-width: 360px;
+  height: 100%;
 `;
