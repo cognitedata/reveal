@@ -96,7 +96,7 @@ export default function UserProfilesConfigContainer() {
       >
         <Form.Item
           name="isUserProfilesEnabled"
-          label={t('enabled')}
+          label={t('enable-user-profiles')}
           valuePropName="checked"
         >
           <Checkbox disabled={updating} />
@@ -104,7 +104,7 @@ export default function UserProfilesConfigContainer() {
 
         <Form.Item {...noLabelItemLayout}>
           <Button type="primary" htmlType="submit" disabled={updating}>
-            {t('save-configuration')}
+            {t('save')}
           </Button>
         </Form.Item>
       </Form>
