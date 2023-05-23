@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export enum ParamKeys {
@@ -11,19 +12,22 @@ export const useExpandedIdParams = (): [
   const [searchParams, setSearchParams] = useSearchParams();
   const expandedId = searchParams.get(ParamKeys.ExpandedId) ?? undefined;
 
-  const setExpandedId = (id?: string) => {
-    setSearchParams((currentParams) => {
-      if (id === undefined) {
-        currentParams.delete(ParamKeys.ExpandedId);
-        return currentParams;
-      }
+  const setExpandedId = useCallback(
+    (id?: string) => {
+      setSearchParams((currentParams) => {
+        if (id === undefined) {
+          currentParams.delete(ParamKeys.ExpandedId);
+          return currentParams;
+        }
 
-      return {
-        ...currentParams,
-        [ParamKeys.ExpandedId]: id,
-      };
-    });
-  };
+        return {
+          ...currentParams,
+          [ParamKeys.ExpandedId]: id,
+        };
+      });
+    },
+    [setSearchParams]
+  );
 
   return [expandedId, setExpandedId];
 };

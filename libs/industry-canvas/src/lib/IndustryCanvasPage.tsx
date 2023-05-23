@@ -39,7 +39,7 @@ import {
   IndustryCanvasProvider,
   useIndustryCanvasContext,
 } from './IndustryCanvasContext';
-import { ContainerReference } from './types';
+import { ContainerReference, ContainerReferenceType } from './types';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
@@ -49,6 +49,13 @@ export type OnAddContainerReferences = (
   containerReferences: ContainerReference[]
 ) => void;
 import useManagedTool from './utils/useManagedTool';
+import {
+  DEFAULT_CONTAINER_MAX_HEIGHT,
+  DEFAULT_CONTAINER_MAX_WIDTH,
+} from './utils/addDimensionsToContainerReference';
+import DragOverIndicator from './components/DragOverIndicator';
+import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
+import { useDragAndDrop } from './hooks/useDragAndDrop';
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
@@ -114,6 +121,11 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     selectedCanvasAnnotation,
     onUpdateRequest,
   });
+
+  const { fileDropData, resetFileDropData, isDragging, onDrop } =
+    useDragAndDrop({
+      unifiedViewerRef: unifiedViewerRef,
+    });
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
@@ -384,7 +396,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           </Dropdown>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
-      <PreviewTabWrapper onKeyDown={onKeyDown}>
+      <PreviewTabWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
         <IndustryCanvas
           id={APPLICATION_ID_INDUSTRY_CANVAS}
           viewerRef={unifiedViewerRef}
@@ -410,7 +422,25 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
           toolOptions={toolOptions}
         />
+        <DragOverIndicator isDragging={isDragging} />
       </PreviewTabWrapper>
+      <IndustryCanvasFileUploadModal
+        fileDropData={fileDropData}
+        onCancel={resetFileDropData}
+        onOk={(fileInfo, relativePointerPosition) => {
+          resetFileDropData();
+          onAddContainerReferences([
+            {
+              type: ContainerReferenceType.FILE,
+              resourceId: fileInfo.id,
+              x: relativePointerPosition.x,
+              y: relativePointerPosition.y,
+              maxHeight: DEFAULT_CONTAINER_MAX_HEIGHT,
+              maxWidth: DEFAULT_CONTAINER_MAX_WIDTH,
+            },
+          ]);
+        }}
+      />
     </>
   );
 };
@@ -439,6 +469,7 @@ const TitleRowWrapper = styled.div`
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
+  position: relative;
 `;
 
 const StyledGoBackWrapper = styled.div`

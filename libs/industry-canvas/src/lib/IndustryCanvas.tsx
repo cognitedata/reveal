@@ -225,6 +225,7 @@ export const IndustryCanvas = ({
         // We are using a different version of the SDK in the library
         // but the conflicts are irrelevant for IC, so just recasting sadly
         cogniteClient={sdk as any}
+        shouldAllowDragDrop={false} // We are using our own drag and drop handlers
       />
       <ToolbarWrapper>
         <ToolbarComponent activeTool={tool} onToolChange={setTool} />
