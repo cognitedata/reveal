@@ -71,7 +71,7 @@ interface Props {
   extraBorders?: boolean;
 }
 
-export const TableWrapper: React.FC<Props> = ({
+export const TableWrapper: React.FC<React.PropsWithChildren<Props>> = ({
   stickyHeader,
   stickyFirstColumn,
   alignValuesCenter,

@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateFileLabels } from 'src/services/api';
 import { DOCUMENTS_KEYS } from 'src/services/constants';
 import { Toast } from 'src/components/Toast';

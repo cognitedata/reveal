@@ -51,7 +51,7 @@ interface Props {
   breadcrumbs?: { title: string; onClick?: () => void }[];
 }
 
-export const Page: React.FC<Props> = ({
+export const Page: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   BottomNavigation,
   Widget,

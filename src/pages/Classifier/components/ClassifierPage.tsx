@@ -9,7 +9,7 @@ interface Props extends ClassifierProps {
   Navigation: JSX.Element | JSX.Element[];
 }
 
-export const CommonClassifierPage: React.FC<Props> = ({
+export const CommonClassifierPage: React.FC<React.PropsWithChildren<Props>> = ({
   Navigation,
   Widget,
   children,

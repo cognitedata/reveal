@@ -10,20 +10,14 @@ import GlobalStyles from 'src/styles/GlobalStyles';
 import { setupMixpanel } from 'src/utils/config';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { globalConfig } from 'src/configs/global.config';
 import { MainRouter } from 'src/pages/router';
 
 setupMixpanel();
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      notifyOnChangeProps: 'tracked',
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const App = () => {
   const project = getProject();

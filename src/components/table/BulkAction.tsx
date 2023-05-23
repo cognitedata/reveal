@@ -42,7 +42,7 @@ export interface Props {
   subtitle?: string;
 }
 
-const TableBulkActions: React.FC<Props> = ({
+const TableBulkActions: React.FC<React.PropsWithChildren<Props>> = ({
   isVisible,
   title,
   subtitle,

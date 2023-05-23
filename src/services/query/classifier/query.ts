@@ -1,6 +1,6 @@
 import { DocumentsClassifier } from '@cognite/sdk-playground';
 import { useSDK } from '@cognite/sdk-provider';
-import { useInfiniteQuery, useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   composeActiveClassifier,
   composeClassifierTrainingSets,

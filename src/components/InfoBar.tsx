@@ -22,10 +22,9 @@ const Wrapper = styled.div`
   gap: 1rem;
 `;
 
-export const InfoBar: React.FC<{ visible?: boolean }> = ({
-  visible,
-  children,
-}) => {
+export const InfoBar: React.FC<
+  React.PropsWithChildren<{ visible?: boolean }>
+> = ({ visible, children }) => {
   return (
     <AnimatePresence>
       {visible && (

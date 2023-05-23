@@ -1,5 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import React, { FC } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Content = styled.div`
@@ -22,6 +22,8 @@ export interface ClassifierNavigationProps {
   disabled?: boolean;
 }
 
-export const BottomNavigation: FC = ({ children }) => {
+export const BottomNavigation: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   return <Content>{children}</Content>;
 };

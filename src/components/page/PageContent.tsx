@@ -7,6 +7,8 @@ export const Container = styled.div`
   overflow: auto;
 `;
 
-export const PageContent: React.FC = ({ children }) => {
+export const PageContent: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   return <Container>{children}</Container>;
 };

@@ -1,6 +1,6 @@
 import { useInterpret } from '@xstate/react';
 import { Interpreter } from 'xstate';
-import React, { createContext, FC, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 import { classifierMachine, Model } from '../classifierMachine';
 
 export const ClassifierProvider = createContext<{
@@ -18,7 +18,9 @@ export const useClassifierContext = (): {
   return context as { classifierMachine: Interpreter<Model> };
 };
 
-export const ClassifierContext: FC = ({ children }) => {
+export const ClassifierContext: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   const classifierService = useInterpret(classifierMachine, { devTools: true });
 
   const value = React.useMemo(

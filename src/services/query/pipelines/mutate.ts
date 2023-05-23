@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { Label } from '@cognite/sdk';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   updateDocumentPipelinesActiveClassifier,
   updateDocumentPipelinesTrainingLabels,
