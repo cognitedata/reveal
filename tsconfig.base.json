@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -30,6 +29,12 @@
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
+      ],
+      "@cognite/cdf-utilities": [
+        "libs/shared/cdf-utilities/src/index.ts"
+      ],
+      "@cognite/sdk-react-query-hooks": [
+        "libs/shared/cdf-sdk-react-query-hooks/src/index.ts"
       ],
       "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
       "@data-exploration-components/*": [
@@ -66,7 +71,16 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@cognite/copilot/*": ["apps/copilot/src/*"]
+      "@cognite/copilot/*": ["apps/copilot/src/*"],
+      "@cognite/cdf-sdk-singleton": [
+        "libs/shared/cdf-sdk-singleton/src/index.ts"
+      ],
+      "@cognite/login-utils": [
+        "libs/shared/cdf-login-utils/src/index.ts"
+      ],
+      "@cognite/cdf-route-tracker": [
+        "libs/shared/cdf-route-tracker/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

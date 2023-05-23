@@ -1,0 +1,60 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { MemoryRouter } from 'react-router-dom';
+
+import notification from './Notification';
+
+import { Meta, Story } from '@storybook/addon-docs';
+
+<Meta title="Components/Notification" />
+
+# Notification
+
+This is a sample description for the `Notification` component.
+
+## Examples
+
+### Different types
+
+This is an example of a notification with one item.
+
+<Story name="Different types">
+  <button
+    onClick={() =>
+      notification.success({
+        message: 'This is a success notification',
+        description:
+          'Duration can be used to specify how long the notification stays open. After the duration time elapses, the notification closes automatically. If not specified, default value is 4.5 seconds. If you set the value to 0, the notification box will never close automatically.',
+      })
+    }
+  >
+    Success
+  </button>
+  <button
+    onClick={() => {
+      notification.info({
+        message: 'This is an info notification',
+      });
+    }}
+  >
+    Info
+  </button>
+  <button
+    onClick={() => {
+      notification.warning({
+        message: 'This is a warning notification',
+      });
+    }}
+  >
+    Warning
+  </button>
+  <button
+    onClick={() => {
+      notification.error({
+        message: 'This is an error notification',
+        description: "It doesn't work like that",
+      });
+    }}
+  >
+    Error
+  </button>
+</Story>
