@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { CategoryCard } from '../components/cards/CategoryCard';
 import { Page } from '../containers/page/Page';
-import { SearchBar } from '../containers/SearchBar';
+import { SearchBar } from '../containers/search/SearchBar';
 import { useNavigation } from '../hooks/useNavigation';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';

@@ -2,6 +2,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { EMPTY_ARRAY } from '../../../constants/object';
 import { useTypesDataModelQuery } from '../../dataModels/query/useTypesDataModelQuery';
 import { FDMClient } from '../../FDMClient';
 
@@ -39,7 +40,7 @@ export const useListDataTypeQuery = (sort?: Record<string, string>) => {
   );
 
   const flattenResults = React.useMemo(
-    () => results?.pages.flatMap((page) => page.items),
+    () => results?.pages.flatMap((page) => page.items) || EMPTY_ARRAY,
     [results]
   );
 
