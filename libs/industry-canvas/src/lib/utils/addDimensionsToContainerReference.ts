@@ -1,7 +1,6 @@
 import { isNotUndefined } from '@cognite/data-exploration';
 import {
   UnifiedViewer,
-  isConnectionAnnotation,
   isEllipseAnnotation,
   isImageAnnotation,
   isLabelAnnotation,
@@ -18,6 +17,8 @@ import {
 import assertNever from './assertNever';
 
 const INITIAL_CONTAINER_MARGIN = 100;
+export const DEFAULT_CONTAINER_MAX_WIDTH = 1000;
+export const DEFAULT_CONTAINER_MAX_HEIGHT = 1000;
 export const DEFAULT_TIMESERIES_HEIGHT = 400;
 export const DEFAULT_TIMESERIES_WIDTH = 700;
 export const DEFAULT_ASSET_WIDTH = 600;
@@ -35,8 +36,8 @@ const getInitialContainerReferenceDimensions = (
     return {
       x: currentMaxX + INITIAL_CONTAINER_MARGIN,
       y: 0,
-      maxWidth: 1000,
-      maxHeight: 1000,
+      maxWidth: DEFAULT_CONTAINER_MAX_WIDTH,
+      maxHeight: DEFAULT_CONTAINER_MAX_HEIGHT,
     };
   }
 
@@ -87,10 +88,9 @@ const getRightMostPointOfCanvasAnnotation = (
   canvasAnnotation: CanvasAnnotation
 ): number | undefined => {
   if (isPolylineAnnotation(canvasAnnotation)) {
-    return max(canvasAnnotation.vertices.map((point) => point.x)) ?? 0;
-  }
-
-  if (isConnectionAnnotation(canvasAnnotation)) {
+    if (canvasAnnotation.vertices !== undefined) {
+      return max(canvasAnnotation.vertices.map((point) => point.x)) ?? 0;
+    }
     return undefined;
   }
 

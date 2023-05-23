@@ -2,6 +2,7 @@ import mime from 'mime-types';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import lowerCase from 'lodash/lowerCase';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+import { getObjectURL } from '@data-exploration-lib/core';
 // import { InternalDocument } from '@data-exploration-lib/domain-layer';
 type InternalDocument = any;
 
@@ -63,11 +64,8 @@ export async function fetchFilePreviewURL(
   }
 
   return sdk.documents.preview.documentAsImage(file.id, 1).then((response) => {
-    const icon = response;
-    const arrayBufferView = new Uint8Array(icon);
-    const blob = new Blob([arrayBufferView]);
-    const objectURL = URL.createObjectURL(blob);
-    return objectURL;
+    const data = response;
+    return getObjectURL(data);
   });
 }
 

@@ -29,7 +29,6 @@ import {
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
   Image360SiteData,
-  Revision3DWithIndex,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import {
   Image360DatasetOptions,
@@ -38,6 +37,7 @@ import {
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
+import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';

@@ -58,3 +58,15 @@ export interface BaseFilterProps<TConfig extends BaseConfig> {
   onBackClick: () => void;
   onApplyClick: ApplyFilterCallback<TConfig>;
 }
+
+export interface DataModel {
+  name: string;
+  description?: string;
+}
+
+export interface Field {
+  name: string;
+  type: FieldType;
+}
+
+export type FieldType = 'string' | 'number' | 'boolean' | 'date';

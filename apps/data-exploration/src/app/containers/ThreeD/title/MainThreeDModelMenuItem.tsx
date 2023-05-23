@@ -4,11 +4,7 @@ import { Body, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import {
-  Image360SiteData,
-  Revision3DWithIndex,
-  useRevisions,
-} from '@data-exploration-app/containers/ThreeD/hooks';
+import { Image360SiteData } from '@data-exploration-app/containers/ThreeD/hooks';
 
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import {
@@ -18,6 +14,10 @@ import {
 } from '@data-exploration-app/containers/ThreeD/utils';
 import { useNavigate } from 'react-router-dom';
 import { formatTime } from '@cognite/cdf-utilities';
+import {
+  Revision3DWithIndex,
+  use3DRevisionsQuery,
+} from '@data-exploration-lib/domain-layer';
 
 export const MainThreeDModelMenuItem = ({
   model,
@@ -38,7 +38,7 @@ export const MainThreeDModelMenuItem = ({
     assetHighlightMode,
   } = useContext(ThreeDContext);
 
-  const { data: revisions = [], isFetched } = useRevisions(model?.id);
+  const { data: revisions = [], isFetched } = use3DRevisionsQuery(model?.id);
 
   const navigate = useNavigate();
 

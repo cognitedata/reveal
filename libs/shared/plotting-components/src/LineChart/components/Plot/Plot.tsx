@@ -175,12 +175,11 @@ export const Plot = memo(
 
       const plotConfig: Partial<PlotlyConfig> = useMemo(
         () => ({
-          staticPlot: isEmptyData,
           scrollZoom: isScrollZoomEnabled && isCursorOnPlot,
           showAxisDragHandles: isPanEnabled,
           displayModeBar: false,
         }),
-        [isEmptyData, isScrollZoomEnabled, isPanEnabled, isCursorOnPlot]
+        [isScrollZoomEnabled, isPanEnabled, isCursorOnPlot]
       );
 
       const plotStyle: React.CSSProperties = useMemo(

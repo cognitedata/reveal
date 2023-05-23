@@ -166,3 +166,9 @@ export const fileIconMapper: FileIconMapper = {
 export const mapMimeTypeToDocumentType = (mimeType?: string) => {
   return fileIconMapper[mimeType || ''] || DOCUMENT_ICON_FALLBACK_VALUE;
 };
+
+export const getObjectURL = (data: ArrayBuffer): string => {
+  const arrayBufferView = new Uint8Array(data);
+  const blob = new Blob([arrayBufferView]);
+  return URL.createObjectURL(blob);
+};

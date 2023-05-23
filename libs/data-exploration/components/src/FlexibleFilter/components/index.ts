@@ -3,6 +3,7 @@ export * from './DateTimeInput';
 export * from './DateTimeRangeInput';
 export * from './Input';
 export * from './Menu';
+export * from './MenuFooterButton';
 export * from './MenuHeader';
 export * from './MenuItem';
 export * from './NoInput';

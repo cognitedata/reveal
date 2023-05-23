@@ -5,16 +5,28 @@ import { extractFieldsFromSchema } from '../../extractors';
 import { FDMClient } from '../../FDMClient';
 
 export const useInstancesQuery = () => {
-  const sdk = useSDK();
-  const client = new FDMClient(sdk);
+  const { space, dataModel, version, dataType, nodeSpace, externalId } =
+    useParams();
 
-  const { space, dataModel, version, dataType, externalId } = useParams();
+  const sdk = useSDK();
+  const client = new FDMClient(sdk, { dataModel, space, version });
 
   return useQuery(
-    ['instances', 'single', space, dataModel, version, dataType, externalId],
+    [
+      'instances',
+      'single',
+      space,
+      dataModel,
+      version,
+      dataType,
+      nodeSpace,
+      externalId,
+    ],
     async () => {
-      if (!(space && dataModel && version && dataType && externalId)) {
-        return Promise.resolve();
+      if (
+        !(space && dataModel && version && dataType && externalId && nodeSpace)
+      ) {
+        return Promise.reject(new Error('Missing headers...'));
       }
 
       const model = await client.getDataModelById({
@@ -35,9 +47,10 @@ export const useInstancesQuery = () => {
       }
 
       const instance = await client.getInstanceById<any>(fields, {
+        nodeSpace,
         space,
         dataModel,
-        version, // FIX_ME
+        version,
         dataType,
         externalId,
       });

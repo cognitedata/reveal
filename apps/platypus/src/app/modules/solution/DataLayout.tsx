@@ -147,15 +147,7 @@ export const DataLayout = () => {
         />
 
         {isDataQualityEnabled && (
-          <Route
-            path="data-quality"
-            element={
-              <DataQualityPage
-                dataModelExternalId={dataModelExternalId}
-                space={space}
-              />
-            }
-          />
+          <Route path="data-quality" element={<DataQualityPage />} />
         )}
 
         <Route

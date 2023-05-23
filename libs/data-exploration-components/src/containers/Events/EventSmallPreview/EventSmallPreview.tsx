@@ -11,13 +11,13 @@ import {
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import { renderTitle } from '@data-exploration-components/utils';
 import { ResourceIcons } from '@data-exploration-components/components/ResourceIcons/ResourceIcons';
-import { EventDetails } from '@data-exploration-components/containers/Events';
 import noop from 'lodash/noop';
 import {
   SmallPreviewProps,
   SelectableItemProps,
 } from '@data-exploration-components/types';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
+import { EventInfo } from '@data-exploration/containers';
 
 export const EventSmallPreview = ({
   eventId,
@@ -108,7 +108,7 @@ export const EventSmallPreview = ({
           {actions}
         </SpacedRow>
       </InfoCell>
-      <EventDetails event={event} />
+      <EventInfo event={event} />
       {children}
     </InfoGrid>
   );

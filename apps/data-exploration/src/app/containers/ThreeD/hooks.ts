@@ -5,7 +5,6 @@ import {
   CogniteError,
   Model3D,
   Node3D,
-  Revision3D,
   AnnotationFilterProps,
   AnnotationsBoundingVolume,
   AnnotationFilterRequest,
@@ -29,14 +28,13 @@ import {
   CognitePointCloudModel,
   Image360Collection,
 } from '@cognite/reveal';
-import { useMemo } from 'react';
 import { Vector3 } from 'three';
 import _ from 'lodash';
 import {
-  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+  Revision3DWithIndex,
+  use3DRevisionsQuery,
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -80,51 +78,7 @@ export const use3DModel = (id: number | undefined) => {
   );
 };
 
-const getRevisionKey = (id?: number) => ['cdf', '3d', 'model', id, 'revisions'];
-
-export type Revision3DWithIndex = Revision3D & { index: number };
-
 type RevisionOpts<T> = UseQueryOptions<Revision3DWithIndex[], unknown, T>;
-
-export const useRevisions = <T = Revision3DWithIndex[]>(
-  modelId?: number,
-  opts?: Omit<RevisionOpts<T>, 'queryKey' | 'queryFn'>
-) => {
-  const sdk = useSDK();
-
-  return useQuery(
-    getRevisionKey(modelId),
-    () =>
-      modelId
-        ? sdk.revisions3D
-            .list(modelId)
-            .autoPagingToArray({ limit: -1 })
-            .then((res) =>
-              res.map((r, rIndex) => ({ ...r, index: res.length - rIndex }))
-            )
-        : [],
-    opts
-  );
-};
-
-export const useDefault3DModelRevision = (
-  modelId?: number,
-  opts?: Omit<
-    RevisionOpts<Revision3DWithIndex | undefined>,
-    'queryKey' | 'queryFn' | 'select'
-  >
-) => {
-  return useRevisions(modelId, {
-    select: (revisions = []) =>
-      revisions.find((r) => r.published) ??
-      (revisions.length > 0
-        ? revisions.reduce((prev, current) =>
-            prev.createdTime > current.createdTime ? prev : current
-          )
-        : undefined),
-    ...opts,
-  });
-};
 
 export const useRevision = (
   modelId?: number,
@@ -134,7 +88,7 @@ export const useRevision = (
     'queryKey' | 'queryFn' | 'select'
   >
 ) => {
-  return useRevisions(modelId, {
+  return use3DRevisionsQuery(modelId, {
     select: (revisions = []) => revisions.find((r) => r.id === revisionId),
     ...opts,
   });
@@ -148,7 +102,7 @@ export const useRevisionIndex = (
     'queryKey' | 'queryFn' | 'select'
   >
 ) => {
-  return useRevisions(modelId, {
+  return use3DRevisionsQuery(modelId, {
     select: (revisions = []) => {
       const index = [...revisions]
         .reverse()
@@ -157,24 +111,6 @@ export const useRevisionIndex = (
     },
     ...opts,
   });
-};
-
-export const use3DModelThumbnail = (url?: string) => {
-  const sdk = useSDK();
-
-  return useQuery<ArrayBuffer>(
-    ['cdf', '3d', 'thumbnail', url],
-    async () => {
-      const resp = await sdk.get(url!, {
-        headers: {
-          Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-        },
-        responseType: 'arraybuffer',
-      });
-      return resp.data;
-    },
-    { enabled: Boolean(url) }
-  );
 };
 
 export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
@@ -198,58 +134,6 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
     siteName: img360.metadata?.site_name ?? 'No site name',
   };
   return image360SiteData;
-};
-
-export const useInfinite360Images = () => {
-  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
-  const {
-    data: images360Datasets,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useEventsSearchResultQuery(
-    {
-      eventsFilters: {
-        type: 'scan',
-      },
-      limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-    },
-    eventSearchConfig
-  );
-
-  const images360Data = useMemo(() => {
-    if (images360Datasets.length > 0) {
-      const results = images360Datasets.reduce(
-        (accum, current) => {
-          if (
-            current.metadata?.site_id &&
-            !Object.hasOwn(accum, current.metadata.site_id)
-          ) {
-            accum[current.metadata.site_id] = {
-              siteId: current.metadata.site_id,
-              siteName: current.metadata?.site_name ?? current.metadata.site_id,
-            };
-          }
-
-          return accum;
-        },
-        {} as {
-          [key: string]: { siteId: string; siteName: string };
-        }
-      );
-
-      return Object.values(results);
-    }
-
-    return [];
-  }, [images360Datasets]);
-
-  return {
-    images360Data,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  };
 };
 
 export const useInfiniteAssetMappings = (

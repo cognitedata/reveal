@@ -1,0 +1,77 @@
+import { Button, Chip, IconType, Title } from '@cognite/cogs.js';
+
+import React, { ReactNode } from 'react';
+import styled from 'styled-components';
+
+interface Props {
+  icon?: IconType | ReactNode;
+  title: string;
+  isSelected?: boolean;
+  showSelectButton?: boolean;
+  onSelectClicked?: () => void;
+  onClose?: () => void;
+}
+export const ResourceDetailsHeader: React.FC<Props> = ({
+  title,
+  icon,
+  showSelectButton,
+  isSelected,
+  onSelectClicked,
+  onClose,
+}) => {
+  return (
+    <Container>
+      <TitleRowWrapper data-testid="title-row-wrapper">
+        {icon && <Icon icon={icon} data-testid="icon" />}
+        <Title level={4}>{title}</Title>
+      </TitleRowWrapper>
+      <ActionsContainer>
+        {showSelectButton && (
+          <Button
+            data-testid="select-button"
+            icon={isSelected ? 'Checkmark' : 'Add'}
+            iconPlacement="left"
+            type="primary"
+            disabled={isSelected}
+            onClick={onSelectClicked}
+          >
+            {isSelected ? 'Selected' : 'Select'}
+          </Button>
+        )}
+        <Button
+          data-testid="close-button"
+          icon="Close"
+          type="ghost"
+          onClick={onClose}
+        ></Button>
+      </ActionsContainer>
+    </Container>
+  );
+};
+
+const Icon: React.FC<{ icon: string | ReactNode }> = ({ icon }) => {
+  if (typeof icon === 'string') {
+    return <Chip icon={icon as any} aria-label={icon} type="neutral" />;
+  }
+
+  return <>{icon}</>;
+};
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const ActionsContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+`;
+
+export const TitleRowWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+`;

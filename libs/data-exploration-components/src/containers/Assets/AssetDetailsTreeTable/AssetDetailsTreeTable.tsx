@@ -1,5 +1,4 @@
 import {
-  ThreeDModelCell,
   useAssetsMetadataColumns,
   useRootPath,
 } from '@data-exploration/containers';
@@ -11,7 +10,11 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import { HighlightCell, Table } from '@data-exploration/components';
+import {
+  HighlightCell,
+  Table,
+  ThreeDModelCell,
+} from '@data-exploration/components';
 
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
 
