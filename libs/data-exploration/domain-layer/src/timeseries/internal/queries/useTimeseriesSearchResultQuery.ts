@@ -18,10 +18,12 @@ export const useTimeseriesSearchResultQuery = (
     query,
     filter,
     sortBy,
+    limit,
   }: {
     query?: string;
     filter: InternalTimeseriesFilters;
     sortBy?: TableSortBy[];
+    limit?: number;
   },
   searchConfig?: TimeseriesConfigType,
   options?: UseInfiniteQueryOptions
@@ -46,7 +48,7 @@ export const useTimeseriesSearchResultQuery = (
       advancedFilter,
       filter: timeseriesFilter,
       sort: timeseriesSort,
-      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+      limit: limit || DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
     },
     {
       ...options,
