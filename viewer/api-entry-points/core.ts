@@ -93,4 +93,4 @@ export {
   Image360AnnotationFilterOptions
 } from '../packages/360-images';
 
-export { OverlayCollection, OverlayInfo, Overlay3D, DefaultMetadataType } from '../packages/3d-overlays';
+export { OverlayCollection, OverlayInfo, Overlay3D, DefaultOverlay3DContentType } from '../packages/3d-overlays';

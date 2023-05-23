@@ -20,16 +20,18 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
     cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: false });
 
     const smartOverlayTool = new SmartOverlayTool<{ text: string; id: number }>(viewer);
+    smartOverlayTool.setTextOverlayVisible(false);
 
     smartOverlayTool.on('hover', ({ htmlOverlay, targetOverlay }) => {
-      htmlOverlay.innerText += ' hovered';
+      const { text, id } = targetOverlay.getContent();
+      htmlOverlay.innerText = text + ', #' + id + ' hovered';
       targetOverlay.setColor(new THREE.Color('red'));
       viewer.requestRedraw();
     });
 
     smartOverlayTool.on('click', ({ htmlOverlay, targetOverlay }) => {
       htmlOverlay.innerText = 'Haha, you clicked me!';
-      targetOverlay.visible = false;
+      targetOverlay.setVisible(false);
       viewer.requestRedraw();
     });
 
@@ -47,7 +49,7 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
           if (x * x + y * y - 0.7 * i * i < 750) {
             const id = i + ' ' + x + ' ' + y;
             labels.push({
-              metadata: {
+              content: {
                 text: 'Meow ' + id,
                 id: i + x + y
               },

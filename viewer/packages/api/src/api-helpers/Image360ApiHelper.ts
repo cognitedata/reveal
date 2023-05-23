@@ -203,10 +203,10 @@ export class Image360ApiHelper {
     this._interactionState.enteredCollection = imageCollection;
 
     if (lastEntered360ImageEntity) {
-      lastEntered360ImageEntity.icon.visible = imageCollection.isCollectionVisible;
+      lastEntered360ImageEntity.icon.setVisible(imageCollection.isCollectionVisible);
     }
 
-    image360Entity.icon.visible = false;
+    image360Entity.icon.setVisible(false);
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
 
@@ -361,7 +361,7 @@ export class Image360ApiHelper {
       const imageCollection = this._image360Facade.getCollectionContainingEntity(
         this._interactionState.currentImage360Entered
       );
-      this._interactionState.currentImage360Entered.icon.visible = imageCollection.isCollectionVisible;
+      this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
       imageCollection.events.image360Exited.fire();
 
       this._interactionState.currentImage360Entered.deactivateAnnotations();

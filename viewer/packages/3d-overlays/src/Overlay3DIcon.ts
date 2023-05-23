@@ -5,7 +5,7 @@
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4, MathUtils, Color } from 'three';
 import { Overlay3D } from './Overlay3D';
-import { DefaultMetadataType } from './OverlayCollection';
+import { DefaultOverlay3DContentType } from './OverlayCollection';
 
 export type IconParameters = {
   position: THREE.Vector3;
@@ -27,14 +27,14 @@ export type SelectedDelegate = (event: { selected: boolean }) => void;
 
 export type IconEvent = 'selected' | 'parametersChange';
 
-export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overlay3D<MetadataType> {
+export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements Overlay3D<ContentType> {
   private readonly _position: THREE.Vector3;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
   private readonly _setAdaptiveScale: SetAdaptiveScaleDelegate;
   private readonly _iconRadius: number;
   private readonly _hoverSprite?: THREE.Sprite;
-  private readonly _iconMetadata?: MetadataType;
+  private readonly _content: ContentType;
   private readonly _raycastBoundingSphere = new Sphere();
 
   private _adaptiveScale = 1;
@@ -49,14 +49,14 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
     parametersChange: new EventTrigger<ParametersChangeDelegate>()
   };
 
-  constructor(iconParameters: IconParameters, iconMetadata?: MetadataType) {
+  constructor(iconParameters: IconParameters, content: ContentType) {
     const { position, minPixelSize, maxPixelSize, iconRadius, hoverSprite, color } = iconParameters;
 
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
     this._iconRadius = iconRadius;
     this._hoverSprite = hoverSprite;
-    this._iconMetadata = iconMetadata;
+    this._content = content;
     this._color = color ?? this._color;
 
     this._setAdaptiveScale = this.setupAdaptiveScaling(position);
@@ -129,15 +129,15 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
 
   setColor(color: Color): void {
     this._color = color;
-    this._events.parametersChange.fire({ color, visble: this.visible });
+    this._events.parametersChange.fire({ color, visble: this.getVisible() });
   }
 
-  get color(): Color {
+  getColor(): Color {
     return this._color;
   }
 
-  getMetadata(): MetadataType | undefined {
-    return this._iconMetadata;
+  getContent(): ContentType {
+    return this._content;
   }
 
   get adaptiveScale(): number {
@@ -152,16 +152,16 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
     return this._culled;
   }
 
-  set visible(visible: boolean) {
+  setVisible(visible: boolean) {
     this._visible = visible;
     this._events.parametersChange.fire({ color: this._color, visble: visible });
   }
 
-  get visible(): boolean {
+  getVisible(): boolean {
     return this._visible && !this._culled;
   }
 
-  get position(): Vector3 {
+  getPosition(): Vector3 {
     return this._position;
   }
 
@@ -178,7 +178,7 @@ export class Overlay3DIcon<MetadataType = DefaultMetadataType> implements Overla
 
   private setupAdaptiveScaling(position: THREE.Vector3): SetAdaptiveScaleDelegate {
     return ({ camera, renderSize, domElement }) => {
-      if (!this.visible) {
+      if (!this.getVisible()) {
         return;
       }
       this._adaptiveScale = this.computeAdaptiveScaling(

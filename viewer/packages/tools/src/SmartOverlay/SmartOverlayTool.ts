@@ -8,20 +8,29 @@ import {
   Overlay3DCollection,
   Overlay3DIcon,
   OverlayInfo,
-  DefaultMetadataType,
+  DefaultOverlay3DContentType,
   OverlayCollection,
   Overlay3D
 } from '@reveal/3d-overlays';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
+/**
+ * Events related to overlays
+ */
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
-export type OverlayEventHandler<MetadataType> = (event: {
-  targetOverlay: Overlay3D<MetadataType>;
+/**
+ * Type for handlers of overlay events
+ */
+export type OverlayEventHandler<ContentType> = (event: {
+  targetOverlay: Overlay3D<ContentType>;
   htmlOverlay: HTMLElement;
   mousePosition: { clientX: number; clientY: number };
 }) => void;
 
+/**
+ * Parameters for instantiating the SmartOverlayTool
+ */
 export type SmartOverlayToolParameters = {
   /**
    * Max point markers size in pixels. Different platforms has limitations for this value.
@@ -35,7 +44,10 @@ export type SmartOverlayToolParameters = {
   defaultOverlayColor: THREE.Color;
 };
 
-export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognite3DViewerToolBase {
+/**
+ * Tool for adding and interacting with 2D overlays positioned at points in
+ */
+export class SmartOverlayTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _textOverlay: HTMLElement;
 
@@ -44,13 +56,13 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
   private readonly _temporaryVec = new THREE.Vector2();
   private readonly _raycaster = new THREE.Raycaster();
 
-  private _overlayCollections: Overlay3DCollection<MetadataType>[] = [];
+  private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
   private _textOverlayVisible = true;
 
   private readonly _events = {
-    hover: new EventTrigger<OverlayEventHandler<MetadataType>>(),
-    click: new EventTrigger<OverlayEventHandler<MetadataType>>(),
+    hover: new EventTrigger<OverlayEventHandler<ContentType>>(),
+    click: new EventTrigger<OverlayEventHandler<ContentType>>(),
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
@@ -73,10 +85,10 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
    * @param overlays Array of overlays to add.
    * @returns Overlay group containing it's id.
    */
-  createOverlayCollection(overlays?: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType> {
+  createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType> {
     const { _viewer: viewer } = this;
 
-    const points = new Overlay3DCollection<MetadataType>(overlays, {
+    const points = new Overlay3DCollection<ContentType>(overlays, {
       defaultOverlayColor: this._defaultOverlayColor
     });
 
@@ -95,7 +107,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
    * Removes overlays that were added with addOverlays method.
    * @param overlayCollection Id of the overlay group to remove.
    */
-  removeOverlayCollection(overlayCollection: OverlayCollection<MetadataType>): void {
+  removeOverlayCollection(overlayCollection: OverlayCollection<ContentType>): void {
     const { _viewer: viewer } = this;
 
     const removedCollection = this._overlayCollections.find(collection => collection === overlayCollection);
@@ -110,14 +122,14 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
   /**
    * Gets all added overlay collections.
    */
-  get collections(): OverlayCollection<MetadataType>[] {
+  get collections(): OverlayCollection<ContentType>[] {
     return this._overlayCollections;
   }
 
   /**
    * Sets whether overlays are visible.
    */
-  set visible(visible: boolean) {
+  setVisible(visible: boolean): void {
     this._isVisible = visible;
     this._overlayCollections.forEach(points => {
       points.visible = visible;
@@ -126,16 +138,25 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     this._viewer.requestRedraw();
   }
 
-  get visible(): boolean {
+  /**
+   * Gets whether overlays are visible.
+   */
+  getVisible(): boolean {
     return this._isVisible;
   }
 
-  set textOverlayVisible(visible: boolean) {
+  /**
+   * Sets whether text overlay is visible.
+   */
+  setTextOverlayVisible(visible: boolean) {
     this._textOverlayVisible = visible;
     this._textOverlay.style.opacity = visible ? '1' : '0';
   }
 
-  get textOverlayVisible(): boolean {
+  /**
+   * Gets whether text overlay is visible.
+   */
+  getTextOverlayVisible(): boolean {
     return this._textOverlayVisible;
   }
 
@@ -155,11 +176,11 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
    * @param event event to subscribe to.
    * @param eventHandler
    */
-  on(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
-  on(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
+  on(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+  on(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
   on(event: 'disposed', eventHandler: DisposedDelegate): void;
 
-  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler<MetadataType> | DisposedDelegate): void {
+  on(event: OverlayToolEvent, eventHandler: OverlayEventHandler<ContentType> | DisposedDelegate): void {
     switch (event) {
       case 'hover':
         this._events.hover.subscribe(eventHandler);
@@ -175,11 +196,11 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     }
   }
 
-  off(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
-  off(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
+  off(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+  off(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
   off(event: 'disposed', eventHandler: DisposedDelegate): void;
 
-  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler<MetadataType> | DisposedDelegate): void {
+  off(event: OverlayToolEvent, eventHandler: OverlayEventHandler<ContentType> | DisposedDelegate): void {
     switch (event) {
       case 'hover':
         this._events.hover.unsubscribe(eventHandler);
@@ -195,6 +216,9 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     }
   }
 
+  /**
+   * @obvious
+   */
   dispose(): void {
     this.clear();
     this._viewer.domElement.removeEventListener('mousemove', this.onMouseMove);
@@ -214,9 +238,6 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
 
     if (intersectedOverlay) {
       this.positionTextOverlay(event);
-
-      textOverlay.innerText = (intersectedOverlay.getMetadata() as DefaultMetadataType | undefined)?.text ?? '';
-
       this._events.hover.fire({ targetOverlay: intersectedOverlay, mousePosition: event, htmlOverlay: textOverlay });
     } else {
       textOverlay.style.opacity = '0';
@@ -242,10 +263,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     _textOverlay.style.opacity = _textOverlayVisible ? '1' : '0';
   }
 
-  private intersectPointsMarkers(mouseCoords: {
-    clientX: number;
-    clientY: number;
-  }): Overlay3DIcon<MetadataType> | null {
+  private intersectPointsMarkers(mouseCoords: { clientX: number; clientY: number }): Overlay3DIcon<ContentType> | null {
     const { _viewer, _raycaster, _temporaryVec } = this;
 
     const { x, y } = this.convertPixelCoordinatesToNormalized(mouseCoords, _viewer.domElement);
@@ -253,11 +271,11 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     _raycaster.setFromCamera(_temporaryVec.set(x, y), camera);
 
-    let intersection: [Overlay3DIcon<MetadataType>, THREE.Vector3][] = [];
+    let intersection: [Overlay3DIcon<ContentType>, THREE.Vector3][] = [];
 
     for (const points of this._overlayCollections) {
-      for (const icon of points.getOverlays() as Overlay3DIcon<MetadataType>[]) {
-        if (icon.visible) {
+      for (const icon of points.getOverlays() as Overlay3DIcon<ContentType>[]) {
+        if (icon.getVisible()) {
           const inter = icon.intersect(_raycaster.ray);
           if (inter) {
             intersection.push([icon, inter]);
@@ -276,7 +294,7 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     intersection = intersection
       .map(
         ([icon, intersection]) =>
-          [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon<MetadataType>, THREE.Vector3]
+          [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon<ContentType>, THREE.Vector3]
       )
       .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
       .sort((a, b) => a[1].length() - b[1].length());
@@ -310,12 +328,12 @@ export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognit
     textOverlay.setAttribute('class', 'text-overlay');
     textOverlay.style.cssText = `
             position: absolute;
-            
+
             /* Anchor to the center of the element and ignore events */
             transform: translate(${horizontalOffset}px, -50%);
             touch-action: none;
             user-select: none;
-                
+
             padding: 7px;
             max-width: 200px;
             color: #fff;
