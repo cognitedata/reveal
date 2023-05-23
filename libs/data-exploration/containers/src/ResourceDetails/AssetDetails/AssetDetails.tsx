@@ -3,14 +3,14 @@ import { Collapse, Title } from '@cognite/cogs.js';
 import { ResourceType } from '@data-exploration-lib/core';
 
 import {
-  InternalDocument,
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
+  useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ResourceDetailsTemplate, Table } from '@data-exploration/components';
-import { ColumnDef } from '@tanstack/react-table';
+import { ResourceDetailsTemplate } from '@data-exploration/components';
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
+import { FileDetailsTable, TimeseriesDetailsTable } from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
 
 interface Props {
@@ -34,17 +34,24 @@ export const AssetDetails: FC<Props> = ({
     const link = createLink(`/explore/search/${resourceType}/${id}`);
     window.open(link, '_blank');
   };
-  const columns = useMemo(
-    () => [Table.Columns.name()],
-    []
-  ) as ColumnDef<InternalDocument>[];
+
+  const filter = { assetSubtreeIds: [{ value: assetId }] };
   const {
     results: relatedFiles = [],
-    hasNextPage,
-    fetchNextPage,
-    isLoading,
+    hasNextPage: fileHasNextPage,
+    fetchNextPage: fileFetchNextPage,
+    isLoading: isFileLoading,
   } = useDocumentSearchResultQuery({
-    filter: { assetSubtreeIds: [{ value: assetId }] },
+    filter,
+    limit: 10,
+  });
+  const {
+    data: relatedTimeseries = [],
+    hasNextPage: timeseriesHasNextPage,
+    fetchNextPage: timeseriesFetchNextPage,
+    isLoading: isTimeseriesLoading,
+  } = useTimeseriesSearchResultQuery({
+    filter,
     limit: 10,
   });
 
@@ -66,17 +73,28 @@ export const AssetDetails: FC<Props> = ({
         </Collapse.Panel>
         <Collapse.Panel header={<h4>Files</h4>}>
           <Wrapper>
-            <Table<InternalDocument>
-              data={relatedFiles}
-              columns={columns}
-              hasNextPage={hasNextPage}
-              showLoadButton
-              fetchMore={fetchNextPage}
-              isLoadingMore={isLoading}
-              onRowClick={(file) => onOpenResources('file', file.id)}
+            <FileDetailsTable
               id="related-file-asset-details"
-              enableSelection
-              hideColumnToggle
+              data={relatedFiles}
+              hasNextPage={fileHasNextPage}
+              fetchMore={fileFetchNextPage}
+              isLoadingMore={isFileLoading}
+              onRowClick={(file) => onOpenResources('file', file.id)}
+            />
+          </Wrapper>
+        </Collapse.Panel>
+
+        <Collapse.Panel header={<h4>Timeseries</h4>}>
+          <Wrapper>
+            <TimeseriesDetailsTable
+              id="related-timeseries-asset-details"
+              data={relatedTimeseries}
+              onRowClick={(timeseries) =>
+                onOpenResources('timeSeries', timeseries.id)
+              }
+              fetchMore={timeseriesFetchNextPage}
+              hasNextPage={timeseriesHasNextPage}
+              isLoadingMore={isTimeseriesLoading}
             />
           </Wrapper>
         </Collapse.Panel>
