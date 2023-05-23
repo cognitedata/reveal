@@ -199,8 +199,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._needsRedraw = false;
   }
 
-  get defaultStyle(): Image360AnnotationAppearance {
-    return this._defaultStyle;
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance {
+    return { ...this._defaultStyle };
   }
 
   public setDefaultAnnotationStyle(defaultStyle: Image360AnnotationAppearance): void {

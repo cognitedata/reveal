@@ -82,6 +82,11 @@ export interface Image360Collection {
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
+   * Get the assigned default style affecting all annotations
+   */
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+
+  /**
    * Assign a default style which affects all annotations
    */
   setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
