@@ -241,16 +241,6 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
           }}
         />
       )}
-      {isCreateSpaceModalVisible && (
-        <CreateNewSpaceModal
-          visible
-          onCancel={() => setIsCreateSpaceModalVisible(false)}
-          onSubmit={(newSpace) => {
-            props.onSpaceChange?.(newSpace);
-            setIsCreateSpaceModalVisible(false);
-          }}
-        />
-      )}
       {isLibraryVisible && (
         <DataModelLibrary
           dataModels={
