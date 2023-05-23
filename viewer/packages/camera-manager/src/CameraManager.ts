@@ -10,16 +10,18 @@ import {
   CameraEventDelegate
 } from './types';
 
+import { DefaultCameraManager } from './DefaultCameraManager';
+
 /**
  * Interface for manager responsible for all manipulations to the camera,
  * including animations and modification of state. Implementations are responsible for
- * providing a `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}. Implementations
+ * providing a `THREE.PerspectiveCamera` instance to the viewer. Implementations
  * must trigger the `cameraChange`-event when camera is changed.
  * The default implementation is {@link DefaultCameraManager}.
  */
 export interface CameraManager {
   /**
-   * Returns the camera used for rendering in {@link Cognite3DViewer}.
+   * Returns the camera used for rendering the viewer.
    * Note that the camera will not be modified directly by Reveal.
    * Implementations must trigger the `cameraChange`-event whenever the
    * camera changes.
@@ -53,7 +55,7 @@ export interface CameraManager {
    * Set this manager as active and enable controls.
    *
    * Should update {@link CameraManager.enabled} to reflect the state of the manager.
-   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
+   * Note that this is called automatically when a new CameraManager is set on the viewer.
    * @param cameraManager Previously used camera manager.
    */
   activate(cameraManager?: CameraManager): void;
@@ -62,7 +64,7 @@ export interface CameraManager {
    * Deactivate this manager and disable controls.
    *
    * Should update {@link CameraManager.enabled} to reflect the state of the manager.
-   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
+   * Note that this is called automatically when a new CameraManager is set on the viewer.
    */
   deactivate(): void;
 
