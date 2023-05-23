@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../../../components/buttons/Button';
 import { useExpandedIdParams } from '../../../hooks/useParams';
@@ -12,6 +12,10 @@ export const PageDashboard: React.FC<
   const [expandedId, setExpandedId] = useExpandedIdParams();
   const hasExpandedWidget = Boolean(expandedId);
 
+  const handleCloseClick = useCallback(() => {
+    setExpandedId(undefined);
+  }, [setExpandedId]);
+
   return (
     <Page>
       <Page.Header
@@ -20,7 +24,7 @@ export const PageDashboard: React.FC<
         loading={loading}
       >
         {hasExpandedWidget ? (
-          <Button.ButtonEsc onCloseClick={() => setExpandedId(undefined)} />
+          <Button.ButtonEsc onCloseClick={handleCloseClick} />
         ) : (
           <>
             <Button.OpenIn />

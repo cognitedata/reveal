@@ -19,7 +19,9 @@ export const CategoryCard: React.FC<Props> = React.memo(
         <Content>
           <Header>
             <Icon type={getIcon(type)} />
-            <p>{type}</p>
+            <Body level={5} strong>
+              {type}
+            </Body>
           </Header>
           <Body level={4}>
             {description || t('no_description', 'No description')}
@@ -55,6 +57,8 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   gap: 8px;
+  align-items: center;
+  padding-bottom: 8px;
 `;
 
 const Content = styled.div``;
