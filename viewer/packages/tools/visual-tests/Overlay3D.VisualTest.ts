@@ -8,7 +8,7 @@ import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
-import { SmartOverlayTool } from '../src/SmartOverlay/SmartOverlayTool';
+import { Overlay3DTool } from '../src/Overlay3D/Overlay3DTool';
 import { OverlayInfo } from '../../3d-overlays/src/OverlayCollection';
 
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
@@ -19,7 +19,7 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
 
     cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: false });
 
-    const smartOverlayTool = new SmartOverlayTool<{ text: string; id: number }>(viewer);
+    const smartOverlayTool = new Overlay3DTool<{ text: string; id: number }>(viewer);
     smartOverlayTool.setTextOverlayVisible(false);
 
     smartOverlayTool.on('hover', ({ htmlOverlay, targetOverlay }) => {

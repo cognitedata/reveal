@@ -29,9 +29,9 @@ export type OverlayEventHandler<ContentType> = (event: {
 }) => void;
 
 /**
- * Parameters for instantiating the SmartOverlayTool
+ * Parameters for instantiating the Overlay3DTool
  */
-export type SmartOverlayToolParameters = {
+export type Overlay3DToolParameters = {
   /**
    * Max point markers size in pixels. Different platforms has limitations for this value.
    * On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500.
@@ -47,7 +47,7 @@ export type SmartOverlayToolParameters = {
 /**
  * Tool for adding and interacting with 2D overlays positioned at points in
  */
-export class SmartOverlayTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
+export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _textOverlay: HTMLElement;
 
@@ -66,7 +66,7 @@ export class SmartOverlayTool<ContentType = DefaultOverlay3DContentType> extends
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
-  constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters) {
+  constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters) {
     super();
 
     this._viewer = viewer;
