@@ -1,8 +1,23 @@
-import { Flex, Button, Body, Checkbox } from '@cognite/cogs.js';
+import { Flex, Title, Button, Body, Checkbox, Icon } from '@cognite/cogs.js';
 import { useTranslations } from 'hooks/translations';
+import { Trans } from 'react-i18next';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useState } from 'react';
-import { StyledModal, DeleteModalHeader } from './elements';
+import styled from 'styled-components';
+import { StyledModal } from './elements';
+
+const StyledDeleteIcon = styled(Icon)`
+  color: var(--cogs-text-icon--status-critical);
+`;
+
+const DeleteModalHeader = ({ title }: { title: string }) => {
+  return (
+    <Flex gap={12} alignItems="center">
+      <StyledDeleteIcon type="Delete" />
+      <Title level={5}>{title}</Title>
+    </Flex>
+  );
+};
 
 type Props = {
   name: string;
@@ -12,9 +27,10 @@ type Props = {
 
 const defaultTranslations = makeDefaultTranslations(
   'Delete scheduled calculation?',
-  'Delete result of calculation (time series)',
+  'Delete saved time series',
   'Yes, delete scheduled',
-  'Cancel'
+  'Cancel',
+  'The scheduled <strong>{{name}}</strong> will be deleted forever and cannot be restored.'
 );
 
 export const ScheduledCalculationDeleteModal = ({
@@ -22,7 +38,7 @@ export const ScheduledCalculationDeleteModal = ({
   onOk,
   onCancel,
 }: Props) => {
-  const { t } = useTranslations(
+  const { t, translate } = useTranslations(
     Object.keys(defaultTranslations),
     'ScheduledCalculationDeleteModal'
   );
@@ -46,8 +62,12 @@ export const ScheduledCalculationDeleteModal = ({
       }
     >
       <Flex direction="column" gap={16}>
-        <Body level={2} strong>
-          {`The schedule ${name} will be deleted forever and can't be restored.`}
+        <Body level={2} as="span">
+          <Trans
+            i18nKey="The scheduled <strong>{{name}}</strong> will be deleted forever and cannot be restored."
+            t={translate}
+            values={{ name }}
+          />
         </Body>
         <Checkbox
           onChange={(val) => setDeleteTimeseries(val)}
@@ -55,7 +75,7 @@ export const ScheduledCalculationDeleteModal = ({
           checked={deleteTimeseries}
           value={deleteTimeseries}
         >
-          {t['Delete result of calculation (time series)']}
+          {t['Delete saved time series']}
         </Checkbox>
       </Flex>
     </StyledModal>

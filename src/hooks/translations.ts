@@ -1,4 +1,8 @@
-import { useTranslation } from 'react-i18next';
+import {
+  useTranslation,
+  UseTranslationResponse,
+  DefaultNamespace,
+} from 'react-i18next';
 
 type TranslationKey = string | number | symbol;
 /**
@@ -10,7 +14,11 @@ type TranslationKey = string | number | symbol;
 export function useTranslations<TranslationKeys extends TranslationKey>(
   keys: TranslationKeys[],
   namespace = 'global'
-): { t: Record<TranslationKeys, string>; translationReady: boolean } {
+): {
+  t: Record<TranslationKeys, string>;
+  translationReady: boolean;
+  translate: UseTranslationResponse<DefaultNamespace>['t'];
+} {
   const { t, ready } = useTranslation(namespace, { useSuspense: false });
 
   return {
@@ -21,6 +29,7 @@ export function useTranslations<TranslationKeys extends TranslationKey>(
       }),
       {} as Record<TranslationKeys, string>
     ),
+    translate: t,
     translationReady: ready,
   };
 }

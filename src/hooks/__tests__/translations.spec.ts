@@ -43,6 +43,7 @@ describe('useTranslations', () => {
     expect(result.current).toStrictEqual({
       t: { Test: 'Test' },
       translationReady: false,
+      translate: result.current.translate,
     });
   });
 });

@@ -242,7 +242,7 @@ export const ScheduledCalculationRow = ({
             />
             {deleteModalOpen && (
               <ScheduledCalculationDeleteModal
-                name={scheduledCalculation.name}
+                name={scheduledCalculationResult?.name!}
                 onOk={handleRemoveSource}
                 onCancel={() => setDeleteModalOpen(false)}
               />

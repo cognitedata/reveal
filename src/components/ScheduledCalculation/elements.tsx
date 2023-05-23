@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 
-import { Modal, Flex, Icon, Title } from '@cognite/cogs.js';
-
-const StyledDeleteIcon = styled(Icon)`
-  color: var(--cogs-text-icon--status-critical);
-`;
+import { Modal } from '@cognite/cogs.js';
 
 export const StyledModal = styled(Modal)`
   && {
@@ -17,12 +13,3 @@ export const StyledModal = styled(Modal)`
     }
   }
 `;
-
-export const DeleteModalHeader = ({ title }: { title: string }) => {
-  return (
-    <Flex gap={12} alignItems="center">
-      <StyledDeleteIcon type="Delete" />
-      <Title level={5}>{title}</Title>
-    </Flex>
-  );
-};
