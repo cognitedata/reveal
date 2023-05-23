@@ -257,7 +257,6 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             dataModels?.map((el) => ({
               id: el.id,
               name: el.name,
-              tags: [],
               versions: [
                 {
                   version: el.version,

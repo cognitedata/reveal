@@ -22,6 +22,11 @@ type TagTree = {
   [key in string]: string[];
 };
 
+const InitialFilter = {
+  templates: true,
+  published: false,
+};
+
 export const DataModelLibrary = ({
   dataModels: propsDataModels,
   onConfirm,
@@ -35,40 +40,43 @@ export const DataModelLibrary = ({
 
   const [selectedKey, setSelectedKey] = useState<string | undefined>();
   const [selectedView, setSelectedView] = useState('visualizer');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedDMTypes, setSelectedDMTypes] = useState({
-    templates: true,
-    published: true,
-  });
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedDMTypes, setSelectedDMTypes] = useState(InitialFilter);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const [isFilterVisible, setFilterVisible] = useState(false);
   const dataModels = useMemo(() => {
-    return Object.entries(library)
-      .reduce(
-        (prev, [key, value]) =>
-          prev.concat({ id: key, ...value, isTemplate: true }),
-        [] as DataModelLibraryItem[]
-      )
-      .concat(propsDataModels.map((el) => ({ ...el, name: el.name || el.id })))
-      .filter((el) => el.versions.length > 0)
-      .sort((a, b) => a.name.localeCompare(b.name));
+    return (
+      Object.entries(library)
+        // hardcoded templates
+        .reduce(
+          (prev, [key, value]) =>
+            prev.concat({ id: key, ...value, isTemplate: true }),
+          [] as DataModelLibraryItem[]
+        )
+        // existing data models
+        .concat(
+          propsDataModels.map((el) => ({ ...el, name: el.name || el.id }))
+        )
+        // must have 1 valid version at least
+        .filter((el) => el.versions.length > 0)
+        // alphabetica ordered by name
+        .sort((a, b) => a.name.localeCompare(b.name))
+    );
   }, [propsDataModels]);
 
   const selectedDataModel = useMemo(
     () => dataModels.find((el) => el.id === selectedKey),
     [dataModels, selectedKey]
   );
-  const labels = useMemo(
+  const categories = useMemo(
     () =>
       dataModels.reduce((prev, model) => {
-        if (model.tags) {
-          for (const tag of model.tags) {
-            if (prev[tag]) {
-              prev[tag].push(model.id);
-            } else {
-              prev[tag] = [model.id];
-            }
+        if (model.category) {
+          if (prev[model.category]) {
+            prev[model.category].push(model.id);
+          } else {
+            prev[model.category] = [model.id];
           }
         }
         return prev;
@@ -77,62 +85,102 @@ export const DataModelLibrary = ({
   );
 
   useEffect(() => {
-    setSelectedTags(Object.keys(labels));
-  }, [labels]);
+    setSelectedCategories(Object.keys(categories));
+  }, [categories]);
+
+  const isAllCategoriesSelected = useMemo(
+    () => selectedCategories.length === Object.keys(categories).length,
+    [selectedCategories, categories]
+  );
 
   const displayedDataModels = useMemo(() => {
-    const isAllTagsSelected =
-      selectedTags.length === Object.keys(labels).length;
     return dataModels
       .filter((el) => {
-        return (
-          (selectedDMTypes.templates && el.isTemplate) ||
-          (selectedDMTypes.published && !el.isTemplate)
-        );
+        // if templates should be visible, show templates
+        if (selectedDMTypes.templates) {
+          if (el.isTemplate) {
+            return true;
+          }
+        }
+        // if non-templates (published data models) should be visible, show non-templates
+        if (selectedDMTypes.published) {
+          if (!el.isTemplate) {
+            return true;
+          }
+        }
+        return false;
       })
       .filter((el) =>
-        isAllTagsSelected
+        // filter out to show only data model with selected category
+        isAllCategoriesSelected
           ? true
-          : el.tags?.some((item) =>
-              selectedTags.includes(item) && searchTerm
-                ? el.name
-                    .concat(' ')
-                    .concat(el.description || '')
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-                : true
-            )
+          : selectedCategories.includes(el.category || '')
+      )
+      .filter((el) =>
+        // filter out to show only data model with proper search terms
+        searchTerm
+          ? el.name
+              .concat(' ')
+              .concat(el.description || '')
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
+          : true
       );
-  }, [dataModels, selectedTags, selectedDMTypes, searchTerm, labels]);
+  }, [
+    dataModels,
+    selectedCategories,
+    selectedDMTypes,
+    searchTerm,
+    isAllCategoriesSelected,
+  ]);
 
   const hasFiltersBeenAdded = useMemo(
     () =>
-      selectedTags.length !== Object.keys(labels).length ||
-      Object.values(selectedDMTypes).includes(false),
-    [selectedTags, labels, selectedDMTypes]
+      selectedCategories.length !== Object.keys(categories).length ||
+      selectedDMTypes.published !== InitialFilter.published ||
+      selectedDMTypes.templates !== InitialFilter.templates,
+    [selectedCategories, categories, selectedDMTypes]
   );
 
+  // if invalid key, deselect
+  useEffect(() => {
+    if (!displayedDataModels.some((el) => el.id === selectedKey)) {
+      setSelectedKey(undefined);
+    }
+  }, [displayedDataModels, selectedKey]);
+
   const filterSection = useMemo(() => {
-    return Object.keys(labels).map((key) => {
+    return Object.keys(categories).map((key) => {
       return (
-        <Checkbox
-          label={key}
-          key={key}
-          checked={selectedTags.includes(key)}
-          onChange={() => {
-            const newTags = [...selectedTags];
-            const index = newTags.indexOf(key);
-            if (index === -1) {
-              newTags.push(key);
-            } else {
-              newTags.splice(index, 1);
-            }
-            setSelectedTags(newTags);
-          }}
-        />
+        <CategoryItem key={key}>
+          <Checkbox
+            style={{ flex: 1 }}
+            key={key}
+            label={key}
+            checked={selectedCategories.includes(key)}
+            onChange={() => {
+              const newCategories = [...selectedCategories];
+              const index = newCategories.indexOf(key);
+              // If the category was there, remove it, otherwise, add it to list of selected categories
+              if (index === -1) {
+                newCategories.push(key);
+              } else {
+                newCategories.splice(index, 1);
+              }
+              setSelectedCategories(newCategories);
+            }}
+          />
+          <Button
+            onClick={() => setSelectedCategories([key])}
+            size="small"
+            className="only-button"
+          >
+            {t('library-button-only', 'only')}
+          </Button>
+        </CategoryItem>
       );
     });
-  }, [labels, selectedTags]);
+  }, [categories, selectedCategories, t]);
 
   return (
     <StyledModal
@@ -162,7 +210,7 @@ export const DataModelLibrary = ({
                 onClick={() => setFilterVisible(false)}
               />
             </Flex>
-            <Flex style={{ flex: 1 }} direction="column" gap={16}>
+            <Flex style={{ flex: 1 }} direction="column" gap={8}>
               <Overline level={3} muted>
                 {t('library-type-of-model', 'Type of data model')}
               </Overline>
@@ -182,10 +230,13 @@ export const DataModelLibrary = ({
               />
             </Flex>
             <Divider direction="horizontal" />
-            <Flex style={{ flex: 1 }} direction="column" gap={16}>
+            <Flex style={{ flex: 1 }} direction="column" gap={8}>
               <Overline level={3} muted>
-                {t('library-labels', 'Labels')}
+                {t('library-categories', 'Categories')}
               </Overline>
+              <Button size="small" style={{ alignSelf: 'start' }}>
+                {t('library-select-all', 'Select all')}
+              </Button>
               {filterSection}
             </Flex>
           </Flex>
@@ -377,5 +428,15 @@ const Sidebar = styled(Flex)<{ $closed?: boolean }>`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+`;
+
+const CategoryItem = styled(Flex)`
+  .only-button {
+    opacity: 0;
+    transition: 0.5s all;
+  }
+  &&:hover .only-button {
+    opacity: 1;
   }
 `;

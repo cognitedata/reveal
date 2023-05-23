@@ -1,7 +1,7 @@
 export type DataModelLibraryTemplateItem = {
   name: string;
   versions: { dml: string; version: string; date: Date }[];
-  tags?: string[];
+  category?: string;
   description?: string;
 };
 
@@ -14,7 +14,7 @@ export const library: { [key in string]: DataModelLibraryTemplateItem } = {
   'Cognite:MovieDM': {
     name: 'Movie and actors',
     description: 'Sample data model from data modeling tutorial',
-    tags: ['Tutorial'],
+    category: 'Tutorial',
     versions: [
       {
         dml: `type Actor implements Person {
