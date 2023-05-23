@@ -8,7 +8,7 @@ export const SearchFilters = React.memo(() => {
   return (
     <>
       <ChipGroup size="small" overflow={2}>
-        <Chip type="neutral" label="Movie starts with 'P'" />
+        <Chip type="neutral" label="Movie name starts with 'Harry Potter'" />
         <Chip type="neutral" label="Filter" />
         <Chip type="neutral" label="Filter" />
         <Chip type="neutral" label="Filter" />
@@ -17,6 +17,7 @@ export const SearchFilters = React.memo(() => {
       <Button
         icon="Filter"
         onClick={(e) => {
+          e.preventDefault();
           e.stopPropagation();
         }}
       >

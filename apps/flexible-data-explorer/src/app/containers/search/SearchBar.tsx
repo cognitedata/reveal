@@ -9,7 +9,12 @@ import zIndex from '../../utils/zIndex';
 import { SearchFilters } from './SearchFilters';
 import { SearchPreview } from './SearchPreview';
 
-export const SearchBar = () => {
+interface Props {
+  width?: string;
+  inverted?: boolean;
+}
+
+export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
   const { t } = useTranslation();
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -41,9 +46,11 @@ export const SearchBar = () => {
         setFocus(true);
       }}
       focused={isFocused}
+      width={width}
+      inverted={inverted}
     >
       <Content>
-        <Icon type="Search" />
+        <StyledIcon type="Search" />
         <StyledInput
           onKeyUp={(e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
@@ -68,8 +75,12 @@ export const SearchBar = () => {
   );
 };
 
-const Container = styled.div<{ focused: boolean }>`
-  width: 80%;
+const Container = styled.div<{
+  focused: boolean;
+  width?: string;
+  inverted?: boolean;
+}>`
+  width: ${(props) => props.width ?? '100%'};
   background-color: white;
   height: 52px;
   margin: 24px;
@@ -81,10 +92,21 @@ const Container = styled.div<{ focused: boolean }>`
     drop-shadow(0px 1px 1px rgba(79, 82, 104, 0.1));
 
   ${(props) => {
+    if (props.inverted) {
+      return `
+        background-color: #F3F4F8;
+        outline: 1px solid rgba(210, 212, 218, 0.56);
+      `;
+    }
+  }};
+
+  ${(props) => {
     if (props.focused) {
       return `
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
+        background-color: white;
+        outline: none;
       `;
     }
 
@@ -112,4 +134,8 @@ const StyledInput = styled.input.attrs({ type: 'search' })`
   &:focus {
     outline: none;
   }
+`;
+
+const StyledIcon = styled(Icon)`
+  min-width: 16px;
 `;
