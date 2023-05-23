@@ -277,6 +277,7 @@
   "pause": "Pause",
   "resume": "Resume",
   "topic-filters-status": "Topic filters status",
+  "topic-filter-history": "Topic filter history",
   "add-topic-filters-to-get-data-in": "Add topic filters to get data in",
   "add-topic-filters": "Add topic filters",
   "no-topic-filters": "No topic filters",
@@ -289,5 +290,12 @@
   "uptime-with-percentage": "{{percentage}}% uptime",
   "number-of-messages": "Number of messages",
   "status": "Status",
-  "type": "Type"
+  "type": "Type",
+  "message-transform-error-count_zero": "No transform failures",
+  "message-transform-error-count_one": "1 transform failure",
+  "message-transform-error-count_other": "{{count}} transform failures",
+  "message-transform-succeed": "{{count}} message transformed successfully",
+  "message-transform-succeed_other": "{{count}} messages transformed successfully",
+  "message-transform-failed_one": "{{count}} message couldn't transformed",
+  "message-transform-failed_other": "{{count}} messages couldn't transformed"
 }

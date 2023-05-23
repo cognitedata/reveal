@@ -513,7 +513,7 @@ export const useMQTTJobsWithMetrics = (sourceExternalId?: string) => {
   );
 };
 
-type ReadMQTTJobMetric = {
+export type ReadMQTTJobMetric = {
   jobExternalId: string;
   timestamp: number;
   sourceMessages: number;

@@ -3,6 +3,7 @@ import {
   MQTTJobWithMetrics,
   ReadMQTTJob,
   ReadMQTTJobLog,
+  ReadMQTTJobMetric,
 } from 'hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
@@ -85,55 +86,82 @@ export type DailyLogAggregation = {
 
 export type AggregationInterval = 'hourly' | 'daily';
 
-export const aggregateLogs = (
-  logs: ReadMQTTJobLog[],
+export type MetricAggregation = {
+  startTime: number;
+  endTime: number;
+  data?: Omit<ReadMQTTJobMetric, 'timestamp' | 'externalId'>;
+};
+
+export const getMetricAggregations = (
+  metrics: ReadMQTTJobMetric[],
   interval: AggregationInterval,
   intervalCount: number
-): DailyLogAggregation[] => {
+): MetricAggregation[] => {
+  const intervalInMs = getIntervalInMs(interval);
+  const endOfCurrentInterval = getEndOfCurrentInterval(interval);
   const now = new Date().getTime();
-  const selectedInterval = interval === 'hourly' ? HOUR_IN_MS : DAY_IN_MS;
-  const before = now - selectedInterval * intervalCount;
-  const aggregations: DailyLogAggregation[] = Array(intervalCount)
+
+  const aggregations: MetricAggregation[] = Array(intervalCount)
     .fill(0)
     .map((_, index) => {
+      const endTime =
+        (index === 0 ? now : endOfCurrentInterval) - index * intervalInMs;
+      const startTime =
+        (index === 0 ? endOfCurrentInterval : endTime) - intervalInMs;
+
+      const metricsForCurrentInterval = metrics.filter(
+        ({ timestamp }) => timestamp < endTime && timestamp >= startTime
+      );
+
+      if (metricsForCurrentInterval.length === 0) {
+        return {
+          endTime,
+          startTime,
+          data: undefined,
+        };
+      }
+
+      const data = { ...metricsForCurrentInterval[0] };
+
+      metricsForCurrentInterval.slice(1).forEach((metric) => {
+        data.destinationFailedValues += metric.destinationFailedValues;
+        data.destinationInputValues += metric.destinationInputValues;
+        data.destinationRequests += metric.destinationRequests;
+        data.destinationSkippedValues += metric.destinationSkippedValues;
+        data.destinationUploadedValues += metric.destinationUploadedValues;
+        data.destinationWriteFailures += metric.destinationWriteFailures;
+        data.transformFailures += metric.transformFailures;
+        data.sourceMessages += metric.sourceMessages;
+      });
+
       return {
-        date: now - index * selectedInterval,
-        logs: [],
+        endTime,
+        startTime,
+        data,
       };
-    });
-
-  if (!logs) {
-    return [];
-  }
-
-  logs
-    .filter(({ createdTime }) => createdTime >= before)
-    .forEach((log) => {
-      const daysBefore = Math.floor((now - log.createdTime) / DAY_IN_MS);
-      aggregations[daysBefore].logs.push(log);
     });
 
   return aggregations;
 };
 
-export const aggregateLogsInLast30Days = (
-  logs?: ReadMQTTJobLog[]
-): DailyLogAggregation[] => {
-  if (!logs) {
-    return [];
+export const getMetricAggregationSuccessCount = (
+  data: MetricAggregation['data']
+): number => {
+  if (!data) {
+    return 0;
   }
 
-  return aggregateLogs(logs, 'daily', 30);
+  return data.sourceMessages - data.transformFailures;
 };
 
-export const aggregateLogsInLast72Hours = (
-  logs?: ReadMQTTJobLog[]
-): DailyLogAggregation[] => {
-  if (!logs) {
-    return [];
+export const getMetricAggregationErrorCount = (
+  data: MetricAggregation['data']
+): number => {
+  if (!data) {
+    return 0;
   }
 
-  return aggregateLogs(logs, 'hourly', 72);
+  return data.transformFailures;
 };
 
 type StatusChangeBucket = {
@@ -220,8 +248,9 @@ export const getUptimeAggregations = (
     .fill(0)
     .map((_, index) => {
       const endTime =
-        index === 0 ? now : endOfCurrentInterval - index * intervalInMs;
-      const startTime = endTime - intervalInMs;
+        (index === 0 ? now : endOfCurrentInterval) - index * intervalInMs;
+      const startTime =
+        (index === 0 ? endOfCurrentInterval : endTime) - intervalInMs;
 
       if (endTime <= firstLogTime) {
         return {
