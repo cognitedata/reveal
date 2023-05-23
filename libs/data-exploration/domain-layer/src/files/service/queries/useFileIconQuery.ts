@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { FileInfo } from '@cognite/sdk/dist/src';
 import { isFileOfType } from '@data-exploration-lib/core';
 import {
