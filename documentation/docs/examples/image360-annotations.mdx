@@ -12,7 +12,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal only considers annotations following specific requirements. For an annotation to be found by Reveal, it must have its `annotatedResourceId` set to the ID of an image file belonging to the 360 image set. Furthermore, `annotatedResourceType` must be `"file"` and `annotationType` must be either `"images.ObjectDetection"` or `"images.AssetLink`". Currently, only annotations containing either a `boundingBox` or a `polygon` is supported, `polyline` annotations will not be displayed. Refer to  [the CDF documentation](https://docs.cognite.com/api/v1/#tag/Annotations/operation/annotationsCreate) for details on the annotation types.
 
-Annotations are represented by `Image360Annotation` instances. The annotations associated with a given entity revision can be queried with the `annotations` property.
+Annotations are represented by `Image360Annotation` instances. The annotations associated with a given entity revision can be queried with the `getAnnotations()` method on the `Image360Revision` instance.
 
 ## Styling Annotations
 
