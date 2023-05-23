@@ -5,12 +5,17 @@ import { ResourceType } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
+  useEventsSearchResultQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 import { ResourceDetailsTemplate } from '@data-exploration/components';
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import { FileDetailsTable, TimeseriesDetailsTable } from '../../DetailsTable';
+import {
+  EventDetailsTable,
+  FileDetailsTable,
+  TimeseriesDetailsTable,
+} from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
 
 interface Props {
@@ -34,7 +39,6 @@ export const AssetDetails: FC<Props> = ({
     const link = createLink(`/explore/search/${resourceType}/${id}`);
     window.open(link, '_blank');
   };
-
   const filter = { assetSubtreeIds: [{ value: assetId }] };
   const {
     results: relatedFiles = [],
@@ -52,6 +56,16 @@ export const AssetDetails: FC<Props> = ({
     isLoading: isTimeseriesLoading,
   } = useTimeseriesSearchResultQuery({
     filter,
+    limit: 10,
+  });
+
+  const {
+    data: relatedEvents = [],
+    hasNextPage: eventHasNextPage,
+    fetchNextPage: eventFetchNextPage,
+    isLoading: isEventLoading,
+  } = useEventsSearchResultQuery({
+    eventsFilters: filter,
     limit: 10,
   });
 
@@ -95,6 +109,18 @@ export const AssetDetails: FC<Props> = ({
               fetchMore={timeseriesFetchNextPage}
               hasNextPage={timeseriesHasNextPage}
               isLoadingMore={isTimeseriesLoading}
+            />
+          </Wrapper>
+        </Collapse.Panel>
+        <Collapse.Panel header={<h4>Events</h4>}>
+          <Wrapper>
+            <EventDetailsTable
+              id="related-event-asset-details"
+              data={relatedEvents}
+              onRowClick={(event) => onOpenResources('event', event.id)}
+              fetchMore={eventFetchNextPage}
+              hasNextPage={eventHasNextPage}
+              isLoadingMore={isEventLoading}
             />
           </Wrapper>
         </Collapse.Panel>
