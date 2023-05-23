@@ -6,7 +6,7 @@ import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
 import { Button, Input, Skeleton } from '@cognite/cogs.js';
-import { Illustrations } from '@cognite/cogs.js-v9';
+import { Illustrations, Pagination } from '@cognite/cogs.js-v9';
 import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -17,10 +17,17 @@ import { useAppDispatch } from 'store/hooks';
 import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
+import {
+  INITIAL_ITEMS_PER_PAGE,
+  getTotalPages,
+  paginateData,
+} from 'utils/pagination';
 
 import { LabelsFilter } from './LabelsFilter';
 
 import type { AppLocationGenerics } from 'routes';
+
+type ItemsPerPage = React.ComponentProps<typeof Pagination>['itemsPerPage'];
 
 export function ModelLibrary() {
   const dispatch = useAppDispatch();
@@ -37,6 +44,10 @@ export function ModelLibrary() {
   >([]);
 
   const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(
+    INITIAL_ITEMS_PER_PAGE
+  );
 
   const [isModelFileDeleted, setIsModelFileDeleted] = useState<boolean>(false);
   const {
@@ -97,6 +108,17 @@ export function ModelLibrary() {
     });
   }
 
+  const onPageChange = (page: number) => {
+    setPageNumber(page);
+  };
+
+  const setItemPerPage = (itemsPerPage: number) => {
+    setItemsPerPage(itemsPerPage as ItemsPerPage);
+  };
+
+  const slicedModelFiles = paginateData(modelFileList, pageNumber);
+  const totalPages = getTotalPages(modelFileList);
+
   return (
     <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
@@ -118,7 +140,7 @@ export function ModelLibrary() {
           </div>
         )}
         <div className="header">
-          <span className="header-title">Search models</span>
+          <span className="header-title">Search models {pageNumber}</span>
           <div className="form">
             <Input
               icon="Search"
@@ -143,9 +165,15 @@ export function ModelLibrary() {
         <div className="model-list">
           <ModelList
             isModalLibraryEmpty={isModalLibraryEmpty}
-            modelFiles={modelFileList}
+            modelFiles={slicedModelFiles}
           />
         </div>
+        <PaginationStyled
+          itemsPerPage={itemsPerPage}
+          setItemPerPage={setItemPerPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </ModelLibrarySidebar>
       <ModelLibraryContent>
         <ModelDetails
@@ -171,6 +199,17 @@ export function ModelLibrary() {
     </ModelLibraryContainer>
   );
 }
+
+const PaginationStyled = styled(Pagination)`
+  & {
+    scale: 0.8;
+    position: absolute;
+    bottom: 0;
+    padding-top: 10px;
+    background: white;
+    padding-bottom: 10px;
+  }
+`;
 
 const ModelLibraryContainer = styled.div`
   display: flex;
@@ -229,8 +268,9 @@ const ModelLibrarySidebar = styled.aside`
   .model-list {
     padding: 24px;
     padding-top: 12px;
+    padding-bottom: 0;
     overflow: auto;
-    height: calc(100vh - 20.8rem);
+    height: calc(100vh - 380px);
   }
 `;
 

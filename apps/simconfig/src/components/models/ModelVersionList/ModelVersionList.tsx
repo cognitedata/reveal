@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -8,11 +9,17 @@ import styled from 'styled-components/macro';
 
 import type { CollapsePanelProps } from '@cognite/cogs.js';
 import { Collapse, Icon, Label, Skeleton, Tooltip } from '@cognite/cogs.js';
-import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
+import { Pagination } from '@cognite/cogs.js-v9';
+import type { ModelFile, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelVersionDetails } from 'components/models';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import {
+  INITIAL_ITEMS_PER_PAGE,
+  getTotalPages,
+  paginateData,
+} from 'utils/pagination';
 
 interface ModelVersionListProps {
   simulator: Simulator;
@@ -20,6 +27,7 @@ interface ModelVersionListProps {
 }
 
 const DESCRIPTION_CUTOFF_LENGTH = 125;
+type ItemsPerPage = React.ComponentProps<typeof Pagination>['itemsPerPage'];
 
 export function ModelVersionList({
   modelName,
@@ -27,6 +35,19 @@ export function ModelVersionList({
 }: ModelVersionListProps) {
   const project = useSelector(selectProject);
   const { search } = useMatch();
+
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(
+    INITIAL_ITEMS_PER_PAGE
+  );
+
+  const setItemPerPage = (itemsPerPage: number) => {
+    setItemsPerPage(itemsPerPage as ItemsPerPage);
+  };
+
+  const onPageChange = (page: number) => {
+    setPageNumber(page);
+  };
 
   const { data, isFetching } = useGetModelFileVersionListQuery({
     project,
@@ -43,6 +64,13 @@ export function ModelVersionList({
     return <Skeleton.List lines={4} borders />;
   }
 
+  const slicedModels = paginateData(
+    data?.modelFileList ?? [],
+    pageNumber
+  ) as ModelFile[];
+
+  const totalPages = getTotalPages(data?.modelFileList ?? []);
+
   return (
     <ModelVersionListContainer>
       <Collapse
@@ -53,8 +81,8 @@ export function ModelVersionList({
         }
         expandIcon={expandIcon}
       >
-        {data?.modelFileList.map((modelFile) => (
-          <Collapse.Panel
+        {slicedModels.map((modelFile) => (
+          <CollapsePanel
             header={
               <div className="version-header">
                 <div className="entry">
@@ -117,13 +145,39 @@ export function ModelVersionList({
             key={`${modelFile.id}-model-version`}
           >
             <ModelVersionDetails modelFile={modelFile} />
-          </Collapse.Panel>
+          </CollapsePanel>
         ))}
       </Collapse>
+
+      <PaginationStyled
+        itemsPerPage={itemsPerPage}
+        setItemPerPage={setItemPerPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </ModelVersionListContainer>
   );
 }
 
+const PaginationStyled = styled(Pagination)`
+  & {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - 200px);
+    padding-bottom: 10px;
+    padding-top: 10px;
+    scale: 0.9;
+  }
+`;
+
+const CollapsePanel = styled(Collapse.Panel)`
+  & {
+    .rc-collapse-content-box {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+  }
+`;
 const ModelVersionListContainer = styled.div`
   .version-header {
     .entry {

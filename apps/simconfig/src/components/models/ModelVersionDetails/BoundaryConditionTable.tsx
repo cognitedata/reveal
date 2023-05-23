@@ -95,9 +95,6 @@ const BoundaryConditionsTableContainer = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 6px;
   padding-left: 20px;
-  .entry {
-    margin-top: 20px;
-  }
   .boundary-conditions {
     margin-top: 8px;
     display: flex;
@@ -147,5 +144,5 @@ export const ProcessingStatus = styled(Label)`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 16px;
+  position: relative;
 `;
