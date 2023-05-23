@@ -17,6 +17,8 @@ import {
 import assertNever from './assertNever';
 
 const INITIAL_CONTAINER_MARGIN = 100;
+export const DEFAULT_CONTAINER_MAX_WIDTH = 1000;
+export const DEFAULT_CONTAINER_MAX_HEIGHT = 1000;
 export const DEFAULT_TIMESERIES_HEIGHT = 400;
 export const DEFAULT_TIMESERIES_WIDTH = 700;
 export const DEFAULT_ASSET_WIDTH = 600;
@@ -34,8 +36,8 @@ const getInitialContainerReferenceDimensions = (
     return {
       x: currentMaxX + INITIAL_CONTAINER_MARGIN,
       y: 0,
-      maxWidth: 1000,
-      maxHeight: 1000,
+      maxWidth: DEFAULT_CONTAINER_MAX_WIDTH,
+      maxHeight: DEFAULT_CONTAINER_MAX_HEIGHT,
     };
   }
 
