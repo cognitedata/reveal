@@ -6,7 +6,7 @@ export const IDP_TYPES = [
   'AAD_B2C',
   'KEYCLOAK',
 ] as const;
-export type IDPType = typeof IDP_TYPES[number];
+export type IDPType = (typeof IDP_TYPES)[number];
 
 export type LoginInfoError = { status?: number; body: any };
 

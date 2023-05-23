@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useContext } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type LoginUtilState = {};
 
 export const LoginUtilContext = createContext<LoginUtilState>(

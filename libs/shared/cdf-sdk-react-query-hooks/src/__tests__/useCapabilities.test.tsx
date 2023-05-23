@@ -1,5 +1,5 @@
 import { useSDK } from '../__mocks__/@cognite/sdk-provider';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 
 import { useCapabilities } from '../hooks';
 import { renderWithReactQueryCacheProvider } from '../testUtils';
@@ -44,10 +44,8 @@ describe('useCapabilities', () => {
     const { result, waitFor } = renderHook(() => useCapabilities('AZURE_AD'), {
       wrapper: renderWithReactQueryCacheProvider(),
     });
-    await act(async () => {
-      await waitFor(() => {
-        return result.current.isSuccess;
-      });
+    await waitFor(() => {
+      return result.current.isSuccess;
     });
 
     expect(useSDK().get).toBeCalledTimes(1);
