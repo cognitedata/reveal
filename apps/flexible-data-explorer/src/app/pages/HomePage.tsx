@@ -25,9 +25,12 @@ export const HomePage = () => {
   return (
     <Page>
       <SearchContainer>
-        <Title level={3}>{t('homepage_title', 'Explore all your data')}</Title>
-        <SearchBar />
+        <Title level={3}>
+          {t('homepage_title', 'Explore all your data from')} ...
+        </Title>
+        <SearchBar width="640px" />
       </SearchContainer>
+
       <Page.Body loading={isLoading}>
         <CategoriesContainer>
           <Title level={4}>Categories {data?.length}</Title>
@@ -80,7 +83,7 @@ const SearchContainer = styled.div`
 
 const CategoriesContainer = styled.div`
   height: 10%;
-  padding-top: 40px;
+  padding-top: 24px;
 `;
 
 const CategoryContent = styled.div`

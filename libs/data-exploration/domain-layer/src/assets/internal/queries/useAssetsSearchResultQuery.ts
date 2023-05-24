@@ -18,10 +18,12 @@ export const useAssetsSearchResultQuery = (
     query,
     assetFilter = {},
     sortBy,
+    limit = DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
   }: {
     query?: string;
     assetFilter: InternalAssetFilters;
     sortBy?: TableSortBy[];
+    limit?: number;
   },
   options?: UseInfiniteQueryOptions,
   searchConfig?: AssetConfigType
@@ -43,7 +45,7 @@ export const useAssetsSearchResultQuery = (
       filter,
       advancedFilter,
       sort,
-      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+      limit,
     },
     {
       ...options,

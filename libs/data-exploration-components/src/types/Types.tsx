@@ -41,6 +41,7 @@ export function convertResourceType(type?: ResourceType): SdkResourceType {
     case 'event': {
       return 'events';
     }
+
     default: {
       throw new Error(`Unknown ResourceType: ${type}`);
     }
