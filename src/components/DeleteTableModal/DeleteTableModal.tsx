@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 
 import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
 import { notification } from 'antd';
@@ -99,7 +99,7 @@ const DeleteTableModal = ({
           <StyledConfirmCheckbox
             checked={isConfirmed}
             name="confirm-delete-table"
-            onChange={() => handleConfirmCheckboxChange}
+            onChange={(e) => handleConfirmCheckboxChange(e.target.checked)}
           >
             {t('delete-table-modal-confirm')}
           </StyledConfirmCheckbox>

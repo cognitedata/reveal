@@ -271,7 +271,7 @@ const CreateTableModal = ({
         }
         maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
         onCancel={handleCancel}
-        title={t('create-table-modal-title')}
+        title={<Title level={5}>{t('create-table-modal-title')}</Title>}
         visible={visible}
         {...modalProps}
         width={CREATE_TABLE_MODAL_WIDTH}
