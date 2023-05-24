@@ -12,6 +12,7 @@ import {
 import { get360ImageCollectionsQuery } from './listCollections';
 import { Euler, Matrix4 } from 'three';
 import zip from 'lodash/zip';
+import { cadFromCdfToThreeMatrix } from '@reveal/utilities/src/constants';
 
 export type DM360Identifier = DM360CollectionIdentifier | DM360SiteIdentifier;
 
@@ -112,11 +113,11 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Identi
       })
     );
 
-    const image360FileDescriptors = zip(faceExternalIds, fileInfos).map(([a, b]) => {
+    const image360FileDescriptors = zip(faceExternalIds, fileInfos).map(([faceMetadata, fileInfo]) => {
       const q: Image360FileDescriptor = {
-        face: a!.face as Image360FileDescriptor['face'],
-        fileId: b!.id!,
-        mimeType: b!.mimeType as Image360FileDescriptor['mimeType']
+        face: faceMetadata!.face as Image360FileDescriptor['face'],
+        fileId: fileInfo!.id!,
+        mimeType: fileInfo!.mimeType as Image360FileDescriptor['mimeType']
       };
       return q;
     });
@@ -131,7 +132,7 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Identi
   ): Image360EventDescriptor {
     const transform = getTranslation();
     transform.multiply(getEulerRotation());
-    // TODO: convert from CDF space to threejs;
+    transform.premultiply(cadFromCdfToThreeMatrix);
     return {
       collectionId,
       collectionLabel,
