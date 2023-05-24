@@ -1,9 +1,14 @@
 import React from 'react';
 import { Document, DocumentTable } from '@cognite/react-document-table';
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  LOADING_RESULTS,
+  REFINE_FILTERS_OR_UPDATE_SEARCH,
+} from '@data-exploration-lib/core';
 import { docTypes } from './docTypes';
 import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import { FileInfo } from '@cognite/sdk/dist/src';
+import { EmptyState } from '@data-exploration/components';
 
 type FileGroupingTableProps = {
   data?: FileInfo[];
@@ -34,7 +39,7 @@ export const FileGroupingTable = ({
   data,
   onItemClicked,
 }: FileGroupingTableProps) => {
-  const { results: documents } = useDocumentSearchResultQuery(
+  const { results: documents, isLoading } = useDocumentSearchResultQuery(
     {
       filter,
       query,
@@ -53,6 +58,14 @@ export const FileGroupingTable = ({
     return { id, metadata, directory, source, name };
   });
   const docs: Document[] = convertFilesToDocs(files || data);
+
+  if (isLoading) {
+    return <EmptyState isLoading title={LOADING_RESULTS} />;
+  }
+
+  if (docs.length === 0) {
+    return <EmptyState body={REFINE_FILTERS_OR_UPDATE_SEARCH} />;
+  }
 
   return (
     <DocumentTable
