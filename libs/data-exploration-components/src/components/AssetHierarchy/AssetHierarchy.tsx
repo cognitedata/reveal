@@ -199,7 +199,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       data = [],
       isLoading,
       isError,
-    } = !retrieveRootAssetsQuery.isIdle
+    } = !(retrieveRootAssetsQuery.fetchStatus === 'idle')
       ? retrieveRootAssetsQuery
       : listRootAssetsQuery;
 
@@ -213,7 +213,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       return;
     }
 
-    const rootAssets = !listRootAssetsQuery.isIdle
+    const rootAssets = !(listRootAssetsQuery.fetchStatus === 'idle')
       ? (data as ListResponse<Asset[]>).items
       : (data as Asset[]);
 
