@@ -33,7 +33,10 @@ import {
   isSuggestedTaggedAnnotation,
   isTaggedAnnotationAnnotation,
 } from '../containers/Files/FilePreview/migration/utils';
-import { useAnnotations } from '@data-exploration-lib/domain-layer';
+import {
+  useAnnotations,
+  useDocumentFilteredAggregateCount,
+} from '@data-exploration-lib/domain-layer';
 import { TaggedAnnotation } from '@data-exploration-lib/core';
 
 const PAGE_SIZE = 20;
@@ -477,13 +480,12 @@ export const useTaggedAnnotationCount = (
 
 export const useRelatedResourceCount = (
   resource: ResourceItem,
-  tabType: ResourceType,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isAdvancedFiltersEnabled = false
+  tabType: ResourceType
 ) => {
   const isAsset = resource.type === 'asset';
   const isFile = resource.type === 'file';
   const isAssetTab = tabType === 'asset';
+  const isFileTab = tabType === 'file';
 
   const {
     data: linkedResourceCount,
@@ -492,7 +494,19 @@ export const useRelatedResourceCount = (
   } = useAggregate(
     convertResourceType(tabType),
     { assetSubtreeIds: [{ id: resource.id }] },
-    { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
+    { enabled: isAsset && !isFileTab && !!resource.id, staleTime: 60 * 1000 }
+  );
+
+  const {
+    data: fileCount,
+    isFetched: isFileCountFetched,
+    isLoading: isFileCountLoading,
+  } = useDocumentFilteredAggregateCount(
+    {
+      filters: { assetSubtreeIds: [{ value: resource.id }] },
+    },
+    undefined,
+    { enabled: isFileTab }
   );
 
   const {
@@ -527,13 +541,15 @@ export const useRelatedResourceCount = (
     isLinkedResourceFetched &&
     isRelationshipFetched &&
     isResourceFetched &&
-    isAnnotationFetched;
+    isAnnotationFetched &&
+    isFileCountFetched;
 
   const isLoading =
     isLinkedResourceLoading &&
     isRelationshipLoading &&
     isResourceLoading &&
-    isAnnotationLoading;
+    isAnnotationLoading &&
+    isFileCountLoading;
 
   let count = relationships.length;
 
@@ -553,6 +569,10 @@ export const useRelatedResourceCount = (
 
   if (isFile && annotationCount) {
     count += annotationCount;
+  }
+
+  if (isFileTab && fileCount) {
+    count += fileCount;
   }
 
   return {

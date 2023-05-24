@@ -9,6 +9,7 @@ import {
   FileConfigType,
   InternalDocumentFilter,
 } from '@data-exploration-lib/core';
+import { UseQueryOptions } from '@tanstack/react-query';
 
 export const useDocumentFilteredAggregateCount = (
   {
@@ -18,7 +19,8 @@ export const useDocumentFilteredAggregateCount = (
     filters?: InternalDocumentFilter;
     query?: string;
   },
-  searchConfig?: FileConfigType
+  searchConfig?: FileConfigType,
+  options?: UseQueryOptions
 ) => {
   const sdk = useSDK();
 
@@ -36,6 +38,9 @@ export const useDocumentFilteredAggregateCount = (
         },
         sdk
       );
+    },
+    {
+      ...(options as any),
     }
   );
 };

@@ -25,6 +25,8 @@ import { ColumnToggle } from './components';
 import {
   DATA_EXPLORATION_COMPONENT,
   EMPTY_OBJECT,
+  LOADING_RESULTS,
+  REFINE_FILTERS_OR_UPDATE_SEARCH,
   isElementHorizontallyInViewport,
   useMetrics,
 } from '@data-exploration-lib/core';
@@ -329,13 +331,11 @@ export function Table<T extends TableData>({
 
   const renderTableContent = () => {
     if (isDataLoading) {
-      return <EmptyState isLoading title="Loading results" />;
+      return <EmptyState isLoading title={LOADING_RESULTS} />;
     }
 
     if (!data || data.length === 0) {
-      return (
-        <EmptyState body="Please, refine your filters or update the search parameters" />
-      );
+      return <EmptyState body={REFINE_FILTERS_OR_UPDATE_SEARCH} />;
     }
     if (!getIsSomeColumnsVisible()) {
       return <EmptyState body="Please, select your columns" />;
