@@ -5,7 +5,7 @@ import { InputType, ValueType } from '../../../types';
 
 export const isApplyButtonDisabled = <T extends InputType>(
   inputType: T,
-  value: ValueType<T>
+  value?: ValueType<T>
 ) => {
   if (inputType === 'boolean' || inputType === 'no-input') {
     return false;

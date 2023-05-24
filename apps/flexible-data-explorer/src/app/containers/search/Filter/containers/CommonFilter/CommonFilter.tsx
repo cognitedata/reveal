@@ -39,7 +39,11 @@ export const CommonFilter = <
       <Select<TOperator>
         options={operators}
         value={operator}
-        onChange={setOperator}
+        onChange={(newValue) => {
+          if (newValue) {
+            setOperator(newValue);
+          }
+        }}
       />
 
       <CommonFilterInput type={inputType} value={value} onChange={setValue} />

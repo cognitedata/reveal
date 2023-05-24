@@ -50,7 +50,7 @@ export type ApplyFilterCallback<TConfig extends BaseConfig> = <
   K extends keyof TConfig
 >(
   operator: K,
-  value: ValueType<TConfig[K]>
+  value?: ValueType<TConfig[K]>
 ) => void;
 
 export interface BaseFilterProps<TConfig extends BaseConfig> {

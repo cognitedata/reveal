@@ -17,6 +17,6 @@ export const getMenuItemIcon = (type: FieldType): IconType => {
       return 'Calendar';
 
     default:
-      return undefined;
+      return 'Placeholder';
   }
 };
