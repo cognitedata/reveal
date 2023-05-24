@@ -10,13 +10,13 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 ### Annotation requirements
 
-Reveal only considers annotations following specific requirements. For an annotation to be found by Reveal, it must have its `annotatedResourceId` set to the ID of an image file belonging to the 360 image set. Furthermore, `annotatedResourceType` must be `"file"` and `annotationType` must be `"images.ObjectDetection"`. The annotation's `data` field must be assigned to an `Images.ObjectDetection` object. Currently, only `Images.ObjectDetection` objects containing either a `boundingBox` or a `polygon` is supported, `polyline` annotations will not be displayed. See [the CDF documentation](https://docs.cognite.com/api/v1/#tag/Annotations/operation/annotationsCreate) for more information.
+Reveal only considers annotations following specific requirements. For an annotation to be found by Reveal, it must have its `annotatedResourceId` set to the ID of an image file belonging to the 360 image set. Furthermore, `annotatedResourceType` must be `"file"` and `annotationType` must be either `"images.ObjectDetection"` or `"images.AssetLink`". Currently, only annotations containing either a `boundingBox` or a `polygon` is supported, `polyline` annotations will not be displayed. Refer to  [the CDF documentation](https://docs.cognite.com/api/v1/#tag/Annotations/operation/annotationsCreate) for details on the annotation types.
 
-Annotations are represented by `Image360Annotation` instances. The annotations associated with a given entity revision can be listed with the `revision.annotations` property.
+Annotations are represented by `Image360Annotation` instances. The annotations associated with a given entity revision can be queried with the `getAnnotations()` method on the `Image360Revision` instance.
 
 ## Styling Annotations
 
-By default, annotations are assigned a random color, grouped by the annotations' `data.label` property.
+By default, annotations are assigned a random color, grouped by the annotations' `data.label` or `data.text` property.
 
 The appearance of annotations can be changed both through a "default" style and through styling annotations individually.
 
@@ -29,33 +29,42 @@ To set a default style for all annotations in an `Image360Collection`, you may c
 | Field        | Field type                | Description                                      |
 |--------------|---------------------------|--------------------------------------------------|
 | `color`      | `THREE.Color?`            | The color of the annotation                      |
-| `visibility` | `boolean?`                | Whether the annotation should be visible or not  |
+| `visible`    | `boolean?`                | Whether the annotation should be visible or not  |
 
 Leaving any of the fields undefined causes the annotations to revert to the original value for that property.
 
 Using this, we can e.g. hide all annotations using
 
 ```js
-collection.setDefaultAnnotationStyle({ visibility: false });
+collection.setDefaultAnnotationStyle({ visible: false });
 ```
 
 ### Individual style
 
-Setting individual style can be done directly on an `Image360Annotation` object. Styling fields set this way will override those of the default appearance. To e.g. hide all annotations in a revision with the label `"pipe"`, you may write
+Setting individual style can be done directly on an `Image360Annotation` object. Styling fields set this way will override those of the default appearance. E.g. to hide all annotations created by `'user0'` in a revision, you may write
 
 ```js
-revision.annotations
-  .filter(a => a.annotation.data.label === 'pipe')
-  .forEach(a => a.setVisibility(false));
+revision
+  .getAnnotations()
+  .then(annotations =>
+    annotations
+      .filter(annotation => annotation.annotation.creatingUser === 'user0')
+      .forEach(annotation => annotation.setVisible(false))
+  );
 ```
 
-## Events
+## Mouse pointer interaction
 
-Reveal exposes events that trigger on cursor-annotation interactions, namely `'image360AnnotationHovered'` and `'image360AnnotationClicked'` events. They represent events where the mouse pointer hovers over or clicks an annotation, respectively. The user may listen for these events on the `Image360Collection` instance.
+The application may react to mouse interactions with annotations by subscribing to e.g. click-events on the viewer object, and subsequently using the received mouse position in the `get360AnnotationIntersectionFromPixel` method on the `Cognite3DViewer` instance. Note that this method will only check interactions with annotations that are associated with the current image360 revision and visible.
 
 To e.g. color every clicked annotation with a blue color, you may write
 
 ```js
-collection.on('image360AnnotationClicked',
-              a => a.setColor(new THREE.Color(0, 0, 1)));
+viewer.on('click', event => {
+  viewer.get360AnnotationIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  ).then(
+    intersection => intersection?.annotation.setColor(new THREE.Color(0, 0, 1))
+  );
+});
 ```
