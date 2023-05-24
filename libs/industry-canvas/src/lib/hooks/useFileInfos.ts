@@ -4,10 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useFileInfos = (fileIds: number[]) => {
   const sdk = useSDK();
-  const result = useQuery<FileInfo[]>(`canvas-files-${fileIds.join(',')}`, () =>
-    fileIds.length === 0
-      ? []
-      : sdk.files.retrieve(fileIds.map((id) => ({ id })))
+  const result = useQuery<FileInfo[]>(
+    [`canvas-files-${fileIds.join(',')}`],
+    () =>
+      fileIds.length === 0
+        ? []
+        : sdk.files.retrieve(fileIds.map((id) => ({ id })))
   );
 
   return result;
