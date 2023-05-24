@@ -1,4 +1,4 @@
-import { UseQueryOptions } from 'react-query';
+import { UseQueryOptions } from '@tanstack/react-query';
 
 export interface OptionType {
   label?: string;

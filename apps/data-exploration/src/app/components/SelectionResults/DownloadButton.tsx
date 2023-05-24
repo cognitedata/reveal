@@ -3,7 +3,7 @@ import { Dropdown, Menu, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { baseCacheKey, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ResourceType, convertResourceType } from '@cognite/data-exploration';
 import { InternalId, Timeseries } from '@cognite/sdk';
 

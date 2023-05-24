@@ -5,7 +5,7 @@ import { useEventsListQuery } from '../../service';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import { mapTableSortByToEventSortFields } from '../transformers';
 import { mapInternalFilterToEventsFilter } from '../transformers';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   EventConfigType,
   InternalEventsFilters,

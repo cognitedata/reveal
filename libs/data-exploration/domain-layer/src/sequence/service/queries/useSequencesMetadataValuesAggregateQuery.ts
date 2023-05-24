@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { SequencesMetadataAggregateResponse } from '../types';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { queryKeys } from '../../../queryKeys';
 import { getSequencesMetadataValuesAggregate } from '../network/getSequencesMetadataValuesAggregate';
 import isEmpty from 'lodash/isEmpty';

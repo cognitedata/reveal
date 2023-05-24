@@ -5,7 +5,7 @@ import {
   isSimilarBoundingBox,
 } from '@cognite/unified-file-viewer';
 import { useMemo } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import { isNotUndefined } from '@data-exploration-components/utils/index';
 import {

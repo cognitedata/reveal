@@ -1,5 +1,5 @@
 import { useAssetsMetadataValuesAggregateQuery } from '../../service';
-import { UseQueryOptions } from 'react-query';
+import { UseQueryOptions } from '@tanstack/react-query';
 import { InternalAssetFilters } from '@data-exploration-lib/core';
 import { mapFiltersToAssetsAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';

@@ -1,5 +1,5 @@
 import { InternalAssetFilters } from '@data-exploration-lib/core';
-import { UseQueryOptions } from 'react-query';
+import { UseQueryOptions } from '@tanstack/react-query';
 import { useEventsMetadataValuesAggregateQuery } from '../../service';
 import omit from 'lodash/omit';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';

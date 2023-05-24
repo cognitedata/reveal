@@ -18,7 +18,7 @@ import {
   ViewerState,
 } from '@cognite/reveal';
 import { Alert } from 'antd';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
 import { usePrevious } from '@cognite/data-exploration';

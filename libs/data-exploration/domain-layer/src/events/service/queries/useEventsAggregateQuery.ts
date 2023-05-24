@@ -5,7 +5,7 @@ import {
   getEventsAggregate,
 } from '@data-exploration-lib/domain-layer';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
 import { EventFilter } from '@cognite/sdk';
 import { AdvancedFilter } from '@data-exploration-lib/domain-layer';

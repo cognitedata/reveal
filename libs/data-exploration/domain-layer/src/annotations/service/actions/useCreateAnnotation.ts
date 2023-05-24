@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useContext } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { CogniteClient } from '@cognite/sdk';
 import uniq from 'lodash/uniq';
 import {

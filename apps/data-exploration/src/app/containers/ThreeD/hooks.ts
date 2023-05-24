@@ -20,7 +20,7 @@ import {
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
 import {
   CogniteCadModel,

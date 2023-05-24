@@ -2,7 +2,7 @@ import { AnnotationModel } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { ContainerConfig, ContainerType } from '@cognite/unified-file-viewer';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
   const sdk = useSDK();

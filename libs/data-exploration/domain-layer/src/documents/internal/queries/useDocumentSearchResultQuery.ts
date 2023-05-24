@@ -8,7 +8,7 @@ import {
 import { DocumentSearchItem } from '@cognite/sdk';
 
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { useDocumentSearchQuery } from '../../service';
 import {
   EMPTY_OBJECT,

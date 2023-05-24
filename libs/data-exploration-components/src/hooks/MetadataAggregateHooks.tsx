@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { AggregateResponse } from '@cognite/sdk';
 import {
   InternalAssetFilters,

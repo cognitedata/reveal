@@ -8,7 +8,10 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { InternalSortBy } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
 
 export const useTimeseriesListQuery = (
   {

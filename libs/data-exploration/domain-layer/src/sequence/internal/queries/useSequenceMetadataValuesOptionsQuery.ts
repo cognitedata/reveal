@@ -1,5 +1,5 @@
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
-import { UseQueryOptions } from 'react-query';
+import { UseQueryOptions } from '@tanstack/react-query';
 import { useSequencesMetadataValuesAggregateQuery } from '../../service';
 import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';

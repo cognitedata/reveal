@@ -5,7 +5,10 @@ import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { InternalSortBy } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
 import { getAssetsList } from '../network';
 
 export const useAssetsListQuery = (

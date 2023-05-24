@@ -1,5 +1,5 @@
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
-import { UseQueryOptions } from 'react-query';
+import { UseQueryOptions } from '@tanstack/react-query';
 import { useTimeseriesMetadataValuesAggregateQuery } from '../../service';
 import omit from 'lodash/omit';
 import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';

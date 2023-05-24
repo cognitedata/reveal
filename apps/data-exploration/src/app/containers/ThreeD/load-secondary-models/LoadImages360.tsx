@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
 
 import { Cognite3DViewer, Image360Collection } from '@cognite/reveal';
-import { useQueries, useQueryClient, UseQueryOptions } from 'react-query';
+import {
+  useQueries,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 
 import {
   getImages360AppliedStateQueryKey,
@@ -47,34 +51,36 @@ const LoadImages360 = ({
         | undefined
       )[]
     >[]
-  >(
-    images360.map(({ applied, siteId, rotationMatrix, translationMatrix }) => ({
-      queryKey: getImages360AppliedStateQueryKey(
-        siteId,
-        applied,
-        rotationMatrix,
-        translationMatrix
-      ),
-      queryFn: getImages360QueryFn(
-        queryClient,
-        viewer,
-        siteId,
-        applied,
-        imageEntities,
-        setImageEntities,
-        is360ImagesMode,
-        setIs360ImagesMode,
-        rotationMatrix,
-        translationMatrix
-      ),
-    }))
-  );
+  >({
+    queries: images360.map(
+      ({ applied, siteId, rotationMatrix, translationMatrix }) => ({
+        queryKey: getImages360AppliedStateQueryKey(
+          siteId,
+          applied,
+          rotationMatrix,
+          translationMatrix
+        ),
+        queryFn: getImages360QueryFn(
+          queryClient,
+          viewer,
+          siteId,
+          applied,
+          imageEntities,
+          setImageEntities,
+          is360ImagesMode,
+          setIs360ImagesMode,
+          rotationMatrix,
+          translationMatrix
+        ),
+      })
+    ),
+  });
 
   useRevealError(result);
 
   useEffect(() => {
     return () => {
-      queryClient.invalidateQueries(IMAGES_360_BASE_QUERY_KEY);
+      queryClient.invalidateQueries([IMAGES_360_BASE_QUERY_KEY]);
     };
   }, [queryClient]);
 

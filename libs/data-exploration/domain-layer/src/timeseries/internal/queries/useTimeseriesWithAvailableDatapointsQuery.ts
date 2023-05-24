@@ -1,5 +1,5 @@
 import { TableSortBy } from '../../../types';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { useTimeseriesSearchResultWithLabelsQuery } from './useTimeseriesSearchResultWithLabelsQuery';
 import { useTimeseriesWithDatapointsQuery } from './useTimeseriesWithDatapointsQuery';
 import {

@@ -5,7 +5,11 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import { useQueries, useQueryClient, UseQueryOptions } from 'react-query';
+import {
+  useQueries,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 
 import {
   SECONDARY_MODEL_BASE_QUERY_KEY,
@@ -38,8 +42,8 @@ const LoadSecondaryModels = ({
       boolean | undefined,
       (string | number | boolean | undefined)[]
     >[]
-  >(
-    secondaryModels.map(({ applied, modelId, revisionId }) => ({
+  >({
+    queries: secondaryModels.map(({ applied, modelId, revisionId }) => ({
       queryKey: getSecondaryModelAppliedStateQueryKey(
         modelId,
         revisionId,
@@ -54,14 +58,14 @@ const LoadSecondaryModels = ({
         setLoadedSecondaryModels,
         applied
       ),
-    }))
-  );
+    })),
+  });
 
   useRevealError(result);
 
   useEffect(() => {
     return () => {
-      queryClient.invalidateQueries(SECONDARY_MODEL_BASE_QUERY_KEY);
+      queryClient.invalidateQueries([SECONDARY_MODEL_BASE_QUERY_KEY]);
     };
   }, [queryClient]);
 

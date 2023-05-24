@@ -1,6 +1,10 @@
 import { CogniteError } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, useQueryClient, UseQueryOptions } from 'react-query';
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { useEffect } from 'react';
 import uniqWith from 'lodash/uniqWith';
 

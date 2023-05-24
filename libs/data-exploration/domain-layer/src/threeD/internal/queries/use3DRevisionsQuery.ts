@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Revision3DWithIndex, RevisionOpts } from '../types';
 
 const getRevisionKey = (id?: number) => ['cdf', '3d', 'model', id, 'revisions'];
