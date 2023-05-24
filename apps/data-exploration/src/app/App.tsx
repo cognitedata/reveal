@@ -1,8 +1,9 @@
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+
 import GlobalStyle from '@data-exploration-app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
