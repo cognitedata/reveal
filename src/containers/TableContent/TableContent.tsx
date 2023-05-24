@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Colors, Flex, Icon, Tabs } from '@cognite/cogs.js';
+import { Colors, Flex, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { Spreadsheet } from 'containers/Spreadsheet';
@@ -26,23 +26,15 @@ const TableContent = () => {
         onTabClick={(view, _) => update([database, table, view])}
         activeKey={view || 'spreadsheet'}
         tabPosition="top"
-        // renderTabBar={(props, TabBarComponent) => (
-        //   <TopBar justifyContent="space-between" alignItems="center">
-        //     <TableHeader title={database} subtitle={table} />
-        //     <TabBarComponent {...props} />
-        //   </TopBar>
-        // )}
       >
-        {/* <TopBar justifyContent="space-between" alignItems="center">
-          <TableHeader title={database} subtitle={table} /> */}
-        {/* <TabBarComponent {...props} /> */}
-        {/* </TopBar> */}
-        {/* <div css={{ position: 'relative', right: 0, top:  }}> */}
+        <TopBar justifyContent="space-between" alignItems="center">
+          <TableHeader title={database} subtitle={table} />
+        </TopBar>
         <StyledTab
           tabKey="spreadsheet"
           iconLeft="DataTable"
           label={t('tab-table')}
-          // style={{ overflow: 'auto' }}
+          style={{ overflow: 'auto' }}
         >
           <Spreadsheet />
         </StyledTab>
@@ -50,32 +42,14 @@ const TableContent = () => {
           tabKey="profiling"
           iconLeft={isFetching ? 'Loader' : 'Profiling'}
           label={t('tab-profile')}
-          // tab={<TabProfiling isFetching={isFetching} isEmpty={isEmpty} />}
           style={{ overflow: 'auto', display: 'inline-flex' }}
           disabled={isEmpty}
         >
           <Profiling key={`${database}_${table}`} />
         </StyledTab>
-        {/* </div> */}
       </StyledTabs>
       <div css={{ backgroundColor: 'green', width: '100%' }}>'test'</div>
     </Wrapper>
-  );
-};
-
-const TabProfiling = ({
-  isFetching,
-  isEmpty,
-}: {
-  isFetching: boolean;
-  isEmpty: boolean;
-}): JSX.Element => {
-  const { t } = useTranslation();
-  return (
-    <Tab $isEmpty={isEmpty}>
-      <Icon type={isFetching ? 'Loader' : 'Profiling'} />
-      {t('tab-profile')}
-    </Tab>
   );
 };
 
@@ -90,18 +64,6 @@ const TopBar = styled(Flex)`
   box-sizing: border-box;
   border-bottom: 1px solid ${Colors['border--interactive--default']};
   background-color: purple;
-`;
-
-const Tab = styled.span<{ $isEmpty?: boolean }>`
-  display: inline-flex;
-  align-content: center;
-  line-height: 17px;
-  font-weight: 500;
-  font-size: 14px;
-  color: ${({ $isEmpty = false }) =>
-    $isEmpty
-      ? Colors['text-icon--interactive--disabled']
-      : Colors['text-icon--medium']};
 `;
 
 const StyledTabs = styled(Tabs)`
