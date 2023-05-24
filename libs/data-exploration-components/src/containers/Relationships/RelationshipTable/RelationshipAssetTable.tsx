@@ -6,10 +6,10 @@ import {
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 
-import { RelationshipTableProps } from './RelationshipTable';
 import { ResultCount } from '@data-exploration-components/components';
 import { ColumnDef } from '@tanstack/react-table';
 import { AssetWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
+import { RelationshipTableProps } from './RelationshipTable';
 
 export function RelationshipAssetTable({
   parentResource,

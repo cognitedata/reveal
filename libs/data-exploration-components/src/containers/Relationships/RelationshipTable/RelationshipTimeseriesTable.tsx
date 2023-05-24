@@ -11,9 +11,9 @@ import {
 
 import { ResultCount } from '@data-exploration-components/components';
 
-import { RelationshipTableProps } from './RelationshipTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
+import { RelationshipTableProps } from './RelationshipTable';
 
 const {
   relationshipLabels,

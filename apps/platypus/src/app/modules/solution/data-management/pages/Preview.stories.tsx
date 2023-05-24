@@ -7,7 +7,6 @@ import {
 } from '@platypus-app/components/Styles/storybook';
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { TypeList } from '../components/TypeList/TypeList';
 import {
   ColDef,
   GetRowIdParams,
@@ -17,6 +16,7 @@ import {
 } from 'ag-grid-community';
 import { Input } from '@cognite/cogs.js';
 import { AgGridReact } from 'ag-grid-react';
+import { TypeList } from '../components/TypeList/TypeList';
 
 const configMock = {
   columns: [

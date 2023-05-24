@@ -1,9 +1,9 @@
+import { Story } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import {
   DataModelSpaceSelect,
   DataModelSpaceSelectProps,
 } from './DataModelSpaceSelect';
-import { Story } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Basic components/DataModelSpaceSelect',

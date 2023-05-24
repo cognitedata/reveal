@@ -1,11 +1,11 @@
 import { Arguments } from 'yargs';
 import updateNotifier from 'update-notifier';
 
+import { enable } from 'debug';
 import { BaseArgs } from '../types';
 import { getConfig } from '../utils/config';
 import { CONSTANTS, ROOT_CONFIG_KEY } from '../constants';
 import { Log } from '../utils/logger';
-import { enable } from 'debug';
 import { track } from '../utils/mixpanel';
 import { getCompleteCommandString } from '../utils/yargs-utils';
 

@@ -5,10 +5,10 @@ import {
   LOADING_RESULTS,
   REFINE_FILTERS_OR_UPDATE_SEARCH,
 } from '@data-exploration-lib/core';
-import { docTypes } from './docTypes';
 import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import { FileInfo } from '@cognite/sdk/dist/src';
 import { EmptyState } from '@data-exploration/components';
+import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {
   data?: FileInfo[];

@@ -14,10 +14,10 @@ import {
   useGetSearchConfigFromLocalStorage,
   DateRangeProps,
 } from '@data-exploration-lib/core';
+import { TableProps } from '@data-exploration/components';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { TimeseriesTable } from './TimeseriesTable';
 import { TimeseriesTableHeader } from './TimeseriesTableHeader';
-import { TableProps } from '@data-exploration/components';
 
 export const TimeseriesSearchResults = ({
   query = '',

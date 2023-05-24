@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { OptionType } from '@cognite/cogs.js';
+import noop from 'lodash/noop';
 import {
   CreateTransformationForm,
   TransformationType,
 } from './CreateTransformationForm';
-import { OptionType } from '@cognite/cogs.js';
-import noop from 'lodash/noop';
 
 type Option = OptionType<any>;
 

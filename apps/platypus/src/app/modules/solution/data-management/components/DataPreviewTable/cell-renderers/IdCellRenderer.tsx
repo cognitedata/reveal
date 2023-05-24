@@ -4,9 +4,9 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { RelationViewer } from '../../RelationViewer/RelationViewer';
 import { useGraphViewerFeatureFlag } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { RelationViewer } from '../../RelationViewer/RelationViewer';
 import { getNodeId } from '../../RelationViewer/utils';
 
 interface IdCellRendererProps extends ICellRendererParams {

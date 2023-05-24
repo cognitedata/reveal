@@ -1,4 +1,3 @@
-import { CompletionItemKind, CompletionList } from './types';
 import {
   CompletionItem,
   getAutocompleteSuggestions,
@@ -8,6 +7,7 @@ import {
 import { IRange, Position } from 'monaco-editor';
 import { buildSchema } from 'graphql';
 import { getBuiltInTypesString } from '@platypus/platypus-common-utils';
+import { CompletionItemKind, CompletionList } from './types';
 
 /**
  * TS class for handling code completion and suggestions.

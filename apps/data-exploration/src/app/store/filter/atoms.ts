@@ -1,10 +1,10 @@
 import { AssetViewMode } from '@data-exploration/containers';
-import { GlobalFilter, GlobalFilterKeys } from './types';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { syncEffect } from 'recoil-sync';
 import { custom } from '@recoiljs/refine';
-import { FILTER } from './constants';
 import { isObjectEmpty } from '@data-exploration-app/utils/compare';
+import { FILTER } from './constants';
+import { GlobalFilter, GlobalFilterKeys } from './types';
 
 const defaultFilterState = {
   asset: {},

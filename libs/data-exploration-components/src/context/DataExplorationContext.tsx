@@ -10,8 +10,8 @@ import {
   MetricsMetadata,
 } from '@data-exploration-lib/core';
 import { Tooltip, Tabs, Select } from '@cognite/cogs.js';
-import { AppContextProvider } from './AppContext';
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
+import { AppContextProvider } from './AppContext';
 
 export type DataExplorationProviderProps = {
   flow: Flow;

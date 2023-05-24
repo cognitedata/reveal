@@ -6,12 +6,12 @@ import {
 } from '@data-exploration-components/types';
 import { FileInfo } from '@cognite/sdk';
 import { FileTable } from '@data-exploration-components/containers';
+import { FileViewSwitcher } from '../SearchResults/FileSearchResults/FileViewSwitcher';
 import {
   FileSwitcherWrapper,
   GroupingTableContainer,
   GroupingTableHeader,
 } from './elements';
-import { FileViewSwitcher } from '../SearchResults/FileSearchResults/FileViewSwitcher';
 
 export const AnnotatedWithTable = ({
   onItemClicked,

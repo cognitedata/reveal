@@ -1,7 +1,7 @@
 import { ComponentStory } from '@storybook/react';
 
-import { CommonFilter } from './CommonFilter';
 import { Operator } from '../../types';
+import { CommonFilter } from './CommonFilter';
 
 export default {
   title:

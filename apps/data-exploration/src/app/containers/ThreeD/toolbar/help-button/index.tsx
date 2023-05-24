@@ -1,13 +1,13 @@
 import { Button, Colors, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { ids } from '../../../../../cogs-variables';
 import {
   MouseNavigation,
   KeyboardNavigation,
   TouchNavigation,
 } from './sections';
-import { ids } from '../../../../../cogs-variables';
-import styled from 'styled-components';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 const HelpButton = (): JSX.Element => {
   return (

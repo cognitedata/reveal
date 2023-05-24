@@ -12,11 +12,11 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { DataModelLibraryItem, library } from './library';
 import { useEffect, useMemo, useState } from 'react';
-import { SchemaVisualizer } from '../SchemaVisualizer/SchemaVisualizer';
 import { GraphqlCodeEditor } from '@platypus-app/modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { SchemaVisualizer } from '../SchemaVisualizer/SchemaVisualizer';
+import { DataModelLibraryItem, library } from './library';
 
 type TagTree = {
   [key in string]: string[];

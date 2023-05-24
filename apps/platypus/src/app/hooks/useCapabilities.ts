@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 
 import { getTenant } from '@platypus-app/utils/tenant-utils';
 import {
@@ -10,6 +9,7 @@ import {
   CombinedSCC,
 } from '@platypus-app/utils/capabilities';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 
 export function useCapabilities<T extends KeysOfSCC>(
   aclName?: T,

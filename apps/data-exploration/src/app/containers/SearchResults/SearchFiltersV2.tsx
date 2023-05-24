@@ -1,10 +1,10 @@
 import React from 'react';
 import { ResourceType } from '@cognite/data-exploration';
-import { useAllFilters } from '../../store/filter/selectors/allSelectors';
 import { SidebarFilters } from '@data-exploration/containers';
 import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { useDebounce } from 'use-debounce';
+import { useAllFilters } from '../../store/filter/selectors/allSelectors';
 
 // import { useFilterState } from 'providers';
 

@@ -4,9 +4,13 @@ import { useList } from '@cognite/sdk-react-query-hooks';
 import {
   AggregatedFilterV2,
   MetadataFilterV2,
+  ByAssetFilterV2,
+  DataSetFilterV2,
+  DateFilterV2,
+  LabelFilterV2,
+  StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
 
-import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 import {
@@ -16,13 +20,7 @@ import {
   SPECIFIC_INFO_CONTENT,
 } from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components';
-import {
-  ByAssetFilterV2,
-  DataSetFilterV2,
-  DateFilterV2,
-  LabelFilterV2,
-  StringFilterV2,
-} from '@data-exploration-components/components/SearchNew';
+import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 
 export const FileFilters = ({
   filter,

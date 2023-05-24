@@ -1,4 +1,11 @@
 import { useMemo } from 'react';
+import { DocumentSearchItem } from '@cognite/sdk';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+import {
+  EMPTY_OBJECT,
+  FileConfigType,
+  InternalDocumentFilter,
+} from '@data-exploration-lib/core';
 import { TableSortBy } from '../../../types';
 import {
   mapFiltersToDocumentSearchFilters,
@@ -6,15 +13,7 @@ import {
   normalize,
 } from '../transformers';
 
-import { DocumentSearchItem } from '@cognite/sdk';
-
-import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { useDocumentSearchQuery } from '../../service';
-import {
-  EMPTY_OBJECT,
-  FileConfigType,
-  InternalDocumentFilter,
-} from '@data-exploration-lib/core';
 
 export const useDocumentSearchResultQuery = (
   {

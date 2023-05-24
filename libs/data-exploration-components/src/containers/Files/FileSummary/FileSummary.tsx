@@ -12,11 +12,11 @@ import { convertResourceType } from '@data-exploration-components/types';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { FileNamePreview } from '../FileTable/FileNamePreview';
 import {
   getHiddenColumns,
   InternalFilesFilters,
 } from '@data-exploration-lib/core';
+import { FileNamePreview } from '../FileTable/FileNamePreview';
 
 export const FileSummary = ({
   query = '',

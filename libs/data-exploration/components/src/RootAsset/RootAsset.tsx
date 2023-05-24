@@ -1,15 +1,15 @@
 import * as React from 'react';
 
-import { RootAssetButton } from './RootAssetButton';
 import { useCallback } from 'react';
 import { Asset } from '@cognite/sdk';
 import { useRootAssetQuery } from '@data-exploration-lib/domain-layer';
-import { LoadingState } from './LoadingState';
 import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { LoadingState } from './LoadingState';
+import { RootAssetButton } from './RootAssetButton';
 
 export interface RootAssetProps {
   assetId?: number;

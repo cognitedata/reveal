@@ -44,10 +44,6 @@ import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
-
-export type OnAddContainerReferences = (
-  containerReferences: ContainerReference[]
-) => void;
 import useManagedTool from './utils/useManagedTool';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
@@ -56,6 +52,10 @@ import {
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
+
+export type OnAddContainerReferences = (
+  containerReferences: ContainerReference[]
+) => void;
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 

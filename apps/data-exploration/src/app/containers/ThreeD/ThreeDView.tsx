@@ -7,31 +7,9 @@ import React, {
 } from 'react';
 
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import Reveal from './Reveal';
-import { AssetMappingsSidebar } from './AssetMappingsSidebar';
-import {
-  ExpandButton,
-  FocusAssetButton,
-  HelpButton,
-  PointToPointMeasurementButton,
-  ShareButton,
-} from './toolbar';
-import { Slicer } from './slicer/Slicer';
-import PointSizeSlider from './point-size-slider/PointSizeSlider';
 
 import styled from 'styled-components';
 import { Colors, Flex } from '@cognite/cogs.js';
-import { ThreeDTitle } from './title/ThreeDTitle';
-import NodePreview, { ResourceTabType } from './NodePreview';
-import {
-  findClosestAsset,
-  fitCameraToAsset,
-  ghostAsset,
-  highlightAsset,
-  highlightAssetMappedNodes,
-  isCadIntersection,
-  removeAllStyles,
-} from './utils';
 
 import {
   CogniteCadModel,
@@ -39,11 +17,8 @@ import {
   Image360Collection,
   Intersection,
 } from '@cognite/reveal';
-import { AssetPreviewSidebar } from './AssetPreviewSidebar';
-import { StyledSplitter } from '../elements';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient } from '@tanstack/react-query';
-import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 
 import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
@@ -56,9 +31,34 @@ import {
   useFlagAssetMappingsOverlays,
   useFlagPointCloudSearch,
 } from '@data-exploration-app/hooks/flags';
-import LoadImages360 from './load-secondary-models/LoadImages360';
-import zIndex from '../../utils/zIndex';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import zIndex from '../../utils/zIndex';
+import { StyledSplitter } from '../elements';
+import LoadImages360 from './load-secondary-models/LoadImages360';
+import { ThreeDContext } from './ThreeDContext';
+import { AssetPreviewSidebar } from './AssetPreviewSidebar';
+import {
+  findClosestAsset,
+  fitCameraToAsset,
+  ghostAsset,
+  highlightAsset,
+  highlightAssetMappedNodes,
+  isCadIntersection,
+  removeAllStyles,
+} from './utils';
+import NodePreview, { ResourceTabType } from './NodePreview';
+import { ThreeDTitle } from './title/ThreeDTitle';
+import PointSizeSlider from './point-size-slider/PointSizeSlider';
+import { Slicer } from './slicer/Slicer';
+import {
+  ExpandButton,
+  FocusAssetButton,
+  HelpButton,
+  PointToPointMeasurementButton,
+  ShareButton,
+} from './toolbar';
+import { AssetMappingsSidebar } from './AssetMappingsSidebar';
+import Reveal from './Reveal';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 
 type Props = {

@@ -1,9 +1,9 @@
+import { KeyValueMap } from '../../boundaries/types';
 import {
   DataModelTransformation,
   DataModelTypeDefsType,
   DataModelVersion,
 } from './types';
-import { KeyValueMap } from '../../boundaries/types';
 import {
   mixerApiBuiltInTypes,
   mixerApiInlineTypeDirectiveName,

@@ -1,9 +1,6 @@
 import * as React from 'react';
 
 import { useTimeseriesFilterOptions } from '@data-exploration-lib/domain-layer';
-import { MultiSelectFilter } from '../MultiSelectFilter';
-import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
-import { transformOptionsForMultiselectFilter } from '../utils';
 import {
   DATA_EXPLORATION_COMPONENT,
   InternalTimeseriesFilters,
@@ -11,6 +8,9 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 import { InputActionMeta } from 'react-select';
+import { MultiSelectFilter } from '../MultiSelectFilter';
+import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
+import { transformOptionsForMultiselectFilter } from '../utils';
 
 interface BaseUnitFilterProps<TFilter>
   extends BaseFilter<TFilter>,

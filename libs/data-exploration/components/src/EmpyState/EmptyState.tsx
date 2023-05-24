@@ -2,8 +2,8 @@ import { Body, Flex, Title } from '@cognite/cogs.js';
 
 import React from 'react';
 import styled from 'styled-components';
-import Loading from './Loading';
 import { SearchEmpty } from '../Graphics';
+import Loading from './Loading';
 
 export interface EmptyStateProps {
   title?: string;

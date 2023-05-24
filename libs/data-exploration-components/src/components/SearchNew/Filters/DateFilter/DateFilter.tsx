@@ -5,13 +5,13 @@ import {
 } from '@data-exploration-components/components';
 import { TIME_SELECT } from '@data-exploration-components/containers';
 import { DateRange } from '@cognite/sdk';
-import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionType } from '@cognite/cogs.js';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { BaseSelect } from '@data-exploration-components/components/Select/BaseSelect';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {

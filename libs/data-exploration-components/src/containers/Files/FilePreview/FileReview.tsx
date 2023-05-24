@@ -2,7 +2,7 @@ import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
 import { ResourceIcons } from '@data-exploration-components/components';
-import { AppContext } from '@data-exploration-lib/core';
+import { AppContext, ExtendedAnnotation } from '@data-exploration-lib/core';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import {
@@ -12,7 +12,6 @@ import {
   isFileAnnotation,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const FileReview = ({
   annotations,

@@ -1,8 +1,8 @@
 import { Button, InputExp, ToolBar, Tooltip } from '@cognite/cogs.js';
-import { UseCurrentSearchResultState } from './hooks/useCurrentSearchResult';
-import { UseSearchBarState } from './hooks/useSearchBarState';
 import { useMemo } from 'react';
 import styled from 'styled-components';
+import { UseCurrentSearchResultState } from './hooks/useCurrentSearchResult';
+import { UseSearchBarState } from './hooks/useSearchBarState';
 
 const getStatusAndStatusText = (
   value: string,

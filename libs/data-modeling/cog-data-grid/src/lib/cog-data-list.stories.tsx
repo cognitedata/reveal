@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
-import { CogDataList } from './cog-data-list';
 import { v4 as generateId } from 'uuid';
+import { CogDataList } from './cog-data-list';
 
 export default {
   title: 'Basic components/CogDataList',

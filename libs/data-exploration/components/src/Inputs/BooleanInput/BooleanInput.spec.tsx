@@ -1,6 +1,6 @@
-import { BooleanInput } from './BooleanInput';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BooleanInput } from './BooleanInput';
 
 describe('BooleanFilter', () => {
   test('The "all" button should be default selected', () => {

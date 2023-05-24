@@ -7,8 +7,8 @@ import isUndefined from 'lodash/isUndefined';
 
 import { NumberInput } from '../NumberInput';
 
-import { Container } from './elements';
 import { InputControlProps } from '../../types';
+import { Container } from './elements';
 
 const PLACEHOLDER = '...';
 

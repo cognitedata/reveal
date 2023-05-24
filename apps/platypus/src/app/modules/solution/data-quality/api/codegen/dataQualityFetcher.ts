@@ -1,7 +1,7 @@
-import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
-import { DataQualityContext } from './dataQualityContext';
 import { getTenant } from '@platypus-app/utils/tenant-utils';
 import { getCluster } from '@cognite/cdf-utilities';
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { DataQualityContext } from './dataQualityContext';
 
 export type ErrorWrapper<TError> =
   | TError

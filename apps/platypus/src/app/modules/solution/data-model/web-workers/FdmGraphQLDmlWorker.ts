@@ -1,9 +1,9 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import type { Position, worker } from 'monaco-editor';
-import { IFdmGraphQLDmlWorkerOptions } from './types';
 import prettierStandalone from 'prettier/standalone';
 import prettierGraphqlParser from 'prettier/parser-graphql';
+import { IFdmGraphQLDmlWorkerOptions } from './types';
 import {
   CodeActionsService,
   CodeCompletionService,

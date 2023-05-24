@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
-import { use3DModel } from './hooks';
 import {
   PointerEventDelegate,
   CogniteCadModel,
@@ -20,13 +19,14 @@ import {
 import { Alert } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
-import RevealErrorFeedback from './RevealErrorFeedback';
 import { usePrevious } from '@cognite/data-exploration';
+import { toast } from '@cognite/cogs.js';
+import { Vector3 } from 'three';
+import RevealErrorFeedback from './RevealErrorFeedback';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
 import { ThreeDContext } from './ThreeDContext';
-import { toast } from '@cognite/cogs.js';
 import RevealErrorToast from './RevealErrorToast';
-import { Vector3 } from 'three';
+import { use3DModel } from './hooks';
 import { IMAGE_360_POSITION_THRESHOLD } from './utils';
 
 type ChildProps = {

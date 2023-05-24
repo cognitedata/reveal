@@ -1,4 +1,9 @@
 import { useMemo } from 'react';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+} from '@data-exploration-lib/core';
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
 import { TableSortBy } from '../../../types';
 import { useAssetsListQuery } from '../../service';
@@ -7,12 +12,6 @@ import {
   mapInternalFilterToAssetFilter,
   mapTableSortByToAssetSortFields,
 } from '../transformers';
-
-import { UseInfiniteQueryOptions } from '@tanstack/react-query';
-import {
-  AssetConfigType,
-  InternalAssetFilters,
-} from '@data-exploration-lib/core';
 
 export const useAssetsSearchResultQuery = (
   {

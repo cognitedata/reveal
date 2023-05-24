@@ -1,6 +1,6 @@
 import React from 'react';
-import { TimeseriesFilters } from './TimeseriesFilters';
 import { render, screen } from '@testing-library/react';
+import { TimeseriesFilters } from './TimeseriesFilters';
 
 describe('TimeseriesFilters', () => {
   describe('Base', () => {

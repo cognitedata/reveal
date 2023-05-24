@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   useEventsFilters,
   useFilterEmptyState,
@@ -22,6 +21,7 @@ import {
   useEventsMetadataKeysAggregateQuery,
   useEventsMetadataValuesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
   const [eventFilter, setEventFilter] = useEventsFilters();

@@ -1,13 +1,13 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { SequencesMetadataAggregateResponse } from '../types';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { queryKeys } from '../../../queryKeys';
-import { getSequencesMetadataValuesAggregate } from '../network/getSequencesMetadataValuesAggregate';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import { SequencesMetadataAggregateResponse } from '../types';
+import { queryKeys } from '../../../queryKeys';
+import { getSequencesMetadataValuesAggregate } from '../network/getSequencesMetadataValuesAggregate';
 import { AdvancedFilter } from '../../../builders';
 import { SequenceProperties } from '../../internal';
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '../../../transformers';
 
 interface Props {

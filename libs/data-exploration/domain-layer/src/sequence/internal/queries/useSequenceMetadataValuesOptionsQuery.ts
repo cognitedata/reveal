@@ -1,9 +1,9 @@
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import { UseQueryOptions } from '@tanstack/react-query';
-import { useSequencesMetadataValuesAggregateQuery } from '../../service';
-import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
+import { useSequencesMetadataValuesAggregateQuery } from '../../service';
+import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
 

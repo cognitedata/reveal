@@ -1,5 +1,6 @@
-import { Router } from 'express';
 import { readFileSync, existsSync } from 'fs';
+import { resolve as pathResolve } from 'path';
+import { Router } from 'express';
 import { CdfDatabaseService } from '../../common/cdf-database.service';
 import {
   CdfApiConfig,
@@ -12,7 +13,6 @@ import {
   flattenNestedObjArray,
   objToFilter,
 } from '../../utils';
-import { resolve as pathResolve } from 'path';
 
 function getPath(path: string): string {
   return pathResolve(process.cwd(), path);

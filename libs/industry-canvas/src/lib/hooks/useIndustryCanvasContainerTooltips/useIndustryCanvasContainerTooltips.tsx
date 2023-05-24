@@ -7,12 +7,12 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { IndustryCanvasContainerConfig } from '../../types';
 import { UseManagedStateReturnType } from '../useManagedState';
-import ContainerTooltip from './ContainerTooltip';
-import useContainerOcrData from './useContainerOcrData';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
 } from '../useTooltipsOptions';
+import ContainerTooltip from './ContainerTooltip';
+import useContainerOcrData from './useContainerOcrData';
 
 const useIndustryCanvasContainerTooltips = ({
   selectedContainer,

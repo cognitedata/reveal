@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Select, SpacedRow } from '../../components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import { useAssetMetadataValues } from '@data-exploration-components/hooks/MetadataAggregateHooks';
+import { Select, SpacedRow } from '../../components';
 
 const LOCKSVG = (
   <svg

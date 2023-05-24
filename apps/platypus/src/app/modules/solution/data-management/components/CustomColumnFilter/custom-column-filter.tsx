@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import { gridConfigService } from '@cognite/cog-data-grid';
 import { CustomFilterModel } from '@cognite/cog-data-grid-root/lib/types';
 
+import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import {
   COL_TYPES_MAP,
   FILTER_OPTIONS_WITHOUT_INPUT,
@@ -13,7 +14,6 @@ import {
 } from '../../utils';
 
 import * as S from './elements';
-import { DataModelTypeDefsField } from '@platypus/platypus-core';
 
 type CustomColumnFilterState = {
   selectedField?: OptionType<DataModelTypeDefsField>;

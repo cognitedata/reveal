@@ -1,6 +1,6 @@
-import { StringInput } from './StringInput';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { StringInput } from './StringInput';
 
 describe('StringFilter', () => {
   test('Typing "hello" into the filter bar', () => {

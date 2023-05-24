@@ -1,10 +1,10 @@
 import { Input, Modal } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { NameWrapper } from './elements';
 import { Validator } from '@platypus/platypus-core';
-import { FormLabel } from '../FormLabel/FormLabel';
 import { SpaceIdValidator } from '@platypus-core/domain/data-model/validators/space-id-validator';
+import { FormLabel } from '../FormLabel/FormLabel';
+import { NameWrapper } from './elements';
 
 export type CreateNewSpaceModalProps = {
   onCancel: () => void;

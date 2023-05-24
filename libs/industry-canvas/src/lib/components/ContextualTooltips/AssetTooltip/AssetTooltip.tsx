@@ -1,10 +1,10 @@
 import React from 'react';
 import { Icon, Colors, Body, Button, Tooltip } from '@cognite/cogs.js';
-import { useAsset } from '../../../hooks/useAsset';
 import styled from 'styled-components';
+import { useAsset } from '../../../hooks/useAsset';
+import * as ContextualTooltip from '../ContextualTooltip';
 import ThreeDButton from './ThreeDButton';
 import TimeseriesList from './TimeseriesList';
-import * as ContextualTooltip from '../ContextualTooltip';
 
 type AssetTooltipProps = {
   id: number;

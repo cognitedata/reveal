@@ -13,6 +13,7 @@ import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import has from 'lodash/has';
 
+import noop from 'lodash/noop';
 import {
   OptionType,
   OptionSelection,
@@ -24,17 +25,16 @@ import { filterOptions } from '../utils/filterOptions';
 import { sortOptions } from '../utils/sortOptions';
 import { hasOptionWithChildOptions } from '../utils/hasOptionWithChildOptions';
 
-import { SearchInput } from './SearchInput';
-import { Option } from './Option';
-import { ChildOptionsMenu } from './ChildOptionsMenu';
-import { FilterEmptyState } from './FilterEmptyState';
-import { SortAction } from './SortAction';
 import {
   OptionContainer,
   OptionMenuContainer,
   OptionMenuLoadingWrapper,
 } from '../elements';
-import noop from 'lodash/noop';
+import { SearchInput } from './SearchInput';
+import { Option } from './Option';
+import { ChildOptionsMenu } from './ChildOptionsMenu';
+import { FilterEmptyState } from './FilterEmptyState';
+import { SortAction } from './SortAction';
 
 export interface OptionsMenuProps {
   options: Array<OptionType>;

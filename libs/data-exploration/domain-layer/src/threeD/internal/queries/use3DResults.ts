@@ -3,11 +3,11 @@ import {
   FileTypeVisibility,
   InternalThreedFilters,
 } from '@data-exploration-lib/core';
-import { DEFAULT_SEARCH_RESULTS_PAGE_SIZE } from '../../../constants';
-import { useInfinite3DModelsQuery } from './useInfinite3DModelsQuery';
-import { Model3DWithType, ThreeDModelsResponse } from '../types';
-import { useInfinite360Images } from './useInfinite360Images';
 import { Model3D } from '@cognite/sdk';
+import { DEFAULT_SEARCH_RESULTS_PAGE_SIZE } from '../../../constants';
+import { Model3DWithType, ThreeDModelsResponse } from '../types';
+import { useInfinite3DModelsQuery } from './useInfinite3DModelsQuery';
+import { useInfinite360Images } from './useInfinite360Images';
 
 export const use3DResults = (
   fileTypeVisibility: FileTypeVisibility,

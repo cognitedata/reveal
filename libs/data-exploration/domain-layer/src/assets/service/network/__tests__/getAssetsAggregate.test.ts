@@ -1,7 +1,6 @@
-import { getAssetsAggregate } from '../getAssetsAggregate';
-
 import { setupServer } from 'msw/node';
 import { renderHook } from '@testing-library/react-hooks';
+import { getAssetsAggregate } from '../getAssetsAggregate';
 
 import { getMockAssetsAggregatePost } from '../../../service/__mocks';
 

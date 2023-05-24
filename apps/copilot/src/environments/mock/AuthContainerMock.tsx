@@ -1,5 +1,5 @@
-import { setCogniteSDKClient } from './cogniteSdk';
 import { CogniteClient } from '@cognite/sdk';
+import { setCogniteSDKClient } from './cogniteSdk';
 
 type AuthContainerProps = {
   children: React.ReactNode;

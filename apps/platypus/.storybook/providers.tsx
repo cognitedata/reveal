@@ -1,14 +1,14 @@
 import React from 'react';
 import '@cognite/cogs.js/dist/cogs.css';
 import { makeDecorator } from '@storybook/addons';
-import configureRender from '../src/app/tests/configureRender';
-import AppProviders from '../src/app/tests/AppProviders';
 import { ContainerProvider } from 'brandi-react';
-import { rootInjector } from '../src/app/di';
 import { CogniteClient } from '@cognite/sdk';
 import config from '@platypus-app/config/config';
-import { setCogniteSDKClient } from '../src/environments/cogniteSdk';
 import { QueryClientProvider } from '@tanstack/react-query';
+import configureRender from '../src/app/tests/configureRender';
+import AppProviders from '../src/app/tests/AppProviders';
+import { rootInjector } from '../src/app/di';
+import { setCogniteSDKClient } from '../src/environments/cogniteSdk';
 import { queryClient } from '../src/app/queryClient';
 
 export default makeDecorator({

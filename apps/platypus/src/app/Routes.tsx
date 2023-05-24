@@ -5,6 +5,7 @@ import {
   Route,
   useLocation,
 } from 'react-router-dom';
+import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { DataModel } from './modules/solution/DataModel';
 import { Spinner } from './components/Spinner/Spinner';
@@ -13,7 +14,6 @@ import { useMixpanelPathTracking } from './hooks/useMixpanel';
 import { isFDMv3 } from './flags';
 import { useInjection } from './hooks/useInjection';
 import { TOKENS } from './di';
-import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 import { getContainer } from './GlobalStyles';
 import zIndex from './utils/zIndex';
 

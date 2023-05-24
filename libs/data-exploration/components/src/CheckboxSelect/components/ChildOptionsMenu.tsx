@@ -4,6 +4,10 @@ import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 
 import {
+  NIL_FILTER_LABEL,
+  useDebouncedState,
+} from '@data-exploration-lib/core';
+import {
   OptionSelection,
   ChildOptionType,
   CustomMetadataValue,
@@ -11,10 +15,6 @@ import {
 import { getChildOptionsSelection } from '../utils/getChildOptionsSelection';
 
 import { OptionsMenu } from './OptionsMenu';
-import {
-  NIL_FILTER_LABEL,
-  useDebouncedState,
-} from '@data-exploration-lib/core';
 
 export interface ChildOptionsMenuProps {
   parentOptionValue: string;

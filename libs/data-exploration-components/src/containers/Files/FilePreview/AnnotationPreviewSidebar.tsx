@@ -26,12 +26,16 @@ import { ResourcePreviewSidebar } from '@data-exploration-components/containers/
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import { useDisclosure } from '@data-exploration-components/hooks/index';
-import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import {
   useCreateAnnotation,
   useDeleteAnnotation,
   useUpdateAnnotations,
 } from '@data-exploration-lib/domain-layer';
+import {
+  ExtendedAnnotation,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-lib/core';
+import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,
@@ -45,10 +49,6 @@ import {
 } from './migration/utils';
 import ReviewTagBar from './ReviewTagBar';
 import FilePreviewSidebar from './FilePreviewSidebar';
-import {
-  ExtendedAnnotation,
-  SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-lib/core';
 
 type Props = {
   file?: FileInfo;

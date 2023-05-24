@@ -2,9 +2,9 @@ import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
 import { PartialStoryFn } from '@storybook/addons';
+import { useResourcePreview, ResourcePreviewProps } from '../context';
 import { ResourcePreviewPropsFunctions } from './stub';
 import { Wrapper } from './utils';
-import { useResourcePreview, ResourcePreviewProps } from '../context';
 
 export const PreviewingResources = (args: ResourcePreviewProps) => {
   const { openPreview, hidePreview } = useResourcePreview();

@@ -1,11 +1,5 @@
-import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationModel, AnnotationStatus } from '@cognite/sdk';
 import pickBy from 'lodash/pickBy';
-import { AnnotationStatus } from '@cognite/sdk';
-import {
-  ResourceItem,
-  ResourceItemState,
-  ResourceType,
-} from '../../../../types/index';
 import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
@@ -14,6 +8,11 @@ import {
   TaggedAnnotationAnnotation,
   TaggedLocalAnnotation,
 } from '@data-exploration-lib/core';
+import {
+  ResourceItem,
+  ResourceItemState,
+  ResourceType,
+} from '../../../../types/index';
 
 export const getExtendedAnnotationPage = (
   annotation: ExtendedAnnotation

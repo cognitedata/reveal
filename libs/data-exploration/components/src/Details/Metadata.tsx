@@ -1,14 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Title, Link } from '@cognite/cogs.js';
-import { TooltipCell, Table } from '..';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
-import {
-  FilterContainer,
-  FilterInput,
-  MetadataCard,
-  MetadataHeader,
-  MetadataTableContainer,
-} from './elements';
 import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
@@ -16,6 +8,14 @@ import {
   useDebounceTrackUsage,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { TooltipCell, Table } from '..';
+import {
+  FilterContainer,
+  FilterInput,
+  MetadataCard,
+  MetadataHeader,
+  MetadataTableContainer,
+} from './elements';
 
 // TODO  Needs to be removed once implemented in our library
 interface DataSource {

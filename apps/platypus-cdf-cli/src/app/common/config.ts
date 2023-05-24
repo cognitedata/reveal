@@ -1,14 +1,14 @@
 import { promises } from 'fs';
-const { stat, writeFile } = promises;
 import { join } from 'path';
+import { cwd } from 'process';
 import { Arguments, CommandModule } from 'yargs';
 import ConfigStore from 'configstore';
 import { CONSTANTS } from '../constants';
 import { BaseArgs, CLIConfigManager } from '../types';
-import { CLICommand } from './cli-command';
-import { cwd } from 'process';
 import { DEBUG as _DEBUG } from '../utils/logger';
 import { getProjectConfig } from '../utils/config';
+import { CLICommand } from './cli-command';
+const { stat, writeFile } = promises;
 
 const DEBUG = _DEBUG.extend('common:config');
 

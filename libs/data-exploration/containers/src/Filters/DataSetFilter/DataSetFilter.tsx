@@ -4,13 +4,13 @@ import {
   DataSetWithCount,
   useDatasetsListQuery,
 } from '@data-exploration-lib/domain-layer';
-import { BaseMultiSelectFilterProps } from '../types';
-import { MultiSelectFilter } from '../MultiSelectFilter';
 import {
   DATA_EXPLORATION_COMPONENT,
   ResourceType,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { BaseMultiSelectFilterProps } from '../types';
+import { MultiSelectFilter } from '../MultiSelectFilter';
 
 interface DataSetFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter, number> {

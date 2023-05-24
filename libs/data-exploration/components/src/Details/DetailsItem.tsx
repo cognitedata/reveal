@@ -1,7 +1,3 @@
-import {
-  ThreeDModelCellDropdown,
-  ThreeDModelCellLink,
-} from './ThreeDModelCell';
 import React from 'react';
 import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -21,6 +17,10 @@ import {
   useClipboard,
   useMetrics,
 } from '@data-exploration-lib/core';
+import {
+  ThreeDModelCellDropdown,
+  ThreeDModelCellLink,
+} from './ThreeDModelCell';
 
 type DetailsItemProps = {
   name: string;

@@ -8,8 +8,8 @@ import {
 
 import noop from 'lodash/noop';
 
-import { SearchInput } from '../SearchInput';
 import { isEscapeButton } from '@data-exploration-lib/core';
+import { SearchInput } from '../SearchInput';
 
 export const MenuList = <OptionType extends OptionTypeBase>({
   children,

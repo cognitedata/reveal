@@ -7,13 +7,13 @@ import {
   TableProps,
 } from '@data-exploration/components';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
-import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
   FileWithRelationshipLabels,
   getHiddenColumns,
   RelationshipLabels,
 } from '@data-exploration-lib/core';
+import { FileNamePreview } from './FileNamePreview';
 
 export type FileTableProps = Omit<
   TableProps<FileWithRelationshipLabels>,

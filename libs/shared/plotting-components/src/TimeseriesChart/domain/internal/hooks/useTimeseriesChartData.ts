@@ -11,8 +11,8 @@ import {
 } from '../transformers';
 import { DataFetchOptions } from '../../../types';
 import { TimeseriesChartQuery } from '../types';
-import { useTimeseriesChartMetadata } from './useTimeseriesChartMetadata';
 import { EMPTY_DATA } from '../../../constants';
+import { useTimeseriesChartMetadata } from './useTimeseriesChartMetadata';
 
 interface Props {
   query: TimeseriesChartQuery;

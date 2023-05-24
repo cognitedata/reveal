@@ -1,8 +1,7 @@
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { AnnotationHoverPreview } from './AnnotationHoverPreview';
-
 import { useMemo } from 'react';
+import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 
 const useHoverTooltips = (
   isTooltipsEnabled: boolean,

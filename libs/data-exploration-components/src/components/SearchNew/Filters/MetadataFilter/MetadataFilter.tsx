@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
-import { mergeUniqueMetadataKeys } from './utils';
 import { FilterFormV2 } from '@data-exploration-components/components/FilterFormV2/FilterFormV2';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { mergeUniqueMetadataKeys } from './utils';
 
 const FilterHeader = styled.div`
   display: flex;

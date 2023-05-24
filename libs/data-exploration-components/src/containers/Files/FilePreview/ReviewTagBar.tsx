@@ -5,13 +5,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { capitalizeFirstLetter } from '@data-exploration-components/utils/index';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const ReviewTagBar = ({
   annotation,

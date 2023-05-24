@@ -3,9 +3,9 @@ import { useState, useRef, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Dropdown, Button } from '@cognite/cogs.js';
 import ReactDatePicker from 'react-datepicker';
+import noop from 'lodash/noop';
 import { DatePickerInput, renderCustomHeader } from './Common';
 import { DatePickerWrapper } from './elements';
-import noop from 'lodash/noop';
 
 export type DatePickerProps = {
   initialDate?: Date;

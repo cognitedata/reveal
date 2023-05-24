@@ -1,13 +1,13 @@
 import React from 'react';
+import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
+import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
+import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
 import { AggregatedMultiselectFilter } from './AggregatedMultiselectFilter/AggregatedMultiselectFilter';
-import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
-import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 
 export const TimeseriesFilters = ({
   filter,

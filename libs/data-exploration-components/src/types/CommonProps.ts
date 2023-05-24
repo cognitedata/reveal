@@ -6,7 +6,6 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
-import { ResourceItem } from './Types';
 import {
   InternalAssetFilters,
   InternalTimeseriesFilters,
@@ -16,6 +15,7 @@ import {
   InternalDocumentFilter,
   OldSequenceFilters,
 } from '@data-exploration-lib/core';
+import { ResourceItem } from './Types';
 
 export type SmallPreviewProps = {
   actions?: React.ReactNode[];

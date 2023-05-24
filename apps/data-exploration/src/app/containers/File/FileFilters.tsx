@@ -1,6 +1,5 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   useFileFilters,
   useFilterEmptyState,
@@ -16,6 +15,7 @@ import {
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const FileFilters = ({ ...rest }) => {
   const [fileFilter, setFileFilter] = useFileFilters();

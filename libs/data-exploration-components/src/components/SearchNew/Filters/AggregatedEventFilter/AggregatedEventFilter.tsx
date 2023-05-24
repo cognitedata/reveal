@@ -2,8 +2,6 @@ import {
   MultiSelectFilter,
   Select,
 } from '@data-exploration-components/components';
-import { FilterFacetTitle } from '../FilterFacetTitle';
-import { reactSelectCogsStylingProps } from '../elements';
 import {
   EventProperty,
   useEventsUniqueValuesByProperty,
@@ -16,6 +14,8 @@ import {
   InternalEventsFilters,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { reactSelectCogsStylingProps } from '../elements';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const AggregatedEventFilterV2 = ({
   field,

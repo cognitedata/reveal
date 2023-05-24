@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
-import render from '../../../../testUtils/render';
 import { fireEvent, screen } from '@testing-library/react';
+import render from '../../../../testUtils/render';
 import { ResetButton } from '../ResetButton';
 import { RESET } from '../constants';
 

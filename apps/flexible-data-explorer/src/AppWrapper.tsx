@@ -8,11 +8,11 @@ import {
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import './set-public-path';
+import { useEffect } from 'react';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import App from './app/App';
 import GlobalStyles from './GlobalStyles';
-import { useEffect } from 'react';
 
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { translations } from './app/common/i18n';
 import GlobalStyle from './app/utils/globalStyles';
 

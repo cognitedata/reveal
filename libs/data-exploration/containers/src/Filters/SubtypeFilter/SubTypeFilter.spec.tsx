@@ -1,6 +1,6 @@
-import { SubTypeFilter } from './SubTypeFilter';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SubTypeFilter } from './SubTypeFilter';
 
 describe('SubTypeFilter', () => {
   describe('Base', () => {

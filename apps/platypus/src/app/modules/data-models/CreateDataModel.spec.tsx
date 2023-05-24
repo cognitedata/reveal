@@ -3,8 +3,8 @@ import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
-import { CreateDataModel } from './CreateDataModel';
 import noop from 'lodash/noop';
+import { CreateDataModel } from './CreateDataModel';
 
 jest.mock('@platypus-app/hooks/useMixpanel');
 jest.mock('@platypus-app/hooks/useDataModelActions');

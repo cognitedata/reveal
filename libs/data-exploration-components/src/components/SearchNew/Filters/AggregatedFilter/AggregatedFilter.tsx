@@ -1,13 +1,13 @@
 import React from 'react';
 import { Select } from '@data-exploration-components/components';
-import { FilterFacetTitle } from '../FilterFacetTitle';
-import { reactSelectCogsStylingProps } from '../elements';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { OptionType } from '@cognite/cogs.js';
+import { reactSelectCogsStylingProps } from '../elements';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const AggregatedFilterV2 = <T,>({
   items,

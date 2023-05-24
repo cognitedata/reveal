@@ -1,6 +1,5 @@
 import { TOKENS } from '@platypus-app/di';
 import { useQuery } from '@tanstack/react-query';
-import { useInjection } from './useInjection';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import {
   DataModel,
@@ -8,9 +7,10 @@ import {
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
-import { useErrorLogger } from './useErrorLogger';
 import { useMemo } from 'react';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useErrorLogger } from './useErrorLogger';
+import { useInjection } from './useInjection';
 import { useSelectedDataModelVersion } from './useSelectedDataModelVersion';
 
 async function dataModelHandlerFuncWrapper<T>(

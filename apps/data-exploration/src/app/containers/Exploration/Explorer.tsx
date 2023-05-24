@@ -2,8 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ResourceSelectorProvider } from '@cognite/data-exploration';
 import styled from 'styled-components';
-import SearchRedirect from './SearchRedirect';
-import { SearchResultsPage } from './SearchResultsPage';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { AssetPage } from '@data-exploration-app/containers/Asset/AssetPage';
@@ -15,6 +13,8 @@ import { SequencePage } from '@data-exploration-app/containers/Sequence/Sequence
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
 import { routes } from '@data-exploration-app/containers/App';
 import { IndustryCanvasPage } from '@fusion/industry-canvas';
+import { SearchResultsPage } from './SearchResultsPage';
+import SearchRedirect from './SearchRedirect';
 
 export const Explorer = () => {
   React.useEffect(() => {

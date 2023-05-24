@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story } from '@storybook/react';
-import { SchemaVisualizer } from './SchemaVisualizer';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
+import { SchemaVisualizer } from './SchemaVisualizer';
 
 export default {
   title: 'Schema/Schema Visualizer',

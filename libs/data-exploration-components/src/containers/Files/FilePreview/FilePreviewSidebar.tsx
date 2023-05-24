@@ -4,9 +4,10 @@ import styled from 'styled-components';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
-import AnnotationsList from './AnnotationsList/index';
 import { useDisclosure } from '@data-exploration-components/hooks/index';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useReviewFile } from '../hooks';
+import AnnotationsList from './AnnotationsList/index';
 import DiagramReviewStatus from './DiagramStatus';
 import FileReview from './FileReview';
 import {
@@ -14,7 +15,6 @@ import {
   isFileAnnotation,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface FilePreviewSidebarProps {
   fileIcon?: React.ReactNode;

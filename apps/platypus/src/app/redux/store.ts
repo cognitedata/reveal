@@ -8,12 +8,12 @@ import {
 } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
+import { environment } from '@platypus-app/environment';
 import globalReducer from './reducers/global/globalReducer';
 import dataModelSlice from './reducers/global/dataModelReducer';
 import dataManagementSlice from './reducers/global/dataManagementReducer';
 import { draftRowsLocalStorageMiddleware } from './middlewares/dataManagementMiddleware';
 import { graphQlSchemaLocalStorageMiddleware } from './middlewares/dataModelMiddleware';
-import { environment } from '@platypus-app/environment';
 
 const createReducer = (asyncReducers: any) => {
   return combineReducers({

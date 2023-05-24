@@ -12,8 +12,6 @@ import {
   ThreeDModelCell,
 } from '@data-exploration/components';
 
-import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
-import { useRootPath } from './hooks';
 import {
   InternalAssetTreeData,
   useRootAssetsQuery,
@@ -27,6 +25,8 @@ import {
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
+import { useRootPath } from './hooks';
 
 const visibleColumns = ['name', 'rootId'];
 

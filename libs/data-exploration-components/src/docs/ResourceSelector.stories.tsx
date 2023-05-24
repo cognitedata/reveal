@@ -2,9 +2,9 @@ import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import { action } from '@storybook/addon-actions';
 import { PartialStoryFn } from '@storybook/addons';
+import { useResourceSelector, OpenSelectorProps } from '../context';
 import { ResourceSelectorPropsFunctions } from './stub';
 import { Wrapper } from './utils';
-import { useResourceSelector, OpenSelectorProps } from '../context';
 
 export default {
   title: 'Resource Selector',

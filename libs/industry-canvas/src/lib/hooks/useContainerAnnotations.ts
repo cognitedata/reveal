@@ -1,13 +1,15 @@
-import { IndustryCanvasContainerConfig } from '../types';
-import { isNotUndefined } from '../utils/isNotUndefined';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { EMPTY_ARRAY } from './constants';
-import { useAnnotationsMultiple } from './useAnnotationsMultiple';
 import zip from 'lodash/zip';
 import { useMemo } from 'react';
-import { getExtendedAnnotationsFromAnnotationsApi } from '@cognite/data-exploration';
-import { getStyledAnnotationFromAnnotation } from '@cognite/data-exploration';
+import {
+  getExtendedAnnotationsFromAnnotationsApi,
+  getStyledAnnotationFromAnnotation,
+} from '@cognite/data-exploration';
+import { isNotUndefined } from '../utils/isNotUndefined';
+import { IndustryCanvasContainerConfig } from '../types';
 import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
+import { useAnnotationsMultiple } from './useAnnotationsMultiple';
+import { EMPTY_ARRAY } from './constants';
 
 type useContainerAnnotationsParams = {
   container: IndustryCanvasContainerConfig;

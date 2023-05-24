@@ -10,15 +10,6 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import {
-  StyledTitleButton,
-  StyledTopBar,
-  StyledTopBarLeft,
-  StyledTopBarRight,
-  StyledTitle,
-  StyledFlex,
-  StyledExternalId,
-} from './elements';
-import {
   useDataModel,
   useDataModelVersions,
 } from '@platypus-app/hooks/useDataModelActions';
@@ -27,7 +18,6 @@ import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettin
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useDraftRows } from '@platypus-app/modules/solution/data-management/hooks/useDraftRows';
 import { DataModelVersion } from '@platypus/platypus-core';
@@ -35,13 +25,23 @@ import { EndpointModal } from '@platypus-app/modules/solution/data-model/compone
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { DOCS_LINKS } from '@platypus-app/constants';
-import { FeaturePreview } from '../FeaturePreview/FeaturePreview';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+import { FeaturePreview } from '../FeaturePreview/FeaturePreview';
+import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
+import {
+  StyledTitleButton,
+  StyledTopBar,
+  StyledTopBarLeft,
+  StyledTopBarRight,
+  StyledTitle,
+  StyledFlex,
+  StyledExternalId,
+} from './elements';
 
 export const NavigationDataModel = () => {
   const currentPage = (() => {

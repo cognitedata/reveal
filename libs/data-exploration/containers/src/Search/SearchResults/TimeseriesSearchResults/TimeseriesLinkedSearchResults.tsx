@@ -1,12 +1,13 @@
 import { Timeseries } from '@cognite/sdk';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  useTimeseriesSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
 import React, { useMemo, useState } from 'react';
-
-import { useTimeseriesSearchResultQuery } from '@data-exploration-lib/domain-layer';
 
 import { useDebounce } from 'use-debounce';
 import {

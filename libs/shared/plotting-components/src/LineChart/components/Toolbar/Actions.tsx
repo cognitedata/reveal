@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import { ZoomActions } from '../ZoomActions';
 import { ActionsWrapper, ActionWrapper } from './elements';
 import { ToolbarProps } from './Toolbar';
-import { ZoomActions } from '../ZoomActions';
 
 export interface ActionsProps
   extends Pick<

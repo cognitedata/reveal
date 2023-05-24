@@ -2,11 +2,11 @@ import { screen } from '@testing-library/react';
 import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import noop from 'lodash/noop';
-import { NoRowsOverlay } from './NoRowsOverlay';
 import {
   useManualPopulationFeatureFlag,
   useTransformationsFeatureFlag,
 } from '@platypus-app/flags';
+import { NoRowsOverlay } from './NoRowsOverlay';
 
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useTransformations',

@@ -12,10 +12,10 @@ import { SimulationLinkDatum } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
-import { getNodeId, getRelationLinkId, getRelationshipsForData } from './utils';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { getNodeId, getRelationLinkId, getRelationshipsForData } from './utils';
 import { RelationNode } from './RelationNode';
 
 const getColor = (key: string) => uniqolor(key);

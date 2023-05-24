@@ -7,12 +7,6 @@ import React, { useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import {
-  GroupingTableHeader,
-  GroupingTableContainer,
-  GroupingTableWrapper,
-} from './elements';
-import { FileViewSwitcher } from './FileViewSwitcher';
-import {
   InternalCommonFilters,
   InternalDocumentFilter,
 } from '@data-exploration-lib/core';
@@ -29,6 +23,12 @@ import {
   InternalDocument,
   useDocumentSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
+import { FileViewSwitcher } from './FileViewSwitcher';
+import {
+  GroupingTableHeader,
+  GroupingTableContainer,
+  GroupingTableWrapper,
+} from './elements';
 
 interface Props {
   defaultFilter: InternalCommonFilters;

@@ -25,7 +25,7 @@ export const EditRegex: React.FC<Props> = ({
     <Flex direction="column" gap={8}>
       <Subtitle>Regex *</Subtitle>
       <Input
-        label={`Regex`}
+        label="Regex"
         placeholder="Regex"
         id="regex"
         type="text"

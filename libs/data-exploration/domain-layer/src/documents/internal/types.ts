@@ -1,6 +1,6 @@
+import { InternalDocument as InternalDocumentCore } from '@data-exploration-lib/core';
 import { MatchingLabels } from '../../types';
 // This is needed to not create circular dependencies
-import { InternalDocument as InternalDocumentCore } from '@data-exploration-lib/core';
 
 // Flattened version of 'DocumentSearchItem' from cognite/sdk
 export type InternalDocument = InternalDocumentCore;

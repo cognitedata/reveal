@@ -16,6 +16,10 @@ import {
 } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { TableData } from '../Table';
 
 import {
@@ -23,13 +27,9 @@ import {
   DragHandleIcon,
   WithDragHandleProps,
 } from '../../DragDropContainer';
-import { HighlightCell } from './HighlightCell';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  useMetrics,
-} from '@data-exploration-lib/core';
 import { MetadataHeaderText } from '../elements';
 import { MAX_COLUMN_SELECTION } from '../constants';
+import { HighlightCell } from './HighlightCell';
 
 export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];

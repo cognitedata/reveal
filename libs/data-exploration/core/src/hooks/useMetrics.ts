@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { AppContext } from '../contexts';
 import noop from 'lodash/noop';
 import debounce from 'lodash/debounce';
+import { AppContext } from '../contexts';
 
 export type MetricsMetadata = {
   [key: string]: any;

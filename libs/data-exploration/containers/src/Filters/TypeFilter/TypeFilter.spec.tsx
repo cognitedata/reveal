@@ -1,6 +1,6 @@
-import { TypeFilter } from './TypeFilter';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { TypeFilter } from './TypeFilter';
 
 describe('TypeFilter', () => {
   describe('Base', () => {

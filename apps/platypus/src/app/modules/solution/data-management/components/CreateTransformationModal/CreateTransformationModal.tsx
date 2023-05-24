@@ -7,21 +7,19 @@ import {
   DataModelTypeDefsType,
   RequiredFieldValidator,
   Validator,
+  getOneToManyModelName,
+  getVersionedExternalId,
 } from '@platypus/platypus-core';
+import { generateId } from '@platypus-app/utils/uuid';
+import { isFDMv3 } from '@platypus-app/flags';
+import { createLink } from '@cognite/cdf-utilities';
+import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
+import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
+import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import {
   CreateTransformationForm,
   TransformationType,
 } from '../CreateTransformationForm';
-import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
-import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
-import { generateId } from '@platypus-app/utils/uuid';
-import {
-  getOneToManyModelName,
-  getVersionedExternalId,
-} from '@platypus/platypus-core';
-import { isFDMv3 } from '@platypus-app/flags';
-import { createLink } from '@cognite/cdf-utilities';
-import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
 
 type Option = OptionType<any>;
 

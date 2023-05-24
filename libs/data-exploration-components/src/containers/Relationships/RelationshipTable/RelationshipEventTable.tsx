@@ -9,9 +9,9 @@ import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-import { RelationshipTableProps } from './RelationshipTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { ResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
+import { RelationshipTableProps } from './RelationshipTable';
 
 const {
   relationshipLabels,

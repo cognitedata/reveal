@@ -25,13 +25,13 @@ import merge from 'lodash/merge';
 import setWith from 'lodash/setWith';
 import { Modal } from '@cognite/cogs.js';
 import { Notification } from '@platypus-app/components/Notification/Notification';
+import styled from 'styled-components';
 import {
   ConjunctionButtons,
   FilterBuilderButton,
   FilterBuilderFunctionSelect,
   InputWidget,
 } from './elements';
-import styled from 'styled-components';
 const InitialConfig = BasicConfig;
 
 const settings = {

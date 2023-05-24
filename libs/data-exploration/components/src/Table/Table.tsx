@@ -21,7 +21,6 @@ import {
   RowSelectionState,
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
-import { ColumnToggle } from './components';
 import {
   DATA_EXPLORATION_COMPONENT,
   EMPTY_OBJECT,
@@ -30,6 +29,16 @@ import {
   isElementHorizontallyInViewport,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { Checkbox, Flex } from '@cognite/cogs.js';
+import noop from 'lodash/noop';
+import { EmptyState } from '../EmpyState';
+import {
+  ColumnToggle,
+  SortIcon,
+  LoadMore,
+  LoadMoreProps,
+  CopyToClipboardIconButton,
+} from './components';
 
 import {
   TableContainer,
@@ -53,15 +62,7 @@ import {
   TableDataBody,
 } from './elements';
 
-import { Checkbox, Flex } from '@cognite/cogs.js';
-
-import { SortIcon } from './components';
 import { ResourceTableColumns } from './columns';
-import { LoadMore, LoadMoreProps } from './components';
-import { EmptyState } from '../EmpyState';
-import noop from 'lodash/noop';
-
-import { CopyToClipboardIconButton } from './components/CopyToClipboardIconButton';
 
 export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;

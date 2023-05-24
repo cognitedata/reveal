@@ -1,14 +1,14 @@
-import { Table as EditTable } from './DataCleanupComponent';
-import { Modal } from '../../components/Modal/Modal';
 import React from 'react';
 
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Modal } from '../../components/Modal/Modal';
 import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';
 import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 import { generateId } from '../../utils/generators';
 import { useConventionUpdateMutate } from '../../service/hooks/mutate/useConventionUpdateMutate';
 import { TagDefinitions, TagAbbreviation } from '../../types';
+import { Table as EditTable } from './DataCleanupComponent';
 
 const columns = [
   {

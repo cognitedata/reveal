@@ -1,7 +1,6 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Tooltip, Button, Flex, Chip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { PageHeaderDivider } from '../DataPreviewTable/elements';
 import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
 import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
@@ -11,8 +10,9 @@ import {
   useSuggestionsFeatureFlag,
   useTransformationsFeatureFlag,
 } from '@platypus-app/flags';
-import * as S from './elements';
 import { useRef } from 'react';
+import { PageHeaderDivider } from '../DataPreviewTable/elements';
+import * as S from './elements';
 
 type Props = {
   space: string;

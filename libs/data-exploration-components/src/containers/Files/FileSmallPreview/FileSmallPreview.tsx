@@ -5,6 +5,13 @@ import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Icon, Title, Chip, Body, Colors } from '@cognite/cogs.js';
 import uniq from 'lodash/uniq';
+import { FilePreview } from '@data-exploration-components/containers/Files/index';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
+import { getIdParam } from '@data-exploration-lib/core';
+import { FileInfo } from '@data-exploration/containers';
+import { SmallPreviewProps, SelectableItemProps } from '../../../types';
+import { isFilePreviewable } from '../../../utils';
 import {
   ErrorFeedback,
   InfoGrid,
@@ -13,13 +20,6 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '../../../components';
-import { isFilePreviewable } from '../../../utils';
-import { SmallPreviewProps, SelectableItemProps } from '../../../types';
-import { FilePreview } from '@data-exploration-components/containers/Files/index';
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
-import { useAnnotations } from '@data-exploration-lib/domain-layer';
-import { getIdParam } from '@data-exploration-lib/core';
-import { FileInfo } from '@data-exploration/containers';
 
 export const FileSmallPreview = ({
   fileId,

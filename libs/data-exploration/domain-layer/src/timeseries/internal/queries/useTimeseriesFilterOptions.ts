@@ -1,12 +1,12 @@
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import { useMemo } from 'react';
+import omit from 'lodash/omit';
 import {
   TimeseriesProperty,
   useTimeseriesUniqueValuesByProperty,
 } from '../../service';
 import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
-import { useMemo } from 'react';
-import omit from 'lodash/omit';
 import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {

@@ -1,7 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import { BaseArgs, ProjectConfig } from '../types';
-import { getAuthToken } from './auth';
 import { AUTH_TYPE, CONSTANTS } from '../constants';
+import { getAuthToken } from './auth';
 
 let client: CogniteClient;
 

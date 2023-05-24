@@ -1,8 +1,8 @@
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
-import { useTimeseriesMetadataKeysAggregateQuery } from '../../service';
-import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
+import { useTimeseriesMetadataKeysAggregateQuery } from '../../service';
+import { mapFiltersToTimeseriesAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
 

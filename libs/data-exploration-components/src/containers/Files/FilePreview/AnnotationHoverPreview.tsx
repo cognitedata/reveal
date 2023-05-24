@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Body, Colors, Detail } from '@cognite/cogs.js';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import {
   getExtendedAnnotationLabel,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 type Props = {
   annotation: ExtendedAnnotation;

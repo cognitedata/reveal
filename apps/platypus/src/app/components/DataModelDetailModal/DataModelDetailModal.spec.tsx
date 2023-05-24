@@ -5,11 +5,11 @@ import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
 import { isFDMv3 } from '@platypus-app/flags/isFDMv3';
 
+import { useState } from 'react';
 import {
   DataModelDetailModal,
   DataModelDetailModalProps,
 } from './DataModelDetailModal';
-import { useState } from 'react';
 
 jest.mock('@platypus-app/flags/isFDMv3');
 

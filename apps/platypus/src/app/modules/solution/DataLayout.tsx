@@ -11,9 +11,8 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { useDataQualityFeatureFlag } from '@platypus-app/flags';
+import { useDataQualityFeatureFlag, useGPTSearch } from '@platypus-app/flags';
 import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
-import { useGPTSearch } from '@platypus-app/flags';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({

@@ -17,12 +17,12 @@ import { KeyValueMap } from '@platypus/platypus-core';
 import { GetRowIdParams } from 'ag-grid-community';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useSuggestions } from './useSuggestions';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
+import { useSuggestions } from './useSuggestions';
 import { TypeColumnSelect } from './TypeColumnSelect';
 import { useSuggestionsGridConfig } from './useSuggestionsGridConfig';
 import { useSuggestionsResult } from './useSuggestionsResult';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export type SuggestionsTableData = {
   id: string;

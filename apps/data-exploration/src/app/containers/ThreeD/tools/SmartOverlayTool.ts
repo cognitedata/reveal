@@ -3,9 +3,9 @@ import {
   HtmlOverlayOptions,
   HtmlOverlayTool,
 } from '@cognite/reveal';
-import { EventTrigger } from './EventTrigger';
 import * as THREE from 'three';
 import zIndex from '../../../utils/zIndex';
+import { EventTrigger } from './EventTrigger';
 
 export type SmartLabel = {
   text: string;

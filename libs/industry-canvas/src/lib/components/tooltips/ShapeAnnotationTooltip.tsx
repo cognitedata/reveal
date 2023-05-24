@@ -7,10 +7,10 @@ import {
 } from '../../colors';
 import { StrokeColorPalette } from '../color-palettes/StrokeColorPalette';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
-import { RightAlignedColorPalettePosition } from './elements';
 import { FillButton } from '../color-palettes/FillButton';
 import { StrokeButton } from '../color-palettes/StrokeButton';
 import { ShapeAnnotation } from '../../types';
+import { RightAlignedColorPalettePosition } from './elements';
 
 export type ShapeAnnotationTooltipProps = {
   shapeAnnotation: ShapeAnnotation;

@@ -9,14 +9,14 @@ import {
   MarkerSeverity,
 } from 'monaco-editor';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ErrorsByGroup } from './Model';
+import { isFDMv3 } from '@platypus-app/flags';
+import { setupGraphql } from '../../web-workers';
 
 // web workers stuff
-import { setupGraphql } from '../../web-workers';
 import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader';
 import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
+import { ErrorsByGroup } from './Model';
 
-import { isFDMv3 } from '@platypus-app/flags';
 import { StyledEditor } from './elements';
 
 const getSampleDataModel = (

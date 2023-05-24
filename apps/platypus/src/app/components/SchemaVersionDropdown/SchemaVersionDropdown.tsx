@@ -13,11 +13,10 @@ import {
 } from '@platypus/platypus-core';
 import { useEffect, useState } from 'react';
 
-import { DropdownButton, LastTimeText } from './elements';
-
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { DropdownButton, LastTimeText } from './elements';
 
 type Props = {
   selectedVersion: DataModelVersion;

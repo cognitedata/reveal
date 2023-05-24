@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
-import { DocumentsTable } from './DocumentsTable';
 import { documents } from '@data-exploration-lib/core';
+import { DocumentsTable } from './DocumentsTable';
 
 export default {
   title: 'Documents/DocumentsTable',

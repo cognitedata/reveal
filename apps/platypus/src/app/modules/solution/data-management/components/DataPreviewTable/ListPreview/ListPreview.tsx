@@ -9,9 +9,9 @@ import {
   DataModelVersion,
 } from '@platypus/platypus-core';
 import { GridReadyEvent } from 'ag-grid-community';
-import { useNestedListDataSource } from '../../../hooks/useNestedListDataSource';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useDebounce } from '@platypus-app/hooks/useDebounce';
+import { useNestedListDataSource } from '../../../hooks/useNestedListDataSource';
 import { usePreviewData } from '../../../hooks/usePreviewData';
 
 const PAGE_LIMIT = 100;

@@ -8,3 +8,4 @@ export * from './MatchingLabels';
 export * from './SortIcon';
 export * from './SubCellMatchingLabel';
 export * from './SubRowMatchingLabel';
+export * from './CopyToClipboardIconButton';

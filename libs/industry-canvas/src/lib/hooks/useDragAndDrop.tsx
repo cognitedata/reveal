@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FileDropData } from '../components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { toast } from '@cognite/cogs.js';
+import { FileDropData } from '../components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import { TOAST_POSITION } from '../constants';
 
 type UseDragAndDropProps = {

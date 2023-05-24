@@ -4,10 +4,10 @@ import isArray from 'lodash/isArray';
 import head from 'lodash/head';
 import unset from 'lodash/unset';
 
+import { isObjectEmpty } from '@data-exploration-lib/core';
 import { InternalAssetData } from './assets';
 import { MAX_METADATA_KEYS } from './constants';
 import { InternalEventsData } from './events';
-import { isObjectEmpty } from '@data-exploration-lib/core';
 
 /**
  * Tech debt: Remove me once api is shifted over to latest

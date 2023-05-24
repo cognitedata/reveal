@@ -4,8 +4,8 @@ import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
 import * as Sentry from '@sentry/browser';
 
-import App from './app/App';
 import { getEnvironment } from '@data-exploration-app/utils/environment';
+import App from './app/App';
 import { environment } from './environment';
 
 if (environment.SENTRY_DSN && getEnvironment() === 'production') {

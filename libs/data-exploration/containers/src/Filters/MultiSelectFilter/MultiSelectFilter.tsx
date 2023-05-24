@@ -8,15 +8,15 @@ import isEmpty from 'lodash/isEmpty';
 // } from '@data-exploration-components/components';
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
-import { formatValue, isNilOption } from './utils';
 import {
   FilterLabel,
   MultiSelect,
   MultiSelectProps,
 } from '@data-exploration/components';
 import { InputActionMeta } from 'react-select';
-import { MultiSelectOptionType } from '../types';
 import compact from 'lodash/compact';
+import { MultiSelectOptionType } from '../types';
+import { formatValue, isNilOption } from './utils';
 
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {

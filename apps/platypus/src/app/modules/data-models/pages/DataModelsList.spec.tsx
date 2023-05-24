@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
 import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 
-import { DataModelsList } from './DataModelsList';
 import { DataModel } from '@platypus/platypus-core';
+import { DataModelsList } from './DataModelsList';
 
 jest.mock('@platypus-app/hooks/useMixpanel');
 jest.mock('@platypus-app/hooks/useCapabilities');

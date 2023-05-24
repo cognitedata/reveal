@@ -1,8 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { InternalAssetData } from '@data-exploration-lib/domain-layer';
-import { BaseMultiSelectFilterProps } from '../types';
-import { MultiSelectFilter } from '../MultiSelectFilter';
 import { useDebounce } from 'use-debounce';
 import { useList, useSearch } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk/dist/src';
@@ -10,6 +8,8 @@ import {
   useMetrics,
   DATA_EXPLORATION_COMPONENT,
 } from '@data-exploration-lib/core';
+import { MultiSelectFilter } from '../MultiSelectFilter';
+import { BaseMultiSelectFilterProps } from '../types';
 
 interface BaseAssetSelectFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter, number> {

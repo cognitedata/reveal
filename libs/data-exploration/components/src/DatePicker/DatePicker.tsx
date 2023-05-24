@@ -3,10 +3,10 @@ import React, { useState, useRef, useMemo } from 'react';
 
 import { Dropdown, Button } from '@cognite/cogs.js';
 import ReactDatePicker from 'react-datepicker';
-import { DatePickerInput, renderCustomHeader } from './Common';
-import { DatePickerWrapper } from './elements';
 import noop from 'lodash/noop';
 import { formatDateToDatePickerString } from '@data-exploration-lib/core';
+import { DatePickerInput, renderCustomHeader } from './Common';
+import { DatePickerWrapper } from './elements';
 
 export type DatePickerProps = {
   initialDate?: Date;

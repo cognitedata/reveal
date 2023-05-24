@@ -21,6 +21,8 @@ import {
 import useLocalStorageState from 'use-local-storage-state';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
+import { Flex } from '@cognite/cogs.js';
+import noop from 'lodash/noop';
 import {
   TableContainer,
   StyledTable,
@@ -40,13 +42,9 @@ import {
   TableDataBody,
 } from './elements';
 
-import { Flex } from '@cognite/cogs.js';
-
-import { SortIcon } from './components';
 // import { ResourceTableColumns } from './columns';
-import { LoadMore, LoadMoreProps } from './components';
+import { LoadMore, LoadMoreProps, SortIcon } from './components';
 // import { EmptyState } from '../EmpyState';
-import noop from 'lodash/noop';
 
 // import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
 

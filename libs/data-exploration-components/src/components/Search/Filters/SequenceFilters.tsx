@@ -1,5 +1,8 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import { ResourceTypes } from '@data-exploration-components/types';
+import { OldSequenceFilters } from '@data-exploration-lib/core';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
@@ -7,9 +10,6 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-import { ResourceTypes } from '@data-exploration-components/types';
-import { OldSequenceFilters } from '@data-exploration-lib/core';
 
 export const SequenceFilters = ({
   filter,

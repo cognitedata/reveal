@@ -4,7 +4,6 @@ import {
   FetchPublishedRowsCountDTO,
 } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
-import { useInjection } from '../../../../hooks/useInjection';
 import {
   formatValidationErrors,
   Notification,
@@ -12,6 +11,7 @@ import {
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useParams } from 'react-router-dom';
+import { useInjection } from '../../../../hooks/useInjection';
 
 export const usePublishedRowsCountMapByType = ({
   dataModelExternalId,

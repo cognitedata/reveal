@@ -3,9 +3,9 @@ import { Table, TableProps } from '@data-exploration/components';
 import React, { useMemo, useState } from 'react';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import styled from 'styled-components';
+import { Icon } from '@cognite/cogs.js';
 import { ThreedRevisions } from './ThreedRevisions';
 import { ThreedModelLastUpdated } from './ThreedModelLastUpdated';
-import { Icon } from '@cognite/cogs.js';
 import { ThreedModelDisplay } from './ThreedModelDisplay';
 import { Image360Display } from './Image360Display';
 

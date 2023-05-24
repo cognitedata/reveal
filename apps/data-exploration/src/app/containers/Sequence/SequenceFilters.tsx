@@ -1,6 +1,5 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   useFilterEmptyState,
   useResetSequenceFilters,
@@ -14,6 +13,7 @@ import {
   useSequencesMetadataValuesAggregateQuery,
   useSequencesMetadataKeysAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();

@@ -3,8 +3,6 @@ import {
   MultiSelectFilter,
   Select,
 } from '@data-exploration-components/components';
-import { FilterFacetTitle } from '../FilterFacetTitle';
-import { reactSelectCogsStylingProps } from '../elements';
 import {
   TimeseriesProperty,
   useTimeseriesUniqueValuesByProperty,
@@ -16,6 +14,8 @@ import {
 } from '@data-exploration-lib/core';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import { reactSelectCogsStylingProps } from '../elements';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const AggregatedTimeseriesFilterV2 = ({
   field,

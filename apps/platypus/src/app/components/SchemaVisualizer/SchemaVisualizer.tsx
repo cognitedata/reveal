@@ -8,6 +8,10 @@ import React, {
 import styled, { CSSProperties } from 'styled-components/macro';
 import { Body, Button, Colors, Flex, Modal, Title } from '@cognite/cogs.js';
 import { Kind, parse } from 'graphql';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { BuiltInType } from '@platypus/platypus-core';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import noop from 'lodash/noop';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
   Node,
@@ -19,32 +23,27 @@ import {
   RenderLinkFunction,
 } from '../Graph/GraphEngine';
 import {
-  getLinkText,
-  getNodeId,
-  getNodeWidth,
-  getLinkEndOffset,
-  NODE_WIDTH,
-} from './utils';
-
-import {
   getInterfaceTypes,
   getLinkedNodes,
   getObjectTypes,
   getUnionTypes,
   SchemaDefinitionNode,
 } from '../../utils/graphql-utils';
-
 import zIndex from '../../utils/zIndex';
+import { Spinner } from '../Spinner/Spinner';
+import {
+  getLinkText,
+  getNodeId,
+  getNodeWidth,
+  getLinkEndOffset,
+  NODE_WIDTH,
+  getConnectorHeight,
+} from './utils';
+
 import { SmallNode } from './nodes/SmallNode';
 import { FullNode } from './nodes/FullNode';
 import { UnionNode } from './nodes/UnionNode';
 import { VisualizerToolbar } from './VisualizerToolbar';
-import { Spinner } from '../Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { BuiltInType } from '@platypus/platypus-core';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { getConnectorHeight } from './utils';
-import noop from 'lodash/noop';
 
 export interface SchemaVisualizerConfig {
   /* Set known types to control which types and field directives will be rendered and their styling */

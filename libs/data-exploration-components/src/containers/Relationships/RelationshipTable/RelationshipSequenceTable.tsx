@@ -10,9 +10,9 @@ import {
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 import { ResultCount } from '@data-exploration-components/components';
-import { RelationshipTableProps } from './RelationshipTable';
 import { SequenceWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
+import { RelationshipTableProps } from './RelationshipTable';
 
 const {
   relationshipLabels,

@@ -6,9 +6,9 @@ import {
   Dispatch,
   useCallback,
 } from 'react';
+import styled from 'styled-components';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { DEFAULT_CANVAS_NAME } from '../services/IndustryCanvasService';
-import styled from 'styled-components';
 
 type CanvasTitleProps = Pick<
   IndustryCanvasContextType,

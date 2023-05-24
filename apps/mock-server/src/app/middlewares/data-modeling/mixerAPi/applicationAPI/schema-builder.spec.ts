@@ -1,6 +1,6 @@
-import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
 import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
 import { execSchemaMock } from '../../../../../tests/mocks';
+import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
 
 describe('SchemaServiceGraphqlApiBuilder Test', () => {
   const normalizeString = (input: string) =>

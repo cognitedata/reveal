@@ -1,5 +1,5 @@
-import { IsStringFilter } from './IsStringFilter';
 import { render, screen } from '@testing-library/react';
+import { IsStringFilter } from './IsStringFilter';
 
 describe('IsStringFilter', () => {
   describe('Base', () => {

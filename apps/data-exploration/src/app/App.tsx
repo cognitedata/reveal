@@ -20,12 +20,12 @@ import AntStyles from '@data-exploration-app/styles/Styles';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
-import theme from './styles/theme';
-import rootStyles from './styles/index.css';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { RecoilDevTools } from 'recoil-gear';
 import { ErrorBoundary } from '@cognite/react-errors';
+import rootStyles from './styles/index.css';
+import theme from './styles/theme';
 
 export default () => {
   const env = getEnv();

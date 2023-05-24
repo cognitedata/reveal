@@ -1,16 +1,18 @@
 import { useMemo } from 'react';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
-import { TableSortBy } from '../../../types';
-
-import { useEventsListQuery } from '../../service';
-import { mapFiltersToEventsAdvancedFilters } from '../transformers';
-import { mapTableSortByToEventSortFields } from '../transformers';
-import { mapInternalFilterToEventsFilter } from '../transformers';
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   EventConfigType,
   InternalEventsFilters,
 } from '@data-exploration-lib/core';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
+import { TableSortBy } from '../../../types';
+
+import { useEventsListQuery } from '../../service';
+import {
+  mapFiltersToEventsAdvancedFilters,
+  mapTableSortByToEventSortFields,
+  mapInternalFilterToEventsFilter,
+} from '../transformers';
 
 export const useEventsSearchResultQuery = (
   {

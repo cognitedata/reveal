@@ -5,11 +5,11 @@ import { PlotHoverEvent } from 'plotly.js';
 
 import head from 'lodash/head';
 
+import isUndefined from 'lodash/isUndefined';
 import { Coordinate, HoverLineData } from '../../types';
 import { getLineInfoPosition } from '../../utils/getLineInfoPosition';
-import { LineInfo, LineInfoPointer, LineInfoWrapper } from './elements';
 import { getPointCustomData } from '../../utils/getPointCustomData';
-import isUndefined from 'lodash/isUndefined';
+import { LineInfo, LineInfoPointer, LineInfoWrapper } from './elements';
 
 export const LINE_INFO_POINTER_SIZE = 9;
 

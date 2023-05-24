@@ -6,20 +6,24 @@ import {
   TableSortBy,
   getChatCompletions,
   useDocumentSearchResultWithMatchingLabelsQuery,
+  useDocumentFilteredAggregateCount,
 } from '@data-exploration-lib/domain-layer';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { AppContext, CLOSE_DROPDOWN_EVENT } from '@data-exploration-lib/core';
-
-import { UploadButton, VerticalDivider } from '@data-exploration/components';
-import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-lib/core';
 import {
+  AppContext,
+  CLOSE_DROPDOWN_EVENT,
+  DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+
+import {
+  UploadButton,
+  VerticalDivider,
+  TableProps,
+} from '@data-exploration/components';
 import { useSDK } from '@cognite/sdk-provider';
-import { TableProps } from '@data-exploration/components';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';

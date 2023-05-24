@@ -3,9 +3,9 @@ import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { getExtendedAnnotationLabel } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
+import { Button } from '@cognite/cogs.js';
 import { TooltipContainerColumn } from '../Canvas/TooltipContainer';
 import { getOverlappingAnnotations } from './getOverlappingAnnotations';
-import { Button } from '@cognite/cogs.js';
 
 const useOverlappingAnnotationsTooltips = (
   isEnabled: boolean,
