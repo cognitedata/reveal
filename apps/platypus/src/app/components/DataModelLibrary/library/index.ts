@@ -1,3 +1,4 @@
+import { CFIHOS } from './CFIHOS';
 import { ISA88 } from './ISA88';
 import { ISO14224 } from './ISO14224';
 import { MovieDM } from './MovieDM';
@@ -18,4 +19,5 @@ export const library: { [key in string]: DataModelLibraryTemplateItem } = {
   'Cognite:MovieDM': MovieDM,
   'Cognite:ISA-88': ISA88,
   'Cognite:ISO-14224': ISO14224,
+  'Cognite:CFIHOS': CFIHOS,
 };

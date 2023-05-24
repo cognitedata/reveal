@@ -19,7 +19,7 @@ export const CommonFilterInput = <T extends InputType>({
   type,
   ...controlProps
 }: CommonFilterInputProps<T>) => {
-  const Input: React.FC<InputControlProps<T>> = useMemo(() => {
+  const Input: any = useMemo(() => {
     switch (type) {
       case 'string':
         return TextInput;

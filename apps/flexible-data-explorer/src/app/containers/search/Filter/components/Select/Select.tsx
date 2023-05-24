@@ -11,7 +11,7 @@ export interface SelectProps<T extends string> {
   options: T[];
   value?: T;
   defaultSelectFirstOption?: boolean;
-  onChange: (value: T) => void;
+  onChange: (value?: T) => void;
 }
 
 export const Select = <T extends string>({
