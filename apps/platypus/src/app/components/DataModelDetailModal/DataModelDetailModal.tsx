@@ -1,13 +1,15 @@
 import {
+  Body,
   Divider,
+  Flex,
+  Icon,
   Input,
   Modal,
-  SegmentedControl,
   Textarea,
 } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { NameWrapper, StyledEditableChip } from './elements';
+import { NameWrapper, StyledEditableChip, Selector } from './elements';
 import { DataSet } from '@cognite/sdk';
 import {
   DataModelExternalIdValidator,
@@ -190,28 +192,44 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
               <FormLabel level={2} strong>
                 {t('modal_how_to_start', 'How would you like to get started')}
               </FormLabel>
-              <SegmentedControl
-                onButtonClicked={(key) => {
-                  if (key === 'library') {
-                    setIsLibraryVisible(true);
-                  } else {
-                    setSelectedLibrary(undefined);
-                  }
+
+              <div
+                style={{
+                  marginTop: 16,
+                  display: 'grid',
+                  columnCount: 3,
+                  gap: 12,
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
                 }}
-                currentKey={selectedLibrary ? 'library' : 'scratch'}
               >
-                <SegmentedControl.Button key="scratch" icon="Edit">
-                  {t('modal_how_to_start_scratch', 'From scratch')}
-                </SegmentedControl.Button>
-                <SegmentedControl.Button key="library" icon="Bookmarks">
-                  {selectedLibrary
-                    ? `${t(
-                        'modal_how_to_start_using_library',
-                        `Starting from `
-                      )} "${selectedLibrary.name}"`
-                    : t('modal_how_to_start_library', 'Browse Library')}
-                </SegmentedControl.Button>
-              </SegmentedControl>
+                <Selector
+                  onClick={() => setSelectedLibrary(undefined)}
+                  $isSelected={!selectedLibrary}
+                >
+                  <Icon type="Edit" />
+                  <Flex direction="column" style={{ flex: 1 }}>
+                    <Body className="name" strong>
+                      {t('modal_how_to_start_scratch', 'From scratch')}
+                    </Body>
+                  </Flex>
+                </Selector>
+                <Selector
+                  onClick={() => setIsLibraryVisible(true)}
+                  $isSelected={!!selectedLibrary}
+                >
+                  <Icon type="Bookmarks" />
+                  <Flex direction="column" style={{ flex: 1 }}>
+                    <Body className="name" strong>
+                      {selectedLibrary
+                        ? `${t(
+                            'modal_how_to_start_using_library',
+                            `Starting from `
+                          )} "${selectedLibrary.name}"`
+                        : t('modal_how_to_start_library', 'Browse Library')}
+                    </Body>
+                  </Flex>
+                </Selector>
+              </div>
             </>
           )}
 
