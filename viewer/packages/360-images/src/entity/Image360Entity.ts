@@ -4,7 +4,7 @@
 
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360DataProvider } from '@reveal/data-providers';
-import { Image360, Image360Metadata } from './Image360';
+import { Image360 } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
@@ -45,6 +45,22 @@ export class Image360Entity implements Image360 {
    */
   get image360Visualization(): Image360VisualizationBox {
     return this._image360VisualzationBox;
+  }
+
+  /**
+   * Get Id of 360 image entity.
+   * @returns Station Id
+   */
+  get id(): string {
+    return this._imageMetadata.id;
+  }
+
+  /**
+   * Get label of 360 image entity.
+   * @returns Station label
+   * */
+  get label(): string {
+    return this._imageMetadata.label;
   }
 
   constructor(
@@ -119,14 +135,6 @@ export class Image360Entity implements Image360 {
    */
   public unloadImage(): void {
     this._image360VisualzationBox.unloadImages();
-  }
-
-  public getImageMetadata(): Image360Metadata {
-    return {
-      station: this._imageMetadata.label,
-      collection: this._imageMetadata.collectionLabel,
-      date: this._activeRevision.date
-    };
   }
 
   public activateAnnotations(): void {

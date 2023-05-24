@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360 } from './Image360';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 
 /**
