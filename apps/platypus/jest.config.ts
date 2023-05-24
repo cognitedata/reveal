@@ -1,4 +1,6 @@
 /* eslint-disable */
+const esModules = ['d3', 'd3-array', 'monaco', 'monaco-editor'].join('|');
+
 export default {
   displayName: 'platypus',
   preset: '../../jest.preset.js',
@@ -11,4 +13,7 @@ export default {
   setupFilesAfterEnv: ['./src/app/setupTests.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
+  moduleNameMapper: {
+    'd3(.*)': '<rootDir>/../../node_modules/d3$1/dist/d3$1.min.js',
+  },
 };

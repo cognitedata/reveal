@@ -32,6 +32,8 @@ export class DataModelDataMapper {
       owners: [],
       version: latestVersion,
       space: dto.externalId,
+      graphQlDml:
+        (dto.versions || [])[0]?.dataModel?.graphqlRepresentation || '',
     } as DataModel;
   }
 }

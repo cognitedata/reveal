@@ -20,7 +20,6 @@ import { useEffect, useMemo, useState } from 'react';
 import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
-import { noop } from 'lodash';
 import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
 import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
 import {
@@ -288,15 +287,8 @@ export const SearchPage = ({
               <GraphqlCodeEditor
                 disabled
                 code={JSON.stringify(result, null, 2)}
-                currentTypeName={null}
-                typeDefs={null}
-                externalId="abc"
                 space="abc"
-                errorsByGroup={{}}
                 language="json"
-                setErrorsByGroup={noop}
-                setEditorHasError={noop}
-                onChange={noop}
               />
             </div>
           </Tabs.Tab>

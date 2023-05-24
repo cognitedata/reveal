@@ -44,6 +44,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType } from '@platypus/platypus-core';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { getConnectorHeight } from './utils';
+import noop from 'lodash/noop';
 
 export interface SchemaVisualizerConfig {
   /* Set known types to control which types and field directives will be rendered and their styling */
@@ -55,13 +56,13 @@ export const SchemaVisualizer = React.memo(
   ({
     graphQLSchemaString,
     active,
-    isVisualizerOn,
-    onNodeClick,
+    isVisualizerOn = true,
+    onNodeClick = noop,
   }: {
     graphQLSchemaString?: string;
     active?: string;
-    isVisualizerOn: boolean;
-    onNodeClick: (nodeName: string) => void;
+    isVisualizerOn?: boolean;
+    onNodeClick?: (nodeName: string) => void;
     /* Customize the Visualizer rendering */
   }) => {
     const { t } = useTranslation('Schema Visualizer');

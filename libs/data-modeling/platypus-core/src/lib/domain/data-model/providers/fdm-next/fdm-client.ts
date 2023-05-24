@@ -215,6 +215,7 @@ export class FdmClient implements FlexibleDataModelingClient {
       name: dto.name,
       description: dto.description,
       version: '1',
+      ...(dto.graphQlDml && { graphQlDml: dto.graphQlDml }),
     };
 
     return this.fetchDataModel({
@@ -271,6 +272,7 @@ export class FdmClient implements FlexibleDataModelingClient {
       name: dto.name,
       space: dto.space,
       version: dto.version,
+      graphQlDml: dto.graphQlDml,
     };
 
     return this.mixerApiService

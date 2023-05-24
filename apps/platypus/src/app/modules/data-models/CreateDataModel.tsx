@@ -5,10 +5,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useDataModelMutation } from './hooks/useDataModelMutation';
 import { DataUtils } from '@platypus/platypus-core';
-import {
-  DataModelDetailModal,
-  OptionType,
-} from '../../components/DataModelDetailModal/DataModelDetailModal';
+import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
@@ -20,9 +17,10 @@ export const CreateDataModel = ({
   visible: boolean;
 }) => {
   const [dataModelName, setDataModelName] = useState('');
-  const [space, setSpace] = useState<OptionType<string>>();
+  const [space, setSpace] = useState<string | undefined>();
   const [dataModelDescription, setDataModelDescription] = useState('');
   const [externalId, setExternalId] = useState('');
+  const [dml, setDML] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation('CreateDataModelDialog');
@@ -42,6 +40,9 @@ export const CreateDataModel = ({
       setExternalId(DataUtils.convertToExternalId(value));
     }
   };
+  const handleDMLChange = (value = '') => {
+    setDML(value);
+  };
 
   const handleExternalIdChange = (value: string) => {
     setExternalId(value);
@@ -51,10 +52,11 @@ export const CreateDataModel = ({
   const handleSubmit = () => {
     create.mutate(
       {
-        space: space?.value,
+        space: space,
         externalId,
         name: dataModelName.trim(),
         description: dataModelDescription,
+        ...(dml && { graphQlDml: dml }),
       },
       {
         onSettled: (result) => {
@@ -105,6 +107,8 @@ export const CreateDataModel = ({
       onExternalIdChange={handleExternalIdChange}
       onDescriptionChange={(value) => setDataModelDescription(value)}
       onNameChange={handleNameChange}
+      // todo, i hate this component - way too much prop chaining, but this is shortest path
+      onDMLChange={handleDMLChange}
       onSubmit={handleSubmit}
       space={space}
       onSpaceChange={setSpace}
