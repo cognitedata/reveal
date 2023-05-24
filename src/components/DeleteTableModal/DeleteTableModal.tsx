@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 
 import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
 import { notification } from 'antd';
