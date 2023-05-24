@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Button,
-  Colors,
-  Detail,
-  Input,
-  Title,
-  Modal,
-  ModalProps,
-} from '@cognite/cogs.js';
+import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { notification } from 'antd';
 import { useFormik } from 'formik';
@@ -22,7 +14,7 @@ import { trimFileExtension } from 'utils/utils';
 import { CREATE_TABLE_MODAL_WIDTH } from 'utils/constants';
 
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-// import Modal, { ModalProps } from 'components/Modal/Modal';
+import Modal, { ModalProps } from 'components/Modal/Modal';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
@@ -121,7 +113,7 @@ const CreateTableModal = ({
     }
     resetForm();
     setCreateTableModalStep(CreateTableModalStep.CreationMode);
-    // onCancel();
+    onCancel();
   }
 
   function handleCreate(): void {
@@ -242,47 +234,47 @@ const CreateTableModal = ({
   return (
     <form onSubmit={handleSubmit}>
       <Modal
-        // footer={
-        //   <>
-        //     {createTableModalStep !== CreateTableModalStep.Upload ? (
-        //       <StyledCancelButton onClick={handleCancel} type="ghost">
-        //         {t('cancel')}
-        //       </StyledCancelButton>
-        //     ) : (
-        //       (isUploadSuccess || isUploadError) && (
-        //         <Button onClick={handleCancel} type="primary">
-        //           {t('create-table-modal-button-ok')}
-        //         </Button>
-        //       )
-        //     )}
-        //     {selectedCreationMode === CreationMode.Empty && (
-        //       <Button
-        //         disabled={isCreationDisabled}
-        //         loading={isCreatingTable}
-        //         onClick={() => handleSubmit()}
-        //         type="primary"
-        //       >
-        //         {t('create-table-modal-button-create')}
-        //       </Button>
-        //     )}
-        //     {createTableModalStep === CreateTableModalStep.PrimaryKey && (
-        //       <Button
-        //         disabled={isUploadDisabled}
-        //         loading={isCreatingTable}
-        //         onClick={() => handleSubmit()}
-        //         type="primary"
-        //       >
-        //         {t('create-database-modal-button-create')}
-        //       </Button>
-        //     )}
-        //   </>
-        // }
-        // maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
+        footer={
+          <>
+            {createTableModalStep !== CreateTableModalStep.Upload ? (
+              <StyledCancelButton onClick={handleCancel} type="ghost">
+                {t('cancel')}
+              </StyledCancelButton>
+            ) : (
+              (isUploadSuccess || isUploadError) && (
+                <Button onClick={handleCancel} type="primary">
+                  {t('create-table-modal-button-ok')}
+                </Button>
+              )
+            )}
+            {selectedCreationMode === CreationMode.Empty && (
+              <Button
+                disabled={isCreationDisabled}
+                loading={isCreatingTable}
+                onClick={() => handleSubmit()}
+                type="primary"
+              >
+                {t('create-table-modal-button-create')}
+              </Button>
+            )}
+            {createTableModalStep === CreateTableModalStep.PrimaryKey && (
+              <Button
+                disabled={isUploadDisabled}
+                loading={isCreatingTable}
+                onClick={() => handleSubmit()}
+                type="primary"
+              >
+                {t('create-database-modal-button-create')}
+              </Button>
+            )}
+          </>
+        }
+        maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
         onCancel={handleCancel}
         title={t('create-table-modal-title')}
         visible={visible}
-        // {...modalProps}
-        // width={CREATE_TABLE_MODAL_WIDTH}
+        {...modalProps}
+        width={CREATE_TABLE_MODAL_WIDTH}
       >
         {createTableModalStep !== CreateTableModalStep.Upload && (
           <FormFieldWrapper
