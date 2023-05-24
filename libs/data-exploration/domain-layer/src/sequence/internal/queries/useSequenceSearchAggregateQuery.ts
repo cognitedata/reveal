@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
-import {
-  mapFiltersToSequenceAdvancedFilters,
-  mapInternalFilterToSequenceFilter,
-  useSequenceAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
+
 import { UseQueryOptions } from '@tanstack/react-query';
 import {
   InternalSequenceFilters,
   SequenceConfigType,
 } from '@data-exploration-lib/core';
+import { useSequenceAggregateQuery } from '../../service';
+import {
+  mapFiltersToSequenceAdvancedFilters,
+  mapInternalFilterToSequenceFilter,
+} from '../transformers';
 
 export const useSequenceSearchAggregateQuery = (
   {

@@ -1,9 +1,10 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../../../../queryKeys';
+import { mapFiltersToDocumentSearchFilters } from '../../../internal';
 import { getDocumentAggregateCount } from '../../network/getDocumentAggregateCount';
 import { useMemo } from 'react';
-import { mapFiltersToDocumentSearchFilters } from '@data-exploration-lib/domain-layer';
+
 import {
   EMPTY_OBJECT,
   FileConfigType,

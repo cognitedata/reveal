@@ -1,5 +1,5 @@
 import { Timeseries } from '@cognite/sdk';
-import { InternalTimeseriesData } from '@data-exploration-lib/domain-layer';
+import { InternalTimeseriesData } from '../../internal';
 
 export const normalizeTimeseries = (
   items: Timeseries[]

@@ -4,13 +4,11 @@ import {
   isNumeric,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
-import {
-  AdvancedFilter,
-  AdvancedFilterBuilder,
-  NIL_FILTER_VALUE,
-} from '@data-exploration-lib/domain-layer';
+
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import { AdvancedFilter, AdvancedFilterBuilder } from '../../../builders';
+import { NIL_FILTER_VALUE } from '../../../constants';
 import { getSearchConfig } from '../../../utils';
 
 export type EventsProperties = {

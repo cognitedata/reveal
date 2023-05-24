@@ -4,12 +4,10 @@ import {
   Sequence,
   SequenceFilter,
 } from '@cognite/sdk';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import {
-  normalizeSequence,
-  SequenceProperties,
-} from '@data-exploration-lib/domain-layer';
-import { InternalSortBy } from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { InternalSortBy } from '../../../types';
+import { SequenceProperties } from '../../internal';
+import { normalizeSequence } from '../transformers';
 
 export const getSequenceList = (
   sdk: CogniteClient,

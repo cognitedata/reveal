@@ -4,13 +4,10 @@ import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 import omit from 'lodash/omit';
 
-import {
-  EventProperty,
-  mapFiltersToEventsAdvancedFilters,
-  useEventsUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
+import { EventProperty, useEventsUniqueValuesByProperty } from '../../service';
+import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 
 interface Props {
   property: EventProperty;

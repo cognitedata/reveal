@@ -4,12 +4,10 @@ import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 import omit from 'lodash/omit';
 
-import {
-  mapFiltersToDocumentSearchFilters,
-  useDocumentsUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { useDocumentsUniqueValuesByProperty } from '../../service';
 import { DocumentProperty, DocumentSourceProperty } from '../../service/types';
+import { mapFiltersToDocumentSearchFilters } from '../transformers';
 
 interface Props {
   property: Exclude<DocumentProperty, 'labels'> | DocumentSourceProperty;

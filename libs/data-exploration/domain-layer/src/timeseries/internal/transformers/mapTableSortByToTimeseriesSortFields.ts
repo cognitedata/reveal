@@ -1,11 +1,8 @@
 import {
   DEFAULT_SCORE_SORTING,
-  TableSortBy,
-} from '@data-exploration-lib/domain-layer';
-import {
-  InternalSortBy,
   METADATA_KEY_SEPARATOR,
-} from '@data-exploration-lib/domain-layer';
+} from '../../../constants';
+import { InternalSortBy, TableSortBy } from '../../../types';
 
 export const mapTableSortByToTimeseriesSortFields = (
   sortBy?: TableSortBy[]

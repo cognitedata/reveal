@@ -1,7 +1,8 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { FileInfo } from '@cognite/sdk/dist/src';
-import { getFileBySiteId, queryKeys } from '@data-exploration-lib/domain-layer';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../../../queryKeys';
+import { getFileBySiteId } from '../network';
 
 export const useFileBySiteIdQuery = (siteId: string | undefined) => {
   const sdk = useSDK();

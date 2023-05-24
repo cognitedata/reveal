@@ -2,7 +2,7 @@ import { setupServer } from 'msw/node';
 import { renderHook } from '@testing-library/react-hooks';
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { getMock360Images } from '../../../__mocks/getMock360Images';
-import { useInfinite360Images } from '@data-exploration-lib/domain-layer';
+import { useInfinite360Images } from '../useInfinite360Images';
 
 const mockServer = setupServer(getMock360Images());
 describe('useInfinite360Images', () => {

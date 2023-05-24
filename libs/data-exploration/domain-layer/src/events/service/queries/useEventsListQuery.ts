@@ -1,14 +1,15 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { EventFilter } from '@cognite/sdk/dist/src';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import { EventsProperties } from '@data-exploration-lib/domain-layer';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
-import { InternalSortBy } from '@data-exploration-lib/domain-layer';
+
 import { useMemo } from 'react';
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { InternalSortBy } from '../../../types';
+import { EventsProperties } from '../../internal';
 import { getEventsList } from '../network';
 
 export const useEventsListQuery = (

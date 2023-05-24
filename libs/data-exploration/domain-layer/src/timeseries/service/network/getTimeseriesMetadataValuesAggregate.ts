@@ -3,7 +3,7 @@ import {
   TimeseriesAggregateFilters,
   TimeseriesAggregateUniqueValuesResponse,
   TimeseriesMetadataAggregateResponse,
-} from '@data-exploration-lib/domain-layer';
+} from '../types';
 
 import { getTimeseriesAggregate } from './getTimeseriesAggregate';
 

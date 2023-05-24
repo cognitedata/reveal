@@ -4,7 +4,7 @@ import {
   TimeseriesAggregateUniquePropertiesResponse,
   TimeseriesMetadataAggregateResponse,
   TimeseriesMetadataProperty,
-} from '@data-exploration-lib/domain-layer';
+} from '../types';
 
 import { getTimeseriesAggregate } from './getTimeseriesAggregate';
 

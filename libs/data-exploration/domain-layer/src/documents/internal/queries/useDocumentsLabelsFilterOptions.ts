@@ -4,11 +4,9 @@ import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 import omit from 'lodash/omit';
 
-import {
-  mapFiltersToDocumentSearchFilters,
-  useDocumentsLabelAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { useDocumentsLabelAggregateQuery } from '../../service';
+import { mapFiltersToDocumentSearchFilters } from '../transformers';
 
 interface Props {
   searchQuery?: string;

@@ -5,12 +5,12 @@ import {
   getMock3DRevisions,
   mockModelObj,
 } from '../../../__mocks/getMock3DRevisions';
-import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 import { jest } from '@jest/globals';
 import {
   mock3dRevisions,
   newestRevision,
 } from '../../../__fixtures/mock3dRevisions';
+import { useDefault3DModelRevision } from '../useDefault3DModelRevision';
 
 const mockServer = setupServer(getMock3DRevisions());
 describe('useDefault3DModelRevision', () => {

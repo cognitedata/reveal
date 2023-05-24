@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
+
 import { AssetFilterProps } from '@cognite/sdk';
-import {
-  AssetsProperties,
-  getAssetsAggregate,
-} from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { AssetsProperties } from '../../internal';
+import { getAssetsAggregate } from '../network';
 
 export const useAssetsAggregateQuery = (
   {

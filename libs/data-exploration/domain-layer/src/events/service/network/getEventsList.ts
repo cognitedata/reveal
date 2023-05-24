@@ -4,10 +4,10 @@ import {
   CursorResponse,
   EventFilter,
 } from '@cognite/sdk';
-import { EventsProperties } from '@data-exploration-lib/domain-layer';
-import { InternalSortBy } from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { InternalSortBy } from '../../../types';
+import { EventsProperties } from '../../internal';
 import { normalizeEvents } from '../transformers';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 
 export const getEventsList = (
   sdk: CogniteClient,

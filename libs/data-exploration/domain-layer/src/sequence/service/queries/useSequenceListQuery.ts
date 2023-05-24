@@ -5,13 +5,11 @@ import {
 } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { SequenceFilter } from '@cognite/sdk/dist/src';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
-import {
-  SequenceProperties,
-  getSequenceList,
-} from '@data-exploration-lib/domain-layer';
-import { InternalSortBy } from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { InternalSortBy } from '../../../types';
+import { SequenceProperties } from '../../internal';
+import { getSequenceList } from '../network';
 
 export const useSequenceListQuery = (
   {

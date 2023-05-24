@@ -4,7 +4,7 @@ import {
   EventsAggregateFilters,
   EventsAggregateUniquePropertiesResponse,
   EventsMetadataAggregateResponse,
-} from '@data-exploration-lib/domain-layer';
+} from '../types';
 
 import { getEventsAggregate } from './getEventsAggregate';
 

@@ -5,7 +5,7 @@ import {
   getMock3DRevisions,
   mockModelObj,
 } from '../../../__mocks/getMock3DRevisions';
-import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
+import { use3DRevisionsQuery } from '../use3DRevisionsQuery';
 
 const mockServer = setupServer(getMock3DRevisions());
 describe('use3DRevisionsQuery', () => {

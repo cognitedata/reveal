@@ -4,10 +4,8 @@ import {
   UseInfiniteQueryOptions,
   useInfiniteQuery,
 } from '@tanstack/react-query';
-import {
-  queryKeys,
-  getBasicMappingsByAssetId,
-} from '@data-exploration-lib/domain-layer';
+import { queryKeys } from '../../../queryKeys';
+import { getBasicMappingsByAssetId } from '../network';
 
 export const useBasicMappingsByAssetIdQuery = (
   {

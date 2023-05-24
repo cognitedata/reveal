@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { TableSortBy } from '../../../types';
 import {
   mapFiltersToDocumentSearchFilters,
   mapTableSortByToDocumentSortFields,
@@ -7,7 +8,6 @@ import {
 
 import { DocumentSearchItem } from '@cognite/sdk';
 
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { useDocumentSearchQuery } from '../../service';
 import {

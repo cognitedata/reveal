@@ -1,12 +1,13 @@
-import { useAssetsListQuery } from '@data-exploration-lib/domain-layer';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
+import { TableSortBy } from '../../../types';
+import { useAssetsListQuery } from '../../service';
 import {
   mapFiltersToAssetsAdvancedFilters,
   mapInternalFilterToAssetFilter,
   mapTableSortByToAssetSortFields,
 } from '../transformers';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   AssetConfigType,

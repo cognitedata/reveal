@@ -1,12 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { DocumentProperties } from '../../internal';
 
-import {
-  AdvancedFilter,
-  DocumentProperties,
-  queryKeys,
-} from '@data-exploration-lib/domain-layer';
 import { getDocumentsUniqueValuesByProperty } from '../network';
 import { DocumentProperty, DocumentSourceProperty } from '../types';
 

@@ -2,7 +2,8 @@ import { CogniteClient } from '@cognite/sdk';
 import {
   EventsAggregateUniqueValuesResponse,
   EventsMetadataAggregateResponse,
-} from '@data-exploration-lib/domain-layer';
+} from '../../../events';
+
 import { DocumentsAggregateFilters } from '../types';
 import { getDocumentsAggregate } from './getDocumentsAggregate';
 

@@ -1,13 +1,11 @@
 import omit from 'lodash/omit';
 
 import { InternalAssetFilters } from '@data-exploration-lib/core';
-import {
-  mapFiltersToAssetsAdvancedFilters,
-  useAssetsMetadataKeysAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
+import { mapFiltersToAssetsAdvancedFilters } from '..';
+import { useAssetsMetadataKeysAggregateQuery } from '../../service';
 
 interface Props {
   query?: string;

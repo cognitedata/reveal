@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../../../queryKeys';
 import { getRootAsset } from '../network/getRootAsset';
 
 export const useRootAssetQuery = (assetId?: number) => {

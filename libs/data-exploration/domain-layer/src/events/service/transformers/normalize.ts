@@ -1,5 +1,5 @@
 import { CogniteEvent } from '@cognite/sdk';
-import { InternalEventsData } from '@data-exploration-lib/domain-layer';
+import { InternalEventsData } from '../../internal';
 
 export const normalizeEvents = (
   items: CogniteEvent[]

@@ -1,6 +1,7 @@
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
+import { TableSortBy } from '../../../types';
+
 import { useEventsListQuery } from '../../service';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import { mapTableSortByToEventSortFields } from '../transformers';

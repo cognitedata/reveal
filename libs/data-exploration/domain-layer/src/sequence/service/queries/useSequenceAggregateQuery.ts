@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
 import { SequenceFilter } from '@cognite/sdk';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import {
-  SequenceProperties,
-  getSequencesAggregate,
-} from '@data-exploration-lib/domain-layer';
+
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { SequenceProperties } from '../../internal';
+import { getSequencesAggregate } from '../network';
 
 export const useSequenceAggregateQuery = (
   {

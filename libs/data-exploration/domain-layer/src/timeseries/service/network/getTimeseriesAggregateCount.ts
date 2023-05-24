@@ -5,11 +5,9 @@ import {
   TimeseriesFilter,
 } from '@cognite/sdk';
 
-import {
-  AdvancedFilter,
-  TimeseriesProperties,
-} from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
+import { AdvancedFilter } from '../../../builders';
+import { TimeseriesProperties } from '../../internal';
 
 export const getTimeseriesAggregateCount = (
   sdk: CogniteClient,

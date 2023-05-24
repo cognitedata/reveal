@@ -7,13 +7,10 @@ import {
 } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import uniqWith from 'lodash/uniqWith';
+import { queryKeys } from '../../../queryKeys';
+import { fetchThreeDModelQuery, fetchThreeDRevisionQuery } from '../network';
+import { DetailedMapping } from '../types';
 
-import {
-  DetailedMapping,
-  fetchThreeDModelQuery,
-  fetchThreeDRevisionQuery,
-} from '@data-exploration-lib/domain-layer';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { useBasicMappingsByAssetIdQuery } from './useBasicMappingsByAssetIdQuery';
 
 export const useDetailedMappingsByAssetIdQuery = (
