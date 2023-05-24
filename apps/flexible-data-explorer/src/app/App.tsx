@@ -1,25 +1,24 @@
-import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from '@cognite/cogs.js';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { getProject } from '@cognite/cdf-utilities';
 import { queryClient } from './queryClient';
 
 import Routes from './Routes';
 import { SDKProvider } from '@cognite/sdk-provider';
+import { useAuthContext } from './common/auth/AuthProvider';
+import { TopBar } from './common/topbar/top-bar';
 
 function App() {
-  const project = getProject();
-  const basename = `${project}/explore`;
+  const { client } = useAuthContext();
 
   return (
-    <SDKProvider sdk={sdk}>
+    <SDKProvider sdk={client}>
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
         <ToastContainer />
-        <Router basename={basename} window={window} children={<Routes />} />
+        <TopBar />
+        <Router window={window} children={<Routes />} />
       </QueryClientProvider>
     </SDKProvider>
   );
