@@ -2,27 +2,38 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Box } from 'components/box/Box';
+import { JobsTable } from 'components/jobs-table/JobsTable';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
-import { Illustrations } from '@cognite/cogs.js';
+import { PAGE_WIDTH } from 'utils/constants';
+import { MessageHistoryChart } from 'components/message-history-chart/MessageHistoryChart';
 
 type HostedExtractionPipelineInsightProps = {
   source: MQTTSourceWithJobMetrics;
 };
 
-export const HostedExtractionPipelineInsight =
-  ({}: HostedExtractionPipelineInsightProps): JSX.Element => {
-    return (
-      <TemporaryBox>
-        <Illustrations.Solo type="MaintenanceFixTools" />
-      </TemporaryBox>
-    );
-  };
+export const HostedExtractionPipelineInsight = ({
+  source,
+}: HostedExtractionPipelineInsightProps): JSX.Element => {
+  return (
+    <InsightGrid>
+      <MessageHistorySection jobs={source.jobs} />
+      <JobsTableSection jobs={source.jobs} />
+    </InsightGrid>
+  );
+};
 
-const TemporaryBox = styled(Box)`
-  align-items: center;
-  display: flex;
-  height: 256px;
-  justify-content: center;
-  width: 1024px;
+const InsightGrid = styled.div`
+  display: grid;
+  gap: 16px;
+  grid-template-rows: [start] 300px [first] auto [end];
+  width: ${PAGE_WIDTH}px;
+`;
+
+const MessageHistorySection = styled(MessageHistoryChart)`
+  grid-row: start / first;
+  margin-bottom: 0;
+`;
+
+const JobsTableSection = styled(JobsTable)`
+  grid-row: first / end;
 `;

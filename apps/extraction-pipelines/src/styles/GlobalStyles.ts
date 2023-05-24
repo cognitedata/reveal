@@ -41,15 +41,6 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-select-dropdown-menu {
     margin-top: 0;
   }
-
-  .extpipes-ui-style-scope [data-tippy-root] {
-    .tippy-box {
-      .tippy-content {
-        padding: 0;
-      }
-    }
-  }
-
 `;
 
 export default GlobalStyle;

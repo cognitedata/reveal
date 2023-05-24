@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Body,
-  Button,
-  Colors,
-  Dropdown,
-  Menu,
-  Status,
-  StatusProps,
-} from '@cognite/cogs.js';
+import { Body, Button, Colors, Dropdown, Menu, Status } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
@@ -16,31 +8,12 @@ import {
   useDeleteMQTTJob,
   useUpdateMQTTJob,
 } from 'hooks/hostedExtractors';
-import {
-  doesJobStatusHaveErrorType,
-  doesJobStatusHaveNeutralType,
-  doesJobStatusHaveSuccessType,
-} from 'utils/hostedExtractors';
 import { notification } from 'antd';
+import { getJobStatusForCogs } from 'utils/hostedExtractors';
 
 type TopicFilterProps = {
   className?: string;
   job: MQTTJobWithMetrics;
-};
-
-const getJobStatusForCogs = (
-  job: MQTTJobWithMetrics
-): StatusProps['type'] | undefined => {
-  if (doesJobStatusHaveErrorType(job)) {
-    return 'critical';
-  }
-  if (doesJobStatusHaveNeutralType(job)) {
-    return 'neutral';
-  }
-  if (doesJobStatusHaveSuccessType(job)) {
-    return 'success';
-  }
-  return undefined;
 };
 
 export const TopicFilter = ({

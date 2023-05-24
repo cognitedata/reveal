@@ -1,0 +1,35 @@
+name: Sync added and deleted keys to locize
+on:
+  push:
+    branches:
+      - master
+
+env:
+  NODE_OPTIONS: '--max_old_space_size=4096'
+
+jobs:
+  locize-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install 🔧
+        run: yarn --network-timeout 1000000 --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
+      - name: 'Save added keys to locize'
+        run: yarn save-missing
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
+      - name: 'Remove deleted keys from locize'
+        run: yarn remove-deleted
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
