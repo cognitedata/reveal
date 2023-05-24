@@ -1,6 +1,8 @@
-import { Button, Chip, ChipGroup } from '@cognite/cogs.js';
+import { Button, Chip, ChipGroup, Dropdown } from '@cognite/cogs.js';
 import React from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
+
+import { Filter } from './Filter';
 
 export const SearchFilters = React.memo(() => {
   const { t } = useTranslation();
@@ -14,15 +16,17 @@ export const SearchFilters = React.memo(() => {
         <Chip type="neutral" label="Filter" />
       </ChipGroup>
 
-      <Button
-        icon="Filter"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        {t('filter_button', 'Filters')}
-      </Button>
+      <Dropdown content={<Filter />}>
+        <Button
+          icon="Filter"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          {t('filter_button', 'Filters')}
+        </Button>
+      </Dropdown>
     </>
   );
 });
