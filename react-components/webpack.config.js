@@ -10,6 +10,7 @@ export default (_, argv) => {
   const { mode } = argv;
   const isProduction = mode === 'production';
   return {
+    mode,
     entry: './src/index.ts',
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -31,9 +32,7 @@ export default (_, argv) => {
       ]
     },
     externals: [
-      nodeExternals({
-        importType: 'module'
-      })
+      nodeExternals()
     ],
     resolve: {
       extensions: ['.tsx', '.ts'],

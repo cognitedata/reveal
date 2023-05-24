@@ -20,8 +20,8 @@ export interface Image360HistoricalOverviewToolbarProps{
   stationName?: string;
   collectionId?: string;
   revisionCollection?: Image360RevisionDetails[];
-  activeRevision?: number | null;
-  setActiveRevision?: (index: number | null) => void;
+  activeRevision?: number;
+  setActiveRevision?: (index: number) => void;
   viewer?: Cognite3DViewer;
 };
 
