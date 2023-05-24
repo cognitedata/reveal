@@ -44,11 +44,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
         searchQuery={query}
       />
       {!!databases.length && (
-        <StyledButton
-          // style={{ display: 'block' }}
-          icon="Add"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
+        <StyledButton icon="Add" onClick={() => setIsCreateModalOpen(true)}>
           {t('explorer-side-panel-databases-button-create-database')}
         </StyledButton>
       )}
@@ -63,7 +59,8 @@ const SidePanelDatabaseList = (): JSX.Element => {
 
 const StyledButton = styled(Button)`
   &&& {
-    display: block !important;
+    display: flex !important;
+    width: 100%;
   }
 `;
 
