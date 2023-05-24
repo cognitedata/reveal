@@ -2,6 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
+import { CogniteCadModel } from './wrappers/CogniteCadModel';
+
 /**
  * Units supported by {@link CogniteCadModel}.
  */
@@ -24,7 +26,7 @@ export type GeometryFilter = {
    * will be transformed into coordinates relative to the model using the the model transformation
    * which can be specified using {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions |the CDF API},
    * or set in {@link https://fusion.cognite.com/ |Cognite Fusion}.
-   * @see {@link isBoundingBoxInModelCoordinates}.
+   * @see {@link GeometryFilter.isBoundingBoxInModelCoordinates}.
    */
   boundingBox?: THREE.Box3;
 

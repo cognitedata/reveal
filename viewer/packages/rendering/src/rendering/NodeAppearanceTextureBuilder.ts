@@ -45,8 +45,8 @@ export class NodeAppearanceTextureBuilder {
 
   /**
    * Sets the default style and invalidates the builder. Note that this causes a full
-   * recomputation of values the next time {@link build} is called, so using this might be
-   * expensive.
+   * recomputation of values the next time {@link NodeAppearanceTextureBuilder.build} is called,
+   * so using this might be expensive.
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
   setDefaultAppearance(appearance: NodeAppearance): void {

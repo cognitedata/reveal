@@ -58,7 +58,7 @@ export type HtmlOverlayToolClusteringOptions = {
   /**
    * Currently only 'overlapInScreenSpace' is supported. In this mode,
    * overlays are clustered together into a single element as defined by
-   * the {@link createClusterElementCallback} and hidden when they overlap
+   * the {@link HtmlOverlayToolClusteringOptions.createClusterElementCallback} and hidden when they overlap
    * in screen space. The composite element is placed at the midpoint of
    * all clustered elements.
    *
