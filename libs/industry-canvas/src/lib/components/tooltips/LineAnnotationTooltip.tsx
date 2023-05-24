@@ -8,6 +8,14 @@ import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
 import { RightAlignedColorPalettePosition } from './elements';
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
+import { LineEndTypeTooltip } from './LineEndTypeTooltip';
+
+enum EditMode {
+  IDLE,
+  EDITING_STROKE_WIDTH,
+  EDITING_FILL,
+  EDITING_LINE_END_TYPE,
+}
 
 export type PolylineAnnotationTooltipProps = {
   lineAnnotation: PolylineAnnotation;
@@ -22,11 +30,19 @@ export const LineAnnotationTooltip: React.FC<
   onUpdateAnnotationStyleByType,
   onDeleteSelectedCanvasAnnotation,
 }) => {
-  const [isInEditFillMode, setIsInEditFillMode] = useState(false);
+  const [editMode, setEditMode] = useState(EditMode.IDLE);
+
+  const toggleEditMode = (mode: EditMode) => {
+    if (editMode === mode) {
+      setEditMode(EditMode.IDLE);
+    } else {
+      setEditMode(mode);
+    }
+  };
 
   return (
     <>
-      {isInEditFillMode && (
+      {editMode === EditMode.EDITING_FILL && (
         <RightAlignedColorPalettePosition>
           <FillColorPalette
             colors={Object.values(TEXT_ANNOTATION_COLOR_MAP)}
@@ -39,10 +55,33 @@ export const LineAnnotationTooltip: React.FC<
           />
         </RightAlignedColorPalettePosition>
       )}
+      {editMode === EditMode.EDITING_LINE_END_TYPE && (
+        <RightAlignedColorPalettePosition>
+          <LineEndTypeTooltip
+            selectedStartEndType={lineAnnotation.startEndType}
+            selectedEndEndType={lineAnnotation.endEndType}
+            onUpdateEndType={({ startEndType, endEndType }) => {
+              onUpdateAnnotationStyleByType({
+                line: { startEndType, endEndType },
+              });
+            }}
+          />
+        </RightAlignedColorPalettePosition>
+      )}
       <ToolBar direction="horizontal">
         <>
+          <Tooltip content="Change line end types">
+            <Button
+              icon="ArrowUpRight"
+              aria-label="Edit line type"
+              type="ghost"
+              toggled={editMode === EditMode.EDITING_LINE_END_TYPE}
+              onClick={() => toggleEditMode(EditMode.EDITING_LINE_END_TYPE)}
+            />
+          </Tooltip>
           <Dropdown
             placement="top-start"
+            onShown={() => setEditMode(EditMode.EDITING_STROKE_WIDTH)}
             content={
               <Menu>
                 {Object.entries(LINE_STROKE_WIDTH).map(
@@ -79,10 +118,8 @@ export const LineAnnotationTooltip: React.FC<
               icon="ColorPalette"
               aria-label="Edit color"
               type="ghost"
-              toggled={isInEditFillMode}
-              onClick={() => {
-                setIsInEditFillMode((prev) => !prev);
-              }}
+              toggled={editMode === EditMode.EDITING_FILL}
+              onClick={() => toggleEditMode(EditMode.EDITING_FILL)}
             />
           </Tooltip>
         </>
