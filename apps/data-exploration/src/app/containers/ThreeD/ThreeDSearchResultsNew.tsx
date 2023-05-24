@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import { ThreeDTable } from '@data-exploration/containers';
 import {
   FileTypeVisibility,
-  InternalThreedFilters,
+  InternalThreeDFilters,
 } from '@data-exploration-lib/core';
 import {
   Model3DWithType,
   use3DResults,
 } from '@data-exploration-lib/domain-layer';
 import {
-  defaultVisibility,
+  DEFAULT_VISIBILITY,
   FileTypeToggle,
 } from '@data-exploration/components';
 import useLocalStorageState from 'use-local-storage-state';
@@ -23,13 +23,13 @@ export const ThreeDSearchResultsNew = ({
   filter = {},
   onClick,
 }: {
-  filter?: InternalThreedFilters;
+  filter?: InternalThreeDFilters;
   query?: string | undefined;
   onClick: (item: Model3DWithType) => void;
 }) => {
   const [fileTypeVisibility, setFileTypeVisibility] =
     useLocalStorageState<FileTypeVisibility>(`${ID}-file-types`, {
-      defaultValue: defaultVisibility,
+      defaultValue: DEFAULT_VISIBILITY,
     });
 
   const {

@@ -3,7 +3,7 @@ import React from 'react';
 import { TimeDisplay } from '@data-exploration/components';
 import { DASH } from '@data-exploration-lib/core';
 import { Body } from '@cognite/cogs.js';
-export const ThreedModelLastUpdated = ({
+export const ThreeDModelLastUpdated = ({
   modelId,
   is360Image,
 }: {

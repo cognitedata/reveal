@@ -7,9 +7,9 @@ import {
   useDefault3DModelRevision,
 } from '@data-exploration-lib/domain-layer';
 import { getObjectURL } from '@data-exploration-lib/core';
-import { ThreedThumbnail } from './ThreedThumbnail';
+import { ThreeDThumbnail } from './ThreeDThumbnail';
 
-export const ThreedModelDisplay = ({ model }: { model: Model3DWithType }) => {
+export const ThreeDModelDisplay = ({ model }: { model: Model3DWithType }) => {
   const { data: latestRevision, isLoading: isRevisionLoading } =
     useDefault3DModelRevision(model?.id);
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
@@ -40,7 +40,7 @@ export const ThreedModelDisplay = ({ model }: { model: Model3DWithType }) => {
 
   return (
     <Flex direction="row" gap={8} style={{ alignItems: 'center' }}>
-      <ThreedThumbnail
+      <ThreeDThumbnail
         imageUrl={imageUrl}
         isLoading={isCADModelThumbnailLoading}
       />

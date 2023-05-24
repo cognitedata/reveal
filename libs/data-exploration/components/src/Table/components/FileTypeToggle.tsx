@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { FileTypes, FileTypeVisibility } from '@data-exploration-lib/core';
 
 const CustomChip = ({
-  lable,
+  label,
   icon,
   checked,
   onChange,
 }: {
-  lable: string;
+  label: string;
   icon: IconType;
   checked: boolean;
   onChange: (nextState: boolean) => void;
@@ -17,7 +17,7 @@ const CustomChip = ({
   <ChipContainer>
     <ChipContent>
       <ChipIcon type={icon} />
-      <Lable level={2}>{lable}</Lable>
+      <Lable level={2}>{label}</Lable>
       <Switch
         checked={checked}
         onChange={(_e: any, nextState: boolean) => onChange(nextState)}
@@ -35,18 +35,18 @@ export const FileTypeToggle = (
   return (
     <>
       <CustomChip
-        lable="CAD models"
+        label="CAD models"
         icon="Cube"
         checked={fileTypeVisibility.CADModels}
         onChange={(nextState: boolean) => {
           setFileTypeVisibility({
             ...fileTypeVisibility,
-            [FileTypes.CAD_MOLDELS]: nextState,
+            [FileTypes.CAD_MODELS]: nextState,
           });
         }}
       />
       <CustomChip
-        lable="Point clouds"
+        label="Point clouds"
         icon="PonitCloud"
         checked={fileTypeVisibility.PointClouds}
         onChange={(nextState: boolean) => {
@@ -57,7 +57,7 @@ export const FileTypeToggle = (
         }}
       />
       <CustomChip
-        lable="360 images"
+        label="360 images"
         icon="View360"
         checked={fileTypeVisibility.Images360}
         onChange={(nextState: boolean) => {

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import React, { useMemo } from 'react';
 import { Icon } from '@cognite/cogs.js';
 
-export const ThreedThumbnail = ({
+export const ThreeDThumbnail = ({
   imageUrl,
   isLoading,
 }: {

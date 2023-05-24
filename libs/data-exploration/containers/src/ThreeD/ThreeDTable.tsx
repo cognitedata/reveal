@@ -68,7 +68,7 @@ export const ThreeDTable = ({
               {row.original?.type === 'img360' ? (
                 <Image360Display model={row.original} />
               ) : (
-                <ThreedModelDisplay model={row.original} />
+                <ThreeDModelDisplay model={row.original} />
               )}
             </div>
           ),
@@ -82,7 +82,7 @@ export const ThreeDTable = ({
           accessorKey: 'id',
           header: 'Revisions',
           cell: ({ getValue, row }) => (
-            <ThreedRevisions
+            <ThreeDRevisions
               modelId={getValue<number>()}
               is360Image={row.original?.type === 'img360'}
             />
@@ -95,7 +95,7 @@ export const ThreeDTable = ({
           accessorKey: 'id',
           header: 'Updated',
           cell: ({ getValue, row }) => (
-            <ThreedModelLastUpdated
+            <ThreeDModelLastUpdated
               modelId={getValue<number>()}
               is360Image={row.original?.type === 'img360'}
             />

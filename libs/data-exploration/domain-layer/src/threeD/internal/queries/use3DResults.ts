@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import {
   FileTypeVisibility,
-  InternalThreedFilters,
+  InternalThreeDFilters,
 } from '@data-exploration-lib/core';
 import { Model3D } from '@cognite/sdk';
 import { DEFAULT_SEARCH_RESULTS_PAGE_SIZE } from '../../../constants';
@@ -12,7 +12,7 @@ import { useInfinite360Images } from './useInfinite360Images';
 export const use3DResults = (
   fileTypeVisibility: FileTypeVisibility,
   query?: string | undefined,
-  filter?: InternalThreedFilters,
+  filter?: InternalThreeDFilters,
   limit: number = DEFAULT_SEARCH_RESULTS_PAGE_SIZE
 ) => {
   const {
@@ -20,7 +20,7 @@ export const use3DResults = (
     fetchNextPage: fetchMore3DModelData,
     hasNextPage: canFetchMore3DModelData,
     isFetchingNextPage: isFetchingMore3DModelData,
-  } = useInfinite3DModelsQuery(limit, { enabled: true }, filter);
+  } = useInfinite3DModelsQuery(limit, { enabled: true });
 
   const {
     images360Data,
