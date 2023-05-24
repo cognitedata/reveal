@@ -6,25 +6,6 @@ import { Image360Revision } from './Image360Revision';
 import { Image360Visualization } from './Image360Visualization';
 
 /**
- * Metadata for a 360 image
- */
-export type Image360Metadata = {
-  /**
-   * The name or ID of the station this 360 image represents.
-   */
-  station: string;
-  /**
-   * The name of the collection to which this 360 image belongs.
-   */
-  collection: string;
-  /**
-   * The date of the most recently viewed revision of this 360 image,
-   * or the newest one if unviewed.
-   */
-  date?: Date;
-};
-
-/**
  * A single 360 image "station", which may consist of several revisions
  * captured in approximately the same location
  */
@@ -43,9 +24,16 @@ export interface Image360 {
   readonly image360Visualization: Image360Visualization;
 
   /**
-   * Get additional information about this image and its active revision.
+   * Get Id of 360 image entity.
+   * @returns Station Id
    */
-  getImageMetadata(): Image360Metadata;
+  readonly id: string;
+
+  /**
+   * Get label of 360 image entity.
+   * @returns Station label
+   * */
+  readonly label: string;
 
   /**
    * List all historical images for this entity.
