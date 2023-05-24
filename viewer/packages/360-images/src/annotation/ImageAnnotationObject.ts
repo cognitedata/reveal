@@ -152,7 +152,7 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 
   private updateMaterials(): void {
-    const color = this.getColor();
+    const color = this.getColorReference();
     const visibility = this.getVisible();
 
     this._meshMaterial.color = color;
@@ -168,8 +168,12 @@ export class ImageAnnotationObject implements Image360Annotation {
     this.updateMaterials();
   }
 
-  public getColor(): Color {
+  private getColorReference(): Color {
     return this._appearance.color ?? this._defaultAppearance.color ?? getDefaultColor(this._annotation);
+  }
+
+  public getColor(): Color {
+    return this.getColorReference().clone();
   }
 
   public setColor(color?: Color): void {
