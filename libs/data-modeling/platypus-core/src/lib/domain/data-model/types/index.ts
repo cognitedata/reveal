@@ -11,6 +11,7 @@ export interface DataModel {
   updatedTime: number;
   owners: string[];
   version: string;
+  graphQlDml: string;
   /** DMS v3 requires space externalId */
   space: string;
 }

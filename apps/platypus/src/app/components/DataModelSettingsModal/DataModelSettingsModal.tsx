@@ -49,10 +49,7 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
       onDescriptionChange={(value) => setDescription(value)}
       onNameChange={(value) => setName(value)}
       onSubmit={handleSubmit}
-      space={{
-        label: props.dataModel.space,
-        value: props.dataModel.space,
-      }}
+      space={props.dataModel.space}
       title={t('data_model_settings_modal_title', 'Settings')}
     />
   );

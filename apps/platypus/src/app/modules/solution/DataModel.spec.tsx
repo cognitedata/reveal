@@ -33,6 +33,12 @@ jest.mock('@platypus-app/hooks/useMixpanel', () => ({
 jest.mock('@platypus-app/hooks/useDataModelActions');
 jest.mock('@platypus-app/hooks/useSelectedDataModelVersion');
 
+jest.mock('@platypus-app/components/DataModelLibrary/DataModelLibrary', () => {
+  return {
+    DataModelLibrary: () => <p>Mock</p>,
+  };
+});
+
 const solutionReduxMock = {
   ...initialState,
   dataModel: mockSolution,

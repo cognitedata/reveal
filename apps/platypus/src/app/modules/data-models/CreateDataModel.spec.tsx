@@ -7,6 +7,13 @@ import { CreateDataModel } from './CreateDataModel';
 import noop from 'lodash/noop';
 
 jest.mock('@platypus-app/hooks/useMixpanel');
+jest.mock('@platypus-app/hooks/useDataModelActions');
+
+jest.mock('@platypus-app/components/DataModelLibrary/DataModelLibrary', () => {
+  return {
+    DataModelLibrary: () => <p>Mock</p>,
+  };
+});
 
 jest.mock('@platypus-app/hooks/useSpaces', () => {
   return {

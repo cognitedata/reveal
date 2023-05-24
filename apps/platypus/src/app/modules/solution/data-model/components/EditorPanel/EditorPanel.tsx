@@ -104,9 +104,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         <Suspense fallback={<Spinner />}>
           <GraphqlCodeEditor
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
-            externalId={externalId}
             space={space}
-            currentTypeName={currentTypeName}
+            currentTypeName={currentTypeName || undefined}
             typeDefs={typeDefs}
             code={graphQlSchema}
             disabled={isUIDisabled}
