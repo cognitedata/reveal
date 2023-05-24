@@ -11,6 +11,7 @@ import { CanvasAnnotation } from '../types';
 import { ExactlyOneKey } from '../utils/ExactlyOneKey';
 import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
 import { UseManagedStateReturnType } from './useManagedState';
+import { PolylineEndType } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 
 export const SHARED_STICKY_TOOL_OPTIONS = {
   width: 200,
@@ -43,6 +44,8 @@ type TextAnnotationStyle = {
 type LineAnnotationStyle = {
   stroke?: string;
   strokeWidth?: number;
+  startEndType?: PolylineEndType;
+  endEndType?: PolylineEndType;
 };
 
 type StickyAnnotationStyle = {
@@ -91,6 +94,10 @@ const getAnnotationWithUpdatedStyle = <T extends CanvasAnnotation>(
       }
       return {
         ...annotation,
+        startEndType:
+          updatedAnnotationStyle.line.startEndType ?? annotation.startEndType,
+        endEndType:
+          updatedAnnotationStyle.line.endEndType ?? annotation.endEndType,
         style: {
           ...annotation.style,
           ...updatedAnnotationStyle.line,
