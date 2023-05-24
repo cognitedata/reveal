@@ -38,15 +38,15 @@ const TableContent = () => {
         {/* <TabBarComponent {...props} /> */}
         {/* </TopBar> */}
         {/* <div css={{ position: 'relative', right: 0, top:  }}> */}
-        <Tabs.Tab
+        <StyledTab
           tabKey="spreadsheet"
           iconLeft="DataTable"
           label={t('tab-table')}
           // style={{ overflow: 'auto' }}
         >
           <Spreadsheet />
-        </Tabs.Tab>
-        <Tabs.Tab
+        </StyledTab>
+        <StyledTab
           tabKey="profiling"
           iconLeft={isFetching ? 'Loader' : 'Profiling'}
           label={t('tab-profile')}
@@ -55,7 +55,7 @@ const TableContent = () => {
           disabled={isEmpty}
         >
           <Profiling key={`${database}_${table}`} />
-        </Tabs.Tab>
+        </StyledTab>
         {/* </div> */}
       </StyledTabs>
       <div css={{ backgroundColor: 'green', width: '100%' }}>'test'</div>
@@ -105,23 +105,27 @@ const Tab = styled.span<{ $isEmpty?: boolean }>`
 `;
 
 const StyledTabs = styled(Tabs)`
-  &&&&& {
-    width: 100%;
-    background-color: blue !important;
-    flex: 1;
-    .cogs.cogs-tabs {
-      background-color: orange;
-      width: 100% !important;
-    }
-    .rc-tabs-nav {
-      width: 100%;
-    }
-    ,
-    .rc-tabs-content {
-      height: 100%;
-      width: 100% !important;
-    }
+  width: 100%;
+  background-color: blue !important;
+  flex: 1;
+  .cogs.cogs-tabs {
+    background-color: orange;
+    width: 100% !important;
   }
+  .rc-tabs-nav {
+    width: 100%;
+  }
+  ,
+  .rc-tabs-content {
+    height: 100%;
+    width: 100% !important;
+  }
+`;
+
+const StyledTab = styled(Tabs.Tab)`
+  height: 100%;
+  width: 100%;
+  background-color: purple;
 `;
 
 export default TableContent;

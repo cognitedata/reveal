@@ -26,47 +26,45 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
     <StyledTableHeader>
       <tr>
         <TableCell $width={44}>
-          <Icon type="ReorderDefault" onClick={() => onSortClick('type')} />
-          <div></div>
+          <span onClick={() => onSortClick('type')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-column')}
-
-          <Icon
-            type="ReorderDefault"
-            // onClick={() => onSortClick('label')}
-          />
+          <span onClick={() => onSortClick('label')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-empty')}
-          <Icon
-            type="ReorderDefault"
-            // onClick={() => onSortClick('nullCount')}
-          />
+          <span onClick={() => onSortClick('nullCount')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-distinct')}
-          <Icon
-            type="ReorderDefault"
-            // onClick={() => onSortClick('distinctCount')}
-          />
+          <span onClick={() => onSortClick('distinctCount')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell $width={150}>
           {t('profiling-table-header-frequency')}
         </TableCell>
         <TableCell>
           {t('profiling-table-header-min')}
-          <Icon
-            type="ReorderDefault"
-            // onClick={() => onSortClick('min')}
-          />
+          <span onClick={() => onSortClick('min')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-max')}
-          <Icon
-            type="ReorderDefault"
-            // onClick={() => onSortClick('max')}
-          />
+          <span onClick={() => onSortClick('max')}>
+            <Icon
+              type="ReorderDefault"
+              //
+            />
+          </span>
         </TableCell>
         <TableCell>{t('profiling-table-header-mean')}</TableCell>
         <TableCell $width={68}>

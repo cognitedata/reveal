@@ -62,8 +62,9 @@ const SidePanelDatabaseList = (): JSX.Element => {
 };
 
 const StyledButton = styled(Button)`
-  &&&
+  &&& {
     display: block !important;
+  }
 `;
 
 export default SidePanelDatabaseList;

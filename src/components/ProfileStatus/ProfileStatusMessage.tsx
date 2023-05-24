@@ -39,7 +39,7 @@ export const ProfileStatusMessage = ({
           isClosable
           isCompact={isCompact}
           message={t('profile-status-message_partial')}
-          // type="ghost-destructive"
+          type="warning"
         />
       );
     default:
