@@ -801,6 +801,8 @@ export interface Image360 {
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
     getCenter(out?: Vector3): Vector3;
+    getColor(): Color;
+    getVisible(): boolean;
     setColor(color?: Color): void;
     setVisible(visible?: boolean): void;
 }
@@ -838,6 +840,7 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     readonly image360Entities: Image360[];
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
