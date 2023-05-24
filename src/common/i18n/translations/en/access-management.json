@@ -108,7 +108,7 @@
   "edit": "Edit",
   "enabled": "Enabled",
   "enable-user-profiles": "Enable user profiles",
-  "enabling-user-profiles-collects-data-for-all-active-users": "Enabling user profiles will automatically collect user information, such as name, email, and job title, for all CDF users. User profiles allow you, Cognite, and 3rd-party application builders to provide improved search and collaboration features. Currently user profiles is collected for projects using Azure Active Directory IdP only.",
+  "enabling-user-profiles-collects-data-for-all-active-users": "Enabling user profiles will automatically collect user information, such as name, email, and job title, for all CDF users. User profiles allow you, Cognite, and 3rd-party application builders to provide improved search and collaboration features. Currently, we collect user profiles for projects that use Azure Active Directory as the identity provider (IdP).",
   "entity-matching": "Entity matching",
   "error-invalid-domain": "Invalid domains: {{domains}}",
   "error-invalid-domain-desc": "fusion.cognite.com is not present, which may cause Fusion to become inaccessible for the project",
