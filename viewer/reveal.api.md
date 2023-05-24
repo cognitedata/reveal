@@ -794,7 +794,7 @@ export interface Image360 {
     getRevisions(): Image360Revision[];
     readonly id: string;
     readonly image360Visualization: Image360Visualization;
-    readonly label: string;
+    readonly label: string | undefined;
     readonly transform: THREE.Matrix4;
 }
 
@@ -842,7 +842,9 @@ export type Image360AnnotationIntersection = {
 export interface Image360Collection {
     findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    readonly id: string;
     readonly image360Entities: Image360[];
+    readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;

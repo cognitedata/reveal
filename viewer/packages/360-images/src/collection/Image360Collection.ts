@@ -40,6 +40,18 @@ export type Image360AnnotationAssetQueryResult = {
  */
 export interface Image360Collection {
   /**
+   * The id of the collection.
+   * @returns The id of the collection.
+   */
+  readonly id: string;
+
+  /**
+   * The label of the collection.
+   * @returns The label of the collection.
+   */
+  readonly label: string | undefined;
+
+  /**
    * A list containing all the 360 images in this set.
    */
   readonly image360Entities: Image360[];
