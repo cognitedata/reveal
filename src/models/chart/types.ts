@@ -117,7 +117,7 @@ export type ChartWorkflowV2 = ChartWorkflowBase & {
 
 export type ScheduledCalculation = Omit<
   ChartWorkflowV2,
-  'type' | 'statisticsCalls' | 'dataProfilingCalls' | 'calls'
+  'type' | 'calls' | 'dataProfilingCalls'
 > & { type: 'scheduledCalculation' };
 
 export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;

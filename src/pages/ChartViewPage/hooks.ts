@@ -7,6 +7,8 @@ import {
   Chart,
   ChartTimeSeries,
   ChartWorkflow,
+  ScheduledCalculation,
+  ChartSource,
 } from 'models/chart/types';
 import {
   updateChartDateRange,
@@ -35,6 +37,7 @@ import { getHash } from 'utils/hash';
 import { usePrevious } from 'react-use';
 import { useRecoilState } from 'recoil';
 import { useOperations } from 'models/operations/atom';
+import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
 
 export const useInitializedChart = (chartId: string) => {
   /**
@@ -158,7 +161,7 @@ export const useUploadCalculations = ({
 };
 
 export const useStatistics = (
-  sourceItem: ChartWorkflow | ChartTimeSeries | undefined,
+  sourceItem: ChartSource | undefined,
   dateFrom: string,
   dateTo: string,
   enabled: boolean = true
@@ -169,6 +172,7 @@ export const useStatistics = (
   const sourceId = sourceItem?.id;
   const previousSourceId = usePrevious<string | undefined>(sourceId);
   const sourceChanged = sourceId !== previousSourceId;
+  const scheduledCalculationsData = useScheduledCalculationDataValue();
 
   /**
    * Using strings to avoid custom equality check
@@ -180,6 +184,9 @@ export const useStatistics = (
     debouncedDatesAsString
   );
 
+  /**
+   * Check statistic call status
+   */
   const {
     data: callStatus,
     error: callStatusError,
@@ -193,6 +200,9 @@ export const useStatistics = (
     enabled: !!statisticsCall?.callId,
   });
 
+  /**
+   * Get statistic data once the calls have been successful
+   */
   const { data: statisticsData } = useQuery({
     queryKey: ['statistics', 'result', statisticsCall?.callId],
     queryFn: () => fetchStatisticsResult(sdk, statisticsCall?.callId || ''),
@@ -206,7 +216,7 @@ export const useStatistics = (
   const memoizedCallFunction = useCallback(callFunction, [callFunction]);
 
   const updateStatistics = useCallback(
-    (diff: Partial<ChartTimeSeries | ChartWorkflow>) => {
+    (diff: Partial<ChartSource>) => {
       if (!sourceItem) return;
       setChart((oldChart) => {
         if (!oldChart) {
@@ -223,6 +233,15 @@ export const useStatistics = (
                 }
               : ts
           ),
+          scheduledCalculationCollection:
+            oldChart?.scheduledCalculationCollection?.map((sc) =>
+              sc.id === sourceItem.id
+                ? {
+                    ...sc,
+                    ...diff,
+                  }
+                : sc
+            ),
           workflowCollection: oldChart?.workflowCollection?.map((wf) =>
             wf.id === sourceItem.id
               ? {
@@ -262,6 +281,10 @@ export const useStatistics = (
     let identifier;
     if (sourceItem.type === 'timeseries') {
       identifier = (sourceItem as ChartTimeSeries).tsExternalId;
+    } else if (sourceItem.type === 'scheduledCalculation') {
+      identifier =
+        scheduledCalculationsData[(sourceItem as ScheduledCalculation).id]
+          .targetTimeseriesExternalId;
     } else {
       const backendCalls = (sourceItem as ChartWorkflow).calls;
       if (backendCalls && backendCalls.length > 0) {
@@ -279,7 +302,8 @@ export const useStatistics = (
       start_time: new Date(dateFrom).getTime(),
       end_time: new Date(dateTo).getTime(),
       histogram_options: { num_boxes: 10 }, // (eiriklv): This should be chosen by user at some point
-      ...(sourceItem.type === 'timeseries'
+      ...(sourceItem.type === 'timeseries' ||
+      sourceItem.type === 'scheduledCalculation'
         ? { tag: identifier }
         : { calculation_id: identifier }),
     };
@@ -338,5 +362,10 @@ export const useStatistics = (
       ? StatusStatusEnum.Running
       : callStatus?.status;
 
-  return { results: statisticsData?.results, status };
+  return {
+    results: statisticsData?.results,
+    status,
+    error: statisticsData?.error,
+    warnings: statisticsData?.warnings,
+  };
 };

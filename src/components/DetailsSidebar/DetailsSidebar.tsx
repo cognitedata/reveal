@@ -1,21 +1,25 @@
 /* eslint camelcase: 0 */
 
+import { useState } from 'react';
+import { Col, List, Row } from 'antd';
 import {
+  StatisticsResult,
   StatisticsResultResults,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
 import {
   Button,
   Icon,
+  Infobox,
   SegmentedControl,
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { Col, List, Row } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
+
 import DetailsBlock from 'components/DetailsBlock/DetailsBlock';
 import { SourceCircle, SourceSquare } from 'pages/ChartViewPage/elements';
-import { useState } from 'react';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { ChartSource } from 'models/chart/types';
 import { formatValueForDisplay } from 'utils/numbers';
 import { getUnitConverter } from 'utils/units';
 import { makeDefaultTranslations } from 'utils/translations';
@@ -27,6 +31,7 @@ import {
   TopContainerAside,
   TopContainerTitle,
 } from 'components/Common/SidebarElements';
+import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
 import {
   Container,
   HistogramWrapper,
@@ -53,10 +58,12 @@ const renderStatusIcon = (status?: StatusStatusEnum) => {
 };
 
 type Props = {
-  sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  sourceItem: ChartSource | undefined;
   onClose: () => void;
   visible?: boolean;
   statisticsResult?: StatisticsResultResults | null;
+  statisticsError?: StatisticsResult['error'] | null;
+  statisticsWarnings?: StatisticsResult['warnings'] | null;
   statisticsStatus?: StatusStatusEnum;
 };
 
@@ -67,7 +74,10 @@ const defaultTranslation = makeDefaultTranslations(
   'Statistics',
   'Metadata',
   'Time series',
-  'Calculation'
+  'Calculation',
+  'Warnings',
+  'Error',
+  'Scheduled Calculation'
 );
 
 const statsDefaultTranslations = makeDefaultTranslations(
@@ -104,6 +114,8 @@ export default function DetailsSidebar({
   sourceItem,
   onClose,
   statisticsResult,
+  statisticsError,
+  statisticsWarnings,
   statisticsStatus,
 }: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
@@ -154,20 +166,45 @@ export default function DetailsSidebar({
             sourceItem={sourceItem}
             timeSeriesTitle={t['Time series']}
             calculationTitle={t.Calculation}
+            scheduledCalcTitle={t['Scheduled Calculation']}
           />
-          {selectedMenu === 'metadata' && (
-            <Metadata
-              sourceItem={sourceItem}
-              noMetaText={t['currently unavailable for calculations']}
-            />
+          {statisticsError && (
+            <Infobox
+              type="danger"
+              title={t.Error}
+              style={{ marginBottom: '1rem' }}
+            >
+              {statisticsError}
+            </Infobox>
           )}
-          {selectedMenu === 'statistics' && visible && (
-            <Statistics
-              sourceItem={sourceItem}
-              translations={statsTranslations}
-              statistics={statisticsResult}
-              status={statisticsStatus}
-            />
+          {statisticsWarnings &&
+            statisticsWarnings.map((warning) => (
+              <Infobox
+                type="warning"
+                title={t.Warnings}
+                key={uuidv4()}
+                style={{ marginBottom: '1rem' }}
+              >
+                {warning}
+              </Infobox>
+            ))}
+          {!statisticsError && (
+            <>
+              {selectedMenu === 'metadata' && (
+                <Metadata
+                  sourceItem={sourceItem}
+                  noMetaText={t['currently unavailable for calculations']}
+                />
+              )}
+              {selectedMenu === 'statistics' && visible && (
+                <Statistics
+                  sourceItem={sourceItem}
+                  translations={statsTranslations}
+                  statistics={statisticsResult}
+                  status={statisticsStatus}
+                />
+              )}
+            </>
           )}
         </Container>
       </ContentOverflowWrapper>
@@ -179,18 +216,41 @@ const Metadata = ({
   sourceItem,
   noMetaText = 'currently unavailable for calculations',
 }: {
-  sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  sourceItem: ChartSource | undefined;
   noMetaText?: string;
 }) => {
-  return (
-    <>
-      {sourceItem?.type === 'timeseries' ? (
-        <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
-      ) : (
-        <p>({noMetaText})</p>
-      )}
-    </>
-  );
+  const scheduledCalculationsData = useScheduledCalculationDataValue();
+
+  if (!sourceItem) {
+    return null;
+  }
+
+  switch (sourceItem.type) {
+    case 'workflow': {
+      return <p>({noMetaText})</p>;
+    }
+
+    case 'scheduledCalculation': {
+      const scheduledCalcTSId =
+        scheduledCalculationsData[sourceItem.id]?.series?.id;
+      if (scheduledCalcTSId) {
+        return <MetadataList timeseriesId={scheduledCalcTSId} />;
+      }
+      break;
+    }
+
+    case 'timeseries': {
+      if (sourceItem.tsId) {
+        return <MetadataList timeseriesId={sourceItem.tsId} />;
+      }
+      break;
+    }
+
+    default:
+      break;
+  }
+
+  return null;
 };
 
 const Statistics = ({
@@ -199,7 +259,7 @@ const Statistics = ({
   statistics,
   status,
 }: {
-  sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  sourceItem: ChartSource | undefined;
   translations?: typeof statsDefaultTranslations;
   statistics?: StatisticsResultResults | null;
   status?: StatusStatusEnum;
@@ -295,16 +355,20 @@ const SourceHeader = ({
   sourceItem,
   timeSeriesTitle = 'Time series',
   calculationTitle = 'Calculation',
+  scheduledCalcTitle = 'Scheduled Calculation',
 }: {
-  sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  sourceItem: ChartSource | undefined;
   timeSeriesTitle?: string;
   calculationTitle?: string;
+  scheduledCalcTitle?: string;
 }) => {
   const isTimeSeries = sourceItem?.type === 'timeseries';
   return (
     <div style={{ wordBreak: 'break-word' }}>
       <Title level={6}>
-        {isTimeSeries ? timeSeriesTitle : calculationTitle}
+        {sourceItem?.type === 'timeseries' && timeSeriesTitle}
+        {sourceItem?.type === 'workflow' && calculationTitle}
+        {sourceItem?.type === 'scheduledCalculation' && scheduledCalcTitle}
       </Title>
       <SourceItemWrapper>
         {isTimeSeries ? (

@@ -641,7 +641,12 @@ const ChartViewPage = () => {
   /**
    * Statistics results (for active item)
    */
-  const { results: statisticsResult, status: statisticsStatus } = useStatistics(
+  const {
+    results: statisticsResult,
+    status: statisticsStatus,
+    error: statisticsError,
+    warnings: statisticsWarnings,
+  } = useStatistics(
     selectedSourceItem,
     chart?.dateFrom || new Date().toISOString(),
     chart?.dateTo || new Date().toISOString(),
@@ -952,6 +957,8 @@ const ChartViewPage = () => {
             sourceItem={selectedSourceItem}
             statisticsResult={statisticsResult}
             statisticsStatus={statisticsStatus}
+            statisticsError={statisticsError}
+            statisticsWarnings={statisticsWarnings}
           />
         )}
         {showDataProfilingSidebar && (
