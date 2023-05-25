@@ -18,7 +18,7 @@ export class Image360Entity implements Image360 {
   private readonly _imageMetadata: Image360EventDescriptor;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Overlay3DIcon;
-  private readonly _image360VisualzationBox: Image360VisualizationBox;
+  private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
 
   /**
@@ -44,7 +44,7 @@ export class Image360Entity implements Image360 {
    * @returns Image360Visualization
    */
   get image360Visualization(): Image360VisualizationBox {
-    return this._image360VisualzationBox;
+    return this._image360VisualizationBox;
   }
 
   /**
@@ -59,7 +59,7 @@ export class Image360Entity implements Image360 {
    * Get label of 360 image entity.
    * @returns Station label
    * */
-  get label(): string {
+  get label(): string | undefined {
     return this._imageMetadata.label;
   }
 
@@ -76,12 +76,12 @@ export class Image360Entity implements Image360 {
     this._image360Icon = icon;
     this._imageMetadata = image360Metadata;
 
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
-    this._image360VisualzationBox.visible = false;
+    this._image360VisualizationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
+    this._image360VisualizationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
       descriptor =>
-        new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualzationBox, annotationFilterer)
+        new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualizationBox, annotationFilterer)
     );
     this._activeRevision = this.getMostRecentRevision();
   }
@@ -134,22 +134,22 @@ export class Image360Entity implements Image360 {
    * Drops the GPU resources for the 360 image
    */
   public unloadImage(): void {
-    this._image360VisualzationBox.unloadImages();
+    this._image360VisualizationBox.unloadImages();
   }
 
   public activateAnnotations(): void {
     const setAndShowAnnotations = async () => {
       const annotations = await this._activeRevision.getAnnotations();
 
-      this._image360VisualzationBox.setAnnotations(annotations);
-      this._image360VisualzationBox.setAnnotationsVisibility(true);
+      this._image360VisualizationBox.setAnnotations(annotations);
+      this._image360VisualizationBox.setAnnotationsVisibility(true);
     };
 
     setAndShowAnnotations();
   }
 
   public deactivateAnnotations(): void {
-    this._image360VisualzationBox.setAnnotationsVisibility(false);
+    this._image360VisualizationBox.setAnnotationsVisibility(false);
   }
 
   /**
