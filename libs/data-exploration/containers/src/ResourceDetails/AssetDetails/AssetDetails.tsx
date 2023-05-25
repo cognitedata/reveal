@@ -20,6 +20,10 @@ import {
 } from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
 
+export const onOpenResources = (resourceType: ResourceType, id: number) => {
+  const link = createLink(`/explore/search/${resourceType}/${id}`);
+  window.open(link, '_blank');
+};
 interface Props {
   assetId: number;
   isSelected: boolean;
@@ -37,10 +41,6 @@ export const AssetDetails: FC<Props> = ({
     return data ? data[0] : undefined;
   }, [data]);
 
-  const onOpenResources = (resourceType: ResourceType, id: number) => {
-    const link = createLink(`/explore/search/${resourceType}/${id}`);
-    window.open(link, '_blank');
-  };
   const filter = { assetSubtreeIds: [{ value: assetId }] };
   const {
     results: relatedFiles = [],

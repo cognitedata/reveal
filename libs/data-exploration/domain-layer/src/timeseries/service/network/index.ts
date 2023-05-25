@@ -6,3 +6,4 @@ export * from './getTimeseriesMetadataKeysAggregate';
 export * from './getTimeseriesMetadataValuesAggregate';
 export * from './getTimeseriesDatapoints';
 export * from './getTimeseriesLatestDatapoint';
+export * from './getTimeseriesByIds';

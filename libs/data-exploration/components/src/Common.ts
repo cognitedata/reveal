@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Title } from '@cognite/cogs.js';
 
 export const SpacedRow = styled.div`
   display: flex;
@@ -38,3 +39,9 @@ export const Divider = {
   Vertical: VerticalDivider,
   Horizontal: HorizontalDivider,
 };
+
+export const TitleName = styled(Title)`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;

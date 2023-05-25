@@ -91,7 +91,8 @@ export const queryKeys = {
     filter?: any
   ) =>
     [...queryKeys.timeseries(), 'latest', 'datapoints', items, filter] as const,
-
+  timeseriesById: (ids?: IdEither[]) =>
+    [...queryKeys.timeseries(), ids] as const,
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,
   eventsMetadataValues: (
