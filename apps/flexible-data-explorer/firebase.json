@@ -1,10 +1,19 @@
 {
   "hosting": {
+    "public": ".",
+    "trailingSlash": false,
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "redirects": [
+      {
+        "source": "/",
+        "destination": "/explore",
+        "type": 302
+      }
+    ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/explore/**",
+        "destination": "/explore/index.html"
       }
     ]
   }

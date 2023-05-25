@@ -18,7 +18,7 @@ function App() {
         <ReactQueryDevtools initialIsOpen={false} />
         <ToastContainer />
         <TopBar />
-        <Router window={window} children={<Routes />} />
+        <Router window={window} children={<Routes />} basename="/explore" />
       </QueryClientProvider>
     </SDKProvider>
   );
