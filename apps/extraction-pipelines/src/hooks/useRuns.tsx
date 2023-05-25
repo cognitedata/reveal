@@ -4,7 +4,7 @@ import {
   UseInfiniteQueryResult,
   useMutation,
   useQueryClient,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { createRun, getFilteredRuns } from 'utils/RunsAPI';
 
 import {

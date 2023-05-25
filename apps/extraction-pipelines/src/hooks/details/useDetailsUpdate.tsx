@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Extpipe, ExtpipeFieldName, ExtpipeFieldValue } from 'model/Extpipe';
 
 import { ExtpipeUpdateSpec, saveUpdate } from 'utils/ExtpipesAPI';

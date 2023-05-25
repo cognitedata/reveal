@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getRawDBsAndTables } from 'utils/RawDataBaseAPI';
 import { CogniteError, RawDB, RawDBTable } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -10,7 +10,7 @@ export type DatabaseWithTablesItem = {
 export const useRawDBAndTables = () => {
   const sdk = useSDK();
   return useQuery<DatabaseWithTablesItem[], CogniteError>(
-    'raw-db-tables',
+    ['raw-db-tables'],
     () => {
       return getRawDBsAndTables(sdk);
     },

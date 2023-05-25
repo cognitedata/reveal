@@ -1,9 +1,10 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import React, { FunctionComponent } from 'react';
 import { IconFilled } from 'components/styled';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
 interface InfoBoxProps {
+  children: React.ReactNode;
   iconType: string;
   color?: 'primary' | 'warning';
 }
@@ -41,7 +42,7 @@ export const InfoBox: FunctionComponent<InfoBoxProps> = ({
   iconType,
   children,
   color,
-}: PropsWithChildren<InfoBoxProps>) => {
+}: InfoBoxProps): JSX.Element => {
   return (
     <Box className="bottom-spacing" color={color}>
       <IconFilled

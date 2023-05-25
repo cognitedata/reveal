@@ -1,11 +1,9 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { renderRegisterContext } from 'utils/test/render';
-import {
-  EXTPIPE_EXTERNAL_ID_HEADING,
-} from 'utils/constants';
+import { EXTPIPE_EXTERNAL_ID_HEADING } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -21,7 +19,6 @@ import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { databaseListMock, mockDataSetResponse } from 'utils/mockResponse';
 import { CREATE_EXTPIPE_PAGE_PATH } from 'routing/CreateRouteConfig';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {

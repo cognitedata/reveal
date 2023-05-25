@@ -55,7 +55,12 @@ const Extpipes: FunctionComponent<Props> = () => {
     'FUSION_HOSTED_EXTRACTORS'
   );
 
-  const { data, isLoading, error: errorExtpipes, refetch } = useExtpipes(20);
+  const {
+    data,
+    isInitialLoading,
+    error: errorExtpipes,
+    refetch,
+  } = useExtpipes(20);
 
   const canEdit = true;
   const [isCreateSourceModalOpen, setIsCreateSourceModalOpen] = useState(false);
@@ -98,7 +103,7 @@ const Extpipes: FunctionComponent<Props> = () => {
     </StyledTooltip>
   );
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return <Loader />;
   }
 
