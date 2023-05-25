@@ -3,7 +3,7 @@
  */
 
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Image360HistoricalDetailsPanel } from '../Panel/Image360HistoricalDetailsPanel';
 import { Image360HistoricalOverviewToolbar } from '../Toolbar/Image360HistoricalOverviewToolbar';
 import { formatDate } from '../utils/FormatDate';
@@ -33,8 +33,22 @@ export const Image360HistoricalDetailsView = ({
       image360Entity?: Image360;
     }[]
   >([]);
+  const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
 
-  useMemo(() => {
+  useEffect(() => {
+    return () => {
+      setImageUrls((urls) => {
+        urls.forEach((url) => {
+          if (url) {
+            URL.revokeObjectURL(url);
+          }
+        });
+        return [];
+      });
+    };
+  }, [imageUrls]);
+
+  useMemo(async () => {
     if (image360Entity) {
       const revisionDates = image360Entity
           .getRevisions()
@@ -47,6 +61,10 @@ export const Image360HistoricalDetailsView = ({
             imageUrl: '',
           });
         });
+
+      const revisions = image360Entity.getRevisions();
+      const imageDatas = await Promise.all(revisions.map( async revision => await revision.getPreviewThumbnailUrl()));
+      setImageUrls(imageDatas);
       const collection: {
         date: string;
         imageUrl: string | undefined;
@@ -56,7 +74,7 @@ export const Image360HistoricalDetailsView = ({
       revisionDetails.forEach((details, index) => {
         collection.push({
           date: formatDate(details.date!),
-          imageUrl: '',
+          imageUrl: imageUrls[index]!,
           index: index,
           image360Entity: image360Entity,
         });
