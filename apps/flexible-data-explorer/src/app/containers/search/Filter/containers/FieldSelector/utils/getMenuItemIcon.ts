@@ -2,7 +2,7 @@ import { IconType } from '@cognite/cogs.js';
 
 import { FieldType } from '../../../types';
 
-export const getMenuItemIcon = (type: FieldType): IconType => {
+export const getMenuItemIcon = (type: FieldType): IconType | undefined => {
   switch (type) {
     case 'string':
       return 'String';
@@ -17,6 +17,6 @@ export const getMenuItemIcon = (type: FieldType): IconType => {
       return 'Calendar';
 
     default:
-      return 'Placeholder';
+      return undefined;
   }
 };

@@ -39,18 +39,14 @@ export const CommonFilter = <
       <Select<TOperator>
         options={operators}
         value={operator}
-        onChange={(newValue) => {
-          if (newValue) {
-            setOperator(newValue);
-          }
-        }}
+        onChange={setOperator}
       />
 
       <CommonFilterInput type={inputType} value={value} onChange={setValue} />
 
       <ApplyButton
         disabled={isApplyButtonDisabled(inputType, value)}
-        onClick={() => onApplyClick(operator, value)}
+        onClick={() => onApplyClick(operator, value!)}
       />
     </Menu>
   );
