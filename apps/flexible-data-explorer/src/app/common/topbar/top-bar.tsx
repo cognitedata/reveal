@@ -17,6 +17,9 @@ export const TopBar: FC<Props> = ({ tenant }) => {
           links={[
             {
               name: 'Explore',
+              onClick: () => {
+                window.open('https://localhost:3000/explore', '_self');
+              },
             },
           ]}
         />
