@@ -867,6 +867,7 @@ export type Image360ExitedDelegate = () => void;
 export interface Image360Revision {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation[]>;
+    getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
 
 // @public

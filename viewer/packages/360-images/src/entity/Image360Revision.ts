@@ -17,7 +17,12 @@ export interface Image360Revision {
   readonly date: Date | undefined;
 
   /**
-   * The annotations associated with this revision
+   * The annotations associated with this revision.
    */
   getAnnotations(): Promise<Image360Annotation[]>;
+
+  /**
+   * Get the thumbnail url for this revision.
+   */
+  getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
