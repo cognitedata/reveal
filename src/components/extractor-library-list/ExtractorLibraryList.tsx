@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Body, Chip, Colors, Elevations, Title } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
+import sortBy from 'lodash/sortBy';
 
 import { trackUsage } from 'utils';
 import { ExtractorBase } from 'service/extractors';
@@ -24,7 +25,9 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
 
   return (
     <StyledGrid>
-      {items?.map((item) => (
+      {sortBy(items, (item: ExtractorLibraryItem) =>
+        item.name.toLowerCase()
+      )?.map((item: ExtractorLibraryItem) => (
         <StyledExtractorContainer
           key={item.externalId}
           to={createLink(`/${subAppPath}/${item.category}/${item.externalId}`)}
