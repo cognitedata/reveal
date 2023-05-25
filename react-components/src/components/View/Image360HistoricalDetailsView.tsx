@@ -3,12 +3,10 @@
  */
 
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image360HistoricalDetailsPanel } from '../Panel/Image360HistoricalDetailsPanel';
 import { Image360HistoricalOverviewToolbar } from '../Toolbar/Image360HistoricalOverviewToolbar';
 import { formatDate } from '../utils/FormatDate';
-import { use360ImageThumbnail } from '../../services/queries/use360ImageStationThumbnailQuery';
-import { getObjectURL } from '../../services/utils/files';
 
 export interface Image360HistoricalDetailsViewProps{
   viewer: Cognite3DViewer;
@@ -35,36 +33,6 @@ export const Image360HistoricalDetailsView = ({
       image360Entity?: Image360;
     }[]
   >([]);
-  const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
-
-  const imageDatas = use360ImageThumbnail(stationId);
-
-  const setImageBlob = useCallback((imageData: ArrayBuffer[]) => {
-    if (!imageData) {
-      return;
-    }
-    const newUrls = imageDatas.map((imageData) => {
-      const objectURL = getObjectURL(imageData);
-      return objectURL;
-    });
-
-    setImageUrls((prevUrls) => [...prevUrls, ...newUrls]);
-  }, []);
-
-  useEffect(() => {
-    setImageBlob(imageDatas);
-
-    return () => {
-      setImageUrls((urls) => {
-        urls.forEach((url) => {
-          if (url) {
-            URL.revokeObjectURL(url);
-          }
-        });
-        return [];
-      });
-    };
-  }, [imageDatas, setImageBlob]);
 
   useMemo(() => {
     if (image360Entity) {
