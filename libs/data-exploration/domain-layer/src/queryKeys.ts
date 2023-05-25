@@ -136,6 +136,7 @@ export const queryKeys = {
       advancedFilter,
       filter,
     ] as const,
+  eventsByIds: (ids?: IdEither[]) => [...queryKeys.events(), ids],
 
   // ASSETS
   assets: () => [...queryKeys.all, 'assets'] as const,

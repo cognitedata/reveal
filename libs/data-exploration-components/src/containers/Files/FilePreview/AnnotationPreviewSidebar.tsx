@@ -282,7 +282,7 @@ const AnnotationPreviewSidebar = ({
         : undefined;
 
     openResourceSelector({
-      resourceTypes: ['asset', 'file'],
+      resourceTypes: ['asset', 'file', 'event', 'timeSeries', 'sequence'],
       selectionMode: 'single',
       onSelect: (item) => {
         if (selectedAnnotation === undefined) {

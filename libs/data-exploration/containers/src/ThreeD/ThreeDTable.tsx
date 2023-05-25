@@ -4,10 +4,10 @@ import React, { useMemo, useState } from 'react';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
-import { ThreedRevisions } from './ThreedRevisions';
-import { ThreedModelLastUpdated } from './ThreedModelLastUpdated';
-import { ThreedModelDisplay } from './ThreedModelDisplay';
 import { Image360Display } from './Image360Display';
+import { ThreeDModelDisplay } from './ThreeDModelDisplay';
+import { ThreeDRevisions } from './ThreeDRevisions';
+import { ThreeDModelLastUpdated } from './ThreeDModelLastUpdated';
 
 interface ThreeDTableProps
   extends Omit<TableProps<InternalThreeDModelData>, 'columns'> {

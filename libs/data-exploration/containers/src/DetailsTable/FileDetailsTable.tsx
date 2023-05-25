@@ -2,6 +2,7 @@ import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import { Table, TableProps } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 import React, { useMemo } from 'react';
+import { Wrapper } from './elements';
 
 export const FileDetailsTable = (
   props: Omit<TableProps<InternalDocument>, 'columns'>
@@ -11,12 +12,14 @@ export const FileDetailsTable = (
     []
   ) as ColumnDef<InternalDocument>[];
   return (
-    <Table<InternalDocument>
-      columns={columns}
-      showLoadButton
-      enableSelection
-      hideColumnToggle
-      {...props}
-    />
+    <Wrapper>
+      <Table<InternalDocument>
+        columns={columns}
+        showLoadButton
+        enableSelection
+        hideColumnToggle
+        {...props}
+      />
+    </Wrapper>
   );
 };
