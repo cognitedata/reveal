@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Body, Button, Colors, Dropdown, Menu, Status } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -10,6 +10,7 @@ import {
 } from 'hooks/hostedExtractors';
 import { notification } from 'antd';
 import { getJobStatusForCogs } from 'utils/hostedExtractors';
+import { EditJobsModal } from 'components/edit-job-modal/EditJobModal';
 
 type TopicFilterProps = {
   className?: string;
@@ -20,6 +21,7 @@ export const TopicFilter = ({
   className,
   job,
 }: TopicFilterProps): JSX.Element => {
+  const [editJobsModalVisible, setEditJobsModalVisible] = useState(false);
   const { t } = useTranslation();
 
   const { mutate: deleteJob } = useDeleteMQTTJob();
@@ -70,46 +72,62 @@ export const TopicFilter = ({
   };
 
   return (
-    <Container className={className}>
-      <Body level={2}>{job.topicFilter}</Body>
-      <Body level={2}>
-        {job.status ? (
-          <Status
-            text={t(`mqtt-job-status-${job.status}`)}
-            type={getJobStatusForCogs(job)}
-          />
-        ) : (
-          '-'
-        )}
-      </Body>
-      <Dropdown
-        content={
-          <Menu>
-            <Menu.Item
-              icon={job.targetStatus === 'paused' ? 'Play' : 'Pause'}
-              iconPlacement="left"
-              onClick={handleUpdateTargetStatus}
-            >
-              {job.targetStatus === 'paused' ? t('resume') : t('pause')}
-            </Menu.Item>
-            <Menu.Item
-              destructive
-              icon="Delete"
-              iconPlacement="left"
-              onClick={handleDelete}
-            >
-              {t('delete')}
-            </Menu.Item>
-          </Menu>
-        }
-        hideOnSelect={{
-          hideOnContentClick: true,
-          hideOnOutsideClick: true,
-        }}
-      >
-        <Button icon="EllipsisHorizontal" type="ghost" />
-      </Dropdown>
-    </Container>
+    <>
+      <Container className={className}>
+        <Body level={2}>{job.topicFilter}</Body>
+        <Body level={2}>
+          {job.status ? (
+            <Status
+              text={t(`mqtt-job-status-${job.status}`)}
+              type={getJobStatusForCogs(job)}
+            />
+          ) : (
+            '-'
+          )}
+        </Body>
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Item
+                icon={job.targetStatus === 'paused' ? 'Play' : 'Pause'}
+                iconPlacement="left"
+                onClick={handleUpdateTargetStatus}
+              >
+                {job.targetStatus === 'paused' ? t('resume') : t('pause')}
+              </Menu.Item>
+              <Menu.Item
+                icon="Edit"
+                iconPlacement="left"
+                onClick={() => setEditJobsModalVisible(true)}
+              >
+                {t('edit')}
+              </Menu.Item>
+              <Menu.Item
+                destructive
+                icon="Delete"
+                iconPlacement="left"
+                onClick={handleDelete}
+              >
+                {t('delete')}
+              </Menu.Item>
+            </Menu>
+          }
+          hideOnSelect={{
+            hideOnContentClick: true,
+            hideOnOutsideClick: true,
+          }}
+        >
+          <Button icon="EllipsisHorizontal" type="ghost" />
+        </Dropdown>
+      </Container>
+      {editJobsModalVisible && (
+        <EditJobsModal
+          onCancel={() => setEditJobsModalVisible(false)}
+          jobId={job.externalId}
+          visible={editJobsModalVisible}
+        />
+      )}
+    </>
   );
 };
 
