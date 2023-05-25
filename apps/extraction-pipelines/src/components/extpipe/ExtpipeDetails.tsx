@@ -18,7 +18,7 @@ interface ExtpipeViewProps {}
 export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
   const { t } = useTranslation();
   const id = useSelectedExtpipeId();
-  const { data: extpipe, isLoading } = useSelectedExtpipe();
+  const { data: extpipe, isInitialLoading } = useSelectedExtpipe();
 
   useEffect(() => {
     if (id) {
@@ -26,7 +26,7 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
     }
   }, [id]);
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return <Loader />;
   }
 

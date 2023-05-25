@@ -3,7 +3,7 @@ import {
   UseMutationOptions,
   useQuery,
   useQueryClient,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { deleteExtractionPipeline, getExtpipeById } from 'utils/ExtpipesAPI';
 import { Extpipe } from 'model/Extpipe';

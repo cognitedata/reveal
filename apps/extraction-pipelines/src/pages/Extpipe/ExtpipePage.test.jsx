@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import {
   EXT_PIPE_TAB_OVERVIEW,

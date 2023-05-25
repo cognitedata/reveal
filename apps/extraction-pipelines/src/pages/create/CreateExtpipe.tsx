@@ -151,7 +151,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               aria-live="polite"
             >
               <InfoIcon />
-              <p>{errors.server.message}</p>
+              <p>{errors.server.message?.toString()}</p>
             </InfoMessage>
           ) : null}
           {dataSetIdFromLocation == null && (
