@@ -10,9 +10,9 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/flexible-data-explorer/explore",
+        "outputPath": "dist/apps/flexible-data-explorer",
         "index": "apps/flexible-data-explorer/src/index.html",
-        "baseHref": "/explore",
+        "baseHref": "/",
         "main": "apps/flexible-data-explorer/src/main.tsx",
         "tsConfig": "apps/flexible-data-explorer/tsconfig.app.json",
         "assets": [

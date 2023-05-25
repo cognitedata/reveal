@@ -23,16 +23,5 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     };
   }
 
-  return {
-    ...config,
-    plugins: [
-      ...config.plugins,
-      new CopyWebpackPlugin({
-        patterns: [{ from: './firebase.json', to: '../' }],
-      }),
-    ],
-    // react scripts are causing a lot of errors to be throw in console (Failed to parse source map from...)
-    // https://github.com/facebook/create-react-app/discussions/11767
-    ignoreWarnings: [/Failed to parse source map/],
-  };
+  return config;
 });
