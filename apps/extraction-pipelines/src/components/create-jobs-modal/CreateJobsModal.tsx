@@ -301,7 +301,7 @@ export const CreateJobsModal = ({
               onChange={(_, e) => setFieldValue('formatField', e)}
               options={formatFieldOptions}
               placeholder={t('select-format')}
-              value={values.formatField}
+              value={values.format}
               aria-placeholder="Select format"
             />
           </FormFieldWrapper>
