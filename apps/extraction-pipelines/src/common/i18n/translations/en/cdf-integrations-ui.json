@@ -204,6 +204,7 @@
   "table-name": "Table name",
   "timestamp": "Timestamp",
   "toggle-edit-row": "Toggle edit row",
+  "topic-filter-edit-success": "Topic filter updated successfully",
   "total": "Total",
   "try-again-later": "Oops, an error occurred. Please try again later.",
   "value": "Value",

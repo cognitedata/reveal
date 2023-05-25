@@ -35,7 +35,7 @@ export const EditJobsModal = ({
   const { mutateAsync: updateJob } = useUpdateMQTTJob({
     onSuccess: () => {
       notification.success({
-        message: 'Success',
+        message: t('topic-filter-edit-success'),
         key: 'update-source',
       });
       onCancel();
