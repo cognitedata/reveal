@@ -7,6 +7,7 @@ static final String[] APPLICATIONS = [
   'data-exploration',
   'coding-conventions',
   'copilot',
+  'industry-canvas-ui',
 ]
 
 /*
@@ -24,6 +25,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'data-exploration': 'data-exploration',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
+  'industry-canvas-ui': 'industry-canvas-ui'
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -31,6 +33,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'data-exploration': "@cognite/cdf-data-exploration",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
+  'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui"
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have

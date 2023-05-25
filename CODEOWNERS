@@ -30,6 +30,7 @@ libs/shared/plotting-components   @cognitedata/explorers
 
 # Team UFV
 libs/industry-canvas              @cognitedata/unified-file-viewer
+apps/industry-canvas-ui              @cognitedata/unified-file-viewer
 
 # Coding conventions
 apps/coding-conventions           @deep-cognite @CimStordal
