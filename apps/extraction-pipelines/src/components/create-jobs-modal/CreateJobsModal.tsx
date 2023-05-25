@@ -47,7 +47,7 @@ type CreateJobsFormValues = {
   clientId?: string;
   clientSecret?: string;
   type?: MQTTDestinationType;
-  formatField?: MQTTFormat;
+  format?: MQTTFormat;
 };
 
 type CreateJobsModalProps = {
