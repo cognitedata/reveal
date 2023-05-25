@@ -4,6 +4,7 @@
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
+import cloneDeep from 'lodash/cloneDeep';
 import {
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
@@ -56,9 +57,14 @@ export class DefaultImage360Collection implements Image360Collection {
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
+  private readonly _collectionLabel: string | undefined;
 
   get id(): string {
     return this._collectionId;
+  }
+
+  get label(): string | undefined {
+    return this._collectionLabel;
   }
 
   get targetRevisionDate(): Date | undefined {
@@ -85,11 +91,13 @@ export class DefaultImage360Collection implements Image360Collection {
 
   constructor(
     collectionId: string,
+    collectionLabel: string | undefined,
     entities: Image360Entity[],
     icons: IconCollection,
     image360DataProvider: Image360DataProvider
   ) {
     this._collectionId = collectionId;
+    this._collectionLabel = collectionLabel;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;
@@ -137,7 +145,7 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public setIconsVisibility(visible: boolean): void {
     this._isCollectionVisible = visible;
-    this.image360Entities.forEach(entity => (entity.icon.visible = visible));
+    this.image360Entities.forEach(entity => entity.icon.setVisible(visible));
   }
 
   /**
@@ -199,8 +207,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._needsRedraw = false;
   }
 
-  get defaultStyle(): Image360AnnotationAppearance {
-    return this._defaultStyle;
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance {
+    return cloneDeep(this._defaultStyle);
   }
 
   public setDefaultAnnotationStyle(defaultStyle: Image360AnnotationAppearance): void {

@@ -7,7 +7,7 @@ import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
-import { DefaultMetadataType, OverlayCollection, OverlayInfo } from './OverlayCollection';
+import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 
 export type Overlay3DCollectionOptions = {
   overlayTexture?: Texture;
@@ -15,7 +15,7 @@ export type Overlay3DCollectionOptions = {
   defaultOverlayColor?: Color;
 };
 
-export class Overlay3DCollection<MetadataType = DefaultMetadataType>
+export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   extends Object3D
   implements OverlayCollection<MetadataType>
 {
@@ -74,7 +74,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
 
   sortOverlaysRelativeToCamera(camera: THREE.Camera): void {
     this._overlays = this._overlays.sort((a, b) => {
-      return b.position.distanceToSquared(camera.position) - a.position.distanceToSquared(camera.position);
+      return b.getPosition().distanceToSquared(camera.position) - a.getPosition().distanceToSquared(camera.position);
     });
 
     this.updatePointsObject();
@@ -102,10 +102,10 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
   }
 
   private updatePointsObject(): void {
-    const filteredPoints = this._overlays.filter(p => p.visible);
+    const filteredPoints = this._overlays.filter(p => p.getVisible());
 
-    const pointsPositions = filteredPoints.map(p => p.position);
-    const pointsColors = filteredPoints.map(p => p.color ?? this.defaultOverlayColor);
+    const pointsPositions = filteredPoints.map(p => p.getPosition());
+    const pointsColors = filteredPoints.map(p => p.getColor() ?? this.defaultOverlayColor);
 
     this._overlayPoints.setPoints(pointsPositions, pointsColors);
   }
@@ -120,7 +120,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
           maxPixelSize: this.MaxPixelSize,
           iconRadius: this._iconRadius
         },
-        overlay?.metadata
+        overlay?.content
       );
 
       icon.on('parametersChange', () => {

@@ -1,29 +1,35 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-export interface Overlay3D<MetadataType> {
+
+import { Color, Vector3 } from 'three';
+
+/**
+ * Represents one 3d overlay
+ */
+export interface Overlay3D<ContentType> {
   /**
    * Set whether this overlay should be visible.
    * */
-  set visible(visible: boolean);
+  setVisible(visible: boolean): void;
   /**
    * Get whether this overlay is visible.
    */
-  get visible(): boolean;
+  getVisible(): boolean;
   /**
    * Get the position of this overlay.
    */
-  get position(): THREE.Vector3;
+  getPosition(): Vector3;
   /**
    * Set the display color of this overlay.
    * */
-  setColor(color: THREE.Color): void;
+  setColor(color: Color): void;
   /**
    * Get the display color of this overlay.
    * */
-  get color(): THREE.Color;
+  getColor(): Color;
   /**
    * Get the metadata associated with this overlay.
    * */
-  getMetadata(): MetadataType | undefined;
+  getContent(): ContentType;
 }

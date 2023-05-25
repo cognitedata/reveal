@@ -14,7 +14,8 @@ import {
   IconsOptions,
   Image360RevisionEntity,
   DefaultImage360Collection,
-  Image360AnnotationIntersection
+  Image360AnnotationIntersection,
+  Image360AnnotationFilterOptions
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -137,7 +138,8 @@ export class Image360ApiHelper {
   public async add360ImageSet(
     eventFilter: Metadata,
     collectionTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean
+    preMultipliedRotation: boolean,
+    annotationOptions?: Image360AnnotationFilterOptions
   ): Promise<Image360Collection> {
     const id: string | undefined = eventFilter.site_id;
     if (id === undefined) {
@@ -146,7 +148,13 @@ export class Image360ApiHelper {
     if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
       throw new Error(`Image set with id=${id} has already been added`);
     }
-    const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+
+    const imageCollection = await this._image360Facade.create(
+      eventFilter,
+      annotationOptions,
+      collectionTransform,
+      preMultipliedRotation
+    );
 
     this._needsRedraw = true;
     return imageCollection;
@@ -195,10 +203,10 @@ export class Image360ApiHelper {
     this._interactionState.enteredCollection = imageCollection;
 
     if (lastEntered360ImageEntity) {
-      lastEntered360ImageEntity.icon.visible = imageCollection.isCollectionVisible;
+      lastEntered360ImageEntity.icon.setVisible(imageCollection.isCollectionVisible);
     }
 
-    image360Entity.icon.visible = false;
+    image360Entity.icon.setVisible(false);
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
 
@@ -353,7 +361,7 @@ export class Image360ApiHelper {
       const imageCollection = this._image360Facade.getCollectionContainingEntity(
         this._interactionState.currentImage360Entered
       );
-      this._interactionState.currentImage360Entered.icon.visible = imageCollection.isCollectionVisible;
+      this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
       imageCollection.events.image360Exited.fire();
 
       this._interactionState.currentImage360Entered.deactivateAnnotations();

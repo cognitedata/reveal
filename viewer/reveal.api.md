@@ -6,6 +6,7 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -31,6 +32,7 @@ export type AbsolutePosition = {
 export type AddImage360Options = {
     collectionTransform?: THREE.Matrix4;
     preMultipliedRotation?: boolean;
+    annotationFilter?: Image360AnnotationFilterOptions;
 };
 
 // @public
@@ -692,12 +694,6 @@ export class DefaultCameraManager implements CameraManager {
     update(deltaTime: number, boundingBox: THREE_2.Box3): void;
 }
 
-// @public (undocumented)
-export type DefaultMetadataType = {
-    text?: string;
-    [key: string]: string | undefined;
-};
-
 // @public
 export const DefaultNodeAppearance: {
     Default: NodeAppearance;
@@ -713,6 +709,11 @@ export const DefaultNodeAppearance: {
         outlineColor?: NodeOutlineColor | undefined;
         prioritizedForLoadingHint?: number | undefined;
     };
+};
+
+// @public
+export type DefaultOverlay3DContentType = {
+    [key: string]: string;
 };
 
 // @public (undocumented)
@@ -787,12 +788,13 @@ export type HtmlOverlayToolOptions = {
     clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
 
-// @public (undocumented)
+// @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
-    getImageMetadata(): Image360Metadata;
     getRevisions(): Image360Revision[];
+    readonly id: string;
     readonly image360Visualization: Image360Visualization;
+    readonly label: string | undefined;
     readonly transform: THREE.Matrix4;
 }
 
@@ -800,6 +802,8 @@ export interface Image360 {
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
     getCenter(out?: Vector3): Vector3;
+    getColor(): Color;
+    getVisible(): boolean;
     setColor(color?: Color): void;
     setVisible(visible?: boolean): void;
 }
@@ -823,6 +827,11 @@ export type Image360AnnotationAssetQueryResult = {
 };
 
 // @public
+export type Image360AnnotationFilterOptions = {
+    status?: 'all' | AnnotationStatus | AnnotationStatus[];
+};
+
+// @public
 export type Image360AnnotationIntersection = {
     type: 'image360Annotation';
     annotation: Image360Annotation;
@@ -832,7 +841,10 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    readonly id: string;
     readonly image360Entities: Image360[];
+    readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
@@ -850,13 +862,6 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 
 // @public
 export type Image360ExitedDelegate = () => void;
-
-// @public (undocumented)
-export type Image360Metadata = {
-    station: string;
-    collection: string;
-    date?: Date;
-};
 
 // @public
 export interface Image360Revision {
@@ -1181,28 +1186,59 @@ export class NumericRange {
 // @public
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
-// @public (undocumented)
-export interface Overlay3D<MetadataType> {
-    get color(): THREE.Color;
-    getMetadata(): MetadataType | undefined;
-    get position(): THREE.Vector3;
-    setColor(color: THREE.Color): void;
-    set visible(visible: boolean);
-    get visible(): boolean;
+// @public
+export interface Overlay3D<ContentType> {
+    getColor(): Color;
+    getContent(): ContentType;
+    getPosition(): Vector3;
+    getVisible(): boolean;
+    setColor(color: Color): void;
+    setVisible(visible: boolean): void;
 }
 
-// @public (undocumented)
-export interface OverlayCollection<MetadataType> {
-    addOverlays(overlays: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
-    getOverlays(): Overlay3D<MetadataType>[];
+// @public
+export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
+    constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
+    clear(): void;
+    createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType>;
+    dispose(): void;
+    getCollections(): OverlayCollection<ContentType>[];
+    getTextOverlayVisible(): boolean;
+    getVisible(): boolean;
+    // (undocumented)
+    off(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    off(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    off(event: 'disposed', eventHandler: DisposedDelegate): void;
+    on(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    on(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    on(event: 'disposed', eventHandler: DisposedDelegate): void;
+    removeOverlayCollection(overlayCollection: OverlayCollection<ContentType>): void;
+    setTextOverlayVisible(visible: boolean): void;
+    setVisible(visible: boolean): void;
+}
+
+// @public
+export type Overlay3DToolParameters = {
+    maxPointSize?: number;
+    defaultOverlayColor: THREE_2.Color;
+};
+
+// @public
+export interface OverlayCollection<ContentType> {
+    addOverlays(overlays: OverlayInfo<ContentType>[]): Overlay3D<ContentType>[];
+    getOverlays(): Overlay3D<ContentType>[];
     removeAllOverlays(): void;
-    removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
+    removeOverlays(overlays: Overlay3D<ContentType>[]): void;
     setVisibility(visibility: boolean): void;
 }
 
-// @public (undocumented)
-export type OverlayEventHandler<MetadataType> = (event: {
-    targetOverlay: Overlay3D<MetadataType>;
+// @public
+export type OverlayEventHandler<ContentType> = (event: {
+    targetOverlay: Overlay3D<ContentType>;
     htmlOverlay: HTMLElement;
     mousePosition: {
         clientX: number;
@@ -1210,14 +1246,14 @@ export type OverlayEventHandler<MetadataType> = (event: {
     };
 }) => void;
 
-// @public (undocumented)
-export type OverlayInfo<MetadataType = DefaultMetadataType> = {
+// @public
+export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
     position: THREE.Vector3;
-    metadata?: MetadataType;
+    content: ContentType;
     color?: THREE.Color;
 };
 
-// @public (undocumented)
+// @public
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
 // @public (undocumented)
@@ -1391,40 +1427,6 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
-
-// @public (undocumented)
-export class SmartOverlayTool<MetadataType = DefaultMetadataType> extends Cognite3DViewerToolBase {
-    constructor(viewer: Cognite3DViewer, toolParameters?: SmartOverlayToolParameters);
-    clear(): void;
-    get collections(): OverlayCollection<MetadataType>[];
-    createOverlayCollection(overlays?: OverlayInfo<MetadataType>[]): OverlayCollection<MetadataType>;
-    // (undocumented)
-    dispose(): void;
-    // (undocumented)
-    off(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
-    // (undocumented)
-    off(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
-    // (undocumented)
-    off(event: 'disposed', eventHandler: DisposedDelegate): void;
-    on(event: 'hover', eventHandler: OverlayEventHandler<MetadataType>): void;
-    // (undocumented)
-    on(event: 'click', eventHandler: OverlayEventHandler<MetadataType>): void;
-    // (undocumented)
-    on(event: 'disposed', eventHandler: DisposedDelegate): void;
-    removeOverlayCollection(overlayCollection: OverlayCollection<MetadataType>): void;
-    set textOverlayVisible(visible: boolean);
-    // (undocumented)
-    get textOverlayVisible(): boolean;
-    set visible(visible: boolean);
-    // (undocumented)
-    get visible(): boolean;
-}
-
-// @public (undocumented)
-export type SmartOverlayToolParameters = {
-    maxPointSize?: number;
-    defaultOverlayColor: THREE_2.Color;
-};
 
 // @public
 export class StyledPointCloudObjectCollection {

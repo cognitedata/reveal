@@ -11,6 +11,10 @@ import { CameraManager } from '@reveal/camera-manager';
 import { GeometryFilter, CogniteCadModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 import { EdlOptions } from '@reveal/rendering';
+import { Cognite3DViewer } from './Cognite3DViewer';
+import { DefaultCameraManager } from '@reveal/camera-manager';
+import { CdfModelIdentifier } from '@reveal/data-providers';
+import { Image360AnnotationFilterOptions } from '@reveal/360-images';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -156,7 +160,7 @@ export interface Cognite3DViewerOptions {
    *
    * Note that the data source must support {@link CdfModelIdentifier}.
    *
-   * This cannot be used together with {@link _localModels}.
+   * This cannot be used together with {@link Cognite3DViewerOptions._localModels}.
    */
   customDataSource?: DataSource;
 
@@ -207,6 +211,10 @@ export type AddImage360Options = {
    * @default true
    */
   preMultipliedRotation?: boolean;
+  /**
+   * Annotation options.
+   */
+  annotationFilter?: Image360AnnotationFilterOptions;
 };
 
 export type CadIntersection = {

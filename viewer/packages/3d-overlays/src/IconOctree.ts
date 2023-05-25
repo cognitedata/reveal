@@ -19,12 +19,12 @@ export class IconOctree extends PointOctree<Overlay3DIcon> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
   public static getMinimalOctreeBoundsFromIcons(icons: Overlay3DIcon[]): Box3 {
-    return new Box3().setFromPoints(icons.map(icon => icon.position));
+    return new Box3().setFromPoints(icons.map(icon => icon.getPosition()));
   }
 
   constructor(icons: Overlay3DIcon[], bounds: Box3, maxLeafSize: number) {
     super(bounds.min, bounds.max, 0, maxLeafSize);
-    icons.forEach(icon => this.set(icon.position, icon));
+    icons.forEach(icon => this.set(icon.getPosition(), icon));
     this.filterEmptyLeaves();
     this._nodeCenters = this.populateNodeCenters();
   }
@@ -132,10 +132,10 @@ export class IconOctree extends PointOctree<Overlay3DIcon> {
 
   private getClosestToAverageIcon(icons: Overlay3DIcon[]): Overlay3DIcon {
     const center = icons
-      .reduce((result, currentValue) => result.add(currentValue.position), new Vector3())
+      .reduce((result, currentValue) => result.add(currentValue.getPosition()), new Vector3())
       .divideScalar(icons.length);
 
-    const minDistanceIcon = minBy(icons, icon => icon.position.distanceToSquared(center));
+    const minDistanceIcon = minBy(icons, icon => icon.getPosition().distanceToSquared(center));
 
     assert(minDistanceIcon !== undefined);
 

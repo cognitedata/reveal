@@ -419,10 +419,10 @@ export class Cognite3DViewer {
   /**
    * Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
    * @see {@link https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects}
-   * ```ts
+   * ```js
    * // Viewer is no longer in use, free up memory
    * viewer.dispose();
-   * ```.
+   * ```
    */
   dispose(): void {
     if (this.isDisposed) {
@@ -576,7 +576,7 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraStop', callback: CameraStopDelegate): void;
   /**
-   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
+   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link Cognite3DViewer.on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
   /**
@@ -803,7 +803,8 @@ export class Cognite3DViewer {
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
       eventFilter,
       collectionTransform,
-      preMultipliedRotation
+      preMultipliedRotation,
+      add360ImageOptions?.annotationFilter
     );
 
     const numberOf360Images = image360Collection.image360Entities.length;
