@@ -1,10 +1,25 @@
-import { ResourceType, useDialog, ViewType } from '@data-exploration-lib/core';
-import { Drawer, ExplorationFilterToggle } from '@data-exploration/components';
-import { Divider, Flex, Input } from '@cognite/cogs.js';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
+import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
 import { useDebounce } from 'use-debounce';
-import { SidebarFilters } from '../Search';
+
+import {
+  EMPTY_OBJECT,
+  FilterState,
+  ResourceItem,
+  ResourceType,
+  useDialog,
+  ViewType,
+} from '@data-exploration-lib/core';
+
+import {
+  BulkActionbar,
+  Drawer,
+  ExplorationFilterToggle,
+} from '@data-exploration/components';
+
 import {
   AssetsTab,
   DocumentsTab,
@@ -14,142 +29,226 @@ import {
   ThreeDTab,
   TimeseriesTab,
 } from '../ResourceTabs';
-import { useFilterState } from './useFilterState';
+import { SidebarFilters } from '../Search';
 import { ResourceSelectorTable } from './ResourceSelectorTable';
+import { useFilterState } from './useFilterState';
 
 const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'asset',
   'file',
   'event',
-  'sequence',
   'timeSeries',
 ];
+
+const initialSelectedRows = {
+  asset: {},
+  file: {},
+  timeSeries: {},
+  sequence: {},
+  threeD: {},
+  event: {},
+};
+
+export type SelectionProps = {
+  selectionMode?: 'single' | 'multiple';
+  onSelect?: (item: ResourceItem | ResourceItem[]) => void;
+};
+
+export type ResourceSelection = Record<
+  ResourceType,
+  Record<string, ResourceItem>
+>;
 export const ResourceSelector = ({
   visible = false,
+
   visibleResourceTabs = DEFAULT_VISIBLE_RESOURCE_TABS,
+  selectionMode = 'multiple',
+  initialFilter = EMPTY_OBJECT,
   onClose,
+  onSelect = noop,
 }: {
   visible: boolean;
   onClose: () => void;
   visibleResourceTabs?: ResourceType[];
-}) => {
-  const { state, setter, resetter } = useFilterState();
+  initialFilter?: Partial<FilterState>;
+} & SelectionProps) => {
+  const { state, setter, resetter } = useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
   const [activeKey, setActiveKey] = useState(visibleResourceTabs[0]);
 
   const [debouncedQuery] = useDebounce(query, 100);
+  const [selectedRows, setSelectedRows] =
+    useState<ResourceSelection>(initialSelectedRows);
+  const allSelectedRows = useMemo(
+    () =>
+      Object.entries(selectedRows)
+        .filter(([_, value]) => !isEmpty(value))
+        .reduce((acc, item) => {
+          acc.push(
+            ...Object.values(item[1]).map((value) => ({
+              ...value,
+              type: item[0] as ResourceType,
+            }))
+          );
+          return acc;
+        }, [] as ResourceItem[]),
+    [selectedRows]
+  );
+  const actionBarOptions = useMemo(
+    () =>
+      allSelectedRows.map((value) => ({
+        name: value.externalId || '',
+        type: value.type,
+      })),
+    [allSelectedRows]
+  );
 
   return (
-    <Drawer visible={visible} onClose={onClose}>
-      <SearchFiltersWrapper>
-        <FilterWrapper visible={showFilter}>
-          <SidebarFilters
-            query={query}
-            enableDocumentLabelsFilter
-            filter={state}
-            onFilterChange={(resourceType, currentFilter) => {
-              setter(resourceType, currentFilter);
-            }}
-            resourceType={activeKey}
-            onResetFilterClick={(type) => {
-              resetter(type);
-            }}
-          />
-        </FilterWrapper>
-
-        <MainSearchContainer>
-          <SearchInputContainer>
-            <>
-              <ExplorationFilterToggle
-                filterState={showFilter}
-                onClick={onToggleFilter}
-              />
-              <Divider direction="vertical" />
-            </>
-            <InputWrapper>
-              <Input
-                size="large"
-                variant="noBorder"
-                autoFocus
-                fullWidth
-                icon="Search"
-                placeholder="Search..."
-                onChange={(ev) => setQuery(ev.target.value)}
-                value={query}
-              />
-            </InputWrapper>
-          </SearchInputContainer>
-
-          <ResourceTypeTabs
-            currentResourceType={activeKey}
-            setCurrentResourceType={(tab) => setActiveKey(tab as ResourceType)}
-          >
-            {visibleResourceTabs.map((tab) => {
-              if (tab === 'asset')
-                return (
-                  <AssetsTab
-                    key={tab}
-                    tabKey={ViewType.Asset}
-                    query={debouncedQuery}
-                    filter={{ ...state.common, ...state.asset }}
-                    label="Assets"
-                  />
-                );
-              if (tab === 'event')
-                return (
-                  <EventsTab
-                    key={tab}
-                    tabKey={ViewType.Event}
-                    query={debouncedQuery}
-                    filter={state.event}
-                    label="Events"
-                  />
-                );
-              if (tab === 'file')
-                return (
-                  <DocumentsTab
-                    key={tab}
-                    tabKey={ViewType.File}
-                    query={debouncedQuery}
-                    filter={state.document}
-                    label="Files"
-                  />
-                );
-              if (tab === 'timeSeries')
-                return (
-                  <TimeseriesTab
-                    key={tab}
-                    tabKey={ViewType.TimeSeries}
-                    query={debouncedQuery}
-                    filter={state.timeseries}
-                    label="Time series"
-                  />
-                );
-              if (tab === 'sequence')
-                return (
-                  <SequenceTab
-                    tabKey={ViewType.Sequence}
-                    query={debouncedQuery}
-                    filter={state.sequence}
-                    label="Sequence"
-                  />
-                );
-              return (
-                <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
-              );
-            })}
-          </ResourceTypeTabs>
-          <MainContainer>
-            <ResourceSelectorTable
+    <>
+      <Drawer
+        visible={visible}
+        onClose={() => {
+          onClose();
+          setSelectedRows(initialSelectedRows);
+        }}
+      >
+        <SearchFiltersWrapper>
+          <FilterWrapper visible={showFilter}>
+            <SidebarFilters
+              query={query}
+              enableDocumentLabelsFilter
               filter={state}
-              query={debouncedQuery}
+              onFilterChange={(resourceType, currentFilter) => {
+                setter(resourceType, currentFilter);
+              }}
               resourceType={activeKey}
+              onResetFilterClick={(type) => {
+                resetter(type);
+              }}
             />
-          </MainContainer>
-        </MainSearchContainer>
-      </SearchFiltersWrapper>
-    </Drawer>
+          </FilterWrapper>
+
+          <MainSearchContainer>
+            <SearchInputContainer>
+              <>
+                <ExplorationFilterToggle
+                  filterState={showFilter}
+                  onClick={onToggleFilter}
+                />
+                <Divider direction="vertical" />
+              </>
+              <InputWrapper>
+                <Input
+                  size="large"
+                  variant="noBorder"
+                  autoFocus
+                  fullWidth
+                  icon="Search"
+                  placeholder="Search..."
+                  onChange={(ev) => setQuery(ev.target.value)}
+                  value={query}
+                />
+              </InputWrapper>
+            </SearchInputContainer>
+
+            <ResourceTypeTabs
+              currentResourceType={activeKey}
+              setCurrentResourceType={(tab) =>
+                setActiveKey(tab as ResourceType)
+              }
+            >
+              {visibleResourceTabs.map((tab) => {
+                if (tab === 'asset')
+                  return (
+                    <AssetsTab
+                      key={tab}
+                      tabKey={ViewType.Asset}
+                      query={debouncedQuery}
+                      filter={{ ...state.common, ...state.asset }}
+                    />
+                  );
+                if (tab === 'event')
+                  return (
+                    <EventsTab
+                      key={tab}
+                      tabKey={ViewType.Event}
+                      query={debouncedQuery}
+                      filter={state.event}
+                    />
+                  );
+                if (tab === 'file')
+                  return (
+                    <DocumentsTab
+                      key={tab}
+                      tabKey={ViewType.File}
+                      query={debouncedQuery}
+                      filter={state.document}
+                    />
+                  );
+                if (tab === 'timeSeries')
+                  return (
+                    <TimeseriesTab
+                      key={tab}
+                      tabKey={ViewType.TimeSeries}
+                      query={debouncedQuery}
+                      filter={state.timeseries}
+                    />
+                  );
+                if (tab === 'sequence')
+                  return (
+                    <SequenceTab
+                      tabKey={ViewType.Sequence}
+                      query={debouncedQuery}
+                      filter={state.sequence}
+                    />
+                  );
+                return (
+                  <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
+                );
+              })}
+            </ResourceTypeTabs>
+            <MainContainer>
+              <ResourceSelectorTable
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+                filter={state}
+                selectionMode="multiple"
+                query={debouncedQuery}
+                resourceType={activeKey}
+                onFilterChange={(nextState) => {
+                  setter(activeKey, nextState);
+                }}
+              />
+            </MainContainer>
+          </MainSearchContainer>
+          <BulkActionbar
+            options={actionBarOptions}
+            title={`${actionBarOptions.length} items`}
+            subtitle="Selected"
+            isVisible={actionBarOptions.length > 0}
+          >
+            <Button
+              icon="Add"
+              onClick={() => {
+                if (selectionMode === 'multiple') onSelect(allSelectedRows);
+                else onSelect(allSelectedRows[0]);
+              }}
+              inverted
+              type="secondary"
+            >
+              Add to Canvas
+            </Button>
+            <BulkActionbar.Separator />
+            <Button
+              icon="Close"
+              onClick={() => setSelectedRows(initialSelectedRows)}
+              inverted
+            />
+          </BulkActionbar>
+        </SearchFiltersWrapper>
+      </Drawer>
+    </>
   );
 };
 
@@ -163,6 +262,7 @@ const MainSearchContainer = styled.div`
 const SearchFiltersWrapper = styled.div`
   display: flex;
   flex: 0 0 auto;
+  position: relative;
   height: 100%;
 `;
 const FilterWrapper = styled.div<{ visible?: boolean }>`

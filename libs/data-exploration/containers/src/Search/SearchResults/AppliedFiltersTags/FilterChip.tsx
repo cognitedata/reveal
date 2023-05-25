@@ -1,11 +1,11 @@
 import { IconType, Chip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { COMMON_FILTER_KEYS } from '@data-exploration-lib/domain-layer';
 
 import includes from 'lodash/includes';
 import React from 'react';
 
 import { getTitle } from './utils';
+import { COMMON_FILTER_KEYS } from '@data-exploration-lib/core';
 
 export interface FilterChipProps {
   name: string;

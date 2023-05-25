@@ -2,7 +2,7 @@ import { createLayers } from '@cognite/z-index';
 
 const LAYERS = [
   'MAXIMUM',
-
+  'BULK_ACTION',
   'DRAWER',
   'OVERLAY',
 

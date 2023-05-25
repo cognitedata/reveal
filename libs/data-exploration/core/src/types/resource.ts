@@ -18,6 +18,13 @@ export type ResourceType =
   | 'event'
   | 'threeD';
 
+export type ResourceSelectionMode = 'single' | 'multiple';
+export type SelectableItemsProps = {
+  onSelect: (item: ResourceItem) => void;
+  selectionMode: ResourceSelectionMode;
+  isSelected: (item: ResourceItem) => boolean;
+};
+
 // Temporary mapping of the two almost identical types. Should be
 // removed as soon as possible, but that requires a full refactor
 // replacing ResourceType with SdkResourcetype

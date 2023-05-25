@@ -1,4 +1,8 @@
-import { FilterResourceType, FilterState } from '@data-exploration-lib/core';
+import {
+  FilterResourceType,
+  FilterState,
+  getCategoryValues,
+} from '@data-exploration-lib/core';
 
 import { useReducer } from 'react';
 
@@ -44,11 +48,17 @@ function reducer(state: FilterState, action: Action) {
 
   if (clear) return clearFilter(state, type);
 
-  return updateFilters(state, type, nextValue);
+  const { common, specific } = getCategoryValues(nextValue);
+
+  if (common) return updateFilters(state, 'common', common);
+  else return updateFilters(state, type, specific);
 }
 
-export const useFilterState = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+export const useFilterState = (initialFilter: Partial<FilterState> = {}) => {
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialFilter,
+    ...initialState,
+  });
 
   const setter = (
     resourceType: FilterResourceType,

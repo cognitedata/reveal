@@ -117,3 +117,12 @@ export interface OldFilesFilters
   extends Omit<InternalFilesFilters, 'metadata'> {
   metadata?: Metadata;
 }
+
+export const COMMON_FILTER_KEYS: readonly (keyof InternalCommonFilters)[] = [
+  'assetSubtreeIds',
+  'dataSetIds',
+  'createdTime',
+  'lastUpdatedTime',
+  'externalIdPrefix',
+  'internalId',
+] as const;

@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react';
-import styled from 'styled-components/macro';
 
 import {
   InternalDocument,
@@ -54,7 +53,8 @@ export const DocumentSearchResults = ({
   onFilterChange,
   onFileClicked,
   ...rest
-}: DocumentSearchResultsProps) => {
+}: DocumentSearchResultsProps &
+  Omit<TableProps<InternalDocument>, 'data' | 'columns' | 'id'>) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [realQuery, setRealQuery] = useState<string>();
   const [gptColumnName, setGptColumnName] = useState<string>('Summary');
@@ -148,7 +148,7 @@ export const DocumentSearchResults = ({
   );
 
   return (
-    <DocumentSearchResultWrapper>
+    <>
       <DocumentsTable
         id={id || 'documents-search-results'}
         enableSorting
@@ -222,10 +222,6 @@ export const DocumentSearchResults = ({
           onCancel={() => setModalVisible(false)}
         />
       )}
-    </DocumentSearchResultWrapper>
+    </>
   );
 };
-
-const DocumentSearchResultWrapper = styled.div`
-  height: 100%;
-`;
