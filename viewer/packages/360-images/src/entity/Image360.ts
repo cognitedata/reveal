@@ -33,7 +33,7 @@ export interface Image360 {
    * Get label of 360 image entity.
    * @returns Station label
    * */
-  readonly label: string;
+  readonly label: string | undefined;
 
   /**
    * List all historical images for this entity.

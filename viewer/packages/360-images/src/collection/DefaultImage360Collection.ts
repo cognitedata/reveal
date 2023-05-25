@@ -57,9 +57,14 @@ export class DefaultImage360Collection implements Image360Collection {
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
+  private readonly _collectionLabel: string | undefined;
 
   get id(): string {
     return this._collectionId;
+  }
+
+  get label(): string | undefined {
+    return this._collectionLabel;
   }
 
   get targetRevisionDate(): Date | undefined {
@@ -86,11 +91,13 @@ export class DefaultImage360Collection implements Image360Collection {
 
   constructor(
     collectionId: string,
+    collectionLabel: string | undefined,
     entities: Image360Entity[],
     icons: IconCollection,
     image360DataProvider: Image360DataProvider
   ) {
     this._collectionId = collectionId;
+    this._collectionLabel = collectionLabel;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;
