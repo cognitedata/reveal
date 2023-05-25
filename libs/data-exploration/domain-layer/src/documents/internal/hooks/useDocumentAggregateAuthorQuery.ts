@@ -1,5 +1,7 @@
-import { mapAggregatesToFilters } from '../../service';
-import { useDocumentTotalAggregates } from '../../service';
+import {
+  mapAggregatesToFilters,
+  useDocumentTotalAggregates,
+} from '../../service';
 
 export const useDocumentAggregateAuthorQuery = () => {
   const { data, ...rest } = useDocumentTotalAggregates([

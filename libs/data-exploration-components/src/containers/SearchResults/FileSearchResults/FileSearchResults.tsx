@@ -4,14 +4,14 @@ import { Asset, FileInfo } from '@cognite/sdk';
 import { FileTable } from '@data-exploration-components/containers/Files';
 import { convertResourceType } from '@data-exploration-components/types';
 
-import { FileToolbar } from './FileToolbar';
-import { useResourceResults } from '..';
 import { EmptyState } from '@data-exploration/components';
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 
 import { useResultCount } from '@data-exploration-components/components';
 import { InternalFilesFilters } from '@data-exploration-lib/core';
+import { useResourceResults } from '..';
+import { FileToolbar } from './FileToolbar';
 
 export const FileSearchResults = ({
   query = '',

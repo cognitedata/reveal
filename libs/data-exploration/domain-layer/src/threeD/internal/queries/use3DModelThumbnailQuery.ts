@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const use3DModelThumbnailQuery = (url?: string) => {
   const sdk = useSDK();

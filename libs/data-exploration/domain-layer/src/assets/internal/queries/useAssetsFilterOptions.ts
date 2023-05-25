@@ -4,13 +4,10 @@ import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 import omit from 'lodash/omit';
 
-import {
-  AssetProperty,
-  useAssetsUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
 import { mapFiltersToAssetsAdvancedFilters } from '..';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
+import { AssetProperty, useAssetsUniqueValuesByProperty } from '../../service';
 
 interface Props {
   property: AssetProperty;

@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 import yargs, { CommandModule, scriptName } from 'yargs';
 import chalk from 'chalk';
+import { track } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
+import {
+  PlatypusDmlError,
+  PlatypusValidationError,
+} from '@platypus/platypus-core';
+import * as Sentry from '@sentry/node';
 import { authenticate } from './app/middlewares/auth';
 import * as signin from './app/cmds/sign-in';
 import * as dataModelsCmds from './app/cmds/data-models';
@@ -9,12 +15,6 @@ import status from './app/cmds/status';
 import logout from './app/cmds/logout';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
-import { track } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
-import {
-  PlatypusDmlError,
-  PlatypusValidationError,
-} from '@platypus/platypus-core';
-import * as Sentry from '@sentry/node';
 import CONFIG from './app/config/config';
 
 const DEBUG = _DEBUG.extend('main');

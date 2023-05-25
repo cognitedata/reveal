@@ -6,12 +6,11 @@ import React, {
   useState,
 } from 'react';
 
-import { Button, Input, Menu } from '@cognite/cogs.js';
+import { Button, Input, Menu, Divider } from '@cognite/cogs.js';
 
 import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
-import { Divider } from '@cognite/cogs.js';
 
 import {
   Image360DatasetOptions,

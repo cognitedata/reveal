@@ -1,7 +1,7 @@
 import React from 'react';
 import { Loader } from '@cognite/cogs.js';
-import NoAccessPage from './NoAccessPage';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
+import NoAccessPage from './NoAccessPage';
 
 const NoAccessWrapper = ({ children }: { children: JSX.Element }) => {
   const dataModelInstancesAcl = useCapabilities('dataModelInstancesAcl', [

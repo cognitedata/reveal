@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
-import {
-  mapFiltersToTimeseriesAdvancedFilters,
-  mapInternalFilterToTimeseriesFilter,
-  mapTableSortByToTimeseriesSortFields,
-  useTimeseriesListQuery,
-} from '@data-exploration-lib/domain-layer';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   InternalTimeseriesFilters,
   TimeseriesConfigType,
 } from '@data-exploration-lib/core';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
+import { TableSortBy } from '../../../types';
+import { useTimeseriesListQuery } from '../../service';
+import {
+  mapFiltersToTimeseriesAdvancedFilters,
+  mapInternalFilterToTimeseriesFilter,
+  mapTableSortByToTimeseriesSortFields,
+} from '../transformers';
 
 export const useTimeseriesSearchResultQuery = (
   {

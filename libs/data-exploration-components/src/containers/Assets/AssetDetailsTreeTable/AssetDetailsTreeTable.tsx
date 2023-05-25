@@ -16,9 +16,11 @@ import {
   ThreeDModelCell,
 } from '@data-exploration/components';
 
-import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
+import {
+  useRootAssetsQuery,
+  InternalAssetTreeData,
+} from '@data-exploration-lib/domain-layer';
 
-import { InternalAssetTreeData } from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 import { DASH, getHiddenColumns } from '@data-exploration-lib/core';

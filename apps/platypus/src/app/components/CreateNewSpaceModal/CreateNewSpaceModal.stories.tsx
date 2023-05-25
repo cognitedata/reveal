@@ -1,9 +1,9 @@
+import noop from 'lodash/noop';
+import { Story } from '@storybook/react';
 import {
   CreateNewSpaceModal,
   CreateNewSpaceModalProps,
 } from './CreateNewSpaceModal';
-import noop from 'lodash/noop';
-import { Story } from '@storybook/react';
 
 export default {
   title: 'Basic components/CreateNewSpaceModal',

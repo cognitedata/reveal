@@ -2,9 +2,9 @@ import {
   SEARCH_CONFIG_SUBTITLE,
   SEARCH_CONFIG_TITLE,
 } from '@data-exploration-lib/core';
-import { SearchConfig } from '../SearchConfig';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderComponent } from '@data-exploration/components';
+import { SearchConfig } from '../SearchConfig';
 
 describe('SearchConfig', () => {
   const onCancel = jest.fn();

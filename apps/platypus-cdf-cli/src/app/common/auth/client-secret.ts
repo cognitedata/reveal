@@ -1,8 +1,8 @@
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { readFromCache, cachePlugin } from '../../utils/msalTokenCache';
 import { Logger } from '@platypus/platypus-core';
-import { handleResponse } from './common';
+import { readFromCache, cachePlugin } from '../../utils/msalTokenCache';
 import { DEBUG as _DEBUG } from '../../utils/logger';
+import { handleResponse } from './common';
 
 const DEBUG = _DEBUG.extend('auth:client-secret');
 

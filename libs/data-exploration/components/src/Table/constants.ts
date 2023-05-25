@@ -1,4 +1,4 @@
-import { FileTypes } from '@data-exploration-lib/core';
+import { FileTypes, FileTypeVisibility } from '@data-exploration-lib/core';
 
 export const ColumnKeys = [
   'created',
@@ -19,8 +19,8 @@ export const ColumnKeys = [
 
 export const MAX_COLUMN_SELECTION = 20;
 
-export const defaultVisibility = {
-  [FileTypes.CAD_MOLDELS]: true,
+export const DEFAULT_VISIBILITY: FileTypeVisibility = {
+  [FileTypes.CAD_MODELS]: true,
   [FileTypes.POINT_CLOUDS]: true,
   [FileTypes.IMAGES_360]: true,
 };

@@ -1,5 +1,5 @@
 import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
-import { AssetsAggregateRequestPayload } from '@data-exploration-lib/domain-layer';
+import { AssetsAggregateRequestPayload } from '../types';
 
 export const getAssetsAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,

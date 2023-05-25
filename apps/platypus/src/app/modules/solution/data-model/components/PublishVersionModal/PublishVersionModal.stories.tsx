@@ -1,6 +1,6 @@
-import { PublishVersionModal } from './PublishVersionModal';
 import { Wrapper } from '@platypus-app/components/Styles/storybook';
 import { action } from '@storybook/addon-actions';
+import { PublishVersionModal } from './PublishVersionModal';
 
 export default {
   title: 'Basic Components/PublishVersionModal',

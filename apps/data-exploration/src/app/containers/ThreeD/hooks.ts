@@ -20,8 +20,7 @@ import {
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-} from 'react-query';
-import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
+} from '@tanstack/react-query';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -35,6 +34,7 @@ import {
   use3DRevisionsQuery,
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
+import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];

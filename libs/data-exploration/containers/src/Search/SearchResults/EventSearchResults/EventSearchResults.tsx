@@ -11,11 +11,11 @@ import {
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { TableProps } from '@data-exploration/components';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
 import { EventTable } from './EventTable';
-import { TableProps } from '@data-exploration/components';
 
 export const EventSearchResults = ({
   query = '',

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { colors } from '../../utils/colors';
+import { Convention } from '../../types';
 import {
   Collapse,
   Container,
@@ -8,8 +10,6 @@ import {
   StyledTrashIcon,
 } from './elements';
 import { BaseFilterHeader } from './BaseFilterHeader';
-import { colors } from '../../utils/colors';
-import { Convention } from '../../types';
 
 // Might need this in the near future. Leaving for now
 const CollapseIcon: React.FC<{ isActive?: boolean }> = ({ isActive }) => {

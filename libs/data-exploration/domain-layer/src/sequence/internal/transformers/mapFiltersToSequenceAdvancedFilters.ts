@@ -4,11 +4,8 @@ import {
   SequenceConfigType,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
-import {
-  AdvancedFilter,
-  AdvancedFilterBuilder,
-} from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
+import { AdvancedFilter, AdvancedFilterBuilder } from '../../../builders';
 import { getSearchConfig } from '../../../utils';
 
 export type SequenceProperties = {

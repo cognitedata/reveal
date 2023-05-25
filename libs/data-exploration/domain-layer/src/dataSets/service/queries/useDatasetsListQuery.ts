@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { DataSet, DataSetFilter } from '@cognite/sdk';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { queryKeys } from '../../../queryKeys';
 import { getDatasetsList } from '../network';
 

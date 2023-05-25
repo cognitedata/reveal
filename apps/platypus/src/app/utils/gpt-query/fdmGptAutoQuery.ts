@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
-import { getGraphQLQueryForFDM, getRelevantTypesPrompt } from './prompts';
 import { some } from 'lodash';
+import { getGraphQLQueryForFDM, getRelevantTypesPrompt } from './prompts';
 
 type GptMessage = {
   role: 'user' | 'system' | 'assistant';

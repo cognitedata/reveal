@@ -1,9 +1,8 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
-import { DataSetInternal } from '@data-exploration-lib/domain-layer';
-import { useQuery } from 'react-query';
-import { ONE_HOUR_IN_MS } from '../../service/constants';
-import { getAggregateByIds } from '../../service/network/getAggregateById';
+import { useQuery } from '@tanstack/react-query';
+import { getAggregateByIds, ONE_HOUR_IN_MS } from '../../service';
+import { DataSetInternal } from '../types';
 
 export const useDataSetAggregateByIdsQuery = (
   type: SdkResourceType | undefined,

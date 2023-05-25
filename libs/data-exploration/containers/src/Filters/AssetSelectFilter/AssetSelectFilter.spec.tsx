@@ -1,6 +1,6 @@
-import { AssetSelectFilter } from './AssetSelectFilter';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AssetSelectFilter } from './AssetSelectFilter';
 
 describe('AssetSelectFilter', () => {
   describe('Base', () => {

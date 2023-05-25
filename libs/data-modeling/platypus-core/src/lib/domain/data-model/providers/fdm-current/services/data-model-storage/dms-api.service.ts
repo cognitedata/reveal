@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 
+import { PlatypusError } from '@platypus-core/boundaries/types';
 import {
   DataModelStorageModelsDTO,
   DmsListModelsRequestDTO,
@@ -17,8 +18,6 @@ import {
   RetrieveEdgesByIdsResponseDTO,
   DataModelStorageModel,
 } from '../../dto';
-
-import { PlatypusError } from '@platypus-core/boundaries/types';
 
 /**
  * Data Model Storage API

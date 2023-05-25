@@ -9,9 +9,9 @@ import {
   InternalEventsFilters,
   InternalFilesFilters,
   InternalSequenceFilters,
+  InternalAssetFilters,
 } from '@data-exploration-lib/core';
 import get from 'lodash/get';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 export type FiltersWithResourceType = Required<ResourceFilterProps> & {
   resourceType: ResourceType;

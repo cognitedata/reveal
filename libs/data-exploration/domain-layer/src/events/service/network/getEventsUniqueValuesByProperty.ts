@@ -3,7 +3,7 @@ import {
   EventProperty,
   EventsAggregateFilters,
   EventsAggregateUniqueValuesResponse,
-} from '@data-exploration-lib/domain-layer';
+} from '../types';
 
 import { getEventsAggregate } from './getEventsAggregate';
 

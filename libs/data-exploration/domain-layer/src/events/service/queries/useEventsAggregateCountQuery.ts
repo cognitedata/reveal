@@ -1,19 +1,17 @@
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  getEventsAggregateCount,
-  queryKeys,
-} from '@data-exploration-lib/domain-layer';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
-import {
-  mapFiltersToEventsAdvancedFilters,
-  mapInternalFilterToEventsFilter,
-} from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
 import {
   EventConfigType,
   InternalEventsFilters,
 } from '@data-exploration-lib/core';
+import { queryKeys } from '../../../queryKeys';
+import {
+  mapFiltersToEventsAdvancedFilters,
+  mapInternalFilterToEventsFilter,
+} from '../../internal';
+import { getEventsAggregateCount } from '../network';
 
 export const useEventsAggregateCountQuery = (
   {

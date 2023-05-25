@@ -17,8 +17,8 @@ import {
   IndustryCanvasState,
   SerializedCanvasDocument,
 } from '../types';
-import useIndustryCanvasSearchParameters from './useIndustryCanvasSearchParameters';
 import { serializeCanvasState } from '../utils/utils';
+import useIndustryCanvasSearchParameters from './useIndustryCanvasSearchParameters';
 
 export type IndustryCanvasContextType = {
   activeCanvas: SerializedCanvasDocument | undefined;

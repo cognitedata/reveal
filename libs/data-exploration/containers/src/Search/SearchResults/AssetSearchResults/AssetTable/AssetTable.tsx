@@ -13,9 +13,8 @@ import {
   AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
-
 import noop from 'lodash/noop';
+import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
 
 const visibleColumns = ['name', 'rootId'];
 export const AssetTable = ({

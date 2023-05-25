@@ -1,7 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
-import { getFileCountAggregateBySiteId } from '@data-exploration-lib/domain-layer';
+import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../../../queryKeys';
+import { getFileCountAggregateBySiteId } from '../network';
 
 export const useFilesAggregateBySiteId = (siteId?: string, face?: string) => {
   const sdk = useSDK();

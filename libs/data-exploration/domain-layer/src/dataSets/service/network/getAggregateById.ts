@@ -1,6 +1,6 @@
 import { aggregate, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { CogniteClient, DataSet } from '@cognite/sdk';
-import { DataSetWithCount } from '@data-exploration-lib/domain-layer';
+import { DataSetWithCount } from '../../internal';
 
 export const getAggregateByIds = (
   sdk: CogniteClient,

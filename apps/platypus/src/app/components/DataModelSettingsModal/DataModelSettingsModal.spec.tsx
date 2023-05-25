@@ -3,8 +3,8 @@ import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
-import { DataModelSettingsModal } from './DataModelSettingsModal';
 import { DataModel } from '@platypus/platypus-core';
+import { DataModelSettingsModal } from './DataModelSettingsModal';
 
 const mockMutate = jest.fn().mockImplementation((_, options) => {
   options.onSuccess();

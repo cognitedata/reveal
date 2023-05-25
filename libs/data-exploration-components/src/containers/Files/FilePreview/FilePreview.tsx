@@ -17,11 +17,19 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ResourceItem } from '@data-exploration-components/types';
 import { lightGrey } from '@data-exploration-components/utils';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-lib/core';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  ANNOTATION_SOURCE_KEY,
+  AnnotationSource,
+  ExtendedAnnotation,
+} from '@data-exploration-lib/core';
 import {
   useSearchResults,
   SearchResult,
 } from '@data-exploration-lib/domain-layer';
+import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
+import { Flex } from '@cognite/cogs.js';
+import noop from 'lodash/noop';
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { MAX_CONTAINER_HEIGHT, MAX_CONTAINER_WIDTH } from './constants';
@@ -29,21 +37,13 @@ import getExtendedAnnotationsWithBadges from './getExtendedAnnotationsWithBadges
 import { useUnifiedFileViewerAnnotations } from './hooks';
 import { Pagination } from './Pagination';
 import {
-  ANNOTATION_SOURCE_KEY,
-  AnnotationSource,
-  ExtendedAnnotation,
-} from '@data-exploration-lib/core';
-import {
   getContainerId,
   getSearchResultAnnotationStyle,
   useDebouncedMetrics,
 } from './utils';
-import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
-import { Flex } from '@cognite/cogs.js';
 import { useNumPages } from './hooks/useNumPages';
 import { useCurrentSearchResult } from './hooks/useCurrentSearchResult';
 import { useSearchBarState } from './hooks/useSearchBarState';
-import noop from 'lodash/noop';
 import usePrevious from './hooks/usePrevious';
 
 type FilePreviewProps = {

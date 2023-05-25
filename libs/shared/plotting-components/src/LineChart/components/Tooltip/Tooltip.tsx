@@ -9,9 +9,9 @@ import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 import { Coordinate, TooltipRendererProps, Variant } from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
+import { getPointCustomData } from '../../utils/getPointCustomData';
 import { TooltipDetail, TooltipDetailProps } from './TooltipDetail';
 import { TooltipContainer, TooltipWrapper } from './elements';
-import { getPointCustomData } from '../../utils/getPointCustomData';
 
 export interface TooltipProps {
   chartRef: React.RefObject<HTMLDivElement>;

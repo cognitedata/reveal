@@ -10,6 +10,7 @@ import {
   SegmentedControl,
   Flex,
 } from '@cognite/cogs.js';
+import styled from 'styled-components';
 import { PivotRangePicker } from './PivotRangePicker';
 import {
   PivotRange,
@@ -18,7 +19,6 @@ import {
   getPivotRangeAsDates,
 } from './Common';
 import { CalendarPicker } from './CalendarPicker';
-import styled from 'styled-components';
 import { Divider } from './elements';
 import { TIME_SELECT } from './constants';
 

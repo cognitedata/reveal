@@ -2,9 +2,9 @@ import { screen } from '@testing-library/react';
 import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
-import { TransformationDropdown } from './TransformationDropdown';
 import { DataModelTransformation } from '@platypus/platypus-core';
 import noop from 'lodash/noop';
+import { TransformationDropdown } from './TransformationDropdown';
 
 const mockTransformations: DataModelTransformation[] = [
   {

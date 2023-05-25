@@ -1,6 +1,10 @@
-import { ResourceType, useDialog } from '@data-exploration-lib/core';
+import { ResourceType, useDialog, ViewType } from '@data-exploration-lib/core';
 import { Drawer, ExplorationFilterToggle } from '@data-exploration/components';
 import { Divider, Flex, Input } from '@cognite/cogs.js';
+import { useState } from 'react';
+import styled from 'styled-components';
+import { useDebounce } from 'use-debounce';
+import { SidebarFilters } from '../Search';
 import {
   AssetsTab,
   DocumentsTab,
@@ -10,13 +14,8 @@ import {
   ThreeDTab,
   TimeseriesTab,
 } from '../ResourceTabs';
-import { ResourceSelectorTable } from './ResourceSelectorTable';
-import { ViewType } from '@data-exploration-lib/core';
-import { useState } from 'react';
-import styled from 'styled-components';
-import { SidebarFilters } from '../Search';
 import { useFilterState } from './useFilterState';
-import { useDebounce } from 'use-debounce';
+import { ResourceSelectorTable } from './ResourceSelectorTable';
 
 const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'asset',

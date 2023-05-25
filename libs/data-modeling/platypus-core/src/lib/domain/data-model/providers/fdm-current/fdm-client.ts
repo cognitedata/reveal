@@ -26,7 +26,11 @@ import {
   GetByExternalIdDTO,
   DeleteDataModelOutput,
 } from '../../dto';
-import { TransformationApiService } from '../../services';
+import {
+  TransformationApiService,
+  MixerQueryBuilder,
+  OPERATION_TYPE,
+} from '../../services';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import {
   DataModel,
@@ -40,6 +44,8 @@ import {
   SpaceInstance,
   BuiltInType,
 } from '../../types';
+import { compareDataModelVersions } from '../../utils';
+import { ListSpacesDTO } from '../fdm-next/dto/dms-space-dtos';
 import {
   DataModelDataMapper,
   DataModelVersionDataMapper,
@@ -55,9 +61,6 @@ import {
 } from './dto';
 import { DmsApiService, DmsModelBuilder } from './services/data-model-storage';
 import { MixerApiService, MixerBindingsBuilder } from './services/mixer-api';
-import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
-import { compareDataModelVersions } from '../../utils';
-import { ListSpacesDTO } from '../fdm-next/dto/dms-space-dtos';
 
 export class FdmV2Client implements FlexibleDataModelingClient {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;

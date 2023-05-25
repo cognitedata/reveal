@@ -1,9 +1,8 @@
 import { AggregateResponse } from '@cognite/sdk';
-import {
-  AggregateFilters,
-  DocumentProperties,
-} from '@data-exploration-lib/domain-layer';
+
 import { AdvancedFilter } from '../../builders';
+import { AggregateFilters } from '../../types';
+import { DocumentProperties } from '../internal';
 
 export interface DocumentsMetadataAggregateResponse extends AggregateResponse {
   value: string;

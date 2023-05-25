@@ -1,6 +1,5 @@
 import 'graphiql/graphiql.min.css';
 
-import { QueryExplorer } from '../components/QueryExplorer';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import {
   Button,
@@ -17,19 +16,20 @@ import {
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useEffect, useMemo, useState } from 'react';
-import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
 import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
-import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
-import {
-  getNodeId,
-  getRelationLinkId,
-} from '../../data-management/components/RelationViewer/utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import { fetchGptAutoQuery } from '@platypus-app/utils/gpt-query';
 import sdk from '@cognite/cdf-sdk-singleton';
 import zIndex from '@platypus-app/utils/zIndex';
+import {
+  getNodeId,
+  getRelationLinkId,
+} from '../../data-management/components/RelationViewer/utils';
+import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
+import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
+import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
+import { QueryExplorer } from '../components/QueryExplorer';
 import { augmentQueryWithRequiredFields } from './util';
 
 export interface QueryExplorerPageProps {

@@ -1,3 +1,9 @@
+import { chunk, uniqBy } from 'lodash';
+import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  GraphQLInputObjectType,
+} from 'graphql';
 import {
   ConflictMode,
   CreateDataModelDTO,
@@ -35,6 +41,16 @@ import {
 } from '../../types';
 
 import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
+import { DataUtils } from '../../../../boundaries/utils/data-utils';
+import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
+import { IGraphQlUtilsService } from '../../boundaries';
+import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
+import {
+  MixerQueryBuilder,
+  OPERATION_TYPE,
+  TransformationApiService,
+} from '../../services';
+import { compareDataModelVersions } from '../../utils';
 import {
   DataModelsApiService,
   SpacesApiService,
@@ -44,27 +60,11 @@ import {
 import { ListSpacesDTO, SpaceDTO } from './dto/dms-space-dtos';
 import { DataModelDTO } from './dto/dms-data-model-dtos';
 import { DataModelDataMapper } from './data-mappers';
-import { DataUtils } from '../../../../boundaries/utils/data-utils';
 import { FdmMixerApiService } from './services/mixer-api';
-import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
-import { IGraphQlUtilsService } from '../../boundaries';
-import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
-import {
-  MixerQueryBuilder,
-  OPERATION_TYPE,
-  TransformationApiService,
-} from '../../services';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
-import { compareDataModelVersions } from '../../utils';
 import { ItemsWithCursor } from './dto/dms-common-dtos';
-import { chunk, uniqBy } from 'lodash';
 import { InstancesApiService } from './services/data-modeling-api/instances-api.service';
-import {
-  buildClientSchema,
-  getIntrospectionQuery,
-  GraphQLInputObjectType,
-} from 'graphql';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private dataModelDataMapper: DataModelDataMapper;

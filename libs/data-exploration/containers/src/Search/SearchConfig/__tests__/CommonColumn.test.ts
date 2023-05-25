@@ -4,9 +4,9 @@ import {
   searchConfigCommonColumns,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
-import { CommonColumn } from '../CommonColumn';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderComponent } from '@data-exploration/components';
+import { CommonColumn } from '../CommonColumn';
 
 const mockData = getMockSearchConfig();
 describe('CommonColumn', () => {

@@ -6,7 +6,7 @@ import {
   RangePicker,
   SpacedRow,
 } from '@data-exploration-components/components';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';

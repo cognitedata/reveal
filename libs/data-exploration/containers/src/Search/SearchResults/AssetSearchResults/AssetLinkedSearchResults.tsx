@@ -1,6 +1,8 @@
 import { Asset } from '@cognite/sdk';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
-import { useAssetsSearchResultQuery } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  useAssetsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,

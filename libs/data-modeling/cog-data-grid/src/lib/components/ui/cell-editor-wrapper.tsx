@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Chip, Tooltip } from '@cognite/cogs.js';
-import { ReactElement } from 'react';
 import * as S from './elements';
 
 export type CellEditorWrapperProps = {

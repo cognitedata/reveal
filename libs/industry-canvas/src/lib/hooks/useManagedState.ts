@@ -35,13 +35,13 @@ import {
   deserializeCanvasDocument,
   serializeCanvasState,
 } from '../utils/utils';
+import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
 } from './useCanvasStateHistory';
 import resolveContainerConfig from './utils/resolveContainerConfig';
 import { useContainerAnnotations } from './useContainerAnnotations';
-import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
 
 export type InteractionState = {
   hoverId: string | undefined;

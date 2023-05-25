@@ -1,12 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CdfDatabaseService } from '../../../common/cdf-database.service';
-import {
-  CdfMockDatabase,
-  CdfResourceObject,
-  Datapoint,
-  DatapointGroup,
-} from '../../../types';
-import { filterCollection } from '../../../utils';
 import {
   startOfDay,
   startOfHour,
@@ -17,6 +9,14 @@ import {
   addSeconds,
   startOfSecond,
 } from 'date-fns';
+import { CdfDatabaseService } from '../../../common/cdf-database.service';
+import {
+  CdfMockDatabase,
+  CdfResourceObject,
+  Datapoint,
+  DatapointGroup,
+} from '../../../types';
+import { filterCollection } from '../../../utils';
 import { Collection } from '../../../common/collection';
 
 export const findDatapoints = (

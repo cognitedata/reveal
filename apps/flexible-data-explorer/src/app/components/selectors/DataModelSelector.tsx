@@ -6,8 +6,7 @@ import {
   Skeleton,
   Title,
 } from '@cognite/cogs.js';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from '../../hooks/useTranslation';
 import { DataModelList } from '../../services/FDMClient';

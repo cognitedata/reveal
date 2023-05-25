@@ -3,11 +3,11 @@ import { Table, TableProps } from '@data-exploration/components';
 import React, { useMemo, useState } from 'react';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import styled from 'styled-components';
-import { ThreedRevisions } from './ThreedRevisions';
-import { ThreedModelLastUpdated } from './ThreedModelLastUpdated';
 import { Icon } from '@cognite/cogs.js';
-import { ThreedModelDisplay } from './ThreedModelDisplay';
 import { Image360Display } from './Image360Display';
+import { ThreeDModelDisplay } from './ThreeDModelDisplay';
+import { ThreeDRevisions } from './ThreeDRevisions';
+import { ThreeDModelLastUpdated } from './ThreeDModelLastUpdated';
 
 interface ThreeDTableProps
   extends Omit<TableProps<InternalThreeDModelData>, 'columns'> {
@@ -68,7 +68,7 @@ export const ThreeDTable = ({
               {row.original?.type === 'img360' ? (
                 <Image360Display model={row.original} />
               ) : (
-                <ThreedModelDisplay model={row.original} />
+                <ThreeDModelDisplay model={row.original} />
               )}
             </div>
           ),
@@ -82,7 +82,7 @@ export const ThreeDTable = ({
           accessorKey: 'id',
           header: 'Revisions',
           cell: ({ getValue, row }) => (
-            <ThreedRevisions
+            <ThreeDRevisions
               modelId={getValue<number>()}
               is360Image={row.original?.type === 'img360'}
             />
@@ -95,7 +95,7 @@ export const ThreeDTable = ({
           accessorKey: 'id',
           header: 'Updated',
           cell: ({ getValue, row }) => (
-            <ThreedModelLastUpdated
+            <ThreeDModelLastUpdated
               modelId={getValue<number>()}
               is360Image={row.original?.type === 'img360'}
             />

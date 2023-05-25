@@ -1,7 +1,7 @@
 import { Body, Colors, Menu } from '@cognite/cogs.js';
-import { SerializedCanvasDocument } from '../types';
 import styled from 'styled-components';
 import { formatDistanceToNow } from 'date-fns';
+import { SerializedCanvasDocument } from '../types';
 
 type CanvasSubmenuProps = {
   isActiveCanvas: boolean;

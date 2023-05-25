@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import difference from 'lodash/difference';
 
+import { PlotRange } from '../LineChart';
 import { TimePeriods } from './components/TimePeriods';
 
 import {
@@ -18,7 +19,6 @@ import { DateRangePicker } from './components/DateRangePicker';
 import { getChartByVariant } from './utils/getChartByVariant';
 import { formatDateRangeForAxis } from './utils/formatDateRangeForAxis';
 import { useTimeseriesChartData } from './domain/internal/hooks/useTimeseriesChartData';
-import { PlotRange } from '../LineChart';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   timeseriesId,

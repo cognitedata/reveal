@@ -1,9 +1,9 @@
 import * as React from 'react';
 
+import { EXPLORATION, useMetrics } from '@data-exploration-lib/core';
+import { ResetButton } from '../../Buttons';
 import { Collapse, Container, Panel } from './elements';
 import { BaseFilterHeader } from './BaseFilterHeader';
-import { ResetButton } from '../../Buttons';
-import { EXPLORATION, useMetrics } from '@data-exploration-lib/core';
 
 // Might need this in the near future. Leaving for now
 // const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {

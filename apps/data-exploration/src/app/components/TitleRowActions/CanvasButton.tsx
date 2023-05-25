@@ -9,7 +9,7 @@ import {
   isSupportedResourceItem as isSupportedResourceItemHelper,
   resourceItemToContainerReference,
 } from '@fusion/industry-canvas';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
 

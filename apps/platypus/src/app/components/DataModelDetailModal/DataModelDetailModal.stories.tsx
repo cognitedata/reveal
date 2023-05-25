@@ -1,10 +1,10 @@
+import noop from 'lodash/noop';
+import { Story } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import {
   DataModelDetailModal,
   DataModelDetailModalProps,
 } from './DataModelDetailModal';
-import noop from 'lodash/noop';
-import { Story } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Basic components/DataModelDetailModal',

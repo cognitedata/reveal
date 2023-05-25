@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import * as spdy from 'spdy';
-import { getArgs } from './cli/cli-args';
 import * as fs from 'fs';
+import * as path from 'path';
+import * as spdy from 'spdy';
 import * as cors from 'cors';
+import { getArgs } from './cli/cli-args';
 
 import { createMockServer } from './app/mock-server';
 import cdfMiddleware from './app/middlewares/cdf-middleware';
 
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
-import * as path from 'path';
 import { userTokenData } from './user-token-data';
 const TENANT = process.env.NODE_ENV || 'mock';
 const server = createMockServer();

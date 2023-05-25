@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  EventsProperties,
-  getEventsAggregate,
-} from '@data-exploration-lib/domain-layer';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
-import { useQuery, UseQueryOptions } from 'react-query';
+
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
 import { EventFilter } from '@cognite/sdk';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { EventsProperties } from '../../internal';
+import { getEventsAggregate } from '../network';
 
 // TODO: is it used anymore?
 export const useEventsAggregateQuery = (

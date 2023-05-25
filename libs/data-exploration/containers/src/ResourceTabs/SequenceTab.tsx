@@ -1,10 +1,10 @@
+import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 import { CounterTab } from './elements';
 
-import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 import { ResourceTabProps } from './types';
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 export const SequenceTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');

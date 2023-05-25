@@ -1,4 +1,3 @@
-import { BaseApiService } from './base-api.service';
 import {
   DataModelDTO,
   ListQueryParams,
@@ -8,6 +7,7 @@ import {
 } from '../../dto/dms-data-model-dtos';
 
 import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
+import { BaseApiService } from './base-api.service';
 
 export class DataModelsApiService extends BaseApiService {
   upsert(dataModels: DataModelDTO[]): Promise<ItemList<DataModelInstanceDTO>> {

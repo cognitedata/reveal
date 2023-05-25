@@ -4,8 +4,8 @@ import {
   NotificationDot,
   Tooltip,
 } from '@cognite/cogs.js';
-import { BaseIcon } from '../../Icons';
 import styled from 'styled-components';
+import { BaseIcon } from '../../Icons';
 
 type Props = ButtonProps & {
   showNotificationDot?: boolean;

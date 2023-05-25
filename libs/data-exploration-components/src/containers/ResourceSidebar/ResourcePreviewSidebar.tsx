@@ -1,10 +1,13 @@
-import { AssetDetails } from '@data-exploration/containers';
+import {
+  AssetDetails,
+  EventDetails,
+  TimeseriesDetails,
+} from '@data-exploration/containers';
 import React from 'react';
 import styled from 'styled-components';
 import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
-import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
-import { EventSmallPreview } from '@data-exploration-components/containers/Events';
+// import { EventSmallPreview } from '@data-exploration-components/containers/Events';
 import noop from 'lodash/noop';
 import {
   ResourceItem,
@@ -91,16 +94,22 @@ export const ResourcePreviewSidebar = ({
       }
       case 'timeSeries': {
         content = (
-          <TimeseriesSmallPreview
-            hideTitle={hideTitle}
+          <TimeseriesDetails
             timeseriesId={item.id}
-            {...commonProps}
+            isSelected={isSelected}
+            onClose={onClose}
           />
         );
         break;
       }
       case 'event': {
-        content = <EventSmallPreview eventId={item.id} {...commonProps} />;
+        content = (
+          <EventDetails
+            eventItem={item}
+            isSelected={isSelected}
+            onClose={onClose}
+          />
+        );
         break;
       }
     }

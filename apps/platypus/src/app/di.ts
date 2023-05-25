@@ -27,9 +27,9 @@ import { StorageProviderFactoryImpl } from '@platypus-app/utils/persistence';
 
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 
+import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
 import { isFDMv3 } from './flags';
-import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 
 // First define the Tokens
 export const TOKENS = {

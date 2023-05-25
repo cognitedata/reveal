@@ -11,7 +11,6 @@ import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 import {
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
@@ -22,6 +21,7 @@ import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export const TimeseriesSummary = ({
   query = '',

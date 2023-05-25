@@ -1,7 +1,9 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
 import { ThreeDModelsResponse } from '../types';
-import { list3DModelQuery } from '../../service';
 import { queryKeys } from '../../../queryKeys';
 
 export const useInfinite3DModelsQuery = (
@@ -12,15 +14,14 @@ export const useInfinite3DModelsQuery = (
     ThreeDModelsResponse,
     ThreeDModelsResponse,
     string[]
-  >,
-  filter = {}
+  >
 ) => {
   const sdk = useSDK();
 
   return useInfiniteQuery(
     queryKeys.listThreeDModels(limit),
     async ({ pageParam }) => {
-      return list3DModelQuery(sdk, filter, limit, pageParam);
+      return sdk.models3D.list({ limit, cursor: pageParam });
     },
     {
       getNextPageParam: (r) => r.nextCursor,

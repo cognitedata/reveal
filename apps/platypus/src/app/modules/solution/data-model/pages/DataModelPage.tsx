@@ -21,17 +21,12 @@ import {
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
-import { useDataModelState } from '../../hooks/useDataModelState';
-import { SchemaEditorMode } from '../types';
-import { EditorPanel } from '../components/EditorPanel';
-import { DataModelHeader } from '../components/DataModelHeader';
 import {
   PageToolbar,
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
@@ -39,16 +34,21 @@ import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedData
 import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
+import { useParams } from 'react-router-dom';
+import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
 import {
   PublishVersionModal,
   VersionType,
 } from '../components/PublishVersionModal';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
-import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
-import { useParams } from 'react-router-dom';
+import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
+import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
+import { DataModelHeader } from '../components/DataModelHeader';
+import { EditorPanel } from '../components/EditorPanel';
+import { SchemaEditorMode } from '../types';
+import { useDataModelState } from '../../hooks/useDataModelState';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 

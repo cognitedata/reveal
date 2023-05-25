@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 
 export type ConstructedTreeAssetChildren =

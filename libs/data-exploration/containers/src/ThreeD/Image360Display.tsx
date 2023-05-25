@@ -7,7 +7,7 @@ import {
   useFilesAggregateBySiteId,
 } from '@data-exploration-lib/domain-layer';
 import { getObjectURL } from '@data-exploration-lib/core';
-import { ThreedThumbnail } from './ThreedThumbnail';
+import { ThreeDThumbnail } from './ThreeDThumbnail';
 
 export const Image360Display = ({ model }: { model: Model3DWithType }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
@@ -40,7 +40,7 @@ export const Image360Display = ({ model }: { model: Model3DWithType }) => {
 
   return (
     <Flex direction="row" gap={8} style={{ alignItems: 'center' }}>
-      <ThreedThumbnail imageUrl={imageUrl} isLoading={!isFetchedThumbnail} />
+      <ThreeDThumbnail imageUrl={imageUrl} isLoading={!isFetchedThumbnail} />
       <Flex direction="column">
         <HighlightCell text={model?.name} />
         {!isFetchedFileCount ? (

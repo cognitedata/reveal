@@ -1,8 +1,8 @@
 import { InternalEventsFilters } from '@data-exploration-lib/core';
-import { useEventsMetadataKeysAggregateQuery } from '../../service';
-import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
+import { useEventsMetadataKeysAggregateQuery } from '../../service';
+import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
 

@@ -4,10 +4,8 @@ import {
   CursorResponse,
   EventFilter,
 } from '@cognite/sdk';
-
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import {} from '@data-exploration-lib/domain-layer';
-import { EventsProperties } from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { EventsProperties } from '../../internal';
 
 export const getEventsAggregateCount = (
   sdk: CogniteClient,

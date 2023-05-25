@@ -4,14 +4,6 @@ import {
   useEventsFilterOptions,
 } from '@data-exploration-lib/domain-layer';
 
-import { MultiSelectFilter } from '../MultiSelectFilter';
-import {
-  BaseFilter,
-  BaseMultiSelectFilterProps,
-  CommonFilterProps,
-  MultiSelectOptionType,
-} from '../types';
-
 import {
   DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
@@ -20,8 +12,16 @@ import {
   useDebouncedState,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { transformOptionsForMultiselectFilter } from '../utils';
 import { InputActionMeta } from 'react-select';
+import { MultiSelectFilter } from '../MultiSelectFilter';
+import {
+  BaseFilter,
+  BaseMultiSelectFilterProps,
+  CommonFilterProps,
+  MultiSelectOptionType,
+} from '../types';
+
+import { transformOptionsForMultiselectFilter } from '../utils';
 
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {

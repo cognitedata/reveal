@@ -1,4 +1,3 @@
-import { base64Decode } from '.';
 import { Collection } from '../common/collection';
 import {
   CdfApiConfig,
@@ -8,6 +7,7 @@ import {
   MockData,
 } from '../types';
 import { flattenObjAsArray, isObject } from './data-utils';
+import { base64Decode } from '.';
 
 /**
  * Converts URL pattern used in config

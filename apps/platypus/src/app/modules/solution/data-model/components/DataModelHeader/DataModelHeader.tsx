@@ -3,7 +3,6 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { DiscardButton, ReturnButton } from './elements';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
@@ -14,6 +13,7 @@ import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataM
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import config from '@platypus-app/config/config';
+import { DiscardButton, ReturnButton } from './elements';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;

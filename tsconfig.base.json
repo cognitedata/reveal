@@ -22,6 +22,7 @@
       "@cognite/cog-data-grid-root/*": [
         "libs/data-modeling/cog-data-grid/src/*"
       ],
+      "@cognite/copilot/*": ["apps/copilot/src/*"],
       "@cognite/data-exploration": [
         "libs/data-exploration-components/src/index.ts"
       ],

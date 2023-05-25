@@ -3,6 +3,7 @@ import { Button, Pagination, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ContainerType } from '@cognite/unified-file-viewer';
 import dayjs from 'dayjs';
 import React, { useCallback, useState } from 'react';
+import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 import DateRangePrompt from '../../components/DateRangePrompt';
 import { TooltipToolBarContainer } from '../../TooltipContainer';
 import {
@@ -10,13 +11,12 @@ import {
   isIndustryCanvasTimeSeriesContainer,
 } from '../../types';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
-import getContainerText from './getContainerText';
-import LabelToolbar from './LabelToolbar';
-import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
 } from '../useTooltipsOptions';
+import getContainerText from './getContainerText';
+import LabelToolbar from './LabelToolbar';
 
 const navigateToPath = (path: string) => {
   const link = createLink(path);

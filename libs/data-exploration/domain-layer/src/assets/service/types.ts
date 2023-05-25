@@ -1,9 +1,7 @@
 import { AggregateResponse, AssetFilterProps } from '@cognite/sdk';
-import {
-  AdvancedFilter,
-  AggregateFilters,
-  AssetsProperties,
-} from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../builders';
+import { AggregateFilters } from '../../types';
+import { AssetsProperties } from '../internal';
 
 /**
  * DOCUMENTATION:

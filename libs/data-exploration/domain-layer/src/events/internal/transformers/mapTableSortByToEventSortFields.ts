@@ -1,9 +1,8 @@
 import {
   DEFAULT_SCORE_SORTING,
-  InternalSortBy,
   METADATA_KEY_SEPARATOR,
-  TableSortBy,
-} from '@data-exploration-lib/domain-layer';
+} from '../../../constants';
+import { InternalSortBy, TableSortBy } from '../../../types';
 
 export const mapTableSortByToEventSortFields = (
   sortBy?: TableSortBy[]

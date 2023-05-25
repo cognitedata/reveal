@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useTimeseriesLatestDatapointQuery = (timeseriesId: number) => {
   const sdk = useSDK();

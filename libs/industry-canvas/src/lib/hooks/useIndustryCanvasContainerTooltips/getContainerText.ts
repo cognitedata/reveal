@@ -1,6 +1,6 @@
 import { ContainerType, OCRAnnotation } from '@cognite/unified-file-viewer';
-import { IndustryCanvasContainerConfig } from '../../types';
 import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
+import { IndustryCanvasContainerConfig } from '../../types';
 
 const getTextFromAnnotations = (annotations: OCRAnnotation[]): string =>
   annotations

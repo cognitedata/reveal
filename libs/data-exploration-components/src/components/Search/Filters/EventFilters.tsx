@@ -2,7 +2,6 @@ import React from 'react';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 
-import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import {
@@ -21,6 +20,7 @@ import {
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
 import { BaseFilterCollapse } from '@data-exploration/components';
+import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 
 export const EventFilters = ({
   filter,

@@ -16,8 +16,8 @@ import {
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
-import { AssetHierarchyTab } from './AssetHierarchyTab';
 import { AssetInfo } from '@data-exploration/containers';
+import { AssetHierarchyTab } from './AssetHierarchyTab';
 
 export type AssetPreviewTabType =
   | 'details'

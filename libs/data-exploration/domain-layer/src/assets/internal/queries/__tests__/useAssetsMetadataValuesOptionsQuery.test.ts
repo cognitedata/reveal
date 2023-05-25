@@ -1,8 +1,8 @@
 import { setupServer } from 'msw/node';
 import { renderHook } from '@testing-library/react-hooks';
+import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { useAssetsSearchAggregateQuery } from '../useAssetsSearchAggregateQuery';
 import { getMockAssetsAggregatePost } from '../../../service/__mocks';
-import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 
 const mockServer = setupServer(getMockAssetsAggregatePost());
 describe('useAssetsMetadataValuesOptionsQuery', () => {

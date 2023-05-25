@@ -12,7 +12,7 @@ import {
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 import { createLink } from '@cognite/cdf-utilities';
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import isArray from 'lodash/isArray';
 
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
@@ -223,7 +223,7 @@ export const useCurrentResourceId = (): [
 };
 
 export const useUserInformation = () => {
-  return useQuery('user-info', getUserInformation);
+  return useQuery(['user-info'], getUserInformation);
 };
 
 /**

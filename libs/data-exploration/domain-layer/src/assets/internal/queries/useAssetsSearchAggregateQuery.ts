@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
-import {
-  mapFiltersToAssetsAdvancedFilters,
-  mapInternalFilterToAssetFilter,
-  useAssetsAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
-import { UseQueryOptions } from 'react-query';
+
+import { UseQueryOptions } from '@tanstack/react-query';
 import {
   AssetConfigType,
   InternalAssetFilters,
 } from '@data-exploration-lib/core';
+import { useAssetsAggregateQuery } from '../../service';
+import {
+  mapFiltersToAssetsAdvancedFilters,
+  mapInternalFilterToAssetFilter,
+} from '../transformers';
 
 export const useAssetsSearchAggregateQuery = (
   {

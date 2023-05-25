@@ -1,5 +1,5 @@
 import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
-import { EventsAggregateRequestPayload } from '@data-exploration-lib/domain-layer';
+import { EventsAggregateRequestPayload } from '../types';
 
 export const getEventsAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,

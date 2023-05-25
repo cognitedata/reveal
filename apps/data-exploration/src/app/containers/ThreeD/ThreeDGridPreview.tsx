@@ -13,13 +13,13 @@ import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
 
-import { PartialBy } from './utils';
 import { ThreeDModel } from '@data-exploration/components';
 import { getObjectURL } from '@data-exploration-lib/core';
 import {
   use3DModelThumbnailQuery,
   useDefault3DModelRevision,
 } from '@data-exploration-lib/domain-layer';
+import { PartialBy } from './utils';
 
 export type Model3DWithType = PartialBy<
   Model3D,

@@ -1,22 +1,21 @@
 import React from 'react';
 
 import {
+  ResourceType,
+  ResourceFilterProps,
+  SetResourceFilterProps,
+} from '@data-exploration-components/types';
+import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
+import styled from 'styled-components';
+import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { ResetFiltersButton } from './ResetFiltersButton';
+import {
   AssetFiltersV2,
   EventFilters,
   FileFilters,
   SequenceFilters,
   TimeseriesFilters,
 } from '.';
-
-import {
-  ResourceType,
-  ResourceFilterProps,
-  SetResourceFilterProps,
-} from '@data-exploration-components/types';
-import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
-import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { ResetFiltersButton } from './ResetFiltersButton';
-import styled from 'styled-components';
 
 export type FilterProps = Required<ResourceFilterProps> &
   SetResourceFilterProps & {

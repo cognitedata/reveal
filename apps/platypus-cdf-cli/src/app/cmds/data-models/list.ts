@@ -4,8 +4,8 @@ import Table from 'cli-table3';
 
 import { Arguments } from 'yargs';
 
-import { getDataModelsHandler } from './utils';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { getDataModelsHandler } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:list');
 const columns = ['name', 'id', 'space', 'version'];

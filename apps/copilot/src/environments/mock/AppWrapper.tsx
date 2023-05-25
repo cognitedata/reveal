@@ -1,10 +1,11 @@
 import React from 'react';
-import { AuthContainerMock } from './AuthContainerMock';
 import '@cognite/cogs.js/dist/cogs.css';
-import App from '../../app/App';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { translations } from '../../app/common/i18n';
+
+import App from '../../app/App';
+import { translations } from '../../app/common';
+import { AuthContainerMock } from './AuthContainerMock';
 
 export const AppWrapper = () => {
   const projectName = 'copilot';

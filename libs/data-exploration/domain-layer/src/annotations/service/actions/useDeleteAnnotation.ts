@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
   getFileIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,

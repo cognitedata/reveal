@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { MSWRequest } from '@data-exploration-lib/core';
-import { TEST_PROJECT } from '@data-exploration-lib/domain-layer';
+import { TEST_PROJECT } from '../../__mocks';
 import { mock3dRevisions } from '../__fixtures/mock3dRevisions';
 import { mock3dModels } from '../__fixtures/mock3dModels';
 

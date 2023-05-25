@@ -1,7 +1,6 @@
 import { Loader } from '@data-exploration/components';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { ids } from '../../../cogs-variables';
 import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
@@ -14,6 +13,7 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useUserInformation } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import { ids } from '../../../cogs-variables';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(

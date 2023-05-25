@@ -1,10 +1,10 @@
 import 'graphiql/graphiql.min.css';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { QueryExplorer } from '../components/QueryExplorer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useParams } from 'react-router-dom';
+import { QueryExplorer } from '../components/QueryExplorer';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;

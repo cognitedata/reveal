@@ -1,9 +1,9 @@
 import { InternalAssetFilters } from '@data-exploration-lib/core';
-import { UseQueryOptions } from 'react-query';
-import { useEventsMetadataValuesAggregateQuery } from '../../service';
+import { UseQueryOptions } from '@tanstack/react-query';
 import omit from 'lodash/omit';
-import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useMemo } from 'react';
+import { useEventsMetadataValuesAggregateQuery } from '../../service';
+import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 import { getAssetSubtreeIdFilter } from '../../../utils';
 

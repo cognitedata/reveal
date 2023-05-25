@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { InputControlProps, InputType } from '../../types';
 import {
   NumericRangeInput,
@@ -17,33 +15,31 @@ export interface CommonFilterInputProps<T extends InputType>
 
 export const CommonFilterInput = <T extends InputType>({
   type,
-  ...controlProps
+  ...props
 }: CommonFilterInputProps<T>) => {
-  const Input: any = useMemo(() => {
-    switch (type) {
-      case 'string':
-        return TextInput;
+  if (type === 'string') {
+    return <TextInput {...(props as InputControlProps<'string'>)} />;
+  }
 
-      case 'number':
-        return NumberInput;
+  if (type === 'number') {
+    return <NumberInput {...(props as InputControlProps<'number'>)} />;
+  }
 
-      case 'numeric-range':
-        return NumericRangeInput;
+  if (type === 'numeric-range') {
+    return (
+      <NumericRangeInput {...(props as InputControlProps<'numeric-range'>)} />
+    );
+  }
 
-      case 'date':
-        return DateTimeInput;
+  if (type === 'date') {
+    return <DateTimeInput {...(props as InputControlProps<'date'>)} />;
+  }
 
-      case 'date-range':
-        return DateTimeRangeInput;
+  if (type === 'date-range') {
+    return (
+      <DateTimeRangeInput {...(props as InputControlProps<'date-range'>)} />
+    );
+  }
 
-      case 'boolean':
-      case 'no-input':
-        return NoInput;
-
-      default:
-        return NoInput;
-    }
-  }, [type]);
-
-  return <Input {...controlProps} />;
+  return <NoInput />;
 };

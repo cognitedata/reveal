@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
 import {
   BaseArgs,
@@ -15,7 +16,6 @@ import {
   PlatypusValidationError,
   Validator,
 } from '@platypus/platypus-core';
-import { readFileSync } from 'fs';
 import { Arguments, Argv } from 'yargs';
 
 import {

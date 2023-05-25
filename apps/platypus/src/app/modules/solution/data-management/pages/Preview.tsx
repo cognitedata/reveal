@@ -15,6 +15,10 @@ import {
   useSearchParams,
   useParams,
 } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
 import {
   DataPreviewTable,
   DataPreviewTableRef,
@@ -23,10 +27,6 @@ import { TransformationIframe } from '../components/TransformationPlaceholder/Tr
 import { TypeList } from '../components/TypeList/TypeList';
 import { useDraftRows } from '../hooks/useDraftRows';
 import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
-import { useQueryClient } from '@tanstack/react-query';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
 
 export interface PreviewProps {
   dataModelExternalId: string;

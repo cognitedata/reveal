@@ -1,16 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  getTimeseriesMetadataValuesAggregate,
-  TimeseriesMetadataAggregateResponse,
-  queryKeys,
-  TimeseriesProperties,
-  AdvancedFilter,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { transformNewFilterToOldFilter } from '../../../transformers';
+import { TimeseriesProperties } from '../../internal';
+import { getTimeseriesMetadataValuesAggregate } from '../network';
+import { TimeseriesMetadataAggregateResponse } from '../types';
 
 interface Props {
   metadataKey?: string | null;

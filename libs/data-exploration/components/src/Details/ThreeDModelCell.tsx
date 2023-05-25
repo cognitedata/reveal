@@ -8,8 +8,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { createLink } from '@cognite/cdf-utilities';
 import { DASH } from '@data-exploration-lib/core';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { TimeDisplay } from '@data-exploration/components';
+import { TimeDisplay } from '../TimeDisplay';
 
 export const ThreeDModelCellLink = ({
   assetId,

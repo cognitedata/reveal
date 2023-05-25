@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Select } from '@data-exploration-components/components';
 import { reactSelectCogsStylingProps } from '@data-exploration-components/components/SearchNew/Filters/elements';
-import { DISABLE_VALUE_TOOLTIP } from './constants';
 import { Tooltip } from '@cognite/cogs.js';
+import { DISABLE_VALUE_TOOLTIP } from './constants';
 import { FilterItemWrapper } from './elements';
 
 export const FilterItem = ({

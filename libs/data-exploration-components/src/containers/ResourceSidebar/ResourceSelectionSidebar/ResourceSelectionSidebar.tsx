@@ -20,7 +20,10 @@ import {
   ResourcePreviewSidebar,
 } from '@data-exploration-components/containers';
 
-import { VerticalDivider } from '@data-exploration/components';
+import {
+  VerticalDivider,
+  ExplorationFilterToggle,
+} from '@data-exploration/components';
 import {
   InternalEventsFilters,
   OldSequenceFilters,
@@ -29,7 +32,6 @@ import {
   InternalTimeseriesFilters,
   zIndex,
 } from '@data-exploration-lib/core';
-import { ExplorationFilterToggle } from '@data-exploration/components';
 
 const Wrapper = styled.div`
   display: flex;

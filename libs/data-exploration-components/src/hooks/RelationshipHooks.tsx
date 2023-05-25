@@ -22,7 +22,11 @@ import {
 } from '@cognite/sdk';
 import flatten from 'lodash/flatten';
 import uniqueBy from 'lodash/uniqBy';
-import { AppContext } from '@data-exploration-lib/core';
+import { AppContext, TaggedAnnotation } from '@data-exploration-lib/core';
+import {
+  useAnnotations,
+  useDocumentFilteredAggregateCount,
+} from '@data-exploration-lib/domain-layer';
 import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/Annotations';
 import {
   getResourceExternalIdFromTaggedAnnotation,
@@ -33,11 +37,6 @@ import {
   isSuggestedTaggedAnnotation,
   isTaggedAnnotationAnnotation,
 } from '../containers/Files/FilePreview/migration/utils';
-import {
-  useAnnotations,
-  useDocumentFilteredAggregateCount,
-} from '@data-exploration-lib/domain-layer';
-import { TaggedAnnotation } from '@data-exploration-lib/core';
 
 const PAGE_SIZE = 20;
 

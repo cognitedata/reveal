@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
 import {
   BaseArgs,
@@ -8,7 +9,6 @@ import Response, {
   DEBUG as _DEBUG,
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import { Arguments } from 'yargs';
-import { readFileSync } from 'fs';
 
 import { getDataModelStorageApiService } from '../../utils';
 

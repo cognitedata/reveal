@@ -5,11 +5,11 @@ import {
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
-import usePrevious from './usePrevious';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
+import usePrevious from './usePrevious';
 
 type UseCurrentSearchResultProps = {
   searchResults: SearchResult[];

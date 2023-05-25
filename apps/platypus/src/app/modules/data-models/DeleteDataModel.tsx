@@ -5,7 +5,6 @@ import { DataModel, StorageProviderType } from '@platypus/platypus-core';
 
 import { Notification } from '@platypus-app/components/Notification/Notification';
 
-import { useTranslation } from '../../hooks/useTranslation';
 import { TOKENS } from '@platypus-app/di';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { useInjection } from '@platypus-app/hooks/useInjection';
@@ -13,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { NoNameDisplayName } from '@platypus-app/constants';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export const DeleteDataModel = ({
   dataModel,

@@ -2,10 +2,10 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { queryClient } from './queryClient';
 
 import Routes from './Routes';
-import { SDKProvider } from '@cognite/sdk-provider';
 import { useAuthContext } from './common/auth/AuthProvider';
 import { TopBar } from './common/topbar/top-bar';
 

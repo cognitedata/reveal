@@ -5,6 +5,7 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
 import styled from 'styled-components';
 
+import { FilterLabel } from '../Labels';
 import { FilterButtonText } from './elements';
 import {
   OptionType,
@@ -15,7 +16,6 @@ import {
 import { OptionsMenu } from './components/OptionsMenu';
 import { ApplyButton } from './components/ApplyButton';
 import { getFilterButtonText } from './utils/getFilterButtonText';
-import { FilterLabel } from '../Labels';
 
 export type CheckboxSelectProps = {
   selection?: OptionSelection;

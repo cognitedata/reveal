@@ -5,15 +5,15 @@ import {
   isSimilarBoundingBox,
 } from '@cognite/unified-file-viewer';
 import { useMemo } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { isNotUndefined } from '@data-exploration-components/utils/index';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import {
   getExtendedAnnotationPage,
   isRejectedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useAnnotations } from '@data-exploration-lib/domain-layer';
+import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
 
 // The maximum difference the corresponding sides of two bounding boxes may

@@ -6,10 +6,7 @@ import {
   TableProps,
   TimeDisplay,
 } from '@data-exploration/components';
-import { useDocumentsMetadataColumns } from '../useDocumentsMetadataColumns';
 
-import { DocumentNamePreview } from './DocumentNamePreview';
-import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
@@ -19,6 +16,9 @@ import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
 import { Body } from '@cognite/cogs.js';
 
 import { Asset } from '@cognite/sdk';
+import { useDocumentsMetadataColumns } from '../useDocumentsMetadataColumns';
+import { DocumentContentPreview } from './DocumentContentPreview';
+import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentSummaryPreview } from './DocumentSummaryPreview';
 
 // TODO: Might need to add RelationshipLabels at some point.

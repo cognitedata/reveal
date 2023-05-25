@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { OptionType, Select as CogsSelect } from '@cognite/cogs.js';
 
 import head from 'lodash/head';
+import isUndefined from 'lodash/isUndefined';
 
 import { SelectWrapper } from './elements';
 import { mapOptionsToOptionType, mapOptionToOptionType } from './utils';
@@ -11,7 +12,7 @@ export interface SelectProps<T extends string> {
   options: T[];
   value?: T;
   defaultSelectFirstOption?: boolean;
-  onChange: (value?: T) => void;
+  onChange: (value: T) => void;
 }
 
 export const Select = <T extends string>({
@@ -49,7 +50,10 @@ export const Select = <T extends string>({
         value={selectValue}
         onChange={(option: OptionType<T>) => {
           setSelectedOption(option);
-          onChange(option.value);
+
+          if (!isUndefined(option.value)) {
+            onChange(option.value);
+          }
         }}
       />
     </SelectWrapper>

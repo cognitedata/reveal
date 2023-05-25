@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
 
-import {
-  mapFiltersToSequenceAdvancedFilters,
-  mapInternalFilterToSequenceFilter,
-  mapTableSortByToSequenceSortFields,
-  useSequenceListQuery,
-} from '@data-exploration-lib/domain-layer';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   InternalSequenceFilters,
   SequenceConfigType,
 } from '@data-exploration-lib/core';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
+import { TableSortBy } from '../../../types';
+import { useSequenceListQuery } from '../../service';
+import {
+  mapFiltersToSequenceAdvancedFilters,
+  mapInternalFilterToSequenceFilter,
+  mapTableSortByToSequenceSortFields,
+} from '../transformers';
 
 export const useSequenceSearchResultQuery = (
   {

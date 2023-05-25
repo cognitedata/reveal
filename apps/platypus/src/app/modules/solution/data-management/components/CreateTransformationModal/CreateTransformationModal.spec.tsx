@@ -2,9 +2,9 @@ import { screen } from '@testing-library/react';
 import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
-import { CreateTransformationModal } from './CreateTransformationModal';
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import noop from 'lodash/noop';
+import { CreateTransformationModal } from './CreateTransformationModal';
 
 const mockMutate = jest.fn().mockImplementation((transformation, options) => {
   options.onSuccess({ id: transformation.transformationExternalId });

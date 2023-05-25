@@ -3,14 +3,14 @@ import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ContainerProvider } from 'brandi-react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
 import { rootInjector } from './di';
 
 import Routes from './Routes';
 import { getTenant } from './utils/tenant-utils';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './queryClient';
 import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
-import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly

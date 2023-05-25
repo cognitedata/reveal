@@ -5,9 +5,9 @@ import styled from 'styled-components';
 
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
-import DownloadButton from './DownloadButton';
 import { PreviewCloseButton } from '@data-exploration-app/components/TitleRowActions/PreviewCloseButton';
 import { FullscreenButton } from '@data-exploration-app/components/TitleRowActions/FullscreenButton';
+import DownloadButton from './DownloadButton';
 
 type TitleRowActionsProps = {
   item: ResourceItem;

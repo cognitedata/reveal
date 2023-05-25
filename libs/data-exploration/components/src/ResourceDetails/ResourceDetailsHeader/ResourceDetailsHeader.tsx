@@ -1,7 +1,8 @@
-import { Button, Chip, IconType, Title } from '@cognite/cogs.js';
+import { Button, Chip, IconType } from '@cognite/cogs.js';
 
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
+import { TitleName } from '../../Common';
 
 interface Props {
   icon?: IconType | ReactNode;
@@ -23,7 +24,7 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
     <Container>
       <TitleRowWrapper data-testid="title-row-wrapper">
         {icon && <Icon icon={icon} data-testid="icon" />}
-        <Title level={4}>{title}</Title>
+        <TitleName level={4}>{title}</TitleName>
       </TitleRowWrapper>
       <ActionsContainer>
         {showSelectButton && (
@@ -74,4 +75,7 @@ export const TitleRowWrapper = styled.div`
   align-items: center;
   flex-wrap: nowrap;
   gap: 8px;
+  overflow: hidden;
+  vertical-align: bottom;
+  flex: 1 1 auto;
 `;

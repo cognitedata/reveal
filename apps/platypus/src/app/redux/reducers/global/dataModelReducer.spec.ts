@@ -1,5 +1,4 @@
-import dataModelReducer from './dataModelReducer';
-import { initialState } from './dataModelReducer';
+import dataModelReducer, { initialState } from './dataModelReducer';
 
 const parsedTypeDefsMock = {
   types: [

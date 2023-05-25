@@ -16,14 +16,13 @@ import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
 import { isNotUndefined } from '@data-exploration-components/utils/index';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,
   isApprovedAnnotation,
   isSuggestedAnnotation,
 } from '../migration/utils';
-
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface AnnotationsListProps {
   annotations: ExtendedAnnotation[];

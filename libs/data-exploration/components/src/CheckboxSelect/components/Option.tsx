@@ -5,6 +5,7 @@ import { Checkbox } from '@cognite/cogs.js';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
 
+import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 import {
   OptionLabel,
   OptionSecondaryLabel,
@@ -15,7 +16,6 @@ import {
   OptionCount,
 } from '../elements';
 import { OptionType } from '../types';
-import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 
 export interface OptionProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {

@@ -3,7 +3,7 @@ import React from 'react';
 import { Body } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { aggregateKey } from '@cognite/sdk-react-query-hooks';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { Select } from '@data-exploration-components/components';
 import {

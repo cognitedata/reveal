@@ -8,7 +8,10 @@ import {
   SequenceRow,
 } from '@cognite/sdk';
 
-import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
+import {
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import { pickOptionalId } from '@data-exploration-lib/core';
 
 const post = <T>(sdk: CogniteClient, path: string, data: any) =>
@@ -26,7 +29,7 @@ export const useInfiniteSequenceRows = (
   const sdk = useSDK();
 
   return useInfiniteQuery<SequenceDataResponse>(
-    `sequence-rows-${pickOptionalId(id)}`,
+    [`sequence-rows-${pickOptionalId(id)}`],
     async ({ pageParam }) => {
       const res = await post<SequenceDataResponse>(
         sdk,

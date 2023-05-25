@@ -11,12 +11,12 @@ import {
   objToFilter,
 } from '../../../utils';
 import { camelize } from '../../../utils/text-utils';
+import { longScalar } from '../../../utils/graphql/custom-scalars';
 import {
   assetFieldsResolver,
   synteticTimeSeriesFieldsResolver,
   timeSeriesFieldsResolver,
 } from './built-in-types-resolvers';
-import { longScalar } from '../../../utils/graphql/custom-scalars';
 import { aggregateDatapoints } from './timeseries-utils';
 
 export interface BuildQueryResolversParams {

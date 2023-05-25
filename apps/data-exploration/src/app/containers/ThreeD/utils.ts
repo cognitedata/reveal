@@ -36,7 +36,7 @@ import {
   SlicingState,
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
-import { FetchQueryOptions, QueryClient } from 'react-query';
+import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
 import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
@@ -266,11 +266,15 @@ export const ghostAsset = async (
     });
 
     if (assetId !== undefined) {
-      const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
-    if (annotation === undefined) {
-      return;
-    }
-    const annotationId = annotation.id;
+      const annotation = await getAnnotationByAssetId(
+        sdk,
+        threeDModel,
+        assetId
+      );
+      if (annotation === undefined) {
+        return;
+      }
+      const annotationId = annotation.id;
 
       const colorBoundingBoxObject = new AnnotationIdPointCloudObjectCollection(
         [annotationId]
@@ -296,7 +300,7 @@ export const ghostAsset = async (
 
 export const highlightAssetMappedNodes = async (
   threeDModel: CogniteModel,
-  queryClient: QueryClient,
+  queryClient: QueryClient
 ) => {
   if (threeDModel instanceof CogniteCadModel) {
     const assetNodeCollection = await fetchAssetNodeCollection(

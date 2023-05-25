@@ -13,9 +13,12 @@ import {
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { TableProps } from '@data-exploration/components';
+import {
+  TableProps,
+  KeepMounted,
+  VerticalDivider,
+} from '@data-exploration/components';
 
-import { KeepMounted, VerticalDivider } from '@data-exploration/components';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';

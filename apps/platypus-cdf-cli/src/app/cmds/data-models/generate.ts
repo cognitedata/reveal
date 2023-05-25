@@ -1,16 +1,12 @@
-import { Arguments } from 'yargs';
-import { CLICommand } from '../../common/cli-command';
-import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
 import fs from 'fs';
-import fsExtra from 'fs-extra';
 import path, { join } from 'path';
-import { DEBUG as _DEBUG } from '../../utils/logger';
+import fsExtra from 'fs-extra';
+import { Arguments } from 'yargs';
 import { getAuthToken } from '@cognite/platypus-cdf-cli/app/utils/auth';
 import { getProjectConfig } from '@cognite/platypus-cdf-cli/app/utils/config';
 import { generate } from '@genql/cli';
 import typescript from 'rollup-plugin-typescript2';
 import { rollup } from 'rollup';
-import { getFdmV3MixerApiService } from './utils';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelTypeDefsType,
@@ -21,6 +17,10 @@ import {
   CONSTANTS,
   SupportedGraphQLGeneratorPlugins,
 } from '@cognite/platypus-cdf-cli/app/constants';
+import { DEBUG as _DEBUG } from '../../utils/logger';
+import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { CLICommand } from '../../common/cli-command';
+import { getFdmV3MixerApiService } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:generate');
 

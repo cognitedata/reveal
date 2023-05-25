@@ -6,6 +6,8 @@ import ReactUnifiedViewer, {
 } from '@cognite/unified-file-viewer';
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
+import { isDevelopment } from '@cognite/cdf-utilities';
+import { useSDK } from '@cognite/sdk-provider';
 import useEditOnSelect from './hooks/useEditOnSelect';
 
 import { UseManagedStateReturnType } from './hooks/useManagedState';
@@ -13,9 +15,7 @@ import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
 import ZoomControls from './components/ZoomControls';
 import { ZOOM_TO_FIT_MARGIN } from './constants';
-import { isDevelopment } from '@cognite/cdf-utilities';
 import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
-import { useSDK } from '@cognite/sdk-provider';
 import getContainerSummarizationSticky from './utils/getSummarizationSticky';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';

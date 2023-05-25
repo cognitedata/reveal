@@ -1,9 +1,9 @@
 import { useTimeseriesAggregateCountQuery } from '@data-exploration-lib/domain-layer';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 
 import { ResourceTabProps } from './types';
 import { CounterTab } from './elements';
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 export const TimeseriesTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const timeseriesSearchConfig =

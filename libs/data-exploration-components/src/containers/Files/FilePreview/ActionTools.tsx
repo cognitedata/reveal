@@ -3,9 +3,9 @@ import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
 import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
+import noop from 'lodash/noop';
 import { EditFileButton, ShowHideDetailsButton } from '../../../components';
 import { SearchBar, SearchBarProps } from './SearchBar';
-import noop from 'lodash/noop';
 import { UseSearchBarState } from './hooks/useSearchBarState';
 
 export const ActionTools = ({

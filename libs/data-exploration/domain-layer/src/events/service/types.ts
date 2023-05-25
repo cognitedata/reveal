@@ -1,9 +1,7 @@
 import { AggregateResponse, EventFilter } from '@cognite/sdk';
-import {
-  AdvancedFilter,
-  AggregateFilters,
-  EventsProperties,
-} from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../builders';
+import { AggregateFilters } from '../../types';
+import { EventsProperties } from '../internal';
 
 /**
  * DOCUMENTATION:

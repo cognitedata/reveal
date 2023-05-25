@@ -1,8 +1,6 @@
 import { DocumentFilterProperty, DocumentSortItem } from '@cognite/sdk';
-import {
-  TableSortBy,
-  METADATA_KEY_SEPARATOR,
-} from '@data-exploration-lib/domain-layer';
+import { METADATA_KEY_SEPARATOR } from '../../../constants';
+import { TableSortBy } from '../../../types';
 
 const columnToSortMap = new Map<string, DocumentFilterProperty>([
   ['name', ['sourceFile', 'name']],

@@ -1,5 +1,4 @@
 import React from 'react';
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   useFilterEmptyState,
   useResetTimeseriesFilters,
@@ -15,6 +14,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 import { AggregatedTimeseriesFilterV2 } from '@data-exploration-components/components/SearchNew';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();

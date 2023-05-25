@@ -1,5 +1,5 @@
 import { DocumentSearchItem } from '@cognite/sdk';
-import { InternalDocument } from '@data-exploration-lib/domain-layer';
+import { InternalDocument } from '../types';
 
 // A function to convert data for documents
 export const normalize = (

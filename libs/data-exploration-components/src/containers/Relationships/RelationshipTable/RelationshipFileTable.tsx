@@ -10,7 +10,6 @@ import {
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
-import { RelationshipTableProps } from './RelationshipTable';
 
 import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
@@ -20,6 +19,7 @@ import {
   GroupingTableHeader,
   FileSwitcherWrapper,
 } from '../elements';
+import { RelationshipTableProps } from './RelationshipTable';
 
 const {
   relationshipLabels,

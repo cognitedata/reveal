@@ -9,22 +9,22 @@ import {
 } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { NameWrapper, StyledEditableChip, Selector } from './elements';
 import { DataSet } from '@cognite/sdk';
 import {
   DataModelExternalIdValidator,
   Validator,
 } from '@platypus/platypus-core';
 import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
-import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSelect';
 import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
 import { isFDMv3 } from '@platypus-app/flags';
-import { FormLabel } from '../FormLabel/FormLabel';
 import { DataModelExternalIdValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-external-id-validator-v2';
-import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
 import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
+import { FormLabel } from '../FormLabel/FormLabel';
+import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
+import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSelect';
 import { DataModelLibrary } from '../DataModelLibrary/DataModelLibrary';
 import { DataModelLibraryItem } from '../DataModelLibrary/library';
+import { NameWrapper, StyledEditableChip, Selector } from './elements';
 
 export type DataModelDetailModalProps = {
   description: string;

@@ -14,7 +14,8 @@
     "lodash",
     "testcafe",
     "no-only-tests",
-    "@cognite"
+    "@cognite",
+    "import"
   ],
   "overrides": [
     {
@@ -90,9 +91,9 @@
         "consistent-return": ["off"],
         "default-param-last": ["off"],
         "func-names": ["off"],
-        "import/first": ["off"],
-        "import/no-duplicates": ["off"],
-        "import/order": ["off"],
+        "import/first": ["error"],
+        "import/no-duplicates": ["error"],
+        "import/order": ["error"],
         "jsx-a11y/click-events-have-key-events": ["off"],
         "jsx-a11y/no-static-element-interactions": ["off"],
         "lines-between-class-members": ["off"],

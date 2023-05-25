@@ -1,5 +1,8 @@
 import { Button, Flex, OptionType, Select, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { useSpaces } from '@platypus-app/hooks/useSpaces';
+import { FormLabel } from '../FormLabel/FormLabel';
 import {
   HorizontalDivider,
   InputDetail,
@@ -7,9 +10,6 @@ import {
   StyledIcon,
   StyledLink,
 } from './elements';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { FormLabel } from '../FormLabel/FormLabel';
-import { useSpaces } from '@platypus-app/hooks/useSpaces';
 
 export { OptionType };
 

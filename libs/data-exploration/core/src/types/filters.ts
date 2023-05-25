@@ -107,7 +107,7 @@ export type InternalFilesFilters = Omit<
   metadata?: { key: string; value: string }[];
 };
 
-export interface InternalThreedFilters extends InternalCommonFilters {
+export interface InternalThreeDFilters extends InternalCommonFilters {
   labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string | typeof METADATA_ALL_VALUE }[];
   sources?: { label?: string; value: string }[];

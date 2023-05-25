@@ -1,8 +1,8 @@
+import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 import { ResourceTabProps } from './types';
-import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { CounterTab } from './elements';
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 
 // This is FilesTab with counts when advanced filters are enabled!
 export const DocumentsTab = ({

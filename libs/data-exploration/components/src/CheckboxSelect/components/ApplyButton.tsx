@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import { Button, Menu } from '@cognite/cogs.js';
 
-import { ApplyButtonWrapper } from '../elements';
 import styled from 'styled-components';
+import { ApplyButtonWrapper } from '../elements';
 
 export interface ApplyButtonProps {
   disabled?: boolean;

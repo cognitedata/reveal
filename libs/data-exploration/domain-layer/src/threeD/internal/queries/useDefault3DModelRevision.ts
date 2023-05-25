@@ -1,9 +1,6 @@
-import {
-  Revision3DWithIndex,
-  RevisionOpts,
-  use3DRevisionsQuery,
-} from '@data-exploration-lib/domain-layer';
 import { useCallback } from 'react';
+import { Revision3DWithIndex, RevisionOpts } from '../types';
+import { use3DRevisionsQuery } from './use3DRevisionsQuery';
 
 export const useDefault3DModelRevision = (
   modelId?: number,

@@ -8,17 +8,17 @@ import {
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { SchemaEditorMode } from '../../types';
-import { UIEditor } from './UIEditor';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
+import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
+import { SchemaEditorMode } from '../../types';
 import { ErrorsByGroup } from '../GraphqlCodeEditor/Model';
+import { UIEditor } from './UIEditor';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({

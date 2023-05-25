@@ -7,9 +7,9 @@ import {
 
 import { useDraftRows } from '../../hooks/useDraftRows';
 
-import * as S from './elements';
 import { BulkPopulationButton } from '../BulkPopulationButton';
 import useTransformations from '../../hooks/useTransformations';
+import * as S from './elements';
 
 export type NoRowsOverlayProps = {
   space: string;

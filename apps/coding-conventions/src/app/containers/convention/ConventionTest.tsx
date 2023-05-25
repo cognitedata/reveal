@@ -2,10 +2,10 @@ import { Body, Icon, Input } from '@cognite/cogs.js';
 
 import { useEffect, useState } from 'react';
 
+import styled from 'styled-components';
 import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';
 import { validate } from '../../utils/validation';
-import styled from 'styled-components';
 
 export const ConventionTest = () => {
   const { data: system } = useSystemQuery();

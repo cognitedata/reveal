@@ -1,18 +1,17 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  AdvancedFilter,
-  getTimeseriesUniqueValuesByProperty,
-  queryKeys,
-  TimeseriesProperties,
-  TimeseriesProperty,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
+
 import {
   InternalTimeseriesFilters,
   OldTimeseriesFilters,
 } from '@data-exploration-lib/core';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { transformNewFilterToOldFilter } from '../../../transformers';
+import { TimeseriesProperties } from '../../internal';
+import { getTimeseriesUniqueValuesByProperty } from '../network';
+import { TimeseriesProperty } from '../types';
 
 interface Props {
   property: TimeseriesProperty;

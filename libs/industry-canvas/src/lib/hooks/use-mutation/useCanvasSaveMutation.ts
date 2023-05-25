@@ -1,6 +1,6 @@
 import { toast } from '@cognite/cogs.js';
 import { captureException } from '@sentry/react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
 
 import { QueryKeys, TOAST_POSITION } from '../../constants';

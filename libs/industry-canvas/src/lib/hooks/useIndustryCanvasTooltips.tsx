@@ -1,13 +1,13 @@
-import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTooltips';
-import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
-import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
 import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
+import { OnAddContainerReferences } from '../IndustryCanvasPage';
+import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTooltips';
+import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
+import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
 import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
 import { UseManagedStateReturnType } from './useManagedState';
-import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 
 export type UseTooltipsParams = {

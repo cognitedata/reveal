@@ -1,8 +1,8 @@
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
-import { useSequencesMetadataKeysAggregateQuery } from '../../service';
-import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import omit from 'lodash/omit';
 import { useMemo } from 'react';
+import { useSequencesMetadataKeysAggregateQuery } from '../../service';
+import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
 

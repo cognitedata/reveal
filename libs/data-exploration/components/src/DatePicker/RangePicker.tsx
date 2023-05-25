@@ -13,6 +13,9 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
+import styled from 'styled-components';
+import { TIME_SELECT } from '@data-exploration-lib/core';
+import { Divider } from '../Common';
 import { PivotRangePicker } from './PivotRangePicker';
 import {
   PivotRange,
@@ -20,10 +23,6 @@ import {
   determinePivotRange,
   getPivotRangeAsDates,
 } from './Common';
-
-import styled from 'styled-components';
-import { Divider } from '../Common';
-import { TIME_SELECT } from '@data-exploration-lib/core';
 
 export type RangePickerProps = {
   initialRange?: [Date, Date];

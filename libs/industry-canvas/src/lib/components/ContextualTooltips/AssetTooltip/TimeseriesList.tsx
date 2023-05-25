@@ -1,7 +1,7 @@
 import { Button, Icon, Body, Colors, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
-import { useAssetTimeseries } from '../../../hooks/useAssetTimeseries';
 import styled from 'styled-components';
+import { useAssetTimeseries } from '../../../hooks/useAssetTimeseries';
 
 type TimeseriesListProps = {
   assetId: number;

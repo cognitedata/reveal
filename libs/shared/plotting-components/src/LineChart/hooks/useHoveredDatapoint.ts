@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-import { getMarkerPosition } from '../utils/getMarkerPosition';
 import head from 'lodash/head';
+import { getMarkerPosition } from '../utils/getMarkerPosition';
 import { getHoveredLineColor } from '../utils/getHoveredLineColor';
 
 export const useHoveredDatapoint = (plotHoverEvent?: PlotHoverEvent) => {

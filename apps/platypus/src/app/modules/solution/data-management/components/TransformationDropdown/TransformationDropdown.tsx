@@ -2,12 +2,12 @@ import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Fragment } from 'react';
 import styled from 'styled-components';
-import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
-import useTransformations from '../../hooks/useTransformations';
 import { groupTransformationsByTypes } from '@platypus/platypus-core';
 import { isFDMv3 } from '@platypus-app/flags';
 import { createLink } from '@cognite/cdf-utilities';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import useTransformations from '../../hooks/useTransformations';
+import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 
 type Props = {
   space: string;

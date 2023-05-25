@@ -2,7 +2,7 @@ import { setupServer } from 'msw/node';
 import { renderHook } from '@testing-library/react-hooks';
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { getMock3DModels } from '../../../__mocks/getMock3DModels';
-import { useInfinite3DModelsQuery } from '@data-exploration-lib/domain-layer';
+import { useInfinite3DModelsQuery } from '../useInfinite3DModelsQuery';
 
 const mockServer = setupServer(getMock3DModels());
 describe('useInfinite3DModelsQuery', () => {

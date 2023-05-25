@@ -1,5 +1,6 @@
 import { AnnotationType, ToolType } from '@cognite/unified-file-viewer';
 import { useCallback, useMemo, useState } from 'react';
+import { PolylineEndType } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 import {
   SHAPE_ANNOTATION_FILL_COLOR_MAP,
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
@@ -11,7 +12,6 @@ import { CanvasAnnotation } from '../types';
 import { ExactlyOneKey } from '../utils/ExactlyOneKey';
 import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
 import { UseManagedStateReturnType } from './useManagedState';
-import { PolylineEndType } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 
 export const SHARED_STICKY_TOOL_OPTIONS = {
   width: 200,

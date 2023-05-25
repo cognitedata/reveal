@@ -1,10 +1,10 @@
 import React from 'react';
-import { BaseModal } from './BaseModal';
 import {
   SAVE,
   SEARCH_CONFIG_SUBTITLE,
   SEARCH_CONFIG_TITLE,
 } from '@data-exploration-lib/core';
+import { BaseModal } from './BaseModal';
 import { BaseModalProps } from './type';
 
 type SearchConfigModalProps = Omit<BaseModalProps, 'size'>;

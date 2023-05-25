@@ -1,15 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  AdvancedFilter,
-  AssetsMetadataAggregateResponse,
-  AssetsProperties,
-  getAssetsMetadataKeysAggregate,
-  queryKeys,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
+
 import { InternalAssetFilters } from '@data-exploration-lib/core';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { transformNewFilterToOldFilter } from '../../../transformers';
+import { AssetsProperties } from '../../internal';
+import { getAssetsMetadataKeysAggregate } from '../network';
+import { AssetsMetadataAggregateResponse } from '../types';
 
 interface Props {
   query?: string;

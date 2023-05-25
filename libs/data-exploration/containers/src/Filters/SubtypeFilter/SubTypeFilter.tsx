@@ -5,10 +5,10 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 import { useEventsFilterOptions } from '@data-exploration-lib/domain-layer';
+import { InputActionMeta } from 'react-select';
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';
-import { InputActionMeta } from 'react-select';
 
 interface BaseSubTypeFilterProps<TFilter>
   extends BaseFilter<TFilter>,

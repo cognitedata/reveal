@@ -1,9 +1,9 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
-import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
+import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
+import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 export const SequenceFilters = ({
   filter,

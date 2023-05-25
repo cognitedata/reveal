@@ -6,13 +6,8 @@ import {
   COMMON_INFO_CONTENT,
   InternalAssetFilters,
   SPECIFIC_INFO_CONTENT,
+  isObjectEmpty,
 } from '@data-exploration-lib/core';
-
-import { isObjectEmpty } from '@data-exploration-lib/core';
-import {
-  TempCommonMultiSelectFix,
-  TempMultiSelectFix,
-} from './AdvancedFiltersCollapse';
 
 import { BaseFilterCollapse } from '@data-exploration/components';
 import {
@@ -27,6 +22,10 @@ import {
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  TempCommonMultiSelectFix,
+  TempMultiSelectFix,
+} from './AdvancedFiltersCollapse';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({

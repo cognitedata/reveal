@@ -1,8 +1,9 @@
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import GlobalStyle from '@data-exploration-app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
@@ -19,12 +20,12 @@ import AntStyles from '@data-exploration-app/styles/Styles';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
-import theme from './styles/theme';
-import rootStyles from './styles/index.css';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { RecoilDevTools } from 'recoil-gear';
 import { ErrorBoundary } from '@cognite/react-errors';
+import rootStyles from './styles/index.css';
+import theme from './styles/theme';
 
 export default () => {
   const env = getEnv();

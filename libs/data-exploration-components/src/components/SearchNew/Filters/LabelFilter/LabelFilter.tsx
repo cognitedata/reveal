@@ -2,13 +2,13 @@ import React from 'react';
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { MultiSelect } from '@data-exploration-components/components';
 import { ResourceType } from '@data-exploration-components/types';
-import { FilterFacetTitle } from '../FilterFacetTitle';
-import { OptionValue } from '../types';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
+import { FilterFacetTitle } from '../FilterFacetTitle';
+import { OptionValue } from '../types';
 
 export const LabelFilterV2 = ({
   resourceType,

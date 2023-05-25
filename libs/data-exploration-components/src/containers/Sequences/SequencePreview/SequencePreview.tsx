@@ -3,8 +3,7 @@ import { Sequence } from '@cognite/sdk';
 
 import { useInfiniteSequenceRows } from '@data-exploration-components/hooks/sequenceHooks';
 
-import { Loader } from '@data-exploration/components';
-import { EmptyState, Table } from '@data-exploration/components';
+import { Loader, EmptyState, Table } from '@data-exploration/components';
 import { AllowedTableStateId } from '@data-exploration-components/types';
 
 export interface SequenceDataRow {

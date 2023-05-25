@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story } from '@storybook/react';
-import { PageToolbar, Size } from './PageToolbar';
 import { Button } from '@cognite/cogs.js';
+import { PageToolbar, Size } from './PageToolbar';
 
 export default {
   title: 'Basic components/PageToolbar',

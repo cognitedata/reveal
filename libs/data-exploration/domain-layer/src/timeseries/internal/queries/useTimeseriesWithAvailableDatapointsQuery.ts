@@ -1,12 +1,12 @@
-import { TableSortBy } from '../../../types';
-import { UseInfiniteQueryOptions } from 'react-query';
-import { useTimeseriesSearchResultWithLabelsQuery } from './useTimeseriesSearchResultWithLabelsQuery';
-import { useTimeseriesWithDatapointsQuery } from './useTimeseriesWithDatapointsQuery';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   InternalTimeseriesFilters,
   isDateInDateRange,
   TimeseriesConfigType,
 } from '@data-exploration-lib/core';
+import { TableSortBy } from '../../../types';
+import { useTimeseriesSearchResultWithLabelsQuery } from './useTimeseriesSearchResultWithLabelsQuery';
+import { useTimeseriesWithDatapointsQuery } from './useTimeseriesWithDatapointsQuery';
 
 export const useTimeseriesWithAvailableDatapointsQuery = (
   {

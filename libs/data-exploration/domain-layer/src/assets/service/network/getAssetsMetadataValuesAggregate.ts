@@ -3,7 +3,7 @@ import {
   AssetsAggregateFilters,
   AssetsAggregateUniqueValuesResponse,
   AssetsMetadataAggregateResponse,
-} from '@data-exploration-lib/domain-layer';
+} from '../types';
 
 import { getAssetsAggregate } from './getAssetsAggregate';
 

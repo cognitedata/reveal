@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
+import { Button, ToolBar, Tooltip, Colors } from '@cognite/cogs.js';
 import { StickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 import { STICKY_ANNOTATION_COLOR_MAP } from '../../colors';
-import { Colors } from '@cognite/cogs.js';
 
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { CircleButton } from '../color-palettes/CircleButton';

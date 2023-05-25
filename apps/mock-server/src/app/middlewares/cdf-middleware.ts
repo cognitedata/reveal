@@ -1,20 +1,20 @@
+import path = require('path');
+import { router as jsonServerRouter, rewriter } from 'json-server';
 import {
   CdfApiConfig,
   CdfMockDatabase,
   CdfServerRouter,
   MockData,
 } from '../types';
+import { mergeConfigs, createDefaultMockApiEndpoints } from '../utils';
+import { loadMiddlewares } from '../../cli/loader';
+import { config as mockServerConfig } from '../config';
 import createCdfRestRouter from './cdf-rest-middleware';
 import templatesMiddleware from './templates';
 import timeseriesMiddleware from './timeseries';
 import flexibleDataModelingMiddleware from './data-modeling/flexible-data-modeling-middleware';
 import { fdmConfigOverrides } from './data-modeling/config-overrides';
 import filesMiddleware from './files';
-import { router as jsonServerRouter, rewriter } from 'json-server';
-import { mergeConfigs, createDefaultMockApiEndpoints } from '../utils';
-import path = require('path');
-import { loadMiddlewares } from '../../cli/loader';
-import { config as mockServerConfig } from '../config';
 
 export default function (
   mockData: MockData,

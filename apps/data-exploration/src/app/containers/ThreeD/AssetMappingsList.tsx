@@ -8,13 +8,13 @@ import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { AugmentedMapping } from './hooks';
-import { prepareSearchString, grepContains } from './utils';
 import { CogniteError } from '@cognite/sdk';
 import noop from 'lodash/noop';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { SearchEmpty } from '@data-exploration/components';
 import uniqBy from 'lodash/uniqBy';
+import { prepareSearchString, grepContains } from './utils';
+import { AugmentedMapping } from './hooks';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;

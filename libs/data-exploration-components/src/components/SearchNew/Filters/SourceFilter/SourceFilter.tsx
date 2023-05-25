@@ -6,8 +6,8 @@ import {
   MultiSelectFilter,
 } from '@cognite/data-exploration';
 
-import { OptionValue } from '../types';
 import head from 'lodash/head';
+import { OptionValue } from '../types';
 
 export interface SourceFilterProps<T extends { source?: string }> {
   items: T[];

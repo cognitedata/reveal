@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MultiSelect } from '../MultiSelect';
 import React from 'react';
+import { MultiSelect } from '../MultiSelect';
 
 const options = [
   { label: 'orange', value: 'orange' },

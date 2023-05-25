@@ -8,8 +8,8 @@ import {
 } from '@data-exploration-components/components';
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
-import { FilterTitle } from './elements';
 import { OptionValue } from '../SearchNew/Filters/types';
+import { FilterTitle } from './elements';
 import { formatValue, isNilOption } from './utils';
 
 export interface MultiSelectFilterProps<ValueType>

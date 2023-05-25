@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { ids } from '../../cogs-variables';
 import React, { useEffect } from 'react';
 import {
   ConfigProvider,
@@ -85,6 +84,7 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
+import { ids } from '../../cogs-variables';
 
 const styles = [
   affixStyle,

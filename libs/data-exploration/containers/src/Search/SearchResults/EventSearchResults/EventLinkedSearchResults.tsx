@@ -1,12 +1,14 @@
 import { CogniteEvent } from '@cognite/sdk';
-import { TableSortBy } from '@data-exploration-lib/domain-layer';
+import {
+  TableSortBy,
+  useEventsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
 import React, { useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import {
   InternalCommonFilters,
   InternalEventsFilters,

@@ -3,8 +3,8 @@ import { CSSProperties } from 'react';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { LoaderWrapper } from './elements';
 import { Variant } from '../../types';
+import { LoaderWrapper } from './elements';
 
 export interface LoaderProps {
   variant?: Variant;

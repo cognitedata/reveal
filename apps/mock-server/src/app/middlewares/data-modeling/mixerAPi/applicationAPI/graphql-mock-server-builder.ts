@@ -3,6 +3,7 @@ import { KeyValuePair, CdfMockDatabase } from '../../../../types';
 import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
 import { Api, DmsBinding } from '../../types';
+import { createMockServerKey } from '../../utils/graphql-server-utils';
 import {
   buildQueryResolvers,
   getDataModelStorageExternalId,
@@ -10,7 +11,6 @@ import {
 
 import { buildDmsV3QueryResolvers } from './dms-v3-query-resolvers-builder';
 import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
-import { createMockServerKey } from '../../utils/graphql-server-utils';
 
 export interface BuildMockServerParams {
   db: CdfMockDatabase;

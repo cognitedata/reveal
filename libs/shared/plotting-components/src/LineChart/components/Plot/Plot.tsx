@@ -41,9 +41,9 @@ import {
   getPlotRangeFromRelayoutEvent,
 } from '../../utils/extractPlotRange';
 
-import { PlotWrapper } from './elements';
 import { usePlotData } from '../../hooks/usePlotData';
 import { Loader } from '../Loader';
+import { PlotWrapper } from './elements';
 
 export interface PlotElement {
   getPlotRange: () => PlotRange | undefined;

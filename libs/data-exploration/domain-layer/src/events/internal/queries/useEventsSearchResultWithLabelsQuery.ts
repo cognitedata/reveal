@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { TableSortBy } from '../../../types';
-import { useEventsSearchResultQuery } from './useEventsSearchResultQuery';
-import { UseInfiniteQueryOptions } from 'react-query';
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {
   EventConfigType,
   InternalEventsFilters,
   useDeepMemo,
 } from '@data-exploration-lib/core';
+import { TableSortBy } from '../../../types';
 import {
   extractMatchingLabels,
   MatchingLabelPropertyType,
 } from '../../../utils/extractMatchingLabels';
 import { getSearchConfig } from '../../../utils';
+import { useEventsSearchResultQuery } from './useEventsSearchResultQuery';
 
 export const useEventsSearchResultWithLabelsQuery = (
   {

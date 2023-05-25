@@ -10,7 +10,7 @@ import {
 
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 

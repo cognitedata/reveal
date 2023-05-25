@@ -1,11 +1,15 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { AssetFilterProps } from '@cognite/sdk';
-import { AssetsProperties } from '@data-exploration-lib/domain-layer';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
-import { InternalSortBy } from '@data-exploration-lib/domain-layer';
+
 import { useMemo } from 'react';
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { InternalSortBy } from '../../../types';
+import { AssetsProperties } from '../../internal';
 import { getAssetsList } from '../network';
 
 export const useAssetsListQuery = (

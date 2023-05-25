@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
-import { ZoomActionsWrapper } from './elements';
 import { PlotElement } from '../Plot';
 import { AxisDirectionConfig } from '../../types';
 import { useAxisDirection } from '../../hooks/useAxisDirection';
 import { getPlotZoomRange } from '../../utils/getPlotZoomRange';
+import { ZoomActionsWrapper } from './elements';
 
 export interface ZoomActionsProps {
   plotRef: React.RefObject<PlotElement>;

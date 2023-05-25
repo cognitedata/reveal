@@ -1,6 +1,7 @@
 import { Arguments } from 'yargs';
-import { BaseArgs, ProjectConfig } from '../types';
 import { CogniteClient } from '@cognite/sdk';
+import { prompt } from 'enquirer';
+import { BaseArgs, ProjectConfig } from '../types';
 import {
   createSdkClient,
   getCogniteSDKClient,
@@ -18,10 +19,9 @@ import {
   ROOT_CONFIG_KEY,
 } from '../constants';
 import { getCommandName } from '../utils/yargs-utils';
-import { skipMiddleware } from './util';
 import logout from '../common/auth/logout';
 import logger, { DEBUG as _DEBUG } from '../utils/logger';
-import { prompt } from 'enquirer';
+import { skipMiddleware } from './util';
 
 const DEBUG = _DEBUG.extend('middleware:auth');
 

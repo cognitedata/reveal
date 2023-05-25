@@ -1,6 +1,6 @@
 import React from 'react';
-import { AssetFilters } from './AssetFilters';
 import { render, screen } from '@testing-library/react';
+import { AssetFilters } from './AssetFilters';
 
 describe('AssetFilters', () => {
   describe('Base', () => {

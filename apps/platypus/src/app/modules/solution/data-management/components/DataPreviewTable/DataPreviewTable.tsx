@@ -33,6 +33,17 @@ import {
   useRef,
   useState,
 } from 'react';
+import {
+  useManualPopulationFeatureFlag,
+  useDataManagementDeletionFeatureFlag,
+  useSuggestionsFeatureFlag,
+  useFilterBuilderFeatureFlag,
+  useColumnSelectionFeatureFlag,
+} from '@platypus-app/flags';
+import debounce from 'lodash/debounce';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { Button } from '@cognite/cogs.js';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
@@ -43,6 +54,9 @@ import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
 import { SuggestionsModal } from '../SuggestionsModal/SuggestionsModal';
 
+import { useListDataSource } from '../../hooks/useListDataSource';
+import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
+import { FilterBuilder } from '../FilterBuilder/FilterBuilder';
 import { StyledDataPreviewTable } from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
@@ -52,23 +66,9 @@ import {
   sanitizeRow,
 } from './utils';
 import {
-  useManualPopulationFeatureFlag,
-  useDataManagementDeletionFeatureFlag,
-  useSuggestionsFeatureFlag,
-  useFilterBuilderFeatureFlag,
-  useColumnSelectionFeatureFlag,
-} from '@platypus-app/flags';
-import {
   CollapsiblePanelContainer,
   DataPreviewSidebarData,
 } from './collapsible-panel-container';
-import debounce from 'lodash/debounce';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { useListDataSource } from '../../hooks/useListDataSource';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
-import { FilterBuilder } from '../FilterBuilder/FilterBuilder';
-import { Button } from '@cognite/cogs.js';
 
 const pageSizeLimit = 100;
 const instanceIdCol = 'externalId';

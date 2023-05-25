@@ -6,8 +6,8 @@ import { PolylineAnnotation } from '@cognite/unified-file-viewer';
 import { LINE_STROKE_WIDTH } from '../../constants';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
-import { RightAlignedColorPalettePosition } from './elements';
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
+import { RightAlignedColorPalettePosition } from './elements';
 import { LineEndTypeTooltip } from './LineEndTypeTooltip';
 
 enum EditMode {

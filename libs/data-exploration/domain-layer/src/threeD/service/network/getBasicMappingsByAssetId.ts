@@ -1,10 +1,7 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient, CursorResponse } from '@cognite/sdk';
-
-import {
-  BasicMapping,
-  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-} from '@data-exploration-lib/domain-layer';
+import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '../../../constants';
+import { BasicMapping } from '../types';
 
 export const getBasicMappingsByAssetId = (
   sdk: CogniteClient,

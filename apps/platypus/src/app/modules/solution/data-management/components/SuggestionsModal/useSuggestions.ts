@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
-import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { KeyValueMap, StorageProviderType } from '@platypus/platypus-core';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 const REJECTED_SUGGESTIONS_KEY = 'REJECTED_SUGGESTIONS';
 

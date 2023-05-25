@@ -1,4 +1,3 @@
-import { CommandArgument, CommandArgumentType } from '../../types';
 import {
   showAutocomplete,
   showConfirm,
@@ -10,6 +9,7 @@ import {
 } from '@cognite/platypus-cdf-cli/app/utils/enquirer-utils';
 
 import { KeyValueMap } from '@platypus/platypus-core';
+import { CommandArgument, CommandArgumentType } from '../../types';
 
 export class EnquirerCommandBuilder {
   build(commandArg: CommandArgument, commandArgs: KeyValueMap) {

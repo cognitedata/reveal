@@ -4,9 +4,9 @@ import {
   CogniteClient,
   CursorResponse,
 } from '@cognite/sdk';
-import { AssetsProperties } from '@data-exploration-lib/domain-layer';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import { InternalSortBy } from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { InternalSortBy } from '../../../types';
+import { AssetsProperties } from '../../internal';
 import { normalizeAssets } from '../transformers';
 
 export const getAssetsList = (

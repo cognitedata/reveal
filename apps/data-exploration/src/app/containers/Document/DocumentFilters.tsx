@@ -1,5 +1,4 @@
 import React from 'react';
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import {
@@ -24,6 +23,7 @@ import {
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();

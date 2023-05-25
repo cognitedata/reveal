@@ -9,7 +9,7 @@ import {
 import { Loader } from '@data-exploration/components';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { UseQueryResult } from 'react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 import union from 'lodash/union';
 import Tree, { Node } from 'react-virtualized-tree';
 
@@ -199,7 +199,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       data = [],
       isLoading,
       isError,
-    } = !retrieveRootAssetsQuery.isIdle
+    } = !(retrieveRootAssetsQuery.fetchStatus === 'idle')
       ? retrieveRootAssetsQuery
       : listRootAssetsQuery;
 
@@ -213,7 +213,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       return;
     }
 
-    const rootAssets = !listRootAssetsQuery.isIdle
+    const rootAssets = !(listRootAssetsQuery.fetchStatus === 'idle')
       ? (data as ListResponse<Asset[]>).items
       : (data as Asset[]);
 

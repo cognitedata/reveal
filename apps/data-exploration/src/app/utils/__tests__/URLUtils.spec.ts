@@ -1,5 +1,5 @@
-import { getSearchParams } from '../URLUtils';
 import qs from 'query-string';
+import { getSearchParams } from '../URLUtils';
 
 describe('URLUtils', () => {
   describe('getSearchParams', () => {

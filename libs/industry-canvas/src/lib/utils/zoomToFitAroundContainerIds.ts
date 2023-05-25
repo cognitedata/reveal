@@ -1,6 +1,6 @@
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
-import { isNotUndefined } from './isNotUndefined';
 import { ZOOM_TO_FIT_MARGIN } from '../constants';
+import { isNotUndefined } from './isNotUndefined';
 
 type IRect = {
   x: number;

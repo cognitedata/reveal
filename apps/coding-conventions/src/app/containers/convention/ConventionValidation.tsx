@@ -9,9 +9,9 @@ import { useState } from 'react';
 import { DataSet, IdEither } from '@cognite/sdk';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
+import styled from 'styled-components';
 import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 
-import styled from 'styled-components';
 import { useValidate } from '../../hooks/useValidate';
 import { SearchEmpty } from '../../components/SearchEmpty';
 

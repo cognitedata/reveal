@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
+import { TIME_SELECT } from '@data-exploration-components/containers';
 import { useDateRange } from '../storage/useDateRange';
 import { TIMESERIES_TABLE_DATE_RANGE_KEY } from '../../utils/constants';
-import { TIME_SELECT } from '@data-exploration-components/containers';
 import * as URLUtils from '../../utils/URLUtils';
 
 const TEST_DATE_RANGE = [

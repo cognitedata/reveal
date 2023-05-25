@@ -4,9 +4,9 @@ import {
   ResourceTypes,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
-import { ResourceColumns } from '../ResourceColumns';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderComponent } from '@data-exploration/components';
+import { ResourceColumns } from '../ResourceColumns';
 
 const totalNumberOfCheckboxes = 32;
 

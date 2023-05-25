@@ -1,15 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  AdvancedFilter,
-  EventsProperties,
-  getEventsMetadataKeysAggregate,
-  queryKeys,
-  transformNewFilterToOldFilter,
-} from '@data-exploration-lib/domain-layer';
-import { EventsMetadataAggregateResponse } from '../types';
 import { InternalEventsFilters } from '@data-exploration-lib/core';
+import { AdvancedFilter } from '../../../builders';
+import { queryKeys } from '../../../queryKeys';
+import { transformNewFilterToOldFilter } from '../../../transformers';
+import { EventsProperties } from '../../internal';
+import { getEventsMetadataKeysAggregate } from '../network';
+
+import { EventsMetadataAggregateResponse } from '../types';
 
 interface Props {
   query?: string;

@@ -1,6 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import { getTimeseriesContainerConfig } from '@cognite/unified-file-viewer';
 import dayjs from 'dayjs';
+import { v4 as uuid } from 'uuid';
 import {
   IndustryCanvasContainerConfig,
   TimeseriesContainerReference,
@@ -9,7 +10,6 @@ import {
   DEFAULT_TIMESERIES_HEIGHT,
   DEFAULT_TIMESERIES_WIDTH,
 } from '../../utils/addDimensionsToContainerReference';
-import { v4 as uuid } from 'uuid';
 
 const resolveTimeseriesContainerConfig = async (
   sdk: CogniteClient,

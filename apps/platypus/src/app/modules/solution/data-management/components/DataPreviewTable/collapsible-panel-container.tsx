@@ -1,11 +1,5 @@
 import { Button, CollapsablePanel, Icon } from '@cognite/cogs.js';
 import { ReactElement, useEffect, useState } from 'react';
-import { SidePanelTitle } from './data-preview-side-panel-title';
-import { SidePanel } from './SidePanel';
-
-import * as S from './elements';
-import { InstancePreview } from './InstancePreview/InstancePreview';
-import { ListPreview } from './ListPreview/ListPreview';
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -15,8 +9,14 @@ import {
 import { CogDataList } from '@cognite/cog-data-grid';
 import { TimeseriesChart } from '@cognite/plotting-components';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 import { createLink } from '@cognite/cdf-utilities';
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { SidePanelTitle } from './data-preview-side-panel-title';
+import { SidePanel } from './SidePanel';
+
+import * as S from './elements';
+import { InstancePreview } from './InstancePreview/InstancePreview';
+import { ListPreview } from './ListPreview/ListPreview';
 
 export type DataPreviewSidebarData =
   | {

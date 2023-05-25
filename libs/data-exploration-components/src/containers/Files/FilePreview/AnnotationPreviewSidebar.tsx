@@ -19,19 +19,23 @@ import {
   ResourceItem,
   convertResourceType,
 } from '@data-exploration-components/types/index';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { sleep } from '@data-exploration-components/utils/index';
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
 import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import { useDisclosure } from '@data-exploration-components/hooks/index';
-import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import {
   useCreateAnnotation,
   useDeleteAnnotation,
   useUpdateAnnotations,
 } from '@data-exploration-lib/domain-layer';
+import {
+  ExtendedAnnotation,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-lib/core';
+import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,
@@ -45,10 +49,6 @@ import {
 } from './migration/utils';
 import ReviewTagBar from './ReviewTagBar';
 import FilePreviewSidebar from './FilePreviewSidebar';
-import {
-  ExtendedAnnotation,
-  SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-lib/core';
 
 type Props = {
   file?: FileInfo;
@@ -126,7 +126,7 @@ const AnnotationPreviewSidebar = ({
   const onSuccess = (action: string) => {
     const invalidate = () => {
       if (file !== undefined) {
-        client.invalidateQueries(`annotations-file-${file.id}`);
+        client.invalidateQueries([`annotations-file-${file.id}`]);
       }
 
       client.invalidateQueries([
@@ -282,7 +282,7 @@ const AnnotationPreviewSidebar = ({
         : undefined;
 
     openResourceSelector({
-      resourceTypes: ['asset', 'file'],
+      resourceTypes: ['asset', 'file', 'event', 'timeSeries', 'sequence'],
       selectionMode: 'single',
       onSelect: (item) => {
         if (selectedAnnotation === undefined) {

@@ -1,6 +1,6 @@
-import { getConfig } from './config';
 import { init as MixPanelInit } from 'mixpanel';
 import { ROOT_CONFIG_KEY } from '../constants';
+import { getConfig } from './config';
 
 // https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3929277073/User+Metrics+-+Mixpanel
 type MixpanelKey = 'CLI.DataModel.ErrorMessage' | 'CLI.Command';
