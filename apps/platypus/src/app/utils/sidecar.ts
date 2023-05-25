@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ContainerSidecarConfig } from '@cognite/react-container/dist/types';
 /* eslint-disable no-underscore-dangle  */
-import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
+import { getDefaultSidecar } from '@cognite/sidecar';
 
-export interface PlatypusSidecarConfig extends SidecarConfig {
+export interface PlatypusSidecarConfig extends ContainerSidecarConfig {
   disableTranslations?: boolean;
   disableLoopDetector?: boolean;
   disableSentry?: boolean;
