@@ -31,4 +31,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: live
           projectId: ${{ github.ref_name == 'master' && 'fbhosting-217032465111-staging' || 'fbhosting-217032465111' }}
-          target: flexible-data-explorer-${{ github.ref_name == 'master' && 'staging' || 'production' }}
+          target: cognite-flexible-data-explorer-${{ github.ref_name == 'master' && 'staging' || 'production' }}
