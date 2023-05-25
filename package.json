@@ -53,7 +53,7 @@
     "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.1",
-    "@types/react": "^17.0.30",
+    "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/single-spa-react": "^2.12.0",
     "@types/styled-components": "^5.1.15",
