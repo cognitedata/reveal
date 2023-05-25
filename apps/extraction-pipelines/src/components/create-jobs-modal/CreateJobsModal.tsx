@@ -236,9 +236,8 @@ export const CreateJobsModal = ({
   ];
 
   const formatFieldOptions = formatField.map(({ type }) => ({
-    label: `${
-      type === 'tmc' ? 'TMC' : type.charAt(0).toUpperCase() + type.slice(1)
-    }: "${type}"`,
+    label:
+      type === 'tmc' ? 'TMC' : type.charAt(0).toUpperCase() + type.slice(1),
     value: type,
   }));
 
