@@ -16,13 +16,6 @@ const LazyExtpipe = React.lazy(
     )
 );
 
-const LazyCreateExtpipeCreateRoot = React.lazy(
-  () =>
-    import(
-      '../pages/create/Create'
-      /* webpackChunkName: "pnid_extpipe_create_create_routes" */
-    )
-);
 interface ExtpipesRoute {
   name: string;
   path: string;
@@ -43,11 +36,6 @@ export const routingConfig: ExtpipesRoute[] = [
     path: `/:tenant${EXT_PIPES_OVERVIEW_PAGE_PATH}`,
     exact: true,
     component: LazyExtpipes,
-  },
-  {
-    name: 'Create extpipe - create',
-    path: `/:tenant${CREATE_EXT_PIPE_PAGE_PATH}`,
-    component: LazyCreateExtpipeCreateRoot,
   },
   {
     name: 'Extpipe',

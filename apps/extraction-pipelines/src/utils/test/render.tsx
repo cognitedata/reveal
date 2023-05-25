@@ -1,7 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter as Router } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { AppEnvProvider } from 'hooks/useAppEnv';

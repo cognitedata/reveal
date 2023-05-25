@@ -16,11 +16,11 @@ export const ConfigurationLink: FunctionComponent<Props> = ({
 }: PropsWithoutRef<Props>) => {
   const { data: extpipe } = useSelectedExtpipe();
 
-  const { data, isLoading } = useExtpipeConfig(
+  const { data, isInitialLoading } = useExtpipeConfig(
     { externalId: extpipe?.externalId!, activeAtTime: createdTime },
     { enabled: !!extpipe?.externalId }
   );
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <Icon
         type="Loader"

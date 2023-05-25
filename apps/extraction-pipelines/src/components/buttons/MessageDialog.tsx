@@ -1,15 +1,10 @@
-import React, {
-  FunctionComponent,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ErrorIcon } from 'components/icons/ErrorIcon';
 import { StyledTooltip } from 'components/styled';
 import { useTranslation } from 'common';
-interface OwnProps {
+interface MessageDialogProps {
   visible: boolean;
   title: string;
   width?: number;
@@ -20,13 +15,10 @@ interface OwnProps {
   contentText?: string;
   cancelBtnText?: string;
   confirmBtnText?: string;
+  children: React.ReactNode;
 }
 
-type Props = OwnProps;
-
-const MessageDialog: FunctionComponent<Props> = (
-  props: PropsWithChildren<Props>
-) => {
+const MessageDialog = (props: MessageDialogProps): JSX.Element => {
   const { t } = useTranslation();
   const {
     visible,

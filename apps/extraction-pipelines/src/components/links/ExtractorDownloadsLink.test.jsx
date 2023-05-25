@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'utils/test';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { trackUsage } from 'utils/Metrics';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import {

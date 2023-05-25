@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
 import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';

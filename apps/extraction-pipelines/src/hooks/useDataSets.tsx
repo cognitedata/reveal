@@ -1,5 +1,5 @@
 import { CogniteError, DataSet, IdEither } from '@cognite/sdk';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { DataSetModel } from 'model/DataSetModel';
 import { getDataSets } from 'utils/DataSetAPI';
