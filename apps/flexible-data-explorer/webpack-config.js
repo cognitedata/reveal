@@ -14,7 +14,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     config.devServer.allowedHosts = 'all';
     config.devServer.headers['Access-Control-Allow-Origin'] = '*';
     config.devServer.https = true;
-    config.devServer.port = 3010;
+    config.devServer.port = 3000;
 
     config.devServer.static = {
       watch: {

@@ -35,7 +35,7 @@ const InnerAuthProvider: FC<PropsWithChildren<Props>> = ({
   mock,
   appId = 'maintain',
 }) => {
-  const { getUser, project, getToken, logout } = useAuth();
+  const { getUser, project, getToken, logout, cluster } = useAuth();
 
   const [isFetchingAuthState, setIsFetchingAuthState] =
     useState<boolean>(false);
@@ -48,13 +48,14 @@ const InnerAuthProvider: FC<PropsWithChildren<Props>> = ({
       mock?.client ||
       new CogniteClient({
         appId,
+        baseUrl: `https://${cluster}`,
         project,
         getToken: async () =>
           getToken().then((token: string) => {
             return token || 'nothing';
           }),
       }),
-    [appId, getToken, mock?.client, project]
+    [appId, getToken, mock?.client, project, cluster]
   );
 
   const fetchAuthState = useCallback(async (): Promise<
