@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { getExtpipes } from 'utils/ExtpipesAPI';
 

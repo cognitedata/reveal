@@ -1,6 +1,10 @@
 import render from 'utils/test/render';
 import React from 'react';
-import { fireEvent, screen } from '@testing-library/react';
+import {
+  fireEvent,
+  screen,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import { EditMetaDataView } from 'components/inputs/metadata/EditMetaData';
 
 function fillKeyValue(key, value) {
@@ -13,8 +17,11 @@ function fillKeyValue(key, value) {
 }
 
 describe('Edit metadata tests', () => {
-  const clickAddFields = () => {
+  const clickAddFields = async () => {
     screen.getByTestId('add-fields-btn').click();
+
+    // wait for state to be updated and new fields to be rendered
+    await screen.findAllByDisplayValue('');
   };
 
   test('Component testing', async () => {
@@ -28,13 +35,16 @@ describe('Edit metadata tests', () => {
         onConfirm={onConfirm}
       />
     );
+
     fireEvent.change(screen.getByDisplayValue('Sunny'), {
       target: { value: 'Very rainy' },
     });
-    clickAddFields();
+    await clickAddFields();
     fillKeyValue('Wind speed', '14 m/s');
-    clickAddFields();
+    await clickAddFields();
+
     screen.getByTestId('confirm-btn').click();
+
     expect(onConfirm).toHaveBeenCalledWith({
       weather: 'Very rainy',
       windSpeed: '14 m/s',
@@ -43,7 +53,7 @@ describe('Edit metadata tests', () => {
 
   test.todo('Should handle user writing same metadata field name twice');
 
-  test('Handle deleting row, and saving with no metadata-fields set', () => {
+  test('Handle deleting row, and saving with no metadata-fields set', async () => {
     const onConfirm = jest.fn();
     const onCancel = jest.fn();
     render(
@@ -54,6 +64,10 @@ describe('Edit metadata tests', () => {
       />
     );
     screen.getByLabelText('Remove metadata row').click();
+
+    // wait for state to be updated with deleted row
+    await waitForElementToBeRemoved(() => screen.queryByDisplayValue('Sunny'));
+
     screen.getByTestId('confirm-btn').click();
     expect(onConfirm).toHaveBeenCalledWith({});
   });

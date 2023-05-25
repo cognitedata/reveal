@@ -8,12 +8,9 @@ interface EditModalProps {
   title: string;
 }
 
-export const EditModal: FunctionComponent<EditModalProps> = ({
-  visible,
-  close,
-  children,
-  title,
-}: PropsWithChildren<EditModalProps>) => {
+export const EditModal: FunctionComponent<
+  PropsWithChildren<EditModalProps>
+> = ({ visible, close, children, title }) => {
   return (
     <Modal hideFooter onCancel={close} title={title} visible={visible}>
       {children}

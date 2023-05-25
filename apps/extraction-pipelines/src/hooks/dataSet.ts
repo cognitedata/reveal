@@ -1,6 +1,6 @@
 import { DataSet } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
