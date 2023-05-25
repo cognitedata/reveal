@@ -484,22 +484,28 @@ pods {
                   sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")
                 }
               }
-              appHosting(
-                 appName: args.firebaseAppSite,
-                 environment: args.variant,
-                 firebaseJson: args.firebaseJsonPath,
-                 build: performBuildFirebase,
-                 buildFolder: args.buildFolder,
-               )
 
-               if(isPullRequest){
+              if(isPullRequest){
+                def prefix = jenkinsHelpersUtil.determineRepoName();
+                def domain = "fusion-preview";
                 previewServer(
                   buildFolder: 'build',
                   commentPrefix: '[pr-preview-firebase]\n',
-                  prefix: 'pr',
-                  repo: params.sub_domain
+                  prefix: prefix,
+                  repo: domain
                 )
                }
+
+              if(!isPullRequest){
+                appHosting(
+                  appName: args.firebaseAppSite,
+                  environment: args.variant,
+                  firebaseJson: args.firebaseJsonPath,
+                  build: performBuildFirebase,
+                  buildFolder: args.buildFolder,
+                  isFusionSubApp: true
+                )
+              }
             }
 
             publishFirebase(
