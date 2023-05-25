@@ -4,7 +4,7 @@ import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import render, {
   renderWithReQueryCacheSelectedExtpipeContext,
 } from 'utils/test/render';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { useSDK } from '@cognite/sdk-provider';
 import { ExtpipeHeading } from 'components/extpipe/ExtpipeHeading';

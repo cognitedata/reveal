@@ -4,7 +4,7 @@ import {
   useQueries,
   useQuery,
   UseQueryOptions,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   CreateConfigRevisionArguments,
@@ -41,14 +41,14 @@ export const useExtpipeConfigs = (
 ) => {
   const sdk = useSDK();
 
-  return useQueries(
-    reqs.map(({ externalId, activeAtTime, revision }) => ({
+  return useQueries({
+    queries: reqs.map(({ externalId, activeAtTime, revision }) => ({
       queryKey: ['extpipe', 'config', externalId, { revision, activeAtTime }],
       queryFn: () =>
         getExtpipeConfig(sdk, externalId, { revision, activeAtTime }),
       ...options,
-    }))
-  );
+    })),
+  });
 };
 
 export const useExtpipeConfigRevisions = (

@@ -31,9 +31,9 @@ export default function ExtpipeRunHistory() {
     trackUsage({ t: 'Extraction pipeline.Health', id });
   }, [id]);
 
-  const { data: extpipe, isLoading, error } = useSelectedExtpipe();
+  const { data: extpipe, isInitialLoading, error } = useSelectedExtpipe();
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return <Loader />;
   }
 

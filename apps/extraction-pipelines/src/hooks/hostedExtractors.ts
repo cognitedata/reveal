@@ -7,7 +7,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { CreateSessionVariables, useCreateSession } from './sessions';
 
 type UpdateWithExternalId<T, P extends keyof T> = {

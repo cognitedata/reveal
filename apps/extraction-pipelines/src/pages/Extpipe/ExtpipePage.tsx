@@ -23,9 +23,9 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
   const { t } = useTranslation();
   const { id } = useParams<RouterParams>();
 
-  const { data: extpipe, isLoading, error } = useSelectedExtpipe();
+  const { data: extpipe, isInitialLoading, error } = useSelectedExtpipe();
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return <Loader />;
   }
 
