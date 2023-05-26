@@ -155,12 +155,20 @@ export type SerializedIndustryCanvasState = {
   canvasAnnotations: CanvasAnnotation[];
 };
 
+type UserIdentifier = string;
+type ISOString = string;
+
 export type CanvasDocument = {
   externalId: string;
   name: string;
   isArchived?: boolean;
-  createdAt: string;
-  updatedAt: string;
+
+  createdAt: ISOString;
+  createdBy: UserIdentifier;
+
+  updatedAt: ISOString;
+  updatedBy: UserIdentifier;
+
   version: number;
   data: IndustryCanvasState;
 };

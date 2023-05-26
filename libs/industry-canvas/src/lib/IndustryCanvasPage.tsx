@@ -47,6 +47,7 @@ import {
   useIndustryCanvasContext,
 } from './IndustryCanvasContext';
 import { ContainerReference, ContainerReferenceType } from './types';
+import { UserProfileProvider } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
@@ -452,9 +453,11 @@ export const IndustryCanvasPage = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <IndustryCanvasProvider>
-        <IndustryCanvasPageWithoutQueryClientProvider />
-      </IndustryCanvasProvider>
+      <UserProfileProvider>
+        <IndustryCanvasProvider>
+          <IndustryCanvasPageWithoutQueryClientProvider />
+        </IndustryCanvasProvider>
+      </UserProfileProvider>
     </QueryClientProvider>
   );
 };
