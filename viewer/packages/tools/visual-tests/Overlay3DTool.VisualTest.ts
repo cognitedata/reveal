@@ -16,8 +16,6 @@ export default class DefaultVisualTest extends ViewerVisualTestFixture {
     const { viewer } = _;
 
     const cameraManager = viewer.cameraManager as DefaultCameraManager;
-    viewer.setBackgroundColor({ color: new THREE.Color().setScalar(0.9) });
-    //viewer.setResolutionOptions({maxRenderResolution: Infinity})
 
     cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: false });
 
