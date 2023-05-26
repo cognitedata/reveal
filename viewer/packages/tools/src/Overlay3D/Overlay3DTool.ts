@@ -53,12 +53,12 @@ export type OverlayCollectionOptions = {
   /**
    * Sets default texture for all overlays of this OverlayCollection.
    * Must be a square texture with size at least as `maxPointSize`.
-   * Texture should be monochrome, internally, R channel is used as a mask for denoting pixels 
+   * Texture should be monochrome, internally, R channel is used as a mask for denoting pixels
    * that should be colored by texture and not by overlay color.
-  */
+   */
   overlayTexture?: THREE.Texture;
   /**
-   * Sets whether overlays are always displayed as circles. Regardless of 
+   * Sets whether overlays are always displayed as circles. Regardless of
    * texture used. Default is true.
    */
   circularOverlay?: boolean;
@@ -105,7 +105,10 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
    * @param overlays Array of overlays to add.
    * @returns Overlay group containing it's id.
    */
-  createOverlayCollection(overlays?: OverlayInfo<ContentType>[], options?: OverlayCollectionOptions): OverlayCollection<ContentType> {
+  createOverlayCollection(
+    overlays?: OverlayInfo<ContentType>[],
+    options?: OverlayCollectionOptions
+  ): OverlayCollection<ContentType> {
     const { _viewer: viewer } = this;
 
     const points = new Overlay3DCollection<ContentType>(overlays, {

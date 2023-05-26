@@ -42,7 +42,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       minPixelSize: this.MinPixelSize,
       maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
       radius: this._iconRadius,
-      circularOverlay: options?.circularOverlay ?? true,
+      circularOverlay: options?.circularOverlay ?? true
     });
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
@@ -149,12 +149,12 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     const overlayColor = new Color().setScalar(0);
 
     const context = canvas.getContext('2d')!;
-    context.clearRect(0, 0, textureSize, textureSize );
+    context.clearRect(0, 0, textureSize, textureSize);
     context.beginPath();
     context.lineWidth = textureSize / 12;
     context.strokeStyle = 'white';
     context.fillStyle = '#' + overlayColor.getHexString();
-    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth/3, 0, 2 * Math.PI);
+    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 3, 0, 2 * Math.PI);
     context.fill();
     context.stroke();
 
