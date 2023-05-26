@@ -1,4 +1,5 @@
 import { Data } from '../LineChart';
+
 import { TimePeriod } from './types';
 
 export const DEFAULT_NUMBER_OF_POINTS = 500;

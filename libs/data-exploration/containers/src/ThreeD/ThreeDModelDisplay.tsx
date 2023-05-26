@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Detail, Flex, Icon } from '@cognite/cogs.js';
+
 import { HighlightCell } from '@data-exploration/components';
+import { getObjectURL } from '@data-exploration-lib/core';
 import {
   Model3DWithType,
   use3DModelThumbnailQuery,
   useDefault3DModelRevision,
 } from '@data-exploration-lib/domain-layer';
-import { getObjectURL } from '@data-exploration-lib/core';
+
+import { Detail, Flex, Icon } from '@cognite/cogs.js';
+
 import { ThreeDThumbnail } from './ThreeDThumbnail';
 
 export const ThreeDModelDisplay = ({ model }: { model: Model3DWithType }) => {

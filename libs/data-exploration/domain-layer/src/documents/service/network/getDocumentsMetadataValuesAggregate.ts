@@ -1,10 +1,11 @@
 import { CogniteClient } from '@cognite/sdk';
+
 import {
   EventsAggregateUniqueValuesResponse,
   EventsMetadataAggregateResponse,
 } from '../../../events';
-
 import { DocumentsAggregateFilters } from '../types';
+
 import { getDocumentsAggregate } from './getDocumentsAggregate';
 
 export const getDocumentsMetadataValuesAggregate = (

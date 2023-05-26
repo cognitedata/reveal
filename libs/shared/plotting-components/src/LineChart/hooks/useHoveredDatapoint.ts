@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
+import head from 'lodash/head';
 import { PlotHoverEvent } from 'plotly.js';
 
-import head from 'lodash/head';
-import { getMarkerPosition } from '../utils/getMarkerPosition';
 import { getHoveredLineColor } from '../utils/getHoveredLineColor';
+import { getMarkerPosition } from '../utils/getMarkerPosition';
 
 export const useHoveredDatapoint = (plotHoverEvent?: PlotHoverEvent) => {
   const point = head(plotHoverEvent?.points);

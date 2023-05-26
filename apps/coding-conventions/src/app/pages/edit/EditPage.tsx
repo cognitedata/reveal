@@ -1,13 +1,15 @@
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
+
 import { Modal } from '../../components/Modal/Modal';
+import { useConventionUpdateMutate } from '../../service/hooks/mutate/useConventionUpdateMutate';
 import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';
 import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
-import { generateId } from '../../utils/generators';
-import { useConventionUpdateMutate } from '../../service/hooks/mutate/useConventionUpdateMutate';
 import { TagDefinitions, TagAbbreviation } from '../../types';
+import { generateId } from '../../utils/generators';
+
 import { Table as EditTable } from './DataCleanupComponent';
 
 const columns = [

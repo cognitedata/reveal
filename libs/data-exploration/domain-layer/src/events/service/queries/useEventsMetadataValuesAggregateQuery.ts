@@ -1,9 +1,10 @@
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { transformNewFilterToOldFilter } from '../../../transformers';

@@ -1,12 +1,15 @@
-import { FileThumbnail } from '@data-exploration/containers';
 import React, { useMemo } from 'react';
-import { FileInfo as File } from '@cognite/sdk';
-import { useSelectionCheckbox } from '@data-exploration-components/hooks/useSelection';
-import styled, { css } from 'styled-components';
-import { Body, Colors } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
-import { SelectableItemsProps } from '@data-exploration-components/types';
+
+import styled, { css } from 'styled-components';
+
 import { TimeDisplay } from '@data-exploration/components';
+import { FileThumbnail } from '@data-exploration/containers';
+import { useSelectionCheckbox } from '@data-exploration-components/hooks/useSelection';
+import { SelectableItemsProps } from '@data-exploration-components/types';
+
+import { Body, Colors } from '@cognite/cogs.js';
+import { FileInfo as File } from '@cognite/sdk';
 
 export const FileGridPreview = ({
   item,

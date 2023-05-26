@@ -1,20 +1,22 @@
 import { useState } from 'react';
-import { Asset, CogniteEvent } from '@cognite/sdk';
 
+import { TableProps } from '@data-exploration/components';
+import {
+  InternalEventsFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 import {
   TableSortBy,
   useEventsAggregateCountQuery,
   useEventsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import {
-  InternalEventsFilters,
-  useGetSearchConfigFromLocalStorage,
-} from '@data-exploration-lib/core';
-import { TableProps } from '@data-exploration/components';
+import { Asset, CogniteEvent } from '@cognite/sdk';
+
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
+
 import { EventTable } from './EventTable';
 
 export const EventSearchResults = ({

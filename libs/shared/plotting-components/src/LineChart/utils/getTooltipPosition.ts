@@ -1,5 +1,7 @@
 import { PlotMouseEvent } from 'plotly.js';
+
 import { Coordinate } from '../types';
+
 import { getMarkerPosition } from './getMarkerPosition';
 import { getPlotStyleData } from './getPlotStyleData';
 

@@ -1,29 +1,3 @@
-import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-  DeleteInstancesDTO,
-  KeyValueMap,
-  MixerQueryBuilder,
-  PlatypusError,
-} from '@platypus/platypus-core';
-import {
-  CellDoubleClickedEvent,
-  CellEditingStartedEvent,
-  ColDef,
-  GridReadyEvent,
-  RowDataUpdatedEvent,
-  ValueSetterParams,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
 import {
   forwardRef,
   useCallback,
@@ -33,6 +7,19 @@ import {
   useRef,
   useState,
 } from 'react';
+
+import {
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
+  DeleteInstancesDTO,
+  KeyValueMap,
+  MixerQueryBuilder,
+  PlatypusError,
+} from '@platypus/platypus-core';
+import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { TOKENS } from '@platypus-app/di';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
@@ -40,23 +27,43 @@ import {
   useFilterBuilderFeatureFlag,
   useColumnSelectionFeatureFlag,
 } from '@platypus-app/flags';
-import debounce from 'lodash/debounce';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
+import {
+  CellDoubleClickedEvent,
+  CellEditingStartedEvent,
+  ColDef,
+  GridReadyEvent,
+  RowDataUpdatedEvent,
+  ValueSetterParams,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import debounce from 'lodash/debounce';
+
+import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { Button } from '@cognite/cogs.js';
+
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
+import { useListDataSource } from '../../hooks/useListDataSource';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
 import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
 import { buildGridConfig } from '../../services/grid-config-builder';
+import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
 import { CreateTransformationModal } from '../CreateTransformationModal';
 import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
+import { FilterBuilder } from '../FilterBuilder/FilterBuilder';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
 import { SuggestionsModal } from '../SuggestionsModal/SuggestionsModal';
 
-import { useListDataSource } from '../../hooks/useListDataSource';
-import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
-import { FilterBuilder } from '../FilterBuilder/FilterBuilder';
+import {
+  CollapsiblePanelContainer,
+  DataPreviewSidebarData,
+} from './collapsible-panel-container';
 import { StyledDataPreviewTable } from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
@@ -65,10 +72,6 @@ import {
   getSuggestionsAvailable,
   sanitizeRow,
 } from './utils';
-import {
-  CollapsiblePanelContainer,
-  DataPreviewSidebarData,
-} from './collapsible-panel-container';
 
 const pageSizeLimit = 100;
 const instanceIdCol = 'externalId';

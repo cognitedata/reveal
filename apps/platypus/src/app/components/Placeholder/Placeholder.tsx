@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
 import {
   Body,
   Button,
@@ -7,8 +11,7 @@ import {
   Tooltip,
   Illustrations,
 } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useState } from 'react';
+
 import { PlaceholderWrapper } from './elements';
 
 export const Placeholder = ({

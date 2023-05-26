@@ -1,6 +1,9 @@
-import { Chip, Title } from '@cognite/cogs.js';
 import { PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
+
+import { Chip, Title } from '@cognite/cogs.js';
+
 import { getIcon } from '../../utils/getIcon';
 
 export const SearchResults = ({ children }: PropsWithChildren) => {

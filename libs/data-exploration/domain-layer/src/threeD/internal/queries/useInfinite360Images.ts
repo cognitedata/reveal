@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
+
 import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+
+import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '../../../constants';
 import {
   InternalEventsData,
   useEventsSearchResultQuery,
 } from '../../../events';
-import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '../../../constants';
 import { InternalEventWithMetadata } from '../types';
 
 export const useInfinite360Images = () => {

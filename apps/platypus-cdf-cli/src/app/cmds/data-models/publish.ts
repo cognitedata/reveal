@@ -1,13 +1,5 @@
 import { readFileSync } from 'fs';
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import {
-  BaseArgs,
-  CommandArgument,
-  CommandArgumentType,
-} from '@cognite/platypus-cdf-cli/app/types';
-import Response, {
-  DEBUG as _DEBUG,
-} from '@cognite/platypus-cdf-cli/app/utils/logger';
+
 import {
   CreateDataModelVersionDTO,
   DataModelsHandler,
@@ -17,6 +9,16 @@ import {
   Validator,
 } from '@platypus/platypus-core';
 import { Arguments, Argv } from 'yargs';
+
+import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
+import {
+  BaseArgs,
+  CommandArgument,
+  CommandArgumentType,
+} from '@cognite/platypus-cdf-cli/app/types';
+import Response, {
+  DEBUG as _DEBUG,
+} from '@cognite/platypus-cdf-cli/app/utils/logger';
 
 import {
   autoIncrementVersion,

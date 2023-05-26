@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
+
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { usePreviewData } from '@platypus-app/modules/solution/data-management/hooks/usePreviewData';
+
 import { CogDataList } from '@cognite/cog-data-grid';
 import { Body } from '@cognite/cogs.js';
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import { FileInfo as FileInfoProps } from '@cognite/sdk';
 
 import { TimeDisplay, GeneralDetails } from '@data-exploration/components';
+
+import { FileInfo as FileInfoProps } from '@cognite/sdk';
 
 export const FileInfo = ({ file }: { file: FileInfoProps }) => (
   <GeneralDetails>

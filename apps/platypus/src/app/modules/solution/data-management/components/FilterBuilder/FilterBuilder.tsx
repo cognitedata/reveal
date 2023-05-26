@@ -1,5 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
+import styled from 'styled-components';
+
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import type {
   JsonGroup,
   Config,
@@ -17,15 +23,12 @@ import {
   BasicConfig,
   JsonTree,
 } from '@react-awesome-query-builder/ui';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { TOKENS } from '@platypus-app/di';
 import { GraphQLInputFieldMap } from 'graphql';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import merge from 'lodash/merge';
 import setWith from 'lodash/setWith';
+
 import { Modal } from '@cognite/cogs.js';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import styled from 'styled-components';
+
 import {
   ConjunctionButtons,
   FilterBuilderButton,

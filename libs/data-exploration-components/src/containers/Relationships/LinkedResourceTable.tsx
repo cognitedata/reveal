@@ -1,18 +1,17 @@
+import React from 'react';
+
 import {
   AssetLinkedSearchResults,
   EventLinkedSearchResults,
   SequenceLinkedSearchResults,
   TimeseriesLinkedSearchResults,
 } from '@data-exploration/containers';
-import React from 'react';
-
+import { FileLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileLinkedSearchResults';
 import {
   ResourceType,
   ResourceItem,
   SelectableItemsProps,
 } from '@data-exploration-components/types';
-
-import { FileLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileLinkedSearchResults';
 
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,

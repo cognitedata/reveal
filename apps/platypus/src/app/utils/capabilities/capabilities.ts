@@ -1,5 +1,6 @@
-import { SingleCogniteCapability, Acl, AclScopeAll } from '@cognite/sdk';
 import diff from 'lodash/difference';
+
+import { SingleCogniteCapability, Acl, AclScopeAll } from '@cognite/sdk';
 
 type AclTransformationActions = 'READ' | 'WRITE';
 type AclExperimentActions = 'USE';

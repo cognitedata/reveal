@@ -1,7 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { DocumentsAggregateAllUniqueValuesRequest } from '@cognite/sdk/dist/src';
-import isEmpty from 'lodash/isEmpty';
 import { useQuery } from '@tanstack/react-query';
+import isEmpty from 'lodash/isEmpty';
+
+import { DocumentsAggregateAllUniqueValuesRequest } from '@cognite/sdk/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../../queryKeys';
 import { getDocumentAggregates } from '../../network/getDocumentAggregates';
 

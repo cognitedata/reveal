@@ -3,6 +3,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import ReactDOM from 'react-dom';
 
 import { Flex } from '@data-exploration-lib/core';
+
 import { DRAG_DROP_PORTAL_CLASS } from '../constants';
 
 const getDraggableElement = (

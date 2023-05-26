@@ -1,6 +1,8 @@
-import { InputExp, ToolBar } from '@cognite/cogs.js';
 import React, { useEffect, useState } from 'react';
+
 import styled from 'styled-components';
+
+import { InputExp, ToolBar } from '@cognite/cogs.js';
 
 type LabelToolbarProps = {
   initialValue: string | undefined;

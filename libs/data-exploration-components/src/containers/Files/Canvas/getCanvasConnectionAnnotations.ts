@@ -1,8 +1,3 @@
-import {
-  Annotation,
-  AnnotationType,
-  LineType,
-} from '@cognite/unified-file-viewer';
 import { PagedFileReference } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
 import {
@@ -11,6 +6,12 @@ import {
   getResourceTypeFromExtendedAnnotation,
 } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
+import {
+  Annotation,
+  AnnotationType,
+  LineType,
+} from '@cognite/unified-file-viewer';
 
 const numFileLinksBetweenFiles = (
   fromFileId: number,

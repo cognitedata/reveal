@@ -1,4 +1,5 @@
 import { Button } from '@cognite/cogs.js';
+
 import { CircleIcon, CircleIconProps } from '../icons/CircleIcon';
 
 type CircleButtonProps = {

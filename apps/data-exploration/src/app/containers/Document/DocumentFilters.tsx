@@ -1,10 +1,16 @@
 import React from 'react';
 
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { useFilterEmptyState } from '@data-exploration-app/store';
 import {
   useDocumentFilters,
   useResetDocumentFilters,
 } from '@data-exploration-app/store/filter/selectors/documentSelectors';
+import {
+  InternalDocumentFilter,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 import {
   useDocumentAggregateAuthorQuery,
   useDocumentAggregateSourceQuery,
@@ -13,16 +19,10 @@ import {
   useDocumentsMetadataKeysAggregateQuery,
   useDocumentsMetadataValuesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { useFilterEmptyState } from '@data-exploration-app/store';
-import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import {
-  InternalDocumentFilter,
-  useGetSearchConfigFromLocalStorage,
-} from '@data-exploration-lib/core';
+import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
+
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const DocumentFilter = ({ ...rest }) => {

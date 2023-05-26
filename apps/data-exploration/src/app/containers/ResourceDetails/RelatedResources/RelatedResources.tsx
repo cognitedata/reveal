@@ -1,5 +1,14 @@
-import { RelationshipLabels } from '@data-exploration-lib/core';
 import { useState, useEffect } from 'react';
+
+import styled from 'styled-components';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { useFlagFileCategorization } from '@data-exploration-app/hooks/flags';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
+import { RelationshipLabels } from '@data-exploration-lib/core';
+
+import { Select } from '@cognite/cogs.js';
 import {
   RelationshipTable,
   RelationshipTableProps,
@@ -14,13 +23,6 @@ import {
   RelationshipFilters,
   useRelatedResourceResults,
 } from '@cognite/data-exploration';
-import { Select } from '@cognite/cogs.js';
-
-import styled from 'styled-components';
-import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import { useFlagFileCategorization } from '@data-exploration-app/hooks/flags';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type TypeOption = {
   label: string;

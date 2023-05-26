@@ -1,21 +1,23 @@
-import { ColumnDef } from '@tanstack/react-table';
+import React, { useMemo } from 'react';
 
 import {
   ResourceTableColumns,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration/components';
-import React, { useMemo } from 'react';
+import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { useResourceResults } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
-import { Asset, FileInfo } from '@cognite/sdk';
-import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
-import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import {
   getHiddenColumns,
   InternalFilesFilters,
 } from '@data-exploration-lib/core';
+import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, FileInfo } from '@cognite/sdk';
+
 import { FileNamePreview } from '../FileTable/FileNamePreview';
 
 export const FileSummary = ({

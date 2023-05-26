@@ -1,6 +1,8 @@
-import { Flex, Icon } from '@cognite/cogs.js';
-import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
+
+import { ICellRendererParams } from 'ag-grid-community';
+
+import { Flex, Icon } from '@cognite/cogs.js';
 
 interface FieldNameCellRendererProps extends ICellRendererParams {
   disabled: boolean;

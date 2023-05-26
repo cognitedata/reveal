@@ -1,7 +1,10 @@
 import React, { PropsWithChildren, useCallback, useRef } from 'react';
+
 import styled from 'styled-components';
-import { Body, Button, Colors, Flex, Menu } from '@cognite/cogs.js';
+
 import { Dropdown, DropdownProps } from 'antd';
+
+import { Body, Button, Colors, Flex, Menu } from '@cognite/cogs.js';
 
 export type TableFilterProps = {
   menuTitle?: string;

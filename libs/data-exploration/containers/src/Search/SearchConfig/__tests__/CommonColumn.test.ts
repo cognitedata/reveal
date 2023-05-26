@@ -1,3 +1,4 @@
+import { renderComponent } from '@data-exploration/components';
 import {
   COMMON_COLUMN_HEADER,
   getMockSearchConfig,
@@ -5,7 +6,7 @@ import {
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderComponent } from '@data-exploration/components';
+
 import { CommonColumn } from '../CommonColumn';
 
 const mockData = getMockSearchConfig();

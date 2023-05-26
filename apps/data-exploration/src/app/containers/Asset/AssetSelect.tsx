@@ -1,13 +1,16 @@
 import React, { useMemo, useState } from 'react';
+
+import noop from 'lodash/noop';
+import { useDebounce } from 'use-debounce';
+
+import { Select } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 import {
   useCdfItems,
   useSearch,
   useList,
 } from '@cognite/sdk-react-query-hooks';
-import { useDebounce } from 'use-debounce';
-import { Select } from '@cognite/data-exploration';
-import noop from 'lodash/noop';
+
 // import { Props, OptionTypeBase } from 'react-select';
 
 type AssetInfo = { value: number; name: string };

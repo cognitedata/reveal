@@ -1,23 +1,23 @@
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Body, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
-import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import { Image360SiteData } from '@data-exploration-app/containers/ThreeD/hooks';
-
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import {
   getMainModelSubtitle,
   getMainModelTitle,
   getStateUrl,
 } from '@data-exploration-app/containers/ThreeD/utils';
-import { useNavigate } from 'react-router-dom';
-import { formatTime } from '@cognite/cdf-utilities';
 import {
   Revision3DWithIndex,
   use3DRevisionsQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { formatTime } from '@cognite/cdf-utilities';
+import { Body, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
 
 export const MainThreeDModelMenuItem = ({
   model,

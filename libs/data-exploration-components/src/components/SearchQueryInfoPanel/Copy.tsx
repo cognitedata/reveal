@@ -1,7 +1,9 @@
-import CopyToClipboard from 'react-copy-to-clipboard';
-import isString from 'lodash/isString';
-import { Tooltip } from '@cognite/cogs.js';
 import React from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
+
+import isString from 'lodash/isString';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 interface Props {
   text?: string;

@@ -1,9 +1,10 @@
+import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
 import {
   ListQueryParams,
   ViewInstance,
   ViewReference,
 } from '../../dto/dms-view-dtos';
-import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
+
 import { BaseApiService } from './base-api.service';
 
 export class ViewsApiService extends BaseApiService {

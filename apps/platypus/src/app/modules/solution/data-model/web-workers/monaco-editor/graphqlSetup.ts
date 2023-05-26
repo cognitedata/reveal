@@ -1,13 +1,15 @@
 import { Monaco } from '@monaco-editor/react';
 import { IDisposable, Uri } from 'monaco-editor';
+
 import { config } from '../config';
-import { EditorInstance, WorkerAccessor } from '../types';
 import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';
-import { WorkerManager } from './workerManager';
+import { EditorInstance, WorkerAccessor } from '../types';
+
 import { CodeActionProvider, DiagnosticsAdapter } from './language-features';
-import { DocumentFormattingAdapter } from './language-features/DocumentFormattingAdapter';
 import { CodeCompletionProvider } from './language-features/CodeCompletionProvider';
+import { DocumentFormattingAdapter } from './language-features/DocumentFormattingAdapter';
 import { HoverAdapter } from './language-features/HoverAdapter';
+import { WorkerManager } from './workerManager';
 
 /**
  * File that is used to setup or wire up web worker and all monaco stuff

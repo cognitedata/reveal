@@ -1,5 +1,7 @@
-import { sequences } from '@data-exploration-lib/core';
 import React from 'react';
+
+import { sequences } from '@data-exploration-lib/core';
+
 import { SequenceColumns } from './SequenceColumns';
 
 export default {

@@ -1,7 +1,10 @@
-import { Button } from '@cognite/cogs.js';
-import { SortingState } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { SortingState } from '@tanstack/react-table';
+
+import { Button } from '@cognite/cogs.js';
+
 import { Table } from '../components/table/Table';
 import { Page } from '../containers/page/Page';
 import { useNavigation } from '../hooks/useNavigation';

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+
 import copy from 'copy-to-clipboard';
 
 export interface UseClipboardOptions {

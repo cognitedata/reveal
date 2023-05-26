@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { ResourceDetailsTemplate } from './ResourceDetailsTemplate';
 
 export default {

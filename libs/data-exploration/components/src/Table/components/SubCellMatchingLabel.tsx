@@ -1,8 +1,10 @@
+import styled from 'styled-components';
+
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 import { Cell, Column } from '@tanstack/react-table';
-import isEmpty from 'lodash/isEmpty';
 import has from 'lodash/has';
-import styled from 'styled-components';
+import isEmpty from 'lodash/isEmpty';
+
 import { MatchingLabelsComponent } from './MatchingLabels';
 
 export const SubCellMatchingLabels = <

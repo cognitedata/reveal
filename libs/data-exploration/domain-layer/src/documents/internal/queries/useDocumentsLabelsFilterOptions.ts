@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { InternalDocumentFilter } from '@data-exploration-lib/core';
-
 import omit from 'lodash/omit';
 
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';

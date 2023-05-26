@@ -1,5 +1,6 @@
-import type { CogniteClient } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
+
+import type { CogniteClient } from '@cognite/sdk';
 
 import { SerializedCanvasDocument } from '../types';
 import { FDMClient, gql } from '../utils/FDMClient';

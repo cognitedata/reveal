@@ -1,10 +1,13 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { useQuery } from '@tanstack/react-query';
+
 import { Icon, Tooltip, Menu } from '@cognite/cogs.js';
 import { IdEither, FileInfo } from '@cognite/sdk';
-import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
-import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import styled from 'styled-components';
+import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 
 export function FileDownloadAnchor({
   id,

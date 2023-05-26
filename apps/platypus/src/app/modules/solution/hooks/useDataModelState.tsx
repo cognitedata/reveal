@@ -1,7 +1,9 @@
-import { actions as solutionActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { DataModelVersion } from '@platypus/platypus-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+
+import { DataModelVersion } from '@platypus/platypus-core';
+import { actions as solutionActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
+
 import { SchemaEditorMode } from '../data-model/types';
 
 export const useDataModelState = () => {

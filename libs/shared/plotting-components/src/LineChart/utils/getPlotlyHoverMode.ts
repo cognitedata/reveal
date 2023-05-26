@@ -1,4 +1,5 @@
 import { Layout as PlotlyLayout } from 'plotly.js';
+
 import { HoverMode } from '../types';
 
 export const getPlotlyHoverMode = (

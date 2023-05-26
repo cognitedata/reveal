@@ -1,4 +1,5 @@
 import { Sequence } from '@cognite/sdk';
+
 import { InternalSequenceData } from '../../internal';
 
 export const normalizeSequence = (

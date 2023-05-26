@@ -1,4 +1,5 @@
 import { Button } from '@cognite/cogs.js';
+
 import { RESET } from './constants';
 
 interface Props {

@@ -3,15 +3,15 @@ import { useMemo } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import { Data } from '../../../../LineChart';
-
+import { EMPTY_DATA } from '../../../constants';
+import { DataFetchOptions } from '../../../types';
 import { useTimeseriesDatapointsQuery } from '../../service/queries';
 import {
   mapToChartData,
   mapToTimeseriesDatapointsQuery,
 } from '../transformers';
-import { DataFetchOptions } from '../../../types';
 import { TimeseriesChartQuery } from '../types';
-import { EMPTY_DATA } from '../../../constants';
+
 import { useTimeseriesChartMetadata } from './useTimeseriesChartMetadata';
 
 interface Props {

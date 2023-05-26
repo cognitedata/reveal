@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { BotuiInterface, createBot } from 'botui';
 import {
   BotUI,
   BotUIMessageList,
@@ -8,8 +7,10 @@ import {
   useBotUI,
   // useBotUIAction,
 } from '@botui/react';
-import { Body, Button, Flex, Icon, Textarea, Title } from '@cognite/cogs.js';
+import { BotuiInterface, createBot } from 'botui';
 import styled from 'styled-components/macro';
+
+import { Body, Button, Flex, Icon, Textarea, Title } from '@cognite/cogs.js';
 
 const TextAction = () => {
   const bot = useBotUI(); // current instance

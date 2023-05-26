@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+
 import { isValidUrl, useSearchParamString } from '../url';
 
 const mockFunction = jest.fn();

@@ -1,8 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Sequence } from '@cognite/sdk';
+
 import { PageTitle } from '@cognite/cdf-utilities';
+import { Sequence } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { SequencePreview } from './SequencePreview';
 
 export const SequencePage = () => {

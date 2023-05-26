@@ -1,5 +1,7 @@
-import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
+
 import { PERCENTAGE_VALUES } from '../constants';
 import convertToPercentage from '../utils/convertToPercentage';
 

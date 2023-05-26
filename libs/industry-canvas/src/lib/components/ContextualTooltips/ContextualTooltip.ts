@@ -1,5 +1,6 @@
-import { Body, Colors, Elevations, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body, Colors, Elevations, Icon, Title } from '@cognite/cogs.js';
 
 export const Container = styled.div`
   width: 296px;

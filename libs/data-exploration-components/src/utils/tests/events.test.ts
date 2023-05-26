@@ -1,4 +1,5 @@
 import { CogniteEvent } from '@cognite/sdk';
+
 import { renderTitle } from '../events';
 
 describe('EventsUtils', () => {

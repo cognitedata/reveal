@@ -1,12 +1,11 @@
-import { screen } from '@testing-library/react';
+import { isFDMv3 } from '@platypus-app/flags/isFDMv3';
 import render from '@platypus-app/tests/render';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
-import { isFDMv3 } from '@platypus-app/flags/isFDMv3';
-import { useBetaDataModels } from './hooks/useBetaDataModels';
-
 import { Banner } from './DataModelsPage';
+import { useBetaDataModels } from './hooks/useBetaDataModels';
 
 jest.mock('@platypus-app/flags/isFDMv3');
 jest.mock('./hooks/useBetaDataModels');

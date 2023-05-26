@@ -1,5 +1,6 @@
-import { Button, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 interface Props {
   filterState: boolean;

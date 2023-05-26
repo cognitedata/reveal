@@ -1,7 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
-import { Asset } from '@cognite/sdk';
 
 import {
   EmptyState,
@@ -11,21 +8,26 @@ import {
   Table,
   ThreeDModelCell,
 } from '@data-exploration/components';
-
-import {
-  InternalAssetTreeData,
-  useRootAssetsQuery,
-  useSearchAssetTree,
-} from '@data-exploration-lib/domain-layer';
-import gt from 'lodash/gt';
-import { Icon } from '@cognite/cogs.js';
 import {
   DASH,
   getHiddenColumns,
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  InternalAssetTreeData,
+  useRootAssetsQuery,
+  useSearchAssetTree,
+} from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+import { ExpandedState } from '@tanstack/table-core';
+import gt from 'lodash/gt';
+
+import { Icon } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
+
 import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
+
 import { useRootPath } from './hooks';
 
 const visibleColumns = ['name', 'rootId'];

@@ -1,7 +1,7 @@
 import { editor, Uri } from 'monaco-editor';
 
-import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';
 import { config } from '../config';
+import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';
 import { IFdmGraphQLDmlWorkerOptions } from '../types';
 
 /**

@@ -1,10 +1,11 @@
-import { Arguments, CommandModule } from 'yargs';
-import Table from 'cli-table3';
 import { green } from 'chalk';
+import Table from 'cli-table3';
+import { Arguments, CommandModule } from 'yargs';
+
+import { ROOT_CONFIG_KEY } from '../constants';
 import { BaseArgs } from '../types';
 import { getConfig } from '../utils/config';
 import { DEBUG as _DEBUG } from '../utils/logger';
-import { ROOT_CONFIG_KEY } from '../constants';
 
 const DEBUG = _DEBUG.extend('cmd:status');
 class LoginStatusCommand implements CommandModule {

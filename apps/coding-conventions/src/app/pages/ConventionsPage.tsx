@@ -1,14 +1,15 @@
-import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Header } from '../components/Header/Header';
 
-import { SystemView } from '../containers/system/SystemView';
+import styled from 'styled-components';
+
 import { Drawer } from '../components/Drawer';
-import { ConventionView } from '../containers/convention/ConventionView';
+import { Header } from '../components/Header/Header';
 import { Modal } from '../components/Modal/Modal';
+import { ConventionEdit } from '../containers/convention/ConventionEdit';
 import { ConventionTest } from '../containers/convention/ConventionTest';
 import { ConventionValidation } from '../containers/convention/ConventionValidation';
-import { ConventionEdit } from '../containers/convention/ConventionEdit';
+import { ConventionView } from '../containers/convention/ConventionView';
+import { SystemView } from '../containers/system/SystemView';
 
 interface Props {
   validate?: boolean;

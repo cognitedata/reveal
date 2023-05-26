@@ -1,3 +1,5 @@
+import { MutableRefObject, useCallback, useEffect, useState } from 'react';
+
 import {
   Annotation,
   AnnotationType,
@@ -6,7 +8,6 @@ import {
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import { UnifiedViewerPointerEvent } from '@cognite/unified-file-viewer/dist/core/UnifiedViewerRenderer/UnifiedEventHandler';
-import { MutableRefObject, useCallback, useEffect, useState } from 'react';
 
 const useEditOnSelect = (
   unifiedViewerRef: MutableRefObject<UnifiedViewer | null>,

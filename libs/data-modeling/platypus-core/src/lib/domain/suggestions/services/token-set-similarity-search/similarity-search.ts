@@ -1,5 +1,5 @@
-import { SparseVector } from './types';
 import { TopKHeap } from './heap';
+import { SparseVector } from './types';
 
 interface InvertedListElement {
   vectorId: number;

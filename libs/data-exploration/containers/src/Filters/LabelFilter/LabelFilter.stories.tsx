@@ -1,6 +1,9 @@
-import { OptionType } from '@cognite/cogs.js';
-import { ComponentStory } from '@storybook/react';
 import { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
+import { OptionType } from '@cognite/cogs.js';
+
 import { LabelFilter } from './LabelFilter';
 
 export default {

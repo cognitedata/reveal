@@ -1,3 +1,5 @@
+import isEmpty from 'lodash/isEmpty';
+
 import {
   AggregateResponse,
   CogniteClient,
@@ -5,7 +7,6 @@ import {
   TimeseriesFilter,
 } from '@cognite/sdk';
 
-import isEmpty from 'lodash/isEmpty';
 import { AdvancedFilter } from '../../../builders';
 import { TimeseriesProperties } from '../../internal';
 

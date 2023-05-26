@@ -1,11 +1,14 @@
 import React from 'react';
-import { Divider } from '@cognite/cogs.js';
+
 import {
   FilterIdType,
   getTitle,
   SearchConfigDataType,
   SearchConfigResourceType,
 } from '@data-exploration-lib/core';
+
+import { Divider } from '@cognite/cogs.js';
+
 import { ColumnHeader, CommonWrapper, ModalCheckbox } from './elements';
 
 type Props = {

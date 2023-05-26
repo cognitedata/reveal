@@ -1,5 +1,6 @@
-import { Chip } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+
+import { Chip } from '@cognite/cogs.js';
 
 export const RootAssetLabel = styled.div`
   max-width: 100%;

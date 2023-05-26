@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { useSequencesMetadataKeys } from '@data-exploration-lib/domain-layer';
-
-import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '@data-exploration/components';
+import { useSequencesMetadataKeys } from '@data-exploration-lib/domain-layer';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 
 export const useSequencesMetadataColumns = () => {
   const [query, setQuery] = useState<string>();

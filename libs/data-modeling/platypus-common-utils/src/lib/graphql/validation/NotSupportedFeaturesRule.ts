@@ -13,6 +13,7 @@ import {
   ValidationContext,
 } from 'graphql';
 import { fieldDefinitionApi } from 'graphql-extra';
+
 import { getWhiteListedEnumsAndInputs } from '../utils';
 
 export function NotSupportedFeaturesRule(

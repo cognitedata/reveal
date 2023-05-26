@@ -1,14 +1,11 @@
-import { usePrevious } from '@data-exploration-components/hooks/index';
-import isEqual from 'lodash/isEqual';
 import React, { useState, useEffect } from 'react';
+
 import styled from 'styled-components';
-import { Button, Flex, Input } from '@cognite/cogs.js';
+
 import {
-  ResourceType,
-  ResourceItem,
-  SelectableItemsProps,
-  InitialOldResourceFilterProps,
-} from '@data-exploration-components/types';
+  VerticalDivider,
+  ExplorationFilterToggle,
+} from '@data-exploration/components';
 import {
   Divider,
   ResourceTypeTabs,
@@ -19,11 +16,13 @@ import {
   SearchResults,
   ResourcePreviewSidebar,
 } from '@data-exploration-components/containers';
-
+import { usePrevious } from '@data-exploration-components/hooks/index';
 import {
-  VerticalDivider,
-  ExplorationFilterToggle,
-} from '@data-exploration/components';
+  ResourceType,
+  ResourceItem,
+  SelectableItemsProps,
+  InitialOldResourceFilterProps,
+} from '@data-exploration-components/types';
 import {
   InternalEventsFilters,
   OldSequenceFilters,
@@ -32,6 +31,9 @@ import {
   InternalTimeseriesFilters,
   zIndex,
 } from '@data-exploration-lib/core';
+import isEqual from 'lodash/isEqual';
+
+import { Button, Flex, Input } from '@cognite/cogs.js';
 
 const Wrapper = styled.div`
   display: flex;

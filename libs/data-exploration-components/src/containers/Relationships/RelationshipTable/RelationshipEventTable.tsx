@@ -1,16 +1,18 @@
-import { EventWithRelationshipLabels } from '@data-exploration/containers';
 import React from 'react';
+
 import {
   EmptyState,
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
+import { EventWithRelationshipLabels } from '@data-exploration/containers';
+import { ResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
-import { ResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
+
 import { RelationshipTableProps } from './RelationshipTable';
 
 const {

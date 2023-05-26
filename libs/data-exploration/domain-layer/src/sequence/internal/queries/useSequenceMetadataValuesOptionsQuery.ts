@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
+
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import { UseQueryOptions } from '@tanstack/react-query';
 import omit from 'lodash/omit';
-import { useMemo } from 'react';
+
+import { getAssetSubtreeIdFilter } from '../../../utils';
+import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useSequencesMetadataValuesAggregateQuery } from '../../service';
 import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
-import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
-import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   searchQuery?: string;

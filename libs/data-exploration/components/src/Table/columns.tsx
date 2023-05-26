@@ -1,9 +1,5 @@
-import { Body, Flex, Tooltip } from '@cognite/cogs.js';
-import { DataSet, Asset } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import capitalize from 'lodash/capitalize';
-import uniqueId from 'lodash/uniqueId';
 import React from 'react';
+
 import {
   DASH,
   METADATA_KEY_SEPARATOR,
@@ -11,10 +7,18 @@ import {
   isNumber,
   mapFileType,
 } from '@data-exploration-lib/core';
+import capitalize from 'lodash/capitalize';
+import uniqueId from 'lodash/uniqueId';
+
+import { Body, Flex, Tooltip } from '@cognite/cogs.js';
+import { DataSet, Asset } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { RootAsset } from '../RootAsset';
 import { TimeDisplay } from '../TimeDisplay';
-import { StyledLabel } from './elements';
+
 import { DirectAssets, HighlightCell } from './components';
+import { StyledLabel } from './elements';
 import { ResourceTableHashMap } from './types';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff

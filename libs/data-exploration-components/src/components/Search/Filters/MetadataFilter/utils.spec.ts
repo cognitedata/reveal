@@ -1,5 +1,6 @@
 // eslint-disable-next-line  @typescript-eslint/no-unused-vars
 import React from 'react';
+
 import { mergeUniqueMetadataKeys } from './utils';
 
 describe('@data-exploration-components/utils', () => {

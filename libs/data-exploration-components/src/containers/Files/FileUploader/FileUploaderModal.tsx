@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { FileInfo } from '@cognite/sdk';
-import { Modal } from 'antd';
-import { Button } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { useQueryClient } from '@tanstack/react-query';
+import { Modal } from 'antd';
+
+import { Button } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
 import {
   searchBaseCacheKey,
   listBaseCacheKey,
 } from '@cognite/sdk-react-query-hooks';
+
 import { FileUploader } from './FileUploader';
 
 const Wrapper = styled.div`

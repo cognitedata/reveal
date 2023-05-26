@@ -1,7 +1,8 @@
-import isNumber from 'lodash/isNumber';
 import isDate from 'lodash/isDate';
+import isNumber from 'lodash/isNumber';
 
 import { PlotRange, Data, ValueType } from '../types';
+
 import { getDataAsArray } from './getDataAsArray';
 
 export const getPlotRange = (data: Data | Data[]): PlotRange => {

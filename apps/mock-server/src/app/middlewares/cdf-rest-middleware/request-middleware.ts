@@ -1,10 +1,12 @@
 import { Request } from 'express';
+
 import { CdfApiConfig, CdfMockDatabase } from '../../types';
 import {
   getConfigForUrl,
   getEndpointEnding,
   shouldUrlBeIgnored,
 } from '../../utils';
+
 import {
   isCdfCreateRequest,
   isCdfDeleteRequest,

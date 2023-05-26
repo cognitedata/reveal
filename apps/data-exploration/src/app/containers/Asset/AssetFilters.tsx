@@ -1,24 +1,25 @@
-import { useList } from '@cognite/sdk-react-query-hooks';
+import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 import {
   useAssetFilters,
   useFilterEmptyState,
   useResetAssetFilters,
 } from '@data-exploration-app/store/filter';
-import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import {
-  LabelFilterV2,
-  MetadataFilterV2,
-  SourceFilter,
-} from '@cognite/data-exploration';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import {
   transformNewFilterToOldFilter,
   useAssetsMetadataKeysAggregateQuery,
   useAssetsMetadataValuesAggregateQuery,
   useAssetsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+
+import {
+  LabelFilterV2,
+  MetadataFilterV2,
+  SourceFilter,
+} from '@cognite/data-exploration';
+import { useList } from '@cognite/sdk-react-query-hooks';
 
 export const AssetFilters = ({ ...rest }) => {
   const [assetFilters, setAssetFilters] = useAssetFilters();

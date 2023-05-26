@@ -1,10 +1,13 @@
-import { Body, Input } from '@cognite/cogs.js';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useState } from 'react';
 
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
+
+import { Body, Input } from '@cognite/cogs.js';
+
 import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
-import { TypeDescription } from './TypeDescription';
+
 import * as S from './elements';
+import { TypeDescription } from './TypeDescription';
 
 export type TypeListProps = {
   items?: DataModelTypeDefsType[];

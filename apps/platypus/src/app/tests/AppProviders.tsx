@@ -1,14 +1,16 @@
 import React from 'react';
-
-import { BrowserRouter } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux';
-import { I18nContainer } from '@cognite/react-i18n';
-import { StoreType } from '@platypus-app/redux/store';
-import { ContainerProvider } from 'brandi-react';
-import { rootInjector } from '@platypus-app/di';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+
 import config from '@platypus-app/config/config';
+import { rootInjector } from '@platypus-app/di';
+import { StoreType } from '@platypus-app/redux/store';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ContainerProvider } from 'brandi-react';
+
+import { I18nContainer } from '@cognite/react-i18n';
 import { CogniteClient } from '@cognite/sdk';
+
 import { setCogniteSDKClient } from '../../../src/environments/cogniteSdk';
 
 export type Props = {

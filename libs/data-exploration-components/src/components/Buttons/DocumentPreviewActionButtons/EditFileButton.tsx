@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ResourceItem } from '@cognite/data-exploration';
 export const EditFileButton = ({

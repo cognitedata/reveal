@@ -5,6 +5,7 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
+
 import { InternalDocument } from './documents';
 export interface MatchingLabels {
   exact: string[];

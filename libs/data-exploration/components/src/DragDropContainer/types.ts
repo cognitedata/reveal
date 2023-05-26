@@ -1,10 +1,11 @@
-import { IconProps } from '@cognite/cogs.js';
 import {
   Direction,
   DraggableProvided,
   DropResult,
   ResponderProvided,
 } from 'react-beautiful-dnd';
+
+import { IconProps } from '@cognite/cogs.js';
 
 export interface DragDropContainerProps {
   id: string;

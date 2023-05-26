@@ -1,4 +1,20 @@
 import {
+  Styles,
+  SelectComponentsConfig,
+  components as ReactSelectComponents,
+} from 'react-select';
+
+import { getContainer } from '@platypus-app/GlobalStyles';
+import {
+  ButtonProps,
+  ConjsProps,
+  FieldItems,
+  FieldProps,
+  TextWidgetProps,
+} from '@react-awesome-query-builder/ui';
+import Creatable from 'react-select/creatable';
+
+import {
   Body,
   Button,
   Checkbox,
@@ -10,20 +26,6 @@ import {
   SegmentedControl,
   Select,
 } from '@cognite/cogs.js';
-import { getContainer } from '@platypus-app/GlobalStyles';
-import {
-  ButtonProps,
-  ConjsProps,
-  FieldItems,
-  FieldProps,
-  TextWidgetProps,
-} from '@react-awesome-query-builder/ui';
-import {
-  Styles,
-  SelectComponentsConfig,
-  components as ReactSelectComponents,
-} from 'react-select';
-import Creatable from 'react-select/creatable';
 
 const selectStyles: Partial<Styles> = {
   container: (style) => ({

@@ -1,4 +1,3 @@
-import { Button, Input, Title, Tooltip } from '@cognite/cogs.js';
 import {
   useState,
   useEffect,
@@ -6,7 +5,11 @@ import {
   Dispatch,
   useCallback,
 } from 'react';
+
 import styled from 'styled-components';
+
+import { Button, Input, Title, Tooltip } from '@cognite/cogs.js';
+
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { DEFAULT_CANVAS_NAME } from '../services/IndustryCanvasService';
 

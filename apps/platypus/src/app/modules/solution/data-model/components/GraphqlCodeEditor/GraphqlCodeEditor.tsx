@@ -1,6 +1,9 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+
 import Editor, { Monaco } from '@monaco-editor/react';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { isFDMv3 } from '@platypus-app/flags';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
 import {
@@ -8,16 +11,14 @@ import {
   editor as MonacoEditor,
   MarkerSeverity,
 } from 'monaco-editor';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { isFDMv3 } from '@platypus-app/flags';
-import { setupGraphql } from '../../web-workers';
 
+import { setupGraphql } from '../../web-workers';
 // web workers stuff
 import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader';
 import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
-import { ErrorsByGroup } from './Model';
 
 import { StyledEditor } from './elements';
+import { ErrorsByGroup } from './Model';
 
 const getSampleDataModel = (
   space = 'your-space'

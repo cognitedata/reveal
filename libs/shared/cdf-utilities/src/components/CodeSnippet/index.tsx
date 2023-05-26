@@ -1,5 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
+
 import styled from 'styled-components';
 
 import { CodeEditor, CodeEditorProps, CopyButton } from '..';

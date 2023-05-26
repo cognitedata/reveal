@@ -1,6 +1,5 @@
-import { TOKENS } from '@platypus-app/di';
-import { useFilterBuilderFeatureFlag } from '@platypus-app/flags';
-import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useRef } from 'react';
+
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -10,8 +9,10 @@ import {
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
+import { TOKENS } from '@platypus-app/di';
+import { useFilterBuilderFeatureFlag } from '@platypus-app/flags';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { IDatasource, IGetRowsParams } from 'ag-grid-community';
-import { useRef } from 'react';
 
 import { convertToGraphQlFilters } from '../utils/list-data-source-utils';
 

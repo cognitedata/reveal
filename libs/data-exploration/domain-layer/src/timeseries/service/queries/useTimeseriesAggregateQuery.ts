@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
 
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
+
 import { TimeseriesFilter } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { TimeseriesProperties } from '../../internal';

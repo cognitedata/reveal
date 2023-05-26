@@ -6,8 +6,9 @@ import {
   FilterMode,
   MockData,
 } from '../types';
-import { flattenObjAsArray, isObject } from './data-utils';
+
 import { base64Decode } from '.';
+import { flattenObjAsArray, isObject } from './data-utils';
 
 /**
  * Converts URL pattern used in config

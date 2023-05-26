@@ -1,5 +1,6 @@
 import { KeyValueMap, Logger, ValidationRule } from '@platypus/platypus-core';
 import { Mixpanel } from 'mixpanel';
+
 import { AUTH_CONFIG, AUTH_TYPE, LOGIN_STATUS } from './constants';
 
 export type BaseArgs = {

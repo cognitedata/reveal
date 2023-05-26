@@ -1,10 +1,12 @@
 import { lazy, Suspense } from 'react';
 
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ReleaseBanner } from '@platypus-app/components/ReleaseBanner/ReleaseBanner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { isFDMv3 } from '@platypus-app/flags';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
 import { createLink } from '@cognite/cdf-utilities';
+
 import { useBetaDataModels } from './hooks/useBetaDataModels';
 
 const DataModelsList = lazy(() =>

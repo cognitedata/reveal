@@ -1,5 +1,6 @@
-import { DateRange, Range } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
+
+import { DateRange, Range } from '@cognite/cogs.js';
 
 type CalendarPickerProps = {
   dates: [Date, Date];

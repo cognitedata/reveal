@@ -1,12 +1,15 @@
-import { Loader } from '@data-exploration/components';
 import React from 'react';
-import { Body, DocumentIcon } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+
 import Styled from 'styled-components';
+
+import { Loader } from '@data-exploration/components';
 import {
   InternalDocument,
   useFilePreviewURL,
 } from '@data-exploration-lib/domain-layer';
+
+import { Body, DocumentIcon } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
 
 export const FileThumbnail = ({
   file,

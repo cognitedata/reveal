@@ -1,6 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { ComponentStory } from '@storybook/react';
+
 import { SequenceSummary } from './SequenceSummary';
 
 export default {

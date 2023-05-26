@@ -1,4 +1,3 @@
-import { InputControlProps, InputType } from '../../types';
 import {
   NumericRangeInput,
   DateTimeInput,
@@ -7,6 +6,7 @@ import {
   TextInput,
   NumberInput,
 } from '../../components';
+import { InputControlProps, InputType } from '../../types';
 
 export interface CommonFilterInputProps<T extends InputType>
   extends InputControlProps<T> {

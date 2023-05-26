@@ -1,11 +1,11 @@
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { transformNewFilterToOldFilter } from '../../../transformers';
-
 import { AssetsProperties } from '../../internal';
 import { getAssetsUniqueValuesByProperty } from '../network';
 import { AssetProperty } from '../types';

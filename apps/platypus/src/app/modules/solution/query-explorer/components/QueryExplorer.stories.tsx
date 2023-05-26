@@ -1,3 +1,4 @@
+import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import {
   Wrapper,
   MainTitle,
@@ -6,9 +7,9 @@ import {
   Group,
 } from '@platypus-app/components/Styles/storybook';
 import configureStory from '@platypus-app/tests/configureStorybook';
-import { createGraphiQLFetcher } from '@graphiql/toolkit';
 
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
+
 import { FETCHER_API, DEFAULT_QUERY } from './query-explorer.mock';
 import { QueryExplorer } from './QueryExplorer';
 

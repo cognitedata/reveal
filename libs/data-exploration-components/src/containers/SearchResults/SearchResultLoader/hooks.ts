@@ -1,5 +1,12 @@
 import { useMemo } from 'react';
+
+import { isDateInDateRange } from '@data-exploration-lib/core';
+import {
+  transformNewFilterToOldFilter,
+  useTimeseriesWithDatapointsQuery,
+} from '@data-exploration-lib/domain-layer';
 import flatten from 'lodash/flatten';
+
 import {
   FileInfo,
   Asset,
@@ -12,12 +19,6 @@ import {
   useInfiniteSearch,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
-
-import {
-  transformNewFilterToOldFilter,
-  useTimeseriesWithDatapointsQuery,
-} from '@data-exploration-lib/domain-layer';
-import { isDateInDateRange } from '@data-exploration-lib/core';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 

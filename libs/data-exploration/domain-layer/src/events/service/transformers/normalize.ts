@@ -1,4 +1,5 @@
 import { CogniteEvent } from '@cognite/sdk';
+
 import { InternalEventsData } from '../../internal';
 
 export const normalizeEvents = (

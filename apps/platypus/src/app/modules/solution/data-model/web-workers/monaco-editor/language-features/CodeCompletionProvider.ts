@@ -1,4 +1,5 @@
 import { editor, languages, Position } from 'monaco-editor';
+
 import { WorkerAccessor } from '../../types';
 
 import CompletionItemProvider = languages.CompletionItemProvider;

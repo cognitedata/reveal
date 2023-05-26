@@ -1,3 +1,4 @@
+import { systemFixtures, conventionFixtures } from '../../__fixtures/general';
 import { Convention } from '../../types';
 import {
   backTrackingIsValid,
@@ -5,7 +6,6 @@ import {
   getConventionsWithSeperators,
   validate,
 } from '../validation';
-import { systemFixtures, conventionFixtures } from '../../__fixtures/general';
 
 describe('backtracking Validation', () => {
   const system = systemFixtures.find((item) => item.id === '123');

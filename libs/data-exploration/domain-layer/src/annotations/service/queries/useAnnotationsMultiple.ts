@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
+
 import { AnnotationModel } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 
 type PagedFileReference = {

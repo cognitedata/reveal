@@ -1,16 +1,19 @@
-import { CogDataList } from '@cognite/cog-data-grid';
-import { Button, Input, Flex } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { AgGridReact } from 'ag-grid-react';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
 } from '@platypus/platypus-core';
-import { GridReadyEvent } from 'ag-grid-community';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useDebounce } from '@platypus-app/hooks/useDebounce';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { GridReadyEvent } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+import { CogDataList } from '@cognite/cog-data-grid';
+import { Button, Input, Flex } from '@cognite/cogs.js';
+
 import { useNestedListDataSource } from '../../../hooks/useNestedListDataSource';
 import { usePreviewData } from '../../../hooks/usePreviewData';
 

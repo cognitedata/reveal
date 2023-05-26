@@ -1,8 +1,9 @@
+import { UploadFile } from 'antd/lib/upload/interface';
+import noop from 'lodash/noop';
+
 /*eslint-disable @typescript-eslint/ban-ts-comment*/
 // @ts-ignore the types are missing for this forked lib, that's why the "ts-ignore" here
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { UploadFile } from 'antd/lib/upload/interface';
-import noop from 'lodash/noop';
 
 export const GCSUploader = (
   file: Blob | UploadFile,

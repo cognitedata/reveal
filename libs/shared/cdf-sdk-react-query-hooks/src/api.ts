@@ -1,4 +1,5 @@
 import { AggregateResponse, CogniteClient } from '@cognite/sdk';
+
 import { SdkResourceType } from './hooks';
 
 export const post = (sdk: CogniteClient, path: string, data: any) =>

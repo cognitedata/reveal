@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Coordinate } from '../../types';
+
 import { Line } from './elements';
 
 export interface HoverLineProps {

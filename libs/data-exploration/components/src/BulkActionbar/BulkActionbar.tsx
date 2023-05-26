@@ -1,7 +1,10 @@
-import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
+import React from 'react';
+
 import { EMPTY_ARRAY, useDialog } from '@data-exploration-lib/core';
 import { capitalize } from 'lodash';
-import React from 'react';
+
+import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
+
 import { Bar, Separator, Subtitle, Wrapper, Title } from './elements';
 
 export interface BulkActionbarOptions {

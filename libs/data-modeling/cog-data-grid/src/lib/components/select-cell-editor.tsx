@@ -1,7 +1,10 @@
-import { OptionType, Select } from '@cognite/cogs.js';
-import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import { Component } from 'react';
+
 import styled from 'styled-components';
+
+import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
+
+import { OptionType, Select } from '@cognite/cogs.js';
 
 type Option = OptionType<any>;
 

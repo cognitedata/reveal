@@ -1,5 +1,5 @@
-import { useInjection as useBrandiInjection } from 'brandi-react';
 import { TokenValue, TokenType } from 'brandi';
+import { useInjection as useBrandiInjection } from 'brandi-react';
 
 // Just a wrapper arround brandi hook
 // To avoid direct dependency to the third party hook

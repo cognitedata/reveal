@@ -1,24 +1,25 @@
-import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { Tabs } from '@cognite/cogs.js';
-import {
-  SequencePreview as SequenceTabPreview,
-  ErrorFeedback,
-} from '@cognite/data-exploration';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { CogniteError, Sequence } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
+import { Loader, Metadata } from '@data-exploration/components';
+import { SequenceInfo } from '@data-exploration/containers';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import { SequenceInfo } from '@data-exploration/containers';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
+import { Tabs } from '@cognite/cogs.js';
+import {
+  SequencePreview as SequenceTabPreview,
+  ErrorFeedback,
+} from '@cognite/data-exploration';
+import { CogniteError, Sequence } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export type SequencePreviewType =
   | 'details'

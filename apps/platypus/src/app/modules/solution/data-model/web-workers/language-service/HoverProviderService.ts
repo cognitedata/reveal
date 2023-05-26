@@ -7,6 +7,7 @@ import {
   DataModelTypeDefsType,
   DirectiveProps,
 } from '@platypus/platypus-core';
+
 import { DOCUMENTATION_LINK } from './constants';
 import { HoverItem, LocationTypesMap } from './types';
 

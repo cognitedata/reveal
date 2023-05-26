@@ -1,8 +1,9 @@
 import React from 'react';
-import { Asset } from '@cognite/sdk';
 
-import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 import { GeneralDetails, TimeDisplay } from '@data-exploration/components';
+import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
+
+import { Asset } from '@cognite/sdk';
 
 type Props = {
   asset: Asset;

@@ -15,6 +15,7 @@ import {
   fdmInstancesMockData,
   fdmDataModelsMockData,
 } from '@fusion/mock-data';
+
 import { MockData } from './app/types';
 
 export const mockDataSample = {

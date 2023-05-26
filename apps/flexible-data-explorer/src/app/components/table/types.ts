@@ -1,5 +1,6 @@
-import { Asset, CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, CogniteEvent } from '@cognite/sdk';
 
 type TableColumnDef = ColumnDef<any, any>;
 

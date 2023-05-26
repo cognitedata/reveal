@@ -2,8 +2,9 @@ import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
-import { openInCharts } from '../../utils/openInCharts';
 import { DateRange } from '../../types';
+import { openInCharts } from '../../utils/openInCharts';
+
 import { ButtonWrapper } from './elements';
 
 export interface OpenInChartsButtonProps {

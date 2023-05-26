@@ -1,5 +1,9 @@
-import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
+
+import styled from 'styled-components';
+
+import { ComponentStory } from '@storybook/react';
+
 import {
   EventFilter,
   AssetFilterProps,
@@ -7,8 +11,9 @@ import {
   FileFilterProps,
   SequenceFilter,
 } from '@cognite/sdk';
-import styled from 'styled-components';
+
 import { Wrapper } from '../../docs/utils';
+
 import { SearchFilters } from './SearchFilters';
 
 export default {

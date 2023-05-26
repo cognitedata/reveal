@@ -1,5 +1,7 @@
-import { ComponentStory } from '@storybook/react';
 import React from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
 import { InfoGrid, InfoCell } from './InfoGrid';
 
 export default {

@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { timeseries } from '@data-exploration-components/stubs/timeseries';
+
 import { TimeseriesSmallPreview } from './TimeseriesSmallPreview';
 
 export default {

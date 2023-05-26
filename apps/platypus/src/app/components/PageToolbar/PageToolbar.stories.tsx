@@ -1,6 +1,9 @@
 import React from 'react';
+
 import { Story } from '@storybook/react';
+
 import { Button } from '@cognite/cogs.js';
+
 import { PageToolbar, Size } from './PageToolbar';
 
 export default {

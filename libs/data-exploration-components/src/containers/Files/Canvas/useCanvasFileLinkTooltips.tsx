@@ -1,18 +1,20 @@
-import { Button } from '@cognite/cogs.js';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+import React, { useMemo } from 'react';
+
 import { TooltipContainer } from '@data-exploration-components/containers/Files/Canvas/TooltipContainer';
+import {
+  PagedFileReference,
+  useCanvasFilesFromUrl,
+} from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import {
   getFileIdFromExtendedAnnotation,
   getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
-import {
-  PagedFileReference,
-  useCanvasFilesFromUrl,
-} from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import React, { useMemo } from 'react';
+
+import { Button } from '@cognite/cogs.js';
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];

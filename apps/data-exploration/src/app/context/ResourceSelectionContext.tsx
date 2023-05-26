@@ -1,4 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
+
+import noop from 'lodash/noop';
+
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 import {
   AssetFilterProps,
@@ -7,7 +10,6 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
-import noop from 'lodash/noop';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
 export type ResourceItemState = ResourceItem & {

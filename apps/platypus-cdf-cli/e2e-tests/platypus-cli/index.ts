@@ -1,4 +1,5 @@
 import { CONSTANTS } from '@cognite/platypus-cdf-cli/app/constants';
+
 import { Run } from './process';
 
 const runCommand = async (...args) => {

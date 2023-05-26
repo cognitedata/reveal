@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
+
 import { CdfDatabaseService } from '../../../common/cdf-database.service';
 import { config } from '../../../config';
 import { CdfMockDatabase, CdfResourceObject } from '../../../types';
@@ -10,8 +11,9 @@ import {
   isObjectContainingPrimitiveValues,
   objToFilter,
 } from '../../../utils';
-import { camelize } from '../../../utils/text-utils';
 import { longScalar } from '../../../utils/graphql/custom-scalars';
+import { camelize } from '../../../utils/text-utils';
+
 import {
   assetFieldsResolver,
   synteticTimeSeriesFieldsResolver,

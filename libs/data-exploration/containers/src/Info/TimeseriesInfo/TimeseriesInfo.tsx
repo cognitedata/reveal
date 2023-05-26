@@ -1,7 +1,9 @@
 import React from 'react';
-import { Timeseries } from '@cognite/sdk';
 
 import { GeneralDetails, TimeDisplay } from '@data-exploration/components';
+
+import { Timeseries } from '@cognite/sdk';
+
 import { TimeseriesLastReading } from '../../Timeseries';
 
 export function TimeseriesInfo({ timeseries }: { timeseries: Timeseries }) {

@@ -1,10 +1,10 @@
+import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import {
   COMMON_INFO_CONTENT,
   FilterProps,
   isObjectEmpty,
 } from '@data-exploration-lib/core';
-import { BaseFilterCollapse } from '@data-exploration/components'; //??
-import { TempMultiSelectFix } from '../elements';
+
 import {
   AssetSelectFilter,
   DataSetFilter,
@@ -12,6 +12,7 @@ import {
   ExternalIdFilter,
   InternalIdFilter,
 } from '../../../Filters';
+import { TempMultiSelectFix } from '../elements';
 
 export const CommonFilters: React.FC<FilterProps> = ({
   filter,

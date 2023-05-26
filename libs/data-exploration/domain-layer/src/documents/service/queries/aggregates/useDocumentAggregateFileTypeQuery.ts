@@ -1,4 +1,5 @@
 import { mapAggregatesToFilters } from '../../transformers/mapAggregatesToFilters';
+
 import { useDocumentTotalAggregates } from './useDocumentTotalAggregates';
 
 export const useDocumentAggregateFileTypeQuery = () => {

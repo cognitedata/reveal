@@ -1,6 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Title } from '@cognite/cogs.js';
+
 import {
   AssetItem,
   AssetsItem,

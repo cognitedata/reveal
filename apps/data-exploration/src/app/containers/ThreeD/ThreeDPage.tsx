@@ -1,6 +1,8 @@
-import { useSearchParamString } from '@data-exploration-lib/core';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+
+import { useSearchParamString } from '@data-exploration-lib/core';
+
 import { ThreeDContextProvider } from './ThreeDContext';
 import { ThreeDView } from './ThreeDView';
 

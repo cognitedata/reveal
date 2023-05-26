@@ -1,5 +1,7 @@
-import { Button, Chip, ChipGroup, Dropdown } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Button, Chip, ChipGroup, Dropdown } from '@cognite/cogs.js';
+
 import { useTranslation } from '../../hooks/useTranslation';
 
 import { Filter } from './Filter';

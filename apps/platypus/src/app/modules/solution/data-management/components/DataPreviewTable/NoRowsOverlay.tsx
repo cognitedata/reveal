@@ -1,14 +1,15 @@
-import { Body, Button, Title } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   useManualPopulationFeatureFlag,
   useTransformationsFeatureFlag,
 } from '@platypus-app/flags';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Body, Button, Title } from '@cognite/cogs.js';
 
 import { useDraftRows } from '../../hooks/useDraftRows';
-
-import { BulkPopulationButton } from '../BulkPopulationButton';
 import useTransformations from '../../hooks/useTransformations';
+import { BulkPopulationButton } from '../BulkPopulationButton';
+
 import * as S from './elements';
 
 export type NoRowsOverlayProps = {

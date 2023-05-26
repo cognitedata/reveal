@@ -1,5 +1,6 @@
-import noop from 'lodash/noop';
 import { Story } from '@storybook/react';
+import noop from 'lodash/noop';
+
 import {
   CreateNewSpaceModal,
   CreateNewSpaceModalProps,

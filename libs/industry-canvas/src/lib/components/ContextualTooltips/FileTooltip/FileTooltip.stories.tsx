@@ -1,8 +1,9 @@
+import { ComponentStory } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { SDKProvider } from '@cognite/sdk-provider';
 import { FileInfo, CogniteClient } from '@cognite/sdk';
-import { ComponentStory } from '@storybook/react';
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import FileTooltip from './FileTooltip';
 
 export default {

@@ -1,18 +1,20 @@
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
-import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import config from '@platypus-app/config/config';
+import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
+import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
+import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+
+import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
+
 import { DiscardButton, ReturnButton } from './elements';
 
 export interface DataModelHeaderProps {

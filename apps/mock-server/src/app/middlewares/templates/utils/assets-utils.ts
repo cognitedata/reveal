@@ -1,5 +1,5 @@
-import { CdfMockDatabase, CdfResourceObject } from '../../../types';
 import { CdfDatabaseService } from '../../../common/cdf-database.service';
+import { CdfMockDatabase, CdfResourceObject } from '../../../types';
 import { filterCollection, objToFilter } from '../../../utils';
 
 export const findAssetParent = (

@@ -1,7 +1,6 @@
 import isUndefined from 'lodash/isUndefined';
 
 import { ValueType } from '../../../../LineChart';
-
 import { TimeseriesDatapoint } from '../../service/types';
 
 export const getDatapointValue = (

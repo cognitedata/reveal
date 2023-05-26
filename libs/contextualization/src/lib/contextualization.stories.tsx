@@ -1,4 +1,5 @@
 import type { ComponentStory, ComponentMeta } from '@storybook/react';
+
 import { Contextualization } from './contextualization';
 
 const Story: ComponentMeta<typeof Contextualization> = {

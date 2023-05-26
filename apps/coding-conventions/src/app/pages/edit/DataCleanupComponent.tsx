@@ -1,9 +1,12 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { memoize } from 'lodash';
 import React, { useEffect } from 'react';
 import { useTable } from 'react-table';
+
 import styled from 'styled-components';
+
+import { memoize } from 'lodash';
+
 import { getCellById, handleOnPasteEvent, pasteShiftV } from './helpers';
 import { PasteDelimiter, SelectPasteFormat } from './SelectPasteFormat';
 

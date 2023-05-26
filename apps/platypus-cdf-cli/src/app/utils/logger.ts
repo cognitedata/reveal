@@ -1,6 +1,7 @@
 import { Logger } from '@platypus/platypus-core';
 import chalk from 'chalk';
 import _debug from 'debug';
+
 import { CONSTANTS } from '../constants';
 
 export const DEBUG = _debug(CONSTANTS.APP_ID);

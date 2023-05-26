@@ -1,3 +1,13 @@
+import { useEffect, useState } from 'react';
+
+import {
+  DataModelVersion,
+  DataModelVersionStatus,
+} from '@platypus/platypus-core';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+
 import {
   Flex,
   Body,
@@ -7,15 +17,7 @@ import {
   Chip,
   Tooltip,
 } from '@cognite/cogs.js';
-import {
-  DataModelVersion,
-  DataModelVersionStatus,
-} from '@platypus/platypus-core';
-import { useEffect, useState } from 'react';
 
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { DropdownButton, LastTimeText } from './elements';
 
 type Props = {

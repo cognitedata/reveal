@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { Story } from '@storybook/react';
 import noop from 'lodash/noop';
+
 import { ReleaseBanner } from './ReleaseBanner';
 
 export default {

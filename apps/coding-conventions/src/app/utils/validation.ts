@@ -1,4 +1,5 @@
 import toRegexRange from 'to-regex-range';
+
 import {
   Convention,
   System,
@@ -7,6 +8,7 @@ import {
   TagRange,
   TagRegex,
 } from '../types';
+
 import { validateDataMap } from './validateDataMap';
 
 export type BackTrackInterface = {

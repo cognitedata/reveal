@@ -1,6 +1,6 @@
-import { CogniteClient } from '@cognite/sdk';
-
 import isEmpty from 'lodash/isEmpty';
+
+import { CogniteClient } from '@cognite/sdk';
 
 import { TimeseriesDatapoint, TimeseriesDatapointsQuery } from '../types';
 

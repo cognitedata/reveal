@@ -1,12 +1,13 @@
 import * as React from 'react';
 
+import head from 'lodash/head';
+
 import {
   AggregatedFilterV2,
   extractSources,
   MultiSelectFilter,
 } from '@cognite/data-exploration';
 
-import head from 'lodash/head';
 import { OptionValue } from '../types';
 
 export interface SourceFilterProps<T extends { source?: string }> {

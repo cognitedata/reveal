@@ -1,4 +1,5 @@
 import { Body, Modal } from '@cognite/cogs.js';
+
 import { SerializedCanvasDocument } from '../types';
 
 type CanvasDeletionModalProps = {

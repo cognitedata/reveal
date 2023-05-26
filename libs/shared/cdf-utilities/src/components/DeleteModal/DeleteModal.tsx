@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Button, ButtonProps, Checkbox } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Button, ButtonProps, Checkbox } from '@cognite/cogs.js';
 
 import Modal, { ModalProps } from '../Modal/Modal';
 

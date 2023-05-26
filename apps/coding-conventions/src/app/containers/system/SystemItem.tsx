@@ -1,5 +1,7 @@
-import { Body, Detail, Icon, Title as CogsTitle } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body, Detail, Icon, Title as CogsTitle } from '@cognite/cogs.js';
+
 import { Card } from '../../components/Card';
 import { Resource } from '../../types';
 

@@ -1,9 +1,14 @@
+import { useEffect, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { invert } from 'lodash';
+
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ToolType } from '@cognite/unified-file-viewer';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { invert } from 'lodash';
+
 import { StickyButton } from '../StickyButton';
+
 import ToolTooltip from './ToolTooltip';
 
 export type ToolbarComponentProps = {

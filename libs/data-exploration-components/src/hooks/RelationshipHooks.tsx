@@ -1,17 +1,18 @@
-import {
-  useCdfItems,
-  useAggregate,
-  useInfiniteList,
-  useCdfItem,
-  usePermissions,
-} from '@cognite/sdk-react-query-hooks';
+import { useEffect, useContext, useMemo, useState } from 'react';
+
 import {
   ResourceType,
   ResourceItem,
   convertResourceType,
 } from '@data-exploration-components/types';
+import { AppContext, TaggedAnnotation } from '@data-exploration-lib/core';
+import {
+  useAnnotations,
+  useDocumentFilteredAggregateCount,
+} from '@data-exploration-lib/domain-layer';
+import flatten from 'lodash/flatten';
+import uniqueBy from 'lodash/uniqBy';
 
-import { useEffect, useContext, useMemo, useState } from 'react';
 import {
   ExternalId,
   Asset,
@@ -20,13 +21,14 @@ import {
   Timeseries,
   FileInfo,
 } from '@cognite/sdk';
-import flatten from 'lodash/flatten';
-import uniqueBy from 'lodash/uniqBy';
-import { AppContext, TaggedAnnotation } from '@data-exploration-lib/core';
 import {
-  useAnnotations,
-  useDocumentFilteredAggregateCount,
-} from '@data-exploration-lib/domain-layer';
+  useCdfItems,
+  useAggregate,
+  useInfiniteList,
+  useCdfItem,
+  usePermissions,
+} from '@cognite/sdk-react-query-hooks';
+
 import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/Annotations';
 import {
   getResourceExternalIdFromTaggedAnnotation,

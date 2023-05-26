@@ -1,14 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 
 import {
-  InternalDocument,
-  TableSortBy,
-  getChatCompletions,
-  useDocumentSearchResultWithMatchingLabelsQuery,
-  useDocumentFilteredAggregateCount,
-} from '@data-exploration-lib/domain-layer';
-import { Asset, FileInfo } from '@cognite/sdk';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+  UploadButton,
+  VerticalDivider,
+  TableProps,
+} from '@data-exploration/components';
 import {
   AppContext,
   CLOSE_DROPDOWN_EVENT,
@@ -16,16 +12,22 @@ import {
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-
 import {
-  UploadButton,
-  VerticalDivider,
-  TableProps,
-} from '@data-exploration/components';
+  InternalDocument,
+  TableSortBy,
+  getChatCompletions,
+  useDocumentSearchResultWithMatchingLabelsQuery,
+  useDocumentFilteredAggregateCount,
+} from '@data-exploration-lib/domain-layer';
+
+import { Asset, FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
+
 import { DocumentsTable } from './DocumentsTable';
 import { DocumentUploaderModal } from './DocumentUploader';
 

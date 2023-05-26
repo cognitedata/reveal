@@ -1,4 +1,7 @@
 import styled from 'styled-components';
+
+import { TimeDisplay } from '@data-exploration/components';
+
 import { Flex, Icon, Chip } from '@cognite/cogs.js';
 import { Asset, CogniteClient } from '@cognite/sdk';
 import {
@@ -6,7 +9,6 @@ import {
   TableItem,
   TableContainerProps,
 } from '@cognite/unified-file-viewer';
-import { TimeDisplay } from '@data-exploration/components';
 
 const getAsset = async (
   client: CogniteClient,

@@ -1,4 +1,15 @@
 import React, { useState, Suspense, useMemo, useEffect } from 'react';
+
+import styled from 'styled-components';
+
+import {
+  DragDropContainer,
+  DragHandleIcon,
+  WithDragHandleProps,
+} from '@data-exploration/components';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
 import {
   Button,
   Checkbox,
@@ -11,16 +22,6 @@ import {
   Detail,
   Body,
 } from '@cognite/cogs.js';
-
-import styled from 'styled-components';
-
-import {
-  DragDropContainer,
-  DragHandleIcon,
-  WithDragHandleProps,
-} from '@data-exploration/components';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export type ColumnToggleType = {
   label: string;

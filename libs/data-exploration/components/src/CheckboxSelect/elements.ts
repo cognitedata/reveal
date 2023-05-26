@@ -1,5 +1,6 @@
-import { Flex, Icon, Chip, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+
+import { Flex, Icon, Chip, Menu } from '@cognite/cogs.js';
 
 export const FilterButtonText = styled.span`
   margin-right: auto;

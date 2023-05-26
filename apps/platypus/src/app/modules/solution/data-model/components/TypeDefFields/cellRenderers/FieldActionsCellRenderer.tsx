@@ -1,6 +1,8 @@
+import React from 'react';
+
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import { ICellRendererParams } from 'ag-grid-community';
-import React from 'react';
+
 import { DeleteFieldButton } from '../elements';
 
 export interface FieldActionsCellRendererProps extends ICellRendererParams {

@@ -1,4 +1,5 @@
 import { DataUtils } from '@platypus-core/boundaries/utils/data-utils';
+
 import { PlatypusError } from '../../../../boundaries/types/platypus-error';
 import { IGraphQlUtilsService } from '../../boundaries';
 import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
@@ -46,6 +47,7 @@ import {
 } from '../../types';
 import { compareDataModelVersions } from '../../utils';
 import { ListSpacesDTO } from '../fdm-next/dto/dms-space-dtos';
+
 import {
   DataModelDataMapper,
   DataModelVersionDataMapper,

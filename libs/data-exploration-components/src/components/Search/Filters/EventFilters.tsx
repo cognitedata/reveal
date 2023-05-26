@@ -1,15 +1,6 @@
 import React from 'react';
 
-import { useList } from '@cognite/sdk-react-query-hooks';
-
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-
-import {
-  COMMON_INFO_CONTENT,
-  InternalEventsFilters,
-  isObjectEmpty,
-  SPECIFIC_INFO_CONTENT,
-} from '@data-exploration-lib/core';
+import { BaseFilterCollapse } from '@data-exploration/components';
 import {
   AggregatedEventFilterV2,
   ByAssetFilterV2,
@@ -19,7 +10,16 @@ import {
   SourceFilter,
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
-import { BaseFilterCollapse } from '@data-exploration/components';
+import {
+  COMMON_INFO_CONTENT,
+  InternalEventsFilters,
+  isObjectEmpty,
+  SPECIFIC_INFO_CONTENT,
+} from '@data-exploration-lib/core';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 
 export const EventFilters = ({

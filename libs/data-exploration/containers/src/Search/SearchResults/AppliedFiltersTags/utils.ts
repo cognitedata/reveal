@@ -1,12 +1,14 @@
-import { formatDate } from '@cognite/cogs.js';
-import { DateRange, Metadata } from '@cognite/sdk';
-import startCase from 'lodash/startCase';
-import isObject from 'lodash/isObject';
+import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
 import {
   NIL_FILTER_VALUE,
   NIL_FILTER_LABEL,
 } from '@data-exploration-lib/domain-layer';
-import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
+import isObject from 'lodash/isObject';
+import startCase from 'lodash/startCase';
+
+import { formatDate } from '@cognite/cogs.js';
+import { DateRange, Metadata } from '@cognite/sdk';
+
 import { CUSTOM_FILTER_TITLE } from './constants';
 
 export const getTitle = (input: string) => {

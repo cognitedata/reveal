@@ -1,5 +1,7 @@
 import { PropsWithChildren } from 'react';
+
 import styled, { css } from 'styled-components';
+
 import { WidgetBody } from './components/WidgetBody';
 import { WidgetHeader } from './components/WidgetHeader';
 

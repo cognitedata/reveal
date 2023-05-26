@@ -1,8 +1,8 @@
+import { StringInput, StringInputProps } from '@data-exploration/components';
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebouncedMetrics,
 } from '@data-exploration-lib/core';
-import { StringInput, StringInputProps } from '@data-exploration/components';
 
 export const ExternalIdFilter = ({ onChange, ...rest }: StringInputProps) => {
   const trackUsage = useDebouncedMetrics();

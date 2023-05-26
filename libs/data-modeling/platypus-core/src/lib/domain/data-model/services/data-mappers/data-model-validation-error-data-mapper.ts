@@ -1,9 +1,8 @@
-import { DataModelTypeDefs, DataModelValidationError } from '../../types';
-
 import {
   ValidateDataModelBreakingChangeInfoDTO,
   ValidateDataModelDTO,
 } from '../../dto';
+import { DataModelTypeDefs, DataModelValidationError } from '../../types';
 
 interface ErrorTypeInfo {
   typeName: string;

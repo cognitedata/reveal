@@ -1,5 +1,7 @@
 import { useState } from 'react';
+
 import { Checkbox, Modal } from '@cognite/cogs.js';
+
 import { useTranslation } from '../../../../../hooks/useTranslation';
 
 export const DeleteRowsModal = ({

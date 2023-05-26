@@ -1,5 +1,5 @@
-import isNumber from 'lodash/isNumber';
 import isInteger from 'lodash/isInteger';
+import isNumber from 'lodash/isNumber';
 
 export type DecimalValueFormatterProps = {
   value: number;

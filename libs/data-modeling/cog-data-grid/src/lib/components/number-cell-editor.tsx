@@ -1,6 +1,9 @@
-import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import { ChangeEvent, Component, createRef } from 'react';
+
+import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
+
 import { decimalValueFormatter } from '../core/utils';
+
 import { CellEditorWrapper } from './ui';
 
 interface NumberColTypeCellEditorState {

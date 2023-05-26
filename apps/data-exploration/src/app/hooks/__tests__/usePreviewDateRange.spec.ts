@@ -1,12 +1,13 @@
-import { renderHook, act } from '@testing-library/react-hooks';
 import { TIME_SELECT } from '@data-exploration-components/containers';
-import { useDateRange } from '../storage/useDateRange';
-import { usePreviewDateRange } from '../storage/usePreviewDateRange';
+import { renderHook, act } from '@testing-library/react-hooks';
+
 import {
   TIMESERIES_TABLE_DATE_RANGE_KEY,
   TIMESERIES_PREVIEW_DATE_RANGE_KEY,
 } from '../../utils/constants';
 import * as URLUtils from '../../utils/URLUtils';
+import { useDateRange } from '../storage/useDateRange';
+import { usePreviewDateRange } from '../storage/usePreviewDateRange';
 
 const TEST_DATE_RANGE = [
   '2021-03-07T12:11:17.000Z',

@@ -1,11 +1,15 @@
-import { Button, Flex, Chip, Modal } from '@cognite/cogs.js';
-import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
-import { ICellRendererParams } from 'ag-grid-community';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
+
+import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
 import { useGraphViewerFeatureFlag } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { ICellRendererParams } from 'ag-grid-community';
+
+import { Button, Flex, Chip, Modal } from '@cognite/cogs.js';
+
 import { RelationViewer } from '../../RelationViewer/RelationViewer';
 import { getNodeId } from '../../RelationViewer/utils';
 

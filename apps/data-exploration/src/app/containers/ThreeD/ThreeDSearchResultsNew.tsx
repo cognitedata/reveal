@@ -1,6 +1,11 @@
 import React from 'react';
-import { Loader } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import {
+  DEFAULT_VISIBILITY,
+  FileTypeToggle,
+} from '@data-exploration/components';
 import { ThreeDTable } from '@data-exploration/containers';
 import {
   FileTypeVisibility,
@@ -10,11 +15,9 @@ import {
   Model3DWithType,
   use3DResults,
 } from '@data-exploration-lib/domain-layer';
-import {
-  DEFAULT_VISIBILITY,
-  FileTypeToggle,
-} from '@data-exploration/components';
 import useLocalStorageState from 'use-local-storage-state';
+
+import { Loader } from '@cognite/cogs.js';
 
 const ID = '3d-model-table';
 

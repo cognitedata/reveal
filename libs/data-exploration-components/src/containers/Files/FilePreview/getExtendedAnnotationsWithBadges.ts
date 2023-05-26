@@ -1,6 +1,8 @@
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
 import { Colors } from '@cognite/cogs.js';
 import { Annotation, AnnotationType } from '@cognite/unified-file-viewer';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
 import { isSuggestedAnnotation } from './migration/utils';
 
 const getExtendedAnnotationsWithBadges = (

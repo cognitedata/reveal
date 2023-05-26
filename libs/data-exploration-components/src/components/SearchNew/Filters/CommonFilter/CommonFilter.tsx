@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { ResourceType } from '@data-exploration-components/types';
+
 import { BaseFilterCollapse } from '../BaseFilterCollapse/BaseFilterCollapse';
 import { DateFilterV2 } from '../DateFilter/DateFilter';
 // import { MetadataFilter } from '../MetadataFilter/MetadataFilter';

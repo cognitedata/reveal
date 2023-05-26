@@ -1,5 +1,6 @@
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse';
 import { Convention } from '../../types';
+
 import { ConventionItem } from './ConventionItem';
 import { Content } from './elements';
 

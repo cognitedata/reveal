@@ -4,6 +4,7 @@ import {
   TICK_LABEL_PADDING,
 } from '../constants';
 import { Layout } from '../types';
+
 import { getBooleanFromAxisDirection } from './getBooleanFromAxisDirection';
 import { getMaxYTickLength } from './getMaxYTickLength';
 

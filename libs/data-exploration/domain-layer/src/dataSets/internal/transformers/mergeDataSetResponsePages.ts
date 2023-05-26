@@ -1,4 +1,5 @@
 import { InfiniteData } from '@tanstack/react-query';
+
 import { DataSetInternal } from '../types';
 
 export const mergeDataSetResponsePages = (

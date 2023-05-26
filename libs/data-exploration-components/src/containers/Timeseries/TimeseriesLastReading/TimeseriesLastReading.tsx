@@ -1,7 +1,9 @@
-import { Body } from '@cognite/cogs.js';
-import { useTimeseriesLatestDatapointQuery } from '@data-exploration-components/hooks/Timeseries/useTimeseriesLatestDatapointQuery';
 import React from 'react';
+
 import { TimeDisplay } from '@data-exploration/components';
+import { useTimeseriesLatestDatapointQuery } from '@data-exploration-components/hooks/Timeseries/useTimeseriesLatestDatapointQuery';
+
+import { Body } from '@cognite/cogs.js';
 
 interface Props {
   timeseriesId: number;

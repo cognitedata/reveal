@@ -1,8 +1,9 @@
 import * as React from 'react';
 
 import { CollapsePanelProps } from '@cognite/cogs.js';
-import { Collapse, StyledCollapseIcon, Container, Panel } from './elements';
+
 import { FilterTitle } from './BaseFilterTitle';
+import { Collapse, StyledCollapseIcon, Container, Panel } from './elements';
 
 const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {
   return (

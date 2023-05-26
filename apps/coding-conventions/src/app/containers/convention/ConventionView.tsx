@@ -1,13 +1,16 @@
-import { Button, Loader } from '@cognite/cogs.js';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { Button, Loader } from '@cognite/cogs.js';
+
 import { VerticalDivider } from '../../components/Divider';
-import { Convention } from '../../types';
 import { DrawerHeader } from '../../components/Drawer';
-import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
-import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';
 import { useConventionCreateMutate } from '../../service/hooks/mutate/useConventionCreateMutate';
 import { useConventionUpdateMutate } from '../../service/hooks/mutate/useConventionUpdateMutate';
+import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';
+import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
+import { Convention } from '../../types';
+
 import { ConventionHeader } from './ConventionHeader';
 import { ConventionList } from './ConventionList';
 

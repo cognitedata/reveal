@@ -1,4 +1,5 @@
 import { assetsFixture, rootAssetFixture } from '@data-exploration-lib/core';
+
 import { concatParents } from '../assets/service/utils/concatParents';
 
 jest.mock('@cognite/unified-file-viewer', () => {

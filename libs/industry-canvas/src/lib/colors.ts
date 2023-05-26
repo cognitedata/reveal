@@ -1,5 +1,6 @@
-import { Colors } from '@cognite/cogs.js';
 import { rgba } from 'polished';
+
+import { Colors } from '@cognite/cogs.js';
 
 const fillOpacity = 0.9;
 export const SHAPE_ANNOTATION_FILL_COLOR_MAP = {

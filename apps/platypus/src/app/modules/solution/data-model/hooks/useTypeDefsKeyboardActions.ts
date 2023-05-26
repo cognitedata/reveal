@@ -1,5 +1,6 @@
-import { CellFocusedEvent, Column } from 'ag-grid-community';
 import { useCallback } from 'react';
+
+import { CellFocusedEvent, Column } from 'ag-grid-community';
 
 interface getCellPositionProps {
   rowIndex: number;

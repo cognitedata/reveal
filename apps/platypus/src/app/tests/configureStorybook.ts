@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DeepPartial } from '@reduxjs/toolkit';
 import { RootState } from '@platypus-app/redux/store';
+import { DeepPartial } from '@reduxjs/toolkit';
+
 import mockDecorator from './mockDecorator';
 
 export const APP_PROVIDERS_PARAMETER_NAME = 'providersConfig';

@@ -1,6 +1,8 @@
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 export const PreviewFilterDropdown: React.FC<
   React.PropsWithChildren<Record<string, unknown>>

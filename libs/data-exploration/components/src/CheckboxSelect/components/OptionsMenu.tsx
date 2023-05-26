@@ -1,39 +1,37 @@
 import { useState } from 'react';
 
-import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
-
 import {
   EMPTY_ARRAY,
   NIL_FILTER_LABEL,
   isEscapeButton,
   useDeepEffect,
 } from '@data-exploration-lib/core';
-
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
 import has from 'lodash/has';
-
+import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
-import {
-  OptionType,
-  OptionSelection,
-  SortDirection,
-  CustomMetadataValue,
-} from '../types';
+import omit from 'lodash/omit';
 
-import { filterOptions } from '../utils/filterOptions';
-import { sortOptions } from '../utils/sortOptions';
-import { hasOptionWithChildOptions } from '../utils/hasOptionWithChildOptions';
+import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
 
 import {
   OptionContainer,
   OptionMenuContainer,
   OptionMenuLoadingWrapper,
 } from '../elements';
-import { SearchInput } from './SearchInput';
-import { Option } from './Option';
+import {
+  OptionType,
+  OptionSelection,
+  SortDirection,
+  CustomMetadataValue,
+} from '../types';
+import { filterOptions } from '../utils/filterOptions';
+import { hasOptionWithChildOptions } from '../utils/hasOptionWithChildOptions';
+import { sortOptions } from '../utils/sortOptions';
+
 import { ChildOptionsMenu } from './ChildOptionsMenu';
 import { FilterEmptyState } from './FilterEmptyState';
+import { Option } from './Option';
+import { SearchInput } from './SearchInput';
 import { SortAction } from './SortAction';
 
 export interface OptionsMenuProps {

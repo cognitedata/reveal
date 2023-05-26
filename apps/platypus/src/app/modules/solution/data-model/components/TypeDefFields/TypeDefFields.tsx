@@ -1,12 +1,12 @@
-import { CogDataGrid } from '@cognite/cog-data-grid';
-import { Button } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+
 import {
   DataModelTypeDefsField,
   DataModelTypeDefsType,
   mixerApiBuiltInTypes,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   GetRowIdParams,
   GridApi,
@@ -14,9 +14,13 @@ import {
   ValueSetterParams,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+
+import { CogDataGrid } from '@cognite/cog-data-grid';
+import { Button } from '@cognite/cogs.js';
+
 import { useTypeDefFieldsGrid } from '../../hooks/useTypeDefFieldsGrid';
 import { useTypeDefsKeyboardActions } from '../../hooks/useTypeDefsKeyboardActions';
+
 import { DataModelFieldsGrid } from './elements';
 
 export interface TypeDefFieldsProps {

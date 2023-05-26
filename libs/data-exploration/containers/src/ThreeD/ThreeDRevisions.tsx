@@ -1,7 +1,8 @@
-import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 import React, { useMemo } from 'react';
+
 import { HighlightCell } from '@data-exploration/components';
 import { DASH } from '@data-exploration-lib/core';
+import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 export const ThreeDRevisions = ({
   modelId,
   is360Image,

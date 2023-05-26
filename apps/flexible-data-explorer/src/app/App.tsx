@@ -1,13 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { ToastContainer } from '@cognite/cogs.js';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { getProject } from '@cognite/cdf-utilities';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { queryClient } from './queryClient';
 
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import { ToastContainer } from '@cognite/cogs.js';
+import { SDKProvider } from '@cognite/sdk-provider';
+
+import { queryClient } from './queryClient';
 import Routes from './Routes';
 
 function App() {

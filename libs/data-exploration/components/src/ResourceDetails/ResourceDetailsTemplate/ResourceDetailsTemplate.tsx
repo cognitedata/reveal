@@ -1,6 +1,9 @@
-import { IconType } from '@cognite/cogs.js';
 import React, { ReactNode } from 'react';
+
 import styled from 'styled-components';
+
+import { IconType } from '@cognite/cogs.js';
+
 import { ResourceDetailsHeader } from '../ResourceDetailsHeader';
 
 interface Props {

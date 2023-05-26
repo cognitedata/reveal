@@ -1,7 +1,8 @@
+import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+
 import { TabProps } from '@cognite/cogs.js';
 
-import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
 import { CounterTab } from './elements';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 

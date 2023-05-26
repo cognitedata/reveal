@@ -1,9 +1,10 @@
+import queryString from 'query-string';
+
 import {
   getSelectedIdpDetails,
   IDPResponse,
   LegacyProject,
 } from '@cognite/login-utils';
-import queryString from 'query-string';
 
 export const getQueryParameter = (parameterKey: string) => {
   const parameters = queryString.parse(window.location.search) ?? {};

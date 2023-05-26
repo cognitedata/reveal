@@ -1,5 +1,7 @@
-import { Chip, Title } from '@cognite/cogs.js';
 import { InterfaceTypeDefinitionNode } from 'graphql';
+
+import { Chip, Title } from '@cognite/cogs.js';
+
 import { Header } from './Common';
 
 export const InterfaceNode = ({

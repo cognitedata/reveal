@@ -1,3 +1,4 @@
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { uniqBy } from 'lodash';
 
 import {
@@ -13,7 +14,7 @@ import {
   PolylineAnnotation,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
 import { IndustryCanvasContainerConfig } from '../types';
 
 const CONNECTION_OPACITY = 0.35;

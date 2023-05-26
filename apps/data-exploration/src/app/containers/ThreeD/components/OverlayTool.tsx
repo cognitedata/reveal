@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import {
   LabelEventHandler,
   SmartOverlayTool,
 } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-import { useSDK } from '@cognite/sdk-provider';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import * as THREE from 'three';
-import { useQueryClient } from '@tanstack/react-query';
 import { getAssetQueryKey } from '@data-exploration-app/containers/ThreeD/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import noop from 'lodash/noop';
+import * as THREE from 'three';
+
+import { Cognite3DViewer } from '@cognite/reveal';
+import { useSDK } from '@cognite/sdk-provider';
 
 type OverlayToolProps = {
   viewer: Cognite3DViewer;

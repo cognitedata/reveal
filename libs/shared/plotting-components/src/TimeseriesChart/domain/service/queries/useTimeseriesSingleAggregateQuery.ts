@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { queryKeys } from '../../queryKeys';
-import { TimeseriesSingleAggregateQuery } from '../types';
 import { getTimeseriesSingleAggregate } from '../network';
+import { TimeseriesSingleAggregateQuery } from '../types';
 
 interface Props {
   query: TimeseriesSingleAggregateQuery;

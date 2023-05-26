@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
+
 import {
   EventFilter,
   AssetFilterProps,
@@ -7,6 +9,7 @@ import {
   FileFilterProps,
   SequenceFilter,
 } from '@cognite/sdk';
+
 import {
   AssetFilters,
   TimeseriesFilters,

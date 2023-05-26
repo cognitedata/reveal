@@ -5,6 +5,7 @@ import {
 } from '../common/auth';
 import { AUTH_CONFIG, AUTH_TYPE } from '../constants';
 import { BaseArgs, ProjectConfig } from '../types';
+
 import { DEBUG } from './logger';
 
 export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {

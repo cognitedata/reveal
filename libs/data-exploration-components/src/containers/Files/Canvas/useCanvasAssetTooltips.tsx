@@ -1,6 +1,7 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Link } from '@cognite/cogs.js';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+import { useMemo } from 'react';
+
+import styled from 'styled-components';
+
 import { TooltipContainer } from '@data-exploration-components/containers/Files/Canvas/TooltipContainer';
 import {
   getExtendedAnnotationLabel,
@@ -8,9 +9,10 @@ import {
   isAssetAnnotation,
 } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import styled from 'styled-components';
 
-import { useMemo } from 'react';
+import { createLink } from '@cognite/cdf-utilities';
+import { Link } from '@cognite/cogs.js';
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
 const AssetLabel = styled.div`
   padding: 8px;

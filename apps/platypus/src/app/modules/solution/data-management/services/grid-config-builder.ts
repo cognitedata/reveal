@@ -1,21 +1,22 @@
 /* eslint-disable no-prototype-builtins */
 import {
-  ColumnConfig,
-  ColumnDataType,
-  GridConfig,
-} from '@cognite/cog-data-grid';
-import { IconType } from '@cognite/cogs.js';
-import {
   DataModelTypeDefsField,
   DataModelTypeDefsType,
   KeyValueMap,
 } from '@platypus/platypus-core';
 import { IFilterDef } from 'ag-grid-community';
+
+import {
+  ColumnConfig,
+  ColumnDataType,
+  GridConfig,
+} from '@cognite/cog-data-grid';
+import { IconType } from '@cognite/cogs.js';
+
 import { CustomColumnFilter } from '../components/CustomColumnFilter/custom-column-filter';
 import { CheckboxCellRenderer } from '../components/DataPreviewTable/cell-renderers/CheckboxCellRenderer';
 import { CustomCellRenderer } from '../components/DataPreviewTable/cell-renderers/CustomCellRenderer';
 import { IdCellRenderer } from '../components/DataPreviewTable/cell-renderers/IdCellRenderer';
-
 import { COL_TYPES_MAP, INSTANCE_TYPE_DEFS_FIELDS } from '../utils/constants';
 
 const colFiltersMap: KeyValueMap = {

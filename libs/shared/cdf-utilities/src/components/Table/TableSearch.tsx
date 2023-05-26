@@ -1,7 +1,10 @@
 import React from 'react';
-import { Input, InputProps } from 'antd';
-import { Icon, Colors } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Input, InputProps } from 'antd';
+
+import { Icon, Colors } from '@cognite/cogs.js';
 
 export type TableSearchProps = InputProps;
 

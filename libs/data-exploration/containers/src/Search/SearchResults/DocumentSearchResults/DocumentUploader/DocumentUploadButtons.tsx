@@ -1,18 +1,20 @@
 import React from 'react';
-import { FileUploadResponse, CogniteClient } from '@cognite/sdk';
-import { UploadFile } from 'antd/lib/upload/interface';
-import { Button } from '@cognite/cogs.js';
-import { SpacedRow } from '@data-exploration/components';
-import { Modal, message } from 'antd';
 
-import { useSDK } from '@cognite/sdk-provider';
+import { SpacedRow } from '@data-exploration/components';
 import {
   DATA_EXPLORATION_COMPONENT,
   getMIMEType,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { GCSUploader } from './GCSUploader';
+import { Modal, message } from 'antd';
+import { UploadFile } from 'antd/lib/upload/interface';
+
+import { Button } from '@cognite/cogs.js';
+import { FileUploadResponse, CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { STATUS } from './DocumentUploader';
+import { GCSUploader } from './GCSUploader';
 
 const { confirm } = Modal;
 const currentUploads: { [key: string]: any } = {};

@@ -1,7 +1,10 @@
-import { AnnotationType } from '@cognite/unified-file-viewer';
 import { ComponentStory } from '@storybook/react';
+
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
 import { FONT_SIZE } from '../../constants';
+
 import { TextAnnotationTooltip } from './TextAnnotationTooltip';
 
 export default {

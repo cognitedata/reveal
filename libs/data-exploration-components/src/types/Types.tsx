@@ -1,5 +1,5 @@
-import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { AllIconTypes } from '@cognite/cogs.js';
+import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 // TODO: while moving away from ResourceTypes, we can use/rename this as ViewType
 export enum ResourceTypes {

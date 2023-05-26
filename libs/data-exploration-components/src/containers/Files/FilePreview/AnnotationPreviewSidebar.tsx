@@ -1,4 +1,21 @@
 import React, { useEffect, useCallback, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
+import {
+  ExtendedAnnotation,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-lib/core';
+import {
+  useCreateAnnotation,
+  useDeleteAnnotation,
+  useUpdateAnnotations,
+} from '@data-exploration-lib/domain-layer';
+import { useQueryClient } from '@tanstack/react-query';
+import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
+import capitalize from 'lodash/capitalize';
+
 import {
   Button,
   Title,
@@ -8,34 +25,17 @@ import {
   Detail,
   Flex,
 } from '@cognite/cogs.js';
-import {
-  Divider,
-  InfoCell,
-} from '@data-exploration-components/components/index';
-import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
-import styled from 'styled-components';
-import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
-import {
-  ResourceItem,
-  convertResourceType,
-} from '@data-exploration-components/types/index';
-import { useQueryClient } from '@tanstack/react-query';
-import { sleep } from '@data-exploration-components/utils/index';
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
-import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import capitalize from 'lodash/capitalize';
-import { useDisclosure } from '@data-exploration-components/hooks/index';
-import {
-  useCreateAnnotation,
-  useDeleteAnnotation,
-  useUpdateAnnotations,
-} from '@data-exploration-lib/domain-layer';
-import {
-  ExtendedAnnotation,
-  SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-lib/core';
+
+import { Divider, InfoCell } from '../../../components';
+import { useDisclosure } from '../../../hooks';
+import { ResourceItem, convertResourceType } from '../../../types';
+import { sleep } from '../../../utils';
+import { ResourcePreviewSidebar } from '../../ResourceSidebar';
+
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
+import FilePreviewSidebar from './FilePreviewSidebar';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,
@@ -46,9 +46,8 @@ import {
   isExtendedLocalAnnotation,
   setExtendedAnnotationResource,
   setExtendedAnnotationStatus,
-} from './migration/utils';
+} from './migration';
 import ReviewTagBar from './ReviewTagBar';
-import FilePreviewSidebar from './FilePreviewSidebar';
 
 type Props = {
   file?: FileInfo;

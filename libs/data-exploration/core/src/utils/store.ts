@@ -1,5 +1,6 @@
-import isArray from 'lodash/isArray';
 import includes from 'lodash/includes';
+import isArray from 'lodash/isArray';
+
 import { COMMON_FILTER_KEYS, InternalCommonFilters } from '../types';
 
 const isCommonKey = (key: string) => includes(COMMON_FILTER_KEYS, key);

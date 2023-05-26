@@ -1,19 +1,22 @@
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { CogniteCadModel } from '@cognite/reveal';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
+import { useRef, useEffect, useContext } from 'react';
+
+import styled from 'styled-components';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
   AugmentedMapping,
   useInfiniteAssetMappings,
 } from '@data-exploration-app/containers/ThreeD/hooks';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { getBoundingBoxesByNodeIds } from '@data-exploration-app/containers/ThreeD/utils';
-import { useRef, useEffect, useContext } from 'react';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import styled from 'styled-components';
+
+import { Button, Tooltip } from '@cognite/cogs.js';
+import { CogniteCadModel } from '@cognite/reveal';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;

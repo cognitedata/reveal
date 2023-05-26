@@ -1,7 +1,10 @@
 import React, { Key, useRef } from 'react';
-import { Icon } from '@cognite/cogs.js';
-import { Select, SelectProps } from 'antd';
+
 import styled from 'styled-components';
+
+import { Select, SelectProps } from 'antd';
+
+import { Icon } from '@cognite/cogs.js';
 
 const { Option } = Select;
 

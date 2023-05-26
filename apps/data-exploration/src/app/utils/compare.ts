@@ -1,6 +1,7 @@
-import isObject from 'lodash/isObject';
-import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import isObject from 'lodash/isObject';
+
 import { ResourceItem, ResourceItemState } from '@cognite/data-exploration';
 
 export const isObjectEmpty = <T extends Record<string, unknown>>(

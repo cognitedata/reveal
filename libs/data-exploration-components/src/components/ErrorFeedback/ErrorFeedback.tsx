@@ -1,5 +1,7 @@
-import { Button, Detail, Flex, Title, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Button, Detail, Flex, Title, Tooltip } from '@cognite/cogs.js';
+
 import ErrorIcon from './ErrorIcon';
 
 type Props = {

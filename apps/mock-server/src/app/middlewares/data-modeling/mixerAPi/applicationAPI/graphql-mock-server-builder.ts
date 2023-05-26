@@ -1,15 +1,16 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { KeyValuePair, CdfMockDatabase } from '../../../../types';
+
 import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
+import { KeyValuePair, CdfMockDatabase } from '../../../../types';
 import { Api, DmsBinding } from '../../types';
 import { createMockServerKey } from '../../utils/graphql-server-utils';
+
+import { buildDmsV3QueryResolvers } from './dms-v3-query-resolvers-builder';
 import {
   buildQueryResolvers,
   getDataModelStorageExternalId,
 } from './query-resolvers-builder';
-
-import { buildDmsV3QueryResolvers } from './dms-v3-query-resolvers-builder';
 import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
 
 export interface BuildMockServerParams {

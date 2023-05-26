@@ -1,9 +1,9 @@
-import { screen } from '@testing-library/react';
+import { DataModel } from '@platypus/platypus-core';
 import render from '@platypus-app/tests/render';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
-import { DataModel } from '@platypus/platypus-core';
 import { DataModelSettingsModal } from './DataModelSettingsModal';
 
 const mockMutate = jest.fn().mockImplementation((_, options) => {

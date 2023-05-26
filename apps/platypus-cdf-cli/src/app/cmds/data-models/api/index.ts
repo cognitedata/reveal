@@ -1,6 +1,7 @@
 import { Argv } from 'yargs';
-import listApisCmd from './list';
+
 import createApiSpecCmd from './create';
+import listApisCmd from './list';
 import * as apiSpecVersionsCmds from './versions';
 
 export const command = 'api <command>';

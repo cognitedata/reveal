@@ -2,9 +2,9 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { screen } from '@testing-library/react';
 
-import { Option, OptionProps } from '../Option';
-import { OptionType } from '../../types';
 import { renderComponent } from '../../../__test-utils';
+import { OptionType } from '../../types';
+import { Option, OptionProps } from '../Option';
 
 describe('NestedFilter/Option', () => {
   const option: OptionType = {

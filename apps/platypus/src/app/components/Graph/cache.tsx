@@ -1,4 +1,5 @@
 import LRU from 'lru-cache';
+
 import { Node } from './GraphEngine';
 
 export const locationCache = new LRU<string, string>({

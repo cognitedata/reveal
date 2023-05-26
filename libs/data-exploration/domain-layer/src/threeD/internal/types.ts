@@ -1,6 +1,8 @@
-import { Model3D, Revision3D } from '@cognite/sdk';
-import { UseQueryOptions } from '@tanstack/react-query';
 import { ResourceType } from '@data-exploration-lib/core';
+import { UseQueryOptions } from '@tanstack/react-query';
+
+import { Model3D, Revision3D } from '@cognite/sdk';
+
 import { InternalEventsData } from '../../events';
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

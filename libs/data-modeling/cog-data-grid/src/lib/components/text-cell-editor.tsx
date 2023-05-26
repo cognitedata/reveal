@@ -1,6 +1,9 @@
-import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import { ChangeEvent, Component, createRef } from 'react';
+
+import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
+
 import { ColumnDataType } from '../core/types';
+
 import { CellEditorWrapper } from './ui';
 
 interface TextCellEditorState {

@@ -1,8 +1,9 @@
 import * as React from 'react';
 
+import styled from 'styled-components';
+
 import { Button, Menu } from '@cognite/cogs.js';
 
-import styled from 'styled-components';
 import { ApplyButtonWrapper } from '../elements';
 
 export interface ApplyButtonProps {

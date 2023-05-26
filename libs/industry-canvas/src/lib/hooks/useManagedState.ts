@@ -8,8 +8,9 @@ import {
   useState,
 } from 'react';
 
-import { useSDK } from '@cognite/sdk-provider';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
+import { useSDK } from '@cognite/sdk-provider';
 import {
   Annotation,
   ContainerConfig,
@@ -21,7 +22,7 @@ import {
   UnifiedViewerMouseEvent,
 } from '@cognite/unified-file-viewer';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
   CanvasAnnotation,
@@ -35,13 +36,13 @@ import {
   deserializeCanvasDocument,
   serializeCanvasState,
 } from '../utils/utils';
-import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
+
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
 } from './useCanvasStateHistory';
-import resolveContainerConfig from './utils/resolveContainerConfig';
 import { useContainerAnnotations } from './useContainerAnnotations';
+import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
   hoverId: string | undefined;

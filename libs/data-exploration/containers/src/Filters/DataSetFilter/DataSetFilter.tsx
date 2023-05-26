@@ -1,16 +1,18 @@
-import { OptionType, Tooltip } from '@cognite/cogs.js';
-import {
-  DataSetInternal,
-  DataSetWithCount,
-  useDatasetsListQuery,
-} from '@data-exploration-lib/domain-layer';
 import {
   DATA_EXPLORATION_COMPONENT,
   ResourceType,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { BaseMultiSelectFilterProps } from '../types';
+import {
+  DataSetInternal,
+  DataSetWithCount,
+  useDatasetsListQuery,
+} from '@data-exploration-lib/domain-layer';
+
+import { OptionType, Tooltip } from '@cognite/cogs.js';
+
 import { MultiSelectFilter } from '../MultiSelectFilter';
+import { BaseMultiSelectFilterProps } from '../types';
 
 interface DataSetFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter, number> {

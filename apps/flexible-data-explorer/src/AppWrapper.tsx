@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   SubAppWrapper,
@@ -8,13 +11,11 @@ import {
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import './set-public-path';
-import { useEffect } from 'react';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import App from './app/App';
-import GlobalStyles from './GlobalStyles';
 
-import { translations } from './app/common/i18n';
+import App from './app/App';
+import { translations } from './app/common';
 import GlobalStyle from './app/utils/globalStyles';
+import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'flexible-data-explorer';

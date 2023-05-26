@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks';
+
 import { useSessionStorage } from '../storage/useSessionStorage';
 
 const TEST_KEY = 'key';

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
-
 import { useSearchParams, useNavigate } from 'react-router-dom';
+
 import { ContainerReference } from '../types';
 import { getCanvasLink } from '../utils/getCanvasLink';
 

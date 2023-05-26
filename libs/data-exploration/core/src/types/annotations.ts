@@ -1,6 +1,6 @@
 import { AnnotationModel } from '@cognite/sdk';
-
 import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
+
 import { ANNOTATION_SOURCE_KEY } from '../constants';
 
 export enum AnnotationSource {

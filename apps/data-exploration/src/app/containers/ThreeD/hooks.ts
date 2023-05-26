@@ -1,4 +1,28 @@
 import {
+  Revision3DWithIndex,
+  use3DRevisionsQuery,
+  useEventsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
+import {
+  FetchQueryOptions,
+  QueryClient,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useQuery,
+  UseQueryOptions,
+} from '@tanstack/react-query';
+import _ from 'lodash';
+import keyBy from 'lodash/keyBy';
+import uniqBy from 'lodash/uniqBy';
+import { Vector3 } from 'three';
+
+import {
+  CogniteCadModel,
+  Cognite3DViewer,
+  CognitePointCloudModel,
+  Image360Collection,
+} from '@cognite/reveal';
+import {
   Asset,
   AssetMapping3D,
   CogniteClient,
@@ -11,29 +35,7 @@ import {
   CogniteInternalId,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import uniqBy from 'lodash/uniqBy';
-import keyBy from 'lodash/keyBy';
-import {
-  FetchQueryOptions,
-  QueryClient,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  useQuery,
-  UseQueryOptions,
-} from '@tanstack/react-query';
-import {
-  CogniteCadModel,
-  Cognite3DViewer,
-  CognitePointCloudModel,
-  Image360Collection,
-} from '@cognite/reveal';
-import { Vector3 } from 'three';
-import _ from 'lodash';
-import {
-  Revision3DWithIndex,
-  use3DRevisionsQuery,
-  useEventsSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+
 import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
 
 export type ThreeDModelsResponse = {

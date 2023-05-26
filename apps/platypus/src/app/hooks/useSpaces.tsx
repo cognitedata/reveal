@@ -1,6 +1,6 @@
+import { SpaceInstance } from '@platypus/platypus-core';
 import { TOKENS } from '@platypus-app/di';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { SpaceInstance } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from 'brandi-react';
 

@@ -1,5 +1,6 @@
-import { fileMockData } from '@data-exploration-lib/core';
 import React from 'react';
+
+import { fileMockData } from '@data-exploration-lib/core';
 
 import { FileInfo } from './FileInfo';
 

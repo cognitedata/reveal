@@ -1,9 +1,15 @@
-import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useMemo, useRef } from 'react';
-import merge from 'lodash/merge';
-import has from 'lodash/has';
-import mapValues from 'lodash/mapValues';
 
+import {
+  DATA_EXPLORATION_COMPONENT,
+  EMPTY_OBJECT,
+  getResourceTypeById,
+  LOADING_RESULTS,
+  REFINE_FILTERS_OR_UPDATE_SEARCH,
+  isElementHorizontallyInViewport,
+  ResourceItem,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import {
   Row,
   useReactTable,
@@ -22,20 +28,18 @@ import {
   RowSelectionState,
   Updater,
 } from '@tanstack/react-table';
-import useLocalStorageState from 'use-local-storage-state';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  EMPTY_OBJECT,
-  getResourceTypeById,
-  LOADING_RESULTS,
-  REFINE_FILTERS_OR_UPDATE_SEARCH,
-  isElementHorizontallyInViewport,
-  ResourceItem,
-  useMetrics,
-} from '@data-exploration-lib/core';
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import has from 'lodash/has';
+import isEmpty from 'lodash/isEmpty';
+import mapValues from 'lodash/mapValues';
+import merge from 'lodash/merge';
 import noop from 'lodash/noop';
+import useLocalStorageState from 'use-local-storage-state';
+
+import { Checkbox, Flex } from '@cognite/cogs.js';
+
 import { EmptyState } from '../EmpyState';
+
+import { ResourceTableColumns } from './columns';
 import {
   ColumnToggle,
   SortIcon,
@@ -43,7 +47,6 @@ import {
   LoadMoreProps,
   CopyToClipboardIconButton,
 } from './components';
-
 import {
   TableContainer,
   ColumnSelectorWrapper,
@@ -65,8 +68,6 @@ import {
   MetadataHeaderText,
   TableDataBody,
 } from './elements';
-
-import { ResourceTableColumns } from './columns';
 
 export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;

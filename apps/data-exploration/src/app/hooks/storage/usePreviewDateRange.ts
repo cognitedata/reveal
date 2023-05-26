@@ -1,11 +1,12 @@
 import React from 'react';
-import { TIME_SELECT } from '@data-exploration-components/containers';
+
 import { useSessionStorage } from '@data-exploration-app/hooks/storage';
 import {
   TIMESERIES_PREVIEW_DATE_RANGE_KEY,
   TIMESERIES_TABLE_DATE_RANGE_KEY,
 } from '@data-exploration-app/utils/constants';
 import { getProject } from '@data-exploration-app/utils/URLUtils';
+import { TIME_SELECT } from '@data-exploration-components/containers';
 
 export const usePreviewDateRange = (
   tableSessionKey = `${getProject()}-${TIMESERIES_TABLE_DATE_RANGE_KEY}`,

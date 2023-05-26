@@ -1,6 +1,9 @@
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
 import { useMemo } from 'react';
+
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
+
 import { mapFiltersToDocumentSearchFilters } from '../../internal';
+
 import { useDocumentsMetadataKeysAggregateQuery } from './useDocumentsMetadataKeysAggregateQuery';
 
 interface Props {

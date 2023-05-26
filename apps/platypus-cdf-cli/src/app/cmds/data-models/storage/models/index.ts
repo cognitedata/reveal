@@ -1,7 +1,8 @@
 import { Argv } from 'yargs';
-import listStorageCmd from './list';
+
 import applyStorageCmd from './apply';
 import deleteStorageCmd from './delete';
+import listStorageCmd from './list';
 
 export const command = 'models <command>';
 export const desc = 'Manage data model storage models';

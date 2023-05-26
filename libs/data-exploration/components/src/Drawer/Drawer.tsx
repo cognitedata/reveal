@@ -1,6 +1,9 @@
 import React, { PropsWithChildren } from 'react';
-import { zIndex } from '@data-exploration-lib/core';
+
 import styled from 'styled-components';
+
+import { zIndex } from '@data-exploration-lib/core';
+
 import { Button } from '@cognite/cogs.js';
 
 interface DrawerProps {

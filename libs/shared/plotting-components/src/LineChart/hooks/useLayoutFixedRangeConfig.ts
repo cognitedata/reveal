@@ -4,8 +4,9 @@ import { Layout as PlotlyLayout } from 'plotly.js';
 
 import { AxisIdentifier, Config } from '../types';
 import { getFixedRangeConfig } from '../utils/getFixedRangeConfig';
-import { getSelectDirection } from '../utils/getSelectDirection';
 import { getPlotAreaCursor } from '../utils/getPlotAreaCursor';
+import { getSelectDirection } from '../utils/getSelectDirection';
+
 import { useAxisDirection } from './useAxisDirection';
 
 export const useLayoutFixedRangeConfig = (

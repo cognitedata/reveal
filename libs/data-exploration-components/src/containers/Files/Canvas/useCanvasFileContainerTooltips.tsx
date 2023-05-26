@@ -1,12 +1,15 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Button, Link } from '@cognite/cogs.js';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+import { useMemo } from 'react';
+
 import {
   PagedFileReference,
   useCanvasFilesFromUrl,
 } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
-import { useMemo } from 'react';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Button, Link } from '@cognite/cogs.js';
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
 import { TooltipContainer } from './TooltipContainer';
 
 const useCanvasFileContainerTooltips = (

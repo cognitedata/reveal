@@ -1,3 +1,16 @@
+import { useEffect, useState } from 'react';
+
+import {
+  DataModelExternalIdValidator,
+  Validator,
+} from '@platypus/platypus-core';
+import { isFDMv3 } from '@platypus-app/flags';
+import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { DataModelExternalIdValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-external-id-validator-v2';
+import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
+import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
+
 import {
   Body,
   Divider,
@@ -7,23 +20,14 @@ import {
   Modal,
   Textarea,
 } from '@cognite/cogs.js';
-import { useEffect, useState } from 'react';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataSet } from '@cognite/sdk';
-import {
-  DataModelExternalIdValidator,
-  Validator,
-} from '@platypus/platypus-core';
-import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
-import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
-import { isFDMv3 } from '@platypus-app/flags';
-import { DataModelExternalIdValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-external-id-validator-v2';
-import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
-import { FormLabel } from '../FormLabel/FormLabel';
+
 import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
-import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSelect';
 import { DataModelLibrary } from '../DataModelLibrary/DataModelLibrary';
 import { DataModelLibraryItem } from '../DataModelLibrary/library';
+import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSelect';
+import { FormLabel } from '../FormLabel/FormLabel';
+
 import { NameWrapper, StyledEditableChip, Selector } from './elements';
 
 export type DataModelDetailModalProps = {

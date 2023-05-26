@@ -1,8 +1,8 @@
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { transformNewFilterToOldFilter } from '../../../transformers';

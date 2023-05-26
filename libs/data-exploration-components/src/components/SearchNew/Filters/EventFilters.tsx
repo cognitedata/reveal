@@ -1,14 +1,16 @@
 import React from 'react';
 
-import { useList } from '@cognite/sdk-react-query-hooks';
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import head from 'lodash/head';
-import { InternalEventsFilters } from '@data-exploration-lib/core';
-import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEventFilter';
+import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
+import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
-import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 export const EventFilters = ({
   filter,

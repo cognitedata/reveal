@@ -1,9 +1,12 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import noop from 'lodash/noop';
+
 import { Colors } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import noop from 'lodash/noop';
 
 const BreadCrumbItem = styled.li`
   color: ${Colors['decorative--grayscale--600']};

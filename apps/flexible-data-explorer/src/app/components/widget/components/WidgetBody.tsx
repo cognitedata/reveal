@@ -1,5 +1,7 @@
 import { PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
+
 import { BaseWidgetProps } from '../Widget';
 
 export const WidgetBody = ({

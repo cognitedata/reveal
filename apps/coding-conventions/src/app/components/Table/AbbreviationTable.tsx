@@ -1,4 +1,5 @@
 import { Convention } from '../../types';
+
 import { BaseTable } from './BaseTable';
 
 const baseColumns = [

@@ -1,6 +1,7 @@
-import { Annotation, AnnotationType } from '@cognite/unified-file-viewer';
 import { PagedFileReference } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
+
+import { Annotation, AnnotationType } from '@cognite/unified-file-viewer';
 
 export const getClickedContainerOutlineAnnotation = (
   clickedContainer: PagedFileReference | undefined

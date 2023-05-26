@@ -1,5 +1,7 @@
-import { CogniteClient, CogniteError, Model3D } from '@cognite/sdk/dist/src';
 import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
+
+import { CogniteClient, CogniteError, Model3D } from '@cognite/sdk/dist/src';
+
 import { queryKeys } from '../../../queryKeys';
 
 export const fetchThreeDModelQuery = (

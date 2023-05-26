@@ -6,6 +6,7 @@ import {
 } from '@cognite/sdk';
 
 import { METADATA_ALL_VALUE } from '../constants';
+
 import { ResourceType } from './resource';
 
 export type FilterResourceType = ResourceType | 'document' | 'common';

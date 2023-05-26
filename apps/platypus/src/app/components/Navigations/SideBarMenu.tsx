@@ -1,7 +1,10 @@
 import { useParams, useLocation } from 'react-router-dom';
-import { Icon, IconType, Tooltip } from '@cognite/cogs.js';
+
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import uniqueId from 'lodash/uniqueId';
+
+import { Icon, IconType, Tooltip } from '@cognite/cogs.js';
+
 import * as S from './elements';
 
 export type SideBarItem = {

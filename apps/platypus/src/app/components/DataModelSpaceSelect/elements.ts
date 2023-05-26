@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+
 import { Detail, Icon } from '@cognite/cogs.js';
 
 export const InputDetail = styled.div`

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { TimeseriesDetails } from './TimeseriesDetails';
 
 export default {

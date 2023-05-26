@@ -1,4 +1,3 @@
-import { Body, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import {
@@ -8,6 +7,8 @@ import {
   PinchRight,
   Mouse,
 } from '@data-exploration-components/graphics';
+
+import { Body, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
 
 interface HelpMenuSectionProps {
   children: React.ReactNode;

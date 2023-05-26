@@ -1,4 +1,5 @@
 import { Button, Shortcut } from '@cognite/cogs.js';
+
 import { useEscapeButtonListener } from '../../hooks/listeners/useEscapeButtonListener';
 
 export const ButtonEsc = ({ onCloseClick }: { onCloseClick?: () => void }) => {

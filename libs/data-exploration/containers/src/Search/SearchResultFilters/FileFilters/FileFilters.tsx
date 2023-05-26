@@ -1,10 +1,10 @@
+import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
 } from '@data-exploration-lib/core';
-import { BaseFilterCollapse } from '@data-exploration/components'; //??
-import { TempMultiSelectFix } from '../elements';
+
 import {
   AuthorFilter,
   LabelFilter,
@@ -12,6 +12,7 @@ import {
   SourceFilter,
   TypeFilter,
 } from '../../../Filters';
+import { TempMultiSelectFix } from '../elements';
 
 export interface FileFilterProps extends FilterProps {
   enableDocumentLabelsFilter?: boolean;

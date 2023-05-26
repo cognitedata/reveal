@@ -1,5 +1,7 @@
-import { CogniteClient } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
+
+import { CogniteClient } from '@cognite/sdk';
+
 import {
   AssetContainerReference,
   IndustryCanvasContainerConfig,
@@ -8,6 +10,7 @@ import {
   DEFAULT_ASSET_HEIGHT,
   DEFAULT_ASSET_WIDTH,
 } from '../../utils/addDimensionsToContainerReference';
+
 import getAssetTableContainerConfig from './getAssetTableContainerConfig';
 
 const resolveAssetContainerConfig = async (

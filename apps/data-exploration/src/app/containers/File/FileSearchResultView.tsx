@@ -1,24 +1,26 @@
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
-import { DocumentSearchResults } from '@data-exploration/containers';
 import { useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
+
+import { DocumentSearchResults } from '@data-exploration/containers';
+import { routes } from '@data-exploration-app/containers/App';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
 import { FilePreview } from '@data-exploration-app/containers/File/FilePreview';
 import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
-import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
   useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
-import { routes } from '@data-exploration-app/containers/App';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
-import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const FileSearchResultView = () => {
   const isDocumentsGPTEnabled = useFlagDocumentGPT();

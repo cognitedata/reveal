@@ -1,6 +1,9 @@
-import { ToolType } from '@cognite/unified-file-viewer';
-import { ComponentStory } from '@storybook/react';
 import { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
+import { ToolType } from '@cognite/unified-file-viewer';
+
 import ToolbarComponent from './ToolbarComponent';
 
 export default {

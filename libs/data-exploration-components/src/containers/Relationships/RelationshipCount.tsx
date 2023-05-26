@@ -1,7 +1,10 @@
 import React from 'react';
-import { ResourceType } from '@data-exploration-components/types';
-import { Icon, Detail } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { ResourceType } from '@data-exploration-components/types';
+
+import { Icon, Detail } from '@cognite/cogs.js';
 
 const getResourceIcon = (resourceType: ResourceType) => {
   switch (resourceType) {

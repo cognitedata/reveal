@@ -1,3 +1,11 @@
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
+import { useDebounce } from 'use-debounce';
+import { v4 as uuid } from 'uuid';
+
 import {
   Button,
   Divider,
@@ -7,16 +15,13 @@ import {
   toast,
   Tooltip,
 } from '@cognite/cogs.js';
-import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { useDebounce } from 'use-debounce';
-import { v4 as uuid } from 'uuid';
+
 import { TOAST_POSITION } from '../constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { SerializedCanvasDocument } from '../types';
 import { getCanvasLink } from '../utils/getCanvasLink';
+
 import CanvasDeletionModal from './CanvasDeletionModal';
 import CanvasSubmenu from './CanvasSubmenu';
 

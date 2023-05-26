@@ -1,5 +1,6 @@
-import { Button } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
+
+import { Button } from '@cognite/cogs.js';
 
 export const ButtonFullscreen = (props: ComponentProps<typeof Button>) => {
   return (

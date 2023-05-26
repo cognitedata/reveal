@@ -1,7 +1,9 @@
 import React from 'react';
 import { Routes as ReactRoutes, Route } from 'react-router-dom';
-import { useFusionQuery } from './hooks/useFusionQuery';
+
 import { IndustryCanvasPage } from '@fusion/industry-canvas';
+
+import { useFusionQuery } from './hooks/useFusionQuery';
 import { routes } from './routes';
 
 const Routes = () => {

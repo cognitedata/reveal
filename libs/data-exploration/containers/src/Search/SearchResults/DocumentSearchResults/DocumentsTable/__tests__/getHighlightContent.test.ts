@@ -1,4 +1,5 @@
 import { DASH, mockDocument } from '@data-exploration-lib/core';
+
 import { getHighlightContent } from '../utils';
 
 describe('getHighlightContent', () => {

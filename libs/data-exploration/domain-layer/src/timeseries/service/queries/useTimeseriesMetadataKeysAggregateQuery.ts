@@ -1,13 +1,13 @@
+import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { transformNewFilterToOldFilter } from '../../../transformers';
 import { TimeseriesProperties } from '../../internal';
 import { getTimeseriesMetadataKeysAggregate } from '../network';
-
 import { TimeseriesMetadataAggregateResponse } from '../types';
 
 interface Props {

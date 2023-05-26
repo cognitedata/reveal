@@ -3,9 +3,11 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
-import { configureI18n } from '@cognite/react-i18n';
 import config from '@platypus-app/config/config';
+
+import { configureI18n } from '@cognite/react-i18n';
 import { CogniteClient } from '@cognite/sdk';
+
 import { setCogniteSDKClient } from '../environments/cogniteSdk';
 
 configureI18n();

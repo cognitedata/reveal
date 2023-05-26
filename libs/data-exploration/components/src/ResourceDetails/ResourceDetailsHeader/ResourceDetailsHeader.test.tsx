@@ -1,5 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
+
 import { renderComponent } from '../../__test-utils';
+
 import { ResourceDetailsHeader } from './ResourceDetailsHeader';
 
 describe('ResourceDetailsHeader', () => {

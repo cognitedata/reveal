@@ -1,7 +1,9 @@
-import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 import React from 'react';
+
 import { TimeDisplay } from '@data-exploration/components';
 import { DASH } from '@data-exploration-lib/core';
+import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
+
 import { Body } from '@cognite/cogs.js';
 export const ThreeDModelLastUpdated = ({
   modelId,

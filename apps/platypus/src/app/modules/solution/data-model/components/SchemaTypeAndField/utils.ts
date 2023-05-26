@@ -1,5 +1,6 @@
-import { OptionType } from '@cognite/cogs.js';
 import { BuiltInType } from '@platypus/platypus-core';
+
+import { OptionType } from '@cognite/cogs.js';
 
 export const groupOptions = (
   types: BuiltInType[],

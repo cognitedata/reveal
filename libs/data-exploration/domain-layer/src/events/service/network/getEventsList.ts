@@ -4,6 +4,7 @@ import {
   CursorResponse,
   EventFilter,
 } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../../builders';
 import { InternalSortBy } from '../../../types';
 import { EventsProperties } from '../../internal';

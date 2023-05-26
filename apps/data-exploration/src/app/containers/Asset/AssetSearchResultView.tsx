@@ -1,33 +1,33 @@
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+
 import {
   AssetSearchResults,
   AssetViewMode,
 } from '@data-exploration/containers';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { routes } from '@data-exploration-app/containers/App';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-
-import {
-  useAssetFilters,
-  useAssetViewState,
-} from '@data-exploration-app/store';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { ResourceItem } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
   useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
-import { useDebounce } from 'use-debounce';
+import {
+  useAssetFilters,
+  useAssetViewState,
+} from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-
-import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
-import { routes } from '@data-exploration-app/containers/App';
-import { createLink } from '@cognite/cdf-utilities';
-import { Asset } from '@cognite/sdk';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { useDebounce } from 'use-debounce';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { ResourceItem } from '@cognite/data-exploration';
+import { Asset } from '@cognite/sdk';
 
 export const AssetSearchResultView = () => {
   const [assetView, setAssetView] = useAssetViewState();

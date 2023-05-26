@@ -1,5 +1,7 @@
-import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
 import { CSSProperties, ForwardedRef, forwardRef } from 'react';
+
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
+
 import { CogDataGridStyled } from './cog-data-grid-styled';
 import { ThemeNames } from './types';
 

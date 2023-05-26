@@ -1,11 +1,13 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { ResourceItem } from '@cognite/data-exploration';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { FilePreviewTabType } from '@data-exploration-app/containers/File/FilePreview';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Button, Tooltip } from '@cognite/cogs.js';
+import { ResourceItem } from '@cognite/data-exploration';
 
 export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
   item,

@@ -1,14 +1,4 @@
-import {
-  DocumentContentPreview,
-  DocumentNamePreview,
-  useDocumentsMetadataColumns,
-} from '@data-exploration/containers';
-import { ColumnDef, Row } from '@tanstack/react-table';
-import {
-  InternalDocument,
-  InternalDocumentWithMatchingLabels,
-  useDocumentSearchResultWithMatchingLabelsQuery,
-} from '@data-exploration-lib/domain-layer';
+import React, { useMemo } from 'react';
 
 import {
   SubCellMatchingLabels,
@@ -16,19 +6,28 @@ import {
   Table,
   TimeDisplay,
 } from '@data-exploration/components';
-import React, { useMemo } from 'react';
-
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-
+import {
+  DocumentContentPreview,
+  DocumentNamePreview,
+  useDocumentsMetadataColumns,
+} from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { Body } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
   DASH,
   getHiddenColumns,
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  InternalDocument,
+  InternalDocumentWithMatchingLabels,
+  useDocumentSearchResultWithMatchingLabelsQuery,
+} from '@data-exploration-lib/domain-layer';
+import { ColumnDef, Row } from '@tanstack/react-table';
+
+import { Body } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
 
 export const DocumentSummary = ({
   query = '',

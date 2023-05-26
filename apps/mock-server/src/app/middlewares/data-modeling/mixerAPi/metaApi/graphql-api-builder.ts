@@ -1,6 +1,8 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
+
 import { CdfMockDatabase, KeyValuePair } from '../../../../types';
 import { schemaServiceGraphqlApi } from '../../config/schema-service-api';
+
 import { graphQlMetaApiResolvers } from './graphql-resolvers';
 
 export interface BuildSchemaServiceMetaApiMockServerProps {

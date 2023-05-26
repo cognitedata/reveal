@@ -1,13 +1,16 @@
+import { Dispatch, SetStateAction } from 'react';
+
 import {
   FilterState,
   ResourceItem,
   ResourceSelectionMode,
   ResourceType,
 } from '@data-exploration-lib/core';
+import { ResourceItems } from '@data-exploration-lib/domain-layer';
 import { RowSelectionState, Updater } from '@tanstack/react-table';
 import { mapValues } from 'lodash';
-import { Dispatch, SetStateAction } from 'react';
 import noop from 'lodash/noop';
+
 import {
   AssetSearchResults,
   DocumentSearchResults,
@@ -15,8 +18,8 @@ import {
   SequenceSearchResults,
   TimeseriesSearchResults,
 } from '../Search';
+
 import { ResourceSelection } from './ResourceSelector';
-import { ResourceItems } from '@data-exploration-lib/domain-layer';
 
 export const ResourceSelectorTable = ({
   resourceType,

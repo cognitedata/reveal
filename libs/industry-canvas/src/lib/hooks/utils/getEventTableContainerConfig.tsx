@@ -1,4 +1,8 @@
 import styled from 'styled-components';
+
+import { TimeDisplay } from '@data-exploration/components';
+
+import { createLink } from '@cognite/cdf-utilities';
 import { Icon, Link } from '@cognite/cogs.js';
 import { CogniteEvent, CogniteClient, Asset } from '@cognite/sdk';
 import {
@@ -6,8 +10,6 @@ import {
   TableContainerProps,
   TableItem,
 } from '@cognite/unified-file-viewer';
-import { TimeDisplay } from '@data-exploration/components';
-import { createLink } from '@cognite/cdf-utilities';
 
 export const getEventTableTitle = (event: CogniteEvent): string => {
   let title = '';

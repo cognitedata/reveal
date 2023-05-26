@@ -1,5 +1,7 @@
-import { Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Modal } from '@cognite/cogs.js';
+
 import { StyledBody, StyledBreakingChanges } from './elements';
 
 export interface BreakingChangesModalProps {

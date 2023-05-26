@@ -1,20 +1,23 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import keyBy from 'lodash/keyBy';
-import isEmpty from 'lodash/isEmpty';
+
 import {
   AssetConfigType,
   InternalAssetFilters,
 } from '@data-exploration-lib/core';
+import { useQuery } from '@tanstack/react-query';
+import isEmpty from 'lodash/isEmpty';
+import keyBy from 'lodash/keyBy';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
+import { TableSortBy } from '../../../types';
 import {
   InternalAssetTreeData,
   useAssetsSearchResultWithLabelsQuery,
 } from '../../internal';
 import { buildTree } from '../utils/buildTree';
 import { concatParents } from '../utils/concatParents';
-import { TableSortBy } from '../../../types';
 
 export const useSearchAssetTree = (
   {

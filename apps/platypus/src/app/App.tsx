@@ -1,16 +1,19 @@
 import { BrowserRouter as Router } from 'react-router-dom';
-import styled from 'styled-components/macro';
-import { ToastContainer } from '@cognite/cogs.js';
-import { ContainerProvider } from 'brandi-react';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
-import { rootInjector } from './di';
 
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ContainerProvider } from 'brandi-react';
+import styled from 'styled-components/macro';
+
+import { ToastContainer } from '@cognite/cogs.js';
+
+import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
+
+import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
+import { rootInjector } from './di';
+import { queryClient } from './queryClient';
 import Routes from './Routes';
 import { getTenant } from './utils/tenant-utils';
-import { queryClient } from './queryClient';
-import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly

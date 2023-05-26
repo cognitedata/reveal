@@ -1,6 +1,9 @@
-import { Title } from '@cognite/cogs.js';
 import { useCallback } from 'react';
+
 import styled from 'styled-components';
+
+import { Title } from '@cognite/cogs.js';
+
 import { CategoryCard } from '../components/cards/CategoryCard';
 import { Page } from '../containers/page/Page';
 import { SearchBar } from '../containers/search/SearchBar';

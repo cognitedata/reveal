@@ -1,27 +1,30 @@
 import React, { useMemo, useState } from 'react';
-import { Flex, SegmentedControl } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
 
 import styled from 'styled-components';
+
+import {
+  TableProps,
+  KeepMounted,
+  VerticalDivider,
+} from '@data-exploration/components';
+import {
+  InternalAssetFilters,
+  useGetSearchConfigFromLocalStorage,
+} from '@data-exploration-lib/core';
 import {
   useAssetsSearchResultWithLabelsQuery,
   useAssetsSearchAggregateQuery,
   TableSortBy,
   AssetWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
-import {
-  InternalAssetFilters,
-  useGetSearchConfigFromLocalStorage,
-} from '@data-exploration-lib/core';
-import {
-  TableProps,
-  KeepMounted,
-  VerticalDivider,
-} from '@data-exploration/components';
+
+import { Flex, SegmentedControl } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
 
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
+
 import { AssetTable } from './AssetTable';
 import { AssetTreeTable } from './AssetTreeTable';
 

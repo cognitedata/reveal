@@ -9,7 +9,9 @@ import {
   addSeconds,
   startOfSecond,
 } from 'date-fns';
+
 import { CdfDatabaseService } from '../../../common/cdf-database.service';
+import { Collection } from '../../../common/collection';
 import {
   CdfMockDatabase,
   CdfResourceObject,
@@ -17,7 +19,6 @@ import {
   DatapointGroup,
 } from '../../../types';
 import { filterCollection } from '../../../utils';
-import { Collection } from '../../../common/collection';
 
 export const findDatapoints = (
   externalId: string,

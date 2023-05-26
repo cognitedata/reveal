@@ -1,8 +1,9 @@
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
 import useSelector from '@platypus-app/hooks/useSelector';
 
 import { Detail } from '@cognite/cogs.js';
-import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
+
 import * as S from './elements';
 
 export type TypeDescriptionProps = {

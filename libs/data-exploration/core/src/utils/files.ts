@@ -1,7 +1,9 @@
-import mime from 'mime-types';
-import { CogniteClient, FileInfo } from '@cognite/sdk';
 import lowerCase from 'lodash/lowerCase';
+import mime from 'mime-types';
+
+import { CogniteClient, FileInfo } from '@cognite/sdk';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+
 import { DOCUMENT_ICON_FALLBACK_VALUE } from '../constants';
 import { InternalDocument } from '../types';
 

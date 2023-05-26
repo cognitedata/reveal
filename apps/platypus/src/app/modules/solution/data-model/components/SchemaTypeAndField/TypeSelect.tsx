@@ -1,8 +1,11 @@
+import { useEffect, useState } from 'react';
+
 import styled from 'styled-components';
 
-import { Flex, Select, SegmentedControl, OptionType } from '@cognite/cogs.js';
-import { useEffect, useState } from 'react';
 import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
+
+import { Flex, Select, SegmentedControl, OptionType } from '@cognite/cogs.js';
+
 import { groupOptions } from './utils';
 
 type OptionValue = {

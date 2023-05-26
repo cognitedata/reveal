@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/macro';
-import { ToastContainer } from '@cognite/cogs.js';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from './queryClient';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import styled from 'styled-components/macro';
+
+import { ToastContainer } from '@cognite/cogs.js';
+
 import { Copilot } from './pages/Copilot';
+import { queryClient } from './queryClient';
 
 const COPILOT_TOGGLE = 'COPILOT_TOGGLE';
 

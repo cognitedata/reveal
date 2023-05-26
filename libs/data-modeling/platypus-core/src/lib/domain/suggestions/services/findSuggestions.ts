@@ -2,6 +2,7 @@
  * This file is owned and provided by the Matchmaker team
  */
 import { DMSRecord, SuggestionsMatch } from '../types';
+
 import {
   cosineSimilarity,
   countDocumentFrequencies,

@@ -7,8 +7,9 @@ import {
   memo,
   forwardRef,
 } from 'react';
-
 import PlotlyPlot from 'react-plotly.js';
+
+import debounce from 'lodash/debounce';
 import {
   Layout as PlotlyLayout,
   Config as PlotlyConfig,
@@ -18,9 +19,14 @@ import {
   PlotRelayoutEvent,
 } from 'plotly.js';
 
-import debounce from 'lodash/debounce';
-
-import { getCommonAxisLayoutProps } from '../../utils/getCommonAxisLayoutProps';
+import { useAxisTickCount } from '../../hooks/useAxisTickCount';
+import { useDeepMemo } from '../../hooks/useDeep';
+import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
+import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
+import { useLayoutMargin } from '../../hooks/useLayoutMargin';
+import { usePlotData } from '../../hooks/usePlotData';
+import { usePlotDataRange } from '../../hooks/usePlotDataRange';
+import { usePlotDataRangeInitial } from '../../hooks/usePlotDataRangeInitial';
 import {
   Config,
   Layout,
@@ -28,21 +34,14 @@ import {
   PlotRange,
   PresetPlotRange,
 } from '../../types';
-import { useAxisTickCount } from '../../hooks/useAxisTickCount';
-import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
-import { useLayoutMargin } from '../../hooks/useLayoutMargin';
-import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
-import { usePlotDataRangeInitial } from '../../hooks/usePlotDataRangeInitial';
-import { usePlotDataRange } from '../../hooks/usePlotDataRange';
-import { useDeepMemo } from '../../hooks/useDeep';
-import { getPlotlyHoverMode } from '../../utils/getPlotlyHoverMode';
 import {
   getPlotRangeFromPlotSelectionEvent,
   getPlotRangeFromRelayoutEvent,
 } from '../../utils/extractPlotRange';
-
-import { usePlotData } from '../../hooks/usePlotData';
+import { getCommonAxisLayoutProps } from '../../utils/getCommonAxisLayoutProps';
+import { getPlotlyHoverMode } from '../../utils/getPlotlyHoverMode';
 import { Loader } from '../Loader';
+
 import { PlotWrapper } from './elements';
 
 export interface PlotElement {

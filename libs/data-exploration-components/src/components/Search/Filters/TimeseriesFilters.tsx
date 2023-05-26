@@ -1,12 +1,5 @@
 import React from 'react';
 
-import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
-import {
-  COMMON_INFO_CONTENT,
-  InternalTimeseriesFilters,
-  isObjectEmpty,
-  SPECIFIC_INFO_CONTENT,
-} from '@data-exploration-lib/core';
 import { BaseFilterCollapse } from '@data-exploration/components';
 import { IsStepFilter, IsStringFilter } from '@data-exploration/containers';
 import {
@@ -17,14 +10,21 @@ import {
   MetadataFilterV2,
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
-
 import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
+import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
+import {
+  COMMON_INFO_CONTENT,
+  InternalTimeseriesFilters,
+  isObjectEmpty,
+  SPECIFIC_INFO_CONTENT,
+} from '@data-exploration-lib/core';
 import {
   useTimeseriesList,
   useTimeseriesMetadataKeysAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+
 import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
+import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 
 export const TimeseriesFilters = ({
   filter,

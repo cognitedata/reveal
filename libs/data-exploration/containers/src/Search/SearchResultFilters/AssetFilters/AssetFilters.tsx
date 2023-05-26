@@ -1,11 +1,12 @@
+import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
 } from '@data-exploration-lib/core';
-import { BaseFilterCollapse } from '@data-exploration/components'; //??
-import { TempMultiSelectFix } from '../elements';
+
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
+import { TempMultiSelectFix } from '../elements';
 
 export const AssetFilters: React.FC<FilterProps> = ({
   query,

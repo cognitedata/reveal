@@ -1,6 +1,9 @@
-import { createLink } from '@cognite/cdf-utilities';
 import React from 'react';
+
 import styled from 'styled-components/macro';
+
+import { createLink } from '@cognite/cdf-utilities';
+
 import { RootAssetButton } from './RootAssetButton';
 
 export default {

@@ -1,12 +1,13 @@
-import { useSDK } from '@cognite/sdk-provider';
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+
 import {
   Datapoints,
   DatapointsMultiQuery,
   IdEither,
 } from '@cognite/sdk/dist/src';
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { useSDK } from '@cognite/sdk-provider';
 
-import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../../../queryKeys';
 import { getTimeseriesDatapoints } from '../network';
 

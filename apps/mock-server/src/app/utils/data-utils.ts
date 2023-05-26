@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IntrospectionQuery } from 'graphql';
+
 import { CdfResourceObject, KeyValuePair } from '..';
 import { Collection } from '../common/collection';
 import { MockData } from '../types';

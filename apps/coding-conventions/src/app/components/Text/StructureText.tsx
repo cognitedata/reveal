@@ -1,8 +1,10 @@
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { SelectedText } from '../../containers/convention/elements';
 import { Convention } from '../../types';
 import { colors } from '../../utils/colors';
-import { SelectedText } from '../../containers/convention/elements';
 
 interface Props {
   text: string;

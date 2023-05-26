@@ -1,7 +1,9 @@
-import { BulkActionbar } from '..';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderComponent } from '../__test-utils';
+
 import { Button } from '@cognite/cogs.js';
+
+import { BulkActionbar } from '..';
+import { renderComponent } from '../__test-utils';
 
 describe('BulkActionbar', () => {
   test("shouldn't render the componet if the visible props is false", () => {

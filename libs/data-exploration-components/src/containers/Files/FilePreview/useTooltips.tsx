@@ -1,8 +1,11 @@
-import { useFlag } from '@cognite/react-feature-flags';
 import { useMemo } from 'react';
+
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import useHoverTooltips from './useHoverTooltips';
+
+import { useFlag } from '@cognite/react-feature-flags';
+
 import useFileLinkTooltips from './useFileLinkTooltips';
+import useHoverTooltips from './useHoverTooltips';
 import useOverlappingAnnotationsTooltips from './useOverlappingAnnotationsTooltips';
 
 const useTooltips = ({

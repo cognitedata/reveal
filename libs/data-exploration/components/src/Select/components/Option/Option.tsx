@@ -1,15 +1,15 @@
 import { components, OptionProps, OptionTypeBase } from 'react-select';
 
-import { Checkbox } from '@cognite/cogs.js';
-
 import {
   formatBigNumbersWithSuffix,
   NIL_FILTER_LABEL,
 } from '@data-exploration-lib/core';
-
 import isUndefined from 'lodash/isUndefined';
 
+import { Checkbox } from '@cognite/cogs.js';
+
 import { Ellipsis } from '../../../Ellipsis';
+
 import {
   OptionContentWrapper,
   OptionCount,

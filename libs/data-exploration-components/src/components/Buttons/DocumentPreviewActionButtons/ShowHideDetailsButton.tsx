@@ -1,4 +1,5 @@
 import { IconButton } from '../IconButton/IconButton';
+
 import { HIDE_DETAILS, SHOW_DETAILS } from './constants';
 
 type Props = {

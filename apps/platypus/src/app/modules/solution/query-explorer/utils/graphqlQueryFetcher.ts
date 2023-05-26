@@ -1,5 +1,5 @@
-import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FetcherParams, FetcherResult } from '@graphiql/toolkit';
+import { Notification } from '@platypus-app/components/Notification/Notification';
 import { rootInjector, TOKENS } from '@platypus-app/di';
 
 export default {

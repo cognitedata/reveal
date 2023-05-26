@@ -1,5 +1,6 @@
-import { Alert, Button } from 'antd';
 import { FallbackProps } from 'react-error-boundary';
+
+import { Alert, Button } from 'antd';
 
 export default function RevealErrorFeedback({
   error,

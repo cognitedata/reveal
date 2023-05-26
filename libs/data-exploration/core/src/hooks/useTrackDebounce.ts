@@ -1,4 +1,5 @@
 import debounce from 'lodash/debounce';
+
 import { MetricsMetadata, useMetrics } from './useMetrics';
 
 export const useDebounceTrackUsage = (duration = 500) => {

@@ -1,4 +1,5 @@
 import { ComponentStory } from '@storybook/react';
+
 import { Menu } from '../Menu';
 
 import { MenuFooterButton } from './MenuFooterButton';

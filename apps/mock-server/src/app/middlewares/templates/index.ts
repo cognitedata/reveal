@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { graphql } from 'graphql';
+
 import { CdfDatabaseService } from '../../common/cdf-database.service';
 import { CdfApiConfig, CdfMockDatabase, ExtendedRouter } from '../../types';
+
 import { buildFromMockDb, buildMockServer, createMockServerKey } from './utils';
 
 export default function (db: CdfMockDatabase, config: CdfApiConfig) {

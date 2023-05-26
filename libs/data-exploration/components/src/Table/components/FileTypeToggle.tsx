@@ -1,7 +1,10 @@
 import React from 'react';
-import { Body, Icon, IconType, Switch } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
 import { FileTypes, FileTypeVisibility } from '@data-exploration-lib/core';
+
+import { Body, Icon, IconType, Switch } from '@cognite/cogs.js';
 
 const CustomChip = ({
   label,

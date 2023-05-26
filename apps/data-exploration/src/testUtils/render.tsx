@@ -1,11 +1,12 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import {
   render as rtlRender,
   configure,
   RenderOptions,
 } from '@testing-library/react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { ids } from '../cogs-variables';
 

@@ -1,8 +1,12 @@
 import React from 'react';
-import { InternalDocument } from '@data-exploration-lib/domain-layer';
+
 import styled from 'styled-components';
+
 import { HighlightCell } from '@data-exploration/components';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
+
 import { Body, Flex } from '@cognite/cogs.js';
+
 import { getFocusedHighlightContent, getHighlightContent } from './utils';
 
 export const DocumentContentPreview = ({

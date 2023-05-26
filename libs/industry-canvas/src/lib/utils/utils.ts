@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk/dist/src/index';
+
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';

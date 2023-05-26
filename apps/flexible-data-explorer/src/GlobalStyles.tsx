@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import React from 'react';
+
+import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
+
+import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
   Tooltip as CogsTooltip,
   Loader,
   Modal,
   Dropdown,
 } from '@cognite/cogs.js';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import styleScope from './styleScope';
 

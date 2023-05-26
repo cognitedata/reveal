@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+
 import { FileInfo } from '@cognite/sdk';
 import {
   RectangleAnnotation,
   getAnnotationsFromContextApiOcrAnnotations,
 } from '@cognite/unified-file-viewer';
+
 import { usePnIdRawOCRResultQuery } from '../../service/queries/usePnIdRawOCRResultQuery';
 
 export type SearchResult = {

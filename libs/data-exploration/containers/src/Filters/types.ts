@@ -1,3 +1,5 @@
+import { InputActionMeta } from 'react-select';
+
 import {
   InternalAssetFilters,
   InternalDocumentFilter,
@@ -6,7 +8,6 @@ import {
   InternalSequenceFilters,
   InternalTimeseriesFilters,
 } from '@data-exploration-lib/core';
-import { InputActionMeta } from 'react-select';
 
 export interface BaseFilter<TFilter> {
   // TODO: Investigate which properties are needed here to make dynamic filter work.

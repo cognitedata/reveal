@@ -3,6 +3,7 @@ import {
   DataModelTypeDefsType,
   DataModelVersion,
 } from '../types';
+
 import { QueryFilter, QuerySort } from './common-dtos';
 
 export interface DataQueryingBaseDTO {

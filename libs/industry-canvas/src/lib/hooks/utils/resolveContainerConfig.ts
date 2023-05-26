@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
+
 import {
   ContainerReference,
   IndustryCanvasContainerConfig,
@@ -9,6 +10,7 @@ import {
   isTimeseriesContainerReference,
 } from '../../types';
 import assertNever from '../../utils/assertNever';
+
 import resolveAssetContainerConfig from './resolveAssetContainerConfig';
 import resolveEventContainerConfig from './resolveEventContainerConfig';
 import resolveFileContainerConfig from './resolveFileContainerConfig';

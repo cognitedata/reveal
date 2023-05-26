@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { OptionType } from '@cognite/cogs.js';
+
 import noop from 'lodash/noop';
+
+import { OptionType } from '@cognite/cogs.js';
+
 import {
   CreateTransformationForm,
   TransformationType,

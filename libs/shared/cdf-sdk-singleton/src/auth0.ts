@@ -1,4 +1,5 @@
 import createAuth0Client from '@auth0/auth0-spa-js';
+
 import { UserInfo } from './types';
 
 export async function getUserInformation(

@@ -1,24 +1,26 @@
-import {
-  DateRangeProps,
-  getHiddenColumns,
-  RelationshipLabels,
-  TIME_SELECT,
-} from '@data-exploration-lib/core';
 import { useEffect, useMemo, useState } from 'react';
-import { Asset, Timeseries } from '@cognite/sdk';
+
 import {
   SubCellMatchingLabels,
   Table,
   TableProps,
   TimeDisplay,
 } from '@data-exploration/components';
-import { ColumnDef } from '@tanstack/react-table';
+import {
+  DateRangeProps,
+  getHiddenColumns,
+  RelationshipLabels,
+  TIME_SELECT,
+} from '@data-exploration-lib/core';
 import {
   InternalTimeseriesDataWithMatchingLabels,
   TimeseriesWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
 
 import { TimeseriesChart } from '@cognite/plotting-components';
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import { useTimeseriesMetadataColumns } from '../useTimeseriesMetadataColumns';
 
 export interface TimeseriesTableProps

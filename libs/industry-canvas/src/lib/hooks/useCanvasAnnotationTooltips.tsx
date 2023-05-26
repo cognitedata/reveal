@@ -1,16 +1,20 @@
+import { useMemo } from 'react';
+
+import styled from 'styled-components';
+
 import {
   isPolylineAnnotation,
   isTextAnnotation,
   isStickyAnnotation,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
-import { useMemo } from 'react';
-import styled from 'styled-components';
+
 import { LineAnnotationTooltip } from '../components/tooltips/LineAnnotationTooltip';
 import { ShapeAnnotationTooltip } from '../components/tooltips/ShapeAnnotationTooltip';
 import { StickyAnnotationTooltip } from '../components/tooltips/StickyAnnotationTooltip';
 import { TextAnnotationTooltip } from '../components/tooltips/TextAnnotationTooltip';
 import { CanvasAnnotation, isShapeAnnotation } from '../types';
+
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
 
 export type UseCanvasAnnotationTooltipsParams = {

@@ -1,21 +1,24 @@
-import { Asset } from '@cognite/sdk';
-import {
-  TableSortBy,
-  useAssetsSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import React, { useMemo, useState } from 'react';
+
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
-import React, { useMemo, useState } from 'react';
-
-import { useDebounce } from 'use-debounce';
 import {
   InternalAssetFilters,
   InternalCommonFilters,
 } from '@data-exploration-lib/core';
+import {
+  TableSortBy,
+  useAssetsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
+import { useDebounce } from 'use-debounce';
+
+import { Asset } from '@cognite/sdk';
+
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
+
 import { AssetTable } from './AssetTable';
 
 interface Props {

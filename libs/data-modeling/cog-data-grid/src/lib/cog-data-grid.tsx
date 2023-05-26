@@ -1,11 +1,3 @@
-import { Icon } from '@cognite/cogs.js';
-import {
-  ColDef,
-  ColGroupDef,
-  GetRowIdParams,
-  GridOptions,
-} from 'ag-grid-community';
-import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
 import {
   CSSProperties,
   ForwardedRef,
@@ -14,6 +6,17 @@ import {
   useState,
 } from 'react';
 import ReactDOM from 'react-dom';
+
+import {
+  ColDef,
+  ColGroupDef,
+  GetRowIdParams,
+  GridOptions,
+} from 'ag-grid-community';
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
+
+import { Icon } from '@cognite/cogs.js';
+
 import { CogDataGridStyled } from './cog-data-grid-styled';
 import './cog-data-grid.module.css';
 import { gridConfigService } from './core/services/grid-config.service';

@@ -1,12 +1,16 @@
-import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
-import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 
-import { FileInfo } from '@cognite/sdk';
+import styled from 'styled-components';
+
+import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import { useDisclosure } from '@data-exploration-components/hooks/index';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
+import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
 import { useReviewFile } from '../hooks';
+
 import AnnotationsList from './AnnotationsList/index';
 import DiagramReviewStatus from './DiagramStatus';
 import FileReview from './FileReview';

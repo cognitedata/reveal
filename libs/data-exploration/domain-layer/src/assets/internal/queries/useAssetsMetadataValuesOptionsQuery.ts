@@ -1,11 +1,13 @@
-import { UseQueryOptions } from '@tanstack/react-query';
-import { InternalAssetFilters } from '@data-exploration-lib/core';
-import omit from 'lodash/omit';
 import { useMemo } from 'react';
-import { mapFiltersToAssetsAdvancedFilters } from '../transformers';
-import { useAssetsMetadataValuesAggregateQuery } from '../../service';
-import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+
+import { InternalAssetFilters } from '@data-exploration-lib/core';
+import { UseQueryOptions } from '@tanstack/react-query';
+import omit from 'lodash/omit';
+
 import { getAssetSubtreeIdFilter } from '../../../utils';
+import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
+import { useAssetsMetadataValuesAggregateQuery } from '../../service';
+import { mapFiltersToAssetsAdvancedFilters } from '../transformers';
 
 interface Props {
   searchQuery?: string;

@@ -1,6 +1,14 @@
+import React, { useState, Suspense, useMemo } from 'react';
+
+import styled from 'styled-components';
+
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import { Column, Updater, ColumnOrderState } from '@tanstack/table-core';
 import has from 'lodash/has';
-import React, { useState, Suspense, useMemo } from 'react';
+
 import {
   Button,
   Checkbox,
@@ -15,20 +23,15 @@ import {
   Body,
 } from '@cognite/cogs.js';
 
-import styled from 'styled-components';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  useMetrics,
-} from '@data-exploration-lib/core';
-import { TableData } from '../Table';
-
 import {
   DragDropContainer,
   DragHandleIcon,
   WithDragHandleProps,
 } from '../../DragDropContainer';
-import { MetadataHeaderText } from '../elements';
 import { MAX_COLUMN_SELECTION } from '../constants';
+import { MetadataHeaderText } from '../elements';
+import { TableData } from '../Table';
+
 import { HighlightCell } from './HighlightCell';
 
 export interface ColumnToggleProps<T extends TableData = any> {

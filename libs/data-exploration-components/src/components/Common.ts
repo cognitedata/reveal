@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { lightGrey } from '@data-exploration-components/utils';
 
 export type onResourceSelectedParams = {

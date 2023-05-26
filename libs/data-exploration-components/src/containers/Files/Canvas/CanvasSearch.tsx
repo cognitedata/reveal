@@ -1,12 +1,13 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { FileInfo } from '@cognite/sdk/dist/src/index';
-import { PagedFileReference } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import React, { useState, useEffect, useCallback } from 'react';
+
+import styled from 'styled-components';
+
+import { PagedFileReference } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import debounce from 'lodash/debounce';
 
 import { Button, Icon, Input, Menu } from '@cognite/cogs.js';
-
-import styled from 'styled-components';
+import { FileInfo } from '@cognite/sdk/dist/src/index';
+import { useSDK } from '@cognite/sdk-provider';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
 
 type CanvasSearchProps = {

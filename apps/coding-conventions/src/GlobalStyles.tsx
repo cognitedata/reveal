@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import React from 'react';
+
+import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
   Tooltip as CogsTooltip,
   Loader,
@@ -9,8 +11,6 @@ import {
   Drawer,
   Select,
 } from '@cognite/cogs.js';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import styleScope from './styleScope';

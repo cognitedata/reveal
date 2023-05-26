@@ -1,5 +1,6 @@
 import { scriptName } from 'yargs';
 import { detailed } from 'yargs-parser';
+
 import { environment } from '../environments/environment';
 
 import { cliConfig } from './cli-config';

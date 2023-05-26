@@ -6,8 +6,16 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
+import { ErrorBoundary } from 'react-error-boundary';
+
 import styled from 'styled-components';
+
+import { useQuery } from '@tanstack/react-query';
+import { Alert } from 'antd';
+import { Vector3 } from 'three';
+
+import { toast } from '@cognite/cogs.js';
+import { usePrevious } from '@cognite/data-exploration';
 import {
   PointerEventDelegate,
   CogniteCadModel,
@@ -16,17 +24,13 @@ import {
   Intersection,
   ViewerState,
 } from '@cognite/reveal';
-import { Alert } from 'antd';
-import { useQuery } from '@tanstack/react-query';
-import { ErrorBoundary } from 'react-error-boundary';
-import { usePrevious } from '@cognite/data-exploration';
-import { toast } from '@cognite/cogs.js';
-import { Vector3 } from 'three';
-import RevealErrorFeedback from './RevealErrorFeedback';
-import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
-import { ThreeDContext } from './ThreeDContext';
-import RevealErrorToast from './RevealErrorToast';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { use3DModel } from './hooks';
+import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
+import RevealErrorFeedback from './RevealErrorFeedback';
+import RevealErrorToast from './RevealErrorToast';
+import { ThreeDContext } from './ThreeDContext';
 import { IMAGE_360_POSITION_THRESHOLD } from './utils';
 
 type ChildProps = {

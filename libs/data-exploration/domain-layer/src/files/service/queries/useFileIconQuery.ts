@@ -1,7 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from '@tanstack/react-query';
-import { FileInfo } from '@cognite/sdk/dist/src';
 import { isFileOfType } from '@data-exploration-lib/core';
+import { useQuery } from '@tanstack/react-query';
+
+import { FileInfo } from '@cognite/sdk/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { VALID_IMAGE_TYPES } from '../../../constants';
 import { queryKeys } from '../../../queryKeys';
 import { getFileIcon } from '../network';

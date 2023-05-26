@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { CommonFilter } from '../CommonFilter';
 import { BaseFilterProps, Operator } from '../../types';
+import { CommonFilter } from '../CommonFilter';
 
 const CONFIG = {
   [Operator.STARTS_WITH]: 'string',

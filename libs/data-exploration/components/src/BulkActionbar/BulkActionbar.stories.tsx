@@ -1,8 +1,11 @@
-import { Button } from '@cognite/cogs.js';
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { useDialog } from '@data-exploration-lib/core';
 
-import React from 'react';
-import styled from 'styled-components';
+import { Button } from '@cognite/cogs.js';
+
 import { BulkActionbar } from './BulkActionbar';
 
 export default {

@@ -1,6 +1,9 @@
-import { ToolType } from '@cognite/unified-file-viewer';
 import { useEffect, useState } from 'react';
+
+import { ToolType } from '@cognite/unified-file-viewer';
+
 import { ToolTypeByShortcutKey } from '../components/ToolbarComponent/ToolbarComponent';
+
 import shouldFireToolKeyboardShortcut from './shouldFireToolKeyboardShortcut';
 
 const useManagedTool = (initialToolType: ToolType) => {

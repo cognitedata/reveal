@@ -1,6 +1,18 @@
 import 'graphiql/graphiql.min.css';
 
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { DataModelTypeDefs } from '@platypus/platypus-core';
+import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import { fetchGptAutoQuery } from '@platypus-app/utils/gpt-query';
+import zIndex from '@platypus-app/utils/zIndex';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   Button,
   Collapse,
@@ -13,23 +25,16 @@ import {
   Table,
   Tabs,
 } from '@cognite/cogs.js';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
-import { DataModelTypeDefs } from '@platypus/platypus-core';
-import { fetchGptAutoQuery } from '@platypus-app/utils/gpt-query';
-import sdk from '@cognite/cdf-sdk-singleton';
-import zIndex from '@platypus-app/utils/zIndex';
+
+import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
 import {
   getNodeId,
   getRelationLinkId,
 } from '../../data-management/components/RelationViewer/utils';
-import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
 import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
-import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
 import { QueryExplorer } from '../components/QueryExplorer';
+import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
+
 import { augmentQueryWithRequiredFields } from './util';
 
 export interface QueryExplorerPageProps {

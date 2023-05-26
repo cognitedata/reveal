@@ -1,7 +1,6 @@
-import { Loader } from '@data-exploration/components';
 import React from 'react';
-import { CogniteError, Timeseries } from '@cognite/sdk';
-import { Title, Body } from '@cognite/cogs.js';
+
+import { Loader } from '@data-exploration/components';
 import {
   ErrorFeedback,
   InfoGrid,
@@ -11,14 +10,18 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesChart } from '@data-exploration-components/containers/Timeseries';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import {
   SmallPreviewProps,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import noop from 'lodash/noop';
+
+import { Title, Body } from '@cognite/cogs.js';
+import { CogniteError, Timeseries } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { TimeOptions } from '../types';
 
 export const TimeseriesSmallPreview = ({

@@ -1,5 +1,6 @@
-import { Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Tabs } from '@cognite/cogs.js';
 export const TabContainer = styled.div`
   display: flex;
   align-items: center;

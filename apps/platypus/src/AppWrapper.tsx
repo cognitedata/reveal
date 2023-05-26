@@ -1,7 +1,7 @@
-import sidecar from './app/utils/sidecar';
-import store from './app/redux/store';
-import { AppContainer } from './environments/AppContainer';
 import App from './app/App';
+import store from './app/redux/store';
+import sidecar from './app/utils/sidecar';
+import { AppContainer } from './environments/AppContainer';
 
 //
 // Globally defined global

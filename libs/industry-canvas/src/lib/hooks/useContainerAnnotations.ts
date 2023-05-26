@@ -1,15 +1,19 @@
+import { useMemo } from 'react';
+
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import zip from 'lodash/zip';
-import { useMemo } from 'react';
+
 import {
   getExtendedAnnotationsFromAnnotationsApi,
   getStyledAnnotationFromAnnotation,
 } from '@cognite/data-exploration';
-import { isNotUndefined } from '../utils/isNotUndefined';
+
 import { IndustryCanvasContainerConfig } from '../types';
+import { isNotUndefined } from '../utils/isNotUndefined';
 import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
-import { useAnnotationsMultiple } from './useAnnotationsMultiple';
+
 import { EMPTY_ARRAY } from './constants';
+import { useAnnotationsMultiple } from './useAnnotationsMultiple';
 
 type useContainerAnnotationsParams = {
   container: IndustryCanvasContainerConfig;

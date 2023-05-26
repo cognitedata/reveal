@@ -1,12 +1,5 @@
 import { ResourceSelectionMode } from '@data-exploration-components/hooks/useSelection';
 import {
-  AssetFilterProps,
-  TimeseriesFilter,
-  FileFilterProps,
-  EventFilter,
-  SequenceFilter,
-} from '@cognite/sdk';
-import {
   InternalAssetFilters,
   InternalTimeseriesFilters,
   InternalFilesFilters,
@@ -15,6 +8,15 @@ import {
   InternalDocumentFilter,
   OldSequenceFilters,
 } from '@data-exploration-lib/core';
+
+import {
+  AssetFilterProps,
+  TimeseriesFilter,
+  FileFilterProps,
+  EventFilter,
+  SequenceFilter,
+} from '@cognite/sdk';
+
 import { ResourceItem } from './Types';
 
 export type SmallPreviewProps = {

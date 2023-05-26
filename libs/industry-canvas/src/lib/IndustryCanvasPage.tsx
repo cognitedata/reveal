@@ -1,3 +1,10 @@
+import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { v4 as uuid } from 'uuid';
+
 import { PageTitle } from '@cognite/cdf-utilities';
 import {
   Button,
@@ -21,37 +28,33 @@ import {
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { v4 as uuid } from 'uuid';
+
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
+import DragOverIndicator from './components/DragOverIndicator';
+import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
 } from './constants';
+import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
-
+import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import { IndustryCanvas } from './IndustryCanvas';
 import {
   IndustryCanvasProvider,
   useIndustryCanvasContext,
 } from './IndustryCanvasContext';
 import { ContainerReference, ContainerReferenceType } from './types';
-import isSupportedResourceItem from './utils/isSupportedResourceItem';
-import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
-import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
-import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
-import useManagedTool from './utils/useManagedTool';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/addDimensionsToContainerReference';
-import DragOverIndicator from './components/DragOverIndicator';
-import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
-import { useDragAndDrop } from './hooks/useDragAndDrop';
+import isSupportedResourceItem from './utils/isSupportedResourceItem';
+import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
+import useManagedTool from './utils/useManagedTool';
+import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
 
 export type OnAddContainerReferences = (
   containerReferences: ContainerReference[]

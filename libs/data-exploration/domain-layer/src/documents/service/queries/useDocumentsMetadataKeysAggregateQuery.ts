@@ -1,12 +1,12 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { DocumentProperties } from '../../internal';
-
-import { DocumentsMetadataAggregateResponse } from '../types';
 import { getDocumentsMetadataKeysAggregate } from '../network';
+import { DocumentsMetadataAggregateResponse } from '../types';
 
 interface Props {
   query?: string;

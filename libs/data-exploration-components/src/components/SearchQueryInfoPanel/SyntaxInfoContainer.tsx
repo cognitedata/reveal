@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
 import isNil from 'lodash/isNil';
+
 import { storage } from '@cognite/storage';
 
 import { SYNTAX_INFO_CONTAINER_KEY } from './constants';

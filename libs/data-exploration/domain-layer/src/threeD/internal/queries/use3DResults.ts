@@ -1,13 +1,17 @@
 import { useCallback, useMemo } from 'react';
+
 import {
   FileTypeVisibility,
   InternalThreeDFilters,
 } from '@data-exploration-lib/core';
+
 import { Model3D } from '@cognite/sdk';
+
 import { DEFAULT_SEARCH_RESULTS_PAGE_SIZE } from '../../../constants';
 import { Model3DWithType, ThreeDModelsResponse } from '../types';
-import { useInfinite3DModelsQuery } from './useInfinite3DModelsQuery';
+
 import { useInfinite360Images } from './useInfinite360Images';
+import { useInfinite3DModelsQuery } from './useInfinite3DModelsQuery';
 
 export const use3DResults = (
   fileTypeVisibility: FileTypeVisibility,

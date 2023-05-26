@@ -1,13 +1,12 @@
-import { isInlineType } from '../utils';
-
-import { DataModelTypeDefsField, DataModelTypeDefsType } from '../types';
+import { mixerApiBuiltInTypes } from '../constants';
 import {
   BuildGetByExternalIdQueryDTO,
   BuildListQueryDTO,
   BuildSearchQueryDTO,
   QuerySort,
 } from '../dto';
-import { mixerApiBuiltInTypes } from '../constants';
+import { DataModelTypeDefsField, DataModelTypeDefsType } from '../types';
+import { isInlineType } from '../utils';
 
 export enum OPERATION_TYPE {
   LIST = 'list',

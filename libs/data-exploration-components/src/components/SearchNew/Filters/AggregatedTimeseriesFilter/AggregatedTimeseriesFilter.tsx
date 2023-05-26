@@ -1,19 +1,21 @@
 import { useMemo } from 'react';
+
 import {
   MultiSelectFilter,
   Select,
 } from '@data-exploration-components/components';
 import {
-  TimeseriesProperty,
-  useTimeseriesUniqueValuesByProperty,
-} from '@data-exploration-lib/domain-layer';
-import {
   DATA_EXPLORATION_COMPONENT,
   InternalTimeseriesFilters,
   useMetrics,
 } from '@data-exploration-lib/core';
+import {
+  TimeseriesProperty,
+  useTimeseriesUniqueValuesByProperty,
+} from '@data-exploration-lib/domain-layer';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+
 import { reactSelectCogsStylingProps } from '../elements';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 

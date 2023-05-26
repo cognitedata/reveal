@@ -1,9 +1,11 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
-import noop from 'lodash/noop';
+
 import { VerticalDivider } from '@data-exploration/components';
+import noop from 'lodash/noop';
+
+import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 
 interface SummaryHeaderProps {
   icon?: IconType;

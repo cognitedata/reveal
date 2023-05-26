@@ -1,10 +1,11 @@
-import { CustomFilterModel } from '@cognite/cog-data-grid-root/lib/types';
 import {
   QueryFilter,
   FieldFilter,
   DataModelTypeDefsField,
 } from '@platypus/platypus-core';
 import { ISimpleFilterModelType } from 'ag-grid-community/dist/lib/filter/provided/simpleFilter';
+
+import { CustomFilterModel } from '@cognite/cog-data-grid-root/lib/types';
 
 import { INSTANCE_TYPE_DEFS_FIELDS } from './constants';
 

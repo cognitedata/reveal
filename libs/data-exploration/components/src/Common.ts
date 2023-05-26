@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Title } from '@cognite/cogs.js';
 
 export const SpacedRow = styled.div`

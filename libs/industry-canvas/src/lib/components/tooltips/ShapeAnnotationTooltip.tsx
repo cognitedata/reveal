@@ -1,15 +1,18 @@
 import { useState } from 'react';
+
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
-import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+
 import {
   SHAPE_ANNOTATION_FILL_COLOR_MAP,
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
 } from '../../colors';
-import { StrokeColorPalette } from '../color-palettes/StrokeColorPalette';
-import { FillColorPalette } from '../color-palettes/FillColorPalette';
-import { FillButton } from '../color-palettes/FillButton';
-import { StrokeButton } from '../color-palettes/StrokeButton';
+import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { ShapeAnnotation } from '../../types';
+import { FillButton } from '../color-palettes/FillButton';
+import { FillColorPalette } from '../color-palettes/FillColorPalette';
+import { StrokeButton } from '../color-palettes/StrokeButton';
+import { StrokeColorPalette } from '../color-palettes/StrokeColorPalette';
+
 import { RightAlignedColorPalettePosition } from './elements';
 
 export type ShapeAnnotationTooltipProps = {

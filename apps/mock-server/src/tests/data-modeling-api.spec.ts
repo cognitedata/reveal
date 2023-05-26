@@ -1,6 +1,8 @@
 import { fdmViewsMockData } from '@fusion/mock-data';
 import * as request from 'supertest';
+
 import { mockDataSample } from '../mock-data';
+
 import { createServer } from './tests-setup';
 
 // https://pr-ark-codegen-1771.specs.preview.cogniteapp.com/v1.json.html#tag/Spaces-(New)/operation/ApplySpaces

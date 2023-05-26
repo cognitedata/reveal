@@ -1,12 +1,11 @@
 import * as React from 'react';
+
 import { CogsTooltipProps, Icon, Tooltip } from '@cognite/cogs.js';
 
+import { TOOLTIP_DELAY_IN_MS } from '../../common';
+import { formatTime, getDetailedTime } from '../../utils';
+
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import {
-  formatTime,
-  getDetailedTime,
-  TOOLTIP_DELAY_IN_MS,
-} from '@cognite/cdf-utilities';
 
 type TimestampProps = {
   absolute?: boolean;

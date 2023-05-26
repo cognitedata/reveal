@@ -1,6 +1,7 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { Timeseries } from '@cognite/sdk';
 import { useQuery } from '@tanstack/react-query';
+
+import { Timeseries } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useAssetTimeseries = (assetId?: number) => {
   const sdk = useSDK();

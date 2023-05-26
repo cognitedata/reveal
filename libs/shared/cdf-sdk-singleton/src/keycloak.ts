@@ -1,4 +1,5 @@
 import { getUserManager } from '@cognite/login-utils';
+
 import { UserInfo } from './types';
 
 /**

@@ -1,10 +1,10 @@
+import { useReducer } from 'react';
+
 import {
   FilterResourceType,
   FilterState,
   getCategoryValues,
 } from '@data-exploration-lib/core';
-
-import { useReducer } from 'react';
 
 const initialState: FilterState = {
   common: {},

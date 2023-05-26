@@ -5,16 +5,18 @@ import {
   Route,
   useLocation,
 } from 'react-router-dom';
+
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
+
+import { Spinner } from './components/Spinner/Spinner';
+import { TOKENS } from './di';
+import { isFDMv3 } from './flags';
+import { getContainer } from './GlobalStyles';
+import { useFusionQuery } from './hooks/useFusionQuery';
+import { useInjection } from './hooks/useInjection';
+import { useMixpanelPathTracking } from './hooks/useMixpanel';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { DataModel } from './modules/solution/DataModel';
-import { Spinner } from './components/Spinner/Spinner';
-import { useFusionQuery } from './hooks/useFusionQuery';
-import { useMixpanelPathTracking } from './hooks/useMixpanel';
-import { isFDMv3 } from './flags';
-import { useInjection } from './hooks/useInjection';
-import { TOKENS } from './di';
-import { getContainer } from './GlobalStyles';
 import zIndex from './utils/zIndex';
 
 const DataModelSubRoutes = () => (

@@ -4,8 +4,9 @@ import {
   Kind,
   ObjectTypeDefinitionNode,
 } from 'graphql';
-import { Node } from '../Graph/GraphEngine';
+
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
+import { Node } from '../Graph/GraphEngine';
 
 export const NODE_WIDTH = 240;
 export const NODE_ICON_WIDTH = 20;

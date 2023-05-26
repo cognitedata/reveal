@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
-import { FilterTitle } from '../FilterTitle';
+
 import render from '../../../../testUtils/render';
+import { FilterTitle } from '../FilterTitle';
 
 describe('FilterTitle', () => {
   it('should render filter title', () => {

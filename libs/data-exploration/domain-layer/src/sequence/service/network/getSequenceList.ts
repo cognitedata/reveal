@@ -4,6 +4,7 @@ import {
   Sequence,
   SequenceFilter,
 } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../../builders';
 import { InternalSortBy } from '../../../types';
 import { SequenceProperties } from '../../internal';

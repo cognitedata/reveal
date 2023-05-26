@@ -1,5 +1,6 @@
-import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+
+import { Title } from '@cognite/cogs.js';
 
 export const StyledMainTitle = styled(Title)`
   padding: 0px 0 10px 0;

@@ -3,6 +3,7 @@ import {
   SearchConfigDataType,
   SEARCH_CONFIG_LOCAL_STORAGE_KEY,
 } from '@data-exploration-lib/core';
+
 import { getSearchConfig } from '../getSearchConfig';
 
 const newConfig: SearchConfigDataType = {

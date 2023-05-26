@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
+import { SpacedRow } from '@data-exploration-components/components';
+import { getMIMEType, sleep } from '@data-exploration-components/utils';
 import { Upload, Modal, message } from 'antd';
-// @ts-ignore
+import { UploadFile } from 'antd/lib/upload/interface';
+
+import { Body, Icon, Button } from '@cognite/cogs.js';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from '@cognite/sdk';
-import { UploadFile } from 'antd/lib/upload/interface';
-import { Body, Icon, Button } from '@cognite/cogs.js';
-import { getMIMEType, sleep } from '@data-exploration-components/utils';
-import { SpacedRow } from '@data-exploration-components/components';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const GCSUploader = (

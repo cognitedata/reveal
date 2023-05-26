@@ -1,10 +1,12 @@
+import { useMemo } from 'react';
+
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import omit from 'lodash/omit';
-import { useMemo } from 'react';
+
+import { getAssetSubtreeIdFilter } from '../../../utils';
+import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useSequencesMetadataKeysAggregateQuery } from '../../service';
 import { mapFiltersToSequenceAdvancedFilters } from '../transformers';
-import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
-import { getAssetSubtreeIdFilter } from '../../../utils';
 
 interface Props {
   filter?: InternalSequenceFilters;

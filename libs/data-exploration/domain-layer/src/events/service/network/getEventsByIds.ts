@@ -1,5 +1,7 @@
-import { CogniteClient, IdEither } from '@cognite/sdk';
 import chunk from 'lodash/chunk';
+
+import { CogniteClient, IdEither } from '@cognite/sdk';
+
 import { MAX_RESULT_LIMIT_ASSET } from '../../../constants';
 
 export const getEventsByIds = (sdk: CogniteClient, ids: IdEither[]) => {

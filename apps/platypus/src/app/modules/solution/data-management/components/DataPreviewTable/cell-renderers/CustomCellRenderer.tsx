@@ -1,11 +1,14 @@
-import { Body, Flex, Icon, Tooltip } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import React, { useMemo, useState } from 'react';
+
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
 } from '@platypus/platypus-core';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ICellRendererParams } from 'ag-grid-community';
-import React, { useMemo, useState } from 'react';
+
+import { Body, Flex, Icon, Tooltip } from '@cognite/cogs.js';
+
 import { usePreviewData } from '../../../hooks/usePreviewData';
 
 const PROPERTY_TO_SHOW = 3;

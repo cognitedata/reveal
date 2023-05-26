@@ -1,12 +1,15 @@
-import { gridConfigService } from '@cognite/cog-data-grid';
-import { Icon } from '@cognite/cogs.js';
+import { useCallback } from 'react';
+
 import { TOKENS } from '@platypus-app/di';
 import { isFDMv3 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
-import { useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { gridConfigService } from '@cognite/cog-data-grid';
+import { Icon } from '@cognite/cogs.js';
+
 import { DataModelActionsCellRenderer } from '../components/DataModelsTable/DataModelActionsCellRenderer';
 import { DataModelNameCellRenderer } from '../components/DataModelsTable/DataModelNameCellRenderer';
 

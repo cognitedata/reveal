@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
+
 import styled from 'styled-components';
+
 import { Body, Colors, Detail } from '@cognite/cogs.js';
 
 export type TableNoResultsProps = {

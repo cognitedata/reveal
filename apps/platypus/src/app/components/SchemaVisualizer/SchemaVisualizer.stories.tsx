@@ -1,6 +1,9 @@
 import React from 'react';
+
 import { Story } from '@storybook/react';
+
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
+
 import { SchemaVisualizer } from './SchemaVisualizer';
 
 export default {

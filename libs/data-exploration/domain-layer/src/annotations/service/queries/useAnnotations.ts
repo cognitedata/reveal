@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useAnnotations = (fileId: number) => {

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import * as fs from 'fs';
 import * as path from 'path';
-import * as spdy from 'spdy';
+
 import * as cors from 'cors';
-import { getArgs } from './cli/cli-args';
+import * as spdy from 'spdy';
 
-import { createMockServer } from './app/mock-server';
 import cdfMiddleware from './app/middlewares/cdf-middleware';
-
+import { createMockServer } from './app/mock-server';
+import { getArgs } from './cli/cli-args';
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
 import { userTokenData } from './user-token-data';

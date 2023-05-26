@@ -1,6 +1,8 @@
 import React from 'react';
-import { Body, Flex, Button, Link } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Body, Flex, Button, Link } from '@cognite/cogs.js';
 // import { useClipboard } from '@data-exploration-components/hooks';
 
 type DetailsItemProps = {

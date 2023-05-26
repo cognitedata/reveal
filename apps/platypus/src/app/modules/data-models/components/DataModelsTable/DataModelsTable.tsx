@@ -1,8 +1,3 @@
-import { CogDataTable } from '@cognite/cog-data-grid';
-import { Pagination } from '@cognite/cogs.js';
-import { DataModel, StorageProviderType } from '@platypus/platypus-core';
-import { RowClickedEvent } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
 import React, {
   useMemo,
   useRef,
@@ -10,12 +5,21 @@ import React, {
   ForwardedRef,
   useImperativeHandle,
 } from 'react';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
-import { useInjection } from '@platypus-app/hooks/useInjection';
+
+import { DataModel, StorageProviderType } from '@platypus/platypus-core';
 import { TOKENS } from '@platypus-app/di';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+import { RowClickedEvent } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+import { CogDataTable } from '@cognite/cog-data-grid';
+import { Pagination } from '@cognite/cogs.js';
+
 import { useDataModelsGridConfig } from '../../hooks/useDataModelsGridConfig';
+
 import { PaginationWrapper } from './elements';
 
 const RESULTS_PER_PAGE = 25;

@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+
 import { Variant } from '../../types';
 
 export const TooltipWrapper = styled.div`

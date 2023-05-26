@@ -1,4 +1,5 @@
 import { Convention } from '../../types';
+
 import { RawConnector } from './connectors/RawConnector';
 
 export class Database {

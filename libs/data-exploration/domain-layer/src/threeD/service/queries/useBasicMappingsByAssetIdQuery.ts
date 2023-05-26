@@ -1,9 +1,12 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useMemo } from 'react';
+
 import {
   UseInfiniteQueryOptions,
   useInfiniteQuery,
 } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 import { getBasicMappingsByAssetId } from '../network';
 

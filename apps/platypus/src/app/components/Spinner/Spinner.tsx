@@ -1,5 +1,7 @@
-import { Icon } from '@cognite/cogs.js';
 import { CSSProperties } from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
+
 import { StyledLoaderContainer } from './elements';
 
 export const Spinner = ({

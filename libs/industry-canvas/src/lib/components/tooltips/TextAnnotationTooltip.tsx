@@ -1,10 +1,13 @@
+import { useState } from 'react';
+
 import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { TextAnnotation } from '@cognite/unified-file-viewer';
-import { useState } from 'react';
+
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
 import { FONT_SIZE } from '../../constants';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
+
 import { LeftAlignedColorPalettePosition } from './elements';
 
 export type TextAnnotationTooltipProps = {

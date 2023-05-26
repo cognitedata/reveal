@@ -5,6 +5,7 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { isEqual as equal } from 'lodash';
+
 import { IDPType } from '@cognite/login-utils';
 import {
   AggregateResponse,
@@ -14,6 +15,8 @@ import {
   SingleCogniteCapability,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { aggregateApi, post, listApi as _listApi, searchApi } from '../api';
 import {
   aggregateKey,
   byIdKey,
@@ -25,8 +28,6 @@ import {
   searchCacheKey,
   capabilitiesKey,
 } from '../keys';
-
-import { aggregateApi, post, listApi as _listApi, searchApi } from '../api';
 
 /**
  * @deprecated this was exported out of the package by mistake, will be removed

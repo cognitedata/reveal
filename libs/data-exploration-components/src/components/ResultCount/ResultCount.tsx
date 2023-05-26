@@ -1,24 +1,25 @@
 /* eslint-disable react/no-unused-prop-types */
 import React from 'react';
-import {
-  useSearch,
-  useAggregate,
-  SdkResourceType,
-} from '@cognite/sdk-react-query-hooks';
-import { Chip } from '@cognite/cogs.js';
+
 import {
   getTitle,
   ResourceType,
   convertResourceType,
 } from '@data-exploration-components/types';
-
-import { Model3D } from '@cognite/sdk';
+import { formatNumber } from '@data-exploration-lib/core';
 import {
   ThreeDModelsResponse,
   transformNewFilterToOldFilter,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { formatNumber } from '@data-exploration-lib/core';
+
+import { Chip } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
+import {
+  useSearch,
+  useAggregate,
+  SdkResourceType,
+} from '@cognite/sdk-react-query-hooks';
 
 export type ResultProps = {
   api: 'list' | 'search';

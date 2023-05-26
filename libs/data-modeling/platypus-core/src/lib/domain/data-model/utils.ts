@@ -1,13 +1,14 @@
 import { KeyValueMap } from '../../boundaries/types';
+
+import {
+  mixerApiBuiltInTypes,
+  mixerApiInlineTypeDirectiveName,
+} from './constants';
 import {
   DataModelTransformation,
   DataModelTypeDefsType,
   DataModelVersion,
 } from './types';
-import {
-  mixerApiBuiltInTypes,
-  mixerApiInlineTypeDirectiveName,
-} from './constants';
 
 export const getTypesMap = () => {
   const typesMap = {} as KeyValueMap;

@@ -1,5 +1,6 @@
-import { Pagination as CogsPagination } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Pagination as CogsPagination } from '@cognite/cogs.js';
 
 export const Pagination = ({
   currentPage,

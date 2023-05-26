@@ -1,9 +1,11 @@
 import { PropsWithChildren, useState } from 'react';
+
 import { ColDef } from 'ag-grid-community';
+
 import { CogDataTable } from './cog-data-table';
-import { ThemeNames } from './types';
 import { gridConfigService } from './core/services/grid-config.service';
 import { ColumnDataType } from './core/types';
+import { ThemeNames } from './types';
 
 export default {
   title: 'Basic components/CogDataTable',

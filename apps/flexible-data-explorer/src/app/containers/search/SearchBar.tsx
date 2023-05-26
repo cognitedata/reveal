@@ -1,11 +1,15 @@
-import { Icon } from '@cognite/cogs.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
 import styled from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
+
 import { useClickOutsideListener } from '../../hooks/listeners/useClickOutsideListener';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
+
 import { SearchFilters } from './SearchFilters';
 import { SearchPreview } from './SearchPreview';
 

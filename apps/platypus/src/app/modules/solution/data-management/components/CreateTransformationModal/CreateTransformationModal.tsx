@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Modal, OptionType } from '@cognite/cogs.js';
 
 import {
   DataModelTypeDefsType,
@@ -10,10 +7,14 @@ import {
   getOneToManyModelName,
   getVersionedExternalId,
 } from '@platypus/platypus-core';
-import { generateId } from '@platypus-app/utils/uuid';
 import { isFDMv3 } from '@platypus-app/flags';
-import { createLink } from '@cognite/cdf-utilities';
 import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { generateId } from '@platypus-app/utils/uuid';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Modal, OptionType } from '@cognite/cogs.js';
+
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import {

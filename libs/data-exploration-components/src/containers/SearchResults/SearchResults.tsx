@@ -1,4 +1,5 @@
-import { DateRangeProps } from '@data-exploration-lib/core';
+import React, { useState } from 'react';
+
 import {
   AssetSearchResults,
   AssetViewMode,
@@ -6,13 +7,14 @@ import {
   SequenceSearchResults,
   TimeseriesSearchResults,
 } from '@data-exploration/containers';
-import React, { useState } from 'react';
 import {
   ResourceType,
   ResourceItem,
   SelectableItemsProps,
   OldResourceFilterProps,
 } from '@data-exploration-components/types';
+import { DateRangeProps } from '@data-exploration-lib/core';
+
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';
 
 export const SearchResults = ({

@@ -93,7 +93,43 @@
         "func-names": ["off"],
         "import/first": ["error"],
         "import/no-duplicates": ["error"],
-        "import/order": ["error"],
+        "import/order": [
+          "error",
+          {
+            "groups": [
+              "builtin",
+              "external",
+              "internal",
+              "parent",
+              ["sibling", "index"]
+            ],
+            "newlines-between": "always",
+            "alphabetize": {
+              "order": "asc",
+              "caseInsensitive": true
+            },
+            "pathGroups": [
+              {
+                "group": "external",
+                "pattern": "react**",
+                "position": "before"
+              },
+              {
+                "group": "external",
+                "pattern": "styled**",
+                "position": "before"
+              },
+              {
+                "group": "external",
+                "pattern": "@cognite/**",
+                "position": "after"
+              },
+              { "group": "parent", "pattern": "../**" },
+              { "group": "sibling", "pattern": "./**" }
+            ],
+            "pathGroupsExcludedImportTypes": ["react"]
+          }
+        ],
         "jsx-a11y/click-events-have-key-events": ["off"],
         "jsx-a11y/no-static-element-interactions": ["off"],
         "lines-between-class-members": ["off"],

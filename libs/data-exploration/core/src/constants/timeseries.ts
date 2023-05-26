@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+
 import { TimeOptions } from '../types';
 export const TIME_SELECT: {
   [key in TimeOptions]: {

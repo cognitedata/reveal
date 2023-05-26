@@ -1,6 +1,5 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Link } from '@cognite/cogs.js';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+import React, { useMemo } from 'react';
+
 import { useCanvasFilesFromUrl } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import {
   getFileIdFromExtendedAnnotation,
@@ -8,7 +7,11 @@ import {
   getResourceTypeFromExtendedAnnotation,
 } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import React, { useMemo } from 'react';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Link } from '@cognite/cogs.js';
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
 import { TooltipContainer } from '../Canvas/TooltipContainer';
 
 const useFileLinkTooltips = (

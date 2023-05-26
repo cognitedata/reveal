@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
 import { BaseConfig, BaseFilterProps, ValueType } from '../../types';
-import { isApplyButtonDisabled } from './utils';
+
 import { CommonFilterInput } from './CommonFilterInput';
+import { isApplyButtonDisabled } from './utils';
 
 export interface CommonFilterProps<TConfig extends BaseConfig>
   extends BaseFilterProps<TConfig> {

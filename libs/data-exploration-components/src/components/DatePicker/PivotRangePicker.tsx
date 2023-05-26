@@ -1,9 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import dayjs from 'dayjs';
-import { Body, Input } from '@cognite/cogs.js';
-import { SpacedRow } from '@data-exploration-components/components';
 import ReactDatePicker from 'react-datepicker';
+
+import { SpacedRow } from '@data-exploration-components/components';
+import dayjs from 'dayjs';
+
+import { Body, Input } from '@cognite/cogs.js';
+
 import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
 import {
   DatePickerWrapper,

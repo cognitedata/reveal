@@ -1,9 +1,12 @@
-import { AnnotationType } from '@cognite/unified-file-viewer';
 import { ComponentStory } from '@storybook/react';
+
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
 import {
   SHAPE_ANNOTATION_FILL_COLOR_MAP,
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
 } from '../../colors';
+
 import { ShapeAnnotationTooltip } from './ShapeAnnotationTooltip';
 
 export default {

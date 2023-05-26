@@ -1,10 +1,13 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { TimeseriesFilter } from '@cognite/sdk/dist/src';
 import { useMemo } from 'react';
+
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
+
+import { TimeseriesFilter } from '@cognite/sdk/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { InternalSortBy } from '../../../types';

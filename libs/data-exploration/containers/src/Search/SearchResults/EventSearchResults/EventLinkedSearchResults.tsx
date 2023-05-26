@@ -1,19 +1,22 @@
-import { CogniteEvent } from '@cognite/sdk';
-import {
-  TableSortBy,
-  useEventsSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import React, { useMemo, useState } from 'react';
+
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
-import React, { useMemo, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import {
   InternalCommonFilters,
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  TableSortBy,
+  useEventsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
+import { useDebounce } from 'use-debounce';
+
+import { CogniteEvent } from '@cognite/sdk';
+
 import {
   MetadataFilter,
   SourceFilter,
@@ -21,6 +24,7 @@ import {
   TypeFilter,
 } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
+
 import { EventTable } from './EventTable';
 
 interface Props {

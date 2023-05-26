@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react';
-import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Flex } from '@cognite/cogs.js';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import {
-  formatValidationErrors,
-  Notification,
-} from '@platypus-app/components/Notification/Notification';
-import { TOKENS } from '@platypus-app/di';
+import { useParams } from 'react-router-dom';
+
 import {
   ErrorType,
   DataModelVersion,
@@ -19,36 +10,47 @@ import {
   ValidationError,
   PlatypusDmlError,
 } from '@platypus/platypus-core';
-
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
+import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
+import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
+import {
+  formatValidationErrors,
+  Notification,
+} from '@platypus-app/components/Notification/Notification';
 import {
   PageToolbar,
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { useQueryClient } from '@tanstack/react-query';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+import { TOKENS } from '@platypus-app/di';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
-import { useParams } from 'react-router-dom';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useQueryClient } from '@tanstack/react-query';
+
+import { Flex } from '@cognite/cogs.js';
+
+import { useDataModelState } from '../../hooks/useDataModelState';
+import { DataModelHeader } from '../components/DataModelHeader';
+import { EditorPanel } from '../components/EditorPanel';
+import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
 import {
   PublishVersionModal,
   VersionType,
 } from '../components/PublishVersionModal';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
-import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
-import { DataModelHeader } from '../components/DataModelHeader';
-import { EditorPanel } from '../components/EditorPanel';
 import { SchemaEditorMode } from '../types';
-import { useDataModelState } from '../../hooks/useDataModelState';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 

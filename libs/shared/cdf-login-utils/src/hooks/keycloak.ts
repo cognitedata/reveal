@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useMemo } from 'react';
+
 import {
   QueryObserverLoadingErrorResult,
   useQuery,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
+
 import { IDPResponse, KeycloakResponse } from '../types/loginInfo';
 import { getKeycloakToken, getUserManager } from '../utils';
 import { getProjects } from '../utils/shared';

@@ -1,4 +1,5 @@
 import { PublicClientApplication } from '@azure/msal-browser';
+
 import { ADFS } from '@cognite/sdk-core';
 
 const CACHE_CONFIG = {

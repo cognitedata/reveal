@@ -2,6 +2,7 @@ import {
   MainDescription,
   MainTitle,
 } from '@platypus-app/components/Styles/storybook';
+
 import { SplitPanelLayout } from './SplitPanelLayout';
 
 export default {

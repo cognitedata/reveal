@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { rewriter } from 'json-server';
+
 import { CdfApiConfig, CdfMockDatabase, CdfServerRouter } from '../../types';
-import { responseMiddleware } from './response-middleware';
+
 import { requestMiddleware } from './request-middleware';
+import { responseMiddleware } from './response-middleware';
 
 export default function (db: CdfMockDatabase, config?: CdfApiConfig) {
   // Create router

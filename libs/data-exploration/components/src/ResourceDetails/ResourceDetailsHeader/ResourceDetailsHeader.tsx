@@ -1,7 +1,9 @@
+import React, { ReactNode } from 'react';
+
+import styled from 'styled-components';
+
 import { Button, Chip, IconType } from '@cognite/cogs.js';
 
-import React, { ReactNode } from 'react';
-import styled from 'styled-components';
 import { TitleName } from '../../Common';
 
 interface Props {

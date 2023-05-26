@@ -1,6 +1,8 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Title } from '@cognite/cogs.js';
 
 import Breadcrumb, { BreadcrumbProps } from '../Breadcrumb/Breadcrumb';
 

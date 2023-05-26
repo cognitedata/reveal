@@ -1,6 +1,8 @@
-import { Flex, Input, Body } from '@cognite/cogs.js';
 import { useEffect, useState } from 'react';
+
 import styled from 'styled-components';
+
+import { Flex, Input, Body } from '@cognite/cogs.js';
 
 interface Props {
   description: string;

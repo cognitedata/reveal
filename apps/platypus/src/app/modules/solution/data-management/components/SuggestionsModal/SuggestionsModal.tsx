@@ -1,3 +1,15 @@
+import { useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { KeyValueMap } from '@platypus/platypus-core';
+import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import * as Sentry from '@sentry/react';
+import { GetRowIdParams } from 'ag-grid-community';
+
 import { CogDataGrid } from '@cognite/cog-data-grid';
 import {
   Body,
@@ -9,18 +21,11 @@ import {
   Title,
   Modal,
 } from '@cognite/cogs.js';
-import * as Sentry from '@sentry/react';
-import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { KeyValueMap } from '@platypus/platypus-core';
-import { GetRowIdParams } from 'ag-grid-community';
-import { useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+
 import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
-import { useSuggestions } from './useSuggestions';
+
 import { TypeColumnSelect } from './TypeColumnSelect';
+import { useSuggestions } from './useSuggestions';
 import { useSuggestionsGridConfig } from './useSuggestionsGridConfig';
 import { useSuggestionsResult } from './useSuggestionsResult';
 

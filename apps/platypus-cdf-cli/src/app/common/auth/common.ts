@@ -1,5 +1,6 @@
 import { AuthenticationResult } from '@azure/msal-node';
 import decode, { JwtPayload } from 'jwt-decode';
+
 import { AUTH_CONFIG } from '../../constants';
 import { setProjectConfig } from '../../utils/config';
 

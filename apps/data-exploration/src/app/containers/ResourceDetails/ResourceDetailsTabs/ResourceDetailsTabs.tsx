@@ -1,25 +1,28 @@
 import React, { useContext } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import styled from 'styled-components';
+
+import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
+import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
+import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { getTabCountLabel } from '@data-exploration-components/utils';
+import {
+  formatNumber,
+  withThousandSeparator,
+} from '@data-exploration-lib/core';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Tabs, TabProps } from '@cognite/cogs.js';
 import {
   useRelatedResourceCounts,
   ResourceType,
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Tabs, TabProps } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
-import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
-import { useLocation } from 'react-router-dom';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
-import { getTabCountLabel } from '@data-exploration-components/utils';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import {
-  formatNumber,
-  withThousandSeparator,
-} from '@data-exploration-lib/core';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };

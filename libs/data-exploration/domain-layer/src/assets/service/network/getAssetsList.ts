@@ -4,6 +4,7 @@ import {
   CogniteClient,
   CursorResponse,
 } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../../builders';
 import { InternalSortBy } from '../../../types';
 import { AssetsProperties } from '../../internal';

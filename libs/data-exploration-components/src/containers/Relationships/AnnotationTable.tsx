@@ -1,23 +1,25 @@
+import React, { useMemo } from 'react';
+
+import { Loader } from '@data-exploration/components';
 import {
   AssetTable,
   EventTable,
   SequenceTable,
   TimeseriesTable,
 } from '@data-exploration/containers';
-import React, { useMemo } from 'react';
-import uniqBy from 'lodash/uniqBy';
-import { Loader } from '@data-exploration/components';
+import { FileTable } from '@data-exploration-components/containers';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
+import { useTaggedAnnotationsByResourceType } from '@data-exploration-components/hooks/RelationshipHooks';
 import {
   SelectableItemsProps,
   ResourceType,
   convertResourceType,
 } from '@data-exploration-components/types';
 import { Alert } from 'antd';
-import { FileTable } from '@data-exploration-components/containers';
+import uniqBy from 'lodash/uniqBy';
 
 import { IdEither } from '@cognite/sdk';
-import { useTaggedAnnotationsByResourceType } from '@data-exploration-components/hooks/RelationshipHooks';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
+
 import {
   getResourceExternalIdFromTaggedAnnotation,
   getResourceIdFromTaggedAnnotation,

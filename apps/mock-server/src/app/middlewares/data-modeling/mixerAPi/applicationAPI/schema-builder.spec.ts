@@ -1,5 +1,6 @@
-import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
 import { execSchemaMock } from '../../../../../tests/mocks';
+import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
+
 import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
 
 describe('SchemaServiceGraphqlApiBuilder Test', () => {

@@ -1,4 +1,5 @@
 import { GraphQLInputObjectType } from 'graphql';
+
 import {
   ConflictMode,
   CreateDataModelDTO,
@@ -23,7 +24,6 @@ import {
   DeleteDataModelOutput,
 } from '../dto';
 import { ListSpacesDTO } from '../providers/fdm-next/dto/dms-space-dtos';
-
 import {
   BuiltInType,
   CdfResourceInstance,

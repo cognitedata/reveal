@@ -1,5 +1,4 @@
-import { Container, token } from 'brandi';
-
+import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   MixerApiService,
   DmsApiService,
@@ -20,15 +19,13 @@ import {
   ViewsApiService,
   DataModelsApiService,
 } from '@platypus/platypus-core';
-
 import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
-
 import { StorageProviderFactoryImpl } from '@platypus-app/utils/persistence';
-
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
-
 import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
+import { Container, token } from 'brandi';
+
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
+
 import { isFDMv3 } from './flags';
 
 // First define the Tokens

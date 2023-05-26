@@ -1,5 +1,6 @@
-import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Icon, Title } from '@cognite/cogs.js';
 
 type DragOverIndicatorProps = {
   isDragging: boolean;

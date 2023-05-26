@@ -1,4 +1,5 @@
 import qs from 'query-string';
+
 import { getSearchParams } from '../URLUtils';
 
 describe('URLUtils', () => {

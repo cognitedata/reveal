@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import {
   Title as DefaultTitle,
   Detail,
@@ -8,8 +10,9 @@ import {
   Flex,
   Select,
 } from '@cognite/cogs.js';
-import { Convention } from '../../types';
+
 import { useDependentConvention } from '../../hooks/useDependentConvention';
+import { Convention } from '../../types';
 
 const Content = styled.div`
   display: flex;

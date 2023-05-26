@@ -1,5 +1,6 @@
 import { KeyValueMap } from '@platypus/platypus-core';
 import Enquirer from 'enquirer';
+
 import {
   ArrayPromptOptions,
   BooleanPromptOptions,

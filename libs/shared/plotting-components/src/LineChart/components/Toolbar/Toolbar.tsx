@@ -3,9 +3,9 @@ import * as React from 'react';
 import { AxisDirectionConfig, LineChartProps } from '../../types';
 import { PlotElement } from '../Plot';
 
+import { Actions } from './Actions';
 import { ToolbarWrapper } from './elements';
 import { Filters } from './Filters';
-import { Actions } from './Actions';
 
 export interface ToolbarProps
   extends Pick<LineChartProps, 'renderFilters' | 'renderActions'> {

@@ -1,3 +1,7 @@
+import { useMemo } from 'react';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
 import { createLink } from '@cognite/cdf-utilities';
 import {
   getFileIdFromExtendedAnnotation,
@@ -5,12 +9,11 @@ import {
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useMemo } from 'react';
+
 import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
+import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { TooltipContainer } from '../TooltipContainer';
 import { ContainerReferenceType } from '../types';
-import { OnAddContainerReferences } from '../IndustryCanvasPage';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];

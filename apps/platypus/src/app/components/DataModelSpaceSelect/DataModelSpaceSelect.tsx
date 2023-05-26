@@ -1,8 +1,11 @@
-import { Button, Flex, OptionType, Select, Tooltip } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useSpaces } from '@platypus-app/hooks/useSpaces';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Button, Flex, OptionType, Select, Tooltip } from '@cognite/cogs.js';
+
 import { FormLabel } from '../FormLabel/FormLabel';
+
 import {
   HorizontalDivider,
   InputDetail,

@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
 import { LineChartProps } from '../types';
+
 import { getDataAsArray } from './getDataAsArray';
 
 export const checkIsEmptyData = (data: LineChartProps['data']) => {

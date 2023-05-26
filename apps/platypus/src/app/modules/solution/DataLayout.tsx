@@ -1,18 +1,17 @@
 import { lazy, Suspense } from 'react';
-
 import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom';
 
+import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
+import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
 import {
   SideBarItem,
   SideBarMenu,
 } from '@platypus-app/components/Navigations/SideBarMenu';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { useDataQualityFeatureFlag, useGPTSearch } from '@platypus-app/flags';
-import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({

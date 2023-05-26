@@ -1,17 +1,20 @@
 import { AddressInfo } from 'net';
+
 import {
   AccountInfo,
   AuthenticationResult,
   CryptoProvider,
   PublicClientApplication,
 } from '@azure/msal-node';
-import open from 'open';
 import { Logger } from '@platypus/platypus-core';
-import { readFromCache, cachePlugin } from '../../utils/msalTokenCache';
+import open from 'open';
+
 import {
   listenForAuthCode,
   openServerAtPort,
 } from '../../utils/msalCallbackServer';
+import { readFromCache, cachePlugin } from '../../utils/msalTokenCache';
+
 import { handleResponse } from './common';
 
 export type PKAccessTokenRequest = {

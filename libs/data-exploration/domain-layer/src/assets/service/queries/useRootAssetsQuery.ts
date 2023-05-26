@@ -1,12 +1,15 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { Asset, ListResponse } from '@cognite/sdk';
 import { useCallback, useMemo } from 'react';
+
 import {
   QueryClient,
   useQueries,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+import { Asset, ListResponse } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 import { getAssetsList } from '../network';
 

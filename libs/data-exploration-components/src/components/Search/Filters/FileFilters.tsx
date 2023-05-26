@@ -1,6 +1,6 @@
 import React from 'react';
-import { useList } from '@cognite/sdk-react-query-hooks';
 
+import { BaseFilterCollapse } from '@data-exploration/components';
 import {
   AggregatedFilterV2,
   MetadataFilterV2,
@@ -10,8 +10,6 @@ import {
   LabelFilterV2,
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
-
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 import {
   COMMON_INFO_CONTENT,
@@ -19,7 +17,10 @@ import {
   isObjectEmpty,
   SPECIFIC_INFO_CONTENT,
 } from '@data-exploration-lib/core';
-import { BaseFilterCollapse } from '@data-exploration/components';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 
 export const FileFilters = ({

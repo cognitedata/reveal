@@ -1,4 +1,5 @@
 import { DOCUMENT_ICON_FALLBACK_VALUE } from '@data-exploration-lib/core';
+
 import { mapMimeTypeToDocumentType } from '../mapMimeTypeToDocumentType';
 
 describe('mapMimeTypeToDocumentType', () => {

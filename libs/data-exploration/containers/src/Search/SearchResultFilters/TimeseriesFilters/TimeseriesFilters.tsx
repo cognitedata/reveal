@@ -1,16 +1,17 @@
+import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
 } from '@data-exploration-lib/core';
-import { BaseFilterCollapse } from '@data-exploration/components'; //??
-import { TempMultiSelectFix } from '../elements';
+
 import {
   IsStepFilter,
   IsStringFilter,
   MetadataFilter,
   UnitFilter,
 } from '../../../Filters';
+import { TempMultiSelectFix } from '../elements';
 
 export const TimeseriesFilters: React.FC<FilterProps> = ({
   filter,

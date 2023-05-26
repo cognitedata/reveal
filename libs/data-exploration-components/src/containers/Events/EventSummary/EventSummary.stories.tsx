@@ -1,6 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { ComponentStory } from '@storybook/react';
+
 import { EventSummary } from './EventSummary';
 
 export default {

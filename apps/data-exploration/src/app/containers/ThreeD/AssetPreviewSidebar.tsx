@@ -1,9 +1,11 @@
 import styled from 'styled-components';
-import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
-import { Tooltip, Button } from '@cognite/cogs.js';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
+import { Tooltip, Button } from '@cognite/cogs.js';
 
 export const AssetPreviewSidebar = ({
   assetId,

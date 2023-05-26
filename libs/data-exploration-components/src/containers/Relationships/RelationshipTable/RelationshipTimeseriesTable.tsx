@@ -1,18 +1,18 @@
 import React from 'react';
+
 import {
   EmptyState,
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
+import { ResultCount } from '@data-exploration-components/components';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-
-import { ResultCount } from '@data-exploration-components/components';
-
-import { ColumnDef } from '@tanstack/react-table';
 import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+
 import { RelationshipTableProps } from './RelationshipTable';
 
 const {

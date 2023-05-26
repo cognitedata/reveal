@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Body, SegmentedControl } from '@cognite/cogs.js';
 
 export const BooleanFilter = ({

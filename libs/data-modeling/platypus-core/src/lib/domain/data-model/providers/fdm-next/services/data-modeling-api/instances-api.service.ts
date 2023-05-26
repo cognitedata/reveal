@@ -4,6 +4,7 @@ import {
   DeleteRequestDTO,
   SlimNodeOrEdge,
 } from '../../dto/dms-instances-dtos';
+
 import { BaseApiService } from './base-api.service';
 
 export class InstancesApiService extends BaseApiService {

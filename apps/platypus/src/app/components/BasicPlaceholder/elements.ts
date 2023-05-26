@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+
 import { Title, Button } from '@cognite/cogs.js';
 
 export const StyledContainer = styled.div`

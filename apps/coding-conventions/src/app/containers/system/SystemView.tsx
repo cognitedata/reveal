@@ -1,11 +1,14 @@
-import { Body, Flex, Infobar, Input, Select, Textarea } from '@cognite/cogs.js';
 import { useMemo, useState } from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Flex, Infobar, Input, Select, Textarea } from '@cognite/cogs.js';
+
 import { InfoTooltip } from '../../components/Info/InfoTooltip';
 import { Modal } from '../../components/Modal/Modal';
-
 import { useSystemMutate } from '../../service/hooks/mutate/useSystemMutate';
 import { Resource } from '../../types';
+
 import { SystemList } from './SystemList';
 
 export const SystemView = () => {

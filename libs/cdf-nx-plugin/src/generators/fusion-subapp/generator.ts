@@ -9,6 +9,7 @@ import {
 } from '@nrwl/devkit';
 import { Linter } from '@nrwl/linter';
 import { applicationGenerator } from '@nrwl/react';
+
 import { FusionSubappGeneratorSchema } from './schema';
 
 function generateCustomFiles(

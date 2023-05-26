@@ -4,6 +4,7 @@ import {
   TimeseriesFilter,
   Timeseries,
 } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../../builders';
 import { InternalSortBy } from '../../../types';
 import { TimeseriesProperties } from '../../internal';

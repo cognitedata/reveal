@@ -1,7 +1,9 @@
-import { CogniteClient } from '@cognite/sdk';
-import { getTimeseriesContainerConfig } from '@cognite/unified-file-viewer';
 import dayjs from 'dayjs';
 import { v4 as uuid } from 'uuid';
+
+import { CogniteClient } from '@cognite/sdk';
+import { getTimeseriesContainerConfig } from '@cognite/unified-file-viewer';
+
 import {
   IndustryCanvasContainerConfig,
   TimeseriesContainerReference,

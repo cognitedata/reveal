@@ -1,8 +1,10 @@
-import { SDKProvider } from '@cognite/sdk-provider';
-import { CogniteClient, Asset, CursorAndAsyncIterator } from '@cognite/sdk';
-import { Timeseries } from '@cognite/sdk/dist/src/index';
 import { ComponentStory } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import { CogniteClient, Asset, CursorAndAsyncIterator } from '@cognite/sdk';
+import { Timeseries } from '@cognite/sdk/dist/src/index';
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import AssetTooltip from './AssetTooltip';
 
 export default {

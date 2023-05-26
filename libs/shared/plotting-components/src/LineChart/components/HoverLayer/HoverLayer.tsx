@@ -2,14 +2,14 @@ import * as React from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-import { Coordinate, HoverLineData, Layout, Variant } from '../../types';
 import { useHoveredDatapoint } from '../../hooks/useHoveredDatapoint';
+import { Coordinate, HoverLineData, Layout, Variant } from '../../types';
 import { getPlotStyleData } from '../../utils/getPlotStyleData';
 
+import { HoverLayerWrapper } from './elements';
 import { HoverLine } from './HoverLine';
 import { HoverLineInfo } from './HoverLineInfo';
 import { HoverMarker } from './HoverMarker';
-import { HoverLayerWrapper } from './elements';
 
 export interface HoverLayerProps {
   chartRef: React.RefObject<HTMLDivElement>;

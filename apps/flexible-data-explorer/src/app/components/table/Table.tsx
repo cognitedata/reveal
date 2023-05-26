@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import has from 'lodash/has';
 
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 import {
   Row,
   useReactTable,
@@ -18,11 +18,13 @@ import {
   Cell,
   RowSelectionState,
 } from '@tanstack/react-table';
+import has from 'lodash/has';
+import noop from 'lodash/noop';
 import useLocalStorageState from 'use-local-storage-state';
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
 import { Flex } from '@cognite/cogs.js';
-import noop from 'lodash/noop';
+
+import { LoadMore, LoadMoreProps, SortIcon } from './components';
 import {
   TableContainer,
   StyledTable,
@@ -43,7 +45,6 @@ import {
 } from './elements';
 
 // import { ResourceTableColumns } from './columns';
-import { LoadMore, LoadMoreProps, SortIcon } from './components';
 // import { EmptyState } from '../EmpyState';
 
 // import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';

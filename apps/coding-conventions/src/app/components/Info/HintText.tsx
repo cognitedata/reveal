@@ -1,5 +1,6 @@
-import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
 
 interface Props {
   text: string;

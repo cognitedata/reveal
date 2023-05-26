@@ -1,9 +1,12 @@
+import React, { useState } from 'react';
+
+import styled from 'styled-components';
+
 import {
   ExtendedAnnotation,
   getExtendedAnnotationFixture,
 } from '@data-exploration-lib/core';
-import React, { useState } from 'react';
-import styled from 'styled-components';
+
 import { CreateAnnotationForm } from './CreateAnnotationForm';
 
 export default {

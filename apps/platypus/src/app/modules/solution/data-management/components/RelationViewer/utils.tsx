@@ -1,4 +1,5 @@
 import { DataModelTypeDefs, FdmMixerApiService } from '@platypus/platypus-core';
+
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 
 export const getRelationshipsForData = async ({

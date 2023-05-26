@@ -1,11 +1,15 @@
 import * as React from 'react';
 
-import { Button, Dropdown } from '@cognite/cogs.js';
-
-import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
 import styled from 'styled-components';
 
+import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
+
+import { Button, Dropdown } from '@cognite/cogs.js';
+
 import { FilterLabel } from '../Labels';
+
+import { ApplyButton } from './components/ApplyButton';
+import { OptionsMenu } from './components/OptionsMenu';
 import { FilterButtonText } from './elements';
 import {
   OptionType,
@@ -13,8 +17,6 @@ import {
   WidthProps,
   CustomMetadataValue,
 } from './types';
-import { OptionsMenu } from './components/OptionsMenu';
-import { ApplyButton } from './components/ApplyButton';
 import { getFilterButtonText } from './utils/getFilterButtonText';
 
 export type CheckboxSelectProps = {

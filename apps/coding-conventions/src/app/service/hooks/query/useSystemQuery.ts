@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+
+import { useQuery } from '@tanstack/react-query';
+
 import { Database } from '../../storage/Database';
 
 export const useSystemQuery = () => {

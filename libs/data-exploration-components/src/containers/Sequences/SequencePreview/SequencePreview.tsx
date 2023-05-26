@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { Sequence } from '@cognite/sdk';
-
-import { useInfiniteSequenceRows } from '@data-exploration-components/hooks/sequenceHooks';
 
 import { Loader, EmptyState, Table } from '@data-exploration/components';
+import { useInfiniteSequenceRows } from '@data-exploration-components/hooks/sequenceHooks';
 import { AllowedTableStateId } from '@data-exploration-components/types';
+
+import { Sequence } from '@cognite/sdk';
 
 export interface SequenceDataRow {
   rowNumber: number;

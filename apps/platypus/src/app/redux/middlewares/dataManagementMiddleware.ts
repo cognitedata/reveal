@@ -1,6 +1,7 @@
-import { rootInjector, TOKENS } from '@platypus-app/di';
 import { StorageProviderType } from '@platypus/platypus-core';
+import { rootInjector, TOKENS } from '@platypus-app/di';
 import { Action, Dispatch, MiddlewareAPI } from '@reduxjs/toolkit';
+
 import {
   actions,
   compatiblizeDraftRowsData,

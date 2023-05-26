@@ -1,21 +1,19 @@
 import {
-  DataModelStorageBindingsDTO,
-  DataModelStorageBindingsProperty,
-} from '../../dto';
-
+  DataModelVersion,
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
+  DataModelTypeDefsField,
+} from '../../../../types';
 import {
   isInlineType,
   getOneToManyModelName,
   getVersionedExternalId,
   isCustomType,
 } from '../../../../utils';
-
 import {
-  DataModelVersion,
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-  DataModelTypeDefsField,
-} from '../../../../types';
+  DataModelStorageBindingsDTO,
+  DataModelStorageBindingsProperty,
+} from '../../dto';
 
 export class MixerBindingsBuilder {
   /**

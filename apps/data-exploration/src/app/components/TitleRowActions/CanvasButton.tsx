@@ -1,17 +1,19 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Chip, Tooltip } from '@cognite/cogs.js';
-import { ResourceItem } from '@cognite/data-exploration';
-import { useSDK } from '@cognite/sdk-provider';
+import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { useFlagIndustryCanvas } from '@data-exploration-app/hooks/flags/useFlagIndustryCanvas';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
-import React from 'react';
+import { queryKeys } from '@data-exploration-lib/domain-layer';
 import {
   isSupportedResourceItem as isSupportedResourceItemHelper,
   resourceItemToContainerReference,
 } from '@fusion/industry-canvas';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import { queryKeys } from '@data-exploration-lib/domain-layer';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Chip, Tooltip } from '@cognite/cogs.js';
+import { ResourceItem } from '@cognite/data-exploration';
+import { useSDK } from '@cognite/sdk-provider';
 
 type CanvasButtonProps = {
   item: ResourceItem;

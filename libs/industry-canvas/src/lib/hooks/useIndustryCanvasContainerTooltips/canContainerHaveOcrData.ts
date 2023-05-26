@@ -1,4 +1,5 @@
 import { ContainerType } from '@cognite/unified-file-viewer';
+
 import { IndustryCanvasContainerConfig } from '../../types';
 
 const canContainerHaveOcrData = (

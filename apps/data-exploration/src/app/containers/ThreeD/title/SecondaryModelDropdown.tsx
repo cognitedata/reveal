@@ -6,22 +6,17 @@ import React, {
   useState,
 } from 'react';
 
-import { Button, Input, Menu, Divider } from '@cognite/cogs.js';
-
-import { Cognite3DViewer } from '@cognite/reveal';
-import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
   Image360DatasetOptions,
   SecondaryModelOptions,
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
 import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MainThreeDModelMenuItem';
 import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-import { TableNoResults } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   Revision3DWithIndex,
@@ -29,6 +24,12 @@ import {
   ThreeDModelsResponse,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { TableNoResults } from '@cognite/cdf-utilities';
+import { Button, Input, Menu, Divider } from '@cognite/cogs.js';
+import { Cognite3DViewer } from '@cognite/reveal';
+import { Model3D } from '@cognite/sdk';
+
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../utils';
 
 type SecondaryModelDropdownProps = {

@@ -6,9 +6,8 @@ import {
   ResponderProvided,
 } from 'react-beautiful-dnd';
 
-import isEmpty from 'lodash/isEmpty';
-
 import { useDeepEffect, useDeepMemo } from '@data-exploration-lib/core';
+import isEmpty from 'lodash/isEmpty';
 
 import { DraggableElements } from './components/DraggableElements';
 import { DragDropContainerProps } from './types';

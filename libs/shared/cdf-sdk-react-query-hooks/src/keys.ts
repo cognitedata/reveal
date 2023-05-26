@@ -1,4 +1,5 @@
 import { IdEither, ListGroups } from '@cognite/sdk';
+
 import { SdkResourceType } from './hooks';
 
 const rootKey = 'sdk-react-query-hooks';

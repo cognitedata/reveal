@@ -1,6 +1,8 @@
-import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
+
 import { assets } from '@data-exploration-components/stubs/assets';
+import { ComponentStory } from '@storybook/react';
+
 import { MetadataFilter } from './MetadataFilter';
 
 export default {

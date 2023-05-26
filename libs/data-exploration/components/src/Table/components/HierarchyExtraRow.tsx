@@ -1,6 +1,9 @@
-import { Row } from '@tanstack/react-table';
 import styled from 'styled-components';
+
+import { Row } from '@tanstack/react-table';
+
 import { Icon } from '@cognite/cogs.js';
+
 import { Tr } from '../elements';
 
 export const HierarchyExtraRow = <

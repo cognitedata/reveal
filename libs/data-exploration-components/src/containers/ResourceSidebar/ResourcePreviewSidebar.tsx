@@ -1,19 +1,21 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
+import { Loader, SearchEmpty } from '@data-exploration/components';
 import {
   AssetDetails,
   EventDetails,
   TimeseriesDetails,
 } from '@data-exploration/containers';
-import React from 'react';
-import styled from 'styled-components';
 import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
 // import { EventSmallPreview } from '@data-exploration-components/containers/Events';
-import noop from 'lodash/noop';
 import {
   ResourceItem,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-import { Loader, SearchEmpty } from '@data-exploration/components';
+import noop from 'lodash/noop';
 
 type Props = {
   item?: ResourceItem;

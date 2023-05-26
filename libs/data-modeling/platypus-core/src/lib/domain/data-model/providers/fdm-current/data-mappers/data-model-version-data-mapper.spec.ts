@@ -1,4 +1,5 @@
 import { DataModelVersionStatus } from '../../../types';
+
 import { DataModelVersionDataMapper } from './data-model-version-data-mapper';
 
 describe('DataModelVersionDataMapperTest', () => {

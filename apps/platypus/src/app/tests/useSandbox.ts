@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+
 import sinon, { SinonSandbox } from 'sinon';
 
 export type SetupMocks = (sandbox: SinonSandbox) => void;

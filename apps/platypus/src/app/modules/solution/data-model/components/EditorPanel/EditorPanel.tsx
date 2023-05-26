@@ -1,23 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import React, { Suspense, useState } from 'react';
-import { SegmentedControl } from '@cognite/cogs.js';
+
+import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import {
   PageToolbar,
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
+import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
-import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
+
+import { SegmentedControl } from '@cognite/cogs.js';
+
 import { SchemaEditorMode } from '../../types';
+import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { ErrorsByGroup } from '../GraphqlCodeEditor/Model';
+
 import { UIEditor } from './UIEditor';
 
 const GraphqlCodeEditor = React.lazy(() =>

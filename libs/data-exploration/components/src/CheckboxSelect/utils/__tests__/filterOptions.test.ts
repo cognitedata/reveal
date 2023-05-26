@@ -1,5 +1,4 @@
 import { OptionType } from '../../types';
-
 import { filterOptions } from '../filterOptions';
 
 describe('NestedFilter/filterOptions', () => {

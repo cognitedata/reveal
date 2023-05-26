@@ -1,19 +1,20 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import styled from 'styled-components/macro';
-import { ToastContainer } from '@cognite/cogs.js';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import {
   QueryClientProvider as TanstackProvider,
   QueryClientProvider,
   QueryClient,
 } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import styled from 'styled-components/macro';
+
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import { ToastContainer } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import { getProject } from '@cognite/cdf-utilities';
 import { queryClient } from './queryClient';
-
 import Routes from './Routes';
 import { Database } from './service/storage/Database';
 

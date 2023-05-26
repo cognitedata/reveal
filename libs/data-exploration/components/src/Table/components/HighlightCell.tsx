@@ -1,7 +1,10 @@
 import React, { useRef } from 'react';
-import { Tooltip } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
+
 import { useIsOverflow } from '@data-exploration-lib/core';
+
+import { Tooltip } from '@cognite/cogs.js';
+
 import { EllipsisText } from '../elements';
 
 export const HighlightCell = React.memo(

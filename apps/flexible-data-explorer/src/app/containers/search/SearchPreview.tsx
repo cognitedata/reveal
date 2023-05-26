@@ -1,6 +1,8 @@
-import { Detail } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Detail } from '@cognite/cogs.js';
 // import useLocalStorageState from 'use-local-storage-state';
 
 const RecentlyViewed = () => {

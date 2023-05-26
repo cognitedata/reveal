@@ -1,11 +1,15 @@
-import { Body, Button, Icon, Link } from '@cognite/cogs.js';
-import { ResourceIcons } from '@data-exploration-components/components/index';
-import { ResourceType } from '@cognite/data-exploration';
 import React from 'react';
+
 import styled from 'styled-components';
-import { createLink } from '@cognite/cdf-utilities';
+
+import { ResourceIcons } from '@data-exploration-components/components/index';
 import { capitalizeFirstLetter } from '@data-exploration-components/utils/index';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Button, Icon, Link } from '@cognite/cogs.js';
+import { ResourceType } from '@cognite/data-exploration';
+
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,

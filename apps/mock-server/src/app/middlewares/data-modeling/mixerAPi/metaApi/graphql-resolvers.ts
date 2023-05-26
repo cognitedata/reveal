@@ -1,17 +1,18 @@
-import { v4 } from 'uuid';
 import { GraphQLError } from 'graphql';
+import { v4 } from 'uuid';
+
+import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { CdfMockDatabase, CdfResourceObject } from '../../../../types';
+import { objToFilter, sortCollection } from '../../../../utils';
 import {
   bigIntScalar,
   timestampStringScalar,
 } from '../../../../utils/graphql/custom-scalars';
-import { CdfDatabaseService } from '../../../../common/cdf-database.service';
-import { fetchAndQueryData } from '../../utils/query-fetcher';
-import { objToFilter, sortCollection } from '../../../../utils';
 import {
   createMockServerKey,
   validateBreakingChanges,
 } from '../../utils/graphql-server-utils';
+import { fetchAndQueryData } from '../../utils/query-fetcher';
 import { buildMockServer } from '../applicationAPI/graphql-mock-server-builder';
 
 export const graphQlMetaApiResolvers = (

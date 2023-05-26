@@ -1,6 +1,8 @@
-import { Input, OptionType, SegmentedControl, Select } from '@cognite/cogs.js';
 import { EditableChip } from '@platypus-app/components/EditableChip';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Input, OptionType, SegmentedControl, Select } from '@cognite/cogs.js';
+
 import { Column, Label, Row } from './elements';
 
 type Option = OptionType<any>;

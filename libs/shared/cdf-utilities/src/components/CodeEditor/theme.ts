@@ -1,8 +1,10 @@
+import { css } from 'styled-components';
+
 import { Extension } from '@codemirror/state';
-import { Colors } from '@cognite/cogs.js';
 import { tags as t } from '@lezer/highlight';
 import { createTheme } from '@uiw/codemirror-themes';
-import { css } from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 import { CodeEditorTheme } from '.';
 

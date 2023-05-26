@@ -1,15 +1,16 @@
-import { setupServer } from 'msw/node';
-import { renderHook } from '@testing-library/react-hooks';
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { jest } from '@jest/globals';
-import {
-  getMock3DRevisions,
-  mockModelObj,
-} from '../../../__mocks/getMock3DRevisions';
+import { renderHook } from '@testing-library/react-hooks';
+import { setupServer } from 'msw/node';
+
 import {
   mock3dRevisions,
   newestRevision,
 } from '../../../__fixtures/mock3dRevisions';
+import {
+  getMock3DRevisions,
+  mockModelObj,
+} from '../../../__mocks/getMock3DRevisions';
 import { useDefault3DModelRevision } from '../useDefault3DModelRevision';
 
 const mockServer = setupServer(getMock3DRevisions());

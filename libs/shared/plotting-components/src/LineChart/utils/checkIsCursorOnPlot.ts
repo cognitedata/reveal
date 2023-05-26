@@ -3,6 +3,7 @@ import { RefObject } from 'react';
 import head from 'lodash/head';
 
 import { PLOT_CLASSNAME } from '../constants';
+
 import { checkIsClientOnElementt } from './checkIsClientOnElementt';
 
 export const checkIsCursorOnPlot = (

@@ -1,3 +1,4 @@
+import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
 import {
   DataModelDTO,
   ListQueryParams,
@@ -6,7 +7,6 @@ import {
   DataModelReference,
 } from '../../dto/dms-data-model-dtos';
 
-import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
 import { BaseApiService } from './base-api.service';
 
 export class DataModelsApiService extends BaseApiService {

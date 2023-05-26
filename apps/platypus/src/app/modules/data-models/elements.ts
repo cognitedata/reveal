@@ -1,5 +1,6 @@
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import styled from 'styled-components/macro';
+
 import { Row } from '@cognite/cogs.js';
 
 const dataModelListWidth = 1020;

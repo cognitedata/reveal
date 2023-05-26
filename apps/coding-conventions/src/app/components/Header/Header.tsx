@@ -1,10 +1,11 @@
+import styled from 'styled-components';
+
 import { createLink } from '@cognite/cdf-utilities';
 import {
   Body,
   Breadcrumbs as CogsBreadcrumb,
   Title as CogsTitle,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
 
 interface Props {
   title: string;

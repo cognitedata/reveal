@@ -5,23 +5,25 @@ import React, {
   useRef,
   useCallback,
 } from 'react';
-import { Button, Flex, Input } from '@cognite/cogs.js';
+
+import styled from 'styled-components';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { AssetMappingsList } from '@data-exploration-app/containers/ThreeD/AssetMappingsList';
 import {
   AugmentedMapping,
   useInfiniteAssetMappings,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import styled from 'styled-components';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Asset } from '@cognite/sdk';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
+import { Button, Flex, Input } from '@cognite/cogs.js';
 import {
   Cognite3DViewer,
   CognitePointCloudModel,
   CogniteModel,
 } from '@cognite/reveal';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { Asset } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 type ThreeDSidebarProps = {
   modelId?: number;

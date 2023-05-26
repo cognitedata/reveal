@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
+
 import {
   TimeseriesAggregateFilters,
   TimeseriesAggregateUniqueValuesResponse,

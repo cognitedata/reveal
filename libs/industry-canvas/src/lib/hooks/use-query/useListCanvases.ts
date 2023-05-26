@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+
+import { QueryKeys } from '../../constants';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
 import { SerializedCanvasDocument } from '../../types';
-import { QueryKeys } from '../../constants';
 
 export const useListCanvases = (service: IndustryCanvasService) => {
   return useQuery<SerializedCanvasDocument[]>(

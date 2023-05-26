@@ -1,4 +1,5 @@
 import React, { Key, ReactNode } from 'react';
+
 import { Flex, Chip, ChipProps } from '@cognite/cogs.js';
 
 type TableFilterLabel = {

@@ -1,5 +1,9 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
+
+import styled from 'styled-components';
+
+import { TIME_SELECT } from '@data-exploration-lib/core';
 import dayjs from 'dayjs';
 import noop from 'lodash/noop';
 
@@ -13,16 +17,15 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
-import styled from 'styled-components';
-import { TIME_SELECT } from '@data-exploration-lib/core';
 import { Divider } from '../Common';
-import { PivotRangePicker } from './PivotRangePicker';
+
 import {
   PivotRange,
   StartEndRange,
   determinePivotRange,
   getPivotRangeAsDates,
 } from './Common';
+import { PivotRangePicker } from './PivotRangePicker';
 
 export type RangePickerProps = {
   initialRange?: [Date, Date];

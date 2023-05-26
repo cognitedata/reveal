@@ -1,7 +1,7 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Collapse, Title } from '@cognite/cogs.js';
-import { ResourceType } from '@data-exploration-lib/core';
+import React, { FC, useMemo } from 'react';
 
+import { ResourceDetailsTemplate } from '@data-exploration/components';
+import { ResourceType } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
@@ -9,8 +9,10 @@ import {
   useTimeseriesSearchResultQuery,
   useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ResourceDetailsTemplate } from '@data-exploration/components';
-import React, { FC, useMemo } from 'react';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Collapse, Title } from '@cognite/cogs.js';
+
 import {
   AssetDetailsTable,
   EventDetailsTable,

@@ -1,24 +1,26 @@
-import { FileGroupingTable } from '@data-exploration/containers';
 import React, { useState } from 'react';
-import {
-  useRelatedResourceResults,
-  useRelationshipCount,
-} from '@data-exploration-components/hooks';
-import { ResultCount } from '@data-exploration-components/components';
+
 import {
   EmptyState,
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
-
+import { FileGroupingTable } from '@data-exploration/containers';
+import { ResultCount } from '@data-exploration-components/components';
+import { FileViewSwitcher } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileViewSwitcher';
+import {
+  useRelatedResourceResults,
+  useRelationshipCount,
+} from '@data-exploration-components/hooks';
 import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
-import { FileViewSwitcher } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileViewSwitcher';
+
 import {
   GroupingTableContainer,
   GroupingTableHeader,
   FileSwitcherWrapper,
 } from '../elements';
+
 import { RelationshipTableProps } from './RelationshipTable';
 
 const {

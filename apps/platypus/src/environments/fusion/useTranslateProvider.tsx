@@ -1,5 +1,6 @@
-import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 import { useCallback } from 'react';
+
+import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
 // Dummy hook so we can use translate in our code
 // We will switch later to the react package

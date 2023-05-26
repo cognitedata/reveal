@@ -1,5 +1,6 @@
-import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button, Input } from '@cognite/cogs.js';
 
 export const SuggestionButton = styled(Button)<{ $isActive: boolean }>`
   && {

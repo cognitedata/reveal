@@ -1,4 +1,5 @@
 import { Metrics } from '@cognite/metrics';
+
 import tracker, { getCluster } from '.';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({

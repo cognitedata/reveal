@@ -6,11 +6,23 @@ import React, {
   useCallback,
 } from 'react';
 
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
 import styled from 'styled-components';
-import { Colors, Flex } from '@cognite/cogs.js';
 
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
+import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
+import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
+import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
+import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import {
+  useFlagAssetMappingsOverlays,
+  useFlagPointCloudSearch,
+} from '@data-exploration-app/hooks/flags';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useQueryClient } from '@tanstack/react-query';
+import debounce from 'lodash/debounce';
+
+import { Colors, Flex } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   CognitePointCloudModel,
@@ -18,25 +30,27 @@ import {
   Intersection,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQueryClient } from '@tanstack/react-query';
-import debounce from 'lodash/debounce';
 
-import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
-import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-
-import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
-import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
-import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
-import {
-  useFlagAssetMappingsOverlays,
-  useFlagPointCloudSearch,
-} from '@data-exploration-app/hooks/flags';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import zIndex from '../../utils/zIndex';
 import { StyledSplitter } from '../elements';
-import LoadImages360 from './load-secondary-models/LoadImages360';
-import { ThreeDContext } from './ThreeDContext';
+
+import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import { AssetPreviewSidebar } from './AssetPreviewSidebar';
+import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
+import LoadImages360 from './load-secondary-models/LoadImages360';
+import NodePreview, { ResourceTabType } from './NodePreview';
+import PointSizeSlider from './point-size-slider/PointSizeSlider';
+import Reveal from './Reveal';
+import { Slicer } from './slicer/Slicer';
+import { ThreeDContext } from './ThreeDContext';
+import { ThreeDTitle } from './title/ThreeDTitle';
+import {
+  ExpandButton,
+  FocusAssetButton,
+  HelpButton,
+  PointToPointMeasurementButton,
+  ShareButton,
+} from './toolbar';
 import {
   findClosestAsset,
   fitCameraToAsset,
@@ -46,20 +60,6 @@ import {
   isCadIntersection,
   removeAllStyles,
 } from './utils';
-import NodePreview, { ResourceTabType } from './NodePreview';
-import { ThreeDTitle } from './title/ThreeDTitle';
-import PointSizeSlider from './point-size-slider/PointSizeSlider';
-import { Slicer } from './slicer/Slicer';
-import {
-  ExpandButton,
-  FocusAssetButton,
-  HelpButton,
-  PointToPointMeasurementButton,
-  ShareButton,
-} from './toolbar';
-import { AssetMappingsSidebar } from './AssetMappingsSidebar';
-import Reveal from './Reveal';
-import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 
 type Props = {
   modelId?: number;

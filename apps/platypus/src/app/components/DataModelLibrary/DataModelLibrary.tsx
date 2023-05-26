@@ -1,3 +1,10 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { GraphqlCodeEditor } from '@platypus-app/modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
+
 import {
   Body,
   Button,
@@ -11,11 +18,9 @@ import {
   Overline,
   SegmentedControl,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { useEffect, useMemo, useState } from 'react';
-import { GraphqlCodeEditor } from '@platypus-app/modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
 import { SchemaVisualizer } from '../SchemaVisualizer/SchemaVisualizer';
+
 import { DataModelLibraryItem, library } from './library';
 
 type TagTree = {

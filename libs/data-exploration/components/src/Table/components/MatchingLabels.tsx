@@ -1,9 +1,12 @@
-import { Chip, Flex, Tooltip } from '@cognite/cogs.js';
+import React from 'react';
+
+import styled from 'styled-components';
+
+import { capitalizeFirstLetter } from '@data-exploration-lib/core';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
-import React from 'react';
-import styled from 'styled-components';
-import { capitalizeFirstLetter } from '@data-exploration-lib/core';
+
+import { Chip, Flex, Tooltip } from '@cognite/cogs.js';
 
 const getMainTooltipContent = (title: string, items: string[]) => (
   <>

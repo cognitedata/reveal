@@ -1,4 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
 import {
   createContext,
   useCallback,
@@ -6,6 +5,9 @@ import {
   useEffect,
   useMemo,
 } from 'react';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
@@ -18,6 +20,7 @@ import {
   SerializedCanvasDocument,
 } from '../types';
 import { serializeCanvasState } from '../utils/utils';
+
 import useIndustryCanvasSearchParameters from './useIndustryCanvasSearchParameters';
 
 export type IndustryCanvasContextType = {

@@ -1,6 +1,8 @@
-import { Body, Title } from '@cognite/cogs.js';
 import { PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Title } from '@cognite/cogs.js';
 
 interface Props {
   title?: string;

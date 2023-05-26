@@ -38,6 +38,7 @@ import {
   groupLegacyProjectsByValidationStatus,
   validateLegacyProject,
 } from '../utils';
+
 import { useKeycloakProjects } from './keycloak';
 
 const getLoginInfoQueryKey = () => [BASE_QUERY_KEY, 'login-info'];

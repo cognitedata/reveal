@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
-import { Breadcrumbs } from '../Breadcrumbs';
+
 import render from '../../../../testUtils/render';
+import { Breadcrumbs } from '../Breadcrumbs';
 
 describe('Breadcrumbs', () => {
   it('Should render breadcrumbs correctly', () => {

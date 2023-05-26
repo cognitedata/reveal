@@ -1,13 +1,13 @@
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { PlatypusError } from '@platypus-app/types';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import {
   CreateDataModelDTO,
   DataModel,
   Result,
   UpdateDataModelDTO,
 } from '@platypus/platypus-core';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { PlatypusError } from '@platypus-app/types';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useDataModelMutation() {

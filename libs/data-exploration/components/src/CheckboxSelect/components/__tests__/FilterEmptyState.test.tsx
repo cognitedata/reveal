@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/extend-expect';
 
 import { screen } from '@testing-library/react';
-import { renderComponent } from '../../../__test-utils';
 
+import { renderComponent } from '../../../__test-utils';
 import { FilterEmptyState, FilterEmptyStateProps } from '../FilterEmptyState';
 
 describe('NestedFilter/FilterEmptyState', () => {

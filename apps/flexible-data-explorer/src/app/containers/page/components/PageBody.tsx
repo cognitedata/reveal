@@ -1,6 +1,9 @@
-import { Skeleton } from '@cognite/cogs.js';
 import { PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
+
+import { Skeleton } from '@cognite/cogs.js';
+
 import { useUserSettings } from '../../../hooks/useUserSettings';
 
 interface Props {

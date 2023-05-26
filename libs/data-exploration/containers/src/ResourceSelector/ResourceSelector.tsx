@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
-import isEmpty from 'lodash/isEmpty';
-import noop from 'lodash/noop';
-import { useDebounce } from 'use-debounce';
 
+import styled from 'styled-components';
+
+import {
+  BulkActionbar,
+  Drawer,
+  ExplorationFilterToggle,
+} from '@data-exploration/components';
 import {
   EMPTY_OBJECT,
   FilterState,
@@ -13,12 +15,11 @@ import {
   useDialog,
   ViewType,
 } from '@data-exploration-lib/core';
+import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
+import { useDebounce } from 'use-debounce';
 
-import {
-  BulkActionbar,
-  Drawer,
-  ExplorationFilterToggle,
-} from '@data-exploration/components';
+import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
 
 import {
   AssetsTab,
@@ -30,6 +31,7 @@ import {
   TimeseriesTab,
 } from '../ResourceTabs';
 import { SidebarFilters } from '../Search';
+
 import { ResourceSelectorTable } from './ResourceSelectorTable';
 import { useFilterState } from './useFilterState';
 

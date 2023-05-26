@@ -1,6 +1,9 @@
-import { Body, Button, Icon } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Button, Icon } from '@cognite/cogs.js';
+
 import { useTranslation } from '../../hooks/useTranslation';
 import { getIcon } from '../../utils/getIcon';
 

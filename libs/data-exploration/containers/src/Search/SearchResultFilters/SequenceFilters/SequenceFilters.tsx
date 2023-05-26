@@ -1,11 +1,12 @@
+import { BaseFilterCollapse } from '@data-exploration/components'; //??
 import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
 } from '@data-exploration-lib/core';
-import { BaseFilterCollapse } from '@data-exploration/components'; //??
-import { TempMultiSelectFix } from '../elements';
+
 import { MetadataFilter } from '../../../Filters';
+import { TempMultiSelectFix } from '../elements';
 
 // INFO: FileFilters is for documents.
 export const SequenceFilters: React.FC<FilterProps> = ({

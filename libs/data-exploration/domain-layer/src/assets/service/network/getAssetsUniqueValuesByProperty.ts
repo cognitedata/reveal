@@ -1,4 +1,5 @@
 import { CogniteClient, UniqueValuesAggregateResponse } from '@cognite/sdk';
+
 import { AssetProperty, AssetsAggregateFilters } from '../types';
 
 import { getAssetsAggregate } from './getAssetsAggregate';

@@ -1,7 +1,9 @@
-import { Body, Flex } from '@cognite/cogs.js';
+import { ForwardedRef, forwardRef } from 'react';
+
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
-import { ForwardedRef, forwardRef } from 'react';
+
+import { Body, Flex } from '@cognite/cogs.js';
 
 const CellRenderer = (params: ICellRendererParams<Row, string>) => (
   <Flex alignItems="center" style={{ height: '100%' }}>

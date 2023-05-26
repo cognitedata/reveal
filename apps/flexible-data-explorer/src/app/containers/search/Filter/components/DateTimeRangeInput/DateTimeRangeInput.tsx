@@ -3,8 +3,9 @@ import { useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { DateTimeInput } from '../DateTimeInput';
 import { InputControlProps } from '../../types';
+import { DateTimeInput } from '../DateTimeInput';
+
 import { Chip, Container } from './elements';
 
 export type DateTimeRangeInputProps = InputControlProps<'date-range'>;

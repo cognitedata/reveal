@@ -1,5 +1,7 @@
-import { Chip } from '@cognite/cogs.js';
 import { ResourceType } from '@data-exploration-lib/core';
+
+import { Chip } from '@cognite/cogs.js';
+
 import { getSearchResultCountLabel } from '../utils';
 
 export const SearchResultCountLabel = ({

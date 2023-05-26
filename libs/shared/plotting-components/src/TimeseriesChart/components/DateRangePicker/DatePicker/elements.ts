@@ -1,5 +1,6 @@
-import { Button, Colors } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
+
+import { Button, Colors } from '@cognite/cogs.js';
 
 export const SpacedRow = styled.div`
   display: flex;
