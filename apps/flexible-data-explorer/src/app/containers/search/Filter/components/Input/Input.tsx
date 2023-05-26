@@ -12,10 +12,18 @@ export interface InputProps {
   onChange: (value: string) => void;
 }
 
-export const Input: React.FC<InputProps> = ({ onChange, ...rest }) => {
+export const Input: React.FC<InputProps> = ({
+  value = '',
+  onChange,
+  ...rest
+}) => {
   return (
     <InputWrapper>
-      <CogsInput {...rest} onChange={(event) => onChange(event.target.value)} />
+      <CogsInput
+        {...rest}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
     </InputWrapper>
   );
 };

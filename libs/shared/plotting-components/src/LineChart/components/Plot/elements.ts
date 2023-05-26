@@ -10,6 +10,7 @@ interface PlotWrapperProps {
 }
 
 export const PlotWrapper = styled.div`
+  display: contents;
   overflow: hidden;
   margin-bottom: -4px;
 
@@ -50,8 +51,8 @@ export const PlotWrapper = styled.div`
     ${({ showticks }: PlotWrapperProps) =>
       !showticks &&
       `
-      display: none;
-    `}
+    display: none;
+  `}
   }
 
   > * .draglayer {

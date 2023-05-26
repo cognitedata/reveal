@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { queryKeys } from '../../queryKeys';
-import { getTimeseriesDatapoints } from '../network';
+import { getTimeseriesDatapointsSafe } from '../network';
 import { TimeseriesDatapointsQuery } from '../types';
 
 interface Props {
@@ -16,13 +16,10 @@ export const useTimeseriesDatapointsQuery = ({ query, enabled }: Props) => {
 
   return useQuery(
     queryKeys.datapoints(query),
-    () => {
-      return getTimeseriesDatapoints(sdk, query);
+    async () => {
+      return getTimeseriesDatapointsSafe(sdk, query);
     },
     {
-      onError: () => {
-        return [];
-      },
       keepPreviousData: true,
       enabled,
     }

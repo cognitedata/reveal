@@ -6,6 +6,11 @@ export interface TimeseriesChartProps {
   numberOfPoints?: number;
   quickTimePeriodOptions?: TimePeriod[];
   dateRange?: DateRange;
+  /**
+   * If specified, the specified height will be applied.
+   * If not specified and the chart component is wrapped, it will take the height of the wrapper.
+   * Otherwise, it will be rendered in the default height. (Approx 500px)
+   */
   height?: number;
   dataFetchOptions?: DataFetchOptions;
   autoRange?: boolean;

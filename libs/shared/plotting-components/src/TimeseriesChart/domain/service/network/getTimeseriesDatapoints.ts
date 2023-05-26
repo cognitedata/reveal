@@ -21,5 +21,8 @@ export const getTimeseriesDatapoints = (
       }
 
       return items[0].datapoints;
+    })
+    .catch(() => {
+      return [];
     });
 };

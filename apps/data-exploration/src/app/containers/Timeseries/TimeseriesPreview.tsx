@@ -120,7 +120,7 @@ export const TimeseriesPreview = ({
                 <DetailsTabWrapper>
                   <TimeseriesChart
                     timeseriesId={timeseries.id}
-                    height={300}
+                    height={400}
                     quickTimePeriodOptions={['1D', '1W', '1Y']}
                     dateRange={dateRange}
                     onChangeDateRange={setDateRange}

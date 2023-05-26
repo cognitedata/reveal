@@ -1,4 +1,4 @@
-import { Story } from '@storybook/react';
+import { ComponentStory } from '@storybook/react';
 import get from 'lodash/get';
 
 import { Button, Select } from '@cognite/cogs.js';
@@ -25,10 +25,7 @@ const data = mockData.reduce(
   }
 );
 
-const Template: Story<LineChartProps> = (args) => <LineChart {...args} />;
-
-export const Basic = Template.bind({});
-Basic.args = {
+const props: LineChartProps = {
   data: {
     ...data,
     customData: {
@@ -55,4 +52,29 @@ Basic.args = {
   ],
   formatHoverLineInfo: ({ x, customData }) =>
     `${String(x)}, ${get(customData, 'timezone')}`,
+};
+
+export const Basic: ComponentStory<typeof LineChart> = (args) => {
+  return <LineChart {...args} />;
+};
+Basic.args = props;
+
+const ChartWithWrapper: React.FC<
+  LineChartProps & { wrapperStyle: React.CSSProperties }
+> = ({ wrapperStyle, ...lineChartProps }) => {
+  return (
+    <div style={wrapperStyle}>
+      <LineChart {...lineChartProps} />
+    </div>
+  );
+};
+export const WithWrapper: ComponentStory<typeof ChartWithWrapper> = (args) => {
+  return <ChartWithWrapper {...args} />;
+};
+WithWrapper.args = {
+  ...props,
+  wrapperStyle: {
+    height: 300,
+    transform: 'scale(0.75)',
+  },
 };

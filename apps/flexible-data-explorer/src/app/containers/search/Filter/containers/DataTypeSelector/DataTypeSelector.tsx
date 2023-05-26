@@ -6,15 +6,15 @@ import { DataType } from '../../types';
 
 import { getFilteredDataTypes } from './utils';
 
-export interface DataTypeSelectorProps {
-  dataTypes: DataType[];
-  onSelectDataType: (dataType: DataType) => void;
+export interface DataTypeSelectorProps<T extends DataType> {
+  dataTypes: T[];
+  onSelectDataType: (dataType: T) => void;
 }
 
-export const DataTypeSelector: React.FC<DataTypeSelectorProps> = ({
+export const DataTypeSelector = <T extends DataType>({
   dataTypes,
   onSelectDataType,
-}) => {
+}: DataTypeSelectorProps<T>) => {
   const [searchInputValue, setSearchInputValue] = useState<string>('');
 
   const filteredDataTypes = useMemo(() => {
