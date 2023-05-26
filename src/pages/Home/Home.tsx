@@ -49,11 +49,8 @@ export default function () {
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
 
   const env = getCluster().split('.')[0];
-  const isProductionCluster = !(
-    env == 'azure-dev' ||
-    env == 'bluefield' ||
-    env == 'greenfield'
-  );
+  const isUnsupportedCluster =
+    env == 'sapc-01' || env == 'openfield' || env == 'okd-dev-01';
 
   if (!isFetched) {
     return <Loader />;
@@ -101,7 +98,7 @@ export default function () {
         <Menu.Item key="oidc" disabled={!projectsRead}>
           {t('open-id-connect')}
         </Menu.Item>
-        {!isProductionCluster && (
+        {!isUnsupportedCluster && (
           <Menu.Item key="user-profiles">{t('user-profiles')}</Menu.Item>
         )}
         {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
