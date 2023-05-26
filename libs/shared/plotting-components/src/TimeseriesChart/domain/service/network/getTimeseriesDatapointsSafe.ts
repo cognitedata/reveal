@@ -1,9 +1,10 @@
-import { CogniteClient } from '@cognite/sdk';
-
 import last from 'lodash/last';
+
+import { CogniteClient } from '@cognite/sdk';
 
 import { TimeseriesDatapoint, TimeseriesDatapointsQuery } from '../types';
 import { splitLimitIntoChunks } from '../utils';
+
 import { getTimeseriesDatapoints } from './getTimeseriesDatapoints';
 
 const MAX_RAW_DATAPOINTS_LIMIT = 100000;

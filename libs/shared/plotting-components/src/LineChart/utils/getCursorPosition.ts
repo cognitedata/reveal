@@ -4,14 +4,27 @@ export const getCursorPosition = (
   chartRef: RefObject<HTMLDivElement>,
   event: MouseEvent
 ) => {
-  const chartBounds = chartRef.current?.getBoundingClientRect();
-
-  if (!chartBounds) {
+  if (!chartRef.current) {
     return undefined;
   }
 
-  const x = event.clientX - chartBounds.left;
-  const y = event.clientY - chartBounds.top;
+  const chartBounds = chartRef.current.getBoundingClientRect();
+  const { parentElement } = chartRef.current;
+
+  let x = event.clientX - chartBounds.left;
+  let y = event.clientY - chartBounds.top;
+
+  const transform = parentElement && getComputedStyle(parentElement).transform;
+
+  if (!transform || transform === 'none') {
+    return { x, y };
+  }
+
+  const scaleX = parseFloat(transform.split(',')[0].slice(7));
+  const scaleY = parseFloat(transform.split(',')[3]);
+
+  x /= scaleX;
+  y /= scaleY;
 
   return { x, y };
 };

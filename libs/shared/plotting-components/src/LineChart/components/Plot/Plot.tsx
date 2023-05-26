@@ -65,8 +65,7 @@ export interface PlotProps
   layout: Layout;
   config: Config;
   isCursorOnPlot: boolean;
-  width?: number;
-  height?: number;
+  height?: React.CSSProperties['height'];
   onHover?: (event: PlotHoverEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
   onSelecting?: (event?: PlotSelectionEvent) => void;
@@ -87,7 +86,6 @@ export const Plot = memo(
         layout,
         config,
         isCursorOnPlot,
-        width,
         height,
         onHover,
         onUnhover,
@@ -164,6 +162,7 @@ export const Plot = memo(
           ...fixedRangeLayoutConfig,
           margin,
           hovermode: getPlotlyHoverMode(config.hoverMode),
+          autosize: responsive,
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [tickCount, presetRange, range, fixedRange, fixedRangeLayoutConfig]
@@ -179,14 +178,6 @@ export const Plot = memo(
           displayModeBar: false,
         }),
         [isScrollZoomEnabled, isPanEnabled, isCursorOnPlot]
-      );
-
-      const plotStyle: React.CSSProperties = useMemo(
-        () => ({
-          height,
-          width,
-        }),
-        [height, width]
       );
 
       const handleManualRelayout = useCallback(() => {
@@ -223,7 +214,7 @@ export const Plot = memo(
       }, [handleManualRelayout, plotData]);
 
       if (isLoading) {
-        return <Loader variant={variant} style={{ height, width }} />;
+        return <Loader variant={variant} height={height} />;
       }
 
       return (
@@ -237,7 +228,7 @@ export const Plot = memo(
             data={plotData}
             layout={plotLayout}
             config={plotConfig}
-            style={plotStyle}
+            style={{ width: '100%', height: '100%' }}
             useResizeHandler={responsive}
             onInitialized={handleManualRelayout}
             onHover={onHover}

@@ -13,6 +13,9 @@ export const SUBTITLE_COLOR = 'var(--cogs-text-icon--medium)';
 export const DEFAULT_PADDING = 16;
 export const SMALL_VARIANT_PADDING = '4px 8px';
 
+export const DEFAULT_HEIGHT = '100%';
+export const DEFAULT_WIDTH = '100%';
+
 export const DEFAULT_MARGIN = 1;
 
 export const LINE_WIDTH = 1.4;

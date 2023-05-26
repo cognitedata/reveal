@@ -4,8 +4,10 @@ import isUndefined from 'lodash/isUndefined';
 
 import {
   DEFAULT_BACKGROUND_COLOR,
+  DEFAULT_HEIGHT,
   DEFAULT_PADDING,
   DEFAULT_STYLE_PROPERTIES,
+  DEFAULT_WIDTH,
   SMALL_VARIANT_PADDING,
 } from '../constants';
 import { Style, Variant } from '../types';
@@ -22,7 +24,7 @@ export const getStyleProperties = (
     padding,
     ...style,
     backgroundColor,
-    height: 'fit-content',
-    width: isUndefined(style.width) ? '100%' : 'fit-content',
+    height: isUndefined(style.height) ? DEFAULT_HEIGHT : style.height,
+    width: isUndefined(style.width) ? DEFAULT_WIDTH : style.width,
   };
 };
