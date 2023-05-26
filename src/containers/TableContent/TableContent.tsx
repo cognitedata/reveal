@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Colors, Flex, Tabs } from '@cognite/cogs.js';
+import { Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Tabs as AntdTabs } from 'antd';
 
 import { Spreadsheet } from 'containers/Spreadsheet';
 import { TableHeader } from 'components/TableHeader';
@@ -13,52 +14,69 @@ import { useIsTableEmpty } from 'hooks/table-data';
 import { useActiveTableContext } from 'contexts';
 import { useTranslation } from 'common/i18n';
 
+const { TabPane } = AntdTabs;
+
 const TableContent = () => {
   const { database, table, view, update } = useActiveTableContext();
   const { isFetching } = useFullProfile({ database, table });
   const isEmpty = useIsTableEmpty(database, table);
-  const { t } = useTranslation();
 
   return (
-    // <Wrapper>
-    <StyledTabs
-      css={{ width: '100%' }}
-      key={`${database}_${table}`}
-      onTabClick={(view, _) => update([database, table, view])}
-      activeKey={view || 'spreadsheet'}
-      tabPosition="top"
-    >
-      <TopBar justifyContent="space-between" alignItems="center">
-        <TableHeader title={database} subtitle={table} />
-      </TopBar>
-      {/* <span
-        css={{
-          float: 'right',
-          right: 0,
-          backgroundColor: 'red',
-          display: 'Flex',
-        }}
-      > */}
-      <Tabs.Tab
-        tabKey="spreadsheet"
-        iconLeft="DataTable"
-        label={t('tab-table')}
+    <Wrapper>
+      <StyledTabs
+        key={`${database}_${table}`}
+        onChange={(view) => update([database, table, view])}
+        activeKey={view || 'spreadsheet'}
+        renderTabBar={(props, TabBarComponent) => (
+          <TopBar justifyContent="space-between" alignItems="center">
+            <TableHeader title={database} subtitle={table} />
+            <TabBarComponent {...props} />
+          </TopBar>
+        )}
       >
-        <Spreadsheet />
-      </Tabs.Tab>
+        <TabPane
+          key="spreadsheet"
+          tab={<TabSpreadsheet key={`${database}_${table}`} />}
+          style={{ overflow: 'auto' }}
+        >
+          <Spreadsheet />
+        </TabPane>
 
-      <Tabs.Tab
-        tabKey="profiling"
-        iconLeft={isFetching ? 'Loader' : 'Profiling'}
-        label={t('tab-profile')}
-        disabled={isEmpty}
-      >
-        <Wrapper>
+        <TabPane
+          key="profiling"
+          tab={<TabProfiling isFetching={isFetching} isEmpty={isEmpty} />}
+          style={{ overflow: 'auto' }}
+        >
           <Profiling key={`${database}_${table}`} />
-        </Wrapper>
-      </Tabs.Tab>
-    </StyledTabs>
-    // </Wrapper>
+        </TabPane>
+      </StyledTabs>
+    </Wrapper>
+  );
+};
+
+const TabSpreadsheet = (): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <Tab>
+      <Icon type="DataTable" />
+      {t('tab-table')}
+    </Tab>
+  );
+};
+
+const TabProfiling = ({
+  isFetching,
+  isEmpty,
+}: {
+  isFetching: boolean;
+  isEmpty: boolean;
+}): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <Tab $isEmpty={isEmpty}>
+      <Icon type={isFetching ? 'Loader' : 'Profiling'} />
+      {t('tab-profile')}
+    </Tab>
   );
 };
 
@@ -71,15 +89,29 @@ const TopBar = styled(Flex)`
   height: 64px;
   box-sizing: border-box;
   border-bottom: 1px solid ${Colors['border--interactive--default']};
-  background-color: purple;
-  float: left;
-  left: 0;
 `;
 
-const StyledTabs = styled(Tabs)`
-  &&& {
-    right: 0;
-    background-color: red;
+const Tab = styled.span<{ $isEmpty?: boolean }>`
+  display: inline-flex;
+  align-content: center;
+  line-height: 17px;
+  font-weight: 500;
+  font-size: 14px;
+  color: ${({ $isEmpty = false }) =>
+    $isEmpty
+      ? Colors['text-icon--interactive--disabled']
+      : Colors['text-icon--medium']};
+`;
+
+const StyledTabs = styled(AntdTabs)`
+  width: 100%;
+
+  .ant-tabs-content {
+    height: 100%;
+  }
+
+  .ant-tabs-nav {
+    padding-left: 10px;
   }
 `;
 export default TableContent;
