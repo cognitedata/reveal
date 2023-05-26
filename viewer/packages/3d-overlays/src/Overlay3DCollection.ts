@@ -13,6 +13,7 @@ export type Overlay3DCollectionOptions = {
   overlayTexture?: Texture;
   maxPointSize?: number;
   defaultOverlayColor?: Color;
+  circularOverlay?: boolean;
 };
 
 export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
@@ -40,7 +41,8 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       spriteTexture: this._sharedTexture,
       minPixelSize: this.MinPixelSize,
       maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
-      radius: this._iconRadius
+      radius: this._iconRadius,
+      circularOverlay: options?.circularOverlay ?? true,
     });
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
@@ -140,31 +142,21 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
 
   private createCircleTexture(): THREE.Texture {
     const canvas = document.createElement('canvas');
-    const textureSize = 128;
+    const textureSize = 64;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
-    const overlayColor = new Color('white');
+    const overlayColor = new Color().setScalar(0);
 
     const context = canvas.getContext('2d')!;
+    context.clearRect(0, 0, textureSize, textureSize );
     context.beginPath();
-    context.lineWidth = textureSize / 8;
-    context.strokeStyle = '#' + overlayColor.getHexString();
-    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
-    context.shadowColor = 'rgba(0, 0, 0, 1)';
-    context.shadowBlur = 10;
-    context.fillStyle = context.strokeStyle;
-    context.stroke();
-
-    context.beginPath();
-    context.lineWidth = textureSize / 8;
-    context.strokeStyle = '#' + overlayColor.getHexString();
-    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
-    context.shadowColor = 'rgba(0, 0, 0, 1)';
-    context.shadowBlur = 0;
-    context.fillStyle = context.strokeStyle;
-    context.stroke();
+    context.lineWidth = textureSize / 12;
+    context.strokeStyle = 'white';
+    context.fillStyle = '#' + overlayColor.getHexString();
+    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth/3, 0, 2 * Math.PI);
     context.fill();
+    context.stroke();
 
     return new CanvasTexture(canvas);
   }

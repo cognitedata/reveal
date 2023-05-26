@@ -31,6 +31,7 @@ export type OverlayPointsParameters = {
   colorTint?: Color;
   depthMode?: DepthModes;
   collectionOpacity?: number;
+  circularOverlay?: boolean;
 };
 
 export class OverlayPointsObject extends Group {
@@ -59,7 +60,8 @@ export class OverlayPointsObject extends Group {
       radius,
       colorTint = new Color(1, 1, 1),
       depthMode = LessEqualDepth,
-      collectionOpacity = 1
+      collectionOpacity = 1,
+      circularOverlay = false
     } = materialParameters;
 
     const frontMaterial = this.createIconsMaterial(
@@ -70,7 +72,8 @@ export class OverlayPointsObject extends Group {
       maxPixelSize,
       radius,
       colorTint,
-      false
+      false,
+      circularOverlay
     );
 
     const backMaterial = this.createIconsMaterial(
@@ -81,7 +84,8 @@ export class OverlayPointsObject extends Group {
       maxPixelSize,
       radius,
       colorTint,
-      false
+      false,
+      circularOverlay
     );
 
     const frontPoints = this.initializePoints(geometry, frontMaterial);
@@ -158,7 +162,8 @@ export class OverlayPointsObject extends Group {
     maxPixelSize: number,
     radius: number,
     colorTint: Color,
-    depthWrite: boolean
+    depthWrite: boolean,
+    circularOverlay: boolean
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
@@ -169,6 +174,9 @@ export class OverlayPointsObject extends Group {
         collectionOpacity: { value: collectionOpacity },
         renderDownScale: { value: 1 },
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
+      },
+      defines: {
+        circular_overlay: circularOverlay
       },
       vertexShader: glsl(overlay3DIconVert),
       fragmentShader: glsl(overlay3DIconFrag),
