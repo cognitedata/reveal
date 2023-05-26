@@ -1,10 +1,10 @@
+import omit from 'lodash/omit';
+
 import {
   CogniteClient,
   CursorResponse,
   DatapointAggregates,
 } from '@cognite/sdk';
-
-import omit from 'lodash/omit';
 
 import {
   TimeseriesSingleAggregate,

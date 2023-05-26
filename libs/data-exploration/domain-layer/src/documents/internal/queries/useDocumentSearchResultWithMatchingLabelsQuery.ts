@@ -1,11 +1,13 @@
+import * as React from 'react';
+
 import {
   EMPTY_OBJECT,
   FileConfigType,
   InternalDocumentFilter,
   useDeepMemo,
 } from '@data-exploration-lib/core';
-import * as React from 'react';
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
 import {
@@ -14,6 +16,7 @@ import {
 } from '../../../utils/extractMatchingLabels';
 import { extractMatchingLabelsFromCogniteLabels } from '../../../utils/extractMatchingLabelsFromCogniteLabels';
 import { documentNameAndContentMatcher } from '../transformers/documentNameAndContentMatcher';
+
 import { useDocumentSearchResultQuery } from './useDocumentSearchResultQuery';
 
 export const useDocumentSearchResultWithMatchingLabelsQuery = (

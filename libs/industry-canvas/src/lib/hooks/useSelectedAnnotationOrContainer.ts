@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
+
 import {
   IdsByType,
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
+
 import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
+
 import { EMPTY_IDS_BY_TYPE } from './constants';
 import { UseManagedStateReturnType } from './useManagedState';
 

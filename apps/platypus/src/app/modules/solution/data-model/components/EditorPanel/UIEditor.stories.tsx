@@ -7,6 +7,7 @@ import {
 import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
 import { initialState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import configureStory from '@platypus-app/tests/configureStorybook';
+
 import { UIEditor } from './UIEditor';
 
 export default {

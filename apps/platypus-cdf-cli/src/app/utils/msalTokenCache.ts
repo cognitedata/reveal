@@ -4,7 +4,9 @@ import {
   ISerializableTokenCache,
   TokenCacheContext,
 } from '@azure/msal-common';
+
 import { AUTH_CONFIG } from '../constants';
+
 import { getProjectConfig, setProjectConfig } from './config';
 
 const beforeCacheAccess = async (cacheContext: TokenCacheContext) => {

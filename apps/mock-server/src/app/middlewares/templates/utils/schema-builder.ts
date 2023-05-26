@@ -1,4 +1,5 @@
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
+
 import { getType } from '../../../utils';
 import { camelize } from '../../../utils/text-utils';
 

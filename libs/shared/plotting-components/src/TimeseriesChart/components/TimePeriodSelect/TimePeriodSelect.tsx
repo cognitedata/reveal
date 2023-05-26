@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 
-import { OptionType, Select } from '@cognite/cogs.js';
-
 import isEmpty from 'lodash/isEmpty';
+
+import { OptionType, Select } from '@cognite/cogs.js';
 
 import { TimePeriod, UpdateTimePeriodProps } from '../../types';
 import { getDateRangeForTimePeriod } from '../../utils/getDateRangeForTimePeriod';

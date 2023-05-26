@@ -1,7 +1,7 @@
-import * as monaco from 'monaco-editor';
 import type { CancellationToken } from 'monaco-editor';
-
+import * as monaco from 'monaco-editor';
 import { editor } from 'monaco-editor';
+
 import { WorkerAccessor } from '../../types';
 
 export class DocumentFormattingAdapter

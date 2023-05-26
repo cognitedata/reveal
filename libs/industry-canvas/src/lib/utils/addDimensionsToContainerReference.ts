@@ -1,3 +1,5 @@
+import { max } from 'lodash';
+
 import { isNotUndefined } from '@cognite/data-exploration';
 import {
   UnifiedViewer,
@@ -7,13 +9,14 @@ import {
   isPolylineAnnotation,
   isTextAnnotation,
 } from '@cognite/unified-file-viewer';
-import { max } from 'lodash';
+
 import {
   CanvasAnnotation,
   ContainerReference,
   ContainerReferenceType,
   Dimensions,
 } from '../types';
+
 import assertNever from './assertNever';
 
 const INITIAL_CONTAINER_MARGIN = 100;

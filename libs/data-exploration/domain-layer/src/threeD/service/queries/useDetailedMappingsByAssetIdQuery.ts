@@ -1,12 +1,15 @@
-import { CogniteError } from '@cognite/sdk/dist/src';
-import { useSDK } from '@cognite/sdk-provider';
+import { useEffect } from 'react';
+
 import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { useEffect } from 'react';
 import uniqWith from 'lodash/uniqWith';
+
+import { CogniteError } from '@cognite/sdk/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 import { fetchThreeDModelQuery, fetchThreeDRevisionQuery } from '../network';
 import { DetailedMapping } from '../types';

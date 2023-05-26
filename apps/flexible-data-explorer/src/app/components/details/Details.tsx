@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { DetailsItem } from './DetailsItem';
 
 export const GeneralDetails = ({

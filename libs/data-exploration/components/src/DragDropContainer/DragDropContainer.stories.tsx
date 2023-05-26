@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
+import { FlexColumn, FlexRow } from '@data-exploration-lib/core';
 import times from 'lodash/times';
 import styled from 'styled-components/macro';
 
-import { FlexColumn, FlexRow } from '@data-exploration-lib/core';
-import { WithDragHandleProps } from './types';
-import { DragDropContainer } from './DragDropContainer';
 import { DragHandleIcon } from './components/DragHandleIcon';
+import { DragDropContainer } from './DragDropContainer';
+import { WithDragHandleProps } from './types';
 
 const ItemWrapper = styled(FlexRow)`
   align-items: center;

@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Chip } from '@cognite/cogs.js';
+
 import { HorizontalDivider } from '../elements';
 
 export const PhrasesTab: React.FC = () => {

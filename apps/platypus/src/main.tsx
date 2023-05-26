@@ -1,6 +1,8 @@
 import React from 'react';
+
 import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
+
 import './app/utils/sentry';
 import AppWrapper from './AppWrapper';
 import { environment } from './environments/environment';

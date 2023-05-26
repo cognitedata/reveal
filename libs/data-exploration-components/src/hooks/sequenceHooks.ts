@@ -1,4 +1,8 @@
-import { useSDK } from '@cognite/sdk-provider';
+import { pickOptionalId } from '@data-exploration-lib/core';
+import {
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 
 import {
   CogniteClient,
@@ -7,12 +11,7 @@ import {
   SequenceItem,
   SequenceRow,
 } from '@cognite/sdk';
-
-import {
-  UseInfiniteQueryOptions,
-  useInfiniteQuery,
-} from '@tanstack/react-query';
-import { pickOptionalId } from '@data-exploration-lib/core';
+import { useSDK } from '@cognite/sdk-provider';
 
 const post = <T>(sdk: CogniteClient, path: string, data: any) =>
   sdk

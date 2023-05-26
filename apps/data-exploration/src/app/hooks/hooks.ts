@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import qs from 'query-string';
 import {
   useParams,
   useLocation,
@@ -9,14 +8,16 @@ import {
   NavigateOptions,
   To,
 } from 'react-router-dom';
-import { ResourceItem, ResourceType } from '@cognite/data-exploration';
-import { createLink } from '@cognite/cdf-utilities';
-import { getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { useQuery } from '@tanstack/react-query';
-import isArray from 'lodash/isArray';
 
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { useQuery } from '@tanstack/react-query';
+import isArray from 'lodash/isArray';
+import qs from 'query-string';
+
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { createLink } from '@cognite/cdf-utilities';
+import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 

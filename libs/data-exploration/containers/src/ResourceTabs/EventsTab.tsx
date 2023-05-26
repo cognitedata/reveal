@@ -1,9 +1,9 @@
-import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
 import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
-import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
+import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
 
-import { ResourceTabProps } from './types';
 import { CounterTab } from './elements';
+import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
+import { ResourceTabProps } from './types';
 
 export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');

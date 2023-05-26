@@ -1,9 +1,9 @@
-import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { useCallback, useMemo, useState } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
-import debounce from 'lodash/debounce';
 import { ResourceTableColumns } from '@data-exploration/components';
+import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 
 export const useAssetsMetadataColumns = () => {
   const [query, setQuery] = useState<string>();

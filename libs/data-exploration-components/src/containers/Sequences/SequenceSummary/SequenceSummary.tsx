@@ -1,26 +1,26 @@
-import { Asset, Sequence } from '@cognite/sdk';
-import { useSequencesMetadataColumns } from '@data-exploration/containers';
-import { ColumnDef } from '@tanstack/react-table';
+import React, { useMemo } from 'react';
 
-import {
-  useSequenceSearchResultWithMatchingLabelsQuery,
-  InternalSequenceDataWithMatchingLabels,
-} from '@data-exploration-lib/domain-layer';
 import {
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration/components';
-import React, { useMemo } from 'react';
-
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { useSequencesMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
   EMPTY_OBJECT,
   getHiddenColumns,
   InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  useSequenceSearchResultWithMatchingLabelsQuery,
+  InternalSequenceDataWithMatchingLabels,
+} from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, Sequence } from '@cognite/sdk';
 
 export const SequenceSummary = ({
   query = '',

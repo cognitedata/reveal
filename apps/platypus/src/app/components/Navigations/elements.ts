@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+
 import { Button, TopBar, Body, Flex } from '@cognite/cogs.js';
 
 export const StyledTopBarRight = styled(TopBar.Right)`

@@ -1,5 +1,6 @@
-import { CogniteClient, CogniteError, Revision3D } from '@cognite/sdk/dist/src';
 import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
+
+import { CogniteClient, CogniteError, Revision3D } from '@cognite/sdk/dist/src';
 
 import { queryKeys } from '../../../queryKeys';
 

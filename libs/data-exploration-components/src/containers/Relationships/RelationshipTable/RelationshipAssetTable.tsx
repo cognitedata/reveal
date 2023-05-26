@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { EmptyState, Table } from '@data-exploration/components';
+import { ResultCount } from '@data-exploration-components/components';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-
-import { ResultCount } from '@data-exploration-components/components';
-import { ColumnDef } from '@tanstack/react-table';
 import { AssetWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+
 import { RelationshipTableProps } from './RelationshipTable';
 
 export function RelationshipAssetTable({

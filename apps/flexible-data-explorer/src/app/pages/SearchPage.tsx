@@ -1,7 +1,7 @@
+import { SearchResults } from '../components/search/SearchResults';
 import { Page } from '../containers/page/Page';
 import { useNavigation } from '../hooks/useNavigation';
 import { useSearchDataTypesQuery } from '../services/dataTypes/queries/useSearchDataTypesQuery';
-import { SearchResults } from '../components/search/SearchResults';
 
 export const SearchPage = () => {
   const navigate = useNavigation();

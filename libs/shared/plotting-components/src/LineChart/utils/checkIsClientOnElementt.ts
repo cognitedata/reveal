@@ -1,6 +1,7 @@
 import isUndefined from 'lodash/isUndefined';
 
 import { Coordinate } from '../types';
+
 import { isInRange } from './isInRange';
 
 export const checkIsClientOnElementt = (

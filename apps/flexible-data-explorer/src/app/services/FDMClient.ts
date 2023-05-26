@@ -1,12 +1,13 @@
 // This file contains a bare-bones version of
 // https://github.com/cognitedata/industry-apps/blob/master/packages/e2e-fdm/src/fdm/fdm-client.ts
 
-import type { CogniteClient } from '@cognite/sdk';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { query } from 'gql-query-builder';
 import Fields from 'gql-query-builder/build/Fields';
 import head from 'lodash/head';
+
+import type { CogniteClient } from '@cognite/sdk';
 
 export interface FDMError {
   extensions: { classification: string };

@@ -1,5 +1,7 @@
 import * as React from 'react';
+
 import { Chip } from '@cognite/cogs.js';
+
 import { HorizontalDivider, StyledInfobox } from '../elements';
 
 export const OperatorsTab: React.FC = () => {

@@ -1,7 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
+
+import styled from 'styled-components';
+
 import dayjs from 'dayjs';
 import noop from 'lodash/noop';
+
 import {
   Dropdown,
   Button,
@@ -10,17 +14,17 @@ import {
   SegmentedControl,
   Flex,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { PivotRangePicker } from './PivotRangePicker';
+
+import { CalendarPicker } from './CalendarPicker';
 import {
   PivotRange,
   StartEndRange,
   determinePivotRange,
   getPivotRangeAsDates,
 } from './Common';
-import { CalendarPicker } from './CalendarPicker';
-import { Divider } from './elements';
 import { TIME_SELECT } from './constants';
+import { Divider } from './elements';
+import { PivotRangePicker } from './PivotRangePicker';
 
 export type RangePickerProps = {
   initialRange?: [Date, Date];

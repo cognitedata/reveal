@@ -1,8 +1,11 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { assetsFixture } from '@data-exploration-lib/core';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
+
 import { AssetTreeTable } from './AssetTreeTable';
 
 export default {

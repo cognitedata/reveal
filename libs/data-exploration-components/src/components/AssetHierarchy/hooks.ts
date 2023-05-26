@@ -1,12 +1,13 @@
-import { IdEither } from '@cognite/sdk-core/dist/src';
-import { useSDK } from '@cognite/sdk-provider';
+import { useQuery } from '@tanstack/react-query';
+
 import {
   AssetRetrieveParams,
   Asset,
   AssetListScope,
   ListResponse,
 } from '@cognite/sdk';
-import { useQuery } from '@tanstack/react-query';
+import { IdEither } from '@cognite/sdk-core/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useAssetBreadcrumbsQuery = (
   assetId?: IdEither,

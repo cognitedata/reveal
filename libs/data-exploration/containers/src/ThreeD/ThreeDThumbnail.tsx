@@ -1,5 +1,7 @@
-import styled from 'styled-components';
 import React, { useMemo } from 'react';
+
+import styled from 'styled-components';
+
 import { Icon } from '@cognite/cogs.js';
 
 export const ThreeDThumbnail = ({

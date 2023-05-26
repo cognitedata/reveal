@@ -1,9 +1,11 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
+
 import { KeyValuePair } from '../../..';
 import { CdfDatabaseService } from '../../../common/cdf-database.service';
 import { GraphQlSchemaParser } from '../../../common/graphql-schema-parser';
 import { CdfMockDatabase, TemplateGroupTemplate } from '../../../types';
 import uuid from '../../../utils/uuid';
+
 import { buildQueryResolvers } from './query-resolvers-builder';
 import { TemplatesSchemaBuilder } from './schema-builder';
 

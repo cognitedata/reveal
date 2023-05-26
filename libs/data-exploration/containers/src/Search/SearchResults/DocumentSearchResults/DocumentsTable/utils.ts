@@ -1,5 +1,5 @@
-import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import { DASH } from '@data-exploration-lib/core'; // Don't change the import, fails the tests
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 
 export const getHighlightContent = (document: InternalDocument) => {
   if (

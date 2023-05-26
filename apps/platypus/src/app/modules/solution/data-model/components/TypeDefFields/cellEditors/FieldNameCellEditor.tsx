@@ -1,10 +1,12 @@
-import { Tooltip } from '@cognite/cogs.js';
+import { ChangeEvent, Component, createRef } from 'react';
+
 import {
   SolutionDataModelFieldNameValidator,
   ValidatorResult,
 } from '@platypus/platypus-core';
 import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
-import { ChangeEvent, Component, createRef } from 'react';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 interface FieldNameEditorState {
   initialValue: string;

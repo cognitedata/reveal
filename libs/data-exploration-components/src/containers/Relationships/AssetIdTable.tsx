@@ -1,12 +1,14 @@
-import { AssetTable } from '@data-exploration/containers';
 import React from 'react';
+
+import { AssetTable } from '@data-exploration/containers';
 import {
   ResourceItem,
   convertResourceType,
   SelectableItemsProps,
 } from '@data-exploration-components/types';
-import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
+
 import { Asset } from '@cognite/sdk';
+import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 export const AssetIdTable = ({
   resource,

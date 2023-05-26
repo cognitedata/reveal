@@ -1,4 +1,29 @@
 import {
+  acceptCompletion,
+  autocompletion,
+  closeBrackets,
+  closeBracketsKeymap,
+  completionKeymap,
+} from '@codemirror/autocomplete';
+import {
+  defaultKeymap,
+  historyKeymap,
+  history,
+  indentLess,
+  insertTab,
+} from '@codemirror/commands';
+import {
+  bracketMatching,
+  defaultHighlightStyle,
+  foldGutter,
+  foldKeymap,
+  indentOnInput,
+  syntaxHighlighting,
+} from '@codemirror/language';
+import { lintGutter, lintKeymap } from '@codemirror/lint';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import { EditorState } from '@codemirror/state';
+import {
   Command,
   crosshairCursor,
   drawSelection,
@@ -11,31 +36,6 @@ import {
   rectangularSelection,
   scrollPastEnd,
 } from '@codemirror/view';
-import {
-  defaultKeymap,
-  historyKeymap,
-  history,
-  indentLess,
-  insertTab,
-} from '@codemirror/commands';
-import { EditorState } from '@codemirror/state';
-import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { lintGutter, lintKeymap } from '@codemirror/lint';
-import {
-  acceptCompletion,
-  autocompletion,
-  closeBrackets,
-  closeBracketsKeymap,
-  completionKeymap,
-} from '@codemirror/autocomplete';
-import {
-  bracketMatching,
-  defaultHighlightStyle,
-  foldGutter,
-  foldKeymap,
-  indentOnInput,
-  syntaxHighlighting,
-} from '@codemirror/language';
 
 const PHRASES: Record<string, string> = {
   // @codemirror/view

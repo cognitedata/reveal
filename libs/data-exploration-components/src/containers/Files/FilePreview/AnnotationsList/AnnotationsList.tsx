@@ -1,6 +1,14 @@
-import uniq from 'lodash/uniq';
 import React, { useEffect, useMemo, useState } from 'react';
+
 import styled from 'styled-components';
+
+import { ResourceIcons } from '@data-exploration-components/components/index';
+import { isNotUndefined } from '@data-exploration-components/utils/index';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { Breadcrumb } from 'antd';
+import capitalize from 'lodash/capitalize';
+import uniq from 'lodash/uniq';
+
 import {
   Body,
   Button,
@@ -10,13 +18,9 @@ import {
   Icon,
   SegmentedControl,
 } from '@cognite/cogs.js';
-import { Breadcrumb } from 'antd';
-import { ResourceIcons } from '@data-exploration-components/components/index';
-import capitalize from 'lodash/capitalize';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
-import { isNotUndefined } from '@data-exploration-components/utils/index';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,

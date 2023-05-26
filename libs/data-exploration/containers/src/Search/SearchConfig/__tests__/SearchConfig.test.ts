@@ -1,9 +1,10 @@
+import { renderComponent } from '@data-exploration/components';
 import {
   SEARCH_CONFIG_SUBTITLE,
   SEARCH_CONFIG_TITLE,
 } from '@data-exploration-lib/core';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderComponent } from '@data-exploration/components';
+
 import { SearchConfig } from '../SearchConfig';
 
 describe('SearchConfig', () => {

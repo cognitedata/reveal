@@ -1,8 +1,12 @@
-import { Button, Colors, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
+import { Button, Colors, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
+
 import { ids } from '../../../../../cogs-variables';
+
 import {
   MouseNavigation,
   KeyboardNavigation,

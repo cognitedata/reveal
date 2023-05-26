@@ -3,6 +3,7 @@ import {
   NIL_FILTER_LABEL,
   NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
+
 import { CUSTOM_FILTER_TITLE } from '../constants';
 import { formatValue, getTitle } from '../utils';
 

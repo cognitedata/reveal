@@ -1,4 +1,5 @@
 import { Button } from '@cognite/cogs.js';
+
 import { useTranslation } from '../../hooks/useTranslation';
 
 export const ButtonOpenIn = ({ loading }: { loading?: boolean }) => {

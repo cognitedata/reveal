@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Story } from '@storybook/react';
+
 import { Placeholder } from './Placeholder';
 
 export default {

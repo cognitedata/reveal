@@ -1,7 +1,10 @@
-import { Button, Menu, Dropdown } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useState, MouseEvent } from 'react';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Button, Menu, Dropdown } from '@cognite/cogs.js';
 
 type Props = {
   disabled?: boolean;

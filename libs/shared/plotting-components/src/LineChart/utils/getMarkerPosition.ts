@@ -1,7 +1,7 @@
+import get from 'lodash/get';
+import head from 'lodash/head';
 import { PlotMouseEvent } from 'plotly.js';
 
-import head from 'lodash/head';
-import get from 'lodash/get';
 import { Coordinate } from '../types';
 
 export const getMarkerPosition = (

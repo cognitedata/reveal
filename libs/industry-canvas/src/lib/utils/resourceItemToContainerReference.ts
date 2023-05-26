@@ -1,4 +1,5 @@
 import { ResourceItem } from '@cognite/data-exploration';
+
 import { ContainerReference, ContainerReferenceType } from '../types';
 
 const resourceItemToContainerReference = (

@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { OptionType } from '@cognite/cogs.js';
 import { ComponentStory } from '@storybook/react';
+
+import { OptionType } from '@cognite/cogs.js';
 
 import { MultiSelectOptionType } from '../types';
 

@@ -1,4 +1,5 @@
 import { editor, languages, Range } from 'monaco-editor';
+
 import {
   CodeActionEdit,
   CodeActionsOptions,
@@ -6,7 +7,6 @@ import {
   DiagnosticItem,
   EditorCodeAction,
 } from '../../language-service/types';
-
 import { WorkerAccessor } from '../../types';
 
 /**

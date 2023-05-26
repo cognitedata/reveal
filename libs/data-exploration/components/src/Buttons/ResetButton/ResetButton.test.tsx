@@ -1,6 +1,7 @@
 import { fireEvent, screen, render } from '@testing-library/react';
-import { ResetButton } from './ResetButton';
+
 import { RESET } from './constants';
+import { ResetButton } from './ResetButton';
 
 describe('ResetButton', () => {
   it('should render correctly', () => {

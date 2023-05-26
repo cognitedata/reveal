@@ -1,5 +1,6 @@
-import { events } from '@data-exploration-lib/core';
 import React from 'react';
+
+import { events } from '@data-exploration-lib/core';
 
 import { EventInfo } from './EventInfo';
 

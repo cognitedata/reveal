@@ -1,8 +1,11 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { Body, Flex, Title } from '@cognite/cogs.js';
 
-import React from 'react';
-import styled from 'styled-components';
 import { SearchEmpty } from '../Graphics';
+
 import Loading from './Loading';
 
 export interface EmptyStateProps {

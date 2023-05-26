@@ -2,9 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import { Coordinate } from '../types';
-import { createEventListener } from '../utils/createEventListener';
-
 import { checkIsCursorOnPlot } from '../utils/checkIsCursorOnPlot';
+import { createEventListener } from '../utils/createEventListener';
 import { getCursorPosition } from '../utils/getCursorPosition';
 
 export const useCursorPosition = (

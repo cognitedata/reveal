@@ -1,4 +1,5 @@
 import { Timeseries } from '@cognite/sdk';
+
 import { InternalTimeseriesData } from '../../internal';
 
 export const normalizeTimeseries = (

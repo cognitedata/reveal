@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { assetsFixture, threeDModels } from '@data-exploration-lib/core';
+
 import { AssetInfo } from './AssetInfo';
 
 const sdkMock = {

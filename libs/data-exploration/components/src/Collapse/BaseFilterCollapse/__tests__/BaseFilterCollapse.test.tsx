@@ -1,6 +1,7 @@
 import { fireEvent, screen, render } from '@testing-library/react';
-import { BaseFilterPanel, BaseFilterPanelProps } from '../BaseFilterCollapse';
+
 import { RESET } from '../../../Buttons/ResetButton';
+import { BaseFilterPanel, BaseFilterPanelProps } from '../BaseFilterCollapse';
 
 describe('BaseFilterPanel', () => {
   const initRender = (props?: Partial<BaseFilterPanelProps>) => {

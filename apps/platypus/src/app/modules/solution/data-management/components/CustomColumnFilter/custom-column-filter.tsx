@@ -1,11 +1,13 @@
 import { Component } from 'react';
-import { IFilterOptionDef, IFilterParams } from 'ag-grid-community';
-import { Button, Input, OptionType, Select } from '@cognite/cogs.js';
-import debounce from 'lodash/debounce';
-import { gridConfigService } from '@cognite/cog-data-grid';
-import { CustomFilterModel } from '@cognite/cog-data-grid-root/lib/types';
 
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
+import { IFilterOptionDef, IFilterParams } from 'ag-grid-community';
+import debounce from 'lodash/debounce';
+
+import { gridConfigService } from '@cognite/cog-data-grid';
+import { CustomFilterModel } from '@cognite/cog-data-grid-root/lib/types';
+import { Button, Input, OptionType, Select } from '@cognite/cogs.js';
+
 import {
   COL_TYPES_MAP,
   FILTER_OPTIONS_WITHOUT_INPUT,

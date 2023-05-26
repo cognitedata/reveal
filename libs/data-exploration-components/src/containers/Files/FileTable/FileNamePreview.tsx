@@ -1,17 +1,19 @@
+import React from 'react';
+import Highlighter from 'react-highlight-words';
+
+import styled from 'styled-components';
+
+import { HighlightCell, EllipsisText } from '@data-exploration/components';
+import { FileThumbnail } from '@data-exploration/containers';
 import {
   fileIconMapper,
   isFilePreviewable,
   mapMimeTypeToDocumentType,
 } from '@data-exploration-lib/core';
-import { FileThumbnail } from '@data-exploration/containers';
-import React from 'react';
-import { FileInfo } from '@cognite/sdk';
-import styled from 'styled-components';
-import Highlighter from 'react-highlight-words';
-import { HighlightCell, EllipsisText } from '@data-exploration/components';
 import { Popover } from 'antd';
 
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
 
 const DocumentIconWrapper = styled.div`
   height: 32px;

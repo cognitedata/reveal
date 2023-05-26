@@ -1,4 +1,5 @@
-import { Body, Icon, Chip, Title, Tooltip } from '@cognite/cogs.js';
+import styled from 'styled-components';
+
 import {
   getFieldType,
   renderFieldType,
@@ -8,12 +9,15 @@ import {
   InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
 } from 'graphql';
-import styled from 'styled-components';
+
+import { Body, Icon, Chip, Title, Tooltip } from '@cognite/cogs.js';
+
 import {
   getTypeDirective,
   capitalizeFirst,
   NODE_PROPERTY_ITEM_HEIGHT,
 } from '../utils';
+
 import { Header } from './Common';
 
 export const FullNode = ({

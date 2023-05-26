@@ -1,8 +1,8 @@
+import { BooleanInput, BooleanInputProps } from '@data-exploration/components';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { BooleanInput, BooleanInputProps } from '@data-exploration/components';
 
 export const IsStepFilter = (props: BooleanInputProps) => {
   const { onChange } = props;

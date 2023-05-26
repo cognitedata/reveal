@@ -1,5 +1,6 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient, CursorResponse } from '@cognite/sdk';
+
 import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '../../../constants';
 import { BasicMapping } from '../types';
 

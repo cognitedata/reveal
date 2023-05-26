@@ -6,17 +6,18 @@ import {
   TableProps,
   TimeDisplay,
 } from '@data-exploration/components';
-
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
 import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
-import { Body } from '@cognite/cogs.js';
+import { ColumnDef, Row } from '@tanstack/react-table';
 
+import { Body } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
+
 import { useDocumentsMetadataColumns } from '../useDocumentsMetadataColumns';
+
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentSummaryPreview } from './DocumentSummaryPreview';

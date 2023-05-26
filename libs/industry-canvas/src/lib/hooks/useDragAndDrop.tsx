@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { UnifiedViewer } from '@cognite/unified-file-viewer';
+
 import { toast } from '@cognite/cogs.js';
+import { UnifiedViewer } from '@cognite/unified-file-viewer';
+
 import { FileDropData } from '../components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import { TOAST_POSITION } from '../constants';
 

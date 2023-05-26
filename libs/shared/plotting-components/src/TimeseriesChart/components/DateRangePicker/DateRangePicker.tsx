@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { DateRange } from '../../types';
+
 import { RangePicker } from './DatePicker';
 
 export interface DateRangePickerProps {

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { Data, PlotRange } from '../types';
 import { getPlotRange } from '../utils/getPlotRange';
 import { getPlotRangeWithMargin } from '../utils/getPlotRangeWithMargin';

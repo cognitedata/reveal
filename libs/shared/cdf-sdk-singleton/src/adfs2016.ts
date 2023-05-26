@@ -1,6 +1,6 @@
 // eslint-disable-next-line @cognite/no-sdk-submodule-imports
-import { ADFS } from '@cognite/sdk-core';
 import { removeSelectedIdpDetails } from '@cognite/login-utils';
+import { ADFS } from '@cognite/sdk-core';
 
 import { ADFS_SESSION_TOKEN_KEY } from './constants';
 import { getBaseUrl, getCluster, getEnv, getProject } from './utils';

@@ -2,9 +2,9 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { screen, fireEvent } from '@testing-library/react';
 
-import { SortAction, SortActionProps } from '../SortAction';
-import { SortDirection } from '../../types';
 import { renderComponent } from '../../../__test-utils';
+import { SortDirection } from '../../types';
+import { SortAction, SortActionProps } from '../SortAction';
 
 describe('NestedFilter/SortAction', () => {
   const onChange = jest.fn();

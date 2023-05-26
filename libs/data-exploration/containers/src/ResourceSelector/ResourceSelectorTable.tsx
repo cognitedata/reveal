@@ -1,8 +1,16 @@
-import { FilterState, ResourceType } from '@data-exploration-lib/core';
+import { Dispatch, SetStateAction } from 'react';
+
+import {
+  FilterState,
+  ResourceItem,
+  ResourceSelectionMode,
+  ResourceType,
+} from '@data-exploration-lib/core';
+import { ResourceItems } from '@data-exploration-lib/domain-layer';
 import { RowSelectionState, Updater } from '@tanstack/react-table';
+import { mapValues } from 'lodash';
 import noop from 'lodash/noop';
 
-import React, { useState } from 'react';
 import {
   AssetSearchResults,
   DocumentSearchResults,
@@ -11,42 +19,69 @@ import {
   TimeseriesSearchResults,
 } from '../Search';
 
-export type ResourceSelection = Record<ResourceType, Record<string, boolean>>;
+import { ResourceSelection } from './ResourceSelector';
 
 export const ResourceSelectorTable = ({
   resourceType,
   filter,
   query,
+  selectedRows,
+  selectionMode,
+  setSelectedRows,
+  onFilterChange,
+  onClick = noop,
 }: {
   resourceType: ResourceType;
   filter: FilterState;
   query?: string;
+  selectedRows: ResourceSelection;
+  setSelectedRows: Dispatch<SetStateAction<ResourceSelection>>;
+  selectionMode?: ResourceSelectionMode;
+  onClick?: (item: ResourceItems) => void;
+  onFilterChange?: (newValue: Record<string, unknown>) => void;
 }) => {
-  const [selectedRows, setSelectedRow] = useState<ResourceSelection>({
-    asset: {},
-    file: {},
-    timeSeries: {},
-    sequence: {},
-    threeD: {},
-    event: {},
-  });
   const commonProps = {
-    enableSelection: true,
+    enableSelection: selectionMode === 'multiple',
     id: `${resourceType}-resource-selector`,
     query,
     filter: { ...filter.common, ...filter[resourceType as keyof FilterState] },
     selectedRows: selectedRows[resourceType],
-    onRowSelection: (updater: Updater<RowSelectionState>) => {
-      setSelectedRow((prev) => {
+
+    onRowSelection: (
+      updater: Updater<RowSelectionState>,
+      data: ResourceItem[]
+    ) => {
+      setSelectedRows((prev) => {
         if (typeof updater === 'function') {
-          return { ...prev, [resourceType]: updater(prev[resourceType]) };
+          return {
+            ...prev,
+            [resourceType]: mapValues(
+              updater(
+                mapValues(prev[resourceType], function (resourceItem) {
+                  return Boolean(resourceItem.id);
+                })
+              ),
+              function (_, key) {
+                return data.find((item) => String(item.id) === key);
+              }
+            ),
+          };
         }
-        return { ...prev, [resourceType]: updater };
+        return {
+          ...prev,
+          [resourceType]: mapValues(updater, function (_, key) {
+            return data.find((item) => String(item.id) === key);
+          }),
+        };
       });
     },
-    onClick: noop,
+    onClick,
+    onFilterChange,
   };
-  const documentProps = { ...commonProps, filter: filter.document };
+  const documentProps = {
+    ...commonProps,
+    filter: filter.document,
+  };
 
   switch (resourceType) {
     case 'asset':

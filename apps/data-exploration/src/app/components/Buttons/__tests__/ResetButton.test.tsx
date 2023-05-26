@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom';
 import { fireEvent, screen } from '@testing-library/react';
+
 import render from '../../../../testUtils/render';
-import { ResetButton } from '../ResetButton';
 import { RESET } from '../constants';
+import { ResetButton } from '../ResetButton';
 
 describe('ResetButton', () => {
   it('should render correctly', () => {

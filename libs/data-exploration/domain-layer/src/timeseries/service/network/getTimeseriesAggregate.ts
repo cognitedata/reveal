@@ -1,4 +1,5 @@
 import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
+
 import { TimeseriesAggregateRequestPayload } from '../types';
 
 export const getTimeseriesAggregate = <ResponseType = AggregateResponse>(

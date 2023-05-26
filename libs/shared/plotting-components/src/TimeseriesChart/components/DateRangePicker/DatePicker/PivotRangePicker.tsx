@@ -1,8 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import dayjs from 'dayjs';
-import { Body, Input } from '@cognite/cogs.js';
 import ReactDatePicker from 'react-datepicker';
+
+import dayjs from 'dayjs';
+
+import { Body, Input } from '@cognite/cogs.js';
+
 import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
 import {
   DatePickerWrapper,

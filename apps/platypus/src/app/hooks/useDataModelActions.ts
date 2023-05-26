@@ -1,14 +1,16 @@
-import { TOKENS } from '@platypus-app/di';
-import { useQuery } from '@tanstack/react-query';
-import { Notification } from '@platypus-app/components/Notification/Notification';
+import { useMemo } from 'react';
+
 import {
   DataModel,
   DataModelVersion,
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
-import { useMemo } from 'react';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { TOKENS } from '@platypus-app/di';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useQuery } from '@tanstack/react-query';
+
 import { useErrorLogger } from './useErrorLogger';
 import { useInjection } from './useInjection';
 import { useSelectedDataModelVersion } from './useSelectedDataModelVersion';

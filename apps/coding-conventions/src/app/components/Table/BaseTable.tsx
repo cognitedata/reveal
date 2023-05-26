@@ -1,8 +1,11 @@
-import { Body, Button, Flex, Table, Tooltip } from '@cognite/cogs.js';
 import { useEffect, useMemo, useState, memo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Row } from 'react-table';
+
 import styled from 'styled-components';
+
+import { Body, Button, Flex, Table, Tooltip } from '@cognite/cogs.js';
+
 import { ConventionItem } from '../../containers/convention/ConventionItem';
 import { Convention, TagDefinitions, TagTypes } from '../../types';
 

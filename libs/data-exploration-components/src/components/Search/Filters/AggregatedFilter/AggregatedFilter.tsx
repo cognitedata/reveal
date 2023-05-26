@@ -1,6 +1,8 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
+
 import { Select } from '@data-exploration-components/components';
+
+import { Body } from '@cognite/cogs.js';
 
 export const AggregatedFilter = <T,>({
   items,

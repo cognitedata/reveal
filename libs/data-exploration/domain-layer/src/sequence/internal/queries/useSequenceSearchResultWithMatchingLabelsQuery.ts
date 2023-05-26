@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import {
   EMPTY_OBJECT,
   InternalSequenceFilters,
@@ -6,12 +7,14 @@ import {
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
 import {
   extractMatchingLabels,
   MatchingLabelPropertyType,
 } from '../../../utils/extractMatchingLabels';
+
 import { useSequenceSearchResultQuery } from './useSequenceSearchResultQuery';
 
 export const useSequenceSearchResultWithMatchingLabelsQuery = (

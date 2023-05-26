@@ -1,4 +1,5 @@
 import { Request } from 'express';
+
 import { CdfResourceObject } from '../..';
 import { CdfDatabaseService } from '../../common/cdf-database.service';
 import { Collection } from '../../common/collection';

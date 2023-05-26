@@ -1,16 +1,18 @@
-import { TOKENS } from '@platypus-app/di';
+import { useParams } from 'react-router-dom';
+
 import {
   DataModelTypeDefsType,
   FetchPublishedRowsCountDTO,
 } from '@platypus/platypus-core';
-import { useQuery } from '@tanstack/react-query';
 import {
   formatValidationErrors,
   Notification,
 } from '@platypus-app/components/Notification/Notification';
+import { TOKENS } from '@platypus-app/di';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+
 import { useInjection } from '../../../../hooks/useInjection';
 
 export const usePublishedRowsCountMapByType = ({

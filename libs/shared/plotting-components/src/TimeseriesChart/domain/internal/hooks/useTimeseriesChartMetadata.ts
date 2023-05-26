@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
+
 import { DEFAULT_NUMBER_OF_POINTS } from '../../../constants';
 import { DataFetchOptions } from '../../../types';
-
 import { useTimeseriesSingleAggregateQuery } from '../../service/queries';
-
 import { TimeseriesChartMetadata, TimeseriesChartQuery } from '../types';
 import { getDataFetchMode } from '../utils';
 

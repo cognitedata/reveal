@@ -4,8 +4,8 @@ import { Chip } from '@cognite/cogs.js';
 
 import { SortActionWrapper } from '../elements';
 import { SortDirection } from '../types';
-import { getSortActionData } from '../utils/getSortActionData';
 import { getNextSortDirection } from '../utils/getNextSortDirection';
+import { getSortActionData } from '../utils/getSortActionData';
 
 export interface SortActionProps {
   isVisible?: boolean;

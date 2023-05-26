@@ -1,11 +1,12 @@
-import { A, Icon } from '@cognite/cogs.js';
-import { Asset, AssetIdEither } from '@cognite/sdk';
 import React, { useEffect } from 'react';
 import {
   CustomRendererProps,
   FlattenedNode,
   selectors,
 } from 'react-virtualized-tree';
+
+import { A, Icon } from '@cognite/cogs.js';
+import { Asset, AssetIdEither } from '@cognite/sdk';
 
 import { TREE_UPDATE_TYPE } from './types';
 

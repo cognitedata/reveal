@@ -1,8 +1,11 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { action } from '@storybook/addon-actions';
+
 import { files } from '@data-exploration-components/stubs/files';
+import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
+
 import { FileTable } from './FileTable';
 
 export default {

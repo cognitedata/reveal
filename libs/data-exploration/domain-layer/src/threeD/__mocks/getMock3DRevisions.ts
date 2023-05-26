@@ -1,8 +1,9 @@
-import { rest } from 'msw';
 import { MSWRequest } from '@data-exploration-lib/core';
+import { rest } from 'msw';
+
 import { TEST_PROJECT } from '../../__mocks';
-import { mock3dRevisions } from '../__fixtures/mock3dRevisions';
 import { mock3dModels } from '../__fixtures/mock3dModels';
+import { mock3dRevisions } from '../__fixtures/mock3dRevisions';
 
 export const mockModelObj = mock3dModels.items[0];
 export const getMock3DRevisions = (): MSWRequest => {

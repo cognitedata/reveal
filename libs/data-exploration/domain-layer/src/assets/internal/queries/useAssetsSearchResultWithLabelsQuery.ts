@@ -1,10 +1,12 @@
 import * as React from 'react';
+
 import {
   AssetConfigType,
   InternalAssetFilters,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
 import {
@@ -12,6 +14,7 @@ import {
   MatchingLabelPropertyType,
 } from '../../../utils/extractMatchingLabels';
 import { extractMatchingLabelsFromCogniteLabels } from '../../../utils/extractMatchingLabelsFromCogniteLabels';
+
 import { useAssetsSearchResultQuery } from './useAssetsSearchResultQuery';
 
 export const useAssetsSearchResultWithLabelsQuery = (

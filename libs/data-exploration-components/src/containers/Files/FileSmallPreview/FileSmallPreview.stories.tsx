@@ -1,8 +1,11 @@
 import React from 'react';
-import { files } from '@data-exploration-components/stubs/files';
+
 import { sdkMock } from '@data-exploration-components/docs/stub';
 import { events } from '@data-exploration-components/stubs/events';
+import { files } from '@data-exploration-components/stubs/files';
+
 import { assets } from '../../../stubs/assets';
+
 import { FileSmallPreview } from './FileSmallPreview';
 
 const tempSdk = {

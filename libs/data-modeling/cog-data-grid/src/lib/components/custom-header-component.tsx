@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
+
 import { IHeaderParams } from 'ag-grid-community';
+
 import { Button, Icon, IconType } from '@cognite/cogs.js';
 
 interface CustomHeaderState {

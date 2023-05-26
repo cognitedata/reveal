@@ -1,4 +1,14 @@
 import React from 'react';
+
+import { COMMON_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { TempCommonMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import {
+  useCommonFilters,
+  useFilterEmptyState,
+  useResetCommonFilters,
+} from '@data-exploration-app/store/filter';
+
 import {
   ResourceType,
   DataSetFilterV2,
@@ -7,14 +17,7 @@ import {
   StringFilterV2,
   NumberFilter,
 } from '@cognite/data-exploration';
-import {
-  useCommonFilters,
-  useFilterEmptyState,
-  useResetCommonFilters,
-} from '@data-exploration-app/store/filter';
-import { TempCommonMultiSelectFix } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import { COMMON_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 interface Props {

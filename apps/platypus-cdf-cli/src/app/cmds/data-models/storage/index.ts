@@ -1,7 +1,8 @@
 import { Argv } from 'yargs';
-import * as spacesCmds from './spaces';
+
 import * as modelsCmds from './models';
 import * as nodeCmds from './nodes';
+import * as spacesCmds from './spaces';
 
 export const command = 'storage <command>';
 export const desc = 'Manage data model storage';

@@ -1,5 +1,7 @@
-import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { useState } from 'react';
+
+import { Flex, SegmentedControl } from '@cognite/cogs.js';
+
 import { AbbreviationTable } from '../../components/Table/AbbreviationTable';
 import { RangeTable } from '../../components/Table/RangeTable';
 import { RegexTable } from '../../components/Table/RegexTable';

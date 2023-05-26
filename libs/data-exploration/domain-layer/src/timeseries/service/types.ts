@@ -1,4 +1,5 @@
 import { AggregateResponse, TimeseriesFilter } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../builders';
 import { AggregateFilters } from '../../types';
 import { TimeseriesProperties } from '../internal';

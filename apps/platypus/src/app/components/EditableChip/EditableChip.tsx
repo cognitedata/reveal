@@ -1,5 +1,3 @@
-import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
-import { HtmlElementProps } from '@platypus-app/types';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -7,7 +5,12 @@ import {
   useRef,
   useState,
 } from 'react';
+
 import styled from 'styled-components';
+
+import { HtmlElementProps } from '@platypus-app/types';
+
+import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
 
 export interface EditableChipProps
   extends Omit<HtmlElementProps<HTMLDivElement>, 'onChange'> {

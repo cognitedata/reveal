@@ -1,6 +1,8 @@
-import { Button, Flex, Modal } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Notification } from '@platypus-app/components/Notification/Notification';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Button, Flex, Modal } from '@cognite/cogs.js';
+
 import { StyledEndpoint } from './elements';
 
 export interface EndpointModalProps {

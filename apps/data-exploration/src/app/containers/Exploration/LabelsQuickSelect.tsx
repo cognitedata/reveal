@@ -1,12 +1,5 @@
 import React from 'react';
 
-import { Button } from '@cognite/cogs.js';
-import { SpacedRow } from '@cognite/data-exploration';
-import {
-  FileFilterProps,
-  AssetFilterProps,
-  LabelContainsAnyFilter,
-} from '@cognite/sdk';
 import styled from 'styled-components';
 
 import {
@@ -14,6 +7,14 @@ import {
   useSetResourceFilter,
 } from '@data-exploration-app/context/ResourceSelectionContext';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
+import { Button } from '@cognite/cogs.js';
+import { SpacedRow } from '@cognite/data-exploration';
+import {
+  FileFilterProps,
+  AssetFilterProps,
+  LabelContainsAnyFilter,
+} from '@cognite/sdk';
 
 export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
   const filter = useResourceFilter(type) as FileFilterProps | AssetFilterProps;

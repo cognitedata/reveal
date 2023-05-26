@@ -1,5 +1,6 @@
-import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+
+import { Menu } from '@cognite/cogs.js';
 
 export const ToolbarMenu = styled(Menu)`
   .cogs-menu-item {

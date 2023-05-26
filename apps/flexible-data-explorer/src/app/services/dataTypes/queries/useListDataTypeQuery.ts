@@ -1,7 +1,10 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+
+import { useInfiniteQuery } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useTypesDataModelQuery } from '../../dataModels/query/useTypesDataModelQuery';
 import { FDMClient } from '../../FDMClient';

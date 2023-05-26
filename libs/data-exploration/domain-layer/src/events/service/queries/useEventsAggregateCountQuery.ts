@@ -1,11 +1,13 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-
 import { useMemo } from 'react';
+
 import {
   EventConfigType,
   InternalEventsFilters,
 } from '@data-exploration-lib/core';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 import {
   mapFiltersToEventsAdvancedFilters,

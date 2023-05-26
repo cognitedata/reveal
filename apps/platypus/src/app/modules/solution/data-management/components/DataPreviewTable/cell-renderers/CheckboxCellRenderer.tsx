@@ -1,7 +1,9 @@
-import { ICellRendererParams } from 'ag-grid-community';
-import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
+import { ICellRendererParams } from 'ag-grid-community';
+
+import { Checkbox } from '@cognite/cogs.js';
 
 export const CheckboxCellRenderer = (params: ICellRendererParams) => {
   const rowData = params.node.data as DraftRowData;

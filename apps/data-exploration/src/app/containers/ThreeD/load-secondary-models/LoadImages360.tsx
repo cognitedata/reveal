@@ -1,20 +1,20 @@
 import { useEffect } from 'react';
 
-import { Cognite3DViewer, Image360Collection } from '@cognite/reveal';
-import {
-  useQueries,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query';
-
 import {
   getImages360AppliedStateQueryKey,
   getImages360QueryFn,
   IMAGES_360_BASE_QUERY_KEY,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import * as THREE from 'three';
 import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
+import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import {
+  useQueries,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
+import * as THREE from 'three';
+
+import { Cognite3DViewer, Image360Collection } from '@cognite/reveal';
 
 type LoadImages360Props = {
   images360: Image360DatasetOptions[];

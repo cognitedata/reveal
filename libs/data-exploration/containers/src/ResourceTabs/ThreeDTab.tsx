@@ -1,12 +1,12 @@
-import { Model3D } from '@cognite/sdk';
 import {
   ThreeDModelsResponse,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
 
+import { Model3D } from '@cognite/sdk';
+
 import { CounterTab } from './elements';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
-
 import { ResourceTabProps } from './types';
 
 export const ThreeDTab = ({ query, ...rest }: ResourceTabProps) => {

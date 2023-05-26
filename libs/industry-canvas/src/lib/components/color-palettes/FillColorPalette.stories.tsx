@@ -1,5 +1,7 @@
-import { ComponentStory } from '@storybook/react';
 import { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
 import { FillColorPalette } from './FillColorPalette';
 
 export default {

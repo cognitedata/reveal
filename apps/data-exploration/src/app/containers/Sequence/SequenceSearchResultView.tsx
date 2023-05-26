@@ -1,22 +1,24 @@
-import { SequenceSearchResults } from '@data-exploration/containers';
 import { Routes, Route } from 'react-router-dom';
+
+import { SequenceSearchResults } from '@data-exploration/containers';
+import { routes } from '@data-exploration-app/containers/App';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import { useSequenceFilters } from '@data-exploration-app/store';
-import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
+import { SequencePreview } from '@data-exploration-app/containers/Sequence/SequencePreview';
 import {
   useCurrentResourceId,
   useQueryString,
   useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
-import { useDebounce } from 'use-debounce';
+import { useSequenceFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { SequencePreview } from '@data-exploration-app/containers/Sequence/SequencePreview';
-import { routes } from '@data-exploration-app/containers/App';
+import { useDebounce } from 'use-debounce';
+
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
-import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const SequenceSearchResultView = () => {
   const [, openPreview] = useCurrentResourceId();

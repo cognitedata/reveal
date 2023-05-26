@@ -1,7 +1,9 @@
 import { CogniteClient } from '@cognite/sdk';
+
 import { getCogniteSDKClient } from '../../../../cogniteSdk';
 import { Convention, System } from '../../../types';
 import { generateId } from '../../../utils/generators';
+
 import { StorageDAO } from './dao';
 
 const DB_NAME = 'coding-conventions';

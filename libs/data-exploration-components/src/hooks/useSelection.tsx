@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { ResourceItem } from '@data-exploration-components/types';
+
 import { Button, Checkbox, Colors } from '@cognite/cogs.js';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';

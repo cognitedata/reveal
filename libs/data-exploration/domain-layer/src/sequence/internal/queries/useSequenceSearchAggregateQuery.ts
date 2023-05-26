@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
-import { UseQueryOptions } from '@tanstack/react-query';
 import {
   InternalSequenceFilters,
   SequenceConfigType,
 } from '@data-exploration-lib/core';
+import { UseQueryOptions } from '@tanstack/react-query';
+
 import { useSequenceAggregateQuery } from '../../service';
 import {
   mapFiltersToSequenceAdvancedFilters,

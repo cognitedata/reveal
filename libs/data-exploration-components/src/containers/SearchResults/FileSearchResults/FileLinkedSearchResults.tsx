@@ -1,15 +1,9 @@
+import React, { useMemo, useState } from 'react';
+
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
-import React, { useMemo, useState } from 'react';
-
-import { useDebounce } from 'use-debounce';
-
-import {
-  InternalCommonFilters,
-  InternalDocumentFilter,
-} from '@data-exploration-lib/core';
 import {
   AppliedFiltersTags,
   DocumentsTable,
@@ -20,15 +14,21 @@ import {
   TypeFilter,
 } from '@data-exploration/containers';
 import {
+  InternalCommonFilters,
+  InternalDocumentFilter,
+} from '@data-exploration-lib/core';
+import {
   InternalDocument,
   useDocumentSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { FileViewSwitcher } from './FileViewSwitcher';
+import { useDebounce } from 'use-debounce';
+
 import {
   GroupingTableHeader,
   GroupingTableContainer,
   GroupingTableWrapper,
 } from './elements';
+import { FileViewSwitcher } from './FileViewSwitcher';
 
 interface Props {
   defaultFilter: InternalCommonFilters;

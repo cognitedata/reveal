@@ -1,10 +1,11 @@
 import { formatDate, formatDateCustom } from '@cognite/cogs.js';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   ABSOLUTE_TIME_FORMAT,
   RELATIVE_TIME_THRESHOLD_IN_HOURS,
-} from '@cognite/cdf-utilities';
+} from '../common';
+
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 
 export const formatTime = (timestamp: number, absolute?: boolean) => {
   const shouldUseAbsolute =

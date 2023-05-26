@@ -1,14 +1,17 @@
-import { ComponentStory } from '@storybook/react';
 import React from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
 import { CogniteClient } from '@cognite/sdk';
-import { ocrResults, response } from './resources';
+
 import { FilePreview } from './FilePreview';
-// @ts-ignore
-import pdfFileUrl from './mock/pnid.pdf';
+import { mockTxt, mockJson, mockCsv } from './mock/mockFiles';
 // @ts-ignore
 import longPdfFileUrl from './mock/multipageExample.pdf';
+// @ts-ignore
+import pdfFileUrl from './mock/pnid.pdf';
 import testImageUrl from './mock/test-image.png';
-import { mockTxt, mockJson, mockCsv } from './mock/mockFiles';
+import { ocrResults, response } from './resources';
 import { annotations } from './stubs/annotations';
 
 const VIEWER_ID = 'FilePreviewUFV-story';

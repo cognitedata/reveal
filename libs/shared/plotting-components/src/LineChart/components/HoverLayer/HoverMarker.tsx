@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Coordinate, Variant } from '../../types';
+
 import { LineMarker } from './elements';
 
 export interface HoverMarkerProps {

@@ -1,6 +1,20 @@
 /* eslint-disable prettier/prettier */
-import sdk from '@cognite/cdf-sdk-singleton';
+import {
+  fetchAssetDetails,
+  fetchAssetMappingsByAssetIdQuery,
+  fetchClosestAssetIdQuery,
+  Image360SiteData,
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import {
+  Image360DatasetOptions,
+  SecondaryModelOptions,
+  SlicingState,
+} from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
+import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
 import * as THREE from 'three';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   AssetNodeCollection,
   InvertedNodeCollection,
@@ -24,20 +38,7 @@ import {
   AnnotationFilterProps,
   AnnotationModel,
 } from '@cognite/sdk';
-import {
-  fetchAssetDetails,
-  fetchAssetMappingsByAssetIdQuery,
-  fetchClosestAssetIdQuery,
-  Image360SiteData,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import {
-  Image360DatasetOptions,
-  SecondaryModelOptions,
-  SlicingState,
-} from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
-import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
-import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';

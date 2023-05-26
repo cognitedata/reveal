@@ -1,5 +1,3 @@
-import * as utils from './utils';
-
 import { mixerApiInlineTypeDirectiveName } from './constants';
 import {
   DataModelTransformation,
@@ -7,6 +5,7 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from './types';
+import * as utils from './utils';
 import { groupTransformationsByTypes } from './utils';
 
 const dataModelTypeDefsMock: DataModelTypeDefs = {

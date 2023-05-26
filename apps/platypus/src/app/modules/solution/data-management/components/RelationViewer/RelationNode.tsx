@@ -1,7 +1,9 @@
-import { Body, Flex } from '@cognite/cogs.js';
 import uniqolor from 'uniqolor';
-import { TimeSeriesNode } from './TimeSeriesNode';
+
+import { Body, Flex } from '@cognite/cogs.js';
+
 import { NodeChip, NodeVisibleIcon, NodeWrapper } from './common';
+import { TimeSeriesNode } from './TimeSeriesNode';
 
 const getColor = (key: string) => uniqolor(key);
 

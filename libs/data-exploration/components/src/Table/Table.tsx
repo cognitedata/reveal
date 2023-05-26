@@ -1,8 +1,15 @@
-import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useMemo, useRef } from 'react';
-import merge from 'lodash/merge';
-import has from 'lodash/has';
 
+import {
+  DATA_EXPLORATION_COMPONENT,
+  EMPTY_OBJECT,
+  getResourceTypeById,
+  LOADING_RESULTS,
+  REFINE_FILTERS_OR_UPDATE_SEARCH,
+  isElementHorizontallyInViewport,
+  ResourceItem,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import {
   Row,
   useReactTable,
@@ -19,19 +26,20 @@ import {
   VisibilityState,
   Cell,
   RowSelectionState,
+  Updater,
 } from '@tanstack/react-table';
-import useLocalStorageState from 'use-local-storage-state';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  EMPTY_OBJECT,
-  LOADING_RESULTS,
-  REFINE_FILTERS_OR_UPDATE_SEARCH,
-  isElementHorizontallyInViewport,
-  useMetrics,
-} from '@data-exploration-lib/core';
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import has from 'lodash/has';
+import isEmpty from 'lodash/isEmpty';
+import mapValues from 'lodash/mapValues';
+import merge from 'lodash/merge';
 import noop from 'lodash/noop';
+import useLocalStorageState from 'use-local-storage-state';
+
+import { Checkbox, Flex } from '@cognite/cogs.js';
+
 import { EmptyState } from '../EmpyState';
+
+import { ResourceTableColumns } from './columns';
 import {
   ColumnToggle,
   SortIcon,
@@ -39,7 +47,6 @@ import {
   LoadMoreProps,
   CopyToClipboardIconButton,
 } from './components';
-
 import {
   TableContainer,
   ColumnSelectorWrapper,
@@ -62,15 +69,15 @@ import {
   TableDataBody,
 } from './elements';
 
-import { ResourceTableColumns } from './columns';
-
 export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;
   columns: ColumnDef<T>[];
+  selectedRows?:
+    | Record<string | number, boolean>
+    | Record<string, ResourceItem>;
   data: T[];
   query?: string;
   isDataLoading?: boolean;
-  selectedRows?: Record<string, boolean>;
   expandedRows?: ExpandedState;
   enableSorting?: boolean;
   manualSorting?: boolean;
@@ -93,7 +100,10 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   getCanRowExpand?: (row: Row<T>) => boolean;
   getSubrowData?: (originalRow: T, index: number) => undefined | T[];
   onRowExpanded?: OnChangeFn<ExpandedState>;
-  onRowSelection?: OnChangeFn<RowSelectionState>;
+  onRowSelection?: (
+    updater: Updater<RowSelectionState>,
+    data: ResourceItem[]
+  ) => void;
   enableCopying?: boolean;
   enableSelection?: boolean;
   // This is to render a subcomponent inside the row
@@ -255,7 +265,7 @@ export function Table<T extends TableData>({
         (parent ? [parent.id, index].join('.') : index)
       );
     },
-    []
+    [enableSelection]
   );
 
   const {
@@ -272,16 +282,34 @@ export function Table<T extends TableData>({
       expanded: expandedRows,
       columnOrder,
       columnSizing,
-      rowSelection: selectedRows,
+      columnPinning: {
+        left: ['select'],
+      },
+      rowSelection: selectedRows
+        ? mapValues(selectedRows, function (value) {
+            return Boolean(value);
+          })
+        : undefined,
     },
     enableRowSelection: enableSelection,
+    enablePinning: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     onSortingChange: onSort,
     onColumnOrderChange: setColumnOrder,
     onColumnSizingChange: setColumnSizing,
-    onRowSelectionChange: onRowSelection,
+    onRowSelectionChange: onRowSelection
+      ? (updater) =>
+          onRowSelection(
+            updater,
+            data.map((item) => ({
+              id: item.id,
+              externalId: item.externalId,
+              type: getResourceTypeById(id),
+            }))
+          )
+      : undefined,
     onColumnVisibilityChange: setColumnVisibility,
 
     onExpandedChange: onRowExpanded,
@@ -386,6 +414,7 @@ export function Table<T extends TableData>({
                           );
                         }}
                       />
+
                       {enableColumnResizing ? (
                         <ResizerWrapper
                           {...{

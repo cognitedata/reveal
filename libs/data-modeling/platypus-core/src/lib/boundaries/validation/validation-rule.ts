@@ -1,4 +1,5 @@
 import { KeyValueMap } from '../types';
+
 import { ValidatorResult } from './types';
 
 export interface ValidationRuleProps {

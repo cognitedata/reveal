@@ -1,14 +1,12 @@
 import '@cognite/cogs.js/dist/cogs.css';
 import { AuthProvider } from '@cognite/auth-react';
-import { AuthProvider as InternalAuthProvider } from './app/common/auth/AuthProvider';
-import './set-public-path';
-import { useEffect } from 'react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import App from './app/App';
-import GlobalStyles from './GlobalStyles';
 
-import { translations } from './app/common/i18n';
+import App from './app/App';
+import { translations } from './app/common';
+import { AuthProvider as InternalAuthProvider } from './app/common/auth/AuthProvider';
 import GlobalStyle from './app/utils/globalStyles';
+import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'flexible-data-explorer';

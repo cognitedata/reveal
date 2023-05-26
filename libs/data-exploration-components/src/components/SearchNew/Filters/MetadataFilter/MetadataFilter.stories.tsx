@@ -1,7 +1,8 @@
+import { useState } from 'react';
+
+import { assets } from '@data-exploration-components/stubs/assets';
 import { ComponentStory } from '@storybook/react';
 
-import { useState } from 'react';
-import { assets } from '@data-exploration-components/stubs/assets';
 import { MetadataFilterV2 } from './MetadataFilter';
 
 export default {

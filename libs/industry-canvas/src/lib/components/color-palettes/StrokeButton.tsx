@@ -1,4 +1,5 @@
 import { Button } from '@cognite/cogs.js';
+
 import { StrokeIcon } from '../icons/StrokeIcon';
 import { TransparentIcon } from '../icons/TransparentIcon';
 

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Input } from '@cognite/cogs.js';
 
 import { InputControlProps } from '../../types';
+
 import { InputWrapper } from './elements';
 import { getDateTimeInputValue } from './utils';
 

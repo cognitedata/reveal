@@ -1,3 +1,7 @@
+import React, { useState } from 'react';
+
+import styled, { css } from 'styled-components';
+
 import {
   Body,
   Button,
@@ -6,8 +10,7 @@ import {
   Skeleton,
   Title,
 } from '@cognite/cogs.js';
-import React, { useState } from 'react';
-import styled, { css } from 'styled-components';
+
 import { useTranslation } from '../../hooks/useTranslation';
 import { DataModelList } from '../../services/FDMClient';
 

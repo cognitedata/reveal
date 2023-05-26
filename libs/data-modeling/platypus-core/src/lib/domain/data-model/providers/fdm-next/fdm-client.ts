@@ -1,9 +1,14 @@
-import { chunk, uniqBy } from 'lodash';
 import {
   buildClientSchema,
   getIntrospectionQuery,
   GraphQLInputObjectType,
 } from 'graphql';
+import { chunk, uniqBy } from 'lodash';
+
+import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
+import { DataUtils } from '../../../../boundaries/utils/data-utils';
+import { IGraphQlUtilsService } from '../../boundaries';
+import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
 import {
   ConflictMode,
   CreateDataModelDTO,
@@ -28,7 +33,12 @@ import {
   DeleteDataModelOutput,
   IngestInstanceDTO,
 } from '../../dto';
-
+import {
+  MixerQueryBuilder,
+  OPERATION_TYPE,
+  TransformationApiService,
+} from '../../services';
+import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import {
   CdfResourceInstance,
   DataModel,
@@ -39,32 +49,22 @@ import {
   PaginatedResponse,
   SpaceInstance,
 } from '../../types';
-
-import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
-import { DataUtils } from '../../../../boundaries/utils/data-utils';
-import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
-import { IGraphQlUtilsService } from '../../boundaries';
-import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
-import {
-  MixerQueryBuilder,
-  OPERATION_TYPE,
-  TransformationApiService,
-} from '../../services';
 import { compareDataModelVersions } from '../../utils';
+
+import { DataModelDataMapper } from './data-mappers';
+import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
+import { ItemsWithCursor } from './dto/dms-common-dtos';
+import { DataModelDTO } from './dto/dms-data-model-dtos';
+import { ListSpacesDTO, SpaceDTO } from './dto/dms-space-dtos';
+import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import {
   DataModelsApiService,
   SpacesApiService,
   ContainersApiService,
   ViewsApiService,
 } from './services/data-modeling-api';
-import { ListSpacesDTO, SpaceDTO } from './dto/dms-space-dtos';
-import { DataModelDTO } from './dto/dms-data-model-dtos';
-import { DataModelDataMapper } from './data-mappers';
-import { FdmMixerApiService } from './services/mixer-api';
-import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
-import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
-import { ItemsWithCursor } from './dto/dms-common-dtos';
 import { InstancesApiService } from './services/data-modeling-api/instances-api.service';
+import { FdmMixerApiService } from './services/mixer-api';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private dataModelDataMapper: DataModelDataMapper;

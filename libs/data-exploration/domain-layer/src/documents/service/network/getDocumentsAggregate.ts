@@ -1,4 +1,5 @@
 import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
+
 import { DocumentsAggregateRequestPayload } from '../types';
 
 export const getDocumentsAggregate = <ResponseType = AggregateResponse>(

@@ -1,21 +1,22 @@
 import { useState } from 'react';
-import { Asset, Timeseries } from '@cognite/sdk';
 
-import { Flex } from '@cognite/cogs.js';
-
+import { TableProps } from '@data-exploration/components';
+import {
+  InternalTimeseriesFilters,
+  useGetSearchConfigFromLocalStorage,
+  DateRangeProps,
+} from '@data-exploration-lib/core';
 import {
   TableSortBy,
   useTimeseriesAggregateCountQuery,
   useTimeseriesWithAvailableDatapointsQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import {
-  InternalTimeseriesFilters,
-  useGetSearchConfigFromLocalStorage,
-  DateRangeProps,
-} from '@data-exploration-lib/core';
-import { TableProps } from '@data-exploration/components';
+import { Flex } from '@cognite/cogs.js';
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
+
 import { TimeseriesTable } from './TimeseriesTable';
 import { TimeseriesTableHeader } from './TimeseriesTableHeader';
 

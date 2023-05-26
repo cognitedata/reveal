@@ -1,28 +1,31 @@
 import React, { useMemo } from 'react';
-import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
+
+import styled from 'styled-components';
+
+import {
+  lightGrey,
+  formatDate,
+  datetimeMultiFormat,
+} from '@data-exploration-components/utils';
+import { AxisRight, AxisBottom, TickFormatter } from '@visx/axis';
+import { localPoint } from '@visx/event';
+import { LinearGradient } from '@visx/gradient';
 import { GridRows, GridColumns } from '@visx/grid';
+import { Group } from '@visx/group';
 import { scaleTime, scaleLinear } from '@visx/scale';
+import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
+import { Threshold } from '@visx/threshold';
 import {
   useTooltip,
   defaultStyles,
   Tooltip,
   TooltipWithBounds,
 } from '@visx/tooltip';
-import { localPoint } from '@visx/event';
-import { LinearGradient } from '@visx/gradient';
 import { max, min, extent, bisector } from 'd3-array';
 import { NumberValue } from 'd3-scale';
-import { DatapointAggregate } from '@cognite/sdk';
-import { AxisRight, AxisBottom, TickFormatter } from '@visx/axis';
-import { Group } from '@visx/group';
-import { Threshold } from '@visx/threshold';
+
 import { Body, Colors, Overline } from '@cognite/cogs.js';
-import {
-  lightGrey,
-  formatDate,
-  datetimeMultiFormat,
-} from '@data-exploration-components/utils';
-import styled from 'styled-components';
+import { DatapointAggregate } from '@cognite/sdk';
 
 const pointColor = Colors['decorative--blue--300'];
 const primaryColor = Colors['decorative--blue--400'];

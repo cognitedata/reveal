@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+
 import { IndustryCanvasState } from '../types';
+
 import { EMPTY_FLEXIBLE_LAYOUT } from './constants';
 
 type HistoryState = {

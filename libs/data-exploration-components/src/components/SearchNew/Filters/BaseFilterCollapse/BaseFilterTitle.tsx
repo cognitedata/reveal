@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Title as DefaultTitle } from '@cognite/cogs.js';
 
 const Content = styled.div`

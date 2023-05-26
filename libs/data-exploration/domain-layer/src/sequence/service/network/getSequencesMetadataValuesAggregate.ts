@@ -1,11 +1,13 @@
-import { CogniteClient } from '@cognite/sdk';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+
+import { CogniteClient } from '@cognite/sdk';
 
 import {
   SequencesAggregateFilters,
   SequencesMetadataAggregateResponse,
   SequencesAggregateUniqueValuesResponse,
 } from '../types';
+
 import { getSequencesAggregate } from './getSequencesAggregate';
 
 export const getSequencesMetadataValuesAggregate = (

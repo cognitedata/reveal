@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Result } from '@platypus-core/boundaries/types';
+
 import { FlexibleDataModelingClient } from './boundaries';
 import { DataManagementHandler } from './data-managment-handler';
 import { DataModelVersionStatus } from './types';

@@ -1,9 +1,12 @@
-import noop from 'lodash/noop';
 import React, { useState } from 'react';
+
 import { Upload, message } from 'antd';
-import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
+import noop from 'lodash/noop';
+
 import { Body, Icon, Input } from '@cognite/cogs.js';
+import { FileUploadResponse } from '@cognite/sdk';
+
 import { DocumentUploadButtons } from './DocumentUploadButtons';
 
 const { Dragger } = Upload;

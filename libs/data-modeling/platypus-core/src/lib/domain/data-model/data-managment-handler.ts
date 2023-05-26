@@ -1,4 +1,5 @@
 import { Result } from '../../boundaries/types';
+
 import { FlexibleDataModelingClient } from './boundaries';
 import {
   CreateDataModelTransformationDTO,
@@ -13,7 +14,6 @@ import {
   SearchDataDTO,
   GetByExternalIdDTO,
 } from './dto';
-
 import { PaginatedResponse } from './types';
 
 export class DataManagementHandler {

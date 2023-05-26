@@ -1,6 +1,9 @@
-import { ContainerType } from '@cognite/unified-file-viewer';
-import { ComponentStory } from '@storybook/react';
 import styled from 'styled-components';
+
+import { ComponentStory } from '@storybook/react';
+
+import { ContainerType } from '@cognite/unified-file-viewer';
+
 import ContainerTooltip from './ContainerTooltip';
 
 export default {

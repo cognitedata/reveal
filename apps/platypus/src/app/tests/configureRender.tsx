@@ -1,6 +1,6 @@
+import { rootReducer } from '@platypus-app/redux/store';
 import { configureStore } from '@reduxjs/toolkit';
 
-import { rootReducer } from '@platypus-app/redux/store';
 import { INITIAL_TEST_STATE } from './store';
 
 function configureTestStore(initialState = {}) {

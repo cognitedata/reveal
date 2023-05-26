@@ -1,10 +1,12 @@
-import { Input, InputProps, Modal } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useController, useForm, SubmitHandler } from 'react-hook-form';
+
 import {
   DataModelTypeDefsType,
   DataModelTypeNameValidator,
 } from '@platypus/platypus-core';
-import { useController, useForm, SubmitHandler } from 'react-hook-form';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Input, InputProps, Modal } from '@cognite/cogs.js';
 
 type FormInput = {
   typeName: string;

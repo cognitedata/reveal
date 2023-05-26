@@ -1,5 +1,7 @@
-import { AnnotationType } from '@cognite/unified-file-viewer';
 import { ComponentStory } from '@storybook/react';
+
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
 import { LineAnnotationTooltip } from './LineAnnotationTooltip';
 
 export default {

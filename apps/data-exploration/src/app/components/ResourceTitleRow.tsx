@@ -1,8 +1,11 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
 import { Colors, Title } from '@cognite/cogs.js';
 import { ResourceItem, ResourceIcons } from '@cognite/data-exploration';
 import { DatapointsMultiQuery } from '@cognite/sdk';
-import styled from 'styled-components';
+
 import { TitleRowActions } from './TitleRowActions';
 
 export type DateFilter = Pick<DatapointsMultiQuery, 'start' | 'end'>;

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { IdEither } from '@cognite/sdk';
+
 import { ComponentStory } from '@storybook/react';
+
+import { IdEither } from '@cognite/sdk';
+
 import { DataSetFilter } from './DataSetFilter';
 
 export default {

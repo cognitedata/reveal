@@ -1,13 +1,7 @@
-import { useSDK } from '@cognite/sdk-provider';
-import ReactUnifiedViewer, {
-  Annotation,
-  ContainerConfig,
-  ContainerType,
-  getContainerConfigFromFileInfo,
-  isSupportedFileInfo,
-  UnifiedViewer,
-  UnifiedViewerMouseEvent,
-} from '@cognite/unified-file-viewer';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
 import CanvasSearch from '@data-exploration-components/containers/Files/Canvas/CanvasSearch';
 import { getCanvasConnectionAnnotations } from '@data-exploration-components/containers/Files/Canvas/getCanvasConnectionAnnotations';
 import { isNotUndefinedTuple } from '@data-exploration-components/containers/Files/Canvas/isNotUndefinedTuple';
@@ -19,15 +13,25 @@ import useCanvasTooltips from '@data-exploration-components/containers/Files/Can
 import { useFileInfos } from '@data-exploration-components/containers/Files/Canvas/useFileInfos';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
 import { EMPTY_ARRAY, ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import zip from 'lodash/zip';
+
 import { toast, Flex } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
+import ReactUnifiedViewer, {
+  Annotation,
+  ContainerConfig,
+  ContainerType,
+  getContainerConfigFromFileInfo,
+  isSupportedFileInfo,
+  UnifiedViewer,
+  UnifiedViewerMouseEvent,
+} from '@cognite/unified-file-viewer';
 
 import {
   MAX_CONTAINER_HEIGHT,
   MAX_CONTAINER_WIDTH,
 } from '../FilePreview/constants';
+
 import { useCanvasAnnotations } from './hooks';
 
 export type MultiFileViewerProps = {

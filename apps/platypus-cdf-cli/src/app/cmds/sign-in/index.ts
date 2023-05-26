@@ -1,8 +1,9 @@
 import { Arguments, Argv } from 'yargs';
-import { LoginArgs } from '../../types';
+
 import { AUTH_TYPE, SETTINGS } from '../../constants';
-import { promiseWithTimeout } from '../../utils/general';
+import { LoginArgs } from '../../types';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { promiseWithTimeout } from '../../utils/general';
 
 export const command = 'signin [project]';
 export const aliases = ['login'];

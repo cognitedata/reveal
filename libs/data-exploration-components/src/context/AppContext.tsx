@@ -1,5 +1,6 @@
-import { AppContext, AppContextProps } from '@data-exploration-lib/core';
 import React from 'react';
+
+import { AppContext, AppContextProps } from '@data-exploration-lib/core';
 
 export const AppContextProvider = ({
   children,

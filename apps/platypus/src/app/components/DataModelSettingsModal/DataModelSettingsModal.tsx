@@ -1,6 +1,8 @@
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataModel } from '@platypus/platypus-core';
 import { useState } from 'react';
+
+import { DataModel } from '@platypus/platypus-core';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
 import { useDataModelMutation } from '../../modules/data-models/hooks/useDataModelMutation';
 import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailModal';
 

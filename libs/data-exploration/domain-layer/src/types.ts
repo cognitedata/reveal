@@ -1,3 +1,12 @@
+import {
+  Asset,
+  CogniteEvent,
+  FileInfo,
+  Sequence,
+  Timeseries,
+} from '@cognite/sdk';
+
+import { InternalDocument } from './documents';
 export interface MatchingLabels {
   exact: string[];
   partial: string[];
@@ -31,3 +40,11 @@ export interface RelationshipLabels {
   relation?: string;
   relatedResourceType?: string;
 }
+
+export type ResourceItems =
+  | FileInfo
+  | Asset
+  | CogniteEvent
+  | Sequence
+  | Timeseries
+  | InternalDocument;

@@ -1,4 +1,5 @@
 import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
+
 import { BLACKLISTED_ROW_ATTRIBUTES } from './constant';
 
 export const sanitizeRow = (row: KeyValueMap) => {

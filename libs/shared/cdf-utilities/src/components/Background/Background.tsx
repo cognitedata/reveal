@@ -1,8 +1,7 @@
 import React, { ReactElement } from 'react';
+
 import styled from 'styled-components';
 
-import LogoWithText from './LogoWithText';
-import BgImg from './BgImg';
 import img1 from './bg_01.jpg';
 import img1Small from './bg_01_small.jpg';
 import img2 from './bg_02.jpg';
@@ -11,6 +10,8 @@ import img3 from './bg_03.jpg';
 import img3Small from './bg_03_small.jpg';
 import img4 from './bg_04.jpg';
 import img4Small from './bg_04_small.jpg';
+import BgImg from './BgImg';
+import LogoWithText from './LogoWithText';
 
 export type BackgroundProps = {
   rotatePeriod?: number; // milliseconds

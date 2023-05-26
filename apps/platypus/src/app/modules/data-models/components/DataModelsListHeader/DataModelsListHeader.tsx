@@ -1,8 +1,9 @@
-import { Flex, Title, Input, Tooltip, Button } from '@cognite/cogs.js';
 import config from '@platypus-app/config/config';
 import { isFDMv3 } from '@platypus-app/flags';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Flex, Title, Input, Tooltip, Button } from '@cognite/cogs.js';
 
 export interface DataModelsListHeaderProps {
   dataModelsCount: number;

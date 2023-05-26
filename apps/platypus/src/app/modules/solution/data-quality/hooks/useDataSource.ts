@@ -1,11 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useState } from 'react';
+
 import {
   DataSourceDTO,
   DataSourceDraft,
   useCreateDataSources,
   useListDataSources,
 } from '@data-quality/codegen';
-import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export type DataModelOptions = {
   dataModelId: string;

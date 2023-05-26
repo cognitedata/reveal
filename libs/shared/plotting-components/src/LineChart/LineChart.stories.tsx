@@ -1,11 +1,11 @@
 import { Story } from '@storybook/react';
+import get from 'lodash/get';
 
 import { Button, Select } from '@cognite/cogs.js';
 
-import get from 'lodash/get';
+import { data as mockData } from './__mocks/data';
 import { LineChart } from './LineChart';
 import { LineChartProps } from './types';
-import { data as mockData } from './__mocks/data';
 
 export default {
   title: 'Shared/PlottingComponents/LineChart',

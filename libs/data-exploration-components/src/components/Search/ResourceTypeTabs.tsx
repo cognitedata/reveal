@@ -1,6 +1,6 @@
+import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 import { ResourceType } from '@data-exploration-components/types';
 
-import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 import { TabProps, Tabs } from '@cognite/cogs.js';
 
 const resourceTypeMap: Record<ResourceType, string> = {

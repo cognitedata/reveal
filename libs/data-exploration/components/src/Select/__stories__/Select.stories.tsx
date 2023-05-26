@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
+
 import { Select } from '../Select';
 
 export default {

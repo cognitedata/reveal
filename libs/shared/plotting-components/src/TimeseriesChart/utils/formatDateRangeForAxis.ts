@@ -1,4 +1,5 @@
 import { DateRange } from '../types';
+
 import { formatDate } from './formatDate';
 
 export const formatDateRangeForAxis = (

@@ -1,12 +1,15 @@
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
-import { useDataSets } from '@platypus-app/hooks/useDataSets';
+
 import { DataUtils } from '@platypus/platypus-core';
+import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+
 import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useTranslation } from '../../hooks/useTranslation';
+
 import { useDataModelMutation } from './hooks/useDataModelMutation';
 
 export const CreateDataModel = ({

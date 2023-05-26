@@ -1,10 +1,10 @@
+import { SPACE } from '../../constants';
 import {
   withThousandSeparator,
   formatBigNumbersWithSuffix,
   withThousandSeparatorStringExtended,
   formatBigNumbersWithSuffixStringExtended,
 } from '../number';
-import { SPACE } from '../../constants';
 
 describe('numbers', () => {
   describe('withThousandSeparator', () => {

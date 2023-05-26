@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Button, Flex } from '@cognite/cogs.js';
 
 interface Props {

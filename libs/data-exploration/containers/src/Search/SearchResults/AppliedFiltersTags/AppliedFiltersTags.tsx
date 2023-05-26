@@ -1,9 +1,14 @@
-import { Flex, IconType } from '@cognite/cogs.js';
+import React from 'react';
+
+import styled from 'styled-components';
+
 import isArray from 'lodash/isArray';
 import isEqual from 'lodash/isEqual';
-import React from 'react';
-import styled from 'styled-components';
+
+import { Flex, IconType } from '@cognite/cogs.js';
+
 import { NewFiltersType } from '../../../Filters';
+
 import { FilterChip } from './FilterChip';
 import { formatValue } from './utils';
 

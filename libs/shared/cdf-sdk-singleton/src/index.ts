@@ -1,32 +1,33 @@
 import './set-public-path';
-import { ClientOptions, CogniteClient } from '@cognite/sdk';
 import {
   getSelectedIdpDetails,
   Auth0Response,
   IDPType,
   KeycloakResponse,
 } from '@cognite/login-utils';
+import { ClientOptions, CogniteClient } from '@cognite/sdk';
+
 import getAADAccessToken, {
   getUserInformation as getAADUserInfo,
   logout as aadLogout,
 } from './aad';
+import {
+  getAccessToken as getADFSAccessToken,
+  logout as adfsLogout,
+} from './adfs2016';
 import {
   logout as auth0Logout,
   getAccessToken as getAuth0AccessToken,
   getUserInformation as getAuth0UserInfo,
 } from './auth0';
 import {
-  getAccessToken as getADFSAccessToken,
-  logout as adfsLogout,
-} from './adfs2016';
-import getLegacyToken, { logout as legacyLogout } from './legacy';
-import { UserInfo } from './types';
-import { getIDP, getBaseUrl, getCluster, getProject, getUrl } from './utils';
-import {
   getAccessToken as getKeycloakAccessToken,
   logout as keycloakLogout,
   getUserInfo as getKeycloakUserInfo,
 } from './keycloak';
+import getLegacyToken, { logout as legacyLogout } from './legacy';
+import { UserInfo } from './types';
+import { getIDP, getBaseUrl, getCluster, getProject, getUrl } from './utils';
 
 export { getIDP } from './utils';
 

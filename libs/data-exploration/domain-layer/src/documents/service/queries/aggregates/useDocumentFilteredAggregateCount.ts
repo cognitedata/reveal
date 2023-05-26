@@ -1,11 +1,14 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
 import {
   EMPTY_OBJECT,
   FileConfigType,
   InternalDocumentFilter,
 } from '@data-exploration-lib/core';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../../queryKeys';
 import { mapFiltersToDocumentSearchFilters } from '../../../internal';
 import { getDocumentAggregateCount } from '../../network/getDocumentAggregateCount';

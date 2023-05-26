@@ -1,4 +1,5 @@
 import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { transformNewFilterToOldFilter } from '../../../transformers';
 
 export const useTimeseriesList = (

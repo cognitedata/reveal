@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { InputActionMeta, NamedProps } from 'react-select';
+
 import styled from 'styled-components';
 
-import { InputActionMeta, NamedProps } from 'react-select';
+import { NIL_FILTER_LABEL, NIL_FILTER_VALUE } from '@data-exploration-lib/core';
 
 import {
   OptionType,
@@ -11,7 +13,6 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { NIL_FILTER_LABEL, NIL_FILTER_VALUE } from '@data-exploration-lib/core';
 import { Option, MultiValue, MenuList } from './components';
 
 export const NIL_FILTER_OPTION: OptionType<string> = {

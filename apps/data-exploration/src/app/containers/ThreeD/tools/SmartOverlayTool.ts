@@ -1,10 +1,13 @@
+import * as THREE from 'three';
+
 import {
   Cognite3DViewer,
   HtmlOverlayOptions,
   HtmlOverlayTool,
 } from '@cognite/reveal';
-import * as THREE from 'three';
+
 import zIndex from '../../../utils/zIndex';
+
 import { EventTrigger } from './EventTrigger';
 
 export type SmartLabel = {

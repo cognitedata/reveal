@@ -1,7 +1,8 @@
 import { Argv } from 'yargs';
-import DMSSpacesListCommand from './list';
+
 import DMSSpacesApplyCommand from './apply';
 import DMSSpacesDeleteCommand from './delete';
+import DMSSpacesListCommand from './list';
 
 export const command = 'spaces <command>';
 export const desc = 'Manage data model storage spaces';

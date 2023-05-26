@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import isEmpty from 'lodash/isEmpty';
-import { SequenceFilter } from '@cognite/sdk';
 
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import isEmpty from 'lodash/isEmpty';
+
+import { SequenceFilter } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { SequenceProperties } from '../../internal';

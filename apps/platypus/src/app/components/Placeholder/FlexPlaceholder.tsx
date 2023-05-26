@@ -1,4 +1,5 @@
 import { Body, Title, Illustrations, IllustrationType } from '@cognite/cogs.js';
+
 import { PlaceholderWrapper } from './elements';
 
 export const FlexPlaceholder = ({

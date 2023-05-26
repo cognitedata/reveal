@@ -1,4 +1,5 @@
 import { DocumentFilterProperty, DocumentSortItem } from '@cognite/sdk';
+
 import { METADATA_KEY_SEPARATOR } from '../../../constants';
 import { TableSortBy } from '../../../types';
 

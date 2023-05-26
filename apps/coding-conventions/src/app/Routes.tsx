@@ -1,4 +1,5 @@
 import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
+
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { ConventionsPage } from './pages/ConventionsPage';
 import { EditPage } from './pages/edit/EditPage';

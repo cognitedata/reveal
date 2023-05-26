@@ -1,11 +1,13 @@
+import { useState } from 'react';
+
+import { DataModelVersion } from '@platypus/platypus-core';
 import {
   Group,
   MainDescription,
   MainTitle,
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
-import { DataModelVersion } from '@platypus/platypus-core';
-import { useState } from 'react';
+
 import { SchemaVersionDropdown } from './SchemaVersionDropdown';
 
 export default {

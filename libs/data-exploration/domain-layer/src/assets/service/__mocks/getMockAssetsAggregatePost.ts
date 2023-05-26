@@ -1,5 +1,5 @@
-import { rest } from 'msw';
 import { MSWRequest } from '@data-exploration-lib/core';
+import { rest } from 'msw';
 
 import { getAssetsMetadataValues } from '../__fixtures/getAssetsMetadataValuesFixture';
 

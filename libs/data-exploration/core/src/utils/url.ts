@@ -1,6 +1,7 @@
 // TODO(CDFUX-0): copies from @cognite/cdf-utilities!
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
 import isUrl from 'is-url';
 
 type UseSearchParamOpts<T> = {

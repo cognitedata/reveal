@@ -1,4 +1,5 @@
 import { ContainerType } from '@cognite/unified-file-viewer';
+
 import { getDefaultRevealContainerLabel } from '../hooks/utils/resolveRevealContainerConfig';
 import { IndustryCanvasContainerConfig } from '../types';
 

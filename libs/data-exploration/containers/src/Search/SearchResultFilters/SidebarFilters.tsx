@@ -4,12 +4,13 @@ import styled from 'styled-components';
 
 import { BaseFilterCollapse } from '@data-exploration/components';
 import { FilterProps, ResourceType } from '@data-exploration-lib/core';
+
 import { AssetFilters } from './AssetFilters';
-import { EventFilters } from './EventFilters';
-import { TimeseriesFilters } from './TimeseriesFilters';
-import { FileFilters } from './FileFilters';
 import { CommonFilters } from './CommonFilters';
+import { EventFilters } from './EventFilters';
+import { FileFilters } from './FileFilters';
 import { SequenceFilters } from './SequenceFilters';
+import { TimeseriesFilters } from './TimeseriesFilters';
 
 interface Props extends FilterProps {
   resourceType?: ResourceType;

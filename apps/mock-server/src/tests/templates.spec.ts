@@ -1,5 +1,7 @@
 import * as request from 'supertest';
+
 import { mockDataSample } from '../mock-data';
+
 import { createServer } from './tests-setup';
 
 describe('Templates Test', () => {

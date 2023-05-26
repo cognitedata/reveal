@@ -1,9 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { CogniteEvent } from '@cognite/sdk';
+
 import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
+
 import { PageTitle } from '@cognite/cdf-utilities';
+import { CogniteEvent } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { EventPreview } from './EventPreview';
 
 export const EventPage = () => {

@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -7,9 +6,9 @@ import {
   DataModelVersionStatus,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 import { rootInjector, TOKENS } from '@platypus-app/di';
+import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface DataModelReducerState {
   currentTypeName: null | string;

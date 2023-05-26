@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import Highlighter from 'react-highlight-words';
+
 import styled from 'styled-components';
+
+import { ThreeDModel } from '@data-exploration/components';
+import { getObjectURL } from '@data-exploration-lib/core';
+import {
+  use3DModelThumbnailQuery,
+  useDefault3DModelRevision,
+} from '@data-exploration-lib/domain-layer';
+
 import {
   Body,
   Icon,
@@ -9,16 +19,9 @@ import {
   Tooltip,
   Illustrations,
 } from '@cognite/cogs.js';
-import Highlighter from 'react-highlight-words';
-import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
+import { Model3D } from '@cognite/sdk';
 
-import { ThreeDModel } from '@data-exploration/components';
-import { getObjectURL } from '@data-exploration-lib/core';
-import {
-  use3DModelThumbnailQuery,
-  useDefault3DModelRevision,
-} from '@data-exploration-lib/domain-layer';
 import { PartialBy } from './utils';
 
 export type Model3DWithType = PartialBy<

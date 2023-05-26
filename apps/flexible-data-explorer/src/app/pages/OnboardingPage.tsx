@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+
 import { DataModelSelector } from '../components/selectors/DataModelSelector';
 import { useNavigation } from '../hooks/useNavigation';
 import { useListDataModelsQuery } from '../services/dataModels/query/useListDataModelsQuery';

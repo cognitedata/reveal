@@ -1,10 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useRef, useMemo } from 'react';
+import ReactDatePicker from 'react-datepicker';
+
+import { formatDateToDatePickerString } from '@data-exploration-lib/core';
+import noop from 'lodash/noop';
 
 import { Dropdown, Button } from '@cognite/cogs.js';
-import ReactDatePicker from 'react-datepicker';
-import noop from 'lodash/noop';
-import { formatDateToDatePickerString } from '@data-exploration-lib/core';
+
 import { DatePickerInput, renderCustomHeader } from './Common';
 import { DatePickerWrapper } from './elements';
 

@@ -1,6 +1,9 @@
 import React, { PropsWithChildren } from 'react';
-import { zIndex } from '@data-exploration-lib/core';
+
 import styled from 'styled-components';
+
+import { zIndex } from '@data-exploration-lib/core';
+
 import { Button } from '@cognite/cogs.js';
 
 interface DrawerProps {
@@ -20,7 +23,12 @@ export const Drawer: React.FC<PropsWithChildren<DrawerProps>> = ({
       <Overlay visible={visible} onClick={onClose} />
       {visible && (
         <ClosedButton>
-          <Button type="tertiary" icon="Close" onClick={onClose} />
+          <Button
+            type="tertiary"
+            aria-label="Close button"
+            icon="Close"
+            onClick={onClose}
+          />
         </ClosedButton>
       )}
     </>
@@ -54,6 +62,6 @@ const Overlay = styled.div<{ visible?: boolean }>`
 const ClosedButton = styled.div`
   position: absolute;
   top: 30px;
-  left: 18%;
+  left: 16%;
   z-index: ${zIndex.DRAWER};
 `;

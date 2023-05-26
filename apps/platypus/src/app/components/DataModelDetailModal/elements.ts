@@ -1,5 +1,5 @@
-import styled from 'styled-components/macro';
 import { EditableChip } from '@platypus-app/components/EditableChip';
+import styled from 'styled-components/macro';
 
 export const NameWrapper = styled.div`
   margin-bottom: 16px;

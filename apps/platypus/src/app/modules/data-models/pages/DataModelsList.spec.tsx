@@ -1,11 +1,11 @@
-import { screen } from '@testing-library/react';
+import { DataModel } from '@platypus/platypus-core';
+import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 import render from '@platypus-app/tests/render';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
-import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 
-import { DataModel } from '@platypus/platypus-core';
 import { DataModelsList } from './DataModelsList';
 
 jest.mock('@platypus-app/hooks/useMixpanel');

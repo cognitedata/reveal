@@ -1,7 +1,9 @@
 import React from 'react';
-import { Tooltip } from '@cognite/cogs.js';
+
 import dayjs from 'dayjs';
 import relativeTimePlugin from 'dayjs/plugin/relativeTime';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 dayjs.extend(relativeTimePlugin);
 export interface TimeDisplayProps {

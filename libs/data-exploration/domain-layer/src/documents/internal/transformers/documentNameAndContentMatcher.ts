@@ -1,4 +1,5 @@
 import { DocumentHighlight } from '@cognite/sdk';
+
 import { MatchingLabels } from '../../../types';
 import { getSearchConfig } from '../../../utils';
 import {

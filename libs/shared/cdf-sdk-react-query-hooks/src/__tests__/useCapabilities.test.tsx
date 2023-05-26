@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useSDK } from '../__mocks__/@cognite/sdk-provider';
 
+import { useSDK } from '../__mocks__/@cognite/sdk-provider';
 import { useCapabilities } from '../hooks';
 import { renderWithReactQueryCacheProvider } from '../testUtils';
 

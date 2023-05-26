@@ -1,4 +1,5 @@
 import { getMockSearchConfig } from '@data-exploration-lib/core';
+
 import { getNumberOfCheckedColumns } from '../getNumberOfCheckedColumns';
 
 const searchConfigData = getMockSearchConfig();

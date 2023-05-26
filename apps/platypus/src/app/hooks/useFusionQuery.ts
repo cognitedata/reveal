@@ -1,6 +1,7 @@
-import { getCluster, getEnv } from '@cognite/cdf-utilities';
 import { useEffect, useRef } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
+
+import { getCluster, getEnv } from '@cognite/cdf-utilities';
 
 // This hook is for setting up the fusion query(env & cluster)
 // for the app so it can read current project in fusion.

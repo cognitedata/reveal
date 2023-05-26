@@ -1,10 +1,12 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 
 import {
-  Cognite3DViewer,
-  CogniteCadModel,
-  CognitePointCloudModel,
-} from '@cognite/reveal';
+  SECONDARY_MODEL_BASE_QUERY_KEY,
+  getSecondaryModelAppliedStateQueryKey,
+  getSecondaryModelQueryFn,
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import {
   useQueries,
   useQueryClient,
@@ -12,12 +14,10 @@ import {
 } from '@tanstack/react-query';
 
 import {
-  SECONDARY_MODEL_BASE_QUERY_KEY,
-  getSecondaryModelAppliedStateQueryKey,
-  getSecondaryModelQueryFn,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
+  Cognite3DViewer,
+  CogniteCadModel,
+  CognitePointCloudModel,
+} from '@cognite/reveal';
 
 type LoadSecondaryModelsProps = {
   secondaryModels: SecondaryModelOptions[];

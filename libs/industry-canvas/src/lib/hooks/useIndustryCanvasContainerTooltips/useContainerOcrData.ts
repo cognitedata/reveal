@@ -1,7 +1,10 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { retrievePnIdRawOCRResult } from '@data-exploration-lib/domain-layer';
 import { useQuery } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { IndustryCanvasContainerConfig } from '../../types';
+
 import canContainerHaveOcrData from './canContainerHaveOcrData';
 
 const useContainerOcrData = (

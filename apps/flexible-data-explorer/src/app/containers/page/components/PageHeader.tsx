@@ -1,6 +1,9 @@
-import { Body, Button, Skeleton, Title } from '@cognite/cogs.js';
 import React, { PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Button, Skeleton, Title } from '@cognite/cogs.js';
+
 import zIndex from '../../../utils/zIndex';
 
 interface Props {

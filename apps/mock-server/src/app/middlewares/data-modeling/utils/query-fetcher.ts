@@ -1,4 +1,5 @@
 import { IntrospectionQuery } from 'graphql';
+
 import { CdfDatabaseService } from '../../../common/cdf-database.service';
 import { CdfMockDatabase, CdfResourceObject } from '../../../types';
 import {

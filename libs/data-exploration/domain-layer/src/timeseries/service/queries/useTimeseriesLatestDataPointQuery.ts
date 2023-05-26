@@ -1,7 +1,8 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { Datapoints, LatestDataBeforeRequest } from '@cognite/sdk/dist/src';
-
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+
+import { Datapoints, LatestDataBeforeRequest } from '@cognite/sdk/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 import { getTimeseriesLatestDatapoint } from '../network';
 

@@ -1,7 +1,10 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import { Modal as CogsModal, ModalDefaultProps } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Modal as CogsModal, ModalDefaultProps } from '@cognite/cogs.js';
+
 import { getContainer } from '../../../GlobalStyles';
 
 const CustomModal = styled(CogsModal)<{

@@ -1,9 +1,12 @@
+import { useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Cognite3DViewer, ResolutionOptions } from '@cognite/reveal';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { useMemo, useState } from 'react';
-import styled from 'styled-components';
 
 type HighQualityToggleProps = {
   viewer: Cognite3DViewer;

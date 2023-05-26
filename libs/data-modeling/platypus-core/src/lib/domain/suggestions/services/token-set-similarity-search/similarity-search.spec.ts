@@ -1,9 +1,10 @@
 import * as seedrandom from 'seedrandom';
-import { SparseVector } from './types';
+
 import {
   SimilarityIndex,
   SimilaritySearchConstraints,
 } from './similarity-search';
+import { SparseVector } from './types';
 import { cosineSimilarity } from './vector-space-model';
 
 describe('SimilarityIndex', () => {

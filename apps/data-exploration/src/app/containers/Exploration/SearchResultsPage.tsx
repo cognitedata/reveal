@@ -1,12 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import {
-  ResourceTypeTabs,
-  getTitle,
-  ResourceType,
-} from '@cognite/data-exploration';
-
 import { SearchConfigButton } from '@data-exploration/components';
 import {
   AssetsTab,
@@ -18,29 +12,29 @@ import {
   TimeseriesTab,
   ResourceTypeTabs as ResourceTypeTabsV2,
 } from '@data-exploration/containers';
-
-import {
-  useAssetsMetadataKeys,
-  useTimeseriesMetadataKeys,
-  useDocumentsMetadataKeys,
-  useEventsMetadataKeys,
-  useSequencesMetadataKeys,
-} from '@data-exploration-lib/domain-layer';
-
-import { Flex, Tabs } from '@cognite/cogs.js';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { AllTab } from '@data-exploration-app/containers/All';
+import { routes } from '@data-exploration-app/containers/App';
+import { AssetSearchResultView } from '@data-exploration-app/containers/Asset/AssetSearchResultView';
+import { EventSearchResultView } from '@data-exploration-app/containers/Event/EventSearchResultView';
+import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
+import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
+import { FileSearchResultView } from '@data-exploration-app/containers/File/FileSearchResultView';
+import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
+import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
+import { TimeseriesSearchResultView } from '@data-exploration-app/containers/Timeseries/TimeseriesSearchResultView';
 import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
-import { useDebounce } from 'use-debounce';
-import styled from 'styled-components/macro';
+import {
+  useFlagDocumentGPT,
+  useFlagDocumentLabelsFilter,
+} from '@data-exploration-app/hooks';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import {
   useQueryString,
   useCurrentResourceType,
 } from '@data-exploration-app/hooks/hooks';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
-import { PageTitle } from '@cognite/cdf-utilities';
-import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
-// import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
+import { useFilterSidebarState } from '@data-exploration-app/store';
 import {
   useAssetFilters,
   useEventsFilters,
@@ -49,23 +43,27 @@ import {
   useTimeseriesFilters,
 } from '@data-exploration-app/store/filter/selectors';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import {
-  useFlagDocumentGPT,
-  useFlagDocumentLabelsFilter,
-} from '@data-exploration-app/hooks';
-import { AllTab } from '@data-exploration-app/containers/All';
-import { useFilterSidebarState } from '@data-exploration-app/store';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { AssetSearchResultView } from '@data-exploration-app/containers/Asset/AssetSearchResultView';
-import { TimeseriesSearchResultView } from '@data-exploration-app/containers/Timeseries/TimeseriesSearchResultView';
-import { FileSearchResultView } from '@data-exploration-app/containers/File/FileSearchResultView';
-import { EventSearchResultView } from '@data-exploration-app/containers/Event/EventSearchResultView';
-import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
-import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
-import { routes } from '@data-exploration-app/containers/App';
-import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { ViewType } from '@data-exploration-lib/core';
+import {
+  useAssetsMetadataKeys,
+  useTimeseriesMetadataKeys,
+  useDocumentsMetadataKeys,
+  useEventsMetadataKeys,
+  useSequencesMetadataKeys,
+} from '@data-exploration-lib/domain-layer';
+import styled from 'styled-components/macro';
+import { useDebounce } from 'use-debounce';
+
+import { PageTitle } from '@cognite/cdf-utilities';
+import { Flex, Tabs } from '@cognite/cogs.js';
+import {
+  ResourceTypeTabs,
+  getTitle,
+  ResourceType,
+} from '@cognite/data-exploration';
+
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {

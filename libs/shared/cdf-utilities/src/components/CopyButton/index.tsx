@@ -1,6 +1,8 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React, { useRef, useState } from 'react';
+
 import copy from 'copy-to-clipboard';
+
 import { Button, Tooltip } from '@cognite/cogs.js';
 
 const DEFAULT_COPY_TIMEOUT_DURATION_IN_MS = 2000;

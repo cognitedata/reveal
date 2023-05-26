@@ -1,4 +1,5 @@
 import { CogniteClient, FileInfo } from '@cognite/sdk';
+
 import {
   isFileOfType,
   fetchFilePreviewURL,

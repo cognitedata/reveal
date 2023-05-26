@@ -1,8 +1,9 @@
 import React from 'react';
-import { TIME_SELECT } from '@data-exploration-components/containers';
+
 import { useSessionStorage } from '@data-exploration-app/hooks';
 import { TIMESERIES_TABLE_DATE_RANGE_KEY } from '@data-exploration-app/utils/constants';
 import { getProject } from '@data-exploration-app/utils/URLUtils';
+import { TIME_SELECT } from '@data-exploration-components/containers';
 
 export const useDateRange = (
   sessionKey = `${getProject()}-${TIMESERIES_TABLE_DATE_RANGE_KEY}`

@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { actions as dataModelActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
+
 import { UpdateDataModelFieldDTO } from '@platypus/platypus-core';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { actions as dataModelActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 export const useTypeDefActions = () => {
   const dispatch = useDispatch();

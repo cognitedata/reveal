@@ -2,8 +2,10 @@ import {
   UseInfiniteQueryOptions,
   useInfiniteQuery,
 } from '@tanstack/react-query';
+
 import { IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
 import { annotationsKey } from '../keys';
 
 export type AnnotatedResourceType = 'file';

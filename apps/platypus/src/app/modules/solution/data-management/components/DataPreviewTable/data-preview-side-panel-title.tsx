@@ -1,5 +1,6 @@
-import { Body, Title } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Body, Title } from '@cognite/cogs.js';
 
 export type SidePanelTitleProps = {
   fieldName: string;

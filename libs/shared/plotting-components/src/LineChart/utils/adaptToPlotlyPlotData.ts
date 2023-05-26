@@ -1,6 +1,5 @@
-import { PlotData } from 'plotly.js';
-
 import times from 'lodash/times';
+import { PlotData } from 'plotly.js';
 
 import {
   DEFAULT_LINE_COLOR,
@@ -9,6 +8,7 @@ import {
   MARKER_SIZE,
 } from '../constants';
 import { LineChartProps, Variant } from '../types';
+
 import { getDataAsArray } from './getDataAsArray';
 import { getLineName } from './getLineName';
 import { mapInterolationToPlotlyLineShape } from './mapInterolationToPlotlyLineShape';

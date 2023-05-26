@@ -1,4 +1,5 @@
 import { ContainerType, IdsByType } from '@cognite/unified-file-viewer';
+
 import { IndustryCanvasContainerConfig } from '../types';
 
 export const EMPTY_FLEXIBLE_LAYOUT: IndustryCanvasContainerConfig = {

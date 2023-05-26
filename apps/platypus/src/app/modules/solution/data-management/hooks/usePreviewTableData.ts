@@ -2,12 +2,12 @@ import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
 } from '@platypus/platypus-core';
-import { useQuery } from '@tanstack/react-query';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { DMSRecord } from '@platypus-core/domain/suggestions';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import { useQuery } from '@tanstack/react-query';
 
 export const usePreviewTableData = (
   dataModelExternalId: string,

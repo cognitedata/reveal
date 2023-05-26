@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve as pathResolve } from 'path';
+
 import { CdfApiConfig, MockData } from '../app';
 // import { mockDataSample } from '../mock-data';
 

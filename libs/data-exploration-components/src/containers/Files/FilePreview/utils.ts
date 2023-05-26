@@ -1,8 +1,11 @@
-import { Colors } from '@cognite/cogs.js';
-import { AnnotationType } from '@cognite/unified-file-viewer';
+import { useCallback } from 'react';
+
 import { ExtendedAnnotation, useMetrics } from '@data-exploration-lib/core';
 import debounce from 'lodash/debounce';
-import { useCallback } from 'react';
+
+import { Colors } from '@cognite/cogs.js';
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
 
 export const getContainerId = (fileId: number) => {

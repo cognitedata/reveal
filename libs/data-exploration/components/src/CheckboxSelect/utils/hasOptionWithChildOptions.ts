@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+
 import { CustomMetadataValue, OptionType } from '../types';
 
 export const hasOptionWithChildOptions = (

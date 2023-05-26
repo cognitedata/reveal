@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+
 import { DEFAULT_LINE_NAME } from '../constants';
 
 export const getLineName = (name: string | undefined, index: number) => {

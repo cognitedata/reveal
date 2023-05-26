@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+
 import { OptionSelection } from '../types';
 
 export const getFilterButtonText = (selection: OptionSelection) => {

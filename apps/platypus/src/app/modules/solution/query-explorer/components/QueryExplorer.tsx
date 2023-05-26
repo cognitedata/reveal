@@ -1,10 +1,12 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { useExplorerPlugin } from '@graphiql/plugin-explorer';
+import { StorageProviderType } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { StorageProviderType } from '@platypus/platypus-core';
 import GraphiQL from 'graphiql';
 import {
   buildClientSchema,
@@ -12,9 +14,10 @@ import {
   GraphQLSchema,
   IntrospectionQuery,
 } from 'graphql';
-import { useEffect, useMemo, useState } from 'react';
+
 import { GraphiqlStorageProvider } from '../utils/graphiqlStorageProvider';
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
+
 import { QueryExplorerContainer } from './elements';
 
 type QueryExplorerType = {

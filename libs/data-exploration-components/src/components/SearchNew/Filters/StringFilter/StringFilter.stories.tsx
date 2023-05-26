@@ -1,5 +1,7 @@
-import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
 import { StringFilterV2 } from './StringFilter';
 
 export default {

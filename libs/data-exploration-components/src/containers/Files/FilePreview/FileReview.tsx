@@ -1,10 +1,14 @@
-import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { Tooltip } from 'antd';
+import React, { useContext } from 'react';
+
+import styled from 'styled-components';
+
 import { ResourceIcons } from '@data-exploration-components/components';
 import { AppContext, ExtendedAnnotation } from '@data-exploration-lib/core';
-import React, { useContext } from 'react';
-import styled from 'styled-components';
+import { Tooltip } from 'antd';
+
+import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import {
   getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,

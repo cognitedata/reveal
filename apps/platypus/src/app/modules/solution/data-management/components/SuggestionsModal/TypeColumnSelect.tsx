@@ -1,3 +1,11 @@
+import { useState } from 'react';
+
+import styled from 'styled-components';
+
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import xor from 'lodash/xor';
+
 import {
   Body,
   Dropdown,
@@ -7,12 +15,6 @@ import {
   Menu,
   Tooltip,
 } from '@cognite/cogs.js';
-
-import styled from 'styled-components';
-import xor from 'lodash/xor';
-import { useState } from 'react';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export const TypeColumnSelect = ({
   selected,

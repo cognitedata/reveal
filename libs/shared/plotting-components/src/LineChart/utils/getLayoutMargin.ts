@@ -1,9 +1,9 @@
-import { Layout as PlotlyLayout } from 'plotly.js';
-
 import isEmpty from 'lodash/isEmpty';
+import { Layout as PlotlyLayout } from 'plotly.js';
 
 import { DEFAULT_MARGIN } from '../constants';
 import { Axis, Layout } from '../types';
+
 import { getMarginBottom } from './getMarginBottom';
 import { getMarginLeft } from './getMarginLeft';
 

@@ -1,3 +1,5 @@
+import { InputActionMeta } from 'react-select';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
@@ -5,7 +7,7 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 import { useDocumentsFilterOptions } from '@data-exploration-lib/domain-layer';
-import { InputActionMeta } from 'react-select';
+
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseFilter, CommonFilterProps, MultiSelectOptionType } from '../types';
 import { transformOptionsForMultiselectFilter } from '../utils';

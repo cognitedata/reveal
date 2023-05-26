@@ -1,4 +1,5 @@
 import { IGraphQlUtilsService } from '../boundaries';
+
 import { DataModelTypeDefsBuilderService } from './data-model-type-defs-builder.service';
 
 const schemaMock = `

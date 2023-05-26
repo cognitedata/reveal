@@ -1,4 +1,5 @@
 import { assetsFixture, rootAssetFixture } from '@data-exploration-lib/core';
+
 import { buildTree } from '../assets/service/utils/buildTree';
 
 jest.mock('@cognite/unified-file-viewer', () => {

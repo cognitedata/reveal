@@ -1,5 +1,10 @@
-import { Store } from 'redux';
 import { Provider as ReduxProvider } from 'react-redux';
+
+import { translations } from '@platypus-app/common';
+import GlobalStyles from '@platypus-app/GlobalStyles';
+import { Store } from 'redux';
+
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   SubAppWrapper,
@@ -7,10 +12,8 @@ import {
   getEnv,
   getProject,
 } from '@cognite/cdf-utilities';
+
 import '../../set-public-path';
-import GlobalStyles from '@platypus-app/GlobalStyles';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { translations } from '@platypus-app/common/i18n';
 
 type AppContainerProps = {
   store: Store;

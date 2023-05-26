@@ -1,13 +1,6 @@
-import { CogniteClient } from '@cognite/sdk';
 import { PlatypusError, SdkError } from '@platypus-core/boundaries/types';
 
-import {
-  ApiSpecDTO,
-  DataModelApiOutputDTO,
-  ApiVersion,
-  ApiVersionFromGraphQl,
-  DataModelStorageBindingsDTO,
-} from '../../dto';
+import { CogniteClient } from '@cognite/sdk';
 
 import {
   GraphQlQueryParams,
@@ -17,6 +10,13 @@ import {
   ValidateDataModelDTO,
   DeleteDataModelOutput,
 } from '../../../../dto';
+import {
+  ApiSpecDTO,
+  DataModelApiOutputDTO,
+  ApiVersion,
+  ApiVersionFromGraphQl,
+  DataModelStorageBindingsDTO,
+} from '../../dto';
 
 export class MixerApiService {
   private schemaServiceBaseUrl: string;

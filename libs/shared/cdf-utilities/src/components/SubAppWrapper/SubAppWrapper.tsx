@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
-import { Colors } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 import { Breadcrumb, PageTitle } from '..';
 

@@ -3,6 +3,7 @@ import {
   AnnotationType,
   ContainerType,
 } from '@cognite/unified-file-viewer';
+
 import { STICKY_ANNOTATION_COLOR_MAP } from '../colors';
 import { SHARED_STICKY_TOOL_OPTIONS } from '../hooks/useManagedTools';
 import { IndustryCanvasContainerConfig } from '../types';

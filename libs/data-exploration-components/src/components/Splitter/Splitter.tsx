@@ -1,8 +1,12 @@
 import React from 'react';
 import SplitterLayout from 'react-splitter-layout';
+
 import styled, { css } from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+
 import { SIDEBAR_RESIZE_EVENT, zIndex } from '@data-exploration-lib/core';
+
+import { Colors } from '@cognite/cogs.js';
+
 import handleSvg from './handle';
 
 // Create the CSS content URL from the SVG code

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Tooltip } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   isNumber,
   useMetrics,
 } from '@data-exploration-lib/core';
+
+import { Input, Tooltip } from '@cognite/cogs.js';
+
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const NumberFilter = ({

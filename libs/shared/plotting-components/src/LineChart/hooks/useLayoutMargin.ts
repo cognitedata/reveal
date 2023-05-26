@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 import { Layout as PlotlyLayout } from 'plotly.js';
+
 import { Axis, Layout } from '../types';
 import { getLayoutMargin } from '../utils/getLayoutMargin';
+
 import { useDeepCallback } from './useDeep';
 
 export interface Props {

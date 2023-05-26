@@ -1,19 +1,21 @@
+import { useMemo } from 'react';
+
 import {
   MultiSelectFilter,
   Select,
 } from '@data-exploration-components/components';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  InternalEventsFilters,
+  useMetrics,
+} from '@data-exploration-lib/core';
 import {
   EventProperty,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
-import { useMemo } from 'react';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  InternalEventsFilters,
-  useMetrics,
-} from '@data-exploration-lib/core';
+
 import { reactSelectCogsStylingProps } from '../elements';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 

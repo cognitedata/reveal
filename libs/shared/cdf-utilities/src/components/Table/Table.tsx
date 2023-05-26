@@ -1,7 +1,9 @@
 import React, { ReactNode, useState } from 'react';
-import { Body, TooltipProps } from '@cognite/cogs.js';
+
 import { Table as AntdTable, TableProps as AntdTableProps } from 'antd';
 import { ColumnType, SortOrder } from 'antd/lib/table/interface';
+
+import { Body, TooltipProps } from '@cognite/cogs.js';
 
 import { TableColumnTitle } from './TableColumnTitle';
 

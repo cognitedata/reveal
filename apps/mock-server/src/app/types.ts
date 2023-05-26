@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { LowdbSync } from 'lowdb';
+
 import { Api } from './middlewares/data-modeling/types';
 
 export type FilterMode = 'list' | 'byids' | 'filter' | 'search';

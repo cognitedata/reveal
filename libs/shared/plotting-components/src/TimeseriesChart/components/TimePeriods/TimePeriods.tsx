@@ -3,6 +3,7 @@ import * as React from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import { TimePeriod, UpdateTimePeriodProps } from '../../types';
+
 import { TimePeriodsWrapper } from './elements';
 import { TimePeriodButton } from './TimePeriodButton';
 

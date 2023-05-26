@@ -1,19 +1,19 @@
+import { useState } from 'react';
+
+import styled from 'styled-components';
+
 import {
   Body,
   Button,
   Collapse as CogsCollapse,
   Select,
 } from '@cognite/cogs.js';
-
-import { useState } from 'react';
 import { DataSet, IdEither } from '@cognite/sdk';
-
 import { useList } from '@cognite/sdk-react-query-hooks';
-import styled from 'styled-components';
-import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 
-import { useValidate } from '../../hooks/useValidate';
 import { SearchEmpty } from '../../components/SearchEmpty';
+import { useValidate } from '../../hooks/useValidate';
+import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 
 const ACCESSOR_FIELDS = {
   assets: [

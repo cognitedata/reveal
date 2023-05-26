@@ -1,5 +1,6 @@
-import { Collapse as DefaultCollapse, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Collapse as DefaultCollapse, Icon } from '@cognite/cogs.js';
 
 const { Panel: DefaultPanel } = DefaultCollapse;
 

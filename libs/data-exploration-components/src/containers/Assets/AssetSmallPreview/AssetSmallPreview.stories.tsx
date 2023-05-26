@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { AssetSmallPreview } from './AssetSmallPreview';
 
 export default {

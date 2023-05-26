@@ -5,7 +5,9 @@ import {
 } from '@azure/msal-node';
 import { Logger } from '@platypus/platypus-core';
 import QRCode from 'qrcode-terminal';
+
 import { readFromCache, cachePlugin } from '../../utils/msalTokenCache';
+
 import { handleResponse } from './common';
 
 export type DeviceCodeRequest = {

@@ -1,6 +1,8 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
+
 import { FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { OCRAnnotationPageResult } from '../../types';
 import { retrievePnIdRawOCRResult } from '../network/retrievePnIdRawOCRResult';
 

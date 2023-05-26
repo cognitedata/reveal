@@ -1,5 +1,7 @@
-import { AnnotationType } from '@cognite/unified-file-viewer';
 import { v4 as uuid } from 'uuid';
+
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
 import { ANNOTATION_SOURCE_KEY } from '../constants';
 import { AnnotationSource, ExtendedAnnotation } from '../types/annotations';
 

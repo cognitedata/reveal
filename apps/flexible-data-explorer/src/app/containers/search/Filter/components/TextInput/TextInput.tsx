@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { Input } from '../Input';
 import { InputControlProps } from '../../types';
+import { Input } from '../Input';
 
 export const DEFAULT_TEXT_INPUT_PLACEHOLDER = 'Enter value...';
 

@@ -1,5 +1,6 @@
-import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button } from '@cognite/cogs.js';
 
 export const DiscardButton = styled(Button)`
   margin-right: 10px;

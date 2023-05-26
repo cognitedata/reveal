@@ -1,4 +1,5 @@
 import { selector, useRecoilState, useResetRecoilState } from 'recoil';
+
 import { globalFilterAtom } from '../atoms';
 import { GlobalFilter } from '../types';
 import { defaultFilterSetter } from '../utils';

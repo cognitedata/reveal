@@ -1,9 +1,9 @@
 import {
-  DataModelStorageModel,
-  DataModelStorageModelsDTO,
-  DmsModelProperty,
-} from '../../dto';
-
+  DataModelVersion,
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
+  DataModelTypeDefsField,
+} from '../../../../types';
 import {
   isInlineType,
   getOneToManyModelName,
@@ -11,13 +11,11 @@ import {
   getTypesMap,
   isCustomType,
 } from '../../../../utils';
-
 import {
-  DataModelVersion,
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-  DataModelTypeDefsField,
-} from '../../../../types';
+  DataModelStorageModel,
+  DataModelStorageModelsDTO,
+  DmsModelProperty,
+} from '../../dto';
 
 export class DmsModelBuilder {
   /**

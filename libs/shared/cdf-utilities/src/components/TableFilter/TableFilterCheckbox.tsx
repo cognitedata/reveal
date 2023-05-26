@@ -1,6 +1,8 @@
 import React, { Key } from 'react';
-import { Body, Checkbox, CheckboxProps, Flex, Chip } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Body, Checkbox, CheckboxProps, Flex, Chip } from '@cognite/cogs.js';
 
 export type TableFilterCheckboxProps = {
   key: Key;

@@ -1,5 +1,7 @@
-import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
 import { BooleanInput } from './BooleanInput';
 
 export default {

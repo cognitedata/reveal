@@ -1,8 +1,8 @@
 import { KeyValueMap } from '../types/key-value-map';
 /* eslint-disable no-prototype-builtins */
 
-import { ValidationRule } from './validation-rule';
 import { ValidatorResult } from './types';
+import { ValidationRule } from './validation-rule';
 
 interface ValidatorRules {
   [field: string]: ValidationRule[];

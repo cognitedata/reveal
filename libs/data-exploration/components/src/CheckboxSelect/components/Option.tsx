@@ -1,11 +1,11 @@
 import * as React from 'react';
 
+import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
+import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
+
 import { Checkbox } from '@cognite/cogs.js';
 
-import isUndefined from 'lodash/isUndefined';
-import isEmpty from 'lodash/isEmpty';
-
-import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 import {
   OptionLabel,
   OptionSecondaryLabel,

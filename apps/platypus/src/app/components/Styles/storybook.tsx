@@ -3,6 +3,7 @@ These styles are used in the storybook only
 *********************************************/
 
 import styled from 'styled-components';
+
 import {
   StyledDescriptionTitle,
   StyledDescriptionWrapper,

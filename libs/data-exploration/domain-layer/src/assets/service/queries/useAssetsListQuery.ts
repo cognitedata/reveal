@@ -1,11 +1,13 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { AssetFilterProps } from '@cognite/sdk';
-
 import { useMemo } from 'react';
+
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
+
+import { AssetFilterProps } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { InternalSortBy } from '../../../types';

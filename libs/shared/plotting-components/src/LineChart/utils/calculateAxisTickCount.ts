@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import head from 'lodash/head';
 
 import { PLOT_CLASSNAME } from '../constants';
+
 import { getAverageTickTextWidth } from './getAverageTickTextWidth';
 
 const X_AXIS_TICK_MARGIN = 32; // marginLeft + marginRight

@@ -1,9 +1,10 @@
 import { PlatypusError } from '@platypus-core/boundaries/types';
+
 import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
-import { FlexibleDataModelingClient } from './boundaries';
 
+import { FlexibleDataModelingClient } from './boundaries';
 import {
   CreateDataModelDTO,
   DeleteDataModelDTO,
@@ -12,7 +13,6 @@ import {
   UpdateDataModelDTO,
 } from './dto';
 import { ListSpacesDTO } from './providers/fdm-next/dto/dms-space-dtos';
-
 import { DataModel, SpaceDTO, SpaceInstance } from './types';
 
 export class DataModelsHandler {

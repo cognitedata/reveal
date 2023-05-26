@@ -1,12 +1,15 @@
-import { Flex } from '@cognite/cogs.js';
 import {
   COMMON_COLUMN_HEADER,
   fuzzySearchToggleColumns,
   searchConfigCommonColumns,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
+
+import { Flex } from '@cognite/cogs.js';
+
 import { checkFuzzySearchEnabled } from '../SearchResults/utils/checkFuzzySearchEnabled';
 import { getNumberOfCheckedColumns } from '../SearchResults/utils/getNumberOfCheckedColumns';
+
 import {
   ColumnHeader,
   CommonColumnWrapper,

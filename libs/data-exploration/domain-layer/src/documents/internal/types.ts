@@ -1,4 +1,5 @@
 import { InternalDocument as InternalDocumentCore } from '@data-exploration-lib/core';
+
 import { MatchingLabels } from '../../types';
 // This is needed to not create circular dependencies
 

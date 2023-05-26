@@ -1,20 +1,24 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ResourceSelectorProvider } from '@cognite/data-exploration';
+
 import styled from 'styled-components';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { routes } from '@data-exploration-app/containers/App';
 import { AssetPage } from '@data-exploration-app/containers/Asset/AssetPage';
-import { TimeseriesPage } from '@data-exploration-app/containers/Timeseries/TimeseriesPage';
-import { FilePage } from '@data-exploration-app/containers/File/FilePage';
 import { CanvasPage } from '@data-exploration-app/containers/Canvas/CanvasPage';
 import { EventPage } from '@data-exploration-app/containers/Event/EventPage';
+import { FilePage } from '@data-exploration-app/containers/File/FilePage';
 import { SequencePage } from '@data-exploration-app/containers/Sequence/SequencePage';
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
-import { routes } from '@data-exploration-app/containers/App';
+import { TimeseriesPage } from '@data-exploration-app/containers/Timeseries/TimeseriesPage';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { IndustryCanvasPage } from '@fusion/industry-canvas';
-import { SearchResultsPage } from './SearchResultsPage';
+
+import { ResourceSelectorProvider } from '@cognite/data-exploration';
+
 import SearchRedirect from './SearchRedirect';
+import { SearchResultsPage } from './SearchResultsPage';
 
 export const Explorer = () => {
   React.useEffect(() => {

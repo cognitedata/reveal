@@ -1,3 +1,24 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { Loader } from '@data-exploration/components';
+import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
+import { ResourceItem } from '@data-exploration-components/types';
+import { lightGrey } from '@data-exploration-components/utils';
+import {
+  DATA_EXPLORATION_COMPONENT,
+  ANNOTATION_SOURCE_KEY,
+  AnnotationSource,
+  ExtendedAnnotation,
+} from '@data-exploration-lib/core';
+import {
+  useSearchResults,
+  SearchResult,
+} from '@data-exploration-lib/domain-layer';
+import noop from 'lodash/noop';
+
+import { Flex } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -11,40 +32,23 @@ import ReactUnifiedViewer, {
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { Loader } from '@data-exploration/components';
-import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { ResourceItem } from '@data-exploration-components/types';
-import { lightGrey } from '@data-exploration-components/utils';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  ANNOTATION_SOURCE_KEY,
-  AnnotationSource,
-  ExtendedAnnotation,
-} from '@data-exploration-lib/core';
-import {
-  useSearchResults,
-  SearchResult,
-} from '@data-exploration-lib/domain-layer';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
-import { Flex } from '@cognite/cogs.js';
-import noop from 'lodash/noop';
+
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { MAX_CONTAINER_HEIGHT, MAX_CONTAINER_WIDTH } from './constants';
 import getExtendedAnnotationsWithBadges from './getExtendedAnnotationsWithBadges';
 import { useUnifiedFileViewerAnnotations } from './hooks';
+import { useCurrentSearchResult } from './hooks/useCurrentSearchResult';
+import { useNumPages } from './hooks/useNumPages';
+import usePrevious from './hooks/usePrevious';
+import { useSearchBarState } from './hooks/useSearchBarState';
 import { Pagination } from './Pagination';
 import {
   getContainerId,
   getSearchResultAnnotationStyle,
   useDebouncedMetrics,
 } from './utils';
-import { useNumPages } from './hooks/useNumPages';
-import { useCurrentSearchResult } from './hooks/useCurrentSearchResult';
-import { useSearchBarState } from './hooks/useSearchBarState';
-import usePrevious from './hooks/usePrevious';
 
 type FilePreviewProps = {
   id: string;

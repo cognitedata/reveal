@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import './cog-data-grid-styles.css';
 import { ThemeClasses, ThemeNames } from './types';

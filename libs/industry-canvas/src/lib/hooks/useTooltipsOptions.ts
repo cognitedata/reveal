@@ -1,5 +1,6 @@
-import { ContainerType } from '@cognite/unified-file-viewer';
 import { useCallback, useState } from 'react';
+
+import { ContainerType } from '@cognite/unified-file-viewer';
 
 type SupportedContainerType = ContainerType.TIMESERIES;
 

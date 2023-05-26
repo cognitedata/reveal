@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { Menu, MenuItem, SearchInput } from '../../components';
 import { DataType } from '../../types';
+
 import { getFilteredDataTypes } from './utils';
 
 export interface DataTypeSelectorProps {

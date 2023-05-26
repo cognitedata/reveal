@@ -1,5 +1,7 @@
-import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
 import { RelationshipLabels } from '@data-exploration-lib/core';
+
+import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
+
 import { MatchingLabels } from '../../types';
 export interface InternalTimeseriesData {
   id: number;

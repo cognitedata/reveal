@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-
-import { Body } from '@cognite/cogs.js';
 import AutoResizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
+
 import styled from 'styled-components';
 
+import { Loader } from '@data-exploration/components';
 import {
   SelectableItemsProps,
   AllowedTableStateId,
 } from '@data-exploration-components/types';
-import { Loader } from '@data-exploration/components';
+
+import { Body } from '@cognite/cogs.js';
 
 export type GridCellProps<T> = {
   item: T;

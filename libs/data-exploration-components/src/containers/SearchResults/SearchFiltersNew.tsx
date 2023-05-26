@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+
+import { Filters } from '@data-exploration-components/components/SearchNew/Filters';
 import {
   ResourceType,
   ResourceFilterProps,
   SetResourceFilterProps,
 } from '@data-exploration-components/types';
-
 import { lightGrey } from '@data-exploration-components/utils';
-import { Filters } from '@data-exploration-components/components/SearchNew/Filters';
 
 const TRANSITION_TIME = 200;
 // interface IFilterIcon {

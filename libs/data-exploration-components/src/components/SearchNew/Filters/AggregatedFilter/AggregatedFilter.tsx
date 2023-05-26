@@ -1,11 +1,14 @@
 import React from 'react';
+
 import { Select } from '@data-exploration-components/components';
-import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
+
 import { OptionType } from '@cognite/cogs.js';
+
 import { reactSelectCogsStylingProps } from '../elements';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 

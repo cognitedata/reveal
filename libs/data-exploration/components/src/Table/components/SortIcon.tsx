@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { IconType, Button, Tooltip } from '@cognite/cogs.js';
 
 export const SortIcon = ({

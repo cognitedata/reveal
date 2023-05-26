@@ -1,13 +1,14 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { DocumentFilter, DocumentSortItem } from '@cognite/sdk';
-
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
+
+import { DocumentFilter, DocumentSortItem } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
-import { search } from '../network/search';
 import { queryKeys } from '../../../queryKeys';
+import { search } from '../network/search';
 
 export const useDocumentSearchQuery = (
   {

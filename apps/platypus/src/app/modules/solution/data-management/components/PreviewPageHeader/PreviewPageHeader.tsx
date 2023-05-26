@@ -1,17 +1,21 @@
+import { useRef } from 'react';
+
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
-import { Tooltip, Button, Flex, Chip } from '@cognite/cogs.js';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
-import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
-import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
   useTransformationsFeatureFlag,
 } from '@platypus-app/flags';
-import { useRef } from 'react';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
+import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
+import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
+
+import { Tooltip, Button, Flex, Chip } from '@cognite/cogs.js';
+
 import { PageHeaderDivider } from '../DataPreviewTable/elements';
+
 import * as S from './elements';
 
 type Props = {

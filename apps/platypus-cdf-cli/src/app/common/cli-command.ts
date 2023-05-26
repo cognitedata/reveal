@@ -1,9 +1,10 @@
 import { Arguments, Argv, CommandModule } from 'yargs';
 
 import { BaseArgs, CommandArgument } from '@cognite/platypus-cdf-cli/app/types';
+
+import { CommandBuilderService } from '../services';
 import { promptQuestions } from '../utils/enquirer-utils';
 import Response from '../utils/logger';
-import { CommandBuilderService } from '../services';
 
 export abstract class CLICommand implements CommandModule {
   command: string;

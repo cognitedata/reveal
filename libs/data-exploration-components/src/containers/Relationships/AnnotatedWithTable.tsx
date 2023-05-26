@@ -1,12 +1,16 @@
-import { FileGroupingTable } from '@data-exploration/containers';
 import React, { useState } from 'react';
+
+import { FileGroupingTable } from '@data-exploration/containers';
+import { FileTable } from '@data-exploration-components/containers';
 import {
   SelectableItemsProps,
   ResourceItem,
 } from '@data-exploration-components/types';
+
 import { FileInfo } from '@cognite/sdk';
-import { FileTable } from '@data-exploration-components/containers';
+
 import { FileViewSwitcher } from '../SearchResults/FileSearchResults/FileViewSwitcher';
+
 import {
   FileSwitcherWrapper,
   GroupingTableContainer,

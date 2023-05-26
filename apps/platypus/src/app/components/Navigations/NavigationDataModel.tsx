@@ -1,4 +1,28 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { DataModelVersion } from '@platypus/platypus-core';
+import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
+import { DOCS_LINKS } from '@platypus-app/constants';
+import { TOKENS } from '@platypus-app/di';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
+import {
+  useDataModel,
+  useDataModelVersions,
+} from '@platypus-app/hooks/useDataModelActions';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useDraftRows } from '@platypus-app/modules/solution/data-management/hooks/useDraftRows';
+import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
+import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
+import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
+import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+
 import {
   Button,
   Chip,
@@ -9,30 +33,10 @@ import {
   NotificationDot,
   Tooltip,
 } from '@cognite/cogs.js';
-import {
-  useDataModel,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
-import { useState } from 'react';
-import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useDraftRows } from '@platypus-app/modules/solution/data-management/hooks/useDraftRows';
-import { DataModelVersion } from '@platypus/platypus-core';
-import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { TOKENS } from '@platypus-app/di';
-import { DOCS_LINKS } from '@platypus-app/constants';
-import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+
 import { FeaturePreview } from '../FeaturePreview/FeaturePreview';
 import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
+
 import {
   StyledTitleButton,
   StyledTopBar,

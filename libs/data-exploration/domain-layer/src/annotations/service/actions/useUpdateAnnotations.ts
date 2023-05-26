@@ -1,10 +1,12 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
-import { AnnotationChangeById } from '@cognite/sdk/dist/src/types';
+import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
 import { useMutation } from '@tanstack/react-query';
 
-import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
+import { CogniteClient } from '@cognite/sdk';
+import { AnnotationChangeById } from '@cognite/sdk/dist/src/types';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { isExtendedAnnotationAnnotation } from '../../utils';
+
 import { persistAssetIds } from './useCreateAnnotation';
 
 const persistAnnotationChanges = async (

@@ -1,8 +1,10 @@
-import { Body, Button, Colors, Flex, Link } from '@cognite/cogs.js';
 import React, { useState } from 'react';
-import noop from 'lodash/noop';
 
 import styled from 'styled-components';
+
+import noop from 'lodash/noop';
+
+import { Body, Button, Colors, Flex, Link } from '@cognite/cogs.js';
 
 type ReleaseBannerProps = {
   defaultIsOpen: React.ReactNode;

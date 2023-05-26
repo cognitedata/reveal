@@ -1,5 +1,6 @@
 import { postsGraphQlSchema } from '@fusion/mock-data';
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
+
 import { GraphQlUtilsService } from './graphql-utils-service';
 
 const schemaMock = postsGraphQlSchema;

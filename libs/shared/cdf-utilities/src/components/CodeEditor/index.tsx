@@ -1,6 +1,8 @@
 import React, { ComponentProps, useMemo } from 'react';
-import ReactCodeMirror from '@uiw/react-codemirror';
+
 import styled from 'styled-components';
+
+import ReactCodeMirror from '@uiw/react-codemirror';
 
 import { CommandFunction, getExtensions } from './extensions';
 import { editorStyle, getTheme } from './theme';

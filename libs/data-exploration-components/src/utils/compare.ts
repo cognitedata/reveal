@@ -1,6 +1,6 @@
-import isObject from 'lodash/isObject';
-import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import isObject from 'lodash/isObject';
 
 export const isObjectEmpty = (
   object?: Record<string, unknown>

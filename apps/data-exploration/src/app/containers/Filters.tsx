@@ -1,16 +1,19 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { ResourceType } from '@cognite/data-exploration';
+
 import { DocumentFilter } from '@data-exploration-app/containers/Document/DocumentFilters';
+
+import { ResourceType } from '@cognite/data-exploration';
+
 import { BaseFilterCollapse } from '../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 import { AssetFilters } from './Asset/AssetFilters';
-import { EventFilters } from './Event/EventFilters';
 import { CommonFilter } from './Common/CommonFilter';
+import { EventFilters } from './Event/EventFilters';
 import { FileFilters } from './File/FileFilters';
-import { TimeseriesFilters } from './Timeseries/TimeseriesFilters';
 import { SequenceFilters } from './Sequence/SequenceFilters';
+import { TimeseriesFilters } from './Timeseries/TimeseriesFilters';
 
 export interface Props {
   resourceType?: ResourceType;

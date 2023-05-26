@@ -1,4 +1,5 @@
 import { AggregateResponse, EventFilter } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../builders';
 import { AggregateFilters } from '../../types';
 import { EventsProperties } from '../internal';

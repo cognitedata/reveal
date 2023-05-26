@@ -1,11 +1,12 @@
-import { screen } from '@testing-library/react';
+import { useState } from 'react';
+
+import { isFDMv3 } from '@platypus-app/flags/isFDMv3';
 import render from '@platypus-app/tests/render';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
-import { isFDMv3 } from '@platypus-app/flags/isFDMv3';
 
-import { useState } from 'react';
 import {
   DataModelDetailModal,
   DataModelDetailModalProps,

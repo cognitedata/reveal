@@ -1,6 +1,8 @@
+import { v4 as uuid } from 'uuid';
+
 import { CogniteClient } from '@cognite/sdk';
 import { ContainerType } from '@cognite/unified-file-viewer';
-import { v4 as uuid } from 'uuid';
+
 import {
   IndustryCanvasContainerConfig,
   ThreeDContainerReference,

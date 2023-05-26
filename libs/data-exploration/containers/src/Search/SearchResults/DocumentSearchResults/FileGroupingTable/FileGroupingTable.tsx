@@ -1,13 +1,16 @@
 import React from 'react';
-import { Document, DocumentTable } from '@cognite/react-document-table';
+
+import { EmptyState } from '@data-exploration/components';
 import {
   InternalDocumentFilter,
   LOADING_RESULTS,
   REFINE_FILTERS_OR_UPDATE_SEARCH,
 } from '@data-exploration-lib/core';
 import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
+
+import { Document, DocumentTable } from '@cognite/react-document-table';
 import { FileInfo } from '@cognite/sdk/dist/src';
-import { EmptyState } from '@data-exploration/components';
+
 import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {

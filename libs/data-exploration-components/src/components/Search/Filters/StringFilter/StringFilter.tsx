@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Body, Input } from '@cognite/cogs.js';
 
 export const StringFilter = ({

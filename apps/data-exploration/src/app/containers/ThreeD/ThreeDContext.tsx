@@ -6,6 +6,13 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
+import noop from 'lodash/noop';
+
+import { Loader } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -13,11 +20,6 @@ import {
   ViewerState,
 } from '@cognite/reveal';
 
-import { Loader } from '@cognite/cogs.js';
-import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
-import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-import noop from 'lodash/noop';
-import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 import {
   getStateUrl,
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,

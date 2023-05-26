@@ -1,6 +1,7 @@
-import { TimeseriesFilter } from '@cognite/sdk/dist/src';
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 import isEmpty from 'lodash/isEmpty';
+
+import { TimeseriesFilter } from '@cognite/sdk/dist/src';
 
 export const mapInternalFilterToTimeseriesFilter = ({
   assetSubtreeIds,

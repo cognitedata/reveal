@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { notification as _notification } from 'antd';
 import {
   ArgsProps,
   NotificationApi,
   NotificationInstance,
 } from 'antd/lib/notification';
+
 import { Icon } from '@cognite/cogs.js';
 
 import 'antd/lib/notification/style/index.css';

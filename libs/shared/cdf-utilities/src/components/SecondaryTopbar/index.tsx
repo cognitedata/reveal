@@ -1,4 +1,8 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
 import {
   Button,
   Colors,
@@ -8,8 +12,6 @@ import {
   Flex,
   Title,
 } from '@cognite/cogs.js';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 
 import SecondaryTopbarDivider from './SecondaryTopbarDivider';
 

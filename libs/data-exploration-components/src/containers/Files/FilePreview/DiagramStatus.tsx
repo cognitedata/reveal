@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+
+import { Tooltip } from 'antd';
+
+import { Chip, ChipType, ChipProps } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Chip, ChipType, ChipProps } from '@cognite/cogs.js';
-import { Tooltip } from 'antd';
+
 import {
   PENDING_LABEL,
   INTERACTIVE_LABEL,

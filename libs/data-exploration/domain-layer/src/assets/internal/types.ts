@@ -1,5 +1,7 @@
-import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
 import { RelationshipLabels } from '@data-exploration-lib/core';
+
+import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
+
 import { MatchingLabels } from '../../types';
 
 export interface InternalAssetData {

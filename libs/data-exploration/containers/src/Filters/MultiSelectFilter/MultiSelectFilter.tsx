@@ -1,21 +1,23 @@
-import { OptionType } from '@cognite/cogs.js';
-
-import isEmpty from 'lodash/isEmpty';
-
 // import {
 //   MultiSelect,
 //   MultiSelectProps,
 // } from '@data-exploration-components/components';
-import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
+
+import { InputActionMeta } from 'react-select';
 
 import {
   FilterLabel,
   MultiSelect,
   MultiSelectProps,
 } from '@data-exploration/components';
-import { InputActionMeta } from 'react-select';
+import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 import compact from 'lodash/compact';
+import isEmpty from 'lodash/isEmpty';
+
+import { OptionType } from '@cognite/cogs.js';
+
 import { MultiSelectOptionType } from '../types';
+
 import { formatValue, isNilOption } from './utils';
 
 export interface MultiSelectFilterProps<ValueType>

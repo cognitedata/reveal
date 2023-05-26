@@ -1,9 +1,13 @@
-import { GridConfig } from '@cognite/cog-data-grid';
-import { Body, Button, Checkbox, Flex, Icon } from '@cognite/cogs.js';
+import { useCallback } from 'react';
+
+import styled, { css } from 'styled-components';
+
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ICellRendererParams } from 'ag-grid-community';
-import { useCallback } from 'react';
-import styled, { css } from 'styled-components';
+
+import { GridConfig } from '@cognite/cog-data-grid';
+import { Body, Button, Checkbox, Flex, Icon } from '@cognite/cogs.js';
+
 import { SuggestionsTableData } from './SuggestionsModal';
 
 export interface getGridConfigProps {

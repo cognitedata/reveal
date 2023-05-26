@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { PlotRange } from '../types';
 import { isUndefinedPlotRange } from '../utils/isUndefinedPlotRange';
+
 import { useDeepCallback, useDeepEffect } from './useDeep';
 
 interface Props {

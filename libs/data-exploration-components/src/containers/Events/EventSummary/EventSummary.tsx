@@ -1,26 +1,26 @@
-import { Asset, CogniteEvent } from '@cognite/sdk';
-import { useEventsMetadataColumns } from '@data-exploration/containers';
-import { ColumnDef } from '@tanstack/react-table';
+import React, { useMemo } from 'react';
 
 import {
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration/components';
-import React, { useMemo } from 'react';
-
-import {
-  useEventsSearchResultWithLabelsQuery,
-  InternalEventDataWithMatchingLabels,
-} from '@data-exploration-lib/domain-layer';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import noop from 'lodash/noop';
+import { useEventsMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
   getHiddenColumns,
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  useEventsSearchResultWithLabelsQuery,
+  InternalEventDataWithMatchingLabels,
+} from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
+
+import { Asset, CogniteEvent } from '@cognite/sdk';
 
 export const EventSummary = ({
   query = '',

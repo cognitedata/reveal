@@ -1,5 +1,7 @@
 import { Label } from '@cognite/sdk/dist/src';
+
 import { MatchingLabels } from '../types';
+
 import { isExactMatch } from './extractMatchingLabels';
 
 export const extractMatchingLabelsFromCogniteLabels = (

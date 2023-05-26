@@ -1,15 +1,16 @@
 import React from 'react';
-import { OptionType, Tooltip } from '@cognite/cogs.js';
-import { ResourceType } from '@data-exploration-components/types';
+
+import { MultiSelectFilter } from '@data-exploration-components/components';
 import { DataSetWCount } from '@data-exploration-components/hooks/sdk';
-
-import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
-
+import { ResourceType } from '@data-exploration-components/types';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { MultiSelectFilter } from '@data-exploration-components/components';
+import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
+
+import { OptionType, Tooltip } from '@cognite/cogs.js';
+
 import { OptionValue } from '../types';
 
 const formatOption = (dataset: DataSetWCount): OptionType<number> => {

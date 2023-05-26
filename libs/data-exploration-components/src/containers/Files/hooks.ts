@@ -1,13 +1,14 @@
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { sleep } from '@data-exploration-components/utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { notification } from 'antd';
+
 import {
   FileInfo,
   ExternalLabelDefinition,
   FileChangeUpdate,
 } from '@cognite/sdk';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { sleep } from '@data-exploration-components/utils';
-import { notification } from 'antd';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export const isFileApproved = (file: FileInfo) =>
   file.labels?.find(

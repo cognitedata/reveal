@@ -1,3 +1,7 @@
+import { useContext, useEffect, useState } from 'react';
+
+import styled from 'styled-components';
+
 import {
   Button,
   Colors,
@@ -9,9 +13,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
-import { useContext, useEffect, useState } from 'react';
 
-import styled from 'styled-components';
 import { ids } from '../../../../cogs-variables';
 import { ThreeDContext } from '../ThreeDContext';
 import { updateAllPointCloudsPointSize } from '../utils';

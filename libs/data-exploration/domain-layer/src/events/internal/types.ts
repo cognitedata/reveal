@@ -5,6 +5,7 @@ import {
   Metadata,
   Timestamp,
 } from '@cognite/sdk';
+
 import { MatchingLabels } from '../../types';
 
 export interface InternalEventsData {

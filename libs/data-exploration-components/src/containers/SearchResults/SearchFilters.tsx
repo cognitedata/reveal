@@ -1,10 +1,7 @@
 import React from 'react';
 
-import {
-  ResourceType,
-  OldResourceFilterProps,
-  SetOldResourceFilterProps,
-} from '@data-exploration-components/types';
+import styled from 'styled-components';
+
 import {
   AssetFilters,
   EventFilters,
@@ -12,8 +9,12 @@ import {
   SequenceFilters,
   TimeseriesFilters,
 } from '@data-exploration-components/components/Search';
+import {
+  ResourceType,
+  OldResourceFilterProps,
+  SetOldResourceFilterProps,
+} from '@data-exploration-components/types';
 import { lightGrey } from '@data-exploration-components/utils';
-import styled from 'styled-components';
 
 const TRANSITION_TIME = 200;
 export type FilterProps = Required<OldResourceFilterProps> &

@@ -7,6 +7,7 @@ import {
 import { Kind, ObjectTypeDefinitionNode } from 'graphql';
 
 import { NodeWrapper } from '../SchemaVisualizer';
+
 import { FullNode } from './FullNode';
 
 export default {

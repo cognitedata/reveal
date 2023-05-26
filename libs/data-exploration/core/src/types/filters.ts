@@ -6,6 +6,7 @@ import {
 } from '@cognite/sdk';
 
 import { METADATA_ALL_VALUE } from '../constants';
+
 import { ResourceType } from './resource';
 
 export type FilterResourceType = ResourceType | 'document' | 'common';
@@ -117,3 +118,12 @@ export interface OldFilesFilters
   extends Omit<InternalFilesFilters, 'metadata'> {
   metadata?: Metadata;
 }
+
+export const COMMON_FILTER_KEYS: readonly (keyof InternalCommonFilters)[] = [
+  'assetSubtreeIds',
+  'dataSetIds',
+  'createdTime',
+  'lastUpdatedTime',
+  'externalIdPrefix',
+  'internalId',
+] as const;

@@ -1,8 +1,8 @@
+import { NumberInput, NumberInputProps } from '@data-exploration/components';
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebouncedMetrics,
 } from '@data-exploration-lib/core';
-import { NumberInput, NumberInputProps } from '@data-exploration/components';
 
 export const InternalIdFilter = (props: NumberInputProps) => {
   const { onChange } = props;

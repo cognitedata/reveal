@@ -3,8 +3,10 @@ import {
   GlobalFilter,
   GlobalFilterKeys,
 } from '@data-exploration-app/store/filter/types';
-import { InternalCommonFilters } from '@data-exploration-lib/core';
-import { COMMON_FILTER_KEYS } from '@data-exploration-lib/domain-layer';
+import {
+  InternalCommonFilters,
+  COMMON_FILTER_KEYS,
+} from '@data-exploration-lib/core';
 import includes from 'lodash/includes';
 import isArray from 'lodash/isArray';
 import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';

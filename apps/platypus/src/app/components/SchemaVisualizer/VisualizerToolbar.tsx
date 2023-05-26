@@ -1,4 +1,5 @@
 import { Input, ToolBar } from '@cognite/cogs.js';
+
 import { ToolbarMenu } from './ToolbarMenu';
 
 export const VisualizerToolbar = ({

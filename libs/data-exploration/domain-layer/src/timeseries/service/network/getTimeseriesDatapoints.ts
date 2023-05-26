@@ -1,5 +1,7 @@
-import { CogniteClient, DatapointsMultiQuery } from '@cognite/sdk/dist/src';
 import chunk from 'lodash/chunk';
+
+import { CogniteClient, DatapointsMultiQuery } from '@cognite/sdk/dist/src';
+
 import { MAX_RESULT_LIMIT_DATAPOINTS } from '../../../constants';
 
 export const getTimeseriesDatapoints = (

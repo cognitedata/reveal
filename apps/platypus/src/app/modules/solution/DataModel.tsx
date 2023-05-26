@@ -1,10 +1,12 @@
-import { Body } from '@cognite/cogs.js';
+import { lazy } from 'react';
+import { Route, Routes, useParams } from 'react-router-dom';
+
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { lazy } from 'react';
-import { Route, Routes, useParams } from 'react-router-dom';
+
+import { Body } from '@cognite/cogs.js';
 
 const DataPage = lazy(() =>
   import('./DataLayout').then((module) => ({

@@ -1,22 +1,24 @@
-import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useParams } from 'react-router-dom';
 
-import { ErrorFeedback, ResourceTypes } from '@cognite/data-exploration';
-import { Tabs } from '@cognite/cogs.js';
+import { Loader, Metadata } from '@data-exploration/components';
+import { AssetInfo } from '@data-exploration/containers';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { Asset, CogniteError } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
-import { AssetInfo } from '@data-exploration/containers';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
+import { Tabs } from '@cognite/cogs.js';
+import { ErrorFeedback, ResourceTypes } from '@cognite/data-exploration';
+import { Asset, CogniteError } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { AssetHierarchyTab } from './AssetHierarchyTab';
 
 export type AssetPreviewTabType =

@@ -1,3 +1,5 @@
+import { getBuiltInTypesString } from '@platypus/platypus-common-utils';
+import { buildSchema } from 'graphql';
 import {
   CompletionItem,
   getAutocompleteSuggestions,
@@ -5,8 +7,7 @@ import {
   IRange as GLSRange,
 } from 'graphql-language-service';
 import { IRange, Position } from 'monaco-editor';
-import { buildSchema } from 'graphql';
-import { getBuiltInTypesString } from '@platypus/platypus-common-utils';
+
 import { CompletionItemKind, CompletionList } from './types';
 
 /**

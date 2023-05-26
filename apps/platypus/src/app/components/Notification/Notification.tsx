@@ -1,6 +1,8 @@
-import { Button, toast, ToastProps } from '@cognite/cogs.js';
-import { ValidationError } from '@platypus/platypus-core';
 import styled from 'styled-components';
+
+import { ValidationError } from '@platypus/platypus-core';
+
+import { Button, toast, ToastProps } from '@cognite/cogs.js';
 
 export const Notification = ({
   type,

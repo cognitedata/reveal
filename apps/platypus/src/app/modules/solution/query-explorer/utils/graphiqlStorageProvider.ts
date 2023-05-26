@@ -1,5 +1,5 @@
-import { StorageProvider } from '@platypus/platypus-core';
 import { Storage } from '@graphiql/toolkit';
+import { StorageProvider } from '@platypus/platypus-core';
 
 export class GraphiqlStorageProvider implements Storage {
   private prefix: string;

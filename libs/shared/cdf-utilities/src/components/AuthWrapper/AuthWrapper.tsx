@@ -1,4 +1,5 @@
 import React, { ReactNode, ReactElement, useEffect, useState } from 'react';
+
 import { Loader } from '@cognite/cogs.js';
 
 interface AuthWrapperProps {

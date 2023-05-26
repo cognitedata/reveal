@@ -1,4 +1,5 @@
 import { PlotRange } from '../types';
+
 import { isUndefinedPlotRange } from './isUndefinedPlotRange';
 
 export const isValidPlotRange = (range: Partial<PlotRange>) => {

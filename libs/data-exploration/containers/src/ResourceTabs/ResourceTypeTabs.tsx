@@ -1,4 +1,5 @@
 import React, { JSXElementConstructor } from 'react';
+
 import { TabProps, Tabs } from '@cognite/cogs.js';
 
 export interface Props {

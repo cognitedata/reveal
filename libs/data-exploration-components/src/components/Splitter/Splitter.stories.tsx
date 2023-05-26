@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
+
 import { Button, Title } from '@cognite/cogs.js';
+
 import { Splitter } from './Splitter';
 
 export default { title: 'Component/Splitter', component: Splitter };

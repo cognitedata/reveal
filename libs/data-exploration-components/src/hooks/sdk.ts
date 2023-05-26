@@ -1,4 +1,10 @@
+import {
+  isFileOfType,
+  fetchFilePreviewURL,
+} from '@data-exploration-components/utils';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import {
   CogniteClient,
   DataSet,
@@ -12,11 +18,6 @@ import {
   aggregateKey,
   aggregate,
 } from '@cognite/sdk-react-query-hooks';
-import {
-  isFileOfType,
-  fetchFilePreviewURL,
-} from '@data-exploration-components/utils';
-import { InternalDocument } from '@data-exploration-lib/domain-layer';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk

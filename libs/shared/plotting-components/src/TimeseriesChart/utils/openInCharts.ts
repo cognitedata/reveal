@@ -1,4 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
+
 import { DateRange } from '../types';
 
 /**

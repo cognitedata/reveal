@@ -1,30 +1,33 @@
-import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect, useContext, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { Loader, Metadata } from '@data-exploration/components';
+import { FileInfo } from '@data-exploration/containers';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
+import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import qs from 'query-string';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { createLink } from '@cognite/cdf-utilities';
+import { Tabs, Infobar } from '@cognite/cogs.js';
 import {
   FilePreview as CogniteFilePreview,
   ErrorFeedback,
   ResourceType,
 } from '@cognite/data-exploration';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo as FileInfoType } from '@cognite/sdk';
-import styled from 'styled-components';
-import { Tabs, Infobar } from '@cognite/cogs.js';
-import qs from 'query-string';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import {
-  useCurrentResourceId,
-  useOnPreviewTabChange,
-} from '@data-exploration-app/hooks/hooks';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
-import { FileInfo } from '@data-exploration/containers';
+import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export type FilePreviewTabType =
   | 'preview'

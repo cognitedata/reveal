@@ -1,4 +1,5 @@
 import { AggregateResponse, AssetFilterProps } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../builders';
 import { AggregateFilters } from '../../types';
 import { AssetsProperties } from '../internal';

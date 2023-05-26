@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+
 import { SegmentedControl, Tooltip } from '@cognite/cogs.js';
+
 import { FilterLabel } from '../../Labels/FilterLabel';
 
 export interface BooleanInputProps {

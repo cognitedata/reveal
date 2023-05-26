@@ -1,4 +1,5 @@
 import { createRef, useEffect, useState } from 'react';
+
 import { SplitPanel } from './elements';
 
 const MIN_WIDTH = 100;

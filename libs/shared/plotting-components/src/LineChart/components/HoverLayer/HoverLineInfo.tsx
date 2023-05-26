@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import head from 'lodash/head';
+import isUndefined from 'lodash/isUndefined';
 import { PlotHoverEvent } from 'plotly.js';
 
-import head from 'lodash/head';
-
-import isUndefined from 'lodash/isUndefined';
 import { Coordinate, HoverLineData } from '../../types';
 import { getLineInfoPosition } from '../../utils/getLineInfoPosition';
 import { getPointCustomData } from '../../utils/getPointCustomData';
+
 import { LineInfo, LineInfoPointer, LineInfoWrapper } from './elements';
 
 export const LINE_INFO_POINTER_SIZE = 9;

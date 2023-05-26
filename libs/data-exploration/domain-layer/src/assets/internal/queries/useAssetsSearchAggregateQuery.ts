@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
-import { UseQueryOptions } from '@tanstack/react-query';
 import {
   AssetConfigType,
   InternalAssetFilters,
 } from '@data-exploration-lib/core';
+import { UseQueryOptions } from '@tanstack/react-query';
+
 import { useAssetsAggregateQuery } from '../../service';
 import {
   mapFiltersToAssetsAdvancedFilters,

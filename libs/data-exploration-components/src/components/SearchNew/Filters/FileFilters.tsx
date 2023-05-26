@@ -1,13 +1,16 @@
 import React from 'react';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
 import { InternalFilesFilters } from '@data-exploration-lib/core';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
+import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
+import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { DateFilterV2 } from './DateFilter/DateFilter';
 import { LabelFilterV2 } from './LabelFilter/LabelFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
-import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { StringFilterV2 } from './StringFilter/StringFilter';
-import { DateFilterV2 } from './DateFilter/DateFilter';
-import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 export const FileFilters = ({
   filter,

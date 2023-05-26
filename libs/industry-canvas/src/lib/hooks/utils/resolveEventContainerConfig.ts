@@ -1,5 +1,7 @@
-import { CogniteClient } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
+
+import { CogniteClient } from '@cognite/sdk';
+
 import {
   EventContainerReference,
   IndustryCanvasContainerConfig,
@@ -8,6 +10,7 @@ import {
   DEFAULT_EVENT_HEIGHT,
   DEFAULT_EVENT_WIDTH,
 } from '../../utils/addDimensionsToContainerReference';
+
 import getEventTableContainerConfig, {
   getEventTableTitle,
 } from './getEventTableContainerConfig';

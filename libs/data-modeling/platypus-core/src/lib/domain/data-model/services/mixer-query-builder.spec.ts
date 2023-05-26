@@ -1,4 +1,5 @@
 import { mixerApiInlineTypeDirectiveName } from '../constants';
+
 import { MixerQueryBuilder, OPERATION_TYPE } from './mixer-query-builder';
 
 const typeDefsMock = {

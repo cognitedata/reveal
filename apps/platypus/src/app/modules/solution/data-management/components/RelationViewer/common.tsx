@@ -1,6 +1,8 @@
-import { Chip, Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import uniqolor from 'uniqolor';
+
+import { Chip, Colors, Flex, Icon } from '@cognite/cogs.js';
 
 const getColor = (key: string) => uniqolor(key);
 

@@ -1,15 +1,19 @@
 import React, { FC, useMemo } from 'react';
-import { Collapse, Title } from '@cognite/cogs.js';
+
+import styled from 'styled-components';
+
+import { ResourceDetailsTemplate } from '@data-exploration/components';
 import {
   useAssetsByIdQuery,
   useTimeseriesByIdsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ResourceDetailsTemplate } from '@data-exploration/components';
-import styled from 'styled-components';
-import { TimeseriesInfo } from '../../Info';
-import { AssetDetailsTable } from '../../DetailsTable';
-import { onOpenResources } from '../AssetDetails';
+
+import { Collapse, Title } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
+
+import { AssetDetailsTable } from '../../DetailsTable';
+import { TimeseriesInfo } from '../../Info';
+import { onOpenResources } from '../AssetDetails';
 
 interface Props {
   timeseriesId: number;

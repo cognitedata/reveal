@@ -1,16 +1,18 @@
+import { useMemo } from 'react';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import dayjs from 'dayjs';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import {
   getResourceIdFromExtendedAnnotation,
   isAssetAnnotation,
 } from '@cognite/data-exploration';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import dayjs from 'dayjs';
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
-import { useMemo } from 'react';
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
-import { ContainerReferenceType } from '../types';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
+import { ContainerReferenceType } from '../types';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { getCogniteSDKClient } from '../../cogniteSdk';
 
 export const useAssets = () => {

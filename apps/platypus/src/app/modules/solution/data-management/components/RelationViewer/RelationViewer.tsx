@@ -1,22 +1,26 @@
-import { Chip, Menu } from '@cognite/cogs.js';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import {
   Graph,
   getLinkId,
   Node,
 } from '@platypus-app/components/Graph/GraphEngine';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import { SimulationLinkDatum } from 'd3';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import uniqolor from 'uniqolor';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+
+import { Chip, Menu } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
+
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
-import { getNodeId, getRelationLinkId, getRelationshipsForData } from './utils';
+
 import { RelationNode } from './RelationNode';
+import { getNodeId, getRelationLinkId, getRelationshipsForData } from './utils';
 
 const getColor = (key: string) => uniqolor(key);
 

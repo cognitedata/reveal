@@ -1,5 +1,6 @@
-import { SpacedRow } from '@data-exploration/components';
 import React from 'react';
+
+import { SpacedRow } from '@data-exploration/components';
 import styled from 'styled-components/macro';
 
 export const SearchResultToolbar = ({

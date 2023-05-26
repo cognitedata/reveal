@@ -1,5 +1,6 @@
-import { Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Input } from '@cognite/cogs.js';
 
 export const MetadataCard = styled.div`
   background-color: var(--cogs-surface--medium);

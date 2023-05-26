@@ -1,13 +1,17 @@
-import { InternalThreeDModelData } from '@data-exploration-lib/domain-layer';
-import { Table, TableProps } from '@data-exploration/components';
 import React, { useMemo, useState } from 'react';
-import { ColumnDef, SortingState } from '@tanstack/react-table';
+
 import styled from 'styled-components';
+
+import { Table, TableProps } from '@data-exploration/components';
+import { InternalThreeDModelData } from '@data-exploration-lib/domain-layer';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
+
 import { Icon } from '@cognite/cogs.js';
+
 import { Image360Display } from './Image360Display';
 import { ThreeDModelDisplay } from './ThreeDModelDisplay';
-import { ThreeDRevisions } from './ThreeDRevisions';
 import { ThreeDModelLastUpdated } from './ThreeDModelLastUpdated';
+import { ThreeDRevisions } from './ThreeDRevisions';
 
 interface ThreeDTableProps
   extends Omit<TableProps<InternalThreeDModelData>, 'columns'> {

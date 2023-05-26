@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React from 'react';
-import { Button, ButtonProps } from '@cognite/cogs.js';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
+
 /* eslint-disable no-nested-ternary */
 import dayjs from 'dayjs';
-
 import range from 'lodash/range';
+
+import { Button, ButtonProps } from '@cognite/cogs.js';
+
 import {
   DatePickerButtonWrapper,
   MonthSelect,

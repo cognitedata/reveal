@@ -1,5 +1,6 @@
-import { Splitter } from '@cognite/data-exploration';
 import styled from 'styled-components';
+
+import { Splitter } from '@cognite/data-exploration';
 
 export const TempCommonMultiSelectFix = styled.div`
   && {

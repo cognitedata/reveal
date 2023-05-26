@@ -1,6 +1,8 @@
-import { Button } from '@cognite/cogs.js';
-import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
+
+import { ICellRendererParams } from 'ag-grid-community';
+
+import { Button } from '@cognite/cogs.js';
 
 export const DataModelActionsCellRenderer = React.memo(
   (params: ICellRendererParams) => {

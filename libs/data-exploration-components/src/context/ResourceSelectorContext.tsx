@@ -1,4 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react';
+
 import { ResourceSelectionSidebar } from '@data-exploration-components/containers/ResourceSidebar';
 import {
   ResourceItem,

@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk/dist/src/index';
+
 import plainGptPrompt from './plainGptPrompt';
 
 const summarizeText = async (

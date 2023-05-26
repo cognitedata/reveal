@@ -1,5 +1,7 @@
-import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+
 import { useFileInfo } from '../../../hooks/useFileInfo';
 import * as ContextualTooltip from '../ContextualTooltip';
 

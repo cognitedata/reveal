@@ -1,4 +1,5 @@
 import useLocalStorageState from 'use-local-storage-state';
+
 import { SEARCH_CONFIG_LOCAL_STORAGE_KEY } from '../../constants';
 import { SearchConfigDataType } from '../../types';
 

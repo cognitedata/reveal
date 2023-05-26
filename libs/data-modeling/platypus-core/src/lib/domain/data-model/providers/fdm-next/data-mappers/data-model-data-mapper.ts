@@ -1,4 +1,5 @@
 import { DataModel } from '@platypus-core/domain/data-model/types';
+
 import { GraphQlDmlVersionDTO } from '../dto/mixer-api-dtos';
 
 export class DataModelDataMapper {

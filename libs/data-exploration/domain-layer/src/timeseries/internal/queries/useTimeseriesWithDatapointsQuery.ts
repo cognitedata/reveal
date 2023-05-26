@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { useTimeseriesLatestDataPointQuery } from '../../service';
 
 export const useTimeseriesWithDatapointsQuery = (

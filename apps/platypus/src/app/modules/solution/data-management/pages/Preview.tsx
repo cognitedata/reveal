@@ -1,13 +1,3 @@
-import { getQueryParameter } from '@cognite/cdf-utilities';
-import { Flex, Modal } from '@cognite/cogs.js';
-import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
-
-import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { useEffect, useRef } from 'react';
 import {
   useLocation,
@@ -15,18 +5,30 @@ import {
   useSearchParams,
   useParams,
 } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
+
+import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
+import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
+import { useQueryClient } from '@tanstack/react-query';
+
+import { getQueryParameter } from '@cognite/cdf-utilities';
+import { Flex, Modal } from '@cognite/cogs.js';
+
 import {
   DataPreviewTable,
   DataPreviewTableRef,
 } from '../components/DataPreviewTable/DataPreviewTable';
 import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
 import { TypeList } from '../components/TypeList/TypeList';
-import { useDraftRows } from '../hooks/useDraftRows';
 import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
+import { useDraftRows } from '../hooks/useDraftRows';
 
 export interface PreviewProps {
   dataModelExternalId: string;

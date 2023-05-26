@@ -1,6 +1,9 @@
-import { Flex, Icon } from '@cognite/cogs.js';
-import { ICellRendererParams } from 'ag-grid-community';
 import styled from 'styled-components';
+
+import { ICellRendererParams } from 'ag-grid-community';
+
+import { Flex, Icon } from '@cognite/cogs.js';
+
 import { ColumnDataType } from '../core/types';
 
 interface IListCellRendererProps extends ICellRendererParams {

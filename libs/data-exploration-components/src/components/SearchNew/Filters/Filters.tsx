@@ -1,14 +1,14 @@
 import React from 'react';
 
+import styled from 'styled-components';
+
+import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
 import {
   ResourceType,
   ResourceFilterProps,
   SetResourceFilterProps,
 } from '@data-exploration-components/types';
-import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
-import styled from 'styled-components';
-import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { ResetFiltersButton } from './ResetFiltersButton';
+
 import {
   AssetFiltersV2,
   EventFilters,
@@ -16,6 +16,8 @@ import {
   SequenceFilters,
   TimeseriesFilters,
 } from '.';
+import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { ResetFiltersButton } from './ResetFiltersButton';
 
 export type FilterProps = Required<ResourceFilterProps> &
   SetResourceFilterProps & {

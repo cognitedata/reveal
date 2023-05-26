@@ -1,5 +1,6 @@
 import Conf from 'conf';
 import { v4 } from 'uuid';
+
 import { CONSTANTS, ROOT_CONFIG_KEY } from '../constants';
 import { ProjectConfig } from '../types';
 let config: Conf<ConfType>;

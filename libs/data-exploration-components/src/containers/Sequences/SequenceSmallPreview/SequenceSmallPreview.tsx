@@ -1,7 +1,7 @@
-import { Loader } from '@data-exploration/components';
 import React from 'react';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { CogniteError, Sequence } from '@cognite/sdk';
+
+import { Loader } from '@data-exploration/components';
+import { SequenceInfo } from '@data-exploration/containers';
 import {
   ErrorFeedback,
   InfoGrid,
@@ -9,15 +9,16 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components';
-import { Title, Body } from '@cognite/cogs.js';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import {
   SmallPreviewProps,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import noop from 'lodash/noop';
-import { SequenceInfo } from '@data-exploration/containers';
+
+import { Title, Body } from '@cognite/cogs.js';
+import { CogniteError, Sequence } from '@cognite/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 export const SequenceSmallPreview = ({
   sequenceId,

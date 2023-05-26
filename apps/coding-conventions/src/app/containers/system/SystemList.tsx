@@ -1,7 +1,10 @@
-import { Flex, Icon, Loader } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
+
+import { Flex, Icon, Loader } from '@cognite/cogs.js';
+
 import { EmptyCard } from '../../components/Card';
 import { useSystemListQuery } from '../../service/hooks/query/useSystemListQuery';
+
 import { SystemItem } from './SystemItem';
 
 interface Props {

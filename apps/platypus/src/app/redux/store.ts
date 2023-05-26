@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useDispatch } from 'react-redux';
+
+import { environment } from '@platypus-app/environment';
 import { KeyValueStore } from '@platypus-app/types';
 import {
   configureStore,
@@ -6,14 +9,12 @@ import {
   ThunkDispatch,
   AnyAction,
 } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
 
-import { environment } from '@platypus-app/environment';
-import globalReducer from './reducers/global/globalReducer';
-import dataModelSlice from './reducers/global/dataModelReducer';
-import dataManagementSlice from './reducers/global/dataManagementReducer';
 import { draftRowsLocalStorageMiddleware } from './middlewares/dataManagementMiddleware';
 import { graphQlSchemaLocalStorageMiddleware } from './middlewares/dataModelMiddleware';
+import dataManagementSlice from './reducers/global/dataManagementReducer';
+import dataModelSlice from './reducers/global/dataModelReducer';
+import globalReducer from './reducers/global/globalReducer';
 
 const createReducer = (asyncReducers: any) => {
   return combineReducers({

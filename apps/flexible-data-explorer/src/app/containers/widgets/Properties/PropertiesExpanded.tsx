@@ -1,5 +1,6 @@
 import { GeneralDetails } from '../../../components/details';
 import { Widget } from '../../../components/widget/Widget';
+
 import { PropertiesProps } from './PropertiesWidget';
 
 export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {

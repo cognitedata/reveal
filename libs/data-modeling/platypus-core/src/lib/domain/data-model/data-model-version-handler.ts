@@ -3,7 +3,9 @@ import {
   Validator,
   ValidatorResult,
 } from '@platypus-core/boundaries/validation';
+
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
+
 import { FlexibleDataModelingClient, IGraphQlUtilsService } from './boundaries';
 import { mixerApiBuiltInTypes } from './constants';
 import {
@@ -15,7 +17,6 @@ import {
   PublishDataModelVersionDTO,
   RunQueryDTO,
 } from './dto';
-
 import {
   DataModelValidationError,
   DataModelVersion,

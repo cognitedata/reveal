@@ -5,6 +5,7 @@ import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 
 import App from '../../app/App';
 import { translations } from '../../app/common';
+
 import { AuthContainerMock } from './AuthContainerMock';
 
 export const AppWrapper = () => {

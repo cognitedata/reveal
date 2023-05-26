@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/extend-expect';
 
 import { screen, fireEvent } from '@testing-library/react';
-import { renderComponent } from '../../../__test-utils';
 
+import { renderComponent } from '../../../__test-utils';
 import { SearchInput, SearchInputProps } from '../SearchInput';
 
 describe('NestedFilter/SearchInput', () => {

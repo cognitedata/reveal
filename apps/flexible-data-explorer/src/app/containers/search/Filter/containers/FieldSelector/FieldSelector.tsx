@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { Menu, MenuHeader, MenuItem, SearchInput } from '../../components';
 import { Field } from '../../types';
+
 import { getFilteredFields, getMenuItemIcon } from './utils';
 
 export interface FieldSelectorProps {

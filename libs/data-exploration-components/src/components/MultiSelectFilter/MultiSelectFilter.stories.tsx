@@ -1,5 +1,6 @@
-import { OptionType } from '@cognite/cogs.js';
 import { ComponentStory } from '@storybook/react';
+
+import { OptionType } from '@cognite/cogs.js';
 
 import { MultiSelectFilter } from './MultiSelectFilter';
 

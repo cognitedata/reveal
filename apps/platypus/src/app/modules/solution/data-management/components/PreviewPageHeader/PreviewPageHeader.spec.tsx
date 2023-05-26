@@ -1,10 +1,11 @@
-import { screen } from '@testing-library/react';
-import render from '@platypus-app/tests/render';
-import '@testing-library/jest-dom/extend-expect';
 import { DataModelTransformation } from '@platypus/platypus-core';
-import noop from 'lodash/noop';
-import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
 import * as flags from '@platypus-app/flags';
+import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
+import render from '@platypus-app/tests/render';
+import { screen } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import noop from 'lodash/noop';
+
 import { PreviewPageHeader } from './PreviewPageHeader';
 
 jest.mock('@platypus-app/flags');

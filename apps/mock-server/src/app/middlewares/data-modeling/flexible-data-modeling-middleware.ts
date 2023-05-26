@@ -1,15 +1,16 @@
 import { Router } from 'express';
 import { graphql } from 'graphql';
-import { CdfApiConfig, CdfMockDatabase, ExtendedRouter } from '../../types';
-import { CdfDatabaseService } from '../../common/cdf-database.service';
-import { buildSchemaServiceMetaApiMockServer } from './mixerAPi/metaApi/graphql-api-builder';
 
+import { CdfDatabaseService } from '../../common/cdf-database.service';
+import { CdfApiConfig, CdfMockDatabase, ExtendedRouter } from '../../types';
+
+import dmsInstancesApiRouter from './dms/instances-middleware';
 import {
   buildFromMockDb,
   buildMixerApiGraphQlServersFromMockDb,
 } from './mixerAPi/applicationAPI/graphql-mock-server-builder';
+import { buildSchemaServiceMetaApiMockServer } from './mixerAPi/metaApi/graphql-api-builder';
 import { createMockServerKey } from './utils/graphql-server-utils';
-import dmsInstancesApiRouter from './dms/instances-middleware';
 
 export default function (db: CdfMockDatabase, config: CdfApiConfig) {
   let schemaServiceDb = db;

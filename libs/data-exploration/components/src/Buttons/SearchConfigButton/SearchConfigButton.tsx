@@ -1,10 +1,12 @@
+import styled from 'styled-components';
+
 import {
   Button,
   ButtonProps,
   NotificationDot,
   Tooltip,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
+
 import { BaseIcon } from '../../Icons';
 
 type Props = ButtonProps & {

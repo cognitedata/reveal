@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 
-import { OptionType, Select as CogsSelect } from '@cognite/cogs.js';
-
 import head from 'lodash/head';
 import isUndefined from 'lodash/isUndefined';
+
+import { OptionType, Select as CogsSelect } from '@cognite/cogs.js';
 
 import { SelectWrapper } from './elements';
 import { mapOptionsToOptionType, mapOptionToOptionType } from './utils';

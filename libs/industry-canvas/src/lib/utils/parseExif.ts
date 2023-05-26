@@ -1,5 +1,6 @@
-import { FileGeoLocation } from '@cognite/sdk/dist/src';
 import exifr from 'exifr';
+
+import { FileGeoLocation } from '@cognite/sdk/dist/src';
 
 // The exifr library isn't properly typed, so we define the types ourselves
 export type ExifTags = {

@@ -1,4 +1,5 @@
 import { Position } from 'monaco-editor';
+
 import { CodeCompletionService } from './CodeCompletionService';
 
 const doCompletePropsFieldLevelMockCurrentCode = 'type A{    phrase: String @';

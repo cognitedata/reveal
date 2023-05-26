@@ -1,6 +1,8 @@
+import React, { useMemo, useState } from 'react';
+
 import { ComponentStory } from '@storybook/react';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
-import React, { useMemo, useState } from 'react';
+
 import { Table } from './Table';
 
 export default {

@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
+
 import { DocumentsAggregateUniqueValuesItem, Label } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../../builders';
 import { queryKeys } from '../../../../queryKeys';
-import { getDocumentsAggregate } from '../../network';
 import { DocumentProperties } from '../../../internal';
+import { getDocumentsAggregate } from '../../network';
 
 interface Props {
   filter?: AdvancedFilter<DocumentProperties>;

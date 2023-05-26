@@ -1,6 +1,7 @@
 import { ResourceItem } from '@cognite/data-exploration';
 import { CogniteClient } from '@cognite/sdk';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+
 import isSupportedResourceType from './isSupportedResourceType';
 
 const isSupportedResourceItem = async (

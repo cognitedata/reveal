@@ -1,8 +1,9 @@
 import * as React from 'react';
 
 import { ResetButton } from '@data-exploration-app/components/Buttons/ResetButton';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+
 import { BaseFilterHeader } from './BaseFilterHeader';
 import { Collapse, Container, Panel } from './elements';
 

@@ -1,22 +1,24 @@
-import { TimeseriesSearchResults } from '@data-exploration/containers';
 import { Routes, Route } from 'react-router-dom';
+
+import { TimeseriesSearchResults } from '@data-exploration/containers';
+import { routes } from '@data-exploration-app/containers/App';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import { useTimeseriesFilters } from '@data-exploration-app/store';
+import { TimeseriesPreview } from '@data-exploration-app/containers/Timeseries/TimeseriesPreview';
 import { useDateRange } from '@data-exploration-app/hooks';
-import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
   useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
-import { useDebounce } from 'use-debounce';
+import { useTimeseriesFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { TimeseriesPreview } from '@data-exploration-app/containers/Timeseries/TimeseriesPreview';
-import { routes } from '@data-exploration-app/containers/App';
-import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
+import { useDebounce } from 'use-debounce';
+
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk/dist/src/types';
 
 export const TimeseriesSearchResultView = () => {

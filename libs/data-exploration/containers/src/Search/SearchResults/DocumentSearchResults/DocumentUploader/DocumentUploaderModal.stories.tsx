@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Button } from '@cognite/cogs.js';
+
 import { action } from '@storybook/addon-actions';
+
+import { Button } from '@cognite/cogs.js';
+
 import { DocumentUploaderModal } from './DocumentUploaderModal';
 
 export default {

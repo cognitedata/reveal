@@ -1,16 +1,19 @@
-import { AppliedFiltersTags } from '@data-exploration/containers';
 import React from 'react';
-import { Asset, FileInfo } from '@cognite/sdk';
-import { FileTable } from '@data-exploration-components/containers/Files';
-import { convertResourceType } from '@data-exploration-components/types';
+
+import styled from 'styled-components';
 
 import { EmptyState } from '@data-exploration/components';
-import styled from 'styled-components';
-import { Flex } from '@cognite/cogs.js';
-
+import { AppliedFiltersTags } from '@data-exploration/containers';
 import { useResultCount } from '@data-exploration-components/components';
+import { FileTable } from '@data-exploration-components/containers/Files';
+import { convertResourceType } from '@data-exploration-components/types';
 import { InternalFilesFilters } from '@data-exploration-lib/core';
+
+import { Flex } from '@cognite/cogs.js';
+import { Asset, FileInfo } from '@cognite/sdk';
+
 import { useResourceResults } from '..';
+
 import { FileToolbar } from './FileToolbar';
 
 export const FileSearchResults = ({

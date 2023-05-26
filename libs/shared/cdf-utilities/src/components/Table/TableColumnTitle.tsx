@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react';
-import { Body, Button, Flex, Tooltip, TooltipProps } from '@cognite/cogs.js';
-import { ColumnType, SortOrder } from 'antd/lib/table/interface';
+
 import styled from 'styled-components';
+
+import { ColumnType, SortOrder } from 'antd/lib/table/interface';
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
+import { Body, Button, Flex, Tooltip, TooltipProps } from '@cognite/cogs.js';
 
 type TableColumnTitleProps<RecordType> = {
   _key: ColumnType<RecordType>['key'];

@@ -1,4 +1,3 @@
-import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelsHandler,
@@ -13,6 +12,8 @@ import {
   ViewsApiService,
   DataModelsApiService,
 } from '@platypus/platypus-core';
+import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
+
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const getMixerApiService = () => {

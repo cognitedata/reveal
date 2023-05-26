@@ -1,9 +1,10 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import {
   ContainerType,
   getPdfCache,
   TooltipAnchorPosition,
 } from '@cognite/unified-file-viewer';
-import { useEffect, useMemo, useState } from 'react';
 
 import { IndustryCanvasContainerConfig } from '../../types';
 import { UseManagedStateReturnType } from '../useManagedState';
@@ -11,6 +12,7 @@ import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
 } from '../useTooltipsOptions';
+
 import ContainerTooltip from './ContainerTooltip';
 import useContainerOcrData from './useContainerOcrData';
 

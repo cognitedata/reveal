@@ -1,11 +1,14 @@
-import { getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { getCluster, getProject } from '@cognite/cdf-utilities';
+import { useEffect, useMemo } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+
 import config from '@platypus-app/config/config';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import mixpanel, { Dict } from 'mixpanel-browser';
-import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useLocation, useParams } from 'react-router-dom';
+import mixpanel, { Dict } from 'mixpanel-browser';
+
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
+
 import { environment } from '../../environments/environment';
 
 // https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3929277073/User+Metrics+-+Mixpanel

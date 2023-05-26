@@ -1,11 +1,19 @@
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { ThemeProvider } from 'styled-components';
+
+import RootApp from '@data-exploration-app/containers/App';
 import GlobalStyle from '@data-exploration-app/styles/global-styles';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import AntStyles from '@data-exploration-app/styles/Styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import collapseStyle from 'rc-collapse/assets/index.css';
+import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
+import { RecoilRoot } from 'recoil';
+import { RecoilDevTools } from 'recoil-gear';
+import { RecoilURLSyncJSON } from 'recoil-sync';
+
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   SubAppWrapper,
@@ -13,17 +21,12 @@ import {
   getProject,
   getEnv,
 } from '@cognite/cdf-utilities';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import { ErrorBoundary } from '@cognite/react-errors';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
-import RootApp from '@data-exploration-app/containers/App';
-import AntStyles from '@data-exploration-app/styles/Styles';
-import { Loader, ToastContainer } from '@cognite/cogs.js';
-import collapseStyle from 'rc-collapse/assets/index.css';
-import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
-import { RecoilRoot } from 'recoil';
-import { RecoilURLSyncJSON } from 'recoil-sync';
-import { RecoilDevTools } from 'recoil-gear';
-import { ErrorBoundary } from '@cognite/react-errors';
+
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';
 

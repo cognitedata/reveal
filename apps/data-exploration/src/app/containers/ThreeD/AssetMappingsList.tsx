@@ -1,20 +1,24 @@
 import React, { useMemo } from 'react';
-import { createLink } from '@cognite/cdf-utilities';
-import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
+
 import styled from 'styled-components';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { CogniteError } from '@cognite/sdk';
-import noop from 'lodash/noop';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+
 import { SearchEmpty } from '@data-exploration/components';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import noop from 'lodash/noop';
 import uniqBy from 'lodash/uniqBy';
-import { prepareSearchString, grepContains } from './utils';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
+import { CogniteError } from '@cognite/sdk';
+
 import { AugmentedMapping } from './hooks';
+import { prepareSearchString, grepContains } from './utils';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;

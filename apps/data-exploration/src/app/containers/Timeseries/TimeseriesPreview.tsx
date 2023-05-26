@@ -1,25 +1,26 @@
-import { Loader, Metadata } from '@data-exploration/components';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { CogniteError, Timeseries } from '@cognite/sdk';
-import { Tabs } from '@cognite/cogs.js';
-import { ErrorFeedback } from '@cognite/data-exploration';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 
+import styled from 'styled-components';
+
+import { Loader, Metadata } from '@data-exploration/components';
+import { TimeseriesInfo } from '@data-exploration/containers';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
+import { usePreviewDateRange } from '@data-exploration-app/hooks';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
-import styled from 'styled-components';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import { usePreviewDateRange } from '@data-exploration-app/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
+import { Tabs } from '@cognite/cogs.js';
+import { ErrorFeedback } from '@cognite/data-exploration';
 import { TimeseriesChart } from '@cognite/plotting-components';
-import { TimeseriesInfo } from '@data-exploration/containers';
+import { CogniteError, Timeseries } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export type TimeseriesPreviewTabType =
   | 'details'

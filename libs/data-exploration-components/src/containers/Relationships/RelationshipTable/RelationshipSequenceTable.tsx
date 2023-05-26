@@ -5,13 +5,14 @@ import {
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
+import { ResultCount } from '@data-exploration-components/components';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-import { ResultCount } from '@data-exploration-components/components';
 import { SequenceWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
+
 import { RelationshipTableProps } from './RelationshipTable';
 
 const {

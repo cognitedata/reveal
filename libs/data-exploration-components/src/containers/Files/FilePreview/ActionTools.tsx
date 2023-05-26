@@ -1,12 +1,17 @@
 import React from 'react';
-import { FileInfo } from '@cognite/sdk';
+
 import styled from 'styled-components';
-import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
-import { UnifiedViewer } from '@cognite/unified-file-viewer';
+
 import noop from 'lodash/noop';
+
+import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+import { UnifiedViewer } from '@cognite/unified-file-viewer';
+
 import { EditFileButton, ShowHideDetailsButton } from '../../../components';
-import { SearchBar, SearchBarProps } from './SearchBar';
+
 import { UseSearchBarState } from './hooks/useSearchBarState';
+import { SearchBar, SearchBarProps } from './SearchBar';
 
 export const ActionTools = ({
   file,

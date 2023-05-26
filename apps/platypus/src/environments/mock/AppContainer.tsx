@@ -1,6 +1,8 @@
 import React from 'react';
-import { Store } from 'redux';
 import { Provider as ReduxProvider } from 'react-redux';
+
+import { Store } from 'redux';
+
 import { AuthContainerMock } from './AuthContainerMock';
 import '@cognite/cogs.js/dist/cogs.css';
 

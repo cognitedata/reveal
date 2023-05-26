@@ -1,4 +1,5 @@
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
+
 import { getType } from '../../../../utils';
 import { mixerApiV3CustomDirectives } from '../../config/schema-service-api';
 

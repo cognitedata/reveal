@@ -1,4 +1,7 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
 import {
   Button,
   Colors,
@@ -9,14 +12,12 @@ import {
   Menu,
   Overline,
 } from '@cognite/cogs.js';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Asset } from '@cognite/sdk';
-
-import styled from 'styled-components';
 import {
   ResourceType,
   useRelatedResourceCounts,
 } from '@cognite/data-exploration';
+import { Asset } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export type ResourceTabType = 'details' | ResourceType;
 

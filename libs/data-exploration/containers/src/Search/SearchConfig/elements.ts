@@ -1,6 +1,8 @@
-import { Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { BaseCheckbox } from '@data-exploration/components';
+
+import { Flex } from '@cognite/cogs.js';
 
 export const ModalCheckbox = styled(BaseCheckbox)`
   padding: 8px;

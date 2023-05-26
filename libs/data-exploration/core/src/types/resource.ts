@@ -1,5 +1,5 @@
-import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { AllIconTypes } from '@cognite/cogs.js';
+import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 export enum ResourceTypes {
   Asset = 'asset',
@@ -17,6 +17,13 @@ export type ResourceType =
   | 'file'
   | 'event'
   | 'threeD';
+
+export type ResourceSelectionMode = 'single' | 'multiple';
+export type SelectableItemsProps = {
+  onSelect: (item: ResourceItem) => void;
+  selectionMode: ResourceSelectionMode;
+  isSelected: (item: ResourceItem) => boolean;
+};
 
 // Temporary mapping of the two almost identical types. Should be
 // removed as soon as possible, but that requires a full refactor

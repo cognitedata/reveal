@@ -1,5 +1,7 @@
 import React, { PropsWithChildren } from 'react';
+
 import styled, { css } from 'styled-components';
+
 import { useExpandedIdParams } from '../../../hooks/useParams';
 
 export const PageWidgets: React.FC<PropsWithChildren> = ({ children }) => {

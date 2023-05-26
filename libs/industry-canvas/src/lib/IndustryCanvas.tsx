@@ -1,27 +1,29 @@
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+
+import styled from 'styled-components';
+
+import { isDevelopment } from '@cognite/cdf-utilities';
+import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
   ToolType,
   UnifiedViewer,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
-import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
-import styled from 'styled-components';
-import { isDevelopment } from '@cognite/cdf-utilities';
-import { useSDK } from '@cognite/sdk-provider';
-import useEditOnSelect from './hooks/useEditOnSelect';
 
-import { UseManagedStateReturnType } from './hooks/useManagedState';
-import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import ToolbarComponent from './components/ToolbarComponent';
 import ZoomControls from './components/ZoomControls';
 import { ZOOM_TO_FIT_MARGIN } from './constants';
-import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
-import getContainerSummarizationSticky from './utils/getSummarizationSticky';
-import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
+import useEditOnSelect from './hooks/useEditOnSelect';
+import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
+import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
-import { OnAddContainerReferences } from './IndustryCanvasPage';
-import summarizeText from './utils/summarizeText';
 import { useTooltipsOptions } from './hooks/useTooltipsOptions';
+import { OnAddContainerReferences } from './IndustryCanvasPage';
+import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
+import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
+import getContainerSummarizationSticky from './utils/getSummarizationSticky';
+import summarizeText from './utils/summarizeText';
 
 export type IndustryCanvasProps = {
   id: string;

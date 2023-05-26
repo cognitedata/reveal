@@ -1,6 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { sdkMock } from '@data-exploration-components/docs/stub';
+
 import { DataExplorationProvider } from '../context/DataExplorationContext';
 
 export const Container = styled.div`

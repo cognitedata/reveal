@@ -1,8 +1,9 @@
-import { FilterChip } from '@data-exploration/containers';
 import React, { useState } from 'react';
 
-import { FilterItem } from './FilterItem';
+import { FilterChip } from '@data-exploration/containers';
+
 import { Tags, Wrapper } from './elements';
+import { FilterItem } from './FilterItem';
 
 export type FilterFormProps = {
   metadata: {

@@ -1,10 +1,11 @@
+import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
 import {
   ListQueryParams,
   SearchParams,
   SpaceDTO,
   SpaceInstanceDTO,
 } from '../../dto/dms-space-dtos';
-import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
+
 import { BaseApiService } from './base-api.service';
 
 export class SpacesApiService extends BaseApiService {

@@ -1,9 +1,12 @@
-import { Body, Button, Title, Flex } from '@cognite/cogs.js';
+import { useState } from 'react';
+
+import styled from 'styled-components';
+
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
-import { useState } from 'react';
-import styled from 'styled-components';
+
+import { Body, Button, Title, Flex } from '@cognite/cogs.js';
 
 import { EllipsisMenu } from './EllipsisMenu';
 import { TypeDeleteModal } from './TypeDeleteModal';

@@ -1,6 +1,8 @@
+import { Component } from 'react';
+
 import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
 import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
-import { Component } from 'react';
+
 import { TypeSelect } from '../../SchemaTypeAndField/TypeSelect';
 
 interface FieldNameEditorState {

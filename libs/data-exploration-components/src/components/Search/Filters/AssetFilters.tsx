@@ -1,14 +1,5 @@
 import React from 'react';
 
-import { ResourceTypes } from '@data-exploration-components/types';
-
-import {
-  COMMON_INFO_CONTENT,
-  InternalAssetFilters,
-  SPECIFIC_INFO_CONTENT,
-  isObjectEmpty,
-} from '@data-exploration-lib/core';
-
 import { BaseFilterCollapse } from '@data-exploration/components';
 import {
   ByAssetFilterV2,
@@ -19,9 +10,17 @@ import {
   SourceFilter,
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
+import { ResourceTypes } from '@data-exploration-components/types';
+import {
+  COMMON_INFO_CONTENT,
+  InternalAssetFilters,
+  SPECIFIC_INFO_CONTENT,
+  isObjectEmpty,
+} from '@data-exploration-lib/core';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
 import {
   TempCommonMultiSelectFix,
   TempMultiSelectFix,

@@ -6,6 +6,7 @@ import {
   Thenable,
   Uri,
 } from 'monaco-editor';
+
 import { config } from '../../config';
 import { FdmGraphQLDmlWorker } from '../../FdmGraphQLDmlWorker';
 import { EditorInstance, ValidationMarker } from '../../types';

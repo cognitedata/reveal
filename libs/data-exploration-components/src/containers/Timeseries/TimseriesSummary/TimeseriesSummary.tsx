@@ -1,26 +1,26 @@
-import { Asset, Timeseries } from '@cognite/sdk';
-import { useTimeseriesMetadataColumns } from '@data-exploration/containers';
-import { ColumnDef } from '@tanstack/react-table';
+import React, { useMemo } from 'react';
 
 import {
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration/components';
-import React, { useMemo } from 'react';
-
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { useTimeseriesMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import {
-  useTimeseriesSearchResultWithLabelsQuery,
-  InternalTimeseriesDataWithMatchingLabels,
-} from '@data-exploration-lib/domain-layer';
-
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
   getHiddenColumns,
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  useTimeseriesSearchResultWithLabelsQuery,
+  InternalTimeseriesDataWithMatchingLabels,
+} from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export const TimeseriesSummary = ({

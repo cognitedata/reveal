@@ -1,9 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useRef, useMemo } from 'react';
-import dayjs from 'dayjs';
-import { Dropdown, Button } from '@cognite/cogs.js';
 import ReactDatePicker from 'react-datepicker';
+
+import dayjs from 'dayjs';
 import noop from 'lodash/noop';
+
+import { Dropdown, Button } from '@cognite/cogs.js';
+
 import { DatePickerInput, renderCustomHeader } from './Common';
 import { DatePickerWrapper } from './elements';
 

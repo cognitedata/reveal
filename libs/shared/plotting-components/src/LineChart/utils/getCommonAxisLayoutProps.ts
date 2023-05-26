@@ -1,7 +1,8 @@
-import { LayoutAxis } from 'plotly.js';
 import isUndefined from 'lodash/isUndefined';
+import { LayoutAxis } from 'plotly.js';
 
 import { Axis, AxisIdentifier, Layout } from '../types';
+
 import { getBooleanFromAxisDirection } from './getBooleanFromAxisDirection';
 
 export const getCommonAxisLayoutProps = (

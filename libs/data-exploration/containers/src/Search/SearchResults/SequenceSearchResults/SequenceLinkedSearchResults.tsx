@@ -1,23 +1,26 @@
-import { Sequence } from '@cognite/sdk';
-import {
-  TableSortBy,
-  useSequenceSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+import React, { useMemo, useState } from 'react';
+
 import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
-
-import React, { useMemo, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import {
   InternalCommonFilters,
   InternalSequenceFilters,
   SequenceWithRelationshipLabels,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
+import {
+  TableSortBy,
+  useSequenceSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
+import { useDebounce } from 'use-debounce';
+
+import { Sequence } from '@cognite/sdk';
+
 import { MetadataFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
+
 import { SequenceTable } from './SequenceTable';
 
 interface Props {

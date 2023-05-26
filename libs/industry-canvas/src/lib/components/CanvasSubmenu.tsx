@@ -1,6 +1,9 @@
-import { Body, Colors, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { formatDistanceToNow } from 'date-fns';
+
+import { Body, Colors, Menu } from '@cognite/cogs.js';
+
 import { SerializedCanvasDocument } from '../types';
 
 type CanvasSubmenuProps = {

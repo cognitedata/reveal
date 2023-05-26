@@ -1,4 +1,5 @@
 import { ViewInstance } from '../../dto/dms-view-dtos';
+
 import { ViewsApiService } from './views-api.service';
 
 const cdfClientMock = {

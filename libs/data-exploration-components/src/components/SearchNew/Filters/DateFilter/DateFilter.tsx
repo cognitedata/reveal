@@ -1,16 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import {
   DatePicker,
   RangePicker,
 } from '@data-exploration-components/components';
+import { BaseSelect } from '@data-exploration-components/components/Select/BaseSelect';
 import { TIME_SELECT } from '@data-exploration-components/containers';
-import { DateRange } from '@cognite/sdk';
-import { OptionType } from '@cognite/cogs.js';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { BaseSelect } from '@data-exploration-components/components/Select/BaseSelect';
+
+import { OptionType } from '@cognite/cogs.js';
+import { DateRange } from '@cognite/sdk';
+
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
 const determinePeriod = (value: DateRange | undefined | null) => {

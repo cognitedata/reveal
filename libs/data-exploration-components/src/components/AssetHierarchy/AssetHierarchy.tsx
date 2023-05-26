@@ -1,4 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import React, { useCallback, useEffect, useState } from 'react';
+import Tree, { Node } from 'react-virtualized-tree';
+
+import { Loader } from '@data-exploration/components';
+import { UseQueryResult } from '@tanstack/react-query';
+import union from 'lodash/union';
+
 import {
   Asset,
   AssetIdEither,
@@ -6,21 +13,15 @@ import {
   InternalId,
   ListResponse,
 } from '@cognite/sdk';
-import { Loader } from '@data-exploration/components';
-import React, { useCallback, useEffect, useState } from 'react';
 
-import { UseQueryResult } from '@tanstack/react-query';
-import union from 'lodash/union';
-import Tree, { Node } from 'react-virtualized-tree';
-
+import AssetNodeRenderer from './AssetNodeRenderer';
+import { AssetNodeWrapper } from './elements';
 import {
   useAssetBreadcrumbsQuery,
   useAssetListQuery,
   useAssetRetrieveQuery,
 } from './hooks';
-import { AssetNodeWrapper } from './elements';
 import { AssetNodeState, ViewMoreNodeState, TREE_UPDATE_TYPE } from './types';
-import AssetNodeRenderer from './AssetNodeRenderer';
 
 type AssetNodesById = Record<string | number, AssetNodeState>;
 

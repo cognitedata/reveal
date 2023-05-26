@@ -1,7 +1,10 @@
-import { Checkbox, Switch, Tooltip } from '@cognite/cogs.js';
-import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { ICellRendererParams } from 'ag-grid-community';
+
+import { Checkbox, Switch, Tooltip } from '@cognite/cogs.js';
 
 type IsDisabledFunc = (field: any) => boolean;
 export interface BoolCellRendererProps extends ICellRendererParams {

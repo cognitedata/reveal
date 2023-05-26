@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
-import { DateRange } from '@cognite/sdk';
-import { OptionType } from '@cognite/cogs.js';
-
 import {
   DatePicker,
   FilterLabel,
   RangePicker,
   Select,
 } from '@data-exploration/components';
-import { isEmpty } from 'lodash';
 import {
   DATA_EXPLORATION_COMPONENT,
   TIME_SELECT,
   useMetrics,
 } from '@data-exploration-lib/core';
+import { isEmpty } from 'lodash';
+
+import { OptionType } from '@cognite/cogs.js';
+import { DateRange } from '@cognite/sdk';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {

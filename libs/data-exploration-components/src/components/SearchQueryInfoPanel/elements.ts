@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import { Button, Title } from '@cognite/cogs.js';
 
 export const Flex = styled.div`

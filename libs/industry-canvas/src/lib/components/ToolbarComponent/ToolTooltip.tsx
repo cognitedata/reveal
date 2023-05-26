@@ -1,6 +1,8 @@
-import { Shortcut } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Shortcut } from '@cognite/cogs.js';
 
 type ToolTooltipProps = {
   label: string;

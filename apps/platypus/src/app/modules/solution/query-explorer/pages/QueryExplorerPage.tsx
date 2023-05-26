@@ -1,9 +1,11 @@
 import 'graphiql/graphiql.min.css';
 
-import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useParams } from 'react-router-dom';
+
+import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
+import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+
 import { QueryExplorer } from '../components/QueryExplorer';
 
 export interface QueryExplorerPageProps {

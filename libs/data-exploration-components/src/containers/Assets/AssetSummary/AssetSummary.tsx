@@ -1,28 +1,27 @@
-import { Asset } from '@cognite/sdk';
-import { useAssetsMetadataColumns } from '@data-exploration/containers';
-import { ColumnDef } from '@tanstack/react-table';
+import React, { useMemo } from 'react';
 
-import {
-  AssetWithRelationshipLabels,
-  InternalAssetDataWithMatchingLabels,
-  useAssetsSearchResultWithLabelsQuery,
-} from '@data-exploration-lib/domain-layer';
 import {
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
   ThreeDModelCell,
 } from '@data-exploration/components';
-import React, { useMemo } from 'react';
+import { useAssetsMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import noop from 'lodash/noop';
-
 import {
   getHiddenColumns,
   InternalSequenceFilters,
 } from '@data-exploration-lib/core';
+import {
+  AssetWithRelationshipLabels,
+  InternalAssetDataWithMatchingLabels,
+  useAssetsSearchResultWithLabelsQuery,
+} from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
+
+import { Asset } from '@cognite/sdk';
 
 export const AssetSummary = ({
   query = '',

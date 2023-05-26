@@ -1,7 +1,7 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Collapse, Title } from '@cognite/cogs.js';
-import { ResourceType } from '@data-exploration-lib/core';
+import React, { FC, useMemo } from 'react';
 
+import { ResourceDetailsTemplate } from '@data-exploration/components';
+import { ResourceType } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
@@ -9,9 +9,10 @@ import {
   useTimeseriesSearchResultQuery,
   useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ResourceDetailsTemplate } from '@data-exploration/components';
-import React, { FC, useMemo } from 'react';
-import styled from 'styled-components';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Collapse, Title } from '@cognite/cogs.js';
+
 import {
   AssetDetailsTable,
   EventDetailsTable,
@@ -19,6 +20,15 @@ import {
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
+import {
+  ASSETS,
+  DETAILS,
+  EVENTS,
+  FILES,
+  NO_DETAILS_AVAILABLE,
+  TIME_SERIES,
+} from '../constant';
+import { StyledCollapse } from '../elements';
 
 export const onOpenResources = (resourceType: ResourceType, id: number) => {
   const link = createLink(`/explore/search/${resourceType}/${id}`);
@@ -90,14 +100,14 @@ export const AssetDetails: FC<Props> = ({
       onSelectClicked={onSelectClicked}
     >
       <StyledCollapse accordion ghost defaultActiveKey="details">
-        <Collapse.Panel key="details" header={<h4>Details</h4>}>
+        <Collapse.Panel key="details" header={<h4>{DETAILS}</h4>}>
           {asset ? (
             <AssetInfo asset={asset} />
           ) : (
-            <Title level={5}>No Details Available</Title>
+            <Title level={5}>{NO_DETAILS_AVAILABLE}</Title>
           )}
         </Collapse.Panel>
-        <Collapse.Panel header={<h4>Assets</h4>}>
+        <Collapse.Panel header={<h4>{ASSETS}</h4>}>
           <AssetDetailsTable
             id="related-asset-asset-details"
             data={relatedAssets}
@@ -109,7 +119,7 @@ export const AssetDetails: FC<Props> = ({
             }
           />
         </Collapse.Panel>
-        <Collapse.Panel header={<h4>Timeseries</h4>}>
+        <Collapse.Panel header={<h4>{TIME_SERIES}</h4>}>
           <TimeseriesDetailsTable
             id="related-timeseries-asset-details"
             data={relatedTimeseries}
@@ -121,7 +131,7 @@ export const AssetDetails: FC<Props> = ({
             isLoadingMore={isTimeseriesLoading}
           />
         </Collapse.Panel>
-        <Collapse.Panel header={<h4>Files</h4>}>
+        <Collapse.Panel header={<h4>{FILES}</h4>}>
           <FileDetailsTable
             id="related-file-asset-details"
             data={relatedFiles}
@@ -131,7 +141,7 @@ export const AssetDetails: FC<Props> = ({
             onRowClick={(file) => onOpenResources('file', file.id)}
           />
         </Collapse.Panel>
-        <Collapse.Panel header={<h4>Events</h4>}>
+        <Collapse.Panel header={<h4>{EVENTS}</h4>}>
           <EventDetailsTable
             id="related-event-asset-details"
             data={relatedEvents}
@@ -145,7 +155,3 @@ export const AssetDetails: FC<Props> = ({
     </ResourceDetailsTemplate>
   );
 };
-
-const StyledCollapse = styled(Collapse)`
-  overflow: auto;
-`;

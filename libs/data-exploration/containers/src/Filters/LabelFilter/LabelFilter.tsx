@@ -1,16 +1,17 @@
 import {
-  useAssetsFilterOptions,
-  useDocumentsLabelsFilterOptions,
-} from '@data-exploration-lib/domain-layer';
-import {
   DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
   InternalDocumentFilter,
   useDebouncedState,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
+import {
+  useAssetsFilterOptions,
+  useDocumentsLabelsFilterOptions,
+} from '@data-exploration-lib/domain-layer';
+
 import { MultiSelectFilter } from '../MultiSelectFilter';
+import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
   options: MultiSelectOptionType<string>[];

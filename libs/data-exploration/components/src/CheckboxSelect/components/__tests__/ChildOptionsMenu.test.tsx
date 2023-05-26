@@ -2,9 +2,9 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { screen, fireEvent } from '@testing-library/react';
 
-import { ChildOptionsMenu, ChildOptionsMenuProps } from '../ChildOptionsMenu';
 import { renderComponent } from '../../../__test-utils';
 import { OptionSelection } from '../../types';
+import { ChildOptionsMenu, ChildOptionsMenuProps } from '../ChildOptionsMenu';
 
 jest.mock('@cognite/unified-file-viewer', () => jest.fn());
 

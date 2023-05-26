@@ -1,29 +1,31 @@
-import { Loader } from '@data-exploration/components';
 import React, { useEffect, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { Loader } from '@data-exploration/components';
 import {
   LineChart,
   LineChartProps,
   RangePicker,
   SpacedRow,
 } from '@data-exploration-components/components';
-import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
-import dayjs from 'dayjs';
-
-import { Button, OptionType, Select } from '@cognite/cogs.js';
-import { ParentSize } from '@visx/responsive';
-
-import styled from 'styled-components';
-import { DatapointAggregates, Datapoints } from '@cognite/sdk';
 import {
   DATA_EXPLORATION_COMPONENT,
   DateRangeProps,
   ResourceTypes,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { calculateGranularity } from '../utils/calculateGranularity';
+import { useQuery } from '@tanstack/react-query';
+import { ParentSize } from '@visx/responsive';
+import dayjs from 'dayjs';
+
+import { Button, OptionType, Select } from '@cognite/cogs.js';
+import { DatapointAggregates, Datapoints } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
+
 import { TimeOptions } from '../types';
+import { calculateGranularity } from '../utils/calculateGranularity';
 
 export const TIME_SELECT: {
   [key in TimeOptions]: {

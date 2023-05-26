@@ -1,5 +1,3 @@
-import { Asset, CogniteEvent } from '@cognite/sdk';
-import { ColumnDef } from '@tanstack/react-table';
 import {
   FileWithRelationshipLabels,
   SequenceWithRelationshipLabels,
@@ -8,6 +6,10 @@ import {
   AssetWithRelationshipLabels,
   TimeseriesWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, CogniteEvent } from '@cognite/sdk';
+
 import { ColumnKeys } from './constants';
 
 type TableColumnDef = ColumnDef<

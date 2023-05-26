@@ -1,4 +1,5 @@
 import { Button, Colors } from '@cognite/cogs.js';
+
 import { StickyIcon } from './icons/StickyIcon';
 
 type StickyButtonProps = {

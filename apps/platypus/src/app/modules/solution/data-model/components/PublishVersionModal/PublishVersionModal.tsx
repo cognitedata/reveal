@@ -1,11 +1,14 @@
-import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
-import { isFDMv3 } from '@platypus-app/flags';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useEffect, useState } from 'react';
+
 import {
   DataModelVersionValidator,
   DataModelVersionValidatorV2,
 } from '@platypus/platypus-core';
-import { useEffect, useState } from 'react';
+import { isFDMv3 } from '@platypus-app/flags';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
+
 import { StyledBreakingChanges } from './elements';
 
 export type VersionType = 'FIRST' | 'SUBSEQUENT';

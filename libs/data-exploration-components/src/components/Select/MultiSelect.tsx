@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { ActionMeta } from 'react-select';
 
 import { OptionType } from '@cognite/cogs.js';

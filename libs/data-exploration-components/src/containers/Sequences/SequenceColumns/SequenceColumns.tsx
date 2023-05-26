@@ -1,6 +1,8 @@
 import React from 'react';
-import { Sequence, SequenceColumn } from '@cognite/sdk';
+
 import { DetailsItem } from '@data-exploration-components/components';
+
+import { Sequence, SequenceColumn } from '@cognite/sdk';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(

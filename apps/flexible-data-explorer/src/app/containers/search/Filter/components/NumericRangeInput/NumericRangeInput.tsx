@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { Chip } from '@cognite/cogs.js';
-
 import isUndefined from 'lodash/isUndefined';
 
-import { NumberInput } from '../NumberInput';
+import { Chip } from '@cognite/cogs.js';
 
 import { InputControlProps } from '../../types';
+import { NumberInput } from '../NumberInput';
+
 import { Container } from './elements';
 
 const PLACEHOLDER = '...';

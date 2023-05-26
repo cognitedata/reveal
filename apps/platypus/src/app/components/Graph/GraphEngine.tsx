@@ -7,14 +7,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
+
+import { HtmlElementProps } from '@platypus-app/types';
 import * as d3 from 'd3';
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
-
 import styled from 'styled-components/macro';
-import { HtmlElementProps } from '@platypus-app/types';
+
+import { getNodesKey, loadFromCache, saveToCache } from './cache';
 import { getELKNodes } from './layout/elkLayout';
 import { getFitContentXYK } from './layout/fitLayout';
-import { getNodesKey, loadFromCache, saveToCache } from './cache';
 
 export type Node = SimulationNodeDatum & {
   id: string;

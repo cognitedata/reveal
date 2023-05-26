@@ -1,4 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
 import {
   createContext,
   useCallback,
@@ -6,11 +5,15 @@ import {
   useEffect,
   useMemo,
 } from 'react';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
 import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
 import { useListCanvases } from '../hooks/use-query/useListCanvases';
+import { useUserProfileContext } from '../hooks/use-query/useUserProfile';
 import { IndustryCanvasService } from '../services/IndustryCanvasService';
 import {
   ContainerReference,
@@ -18,6 +21,7 @@ import {
   SerializedCanvasDocument,
 } from '../types';
 import { serializeCanvasState } from '../utils/utils';
+
 import useIndustryCanvasSearchParameters from './useIndustryCanvasSearchParameters';
 
 export type IndustryCanvasContextType = {
@@ -69,7 +73,11 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   children,
 }): JSX.Element => {
   const sdk = useSDK();
-  const canvasService = useMemo(() => new IndustryCanvasService(sdk), [sdk]);
+  const { userProfile } = useUserProfileContext();
+  const canvasService = useMemo(
+    () => new IndustryCanvasService(sdk, userProfile),
+    [sdk, userProfile]
+  );
   const { canvasId, setCanvasId, initializeWithContainerReferences } =
     useIndustryCanvasSearchParameters();
 
@@ -90,6 +98,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   // Initialize the page with a new and empty canvas if the canvasId query
   // parameter is not provided. This is so that the user immediately can have
   // their changes persisted once they open up the IC page
+  // TODO: can/should this useEffect be removed once we have the canvas management in place?
   useEffect(() => {
     const createInitialCanvas = async () => {
       if (canvasId === undefined && !isCreatingCanvas) {

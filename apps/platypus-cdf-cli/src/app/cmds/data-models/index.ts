@@ -1,11 +1,12 @@
 import { Argv } from 'yargs';
-import * as storageCmds from './storage';
+
 import * as apiCmds from './api';
 import createCmd from './create';
 import deleteCmd from './delete';
-import publishCmd from './publish';
 import generateCmd from './generate';
 import listCmd from './list';
+import publishCmd from './publish';
+import * as storageCmds from './storage';
 
 export const command = 'data-models <command>';
 export const desc = 'Manage data models to store and retrieve data.';

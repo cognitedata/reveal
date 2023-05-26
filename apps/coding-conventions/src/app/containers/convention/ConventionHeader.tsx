@@ -1,8 +1,11 @@
-import { Title } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Title } from '@cognite/cogs.js';
+
 import { HintText } from '../../components/Info/HintText';
 import { StructureText } from '../../components/Text/StructureText';
 import { Convention } from '../../types';
+
 import { Container } from './elements';
 
 interface Props {

@@ -1,6 +1,7 @@
-import { Button, Menu, Body } from '@cognite/cogs.js';
 import { DataModelVersionStatus } from '@platypus/platypus-core';
 import styled from 'styled-components/macro';
+
+import { Button, Menu, Body } from '@cognite/cogs.js';
 
 export const DropdownButton = styled(Button)<{ open: boolean }>`
   display: flex;

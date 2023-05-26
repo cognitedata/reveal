@@ -6,6 +6,7 @@ export enum QueryKeys {
   CREATE_CANVAS = 'canvas.create',
   ARCHIVE_CANVAS = 'canvas.archive',
   LIST_CANVASES = 'canvas.list',
+  USER_PROFILE = 'user-profile',
 }
 
 export const PERCENTAGE_VALUES = {

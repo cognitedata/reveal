@@ -1,4 +1,5 @@
 import { Arguments } from 'yargs';
+
 import { getCommandName } from '../utils/yargs-utils';
 
 export const skipMiddleware = (args: Arguments): boolean => {

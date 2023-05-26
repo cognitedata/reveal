@@ -1,5 +1,6 @@
-import { Illustrations, IllustrationType } from '@cognite/cogs.js';
 import { ReactNode } from 'react';
+
+import { Illustrations, IllustrationType } from '@cognite/cogs.js';
 
 import {
   StyledContainer,

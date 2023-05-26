@@ -1,7 +1,6 @@
 import isUndefined from 'lodash/isUndefined';
 
 import { Data, ValueType } from '../../../../LineChart';
-
 import { TimeseriesDatapoint } from '../../service/types';
 import { TimeseriesChartMetadata } from '../types';
 import { getDatapointValue } from '../utils';

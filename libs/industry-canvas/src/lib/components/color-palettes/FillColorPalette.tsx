@@ -1,5 +1,7 @@
-import { ToolBar } from '@cognite/cogs.js';
 import React from 'react';
+
+import { ToolBar } from '@cognite/cogs.js';
+
 import { FillButton } from './FillButton';
 
 export type FillColorPaletteTooltipProps = {

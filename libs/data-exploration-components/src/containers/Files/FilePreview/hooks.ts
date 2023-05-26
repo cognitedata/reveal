@@ -1,19 +1,22 @@
+import { useMemo } from 'react';
+
+import { isNotUndefined } from '@data-exploration-components/utils/index';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import {
   filterNonOverlappingBoundingBoxes,
   isSimilarBoundingBox,
 } from '@cognite/unified-file-viewer';
-import { useMemo } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { isNotUndefined } from '@data-exploration-components/utils/index';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useAnnotations } from '@data-exploration-lib/domain-layer';
+
+import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import {
   getExtendedAnnotationPage,
   isRejectedAnnotation,
 } from './migration/utils';
-import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
 
 // The maximum difference the corresponding sides of two bounding boxes may

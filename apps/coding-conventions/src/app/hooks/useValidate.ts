@@ -1,10 +1,12 @@
-import { Asset, FileInfo, IdEither } from '@cognite/sdk';
 import { isEmpty, xor } from 'lodash';
+
+import { Asset, FileInfo, IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { useSystemQuery } from '../service/hooks/query/useSystemQuery';
+
 import { useConventionListQuery } from '../service/hooks/query/useConventionListQuery';
-import { validate } from '../utils/validation';
+import { useSystemQuery } from '../service/hooks/query/useSystemQuery';
 import { Resource } from '../types';
+import { validate } from '../utils/validation';
 
 type Field = keyof (Asset | FileInfo);
 

@@ -1,8 +1,8 @@
 import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
 
-import { getTooltipNumericValue } from './getTooltipNumericValue';
 import { addUnit } from './addUnit';
+import { getTooltipNumericValue } from './getTooltipNumericValue';
 
 export const getTooltipRawDatapointValue = (
   value?: string | number,

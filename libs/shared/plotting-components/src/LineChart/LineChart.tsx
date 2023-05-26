@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { useCallback, useRef, useState } from 'react';
 
-import { LineChartWrapper } from './elements';
-import { LineChartProps } from './types';
 import { Header } from './components/Header';
-import { Tooltip } from './components/Tooltip';
 import { HoverLayer } from './components/HoverLayer';
 import { Legend } from './components/Legend';
 import { Plot, PlotElement } from './components/Plot';
 import { Toolbar } from './components/Toolbar';
-
-import { getLayout } from './utils/getLayout';
-import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
-import { getConfig } from './utils/getConfig';
-import { getStyleProperties } from './utils/getStyleProperties';
+import { Tooltip } from './components/Tooltip';
+import { LineChartWrapper } from './elements';
 import { useCursorPosition } from './hooks/useCursorPosition';
+import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
+import { LineChartProps } from './types';
+import { getConfig } from './utils/getConfig';
+import { getLayout } from './utils/getLayout';
+import { getStyleProperties } from './utils/getStyleProperties';
 import { isContinuousHoverEnabled } from './utils/isContinuousHoverEnabled';
 
 export const LineChart: React.FC<LineChartProps> = ({

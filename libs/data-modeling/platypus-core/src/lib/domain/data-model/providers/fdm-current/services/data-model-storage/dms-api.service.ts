@@ -1,6 +1,7 @@
+import { PlatypusError } from '@platypus-core/boundaries/types';
+
 import { CogniteClient } from '@cognite/sdk';
 
-import { PlatypusError } from '@platypus-core/boundaries/types';
 import {
   DataModelStorageModelsDTO,
   DmsListModelsRequestDTO,

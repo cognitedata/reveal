@@ -1,5 +1,6 @@
 import { PlotElement } from '../components/Plot';
 import { AxisDirection, AxisRange, PlotRange } from '../types';
+
 import { getPlotZoomStep } from './getPlotZoomStep';
 
 export const getPlotZoomRange = (

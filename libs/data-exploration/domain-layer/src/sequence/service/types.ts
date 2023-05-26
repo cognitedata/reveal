@@ -1,4 +1,5 @@
 import { AggregateResponse, SequenceFilter } from '@cognite/sdk';
+
 import { AdvancedFilter } from '../../builders';
 import { AggregateFilters } from '../../types';
 import { SequenceProperties } from '../internal';

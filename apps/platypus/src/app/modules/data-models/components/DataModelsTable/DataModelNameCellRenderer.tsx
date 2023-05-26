@@ -1,7 +1,9 @@
-import { Chip } from '@cognite/cogs.js';
+import React from 'react';
+
 import { NoNameDisplayName } from '@platypus-app/constants';
 import { ICellRendererParams } from 'ag-grid-community';
-import React from 'react';
+
+import { Chip } from '@cognite/cogs.js';
 
 export const DataModelNameCellRenderer = React.memo(
   (params: ICellRendererParams) => {

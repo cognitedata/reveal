@@ -1,16 +1,19 @@
-import { Button, Dropdown, Menu, RangeSlider, Tooltip } from '@cognite/cogs.js';
+import { useContext, useEffect, useMemo } from 'react';
+
+import styled from 'styled-components';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import * as THREE from 'three';
+
+import { Button, Dropdown, Menu, RangeSlider, Tooltip } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { useContext, useEffect, useMemo } from 'react';
 
-import styled from 'styled-components';
 import { ids } from '../../../../cogs-variables';
 
 type SliderProps = {

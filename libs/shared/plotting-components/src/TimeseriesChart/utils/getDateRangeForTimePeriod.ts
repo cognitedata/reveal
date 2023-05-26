@@ -1,6 +1,7 @@
 import dayjs, { ManipulateType, OpUnitType } from 'dayjs';
 
 import { DateRange, TimePeriod, TimePeriodType } from '../types';
+
 import { getTimePeriodData } from './getTimePeriodData';
 
 const TIME_PERIOD_TYPE_MAP: Record<TimePeriodType, ManipulateType> = {

@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import React from 'react';
+
+import botui from '@botui/react/default-theme';
+
+import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
   Tooltip as CogsTooltip,
   Loader,
   Modal,
   Dropdown,
 } from '@cognite/cogs.js';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import botui from '@botui/react/default-theme';
 
 import styleScope from './styleScope';
 

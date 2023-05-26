@@ -1,4 +1,5 @@
 import { Input } from '@cognite/cogs.js';
+
 import { FilterLabel } from '../../Labels/FilterLabel';
 
 export interface NumberInputProps {

@@ -1,4 +1,5 @@
 import { BaseWidgetProps } from '../../../components/widget/Widget';
+
 import { PropertiesCollapsed } from './PropertiesCollapsed';
 import { PropertiesExpanded } from './PropertiesExpanded';
 

@@ -1,16 +1,19 @@
 import * as React from 'react';
+
 import {
   InternalTimeseriesFilters,
   TimeseriesConfigType,
   useDeepMemo,
 } from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';
 import {
   extractMatchingLabels,
   MatchingLabelPropertyType,
 } from '../../../utils/extractMatchingLabels';
+
 import { useTimeseriesSearchResultQuery } from './useTimeseriesSearchResultQuery';
 
 export const useTimeseriesSearchResultWithLabelsQuery = (

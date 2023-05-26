@@ -1,5 +1,6 @@
-import { ColumnDataType } from '@cognite/cog-data-grid';
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
+
+import { ColumnDataType } from '@cognite/cog-data-grid';
 
 export const INSTANCE_TYPE_DEFS_FIELDS: DataModelTypeDefsField[] = [
   {

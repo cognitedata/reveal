@@ -1,6 +1,9 @@
 import React from 'react';
-import { Loader } from '@cognite/cogs.js';
+
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
+
+import { Loader } from '@cognite/cogs.js';
+
 import NoAccessPage from './NoAccessPage';
 
 const NoAccessWrapper = ({ children }: { children: JSX.Element }) => {

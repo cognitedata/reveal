@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
-import { InternalAssetData } from '@data-exploration-lib/domain-layer';
+
 import { Table, TableProps } from '@data-exploration/components';
+import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 import { ColumnDef } from '@tanstack/react-table';
+
 import { Wrapper } from './elements';
 
 export const AssetDetailsTable = (

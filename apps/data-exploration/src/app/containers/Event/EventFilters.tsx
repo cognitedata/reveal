@@ -1,26 +1,28 @@
 import React from 'react';
 
-import { useList } from '@cognite/sdk-react-query-hooks';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import {
   useEventsFilters,
   useFilterEmptyState,
   useResetEventsFilters,
 } from '@data-exploration-app/store/filter';
 import {
+  transformNewFilterToOldFilter,
+  useEventsMetadataKeysAggregateQuery,
+  useEventsMetadataValuesAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
+
+import {
   AggregatedEventFilterV2,
   DateFilterV2,
   MetadataFilterV2,
   SourceFilter,
 } from '@cognite/data-exploration';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import {
-  transformNewFilterToOldFilter,
-  useEventsMetadataKeysAggregateQuery,
-  useEventsMetadataValuesAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {

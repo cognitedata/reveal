@@ -1,6 +1,6 @@
-import { Body, Flex, Icon, Infobar } from '@cognite/cogs.js';
-
 import styled from 'styled-components';
+
+import { Body, Flex, Icon, Infobar } from '@cognite/cogs.js';
 
 export const GPTInfobar = ({ onClose }: { onClose: () => void }) => {
   return (

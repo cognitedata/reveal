@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Flex, Title } from '@cognite/cogs.js';
 
 export default function RevealErrorToast({

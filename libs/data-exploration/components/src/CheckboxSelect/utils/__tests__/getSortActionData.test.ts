@@ -1,5 +1,4 @@
 import { SortDirection } from '../../types';
-
 import { ASCENDING, DESCENDING, getSortActionData } from '../getSortActionData';
 
 describe('NestedFilter/getSortActionData', () => {

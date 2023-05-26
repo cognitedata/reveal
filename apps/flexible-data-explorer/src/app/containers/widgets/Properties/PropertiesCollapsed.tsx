@@ -1,7 +1,10 @@
-import { Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body } from '@cognite/cogs.js';
+
 import { Button } from '../../../components/buttons/Button';
 import { Widget } from '../../../components/widget/Widget';
+
 import { PropertiesProps } from './PropertiesWidget';
 
 export const PropertiesCollapsed: React.FC<PropertiesProps> = ({

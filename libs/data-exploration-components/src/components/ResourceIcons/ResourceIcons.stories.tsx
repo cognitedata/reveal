@@ -1,7 +1,11 @@
 import React from 'react';
-import { Overline } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
 import { ComponentStory } from '@storybook/react';
+
+import { Overline } from '@cognite/cogs.js';
+
 import { ResourceIcons } from './ResourceIcons';
 
 export default {

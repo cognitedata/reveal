@@ -1,20 +1,23 @@
 import React, { useEffect } from 'react';
-import { Loader } from '@cognite/cogs.js';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeGrid as Grid } from 'react-window';
+import InfiniteLoader from 'react-window-infinite-loader';
+
+import styled from 'styled-components';
+
 import {
   ThreeDGridPreview,
   Model3DWithType,
 } from '@data-exploration-app/containers/ThreeD/ThreeDGridPreview';
-import { Model3D } from '@cognite/sdk';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeGrid as Grid } from 'react-window';
-import InfiniteLoader from 'react-window-infinite-loader';
-import { Alert } from 'antd';
-import styled from 'styled-components';
 import {
   ThreeDModelsResponse,
   useInfinite360Images,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
+import { Alert } from 'antd';
+
+import { Loader } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
 
 export const ThreeDSearchResults = ({
   query = '',

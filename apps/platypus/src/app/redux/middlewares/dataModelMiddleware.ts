@@ -1,11 +1,11 @@
-import { rootInjector, TOKENS } from '@platypus-app/di';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import {
   DataModelVersion,
   DataModelVersionStatus,
   StorageProviderType,
 } from '@platypus/platypus-core';
+import { rootInjector, TOKENS } from '@platypus-app/di';
+import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
+import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { Action, Dispatch, MiddlewareAPI } from '@reduxjs/toolkit';
 
 import { actions } from '../reducers/global/dataModelReducer';

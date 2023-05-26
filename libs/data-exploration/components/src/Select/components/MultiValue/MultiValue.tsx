@@ -1,8 +1,8 @@
 import { components, MultiValueProps, OptionTypeBase } from 'react-select';
 
 import get from 'lodash/get';
-import isUndefined from 'lodash/isUndefined';
 import isArray from 'lodash/isArray';
+import isUndefined from 'lodash/isUndefined';
 
 import { FormattedCount } from './elements';
 

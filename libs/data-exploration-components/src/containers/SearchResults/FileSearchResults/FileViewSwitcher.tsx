@@ -1,5 +1,6 @@
-import { SegmentedControl } from '@cognite/cogs.js';
 import React from 'react';
+
+import { SegmentedControl } from '@cognite/cogs.js';
 
 export const FileViewSwitcher = ({
   currentView,

@@ -1,6 +1,8 @@
-import { DateRange } from '@cognite/cdf-sdk-singleton';
-import { ComponentStory } from '@storybook/react';
 import { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
+import { DateRange } from '@cognite/cdf-sdk-singleton';
 
 import { DateFilter } from './DateFilter';
 

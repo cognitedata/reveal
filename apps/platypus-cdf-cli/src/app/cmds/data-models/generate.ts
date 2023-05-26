@@ -1,25 +1,29 @@
 import fs from 'fs';
 import path, { join } from 'path';
-import fsExtra from 'fs-extra';
-import { Arguments } from 'yargs';
-import { getAuthToken } from '@cognite/platypus-cdf-cli/app/utils/auth';
-import { getProjectConfig } from '@cognite/platypus-cdf-cli/app/utils/config';
+
 import { generate } from '@genql/cli';
-import typescript from 'rollup-plugin-typescript2';
-import { rollup } from 'rollup';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelTypeDefsType,
   mixerApiBuiltInTypes,
 } from '@platypus/platypus-core';
+import fsExtra from 'fs-extra';
 import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
+import { rollup } from 'rollup';
+import typescript from 'rollup-plugin-typescript2';
+import { Arguments } from 'yargs';
+
 import {
   CONSTANTS,
   SupportedGraphQLGeneratorPlugins,
 } from '@cognite/platypus-cdf-cli/app/constants';
-import { DEBUG as _DEBUG } from '../../utils/logger';
-import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { getAuthToken } from '@cognite/platypus-cdf-cli/app/utils/auth';
+import { getProjectConfig } from '@cognite/platypus-cdf-cli/app/utils/config';
+
 import { CLICommand } from '../../common/cli-command';
+import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { DEBUG as _DEBUG } from '../../utils/logger';
+
 import { getFdmV3MixerApiService } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:generate');

@@ -1,6 +1,9 @@
-import { AnnotationType } from '@cognite/unified-file-viewer';
 import { ComponentStory } from '@storybook/react';
+
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
 import { STICKY_ANNOTATION_COLOR_MAP } from '../../colors';
+
 import { StickyAnnotationTooltip } from './StickyAnnotationTooltip';
 
 export default {

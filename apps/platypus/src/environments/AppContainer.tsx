@@ -1,6 +1,8 @@
-import { Container } from '@cognite/react-container';
 import { PlatypusSidecarConfig } from '@platypus-app/utils/sidecar';
 import { Store } from 'redux';
+
+import { Container } from '@cognite/react-container';
+
 import { AuthContainer } from './AuthContainer';
 
 type AppContainerProps = {

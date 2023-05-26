@@ -5,6 +5,7 @@ import {
   getEnv,
   getProject,
 } from '@cognite/cdf-utilities';
+
 import './set-public-path';
 import App from './app/App';
 import GlobalStyles from './GlobalStyles';

@@ -1,4 +1,7 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import styled from 'styled-components';
+
 import {
   Body,
   Checkbox,
@@ -8,14 +11,14 @@ import {
   Select,
   toast,
 } from '@cognite/cogs.js';
+import { DataSet, FileGeoLocation, FileInfo } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 import { useInfiniteList } from '@cognite/sdk-react-query-hooks';
-import { DataSet, FileGeoLocation, FileInfo } from '@cognite/sdk/dist/src';
-import { useEffect, useMemo, useState } from 'react';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+
+import { TOAST_POSITION } from '../../constants';
 import convertFileToArrayBuffer from '../../utils/convertFileToArrayBuffer';
 import parseExif, { ExifTags } from '../../utils/parseExif';
-import { TOAST_POSITION } from '../../constants';
 
 const FILE_UPLOAD_SOURCE = 'COGNITE_INDUSTRY_CANVAS';
 

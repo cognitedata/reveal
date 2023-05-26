@@ -1,4 +1,5 @@
 import { Arguments, Argv, CommandModule } from 'yargs';
+
 import logout from '../common/auth/logout';
 import { BaseArgs } from '../types';
 

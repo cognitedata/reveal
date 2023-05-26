@@ -1,7 +1,8 @@
-import { Flex, toast } from '@cognite/cogs.js';
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import { Flex, toast } from '@cognite/cogs.js';
+
 import { Modal } from '../../components/Modal/Modal';
 import { useConventionUpdateMutate } from '../../service/hooks/mutate/useConventionUpdateMutate';
 import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';

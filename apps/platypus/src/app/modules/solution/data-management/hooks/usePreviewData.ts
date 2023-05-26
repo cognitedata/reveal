@@ -1,16 +1,18 @@
+import { useParams } from 'react-router-dom';
+
 import {
   DataModelTypeDefsType,
   PlatypusValidationError,
   QueryFilter,
 } from '@platypus/platypus-core';
-import { useQuery } from '@tanstack/react-query';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
-import { KeyValueMap } from '@cognite/cog-data-grid';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { useParams } from 'react-router-dom';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useQuery } from '@tanstack/react-query';
+
+import { KeyValueMap } from '@cognite/cog-data-grid';
 
 export const usePreviewData = (
   params: {

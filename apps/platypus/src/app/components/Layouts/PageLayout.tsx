@@ -1,4 +1,5 @@
 import { HtmlElementProps } from '@platypus-app/types';
+
 import { StyledPageLayout } from './elements';
 
 type PageLayoutProps = {

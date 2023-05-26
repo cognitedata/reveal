@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
+
 import { HOVER_MARKER_BORDER_WIDTH, MARKER_SIZE } from '../../constants';
+
 import { LINE_INFO_POINTER_SIZE } from './HoverLineInfo';
 
 const HOVER_LINE_INFO_BACKGROUND_COLOR = 'var(--cogs-surface--muted--inverted)';

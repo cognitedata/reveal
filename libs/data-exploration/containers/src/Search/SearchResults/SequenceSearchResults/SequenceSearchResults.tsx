@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
-import { Asset, Sequence } from '@cognite/sdk';
 
-import {
-  TableSortBy,
-  useSequenceSearchAggregateQuery,
-  useSequenceSearchResultWithMatchingLabelsQuery,
-} from '@data-exploration-lib/domain-layer';
+import { TableProps } from '@data-exploration/components';
 import {
   EMPTY_OBJECT,
   InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
 } from '@data-exploration-lib/core';
-import { TableProps } from '@data-exploration/components';
+import {
+  TableSortBy,
+  useSequenceSearchAggregateQuery,
+  useSequenceSearchResultWithMatchingLabelsQuery,
+} from '@data-exploration-lib/domain-layer';
+
+import { Asset, Sequence } from '@cognite/sdk';
+
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
+
 import { SequenceTable } from './SequenceTable/SequenceTable';
 
 export const SequenceSearchResults = ({

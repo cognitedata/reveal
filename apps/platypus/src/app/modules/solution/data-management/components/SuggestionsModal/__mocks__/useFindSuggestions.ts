@@ -1,6 +1,6 @@
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { DMSRecord, findSuggestions } from '@platypus-core/domain/suggestions';
 import { useQuery } from '@tanstack/react-query';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 export const useFindSuggestions = (
   sourceRecords?: DMSRecord[],

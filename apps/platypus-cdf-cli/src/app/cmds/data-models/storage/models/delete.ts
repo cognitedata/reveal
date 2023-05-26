@@ -1,3 +1,5 @@
+import { Arguments } from 'yargs';
+
 import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
 import {
   BaseArgs,
@@ -7,7 +9,6 @@ import {
 import Response, {
   DEBUG as _DEBUG,
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
-import { Arguments } from 'yargs';
 
 import { getDataModelStorageApiService } from '../../utils';
 

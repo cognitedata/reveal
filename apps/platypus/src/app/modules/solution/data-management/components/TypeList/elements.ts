@@ -1,5 +1,6 @@
-import { Skeleton } from '@platypus-app/components/Skeleton/Skeleton';
 import styled from 'styled-components';
+
+import { Skeleton } from '@platypus-app/components/Skeleton/Skeleton';
 
 export const StyledSkeleton = styled(Skeleton)`
   margin-top: 2px;

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { IGraphQlUtilsService } from '@platypus-core/domain/data-model/boundaries';
 import {
   DirectiveProps,
   DataModelTypeDefs,
@@ -10,6 +9,7 @@ import {
   DataModelValidationError,
   ArgumentNodeProps,
 } from '@platypus/platypus-core';
+import { IGraphQlUtilsService } from '@platypus-core/domain/data-model/boundaries';
 import {
   ObjectTypeDefinitionNode,
   parse,
@@ -21,7 +21,7 @@ import {
   DirectiveDefinitionNode,
   validateSchema,
 } from 'graphql';
-import { validateWithCustomRules } from 'graphql-language-service';
+import { validateSDL } from 'graphql/validation/validate';
 import {
   documentApi,
   DocumentApi,
@@ -33,12 +33,12 @@ import {
   DirectiveApi,
   InputValueApi,
 } from 'graphql-extra';
-import { validateSDL } from 'graphql/validation/validate';
+import { validateWithCustomRules } from 'graphql-language-service';
 
-import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
-import { ContainerDirectiveValidator } from './validation/ContainerDirectiveValidator';
 import { getBuiltInTypesString } from './utils';
+import { ContainerDirectiveValidator } from './validation/ContainerDirectiveValidator';
 import { FieldNodeValidator } from './validation/FieldNodeValidator';
+import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
 
 const DIRECTIVE_ARGUMENTS_KIND_MAP: {
   [key: DirectiveProps['name']]: {

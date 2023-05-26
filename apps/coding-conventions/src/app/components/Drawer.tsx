@@ -1,6 +1,7 @@
 /* eslint-disable @cognite/no-number-z-index */
-import { Drawer as CogsDrawer, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Drawer as CogsDrawer, Flex, Title } from '@cognite/cogs.js';
 
 export const Drawer = styled(CogsDrawer)`
   z-index: 500 !important;

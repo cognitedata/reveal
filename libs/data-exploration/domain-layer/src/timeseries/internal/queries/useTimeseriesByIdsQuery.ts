@@ -1,6 +1,8 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+
 import { IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
 import { queryKeys } from '../../../queryKeys';
 import { getTimeseriesByIds } from '../../service';
 import { InternalTimeseriesData } from '../types';

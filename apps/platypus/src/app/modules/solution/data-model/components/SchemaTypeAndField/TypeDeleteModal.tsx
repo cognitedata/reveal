@@ -1,5 +1,6 @@
-import { Body, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { Body, Modal } from '@cognite/cogs.js';
 
 type BaseModalProps = {
   visible: boolean;

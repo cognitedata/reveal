@@ -1,6 +1,8 @@
 import { readFileSync, existsSync } from 'fs';
 import { resolve as pathResolve } from 'path';
+
 import { Router } from 'express';
+
 import { CdfDatabaseService } from '../../common/cdf-database.service';
 import {
   CdfApiConfig,

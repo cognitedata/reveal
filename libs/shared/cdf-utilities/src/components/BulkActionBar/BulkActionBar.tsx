@@ -1,4 +1,9 @@
 import React, { useRef } from 'react';
+
+import styled from 'styled-components';
+
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 import {
   Button,
   ButtonProps,
@@ -8,10 +13,6 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 
 type BulkActionBarProps = {
   actions: Omit<ButtonProps, 'variant'>[];

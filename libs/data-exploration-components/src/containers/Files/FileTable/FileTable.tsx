@@ -1,18 +1,20 @@
 import React, { useMemo } from 'react';
 
-import { Asset, FileInfo } from '@cognite/sdk';
 import {
   ResourceTableColumns,
   Table,
   TableProps,
 } from '@data-exploration/components';
-import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
-import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
   FileWithRelationshipLabels,
   getHiddenColumns,
   RelationshipLabels,
 } from '@data-exploration-lib/core';
+import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
+
+import { Asset, FileInfo } from '@cognite/sdk';
+
 import { FileNamePreview } from './FileNamePreview';
 
 export type FileTableProps = Omit<

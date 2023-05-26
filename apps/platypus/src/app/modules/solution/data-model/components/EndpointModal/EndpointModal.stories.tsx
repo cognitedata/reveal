@@ -1,4 +1,5 @@
 import { Wrapper } from '@platypus-app/components/Styles/storybook';
+
 import { EndpointModal } from './EndpointModal';
 
 export default {

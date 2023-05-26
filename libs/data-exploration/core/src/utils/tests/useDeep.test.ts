@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
+
 import { useDeepEffect } from '../useDeep';
 
 //TODO Move this in fixture

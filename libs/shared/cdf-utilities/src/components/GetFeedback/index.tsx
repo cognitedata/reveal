@@ -1,7 +1,10 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { Flex, Button, Detail } from '@cognite/cogs.js';
+
 import { Card, Typography } from 'antd';
+
+import { Flex, Button, Detail } from '@cognite/cogs.js';
 
 import FeedbackHomeIcon from './FeedbackHomeIcon';
 

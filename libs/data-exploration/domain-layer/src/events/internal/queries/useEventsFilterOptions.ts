@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 
 import { InternalEventsFilters } from '@data-exploration-lib/core';
-
 import omit from 'lodash/omit';
 
-import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { getAssetSubtreeIdFilter } from '../../../utils';
+import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { EventProperty, useEventsUniqueValuesByProperty } from '../../service';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers';
 

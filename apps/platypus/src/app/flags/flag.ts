@@ -1,5 +1,5 @@
-import { TOKENS } from '@platypus-app/di';
 import { StorageProviderType } from '@platypus/platypus-core';
+import { TOKENS } from '@platypus-app/di';
 import { useInjection } from 'brandi-react';
 
 export const useFeatureToggle = (key: string) => {

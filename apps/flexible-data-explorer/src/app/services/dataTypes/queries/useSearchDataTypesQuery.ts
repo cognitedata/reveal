@@ -1,6 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+
+import { useQuery } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { useSearchQueryParams } from '../../../hooks/useParams';
 import { useTypesDataModelQuery } from '../../dataModels/query/useTypesDataModelQuery';
 import { FDMClient } from '../../FDMClient';

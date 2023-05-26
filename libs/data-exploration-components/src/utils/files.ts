@@ -1,8 +1,10 @@
-import mime from 'mime-types';
-import { CogniteClient, FileInfo } from '@cognite/sdk';
-import lowerCase from 'lodash/lowerCase';
-import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
 import { getObjectURL } from '@data-exploration-lib/core';
+import lowerCase from 'lodash/lowerCase';
+import mime from 'mime-types';
+
+import { CogniteClient, FileInfo } from '@cognite/sdk';
+import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+
 // import { InternalDocument } from '@data-exploration-lib/domain-layer';
 type InternalDocument = any;
 

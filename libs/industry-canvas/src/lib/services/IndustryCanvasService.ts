@@ -1,8 +1,10 @@
-import type { CogniteClient } from '@cognite/sdk';
 import { v4 as uuid } from 'uuid';
+
+import type { CogniteClient } from '@cognite/sdk';
 
 import { SerializedCanvasDocument } from '../types';
 import { FDMClient, gql } from '../utils/FDMClient';
+import { UserProfile } from '../hooks/use-query/useUserProfile';
 
 export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
 
@@ -15,21 +17,23 @@ type PageInfo = {
 
 export class IndustryCanvasService {
   public readonly CANVAS_DATA_SCHEMA_VERSION = 1;
-  public readonly SPACE_VERSION = 2;
-  public readonly SPACE_EXTERNAL_ID = 'IndustryCanvas';
-  public readonly DATA_MODEL_EXTERNAL_ID = 'Industry_Canvas';
+  public readonly SPACE_VERSION = 1;
+  public readonly SPACE_EXTERNAL_ID = 'IndustryCanvasNextRelease'; // TODO(marvin): refer to system data model once that's done
+  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasNextRelease'; // TODO(marvin): refer to system data model once that's done
   public readonly CANVAS_MODEL_NAME = 'Canvas';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
   private fdmClient: FDMClient;
   private cogniteClient: CogniteClient;
+  private userProfile: UserProfile;
 
-  public constructor(client: CogniteClient) {
+  public constructor(client: CogniteClient, userProfile: UserProfile) {
     this.cogniteClient = client;
     this.fdmClient = new FDMClient(client, {
       spaceExternalId: this.SPACE_EXTERNAL_ID,
       spaceVersion: this.SPACE_VERSION,
     });
+    this.userProfile = userProfile;
   }
 
   public async getCanvasById(
@@ -47,7 +51,9 @@ export class IndustryCanvasService {
               version
               isArchived
               createdAt
+              createdBy
               updatedAt
+              updatedBy
               data
             }
           }
@@ -88,7 +94,9 @@ export class IndustryCanvasService {
               name
               version
               createdAt
+              createdBy
               updatedAt
+              updatedBy
               data
             }
             pageInfo {
@@ -138,6 +146,7 @@ export class IndustryCanvasService {
   ): Promise<SerializedCanvasDocument> {
     const updatedCanvas: SerializedCanvasDocument = {
       ...canvas,
+      updatedBy: this.userProfile.userIdentifier,
       updatedAt: new Date().toISOString(),
     };
     await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
@@ -175,6 +184,8 @@ export class IndustryCanvasService {
       name: DEFAULT_CANVAS_NAME,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      updatedBy: this.userProfile.userIdentifier,
+      createdBy: this.userProfile.userIdentifier,
       data: {
         containerReferences: [],
         canvasAnnotations: [],

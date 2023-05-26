@@ -1,8 +1,5 @@
 import React, { useContext } from 'react';
 
-import { createLink, PageTitle, SecondaryTopbar } from '@cognite/cdf-utilities';
-import { Alert } from 'antd';
-
 import {
   use3DModel,
   useImage360,
@@ -11,6 +8,10 @@ import {
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import SecondaryModelDropdown from '@data-exploration-app/containers/ThreeD/title/SecondaryModelDropdown';
+import { Alert } from 'antd';
+
+import { createLink, PageTitle, SecondaryTopbar } from '@cognite/cdf-utilities';
+
 import { getMainModelTitle } from '../utils';
 
 export const ThreeDTitle = ({

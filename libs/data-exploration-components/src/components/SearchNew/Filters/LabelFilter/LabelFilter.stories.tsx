@@ -1,6 +1,9 @@
-import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
+
+import { ComponentStory } from '@storybook/react';
+
 import { OptionValue } from '../types';
+
 import { LabelFilterV2 } from './LabelFilter';
 
 export default {

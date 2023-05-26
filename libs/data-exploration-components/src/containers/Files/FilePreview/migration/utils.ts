@@ -1,5 +1,3 @@
-import { AnnotationModel, AnnotationStatus } from '@cognite/sdk';
-import pickBy from 'lodash/pickBy';
 import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
@@ -8,6 +6,10 @@ import {
   TaggedAnnotationAnnotation,
   TaggedLocalAnnotation,
 } from '@data-exploration-lib/core';
+import pickBy from 'lodash/pickBy';
+
+import { AnnotationModel, AnnotationStatus } from '@cognite/sdk';
+
 import {
   ResourceItem,
   ResourceItemState,

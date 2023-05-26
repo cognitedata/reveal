@@ -3,10 +3,12 @@
  * The code that is loaded here is being executed in a background thread.
  * The actual implementation is in GraphQLWorker. Here we are just initializing the class.
  */
+
+import type { worker as WorkerNamespace } from 'monaco-editor';
 // eslint-disable-next-line
 // @ts-expect-error
 import { initialize } from 'monaco-editor/esm/vs/editor/editor.worker';
-import type { worker as WorkerNamespace } from 'monaco-editor';
+
 import { create } from '../FdmGraphQLDmlWorker';
 import { IFdmGraphQLDmlWorkerOptions } from '../types';
 

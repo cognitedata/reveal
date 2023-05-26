@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import isEqual from 'lodash/isEqual';
 
 import { PlotRange } from '../types';
+
 import { useDeepEffect } from './useDeep';
 
 interface Props {

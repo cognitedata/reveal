@@ -1,8 +1,12 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
+
 import { action } from '@storybook/addon-actions';
 import { PartialStoryFn } from '@storybook/addons';
+
+import { Button } from '@cognite/cogs.js';
+
 import { useResourcePreview, ResourcePreviewProps } from '../context';
+
 import { ResourcePreviewPropsFunctions } from './stub';
 import { Wrapper } from './utils';
 

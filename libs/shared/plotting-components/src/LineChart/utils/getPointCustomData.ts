@@ -1,7 +1,6 @@
-import { PlotDatum } from 'plotly.js';
-
-import isArray from 'lodash/isArray';
 import get from 'lodash/get';
+import isArray from 'lodash/isArray';
+import { PlotDatum } from 'plotly.js';
 
 import { CustomDataType } from '../types';
 

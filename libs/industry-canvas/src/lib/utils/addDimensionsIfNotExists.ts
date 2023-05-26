@@ -1,5 +1,7 @@
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
+
 import { CanvasAnnotation, ContainerReference } from '../types';
+
 import addDimensionsToContainerReference from './addDimensionsToContainerReference';
 
 const addDimensionsIfNotExists = (

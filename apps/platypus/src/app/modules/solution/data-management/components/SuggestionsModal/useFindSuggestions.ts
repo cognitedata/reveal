@@ -1,6 +1,7 @@
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { DMSRecord, SuggestionsMatch } from '@platypus-core/domain/suggestions';
 import { useQuery } from '@tanstack/react-query';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
+
 import SuggestionsWorker from './suggestionsWorkerLoader';
 
 export const useFindSuggestions = (

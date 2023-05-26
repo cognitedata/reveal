@@ -1,8 +1,11 @@
-import { ComponentStory } from '@storybook/react';
 import React from 'react';
+
 import styled from 'styled-components';
-import { FileSearchResults } from './FileSearchResults';
+
+import { ComponentStory } from '@storybook/react';
+
 import { FileLinkedSearchResults } from './FileLinkedSearchResults';
+import { FileSearchResults } from './FileSearchResults';
 
 export default {
   title: 'Search Results/FileSearchResults',

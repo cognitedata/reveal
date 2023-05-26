@@ -4,9 +4,9 @@ import {
   isNumeric,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
-
-import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+
 import { AdvancedFilter, AdvancedFilterBuilder } from '../../../builders';
 import { NIL_FILTER_VALUE } from '../../../constants';
 import { getSearchConfig } from '../../../utils';

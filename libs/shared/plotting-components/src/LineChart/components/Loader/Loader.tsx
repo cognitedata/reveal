@@ -4,6 +4,7 @@ import { CSSProperties } from 'react';
 import { Icon } from '@cognite/cogs.js';
 
 import { Variant } from '../../types';
+
 import { LoaderWrapper } from './elements';
 
 export interface LoaderProps {

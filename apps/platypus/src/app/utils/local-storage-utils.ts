@@ -1,5 +1,5 @@
-import { isFDMv3 } from '@platypus-app/flags';
 import { STORAGE_PROVIDER_CONSTANTS } from '@platypus/platypus-core';
+import { isFDMv3 } from '@platypus-app/flags';
 
 export const getKeyForDataModel = (
   dataModelSpace: string,

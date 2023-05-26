@@ -1,8 +1,8 @@
+import get from 'lodash/get';
 import { PlotRelayoutEvent, PlotSelectionEvent } from 'plotly.js';
 
-import get from 'lodash/get';
-
 import { PlotRange } from '../types';
+
 import { getAxisRangeFromValues } from './getAxisRangeFromValues';
 import { getValueTypeAsNumber } from './getValueTypeAsNumber';
 

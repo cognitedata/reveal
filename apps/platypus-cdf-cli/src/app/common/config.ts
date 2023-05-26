@@ -1,12 +1,15 @@
 import { promises } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
-import { Arguments, CommandModule } from 'yargs';
+
 import ConfigStore from 'configstore';
+import { Arguments, CommandModule } from 'yargs';
+
 import { CONSTANTS } from '../constants';
 import { BaseArgs, CLIConfigManager } from '../types';
-import { DEBUG as _DEBUG } from '../utils/logger';
 import { getProjectConfig } from '../utils/config';
+import { DEBUG as _DEBUG } from '../utils/logger';
+
 import { CLICommand } from './cli-command';
 const { stat, writeFile } = promises;
 

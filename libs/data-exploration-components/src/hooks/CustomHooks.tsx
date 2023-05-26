@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import queryString from 'query-string';
-import { IdEither } from '@cognite/sdk';
+
 import { extractUniqueIds } from '@data-exploration-lib/core';
-import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
+import { useQuery } from '@tanstack/react-query';
 import copy from 'copy-to-clipboard';
 import unionBy from 'lodash/unionBy';
+import queryString from 'query-string';
+
+import { IdEither } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();

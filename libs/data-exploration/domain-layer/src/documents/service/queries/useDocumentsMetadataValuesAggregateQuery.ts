@@ -1,13 +1,14 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';
 import { DocumentProperties } from '../../internal';
-import { DocumentsMetadataAggregateResponse } from '../types';
 import { getDocumentsMetadataValuesAggregate } from '../network/getDocumentsMetadataValuesAggregate';
+import { DocumentsMetadataAggregateResponse } from '../types';
 
 interface Props {
   metadataKey?: string | null;

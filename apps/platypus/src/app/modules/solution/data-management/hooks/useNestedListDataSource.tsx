@@ -1,6 +1,5 @@
-import { PrimitiveTypes } from '@cognite/cog-data-grid';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useMemo, useRef } from 'react';
+
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -9,9 +8,12 @@ import {
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { IDatasource, IGetRowsParams } from 'ag-grid-community';
 import noop from 'lodash/noop';
-import { useMemo, useRef } from 'react';
+
+import { PrimitiveTypes } from '@cognite/cog-data-grid';
 
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;

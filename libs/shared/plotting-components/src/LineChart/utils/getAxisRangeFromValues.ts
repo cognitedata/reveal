@@ -1,6 +1,7 @@
 import isUndefined from 'lodash/isUndefined';
 
 import { AxisRange, ValueType } from '../types';
+
 import { getValueTypeAsNumber } from './getValueTypeAsNumber';
 
 export const getAxisRangeFromValues = (

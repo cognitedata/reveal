@@ -1,13 +1,15 @@
 import React from 'react';
-import { Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
-import groupBy from 'lodash/groupBy';
 
+import { DASH } from '@data-exploration-lib/core';
 import {
   DetailedMapping,
   useDetailedMappingsByAssetIdQuery,
 } from '@data-exploration-lib/domain-layer';
+import groupBy from 'lodash/groupBy';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { DASH } from '@data-exploration-lib/core';
+import { Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
+
 import { TimeDisplay } from '../TimeDisplay';
 
 export const ThreeDModelCellLink = ({

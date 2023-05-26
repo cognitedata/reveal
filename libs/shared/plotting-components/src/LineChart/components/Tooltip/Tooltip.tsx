@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { PlotHoverEvent } from 'plotly.js';
-
 import head from 'lodash/head';
+import { PlotHoverEvent } from 'plotly.js';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 import { Coordinate, TooltipRendererProps, Variant } from '../../types';
+import { getPointCustomData } from '../../utils/getPointCustomData';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
-import { getPointCustomData } from '../../utils/getPointCustomData';
-import { TooltipDetail, TooltipDetailProps } from './TooltipDetail';
 import { TooltipContainer, TooltipWrapper } from './elements';
+import { TooltipDetail, TooltipDetailProps } from './TooltipDetail';
 
 export interface TooltipProps {
   chartRef: React.RefObject<HTMLDivElement>;

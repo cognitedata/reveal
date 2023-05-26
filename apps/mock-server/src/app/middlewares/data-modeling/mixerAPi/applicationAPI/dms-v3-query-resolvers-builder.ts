@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
+
 import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { config } from '../../../../config';
 import { CdfMockDatabase, CdfResourceObject } from '../../../../types';
