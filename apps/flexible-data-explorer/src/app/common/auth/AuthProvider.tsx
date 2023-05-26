@@ -1,8 +1,3 @@
-import {
-  AuthProvider as UnifiedSigninAuthProvider,
-  useAuth,
-} from '@cognite/auth-react';
-import { CogniteClient } from '@cognite/sdk';
 import type { FC, PropsWithChildren } from 'react';
 import {
   createContext,
@@ -12,6 +7,13 @@ import {
   useMemo,
   useState,
 } from 'react';
+
+import {
+  AuthProvider as UnifiedSigninAuthProvider,
+  useAuth,
+} from '@cognite/auth-react';
+import { CogniteClient } from '@cognite/sdk';
+
 import { AuthStateAuthenticated, AuthStateUser } from './types';
 
 export type AuthContextType = {
@@ -33,7 +35,7 @@ type Props = {
 const InnerAuthProvider: FC<PropsWithChildren<Props>> = ({
   children,
   mock,
-  appId = 'maintain',
+  appId = 'fdx',
 }) => {
   const { getUser, project, getToken, logout, cluster } = useAuth();
 
