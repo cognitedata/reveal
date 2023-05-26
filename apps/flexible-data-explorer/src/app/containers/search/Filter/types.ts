@@ -54,6 +54,7 @@ export type ApplyFilterCallback<TConfig extends BaseConfig> = <
 ) => void;
 
 export interface BaseFilterProps<TConfig extends BaseConfig> {
+  value?: FieldValue;
   name: string;
   onBackClick: () => void;
   onApplyClick: ApplyFilterCallback<TConfig>;
@@ -70,3 +71,14 @@ export interface Field {
 }
 
 export type FieldType = 'string' | 'number' | 'boolean' | 'date';
+
+export interface Option extends DataType {
+  fields: Field[];
+}
+
+export interface FieldValue {
+  operator: Operator;
+  value: ValueType<InputType>;
+}
+
+export type FilterValue = Record<string, Record<string, FieldValue>>;

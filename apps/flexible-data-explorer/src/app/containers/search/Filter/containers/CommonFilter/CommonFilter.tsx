@@ -1,10 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
 import { BaseConfig, BaseFilterProps, ValueType } from '../../types';
 
 import { CommonFilterInput } from './CommonFilterInput';
-import { isApplyButtonDisabled } from './utils';
+import {
+  getInitialOperator,
+  getInitialValue,
+  isApplyButtonDisabled,
+} from './utils';
 
 export interface CommonFilterProps<TConfig extends BaseConfig>
   extends BaseFilterProps<TConfig> {
@@ -16,6 +20,7 @@ export const CommonFilter = <
   TConfig extends BaseConfig
 >({
   config,
+  value: fieldValue,
   name,
   onBackClick,
   onApplyClick,
@@ -24,14 +29,24 @@ export const CommonFilter = <
     return Object.keys(config) as TOperator[];
   }, [config]);
 
-  const [operator, setOperator] = useState<TOperator>(operators[0]);
-  const [value, setValue] = useState<ValueType<TConfig[TOperator]>>();
+  const [operator, setOperator] = useState<TOperator>(
+    getInitialOperator(operators, fieldValue)
+  );
+
+  const [value, setValue] = useState<ValueType<TConfig[TOperator]> | undefined>(
+    getInitialValue(operators, fieldValue)
+  );
 
   const inputType = config[operator];
 
-  useEffect(() => {
-    setValue(undefined);
-  }, [inputType]);
+  const handleChangeOperator = (newOperator: TOperator) => {
+    setOperator(newOperator);
+
+    const newInputType = config[newOperator];
+    if (inputType !== newInputType) {
+      setValue(undefined);
+    }
+  };
 
   return (
     <Menu>
@@ -40,7 +55,7 @@ export const CommonFilter = <
       <Select<TOperator>
         options={operators}
         value={operator}
-        onChange={setOperator}
+        onChange={handleChangeOperator}
       />
 
       <CommonFilterInput type={inputType} value={value} onChange={setValue} />
