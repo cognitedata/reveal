@@ -13,7 +13,11 @@ export const useSubappType = () => {
     // if (pathName.startsWith('/explore')) {
     //   return 'DataExploration';
     // }
-    if (pathName.startsWith('/notebook/streamlit')) {
+    if (
+      pathName.startsWith('/notebook/streamlit') &&
+      // show only on the apps themselves, not the list page
+      !pathName.endsWith('/notebook/streamlit')
+    ) {
       return 'Streamlit';
     }
     // if (pathName === '') {

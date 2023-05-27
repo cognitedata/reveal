@@ -169,6 +169,7 @@ const CodeMessage = ({
       <Modal
         visible={open}
         title="Code preview"
+        size="x-large"
         onCancel={() => setOpen(false)}
         hideFooter
         hidePaddings

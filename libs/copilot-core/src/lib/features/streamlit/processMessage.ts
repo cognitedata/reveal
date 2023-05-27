@@ -134,9 +134,9 @@ assets = client.assets.search(name="21PT1019")
 \`\`\`
 To receive and plot data points, you always have to do it like this
 \`\`\`
-client.time_series.data.retrieve(id=time_series_id, start="1h-ago").to_pandas().plot()
+client.time_series.data.retrieve(id=time_series_id, start="52w-ago").to_pandas().plot()
 \`\`\`
-When receiving data points, "start" and "end" must be on format <integer>(s|m|h|d|w)-ago or 'now', so "1y-ago" and "1M-ago" are NOT valid.
+When receiving data points, "start" and "end" must be on format <integer>(s|m|h|d|w)-ago or 'now', so "1y-ago" and "1M-ago" are NOT valid. Default to "52w-ago".
 Other things you can do is
 \`\`\`
 events = client.events.list(limit=50)
@@ -165,7 +165,6 @@ to make sure we don't have problems with NaN values.
   const start = code.indexOf('```python') + 9;
   const length = code.lastIndexOf('```') - start;
   code = code.substr(start, length);
-  code = code.replace('1y-ago', '52w-ago');
   return { newCode: code, oldCode };
 };
 
