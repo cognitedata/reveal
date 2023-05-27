@@ -3,6 +3,8 @@
 import React from 'react';
 
 import botui from '@botui/react/default-theme';
+import highlight from 'highlight.js/styles/dracula.css';
+import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
@@ -39,7 +41,12 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([cogsStyles, botui]);
+  const isStyleLoaded = useGlobalStyles([
+    cogsStyles,
+    botui,
+    highlight,
+    monacoStyles,
+  ]);
 
   if (!isStyleLoaded) {
     return <Loader />;
