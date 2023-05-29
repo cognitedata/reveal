@@ -83,9 +83,10 @@ WithWrapper.args = {
   },
 };
 
-const Chart2Canvas: React.FC<
+const ChartToCanvasInner: React.FC<
   LineChartProps & { wrapperStyle: React.CSSProperties }
 > = ({ wrapperStyle, ...lineChartProps }) => {
+  const [height, setHeight] = useState(300);
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
 
@@ -93,6 +94,7 @@ const Chart2Canvas: React.FC<
     if (ref !== null) {
       setInterval(async () => {
         setCanvas(await html2canvas(ref, { logging: true }));
+        setHeight((prevHeight) => prevHeight + 10);
       }, 2500);
     }
   }, [ref]);
@@ -107,26 +109,30 @@ const Chart2Canvas: React.FC<
   return (
     <div>
       <h1>DOM-node</h1>
-      <div ref={setRef} style={wrapperStyle}>
+      <div ref={setRef} style={{ ...wrapperStyle, height }}>
         <LineChart {...lineChartProps} />
       </div>
       <h1>Screenshot</h1>
       <div>
         {dataUrl !== undefined && (
-          <img src={dataUrl} height={wrapperStyle.height} />
+          <img
+            src={dataUrl}
+            height={height}
+            style={{ transform: wrapperStyle.transform }}
+          />
         )}
       </div>
     </div>
   );
 };
 
-export const Chart2CanvasStory: ComponentStory<typeof Chart2Canvas> = (
+export const ChartToCanvas: ComponentStory<typeof ChartToCanvasInner> = (
   args
 ) => {
-  return <Chart2Canvas {...args} />;
+  return <ChartToCanvasInner {...args} />;
 };
 
-Chart2CanvasStory.args = {
+ChartToCanvas.args = {
   ...props,
   wrapperStyle: {
     height: 300,
