@@ -1,4 +1,7 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { ComponentStory } from '@storybook/react';
+import html2canvas from 'html2canvas';
 import get from 'lodash/get';
 
 import { Button, Select } from '@cognite/cogs.js';
@@ -71,7 +74,59 @@ const ChartWithWrapper: React.FC<
 export const WithWrapper: ComponentStory<typeof ChartWithWrapper> = (args) => {
   return <ChartWithWrapper {...args} />;
 };
+
 WithWrapper.args = {
+  ...props,
+  wrapperStyle: {
+    height: 300,
+    transform: 'scale(0.75)',
+  },
+};
+
+const Chart2Canvas: React.FC<
+  LineChartProps & { wrapperStyle: React.CSSProperties }
+> = ({ wrapperStyle, ...lineChartProps }) => {
+  const [ref, setRef] = useState<HTMLDivElement | null>(null);
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    if (ref !== null) {
+      setInterval(async () => {
+        setCanvas(await html2canvas(ref, { logging: true }));
+      }, 2500);
+    }
+  }, [ref]);
+
+  const dataUrl = useMemo(() => {
+    if (canvas === null) {
+      return undefined;
+    }
+    return canvas.toDataURL();
+  }, [canvas]);
+
+  return (
+    <div>
+      <h1>DOM-node</h1>
+      <div ref={setRef} style={wrapperStyle}>
+        <LineChart {...lineChartProps} />
+      </div>
+      <h1>Screenshot</h1>
+      <div>
+        {dataUrl !== undefined && (
+          <img src={dataUrl} height={wrapperStyle.height} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const Chart2CanvasStory: ComponentStory<typeof Chart2Canvas> = (
+  args
+) => {
+  return <Chart2Canvas {...args} />;
+};
+
+Chart2CanvasStory.args = {
   ...props,
   wrapperStyle: {
     height: 300,
