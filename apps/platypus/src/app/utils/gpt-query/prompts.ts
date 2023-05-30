@@ -17,7 +17,7 @@ export function getGraphQLQueryForFDM(relevantTypes: string) {
 I have the following GraphQL types:
 ${relevantTypes}
 For each type, there is a query \`list<Type>\` to retrieve the elements, \`aggregate<Type>\` to aggregate and count elements, \`search<Type>\` to search for elements, and \`get<Type>ById\` to retrieve a specific element.
-  
+
 Every type has an additional attribute \`externalId\` which is its unique key.
 For each type only these queries exist: Query \`list<Type>\` to retrieve the elements, \`aggregate<Type>\` to aggregate and count elements, \`search<Type>\` to search for elements, and \`get<Type>ById\` to retrieve a specific element.
 Every query and subtypes has the attribute \`items\`, in which the response is found.
@@ -119,7 +119,7 @@ query {
 All GraphQL operations are in singular, not plural. That means listMovie and not listMovies. 
 Here is an example query including filters and sorting. Filter and sort should not normally be used. Only include properties specified in the data model type in the query, and always include all properties used in filter or sort.
 \`\`\`query {
-  listWorkOrder(filter: {and: [{dueDate: {gte: "2023-05-01T00:00:00Z", lt: "2023-05-08T00:00:00Z"}}, {isActive: {eq: true}}]}, sort: {durationHours: DESC}) {
+  listMyType(filter: {and: [{dueDate: {gte: "2023-05-01T00:00:00Z", lt: "2023-05-08T00:00:00Z"}}, {isActive: {eq: true}}]}, sort: {durationHours: DESC}) {
     items {
       externalId
       title
