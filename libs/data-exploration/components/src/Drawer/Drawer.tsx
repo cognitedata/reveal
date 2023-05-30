@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from 'react';
+import { createPortal } from 'react-dom';
 
 import styled from 'styled-components';
 
@@ -17,7 +18,7 @@ export const Drawer: React.FC<PropsWithChildren<DrawerProps>> = ({
   onClose,
   ...rest
 }) => {
-  return (
+  return createPortal(
     <>
       <StyledDrawer visible={visible} {...rest}></StyledDrawer>
       <Overlay visible={visible} onClick={onClose} />
@@ -31,7 +32,8 @@ export const Drawer: React.FC<PropsWithChildren<DrawerProps>> = ({
           />
         </ClosedButton>
       )}
-    </>
+    </>,
+    document.body
   );
 };
 

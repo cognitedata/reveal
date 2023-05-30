@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,7 +7,9 @@ import {
   Drawer,
   ExplorationFilterToggle,
 } from '@data-exploration/components';
+import { RowSelectionState, Updater } from '@tanstack/react-table';
 import isEmpty from 'lodash/isEmpty';
+import mapValues from 'lodash/mapValues';
 import noop from 'lodash/noop';
 import { useDebounce } from 'use-debounce';
 
@@ -33,6 +35,7 @@ import {
 } from '../ResourceTabs';
 import { SidebarFilters } from '../Search';
 
+import { ResourceSelectorDetails } from './ResourceSelectorDetails';
 import { ResourceSelectorTable } from './ResourceSelectorTable';
 import { useFilterState } from './useFilterState';
 
@@ -52,10 +55,12 @@ const initialSelectedRows = {
   event: {},
 };
 
-export type SelectionProps = {
-  selectionMode?: 'single' | 'multiple';
-  onSelect?: (item: ResourceItem | ResourceItem[]) => void;
-};
+export type SelectionProps =
+  | {
+      selectionMode: 'single';
+      onSelect?: (item: ResourceItem) => void;
+    }
+  | { selectionMode: 'multiple'; onSelect?: (item: ResourceItem[]) => void };
 
 export type ResourceSelection = Record<
   ResourceType,
@@ -65,7 +70,7 @@ export const ResourceSelector = ({
   visible = false,
 
   visibleResourceTabs = DEFAULT_VISIBLE_RESOURCE_TABS,
-  selectionMode = 'multiple',
+  selectionMode = 'single',
   initialFilter = EMPTY_OBJECT,
   onClose,
   onSelect = noop,
@@ -74,11 +79,12 @@ export const ResourceSelector = ({
   onClose: () => void;
   visibleResourceTabs?: ResourceType[];
   initialFilter?: Partial<FilterState>;
-} & SelectionProps) => {
+} & Partial<SelectionProps>) => {
   const { state, setter, resetter } = useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
   const [activeKey, setActiveKey] = useState(visibleResourceTabs[0]);
+  const [previewItem, setPreviewItem] = useState<ResourceItem>();
 
   const [debouncedQuery] = useDebounce(query, 100);
   const [selectedRows, setSelectedRows] =
@@ -98,13 +104,55 @@ export const ResourceSelector = ({
         }, [] as ResourceItem[]),
     [selectedRows]
   );
+
   const actionBarOptions = useMemo(
     () =>
       allSelectedRows.map((value) => ({
-        name: value.externalId || '',
+        name: value.externalId || `${value.id}`,
         type: value.type,
       })),
     [allSelectedRows]
+  );
+  const onDetailRowSelection = useCallback(
+    (
+      updater?: Updater<RowSelectionState>,
+      currentData?: ResourceItem[],
+      resourceType?: ResourceType
+    ) => {
+      setSelectedRows((prev) => {
+        if (updater && currentData && resourceType) {
+          if (typeof updater === 'function') {
+            return {
+              ...prev,
+              [resourceType]: mapValues(
+                updater(
+                  mapValues(prev[resourceType], function (resourceItem) {
+                    return Boolean(resourceItem.id);
+                  })
+                ),
+                function (_, key) {
+                  return currentData.find((item) => String(item.id) === key);
+                }
+              ),
+            };
+          }
+          return {
+            ...prev,
+            [resourceType]: mapValues(updater, function (_, key) {
+              return currentData.find((item) => String(item.id) === key);
+            }),
+          };
+        }
+        return {
+          ...prev,
+          [previewItem!.type]: {
+            ...prev[previewItem!.type],
+            [previewItem!.id]: previewItem,
+          },
+        };
+      });
+    },
+    [previewItem]
   );
 
   return (
@@ -216,15 +264,33 @@ export const ResourceSelector = ({
                 selectedRows={selectedRows}
                 setSelectedRows={setSelectedRows}
                 filter={state}
-                selectionMode="multiple"
+                selectionMode={selectionMode}
                 query={debouncedQuery}
                 resourceType={activeKey}
                 onFilterChange={(nextState) => {
                   setter(activeKey, nextState);
                 }}
+                onClick={({ id, externalId }) => {
+                  setPreviewItem({ id, externalId, type: activeKey });
+                }}
               />
             </MainContainer>
           </MainSearchContainer>
+          {visible && previewItem && (
+            <ResourcePreviewSidebarWrapper>
+              <ResourceSelectorDetails
+                item={previewItem}
+                closable={true}
+                onClose={() => setPreviewItem(undefined)}
+                selectionMode={selectionMode}
+                selectedRows={selectedRows}
+                onSelect={onDetailRowSelection}
+                isSelected={Boolean(
+                  selectedRows[previewItem.type][previewItem.id]
+                )}
+              />
+            </ResourcePreviewSidebarWrapper>
+          )}
           <BulkActionbar
             options={actionBarOptions}
             title={`${actionBarOptions.length} items`}
@@ -234,8 +300,10 @@ export const ResourceSelector = ({
             <Button
               icon="Add"
               onClick={() => {
-                if (selectionMode === 'multiple') onSelect(allSelectedRows);
-                else onSelect(allSelectedRows[0]);
+                if (selectionMode === 'multiple')
+                  onSelect(allSelectedRows as any);
+                if (selectionMode === 'single')
+                  onSelect(allSelectedRows[0] as any);
               }}
               inverted
               type="secondary"
@@ -298,4 +366,11 @@ const MainContainer = styled(Flex)<{ isFilterFeatureEnabled?: boolean }>`
   height: 100%;
   flex: 1;
   overflow: auto;
+`;
+
+const ResourcePreviewSidebarWrapper = styled.div`
+  width: 360px;
+  margin: 12px;
+  flex: 1;
+  border-left: 1px solid var(--cogs-border--muted);
 `;

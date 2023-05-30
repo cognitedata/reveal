@@ -59,7 +59,7 @@ export const ResourceSelectorTable = ({
             [resourceType]: mapValues(
               updater(
                 mapValues(prev[resourceType], function (resourceItem) {
-                  return Boolean(resourceItem.id);
+                  return Boolean(resourceItem?.id);
                 })
               ),
               function (_, key) {

@@ -119,7 +119,7 @@ export const ResourceSelectorProvider = ({
     >
       {children}
       {/* <ResourceSelector visible={isOpen} onClose={() => setIsOpen(false)} /> */}
-      <ResourceSelectionSidebar
+      {/* <ResourceSelectionSidebar
         onClose={(success) => {
           onClose(
             success,
@@ -140,7 +140,7 @@ export const ResourceSelectorProvider = ({
         }
         onSelect={onSelect}
         resourceTypes={resourceTypes}
-      />
+      /> */}
     </ResourceSelectorContext.Provider>
   );
 };

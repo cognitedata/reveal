@@ -7,6 +7,7 @@ import {
   AssetDetails,
   DocumentDetails,
   EventDetails,
+  ResourceSelection,
   SequenceDetails,
   TimeseriesDetails,
 } from '@data-exploration/containers';
@@ -27,6 +28,7 @@ type Props = {
   onClose?: () => void;
   hideTitle?: boolean;
   hideContent?: boolean;
+  selectedRows?: ResourceSelection;
 } & Partial<SelectableItemProps>;
 
 const Centered = styled.div`
@@ -49,17 +51,16 @@ export const ResourcePreviewSidebar = ({
   item,
   placeholder = ResourcePreviewPlaceholder(),
   header,
-  actions,
+
   footer,
   content: propContent,
   onClose = noop,
-  selectionMode = 'none',
+  selectedRows,
   onSelect = noop,
   isSelected = false,
-  hideTitle = false,
   hideContent = false,
 }: Props) => {
-  const commonProps = { selectionMode, onSelect, isSelected };
+  const commonProps = { selectedRows, onSelect };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
@@ -69,6 +70,7 @@ export const ResourcePreviewSidebar = ({
             assetId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            {...commonProps}
           />
         );
         break;

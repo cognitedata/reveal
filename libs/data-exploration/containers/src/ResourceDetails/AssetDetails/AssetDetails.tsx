@@ -5,7 +5,7 @@ import { ResourceDetailsTemplate } from '@data-exploration/components';
 import { createLink } from '@cognite/cdf-utilities';
 import { Collapse, Title } from '@cognite/cogs.js';
 
-import { ResourceType } from '@data-exploration-lib/core';
+import { ResourceType, SelectableItemsProps } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
@@ -21,6 +21,7 @@ import {
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
+import { ResourceSelection } from '../../ResourceSelector';
 import {
   ASSETS,
   DETAILS,
@@ -38,14 +39,20 @@ export const onOpenResources = (resourceType: ResourceType, id: number) => {
 interface Props {
   assetId: number;
   isSelected: boolean;
-  onSelectClicked?: () => void;
+  selectionMode?: 'single' | 'multiple';
+
   onClose?: () => void;
+  selectedRows?: ResourceSelection;
 }
-export const AssetDetails: FC<Props> = ({
+export const AssetDetails: FC<
+  Props & Pick<SelectableItemsProps, 'onSelect'>
+> = ({
   assetId,
   isSelected,
-  onSelectClicked,
+  onSelect,
+  selectionMode,
   onClose,
+  selectedRows,
 }) => {
   const { data } = useAssetsByIdQuery([{ id: assetId }]);
   const asset = useMemo(() => {
@@ -92,13 +99,14 @@ export const AssetDetails: FC<Props> = ({
     limit: 10,
   });
 
+  const enableDetailTableSelection = selectionMode === 'multiple';
   return (
     <ResourceDetailsTemplate
       title={asset ? asset.name : ''}
       icon="Assets"
       isSelected={isSelected}
       onClose={onClose}
-      onSelectClicked={onSelectClicked}
+      onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="details">
         <Collapse.Panel key="details" header={<h4>{DETAILS}</h4>}>
@@ -110,23 +118,27 @@ export const AssetDetails: FC<Props> = ({
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{ASSETS}</h4>}>
           <AssetDetailsTable
+            selectedRows={selectedRows?.asset || {}}
+            enableSelection={enableDetailTableSelection}
             id="related-asset-asset-details"
             data={relatedAssets}
             hasNextPage={assetsHasNextPage}
             fetchMore={assetsFetchNextPage}
             isLoadingMore={isAssetsLoading}
-            onRowClick={(currentAsset) =>
-              onOpenResources('asset', currentAsset.id)
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, 'asset')
             }
           />
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{TIME_SERIES}</h4>}>
           <TimeseriesDetailsTable
+            enableSelection={enableDetailTableSelection}
             id="related-timeseries-asset-details"
-            data={relatedTimeseries}
-            onRowClick={(timeseries) =>
-              onOpenResources('timeSeries', timeseries.id)
+            selectedRows={selectedRows?.timeSeries || {}}
+            onRowSelection={(updater, currentTimeseries) =>
+              onSelect?.(updater, currentTimeseries, 'timeSeries')
             }
+            data={relatedTimeseries}
             fetchMore={timeseriesFetchNextPage}
             hasNextPage={timeseriesHasNextPage}
             isLoadingMore={isTimeseriesLoading}
@@ -134,19 +146,27 @@ export const AssetDetails: FC<Props> = ({
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{FILES}</h4>}>
           <FileDetailsTable
+            enableSelection={enableDetailTableSelection}
             id="related-file-asset-details"
             data={relatedFiles}
+            selectedRows={selectedRows?.file || {}}
+            onRowSelection={(updater, currentFiles) =>
+              onSelect?.(updater, currentFiles, 'file')
+            }
             hasNextPage={fileHasNextPage}
             fetchMore={fileFetchNextPage}
             isLoadingMore={isFileLoading}
-            onRowClick={(file) => onOpenResources('file', file.id)}
           />
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{EVENTS}</h4>}>
           <EventDetailsTable
+            enableSelection={enableDetailTableSelection}
             id="related-event-asset-details"
             data={relatedEvents}
-            onRowClick={(event) => onOpenResources('event', event.id)}
+            selectedRows={selectedRows?.event || {}}
+            onRowSelection={(updater, currentEvents) =>
+              onSelect?.(updater, currentEvents, 'event')
+            }
             fetchMore={eventFetchNextPage}
             hasNextPage={eventHasNextPage}
             isLoadingMore={isEventLoading}

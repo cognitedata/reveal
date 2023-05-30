@@ -2,8 +2,10 @@ import React, { useEffect, useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceSelectorDetails } from '@data-exploration/containers';
-import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
+import {
+  ResourceSelector,
+  ResourceSelectorDetails,
+} from '@data-exploration/containers';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
 import capitalize from 'lodash/capitalize';
@@ -23,6 +25,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import {
   ExtendedAnnotation,
   SIDEBAR_RESIZE_EVENT,
+  useDialog,
 } from '@data-exploration-lib/core';
 import {
   useCreateAnnotation,
@@ -31,7 +34,6 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { Divider, InfoCell } from '../../../components';
-import { useDisclosure } from '../../../hooks';
 import { ResourceItem, convertResourceType } from '../../../types';
 import { sleep } from '../../../utils';
 
@@ -42,7 +44,6 @@ import {
   getExtendedAnnotationLabel,
   getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
-  getResourceItemStateFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
   isExtendedLocalAnnotation,
   setExtendedAnnotationResource,
@@ -87,7 +88,12 @@ const AnnotationPreviewSidebar = ({
   setSelectedAnnotations,
 }: Props) => {
   const client = useQueryClient();
-  const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
+  const { isOpen, open, close: modalClose } = useDialog();
+  const {
+    isOpen: visible,
+    close: resourceSelectorClose,
+    open: openResourceSelector,
+  } = useDialog();
 
   const [annotationModalState, setAnnotationModalState] =
     useState<AnnotationModalStateProps>({
@@ -104,8 +110,6 @@ const AnnotationPreviewSidebar = ({
   const selectedAnnotation = selectedAnnotations?.length
     ? selectedAnnotations[currentIndex || 0]
     : undefined;
-
-  const { openResourceSelector } = useResourceSelector();
 
   const isPendingAnnotation =
     selectedAnnotation !== undefined &&
@@ -230,11 +234,11 @@ const AnnotationPreviewSidebar = ({
       onOk: async () => {
         updateAnnotations([setExtendedAnnotationStatus(annotation, status)]);
         setSelectedAnnotations([]);
-        onModalClose();
+        modalClose();
       },
-      onCancel: onModalClose,
+      onCancel: modalClose,
     });
-    onOpen();
+    open();
   };
 
   const onDeleteAnnotation = (annotation: ExtendedAnnotation) => {
@@ -263,40 +267,37 @@ const AnnotationPreviewSidebar = ({
           deleteAnnotation(annotation);
           setPendingAnnotations([]);
           setSelectedAnnotations([]);
-          onModalClose();
+          modalClose();
         },
-        onCancel: onModalClose,
+        onCancel: modalClose,
       });
-      onOpen();
+      open();
     }
   };
 
   const onLinkResource = useCallback(() => {
-    const resourceItemState =
-      selectedAnnotation !== undefined &&
-      getResourceItemStateFromExtendedAnnotation(selectedAnnotation, 'selected')
-        ? getResourceItemStateFromExtendedAnnotation(
-            selectedAnnotation,
-            'selected'
-          )
-        : undefined;
+    openResourceSelector();
+    //TODO Don't know what this does need to confirm with Industry canvas
+    // const resourceItemState =
+    //   selectedAnnotation !== undefined &&
+    //   getResourceItemStateFromExtendedAnnotation(selectedAnnotation, 'selected')
+    //     ? getResourceItemStateFromExtendedAnnotation(
+    //         selectedAnnotation,
+    //         'selected'
+    //       )
+    //     : undefined;
+  }, [openResourceSelector, selectedAnnotation, visible]);
 
-    openResourceSelector({
-      resourceTypes: ['asset', 'file', 'event', 'timeSeries', 'sequence'],
-      selectionMode: 'single',
-      onSelect: (item) => {
-        if (selectedAnnotation === undefined) {
-          return;
-        }
+  const onSelectResources = (item: ResourceItem) => {
+    if (selectedAnnotation === undefined) {
+      return;
+    }
 
-        setSelectedAnnotations([
-          setExtendedAnnotationResource(selectedAnnotation, item),
-        ]);
-      },
-      initialItemState:
-        resourceItemState !== undefined ? [resourceItemState] : undefined,
-    });
-  }, [openResourceSelector, selectedAnnotation, setSelectedAnnotations]);
+    setSelectedAnnotations([
+      setExtendedAnnotationResource(selectedAnnotation, item),
+    ]);
+    resourceSelectorClose();
+  };
 
   const isLinked =
     selectedAnnotation !== undefined &&
@@ -496,28 +497,36 @@ const AnnotationPreviewSidebar = ({
           }
           onClose={() => setSelectedAnnotations([])}
         />
+        <ResourceSelector
+          visible={visible}
+          selectionMode="single"
+          onClose={resourceSelectorClose}
+          onSelect={onSelectResources}
+        />
       </>
     );
   }
   return (
-    <FilePreviewSidebar
-      annotations={annotations}
-      file={file}
-      fileIcon={fileIcon}
-      approveAnnotations={(annotations: ExtendedAnnotation[]) =>
-        approveAnnotations(
-          annotations.map((annotation) =>
-            setExtendedAnnotationStatus(annotation, 'approved')
+    <>
+      <FilePreviewSidebar
+        annotations={annotations}
+        file={file}
+        fileIcon={fileIcon}
+        approveAnnotations={(annotations: ExtendedAnnotation[]) =>
+          approveAnnotations(
+            annotations.map((annotation) =>
+              setExtendedAnnotationStatus(annotation, 'approved')
+            )
           )
-        )
-      }
-      viewingAnnotations={viewingAnnotations}
-      setViewingAnnotations={setViewingAnnotations}
-      setIsAnnotationsShown={setIsAnnotationsShown}
-      isAnnotationsShown={isAnnotationsShown}
-      reset={reset}
-      setSelectedAnnotations={setSelectedAnnotations}
-    />
+        }
+        viewingAnnotations={viewingAnnotations}
+        setViewingAnnotations={setViewingAnnotations}
+        setIsAnnotationsShown={setIsAnnotationsShown}
+        isAnnotationsShown={isAnnotationsShown}
+        reset={reset}
+        setSelectedAnnotations={setSelectedAnnotations}
+      />
+    </>
   );
 };
 

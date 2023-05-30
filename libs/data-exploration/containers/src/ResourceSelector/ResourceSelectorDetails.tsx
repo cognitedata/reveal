@@ -2,6 +2,7 @@ import {
   AssetDetails,
   EventDetails,
   TimeseriesDetails,
+  ResourceSelection,
 } from '@data-exploration/containers';
 import React from 'react';
 import styled from 'styled-components';
@@ -22,6 +23,7 @@ type Props = {
   onClose?: () => void;
   hideTitle?: boolean;
   hideContent?: boolean;
+  selectedRows?: ResourceSelection;
 } & Partial<SelectableItemsProps>;
 
 const Centered = styled.div`
@@ -44,16 +46,18 @@ export const ResourceSelectorDetails = ({
   item,
   placeholder = ResourcePreviewPlaceholder(),
   header,
-  actions,
   footer,
   content: propContent,
   onClose = noop,
+  selectedRows,
+  selectionMode = 'single',
   onSelect = noop,
+
   isSelected = false,
   hideTitle = false,
   hideContent = false,
 }: Props) => {
-  const commonProps = { onSelect, isSelected, actions };
+  const commonProps = { onSelect, selectedRows };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
@@ -63,6 +67,8 @@ export const ResourceSelectorDetails = ({
             assetId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            selectionMode={selectionMode}
+            {...commonProps}
           />
         );
         break;

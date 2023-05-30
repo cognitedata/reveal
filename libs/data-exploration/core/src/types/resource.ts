@@ -1,3 +1,5 @@
+import { RowSelectionState, Updater } from '@tanstack/react-table';
+
 import { AllIconTypes } from '@cognite/cogs.js';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
@@ -20,7 +22,11 @@ export type ResourceType =
 
 export type ResourceSelectionMode = 'single' | 'multiple';
 export type SelectableItemsProps = {
-  onSelect: (item: ResourceItem) => void;
+  onSelect: (
+    updater?: Updater<RowSelectionState>,
+    currentData?: ResourceItem[],
+    resourceType?: ResourceType
+  ) => void;
   selectionMode: ResourceSelectionMode;
   isSelected: boolean;
 };
