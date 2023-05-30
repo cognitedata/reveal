@@ -7,7 +7,7 @@ import {
   XYPosition,
   FlowTransform,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
 import {
   ComponentProps,
   useCallback,
@@ -52,13 +52,14 @@ import { validateSteps } from './calculations';
 import { defaultTranslations } from '../translations';
 
 type Props = {
-  workflow: ChartWorkflowV2;
+  source: ChartWorkflowV2 | ScheduledCalculation;
+  sourceType?: ChartWorkflowV2['type'] | ScheduledCalculation['type'];
   workflows: ChartWorkflowV2[];
   operations: Operation[];
   sources: SourceOption[];
   onClose: () => void;
   onUpdateWorkflow: (
-    wf: ChartWorkflowV2,
+    wf: ChartWorkflowV2 | ScheduledCalculation,
     steps: ComputationStep[],
     isValid: boolean
   ) => void;
@@ -71,7 +72,8 @@ type Props = {
 };
 
 const ReactFlowNodeEditorContainer = ({
-  workflow,
+  source,
+  sourceType,
   workflows = [],
   operations = [],
   sources,
@@ -81,7 +83,8 @@ const ReactFlowNodeEditorContainer = ({
   translations: t,
   onErrorIconClick,
   calculationResult,
-}: Props) => {
+}: // scheduledCalculationData,
+Props) => {
   /**
    * Hook onto the internal react-flow state
    * to be able to set selected element
@@ -93,14 +96,14 @@ const ReactFlowNodeEditorContainer = ({
   /**
    * Use internal state by default (but)
    */
-  const [localWorkflow, setLocalWorkflow] = useState(workflow);
+  const [localWorkflow, setLocalWorkflow] = useState(source);
 
   /**
-   * Overwrite local workflow state if new workflow prop is passed from outside
+   * Overwrite local source state if new source prop is passed from outside
    */
   useEffect(() => {
-    setLocalWorkflow(workflow);
-  }, [workflow]);
+    setLocalWorkflow(source);
+  }, [source]);
 
   /**
    * Calculate computation steps
@@ -119,7 +122,10 @@ const ReactFlowNodeEditorContainer = ({
    * Data handlers
    */
   const handleSaveSettings = (updatedSettings: ChartWorkflowV2['settings']) => {
-    const newWorkflow = updateFlowSettings(localWorkflow, updatedSettings);
+    const newWorkflow = updateFlowSettings(
+      localWorkflow as ChartWorkflowV2,
+      updatedSettings
+    );
     setLocalWorkflow(() => newWorkflow);
     onUpdateWorkflow(newWorkflow, steps, isValid);
   };
@@ -140,7 +146,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleUpdateOutputName = useCallback(
     (newCalculationName: string) => {
       const updatedWorkflow = updateWorkflowName(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         newCalculationName
       );
 
@@ -153,7 +159,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleRemoveElements = useCallback(
     (elementsToRemove: Elements<NodeDataVariants>) => {
       const updatedWorkflow = removeElementsFromFlow(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         elementsToRemove
       );
 
@@ -165,7 +171,10 @@ const ReactFlowNodeEditorContainer = ({
 
   const handleConnect = useCallback(
     (connection: Edge | Connection) => {
-      const updatedWorkflow = makeConnectionInFlow(localWorkflow, connection);
+      const updatedWorkflow = makeConnectionInFlow(
+        localWorkflow as ChartWorkflowV2,
+        connection
+      );
 
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
@@ -176,7 +185,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleEdgeUpdate = useCallback(
     (oldEdge: Edge, newConnection: Connection) => {
       const updatedWorkflow = updateFlowEdge(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         oldEdge,
         newConnection
       );
@@ -201,7 +210,7 @@ const ReactFlowNodeEditorContainer = ({
     (nodeId: string, nodeType: NodeTypes) => {
       const newNodeId = uuidv4();
       const updatedWorkflow = duplicateNodeInFlow(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         nodeId,
         newNodeId
       );
@@ -215,7 +224,10 @@ const ReactFlowNodeEditorContainer = ({
 
   const handleRemoveNode = useCallback(
     (nodeId: string) => {
-      const updatedWorkflow = removeNodeInFlow(localWorkflow, nodeId);
+      const updatedWorkflow = removeNodeInFlow(
+        localWorkflow as ChartWorkflowV2,
+        nodeId
+      );
 
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
@@ -226,7 +238,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleSourceItemChange = useCallback(
     (nodeId: string, newSourceId: string, newType: string) => {
       const updatedWorkflow = updateSourceItemInFlow(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         nodeId,
         newSourceId,
         newType
@@ -241,7 +253,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleParameterValuesChange = useCallback(
     (nodeId: string, parameterValues: { [key: string]: any }) => {
       const updatedWorkflow = updateParameterValuesInFlow(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         nodeId,
         parameterValues
       );
@@ -255,7 +267,7 @@ const ReactFlowNodeEditorContainer = ({
   const handleConstantChange = useCallback(
     (nodeId: string, value: number) => {
       const updatedWorkflow = updateConstantInFlow(
-        localWorkflow,
+        localWorkflow as ChartWorkflowV2,
         nodeId,
         value
       );
@@ -270,20 +282,23 @@ const ReactFlowNodeEditorContainer = ({
    * Node handlers
    */
   const handleAddSourceNode = useCallback(
-    (position: XYPosition, source: SourceOption) => {
+    (position: XYPosition, sourceNode: SourceOption) => {
       const nodeId = uuidv4();
 
       const newNode: Node<SourceNodeDataDehydrated> = {
         id: nodeId,
         type: NodeTypes.SOURCE,
         data: {
-          selectedSourceId: source.value,
-          type: source.type,
+          selectedSourceId: sourceNode.value,
+          type: sourceNode.type,
         },
         position,
       };
 
-      const updatedWorkflow = addNodeInFlow(localWorkflow, newNode);
+      const updatedWorkflow = addNodeInFlow(
+        localWorkflow as ChartWorkflowV2,
+        newNode
+      );
 
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
@@ -310,7 +325,10 @@ const ReactFlowNodeEditorContainer = ({
         position,
       };
 
-      const updatedWorkflow = addNodeInFlow(localWorkflow, newNode);
+      const updatedWorkflow = addNodeInFlow(
+        localWorkflow as ChartWorkflowV2,
+        newNode
+      );
 
       setSelectedElements([{ id: nodeId, type: nodeType }]);
       setLocalWorkflow(updatedWorkflow);
@@ -331,7 +349,10 @@ const ReactFlowNodeEditorContainer = ({
         position,
       };
 
-      const updatedWorkflow = addNodeInFlow(localWorkflow, newNode);
+      const updatedWorkflow = addNodeInFlow(
+        localWorkflow as ChartWorkflowV2,
+        newNode
+      );
 
       setSelectedElements([{ id: nodeId, type: nodeType }]);
       setLocalWorkflow(updatedWorkflow);
@@ -351,7 +372,10 @@ const ReactFlowNodeEditorContainer = ({
         position,
       };
 
-      const updatedWorkflow = addNodeInFlow(localWorkflow, newNode);
+      const updatedWorkflow = addNodeInFlow(
+        localWorkflow as ChartWorkflowV2,
+        newNode
+      );
 
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
@@ -414,8 +438,10 @@ const ReactFlowNodeEditorContainer = ({
         zoom={zoom}
         flowElements={flowElements}
         sources={sources}
+        sourceType={sourceType}
         operations={operations}
         settings={localWorkflow.settings || { autoAlign: true }}
+        color={localWorkflow.color}
         calculationResult={calculationResult}
         isValid={isValid}
         onSaveSettings={handleSaveSettings}
@@ -428,8 +454,8 @@ const ReactFlowNodeEditorContainer = ({
         onAddFunctionNode={handleAddFunctionNode}
         onAddOutputNode={handleAddOutputNode}
         onMove={handleUpdatePositionAndZoom}
-        translations={t}
         onErrorIconClick={onErrorIconClick}
+        translations={t}
       />
       <CloseButton
         icon="Close"

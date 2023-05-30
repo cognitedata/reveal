@@ -1,5 +1,12 @@
-import { Chart, ChartWorkflowV2 } from 'models/chart/types';
-import { updateWorkflow } from 'models/chart/updates';
+import {
+  Chart,
+  ChartWorkflowV2,
+  ScheduledCalculation,
+} from 'models/chart/types';
+import {
+  updateScheduledCalculation,
+  updateWorkflow,
+} from 'models/chart/updates';
 import { useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { Icon, toast } from '@cognite/cogs.js';
@@ -9,6 +16,7 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
 import { useOperations } from 'models/operations/atom';
 import { availableWorkflows } from 'models/calculation-results/selectors';
+import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
 import { SourceOption } from './V2/types';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
@@ -16,7 +24,7 @@ import { defaultTranslations } from './translations';
 
 interface Props {
   chart: Chart;
-  workflowId: string;
+  sourceId: string;
   onClose: () => void;
   setChart: SetterOrUpdater<Chart | undefined>;
   translations: typeof defaultTranslations;
@@ -24,7 +32,7 @@ interface Props {
 }
 
 const NodeEditor = ({
-  workflowId,
+  sourceId,
   chart,
   onClose,
   setChart,
@@ -48,30 +56,21 @@ const NodeEditor = ({
    * Calculation run status for error sidebar
    */
   const calculationData = useRecoilValue(availableWorkflows);
-  const result = calculationData.find(({ id }) => id === workflowId);
+  const result = calculationData.find(({ id }) => id === sourceId);
+  const scheduledCalculationData =
+    useScheduledCalculationDataValue()?.[sourceId];
 
   /**
    * Generate all source options
    */
   const sources: SourceOption[] = getSourcesFromChart(chart)
-    .filter(({ id }) => id !== workflowId)
+    .filter(({ id }) => id !== sourceId)
     .map((source) => {
       return getSourceOption(source);
     });
 
-  /**
-   * Generate update function for workflow
-   */
-  const handleUpdateWorkflow = useCallback(
-    (wf: ChartWorkflowV2) => {
-      setChart((oldChart) => {
-        return updateWorkflow(oldChart!, workflowId, wf);
-      });
-    },
-    [setChart, workflowId]
-  );
-
-  const readOnly = Boolean(login?.id && !isOwner);
+  const readOnly =
+    Boolean(login?.id && !isOwner) || Boolean(scheduledCalculationData);
 
   /**
    * Trigger toast if error is present
@@ -95,10 +94,35 @@ const NodeEditor = ({
    * This could be done using a selector (refactor opportunity)
    */
   const workflow = chart?.workflowCollection?.find(
-    (flow) => flow.id === workflowId
+    (flow) => flow.id === sourceId
   ) as ChartWorkflowV2 | undefined;
 
-  if (!workflow) {
+  const scheduledCalculation = chart?.scheduledCalculationCollection?.find(
+    (sc) => sc.id === sourceId
+  );
+
+  const sourceType = workflow?.type || scheduledCalculation?.type;
+
+  /**
+   * Generate update function for workflow
+   */
+  const handleUpdateWorkflow = useCallback(
+    (wf: ChartWorkflowV2 | ScheduledCalculation) => {
+      setChart((oldChart) => {
+        if (sourceType === 'scheduledCalculation') {
+          return updateScheduledCalculation(
+            oldChart!,
+            sourceId,
+            wf as ScheduledCalculation
+          );
+        }
+        return updateWorkflow(oldChart!, sourceId, wf as ChartWorkflowV2);
+      });
+    },
+    [setChart, sourceId]
+  );
+
+  if (!(workflow || scheduledCalculation)) {
     return <div>No calculation selected</div>;
   }
 
@@ -112,7 +136,8 @@ const NodeEditor = ({
   return (
     <ReactFlowProvider>
       <ReactFlowNodeEditorContainer
-        workflow={workflow}
+        source={workflow || scheduledCalculation!}
+        sourceType={sourceType}
         workflows={referenceableWorkflows}
         operations={operations}
         sources={sources}

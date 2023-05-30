@@ -1,4 +1,4 @@
-import convertMSToDisplay from './date';
+import { convertMSToDisplay } from './date';
 
 describe('Convert milliseconds to human readable', () => {
   it('should format to readable display', () => {

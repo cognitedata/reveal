@@ -27,6 +27,7 @@ const useCreateChart = () => {
       timeSeriesCollection: [],
       workflowCollection: [],
       thresholdCollection: [],
+      scheduledCalculationCollection: [],
       dateFrom: dayjs()
         .subtract(30, 'days')
         .set('hour', 0)

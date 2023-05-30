@@ -75,7 +75,7 @@ export const CalculationPreview = memo(({ workflowId, period }: Props) => {
     dateFrom,
     dateTo,
     calculations: !isLoading ? [workflow!] : [],
-    calculationsData: !isLoading ? [data!] : [],
+    calculationsData: !isLoading && data ? [data] : [],
     mergeUnits: true,
     isMinMaxShown: false,
     isYAxisShown: true,

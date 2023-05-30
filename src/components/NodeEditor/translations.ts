@@ -24,5 +24,6 @@ export const defaultTranslations = makeDefaultTranslations(
   'Source',
   'Failed to load Operations',
   'Please reload the page',
-  'Close'
+  'Close',
+  'Running on Schedule'
 );

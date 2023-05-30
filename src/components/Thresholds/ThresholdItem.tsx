@@ -16,7 +16,7 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
 } from 'models/chart/types';
-import convertMSToDisplay from 'utils/date';
+import { convertMSToDisplay } from 'utils/date';
 import { getUnitConverter } from 'utils/units';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { isThresholdValid } from 'utils/threshold';

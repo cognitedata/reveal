@@ -25,7 +25,7 @@ const Template: Story<ComponentProps<typeof ReactFlowNodeEditorContainer>> = (
 export const EmptyCalculation = Template.bind({});
 
 EmptyCalculation.args = {
-  workflow: {
+  source: {
     id: 'uZZ2AvDqqhsSe-RjPUS-0',
     name: 'Test Calculation',
     color: '#1192e8',

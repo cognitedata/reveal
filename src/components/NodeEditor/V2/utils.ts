@@ -1,5 +1,5 @@
 import { Operation, OperationVersion } from '@cognite/calculation-backend';
-import { ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
 import { Elements, FlowElement, Node } from 'react-flow-renderer';
 import {
   NodeTypes,
@@ -93,7 +93,7 @@ export const initializeParameterValues = (
 };
 
 export const rehydrateStoredFlow = (
-  workflow: ChartWorkflowV2,
+  workflow: ChartWorkflowV2 | ScheduledCalculation,
   sources: SourceOption[],
   operations: Operation[],
   callbacks: NodeCallbacks,

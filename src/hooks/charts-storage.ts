@@ -90,6 +90,7 @@ export const useUpdateChart = () => {
           },
           'dirty'
         );
+        // Todo(DEGR-0000): send sentry error upon failure from here
         await updateChart(project, chart.id, updatedChart);
       }
       return chart.id;

@@ -18,6 +18,7 @@ import compareVersions from 'compare-versions';
 import AlertIcon from 'components/AlertIcon/AlertIcon';
 import { WorkflowState } from 'models/calculation-results/types';
 import { useFlag } from '@cognite/react-feature-flags';
+import { Label } from '@cognite/cogs.js';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import AddButton, { AddMenu } from './AddButton';
 import EditorControls from './EditorControls/EditorControls';
@@ -31,6 +32,7 @@ import { CanvasContext } from './CanvasContext';
 import EditorToolbar from './EditorToolbar/EditorToolbar';
 import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
 import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
+import { ScheduledCalculationSummary } from './ScheduledCalculationSummary';
 
 type Props = {
   id?: string;
@@ -38,6 +40,8 @@ type Props = {
   zoom?: number;
   flowElements: Elements<NodeDataVariants>;
   sources: SourceOption[];
+  color?: string;
+  sourceType?: 'workflow' | 'scheduledCalculation';
   operations: Operation[];
   settings: {
     autoAlign: boolean;
@@ -70,6 +74,8 @@ const ReactFlowNodeEditor = ({
   zoom = 1,
   flowElements,
   sources,
+  color,
+  sourceType,
   operations,
   settings,
   calculationResult,
@@ -242,6 +248,10 @@ const ReactFlowNodeEditor = ({
         )}
         {isRenderable && (
           <>
+            {isPersistenceCalcEnabled &&
+              sourceType === 'scheduledCalculation' && (
+                <ScheduledCalculationSummary workflowId={id} color={color} />
+              )}
             <EditorToolbar>
               {!readOnly && (
                 <AddButton
@@ -305,9 +315,17 @@ const ReactFlowNodeEditor = ({
                 ''
               )}
             </EditorToolbar>
-            {isPersistenceCalcEnabled ? (
+            {isPersistenceCalcEnabled && sourceType === 'workflow' ? (
               <ScheduleToolbar>
                 <ScheduledCalculationButton workflowId={id} />
+              </ScheduleToolbar>
+            ) : null}
+            {isPersistenceCalcEnabled &&
+            sourceType === 'scheduledCalculation' ? (
+              <ScheduleToolbar>
+                <Label size="medium" variant="normal">
+                  {t['Running on Schedule']}
+                </Label>
               </ScheduleToolbar>
             ) : null}
           </>

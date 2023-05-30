@@ -938,7 +938,7 @@ const ChartViewPage = () => {
                   {workspaceMode === 'editor' && !!selectedSourceId && (
                     <NodeEditor
                       setChart={setChart}
-                      workflowId={selectedSourceId}
+                      sourceId={selectedSourceId}
                       onClose={handleCloseEditor}
                       onErrorIconClick={handleErrorIconClick}
                       chart={chart}

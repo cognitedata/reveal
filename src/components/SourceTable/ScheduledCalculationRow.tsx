@@ -163,7 +163,7 @@ export const ScheduledCalculationRow = ({
         >
           <StyleButton
             disabled={!enabled}
-            icon="Function"
+            icon="Clock"
             styleColor={color}
             label="Workflow Function"
           />

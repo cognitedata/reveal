@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 /**
  * convert ms to display
  */
-export default function convertMSToDisplay(milliseconds: number) {
+export const convertMSToDisplay = (milliseconds: number) => {
   if (Number.isNaN(milliseconds)) return '';
   let hour: number;
   let minute: number;
@@ -24,7 +24,7 @@ export default function convertMSToDisplay(milliseconds: number) {
 
   // 1d 4h 3m 4s
   return `${day}d ${hour}h ${minute}m ${seconds}s`;
-}
+};
 
 /**
  * Format Date
@@ -84,4 +84,15 @@ export const durationFormatter = (date: string) => {
     .replace(/about /i, '~')
     .replace(/almost /i, '~')
     .replace(/ over/i, ' >');
+};
+
+export const convertMillisecondsToDuration = (milliseconds: number) => {
+  const seconds = milliseconds / 1000;
+  const duration = {
+    seconds: seconds % 60,
+    minutes: Math.floor((seconds / 60) % 60),
+    hours: Math.floor((seconds / (60 * 60)) % 24),
+    days: Math.floor(seconds / (60 * 60 * 24)),
+  };
+  return formatDuration(duration);
 };

@@ -11,6 +11,7 @@ export type CalculationTaskSchedule = {
   offset?: number;
   graph: { granularity: string; steps: ScheduledCalculationStep[] };
   targetTimeseriesExternalId: string;
+  createdTime?: number;
 };
 
 export type CalculationTaskScheduledCreate = CalculationTaskSchedule & {

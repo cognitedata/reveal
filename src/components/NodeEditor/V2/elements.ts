@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
+import { Collapse } from '@cognite/cogs.js';
 
 export const NodeEditorContainer = styled.div`
   width: 100%;
@@ -36,4 +37,17 @@ export const ScheduleToolbar = styled.div`
   background-color: var(--cogs-surface--muted);
   box-shadow: var(--cogs-z-8);
   border-radius: 6px;
+`;
+
+export const StyledCollapse = styled(Collapse)`
+  &&& {
+    .rc-collapse-item {
+      .rc-collapse-header {
+        border-bottom: none;
+      }
+      .rc-collapse-content-box {
+        margin-top: 0;
+      }
+    }
+  }
 `;

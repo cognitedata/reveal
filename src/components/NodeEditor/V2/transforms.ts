@@ -16,7 +16,7 @@ import {
   isEdge,
   removeElements,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
 import { NodeDataVariants } from 'components/NodeEditor/V2/types';
 import {
   FunctionNodeData,
@@ -326,7 +326,7 @@ const getInputsFromFunctionNode = (
 };
 
 export const getStepsFromWorkflowReactFlow = (
-  workflow: ChartWorkflowV2,
+  workflow: ChartWorkflowV2 | ScheduledCalculation,
   workflows: ChartWorkflowV2[] = [],
   operations: Operation[] = []
 ): ComputationStep[] => {

@@ -1,4 +1,4 @@
-import { ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
 import {
   addEdge,
   Connection,
@@ -101,9 +101,9 @@ export const updateFlowEdge = (
 };
 
 export const updateNodePositionInFlow = (
-  workflow: ChartWorkflowV2,
+  workflow: ChartWorkflowV2 | ScheduledCalculation,
   node: Node<NodeDataVariants>
-): ChartWorkflowV2 => {
+): ChartWorkflowV2 | ScheduledCalculation => {
   const existingFlow = workflow.flow;
   const elements = existingFlow?.elements ?? [];
 
@@ -238,9 +238,9 @@ export const addNodeInFlow = (
 };
 
 export const updateFlowPositionAndZoom = (
-  workflow: ChartWorkflowV2,
+  workflow: ChartWorkflowV2 | ScheduledCalculation,
   transform: FlowTransform
-): ChartWorkflowV2 => {
+): ChartWorkflowV2 | ScheduledCalculation => {
   const existingFlow = workflow.flow;
 
   return {

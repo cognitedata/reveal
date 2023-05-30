@@ -24,7 +24,7 @@ export const useCalculationPreviewData = (
 
   const hasValidDates = dayjs(dateTo).valueOf() - dayjs(dateFrom).valueOf() > 0;
 
-  const callId = workflow?.calls?.[0]!.callId;
+  const callId = workflow?.calls?.[0]?.callId;
 
   const calculationResultQuery = useMemo(() => {
     return {

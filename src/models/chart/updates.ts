@@ -2,11 +2,13 @@ import { Timeseries } from '@cognite/sdk';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Chart,
+  ChartSource,
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
   ScheduledCalculation,
   SourceCollectionData,
+  CollectionType,
   StorableNode,
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
@@ -32,15 +34,14 @@ import compareVersions from 'compare-versions';
 import { AxisUpdate } from 'components/PlotlyChart/utils';
 import { removeItem, addItem } from './helpers';
 
-function updateCollItem<T extends ChartTimeSeries | ChartWorkflow>(
+function updateCollItem<T extends ChartSource>(
   chart: Chart,
-  collectionType: 'timeSeriesCollection' | 'workflowCollection',
+  collectionType: CollectionType,
   collId: string,
   diff: Partial<T>
 ): Chart {
   return {
     ...chart,
-    // @ts-ignore
     [collectionType]: chart[collectionType]?.map((t) =>
       t.id === collId
         ? {
@@ -64,6 +65,19 @@ export function updateTimeseries(
     update
   );
 }
+
+export const updateScheduledCalculation = (
+  chart: Chart,
+  scId: string,
+  update: Partial<ScheduledCalculation>
+): Chart => {
+  return updateCollItem<ScheduledCalculation>(
+    chart,
+    'scheduledCalculationCollection',
+    scId,
+    update
+  );
+};
 
 export function removeTimeseries(chart: Chart, tsId: string): Chart {
   return removeItem(chart, 'timeSeriesCollection', tsId);
