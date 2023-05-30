@@ -510,7 +510,7 @@ pods {
                   firebaseJson: args.firebaseJsonPath,
                   build: performBuildFirebase,
                   buildFolder: args.buildFolder,
-                  isFusionSubApp: true
+                  isFusionSubapp: true
                 )
               }
             }
