@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { ResourceSelectorDetails } from '@data-exploration/containers';
 import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
@@ -33,7 +34,6 @@ import { Divider, InfoCell } from '../../../components';
 import { useDisclosure } from '../../../hooks';
 import { ResourceItem, convertResourceType } from '../../../types';
 import { sleep } from '../../../utils';
-import { ResourcePreviewSidebar } from '../../ResourceSidebar';
 
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import FilePreviewSidebar from './FilePreviewSidebar';
@@ -439,7 +439,7 @@ const AnnotationPreviewSidebar = ({
         <Modal visible={isOpen} {...annotationModalState}>
           {annotationModalState.content}
         </Modal>
-        <ResourcePreviewSidebar
+        <ResourceSelectorDetails
           hideTitle
           closable={false}
           item={

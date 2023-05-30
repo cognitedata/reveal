@@ -22,7 +22,7 @@ export type ResourceSelectionMode = 'single' | 'multiple';
 export type SelectableItemsProps = {
   onSelect: (item: ResourceItem) => void;
   selectionMode: ResourceSelectionMode;
-  isSelected: (item: ResourceItem) => boolean;
+  isSelected: boolean;
 };
 
 // Temporary mapping of the two almost identical types. Should be
