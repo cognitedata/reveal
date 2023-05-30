@@ -134,7 +134,7 @@
     "stats.js": "0.17.0",
     "three": "0.152.2",
     "ts-jest": "29.1.0",
-    "ts-loader": "9.4.2",
+    "ts-loader": "9.4.3",
     "tsc-alias": "1.8.6",
     "typescript": "5.0.4",
     "wasm-pack": "0.11.1",
