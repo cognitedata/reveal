@@ -18,7 +18,7 @@ export const SearchFilters = React.memo(() => {
         <Chip type="neutral" label="Filter" />
       </ChipGroup>
 
-      <Dropdown content={<Filter />}>
+      <Dropdown placement="bottom-end" content={<Filter />}>
         <Button
           icon="Filter"
           onClick={(e) => {

@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 
-import { Menu, MenuHeader, MenuItem, SearchInput } from '../../components';
+import {
+  Menu,
+  MenuHeader,
+  MenuItem,
+  MenuList,
+  SearchInput,
+} from '../../components';
 import { Field } from '../../types';
 
 import { getFilteredFields, getMenuItemIcon } from './utils';
@@ -31,7 +37,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
 
       <SearchInput value={searchInputValue} onChange={setSearchInputValue} />
 
-      <div>
+      <MenuList>
         {filteredFields.map((field) => {
           return (
             <MenuItem
@@ -42,7 +48,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
             />
           );
         })}
-      </div>
+      </MenuList>
     </Menu>
   );
 };

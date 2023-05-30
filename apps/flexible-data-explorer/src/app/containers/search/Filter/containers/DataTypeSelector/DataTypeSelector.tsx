@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 
-import { Menu, MenuItem, SearchInput } from '../../components';
+import { Menu, MenuItem, MenuList, SearchInput } from '../../components';
 import { DataType } from '../../types';
 
 import { getFilteredDataTypes } from './utils';
@@ -25,7 +25,7 @@ export const DataTypeSelector = <T extends DataType>({
     <Menu>
       <SearchInput value={searchInputValue} onChange={setSearchInputValue} />
 
-      <div>
+      <MenuList>
         {filteredDataTypes.map((dataType) => {
           return (
             <MenuItem
@@ -36,7 +36,7 @@ export const DataTypeSelector = <T extends DataType>({
             />
           );
         })}
-      </div>
+      </MenuList>
     </Menu>
   );
 };
