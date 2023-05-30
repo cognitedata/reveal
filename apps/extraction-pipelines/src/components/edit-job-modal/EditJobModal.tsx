@@ -3,34 +3,23 @@ import { InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 import { notification } from 'antd';
 
 import { useTranslation } from 'common';
-import {
-  useMQTTJobs,
-  useMQTTSourceWithMetrics,
-  useUpdateMQTTJob,
-} from 'hooks/hostedExtractors';
-import { useParams } from 'react-router-dom';
+import { ReadMQTTJob, useUpdateMQTTJob } from 'hooks/hostedExtractors';
 
 type EditJobsModalProps = {
   onCancel: () => void;
-  jobId: string;
+  job: ReadMQTTJob;
   visible: ModalProps['visible'];
 };
 
-export const EditJobsModal = ({
+export const EditJobModal = ({
   onCancel,
-  jobId,
+  job,
   visible,
 }: EditJobsModalProps): JSX.Element => {
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
   const [topicFilterChanged, setTopicFilterChanged] = useState(false);
 
   const { t } = useTranslation();
-  const { externalId = '' } = useParams<{
-    externalId: string;
-  }>();
-
-  const { data: source } = useMQTTSourceWithMetrics(externalId);
-  const { data: MQTTJobs } = useMQTTJobs(source?.externalId);
 
   const { mutateAsync: updateJob } = useUpdateMQTTJob({
     onSuccess: () => {
@@ -49,12 +38,7 @@ export const EditJobsModal = ({
     },
   });
 
-  const topicFilter =
-    MQTTJobs?.find((item) => item.externalId === jobId)?.topicFilter ?? '';
-
-  const jobExternalId = MQTTJobs?.find(
-    (item) => item.externalId === jobId
-  )?.externalId;
+  const topicFilter = job?.topicFilter ?? '';
 
   const handleEdit = (e: ChangeEvent<HTMLInputElement>) => {
     setTopicFilterChanged(true);
@@ -63,7 +47,7 @@ export const EditJobsModal = ({
 
   const handleUpdate = () => {
     updateJob({
-      externalId: jobExternalId ?? '',
+      externalId: job?.externalId ?? '',
       update: {
         topicFilter: {
           set: tempTopicFilterInput,
@@ -77,7 +61,7 @@ export const EditJobsModal = ({
       onCancel={onCancel}
       okText={t('save')}
       onOk={handleUpdate}
-      title={t('edit-topic-filters')}
+      title={t('edit-topic-filter')}
       visible={visible}
     >
       <InputExp
