@@ -5,12 +5,11 @@ import styled from 'styled-components';
 import { Loader, SearchEmpty } from '@data-exploration/components';
 import {
   AssetDetails,
+  DocumentDetails,
   EventDetails,
   TimeseriesDetails,
 } from '@data-exploration/containers';
-import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
-// import { EventSmallPreview } from '@data-exploration-components/containers/Events';
 import {
   ResourceItem,
   SelectableItemProps,
@@ -76,10 +75,10 @@ export const ResourcePreviewSidebar = ({
       }
       case 'file': {
         content = (
-          <FileSmallPreview
-            hideTitle={hideTitle}
-            fileId={item.id}
-            {...commonProps}
+          <DocumentDetails
+            documentId={item.id}
+            isSelected={isSelected}
+            onClose={onClose}
           />
         );
         break;
@@ -107,7 +106,7 @@ export const ResourcePreviewSidebar = ({
       case 'event': {
         content = (
           <EventDetails
-            eventItem={item}
+            eventId={item.id}
             isSelected={isSelected}
             onClose={onClose}
           />

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { EventDetails } from './EventDetails';
+import { DocumentDetails } from './DocumentDetails';
 
 export default {
-  title: 'ResourceDetails/EventDetails',
-  component: EventDetails,
+  title: 'ResourceDetails/DocumentDetails',
+  component: DocumentDetails,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 

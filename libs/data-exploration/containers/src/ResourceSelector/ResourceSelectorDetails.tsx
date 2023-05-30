@@ -104,7 +104,7 @@ export const ResourceSelectorDetails = ({
       case 'event': {
         content = (
           <EventDetails
-            eventItem={item}
+            eventId={item.id}
             isSelected={isSelected}
             onClose={onClose}
           />

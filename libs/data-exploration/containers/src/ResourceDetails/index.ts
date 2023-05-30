@@ -1,3 +1,4 @@
 export * from './AssetDetails';
-export * from './TimeseriesDetails';
+export * from './DocumentDetails';
 export * from './EventDetails';
+export * from './TimeseriesDetails';

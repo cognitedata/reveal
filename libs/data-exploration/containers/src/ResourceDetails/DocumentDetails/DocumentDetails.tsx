@@ -1,17 +1,15 @@
 import React, { FC } from 'react';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
-
-import { Collapse, Title } from '@cognite/cogs.js';
-
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
-  useEventsByIdsQuery,
   useEventsSearchResultQuery,
   useSequenceSearchResultQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   AssetDetailsTable,
@@ -20,7 +18,7 @@ import {
   SequenceDetailsTable,
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
-import { EventInfo } from '../../Info';
+import { FileInfo } from '../../Info';
 import {
   ASSETS,
   DETAILS,
@@ -33,26 +31,26 @@ import {
 import { StyledCollapse } from '../elements';
 
 interface Props {
-  eventId: number;
+  documentId: number;
   isSelected: boolean;
   onSelectClicked?: () => void;
   onClose?: () => void;
 }
-export const EventDetails: FC<Props> = ({
-  eventId,
+export const DocumentDetails: FC<Props> = ({
+  documentId,
   isSelected,
   onSelectClicked,
   onClose,
 }) => {
   const {
-    isLoading: isParentEventLoading,
-    data: event,
-    isFetched: isEventFetched,
-  } = useEventsByIdsQuery([{ id: eventId }]);
+    isLoading: isParentDocumentLoading,
+    results: document,
+    isFetched: isParentDocumentFetched,
+  } = useDocumentSearchResultQuery({ filter: { internalId: documentId } });
 
-  const parentEvent = event?.[0];
+  const parentDocument = document?.[0];
 
-  const assetIds: number[] = parentEvent?.assetIds || [];
+  const assetIds = parentDocument?.assetIds || [];
   const isQueryEnabled = assetIds.length > 0;
 
   const filter = {
@@ -63,7 +61,7 @@ export const EventDetails: FC<Props> = ({
 
   const { data: assets = [], isLoading: isAssetsLoading } = useAssetsByIdQuery(
     assetIds.map((id) => ({ id })),
-    { enabled: isEventFetched && !!assetIds && assetIds.length > 0 }
+    { enabled: isParentDocumentFetched && !!assetIds && isQueryEnabled }
   );
 
   const {
@@ -88,7 +86,7 @@ export const EventDetails: FC<Props> = ({
     hasNextPage: hasDocumentsNextPage,
     fetchNextPage: hasDocumentsFetchNextPage,
     isLoading: isDocumentsLoading,
-    results: relatedDocuments = [],
+    results: documents = [],
   } = useDocumentSearchResultQuery(
     {
       filter,
@@ -111,67 +109,70 @@ export const EventDetails: FC<Props> = ({
 
   return (
     <ResourceDetailsTemplate
-      title={parentEvent?.type || ''}
-      icon="Events"
+      title={parentDocument?.name || ''}
+      icon="Documents"
       isSelected={isSelected}
       onClose={onClose}
       onSelectClicked={onSelectClicked}
     >
-      <StyledCollapse accordion ghost defaultActiveKey="event-details">
-        <Collapse.Panel key="event-details" header={<h4>{DETAILS}</h4>}>
-          {parentEvent ? (
-            <EventInfo event={parentEvent} />
+      <StyledCollapse accordion ghost defaultActiveKey="document-details">
+        <Collapse.Panel key="document-details" header={<h4>{DETAILS}</h4>}>
+          {parentDocument ? (
+            <FileInfo file={parentDocument as any} />
           ) : (
             <Title level={5}>{NO_DETAILS_AVAILABLE}</Title>
           )}
         </Collapse.Panel>
-        <Collapse.Panel key="event-asset-detail" header={<h4>{ASSETS}</h4>}>
+        <Collapse.Panel key="document-asset-detail" header={<h4>{ASSETS}</h4>}>
           <AssetDetailsTable
-            id="asset-resource-event-detail-table"
+            id="asset-resource-document-detail-table"
             data={assets}
-            isDataLoading={isParentEventLoading || isAssetsLoading}
+            isDataLoading={isParentDocumentLoading || isAssetsLoading}
           />
         </Collapse.Panel>
         <Collapse.Panel
-          key="event-timeseries-detail"
+          key="document-timeseries-detail"
           header={<h4>{TIME_SERIES}</h4>}
         >
           <TimeseriesDetailsTable
-            id="timeseries-resource-event-detail-table"
+            id="timeseries-resource-document-detail-table"
             data={timeseries}
             hasNextPage={hasTimeseriesNextPage}
             fetchMore={hasTimeseriesFetchNextPage}
-            isDataLoading={isParentEventLoading || isTimeseriesLoading}
-          />
-        </Collapse.Panel>
-        <Collapse.Panel key="event-documents-detail" header={<h4>{FILES}</h4>}>
-          <FileDetailsTable
-            id="documents-resource-event-detail-table"
-            data={relatedDocuments}
-            hasNextPage={hasDocumentsNextPage}
-            fetchMore={hasDocumentsFetchNextPage}
-            isDataLoading={isParentEventLoading || isDocumentsLoading}
-          />
-        </Collapse.Panel>
-        <Collapse.Panel key="event-events-detail" header={<h4>{EVENTS}</h4>}>
-          <EventDetailsTable
-            id="event-resource-event-detail-table"
-            data={events}
-            hasNextPage={hasEventNextPage}
-            fetchMore={hasEventFetchNextPage}
-            isDataLoading={isParentEventLoading || isEventsLoading}
+            isDataLoading={isParentDocumentLoading || isTimeseriesLoading}
           />
         </Collapse.Panel>
         <Collapse.Panel
-          key="event-sequence-detail"
+          key="document-documents-detail"
+          header={<h4>{FILES}</h4>}
+        >
+          <FileDetailsTable
+            id="documents-resource-document-detail-table"
+            data={documents}
+            hasNextPage={hasDocumentsNextPage}
+            fetchMore={hasDocumentsFetchNextPage}
+            isDataLoading={isParentDocumentLoading || isDocumentsLoading}
+          />
+        </Collapse.Panel>
+        <Collapse.Panel key="document-events-detail" header={<h4>{EVENTS}</h4>}>
+          <EventDetailsTable
+            id="event-resource-document-detail-table"
+            data={events}
+            hasNextPage={hasEventNextPage}
+            fetchMore={hasEventFetchNextPage}
+            isDataLoading={isParentDocumentLoading || isEventsLoading}
+          />
+        </Collapse.Panel>
+        <Collapse.Panel
+          key="document-sequence-detail"
           header={<h4>{SEQUENCES}</h4>}
         >
           <SequenceDetailsTable
-            id="sequence-resource-event-detail-table"
+            id="sequence-resource-document-detail-table"
             data={sequences}
             hasNextPage={hasSequencesNextPage}
             fetchMore={hasSequencesFetchNextPage}
-            isDataLoading={isParentEventLoading || isSequencesLoading}
+            isDataLoading={isParentDocumentLoading || isSequencesLoading}
           />
         </Collapse.Panel>
       </StyledCollapse>
