@@ -9,6 +9,7 @@ import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
 import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
 import { useAllTables } from 'hooks/sdk-queries';
 import { useTranslation } from 'common/i18n';
+import styled from 'styled-components';
 
 const SidePanelTableList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -52,9 +53,9 @@ const SidePanelTableList = (): JSX.Element => {
         searchQuery={query}
         tables={tables}
       />
-      <Button block icon="Add" onClick={() => setIsCreateModalOpen(true)}>
+      <StyledButton icon="Add" onClick={() => setIsCreateModalOpen(true)}>
         {t('explorer-side-panel-tables-button-create-table')}
-      </Button>
+      </StyledButton>
       {isCreateModalOpen && (
         <CreateTableModal
           databaseName={selectedSidePanelDatabase}
@@ -66,5 +67,12 @@ const SidePanelTableList = (): JSX.Element => {
     </SidePanelLevelWrapper>
   );
 };
+
+const StyledButton = styled(Button)`
+  &&& {
+    display: flex !important;
+    width: 100%;
+  }
+`;
 
 export default SidePanelTableList;

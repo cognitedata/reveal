@@ -51,14 +51,14 @@ const Message = ({
       backgroundColor = 'rgba(110, 133, 252, 0.06)';
       border = '1px solid rgba(110, 133, 252, 0.2)';
       icon = 'Loader';
-      iconColor = Colors['link-primary-hover'].hex();
+      iconColor = Colors['text-icon--interactive--default'];
       break;
     case 'info':
     default:
       backgroundColor = 'rgba(110, 133, 252, 0.06)';
       border = '1px solid rgba(110, 133, 252, 0.2)';
       icon = 'InfoFilled';
-      iconColor = Colors['bg-status-small--accent'].hex();
+      iconColor = Colors['surface--status-neutral--muted--default'];
       break;
   }
 
@@ -116,7 +116,7 @@ const StyledMessageWrapper = styled.div<{
 `;
 
 const StyledMessageContent = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
   flex: 1;
   word-break: break;
 `;

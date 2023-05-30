@@ -159,7 +159,7 @@ export const Profiling = (): JSX.Element => {
 const Card = styled.div`
   padding: 16px;
   margin-right: 24px;
-  border: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 8px;
   min-width: 277px;
   header {
@@ -170,7 +170,7 @@ const Card = styled.div`
     margin-bottom: 20px;
   }
   .count {
-    color: ${Colors['greyscale-grey9'].hex()};
+    color: ${Colors['text-icon--strong']};
     font-weight: 900;
     font-size: 24px;
     line-height: 32px;
@@ -205,7 +205,7 @@ const Table = styled.table`
 
 const StyledCount = styled.div<{ $isRunning?: boolean }>`
   color: ${({ $isRunning }) =>
-    $isRunning ? Colors['text-hint'].hex() : Colors['greyscale-grey9'].hex()};
+    $isRunning ? Colors['text-icon--muted'] : Colors['text-icon--strong']};
   font-weight: 900;
   font-size: 24px;
   line-height: 32px;

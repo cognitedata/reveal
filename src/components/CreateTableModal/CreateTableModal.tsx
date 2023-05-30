@@ -310,7 +310,7 @@ const CreateTableModal = ({
 };
 
 const StyledNameInputDetail = styled(Detail)`
-  color: ${Colors['text-secondary'].hex()};
+  color: ${Colors['text-icon--medium']};
   font-size: 13px;
   margin-bottom: 16px;
 `;

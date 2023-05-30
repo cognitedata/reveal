@@ -26,36 +26,45 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
     <StyledTableHeader>
       <tr>
         <TableCell $width={44}>
-          <Icon type="ReorderDefault" onClick={() => onSortClick('type')} />
+          <span onClick={() => onSortClick('type')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-column')}
-          <Icon type="ReorderDefault" onClick={() => onSortClick('label')} />
+          <span onClick={() => onSortClick('label')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-empty')}
-          <Icon
-            type="ReorderDefault"
-            onClick={() => onSortClick('nullCount')}
-          />
+          <span onClick={() => onSortClick('nullCount')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-distinct')}
-          <Icon
-            type="ReorderDefault"
-            onClick={() => onSortClick('distinctCount')}
-          />
+          <span onClick={() => onSortClick('distinctCount')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell $width={150}>
           {t('profiling-table-header-frequency')}
         </TableCell>
         <TableCell>
           {t('profiling-table-header-min')}
-          <Icon type="ReorderDefault" onClick={() => onSortClick('min')} />
+          <span onClick={() => onSortClick('min')}>
+            <Icon type="ReorderDefault" />
+          </span>
         </TableCell>
         <TableCell>
           {t('profiling-table-header-max')}
-          <Icon type="ReorderDefault" onClick={() => onSortClick('max')} />
+          <span onClick={() => onSortClick('max')}>
+            <Icon
+              type="ReorderDefault"
+              //
+            />
+          </span>
         </TableCell>
         <TableCell>{t('profiling-table-header-mean')}</TableCell>
         <TableCell $width={68}>
@@ -72,19 +81,19 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
 const StyledTableHeader = styled.thead`
   position: sticky;
   top: 12px;
-  background-color: ${Colors['greyscale-grey1'].hex()};
-  color: ${Colors['greyscale-grey7'].hex()};
+  background-color: ${Colors['surface--medium']};
+  color: ${Colors['text-icon--medium']};
   z-index: ${ZIndexLayer.Dropdown}; /** lower values causes histograms to render above the scrolled header **/
   .styled-cell {
-    border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
-    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
-    border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-top: 1px solid ${Colors['border--muted']};
+    border-bottom: 1px solid ${Colors['border--muted']};
+    border-left: 1px solid ${Colors['border--muted']};
   }
   .styled-cell:first-child {
     border-radius: 8px 0 0 0;
   }
   .styled-cell:last-child {
-    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-right: 1px solid ${Colors['border--muted']};
     border-radius: 0 8px 0 0;
   }
   td .cogs-icon {
@@ -100,7 +109,7 @@ const StyledExpandTableHeaderIcon = styled(Icon)`
 const StyledTableHeaderBackground = styled.tr`
   position: absolute;
   top: -12px;
-  background-color: ${Colors.white.hex()};
+  background-color: ${Colors['surface--muted']};
   width: 100%;
   height: 12px;
 `;
@@ -110,7 +119,7 @@ const StyledTableHeaderWhiteBorder = styled.tr`
   top: 0px;
   width: 100%;
   height: 8px;
-  border: 1px solid ${Colors.white.hex()};
+  border: 1px solid ${Colors['surface--muted']};
   border-bottom-width: 0;
   border-top-width: 0;
 `;
@@ -120,7 +129,7 @@ const StyledTableHeaderGrayBorder = styled.tr`
   top: 0px;
   width: 100%;
   height: 8px;
-  border: 1px solid ${Colors['border-default'].hex()};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border-bottom-width: 0;

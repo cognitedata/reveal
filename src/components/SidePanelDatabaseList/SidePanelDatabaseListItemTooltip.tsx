@@ -13,12 +13,12 @@ type SidePanelDatabaseListItemTooltipProps = {
 
 const StyledDatabaseListItemTooltipWrapper = styled(Tooltip)`
   && {
-    background-color: ${Colors.white};
+    background-color: ${Colors['surface--muted']};
     border-radius: 12px;
 
     .tippy-svg-arrow {
-      fill: ${Colors.white};
-      stroke: ${Colors.white};
+      fill: ${Colors['surface--muted']};
+      stroke: ${Colors['surface--muted']};
     }
   }
 
@@ -26,7 +26,7 @@ const StyledDatabaseListItemTooltipWrapper = styled(Tooltip)`
   min-width: 200px;
 
   .tippy-content {
-    background-color: ${Colors.white};
+    background-color: ${Colors['surface--muted']};
     border-radius: 12px;
     padding: 0;
   }
@@ -38,15 +38,15 @@ const StyledTooltipContent = styled.div`
 
 const StyledTooltipHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${Colors['border-default']};
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
   display: flex;
   padding: 16px;
 `;
 
 const StyledTooltipHeaderIcon = styled(Icon)`
-  background-color: ${Colors['bg-hover']};
+  background-color: ${Colors['surface--interactive--toggled-default']};
   border-radius: 6px;
-  color: ${Colors['bg-status-small--accent-pressed']};
+  color: ${Colors['text-icon--interactive--default']};
   margin-right: 8px;
   padding: 10px;
   width: 36px !important; /* overrides cogs style */
@@ -63,7 +63,7 @@ const StyledTooltipTableListItemWrapper = styled.div`
 `;
 
 const StyledTooltipTableListItemIcon = styled(Icon)`
-  color: ${Colors['green-2']};
+  color: ${Colors['text-icon--status-success']};
   margin-right: 8px;
 `;
 

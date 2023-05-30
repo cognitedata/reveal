@@ -34,13 +34,13 @@ const StyledFormFieldWrapper = styled.div`
 `;
 
 const StyledFormFieldTitle = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
   display: flex;
   margin-bottom: 6px;
 `;
 
 const StyledFormFieldRequired = styled.div`
-  color: ${Colors['red-3'].hex()};
+  color: ${Colors['text-icon--status-critical']};
 `;
 
 export default FormFieldWrapper;

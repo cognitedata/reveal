@@ -82,7 +82,7 @@ const StyledHeaderRight = styled.div`
 `;
 
 const StyledContentWithLevels = styled.div`
-  border-color: ${Colors['border-default']};
+  border-color: ${Colors['border--interactive--default']};
   border-style: solid;
   border-width: 1px 0;
   flex: 1;

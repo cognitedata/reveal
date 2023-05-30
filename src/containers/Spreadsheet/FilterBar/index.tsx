@@ -63,7 +63,7 @@ export const FilterBar = ({
               <Body level={2}>
                 {t('spreadsheet-filter-buttons-running-profiling')}
               </Body>
-              <Icon type="Loader" className="load-icon" />
+              <Icon type="Loader" />
             </>
           ) : (
             filters.map((filter: FilterType) => {
@@ -107,7 +107,7 @@ const Bar = styled(Flex)`
   height: ${FILTER_BAR_HEIGHT}px;
   padding: 16px;
   box-sizing: border-box;
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
   white-space: nowrap;
 `;
 
@@ -120,7 +120,7 @@ const List = styled(Flex)`
 const Buttons = styled(Flex)`
   & > * {
     margin-right: 8px;
-    color: ${Colors['greyscale-grey7'].hex()};
+    color: ${Colors['text-icon--medium']};
   }
   .load-icon {
     margin-left: 4px;

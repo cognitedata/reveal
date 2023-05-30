@@ -131,7 +131,7 @@ export function useActiveTable(): [
         const tabIndex = tabs.findIndex(
           ([tabDb, tabTable]) => tabDb === newDb && newTable === tabTable
         );
-
+        // console.log(tabIndex >= 0);
         if (tabIndex >= 0) {
           if (!view) {
             view = tabs[tabIndex][2];

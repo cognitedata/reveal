@@ -24,6 +24,6 @@ export const TableHeader = (props: Props): JSX.Element => {
 const TitleSection = styled(Flex)`
   margin-left: 16px;
   .detail--db-name {
-    color: ${Colors['greyscale-grey6'].hex()};
+    color: ${Colors['text-icon--strong']};
   }
 `;

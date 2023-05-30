@@ -125,7 +125,7 @@ const StyledCreateOption = styled.li`
 `;
 
 const StyledColumnsEmptyText = styled(Body)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
   height: 22px;
   margin-top: 16px;
 `;

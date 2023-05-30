@@ -1,5 +1,5 @@
 import React from 'react';
-import icons, { IconType } from 'assets/icons';
+import icons, { IconType } from 'common/assets/icons';
 
 type Props = {
   className?: string;
