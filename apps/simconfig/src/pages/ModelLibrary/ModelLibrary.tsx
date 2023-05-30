@@ -72,6 +72,7 @@ export function ModelLibrary() {
     );
   }, [definitions, dispatch]);
 
+  // Find the list of models
   const modelFileList = useMemo(
     () =>
       (modelFiles?.modelFileList ?? []).filter((modelFile) =>
