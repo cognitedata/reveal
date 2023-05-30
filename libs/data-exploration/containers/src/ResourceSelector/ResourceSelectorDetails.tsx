@@ -57,7 +57,7 @@ export const ResourceSelectorDetails = ({
   hideTitle = false,
   hideContent = false,
 }: Props) => {
-  const commonProps = { onSelect, selectedRows };
+  const commonProps = { onSelect, selectedRows, selectionMode };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
@@ -67,7 +67,6 @@ export const ResourceSelectorDetails = ({
             assetId={item.id}
             isSelected={isSelected}
             onClose={onClose}
-            selectionMode={selectionMode}
             {...commonProps}
           />
         );
@@ -113,6 +112,7 @@ export const ResourceSelectorDetails = ({
             eventId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            {...commonProps}
           />
         );
         break;

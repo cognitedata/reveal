@@ -111,6 +111,7 @@ export const ResourcePreviewSidebar = ({
             eventId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            {...commonProps}
           />
         );
         break;

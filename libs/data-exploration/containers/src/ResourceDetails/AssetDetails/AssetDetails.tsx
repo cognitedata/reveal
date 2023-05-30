@@ -118,13 +118,13 @@ export const AssetDetails: FC<
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{ASSETS}</h4>}>
           <AssetDetailsTable
-            selectedRows={selectedRows?.asset || {}}
-            enableSelection={enableDetailTableSelection}
             id="related-asset-asset-details"
             data={relatedAssets}
             hasNextPage={assetsHasNextPage}
             fetchMore={assetsFetchNextPage}
             isLoadingMore={isAssetsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.asset || {}}
             onRowSelection={(updater, currentAssets) =>
               onSelect?.(updater, currentAssets, 'asset')
             }
@@ -132,44 +132,44 @@ export const AssetDetails: FC<
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{TIME_SERIES}</h4>}>
           <TimeseriesDetailsTable
-            enableSelection={enableDetailTableSelection}
             id="related-timeseries-asset-details"
-            selectedRows={selectedRows?.timeSeries || {}}
-            onRowSelection={(updater, currentTimeseries) =>
-              onSelect?.(updater, currentTimeseries, 'timeSeries')
-            }
             data={relatedTimeseries}
             fetchMore={timeseriesFetchNextPage}
             hasNextPage={timeseriesHasNextPage}
             isLoadingMore={isTimeseriesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.timeSeries || {}}
+            onRowSelection={(updater, currentTimeseries) =>
+              onSelect?.(updater, currentTimeseries, 'timeSeries')
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{FILES}</h4>}>
           <FileDetailsTable
-            enableSelection={enableDetailTableSelection}
             id="related-file-asset-details"
             data={relatedFiles}
+            hasNextPage={fileHasNextPage}
+            fetchMore={fileFetchNextPage}
+            isLoadingMore={isFileLoading}
+            enableSelection={enableDetailTableSelection}
             selectedRows={selectedRows?.file || {}}
             onRowSelection={(updater, currentFiles) =>
               onSelect?.(updater, currentFiles, 'file')
             }
-            hasNextPage={fileHasNextPage}
-            fetchMore={fileFetchNextPage}
-            isLoadingMore={isFileLoading}
           />
         </Collapse.Panel>
         <Collapse.Panel header={<h4>{EVENTS}</h4>}>
           <EventDetailsTable
-            enableSelection={enableDetailTableSelection}
             id="related-event-asset-details"
             data={relatedEvents}
+            fetchMore={eventFetchNextPage}
+            hasNextPage={eventHasNextPage}
+            isLoadingMore={isEventLoading}
+            enableSelection={enableDetailTableSelection}
             selectedRows={selectedRows?.event || {}}
             onRowSelection={(updater, currentEvents) =>
               onSelect?.(updater, currentEvents, 'event')
             }
-            fetchMore={eventFetchNextPage}
-            hasNextPage={eventHasNextPage}
-            isLoadingMore={isEventLoading}
           />
         </Collapse.Panel>
       </StyledCollapse>
