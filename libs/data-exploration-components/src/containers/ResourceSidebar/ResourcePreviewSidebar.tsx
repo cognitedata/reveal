@@ -7,9 +7,9 @@ import {
   AssetDetails,
   DocumentDetails,
   EventDetails,
+  SequenceDetails,
   TimeseriesDetails,
 } from '@data-exploration/containers';
-import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
 import {
   ResourceItem,
   SelectableItemProps,
@@ -59,7 +59,7 @@ export const ResourcePreviewSidebar = ({
   hideTitle = false,
   hideContent = false,
 }: Props) => {
-  const commonProps = { selectionMode, onSelect, isSelected, actions };
+  const commonProps = { selectionMode, onSelect, isSelected };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
@@ -85,10 +85,10 @@ export const ResourcePreviewSidebar = ({
       }
       case 'sequence': {
         content = (
-          <SequenceSmallPreview
-            hideTitle={hideTitle}
+          <SequenceDetails
             sequenceId={item.id}
-            {...commonProps}
+            isSelected={isSelected}
+            onClose={onClose}
           />
         );
         break;
