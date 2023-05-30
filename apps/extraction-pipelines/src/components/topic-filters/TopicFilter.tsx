@@ -10,7 +10,7 @@ import {
 } from 'hooks/hostedExtractors';
 import { notification } from 'antd';
 import { getJobStatusForCogs } from 'utils/hostedExtractors';
-import { EditJobsModal } from 'components/edit-job-modal/EditJobModal';
+import { EditJobModal } from 'components/edit-job-modal/EditJobModal';
 
 type TopicFilterProps = {
   className?: string;
@@ -121,9 +121,9 @@ export const TopicFilter = ({
         </Dropdown>
       </Container>
       {editJobsModalVisible && (
-        <EditJobsModal
+        <EditJobModal
           onCancel={() => setEditJobsModalVisible(false)}
-          jobId={job.externalId}
+          job={job}
           visible={editJobsModalVisible}
         />
       )}
