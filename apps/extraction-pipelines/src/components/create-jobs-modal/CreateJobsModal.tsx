@@ -47,7 +47,7 @@ type CreateJobsFormValues = {
   clientId?: string;
   clientSecret?: string;
   type?: MQTTDestinationType;
-  format?: MQTTFormat;
+  format?: MQTTFormat['type'];
 };
 
 type CreateJobsModalProps = {
@@ -184,7 +184,7 @@ export const CreateJobsModal = ({
                 destinationId: destinationExternalId!,
                 externalId: `${source.externalId}-${values.selectedDestinationExternalId}-${topicFilter}`,
                 format: {
-                  type: 'cognite',
+                  type: values.format ?? 'cognite',
                 },
                 sourceId: source.externalId,
                 topicFilter,
@@ -298,7 +298,7 @@ export const CreateJobsModal = ({
           ))}
           <FormFieldWrapper isRequired title={t('format-field')}>
             <Select
-              onChange={(_, e) => setFieldValue('formatField', e)}
+              onChange={(e) => setFieldValue('format', e)}
               options={formatFieldOptions}
               placeholder={t('select-format')}
               value={values.format}
