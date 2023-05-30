@@ -13,14 +13,14 @@ import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 import { rootInjector } from './di';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
-import { getTenant } from './utils/tenant-utils';
+import { getTenant, isUsingUnifiedSignin } from './utils/tenant-utils';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
 (window as any).global = window;
 
 function App() {
-  const tenant = getTenant();
+  const tenant = isUsingUnifiedSignin() ? `/cdf/${getTenant()}` : getTenant();
 
   return (
     <FeatureFlagProvider>
