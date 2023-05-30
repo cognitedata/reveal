@@ -419,10 +419,10 @@ export class Cognite3DViewer {
   /**
    * Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
    * @see {@link https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects}
-   * ```ts
+   * ```js
    * // Viewer is no longer in use, free up memory
    * viewer.dispose();
-   * ```.
+   * ```
    */
   dispose(): void {
     if (this.isDisposed) {

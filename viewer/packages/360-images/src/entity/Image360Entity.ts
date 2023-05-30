@@ -4,7 +4,7 @@
 
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360DataProvider } from '@reveal/data-providers';
-import { Image360, Image360Metadata } from './Image360';
+import { Image360 } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
@@ -18,7 +18,7 @@ export class Image360Entity implements Image360 {
   private readonly _imageMetadata: Image360EventDescriptor;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Overlay3DIcon;
-  private readonly _image360VisualzationBox: Image360VisualizationBox;
+  private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
 
   /**
@@ -44,7 +44,23 @@ export class Image360Entity implements Image360 {
    * @returns Image360Visualization
    */
   get image360Visualization(): Image360VisualizationBox {
-    return this._image360VisualzationBox;
+    return this._image360VisualizationBox;
+  }
+
+  /**
+   * Get Id of 360 image entity.
+   * @returns Station Id
+   */
+  get id(): string {
+    return this._imageMetadata.id;
+  }
+
+  /**
+   * Get label of 360 image entity.
+   * @returns Station label
+   * */
+  get label(): string | undefined {
+    return this._imageMetadata.label;
   }
 
   constructor(
@@ -60,12 +76,12 @@ export class Image360Entity implements Image360 {
     this._image360Icon = icon;
     this._imageMetadata = image360Metadata;
 
-    this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
-    this._image360VisualzationBox.visible = false;
+    this._image360VisualizationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
+    this._image360VisualizationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
       descriptor =>
-        new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualzationBox, annotationFilterer)
+        new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualizationBox, annotationFilterer)
     );
     this._activeRevision = this.getMostRecentRevision();
   }
@@ -118,30 +134,22 @@ export class Image360Entity implements Image360 {
    * Drops the GPU resources for the 360 image
    */
   public unloadImage(): void {
-    this._image360VisualzationBox.unloadImages();
-  }
-
-  public getImageMetadata(): Image360Metadata {
-    return {
-      station: this._imageMetadata.label,
-      collection: this._imageMetadata.collectionLabel,
-      date: this._activeRevision.date
-    };
+    this._image360VisualizationBox.unloadImages();
   }
 
   public activateAnnotations(): void {
     const setAndShowAnnotations = async () => {
       const annotations = await this._activeRevision.getAnnotations();
 
-      this._image360VisualzationBox.setAnnotations(annotations);
-      this._image360VisualzationBox.setAnnotationsVisibility(true);
+      this._image360VisualizationBox.setAnnotations(annotations);
+      this._image360VisualizationBox.setAnnotationsVisibility(true);
     };
 
     setAndShowAnnotations();
   }
 
   public deactivateAnnotations(): void {
-    this._image360VisualzationBox.setAnnotationsVisibility(false);
+    this._image360VisualizationBox.setAnnotationsVisibility(false);
   }
 
   /**

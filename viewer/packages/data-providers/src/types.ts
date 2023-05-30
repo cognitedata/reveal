@@ -44,9 +44,9 @@ export type Image360Descriptor = {
 
 export type Image360EventDescriptor = {
   id: string;
-  label: string;
+  label: string | undefined;
   collectionId: string;
-  collectionLabel: string;
+  collectionLabel: string | undefined;
   transform: THREE.Matrix4;
 };
 

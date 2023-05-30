@@ -791,9 +791,10 @@ export type HtmlOverlayToolOptions = {
 // @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
-    getImageMetadata(): Image360Metadata;
     getRevisions(): Image360Revision[];
+    readonly id: string;
     readonly image360Visualization: Image360Visualization;
+    readonly label: string | undefined;
     readonly transform: THREE.Matrix4;
 }
 
@@ -841,7 +842,9 @@ export type Image360AnnotationIntersection = {
 export interface Image360Collection {
     findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    readonly id: string;
     readonly image360Entities: Image360[];
+    readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
@@ -861,16 +864,10 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 export type Image360ExitedDelegate = () => void;
 
 // @public
-export type Image360Metadata = {
-    station: string;
-    collection: string;
-    date?: Date;
-};
-
-// @public
 export interface Image360Revision {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation[]>;
+    getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
 
 // @public
