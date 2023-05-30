@@ -30,7 +30,7 @@ Note: if the `pastMesages` are empty, assume you are starting the conversation w
 
 ### Message types
 
-There's many different types of messages you can send as a bot, you can see all of them in `src/lib/types.ts`. Each message will get a special type of display out of the box, and you can trust that the UI can handle each type of message with care and untuitive UI.
+There's many different types of messages you can send as a bot, you can see all of them in `src/lib/types.ts`. Each message will get a special type of display out of the box, and you can trust that the UI can handle each type of message with care and intuitive UI.
 
 ## Communicating between Copilot <-> App
 
