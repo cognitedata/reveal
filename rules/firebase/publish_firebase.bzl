@@ -14,6 +14,7 @@ def _publish_firebase(ctx):
         "@@PACKAGE_JSON_PATH@@": ctx.file.package_json.path,
         "@@FIREBASE_APP_SITE@@": ctx.attr.firebase_app_site,
         "@@IS_FUSION_SUBAPP@@": "true" if ctx.attr.is_fusion_subapp else "false",
+        "@@FUSION_APP_ID@@": ctx.attr.fusion_app_id,
     }
     ctx.actions.expand_template(
         template = ctx.file._runner,
@@ -85,6 +86,10 @@ publish_firebase = rule(
             cfg = "exec",
             executable = True,
             allow_single_file = True,
+        ),
+        "fusion_app_id": attr.string(
+            doc = "Fusion app identifier",
+            mandatory = False,
         ),
     },
     executable = True,

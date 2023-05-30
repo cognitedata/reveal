@@ -471,6 +471,7 @@ pods {
             def params = readJSON text: firebaseJSONString
             def isFusionSubApp = params.is_fusion_subapp == 'true'
             def target = cmd.split(':')[0].split('//')[1]
+            def repoId = params.fusion_app_id
             print(params)
 
             def publishFirebase = { args ->
@@ -486,15 +487,21 @@ pods {
               }
 
               if(isPullRequest){
-                def prefix = jenkinsHelpersUtil.determineRepoName();
+                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${args.firebaseAppSite}";
                 def domain = "fusion-preview";
                 previewServer(
                   buildFolder: 'build',
+                  build: performBuildFirebase,
                   commentPrefix: '[pr-preview-firebase]\n',
                   prefix: prefix,
                   repo: domain
                 )
-               }
+                deleteComments('[pr-preview-firebase]\n')
+                deleteComments('Fusion Preview URL:')
+                def packageName = "@cognite/${repoId}"
+                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
+                pullRequest.comment("Fusion Preview URL: [$url]($url)")
+              }
 
               if(!isPullRequest){
                 appHosting(

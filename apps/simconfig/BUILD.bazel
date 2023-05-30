@@ -360,6 +360,7 @@ publish_firebase(
     build_folder = "build",
     firebase_app_site = "simint",
     firebase_json_path = "build/firebase.json",
+    fusion_app_id = "cdf-simint-ui",
     is_fusion_subapp = True,
     package_json = ":package.json",
     deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES,

@@ -140,7 +140,7 @@ export function ModelLibrary() {
           </div>
         )}
         <div className="header">
-          <span className="header-title">Search models {pageNumber}</span>
+          <span className="header-title">Search models</span>
           <div className="form">
             <Input
               icon="Search"
