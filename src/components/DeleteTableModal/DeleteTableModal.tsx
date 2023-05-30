@@ -76,7 +76,7 @@ const DeleteTableModal = ({
             disabled={isLoading || !isConfirmed}
             loading={isLoading}
             onClick={handleDelete}
-            type="danger"
+            type="ghost-destructive"
           >
             {t('delete-table-modal-button-delete')}
           </Button>,
@@ -99,7 +99,7 @@ const DeleteTableModal = ({
           <StyledConfirmCheckbox
             checked={isConfirmed}
             name="confirm-delete-table"
-            onChange={handleConfirmCheckboxChange}
+            onChange={(e) => handleConfirmCheckboxChange(e.target.checked)}
           >
             {t('delete-table-modal-confirm')}
           </StyledConfirmCheckbox>
@@ -110,7 +110,7 @@ const DeleteTableModal = ({
 };
 
 const StyledDeleteTableModalBody = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
 `;
 
 const StyledCancelButton = styled(Button)`

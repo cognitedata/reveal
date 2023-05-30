@@ -2,6 +2,7 @@ import React from 'react';
 import { Drawer } from 'antd';
 
 import { Button, Colors, Flex } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 import { useActiveTableContext, useProfilingSidebar } from 'contexts';
 import { useColumnSelection } from 'hooks/table-selection';
@@ -24,9 +25,9 @@ export const ProfilingSidebar = (): JSX.Element => {
   const onClickHide = () => setIsProfilingSidebarOpen(false);
 
   const footer = (
-    <Button block icon="PanelRight" type="secondary" onClick={onClickHide}>
+    <StyledButton icon="PanelRight" type="secondary" onClick={onClickHide}>
       {t('profiling-sidebar-button-hide')}
-    </Button>
+    </StyledButton>
   );
 
   return (
@@ -40,7 +41,7 @@ export const ProfilingSidebar = (): JSX.Element => {
       onClose={onClickHide}
       style={{
         position: 'absolute',
-        borderTop: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+        borderTop: `1px solid ${Colors['border--interactive--default']}`,
       }}
       bodyStyle={{ padding: 0 }}
       headerStyle={{ padding: 0 }}
@@ -54,3 +55,10 @@ export const ProfilingSidebar = (): JSX.Element => {
     </Drawer>
   );
 };
+
+const StyledButton = styled(Button)`
+  &&& {
+    display: flex !important;
+    width: 100%;
+  }
+`;

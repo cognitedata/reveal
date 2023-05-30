@@ -17,12 +17,12 @@ type SidePanelDatabaseListItemProps = {
 };
 
 const StyledNavigationIcon = styled(Icon)`
-  color: ${Colors['text-hint']};
+  color: ${Colors['text-icon--muted']};
 `;
 
 const StyledSidePanelDatabaseListItemWrapper = styled.button`
   align-items: center;
-  background-color: ${Colors['bg-accent']};
+  background-color: ${Colors['surface--medium']};
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -33,20 +33,20 @@ const StyledSidePanelDatabaseListItemWrapper = styled.button`
   width: 100%;
 
   :hover {
-    background-color: ${Colors['bg-hover']};
+    background-color: ${Colors['surface--interactive--toggled-default']};
 
     ${StyledNavigationIcon} {
-      color: ${Colors['bg-control--primary-pressed']};
+      color: ${Colors['text-icon--interactive--pressed']};
     }
   }
 
   :active {
-    background-color: ${Colors['bg-selected']};
+    background-color: ${Colors['surface--interactive--pressed']};
   }
 `;
 
 const StyledDatabaseIcon = styled(Icon)`
-  color: ${Colors['bg-status-small--accent-pressed']};
+  color: ${Colors['text-icon--interactive--default']};
   margin-right: 8px;
 `;
 
@@ -61,9 +61,9 @@ const StyledDatabaseName = styled(Body)`
 
 const StyledTableCount = styled(Detail)`
   align-items: center;
-  background-color: ${Colors['bg-control--secondary-hover']};
+  background-color: ${Colors['surface--action--muted--hover']};
   border-radius: 4px;
-  color: ${Colors['text-secondary']};
+  color: ${Colors['text-icon--medium']};
   display: flex;
   height: 20px;
   justify-content: center;

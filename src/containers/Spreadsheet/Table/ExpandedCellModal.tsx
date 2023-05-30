@@ -54,7 +54,7 @@ const StyledModal = styled(Modal)`
   padding: 0;
 
   .ant-modal-content {
-    background-color: ${Colors['greyscale-grey1'].hex()};
+    background-color: ${Colors['surface--medium']};
     padding: 0;
     .ant-modal-close > .ant-modal-close-x {
       width: 36px;

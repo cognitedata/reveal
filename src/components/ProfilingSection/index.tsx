@@ -53,12 +53,12 @@ const StyledSection = styled.div.attrs(
     const defaultStyle: React.CSSProperties = {
       flex: isHalf ? '1 1 45%' : '1 1 100%',
       maxWidth: isHalf ? '50%' : '100%',
-      backgroundColor: Colors.white.hex(),
+      backgroundColor: Colors['surface--muted'],
       padding: '20px',
     };
     const compactStyle: React.CSSProperties = {
       borderRadius: '8px',
-      backgroundColor: Colors['greyscale-grey1'].hex(),
+      backgroundColor: Colors['surface--medium'],
       padding: '8px 12px',
     };
     const newStyle: React.CSSProperties = {

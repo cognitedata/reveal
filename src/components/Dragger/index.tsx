@@ -13,15 +13,15 @@ export default Dragger;
 
 const StyledDragger = styled(AntdDragger)`
   && {
-    border: 2px dashed ${Colors['greyscale-grey4'].hex()};
+    border: 2px dashed ${Colors['border--muted']};
     border-radius: 7px;
     box-sizing: border-box;
     width: 100%;
     transition: 0.3s;
 
     &:hover {
-      border: 2px dashed ${Colors['midblue'].hex()};
-      background-color: ${Colors['bg-control--toggled-hover'].hex()};
+      border: 2px dashed ${Colors['border--interactive--hover']};
+      background-color: ${Colors['surface--interactive--toggled-hover']};
     }
 
     .ant-upload-btn {

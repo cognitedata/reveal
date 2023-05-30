@@ -55,7 +55,7 @@ const Wrapper = styled(Flex)`
   white-space: nowrap;
   margin-top: 18px;
   .detail--last-update-info {
-    color: ${Colors['greyscale-grey6'].hex()};
+    color: ${Colors['text-icon--muted']};
   }
 `;
 
@@ -64,7 +64,7 @@ const StyledLastUpdatedTimeBody = styled(Body)`
 `;
 
 const StyledLastUpdatedTimeLoaderIcon = styled(Icon)`
-  color: ${Colors['greyscale-grey4'].hex()};
+  color: ${Colors['text-icon--muted']};
   margin: 0 5px;
 `;
 

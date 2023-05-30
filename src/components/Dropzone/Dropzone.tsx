@@ -48,7 +48,7 @@ const StyledDocumentIcon = styled(Icon).attrs({
 `;
 
 const StyledDropzoneContent = styled.div`
-  border: 1px dashed ${Colors['border-default'].hex()};
+  border: 1px dashed ${Colors['border--interactive--default']};
   border-radius: 6px;
   padding: 36px;
   position: relative;
@@ -71,13 +71,13 @@ const StyledDropzoneOnDrop = styled.div`
 `;
 
 const StyledDropzoneOnDropText = styled(Title)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
   margin-left: 12px;
 `;
 
 const StyledDropzone = styled(Upload.Dragger)`
   && {
-    background-color: ${Colors['bg-accent'].hex()};
+    background-color: ${Colors['surface--medium']};
     border: none;
     padding: 0px;
 
@@ -96,26 +96,26 @@ const StyledDropzone = styled(Upload.Dragger)`
     }
 
     :hover {
-      background-color: ${Colors['bg-hover'].hex()};
+      background-color: ${Colors['surface--interactive--hover']};
 
       ${StyledDocumentIcon} {
         color: ${Colors['border--interactive--hover']};
       }
 
       ${StyledDropzoneContent} {
-        border-color: ${Colors['bg-status-small--accent'].hex()};
+        border-color: ${Colors['surface--status-neutral--muted--default']};
       }
     }
 
     :active {
-      background-color: ${Colors['bg-selected'].hex()};
+      background-color: ${Colors['surface--interactive--pressed']};
 
       ${StyledDocumentIcon} {
         color: ${Colors['border--interactive--toggled-hover']};
       }
 
       ${StyledDropzoneContent} {
-        border-color: ${Colors['bg-status-small--accent-hover'].hex()};
+        border-color: ${Colors['surface--status-neutral--muted--default--alt']};
         border-width: 2px;
         padding: 35px;
       }
@@ -123,14 +123,14 @@ const StyledDropzone = styled(Upload.Dragger)`
   }
 
   &&.ant-upload-drag-hover {
-    background-color: ${Colors['bg-hover'].hex()};
+    background-color: ${Colors['surface--interactive--hover']};
 
     ${StyledDocumentIcon} {
       color: ${Colors['border--interactive--hover']};
     }
 
     ${StyledDropzoneContent} {
-      border: 2px solid ${Colors['bg-status-small--accent'].hex()};
+      border: 2px solid ${Colors['surface--status-neutral--muted--default']};
       padding: 35px;
     }
 
@@ -141,12 +141,12 @@ const StyledDropzone = styled(Upload.Dragger)`
 `;
 
 const StyledDropzoneTitle = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
   margin: 16px 0 8px;
 `;
 
 const StyledDropzoneDetail = styled(Detail)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
   text-align: center;
 `;
 

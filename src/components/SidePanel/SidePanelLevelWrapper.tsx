@@ -90,7 +90,7 @@ export const StyledRawSidePanelContentLoader = styled(Flex)`
 `;
 
 export const StyledHeaderActionDivider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
+  background-color: ${Colors['surface--interactive--disabled']};
   height: 16px;
   margin: 0 8px;
   width: 2px;
@@ -98,8 +98,8 @@ export const StyledHeaderActionDivider = styled.div`
 
 export const StyledEmptyListWrapper = styled.div`
   align-items: center;
-  background-color: ${Colors['bg-accent'].hex()};
-  border: 1px solid ${Colors['border-default'].hex()};
+  background-color: ${Colors['surface--medium']};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
   display: flex;
   flex-direction: column;
@@ -107,24 +107,24 @@ export const StyledEmptyListWrapper = styled.div`
 `;
 
 export const StyledEmptyListTitle = styled(Title)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
 `;
 
 export const StyledEmptyListDetail = styled(Detail)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
   margin: 8px 0 16px;
   text-align: center;
 `;
 
 export const StyledNoItemsWrapper = styled.div`
-  background-color: ${Colors['bg-accent']};
+  background-color: ${Colors['surface--medium']};
   border-radius: 6px;
   margin-bottom: 8px;
   padding: 12px 12px 16px;
 `;
 
 export const StyledNoItemsDetail = styled(Detail)`
-  color: ${Colors['text-hint']};
+  color: ${Colors['text-icon--muted']};
   line-height: 16px;
   margin-top: 8px;
 `;

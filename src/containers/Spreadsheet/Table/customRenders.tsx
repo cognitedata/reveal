@@ -97,8 +97,8 @@ const Box = styled.div`
   width: 280px;
   padding: 28px;
   margin: 20px;
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
-  background-color: ${Colors.white.hex()};
+  border: 1px solid ${Colors['border--muted']};
+  background-color: ${Colors['surface--muted']};
   border-radius: 6px;
   cursor: pointer;
   text-align: center;
@@ -106,12 +106,12 @@ const Box = styled.div`
     margin-bottom: 16px;
   }
   .text-icon {
-    color: ${Colors['greyscale-grey4'].hex()};
+    color: ${Colors['text-icon--muted']};
     min-height: 50px;
   }
   &:hover {
-    background-color: ${Colors['midblue-7'].hex()};
-    border-color: ${Colors['midblue-3'].hex()};
+    background-color: ${Colors['border--interactive--toggled-pressed']};
+    border-color: ${Colors['border--interactive--hover']};
     ${StyledIcon} {
       color: ${Colors['border--interactive--hover']};
     }
@@ -153,7 +153,7 @@ export const EmptyRender = (): JSX.Element => {
           </Button>
         </Box>
         <a
-          style={{ color: Colors['text-primary'].hex() }}
+          style={{ color: Colors['text-icon--strong'] }}
           href="https://docs.cognite.com/api/v1/#operation/postRows"
           target="_blank"
         >
@@ -169,7 +169,7 @@ export const EmptyRender = (): JSX.Element => {
                 <Icon type="ExternalLink" />
               </Flex>
             </Title>
-            <p style={{ color: Colors['text-secondary'].hex(), margin: 0 }}>
+            <p style={{ color: Colors['text-icon--medium'], margin: 0 }}>
               {t('spreadsheet-table-empty-button-write-data-learn')}
             </p>
           </Box>
@@ -179,7 +179,7 @@ export const EmptyRender = (): JSX.Element => {
   );
 };
 
-const fakeTableColor = `${Colors['greyscale-grey4'].hex()}33`;
+const fakeTableColor = `${Colors['text-icon--muted']}33`;
 
 const EmptyTable = styled.div`
   display: flex;
@@ -199,7 +199,7 @@ const EmptyTable = styled.div`
 `;
 
 const EmptyTableText = styled(Body)`
-  color: ${Colors['text-secondary'].hex()};
+  color: ${Colors['text-icon--medium']};
   text-align: center;
   margin-top: -100px;
 `;
@@ -215,7 +215,7 @@ const HeaderCell = styled(Body).attrs(
   align-items: center;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  color: ${Colors['text-secondary'].hex()};
+  color: ${Colors['text-icon--medium']};
   padding: 0 4px;
   cursor: pointer;
   & > * {

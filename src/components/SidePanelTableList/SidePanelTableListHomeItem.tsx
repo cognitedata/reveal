@@ -14,14 +14,14 @@ type SidePanelTableListHomeItemProps = {
 };
 
 const StyledPanelTableListHomeItemWrapper = styled.div`
-  border-bottom: 1px solid ${Colors['border-default']};
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
   margin-bottom: 8px;
   padding-bottom: 8px;
 `;
 
 const StyledHomeItem = styled.div`
   align-items: center;
-  background-color: ${Colors['bg-accent']};
+  background-color: ${Colors['surface--medium']};
   border-radius: 6px;
   display: flex;
   height: 40px;
@@ -30,7 +30,7 @@ const StyledHomeItem = styled.div`
 `;
 
 const StyledHomeIcon = styled(Icon)`
-  color: ${Colors['bg-status-small--accent-pressed']};
+  color: ${Colors['text-icon--interactive--default']};
   margin-right: 8px;
 `;
 
@@ -71,7 +71,7 @@ const SidePanelTableListHomeItem = ({
                   disabled={!isEmpty}
                   icon="Delete"
                   onClick={() => setIsDeleteModalOpen(true)}
-                  type="ghost-danger"
+                  type="ghost-destructive"
                 >
                   {t('explorer-side-panel-databases-delete-button')}
                 </Button>

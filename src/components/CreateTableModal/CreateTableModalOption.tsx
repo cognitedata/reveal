@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AllIconTypes, Body, Colors, Detail, Icon } from '@cognite/cogs.js';
-import icons, { IconType } from 'assets/icons';
+import icons, { IconType } from 'common/assets/icons';
 import styled from 'styled-components';
 import { CustomIcon } from 'components/CustomIcon';
 
@@ -44,13 +44,13 @@ const CreateTableModalOption = ({
 };
 
 const StyledCreateOptionIcon = styled(Icon)`
-  color: ${Colors['border-default'].hex()};
+  color: ${Colors['border--interactive--default']};
 `;
 
 const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
   align-items: center;
   background-color: inherit;
-  border: 1px solid ${Colors['border-default'].hex()};
+  border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -60,33 +60,33 @@ const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
   width: 100%;
 
   &:hover {
-    background-color: ${Colors['bg-hover'].hex()};
-    border-color: ${Colors['bg-status-small--accent'].hex()};
+    background-color: ${Colors['surface--interactive--hover']};
+    border-color: ${Colors['surface--status-neutral--muted--default']};
 
     ${StyledCreateOptionIcon} {
-      color: ${Colors['bg-status-small--accent'].hex()};
+      color: ${Colors['surface--status-neutral--muted--default']};
     }
   }
 
   &:active {
-    background-color: ${Colors['bg-selected'].hex()};
-    border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
+    background-color: ${Colors['surface--interactive--pressed']};
+    border: 2px solid ${Colors['surface--status-neutral--muted--default--alt']};
     padding: 35px;
 
     ${StyledCreateOptionIcon} {
-      color: ${Colors['bg-status-small--accent-hover'].hex()};
+      color: ${Colors['surface--status-neutral--muted--default--alt']};
     }
   }
 
   ${({ $isSelected }) =>
     $isSelected
       ? `
-      background-color: ${Colors['bg-selected'].hex()};
-      border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
+      background-color: ${Colors['surface--interactive--pressed']};
+      border: 2px solid ${Colors['surface--status-neutral--muted--default--alt']};
       padding: 35px;
   
       ${StyledCreateOptionIcon} {
-        color: ${Colors['bg-status-small--accent-hover'].hex()};
+        color: ${Colors['surface--status-neutral--muted--default--alt']};
       }`
       : ''};
 
@@ -99,12 +99,12 @@ const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
 `;
 
 const StyledCreateOptionTitle = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
+  color: ${Colors['text-icon--strong']};
   margin: 16px 0 8px;
 `;
 
 const StyledCreateOptionDetail = styled(Detail)`
-  color: ${Colors['text-hint'].hex()};
+  color: ${Colors['text-icon--muted']};
   text-align: center;
 `;
 
