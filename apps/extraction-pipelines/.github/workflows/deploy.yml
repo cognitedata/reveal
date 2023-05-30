@@ -34,11 +34,11 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: 'live'
           projectId: 'fusion-217032465111'
-          target: 'cognite-extraction-pipelines-production'
+          target: 'cdf-extraction-pipelines-prod'
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: 'live'
           projectId: 'fusion-217032465111'
-          target: 'cognite-extraction-pipelines-staging'
+          target: 'cdf-extraction-pipelines-staging'
