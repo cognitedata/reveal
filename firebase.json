@@ -1,12 +1,12 @@
 {
   "hosting": [
     {
-      "site": "cognite-raw-explorer-production",
+      "site": "cdf-raw-explorer-prod",
       "public": "./build",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     },
     {
-      "site": "cognite-raw-explorer-staging",
+      "site": "cdf-raw-explorer-staging",
       "public": "./build",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     }

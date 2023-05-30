@@ -34,11 +34,11 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: 'live'
           projectId: 'fusion-217032465111'
-          target: 'cognite-raw-explorer-production'
+          target: 'cdf-raw-explorer-prod'
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: 'live'
           projectId: 'fusion-217032465111'
-          target: 'cognite-raw-explorer-staging'
+          target: 'cdf-raw-explorer-staging'
