@@ -107,7 +107,7 @@ Here is an example for how to filter with ors (name is Gunnar or age is greater 
 }\`\`\`
 Here's an example of how to search for a user:
 query {
-  listWorkOrder(query: "gunnar") {
+  searchUser(query: "gunnar") {
     items {
       externalId
       name
@@ -169,14 +169,6 @@ a valid query is:
       externalId
       name
     }
-    pressure {
-      __typename
-      externalId
-      dataPoints (limit:10){
-        timestamp
-        value
-      }
-    }
     multi {
       items{
         __typename
@@ -192,7 +184,23 @@ All object types comes with an \`externalId\` field. Thus, for all list and sear
 
 Same goes for querying anything \`TimeSeries\` type, make sure \`externalId\` and \`__typename\` field must be requested.
 
-For any user prompt I should generate a valid GraphQl query that follows the schemas defined in the examples with subtypes wrapped in \`items\`. Ensure that the response can be parsed as a GraphQL query. No text, description or anything else, just the GraphQL query (no variables).
 
+To get data points, you query like this
+\`\`\`
+{
+  listA {
+    pressure {
+      __typename
+      externalId
+      dataPoints (limit:10) {
+        timestamp
+        value
+      }
+    }
+  }
+}
+\`\`\`
+
+For any user prompt I should generate a valid GraphQl query that follows the schemas defined in the examples with subtypes wrapped in \`items\`. Ensure that the response can be parsed as a GraphQL query. No text, description or anything else, just the GraphQL query (no variables), and no expected replacement string from the user (such as YOUR_EQUIPMENT_ID).
   `;
 }
