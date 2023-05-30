@@ -46,6 +46,8 @@ const AddNodeButton = ({
       },
       data: {
         processType,
+        processDescription: '',
+        processItem: '',
         processProps: {},
       },
     };
@@ -106,6 +108,12 @@ const AddNodeButton = ({
               onClick={() => handleAddNode('workflow', xPos, yPos)}
             >
               {t('workflow')}
+            </Menu.Item>
+            <Menu.Item
+              icon="Function"
+              onClick={() => handleAddNode('function', xPos, yPos)}
+            >
+              {t('function')}
             </Menu.Item>
           </Menu>
         )}

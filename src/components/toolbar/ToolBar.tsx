@@ -51,7 +51,8 @@ const Toolbar = ({
     bottom: undefined,
     left: undefined,
   });
-  const { isHistoryVisible } = useWorkflowBuilderContext();
+  const { isHistoryVisible, isNodeConfigurationPanelOpen } =
+    useWorkflowBuilderContext();
 
   useEffect(() => {
     switch (placement) {
@@ -92,6 +93,7 @@ const Toolbar = ({
       gap={gap}
       $placement={toolbarPlacement}
       $isHistoryVisible={isHistoryVisible}
+      $isNodeConfigurationPanelOpen={isNodeConfigurationPanelOpen}
     >
       {buttons.map((button, index) => {
         return (
@@ -136,6 +138,7 @@ const ToolbarContainer = styled(Flex)<{
     left?: number | undefined;
   };
   $isHistoryVisible?: boolean;
+  $isNodeConfigurationPanelOpen?: boolean;
 }>`
   background-color: white;
   border: 1px solid ${Colors['border--interactive--default']};
@@ -151,7 +154,7 @@ const ToolbarContainer = styled(Flex)<{
   ${(props) =>
     props.$placement.right !== undefined
       ? `right: ${
-          props.$isHistoryVisible
+          props.$isHistoryVisible || props.$isNodeConfigurationPanelOpen
             ? TOOLBAR_IS_HISTORY_VISIBLE_WIDTH
             : props.$placement.right
         }px;`

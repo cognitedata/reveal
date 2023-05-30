@@ -8,21 +8,18 @@ const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
 
 const cssRegexMatcher = (rule) =>
-      rule.test && rule.test.toString() === CSS_REGEX.toString();
+  rule.test && rule.test.toString() === CSS_REGEX.toString();
 
 const wasmExtensionRegExp = /\.wasm$/;
 
-
 const replaceStyleLoaders = (config) => {
-
-
-     config.module.rules.forEach((rule) => {
-        (rule.oneOf || []).forEach((oneOf) => {
-          if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
-            oneOf.exclude.push(wasmExtensionRegExp);
-          }
-        });
-     });
+  config.module.rules.forEach((rule) => {
+    (rule.oneOf || []).forEach((oneOf) => {
+      if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
+        oneOf.exclude.push(wasmExtensionRegExp);
+      }
+    });
+  });
 
   const styleLoaders = [
     {
@@ -134,10 +131,13 @@ module.exports = {
 
     config.experiments = {
       asyncWebAssembly: true,
-      syncWebAssembly: true
-    }
+      syncWebAssembly: true,
+    };
 
-    config.module.rules.at(-1).oneOf.at(-1).exclude.push(/\.wasm$/);
+    config.module.rules
+      .find((i) => 'oneOf' in i)
+      .oneOf.find((i) => i.type === 'asset/resource')
+      .exclude.push(/\.wasm$/);
 
     return config;
   }),
@@ -157,5 +157,4 @@ module.exports = {
       return config;
     };
   },
-
 };

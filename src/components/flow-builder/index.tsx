@@ -56,6 +56,8 @@ export const FlowBuilder = (): JSX.Element => {
   const {
     flow: flowState,
     changeFlow,
+    setSelectedObject,
+    setIsNodeConfigurationPanelOpen,
     userState,
     setUserState,
   } = useWorkflowBuilderContext();
@@ -141,6 +143,14 @@ export const FlowBuilder = (): JSX.Element => {
           }
         });
         return newState;
+      });
+      selectChanges.forEach(({ id, selected }) => {
+        if (selected) {
+          setSelectedObject(id);
+          setIsNodeConfigurationPanelOpen(true);
+        } else if (selectChanges.every((c) => !c.selected)) {
+          setIsNodeConfigurationPanelOpen(false);
+        }
       });
     }
 
@@ -276,6 +286,8 @@ export const FlowBuilder = (): JSX.Element => {
               position,
               data: {
                 processType: type,
+                processDescription: '',
+                processItem: '',
                 processProps: {},
               },
             };

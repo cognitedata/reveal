@@ -16,6 +16,7 @@
 @import '~antd/es/timeline/style/index.less';
 @import '~antd/es/radio/style/index.less';
 @import '~antd/es/card/style/index.less';
+@import '~antd/dist/antd.css';
 
 @font-family: 'Inter', sans-serif;
 
@@ -132,7 +133,9 @@
 
 /* alert */
 @alert-error-border-color: 'transparent';
-@alert-error-bg-color: var(--cogs-surface--status-critical--muted--default--alt);
+@alert-error-bg-color: var(
+  --cogs-surface--status-critical--muted--default--alt
+);
 @alert-error-icon-color: var(--cogs-text-icon--status-critical);
 
 @alert-info-border-color: 'transparent';
@@ -140,11 +143,15 @@
 @alert-info-icon-color: var(--cogs-text-icon--status-neutral);
 
 @alert-warning-border-color: 'transparent';
-@alert-warning-bg-color: var(--cogs-surface--status-warning--muted--default--alt);
+@alert-warning-bg-color: var(
+  --cogs-surface--status-warning--muted--default--alt
+);
 @alert-warning-icon-color: var(--cogs-text-icon--status-warning);
 
 @alert-success-border-color: 'transparent';
-@alert-success-bg-color: var(--cogs-surface--status-success--muted--default--alt);
+@alert-success-bg-color: var(
+  --cogs-surface--status-success--muted--default--alt
+);
 @alert-success-icon-color: var(--cogs-text-icon--status-success);
 
 @alert-no-icon-padding-vertical: @padding-md;

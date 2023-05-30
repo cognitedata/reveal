@@ -72,6 +72,8 @@ export const ProcessNodeRenderer = ({
       },
       data: {
         processType,
+        processDescription: '',
+        processItem: '',
         processProps: {},
       },
     };
@@ -121,10 +123,13 @@ export const ProcessNodeRenderer = ({
           </ProcessNodeIconContainer>
           <Flex direction="column" gap={2}>
             <ProcessNodeTitle level={3}>
-              {t(`component-title-${data.processType}`, {
-                postProcess: 'uppercase',
-              })}
+              {data.processItem
+                ? data.processItem
+                : t(`component-title-${data.processType}`, {
+                    postProcess: 'uppercase',
+                  })}
             </ProcessNodeTitle>
+            <div>{data.processDescription}</div>
           </Flex>
         </Flex>
         {otherUsers.length > 0 && (

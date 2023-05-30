@@ -16,7 +16,7 @@ import * as Automerge from '@automerge/automerge';
 import { debounce, isEqual } from 'lodash';
 
 import { useUpdateFlow } from 'hooks/files';
-import { AFlow, CanvasEdges, CanvasNodes } from 'types';
+import { AFlow, CanvasEdges, CanvasNodes, ProcessNodeData } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
 import { useSDK } from '@cognite/sdk-provider';
@@ -29,6 +29,8 @@ type FlowContextT = {
   externalId: string;
   isComponentsPanelVisible: boolean;
   setIsComponentsPanelVisible: Dispatch<SetStateAction<boolean>>;
+  isNodeConfigurationPanelOpen: boolean;
+  setIsNodeConfigurationPanelOpen: Dispatch<SetStateAction<boolean>>;
   changeFlow: (fn: Automerge.ChangeFn<AFlow>, logger?: Logger) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
@@ -43,6 +45,8 @@ type FlowContextT = {
   setHistoryVisible: Dispatch<SetStateAction<boolean>>;
   previewHash?: string;
   setPreviewHash: Dispatch<SetStateAction<string | undefined>>;
+
+  selectedObjectData: ProcessNodeData | undefined;
   userState: UserState;
   setUserState: Dispatch<SetStateAction<UserState>>;
   otherUserStates: UserState[];
@@ -101,6 +105,11 @@ export const FlowContextProvider = ({
   const [previewHash, setPreviewHash] = useState<string | undefined>();
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
+  const [isNodeConfigurationPanelOpen, setIsNodeConfigurationPanelOpen] =
+    useState(() => {
+      return selectedObject ? true : false;
+    });
+
   const { data: userInfo } = useUserInfo();
   const { mutate: updateFlow } = useUpdateFlow();
 
@@ -305,12 +314,24 @@ export const FlowContextProvider = ({
     }
   }, [isHistoryVisible]);
 
+  const selectedObjectData = useMemo(() => {
+    if (selectedObject) {
+      const node = flowState.canvas.nodes.find((node) => {
+        return node.id === selectedObject;
+      });
+      return node?.data as ProcessNodeData;
+    }
+    return flowState.canvas.nodes[0].data as ProcessNodeData;
+  }, [flowState, selectedObject]);
+
   return (
     <WorkflowContext.Provider
       value={{
         externalId,
         isComponentsPanelVisible,
         setIsComponentsPanelVisible,
+        isNodeConfigurationPanelOpen,
+        setIsNodeConfigurationPanelOpen,
         flow,
         flowRef,
         changeFlow,
@@ -325,6 +346,7 @@ export const FlowContextProvider = ({
         previewHash,
         setPreviewHash,
         restoreWorkflow,
+        selectedObjectData,
         userState,
         setUserState,
         otherUserStates,

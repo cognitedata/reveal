@@ -18,7 +18,12 @@ type ParentNode = BaseWorkflowBuilderNode<'parent', ParentNodeData>;
 /* PROCESS NODE */
 /****************/
 
-export const PROCESS_TYPES = ['transformation', 'webhook', 'workflow'] as const;
+export const PROCESS_TYPES = [
+  'transformation',
+  'webhook',
+  'workflow',
+  'function',
+] as const;
 export type ProcessType = typeof PROCESS_TYPES[number];
 export const PROCESS: Record<string, ProcessType> = {
   TRANSFORMATION: 'transformation',
@@ -29,14 +34,25 @@ export const PROCESS_ICON: Record<ProcessType, IconType> = {
   transformation: 'Code',
   webhook: 'FrameTool',
   workflow: 'Pipeline',
+  function: 'Function',
 };
 
 export const isProcessType = (t?: string): t is ProcessType => {
   return !!t && PROCESS_TYPES.includes(t as ProcessType);
 };
 
-type BaseProcessNodeData<T extends ProcessType, P = {}> = {
+export type ProcessDescription = string;
+export type ProcessItem = string;
+
+type BaseProcessNodeData<
+  T extends ProcessType,
+  D extends ProcessDescription,
+  I extends ProcessItem,
+  P = {}
+> = {
   processType: T;
+  processDescription: D;
+  processItem: I;
   processProps: P;
 };
 
@@ -45,19 +61,40 @@ type TransformationNodeProps = {
 };
 type TransformationNodeData = BaseProcessNodeData<
   'transformation',
+  string,
+  string,
   TransformationNodeProps
 >;
 
 type WebhookNodeProps = {};
-type WebhookNodeData = BaseProcessNodeData<'webhook', WebhookNodeProps>;
+type WebhookNodeData = BaseProcessNodeData<
+  'webhook',
+  string,
+  string,
+  WebhookNodeProps
+>;
 
 type WorkflowNodeProps = {};
-type WorkflowkNodeData = BaseProcessNodeData<'workflow', WorkflowNodeProps>;
+type WorkflowkNodeData = BaseProcessNodeData<
+  'workflow',
+  string,
+  string,
+  WorkflowNodeProps
+>;
+
+type FunctionNodeProps = {};
+type FunctionNodeData = BaseProcessNodeData<
+  'function',
+  string,
+  string,
+  FunctionNodeProps
+>;
 
 export type ProcessNodeData =
   | TransformationNodeData
   | WebhookNodeData
-  | WorkflowkNodeData;
+  | WorkflowkNodeData
+  | FunctionNodeData;
 export type ProcessNode = BaseWorkflowBuilderNode<'process', ProcessNodeData>;
 
 /********************/
@@ -108,3 +145,27 @@ export type SdkListData<T> = {
   items: T[];
   nextCursor?: string;
 };
+
+export type Runtime = 'py37' | 'py38' | 'py39' | 'py310' | 'py311' | 'py312'; // Future proofing.
+
+export interface CogFunctionUpload {
+  name: string;
+  fileId: number;
+  owner: string;
+  description?: string;
+  apiKey?: string;
+  memory?: number;
+  cpu?: number;
+  secrets?: {};
+  metadata?: {};
+  externalId?: string;
+  runtime?: Runtime;
+}
+
+export interface CogFunction extends CogFunctionUpload {
+  id: number;
+  createdTime: number;
+  status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
+  error?: Error;
+  runtimeVersion?: string;
+}
