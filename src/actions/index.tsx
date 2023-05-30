@@ -83,7 +83,7 @@ export const useCreateDataSetMutation = () => {
         userHistoryService.logNewResourceEdit({
           application: appPath!,
           name: dataset.name!,
-          path: createLink(`/${appPath}/data-sets/${dataset.id}`),
+          path: createLink(`/${appPath}/data-set/${dataset.id}`),
         });
         invalidateDataSetQueries(client);
       },
@@ -140,7 +140,7 @@ export const useUpdateDataSetMutation = () => {
         userHistoryService.logNewResourceEdit({
           application: appPath!,
           name: dataset.name,
-          path: createLink(`/${appPath}/data-sets/${dataset.id}`),
+          path: createLink(`/${appPath}/data-set/${dataset.id}`),
         });
         toast.success(
           <span>
