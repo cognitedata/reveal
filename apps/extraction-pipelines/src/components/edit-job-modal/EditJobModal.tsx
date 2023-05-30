@@ -16,8 +16,9 @@ export const EditJobModal = ({
   job,
   visible,
 }: EditJobsModalProps): JSX.Element => {
-  const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
-  const [topicFilterChanged, setTopicFilterChanged] = useState(false);
+  const [tempTopicFilterInput, setTempTopicFilterInput] = useState(
+    job.topicFilter
+  );
 
   const { t } = useTranslation();
 
@@ -38,10 +39,7 @@ export const EditJobModal = ({
     },
   });
 
-  const topicFilter = job?.topicFilter ?? '';
-
   const handleEdit = (e: ChangeEvent<HTMLInputElement>) => {
-    setTopicFilterChanged(true);
     setTempTopicFilterInput(e.target.value);
   };
 
@@ -72,7 +70,7 @@ export const EditJobModal = ({
         }}
         fullWidth
         onChange={handleEdit}
-        value={topicFilterChanged ? tempTopicFilterInput : topicFilter}
+        value={tempTopicFilterInput}
       />
     </Modal>
   );
