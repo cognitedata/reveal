@@ -1,9 +1,10 @@
-import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
 import { useMutation } from '@tanstack/react-query';
 
 import { CogniteClient } from '@cognite/sdk';
 import { AnnotationChangeById } from '@cognite/sdk/dist/src/types';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
 
 import { isExtendedAnnotationAnnotation } from '../../utils';
 

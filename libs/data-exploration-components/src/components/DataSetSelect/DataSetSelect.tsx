@@ -3,7 +3,6 @@ import React, { useContext, useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { stringContains } from '@data-exploration-components/utils';
-import { AppContext } from '@data-exploration-lib/core';
 import { Select, Popover, Spin } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -13,6 +12,8 @@ import {
   useInfiniteList,
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
+
+import { AppContext } from '@data-exploration-lib/core';
 
 export type DataSetSelectProps = {
   onSelectionChange: (ids: number[]) => void;

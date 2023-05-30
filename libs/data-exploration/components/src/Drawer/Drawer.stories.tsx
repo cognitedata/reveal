@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { useDialog } from '@data-exploration-lib/core';
-
 import { Button } from '@cognite/cogs.js';
+
+import { useDialog } from '@data-exploration-lib/core';
 
 import { Drawer } from './Drawer';
 

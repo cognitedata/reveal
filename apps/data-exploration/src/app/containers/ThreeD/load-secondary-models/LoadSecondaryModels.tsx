@@ -1,13 +1,6 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 
 import {
-  SECONDARY_MODEL_BASE_QUERY_KEY,
-  getSecondaryModelAppliedStateQueryKey,
-  getSecondaryModelQueryFn,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import {
   useQueries,
   useQueryClient,
   UseQueryOptions,
@@ -18,6 +11,14 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
 } from '@cognite/reveal';
+
+import {
+  SECONDARY_MODEL_BASE_QUERY_KEY,
+  getSecondaryModelAppliedStateQueryKey,
+  getSecondaryModelQueryFn,
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 type LoadSecondaryModelsProps = {
   secondaryModels: SecondaryModelOptions[];

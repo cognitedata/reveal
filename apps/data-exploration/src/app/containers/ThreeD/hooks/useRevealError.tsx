@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 
-import RevealErrorToast from '@data-exploration-app/containers/ThreeD/RevealErrorToast';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import { toast } from '@cognite/cogs.js';
+
+import RevealErrorToast from '@data-exploration-app/containers/ThreeD/RevealErrorToast';
 
 export const useRevealError = (
   result: UseQueryResult<boolean | undefined, { message: string }>[]

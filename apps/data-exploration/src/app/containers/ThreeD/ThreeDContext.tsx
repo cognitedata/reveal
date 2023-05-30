@@ -7,9 +7,6 @@ import React, {
   useState,
 } from 'react';
 
-import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
-import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 import noop from 'lodash/noop';
 
 import { Loader } from '@cognite/cogs.js';
@@ -19,6 +16,10 @@ import {
   CognitePointCloudModel,
   ViewerState,
 } from '@cognite/reveal';
+
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 
 import {
   getStateUrl,

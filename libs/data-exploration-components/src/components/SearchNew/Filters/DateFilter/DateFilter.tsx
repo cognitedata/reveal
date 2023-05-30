@@ -6,13 +6,14 @@ import {
 } from '@data-exploration-components/components';
 import { BaseSelect } from '@data-exploration-components/components/Select/BaseSelect';
 import { TIME_SELECT } from '@data-exploration-components/containers';
+
+import { OptionType } from '@cognite/cogs.js';
+import { DateRange } from '@cognite/sdk';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { OptionType } from '@cognite/cogs.js';
-import { DateRange } from '@cognite/sdk';
 
 import { FilterFacetTitle } from '../FilterFacetTitle';
 

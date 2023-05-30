@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-import { EMPTY_ARRAY, RelationshipLabels } from '@data-exploration-lib/core';
-import { useAssetsByIdQuery } from '@data-exploration-lib/domain-layer';
-
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
+
+import { EMPTY_ARRAY, RelationshipLabels } from '@data-exploration-lib/core';
+import { useAssetsByIdQuery } from '@data-exploration-lib/domain-layer';
 
 import { RootAssetButton } from '../../RootAsset';
 

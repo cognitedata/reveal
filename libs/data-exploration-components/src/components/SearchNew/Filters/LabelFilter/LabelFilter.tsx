@@ -2,13 +2,14 @@ import React from 'react';
 
 import { MultiSelect } from '@data-exploration-components/components';
 import { ResourceType } from '@data-exploration-components/types';
+
+import { OptionType, Tooltip } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
-
-import { OptionType, Tooltip } from '@cognite/cogs.js';
 
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionValue } from '../types';

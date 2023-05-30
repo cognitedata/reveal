@@ -5,14 +5,15 @@ import {
   Table,
   TableProps,
 } from '@data-exploration/components';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, CogniteEvent } from '@cognite/sdk';
+
 import {
   getHiddenColumns,
   RelationshipLabels,
 } from '@data-exploration-lib/core';
 import { InternalEventDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-
-import { Asset, CogniteEvent } from '@cognite/sdk';
 
 import { useEventsMetadataColumns } from '../useEventsMetadataColumns';
 

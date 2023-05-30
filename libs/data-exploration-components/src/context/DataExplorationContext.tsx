@@ -4,15 +4,16 @@ import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
 import { ResourcePreviewProvider } from '@data-exploration-components/context/ResourcePreviewContext';
 import { ResourceSelectorProvider } from '@data-exploration-components/context/ResourceSelectorContext';
+
+import { Tooltip, Tabs, Select } from '@cognite/cogs.js';
+import { CogniteClient } from '@cognite/sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import {
   Flow,
   OverrideURLMap,
   MetricsMetadata,
 } from '@data-exploration-lib/core';
-
-import { Tooltip, Tabs, Select } from '@cognite/cogs.js';
-import { CogniteClient } from '@cognite/sdk';
-import { SDKProvider } from '@cognite/sdk-provider';
 
 import { AppContextProvider } from './AppContext';
 

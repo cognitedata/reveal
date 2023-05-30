@@ -1,11 +1,12 @@
 import * as React from 'react';
 
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import {
   AssetConfigType,
   InternalAssetFilters,
   useDeepMemo,
 } from '@data-exploration-lib/core';
-import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';

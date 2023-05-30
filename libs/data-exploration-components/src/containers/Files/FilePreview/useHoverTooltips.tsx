@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 

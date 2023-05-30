@@ -1,6 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
 
 import { TimeseriesSearchResults } from '@data-exploration/containers';
+import { useDebounce } from 'use-debounce';
+
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
+import { Asset } from '@cognite/sdk/dist/src/types';
+
 import { routes } from '@data-exploration-app/containers/App';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
@@ -16,10 +21,6 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useTimeseriesFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { useDebounce } from 'use-debounce';
-
-import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
-import { Asset } from '@cognite/sdk/dist/src/types';
 
 export const TimeseriesSearchResultView = () => {
   const [, openPreview] = useCurrentResourceId();

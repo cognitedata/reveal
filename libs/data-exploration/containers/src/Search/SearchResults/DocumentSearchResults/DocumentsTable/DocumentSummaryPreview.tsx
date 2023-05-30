@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
+import { Body, Flex } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
+
 import {
   InternalDocument,
   getChatCompletions,
 } from '@data-exploration-lib/domain-layer';
-
-import { Body, Flex } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

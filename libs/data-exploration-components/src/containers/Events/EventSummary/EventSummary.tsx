@@ -8,6 +8,11 @@ import {
 import { useEventsMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
+
+import { Asset, CogniteEvent } from '@cognite/sdk';
+
 import {
   getHiddenColumns,
   InternalEventsFilters,
@@ -17,10 +22,6 @@ import {
   useEventsSearchResultWithLabelsQuery,
   InternalEventDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-import noop from 'lodash/noop';
-
-import { Asset, CogniteEvent } from '@cognite/sdk';
 
 export const EventSummary = ({
   query = '',

@@ -8,6 +8,11 @@ import React, {
 
 import styled from 'styled-components';
 
+import { TableNoResults } from '@cognite/cdf-utilities';
+import { Button, Input, Menu, Divider } from '@cognite/cogs.js';
+import { Cognite3DViewer } from '@cognite/reveal';
+import { Model3D } from '@cognite/sdk';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
   Image360DatasetOptions,
@@ -24,11 +29,6 @@ import {
   ThreeDModelsResponse,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { TableNoResults } from '@cognite/cdf-utilities';
-import { Button, Input, Menu, Divider } from '@cognite/cogs.js';
-import { Cognite3DViewer } from '@cognite/reveal';
-import { Model3D } from '@cognite/sdk';
 
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../utils';
 

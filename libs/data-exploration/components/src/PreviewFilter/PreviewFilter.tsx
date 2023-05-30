@@ -2,12 +2,12 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { Input } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebounceTrackUsage,
 } from '@data-exploration-lib/core';
-
-import { Input } from '@cognite/cogs.js';
 
 interface Props {
   query?: string;

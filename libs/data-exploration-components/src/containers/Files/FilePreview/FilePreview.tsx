@@ -6,16 +6,6 @@ import { Loader } from '@data-exploration/components';
 import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
 import { ResourceItem } from '@data-exploration-components/types';
 import { lightGrey } from '@data-exploration-components/utils';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  ANNOTATION_SOURCE_KEY,
-  AnnotationSource,
-  ExtendedAnnotation,
-} from '@data-exploration-lib/core';
-import {
-  useSearchResults,
-  SearchResult,
-} from '@data-exploration-lib/domain-layer';
 import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
@@ -33,6 +23,17 @@ import ReactUnifiedViewer, {
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
+
+import {
+  DATA_EXPLORATION_COMPONENT,
+  ANNOTATION_SOURCE_KEY,
+  AnnotationSource,
+  ExtendedAnnotation,
+} from '@data-exploration-lib/core';
+import {
+  useSearchResults,
+  SearchResult,
+} from '@data-exploration-lib/domain-layer';
 
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';

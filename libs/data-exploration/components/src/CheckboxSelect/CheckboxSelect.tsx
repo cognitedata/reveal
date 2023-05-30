@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
-
 import { Button, Dropdown } from '@cognite/cogs.js';
+
+import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
 
 import { FilterLabel } from '../Labels';
 

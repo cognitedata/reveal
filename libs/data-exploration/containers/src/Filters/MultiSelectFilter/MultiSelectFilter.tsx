@@ -10,11 +10,12 @@ import {
   MultiSelect,
   MultiSelectProps,
 } from '@data-exploration/components';
-import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
 
 import { OptionType } from '@cognite/cogs.js';
+
+import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectOptionType } from '../types';
 

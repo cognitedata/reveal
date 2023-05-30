@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 
 import { isNotUndefined } from '@data-exploration-components/utils/index';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
@@ -11,6 +9,9 @@ import {
   filterNonOverlappingBoundingBoxes,
   isSimilarBoundingBox,
 } from '@cognite/unified-file-viewer';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
 
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import {

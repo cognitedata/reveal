@@ -12,6 +12,17 @@ import {
   TimeseriesTab,
   ResourceTypeTabs as ResourceTypeTabsV2,
 } from '@data-exploration/containers';
+import styled from 'styled-components/macro';
+import { useDebounce } from 'use-debounce';
+
+import { PageTitle } from '@cognite/cdf-utilities';
+import { Flex, Tabs } from '@cognite/cogs.js';
+import {
+  ResourceTypeTabs,
+  getTitle,
+  ResourceType,
+} from '@cognite/data-exploration';
+
 import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { AllTab } from '@data-exploration-app/containers/All';
@@ -53,16 +64,6 @@ import {
   useEventsMetadataKeys,
   useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
-import styled from 'styled-components/macro';
-import { useDebounce } from 'use-debounce';
-
-import { PageTitle } from '@cognite/cdf-utilities';
-import { Flex, Tabs } from '@cognite/cogs.js';
-import {
-  ResourceTypeTabs,
-  getTitle,
-  ResourceType,
-} from '@cognite/data-exploration';
 
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 

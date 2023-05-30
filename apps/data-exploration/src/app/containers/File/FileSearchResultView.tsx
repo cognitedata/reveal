@@ -2,6 +2,10 @@ import { useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import { DocumentSearchResults } from '@data-exploration/containers';
+
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
+import { Asset } from '@cognite/sdk';
+
 import { routes } from '@data-exploration-app/containers/App';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
@@ -18,9 +22,6 @@ import {
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
-
-import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
-import { Asset } from '@cognite/sdk';
 
 export const FileSearchResultView = () => {
   const isDocumentsGPTEnabled = useFlagDocumentGPT();

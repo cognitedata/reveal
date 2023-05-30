@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { DocumentFilter } from '@data-exploration-app/containers/Document/DocumentFilters';
-
 import { ResourceType } from '@cognite/data-exploration';
+
+import { DocumentFilter } from '@data-exploration-app/containers/Document/DocumentFilters';
 
 import { BaseFilterCollapse } from '../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 

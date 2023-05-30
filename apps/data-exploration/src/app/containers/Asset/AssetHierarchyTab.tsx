@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
-import { isResourceSelected } from '@data-exploration-app/utils/compare';
 import qs from 'query-string';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -12,6 +9,10 @@ import {
   ResourceTypes,
 } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
+
+import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
+import { isResourceSelected } from '@data-exploration-app/utils/compare';
 
 export const AssetHierarchyTab = ({ asset }: { asset: Asset }) => {
   const navigateWithHistory = useNavigateWithHistory({

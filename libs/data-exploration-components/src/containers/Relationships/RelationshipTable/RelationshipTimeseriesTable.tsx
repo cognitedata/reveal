@@ -10,8 +10,9 @@ import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 import { ColumnDef } from '@tanstack/react-table';
+
+import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 
 import { RelationshipTableProps } from './RelationshipTable';
 

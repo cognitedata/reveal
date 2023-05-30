@@ -125,7 +125,27 @@
                 "position": "after"
               },
               { "group": "parent", "pattern": "../**" },
-              { "group": "sibling", "pattern": "./**" }
+              { "group": "sibling", "pattern": "./**" },
+
+              // DATA EXPLORATION
+              { "group": "internal", "pattern": "@data-exploration-app/**" },
+              { "group": "internal", "pattern": "@cognite/data-exploration" }, // old lib
+              {
+                "group": "internal",
+                "pattern": "@data-exploration-containers"
+              },
+              {
+                "group": "internal",
+                "pattern": "@data-exploration-components"
+              },
+              {
+                "group": "internal",
+                "pattern": "@data-exploration-lib/domain-layer"
+              },
+              {
+                "group": "internal",
+                "pattern": "@data-exploration-lib/core"
+              }
             ],
             "pathGroupsExcludedImportTypes": ["react"]
           }

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { Input, Tooltip } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   isNumber,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { Input, Tooltip } from '@cognite/cogs.js';
 
 import { FilterFacetTitle } from '../FilterFacetTitle';
 

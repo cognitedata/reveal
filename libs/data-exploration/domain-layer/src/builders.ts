@@ -1,8 +1,9 @@
+import isEmpty from 'lodash/isEmpty';
+
 import {
   isObjectEmpty,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
-import isEmpty from 'lodash/isEmpty';
 
 export type AdvancedFilter<T> = LeafFilter<T> | BoolFilter<T>;
 // export type Sort = {

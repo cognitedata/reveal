@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import dayjs from 'dayjs';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -9,6 +8,8 @@ import {
   isAssetAnnotation,
 } from '@cognite/data-exploration';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';

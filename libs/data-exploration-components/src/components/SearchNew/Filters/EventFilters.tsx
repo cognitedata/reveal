@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { InternalEventsFilters } from '@data-exploration-lib/core';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import head from 'lodash/head';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
+
+import { InternalEventsFilters } from '@data-exploration-lib/core';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEventFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';

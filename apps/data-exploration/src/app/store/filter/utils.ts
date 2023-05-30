@@ -1,3 +1,7 @@
+import includes from 'lodash/includes';
+import isArray from 'lodash/isArray';
+import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';
+
 import { globalFilterAtom } from '@data-exploration-app/store/filter';
 import {
   GlobalFilter,
@@ -7,9 +11,6 @@ import {
   InternalCommonFilters,
   COMMON_FILTER_KEYS,
 } from '@data-exploration-lib/core';
-import includes from 'lodash/includes';
-import isArray from 'lodash/isArray';
-import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';
 
 const isCommonKey = (key: string) => includes(COMMON_FILTER_KEYS, key);
 

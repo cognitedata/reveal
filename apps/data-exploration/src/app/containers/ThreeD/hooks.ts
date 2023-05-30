@@ -1,9 +1,4 @@
 import {
-  Revision3DWithIndex,
-  use3DRevisionsQuery,
-  useEventsSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
-import {
   FetchQueryOptions,
   QueryClient,
   useInfiniteQuery,
@@ -35,6 +30,12 @@ import {
   CogniteInternalId,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  Revision3DWithIndex,
+  use3DRevisionsQuery,
+  useEventsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 
 import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
 

@@ -1,10 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+
 import {
   InternalTimeseriesFilters,
   OldTimeseriesFilters,
 } from '@data-exploration-lib/core';
-import { useQuery } from '@tanstack/react-query';
-
-import { useSDK } from '@cognite/sdk-provider';
 
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';

@@ -1,7 +1,8 @@
-import { InternalAssetFilters } from '@data-exploration-lib/core';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 import { AdvancedFilter } from '../../../builders';
 import { queryKeys } from '../../../queryKeys';

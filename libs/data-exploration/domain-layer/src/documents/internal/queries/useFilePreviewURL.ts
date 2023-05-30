@@ -1,8 +1,9 @@
-import { fetchFilePreviewURL } from '@data-exploration-lib/core';
 import { useQuery } from '@tanstack/react-query';
 
 import { FileInfo } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { fetchFilePreviewURL } from '@data-exploration-lib/core';
 
 import { queryKeys } from '../../../queryKeys';
 import { InternalDocument } from '../types';

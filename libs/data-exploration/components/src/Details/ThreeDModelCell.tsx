@@ -1,14 +1,15 @@
 import React from 'react';
 
+import groupBy from 'lodash/groupBy';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
+
 import { DASH } from '@data-exploration-lib/core';
 import {
   DetailedMapping,
   useDetailedMappingsByAssetIdQuery,
 } from '@data-exploration-lib/domain-layer';
-import groupBy from 'lodash/groupBy';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
 
 import { TimeDisplay } from '../TimeDisplay';
 

@@ -1,12 +1,12 @@
 import { MutableRefObject, useRef, useState } from 'react';
 
+import { FileInfo } from '@cognite/sdk/dist/src';
+import { getCanonicalMimeType } from '@cognite/unified-file-viewer';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { FileInfo } from '@cognite/sdk/dist/src';
-import { getCanonicalMimeType } from '@cognite/unified-file-viewer';
 
 import { useDisclosure } from '../../../../hooks';
 import { useFileDownloadUrl } from '../hooks';

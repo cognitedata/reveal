@@ -1,11 +1,11 @@
 import React from 'react';
 
+import { Input } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebounceTrackUsage,
 } from '@data-exploration-lib/core';
-
-import { Input } from '@cognite/cogs.js';
 
 import { FilterFacetTitle } from '../FilterFacetTitle';
 

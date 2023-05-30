@@ -13,6 +13,8 @@ import {
   SourceFilter,
   TypeFilter,
 } from '@data-exploration/containers';
+import { useDebounce } from 'use-debounce';
+
 import {
   InternalCommonFilters,
   InternalDocumentFilter,
@@ -21,7 +23,6 @@ import {
   InternalDocument,
   useDocumentSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { useDebounce } from 'use-debounce';
 
 import {
   GroupingTableHeader,

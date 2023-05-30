@@ -1,9 +1,10 @@
-import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import has from 'lodash/has';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
 import { OptionType } from '@cognite/cogs.js';
+
+import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 
 import { OptionValue } from '../SearchNew/Filters/types';
 

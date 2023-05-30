@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from 'react';
 
-import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 import dayjs from 'dayjs';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Pagination, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { ContainerType } from '@cognite/unified-file-viewer';
+
+import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 
 import DateRangePrompt from '../../components/DateRangePrompt';
 import { TooltipToolBarContainer } from '../../TooltipContainer';

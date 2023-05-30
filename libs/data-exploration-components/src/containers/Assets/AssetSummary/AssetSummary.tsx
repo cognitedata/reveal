@@ -9,6 +9,11 @@ import {
 import { useAssetsMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
+
+import { Asset } from '@cognite/sdk';
+
 import {
   getHiddenColumns,
   InternalSequenceFilters,
@@ -18,10 +23,6 @@ import {
   InternalAssetDataWithMatchingLabels,
   useAssetsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-import noop from 'lodash/noop';
-
-import { Asset } from '@cognite/sdk';
 
 export const AssetSummary = ({
   query = '',

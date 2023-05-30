@@ -1,6 +1,10 @@
 import React from 'react';
 
 import { SearchConfigModal } from '@data-exploration/components';
+import useLocalStorageState from 'use-local-storage-state';
+
+import { Flex } from '@cognite/cogs.js';
+
 import {
   FilterIdType,
   searchConfigData as searchConfigDefaultData,
@@ -8,9 +12,6 @@ import {
   SearchConfigResourceType,
   SEARCH_CONFIG_LOCAL_STORAGE_KEY,
 } from '@data-exploration-lib/core';
-import useLocalStorageState from 'use-local-storage-state';
-
-import { Flex } from '@cognite/cogs.js';
 
 import { CommonColumn } from './CommonColumn';
 import { ResourceColumns } from './ResourceColumns';

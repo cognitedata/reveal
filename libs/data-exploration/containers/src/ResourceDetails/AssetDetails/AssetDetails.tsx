@@ -1,6 +1,10 @@
 import React, { FC, useMemo } from 'react';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Collapse, Title } from '@cognite/cogs.js';
+
 import { ResourceType } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
@@ -9,9 +13,6 @@ import {
   useTimeseriesSearchResultQuery,
   useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   AssetDetailsTable,

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import useFileLinkTooltips from './useFileLinkTooltips';
 import useHoverTooltips from './useHoverTooltips';

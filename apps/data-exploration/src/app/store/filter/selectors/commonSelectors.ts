@@ -1,5 +1,6 @@
-import { InternalCommonFilters } from '@data-exploration-lib/core';
 import { selector, useRecoilState, useResetRecoilState } from 'recoil';
+
+import { InternalCommonFilters } from '@data-exploration-lib/core';
 
 import { globalFilterAtom } from '../atoms';
 import { defaultFilterSetter } from '../utils';

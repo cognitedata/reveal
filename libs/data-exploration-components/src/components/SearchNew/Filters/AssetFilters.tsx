@@ -1,12 +1,13 @@
+import head from 'lodash/head';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { InternalAssetFilters } from '@data-exploration-lib/core';
 import {
   useAssetsMetadataKeysAggregateQuery,
   useAssetsMetadataValuesAggregateQuery,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
-import head from 'lodash/head';
-
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';

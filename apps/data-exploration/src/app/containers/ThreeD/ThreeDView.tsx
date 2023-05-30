@@ -8,17 +8,6 @@ import React, {
 
 import styled from 'styled-components';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
-import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
-import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
-import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
-import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-import {
-  useFlagAssetMappingsOverlays,
-  useFlagPointCloudSearch,
-} from '@data-exploration-app/hooks/flags';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useQueryClient } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 
@@ -30,6 +19,18 @@ import {
   Intersection,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
+import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
+import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
+import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
+import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import {
+  useFlagAssetMappingsOverlays,
+  useFlagPointCloudSearch,
+} from '@data-exploration-app/hooks/flags';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import zIndex from '../../utils/zIndex';
 import { StyledSplitter } from '../elements';

@@ -1,7 +1,8 @@
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useMutation } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import {
   getFileIdFromExtendedAnnotation,

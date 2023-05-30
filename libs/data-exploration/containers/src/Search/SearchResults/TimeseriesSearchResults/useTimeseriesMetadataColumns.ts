@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { ResourceTableColumns } from '@data-exploration/components';
-import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
+
+import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 export const useTimeseriesMetadataColumns = () => {
   const [query, setQuery] = useState<string>();

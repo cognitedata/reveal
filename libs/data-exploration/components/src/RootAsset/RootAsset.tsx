@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 
+import { Asset } from '@cognite/sdk';
+
 import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { useRootAssetQuery } from '@data-exploration-lib/domain-layer';
-
-import { Asset } from '@cognite/sdk';
 
 import { LoadingState } from './LoadingState';
 import { RootAssetButton } from './RootAssetButton';

@@ -4,6 +4,10 @@ import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
+import { useDebounce } from 'use-debounce';
+
+import { CogniteEvent } from '@cognite/sdk';
+
 import {
   InternalCommonFilters,
   InternalEventsFilters,
@@ -13,9 +17,6 @@ import {
   TableSortBy,
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { useDebounce } from 'use-debounce';
-
-import { CogniteEvent } from '@cognite/sdk';
 
 import {
   MetadataFilter,

@@ -1,5 +1,3 @@
-import { ResourceType } from '@data-exploration-lib/core';
-
 import {
   Annotation,
   ContainerConfig,
@@ -11,6 +9,8 @@ import {
   RectangleAnnotation,
   TimeseriesContainerProps,
 } from '@cognite/unified-file-viewer';
+
+import { ResourceType } from '@data-exploration-lib/core';
 
 export enum ContainerReferenceType {
   FILE = 'file',

@@ -1,11 +1,12 @@
 import { renderComponent } from '@data-exploration/components';
+import { fireEvent, screen } from '@testing-library/react';
+
 import {
   COMMON_COLUMN_HEADER,
   getMockSearchConfig,
   searchConfigCommonColumns,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
-import { fireEvent, screen } from '@testing-library/react';
 
 import { CommonColumn } from '../CommonColumn';
 

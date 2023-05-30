@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
-import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 import { Row } from '@tanstack/react-table';
 import isEmpty from 'lodash/isEmpty';
+
+import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 
 import { MatchingLabelsComponent } from './MatchingLabels';
 

@@ -2,17 +2,18 @@ import {
   ResourceType,
   ResourceFilterProps,
 } from '@data-exploration-components/types';
+import get from 'lodash/get';
+import isBoolean from 'lodash/isBoolean';
+import isEmpty from 'lodash/isEmpty';
+
+import { Metadata, IdEither, DateRange } from '@cognite/sdk';
+
 import {
   InternalEventsFilters,
   InternalFilesFilters,
   InternalSequenceFilters,
   InternalAssetFilters,
 } from '@data-exploration-lib/core';
-import get from 'lodash/get';
-import isBoolean from 'lodash/isBoolean';
-import isEmpty from 'lodash/isEmpty';
-
-import { Metadata, IdEither, DateRange } from '@cognite/sdk';
 
 export type FiltersWithResourceType = Required<ResourceFilterProps> & {
   resourceType: ResourceType;

@@ -8,8 +8,6 @@ import {
   useState,
 } from 'react';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-
 import { useSDK } from '@cognite/sdk-provider';
 import {
   Annotation,
@@ -21,6 +19,8 @@ import {
   UnifiedViewerEventType,
   UnifiedViewerMouseEvent,
 } from '@cognite/unified-file-viewer';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';

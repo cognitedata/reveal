@@ -3,15 +3,16 @@ import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
 import { HighlightCell, EllipsisText } from '@data-exploration/components';
+import { Popover } from 'antd';
+
+import { DocumentIcon, Flex } from '@cognite/cogs.js';
+
 import {
   DASH,
   isFilePreviewable,
   mapMimeTypeToDocumentType,
 } from '@data-exploration-lib/core';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
-import { Popover } from 'antd';
-
-import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
 import { FileThumbnail } from '../FileThumbnail';
 

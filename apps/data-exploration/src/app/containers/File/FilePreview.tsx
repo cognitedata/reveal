@@ -5,17 +5,6 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
-import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import {
-  useCurrentResourceId,
-  useOnPreviewTabChange,
-} from '@data-exploration-app/hooks/hooks';
-import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import qs from 'query-string';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -28,6 +17,18 @@ import {
 } from '@cognite/data-exploration';
 import { CogniteError, FileInfo as FileInfoType } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
+import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
+import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 export type FilePreviewTabType =
   | 'preview'

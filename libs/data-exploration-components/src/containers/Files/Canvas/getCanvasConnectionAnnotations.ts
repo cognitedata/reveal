@@ -5,13 +5,14 @@ import {
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import {
   Annotation,
   AnnotationType,
   LineType,
 } from '@cognite/unified-file-viewer';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const numFileLinksBetweenFiles = (
   fromFileId: number,

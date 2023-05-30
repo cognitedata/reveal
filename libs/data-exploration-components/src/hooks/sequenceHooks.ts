@@ -1,4 +1,3 @@
-import { pickOptionalId } from '@data-exploration-lib/core';
 import {
   UseInfiniteQueryOptions,
   useInfiniteQuery,
@@ -12,6 +11,8 @@ import {
   SequenceRow,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { pickOptionalId } from '@data-exploration-lib/core';
 
 const post = <T>(sdk: CogniteClient, path: string, data: any) =>
   sdk

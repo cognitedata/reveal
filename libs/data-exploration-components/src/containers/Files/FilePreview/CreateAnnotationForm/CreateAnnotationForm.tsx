@@ -3,11 +3,12 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import { IdEither } from '@cognite/sdk';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { SpacedRow } from '../../../../components';
 import { convertResourceType } from '../../../../types';

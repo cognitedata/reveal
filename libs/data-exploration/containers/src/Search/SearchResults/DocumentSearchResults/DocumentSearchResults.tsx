@@ -5,6 +5,11 @@ import {
   VerticalDivider,
   TableProps,
 } from '@data-exploration/components';
+
+import { Asset, FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import {
   AppContext,
   CLOSE_DROPDOWN_EVENT,
@@ -19,10 +24,6 @@ import {
   useDocumentSearchResultWithMatchingLabelsQuery,
   useDocumentFilteredAggregateCount,
 } from '@data-exploration-lib/domain-layer';
-
-import { Asset, FileInfo } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';

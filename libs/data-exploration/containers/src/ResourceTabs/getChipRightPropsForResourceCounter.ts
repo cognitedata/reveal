@@ -1,9 +1,9 @@
+import { ChipProps } from '@cognite/cogs.js';
+
 import {
   formatBigNumbersWithSuffixStringExtended,
   withThousandSeparator,
 } from '@data-exploration-lib/core';
-
-import { ChipProps } from '@cognite/cogs.js';
 
 export const getChipRightPropsForResourceCounter = (
   count: number,

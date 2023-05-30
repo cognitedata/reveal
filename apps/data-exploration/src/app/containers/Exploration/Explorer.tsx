@@ -3,6 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { IndustryCanvasPage } from '@fusion/industry-canvas';
+
+import { ResourceSelectorProvider } from '@cognite/data-exploration';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { routes } from '@data-exploration-app/containers/App';
 import { AssetPage } from '@data-exploration-app/containers/Asset/AssetPage';
@@ -13,9 +17,6 @@ import { SequencePage } from '@data-exploration-app/containers/Sequence/Sequence
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
 import { TimeseriesPage } from '@data-exploration-app/containers/Timeseries/TimeseriesPage';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { IndustryCanvasPage } from '@fusion/industry-canvas';
-
-import { ResourceSelectorProvider } from '@cognite/data-exploration';
 
 import SearchRedirect from './SearchRedirect';
 import { SearchResultsPage } from './SearchResultsPage';

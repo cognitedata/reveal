@@ -1,7 +1,8 @@
-import { zIndex } from '@data-exploration-lib/core';
 import styled from 'styled-components/macro';
 
 import { Flex } from '@cognite/cogs.js';
+
+import { zIndex } from '@data-exploration-lib/core';
 
 interface BarProps {
   visible: boolean;

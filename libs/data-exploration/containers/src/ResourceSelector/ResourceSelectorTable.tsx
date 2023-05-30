@@ -1,5 +1,9 @@
 import { Dispatch, SetStateAction } from 'react';
 
+import { RowSelectionState, Updater } from '@tanstack/react-table';
+import { mapValues } from 'lodash';
+import noop from 'lodash/noop';
+
 import {
   FilterState,
   ResourceItem,
@@ -7,9 +11,6 @@ import {
   ResourceType,
 } from '@data-exploration-lib/core';
 import { ResourceItems } from '@data-exploration-lib/domain-layer';
-import { RowSelectionState, Updater } from '@tanstack/react-table';
-import { mapValues } from 'lodash';
-import noop from 'lodash/noop';
 
 import {
   AssetSearchResults,

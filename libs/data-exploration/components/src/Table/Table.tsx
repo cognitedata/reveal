@@ -1,16 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import {
-  DATA_EXPLORATION_COMPONENT,
-  EMPTY_OBJECT,
-  getResourceTypeById,
-  LOADING_RESULTS,
-  REFINE_FILTERS_OR_UPDATE_SEARCH,
-  isElementHorizontallyInViewport,
-  ResourceItem,
-  useMetrics,
-} from '@data-exploration-lib/core';
-import {
   Row,
   useReactTable,
   getCoreRowModel,
@@ -36,6 +26,17 @@ import noop from 'lodash/noop';
 import useLocalStorageState from 'use-local-storage-state';
 
 import { Checkbox, Flex } from '@cognite/cogs.js';
+
+import {
+  DATA_EXPLORATION_COMPONENT,
+  EMPTY_OBJECT,
+  getResourceTypeById,
+  LOADING_RESULTS,
+  REFINE_FILTERS_OR_UPDATE_SEARCH,
+  isElementHorizontallyInViewport,
+  ResourceItem,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 import { EmptyState } from '../EmpyState';
 

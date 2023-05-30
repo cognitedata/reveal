@@ -1,4 +1,3 @@
-import { FilterResourceType, FilterState } from '@data-exploration-lib/core';
 import {
   DefaultValue,
   selectorFamily,
@@ -6,6 +5,8 @@ import {
   useResetRecoilState,
   useSetRecoilState,
 } from 'recoil';
+
+import { FilterResourceType, FilterState } from '@data-exploration-lib/core';
 
 import { globalFilterAtom } from '../atoms';
 import { Filters, GlobalFilterKeys } from '../types';

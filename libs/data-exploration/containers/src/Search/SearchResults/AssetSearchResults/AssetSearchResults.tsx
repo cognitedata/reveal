@@ -7,6 +7,10 @@ import {
   KeepMounted,
   VerticalDivider,
 } from '@data-exploration/components';
+
+import { Flex, SegmentedControl } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
+
 import {
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
@@ -17,9 +21,6 @@ import {
   TableSortBy,
   AssetWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
-
-import { Flex, SegmentedControl } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
 
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';

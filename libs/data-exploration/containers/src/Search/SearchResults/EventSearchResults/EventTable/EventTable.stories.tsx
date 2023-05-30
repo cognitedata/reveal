@@ -2,9 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { events } from '@data-exploration-lib/core';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
+
+import { events } from '@data-exploration-lib/core';
 
 import { EventTable } from './EventTable';
 

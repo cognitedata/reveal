@@ -1,11 +1,12 @@
 import { renderComponent } from '@data-exploration/components';
+import { fireEvent, screen } from '@testing-library/react';
+
 import {
   getMockSearchConfig,
   getTitle,
   ResourceTypes,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
-import { fireEvent, screen } from '@testing-library/react';
 
 import { ResourceColumns } from '../ResourceColumns';
 

@@ -12,8 +12,9 @@ import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 import { ColumnDef } from '@tanstack/react-table';
+
+import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
 
 import {
   GroupingTableContainer,

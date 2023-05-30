@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useQuery } from '@tanstack/react-query';
 
 import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
@@ -14,6 +12,9 @@ import {
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
+
+import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 type Props = {
   item: ResourceItem;

@@ -1,14 +1,15 @@
 import { useEffect, useMemo } from 'react';
 
-import {
-  AssetConfigType,
-  InternalAssetFilters,
-} from '@data-exploration-lib/core';
 import { useQuery } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 
 import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  AssetConfigType,
+  InternalAssetFilters,
+} from '@data-exploration-lib/core';
 
 import { queryKeys } from '../../../queryKeys';
 import { TableSortBy } from '../../../types';

@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
-import { InternalAssetFilters } from '@data-exploration-lib/core';
 import { UseQueryOptions } from '@tanstack/react-query';
 import omit from 'lodash/omit';
+
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 
 import { getAssetSubtreeIdFilter } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';

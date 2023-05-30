@@ -3,12 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import {
-  distancesInFeetAndMeters,
-  fitCameraToAsset,
-} from '@data-exploration-app/containers/ThreeD/utils';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -21,6 +15,13 @@ import {
   MeasurementTool,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import {
+  distancesInFeetAndMeters,
+  fitCameraToAsset,
+} from '@data-exploration-app/containers/ThreeD/utils';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';

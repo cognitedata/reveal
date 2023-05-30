@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
 import { UseQueryOptions } from '@tanstack/react-query';
 import omit from 'lodash/omit';
+
+import { InternalDocumentFilter } from '@data-exploration-lib/core';
 
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useDocumentsMetadataValuesAggregateQuery } from '../../service';

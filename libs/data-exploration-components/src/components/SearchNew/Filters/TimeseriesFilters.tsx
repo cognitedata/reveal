@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
 import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
+
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
 

@@ -1,10 +1,11 @@
 import './set-public-path';
 import React from 'react';
 
-import { getEnvironment } from '@data-exploration-app/utils/environment';
 import * as Sentry from '@sentry/browser';
 import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
+
+import { getEnvironment } from '@data-exploration-app/utils/environment';
 
 import App from './app/App';
 import { environment } from './environment';

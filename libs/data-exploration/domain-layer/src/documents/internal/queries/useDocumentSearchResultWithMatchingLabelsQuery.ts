@@ -1,12 +1,13 @@
 import * as React from 'react';
 
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import {
   EMPTY_OBJECT,
   FileConfigType,
   InternalDocumentFilter,
   useDeepMemo,
 } from '@data-exploration-lib/core';
-import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 
 import { TableSortBy } from '../../../types';
 import { getSearchConfig } from '../../../utils';

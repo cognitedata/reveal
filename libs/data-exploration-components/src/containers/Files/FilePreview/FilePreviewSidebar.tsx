@@ -4,10 +4,11 @@ import styled from 'styled-components';
 
 import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import { useDisclosure } from '@data-exploration-components/hooks/index';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { useReviewFile } from '../hooks';
 

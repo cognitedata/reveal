@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 import { noop } from 'lodash';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
+
+import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 
 type ThreeDButtonProps = {
   assetId: number;

@@ -1,5 +1,9 @@
 import React, { useState, useMemo } from 'react';
 
+import { ColumnDef, SortingState } from '@tanstack/react-table';
+
+import { Button, Title, Link } from '@cognite/cogs.js';
+
 import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
@@ -7,9 +11,6 @@ import {
   useDebounceTrackUsage,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { ColumnDef, SortingState } from '@tanstack/react-table';
-
-import { Button, Title, Link } from '@cognite/cogs.js';
 
 import { TooltipCell, Table } from '..';
 

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
 import { TableProps } from '@data-exploration/components';
+
+import { Asset, Sequence } from '@cognite/sdk';
+
 import {
   EMPTY_OBJECT,
   InternalSequenceFilters,
@@ -11,8 +14,6 @@ import {
   useSequenceSearchAggregateQuery,
   useSequenceSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { Asset, Sequence } from '@cognite/sdk';
 
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { SearchResultCountLabel } from '../SearchResultCountLabel';

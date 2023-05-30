@@ -8,6 +8,13 @@ import {
   Table,
   ThreeDModelCell,
 } from '@data-exploration/components';
+import { ColumnDef } from '@tanstack/react-table';
+import { ExpandedState } from '@tanstack/table-core';
+import gt from 'lodash/gt';
+
+import { Icon } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
+
 import {
   DASH,
   getHiddenColumns,
@@ -19,12 +26,6 @@ import {
   useRootAssetsQuery,
   useSearchAssetTree,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-import { ExpandedState } from '@tanstack/table-core';
-import gt from 'lodash/gt';
-
-import { Icon } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
 
 import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
 

@@ -5,15 +5,16 @@ import {
   Table,
   TableProps,
 } from '@data-exploration/components';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
+
+import { Asset, FileInfo } from '@cognite/sdk';
+
 import {
   FileWithRelationshipLabels,
   getHiddenColumns,
   RelationshipLabels,
 } from '@data-exploration-lib/core';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
-import { ColumnDef, SortingState } from '@tanstack/react-table';
-
-import { Asset, FileInfo } from '@cognite/sdk';
 
 import { FileNamePreview } from './FileNamePreview';
 

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { extractUniqueIds } from '@data-exploration-lib/core';
 import { useQuery } from '@tanstack/react-query';
 import copy from 'copy-to-clipboard';
 import unionBy from 'lodash/unionBy';
@@ -10,6 +9,8 @@ import queryString from 'query-string';
 import { IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import { extractUniqueIds } from '@data-exploration-lib/core';
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();

@@ -5,15 +5,16 @@ import styled from 'styled-components';
 
 import { HighlightCell, EllipsisText } from '@data-exploration/components';
 import { FileThumbnail } from '@data-exploration/containers';
+import { Popover } from 'antd';
+
+import { DocumentIcon, Flex } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
 import {
   fileIconMapper,
   isFilePreviewable,
   mapMimeTypeToDocumentType,
 } from '@data-exploration-lib/core';
-import { Popover } from 'antd';
-
-import { DocumentIcon, Flex } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
 
 const DocumentIconWrapper = styled.div`
   height: 32px;

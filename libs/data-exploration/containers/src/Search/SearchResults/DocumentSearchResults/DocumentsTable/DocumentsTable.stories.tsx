@@ -2,9 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { documents } from '@data-exploration-lib/core';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
+
+import { documents } from '@data-exploration-lib/core';
 
 import { DocumentsTable } from './DocumentsTable';
 

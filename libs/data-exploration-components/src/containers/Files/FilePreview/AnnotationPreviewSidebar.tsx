@@ -3,15 +3,6 @@ import React, { useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
-import {
-  ExtendedAnnotation,
-  SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-lib/core';
-import {
-  useCreateAnnotation,
-  useDeleteAnnotation,
-  useUpdateAnnotations,
-} from '@data-exploration-lib/domain-layer';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
 import capitalize from 'lodash/capitalize';
@@ -27,6 +18,16 @@ import {
 } from '@cognite/cogs.js';
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import {
+  ExtendedAnnotation,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-lib/core';
+import {
+  useCreateAnnotation,
+  useDeleteAnnotation,
+  useUpdateAnnotations,
+} from '@data-exploration-lib/domain-layer';
 
 import { Divider, InfoCell } from '../../../components';
 import { useDisclosure } from '../../../hooks';

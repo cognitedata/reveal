@@ -4,11 +4,6 @@ import Highlighter from 'react-highlight-words';
 import styled from 'styled-components';
 
 import { ThreeDModel } from '@data-exploration/components';
-import { getObjectURL } from '@data-exploration-lib/core';
-import {
-  use3DModelThumbnailQuery,
-  useDefault3DModelRevision,
-} from '@data-exploration-lib/domain-layer';
 
 import {
   Body,
@@ -21,6 +16,12 @@ import {
 } from '@cognite/cogs.js';
 import { ResourceType } from '@cognite/data-exploration';
 import { Model3D } from '@cognite/sdk';
+
+import { getObjectURL } from '@data-exploration-lib/core';
+import {
+  use3DModelThumbnailQuery,
+  useDefault3DModelRevision,
+} from '@data-exploration-lib/domain-layer';
 
 import { PartialBy } from './utils';
 

@@ -8,14 +8,6 @@ import React, {
 
 import styled from 'styled-components';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { AssetMappingsList } from '@data-exploration-app/containers/ThreeD/AssetMappingsList';
-import {
-  AugmentedMapping,
-  useInfiniteAssetMappings,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import {
   Cognite3DViewer,
@@ -24,6 +16,14 @@ import {
 } from '@cognite/reveal';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { AssetMappingsList } from '@data-exploration-app/containers/ThreeD/AssetMappingsList';
+import {
+  AugmentedMapping,
+  useInfiniteAssetMappings,
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 type ThreeDSidebarProps = {
   modelId?: number;

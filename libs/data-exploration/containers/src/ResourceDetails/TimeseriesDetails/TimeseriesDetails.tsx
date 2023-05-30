@@ -3,13 +3,14 @@ import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
+
+import { Collapse, Title } from '@cognite/cogs.js';
+import { TimeseriesChart } from '@cognite/plotting-components';
+
 import {
   useAssetsByIdQuery,
   useTimeseriesByIdsQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { Collapse, Title } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { AssetDetailsTable } from '../../DetailsTable';
 import { TimeseriesInfo } from '../../Info';

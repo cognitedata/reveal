@@ -1,3 +1,5 @@
+import { OptionType, Tooltip } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   ResourceType,
@@ -8,8 +10,6 @@ import {
   DataSetWithCount,
   useDatasetsListQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { OptionType, Tooltip } from '@cognite/cogs.js';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseMultiSelectFilterProps } from '../types';

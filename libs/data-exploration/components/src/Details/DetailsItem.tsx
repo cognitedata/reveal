@@ -2,6 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
+import { DataSet } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import {
   convertResourceType,
   COPIED_TEXT,
@@ -12,11 +17,6 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 import { DetailedMapping } from '@data-exploration-lib/domain-layer';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import {
   ThreeDModelCellDropdown,

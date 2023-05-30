@@ -1,9 +1,10 @@
-import { isObjectEmpty } from '@data-exploration-lib/core';
 import head from 'lodash/head';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 import unset from 'lodash/unset';
+
+import { isObjectEmpty } from '@data-exploration-lib/core';
 
 import { InternalAssetData } from './assets';
 import { MAX_METADATA_KEYS } from './constants';

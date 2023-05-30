@@ -2,10 +2,6 @@ import React, { useState, Suspense, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  DATA_EXPLORATION_COMPONENT,
-  useMetrics,
-} from '@data-exploration-lib/core';
 import { Column, Updater, ColumnOrderState } from '@tanstack/table-core';
 import has from 'lodash/has';
 
@@ -22,6 +18,11 @@ import {
   Detail,
   Body,
 } from '@cognite/cogs.js';
+
+import {
+  DATA_EXPLORATION_COMPONENT,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 import {
   DragDropContainer,

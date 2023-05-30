@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 
-import { ExtendedAnnotation, useMetrics } from '@data-exploration-lib/core';
 import debounce from 'lodash/debounce';
 
 import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
+
+import { ExtendedAnnotation, useMetrics } from '@data-exploration-lib/core';
 
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
 

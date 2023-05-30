@@ -13,6 +13,7 @@ import {
   SelectableItemsProps,
   OldResourceFilterProps,
 } from '@data-exploration-components/types';
+
 import { DateRangeProps } from '@data-exploration-lib/core';
 
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';

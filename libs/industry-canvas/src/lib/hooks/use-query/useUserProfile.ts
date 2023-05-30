@@ -1,7 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, HttpError } from '@cognite/sdk';
 import { createContext, useContext } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+
+import { CogniteClient, HttpError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { QueryKeys } from '../../constants';
 
 export type UserProfile = {

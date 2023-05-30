@@ -1,5 +1,9 @@
 import React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
+import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
+
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { useFilterEmptyState } from '@data-exploration-app/store';
@@ -19,9 +23,6 @@ import {
   useDocumentsMetadataKeysAggregateQuery,
   useDocumentsMetadataValuesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-import isEmpty from 'lodash/isEmpty';
-
-import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
 
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 

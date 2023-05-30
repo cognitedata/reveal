@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Icon } from '@cognite/cogs.js';
 
 export const NoAccessPage = (): JSX.Element => (

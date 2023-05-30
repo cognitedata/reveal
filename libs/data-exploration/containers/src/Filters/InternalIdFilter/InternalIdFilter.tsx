@@ -1,4 +1,5 @@
 import { NumberInput, NumberInputProps } from '@data-exploration/components';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebouncedMetrics,

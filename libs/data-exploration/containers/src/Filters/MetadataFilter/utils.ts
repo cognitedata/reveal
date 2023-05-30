@@ -1,7 +1,8 @@
 import { OptionSelection, OptionType } from '@data-exploration/components';
-import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
+
+import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
 
 export const transformMetadataKeysToOptions = (
   data?: {

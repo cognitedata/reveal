@@ -8,14 +8,15 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 
 import { SearchEmpty } from '@data-exploration/components';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import noop from 'lodash/noop';
 import uniqBy from 'lodash/uniqBy';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import { AugmentedMapping } from './hooks';
 import { prepareSearchString, grepContains } from './utils';
