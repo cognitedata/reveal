@@ -159,7 +159,11 @@ export const filterFieldsFromObjects = (
   return arr.map((item) => {
     const filteredItem: Record<string, any> = {};
     keys.forEach((key: string) => {
-      filteredItem[key] = key.split('.').reduce((acc, k) => acc[k], item);
+      if (key.startsWith('metadata')) {
+        const metadataKey = key.slice(8);
+        filteredItem[key] = item.metadata[metadataKey];
+      }
+      filteredItem[key] = item[key];
     });
     return filteredItem;
   });
