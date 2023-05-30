@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Filters } from '@data-exploration-app/containers/Filters';
-
 import { ResourceType } from '@cognite/data-exploration';
+
+import { Filters } from '@data-exploration-app/containers/Filters';
 
 // import { useFilterState } from 'providers';
 

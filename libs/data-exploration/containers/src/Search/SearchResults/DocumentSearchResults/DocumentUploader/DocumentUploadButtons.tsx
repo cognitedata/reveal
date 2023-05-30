@@ -1,17 +1,18 @@
 import React from 'react';
 
 import { SpacedRow } from '@data-exploration/components';
-import {
-  DATA_EXPLORATION_COMPONENT,
-  getMIMEType,
-  useMetrics,
-} from '@data-exploration-lib/core';
 import { Modal, message } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 
 import { Button } from '@cognite/cogs.js';
 import { FileUploadResponse, CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  DATA_EXPLORATION_COMPONENT,
+  getMIMEType,
+  useMetrics,
+} from '@data-exploration-lib/core';
 
 import { STATUS } from './DocumentUploader';
 import { GCSUploader } from './GCSUploader';

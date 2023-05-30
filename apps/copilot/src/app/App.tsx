@@ -1,38 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
+import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
+import { FlagProvider } from '@cognite/react-feature-flags';
 
-import { Copilot } from './pages/Copilot';
+import { CopilotPage } from './pages/CopilotPage';
 import { queryClient } from './queryClient';
-
-const COPILOT_TOGGLE = 'COPILOT_TOGGLE';
+import './utils/setupMonaco';
 
 function App() {
-  const [isVisible, setIsVisible] = useState(false);
-  useEffect(() => {
-    const listener = (ev: Event) => {
-      if ('detail' in ev) {
-        const toggleEvent = ev as CustomEvent<{ active?: boolean }>;
-        if ('active' in toggleEvent.detail) {
-          setIsVisible(toggleEvent.detail.active || false);
-        }
-      }
-    };
-    window.addEventListener(COPILOT_TOGGLE, listener);
-    return () => {
-      window.removeEventListener(COPILOT_TOGGLE, listener);
-    };
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       <ToastContainer />
-      <StyledWrapper>{isVisible && <Copilot />}</StyledWrapper>
+      <StyledWrapper>
+        <FlagProvider
+          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+          appName="copilot"
+          projectName={getProject()}
+          remoteAddress={window.location.hostname}
+          disableMetrics
+        >
+          <BrowserRouter>
+            <Routes>
+              <Route path="/:tenant/*" element={<CopilotPage />} />
+            </Routes>
+          </BrowserRouter>
+        </FlagProvider>
+      </StyledWrapper>
     </QueryClientProvider>
   );
 }

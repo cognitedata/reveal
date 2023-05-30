@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { EMPTY_ARRAY, useDialog } from '@data-exploration-lib/core';
 import { capitalize } from 'lodash';
 
 import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
+
+import { EMPTY_ARRAY, useDialog } from '@data-exploration-lib/core';
 
 import { Bar, Separator, Subtitle, Wrapper, Title } from './elements';
 

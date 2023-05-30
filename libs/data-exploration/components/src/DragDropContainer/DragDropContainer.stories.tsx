@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
-import { FlexColumn, FlexRow } from '@data-exploration-lib/core';
 import times from 'lodash/times';
 import styled from 'styled-components/macro';
+
+import { FlexColumn, FlexRow } from '@data-exploration-lib/core';
 
 import { DragHandleIcon } from './components/DragHandleIcon';
 import { DragDropContainer } from './DragDropContainer';

@@ -7,6 +7,10 @@ import {
   FileTypeToggle,
 } from '@data-exploration/components';
 import { ThreeDTable } from '@data-exploration/containers';
+import useLocalStorageState from 'use-local-storage-state';
+
+import { Loader } from '@cognite/cogs.js';
+
 import {
   FileTypeVisibility,
   InternalThreeDFilters,
@@ -15,9 +19,6 @@ import {
   Model3DWithType,
   use3DResults,
 } from '@data-exploration-lib/domain-layer';
-import useLocalStorageState from 'use-local-storage-state';
-
-import { Loader } from '@cognite/cogs.js';
 
 const ID = '3d-model-table';
 

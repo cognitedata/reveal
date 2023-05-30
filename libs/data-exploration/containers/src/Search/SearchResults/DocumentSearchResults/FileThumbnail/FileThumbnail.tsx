@@ -3,13 +3,14 @@ import React from 'react';
 import Styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
+
+import { Body, DocumentIcon } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
 import {
   InternalDocument,
   useFilePreviewURL,
 } from '@data-exploration-lib/domain-layer';
-
-import { Body, DocumentIcon } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
 
 export const FileThumbnail = ({
   file,

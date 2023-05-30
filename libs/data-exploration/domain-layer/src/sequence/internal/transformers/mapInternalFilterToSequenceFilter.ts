@@ -1,7 +1,8 @@
-import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import isEmpty from 'lodash/isEmpty';
 
 import { SequenceFilter } from '@cognite/sdk/dist/src';
+
+import { InternalSequenceFilters } from '@data-exploration-lib/core';
 
 export const mapInternalFilterToSequenceFilter = ({
   assetSubtreeIds,

@@ -1,5 +1,12 @@
 import React from 'react';
 
+import capitalize from 'lodash/capitalize';
+import uniqueId from 'lodash/uniqueId';
+
+import { Body, Flex, Tooltip } from '@cognite/cogs.js';
+import { DataSet, Asset } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import {
   DASH,
   METADATA_KEY_SEPARATOR,
@@ -7,12 +14,6 @@ import {
   isNumber,
   mapFileType,
 } from '@data-exploration-lib/core';
-import capitalize from 'lodash/capitalize';
-import uniqueId from 'lodash/uniqueId';
-
-import { Body, Flex, Tooltip } from '@cognite/cogs.js';
-import { DataSet, Asset } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { RootAsset } from '../RootAsset';
 import { TimeDisplay } from '../TimeDisplay';

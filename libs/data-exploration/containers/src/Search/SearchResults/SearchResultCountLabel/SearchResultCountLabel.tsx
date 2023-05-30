@@ -1,6 +1,6 @@
-import { ResourceType } from '@data-exploration-lib/core';
-
 import { Chip } from '@cognite/cogs.js';
+
+import { ResourceType } from '@data-exploration-lib/core';
 
 import { getSearchResultCountLabel } from '../utils';
 

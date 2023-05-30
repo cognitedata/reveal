@@ -5,6 +5,13 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { TimeseriesInfo } from '@data-exploration/containers';
+
+import { Tabs } from '@cognite/cogs.js';
+import { ErrorFeedback } from '@cognite/data-exploration';
+import { TimeseriesChart } from '@cognite/plotting-components';
+import { CogniteError, Timeseries } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
@@ -15,12 +22,6 @@ import {
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
-import { Tabs } from '@cognite/cogs.js';
-import { ErrorFeedback } from '@cognite/data-exploration';
-import { TimeseriesChart } from '@cognite/plotting-components';
-import { CogniteError, Timeseries } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export type TimeseriesPreviewTabType =
   | 'details'

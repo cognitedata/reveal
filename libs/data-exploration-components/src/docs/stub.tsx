@@ -8,9 +8,10 @@ import { mappings } from '@data-exploration-components/stubs/mappings';
 import { relationships } from '@data-exploration-components/stubs/relationships';
 import { timeseries } from '@data-exploration-components/stubs/timeseries';
 import { datapoints } from '@data-exploration-components/stubs/timeseriesDatapoints';
-import { documents, sequences } from '@data-exploration-lib/core';
 
 import { AssetListScope, IdEither } from '@cognite/sdk';
+
+import { documents, sequences } from '@data-exploration-lib/core';
 
 import {
   ResourcePreviewObserver,

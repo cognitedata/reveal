@@ -13,6 +13,11 @@ import {
 } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { ColumnDef, Row } from '@tanstack/react-table';
+
+import { Body } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
+
 import {
   DASH,
   getHiddenColumns,
@@ -24,10 +29,6 @@ import {
   InternalDocumentWithMatchingLabels,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef, Row } from '@tanstack/react-table';
-
-import { Body } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
 
 export const DocumentSummary = ({
   query = '',

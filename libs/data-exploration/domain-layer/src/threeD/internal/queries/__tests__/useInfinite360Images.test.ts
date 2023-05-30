@@ -1,6 +1,7 @@
-import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+
+import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 
 import { getMock360Images } from '../../../__mocks/getMock360Images';
 import { useInfinite360Images } from '../useInfinite360Images';

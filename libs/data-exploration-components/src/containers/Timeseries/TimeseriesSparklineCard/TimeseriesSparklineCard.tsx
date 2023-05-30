@@ -7,11 +7,12 @@ import {
   LatestDatapoint,
 } from '@data-exploration-components/components';
 import { TimeseriesChart } from '@data-exploration-components/containers/Timeseries';
-import { DateRangeProps } from '@data-exploration-lib/core';
 import { Card, Button, Dropdown, Menu, notification } from 'antd';
 
 import { Body, Tooltip, Icon } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
+
+import { DateRangeProps } from '@data-exploration-lib/core';
 
 export const TimeseriesSparklineCard = ({
   item,

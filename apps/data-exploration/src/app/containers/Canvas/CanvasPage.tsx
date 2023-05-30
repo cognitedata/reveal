@@ -2,8 +2,6 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { TitleRowWrapper } from '@data-exploration-app/components/ResourceTitleRow';
-import { APPLICATION_ID_CANVAS } from '@data-exploration-app/utils/constants';
 import { Canvas } from '@data-exploration-components/containers/Files/Canvas/Canvas';
 import { useCanvasFilesFromUrl } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 
@@ -11,6 +9,9 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { Button, Title, Flex, Tooltip } from '@cognite/cogs.js';
 import { ResourceIcons } from '@cognite/data-exploration';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
+
+import { TitleRowWrapper } from '@data-exploration-app/components/ResourceTitleRow';
+import { APPLICATION_ID_CANVAS } from '@data-exploration-app/utils/constants';
 
 export const CanvasPage = () => {
   const { files } = useCanvasFilesFromUrl();

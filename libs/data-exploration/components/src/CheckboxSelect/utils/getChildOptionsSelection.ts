@@ -1,6 +1,7 @@
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
+
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
 import { OptionSelection, ChildOptionType } from '../types';
 

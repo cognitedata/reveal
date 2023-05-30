@@ -7,10 +7,11 @@ import { AppliedFiltersTags } from '@data-exploration/containers';
 import { useResultCount } from '@data-exploration-components/components';
 import { FileTable } from '@data-exploration-components/containers/Files';
 import { convertResourceType } from '@data-exploration-components/types';
-import { InternalFilesFilters } from '@data-exploration-lib/core';
 
 import { Flex } from '@cognite/cogs.js';
 import { Asset, FileInfo } from '@cognite/sdk';
+
+import { InternalFilesFilters } from '@data-exploration-lib/core';
 
 import { useResourceResults } from '..';
 

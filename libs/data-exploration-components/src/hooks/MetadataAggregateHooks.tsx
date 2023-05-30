@@ -1,12 +1,13 @@
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+
+import { AggregateResponse } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import {
   InternalAssetFilters,
   OldAssetFilters,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-
-import { AggregateResponse } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
 
 export const useAssetMetadataKeys = (
   filter?: InternalAssetFilters | OldAssetFilters,

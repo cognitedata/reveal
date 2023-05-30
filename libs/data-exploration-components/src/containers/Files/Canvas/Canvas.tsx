@@ -12,7 +12,6 @@ import {
 import useCanvasTooltips from '@data-exploration-components/containers/Files/Canvas/useCanvasTooltips';
 import { useFileInfos } from '@data-exploration-components/containers/Files/Canvas/useFileInfos';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
-import { EMPTY_ARRAY, ExtendedAnnotation } from '@data-exploration-lib/core';
 import zip from 'lodash/zip';
 
 import { toast, Flex } from '@cognite/cogs.js';
@@ -26,6 +25,8 @@ import ReactUnifiedViewer, {
   UnifiedViewer,
   UnifiedViewerMouseEvent,
 } from '@cognite/unified-file-viewer';
+
+import { EMPTY_ARRAY, ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import {
   MAX_CONTAINER_HEIGHT,

@@ -3,9 +3,9 @@ import SplitterLayout from 'react-splitter-layout';
 
 import styled, { css } from 'styled-components';
 
-import { SIDEBAR_RESIZE_EVENT, zIndex } from '@data-exploration-lib/core';
-
 import { Colors } from '@cognite/cogs.js';
+
+import { SIDEBAR_RESIZE_EVENT, zIndex } from '@data-exploration-lib/core';
 
 import handleSvg from './handle';
 

@@ -1,10 +1,5 @@
 import { useCallback, useEffect } from 'react';
 
-import {
-  CAMERA_ANIMATION_DURATION,
-  isCadIntersection,
-  MINIMUM_BOUNDINGBOX_SIZE,
-} from '@data-exploration-app/containers/ThreeD/utils';
 import * as THREE from 'three';
 
 import {
@@ -13,6 +8,12 @@ import {
   CognitePointCloudModel,
   PointerEventDelegate,
 } from '@cognite/reveal';
+
+import {
+  CAMERA_ANIMATION_DURATION,
+  isCadIntersection,
+  MINIMUM_BOUNDINGBOX_SIZE,
+} from '@data-exploration-app/containers/ThreeD/utils';
 
 type Args = {
   viewer?: Cognite3DViewer;

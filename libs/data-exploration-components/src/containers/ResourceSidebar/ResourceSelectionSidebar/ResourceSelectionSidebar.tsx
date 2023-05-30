@@ -23,6 +23,10 @@ import {
   SelectableItemsProps,
   InitialOldResourceFilterProps,
 } from '@data-exploration-components/types';
+import isEqual from 'lodash/isEqual';
+
+import { Button, Flex, Input } from '@cognite/cogs.js';
+
 import {
   InternalEventsFilters,
   OldSequenceFilters,
@@ -31,9 +35,6 @@ import {
   InternalTimeseriesFilters,
   zIndex,
 } from '@data-exploration-lib/core';
-import isEqual from 'lodash/isEqual';
-
-import { Button, Flex, Input } from '@cognite/cogs.js';
 
 const Wrapper = styled.div`
   display: flex;

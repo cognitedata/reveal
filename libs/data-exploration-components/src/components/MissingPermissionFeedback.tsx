@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { AppContext } from '@data-exploration-lib/core';
 import { notification } from 'antd';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { AppContext } from '@data-exploration-lib/core';
 
 type Props = {
   key: string;

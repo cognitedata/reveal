@@ -6,8 +6,9 @@ import {
   InputActionMeta,
 } from 'react-select';
 
-import { isEscapeButton } from '@data-exploration-lib/core';
 import noop from 'lodash/noop';
+
+import { isEscapeButton } from '@data-exploration-lib/core';
 
 import { SearchInput } from '../SearchInput';
 

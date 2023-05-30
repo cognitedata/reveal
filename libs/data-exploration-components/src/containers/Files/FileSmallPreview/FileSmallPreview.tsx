@@ -5,13 +5,14 @@ import styled from 'styled-components';
 import { Loader } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
-import { getIdParam } from '@data-exploration-lib/core';
-import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import uniq from 'lodash/uniq';
 
 import { Icon, Title, Chip, Body, Colors } from '@cognite/cogs.js';
 import { FileInfo as FileInfoType, Asset, CogniteError } from '@cognite/sdk';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import { getIdParam } from '@data-exploration-lib/core';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
 
 import {
   ErrorFeedback,

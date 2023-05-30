@@ -6,8 +6,9 @@ import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
-import { AssetWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 import { ColumnDef } from '@tanstack/react-table';
+
+import { AssetWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 
 import { RelationshipTableProps } from './RelationshipTable';
 

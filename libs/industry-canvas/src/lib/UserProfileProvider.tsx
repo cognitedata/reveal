@@ -1,13 +1,17 @@
 import { useContext } from 'react';
+
 import styled from 'styled-components';
+
 import { Colors, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import { AppContext } from '@data-exploration-lib/core';
+
+import { NoAccessPage } from './components/NoAccessPage';
 import {
   UserProfileContext,
   useUserProfile,
 } from './hooks/use-query/useUserProfile';
-import { NoAccessPage } from './components/NoAccessPage';
 
 export const UserProfileProvider = ({
   children,

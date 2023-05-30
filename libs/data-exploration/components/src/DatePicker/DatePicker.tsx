@@ -2,10 +2,11 @@
 import React, { useState, useRef, useMemo } from 'react';
 import ReactDatePicker from 'react-datepicker';
 
-import { formatDateToDatePickerString } from '@data-exploration-lib/core';
 import noop from 'lodash/noop';
 
 import { Dropdown, Button } from '@cognite/cogs.js';
+
+import { formatDateToDatePickerString } from '@data-exploration-lib/core';
 
 import { DatePickerInput, renderCustomHeader } from './Common';
 import { DatePickerWrapper } from './elements';

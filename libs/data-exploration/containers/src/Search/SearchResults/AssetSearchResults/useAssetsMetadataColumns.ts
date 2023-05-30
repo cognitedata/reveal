@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { ResourceTableColumns } from '@data-exploration/components';
-import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
+
+import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 export const useAssetsMetadataColumns = () => {
   const [query, setQuery] = useState<string>();

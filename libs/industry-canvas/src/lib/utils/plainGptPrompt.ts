@@ -1,6 +1,6 @@
-import { getChatCompletions } from '@data-exploration-lib/domain-layer';
-
 import { CogniteClient } from '@cognite/sdk/dist/src/index';
+
+import { getChatCompletions } from '@data-exploration-lib/domain-layer';
 
 const plainGptPrompt = async (
   sdk: CogniteClient,

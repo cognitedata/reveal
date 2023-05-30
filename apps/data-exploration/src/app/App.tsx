@@ -3,9 +3,6 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 import { ThemeProvider } from 'styled-components';
 
-import RootApp from '@data-exploration-app/containers/App';
-import GlobalStyle from '@data-exploration-app/styles/global-styles';
-import AntStyles from '@data-exploration-app/styles/Styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import collapseStyle from 'rc-collapse/assets/index.css';
@@ -26,6 +23,10 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
+
+import RootApp from '@data-exploration-app/containers/App';
+import GlobalStyle from '@data-exploration-app/styles/global-styles';
+import AntStyles from '@data-exploration-app/styles/Styles';
 
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';

@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 
 import { Table, TableProps } from '@data-exploration/components';
-import { InternalEventsData } from '@data-exploration-lib/domain-layer';
 import { ColumnDef } from '@tanstack/react-table';
+
+import { InternalEventsData } from '@data-exploration-lib/domain-layer';
 
 import { Wrapper } from './elements';
 

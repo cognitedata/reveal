@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { ResourceTypes } from '@data-exploration-components/types';
-import { OldSequenceFilters } from '@data-exploration-lib/core';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
+
+import { OldSequenceFilters } from '@data-exploration-lib/core';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';

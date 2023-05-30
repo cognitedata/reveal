@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
-import { useSearchParam } from '@data-exploration-lib/core';
 import isEqual from 'lodash/isEqual';
+
+import { useSearchParam } from '@data-exploration-lib/core';
 
 export type PagedFileReference = {
   id: number;

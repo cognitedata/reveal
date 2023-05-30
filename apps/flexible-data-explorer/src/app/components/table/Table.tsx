@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 import {
   Row,
   useReactTable,
@@ -23,6 +22,8 @@ import noop from 'lodash/noop';
 import useLocalStorageState from 'use-local-storage-state';
 
 import { Flex } from '@cognite/cogs.js';
+
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
 import { LoadMore, LoadMoreProps, SortIcon } from './components';
 import {

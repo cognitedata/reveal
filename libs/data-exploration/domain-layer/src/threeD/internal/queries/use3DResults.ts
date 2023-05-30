@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react';
 
+import { Model3D } from '@cognite/sdk';
+
 import {
   FileTypeVisibility,
   InternalThreeDFilters,
 } from '@data-exploration-lib/core';
-
-import { Model3D } from '@cognite/sdk';
 
 import { DEFAULT_SEARCH_RESULTS_PAGE_SIZE } from '../../../constants';
 import { Model3DWithType, ThreeDModelsResponse } from '../types';

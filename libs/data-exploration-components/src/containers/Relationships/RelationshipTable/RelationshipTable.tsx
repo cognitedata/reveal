@@ -5,12 +5,13 @@ import {
   ResourceType,
   SelectableItemsProps,
 } from '@data-exploration-components/types';
-import { AppContext } from '@data-exploration-lib/core';
 import { Alert } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { A } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { AppContext } from '@data-exploration-lib/core';
 
 import { RelationshipAssetTable } from './RelationshipAssetTable';
 import { RelationshipEventTable } from './RelationshipEventTable';

@@ -2,9 +2,10 @@ import React, { useContext, useState, useCallback } from 'react';
 
 import styled from 'styled-components';
 
+import { ResourceSelectorDetails } from '@data-exploration/containers';
 import { Splitter } from '@data-exploration-components/components';
-import { ResourcePreviewSidebar } from '@data-exploration-components/containers/ResourceSidebar';
 import { ResourceItem } from '@data-exploration-components/types';
+
 import { SIDEBAR_RESIZE_EVENT } from '@data-exploration-lib/core';
 
 export type ResourcePreviewProps = {
@@ -116,7 +117,7 @@ export const ResourcePreviewProvider = ({
       <Splitter>
         <ChildrenWrapper>{children}</ChildrenWrapper>
         {isOpen && (
-          <ResourcePreviewSidebar
+          <ResourceSelectorDetails
             item={item}
             header={header}
             footer={footer}

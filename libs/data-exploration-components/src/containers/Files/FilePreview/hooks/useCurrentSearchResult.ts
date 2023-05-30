@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import {
+  UnifiedViewer,
+  UnifiedViewerEventType,
+} from '@cognite/unified-file-viewer';
+
+import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { SearchResult } from '@data-exploration-lib/domain-layer';
-
-import {
-  UnifiedViewer,
-  UnifiedViewerEventType,
-} from '@cognite/unified-file-viewer';
 
 import usePrevious from './usePrevious';
 

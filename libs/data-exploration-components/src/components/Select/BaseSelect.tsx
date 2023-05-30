@@ -2,10 +2,6 @@ import React, { useMemo } from 'react';
 import { components, NamedProps } from 'react-select';
 
 import { Ellipsis } from '@data-exploration-components/components/Ellipsis/Ellipsis';
-import {
-  NIL_FILTER_LABEL,
-  NIL_FILTER_VALUE,
-} from '@data-exploration-lib/domain-layer';
 import ReactSelectCreatable, {
   Props as ReactSelectCreatableProps,
 } from 'react-select/creatable';
@@ -16,6 +12,11 @@ import {
   SelectProps as CogsSelectProps,
   Theme,
 } from '@cognite/cogs.js';
+
+import {
+  NIL_FILTER_LABEL,
+  NIL_FILTER_VALUE,
+} from '@data-exploration-lib/domain-layer';
 
 export const NIL_FILTER_OPTION: OptionType<string> = {
   label: NIL_FILTER_LABEL,

@@ -3,6 +3,12 @@ import { useParams } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { EventInfo } from '@data-exploration/containers';
+
+import { Tabs } from '@cognite/cogs.js';
+import { ErrorFeedback } from '@cognite/data-exploration';
+import { CogniteError, CogniteEvent } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
@@ -13,11 +19,6 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
-import { Tabs } from '@cognite/cogs.js';
-import { ErrorFeedback } from '@cognite/data-exploration';
-import { CogniteError, CogniteEvent } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export type EventPreviewTabType =
   | 'details'

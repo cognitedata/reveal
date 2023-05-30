@@ -2,12 +2,13 @@ import * as React from 'react';
 
 import { InfoPanel } from '@data-exploration-components/components';
 import { useDisclosure } from '@data-exploration-components/hooks';
+
+import { Button, Dropdown } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { Button, Dropdown } from '@cognite/cogs.js';
 
 export const FilesSyntaxButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure({ isOpen: false });

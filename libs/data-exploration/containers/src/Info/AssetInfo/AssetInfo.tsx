@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { GeneralDetails, TimeDisplay } from '@data-exploration/components';
-import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 
 import { Asset } from '@cognite/sdk';
+
+import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 
 type Props = {
   asset: Asset;

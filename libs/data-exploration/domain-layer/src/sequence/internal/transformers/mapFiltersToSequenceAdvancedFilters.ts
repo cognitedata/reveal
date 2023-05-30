@@ -1,10 +1,11 @@
+import isEmpty from 'lodash/isEmpty';
+
 import {
   InternalSequenceFilters,
   isNumeric,
   SequenceConfigType,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
-import isEmpty from 'lodash/isEmpty';
 
 import { AdvancedFilter, AdvancedFilterBuilder } from '../../../builders';
 import { getSearchConfig } from '../../../utils';

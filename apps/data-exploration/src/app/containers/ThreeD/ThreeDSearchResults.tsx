@@ -5,6 +5,11 @@ import InfiniteLoader from 'react-window-infinite-loader';
 
 import styled from 'styled-components';
 
+import { Alert } from 'antd';
+
+import { Loader } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
+
 import {
   ThreeDGridPreview,
   Model3DWithType,
@@ -14,10 +19,6 @@ import {
   useInfinite360Images,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { Alert } from 'antd';
-
-import { Loader } from '@cognite/cogs.js';
-import { Model3D } from '@cognite/sdk';
 
 export const ThreeDSearchResults = ({
   query = '',

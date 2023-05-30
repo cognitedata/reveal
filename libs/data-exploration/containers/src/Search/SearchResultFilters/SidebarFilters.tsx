@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { BaseFilterCollapse } from '@data-exploration/components';
+
 import { FilterProps, ResourceType } from '@data-exploration-lib/core';
 
 import { AssetFilters } from './AssetFilters';

@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { ResourceIcons } from '@data-exploration-components/components/index';
 import { isNotUndefined } from '@data-exploration-components/utils/index';
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { Breadcrumb } from 'antd';
 import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
@@ -20,6 +19,8 @@ import {
 } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import {
   getExtendedAnnotationLabel,

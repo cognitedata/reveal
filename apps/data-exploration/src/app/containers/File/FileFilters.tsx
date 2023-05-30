@@ -1,14 +1,5 @@
 import React from 'react';
 
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
-import {
-  useFileFilters,
-  useFilterEmptyState,
-  useResetFileFilters,
-} from '@data-exploration-app/store/filter';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-
 import {
   AggregatedFilterV2,
   DateFilterV2,
@@ -17,6 +8,15 @@ import {
   StringFilterV2,
 } from '@cognite/data-exploration';
 import { useList } from '@cognite/sdk-react-query-hooks';
+
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import {
+  useFileFilters,
+  useFilterEmptyState,
+  useResetFileFilters,
+} from '@data-exploration-app/store/filter';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 

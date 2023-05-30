@@ -7,11 +7,12 @@ import {
   SearchResultToolbar,
 } from '@data-exploration/containers';
 import { FileUploaderModal } from '@data-exploration-components/containers';
-import { AppContext, CLOSE_DROPDOWN_EVENT } from '@data-exploration-lib/core';
 
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { AppContext, CLOSE_DROPDOWN_EVENT } from '@data-exploration-lib/core';
 
 export const FileToolbar = ({
   onFileClicked,

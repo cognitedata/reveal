@@ -1,7 +1,8 @@
-import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { jest } from '@jest/globals';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+
+import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 
 import {
   mock3dRevisions,

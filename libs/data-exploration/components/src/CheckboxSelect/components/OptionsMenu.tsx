@@ -1,17 +1,18 @@
 import { useState } from 'react';
 
-import {
-  EMPTY_ARRAY,
-  NIL_FILTER_LABEL,
-  isEscapeButton,
-  useDeepEffect,
-} from '@data-exploration-lib/core';
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
 
 import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
+
+import {
+  EMPTY_ARRAY,
+  NIL_FILTER_LABEL,
+  isEscapeButton,
+  useDeepEffect,
+} from '@data-exploration-lib/core';
 
 import {
   OptionContainer,

@@ -6,13 +6,14 @@ import {
   TableProps,
   ThreeDModelCell,
 } from '@data-exploration/components';
+import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
+
 import { getHiddenColumns } from '@data-exploration-lib/core';
 import {
   AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-import noop from 'lodash/noop';
 
 import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
 

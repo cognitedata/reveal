@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Button, toast } from '@cognite/cogs.js';
+
 import {
   COPIED_TEXT,
   DASH,
@@ -7,8 +9,6 @@ import {
   useClipboard,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { Button, toast } from '@cognite/cogs.js';
 
 export const CopyToClipboardIconButton = ({ value }: { value: string }) => {
   const { hasCopied, onCopy } = useClipboard();

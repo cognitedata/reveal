@@ -10,6 +10,9 @@ import {
   SourceFilter,
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import {
   COMMON_INFO_CONTENT,
   InternalEventsFilters,
@@ -17,8 +20,6 @@ import {
   SPECIFIC_INFO_CONTENT,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 

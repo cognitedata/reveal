@@ -2,11 +2,6 @@ import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import { Loader } from '@data-exploration/components';
-import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
-import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import { useUserInformation } from '@data-exploration-app/hooks/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
@@ -14,6 +9,12 @@ import {
   DataExplorationProvider,
 } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
+import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import { useUserInformation } from '@data-exploration-app/hooks/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import { ids } from '../../../cogs-variables';
 

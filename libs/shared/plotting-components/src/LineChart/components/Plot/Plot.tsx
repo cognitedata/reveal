@@ -27,6 +27,7 @@ import { useLayoutMargin } from '../../hooks/useLayoutMargin';
 import { usePlotData } from '../../hooks/usePlotData';
 import { usePlotDataRange } from '../../hooks/usePlotDataRange';
 import { usePlotDataRangeInitial } from '../../hooks/usePlotDataRangeInitial';
+import { usePlotRevision } from '../../hooks/usePlotRevision';
 import {
   Config,
   Layout,
@@ -99,6 +100,8 @@ export const Plot = memo(
       const { responsive, scrollZoom, pan } = config;
 
       const plotRef = useRef<HTMLDivElement>(null);
+
+      const plotRevision = usePlotRevision(plotRef);
 
       const { plotData, isEmptyData } = usePlotData({
         data,
@@ -210,8 +213,12 @@ export const Plot = memo(
       }, [resetPlotRange, handleManualRelayout]);
 
       useEffect(() => {
-        handleManualRelayout();
-      }, [handleManualRelayout, plotData]);
+        /**
+         * We need this side-effect to be triggered slightly after the container changes.
+         * Otherwise the calculations are made with the old measurements.
+         */
+        setTimeout(() => handleManualRelayout());
+      }, [handleManualRelayout, plotData, plotRevision]);
 
       if (isLoading) {
         return <Loader variant={variant} height={height} />;
@@ -226,6 +233,7 @@ export const Plot = memo(
         >
           <PlotlyPlot
             data={plotData}
+            revision={plotRevision}
             layout={plotLayout}
             config={plotConfig}
             style={{ width: '100%', height: '100%' }}

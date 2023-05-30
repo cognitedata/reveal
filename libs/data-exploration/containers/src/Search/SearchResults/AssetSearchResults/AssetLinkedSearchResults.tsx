@@ -4,6 +4,10 @@ import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
+import { useDebounce } from 'use-debounce';
+
+import { Asset } from '@cognite/sdk';
+
 import {
   InternalAssetFilters,
   InternalCommonFilters,
@@ -12,9 +16,6 @@ import {
   TableSortBy,
   useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { useDebounce } from 'use-debounce';
-
-import { Asset } from '@cognite/sdk';
 
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';

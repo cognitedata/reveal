@@ -1,3 +1,10 @@
+import {
+  LabelFilterV2,
+  MetadataFilterV2,
+  SourceFilter,
+} from '@cognite/data-exploration';
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
@@ -13,13 +20,6 @@ import {
   useAssetsMetadataValuesAggregateQuery,
   useAssetsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-
-import {
-  LabelFilterV2,
-  MetadataFilterV2,
-  SourceFilter,
-} from '@cognite/data-exploration';
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 export const AssetFilters = ({ ...rest }) => {
   const [assetFilters, setAssetFilters] = useAssetFilters();

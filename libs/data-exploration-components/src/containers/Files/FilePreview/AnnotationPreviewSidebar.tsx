@@ -2,16 +2,8 @@ import React, { useEffect, useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { ResourceSelectorDetails } from '@data-exploration/containers';
 import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
-import {
-  ExtendedAnnotation,
-  SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-lib/core';
-import {
-  useCreateAnnotation,
-  useDeleteAnnotation,
-  useUpdateAnnotations,
-} from '@data-exploration-lib/domain-layer';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
 import capitalize from 'lodash/capitalize';
@@ -28,11 +20,20 @@ import {
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
+import {
+  ExtendedAnnotation,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-lib/core';
+import {
+  useCreateAnnotation,
+  useDeleteAnnotation,
+  useUpdateAnnotations,
+} from '@data-exploration-lib/domain-layer';
+
 import { Divider, InfoCell } from '../../../components';
 import { useDisclosure } from '../../../hooks';
 import { ResourceItem, convertResourceType } from '../../../types';
 import { sleep } from '../../../utils';
-import { ResourcePreviewSidebar } from '../../ResourceSidebar';
 
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import FilePreviewSidebar from './FilePreviewSidebar';
@@ -438,7 +439,7 @@ const AnnotationPreviewSidebar = ({
         <Modal visible={isOpen} {...annotationModalState}>
           {annotationModalState.content}
         </Modal>
-        <ResourcePreviewSidebar
+        <ResourceSelectorDetails
           hideTitle
           closable={false}
           item={

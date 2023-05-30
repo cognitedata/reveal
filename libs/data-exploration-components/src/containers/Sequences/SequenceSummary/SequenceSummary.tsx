@@ -8,6 +8,10 @@ import {
 import { useSequencesMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, Sequence } from '@cognite/sdk';
+
 import {
   EMPTY_OBJECT,
   getHiddenColumns,
@@ -18,9 +22,6 @@ import {
   useSequenceSearchResultWithMatchingLabelsQuery,
   InternalSequenceDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-
-import { Asset, Sequence } from '@cognite/sdk';
 
 export const SequenceSummary = ({
   query = '',

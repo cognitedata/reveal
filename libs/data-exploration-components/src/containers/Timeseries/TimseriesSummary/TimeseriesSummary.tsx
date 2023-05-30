@@ -8,6 +8,10 @@ import {
 import { useTimeseriesMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import {
   getHiddenColumns,
   InternalTimeseriesFilters,
@@ -17,9 +21,6 @@ import {
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-
-import { Asset, Timeseries } from '@cognite/sdk';
 
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 

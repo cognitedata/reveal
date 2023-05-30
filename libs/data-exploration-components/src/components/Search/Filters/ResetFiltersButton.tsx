@@ -3,12 +3,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ResourceType } from '@data-exploration-components/types';
+
+import { Button } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { Button } from '@cognite/cogs.js';
 
 export const ResetFiltersButton = <T extends Record<string, unknown>>({
   setFilter,

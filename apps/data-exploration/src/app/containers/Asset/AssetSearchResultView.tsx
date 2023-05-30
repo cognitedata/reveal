@@ -4,6 +4,12 @@ import {
   AssetSearchResults,
   AssetViewMode,
 } from '@data-exploration/containers';
+import { useDebounce } from 'use-debounce';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { ResourceItem } from '@cognite/data-exploration';
+import { Asset } from '@cognite/sdk';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { routes } from '@data-exploration-app/containers/App';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
@@ -23,11 +29,6 @@ import {
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
-import { useDebounce } from 'use-debounce';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { ResourceItem } from '@cognite/data-exploration';
-import { Asset } from '@cognite/sdk';
 
 export const AssetSearchResultView = () => {
   const [assetView, setAssetView] = useAssetViewState();

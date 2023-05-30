@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { MetadataFilterV2 } from '@cognite/data-exploration';
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import {
@@ -12,9 +15,6 @@ import {
   useSequencesMetadataValuesAggregateQuery,
   useSequencesMetadataKeysAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { MetadataFilterV2 } from '@cognite/data-exploration';
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 

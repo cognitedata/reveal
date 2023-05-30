@@ -3,12 +3,13 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { FilterFormV2 } from '@data-exploration-components/components/FilterFormV2/FilterFormV2';
+
+import { Body, Button } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { Body, Button } from '@cognite/cogs.js';
 
 import { mergeUniqueMetadataKeys } from './utils';
 

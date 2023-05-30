@@ -1,9 +1,10 @@
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import {
   InternalTimeseriesFilters,
   isDateInDateRange,
   TimeseriesConfigType,
 } from '@data-exploration-lib/core';
-import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 
 import { TableSortBy } from '../../../types';
 

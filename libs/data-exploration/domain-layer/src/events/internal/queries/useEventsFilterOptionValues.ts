@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-import { InternalEventsFilters } from '@data-exploration-lib/core';
 import omit from 'lodash/omit';
+
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 import { getAssetSubtreeIdFilter } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';

@@ -4,6 +4,10 @@ import {
   DefaultPreviewFilter,
   PreviewFilterDropdown,
 } from '@data-exploration/components';
+import { useDebounce } from 'use-debounce';
+
+import { Timeseries } from '@cognite/sdk';
+
 import {
   InternalCommonFilters,
   InternalTimeseriesFilters,
@@ -13,9 +17,6 @@ import {
   TableSortBy,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { useDebounce } from 'use-debounce';
-
-import { Timeseries } from '@cognite/sdk';
 
 import { UnitFilter, DateFilter, MetadataFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';

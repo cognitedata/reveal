@@ -1,10 +1,11 @@
+import isEmpty from 'lodash/isEmpty';
+
 import {
   FileConfigType,
   InternalDocumentFilter,
   isNumeric,
   METADATA_ALL_VALUE,
 } from '@data-exploration-lib/core';
-import isEmpty from 'lodash/isEmpty';
 
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
 import { getSearchConfig } from '../../../utils';

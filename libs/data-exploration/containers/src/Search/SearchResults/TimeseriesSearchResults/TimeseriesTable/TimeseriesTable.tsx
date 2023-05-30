@@ -6,6 +6,11 @@ import {
   TableProps,
   TimeDisplay,
 } from '@data-exploration/components';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { TimeseriesChart } from '@cognite/plotting-components';
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import {
   DateRangeProps,
   getHiddenColumns,
@@ -16,10 +21,6 @@ import {
   InternalTimeseriesDataWithMatchingLabels,
   TimeseriesWithRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
-import { ColumnDef } from '@tanstack/react-table';
-
-import { TimeseriesChart } from '@cognite/plotting-components';
-import { Asset, Timeseries } from '@cognite/sdk';
 
 import { useTimeseriesMetadataColumns } from '../useTimeseriesMetadataColumns';
 

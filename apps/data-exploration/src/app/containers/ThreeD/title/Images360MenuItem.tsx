@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-
 import { Body, Checkbox, Flex, Menu, Colors } from '@cognite/cogs.js';
+
+import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 export const Images360MenuItem = ({
   siteId,

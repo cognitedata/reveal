@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import zip from 'lodash/zip';
 
 import {
   getExtendedAnnotationsFromAnnotationsApi,
   getStyledAnnotationFromAnnotation,
 } from '@cognite/data-exploration';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { IndustryCanvasContainerConfig } from '../types';
 import { isNotUndefined } from '../utils/isNotUndefined';

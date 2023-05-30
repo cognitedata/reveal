@@ -2,9 +2,9 @@ import React, { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { zIndex } from '@data-exploration-lib/core';
-
 import { Button } from '@cognite/cogs.js';
+
+import { zIndex } from '@data-exploration-lib/core';
 
 interface DrawerProps {
   visible?: boolean;

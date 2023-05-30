@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
 import { useDebounce } from 'use-debounce';
 import { v4 as uuid } from 'uuid';
 
@@ -15,6 +14,8 @@ import {
   toast,
   Tooltip,
 } from '@cognite/cogs.js';
+
+import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
 
 import { TOAST_POSITION } from '../constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';

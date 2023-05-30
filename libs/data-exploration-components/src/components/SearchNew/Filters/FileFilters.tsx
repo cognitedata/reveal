@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { InternalFilesFilters } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';

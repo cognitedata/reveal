@@ -3,9 +3,10 @@ import { useRef, SetStateAction, Dispatch } from 'react';
 import styled from 'styled-components';
 
 import { RangePicker, VerticalDivider } from '@data-exploration/components';
-import { DateRangeProps, useDimensions } from '@data-exploration-lib/core';
 
 import { Flex, Button, Tooltip, Dropdown, Menu } from '@cognite/cogs.js';
+
+import { DateRangeProps, useDimensions } from '@data-exploration-lib/core';
 
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';

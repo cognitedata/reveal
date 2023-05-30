@@ -35,7 +35,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         }}
       />
 
-      <Chip label="AND" />
+      <Chip label="AND" tooltipProps={{ disabled: true }} />
 
       <NumberInput
         placeholder={PLACEHOLDER}

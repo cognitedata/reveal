@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { MultiSelectFilter } from '@data-exploration-components/components';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,

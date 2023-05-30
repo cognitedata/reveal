@@ -1,7 +1,8 @@
-import { ResourceType } from '@data-exploration-lib/core';
 import { UseQueryOptions } from '@tanstack/react-query';
 
 import { Model3D, Revision3D } from '@cognite/sdk';
+
+import { ResourceType } from '@data-exploration-lib/core';
 
 import { InternalEventsData } from '../../events';
 

@@ -1,6 +1,7 @@
-import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 import { renderHook } from '@testing-library/react-hooks';
 import { setupServer } from 'msw/node';
+
+import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 
 import { getMockAssetsAggregatePost } from '../../../service/__mocks';
 import { useAssetsSearchAggregateQuery } from '../useAssetsSearchAggregateQuery';

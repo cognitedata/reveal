@@ -2,8 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { assetsFixture } from '@data-exploration-lib/core';
 import { ComponentStory } from '@storybook/react';
+
+import { assetsFixture } from '@data-exploration-lib/core';
 
 import { AssetTable } from './AssetTable';
 

@@ -1,11 +1,12 @@
 import * as React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
+
 import {
   NIL_FILTER_LABEL,
   useDebouncedState,
 } from '@data-exploration-lib/core';
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
 
 import {
   OptionSelection,

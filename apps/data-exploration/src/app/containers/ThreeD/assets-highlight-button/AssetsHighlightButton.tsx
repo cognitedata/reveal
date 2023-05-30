@@ -2,6 +2,11 @@ import { useRef, useEffect, useContext } from 'react';
 
 import styled from 'styled-components';
 
+import { Button, Tooltip } from '@cognite/cogs.js';
+import { CogniteCadModel } from '@cognite/reveal';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
   AugmentedMapping,
@@ -12,11 +17,6 @@ import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/
 import { getBoundingBoxesByNodeIds } from '@data-exploration-app/containers/ThreeD/utils';
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { CogniteCadModel } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;

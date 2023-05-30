@@ -3,11 +3,12 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import { ResourceIcons } from '@data-exploration-components/components';
-import { AppContext, ExtendedAnnotation } from '@data-exploration-lib/core';
 import { Tooltip } from 'antd';
 
 import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { AppContext, ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import {
   getResourceExternalIdFromExtendedAnnotation,

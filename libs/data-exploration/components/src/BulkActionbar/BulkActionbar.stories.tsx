@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { useDialog } from '@data-exploration-lib/core';
-
 import { Button } from '@cognite/cogs.js';
+
+import { useDialog } from '@data-exploration-lib/core';
 
 import { BulkActionbar } from './BulkActionbar';
 

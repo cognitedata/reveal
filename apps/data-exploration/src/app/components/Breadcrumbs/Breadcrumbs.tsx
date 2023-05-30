@@ -2,13 +2,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { createLink } from '@cognite/cdf-utilities';
+import { Breadcrumbs as Breadcrumb } from '@cognite/cogs.js';
+
 import {
   getSearchParams,
   removeProjectFromPath,
 } from '@data-exploration-app/utils/URLUtils';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Breadcrumbs as Breadcrumb } from '@cognite/cogs.js';
 
 type BreadcrumbsProps = {
   currentResource: {

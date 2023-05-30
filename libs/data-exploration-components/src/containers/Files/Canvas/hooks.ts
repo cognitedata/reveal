@@ -3,9 +3,10 @@ import { useMemo } from 'react';
 import { PagedFileReference } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
 import { isNotUndefined } from '@data-exploration-components/utils';
+import zip from 'lodash/zip';
+
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotationsMultiple } from '@data-exploration-lib/domain-layer';
-import zip from 'lodash/zip';
 
 import getExtendedAnnotationsFromAnnotationsApi from '../FilePreview/Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import { getStyledAnnotationFromAnnotation } from '../FilePreview/utils';

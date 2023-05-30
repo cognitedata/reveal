@@ -11,6 +11,9 @@ import {
   StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
 import { ResourceTypes } from '@data-exploration-components/types';
+
+import { useList } from '@cognite/sdk-react-query-hooks';
+
 import {
   COMMON_INFO_CONTENT,
   InternalAssetFilters,
@@ -18,8 +21,6 @@ import {
   isObjectEmpty,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 import {
   TempCommonMultiSelectFix,

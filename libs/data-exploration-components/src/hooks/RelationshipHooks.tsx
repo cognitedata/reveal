@@ -5,11 +5,6 @@ import {
   ResourceItem,
   convertResourceType,
 } from '@data-exploration-components/types';
-import { AppContext, TaggedAnnotation } from '@data-exploration-lib/core';
-import {
-  useAnnotations,
-  useDocumentFilteredAggregateCount,
-} from '@data-exploration-lib/domain-layer';
 import flatten from 'lodash/flatten';
 import uniqueBy from 'lodash/uniqBy';
 
@@ -28,6 +23,12 @@ import {
   useCdfItem,
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
+
+import { AppContext, TaggedAnnotation } from '@data-exploration-lib/core';
+import {
+  useAnnotations,
+  useDocumentFilteredAggregateCount,
+} from '@data-exploration-lib/domain-layer';
 
 import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/Annotations';
 import {

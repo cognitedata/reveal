@@ -1,15 +1,16 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  useMetrics,
-  DATA_EXPLORATION_COMPONENT,
-} from '@data-exploration-lib/core';
-import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 import { useDebounce } from 'use-debounce';
 
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk/dist/src';
 import { useList, useSearch } from '@cognite/sdk-react-query-hooks';
+
+import {
+  useMetrics,
+  DATA_EXPLORATION_COMPONENT,
+} from '@data-exploration-lib/core';
+import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
 import { BaseMultiSelectFilterProps } from '../types';

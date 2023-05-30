@@ -2,19 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import {
-  useCurrentResourceId,
-  useCurrentResourceType,
-  useQueryString,
-} from '@data-exploration-app/hooks/hooks';
-import { useCommonFilters } from '@data-exploration-app/store';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
-
 import { createLink } from '@cognite/cdf-utilities';
 import {
   SequenceSummary,
@@ -27,6 +14,19 @@ import {
   ResourceTypes,
 } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
+
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import {
+  useCurrentResourceId,
+  useCurrentResourceType,
+  useQueryString,
+} from '@data-exploration-app/hooks/hooks';
+import { useCommonFilters } from '@data-exploration-app/store';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();

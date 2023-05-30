@@ -2,13 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { ResourceItem } from '@cognite/data-exploration';
+
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 import CanvasButton from '@data-exploration-app/components/TitleRowActions/CanvasButton';
 import { FullscreenButton } from '@data-exploration-app/components/TitleRowActions/FullscreenButton';
 import { PreviewCloseButton } from '@data-exploration-app/components/TitleRowActions/PreviewCloseButton';
 import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
-
-import { ResourceItem } from '@cognite/data-exploration';
 
 import DownloadButton from './DownloadButton';
 

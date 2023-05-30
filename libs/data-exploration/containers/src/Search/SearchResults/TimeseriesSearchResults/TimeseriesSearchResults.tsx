@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
 import { TableProps } from '@data-exploration/components';
+
+import { Flex } from '@cognite/cogs.js';
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import {
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
@@ -11,9 +15,6 @@ import {
   useTimeseriesAggregateCountQuery,
   useTimeseriesWithAvailableDatapointsQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { Flex } from '@cognite/cogs.js';
-import { Asset, Timeseries } from '@cognite/sdk';
 
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 

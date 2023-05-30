@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
-import { useCurrentResourceType } from '@data-exploration-app/hooks/hooks';
 import { Badge } from 'antd';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { countByFilter } from '@cognite/data-exploration';
+
+import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
+import { useCurrentResourceType } from '@data-exploration-app/hooks/hooks';
 
 import zIndex from '../../utils/zIndex';
 

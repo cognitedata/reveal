@@ -9,8 +9,6 @@ import {
   To,
 } from 'react-router-dom';
 
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import { useQuery } from '@tanstack/react-query';
 import isArray from 'lodash/isArray';
 import qs from 'query-string';
@@ -18,6 +16,9 @@ import qs from 'query-string';
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
+
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 

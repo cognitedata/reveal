@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
+import { UseInfiniteQueryOptions } from '@tanstack/react-query';
+
 import {
   InternalSequenceFilters,
   SequenceConfigType,
 } from '@data-exploration-lib/core';
-import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '../../../constants';
 import { TableSortBy } from '../../../types';

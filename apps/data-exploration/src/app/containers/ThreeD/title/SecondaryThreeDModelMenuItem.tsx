@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 
+import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
+
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { formatTime } from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
-
-import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
-import { Model3D } from '@cognite/sdk';
 
 export const SecondaryThreeDModelMenuItem = ({
   model,

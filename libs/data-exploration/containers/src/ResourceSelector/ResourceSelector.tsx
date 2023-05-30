@@ -7,6 +7,12 @@ import {
   Drawer,
   ExplorationFilterToggle,
 } from '@data-exploration/components';
+import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
+import { useDebounce } from 'use-debounce';
+
+import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
+
 import {
   EMPTY_OBJECT,
   FilterState,
@@ -15,11 +21,6 @@ import {
   useDialog,
   ViewType,
 } from '@data-exploration-lib/core';
-import isEmpty from 'lodash/isEmpty';
-import noop from 'lodash/noop';
-import { useDebounce } from 'use-debounce';
-
-import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
 
 import {
   AssetsTab,

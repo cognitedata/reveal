@@ -13,17 +13,18 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
-import {
-  useRootAssetsQuery,
-  InternalAssetTreeData,
-} from '@data-exploration-lib/domain-layer';
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import gt from 'lodash/gt';
 
 import { Icon } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
+
+import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
+import {
+  useRootAssetsQuery,
+  InternalAssetTreeData,
+} from '@data-exploration-lib/domain-layer';
 
 const visibleColumns = ['name', 'rootId'];
 

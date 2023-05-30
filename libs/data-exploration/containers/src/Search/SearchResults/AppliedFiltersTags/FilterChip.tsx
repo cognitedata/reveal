@@ -2,10 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { COMMON_FILTER_KEYS } from '@data-exploration-lib/core';
 import includes from 'lodash/includes';
 
 import { IconType, Chip } from '@cognite/cogs.js';
+
+import { COMMON_FILTER_KEYS } from '@data-exploration-lib/core';
 
 import { getTitle } from './utils';
 

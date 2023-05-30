@@ -1,7 +1,8 @@
-import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
+import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 
 export type ConstructedTreeAssetChildren =
   | ConstructedTreeAsset
