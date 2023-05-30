@@ -43,7 +43,7 @@ export const Image360HistoricalOverviewToolbar = ({
         <StyledDetail>Collection: {collectionId}</StyledDetail>
       </StyledFlex>
 
-      <StyledLayoutGrid>
+      <StyledLayoutGridContainer><StyledLayoutGrid>
         { revisionCollection?.map((revisionDetails, index) => (
           <RevisionItem
             onClick={ () => {
@@ -68,6 +68,7 @@ export const Image360HistoricalOverviewToolbar = ({
         ))
         }
       </StyledLayoutGrid>
+      </StyledLayoutGridContainer>
     </OverviewContainer>
   )
 };
@@ -101,30 +102,32 @@ const StyledDetail = styled(Detail)`
   color: rgba(0, 0, 0, 0.9);
 `;
 
-const RevisionItem = styled.div`
-  width: 160px;
-  height: 90px;
-  flex-direction: column;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  opacity: 0.8;
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-  flex-basis: 90%;
-`;
-
-const StyledLayoutGrid = styled.div`
+const StyledLayoutGridContainer = styled.div`
   position: absolute;
   width: 70%;
   height: 112px;
   right: 20px;
+  overflow-x: auto;
+`;
+
+const StyledLayoutGrid = styled.div`
   display: grid;
-  align-items: center;
   grid-auto-flow: column;
-  overflow: auto;
+  align-items: center;
   gap: 6px;
+  justify-content: flex-end;
+  min-width: fit-content;
+`;
+
+const RevisionItem = styled.div`
+  width: 160px;
+  height: 90px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.8;
+  flex-shrink: 0;
 `;
 
 const OverviewContainer = styled.div`
@@ -133,5 +136,4 @@ const OverviewContainer = styled.div`
   flex-direction: column;
   padding: 16px 16px 8px 16px;
   background: #FFFFFF;
-  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.25);
 `;
