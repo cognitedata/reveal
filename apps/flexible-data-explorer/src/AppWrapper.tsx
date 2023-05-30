@@ -1,42 +1,24 @@
-import { useEffect } from 'react';
-
+import '@cognite/cogs.js/dist/cogs.css';
+import { AuthProvider } from '@cognite/auth-react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  SubAppWrapper,
-  AuthWrapper,
-  getEnv,
-  getProject,
-} from '@cognite/cdf-utilities';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-
-import './set-public-path';
 
 import App from './app/App';
 import { translations } from './app/common';
+import { AuthProvider as InternalAuthProvider } from './app/common/auth/AuthProvider';
 import GlobalStyle from './app/utils/globalStyles';
 import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'flexible-data-explorer';
-  const project = getProject();
-  const env = getEnv();
-
-  useEffect(() => {
-    cogsStyles.use();
-    return () => {
-      cogsStyles.unuse();
-    };
-  }, []);
 
   return (
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
-        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-          <SubAppWrapper title={projectName}>
+        <AuthProvider>
+          <InternalAuthProvider>
             <App />
-          </SubAppWrapper>
-        </AuthWrapper>
+          </InternalAuthProvider>
+        </AuthProvider>
       </I18nWrapper>
       <GlobalStyle />
     </GlobalStyles>

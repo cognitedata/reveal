@@ -2,24 +2,20 @@
 // @ts-nocheck
 import React from 'react';
 
-import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
-
-import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
   Tooltip as CogsTooltip,
-  Loader,
+  Modal,
+  Dropdown,
+  Tooltip as CogsTooltip,
   Modal,
   Dropdown,
 } from '@cognite/cogs.js';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+
+import 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import styleScope from './styleScope';
 
-export const getContainer = () => {
-  const els = document.getElementsByClassName(styleScope.styleScope);
-  const el = els.item(0)! as HTMLElement;
-  return el;
-};
+export const getContainer = () => document.body;
 
 // This will override the appendTo prop on all Tooltips used from cogs
 // For tooltips to work on fusion this is needed.
@@ -39,11 +35,5 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([cogsStyles, monacoStyles]);
-
-  if (!isStyleLoaded) {
-    return <Loader />;
-  }
-
   return <div className={styleScope.styleScope}>{props.children}</div>;
 }
