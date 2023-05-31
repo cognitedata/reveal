@@ -5,6 +5,11 @@ import { ResourceDetailsTemplate } from '@data-exploration/components';
 import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
+  EMPTY_OBJECT,
+  SelectableItemsProps,
+  ViewType,
+} from '@data-exploration-lib/core';
+import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
   useEventsSearchResultQuery,
@@ -20,6 +25,7 @@ import {
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
 import { SequenceInfo } from '../../Info';
+import { ResourceSelection } from '../../ResourceSelector';
 import {
   ASSETS,
   DETAILS,
@@ -30,18 +36,24 @@ import {
   TIME_SERIES,
 } from '../constant';
 import { StyledCollapse } from '../elements';
+import { SelectionType } from '../types';
 
 interface Props {
   sequenceId: number;
   isSelected: boolean;
-  onSelectClicked?: () => void;
   onClose?: () => void;
+  selectedRows?: ResourceSelection;
+  selectionMode?: SelectionType;
 }
-export const SequenceDetails: FC<Props> = ({
+export const SequenceDetails: FC<
+  Props & Pick<SelectableItemsProps, 'onSelect'>
+> = ({
   sequenceId,
   isSelected,
-  onSelectClicked,
   onClose,
+  onSelect,
+  selectedRows,
+  selectionMode,
 }) => {
   const {
     isLoading: isParentSequenceLoading,
@@ -50,6 +62,7 @@ export const SequenceDetails: FC<Props> = ({
   } = useSequenceSearchResultQuery({
     filter: { internalId: sequenceId },
   });
+  const enableDetailTableSelection = selectionMode === 'multiple';
 
   const parentSequence = sequence?.[0];
 
@@ -118,7 +131,7 @@ export const SequenceDetails: FC<Props> = ({
       icon="Sequences"
       isSelected={isSelected}
       onClose={onClose}
-      onSelectClicked={onSelectClicked}
+      onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="sequence-details">
         <Collapse.Panel key="sequence-details" header={<h4>{DETAILS}</h4>}>
@@ -133,6 +146,11 @@ export const SequenceDetails: FC<Props> = ({
             id="asset-resource-sequence-detail-table"
             data={assets}
             isDataLoading={isParentSequenceLoading || isAssetsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.asset || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, ViewType.Asset)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -145,6 +163,11 @@ export const SequenceDetails: FC<Props> = ({
             hasNextPage={hasTimeseriesNextPage}
             fetchMore={hasTimeseriesFetchNextPage}
             isDataLoading={isParentSequenceLoading || isTimeseriesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.timeSeries || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, ViewType.TimeSeries)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -157,6 +180,11 @@ export const SequenceDetails: FC<Props> = ({
             hasNextPage={hasDocumentsNextPage}
             fetchMore={hasDocumentsFetchNextPage}
             isDataLoading={isParentSequenceLoading || isDocumentsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.file || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, ViewType.File)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel key="sequence-events-detail" header={<h4>{EVENTS}</h4>}>
@@ -166,6 +194,11 @@ export const SequenceDetails: FC<Props> = ({
             hasNextPage={hasEventNextPage}
             fetchMore={hasEventFetchNextPage}
             isDataLoading={isParentSequenceLoading || isEventsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.event || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, ViewType.Event)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -178,6 +211,11 @@ export const SequenceDetails: FC<Props> = ({
             hasNextPage={hasSequencesNextPage}
             fetchMore={hasSequencesFetchNextPage}
             isDataLoading={isParentSequenceLoading || isSequencesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.sequence || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, ViewType.Sequence)
+            }
           />
         </Collapse.Panel>
       </StyledCollapse>

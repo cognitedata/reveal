@@ -11,6 +11,7 @@ import {
   AssetDetails,
   DocumentDetails,
   EventDetails,
+  SequenceDetails,
   TimeseriesDetails,
 } from '../ResourceDetails';
 
@@ -88,13 +89,12 @@ export const ResourceSelectorDetails = ({
       }
       case 'sequence': {
         content = (
-          //TODO Replace this new sequence Details Page
-          <div> Placeholder for sequence Preview</div>
-          //   <SequenceSmallPreview
-          //     hideTitle={hideTitle}
-          //     sequenceId={item.id}
-          //     {...commonProps}
-          //   />
+          <SequenceDetails
+            sequenceId={item.id}
+            isSelected={isSelected}
+            onClose={onClose}
+            {...commonProps}
+          />
         );
         break;
       }

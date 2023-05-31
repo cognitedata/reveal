@@ -91,6 +91,7 @@ export const ResourcePreviewSidebar = ({
             sequenceId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            {...commonProps}
           />
         );
         break;
