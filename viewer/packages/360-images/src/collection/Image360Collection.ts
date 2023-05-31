@@ -107,4 +107,9 @@ export interface Image360Collection {
    * Find 360 images associated with a asset with the given assetRef
    */
   findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+
+  /**
+   * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
+   */
+  getAssetIds(): Promise<IdEither[]>;
 }
