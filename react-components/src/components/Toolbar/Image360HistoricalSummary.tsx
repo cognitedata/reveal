@@ -15,7 +15,7 @@ export interface Image360RevisionDetails{
   image360Entity?: Image360;
 };
 
-export interface Image360HistoricalOverviewToolbarProps{
+export interface Image360HistoricalSummaryProps{
   stationId?: string;
   stationName?: string;
   collectionId?: string;
@@ -25,7 +25,7 @@ export interface Image360HistoricalOverviewToolbarProps{
   viewer?: Cognite3DViewer;
 };
 
-export const Image360HistoricalOverviewToolbar = ({
+export const Image360HistoricalSummary = ({
   stationId,
   stationName,
   collectionId,
@@ -33,7 +33,7 @@ export const Image360HistoricalOverviewToolbar = ({
   activeRevision,
   setActiveRevision,
   viewer
-}: Image360HistoricalOverviewToolbarProps) => {
+}: Image360HistoricalSummaryProps) => {
 
   return(
     <OverviewContainer>

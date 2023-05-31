@@ -4,11 +4,11 @@
 
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 import React, { useEffect, useState } from 'react';
-import { Image360HistoricalDetailsPanel } from '../Panel/Image360HistoricalDetailsPanel';
-import { Image360HistoricalOverviewToolbar } from '../Toolbar/Image360HistoricalOverviewToolbar';
+import { Image360HistoricalOverview } from '../Panel/Image360HistoricalOverview';
+import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
 import { formatDate } from '../utils/FormatDate';
 
-export interface Image360HistoricalDetailsViewProps{
+export interface Image360HistoricalDetailsProps{
   viewer: Cognite3DViewer;
   stationId?: string;
   stationName?: string;
@@ -16,13 +16,13 @@ export interface Image360HistoricalDetailsViewProps{
   image360Entity?: Image360;
 };
 
-export const Image360HistoricalDetailsView = ({
+export const Image360HistoricalDetails = ({
   viewer,
   stationId,
   stationName,
   collectionId,
   image360Entity
-}: Image360HistoricalDetailsViewProps) => {
+}: Image360HistoricalDetailsProps) => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
   const [revisionCollection, setRevisionCollection] = useState<
@@ -73,14 +73,14 @@ export const Image360HistoricalDetailsView = ({
     <>
       {viewer && (
         <>
-        <Image360HistoricalDetailsPanel
+        <Image360HistoricalOverview
             key={`${stationId}`}
             revisionCount={revisionCollection.length}
             revisionDetailsExpanded={revisionDetailsExpanded}
             setRevisionDetailsExpanded={setRevisionDetailsExpanded}
         />
         {revisionDetailsExpanded && (
-          <Image360HistoricalOverviewToolbar
+          <Image360HistoricalSummary
             viewer={viewer}
             stationId={stationId}
             stationName={stationName}

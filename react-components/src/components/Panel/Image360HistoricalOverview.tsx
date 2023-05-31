@@ -6,17 +6,17 @@ import { Chip, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 
-export interface Image360HistoricalDetailsPanelProps {
+export interface Image360HistoricalOverviewProps {
   revisionCount?: number;
   revisionDetailsExpanded?: boolean;
   setRevisionDetailsExpanded?: (detailed: boolean) => void;
 }
 
-export const Image360HistoricalDetailsPanel = ({
+export const Image360HistoricalOverview = ({
   revisionCount,
   revisionDetailsExpanded,
   setRevisionDetailsExpanded
-}: Image360HistoricalDetailsPanelProps) => {
+}: Image360HistoricalOverviewProps) => {
   const count = revisionCount?.toString();
 
   const onDetailsClick = () => {

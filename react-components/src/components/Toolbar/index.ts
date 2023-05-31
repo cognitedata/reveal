@@ -1,1 +1,1 @@
-export { Image360HistoricalOverviewToolbar } from "./Image360HistoricalOverviewToolbar";
+export { Image360HistoricalSummary } from "./Image360HistoricalSummary";
