@@ -1,10 +1,15 @@
 const path = require('path');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+
 const logger = require('webpack-log')('example');
+
 require('dotenv').config({ path: './.env' });
 
 logger.info(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS);
+
+const isHttps = process.env.HTTPS === 'true';
+const isNotBrowser = process.env.BROWSER === 'none';
 
 module.exports = {
   entry: './src/index.tsx',
@@ -15,8 +20,8 @@ module.exports = {
     compress: true,
     port: 3000,
     hot: true,
-    open: process.env.BROWSER === 'none' ? false : true,
-    server: process.env.HTTPS === 'false' ? 'http' : 'https',
+    open: isNotBrowser ? false : true,
+    server: isHttps ? 'https' : 'http',
     headers: { 'Access-Control-Allow-Origin': '*' },
     historyApiFallback: true
   },
