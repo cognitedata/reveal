@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D } from '@cognite/sdk';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
 import { RevisionIds } from 'utils/types';
 
@@ -18,7 +18,7 @@ export function useDeleteRevisionMutation() {
     deleteRevision,
     {
       onMutate: ({ modelId, revisionId }: RevisionIds) => {
-        const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+        const queryKey = QUERY_KEY.REVISIONS({ modelId });
         queryClient.cancelQueries(queryKey);
 
         // Snapshot the previous value
@@ -35,7 +35,7 @@ export function useDeleteRevisionMutation() {
         return previousRevisions || [];
       },
       onError: (error, { modelId }, snapshotValue) => {
-        const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+        const queryKey = QUERY_KEY.REVISIONS({ modelId });
         queryClient.setQueryData(queryKey, snapshotValue);
         fireErrorNotification({
           error,
@@ -43,7 +43,7 @@ export function useDeleteRevisionMutation() {
         });
       },
       onSuccess: (_, { modelId }: RevisionIds) => {
-        const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+        const queryKey = QUERY_KEY.REVISIONS({ modelId });
         queryClient.invalidateQueries(queryKey);
       },
     }

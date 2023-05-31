@@ -1,5 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from 'store/modules/App/types';

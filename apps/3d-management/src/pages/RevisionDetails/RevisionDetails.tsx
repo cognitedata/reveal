@@ -91,11 +91,11 @@ export default function RevisionDetails() {
   const {
     data: hasUpdateCapabilities,
     isFetched: isFetchedUpdateCapabilities,
-  } = usePermissions(flow, 'threedAcl', 'UPDATE');
+  } = usePermissions(flow as any, 'threedAcl', 'UPDATE');
   const {
     data: hasDeleteCapabilities,
     isFetched: isFetchedDeleteCapabilities,
-  } = usePermissions(flow, 'threedAcl', 'DELETE');
+  } = usePermissions(flow as any, 'threedAcl', 'DELETE');
 
   const revisionId: number = Number(params.revisionId);
   const modelId: number = Number(params.modelId);

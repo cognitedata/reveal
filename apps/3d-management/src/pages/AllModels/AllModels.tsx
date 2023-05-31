@@ -92,9 +92,9 @@ export default function AllModels() {
 
   const { flow } = getFlow();
   const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
-    usePermissions(flow, 'threedAcl', 'CREATE');
+    usePermissions(flow as any, 'threedAcl', 'CREATE');
   const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
-    usePermissions(flow, 'filesAcl', 'WRITE');
+    usePermissions(flow as any, 'filesAcl', 'WRITE');
 
   const showAddModelButton =
     hasThreedCreateCapability && hasFilesWriteCapability;

@@ -7,7 +7,7 @@ const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
 
 const cssRegexMatcher = (rule) =>
-    rule.test && rule.test.toString() === CSS_REGEX.toString();
+  rule.test && rule.test.toString() === CSS_REGEX.toString();
 
 const replaceStyleLoaders = (config) => {
   const styleLoaders = [
@@ -75,11 +75,11 @@ const replaceStyleLoaders = (config) => {
           ],
         },
         ...config.module.rules
-            .find((rule) => Array.isArray(rule.oneOf))
-            .oneOf.filter((rule) => {
-              return !cssRegexMatcher(rule);
-            })
-          .map(rule => {
+          .find((rule) => Array.isArray(rule.oneOf))
+          .oneOf.filter((rule) => {
+            return !cssRegexMatcher(rule);
+          })
+          .map((rule) => {
             // This part is added as a workaround for a webpack 5 problem that
             // occurs while using @cognite/reveal@3.2.0. For more details, you
             // can check:
@@ -123,11 +123,11 @@ module.exports = {
     // Removing html-webpack-plugin.
     // https://single-spa.js.org/docs/faq/#create-react-app
     config.plugins = config.plugins.filter(
-        (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
+      (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
     );
 
     config.plugins = config.plugins.filter(
-        (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+      (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
     );
 
     // Copy firebase.json to the build folder to deploy to firebase
@@ -138,7 +138,7 @@ module.exports = {
     );
 
     config.resolve.fallback = {
-      'path': 'path-browserify',
+      path: 'path-browserify',
       'react/jsx-runtime': 'react/jsx-runtime.js',
       'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
     };
@@ -147,8 +147,6 @@ module.exports = {
     // exclude these dependencies from the output bundle.
     // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     config.externals = {
-      react: 'react',
-      'react-dom': 'react-dom',
       'single-spa': 'single-spa',
       '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
       '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
@@ -159,10 +157,10 @@ module.exports = {
     config.ignoreWarnings = [
       function ignoreSourcemapsloaderWarnings(warning) {
         return (
-            warning.module &&
-            warning.module.resource.includes("node_modules") &&
-            warning.details &&
-            warning.details.includes("source-map-loader")
+          warning.module &&
+          warning.module.resource.includes('node_modules') &&
+          warning.details &&
+          warning.details.includes('source-map-loader')
         );
       },
     ];

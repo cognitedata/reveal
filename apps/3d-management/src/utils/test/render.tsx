@@ -5,7 +5,7 @@ import { createMemoryHistory } from 'history';
 import configureStore from 'store';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export function renderWithProviders(
   ui: any,

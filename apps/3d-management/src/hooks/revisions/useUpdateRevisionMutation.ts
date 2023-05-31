@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D, UpdateRevision3D } from '@cognite/sdk';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
 
 type UpdateArgs = {
@@ -39,7 +39,7 @@ export function useUpdateRevisionMutation() {
     updateRevision,
     {
       onMutate: ({ modelId, revisionId, ...updates }: UpdateArgs) => {
-        const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+        const queryKey = QUERY_KEY.REVISIONS({ modelId });
         const snapshot = queryClient.getQueryData<Revision3D[]>(queryKey);
 
         queryClient.setQueryData<Revision3D[]>(queryKey, (old) => {
@@ -53,7 +53,7 @@ export function useUpdateRevisionMutation() {
         return snapshot || [];
       },
       onError: (error, { modelId }, snapshotValue) => {
-        const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+        const queryKey = QUERY_KEY.REVISIONS({ modelId });
         queryClient.setQueryData(queryKey, snapshotValue);
         fireErrorNotification({
           error,

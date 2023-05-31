@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification } from 'utils';
 import { FileInfo, HttpError } from '@cognite/sdk';

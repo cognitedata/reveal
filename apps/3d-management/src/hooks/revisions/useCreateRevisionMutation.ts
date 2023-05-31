@@ -1,6 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { CreateRevision3D, HttpError, Revision3D } from '@cognite/sdk';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
 
 type CreateRevisionArgs = { modelId: number } & CreateRevision3D;
@@ -19,7 +19,7 @@ export function useCreateRevisionMutation() {
     createRevision,
     {
       onSuccess: (newRevision: Revision3D, { modelId }: CreateRevisionArgs) => {
-        const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+        const queryKey = QUERY_KEY.REVISIONS({ modelId });
         queryClient.setQueryData<Revision3D[]>(queryKey, (old) => {
           return [newRevision].concat(old || []);
         });

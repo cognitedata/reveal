@@ -16,7 +16,7 @@ export function ModelRoutes() {
     data: threedRead,
     isFetched: threedReadFetched,
     error: threedReadError,
-  } = usePermissions(flow, 'threedAcl', 'READ');
+  } = usePermissions(flow as any, 'threedAcl', 'READ');
 
   if (threedReadError) {
     return <p>Error retrieving permissions</p>;
