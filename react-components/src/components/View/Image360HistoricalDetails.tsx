@@ -81,6 +81,7 @@ export const Image360HistoricalDetails = ({
         />
         {revisionDetailsExpanded && (
           <Image360HistoricalSummary
+          key={`${stationId}`}
             viewer={viewer}
             stationId={stationId}
             stationName={stationName}
