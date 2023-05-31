@@ -21,11 +21,13 @@ import {
   IdEither,
   Metadata,
   CogniteInternalId,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  AnnotationData
 } from '@cognite/sdk';
 import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
+import assert from 'assert';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -346,9 +348,10 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
           }
         })
         .autoPagingToArray();
-      const assetIds = annotationArray.map(
-        annotation => (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef
-      );
+      const assetIds = annotationArray.map(annotation => {
+        assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
+        return annotation.data.assetRef;
+      });
 
       return assetIds;
     });
@@ -357,4 +360,11 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
     return assetIds;
   }
+}
+
+function isAssetLinkAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
+  const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+  return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
 }
