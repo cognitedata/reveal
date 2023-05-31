@@ -11,13 +11,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const mainRevisionCollection = [
-  {date: '2023.01.12 13:23', imageUrl: '', index: 0},
+  {date: undefined, imageUrl: '', index: 0},
   {date: '2024.01.13 13:23', imageUrl: '', index: 1},
   {date: '2025.01.14 13:23', imageUrl: '', index: 2}
 ];
 
 const secondaryRevisionCollection = [
-  {date: '2023.01.12 13:23', imageUrl: '', index: 0},
+  {date: ' ', imageUrl: '', index: 0},
   {date: '2024.01.13 13:23', imageUrl: '', index: 1},
   {date: '2025.01.14 13:23', imageUrl: '', index: 2},
   {date: '2026.01.15 15:23', imageUrl: '', index: 3},

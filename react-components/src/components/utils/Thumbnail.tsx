@@ -46,7 +46,7 @@ const StyledThumbnail = styled.div<{ isActive: boolean }>`
   overflow: hidden;
   width: 160px;
   min-width: 56px;
-  height: 112px;
+  height: 90px;
   border: 1px solid #D9D9D9;
   border-radius: 12px;
 

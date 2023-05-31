@@ -122,7 +122,7 @@ const StyledLayoutGrid = styled.div`
 
 const RevisionItem = styled.div`
   width: 160px;
-  height: 90px;
+  height: 112px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;

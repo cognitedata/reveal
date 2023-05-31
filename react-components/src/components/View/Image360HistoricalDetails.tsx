@@ -4,7 +4,7 @@
 
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 import React, { useEffect, useState } from 'react';
-import { Image360HistoricalOverview } from '../Panel/Image360HistoricalOverview';
+import { Image360HistoricalPanel } from '../Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
 import { formatDate } from '../utils/FormatDate';
 import styled from 'styled-components';
@@ -82,7 +82,7 @@ export const Image360HistoricalDetails = ({
     >
       {viewer && (
         <>
-        <Image360HistoricalOverview
+        <Image360HistoricalPanel
             key={uniqueId()}
             revisionCount={revisionCollection.length}
             revisionDetailsExpanded={revisionDetailsExpanded}
