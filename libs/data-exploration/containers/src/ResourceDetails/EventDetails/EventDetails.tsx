@@ -4,11 +4,7 @@ import { ResourceDetailsTemplate } from '@data-exploration/components';
 
 import { Collapse, Title } from '@cognite/cogs.js';
 
-import {
-  EMPTY_OBJECT,
-  ResourceItem,
-  SelectableItemsProps,
-} from '@data-exploration-lib/core';
+import { EMPTY_OBJECT, SelectableItemsProps } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
@@ -45,7 +41,9 @@ interface Props {
   selectedRows?: ResourceSelection;
   selectionMode?: 'single' | 'multiple';
 }
-export const EventDetails: FC<Props & Pick<SelectableItemsProps, 'onSelect'> > = ({
+export const EventDetails: FC<
+  Props & Pick<SelectableItemsProps, 'onSelect'>
+> = ({
   eventId,
   isSelected,
   onSelect,

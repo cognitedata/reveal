@@ -1,6 +1,7 @@
 import {
   AssetDetails,
   EventDetails,
+  DocumentDetails,
   TimeseriesDetails,
   ResourceSelection,
 } from '@data-exploration/containers';
@@ -74,13 +75,12 @@ export const ResourceSelectorDetails = ({
       }
       case 'file': {
         content = (
-          //TODO Replace this new file Details Page
-          <div>Placeholder for file preview</div>
-          //   <FileSmallPreview
-          //     hideTitle={hideTitle}
-          //     fileId={item.id}
-          //     {...commonProps}
-          //   />
+          <DocumentDetails
+            documentId={item.id}
+            isSelected={isSelected}
+            onClose={onClose}
+            {...commonProps}
+          />
         );
         break;
       }

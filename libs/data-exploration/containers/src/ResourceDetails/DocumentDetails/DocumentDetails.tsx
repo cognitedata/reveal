@@ -1,6 +1,10 @@
 import React, { FC } from 'react';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
+
+import { Collapse, Title } from '@cognite/cogs.js';
+
+import { SelectableItemsProps, EMPTY_OBJECT } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
@@ -8,8 +12,6 @@ import {
   useSequenceSearchResultQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-
-import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   AssetDetailsTable,
@@ -19,6 +21,7 @@ import {
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
 import { FileInfo } from '../../Info';
+import { ResourceSelection } from '../../ResourceSelector';
 import {
   ASSETS,
   DETAILS,
@@ -35,12 +38,18 @@ interface Props {
   isSelected: boolean;
   onSelectClicked?: () => void;
   onClose?: () => void;
+  selectedRows?: ResourceSelection;
+  selectionMode?: 'single' | 'multiple';
 }
-export const DocumentDetails: FC<Props> = ({
+export const DocumentDetails: FC<
+  Props & Partial<Pick<SelectableItemsProps, 'onSelect'>>
+> = ({
   documentId,
   isSelected,
-  onSelectClicked,
+  onSelect,
   onClose,
+  selectionMode,
+  selectedRows,
 }) => {
   const {
     isLoading: isParentDocumentLoading,
@@ -107,13 +116,14 @@ export const DocumentDetails: FC<Props> = ({
     { enabled: isQueryEnabled }
   );
 
+  const enableDetailTableSelection = selectionMode === 'multiple';
   return (
     <ResourceDetailsTemplate
       title={parentDocument?.name || ''}
       icon="Documents"
       isSelected={isSelected}
       onClose={onClose}
-      onSelectClicked={onSelectClicked}
+      onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="document-details">
         <Collapse.Panel key="document-details" header={<h4>{DETAILS}</h4>}>
@@ -128,6 +138,11 @@ export const DocumentDetails: FC<Props> = ({
             id="asset-resource-document-detail-table"
             data={assets}
             isDataLoading={isParentDocumentLoading || isAssetsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.asset || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, 'asset')
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -140,6 +155,11 @@ export const DocumentDetails: FC<Props> = ({
             hasNextPage={hasTimeseriesNextPage}
             fetchMore={hasTimeseriesFetchNextPage}
             isDataLoading={isParentDocumentLoading || isTimeseriesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.timeSeries || EMPTY_OBJECT}
+            onRowSelection={(updater, currentTimeseries) =>
+              onSelect?.(updater, currentTimeseries, 'timeSeries')
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -152,6 +172,11 @@ export const DocumentDetails: FC<Props> = ({
             hasNextPage={hasDocumentsNextPage}
             fetchMore={hasDocumentsFetchNextPage}
             isDataLoading={isParentDocumentLoading || isDocumentsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.file || EMPTY_OBJECT}
+            onRowSelection={(updater, currentFiles) =>
+              onSelect?.(updater, currentFiles, 'file')
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel key="document-events-detail" header={<h4>{EVENTS}</h4>}>
@@ -161,6 +186,11 @@ export const DocumentDetails: FC<Props> = ({
             hasNextPage={hasEventNextPage}
             fetchMore={hasEventFetchNextPage}
             isDataLoading={isParentDocumentLoading || isEventsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.event || EMPTY_OBJECT}
+            onRowSelection={(updater, currentEvents) =>
+              onSelect?.(updater, currentEvents, 'event')
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -173,6 +203,11 @@ export const DocumentDetails: FC<Props> = ({
             hasNextPage={hasSequencesNextPage}
             fetchMore={hasSequencesFetchNextPage}
             isDataLoading={isParentDocumentLoading || isSequencesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.sequence || EMPTY_OBJECT}
+            onRowSelection={(updater, currentSequences) =>
+              onSelect?.(updater, currentSequences, 'sequence')
+            }
           />
         </Collapse.Panel>
       </StyledCollapse>
