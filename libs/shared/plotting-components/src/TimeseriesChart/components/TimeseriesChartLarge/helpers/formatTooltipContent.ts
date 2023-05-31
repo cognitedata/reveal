@@ -9,6 +9,10 @@ export const formatTooltipContent = (
 ) => {
   const datapoint = customData as TimeseriesDatapoint;
 
+  if (!datapoint) {
+    return [];
+  }
+
   if ('value' in datapoint) {
     return [
       {

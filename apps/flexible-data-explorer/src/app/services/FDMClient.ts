@@ -264,7 +264,7 @@ export class FDMClient extends BaseFDMClient {
       const dataType = item.name;
 
       const fields = item.fields.reduce((acc, item) => {
-        if (!item.type.custom) {
+        if (!item.type.custom && item.type.name !== 'timeSeries') {
           return [...acc, item.name];
         }
 

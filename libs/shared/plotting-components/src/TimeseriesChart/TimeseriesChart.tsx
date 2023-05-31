@@ -31,6 +31,8 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   autoRange,
   onChangeTimePeriod,
   onChangeDateRange,
+  hideActions,
+  styles,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -91,7 +93,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
       dataRevision={timeseriesId}
       isLoading={isLoading}
       range={chartRange}
-      style={{ height }}
+      style={{ height, ...styles }}
       onRangeChange={handleRangeChange}
       renderFilters={() => [
         <TimePeriods
@@ -106,12 +108,16 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
         />,
         <DateRangePicker value={dateRange} onChange={handleChangeDateRange} />,
       ]}
-      renderActions={() => [
-        <OpenInChartsButton
-          timeseriesId={timeseriesId}
-          dateRange={dateRange}
-        />,
-      ]}
+      renderActions={
+        hideActions
+          ? undefined
+          : () => [
+              <OpenInChartsButton
+                timeseriesId={timeseriesId}
+                dateRange={dateRange}
+              />,
+            ]
+      }
     />
   );
 };

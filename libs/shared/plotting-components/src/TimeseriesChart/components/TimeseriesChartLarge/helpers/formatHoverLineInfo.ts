@@ -4,7 +4,11 @@ import { getFormattedDateWithTimezone } from '../../../utils/getFormattedDateWit
 
 export const formatHoverLineInfo = ({ customData }: HoverLineData) => {
   const datapoint = customData as TimeseriesDatapoint;
-  const { timestamp } = datapoint;
+  const { timestamp } = datapoint || {};
+
+  if (!timestamp) {
+    return '';
+  }
 
   return getFormattedDateWithTimezone(timestamp);
 };

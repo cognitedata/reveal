@@ -21,10 +21,8 @@ export const useSearchDataTypesQuery = () => {
     ['dataType', 'search', space, dataModel, version, query],
     async () => {
       if (!(space && dataModel && version)) {
-        return Promise.resolve();
+        return Promise.reject(new Error('Missing stuff'));
       }
-      // return client.
-      console.log('HERE');
 
       const result = await client.searchDataTypes(query, data, {
         space,

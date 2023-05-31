@@ -1,6 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react';
 
-import { ResourceSelectionSidebar } from '@data-exploration-components/containers/ResourceSidebar';
 import {
   ResourceItem,
   ResourceItemState,
@@ -35,18 +34,20 @@ export const ResourceSelectorProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [resourceTypes, setResourceTypes] = useState<
+  const [_resourceTypes, setResourceTypes] = useState<
     ResourceType[] | undefined
   >(undefined);
-  const [isOpen, setIsOpen] = useState(false);
-  const [props, setProps] = useState<Omit<SelectableItemsProps, 'isSelected'>>({
-    selectionMode: 'single',
-    onSelect: () => {},
-  });
-  const [resourceItemState, setResourceItemState] = useState<
+  const [_isOpen, setIsOpen] = useState(false);
+  const [_props, setProps] = useState<Omit<SelectableItemsProps, 'isSelected'>>(
+    {
+      selectionMode: 'single',
+      onSelect: () => {},
+    }
+  );
+  const [_resourceItemState, setResourceItemState] = useState<
     ResourceItemState[]
   >([]);
-  const [onClose, setOnCloseCallback] = useState<
+  const [_onClose, setOnCloseCallback] = useState<
     (confirmed: boolean, results?: ResourceItem[]) => void
   >(() => () => {});
   const [onSelect, setOnSelectListener] = useState<

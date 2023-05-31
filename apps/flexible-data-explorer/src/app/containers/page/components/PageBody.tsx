@@ -38,5 +38,5 @@ const Content = styled.div<{ compact?: boolean }>`
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 16px 0;
+  padding-bottom: 16px;
 `;

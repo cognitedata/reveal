@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { EventDetails } from './EventDetails';
 
 export default {

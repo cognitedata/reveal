@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Chip, ChipGroup, Dropdown } from '@cognite/cogs.js';
+import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -11,12 +11,12 @@ export const SearchFilters = React.memo(() => {
 
   return (
     <>
-      <ChipGroup size="small" overflow={2}>
+      {/* <ChipGroup size="small" overflow={2}>
         <Chip type="neutral" label="Movie name starts with 'Harry Potter'" />
         <Chip type="neutral" label="Filter" />
         <Chip type="neutral" label="Filter" />
         <Chip type="neutral" label="Filter" />
-      </ChipGroup>
+      </ChipGroup> */}
 
       <Dropdown placement="bottom-end" content={<Filter />}>
         <Button

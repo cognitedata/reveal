@@ -36,7 +36,9 @@ export const HomePage = () => {
 
       <Page.Body loading={isLoading}>
         <CategoriesContainer>
-          <Title level={4}>Categories {data?.length}</Title>
+          <Title level={4}>
+            {t('categories_title', 'Categories')} {data?.length}
+          </Title>
 
           <CategoryContent>
             {data?.map((item) => (
@@ -91,7 +93,7 @@ const CategoriesContainer = styled.div`
 
 const CategoryContent = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 10px;
   grid-row-gap: 10px;
 

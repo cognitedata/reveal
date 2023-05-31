@@ -35,36 +35,35 @@ export const useNavigation = () => {
     [navigate]
   );
 
-  // const redirectSearchPage = (
-  //   space: string,
-  //   dataModel: string,
-  //   version: string
-  // ) => {
-  //   navigate(
-  //     { pathname: `${space}/${dataModel}/${version}/search`, search },
-  //     { replace: true }
-  //   );
-  // };
+  const toInstancePage = useCallback(
+    (dataType: string, nodeSpace: string | undefined, externalId: string) => {
+      const { space, dataModel, version } = params;
+      navigate({
+        pathname: `/${dataModel}/${space}/${version}/${dataType}/${nodeSpace}/${externalId}`,
+        search,
+      });
+    },
+    [navigate, params, search]
+  );
 
-  const toInstancePage = (
-    dataType: string,
-    nodeSpace: string,
-    externalId: string
-  ) => {
-    const { space, dataModel, version } = params;
-    navigate({
-      pathname: `/${dataModel}/${space}/${version}/${dataType}/${nodeSpace}/${externalId}`,
-      search,
-    });
-  };
+  const toTimeseriesPage = useCallback(
+    (externalId: string | number) => {
+      const { space, dataModel, version } = params;
+      navigate({
+        pathname: `/${dataModel}/${space}/${version}/timeseries/${externalId}`,
+        search,
+      });
+    },
+    [navigate, params, search]
+  );
 
-  const toLandingPage = () => {
+  const toLandingPage = useCallback(() => {
     navigate('/');
-  };
+  }, [navigate]);
 
-  const goBack = () => {
+  const goBack = useCallback(() => {
     navigate('..');
-  };
+  }, [navigate]);
 
   return {
     toLandingPage,
@@ -73,6 +72,7 @@ export const useNavigation = () => {
     toHomePage,
 
     toInstancePage,
+    toTimeseriesPage,
     goBack,
   };
 };

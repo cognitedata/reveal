@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { DocumentDetails } from './DocumentDetails';
 
 export default {

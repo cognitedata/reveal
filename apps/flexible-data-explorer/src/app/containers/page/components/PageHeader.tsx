@@ -11,6 +11,7 @@ interface Props {
   subtitle?: string;
   onBackClick?: () => void;
   loading?: boolean;
+  alignActions?: 'right' | 'left';
 }
 
 export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
@@ -19,7 +20,10 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
   subtitle,
   onBackClick,
   loading,
+  alignActions = 'right',
 }) => {
+  const hasContent = title || subtitle || loading;
+
   return (
     <Header>
       <Content>
@@ -32,18 +36,20 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
           />
         )}
 
-        <Wrapper>
-          {loading ? (
-            <Skeleton.Paragraph lines={2} />
-          ) : (
-            <>
-              <Title level={4}>{title}</Title>
-              <Body>{subtitle}</Body>
-            </>
-          )}
-        </Wrapper>
+        {hasContent && (
+          <Wrapper>
+            {loading ? (
+              <Skeleton.Paragraph lines={2} />
+            ) : (
+              <>
+                <Title level={4}>{title}</Title>
+                <Body>{subtitle}</Body>
+              </>
+            )}
+          </Wrapper>
+        )}
 
-        <Actions>
+        <Actions align={alignActions}>
           {React.Children.map(children, (child) => {
             if (React.isValidElement(child)) {
               return React.cloneElement(child, { loading } as any);
@@ -69,8 +75,9 @@ const Header = styled.div`
   z-index: ${zIndex.PAGE_HEADER};
 `;
 
-const Actions = styled.div`
-  margin-left: auto;
+const Actions = styled.div<{ align?: 'left' | 'right' }>`
+  ${({ align }) =>
+    align === 'left' ? 'margin-right: auto;' : 'margin-left: auto;'}
   gap: 8px;
   display: flex;
 `;

@@ -45,7 +45,7 @@ export const PageWidgets: React.FC<PropsWithChildren> = ({ children }) => {
 };
 
 const Container = styled.div<{ hasExpandedWidget: boolean }>`
-  gap: 10px;
+  gap: 20px;
   padding: 16px 0;
 
   ${({ hasExpandedWidget }) => {

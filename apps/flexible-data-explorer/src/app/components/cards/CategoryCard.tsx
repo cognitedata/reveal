@@ -44,6 +44,7 @@ export const CategoryCard: React.FC<Props> = React.memo(
 
 const Container = styled.div`
   width: 100%;
+  min-height: 100px;
   background-color: white;
   border-radius: 10px;
   padding: 16px;

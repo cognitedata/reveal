@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { SequenceDetails } from './SequenceDetails';
 
 export default {

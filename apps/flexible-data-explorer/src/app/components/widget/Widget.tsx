@@ -53,10 +53,10 @@ const Container = styled.div<BaseWidgetProps>`
   }}
 
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 6px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   background-color: white;
-  box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
-    0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
+  box-shadow: 0px 1px 1px 1px rgba(79, 82, 104, 0.06),
+    0px 1px 2px 1px rgba(79, 82, 104, 0.04);
 `;

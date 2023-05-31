@@ -1,4 +1,4 @@
-import { Variant } from '../LineChart';
+import { Style, Variant } from '../LineChart';
 
 export interface TimeseriesChartProps {
   timeseriesId: number;
@@ -16,6 +16,8 @@ export interface TimeseriesChartProps {
   autoRange?: boolean;
   onChangeTimePeriod?: (props: UpdateTimePeriodProps) => void;
   onChangeDateRange?: (dateRange: DateRange) => void;
+  hideActions?: boolean;
+  styles?: Style;
 }
 
 export type DateRange = [Date, Date];

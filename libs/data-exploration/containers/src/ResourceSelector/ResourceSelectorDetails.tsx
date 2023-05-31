@@ -1,17 +1,20 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
+import { Loader, SearchEmpty } from '@data-exploration/components';
+import noop from 'lodash/noop';
+
+import { ResourceItem, SelectableItemsProps } from '@data-exploration-lib/core';
+
 import {
   AssetDetails,
   EventDetails,
   DocumentDetails,
   TimeseriesDetails,
-  ResourceSelection,
-} from '@data-exploration/containers';
-import React from 'react';
-import styled from 'styled-components';
+} from '../ResourceDetails';
 
-import noop from 'lodash/noop';
-
-import { Loader, SearchEmpty } from '@data-exploration/components';
-import { ResourceItem, SelectableItemsProps } from '@data-exploration-lib/core';
+import { ResourceSelection } from './ResourceSelector';
 
 type Props = {
   item?: ResourceItem;
@@ -55,7 +58,7 @@ export const ResourceSelectorDetails = ({
   onSelect = noop,
 
   isSelected = false,
-  hideTitle = false,
+  // hideTitle = false,
   hideContent = false,
 }: Props) => {
   const commonProps = { onSelect, selectedRows, selectionMode };

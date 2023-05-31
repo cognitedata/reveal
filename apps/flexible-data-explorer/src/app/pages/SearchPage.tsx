@@ -1,36 +1,20 @@
-import { SearchResults } from '../components/search/SearchResults';
 import { Page } from '../containers/page/Page';
-import { useNavigation } from '../hooks/useNavigation';
+import { GenericResults } from '../containers/search/results/GenericResults';
+import { ResultsSelection } from '../containers/search/results/ResultsSelection';
+import { TimeseriesResults } from '../containers/search/results/TimeseriesResults';
 import { useSearchDataTypesQuery } from '../services/dataTypes/queries/useSearchDataTypesQuery';
 
 export const SearchPage = () => {
-  const navigate = useNavigation();
-
-  const { data, isLoading } = useSearchDataTypesQuery();
+  const { data: results, isLoading } = useSearchDataTypesQuery();
 
   return (
     <Page>
+      <Page.Header alignActions="left">
+        <ResultsSelection />
+      </Page.Header>
       <Page.Body loading={isLoading}>
-        {Object.keys(data || {}).map((key) => {
-          const values = data?.[key];
-
-          return (
-            <SearchResults>
-              <SearchResults.Header title={key} />
-              <ul>
-                {values.items.map((item: any) => (
-                  <li
-                    onClick={() => {
-                      navigate.toInstancePage(key, item.space, item.externalId);
-                    }}
-                  >
-                    {JSON.stringify(item)}
-                  </li>
-                ))}
-              </ul>
-            </SearchResults>
-          );
-        })}
+        <GenericResults data={results} />
+        <TimeseriesResults />
       </Page.Body>
     </Page>
   );

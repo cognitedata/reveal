@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
-import { Collapse, Title } from '@cognite/cogs.js';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
+
+import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   useAssetsByIdQuery,
@@ -10,8 +11,7 @@ import {
   useSequenceSearchResultQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
-import { ResourceItem } from '@data-exploration-lib/core';
-import { SequenceInfo } from '../../Info';
+
 import {
   AssetDetailsTable,
   EventDetailsTable,
@@ -19,7 +19,7 @@ import {
   SequenceDetailsTable,
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
-
+import { SequenceInfo } from '../../Info';
 import {
   ASSETS,
   DETAILS,

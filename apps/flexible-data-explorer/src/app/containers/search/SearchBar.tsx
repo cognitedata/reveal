@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Icon } from '@cognite/cogs.js';
 
@@ -44,23 +44,21 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
   useClickOutsideListener(closePreview, ref);
 
   return (
-    <Container
-      ref={ref}
-      onFocus={() => {
-        setFocus(true);
-      }}
-      focused={isFocused}
-      width={width}
-      inverted={inverted}
-    >
+    <Container ref={ref} focused={isFocused} width={width} inverted={inverted}>
       <Content>
         <StyledIcon type="Search" />
         <StyledInput
           onKeyUp={(e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
+              e.preventDefault();
+              (e.target as any).blur();
+
               closePreview();
               navigate.toSearchPage(query);
             }
+          }}
+          onFocus={() => {
+            setFocus(true);
           }}
           value={query ?? ''}
           placeholder={t('search_button', 'Search...')}
@@ -92,29 +90,33 @@ const Container = styled.div<{
   border-bottom-left: none;
   z-index: ${zIndex.SEARCH};
 
-  filter: drop-shadow(0px 1px 8px rgba(79, 82, 104, 0.06))
-    drop-shadow(0px 1px 1px rgba(79, 82, 104, 0.1));
-
   ${(props) => {
     if (props.inverted) {
-      return `
-        background-color: #F3F4F8;
+      return css`
+        background-color: #f3f4f8;
         outline: 1px solid rgba(210, 212, 218, 0.56);
       `;
     }
+
+    return css`
+      filter: drop-shadow(0px 1px 8px rgba(79, 82, 104, 0.06))
+        drop-shadow(0px 1px 1px rgba(79, 82, 104, 0.1));
+    `;
   }};
 
   ${(props) => {
     if (props.focused) {
-      return `
+      return css`
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         background-color: white;
         outline: none;
+        filter: drop-shadow(0px 1px 8px rgba(79, 82, 104, 0.06))
+          drop-shadow(0px 1px 1px rgba(79, 82, 104, 0.1));
       `;
     }
 
-    return `
+    return css`
       border-radius: 10px;
     `;
   }}

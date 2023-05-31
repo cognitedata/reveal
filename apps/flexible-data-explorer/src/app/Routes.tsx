@@ -6,6 +6,7 @@ import { SearchBar } from './containers/search/SearchBar';
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { HomePage } from './pages/HomePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
+import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
 import { ListPage } from './pages/ListPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { SearchPage } from './pages/SearchPage';
@@ -32,6 +33,8 @@ const Routes = () => {
         >
           <Route path="search" element={<SearchPage />} />
           <Route path="list/:dataType" element={<ListPage />} />
+
+          <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
 
           <Route
             path=":dataType/:nodeSpace/:externalId/overview?"

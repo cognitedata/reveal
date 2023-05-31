@@ -2,9 +2,6 @@ import { IconType } from '@cognite/cogs.js';
 
 /**
  * Resolves a value to a matching (cogs.js) icon type.
- *
- * NOTE: the value (type) has to be singular to also match on plural tense.
- * For example: value (and not values), user (and not users), etc...
  */
 export const getIcon = (value: string): IconType => {
   const type = value.toLocaleLowerCase();
@@ -17,7 +14,7 @@ export const getIcon = (value: string): IconType => {
     return 'Assets';
   }
 
-  if (['timeserie'].includes(type)) {
+  if (['time series'].includes(type)) {
     return 'Timeseries';
   }
 
@@ -25,5 +22,5 @@ export const getIcon = (value: string): IconType => {
     return 'Document';
   }
 
-  return 'Component';
+  return 'DataTable';
 };

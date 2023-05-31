@@ -25,11 +25,10 @@ import { Flex } from '@cognite/cogs.js';
 
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
-import { LoadMore, LoadMoreProps, SortIcon } from './components';
+import { SortIcon } from './components';
 import {
   TableContainer,
   StyledTable,
-  LoadMoreButtonWrapper,
   Tr,
   HeaderRow,
   MainRowContainer,
@@ -50,7 +49,7 @@ import {
 
 // import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
 
-export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
+export type TableProps<T extends Record<string, any>> = {
   id: string;
   query?: string;
   data: T[];
@@ -118,13 +117,9 @@ export function Table<T extends TableData>({
   stickyHeader = true,
   enableColumnResizing = true,
   sorting,
-  showLoadButton = false,
-  hasNextPage,
   // isDataLoading,
-  isLoadingMore,
   // tableHeaders,
   // tableSubHeaders,
-  fetchMore,
   // hiddenColumns,
   // hideColumnToggle,
   getCanRowExpand,
@@ -225,13 +220,6 @@ export function Table<T extends TableData>({
     // Fixes the weird behavior with the sorting actions on undefined and async data.
     sortDescFirst: false,
   });
-
-  const handleClickLoadMore = () => {
-    if (!fetchMore) return;
-    fetchMore();
-  };
-
-  const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
 
   return (
     <TableContainer>
@@ -346,11 +334,6 @@ export function Table<T extends TableData>({
             })}
           </Tbody>
         </StyledTable>
-        {showLoadButton && (
-          <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
-            <LoadMore {...loadMoreProps} fetchMore={handleClickLoadMore} />
-          </LoadMoreButtonWrapper>
-        )}
       </ContainerInside>
     </TableContainer>
   );
