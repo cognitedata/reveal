@@ -1242,7 +1242,7 @@ export interface OverlayCollection<ContentType> {
 export type OverlayCollectionOptions = {
     defaultOverlayColor?: THREE_2.Color;
     overlayTexture?: THREE_2.Texture;
-    circularOverlay?: boolean;
+    overlayTextureMask?: THREE_2.Texture;
 };
 
 // @public
