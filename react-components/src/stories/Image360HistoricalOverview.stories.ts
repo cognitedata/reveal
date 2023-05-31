@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360HistoricalDetailsPanel } from '../components';
+import { Image360HistoricalOverview } from '../components';
 
 const meta = {
-  title: 'Example/Image360HistoricalDetailsPanel',
-  component: Image360HistoricalDetailsPanel,
+  title: 'Example/Image360HistoricalOverview',
+  component: Image360HistoricalOverview,
   tags: ['autodocs'],
-} satisfies Meta<typeof Image360HistoricalDetailsPanel>;
+} satisfies Meta<typeof Image360HistoricalOverview>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
