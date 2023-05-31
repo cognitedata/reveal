@@ -7,6 +7,8 @@ import React, { useEffect, useState } from 'react';
 import { Image360HistoricalOverview } from '../Panel/Image360HistoricalOverview';
 import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
 import { formatDate } from '../utils/FormatDate';
+import styled from 'styled-components';
+import { uniqueId } from 'lodash';
 
 export interface Image360HistoricalDetailsProps{
   viewer: Cognite3DViewer;
@@ -20,7 +22,6 @@ export const Image360HistoricalDetails = ({
   viewer,
   stationId,
   stationName,
-  collectionId,
   image360Entity
 }: Image360HistoricalDetailsProps) => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
@@ -34,6 +35,7 @@ export const Image360HistoricalDetails = ({
     }[]
   >([]);
   const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
+  const [minWidth, setMinWidth] = useState('100px');
 
   useEffect(() => {
     const fetchRevisionCollection = async () => {
@@ -69,23 +71,29 @@ export const Image360HistoricalDetails = ({
     fetchRevisionCollection();
   }, [image360Entity]);
 
+  useEffect(() => {
+    const newMinWidth = revisionDetailsExpanded ? '90%' : '100px';
+    setMinWidth(newMinWidth);
+  }, [revisionDetailsExpanded]);
+
   return(
-    <>
+    <DetailsContainer
+      style={{ minWidth }}
+    >
       {viewer && (
         <>
         <Image360HistoricalOverview
-            key={`${stationId}`}
+            key={uniqueId()}
             revisionCount={revisionCollection.length}
             revisionDetailsExpanded={revisionDetailsExpanded}
             setRevisionDetailsExpanded={setRevisionDetailsExpanded}
         />
         {revisionDetailsExpanded && (
           <Image360HistoricalSummary
-          key={`${stationId}`}
+            key={uniqueId()}
             viewer={viewer}
             stationId={stationId}
             stationName={stationName}
-            collectionId={collectionId}
             activeRevision={activeRevision}
             setActiveRevision={setActiveRevision}
             revisionCollection={revisionCollection}
@@ -93,6 +101,14 @@ export const Image360HistoricalDetails = ({
         )}
         </>
       )}
-    </>
+      </DetailsContainer>
   );
 };
+
+const DetailsContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: fit-content;
+`;

@@ -18,7 +18,6 @@ export interface Image360RevisionDetails{
 export interface Image360HistoricalSummaryProps{
   stationId?: string;
   stationName?: string;
-  collectionId?: string;
   revisionCollection?: Image360RevisionDetails[];
   activeRevision?: number;
   setActiveRevision?: (index: number) => void;
@@ -28,7 +27,6 @@ export interface Image360HistoricalSummaryProps{
 export const Image360HistoricalSummary = ({
   stationId,
   stationName,
-  collectionId,
   revisionCollection,
   activeRevision,
   setActiveRevision,
@@ -40,7 +38,6 @@ export const Image360HistoricalSummary = ({
       <StyledFlex direction='column'>
         <StyledSubFlex>{stationName}</StyledSubFlex>
         <StyledDetail>Station: {stationId}</StyledDetail>
-        <StyledDetail>Collection: {collectionId}</StyledDetail>
       </StyledFlex>
 
       <StyledLayoutGridContainer><StyledLayoutGrid>
