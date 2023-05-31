@@ -190,7 +190,7 @@ export class Image360ApiHelper {
 
     pull(this._imageCollections, collection);
 
-    collection.image360Entities.forEach(entity => this._image360Facade.delete(entity as Image360Entity));
+    (collection as DefaultImage360Collection).dispose();
     this._needsRedraw = true;
   }
 
