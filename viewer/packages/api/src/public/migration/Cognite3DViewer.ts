@@ -818,7 +818,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Returns a list of added 360 image collections
+   * Returns a list of added 360 image collections.
    */
   get360ImageCollections(): Image360Collection[] {
     return this._image360ApiHelper?.getImageCollections() ?? [];
@@ -837,7 +837,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Removes a previously added 360 image collection from the viewer
+   * Removes a previously added 360 image collection from the viewer.
    * @param imageCollection Collection to remove.
    */
   remove360ImageSet(imageCollection: Image360Collection): void {
