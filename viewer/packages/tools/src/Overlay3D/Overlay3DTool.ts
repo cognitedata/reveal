@@ -52,16 +52,18 @@ export type OverlayCollectionOptions = {
   defaultOverlayColor?: THREE.Color;
   /**
    * Sets default texture for all overlays of this OverlayCollection.
-   * Must be a square texture with size at least as `maxPointSize`.
-   * Texture should be monochrome, internally, R channel is used as a mask for denoting pixels
-   * that should be colored by texture and not by overlay color.
+   * Must be a square texture, recommended size is at least `maxPointSize` for
+   * not pixelated overlays.
    */
   overlayTexture?: THREE.Texture;
   /**
-   * Sets whether overlays are always displayed as circles. Regardless of
-   * texture used. Default is true.
+   * Sets default mask for all overlays of this OverlayCollection,
+   * denoting where overlay color should be placed compared to texture color.
+   * Must be a square texture with the same size as `overlayTexture`.
+   * Texture should be monochrome. Internally, R channel is used for
+   * denoting pixels that should be colored by texture and not by overlay color.
    */
-  circularOverlay?: boolean;
+  overlayTextureMask?: THREE.Texture;
 };
 
 /**
@@ -114,7 +116,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     const points = new Overlay3DCollection<ContentType>(overlays, {
       defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor,
       overlayTexture: options?.overlayTexture,
-      circularOverlay: options?.circularOverlay ?? true
+      overlayTextureMask: options?.overlayTextureMask
     });
 
     viewer.on('cameraChange', () => {

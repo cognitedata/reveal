@@ -11,9 +11,9 @@ import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './O
 
 export type Overlay3DCollectionOptions = {
   overlayTexture?: Texture;
+  overlayTextureMask?: Texture;
   maxPointSize?: number;
   defaultOverlayColor?: Color;
-  circularOverlay?: boolean;
 };
 
 export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
@@ -25,7 +25,10 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   private readonly DefaultMaxPoints = 100000;
   private readonly defaultOverlayColor = new Color('white');
 
-  private readonly _sharedTexture: Texture;
+  private readonly _sharedTextures: {
+    color: Texture;
+    mask: Texture | undefined;
+  };
   private readonly _overlayPoints: OverlayPointsObject;
   private readonly _iconRadius = 0.4;
   private _overlays: Overlay3DIcon<MetadataType>[];
@@ -36,13 +39,19 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     super();
 
     this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
-    this._sharedTexture = options?.overlayTexture ?? this.createCircleTexture();
+
+    const defaultOverlayTextures = this.createCircleTextures();
+    this._sharedTextures = {
+      color: options?.overlayTexture ?? defaultOverlayTextures.color,
+      mask: options?.overlayTextureMask ?? (options?.overlayTexture ? undefined : defaultOverlayTextures.mask)
+    };
+
     this._overlayPoints = new OverlayPointsObject(overlayInfos ? overlayInfos.length : this.DefaultMaxPoints, {
-      spriteTexture: this._sharedTexture,
+      spriteTexture: this._sharedTextures.color,
+      maskTexture: this._sharedTextures.mask,
       minPixelSize: this.MinPixelSize,
       maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
-      radius: this._iconRadius,
-      circularOverlay: options?.circularOverlay ?? true
+      radius: this._iconRadius
     });
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
@@ -137,27 +146,49 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._overlays.forEach(overlay => overlay.dispose());
 
     this._overlayPoints.dispose();
-    this._sharedTexture.dispose();
+    this._sharedTextures.color.dispose();
+    this._sharedTextures.mask?.dispose();
   }
 
-  private createCircleTexture(): THREE.Texture {
+  private createCircleTextures(): {
+    color: THREE.Texture;
+    mask: THREE.Texture;
+  } {
     const canvas = document.createElement('canvas');
-    const textureSize = 64;
+    const canvas2 = document.createElement('canvas');
+
+    const textureSize = this.MaxPixelSize * 2;
     canvas.width = textureSize;
     canvas.height = textureSize;
-
-    const overlayColor = new Color().setScalar(0);
+    canvas2.width = textureSize;
+    canvas2.height = textureSize;
 
     const context = canvas.getContext('2d')!;
+    const context2 = canvas2.getContext('2d')!;
+
     context.clearRect(0, 0, textureSize, textureSize);
     context.beginPath();
     context.lineWidth = textureSize / 12;
     context.strokeStyle = 'white';
-    context.fillStyle = '#' + overlayColor.getHexString();
-    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 3, 0, 2 * Math.PI);
-    context.fill();
+    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - (context.lineWidth / 2) * 1.1, 0, 2 * Math.PI);
     context.stroke();
+    context.closePath();
 
-    return new CanvasTexture(canvas);
+    const colorTexture = new CanvasTexture(canvas);
+
+    const fillRGB = new Color(1.0, 0, 0);
+
+    context2.clearRect(0, 0, textureSize, textureSize);
+    context2.beginPath();
+    context2.fillStyle = '#' + fillRGB.getHexString();
+    context2.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
+    context2.fill();
+
+    const maskTexture = new CanvasTexture(canvas2);
+
+    return {
+      color: colorTexture,
+      mask: maskTexture
+    };
   }
 }

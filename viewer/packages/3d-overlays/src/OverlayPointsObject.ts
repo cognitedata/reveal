@@ -25,13 +25,13 @@ import overlay3DIconFrag from './overlay3DIcon.frag';
 
 export type OverlayPointsParameters = {
   spriteTexture: Texture;
+  maskTexture?: Texture;
   minPixelSize: number;
   maxPixelSize: number;
   radius: number;
   colorTint?: Color;
   depthMode?: DepthModes;
   collectionOpacity?: number;
-  circularOverlay?: boolean;
 };
 
 export class OverlayPointsObject extends Group {
@@ -61,31 +61,31 @@ export class OverlayPointsObject extends Group {
       colorTint = new Color(1, 1, 1),
       depthMode = LessEqualDepth,
       collectionOpacity = 1,
-      circularOverlay = false
+      maskTexture
     } = materialParameters;
 
     const frontMaterial = this.createIconsMaterial(
       spriteTexture,
+      maskTexture,
       collectionOpacity,
       depthMode,
       minPixelSize,
       maxPixelSize,
       radius,
       colorTint,
-      false,
-      circularOverlay
+      false
     );
 
     const backMaterial = this.createIconsMaterial(
       spriteTexture,
+      maskTexture,
       0.5,
       GreaterDepth,
       minPixelSize,
       maxPixelSize,
       radius,
       colorTint,
-      false,
-      circularOverlay
+      false
     );
 
     const frontPoints = this.initializePoints(geometry, frontMaterial);
@@ -155,19 +155,20 @@ export class OverlayPointsObject extends Group {
   }
 
   private createIconsMaterial(
-    texture: Texture,
+    colorTexture: Texture,
+    maskTexture: Texture | undefined,
     collectionOpacity: number,
     depthFunction: DepthModes,
     minPixelSize: number,
     maxPixelSize: number,
     radius: number,
     colorTint: Color,
-    depthWrite: boolean,
-    circularOverlay: boolean
+    depthWrite: boolean
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
-        map: { value: texture },
+        colorTexture: { value: colorTexture },
+        maskTexture: { value: maskTexture },
         radius: { value: radius },
         colorTint: { value: colorTint },
         renderSize: { value: new Vector2(1, 1) },
@@ -176,7 +177,7 @@ export class OverlayPointsObject extends Group {
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
       },
       defines: {
-        circular_overlay: circularOverlay
+        isMaskDefined: maskTexture !== undefined
       },
       vertexShader: glsl(overlay3DIconVert),
       fragmentShader: glsl(overlay3DIconFrag),
