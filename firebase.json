@@ -1,12 +1,12 @@
 {
   "hosting": [
     {
-      "site": "cognite-entity-matching-production",
+      "site": "cdf-entity-matching-prod",
       "public": "./build",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     },
     {
-      "site": "cognite-entity-matching-staging",
+      "site": "cdf-entity-matching-staging",
       "public": "./build",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     }
