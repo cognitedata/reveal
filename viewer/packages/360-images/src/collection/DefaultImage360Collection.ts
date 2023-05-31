@@ -254,6 +254,18 @@ export class DefaultImage360Collection implements Image360Collection {
       });
     }
   }
+
+  getAssetIds(): Promise<IdEither[]> {
+    const fileDescriptors = this.image360Entities
+      .map(entity =>
+        entity
+          .getRevisions()
+          .map(revision => revision.getDescriptors().faceDescriptors)
+          .flat()
+      )
+      .flat();
+    return this._image360DataProvider.get360ImageAssets(fileDescriptors);
+  }
 }
 
 function matchesAssetRef(assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink, matchRef: IdEither): boolean {

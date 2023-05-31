@@ -33,6 +33,10 @@ export interface Image360FileProvider {
   ): Promise<Image360Face[]>;
 }
 
+export interface Image360AssetProvider {
+  get360ImageAssets(image360FileDescriptors: Image360FileDescriptor[]): Promise<IdEither[]>;
+}
+
 export type Historical360ImageSet = Image360EventDescriptor & {
   imageRevisions: Image360Descriptor[];
 };
