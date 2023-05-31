@@ -104,4 +104,8 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
   getFilesByAssetRef(_assetId: IdEither): Promise<CogniteInternalId[]> {
     return Promise.resolve([]);
   }
+
+  get360ImageAssets(_image360FileDescriptors: Image360FileDescriptor[]): Promise<IdEither[]> {
+    return Promise.resolve([]);
+  }
 }
