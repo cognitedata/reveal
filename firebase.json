@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "site": "cdf-extractor-downloads-production",
+      "site": "cdf-extractor-downloads-prod",
       "public": "./build",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     },
