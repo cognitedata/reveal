@@ -10,13 +10,19 @@ import {
   DeleteDataModelDTO,
   DeleteDataModelOutput,
   FetchDataModelDTO,
+  FetchDataModelFromDMSDTO,
   UpdateDataModelDTO,
 } from './dto';
+import { DataModelsApiService } from './providers/fdm-next';
+import { DataModelInstanceDTO } from './providers/fdm-next/dto/dms-data-model-dtos';
 import { ListSpacesDTO } from './providers/fdm-next/dto/dms-space-dtos';
 import { DataModel, SpaceDTO, SpaceInstance } from './types';
 
 export class DataModelsHandler {
-  constructor(private fdmClient: FlexibleDataModelingClient) {}
+  constructor(
+    private fdmClient: FlexibleDataModelingClient,
+    private dataModelsApiService: DataModelsApiService
+  ) {}
 
   /**
    * Lists the available Data Models
@@ -63,6 +69,31 @@ export class DataModelsHandler {
 
       return Result.fail(err);
     }
+  }
+
+  async fetchDataModelFromDMS(
+    dto: FetchDataModelFromDMSDTO
+  ): Promise<Result<DataModelInstanceDTO>> {
+    const { items: dataModelVersions } =
+      // eslint-disable-next-line testing-library/no-await-sync-query
+      await this.dataModelsApiService.getByIds({
+        items: [
+          {
+            externalId: dto.dataModelId,
+            space: dto.space,
+            version: dto.version,
+          },
+        ],
+      });
+
+    if (dataModelVersions.length > 0) {
+      return Result.ok(dataModelVersions[0]);
+    }
+
+    // TODO i18n and better message
+    return Result.fail({
+      name: 'Unable to find Data Model',
+    });
   }
 
   async update(dto: UpdateDataModelDTO): Promise<Result<DataModel>> {

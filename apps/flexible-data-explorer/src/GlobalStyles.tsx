@@ -2,14 +2,7 @@
 // @ts-nocheck
 import React from 'react';
 
-import {
-  Tooltip as CogsTooltip,
-  Modal,
-  Dropdown,
-  Tooltip as CogsTooltip,
-  Modal,
-  Dropdown,
-} from '@cognite/cogs.js';
+import { Tooltip as CogsTooltip, Modal, Dropdown } from '@cognite/cogs.js';
 
 import 'monaco-editor/dev/vs/editor/editor.main.css';
 

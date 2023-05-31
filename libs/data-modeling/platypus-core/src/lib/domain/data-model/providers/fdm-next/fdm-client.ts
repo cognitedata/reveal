@@ -715,14 +715,14 @@ export class FdmClient implements FlexibleDataModelingClient {
         space: dto.spaceExternalId,
         instanceSpace: dto.instanceSpaceExternalId,
         typeName: dto.typeName,
-        version: dto.version,
+        viewVersion: dto.viewVersion,
       }),
       this.transformationApiService.getTransformationsForType({
         destination: 'edges',
         space: dto.spaceExternalId,
         instanceSpace: dto.instanceSpaceExternalId,
         typeName: dto.typeName,
-        version: dto.version,
+        viewVersion: dto.viewVersion,
       }),
     ]).then((values) => values.flat());
   }

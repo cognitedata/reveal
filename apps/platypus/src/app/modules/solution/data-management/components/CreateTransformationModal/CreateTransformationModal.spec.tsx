@@ -71,7 +71,8 @@ describe('CreateTransformationModal', () => {
         space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
-        version="1"
+        dataModelVersion="1"
+        viewVersion="1"
       />,
       {
         redux: mockReduxStore,
@@ -91,7 +92,8 @@ describe('CreateTransformationModal', () => {
         space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
-        version="1"
+        dataModelVersion="1"
+        viewVersion="1"
       />,
       {
         redux: mockReduxStore,
@@ -112,7 +114,8 @@ describe('CreateTransformationModal', () => {
         space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
-        version="1"
+        dataModelVersion="1"
+        viewVersion="1"
       />,
       {
         redux: mockReduxStore,
@@ -135,7 +138,8 @@ describe('CreateTransformationModal', () => {
         space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
-        version="1"
+        dataModelVersion="1"
+        viewVersion="1"
       />,
       {
         redux: mockReduxStore,
@@ -152,7 +156,8 @@ describe('CreateTransformationModal', () => {
         space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
-        version="1"
+        dataModelVersion="1"
+        viewVersion="1"
       />,
       {
         redux: mockReduxStore,
@@ -186,7 +191,8 @@ describe('CreateTransformationModal', () => {
         space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
-        version="1"
+        dataModelVersion="1"
+        viewVersion="1"
       />,
       {
         redux: mockReduxStore,

@@ -1,3 +1,5 @@
+import { fdmViewsMockData } from './views';
+
 export const fdmDataModelsMockData = [
   {
     space: 'blog',
@@ -12,6 +14,7 @@ export const fdmDataModelsMockData = [
     },
     createdTime: 1625702400000,
     lastUpdatedTime: 1625702400000,
+    views: fdmViewsMockData,
   },
   {
     space: 'blog',
@@ -26,6 +29,7 @@ export const fdmDataModelsMockData = [
     },
     createdTime: 1625702400001,
     lastUpdatedTime: 1625702400004,
+    views: fdmViewsMockData,
   },
   {
     space: 'test-space',
@@ -40,5 +44,6 @@ export const fdmDataModelsMockData = [
     },
     createdTime: 1625702400001,
     lastUpdatedTime: 1625702400004,
+    views: fdmViewsMockData,
   },
 ];

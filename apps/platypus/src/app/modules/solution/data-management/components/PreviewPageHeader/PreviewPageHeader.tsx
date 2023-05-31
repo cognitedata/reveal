@@ -19,49 +19,49 @@ import { PageHeaderDivider } from '../DataPreviewTable/elements';
 import * as S from './elements';
 
 type Props = {
-  space: string;
+  children?: React.ReactNode;
   draftRowsCount: number;
+  filteredRowCount: null | undefined | number;
   isDeleteButtonDisabled: boolean;
-  onRefreshClick: () => void;
   onAddTransformationClick: () => void;
   onCreateClick: () => void;
   onDeleteClick: () => void;
-  onSuggestionsClick: () => void;
   onDraftRowsCountClick: () => void;
   onPublishedRowsCountClick: () => void;
+  onRefreshClick: () => void;
   onSearchInputValueChange: (value: string) => void;
+  onSuggestionsClick: () => void;
   publishedRowsCount: number;
-  filteredRowCount: null | undefined | number;
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
+  space: string;
   suggestionsAvailable?: boolean;
   title: string;
   typeName: string;
-  version: string;
-  children?: React.ReactNode;
+  viewVersion: string;
 };
 
 export function PreviewPageHeader({
-  space,
+  children,
   draftRowsCount,
+  filteredRowCount,
   isDeleteButtonDisabled,
   onAddTransformationClick,
   onCreateClick,
   onDeleteClick,
-  onSuggestionsClick,
   onDraftRowsCountClick,
   onPublishedRowsCountClick,
-  onSearchInputValueChange,
   onRefreshClick,
+  onSearchInputValueChange,
+  onSuggestionsClick,
   publishedRowsCount,
-  filteredRowCount,
   shouldShowDraftRows,
   shouldShowPublishedRows,
+  space,
   suggestionsAvailable = false,
   title,
   typeName,
-  version,
-  children,
+  viewVersion,
 }: Props) {
   const { t } = useTranslation('DataPreview');
   const isTransformationsEnabled = useTransformationsFeatureFlag();
@@ -73,7 +73,7 @@ export function PreviewPageHeader({
     space,
     isEnabled: isTransformationsEnabled,
     typeName,
-    version,
+    viewVersion,
   });
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -91,7 +91,7 @@ export function PreviewPageHeader({
         onAddClick={onAddTransformationClick}
         space={space}
         typeName={typeName}
-        version={version}
+        viewVersion={viewVersion}
       />
     ) : (
       <BulkPopulationButton onClick={onAddTransformationClick}>

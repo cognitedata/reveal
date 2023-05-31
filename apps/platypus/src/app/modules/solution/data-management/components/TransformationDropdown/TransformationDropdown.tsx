@@ -17,14 +17,14 @@ type Props = {
   space: string;
   onAddClick: () => void;
   typeName: string;
-  version: string;
+  viewVersion: string;
 };
 
 export function TransformationDropdown({
   space,
   onAddClick,
   typeName,
-  version,
+  viewVersion,
 }: Props) {
   const { t } = useTranslation('BulkPopulation');
   const { setIsTransformationModalOpen } = useDataManagementPageUI();
@@ -35,7 +35,7 @@ export function TransformationDropdown({
     space,
     isEnabled: true,
     typeName,
-    version,
+    viewVersion,
   });
 
   const groupedTransformations = groupTransformationsByTypes(
@@ -64,7 +64,7 @@ export function TransformationDropdown({
                         onClick={() => {
                           track('DataModel.Transformations.Open', {
                             target: groupedTransformations[key].displayName,
-                            version,
+                            version: viewVersion,
                           });
                           if (isFDMV3) {
                             window.open(

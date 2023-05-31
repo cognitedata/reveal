@@ -40,6 +40,7 @@ export const TOKENS = {
     'dataModelVersionHandler'
   ),
   mixerApiService: token<MixerApiService>('mixerApiService'),
+  dataModelsApiService: token<DataModelsApiService>('dataModelsApiService'),
   dataModelStorageApiService: token<DmsApiService>(
     'dataModelStorageApiService'
   ),
@@ -116,7 +117,13 @@ rootInjector
 
 rootInjector
   .bind(TOKENS.dataModelsHandler)
-  .toInstance(() => new DataModelsHandler(rootInjector.get(TOKENS.fdmClient)))
+  .toInstance(() => {
+    const sdkClient = getCogniteSDKClient();
+    return new DataModelsHandler(
+      rootInjector.get(TOKENS.fdmClient),
+      new DataModelsApiService(sdkClient)
+    );
+  })
   .inSingletonScope();
 
 rootInjector

@@ -564,7 +564,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       space: dto.spaceExternalId,
       instanceSpace: dto.instanceSpaceExternalId,
       typeName: dto.typeName,
-      version: dto.version,
+      viewVersion: dto.viewVersion,
     });
   }
 

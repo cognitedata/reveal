@@ -26,12 +26,14 @@ import {
   useSuggestionsFeatureFlag,
   useFilterBuilderFeatureFlag,
   useColumnSelectionFeatureFlag,
+  isFDMv3,
 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useViewForDataModelType } from '@platypus-app/hooks/useViewForDataModelType';
 import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import {
   CellDoubleClickedEvent,
@@ -193,14 +195,24 @@ export const DataPreviewTable = forwardRef<
       space,
     });
 
+    const { data: viewForDataModel } = useViewForDataModelType({
+      dataModelExternalId,
+      dataModelVersion: version,
+      space,
+      viewExternalId: dataModelType.name,
+    });
+
+    const viewVersion =
+      isFDMv3() && viewForDataModel ? viewForDataModel.version : version;
+
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
 
     const handleRowPublish = (row: KeyValueMap) => {
       dataManagementHandler
         .ingestNodes({
           space,
-          model: [dataModelExternalId, `${dataModelType.name}_${version}`],
-          version,
+          model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
+          version: viewVersion,
           items: [sanitizeRow(row) as { externalId: string }],
           dataModelExternalId,
           dataModelType,
@@ -522,9 +534,9 @@ export const DataPreviewTable = forwardRef<
         */
           overwrite: true,
           space,
-          model: [dataModelExternalId, `${dataModelType.name}_${version}`],
+          model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
           items: [updatedRowData],
-          version,
+          version: viewVersion,
           dataModelExternalId,
           dataModelType,
           dataModelTypeDefs,
@@ -653,7 +665,7 @@ export const DataPreviewTable = forwardRef<
       track,
     ]);
 
-    if (!isPublishedRowsCountMapFetched) {
+    if (!isPublishedRowsCountMapFetched || !viewForDataModel) {
       return <Spinner />;
     }
 
@@ -672,9 +684,10 @@ export const DataPreviewTable = forwardRef<
           <CreateTransformationModal
             dataModelExternalId={dataModelExternalId}
             dataModelType={dataModelType}
+            dataModelVersion={version}
             onRequestClose={() => setIsTransformationModalVisible(false)}
             space={space}
-            version={version}
+            viewVersion={viewVersion}
           />
         )}
         {isSuggestionsModalVisible && isSuggestionsEnabled && (
@@ -765,7 +778,7 @@ export const DataPreviewTable = forwardRef<
           }}
           suggestionsAvailable={suggestionsAvailable}
           typeName={dataModelType.name}
-          version={version}
+          viewVersion={viewVersion}
         >
           <>
             {isFilterBuilderEnabled && (
@@ -847,7 +860,7 @@ export const DataPreviewTable = forwardRef<
                       setIsTransformationModalVisible(true)
                     }
                     typeName={dataModelType.name}
-                    version={version}
+                    viewVersion={viewVersion}
                   />
                 ),
                 context: {

@@ -55,7 +55,10 @@ export const getFlexibleDataModelingClient = () => {
 };
 
 export const getDataModelsHandler = () => {
-  return new DataModelsHandler(getFlexibleDataModelingClient());
+  return new DataModelsHandler(
+    getFlexibleDataModelingClient(),
+    new DataModelsApiService(getCogniteSDKClient())
+  );
 };
 
 export const getDataModelVersionsHandler = () => {

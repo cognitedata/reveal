@@ -16,14 +16,14 @@ export type NoRowsOverlayProps = {
   space: string;
   onLoadDataClick: () => void;
   typeName: string;
-  version: string;
+  viewVersion: string;
 };
 
 export const NoRowsOverlay = ({
   space,
   onLoadDataClick,
   typeName,
-  version,
+  viewVersion,
 }: NoRowsOverlayProps) => {
   const { t } = useTranslation('NoRowsOverlay');
   const { createNewDraftRow } = useDraftRows();
@@ -34,7 +34,7 @@ export const NoRowsOverlay = ({
     space,
     isEnabled: isTransformationsEnabled,
     typeName,
-    version,
+    viewVersion,
   });
 
   if (isTransformationsEnabled && transformations.length > 0) {

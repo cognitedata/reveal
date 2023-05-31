@@ -3,6 +3,7 @@ import { Result } from '@platypus-core/boundaries/types';
 import { FlexibleDataModelingClient } from './boundaries';
 import { DataModelsHandler } from './data-models-handler';
 import { CreateDataModelDTO } from './dto';
+import { DataModelsApiService } from './providers/fdm-next';
 import { SpaceDTO } from './types';
 
 describe('DataModelsHandlerTest', () => {
@@ -20,9 +21,14 @@ describe('DataModelsHandlerTest', () => {
       .fn()
       .mockImplementation((dto: SpaceDTO) => Promise.resolve(dto)),
   } as any as FlexibleDataModelingClient;
+  const dataModelsServiceMock = {
+    fetchDataModelFromDMS: jest
+      .fn()
+      .mockImplementation(() => Promise.resolve([])),
+  } as any as DataModelsApiService;
 
   const createInstance = () => {
-    return new DataModelsHandler(fdmClientMock);
+    return new DataModelsHandler(fdmClientMock, dataModelsServiceMock);
   };
 
   it('should work', () => {

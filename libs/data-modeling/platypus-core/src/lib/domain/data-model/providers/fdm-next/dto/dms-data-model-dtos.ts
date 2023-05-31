@@ -19,6 +19,7 @@ export interface DataModelInstanceDTO extends DataModelDTO {
 export interface DataModelReference {
   space: string;
   externalId: string;
+  version?: string;
 }
 
 export interface DataModelSort {

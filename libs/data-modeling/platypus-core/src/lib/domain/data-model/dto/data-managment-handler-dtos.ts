@@ -113,7 +113,7 @@ export interface FetchDataModelTransformationsDTO {
   spaceExternalId: string;
   instanceSpaceExternalId: string;
   typeName: string;
-  version: string;
+  viewVersion: string;
 }
 
 export type CreateDataModelTransformationDTO = {

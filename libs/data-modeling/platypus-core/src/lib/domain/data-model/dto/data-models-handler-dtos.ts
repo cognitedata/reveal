@@ -6,6 +6,10 @@ export interface FetchDataModelDTO {
   space: string;
 }
 
+export interface FetchDataModelFromDMSDTO extends FetchDataModelDTO {
+  version: string;
+}
+
 export interface CreateDataModelDTO {
   space?: string;
   name: string;

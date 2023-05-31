@@ -12,7 +12,7 @@ export class TransformationApiService {
   getTransformationsForType({
     destination,
     typeName,
-    version,
+    viewVersion,
     space,
     instanceSpace,
   }: {
@@ -20,7 +20,7 @@ export class TransformationApiService {
     typeName: string;
     space: string;
     instanceSpace: string;
-    version: string;
+    viewVersion: string;
   }): Promise<DataModelTransformation[]> {
     return new Promise((resolve, reject) => {
       this.cdfClient
@@ -43,7 +43,9 @@ export class TransformationApiService {
                 return (
                   transformationDest.type === 'data_model_instances' &&
                   transformationDest.modelExternalId.startsWith(typeName) &&
-                  transformationDest?.modelExternalId.endsWith(`_${version}`) &&
+                  transformationDest?.modelExternalId.endsWith(
+                    `_${viewVersion}`
+                  ) &&
                   transformationDest.spaceExternalId === space
                 );
               } else if (transformationDest.type === 'edges') {
@@ -57,7 +59,7 @@ export class TransformationApiService {
               }
               return (
                 transformationDest.view.externalId === typeName &&
-                transformationDest.view.version === version &&
+                transformationDest.view.version === viewVersion &&
                 transformationDest.view.space === space &&
                 transformationDest.instanceSpace === instanceSpace
               );

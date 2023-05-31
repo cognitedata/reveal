@@ -1,5 +1,6 @@
-import { TopBar as CogsTopBar } from '@cognite/cogs.js';
 import type { FC } from 'react';
+
+import { TopBar as CogsTopBar } from '@cognite/cogs.js';
 
 type Props = {
   tenant?: string;

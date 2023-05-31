@@ -7,6 +7,17 @@ export const QueryKeys = {
   DATA_MODEL_LIST: ['DATA_MODEL_LIST'] as const,
   DATA_MODEL: (space: string, dataModelExternalId: string) =>
     ['DATA_MODEL', space, dataModelExternalId] as const,
+  DATA_MODEL_FROM_DMS: (
+    space: string,
+    dataModelExternalId: string,
+    dataModelVersion: string
+  ) =>
+    [
+      'DATA_MODEL_FROM_DMS',
+      space,
+      dataModelExternalId,
+      dataModelVersion,
+    ] as const,
   DATA_MODEL_VERSION_LIST: (space: string, dataModelExternalId: string) =>
     ['DATA_MODEL_VERSION_LIST', space, dataModelExternalId] as const,
   DATA_SETS_LIST: ['DATA_SETS_LIST'] as const,

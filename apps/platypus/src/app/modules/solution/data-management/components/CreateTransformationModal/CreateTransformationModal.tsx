@@ -27,17 +27,19 @@ type Option = OptionType<any>;
 export interface CreateTransformationModalProps {
   dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
+  dataModelVersion: string;
   onRequestClose: () => void;
-  version: string;
   space: string;
+  viewVersion: string;
 }
 
 export const CreateTransformationModal = ({
   dataModelExternalId,
   dataModelType,
+  dataModelVersion,
   onRequestClose,
   space,
-  version,
+  viewVersion,
 }: CreateTransformationModalProps) => {
   const isFDMV3 = isFDMv3();
   const { t } = useTranslation('CreateTransformationModal');
@@ -50,7 +52,7 @@ export const CreateTransformationModal = ({
 
   const customTypesNames = useCustomTypeNames(
     dataModelExternalId,
-    version,
+    dataModelVersion,
     space
   );
 
@@ -61,9 +63,9 @@ export const CreateTransformationModal = ({
     ? getOneToManyModelName(
         dataModelType.name,
         selectedRelationship.value,
-        version
+        viewVersion
       )
-    : getVersionedExternalId(dataModelType.name, version);
+    : getVersionedExternalId(dataModelType.name, viewVersion);
 
   const relationships: Option[] = dataModelType.fields
     .filter((field) => {
@@ -105,7 +107,7 @@ export const CreateTransformationModal = ({
         transformationExternalId,
         transformationName,
         typeName: dataModelType.name,
-        version,
+        version: viewVersion,
       },
       {
         onSuccess: (transformation) => {

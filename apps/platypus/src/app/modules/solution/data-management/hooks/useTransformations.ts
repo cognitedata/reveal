@@ -7,22 +7,22 @@ export default function useTransformations({
   space,
   isEnabled,
   typeName,
-  version,
+  viewVersion,
 }: {
   space: string;
   isEnabled: boolean;
   typeName: string;
-  version: string;
+  viewVersion: string;
 }) {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const query = useQuery(
-    QueryKeys.TRANSFORMATION(space, typeName, version),
+    QueryKeys.TRANSFORMATION(space, typeName, viewVersion),
     async () => {
       return dataManagementHandler.getTransformations({
         spaceExternalId: space,
         instanceSpaceExternalId: space,
         typeName,
-        version,
+        viewVersion,
       });
     },
     {

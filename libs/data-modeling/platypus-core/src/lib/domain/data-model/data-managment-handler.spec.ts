@@ -209,7 +209,7 @@ describe('DataManagementHandlerTest', () => {
       spaceExternalId: 'Test',
       instanceSpaceExternalId: 'Test',
       typeName: 'Type',
-      version: '1',
+      viewVersion: '1',
     });
     expect(fdmClientMock.getTransformations).toBeCalled();
     expect(response).toEqual(mockTransformation);
