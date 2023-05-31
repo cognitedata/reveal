@@ -16,6 +16,7 @@ import { useTranslation } from 'common';
 import FormFieldRadioGroup from 'components/form-field-radio-group/FormFieldRadioGroup';
 import {
   MQTTDestinationType,
+  MQTTFormat,
   MQTTSourceWithJobMetrics,
   useCreateMQTTDestination,
   useCreateMQTTJob,
@@ -46,6 +47,7 @@ type CreateJobsFormValues = {
   clientId?: string;
   clientSecret?: string;
   type?: MQTTDestinationType;
+  format?: MQTTFormat['type'];
 };
 
 type CreateJobsModalProps = {
@@ -182,7 +184,7 @@ export const CreateJobsModal = ({
                 destinationId: destinationExternalId!,
                 externalId: `${source.externalId}-${values.selectedDestinationExternalId}-${topicFilter}`,
                 format: {
-                  type: 'cognite',
+                  type: values.format ?? 'cognite',
                 },
                 sourceId: source.externalId,
                 topicFilter,
@@ -217,6 +219,27 @@ export const CreateJobsModal = ({
       values.topicFilters?.filter((f) => f !== filter) ?? []
     );
   };
+
+  const formatField: MQTTFormat[] = [
+    {
+      type: 'cognite',
+    },
+    {
+      type: 'siemens',
+    },
+    {
+      type: 'tmc',
+    },
+    {
+      type: 'rockwell',
+    },
+  ];
+
+  const formatFieldOptions = formatField.map(({ type }) => ({
+    label:
+      type === 'tmc' ? 'TMC' : type.charAt(0).toUpperCase() + type.slice(1),
+    value: type,
+  }));
 
   return (
     <Modal
@@ -273,6 +296,15 @@ export const CreateJobsModal = ({
               />
             </TopicFilterContainer>
           ))}
+          <FormFieldWrapper isRequired title={t('format-field')}>
+            <Select
+              onChange={(e) => setFieldValue('format', e)}
+              options={formatFieldOptions}
+              placeholder={t('select-format')}
+              value={values.format}
+              aria-placeholder="Select format"
+            />
+          </FormFieldWrapper>
         </Flex>
         <FormFieldRadioGroup
           direction="column"

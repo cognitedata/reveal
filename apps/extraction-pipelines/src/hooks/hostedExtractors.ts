@@ -380,8 +380,8 @@ type MQTTFormatPrefixConfig = {
   prefix?: string;
 };
 
-type MQTTFormat = {
-  type: 'cognite';
+export type MQTTFormat = {
+  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell';
   prefix?: MQTTFormatPrefixConfig;
 };
 
