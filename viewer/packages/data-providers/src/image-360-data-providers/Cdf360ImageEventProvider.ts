@@ -8,6 +8,7 @@ import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
+import chunk from 'lodash/chunk';
 
 import {
   AnnotationModel,
@@ -19,7 +20,8 @@ import {
   FileLink,
   IdEither,
   Metadata,
-  CogniteInternalId
+  CogniteInternalId,
+  AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
 import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
@@ -332,5 +334,27 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  public async get360ImageFaces(): Promise<void> {}
+  public async get360ImageAssets(image360FileDescriptors: Image360FileDescriptor[]): Promise<IdEither[]> {
+    const fileIds = image360FileDescriptors.map(desc => desc.fileId);
+    const assetListPromises = chunk(fileIds, 1000).map(async idList => {
+      const annotationArray = await this._client.annotations
+        .list({
+          filter: {
+            annotatedResourceIds: idList.map(id => ({ id })),
+            annotatedResourceType: 'file',
+            annotationType: 'images.AssetLink'
+          }
+        })
+        .autoPagingToArray();
+      const assetIds = annotationArray.map(
+        annotation => (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef
+      );
+
+      return assetIds;
+    });
+
+    const assetIds = (await Promise.all(assetListPromises)).flat() as IdEither[];
+
+    return assetIds;
+  }
 }
