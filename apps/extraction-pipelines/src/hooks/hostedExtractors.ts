@@ -13,7 +13,7 @@ import { CreateSessionVariables, useCreateSession } from './sessions';
 type UpdateWithExternalId<T, P extends keyof T> = {
   externalId: string;
   update: {
-    [K in keyof Pick<T, P>]: { set: T[P] } | { setNull: true };
+    [K in keyof Pick<T, P>]?: { set: T[P] } | { setNull: true };
   };
 };
 
@@ -380,8 +380,8 @@ type MQTTFormatPrefixConfig = {
   prefix?: string;
 };
 
-type MQTTFormat = {
-  type: 'cognite';
+export type MQTTFormat = {
+  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell';
   prefix?: MQTTFormatPrefixConfig;
 };
 
@@ -628,7 +628,10 @@ export const useCreateMQTTJob = (
   );
 };
 
-type UpdateMQTTJobVariables = UpdateWithExternalId<ReadMQTTJob, 'targetStatus'>;
+type UpdateMQTTJobVariables = UpdateWithExternalId<
+  ReadMQTTJob,
+  'targetStatus' | 'topicFilter'
+>;
 
 export const useUpdateMQTTJob = (
   options?: UseMutationOptions<unknown, unknown, UpdateMQTTJobVariables>
