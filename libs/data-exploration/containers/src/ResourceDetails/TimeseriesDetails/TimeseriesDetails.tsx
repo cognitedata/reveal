@@ -8,6 +8,11 @@ import { Collapse, Title } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
 import {
+  EMPTY_OBJECT,
+  SelectableItemsProps,
+  ViewType,
+} from '@data-exploration-lib/core';
+import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
   useEventsListQuery,
@@ -24,20 +29,25 @@ import {
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
 import { TimeseriesInfo } from '../../Info';
-import { onOpenResources } from '../AssetDetails';
+import { ResourceSelection } from '../../ResourceSelector';
 import { EVENTS, FILES, SEQUENCES, TIME_SERIES } from '../constant';
 
 interface Props {
   timeseriesId: number;
   isSelected: boolean;
-  onSelectClicked?: () => void;
   onClose?: () => void;
+  selectionMode?: 'single' | 'multiple';
+  selectedRows?: ResourceSelection;
 }
-export const TimeseriesDetails: FC<Props> = ({
+export const TimeseriesDetails: FC<
+  Props & Pick<SelectableItemsProps, 'onSelect'>
+> = ({
   timeseriesId,
   isSelected,
-  onSelectClicked,
   onClose,
+  onSelect,
+  selectedRows,
+  selectionMode,
 }) => {
   const {
     data,
@@ -103,13 +113,14 @@ export const TimeseriesDetails: FC<Props> = ({
     { enabled: isQueryEnabled }
   );
 
+  const enableDetailTableSelection = selectionMode === 'multiple';
   return (
     <ResourceDetailsTemplate
       title={timeseries ? timeseries.name || '' : ''}
       icon="Timeseries"
       isSelected={isSelected}
       onClose={onClose}
-      onSelectClicked={onSelectClicked}
+      onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="preview">
         {timeseries ? (
@@ -138,8 +149,10 @@ export const TimeseriesDetails: FC<Props> = ({
             id="related-asset-timeseries-details"
             data={relatedAssets}
             isLoadingMore={isAssetsLoading}
-            onRowClick={(currentAsset) =>
-              onOpenResources('asset', currentAsset.id)
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.asset || EMPTY_OBJECT}
+            onRowSelection={(updater, currentAssets) =>
+              onSelect?.(updater, currentAssets, ViewType.Asset)
             }
           />
         </Collapse.Panel>
@@ -153,6 +166,11 @@ export const TimeseriesDetails: FC<Props> = ({
             hasNextPage={hasTimeseriesNextPage}
             fetchMore={hasTimeseriesFetchNextPage}
             isDataLoading={isParentTimeseriesLoading || isTimeseriesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.timeSeries || EMPTY_OBJECT}
+            onRowSelection={(updater, currentTimeseries) =>
+              onSelect?.(updater, currentTimeseries, ViewType.TimeSeries)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -165,6 +183,11 @@ export const TimeseriesDetails: FC<Props> = ({
             hasNextPage={hasDocumentsNextPage}
             fetchMore={hasDocumentsFetchNextPage}
             isDataLoading={isParentTimeseriesLoading || isDocumentsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.file || EMPTY_OBJECT}
+            onRowSelection={(updater, currentFiles) =>
+              onSelect?.(updater, currentFiles, ViewType.File)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -177,6 +200,11 @@ export const TimeseriesDetails: FC<Props> = ({
             hasNextPage={hasEventNextPage}
             fetchMore={hasEventFetchNextPage}
             isDataLoading={isParentTimeseriesLoading || isEventsLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.event || EMPTY_OBJECT}
+            onRowSelection={(updater, currentEvents) =>
+              onSelect?.(updater, currentEvents, ViewType.Event)
+            }
           />
         </Collapse.Panel>
         <Collapse.Panel
@@ -189,6 +217,11 @@ export const TimeseriesDetails: FC<Props> = ({
             hasNextPage={hasSequencesNextPage}
             fetchMore={hasSequencesFetchNextPage}
             isDataLoading={isParentTimeseriesLoading || isSequencesLoading}
+            enableSelection={enableDetailTableSelection}
+            selectedRows={selectedRows?.sequence || EMPTY_OBJECT}
+            onRowSelection={(updater, currentSequences) =>
+              onSelect?.(updater, currentSequences, ViewType.Sequence)
+            }
           />
         </Collapse.Panel>
       </StyledCollapse>

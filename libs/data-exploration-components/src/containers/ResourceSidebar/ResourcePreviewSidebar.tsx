@@ -101,6 +101,7 @@ export const ResourcePreviewSidebar = ({
             timeseriesId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            {...commonProps}
           />
         );
         break;

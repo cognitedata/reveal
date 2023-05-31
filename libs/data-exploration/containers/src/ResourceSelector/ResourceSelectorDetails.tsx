@@ -9,8 +9,8 @@ import { ResourceItem, SelectableItemsProps } from '@data-exploration-lib/core';
 
 import {
   AssetDetails,
-  EventDetails,
   DocumentDetails,
+  EventDetails,
   TimeseriesDetails,
 } from '../ResourceDetails';
 
@@ -58,7 +58,6 @@ export const ResourceSelectorDetails = ({
   onSelect = noop,
 
   isSelected = false,
-  // hideTitle = false,
   hideContent = false,
 }: Props) => {
   const commonProps = { onSelect, selectedRows, selectionMode };
@@ -105,6 +104,7 @@ export const ResourceSelectorDetails = ({
             timeseriesId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            {...commonProps}
           />
         );
         break;
