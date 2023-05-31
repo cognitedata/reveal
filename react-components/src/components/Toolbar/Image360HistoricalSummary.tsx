@@ -7,6 +7,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
+import { uniqueId } from 'lodash';
 
 export interface Image360RevisionDetails{
   date?: string;
@@ -33,6 +34,17 @@ export const Image360HistoricalSummary = ({
   viewer
 }: Image360HistoricalSummaryProps) => {
 
+  const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
+    if(viewer && revisionDetails.image360Entity) {
+      setActiveRevision!(index)
+      const revisions = revisionDetails.image360Entity.getRevisions();
+      const revisionIndex = revisionDetails.index!;
+      if (revisionIndex >= 0 && revisionIndex < revisions.length) {
+        viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
+      }
+    }
+  };
+
   return(
     <OverviewContainer>
       <StyledFlex direction='column'>
@@ -40,31 +52,23 @@ export const Image360HistoricalSummary = ({
         <StyledDetail>Station: {stationId}</StyledDetail>
       </StyledFlex>
 
-      <StyledLayoutGridContainer><StyledLayoutGrid>
-        { revisionCollection?.map((revisionDetails, index) => (
-          <RevisionItem
-            onClick={ () => {
-              if(viewer && revisionDetails.image360Entity) {
-                setActiveRevision!(index)
-                const revisions = revisionDetails.image360Entity.getRevisions();
-                const revisionIndex = revisionDetails.index!;
-                if (revisionIndex >= 0 && revisionIndex < revisions.length) {
-                  viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
-                }
-              }
-              }
-            }
-          >
-            <Thumbnail
-              key={index}
-              isActive={activeRevision === index}
-              imageUrl={revisionDetails.imageUrl}
-              isLoading={false}/>
-            <Detail>{revisionDetails.date}</Detail>
-          </RevisionItem>
-        ))
-        }
-      </StyledLayoutGrid>
+      <StyledLayoutGridContainer>
+        <StyledLayoutGrid>
+          { revisionCollection?.map((revisionDetails, index) => (
+            <RevisionItem
+              key={uniqueId()}
+              onClick={onRevisionChanged.bind(null, revisionDetails, index)}
+            >
+              <Thumbnail
+                key={index}
+                isActive={activeRevision === index}
+                imageUrl={revisionDetails.imageUrl}
+                isLoading={false}/>
+              <Detail>{revisionDetails.date}</Detail>
+            </RevisionItem>
+          ))
+          }
+        </StyledLayoutGrid>
       </StyledLayoutGridContainer>
     </OverviewContainer>
   )
