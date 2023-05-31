@@ -44,6 +44,9 @@ export type Overlay3DToolParameters = {
   defaultOverlayColor: THREE.Color;
 };
 
+/**
+ * Parameters for instantiating the OverlayCollection.
+ */
 export type OverlayCollectionOptions = {
   /**
    * Sets default overlay color for newly added overlays.
