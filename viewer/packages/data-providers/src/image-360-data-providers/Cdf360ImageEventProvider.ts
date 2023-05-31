@@ -356,7 +356,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       return assetIds;
     });
 
-    const assetIds = (await Promise.all(assetListPromises)).flat() as IdEither[];
+    const assetIds = (await Promise.all(assetListPromises)).flat().filter(isIdEither);
 
     return assetIds;
   }
@@ -367,4 +367,8 @@ function isAssetLinkAnnotationData(
 ): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
   const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
+}
+
+function isIdEither(assetRef: { id?: number; externalId?: string }): assetRef is IdEither {
+  return assetRef.id !== undefined && assetRef.externalId !== undefined;
 }
