@@ -1,8 +1,16 @@
-import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { useMemo } from 'react';
+
+import {
+  ColumnType,
+  Table,
+  Timestamp,
+  createLink,
+} from '@cognite/cdf-utilities';
+
 import { useTranslation } from 'common';
 import { WorkflowRead } from 'hooks/workflows';
-import { useMemo } from 'react';
 import { getContainer } from 'utils';
+import Link from 'components/link/Link';
 
 type WorkflowTableProps = {
   workflows: WorkflowRead[];
@@ -25,6 +33,9 @@ const WorkflowTable = ({ workflows }: WorkflowTableProps): JSX.Element => {
         key: 'externalId',
         dataIndex: 'externalId',
         title: t('external-id'),
+        render: (value: string) => (
+          <Link to={createLink(`/flows/${value}`)}>{value}</Link>
+        ),
       },
       {
         key: 'description',
@@ -35,6 +46,9 @@ const WorkflowTable = ({ workflows }: WorkflowTableProps): JSX.Element => {
         key: 'createdTime',
         dataIndex: 'createdTime',
         title: t('created-at'),
+        render: (value: string) => (
+          <Timestamp timestamp={new Date(value).getTime()} />
+        ),
       },
     ],
     [t]
