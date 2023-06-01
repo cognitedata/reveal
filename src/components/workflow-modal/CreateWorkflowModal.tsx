@@ -54,7 +54,7 @@ export const CreateWorkflowModal = ({ onCancel, visible }: Props) => {
       cancelText={t('cancel')}
       okText={t('create')}
       onOk={handleSubmit}
-      title={t('create-flow')}
+      title={t('create-workflow')}
       visible={visible}
     >
       <Flex direction="column" gap={10}>

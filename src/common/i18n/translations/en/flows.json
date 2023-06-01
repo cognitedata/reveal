@@ -66,5 +66,8 @@
   "component-title-function": "Function",
   "component-description-function": "Execute a Cognite Function",
   "created-at": "Created at",
-  "validation-error-field-required": "You must enter a value in this field"
+  "validation-error-field-required": "You must enter a value in this field",
+  "create-workflow": "Create workflow",
+  "workflow_one": "1 workflow",
+  "workflow_other": "{{count}} workflows"
 }
