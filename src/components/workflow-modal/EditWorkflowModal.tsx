@@ -25,11 +25,11 @@ export const WorkflowModal = ({
   const [nameChanged, setNameChanged] = useState(false);
   const [descriptionChanged, setDescriptionChanged] = useState(false);
 
-  const { id } = useParams<{ id: string }>();
+  const { externalId } = useParams<{ externalId: string }>();
   const { t } = useTranslation();
   const { isLoading: isUpdateLoading } = useUpdateFlow();
   const { changeFlow } = useWorkflowBuilderContext();
-  const { data } = useFlow(id ?? '');
+  const { data } = useFlow(externalId ?? '');
 
   const handleUpdate = useCallback(() => {
     changeFlow((f) => {
