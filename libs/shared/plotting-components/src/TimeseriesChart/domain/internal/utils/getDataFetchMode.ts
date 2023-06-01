@@ -1,5 +1,5 @@
-import { DEFAULT_RAW_DATAPOINTS_LIMIT } from '../../../constants';
 import { DataFetchMode, DataFetchOptions } from '../../../types';
+import { DEFAULT_RAW_DATAPOINTS_LIMIT } from '../constants';
 
 interface Props {
   numberOfPoints: number;

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { DEFAULT_NUMBER_OF_POINTS } from '../../../constants';
 import { DataFetchOptions } from '../../../types';
 import { useTimeseriesSingleAggregateQuery } from '../../service/queries';
+import { CHART_POINTS_PER_SERIES } from '../constants';
 import { TimeseriesChartMetadata, TimeseriesChartQuery } from '../types';
 import { getDataFetchMode } from '../utils';
 
@@ -28,8 +28,10 @@ export const useTimeseriesChartMetadata = ({
     });
 
   const metadata: TimeseriesChartMetadata = useMemo(() => {
-    const numberOfPoints =
-      query.numberOfPoints || data?.data.count || DEFAULT_NUMBER_OF_POINTS;
+    const numberOfPoints = Math.min(
+      query.numberOfPoints || data?.data.count || CHART_POINTS_PER_SERIES,
+      CHART_POINTS_PER_SERIES
+    );
 
     const isString = data?.isString;
 

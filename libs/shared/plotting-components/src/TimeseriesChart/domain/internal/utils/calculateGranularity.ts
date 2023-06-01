@@ -8,38 +8,43 @@
 import { DateRange } from '../../../types';
 
 export const calculateGranularity = (
-  dateRange: DateRange | undefined,
-  pps: number
+  domain: DateRange | undefined,
+  pointsPerSeries: number
 ) => {
-  if (!dateRange) {
-    return 'day';
+  if (!domain) {
+    return '100d';
   }
 
-  const diff = dateRange[1].valueOf() - dateRange[0].valueOf();
+  const domainMinValue = domain[0].valueOf();
+  const domainMaxValue = domain[1].valueOf();
 
-  for (let i = 1; i <= 60; i += 1) {
-    const points = diff / (1000 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}s`;
-    }
+  const timeDifferenceSeconds = (domainMaxValue - domainMinValue) / 1000;
+  const targetGranularitySeconds = Math.ceil(
+    timeDifferenceSeconds / pointsPerSeries
+  );
+  const targetGranularityMinutes = Math.ceil(targetGranularitySeconds / 60);
+  const targetGranularityHours = Math.ceil(targetGranularityMinutes / 60);
+  const targetGranularityDays = Math.ceil(targetGranularityHours / 24);
+
+  // Seconds
+  if (targetGranularitySeconds <= 60) {
+    return `${targetGranularitySeconds}s`;
   }
-  for (let i = 1; i <= 60; i += 1) {
-    const points = diff / (1000 * 60 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}m`;
-    }
+
+  // Minutes
+  if (targetGranularityMinutes <= 60) {
+    return `${targetGranularityMinutes}m`;
   }
-  for (let i = 1; i < 24; i += 1) {
-    const points = diff / (1000 * 60 * 60 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}h`;
-    }
+
+  // Hours
+  if (targetGranularityHours <= 24) {
+    return `${targetGranularityHours}h`;
   }
-  for (let i = 1; i < 100; i += 1) {
-    const points = diff / (1000 * 60 * 60 * 24 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}day`;
-    }
+
+  // Days
+  if (targetGranularityDays <= 100) {
+    return `${targetGranularityDays}d`;
   }
-  return 'day';
+
+  return '100d';
 };
