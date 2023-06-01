@@ -20,6 +20,11 @@ export interface Image360Annotation {
   getColor(): Color;
 
   /**
+   * Get the randomly-generated color originally assigned to this annotation
+   */
+  getOriginalColor(): Color;
+
+  /**
    * Set the display color of this annotation. Default: Random, based on annotation label
    */
   setColor(color?: Color): void;

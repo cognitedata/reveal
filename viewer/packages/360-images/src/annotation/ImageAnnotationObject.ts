@@ -176,6 +176,10 @@ export class ImageAnnotationObject implements Image360Annotation {
     return this.getColorReference().clone();
   }
 
+  public getOriginalColor(): Color {
+    return getDefaultColor(this._annotation);
+  }
+
   public setColor(color?: Color): void {
     this._appearance.color = color?.clone();
     this.updateMaterials();
