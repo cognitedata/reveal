@@ -18,7 +18,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool, Overlay3DTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
