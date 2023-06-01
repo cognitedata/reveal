@@ -28,6 +28,15 @@ export const useWorkflows = () => {
   );
 };
 
+export const useWorkflow = (externalId: string) => {
+  const { data, ...queryProps } = useWorkflows();
+
+  return {
+    data: data?.find((w) => w.externalId === externalId),
+    ...queryProps,
+  };
+};
+
 type CreateWorkflowVariables = WorkflowCreate;
 
 export const useCreateWorkflow = (

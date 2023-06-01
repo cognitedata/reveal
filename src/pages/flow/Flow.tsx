@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+
 import { Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Canvas } from 'components/canvas';
 import { useParams } from 'react-router-dom';
+
+import { Canvas } from 'components/canvas';
 import {
   FlowContextProvider,
   useWorkflowBuilderContext,
@@ -10,12 +13,22 @@ import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useCreateFile, useFile } from 'hooks/files';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
-import { useEffect } from 'react';
+import { useWorkflow } from 'hooks/workflows';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
 
-  const { data, error, isInitialLoading } = useFile(externalId!, { retry: 0 });
+  const { data: workflow, isInitialLoading: isInitialLoadingWorkflow } =
+    useWorkflow(externalId!);
+
+  const {
+    data: file,
+    error,
+    isInitialLoading: isInitialLoadingFile,
+  } = useFile(externalId!, {
+    enabled: !!workflow,
+    retry: 0,
+  });
   const { mutate: createFile, isIdle, isLoading } = useCreateFile();
 
   const isMissingError =
@@ -41,12 +54,20 @@ const Flow = (): JSX.Element => {
     return <>ERROR: {JSON.stringify(error)}</>;
   }
 
-  if (isInitialLoading || isLoading || !data) {
+  if (isInitialLoadingFile || isInitialLoadingWorkflow || isLoading) {
     return <Loader />;
   }
 
+  if (!workflow) {
+    return <div>not found</div>;
+  }
+
+  if (!file) {
+    return <div>not found</div>;
+  }
+
   return (
-    <FlowContextProvider externalId={externalId!} initialFlow={data}>
+    <FlowContextProvider externalId={externalId!} initialFlow={file}>
       <FlowContainer />
     </FlowContextProvider>
   );
