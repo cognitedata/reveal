@@ -153,24 +153,6 @@ export function Viewer() {
 
       cameraManager.setCameraControlsOptions(controlsOptions);
 
-      const overlayTool = new Overlay3DTool<{text:string}>(viewer);
-
-      overlayTool.createOverlayCollection([{
-        content: {
-          text: 'Hello World',
-        },
-        position: new THREE.Vector3(),
-        color: new THREE.Color('purple'),
-      }]);
-      overlayTool.setTextOverlayVisible(true);
-
-      overlayTool.on('click', (event) => {
-        event.htmlTextOverlay.innerText = 'Clicked ' + event.targetOverlay.getContent().text;
-      });
-      overlayTool.on('hover', (event) => {
-        event.htmlTextOverlay.innerText = 'Hovered' + event.targetOverlay.getContent().text;
-      });
-
       cameraManagers = {
         Default: viewer.cameraManager as DefaultCameraManager,
         Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1, 0.01, 1000))
