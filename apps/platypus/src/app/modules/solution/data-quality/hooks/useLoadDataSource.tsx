@@ -1,34 +1,36 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import {
-  DataSourceDTO,
+  DataSourceDto,
   DataSourceDraft,
   useCreateDataSources,
   useListDataSources,
 } from '@data-quality/codegen';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { v4 as uuidv4 } from 'uuid';
 
-export type DataModelOptions = {
+type DataModelOptions = {
   dataModelId: string;
   dataModelSpace: string;
   dataModelVersion: string;
 };
 
 type LoadDataSourceOptions = {
-  dataModelOptions: DataModelOptions;
   onError: (error: any) => void;
 };
 
 /** Load a data source by using the data model id, data model space and data model version.
  *
  * If there is no data source matching the given params, then create a new data source. */
-export const useLoadDataSource = (
-  options: LoadDataSourceOptions
-): {
-  dataSource: DataSourceDTO | null;
+export const useLoadDataSource = (): {
+  dataSource?: DataSourceDto;
+  error: any;
   loadingDataSource: boolean;
 } => {
-  const [dataSource, setDataSource] = useState<DataSourceDTO | null>(null);
+  const [dataSource, setDataSource] = useState<DataSourceDto>();
+  const [error, setError] = useState();
 
   const {
     data: dataSourcesData,
@@ -43,13 +45,24 @@ export const useLoadDataSource = (
     status: createStatus,
   } = useCreateDataSources({});
 
+  const { dataModelExternalId, space, version } = useParams() as {
+    dataModelExternalId: string;
+    space: string;
+    version: string;
+  };
+  const { dataModelVersion: selectedDataModelVersion } =
+    useSelectedDataModelVersion(version, dataModelExternalId, space);
+
+  const dataModelOptions: DataModelOptions = {
+    dataModelId: dataModelExternalId,
+    dataModelSpace: space,
+    dataModelVersion: selectedDataModelVersion.version,
+  };
+
   const loadingDataSource = dataSourcesLoading || createLoading;
 
   useEffect(() => {
-    const loadDataSource = async ({
-      dataModelOptions,
-      onError,
-    }: LoadDataSourceOptions) => {
+    const loadDataSource = async ({ onError }: LoadDataSourceOptions) => {
       try {
         // Start looking for a data source when we have the list of all datasources
         if (dataSourcesLoading) return;
@@ -96,21 +109,30 @@ export const useLoadDataSource = (
 
           setDataSource(createdDataSource.items[0]);
         }
-      } catch (error: unknown) {
-        onError(error);
+      } catch (err: unknown) {
+        onError(err);
       }
     };
 
-    loadDataSource(options);
+    loadDataSource({
+      onError: (err) => {
+        setError(err);
+        Notification({
+          type: 'error',
+          message: `Couldn't load data source. ${err?.message}`,
+          errors: JSON.stringify(err?.stack?.error),
+        });
+      },
+    });
   });
 
-  return { dataSource, loadingDataSource };
+  return { dataSource, error, loadingDataSource };
 };
 
 /** Looks for a data source that matches the given data model id, data mode space and data model version in a list of data sources. */
 const findDataSource = (
   dataModelOptions: DataModelOptions,
-  dataSources?: DataSourceDTO[]
+  dataSources?: DataSourceDto[]
 ) => {
   const { dataModelId, dataModelSpace, dataModelVersion } = dataModelOptions;
 

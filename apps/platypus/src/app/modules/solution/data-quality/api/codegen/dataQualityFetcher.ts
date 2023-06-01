@@ -61,7 +61,7 @@ export async function dataQualityFetch<
       ...headers,
     };
 
-    const pathParams = { project: tenant };
+    const pathParameters = { ...pathParams, project: tenant };
 
     /**
      * As the fetch API is being used, when multipart/form-data is specified
@@ -78,7 +78,7 @@ export async function dataQualityFetch<
     }
 
     const response = await window.fetch(
-      `${baseUrl}${resolveUrl(url, queryParams, pathParams)}`,
+      `${baseUrl}${resolveUrl(url, queryParams, pathParameters)}`,
       {
         signal,
         method: method.toUpperCase(),

@@ -40,6 +40,30 @@ export type Cursor = {
   cursor?: string;
 };
 
+export type UpsertConflict = {
+  /**
+   * Details about the error caused by the upsert/update.
+   */
+  error: {
+    /**
+     * The HTTP status code returned
+     *
+     * @format int32
+     * @example 409
+     */
+    code: number;
+    /**
+     * The error message returned from the service.
+     */
+    message: string;
+  };
+};
+
+/**
+ * The cursor value used to return (paginate to) the next page of results, when more data is available.
+ */
+export type NextCursorV3 = string;
+
 /**
  * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
  * @minLength 1
@@ -66,7 +90,7 @@ export type DataModelVersion = string;
  * @minLength 1
  * @maxLength 255
  */
-export type DataSourceId = string;
+export type ExternalId = string;
 
 export type DataSourceDraft = {
   /**
@@ -100,10 +124,10 @@ export type DataSourceDraft = {
    * @minLength 1
    * @maxLength 255
    */
-  externalId: DataSourceId;
+  externalId: ExternalId;
 };
 
-export type DataSourceDTO = {
+export type DataSourceDto = {
   createdTime: EpochTimestamp;
   /**
    * Id of the data model that the data source belongs to
@@ -130,13 +154,13 @@ export type DataSourceDTO = {
    */
   dataModelVersion: DataModelVersion;
   /**
-   * External-id of the data source
+   * The external-id of the data source
    *
    * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
    * @minLength 1
    * @maxLength 255
    */
-  externalId: DataSourceId;
+  externalId: ExternalId;
   lastUpdatedTime: EpochTimestamp;
 };
 
@@ -154,39 +178,226 @@ export type DataSourceCreateRequest = {
   items: DataSourceDraft[];
 };
 
-export type ListOfDataSourceIdsRequest = {
+export type DataSourceListIdsRequest = {
   /**
    * @minItems 1
    * @maxItems 100
    */
   items: {
     /**
-     * Ids for the data sources
+     * Ids for the data sources used in the request
      */
-    externalId: string;
+    externalId: ExternalId;
   }[];
 };
 
-export type UpsertConflict = {
+export type RulesetDraft = {
   /**
-   * Details about the error caused by the upsert/update.
+   * The description of the ruleset
    */
-  error: {
-    /**
-     * The HTTP status code returned
-     *
-     * @format int32
-     * @example 409
-     */
-    code: number;
-    /**
-     * The error message returned from the service.
-     */
-    message: string;
-  };
+  description?: string;
+  /**
+   * The external-id of the ruleset
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The name of the ruleset
+   */
+  name: string;
+  /**
+   * The external-id of the parent ruleset
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  parentRulesetId?: ExternalId;
+};
+
+export type RulesetDto = {
+  createdTime: EpochTimestamp;
+  /**
+   * The external-id of the data source
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataSourceId: ExternalId;
+  /**
+   * The description of the ruleset
+   */
+  description: string;
+  /**
+   * The external-id of the ruleset
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The name of the ruleset
+   */
+  name: string;
+  lastUpdatedTime: EpochTimestamp;
+  /**
+   * The external-id of the parent ruleset
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  parentRulesetId: ExternalId;
 };
 
 /**
- * The cursor value used to return (paginate to) the next page of results, when more data is available.
+ * List of rulesets to create/update
+ *
+ * @minItems 1
+ * @maxItems 100
  */
-export type NextCursorV3 = string;
+export type RulesetCreateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: RulesetDraft[];
+};
+
+export type RulesetListIdsRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: {
+    /**
+     * Ids from rulesets
+     */
+    externalId: ExternalId;
+  }[];
+};
+
+/**
+ * The severity of the rule
+ */
+export type RuleSeverity = 'Critical' | 'High' | 'Medium' | 'Low';
+
+export type RuleDraft = {
+  /**
+   * Conditions used to perform validation
+   */
+  conditions: string;
+  /**
+   * External-id of the data scope connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataScopeId?: ExternalId;
+  /**
+   * The reference to a view in FDM
+   */
+  dataType: string;
+  /**
+   * The description of the rule
+   */
+  description?: string;
+  /**
+   * The error message of the rule
+   */
+  errorMessage?: string;
+  /**
+   * The external-id of the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The name of the rule
+   */
+  name: string;
+  /**
+   * The severity of the rule
+   */
+  severity: RuleSeverity;
+};
+
+export type RuleDto = {
+  /**
+   * Conditions used to perform validation
+   */
+  conditions: string;
+  createdTime: EpochTimestamp;
+  /**
+   * The external-id of the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The external-id of the data scope connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataScopeId?: ExternalId;
+  /**
+   * The reference to a view in FDM
+   */
+  dataType: string;
+  /**
+   * The description of the rule
+   */
+  description: string;
+  /**
+   * The error message of the rule
+   */
+  errorMessage: string;
+  lastUpdatedTime: EpochTimestamp;
+  /**
+   * The name of the rule
+   */
+  name: string;
+  /**
+   * The severity of the rule
+   */
+  severity: RuleSeverity;
+};
+
+/**
+ * List of rules to create/update
+ *
+ * @minItems 1
+ * @maxItems 100
+ */
+export type RuleCreateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: RuleDraft[];
+};
+
+export type RuleListIdsRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: {
+    /**
+     * Ids from rules
+     */
+    externalId: ExternalId;
+  }[];
+};

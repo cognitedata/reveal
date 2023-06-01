@@ -9,30 +9,53 @@ export type ErrorResponse = {
   error: Schemas.Error;
 };
 
-export type DataSourceCollectionResponse = {
-  /**
-   * List of data sources
-   */
-  items: Schemas.DataSourceDTO[];
+export type DataSourceListResponse = {
+  items: Schemas.DataSourceDto[];
 };
 
-export type DataSourceCollectionResponseWithCursor = {
-  /**
-   * List of data sources
-   */
-  items: Schemas.DataSourceDTO[];
+export type DataSourceListResponseWithCursor = {
+  items: Schemas.DataSourceDto[];
   nextCursor?: Schemas.NextCursorV3;
 };
 
-export type ListOfDataSourceIdsResponse = {
+export type DataSourceListIdsResponse = {
   /**
    * @minItems 1
    * @maxItems 100
    */
-  items: {
-    /**
-     * List of data source ids for the requested item(s)
-     */
-    externalId: Schemas.DataSourceDTO;
-  }[];
+  items: Schemas.ExternalId[];
+};
+
+export type RulesetListResponse = {
+  items: Schemas.RulesetDto[];
+};
+
+export type RulesetListResponseWithCursor = {
+  items: Schemas.RulesetDto[];
+  nextCursor?: Schemas.NextCursorV3;
+};
+
+export type RulesetListIdsResponse = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: Schemas.ExternalId[];
+};
+
+export type RuleListResponse = {
+  items: Schemas.RuleDto[];
+};
+
+export type RuleListResponseWithCursor = {
+  items: Schemas.RuleDto[];
+  nextCursor?: Schemas.NextCursorV3;
+};
+
+export type RuleListIdsResponse = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: Schemas.ExternalId[];
 };

@@ -8,6 +8,10 @@
  */
 export type Project = string;
 
+export type DataSourceId = string;
+
+export type RulesetId = string;
+
 /**
  * @default 100
  * @minimum 1

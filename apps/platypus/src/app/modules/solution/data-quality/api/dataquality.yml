@@ -3,10 +3,10 @@ info:
   title: Cognite API
   version: v1 alpha
 servers:
-  - url: "https://api.cognitedata.com"
+- url: "https://api.cognitedata.com"
 tags:
-  - name: Data Quality
-    description: Cerberus
+- name: Data Quality
+  description: Cerberus
 paths:
   #
   # Data Sources
@@ -14,13 +14,13 @@ paths:
   "/api/v1/projects/{project}/data-validation/datasources":
     post:
       tags:
-        - DataSources
+      - DataSources
       summary: Create or update data sources
       description: >-
         Add or update (upsert) data sources.
       operationId: createDataSources
       parameters:
-        - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/project"
       requestBody:
         description: DataSources to add or update.
         content:
@@ -29,10 +29,10 @@ paths:
               $ref: "#/components/schemas/DataSourceCreateRequest"
         required: true
       x-capability:
-        - "DataSourcesAdminAcl:WRITE"
+      - "DataSourcesAdminAcl:WRITE"
       responses:
         "200":
-          $ref: "#/components/responses/DataSourceCollectionResponse"
+          $ref: "#/components/responses/DataSourceListResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse"
         "409":
@@ -41,74 +41,310 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UpsertConflict"
+
     get:
       tags:
-        - DataSources
+      - DataSources
       summary: List data sources defined in the project
       description: >-
         List data sources defined in the current project.
       operationId: listDataSources
       parameters:
-        - $ref: "#/components/parameters/project"
-        - $ref: "#/components/parameters/Cursor"
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/Cursor"
       x-capability:
-        - "DataSourcesAclAdmin:READ"
+      - "DataSourcesAclAdmin:READ"
       responses:
         "200":
-          $ref: "#/components/responses/DataSourceCollectionResponseWithCursor"
+          $ref: "#/components/responses/DataSourceListResponseWithCursor"
         "400":
           $ref: "#/components/responses/ErrorResponse"
 
   "/api/v1/projects/{project}/data-validation/datasources/byids":
     post:
       tags:
-        - DataSources
+      - DataSources
       summary: Retrieve data sources by their ids
       description: >-
         Retrieve up to 100 data sources by specifying their ids.
       operationId: listByIdsDataSources
       parameters:
-        - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/project"
       requestBody:
         description: List of ids for the data sources to return.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ListOfDataSourceIdsRequest"
+              $ref: "#/components/schemas/DataSourceListIdsRequest"
         required: true
       x-capability:
-        - "DataSourcesAdminAcl:READ"
+      - "DataSourcesAdminAcl:READ"
       responses:
         "200":
-          $ref: "#/components/responses/DataSourceCollectionResponse"
+          $ref: "#/components/responses/DataSourceListResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse"
 
   "/api/v1/projects/{project}/data-validation/datasources/delete":
     post:
       tags:
-        - DataSources
+      - DataSources
       summary: Delete data sources
       description: "Delete one or more data sources"
       operationId: deleteDataSources
       parameters:
-        - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/project"
       requestBody:
         description: List of data sources ids to delete.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ListOfDataSourceIdsRequest"
+              $ref: "#/components/schemas/DataSourceListIdsRequest"
         required: true
       x-capability:
-        - "DataSourcesAclAdmin:WRITE"
+      - "DataSourcesAclAdmin:WRITE"
       responses:
         "200":
-          $ref: "#/components/responses/ListOfDataSourceIdsResponse"
+          $ref: "#/components/responses/DataSourceListIdsResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse"
 
-###
+  #
+  # Rulesets
+  #
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets":
+    post:
+      tags:
+      - Rulesets
+      summary: Create or update rulesets
+      description: >-
+        Add or update (upsert) rulesets.
+      operationId: createRulesets
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      requestBody:
+        description: Rulesets to add or update.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RulesetCreateRequest"
+        required: true
+      x-capability:
+      - "RulesetsAdminAcl:WRITE"
+      responses:
+        "200":
+          $ref: "#/components/responses/RulesetListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: Ruleset conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpsertConflict"
+
+    get:
+      tags:
+      - Rulesets
+      summary: List rulesets
+      description: >-
+        List rulesets defined in the current project and the current data source.
+      operationId: listRulesets
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/Cursor"
+      x-capability:
+      - "RulesetsAclAdmin:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/RulesetListResponseWithCursor"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/byids":
+    post:
+      tags:
+      - Rulesets
+      summary: Retrieve rulesets by their ids
+      description: >-
+        Retrieve up to 100 rulesets by specifying their ids.
+      operationId: listByIdsRulesets
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      requestBody:
+        description: List of ids for the rulesets to return.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RulesetListIdsRequest"
+        required: true
+      x-capability:
+      - "RulesetAdminAcl:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/RulesetListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/delete":
+    post:
+      tags:
+      - Rulesets
+      summary: Delete rulesets
+      description: "Delete one or more rulesets"
+      operationId: deleteRulesets
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      requestBody:
+        description: List of rulesets ids to delete.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RulesetListIdsRequest"
+        required: true
+      x-capability:
+      - "RulesetsAclAdmin:WRITE"
+      responses:
+        "200":
+          $ref: "#/components/responses/RulesetListIdsResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  #
+  # Rules in a ruleset
+  #
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules":
+    post:
+      tags:
+      - Rules
+      summary: Create or update rules
+      description: >-
+        Add or update (upsert) rules.
+      operationId: createRules
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/rulesetId"
+      requestBody:
+        description: Rules to add or update.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuleCreateRequest"
+        required: true
+      x-capability:
+      - "RulesAdminAcl:WRITE"
+      responses:
+        "200":
+          $ref: "#/components/responses/RuleListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: Rule conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpsertConflict"
+
+    get:
+      tags:
+      - Rules
+      summary: List rules
+      description: >-
+        List rules defined in the current project, in the current data source and in the current ruleset.
+      operationId: listRules
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/rulesetId"
+      - $ref: "#/components/parameters/Cursor"
+      x-capability:
+      - "RulesAclAdmin:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/RuleListResponseWithCursor"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/byids":
+    post:
+      tags:
+      - Rules
+      summary: Retrieve rules by their ids
+      description: >-
+        Retrieve up to 100 rules by specifying their ids.
+      operationId: listByIdsRules
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/rulesetId"
+      requestBody:
+        description: List of ids for the rules to return.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuleListIdsRequest"
+        required: true
+      x-capability:
+      - "RuleAdminAcl:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/RuleListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/delete":
+    post:
+      tags:
+      - Rules
+      summary: Delete rules
+      description: "Delete one or more rules"
+      operationId: deleteRules
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/rulesetId"
+      requestBody:
+        description: List of rules ids to delete.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuleListIdsRequest"
+        required: true
+      x-capability:
+      - "RuleAclAdmin:WRITE"
+      responses:
+        "200":
+          $ref: "#/components/responses/RuleListIdsResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  #
+  # Rules from all the rulesets
+  #
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rules":
+    get:
+      tags:
+      - Rules
+      summary: List all rules of the data source
+      description: >-
+        List rules defined in the current project, in the current data source and from all the rulesets.
+      operationId: listAllRules
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/Cursor"
+      x-capability:
+      - "RulesAclAdmin:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/RuleListResponseWithCursor"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
 
 components:
   parameters:
@@ -120,6 +356,20 @@ components:
       schema:
         type: string
         example: publicdata
+
+    dataSourceId:
+      in: path
+      name: dataSourceId
+      description: The external id of the data source.
+      schema:
+        type: string
+
+    rulesetId:
+      in: path
+      name: rulesetId
+      description: The external id of the ruleset.
+      schema:
+        type: string
 
     Limit:
       name: limit
@@ -147,27 +397,14 @@ components:
           schema:
             type: object
             required:
-              - error
+            - error
             properties:
               error:
                 $ref: "#/components/schemas/Error"
 
-    DataSourceCollectionResponse:
-      description: "List of data sources"
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - items
-            properties:
-              items:
-                type: array
-                description: "List of data sources"
-                items:
-                  $ref: "#/components/schemas/DataSourceDTO"
+    #### Data source respones ####
 
-    DataSourceCollectionResponseWithCursor:
+    DataSourceListResponse:
       description: "List of data sources"
       content:
         application/json:
@@ -177,13 +414,25 @@ components:
             properties:
               items:
                 type: array
-                description: "List of data sources"
                 items:
-                  $ref: "#/components/schemas/DataSourceDTO"
+                  $ref: "#/components/schemas/DataSourceDto"
+
+    DataSourceListResponseWithCursor:
+      description: "List of data sources with cursor"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataSourceDto"
               nextCursor:
                 $ref: "#/components/schemas/NextCursorV3"
 
-    ListOfDataSourceIdsResponse:
+    DataSourceListIdsResponse:
       description: "List of data source id(s) affected by the request"
       content:
         application/json:
@@ -196,21 +445,107 @@ components:
                 minItems: 1
                 maxItems: 100
                 items:
-                  type: object
-                  required: [externalId]
-                  properties:
-                    externalId:
-                      description: "List of data source ids for the requested item(s)"
-                      allOf:
-                        - $ref: "#/components/schemas/DataSourceDTO"
+                  $ref: "#/components/schemas/ExternalId"
+
+    #### Ruleset respones ####
+
+    RulesetListResponse:
+      description: "List of rulesets"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RulesetDto"
+
+    RulesetListResponseWithCursor:
+      description: "List of rulesets with cursor"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RulesetDto"
+              nextCursor:
+                $ref: "#/components/schemas/NextCursorV3"
+
+    RulesetListIdsResponse:
+      description: "List of ruleset id(s) affected by the request"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                minItems: 1
+                maxItems: 100
+                items:
+                  $ref: "#/components/schemas/ExternalId"
+
+    #### Rule respones ####
+
+    RuleListResponse:
+      description: "List of rules"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RuleDto"
+
+    RuleListResponseWithCursor:
+      description: "List of rules with cursor"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RuleDto"
+              nextCursor:
+                $ref: "#/components/schemas/NextCursorV3"
+
+    RuleListIdsResponse:
+      description: "List of rule id(s) affected by the request"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                minItems: 1
+                maxItems: 100
+                items:
+                  $ref: "#/components/schemas/ExternalId"
 
   schemas:
     # Generic error object. Shared across all CDF APIs
     Error:
       type: object
       required:
-        - code
-        - message
+      - code
+      - message
       description: Cognite API error.
       properties:
         code:
@@ -239,119 +574,6 @@ components:
           type: string
           example: 4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo
 
-    #############
-
-    DataModelId:
-      type: string
-      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
-      minLength: 1
-      maxLength: 255
-
-    DataModelSpace:
-      type: string
-      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
-      minLength: 1
-      maxLength: 255
-
-    DataModelVersion:
-      type: string
-      pattern: "^[a-zA-Z0-9]([a-zA-Z0-9_-]{0,41}[a-zA-Z0-9])?$"
-      minLength: 1
-      maxLength: 43
-
-    DataSourceId:
-      type: string
-      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
-      minLength: 1
-      maxLength: 255
-
-    DataSourceDraft:
-      allOf:
-      type: object
-      required: [dataModelId, dataModelSpaceId, dataModelVersion, externalId]
-      properties:
-        dataModelId:
-          description: "Id of the data model that the data source belongs to"
-          allOf:
-            - $ref: "#/components/schemas/DataModelId"
-        dataModelSpaceId:
-          description: "The data model space that the data source belongs to"
-          allOf:
-            - $ref: "#/components/schemas/DataModelSpace"
-        dataModelVersion:
-          description: "The data model version that the data source belongs to"
-          allOf:
-            - $ref: "#/components/schemas/DataModelVersion"
-        externalId:
-          description: "External-id of the data source"
-          allOf:
-            - $ref: "#/components/schemas/DataSourceId"
-
-    DataSourceDTO:
-      allOf:
-      type: object
-      required:
-        [
-          createdTime,
-          dataModelId,
-          dataModelSpaceId,
-          dataModelVersion,
-          externalId,
-          lastUpdatedTime,
-        ]
-      properties:
-        createdTime:
-          $ref: "#/components/schemas/EpochTimestamp"
-        dataModelId:
-          description: "Id of the data model that the data source belongs to"
-          allOf:
-            - $ref: "#/components/schemas/DataModelId"
-        dataModelSpaceId:
-          description: "The data model space that the data source belongs to"
-          allOf:
-            - $ref: "#/components/schemas/DataModelSpace"
-        dataModelVersion:
-          description: "The data model version that the data source belongs to"
-          allOf:
-            - $ref: "#/components/schemas/DataModelVersion"
-        externalId:
-          description: "External-id of the data source"
-          allOf:
-            - $ref: "#/components/schemas/DataSourceId"
-        lastUpdatedTime:
-          $ref: "#/components/schemas/EpochTimestamp"
-
-    DataSourceCreateRequest:
-      type: object
-      required: [items]
-      description: List of data sources to create/update
-      minItems: 1
-      maxItems: 100
-      properties:
-        items:
-          type: array
-          minItems: 1
-          maxItems: 100
-          items:
-            type: object
-            $ref: "#/components/schemas/DataSourceDraft"
-
-    ListOfDataSourceIdsRequest:
-      type: object
-      required: [items]
-      properties:
-        items:
-          type: array
-          minItems: 1
-          maxItems: 100
-          items:
-            type: object
-            required: [externalId]
-            properties:
-              externalId:
-                description: Ids for the data sources
-                type: string
-
     UpsertConflict:
       type: object
       required: [error]
@@ -373,3 +595,301 @@ components:
     NextCursorV3:
       description: The cursor value used to return (paginate to) the next page of results, when more data is available.
       type: string
+
+    #### Data source schemas ####
+
+    DataModelId:
+      type: string
+      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 255
+
+    DataModelSpace:
+      type: string
+      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 255
+
+    DataModelVersion:
+      type: string
+      pattern: "^[a-zA-Z0-9]([a-zA-Z0-9_-]{0,41}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 43
+
+    ExternalId:
+      type: string
+      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      minLength: 1
+      maxLength: 255
+
+    DataSourceDraft:
+      allOf:
+      type: object
+      required: [dataModelId, dataModelSpaceId, dataModelVersion, externalId]
+      properties:
+        dataModelId:
+          description: "Id of the data model that the data source belongs to"
+          allOf:
+          - $ref: "#/components/schemas/DataModelId"
+        dataModelSpaceId:
+          description: "The data model space that the data source belongs to"
+          allOf:
+          - $ref: "#/components/schemas/DataModelSpace"
+        dataModelVersion:
+          description: "The data model version that the data source belongs to"
+          allOf:
+          - $ref: "#/components/schemas/DataModelVersion"
+        externalId:
+          description: "External-id of the data source"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+
+    DataSourceDto:
+      allOf:
+      type: object
+      required: [createdTime, dataModelId, dataModelSpaceId, dataModelVersion, externalId, lastUpdatedTime]
+      properties:
+        createdTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        dataModelId:
+          description: "Id of the data model that the data source belongs to"
+          allOf:
+          - $ref: "#/components/schemas/DataModelId"
+        dataModelSpaceId:
+          description: "The data model space that the data source belongs to"
+          allOf:
+          - $ref: "#/components/schemas/DataModelSpace"
+        dataModelVersion:
+          description: "The data model version that the data source belongs to"
+          allOf:
+          - $ref: "#/components/schemas/DataModelVersion"
+        externalId:
+          description: "The external-id of the data source"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        lastUpdatedTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+
+    DataSourceCreateRequest:
+      type: object
+      required: [items]
+      description: List of data sources to create/update
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: "#/components/schemas/DataSourceDraft"
+
+    DataSourceListIdsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required: [externalId]
+            properties:
+              externalId:
+                description: Ids for the data sources used in the request
+                $ref: "#/components/schemas/ExternalId"
+
+    #### Ruleset schemas ####
+
+    RulesetDraft:
+      allOf:
+      type: object
+      required: [externalId, name]
+      properties:
+        description:
+          description: "The description of the ruleset"
+          type: string
+        externalId:
+          description: "The external-id of the ruleset"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        name:
+          description: "The name of the ruleset"
+          type: string
+        parentRulesetId:
+          description: "The external-id of the parent ruleset"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+
+    RulesetDto:
+      allOf:
+      type: object
+      required: [createdTime, dataSourceId, description, externalId, lastUpdatedTime, name, parentRulesetId]
+      properties:
+        createdTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        dataSourceId:
+          description: "The external-id of the data source"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        description:
+          description: "The description of the ruleset"
+          type: string
+        externalId:
+          description: "The external-id of the ruleset"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        name:
+          description: "The name of the ruleset"
+          type: string
+        lastUpdatedTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        parentRulesetId:
+          description: "The external-id of the parent ruleset"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+
+    RulesetCreateRequest:
+      type: object
+      required: [items]
+      description: List of rulesets to create/update
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: "#/components/schemas/RulesetDraft"
+
+    RulesetListIdsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required: [externalId]
+            properties:
+              externalId:
+                description: Ids from rulesets
+                $ref: "#/components/schemas/ExternalId"
+
+    #### Rule schemas ####
+
+    RuleSeverity:
+      description: "The severity of the rule"
+      type: string
+      enum:
+      - Critical
+      - High
+      - Medium
+      - Low
+
+    RuleDraft:
+      allOf:
+      type: object
+      required: [conditions, dataType, externalId, name, severity]
+      properties:
+        conditions:
+          description: "Conditions used to perform validation"
+          type: string
+        dataScopeId:
+          description: "External-id of the data scope connected to the rule"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        dataType:
+          description: "The reference to a view in FDM"
+          type: string
+        description:
+          description: "The description of the rule"
+          type: string
+        errorMessage:
+          description: "The error message of the rule"
+          type: string
+        externalId:
+          description: "The external-id of the rule"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        name:
+          description: "The name of the rule"
+          type: string
+        severity:
+          description: "The severity of the rule"
+          allOf:
+          - $ref: "#/components/schemas/RuleSeverity"
+
+    RuleDto:
+      allOf:
+      type: object
+      required: [conditions, createdTime, dataScope, dataType, description, errorMessage, externalId, lastUpdatedTime, name, severity]
+      properties:
+        conditions:
+          description: "Conditions used to perform validation"
+          type: string
+        createdTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        externalId:
+          description: "The external-id of the rule"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        dataScopeId:
+          description: "The external-id of the data scope connected to the rule"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        dataType:
+          description: "The reference to a view in FDM"
+          type: string
+        description:
+          description: "The description of the rule"
+          type: string
+        errorMessage:
+          description: "The error message of the rule"
+          type: string
+        lastUpdatedTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        name:
+          description: "The name of the rule"
+          type: string
+        severity:
+          description: "The severity of the rule"
+          allOf:
+          - $ref: "#/components/schemas/RuleSeverity"
+
+    RuleCreateRequest:
+      type: object
+      required: [items]
+      description: List of rules to create/update
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: "#/components/schemas/RuleDraft"
+
+    RuleListIdsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required: [externalId]
+            properties:
+              externalId:
+                description: Ids from rules
+                $ref: "#/components/schemas/ExternalId"

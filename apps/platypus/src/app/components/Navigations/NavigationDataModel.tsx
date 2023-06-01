@@ -55,6 +55,9 @@ export const NavigationDataModel = () => {
     if (window.location.pathname.endsWith('explorer')) {
       return 'explorer';
     }
+    if (window.location.pathname.endsWith('quality')) {
+      return 'quality';
+    }
     return 'data-modeling';
   })();
   const { dataModelExternalId, space, version } = useParams() as {
@@ -111,6 +114,10 @@ export const NavigationDataModel = () => {
       }
       case 'preview': {
         section = 'data-management/preview';
+        break;
+      }
+      case 'quality': {
+        section = 'data-quality';
         break;
       }
     }
