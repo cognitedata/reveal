@@ -11,9 +11,12 @@ import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 
 /**
- * Filter for finding annotation related to asset
+ * Filter for finding annotations related to an asset
  */
 export type Image360AnnotationAssetFilter = {
+  /**
+   * Reference to the wanted asset
+   */
   assetRef: IdEither;
 };
 
@@ -104,9 +107,9 @@ export interface Image360Collection {
   setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
 
   /**
-   * Find 360 images associated with a asset with the given assetRef
+   * Find 360 images associated with an asset through CDF annotations
    */
-  findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+  findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations

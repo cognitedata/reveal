@@ -239,7 +239,7 @@ export class Image360UI {
 
     const revisionsAndEntities = (
       await Promise.all(
-        this.collections.map(async coll => await coll.findImageAnnotation({ assetRef: { id: assetId } }))
+        this.collections.map(async coll => await coll.findImageAnnotations({ assetRef: { id: assetId } }))
       )
     ).flat(1);
 

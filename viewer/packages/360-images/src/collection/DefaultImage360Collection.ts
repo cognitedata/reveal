@@ -218,7 +218,7 @@ export class DefaultImage360Collection implements Image360Collection {
     );
   }
 
-  public async findImageAnnotation(
+  public async findImageAnnotations(
     filter: Image360AnnotationAssetFilter
   ): Promise<Image360AnnotationAssetQueryResult[]> {
     const imageIds = await this._image360DataProvider.getFilesByAssetRef(filter.assetRef);
