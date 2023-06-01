@@ -64,5 +64,6 @@
   "component-title-workflow": "Workflow",
   "component-description-workflow": "One workflow calls another",
   "component-title-function": "Function",
-  "component-description-function": "Execute a Cognite Function"
+  "component-description-function": "Execute a Cognite Function",
+  "created-at": "Created at"
 }

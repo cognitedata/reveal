@@ -1,15 +1,19 @@
-import { Flex, Icon } from '@cognite/cogs.js';
-import { URL_SEARCH_QUERY_PARAM } from 'common';
-import { useFlowList } from 'hooks/files';
-import { filterFlow, useUrlQuery } from 'utils';
-import ListItem from './ListItem';
+import { Icon } from '@cognite/cogs.js';
+
+import { useWorkflows } from 'hooks/workflows';
+import WorkflowTable from 'components/workflow-table/WorkflowTable';
 
 export default function List() {
-  const { data, isLoading, error } = useFlowList({ staleTime: 0 });
-  const [query] = useUrlQuery(URL_SEARCH_QUERY_PARAM);
-  if (isLoading) {
+  const {
+    data: workflows,
+    error,
+    isInitialLoading: isInitialLoadingWorkflows,
+  } = useWorkflows();
+
+  if (isInitialLoadingWorkflows || !workflows) {
     return <Icon type="Loader" />;
   }
+
   if (error) {
     return (
       <div>
@@ -18,17 +22,6 @@ export default function List() {
       </div>
     );
   }
-  return (
-    <Flex direction="column">
-      {data
-        ?.filter((file) => filterFlow(file, query))
-        .sort(
-          (a, b) =>
-            (b.uploadedTime?.valueOf() || 0) - (a.uploadedTime?.valueOf() || 0)
-        )
-        .map((file) => (
-          <ListItem key={file.id} file={file} />
-        ))}
-    </Flex>
-  );
+
+  return <WorkflowTable workflows={workflows} />;
 }
