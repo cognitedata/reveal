@@ -1205,7 +1205,7 @@ export interface Overlay3D<ContentType> {
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
     clear(): void;
-    createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType>;
+    createOverlayCollection(overlays?: OverlayInfo<ContentType>[], options?: OverlayCollectionOptions): OverlayCollection<ContentType>;
     dispose(): void;
     getCollections(): OverlayCollection<ContentType>[];
     getTextOverlayVisible(): boolean;
@@ -1242,12 +1242,19 @@ export interface OverlayCollection<ContentType> {
 }
 
 // @public
+export type OverlayCollectionOptions = {
+    defaultOverlayColor?: THREE_2.Color;
+    overlayTexture?: THREE_2.Texture;
+    overlayTextureMask?: THREE_2.Texture;
+};
+
+// @public
 export type OverlayEventHandler<ContentType> = (event: {
     targetOverlay: Overlay3D<ContentType>;
-    htmlOverlay: HTMLElement;
+    htmlTextOverlay: HTMLElement;
     mousePosition: {
-        clientX: number;
-        clientY: number;
+        offsetX: number;
+        offsetY: number;
     };
 }) => void;
 

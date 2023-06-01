@@ -12,7 +12,7 @@ export type DefaultOverlay3DContentType = {
 };
 
 /**
- * Data used in creating an overlay
+ * Data used in creating an overlay.
  */
 export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
   /**
@@ -30,7 +30,7 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
 };
 
 /**
- * A set of overlays managed
+ * A set of overlays managed.
  */
 export interface OverlayCollection<ContentType> {
   /**
