@@ -18,7 +18,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, Corner, AxisViewTool, Overlay3DTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -152,6 +152,24 @@ export function Viewer() {
       cameraManager = viewer.cameraManager as DefaultCameraManager;
 
       cameraManager.setCameraControlsOptions(controlsOptions);
+
+      const overlayTool = new Overlay3DTool<{text:string}>(viewer);
+
+      overlayTool.createOverlayCollection([{
+        content: {
+          text: 'Hello World',
+        },
+        position: new THREE.Vector3(),
+        color: new THREE.Color('purple'),
+      }]);
+      overlayTool.setTextOverlayVisible(true);
+
+      overlayTool.on('click', (event) => {
+        event.htmlTextOverlay.innerText = 'Clicked ' + event.targetOverlay.getContent().text;
+      });
+      overlayTool.on('hover', (event) => {
+        event.htmlTextOverlay.innerText = 'Hovered' + event.targetOverlay.getContent().text;
+      });
 
       cameraManagers = {
         Default: viewer.cameraManager as DefaultCameraManager,

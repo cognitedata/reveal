@@ -12,24 +12,23 @@ import { Overlay3DTool } from '../src/Overlay3D/Overlay3DTool';
 import { OverlayInfo } from '../../3d-overlays/src/OverlayCollection';
 
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
-  public async setup(_: ViewerTestFixtureComponents): Promise<void> {
-    const { viewer } = _;
+  public async setup(components: ViewerTestFixtureComponents): Promise<void> {
+    const { viewer } = components;
 
     const cameraManager = viewer.cameraManager as DefaultCameraManager;
 
     cameraManager.setCameraControlsOptions({ mouseWheelAction: 'zoomToCursor', changeCameraTargetOnClick: false });
 
     const smartOverlayTool = new Overlay3DTool<{ text: string; id: number }>(viewer);
-    smartOverlayTool.setTextOverlayVisible(false);
 
-    smartOverlayTool.on('hover', ({ htmlOverlay, targetOverlay }) => {
+    smartOverlayTool.on('hover', ({ htmlTextOverlay, targetOverlay }) => {
       const { text, id } = targetOverlay.getContent();
-      htmlOverlay.innerText = text + ', #' + id + ' hovered';
+      htmlTextOverlay.innerText = text + ', #' + id + ' hovered';
       targetOverlay.setColor(new THREE.Color('red'));
       viewer.requestRedraw();
     });
 
-    smartOverlayTool.on('click', ({ htmlOverlay, targetOverlay }) => {
+    smartOverlayTool.on('click', ({ htmlTextOverlay: htmlOverlay, targetOverlay }) => {
       htmlOverlay.innerText = 'Haha, you clicked me!';
       targetOverlay.setVisible(false);
       viewer.requestRedraw();
