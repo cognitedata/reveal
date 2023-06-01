@@ -12,12 +12,12 @@ import {
 } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
-import { DataModelList } from '../../services/FDMClient';
+import { DataModelListResponse } from '../../services/types';
 
 interface Props {
   loading?: boolean;
-  dataModels?: DataModelList[];
-  onSelectionClick?: (dataModel: DataModelList) => void;
+  dataModels?: DataModelListResponse[];
+  onSelectionClick?: (dataModel: DataModelListResponse) => void;
 }
 
 const Sidebar = React.memo(() => {
@@ -49,7 +49,7 @@ export const DataModelSelector: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [selectedDataModel, setSelectedDataModel] = useState<
-    DataModelList | undefined
+    DataModelListResponse | undefined
   >();
 
   return (

@@ -12,5 +12,3 @@ configure({ adapter: new Adapter() });
 jest.mock('@cognite/cdf-i18n-utils', () => ({
   useTypedTranslation: jest.fn(),
 }));
-
-jest.mock('@cognite/cdf-sdk-singleton');

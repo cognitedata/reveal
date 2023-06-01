@@ -2,41 +2,26 @@ import { useParams } from 'react-router-dom';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { useSDK } from '@cognite/sdk-provider';
-
+import { useFDM } from '../../../providers/FDMProvider';
 import { extractFieldsFromSchema } from '../../extractors';
-import { FDMClient } from '../../FDMClient';
+import { queryKeys } from '../../queryKeys';
 
 export const useInstancesQuery = () => {
-  const { space, dataModel, version, dataType, nodeSpace, externalId } =
-    useParams();
+  const { dataType, instanceSpace, externalId } = useParams();
 
-  const sdk = useSDK();
-  const client = new FDMClient(sdk, { dataModel, space, version });
+  const client = useFDM();
 
   return useQuery(
-    [
-      'instances',
-      'single',
-      space,
-      dataModel,
-      version,
-      dataType,
-      nodeSpace,
-      externalId,
-    ],
+    queryKeys.instance(
+      { dataType, instanceSpace, externalId },
+      client.getHeaders
+    ),
     async () => {
-      if (
-        !(space && dataModel && version && dataType && externalId && nodeSpace)
-      ) {
+      if (!(dataType && externalId && instanceSpace)) {
         return Promise.reject(new Error('Missing headers...'));
       }
 
-      const model = await client.getDataModelById({
-        space,
-        dataModel,
-        version,
-      });
+      const model = await client.getDataModelById();
       const schema = client.parseSchema(model?.graphQlDml);
 
       const extractedFields = extractFieldsFromSchema(schema, dataType);
@@ -50,10 +35,7 @@ export const useInstancesQuery = () => {
       }
 
       const instance = await client.getInstanceById<any>(fields, {
-        nodeSpace,
-        space,
-        dataModel,
-        version,
+        instanceSpace,
         dataType,
         externalId,
       });

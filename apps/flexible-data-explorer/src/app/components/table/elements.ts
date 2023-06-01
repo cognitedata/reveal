@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { Detail, Flex, Chip, Body, BodyProps } from '@cognite/cogs.js';
 
-import { zIndex } from '@data-exploration-lib/core';
+import zIndex from '../../utils/zIndex';
 
 const defaultRowHeight = '48px';
 const defaultExtraRowHeight = '24px';

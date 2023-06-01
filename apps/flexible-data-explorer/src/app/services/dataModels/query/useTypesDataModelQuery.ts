@@ -1,29 +1,15 @@
-import { useParams } from 'react-router-dom';
-
 import { useQuery } from '@tanstack/react-query';
 
-import { useSDK } from '@cognite/sdk-provider';
-
-import { FDMClient } from '../../FDMClient';
+import { useFDM } from '../../../providers/FDMProvider';
+import { queryKeys } from '../../queryKeys';
 
 export const useTypesDataModelQuery = () => {
-  const sdk = useSDK();
-  const client = new FDMClient(sdk);
-
-  const { space, dataModel, version } = useParams();
+  const client = useFDM();
 
   return useQuery(
-    ['dataModel', 'types', space, dataModel, version],
+    queryKeys.dataModelTypes(client.getHeaders),
     async () => {
-      if (!(space && dataModel && version)) {
-        return Promise.resolve([]);
-      }
-
-      const model = await client.getDataModelById({
-        space,
-        dataModel,
-        version,
-      });
+      const model = await client.getDataModelById();
       const schema = client.parseSchema(model?.graphQlDml);
 
       return schema?.types || [];
@@ -31,7 +17,7 @@ export const useTypesDataModelQuery = () => {
     {
       staleTime: Infinity,
       cacheTime: Infinity,
-      enabled: Boolean(space && dataModel && version),
+      enabled: client.getHeaders !== undefined,
     }
   );
 };

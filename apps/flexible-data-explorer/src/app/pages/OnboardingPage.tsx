@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { DataModelSelector } from '../components/selectors/DataModelSelector';
 import { useNavigation } from '../hooks/useNavigation';
 import { useListDataModelsQuery } from '../services/dataModels/query/useListDataModelsQuery';
-import { DataModelList } from '../services/FDMClient';
+import { DataModelListResponse } from '../services/types';
 
 export const OnboardingPage = () => {
   const { space, dataModel, version } = useParams();
@@ -12,7 +12,7 @@ export const OnboardingPage = () => {
 
   const { data, isLoading } = useListDataModelsQuery();
 
-  const handleSelectionClick = (item: DataModelList) => {
+  const handleSelectionClick = (item: DataModelListResponse) => {
     navigate.toHomePage(item.space, item.externalId, item.version);
   };
 

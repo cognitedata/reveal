@@ -9,6 +9,15 @@ import head from 'lodash/head';
 
 import type { CogniteClient } from '@cognite/sdk';
 
+import { BASE_FIELDS } from './constants';
+import {
+  DataModel,
+  DataModelByIdResponse,
+  DataModelListResponse,
+  Instance,
+  IntrospectionResponse,
+} from './types';
+
 export interface FDMError {
   extensions: { classification: string };
   locations: { column: number; line: number };
@@ -29,21 +38,19 @@ class BaseFDMClient {
   protected BASE_URL: string;
   protected client: CogniteClient;
 
-  private headers:
-    | { dataModel?: string; space?: string; version?: string }
-    | undefined;
+  private headers: DataModel | undefined;
 
-  constructor(
-    client: CogniteClient,
-    headers?: { dataModel?: string; space?: string; version?: string }
-  ) {
+  constructor(client: CogniteClient, headers?: DataModel) {
     this.client = client;
     this.BASE_URL = `${client.getBaseUrl()}/api/v1/projects/${client.project}`;
     this.headers = headers;
   }
 
-  // TODO: Start using this helper method
   public get getHeaders() {
+    if (!this.headers) {
+      throw new Error('Missing headers.');
+    }
+
     return this.headers;
   }
 
@@ -68,14 +75,11 @@ class BaseFDMClient {
       });
   }
 
-  public gqlRequest<T>(
-    data: { query: string; variables?: Record<string, any> },
-    {
-      space,
-      dataModel,
-      version,
-    }: { space: string; dataModel: string; version: string }
-  ): Promise<T> {
+  public gqlRequest<T>(data: {
+    query: string;
+    variables?: Record<string, any>;
+  }): Promise<T> {
+    const { dataModel, space, version } = this.headers || {};
     const url = `${this.BASE_URL}/userapis/spaces/${space}/datamodels/${dataModel}/versions/${version}/graphql`;
 
     return this.request<T>(url, data);
@@ -90,10 +94,7 @@ class BaseFDMClient {
     return this.request<T>(url, data);
   }
 
-  public async introspectionQuery(
-    dataType: string,
-    headers: { space: string; dataModel: string; version: string }
-  ) {
+  public async introspectionQuery(dataType: string) {
     const result = query({
       operation: { name: '__type', alias: 'allFields' },
       fields: [
@@ -113,14 +114,12 @@ class BaseFDMClient {
       },
     });
 
-    return this.gqlRequest<IntrospectionResponse>(result, headers).then(
-      (data) => {
-        return data.allFields.fields.map((field) => ({
-          field: field.name,
-          kind: field.type.name || field.type.ofType.name,
-        }));
-      }
-    );
+    return this.gqlRequest<IntrospectionResponse>(result).then((data) => {
+      return data.allFields.fields.map((field) => ({
+        field: field.name,
+        kind: field.type.name || field.type.ofType.name,
+      }));
+    });
   }
 
   public parseSchema(graphQlDml?: string) {
@@ -157,23 +156,17 @@ export class FDMClient extends BaseFDMClient {
     const {
       [operation]: { items },
     } = await this.dmlRequest<{
-      listGraphQlDmlVersions: {
-        items: DataModelList[];
+      [operation]: {
+        items: DataModelListResponse[];
       };
     }>(data);
 
     return items;
   }
 
-  public async getDataModelById({
-    space,
-    dataModel,
-    version,
-  }: {
-    space: string;
-    dataModel: string;
-    version: string;
-  }) {
+  public async getDataModelById() {
+    const { space, dataModel, version } = this.getHeaders;
+
     const operation = 'graphQlDmlVersionsById';
 
     const data = query({
@@ -193,12 +186,7 @@ export class FDMClient extends BaseFDMClient {
       [operation]: { items },
     } = await this.dmlRequest<{
       [operation]: {
-        items: {
-          graphQlDml: string;
-          version: string;
-          name: string;
-          description: string;
-        }[];
+        items: DataModelByIdResponse[];
       };
     }>(data);
 
@@ -209,19 +197,7 @@ export class FDMClient extends BaseFDMClient {
 
   public async getInstanceById<T>(
     fields: Fields,
-    {
-      dataType,
-      externalId,
-      nodeSpace,
-      ...headers
-    }: {
-      space: string;
-      dataModel: string;
-      version: string;
-      dataType: string;
-      nodeSpace: string;
-      externalId: string;
-    }
+    { dataType, externalId, instanceSpace }: Instance
   ) {
     const operation = `get${dataType}ById`;
 
@@ -235,7 +211,7 @@ export class FDMClient extends BaseFDMClient {
       variables: {
         instance: {
           type: 'InstanceRef = {space: "", externalId: ""}',
-          value: { externalId, space: nodeSpace },
+          value: { externalId, space: instanceSpace },
         },
       },
     });
@@ -246,19 +222,14 @@ export class FDMClient extends BaseFDMClient {
       [operation in string]: {
         items: T[];
       };
-    }>(payload, headers);
+    }>(payload);
 
     return head(items);
   }
 
   public async searchDataTypes(
     queryString: string,
-    types: DataModelTypeDefsType[] = [],
-    headers: {
-      space: string;
-      dataModel: string;
-      version: string;
-    }
+    types: DataModelTypeDefsType[] = []
   ) {
     const constructPayload = types.map((item) => {
       const dataType = item.name;
@@ -287,7 +258,7 @@ export class FDMClient extends BaseFDMClient {
 
     const payload = query(constructPayload);
 
-    const result = await this.gqlRequest<Record<string, any>>(payload, headers);
+    const result = await this.gqlRequest<Record<string, any>>(payload);
 
     return result;
   }
@@ -297,11 +268,7 @@ export class FDMClient extends BaseFDMClient {
     {
       cursor,
       sort,
-      ...headers
     }: {
-      space: string;
-      dataModel: string;
-      version: string;
       cursor?: string;
       sort?: Record<string, string>;
     }
@@ -333,82 +300,8 @@ export class FDMClient extends BaseFDMClient {
           endCursor?: string;
         };
       };
-    }>(payload, headers);
+    }>(payload);
 
     return data;
   }
 }
-
-const BASE_FIELDS = ['space', 'externalId', 'createdTime', 'lastUpdatedTime'];
-
-type IntrospectionResponse = {
-  allFields: {
-    fields: {
-      name: string;
-      type: {
-        name: string;
-        kind: 'scalar' | 'object';
-        ofType: {
-          name: string;
-          kind: 'scalar' | 'object';
-        };
-      };
-    }[];
-  };
-};
-
-// public async upsertNodes<T extends { externalId?: string }>(
-//   modelName: string,
-//   nodes: T[]
-// ) {
-//   const data = {
-//     items: nodes.map(({ externalId, ...properties }) => ({
-//       instanceType: 'node',
-//       space: this.SPACE_EXTERNAL_ID,
-//       externalId,
-//       sources: [
-//         {
-//           source: {
-//             type: 'container',
-//             space: this.SPACE_EXTERNAL_ID,
-//             externalId: modelName,
-//           },
-//           properties,
-//         },
-//       ],
-//     })),
-//   };
-//   return this.client.post<{ items: T[] }>(this.baseUrlDms, {
-//     data,
-//     headers: this.DMS_HEADERS,
-//     withCredentials: true,
-//   });
-// }
-
-// public async deleteNodes(externalIds: string[] | string) {
-//   const externalIdsAsArray = Array.isArray(externalIds)
-//     ? externalIds
-//     : [externalIds];
-//   const data = {
-//     items: externalIdsAsArray.map((externalId) => ({
-//       instanceType: 'node',
-//       space: this.SPACE_EXTERNAL_ID,
-//       externalId,
-//     })),
-//   };
-//   return this.client.post(`${this.baseUrlDms}/delete`, {
-//     data,
-//     headers: this.DMS_HEADERS,
-//     withCredentials: true,
-//   });
-// }
-
-export type DataModelList = {
-  space: string;
-  externalId: string;
-  version: string;
-  name?: string;
-  description?: string;
-  createdTime?: string | number;
-  lastUpdatedTime?: string | number;
-};

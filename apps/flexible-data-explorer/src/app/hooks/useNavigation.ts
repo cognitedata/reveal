@@ -36,10 +36,14 @@ export const useNavigation = () => {
   );
 
   const toInstancePage = useCallback(
-    (dataType: string, nodeSpace: string | undefined, externalId: string) => {
+    (
+      dataType: string,
+      instanceSpace: string | undefined,
+      externalId: string
+    ) => {
       const { space, dataModel, version } = params;
       navigate({
-        pathname: `/${dataModel}/${space}/${version}/${dataType}/${nodeSpace}/${externalId}`,
+        pathname: `/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
         search,
       });
     },

@@ -23,7 +23,7 @@ import useLocalStorageState from 'use-local-storage-state';
 
 import { Flex } from '@cognite/cogs.js';
 
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { EMPTY_OBJECT } from '../../constants/object';
 
 import { SortIcon } from './components';
 import {

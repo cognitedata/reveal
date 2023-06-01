@@ -3,22 +3,27 @@ import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { SearchBar } from './containers/search/SearchBar';
-import { useFusionQuery } from './hooks/useFusionQuery';
 import { HomePage } from './pages/HomePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
 import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
 import { ListPage } from './pages/ListPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { SearchPage } from './pages/SearchPage';
+import { FDMProvider } from './providers/FDMProvider';
 
 const Routes = () => {
-  useFusionQuery();
-
   return (
     <ReactRoutes>
       <Route index element={<OnboardingPage />} />
 
-      <Route path="/:dataModel/:space/:version/" element={<Outlet />}>
+      <Route
+        path="/:dataModel/:space/:version/"
+        element={
+          <FDMProvider>
+            <Outlet />
+          </FDMProvider>
+        }
+      >
         <Route index element={<HomePage />} />
 
         <Route
@@ -37,15 +42,15 @@ const Routes = () => {
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
 
           <Route
-            path=":dataType/:nodeSpace/:externalId/overview?"
+            path=":dataType/:instanceSpace/:externalId/overview?"
             element={<InstancesPage />}
           />
           <Route
-            path=":dataType/:nodeSpace/:externalId/3d"
+            path=":dataType/:instanceSpace/:externalId/3d"
             element={<p>3D</p>}
           />
           <Route
-            path=":dataType/:nodeSpace/:externalId/map"
+            path=":dataType/:instanceSpace/:externalId/map"
             element={<p>Map</p>}
           />
         </Route>

@@ -1,36 +1,23 @@
-import { useParams } from 'react-router-dom';
-
 import { useQuery } from '@tanstack/react-query';
 
-import { useSDK } from '@cognite/sdk-provider';
-
 import { useSearchQueryParams } from '../../../hooks/useParams';
+import { useFDM } from '../../../providers/FDMProvider';
 import { useTypesDataModelQuery } from '../../dataModels/query/useTypesDataModelQuery';
-import { FDMClient } from '../../FDMClient';
+import { queryKeys } from '../../queryKeys';
 
 export const useSearchDataTypesQuery = () => {
-  const sdk = useSDK();
-  const client = new FDMClient(sdk);
-  const { space, dataModel, version } = useParams();
+  const client = useFDM();
 
   const { data, isLoading } = useTypesDataModelQuery();
 
   const query = useSearchQueryParams();
 
   return useQuery(
-    ['dataType', 'search', space, dataModel, version, query],
+    queryKeys.searchDataTypes(query, client.getHeaders),
     async () => {
-      if (!(space && dataModel && version)) {
-        return Promise.reject(new Error('Missing stuff'));
-      }
+      const results = await client.searchDataTypes(query, data);
 
-      const result = await client.searchDataTypes(query, data, {
-        space,
-        dataModel,
-        version,
-      });
-
-      return result;
+      return results;
     },
     {
       enabled: data !== undefined || !isLoading,

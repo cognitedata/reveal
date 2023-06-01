@@ -2,8 +2,7 @@ import React, { useRef } from 'react';
 
 import { Tooltip } from '@cognite/cogs.js';
 
-import { useIsOverflow } from '@data-exploration-lib/core';
-
+import { useIsOverflow } from '../../../hooks/useIsOverflow';
 import { EllipsisText } from '../elements';
 
 export const TooltipCell = React.memo(
