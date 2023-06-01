@@ -12,11 +12,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal only considers annotations following specific requirements. For an annotation to be found by Reveal, it must have its `annotatedResourceId` set to the ID of an image file belonging to the 360 image set. Furthermore, `annotatedResourceType` must be `"file"` and `annotationType` must be either `"images.ObjectDetection"` or `"images.AssetLink`". Currently, only annotations containing either a `boundingBox` or a `polygon` is supported, `polyline` annotations will not be displayed. Refer to  [the CDF documentation](https://docs.cognite.com/api/v1/#tag/Annotations/operation/annotationsCreate) for details on the annotation types.
 
-Annotations are represented by `Image360Annotation` instances. The annotations associated with a given entity revision can be queried with the `getAnnotations()` method on the `Image360Revision` instance.
+Annotations are represented by `Image360Annotation` instances. The annotations associated with a given entity revision can be queried with the `getAnnotations()` method on the `Image360Revision` instance. Note that annotations are loaded lazily, i.e. they will only be loaded when entering the relevant 360 image revision or when calling `getAnnotations()`.
 
 ## Styling Annotations
-
-By default, annotations are assigned a random color, grouped by the annotations' `data.label` or `data.text` property.
 
 The appearance of annotations can be changed both through a "default" style and through styling annotations individually.
 
@@ -51,6 +49,16 @@ revision
       .filter(annotation => annotation.annotation.creatingUser === 'user0')
       .forEach(annotation => annotation.setVisible(false))
   );
+```
+
+Since annotations are lazy-loaded, it is usually appropriate to only first apply styling upon entering the relevant revision. This can be done e.g. through registering a listener on the collection:
+
+```js
+collection.on('image360Entered', (entity, revision) => {
+  revision
+    .getAnnotations()
+    .then(annotations => styleAnnotations(annotations));
+});
 ```
 
 ## Mouse pointer interaction
