@@ -76,7 +76,7 @@
     "rxjs": "7.8.1",
     "skmeans": "0.11.3",
     "sparse-octree": "7.1.6",
-    "three-stdlib": "2.22.4"
+    "three-stdlib": "2.23.4"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.37.0",
@@ -91,7 +91,7 @@
     "@types/jsdom": "21.1.1",
     "@types/lodash": "4.14.195",
     "@types/mixpanel-browser": "2.38.1",
-    "@types/node": "18.16.15",
+    "@types/node": "18.16.16",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.4",
     "@types/stats": "0.16.30",
@@ -120,7 +120,7 @@
     "jest-extended": "3.2.4",
     "jest-image-snapshot": "6.1.0",
     "jest-puppeteer": "8.0.6",
-    "jsdom": "22.0.0",
+    "jsdom": "22.1.0",
     "moq.ts": "10.0.6",
     "nock": "13.3.1",
     "prettier": "2.8.8",
