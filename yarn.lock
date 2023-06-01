@@ -1802,10 +1802,10 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@^9.13.2":
-  version "9.13.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.13.2.tgz#335bad619e84b66ec8ce768d989b12b0f2451e40"
-  integrity sha512-BNklL26q0pUNEh20O4RkUO3E2t+5Pu36eh6O+wNpWH90NN5Viv7uQ6qw8ZygiZ33dhDbVwBBofl8G3EjqkSbnw==
+"@cognite/cogs.js@^9.15.0":
+  version "9.15.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.15.0.tgz#4a502e6569dd97adb5cb8d59162e60b47d2b5b89"
+  integrity sha512-7yxOVJIHtQqSHju3rwBa6it4KZ7I1TFyvwFB5fRyS0kc4yHxPh2/HdY4cMNds7GnJ2F49pS0YNjYYh6S376SCw==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
@@ -2162,10 +2162,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^13.2.0":
-  version "13.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.2.0.tgz#8871d5b8e240994ea7ad3daa012b793f69d51c84"
-  integrity sha512-Gt3RNTL3R/wT4vNPPVpSjedPNeUltzStLauT8Vm/qL0NwXfz2s19/cRiPERsfMCqtpKFHZxW/NvuvBPxXJRMMQ==
+"@cognite/unified-file-viewer@^13.3.1":
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.3.1.tgz#ead146eb499c0fb876139e730fdab80500029404"
+  integrity sha512-zBtNzZTHSCRvbl40ieFbBZJJFqmboVAW5ECbQ4WUagi+neC67kaeRh+vHCSqg5Shj3G4GYiwzWgcSzQg8UcJIg==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
     "@cognite/reveal" "^4.1.2"

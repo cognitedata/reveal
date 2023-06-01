@@ -7,7 +7,10 @@ export enum QueryKeys {
   ARCHIVE_CANVAS = 'canvas.archive',
   LIST_CANVASES = 'canvas.list',
   USER_PROFILE = 'user-profile',
+  USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
 }
+
+export const SEARCH_QUERY_PARAM_KEY = 'search';
 
 export const PERCENTAGE_VALUES = {
   '10%': 0.1,

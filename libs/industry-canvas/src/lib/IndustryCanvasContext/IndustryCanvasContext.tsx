@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -95,34 +89,11 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     refetch: refetchCanvases,
   } = useListCanvases(canvasService);
 
-  // Initialize the page with a new and empty canvas if the canvasId query
-  // parameter is not provided. This is so that the user immediately can have
-  // their changes persisted once they open up the IC page
-  // TODO: can/should this useEffect be removed once we have the canvas management in place?
-  useEffect(() => {
-    const createInitialCanvas = async () => {
-      if (canvasId === undefined && !isCreatingCanvas) {
-        const initialCanvas = canvasService.makeEmptyCanvas();
-        const createdCanvas = await createCanvas(initialCanvas);
-        setCanvasId(createdCanvas.externalId);
-        refetchCanvases();
-      }
-    };
-    createInitialCanvas();
-  }, [
-    canvasId,
-    isCreatingCanvas,
-    canvasService,
-    createCanvas,
-    refetchCanvases,
-    setCanvasId,
-  ]);
-
   const saveCanvasWrapper = useCallback(
     async (canvasDocument: SerializedCanvasDocument) => {
       await saveCanvas(canvasDocument);
     },
-    [saveCanvas, setCanvasId]
+    [saveCanvas]
   );
 
   const createCanvasWrapper = useCallback(
@@ -131,11 +102,10 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         ...canvasService.makeEmptyCanvas(),
         data: serializeCanvasState(canvas),
       });
-      setCanvasId(newCanvas.externalId);
       refetchCanvases();
       return newCanvas;
     },
-    [canvasService, createCanvas, refetchCanvases, setCanvasId]
+    [canvasService, createCanvas, refetchCanvases]
   );
 
   const archiveCanvasWrapper = useCallback(

@@ -4,7 +4,10 @@ import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelectorProvider } from '@data-exploration-components/context';
-import { IndustryCanvasPage } from '@fusion/industry-canvas';
+import {
+  IndustryCanvasPage,
+  IndustryCanvasHomePage,
+} from '@fusion/industry-canvas';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { routes } from '@data-exploration-app/containers/App';
@@ -33,7 +36,6 @@ export const Explorer = () => {
             path={routes.searchRoot.path}
             element={<SearchResultsPage />}
           />
-
           <Route path={routes.assetPage.path} element={<AssetPage />} />
           <Route path={routes.assetPageTab.path} element={<AssetPage />} />
           <Route
@@ -48,8 +50,12 @@ export const Explorer = () => {
           <Route path={routes.filePageTab.path} element={<FilePage />} />
           <Route path={routes.canvas.path} element={<CanvasPage />} />
           <Route
-            path={routes.industryCanvas.path}
+            path={routes.industryCanvasDetail.path}
             element={<IndustryCanvasPage />}
+          />
+          <Route
+            path={routes.industryCanvasHome.path}
+            element={<IndustryCanvasHomePage />}
           />
           <Route path={routes.eventPage.path} element={<EventPage />} />
           <Route path={routes.eventPageTab.path} element={<EventPage />} />

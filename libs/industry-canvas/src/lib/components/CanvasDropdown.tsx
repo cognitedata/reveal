@@ -1,8 +1,7 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useDebounce } from 'use-debounce';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -19,6 +18,8 @@ import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
 
 import { TOAST_POSITION } from '../constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
+import useCanvasDeletion from '../hooks/useCanvasDeletion';
+import useCanvasSearch from '../hooks/useCanvasSearch';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { SerializedCanvasDocument } from '../types';
 import { getCanvasLink } from '../utils/getCanvasLink';
@@ -26,16 +27,12 @@ import { getCanvasLink } from '../utils/getCanvasLink';
 import CanvasDeletionModal from './CanvasDeletionModal';
 import CanvasSubmenu from './CanvasSubmenu';
 
-const SEARCH_DEBOUNCE_MS = 300;
-
 type CanvasDropdownProps = Pick<
   IndustryCanvasContextType,
   | 'activeCanvas'
   | 'canvases'
-  | 'archiveCanvas'
   | 'createCanvas'
   | 'isListingCanvases'
-  | 'isArchivingCanvas'
   | 'isSavingCanvas'
   | 'isLoadingCanvas'
   | 'isCreatingCanvas'
@@ -47,10 +44,8 @@ type CanvasDropdownProps = Pick<
 const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   activeCanvas,
   canvases,
-  archiveCanvas,
   createCanvas,
   isListingCanvases,
-  isArchivingCanvas,
   isLoadingCanvas,
   isSavingCanvas,
   isCreatingCanvas,
@@ -59,11 +54,17 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
-  const [debouncedSearchString] = useDebounce(searchString, SEARCH_DEBOUNCE_MS);
+  const { filteredCanvases } = useCanvasSearch({
+    canvases,
+    searchString,
+  });
+  const {
+    canvasToDelete,
+    setCanvasToDelete,
+    onDeleteCanvasConfirmed,
+    isDeletingCanvas,
+  } = useCanvasDeletion();
   const { onCopy } = useClipboard();
-  const [canvasToDelete, setCanvasToDelete] = useState<
-    SerializedCanvasDocument | undefined
-  >(undefined);
   const onCanvasItemClick = (canvas: SerializedCanvasDocument) => {
     setCanvasId(canvas.externalId);
     setIsMenuOpen(false);
@@ -72,15 +73,6 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   const onDeleteCanvas = (canvas: SerializedCanvasDocument) => {
     setCanvasToDelete(canvas);
     setIsMenuOpen(false);
-  };
-
-  const onDeleteCanvasConfirmed = (canvas: SerializedCanvasDocument) => {
-    archiveCanvas(canvas);
-    toast.success(`Deleted canvas '${canvas.name}'`, {
-      toastId: `deleted-canvas-${canvas.externalId}`,
-      position: TOAST_POSITION,
-    });
-    setCanvasToDelete(undefined);
   };
 
   const onCopyLinkClick = (canvas: SerializedCanvasDocument) => {
@@ -97,27 +89,13 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
     setIsMenuOpen(false);
   };
 
-  const filteredCanvases = useMemo(
-    () =>
-      canvases
-        .filter((canvas) => canvas.externalId !== activeCanvas?.externalId)
-        .filter(
-          (canvas) =>
-            debouncedSearchString.trim().length === 0 ||
-            canvas.name
-              .toLowerCase()
-              .includes(debouncedSearchString.toLowerCase())
-        ),
-    [activeCanvas?.externalId, debouncedSearchString, canvases]
-  );
-
   return (
     <>
       <CanvasDeletionModal
         canvas={canvasToDelete}
         onCancel={() => setCanvasToDelete(undefined)}
         onDeleteCanvas={onDeleteCanvasConfirmed}
-        isDeleting={isArchivingCanvas}
+        isDeleting={isDeletingCanvas}
       />
       <Dropdown
         key="CanvasDropdown"
@@ -155,16 +133,20 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                   </>
                 )}
                 <MenuItemsWrapper label="Public canvases">
-                  {filteredCanvases.map((canvas) => (
-                    <CanvasSubmenu
-                      canvas={canvas}
-                      isActiveCanvas={false}
-                      onRenameCanvasClick={onRenameCanvasClick}
-                      onCopyLinkClick={onCopyLinkClick}
-                      onDeleteCanvasClick={onDeleteCanvas}
-                      onCanvasItemClick={onCanvasItemClick}
-                    />
-                  ))}
+                  {filteredCanvases
+                    .filter(
+                      (canvas) => canvas.externalId !== activeCanvas?.externalId
+                    )
+                    .map((canvas) => (
+                      <CanvasSubmenu
+                        canvas={canvas}
+                        isActiveCanvas={false}
+                        onRenameCanvasClick={onRenameCanvasClick}
+                        onCopyLinkClick={onCopyLinkClick}
+                        onDeleteCanvasClick={onDeleteCanvas}
+                        onCanvasItemClick={onCanvasItemClick}
+                      />
+                    ))}
                 </MenuItemsWrapper>
               </>
             )}
@@ -196,7 +178,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
             type="ghost"
             toggled={isMenuOpen}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            loading={isListingCanvases || isArchivingCanvas}
+            loading={isListingCanvases || isDeletingCanvas}
           />
         </Tooltip>
       </Dropdown>

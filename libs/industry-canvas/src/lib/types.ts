@@ -155,7 +155,7 @@ export type SerializedIndustryCanvasState = {
   canvasAnnotations: CanvasAnnotation[];
 };
 
-type UserIdentifier = string;
+export type UserIdentifier = string;
 type ISOString = string;
 
 export type CanvasDocument = {

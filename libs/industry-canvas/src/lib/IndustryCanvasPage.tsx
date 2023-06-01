@@ -1,14 +1,14 @@
 import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { v4 as uuid } from 'uuid';
 
-import { PageTitle } from '@cognite/cdf-utilities';
+import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import {
   Button,
-  Chip,
   Dropdown,
   Menu,
   Colors,
@@ -34,12 +34,14 @@ import { CanvasTitle } from './components/CanvasTitle';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
+  SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
 } from './constants';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
+import { useQueryParameter } from './hooks/useQueryParameter';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import { IndustryCanvas } from './IndustryCanvas';
 import {
@@ -64,6 +66,7 @@ export type OnAddContainerReferences = (
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
 const IndustryCanvasPageWithoutQueryClientProvider = () => {
+  const navigate = useNavigate();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const [shouldShowConnectionAnnotations, setShouldShowConnectionAnnotations] =
@@ -76,6 +79,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     setHasConsumedInitializeWithContainerReferences,
   ] = useState(false);
   const { tool, setTool } = useManagedTool(ToolType.SELECT);
+  const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
 
   const sdk = useSDK();
   const {
@@ -85,8 +89,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     isSavingCanvas,
     isLoadingCanvas,
     isListingCanvases,
-    isArchivingCanvas,
-    archiveCanvas,
     saveCanvas,
     createCanvas,
     initializeWithContainerReferences,
@@ -320,13 +322,29 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     }
   };
 
+  const handleGoBackToIndustryCanvasButtonClick = () => {
+    navigate(
+      createLink('/explore/industryCanvas', {
+        [SEARCH_QUERY_PARAM_KEY]: queryString,
+      })
+    );
+  };
+
   return (
     <>
       <PageTitle title="Industry Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
-            <Chip type="default" icon="Canvas" />
+            <Tooltip
+              content="Go back to Industry Canvas home page"
+              position="bottom"
+            >
+              <Button
+                icon="ArrowLeft"
+                onClick={handleGoBackToIndustryCanvasButtonClick}
+              />
+            </Tooltip>
             <CanvasTitle
               activeCanvas={activeCanvas}
               saveCanvas={saveCanvas}
@@ -337,9 +355,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
               <CanvasDropdown
                 activeCanvas={activeCanvas}
                 canvases={canvases}
-                archiveCanvas={archiveCanvas}
                 createCanvas={createCanvas}
-                isArchivingCanvas={isArchivingCanvas}
                 isListingCanvases={isListingCanvases}
                 isCreatingCanvas={isCreatingCanvas}
                 isLoadingCanvas={isLoadingCanvas}

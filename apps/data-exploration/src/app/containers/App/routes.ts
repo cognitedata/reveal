@@ -67,8 +67,11 @@ export const routes = {
   canvas: {
     path: `/${ViewType.Canvas}`,
   },
-  industryCanvas: {
+  industryCanvasHome: {
     path: `/${ViewType.IndustryCanvas}`,
+  },
+  industryCanvasDetail: {
+    path: `/${ViewType.IndustryCanvas}/canvas`,
   },
   filePageTab: {
     path: `/${ViewType.File}/${SELECTED_ID}/${SELECTED_DETAIL_TAB}`,
