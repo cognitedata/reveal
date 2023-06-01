@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { ResourceSelectorProvider } from '@data-exploration-components/context';
 import { IndustryCanvasPage } from '@fusion/industry-canvas';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -26,31 +27,42 @@ export const Explorer = () => {
 
   return (
     <AppWrapper>
-      <Routes>
-        <Route path={routes.searchRoot.path} element={<SearchResultsPage />} />
+      <ResourceSelectorProvider>
+        <Routes>
+          <Route
+            path={routes.searchRoot.path}
+            element={<SearchResultsPage />}
+          />
 
-        <Route path={routes.assetPage.path} element={<AssetPage />} />
-        <Route path={routes.assetPageTab.path} element={<AssetPage />} />
-        <Route path={routes.timeseriesPage.path} element={<TimeseriesPage />} />
-        <Route
-          path={routes.timeseriesPageTab.path}
-          element={<TimeseriesPage />}
-        />
-        <Route path={routes.filePage.path} element={<FilePage />} />
-        <Route path={routes.filePageTab.path} element={<FilePage />} />
-        <Route path={routes.canvas.path} element={<CanvasPage />} />
-        <Route
-          path={routes.industryCanvas.path}
-          element={<IndustryCanvasPage />}
-        />
-        <Route path={routes.eventPage.path} element={<EventPage />} />
-        <Route path={routes.eventPageTab.path} element={<EventPage />} />
-        <Route path={routes.sequencePage.path} element={<SequencePage />} />
-        <Route path={routes.sequencePageTab.path} element={<SequencePage />} />
-        <Route path={routes.threeDPage.path} element={<ThreeDPage />} />
-        <Route path={routes.threeDPageTab.path} element={<ThreeDPage />} />
-        <Route path={routes.root.path} element={<SearchRedirect />} />
-      </Routes>
+          <Route path={routes.assetPage.path} element={<AssetPage />} />
+          <Route path={routes.assetPageTab.path} element={<AssetPage />} />
+          <Route
+            path={routes.timeseriesPage.path}
+            element={<TimeseriesPage />}
+          />
+          <Route
+            path={routes.timeseriesPageTab.path}
+            element={<TimeseriesPage />}
+          />
+          <Route path={routes.filePage.path} element={<FilePage />} />
+          <Route path={routes.filePageTab.path} element={<FilePage />} />
+          <Route path={routes.canvas.path} element={<CanvasPage />} />
+          <Route
+            path={routes.industryCanvas.path}
+            element={<IndustryCanvasPage />}
+          />
+          <Route path={routes.eventPage.path} element={<EventPage />} />
+          <Route path={routes.eventPageTab.path} element={<EventPage />} />
+          <Route path={routes.sequencePage.path} element={<SequencePage />} />
+          <Route
+            path={routes.sequencePageTab.path}
+            element={<SequencePage />}
+          />
+          <Route path={routes.threeDPage.path} element={<ThreeDPage />} />
+          <Route path={routes.threeDPageTab.path} element={<ThreeDPage />} />
+          <Route path={routes.root.path} element={<SearchRedirect />} />
+        </Routes>
+      </ResourceSelectorProvider>
     </AppWrapper>
   );
 };

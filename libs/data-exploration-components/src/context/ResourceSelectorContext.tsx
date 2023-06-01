@@ -9,6 +9,8 @@ import {
   ResourceType,
 } from '@data-exploration-components/types';
 
+import { ResourceSelectionSidebar } from '..';
+
 export type OpenSelectorProps = {
   /** Callback for when the selector is closed */
   onClose?: (confirmed: boolean, results?: ResourceItem[]) => void;
@@ -35,20 +37,18 @@ export const ResourceSelectorProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [_resourceTypes, setResourceTypes] = useState<
+  const [resourceTypes, setResourceTypes] = useState<
     ResourceType[] | undefined
   >(undefined);
-  const [_isOpen, setIsOpen] = useState(false);
-  const [_props, setProps] = useState<Omit<SelectableItemsProps, 'isSelected'>>(
-    {
-      selectionMode: 'single',
-      onSelect: () => {},
-    }
-  );
-  const [_resourceItemState, setResourceItemState] = useState<
+  const [isOpen, setIsOpen] = useState(false);
+  const [props, setProps] = useState<Omit<SelectableItemsProps, 'isSelected'>>({
+    selectionMode: 'single',
+    onSelect: () => {},
+  });
+  const [resourceItemState, setResourceItemState] = useState<
     ResourceItemState[]
   >([]);
-  const [_onClose, setOnCloseCallback] = useState<
+  const [onClose, setOnCloseCallback] = useState<
     (confirmed: boolean, results?: ResourceItem[]) => void
   >(() => () => {});
   const [onSelect, setOnSelectListener] = useState<
@@ -121,7 +121,7 @@ export const ResourceSelectorProvider = ({
     >
       {children}
       {/* <ResourceSelector visible={isOpen} onClose={() => setIsOpen(false)} /> */}
-      {/* <ResourceSelectionSidebar
+      <ResourceSelectionSidebar
         onClose={(success) => {
           onClose(
             success,
@@ -142,7 +142,7 @@ export const ResourceSelectorProvider = ({
         }
         onSelect={onSelect}
         resourceTypes={resourceTypes}
-      /> */}
+      />
     </ResourceSelectorContext.Provider>
   );
 };
