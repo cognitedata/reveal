@@ -51,8 +51,7 @@ const Toolbar = ({
     bottom: undefined,
     left: undefined,
   });
-  const { isHistoryVisible, isNodeConfigurationPanelOpen } =
-    useWorkflowBuilderContext();
+  const { isHistoryVisible } = useWorkflowBuilderContext();
 
   useEffect(() => {
     switch (placement) {
@@ -93,7 +92,6 @@ const Toolbar = ({
       gap={gap}
       $placement={toolbarPlacement}
       $isHistoryVisible={isHistoryVisible}
-      $isNodeConfigurationPanelOpen={isNodeConfigurationPanelOpen}
     >
       {buttons.map((button, index) => {
         return (

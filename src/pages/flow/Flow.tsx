@@ -8,7 +8,6 @@ import {
 } from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useFlow } from 'hooks/files';
-import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
 
@@ -36,8 +35,7 @@ const Flow = (): JSX.Element => {
 };
 
 function FlowContainer() {
-  const { isHistoryVisible, previewHash, isNodeConfigurationPanelOpen } =
-    useWorkflowBuilderContext();
+  const { isHistoryVisible, previewHash } = useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
@@ -47,7 +45,6 @@ function FlowContainer() {
         {previewHash && <PreviewFeedback />}
         {isHistoryVisible && <FloatingHistoryPanel />}
         <Canvas />
-        {isNodeConfigurationPanelOpen && <NodeConfigurationPanel />}
       </Content>
     </StyledFlowContainer>
   );

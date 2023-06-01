@@ -21,19 +21,14 @@ import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
 import { ProcessNodeData, ProcessType } from 'types';
 import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
+import { ProcessNode } from 'types';
 
 const { Option } = Select;
 
 export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
-  const {
-    nodes,
-    setIsNodeConfigurationPanelOpen,
-    changeNodes,
-    selectedObject,
-    selectedObjectData,
-  } = useWorkflowBuilderContext();
+  const { nodes, changeNodes, userState } = useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
@@ -41,6 +36,18 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { data: flowData } = useFlowList({ staleTime: 0 });
 
   const { data: functionsData } = useFunctions();
+
+  const selectedNode = useMemo(() => {
+    const { selectedObjectIds } = userState;
+    if (selectedObjectIds.length === 1) {
+      const n = nodes.find(({ id }) => id === selectedObjectIds[0]);
+      if (n && !!(n.data as ProcessNodeData).processType) {
+        return n as ProcessNode;
+      }
+    }
+
+    return undefined;
+  }, [nodes, userState]);
 
   const nodeOptions: {
     value: string;
@@ -70,19 +77,22 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   ];
 
   const itemCreateNewOption = () => {
-    switch (selectedObjectData?.processType) {
+    const processType = selectedNode?.data.processType;
+    switch (processType) {
       case 'transformation': {
         return (
           <Option
             key={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
             value={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
           >
             <Link href={createLink('/transformations')} target="_blank">
-              {t('create-new-item', { item: selectedObjectData?.processType })}
+              {t('create-new-item', {
+                item: processType,
+              })}
             </Link>
           </Option>
         );
@@ -91,14 +101,16 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         return (
           <Option
             key={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
             value={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
           >
             <Link href="./" target="_blank">
-              {t('create-new-item', { item: selectedObjectData?.processType })}
+              {t('create-new-item', {
+                item: processType,
+              })}
             </Link>
           </Option>
         );
@@ -107,14 +119,16 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         return (
           <Option
             key={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
             value={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
           >
             <Link href={createLink('/functions')} target="_blank">
-              {t('create-new-item', { item: selectedObjectData?.processType })}
+              {t('create-new-item', {
+                item: processType,
+              })}
             </Link>
           </Option>
         );
@@ -123,14 +137,16 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         return (
           <Option
             key={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
             value={t('create-new-item', {
-              item: selectedObjectData?.processType,
+              item: processType,
             })}
           >
             <Body level={2}>
-              {t('create-new-item', { item: selectedObjectData?.processType })}
+              {t('create-new-item', {
+                item: processType,
+              })}
             </Body>
           </Option>
         );
@@ -139,7 +155,8 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   };
 
   const itemOptions = () => {
-    switch (selectedObjectData?.processType) {
+    const processType = selectedNode?.data.processType;
+    switch (processType) {
       case 'transformation': {
         return transformationList
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -191,7 +208,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const handleComponentChange = (value: ProcessType) => {
     changeNodes((nodes) => {
-      const node = nodes.find((node) => node.id === selectedObject);
+      const node = nodes.find((node) => node.id === selectedNode?.id);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processType = value;
       nodeData.processItem = '';
@@ -200,11 +217,11 @@ export const NodeConfigurationPanel = (): JSX.Element => {
 
   const handleItemChange = (value: string) => {
     let newValue = value;
-    if (value === `Create new ${selectedObjectData?.processType}`) {
+    if (value === `Create new ${selectedNode?.data.processType}`) {
       newValue = '';
     }
     changeNodes((nodes) => {
-      const node = nodes.find((node) => node.id === selectedObject);
+      const node = nodes.find((node) => node.id === selectedNode?.id);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processItem = newValue;
     });
@@ -219,14 +236,14 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Button
           icon="CloseLarge"
           onClick={() => {
-            setIsNodeConfigurationPanelOpen(false);
+            // TODO: add close functionality
           }}
           type="ghost"
         />
       </Flex>
       <Flex direction="column">
         <Select
-          value={selectedObjectData?.processType}
+          value={selectedNode?.data.processType}
           onChange={handleComponentChange}
           style={{ width: 326 }}
         >
@@ -247,9 +264,9 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Select
           placeholder={t('node-configuration-panel-item-placeholder')}
           value={
-            selectedObjectData?.processItem === ''
+            selectedNode?.data.processItem === ''
               ? undefined
-              : selectedObjectData?.processItem
+              : selectedNode?.data.processItem
           }
           onChange={handleItemChange}
           style={{ width: 326, flex: 1 }}
@@ -263,15 +280,15 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         label={t('node-configuration-panel-label')}
         placeholder={t('node-configuration-panel-label-placeholder')}
         value={
-          selectedObjectData?.processDescription === '' ||
-          selectedObjectData?.processDescription === undefined
+          selectedNode?.data.processDescription === '' ||
+          selectedNode?.data.processDescription === undefined
             ? ''
-            : selectedObjectData?.processDescription
+            : selectedNode?.data.processDescription
         }
         onChange={(e) => {
           const value = e.target.value;
           changeNodes((nodes) => {
-            const node = nodes.find((node) => node.id === selectedObject);
+            const node = nodes.find((node) => node.id === selectedNode?.id);
             const nodeData = node?.data as ProcessNodeData;
             nodeData.processDescription = value;
           });
