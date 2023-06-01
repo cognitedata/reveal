@@ -19,7 +19,7 @@ export function InputType({
   stepIndex,
 }: ConfigurationFieldProps) {
   const { setFieldValue } = useFormikContext<UserDefined>();
-  const formikPath = `routine.${routineIndex}.steps.${stepIndex}.arguments.type`;
+  const formikPath = `routine.${routineIndex}.steps.${stepIndex}.arguments`;
   return (
     <InputRow>
       <div className="cogs-input-container">
@@ -36,7 +36,7 @@ export function InputType({
           }
           width={300}
           onChange={(option: ValueOptionType<string>) => {
-            setFieldValue(formikPath, option.value);
+            setFieldValue(formikPath, { type: option.value, address: '' });
           }}
         />
       </div>

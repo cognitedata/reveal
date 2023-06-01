@@ -4,7 +4,7 @@ import { useNavigate } from 'react-location';
 import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Infobox, toast } from '@cognite/cogs.js';
+import { Infobox, Switch, toast } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -17,6 +17,7 @@ import { SummaryStep } from 'pages/CalculationConfiguration/steps/SummaryStep';
 import { createCdfLink } from 'utils/createCdfLink';
 
 import { CustomCalculationBuilderContainer } from './elements';
+import { Routine } from './Routine';
 import { getStepValidationErrors } from './Routine/validation';
 
 interface CustomCalculationBuilderProps {
@@ -40,6 +41,7 @@ export function CustomCalculationBuilder({
   const [isCalculationFormatValid, setIsCalculationFormatValid] =
     useState<boolean>(true);
   const [calculationTemp, setCalculationTemp] = useState<string>();
+  const [isEditorEnabled, setIsEditorEnabled] = useState<boolean>(false);
   const [editorChangesSaved, setEditorChangesSaved] = useState<boolean>(true);
   const { data: user } = useUserInfo();
   const [upsertCalculation] = useUpsertCalculationMutation();
@@ -155,27 +157,46 @@ export function CustomCalculationBuilder({
                 <DataSamplingStep />
               </Wizard.Step>
 
-              <Wizard.Step icon="CLI" key="routine" title="Routine">
-                <EditorContainer>
-                  {!isCalculationFormatValid && (
-                    <Infobox style={{ width: '600px' }} type="danger">
-                      You entered an invalid value that is not supported. Please
-                      try again.
-                    </Infobox>
-                  )}
-                  <Editor
-                    height="42vh"
-                    value={calculationTemp}
-                    width="90vw"
-                    onChange={(value) => {
-                      const checkCalc = isValidCalculation(value);
-                      setIsCalculationFormatValid(!!checkCalc);
-                      setCalculationTemp(value);
-                      setEditorChangesSaved(false);
-                      // handleCalculationEditorChange(value, setValues);
-                    }}
-                  />
-                </EditorContainer>
+              <Wizard.Step
+                icon="Function"
+                key="routine"
+                title="Routine"
+                validationErrors={getStepValidationErrors(values, 'routine')}
+              >
+                <Switch
+                  checked={isEditorEnabled}
+                  name="routine-editor-switch"
+                  style={{ marginBottom: '1em' }}
+                  onChange={setIsEditorEnabled}
+                >
+                  {!isEditorEnabled
+                    ? 'Switch to JSON editor'
+                    : 'Switch to routine builder'}
+                </Switch>
+                {isEditorEnabled ? (
+                  <EditorContainer>
+                    {!isCalculationFormatValid && (
+                      <Infobox style={{ width: '600px' }} type="danger">
+                        You entered an invalid value that is not supported.
+                        Please try again.
+                      </Infobox>
+                    )}
+                    <Editor
+                      height="42vh"
+                      value={calculationTemp}
+                      width="90vw"
+                      onChange={(value) => {
+                        const checkCalc = isValidCalculation(value);
+                        setIsCalculationFormatValid(!!checkCalc);
+                        setCalculationTemp(value);
+                        setEditorChangesSaved(false);
+                        handleCalculationEditorChange(value, setValues);
+                      }}
+                    />
+                  </EditorContainer>
+                ) : (
+                  <Routine setCalculation={setCalculation} />
+                )}
               </Wizard.Step>
 
               <Wizard.Step

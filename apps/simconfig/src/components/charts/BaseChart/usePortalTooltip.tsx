@@ -74,7 +74,6 @@ export function usePortalTooltip({
           cleanupTimeout.current = undefined;
         }, 250);
       }
-      // console.log('Value = ', xMax, yMax, 'Bounding = ', left, top);
 
       if (value !== undefined) {
         showTooltip({

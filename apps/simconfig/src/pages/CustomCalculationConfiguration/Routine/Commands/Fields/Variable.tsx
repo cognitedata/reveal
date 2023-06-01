@@ -12,19 +12,27 @@ import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
 import type { AppLocationGenerics } from 'routes';
 
+interface VariableFieldProps extends ConfigurationFieldProps {
+  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
+}
+
 export function Variable({
   step,
   stepIndex,
   routineIndex,
-}: ConfigurationFieldProps) {
+  timeSeriesPrefix,
+}: VariableFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
-  const currentTimeSeries = values.inputTimeSeries.map(
-    (ts) => ts.type
-  ) as string[];
+  const timeSeriesTarget =
+    timeSeriesPrefix === 'inputTimeSeries'
+      ? values.inputTimeSeries
+      : values.outputTimeSeries;
+
+  const currentTimeSeries = timeSeriesTarget.map((ts) => ts.type) as string[];
   const currentValue =
     values.routine?.[routineIndex].steps[stepIndex].arguments.value;
   const TIMESERIES_VARIABLE_OPTIONS: ValueOptionType<string>[] = Object.entries(
@@ -36,11 +44,11 @@ export function Variable({
         !currentTimeSeries.includes(value) || value === currentValue
     );
   const timeSerieIndex = getTimeSerieIndexByType(
-    values.inputTimeSeries,
+    timeSeriesTarget,
     step.arguments.value ?? ''
   );
   const tsIdx =
-    timeSerieIndex !== -1 ? timeSerieIndex : values.inputTimeSeries.length;
+    timeSerieIndex !== -1 ? timeSerieIndex : timeSeriesTarget.length;
   const formikPath = `routine.${routineIndex}.steps.${stepIndex}.arguments.value`;
 
   return (
@@ -61,8 +69,8 @@ export function Variable({
           width={300}
           onChange={({ value, label }: ValueOptionType<string>) => {
             setFieldValue(formikPath, value);
-            setFieldValue(`inputTimeSeries.${tsIdx}.type`, value);
-            setFieldValue(`inputTimeSeries.${tsIdx}.name`, label);
+            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.type`, value);
+            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.name`, label);
           }}
         />
       </div>

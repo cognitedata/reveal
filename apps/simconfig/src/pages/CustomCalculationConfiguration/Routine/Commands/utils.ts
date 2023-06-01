@@ -2,6 +2,7 @@ import type { OptionType } from '@cognite/cogs.js';
 import type {
   CalculationStep,
   InputTimeSeries,
+  OutputTimeSeries,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -57,6 +58,6 @@ export const getStepIndex = (
 };
 
 export const getTimeSerieIndexByType = (
-  inputs: InputTimeSeries[],
+  timeseries: InputTimeSeries[] | OutputTimeSeries[],
   type: string
-) => inputs.findIndex((timeserie) => timeserie.type === type);
+) => timeseries.findIndex((timeserie) => timeserie.type === type);

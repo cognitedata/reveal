@@ -12,8 +12,20 @@ import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
 import type { AppLocationGenerics } from 'routes';
 
-export function UnitType({ routineIndex, step }: ConfigurationFieldProps) {
+interface UnitTypeFieldProps extends ConfigurationFieldProps {
+  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
+}
+
+export function UnitType({
+  routineIndex,
+  step,
+  timeSeriesPrefix,
+}: UnitTypeFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
+  const timeSeriesTarget =
+    timeSeriesPrefix === 'inputTimeSeries'
+      ? values.inputTimeSeries
+      : values.outputTimeSeries;
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
@@ -25,12 +37,12 @@ export function UnitType({ routineIndex, step }: ConfigurationFieldProps) {
   const TIMESERIES_UNIT_TYPE_OPTIONS: ValueOptionType<string>[] =
     Object.entries(unitLabels).map(([value, label]) => ({ label, value }));
   const timeSerieIndex = getTimeSerieIndexByType(
-    values.inputTimeSeries,
+    timeSeriesTarget,
     step.arguments.value ?? ''
   );
   const tsIdx =
-    timeSerieIndex !== -1 ? timeSerieIndex : values.inputTimeSeries.length;
-  const formikPath = `routine.inputTimeSeries.${routineIndex}.unitType`;
+    timeSerieIndex !== -1 ? timeSerieIndex : timeSeriesTarget.length;
+  const formikPath = `routine.${timeSeriesPrefix}.${routineIndex}.unitType`;
 
   return (
     <InputRow>
@@ -41,16 +53,16 @@ export function UnitType({ routineIndex, step }: ConfigurationFieldProps) {
           name={formikPath}
           options={TIMESERIES_UNIT_TYPE_OPTIONS}
           value={{
-            value: values.inputTimeSeries[tsIdx].unitType,
+            value: timeSeriesTarget[tsIdx].unitType,
             label: getOptionLabel(
               TIMESERIES_UNIT_TYPE_OPTIONS,
-              values.inputTimeSeries[tsIdx].unitType
+              timeSeriesTarget[tsIdx].unitType
             ),
           }}
           width={300}
           onChange={({ value }: ValueOptionType<string>) => {
             setFieldValue(formikPath, value);
-            setFieldValue(`inputTimeSeries.${tsIdx}.unitType`, value);
+            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.unitType`, value);
           }}
         />
       </div>

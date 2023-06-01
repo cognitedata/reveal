@@ -8,13 +8,36 @@ import { InputRow } from 'components/forms/ModelForm/elements';
 import { ACTION_OPTIONS, getOptionLabel } from '../utils';
 import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
+const mapStep = {
+  Get: {
+    type: 'Get',
+    arguments: {
+      address: '',
+      type: 'outputTimeSeries',
+    },
+  },
+  Set: {
+    type: 'Set',
+    arguments: {
+      address: '',
+      type: 'manual',
+    },
+  },
+  Command: {
+    type: 'Command',
+    arguments: {
+      address: '',
+    },
+  },
+};
+
 export function StepType({
   routineIndex,
   stepIndex,
   step,
 }: ConfigurationFieldProps) {
   const { setFieldValue } = useFormikContext<UserDefined>();
-  const formikPath = `routine.${routineIndex}.steps.${stepIndex}.type`;
+  const formikPath = `routine.${routineIndex}.steps.${stepIndex}`;
 
   return (
     <InputRow>
@@ -29,8 +52,11 @@ export function StepType({
             label: getOptionLabel(ACTION_OPTIONS, step.type),
           }}
           width={300}
-          onChange={(option: ValueOptionType<string>) => {
-            setFieldValue(formikPath, option.value);
+          onChange={(option: ValueOptionType<'Command' | 'Get' | 'Set'>) => {
+            setFieldValue(`${formikPath}`, {
+              step: step.step,
+              ...mapStep[option.value],
+            });
           }}
         />
       </div>

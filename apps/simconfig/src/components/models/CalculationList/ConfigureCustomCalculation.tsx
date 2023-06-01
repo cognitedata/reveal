@@ -55,6 +55,7 @@ export function ConfigureCustomCalculation({
         },
       },
     });
+
     if (search.items.length !== 0) {
       return 'Calculation already exists';
     }

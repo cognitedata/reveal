@@ -36,6 +36,39 @@ export function Routine({
     }));
   };
 
+  // useEffect(() => {
+  //   const timeSeriesSteps = values.routine
+  //     ?.map((group) => group.steps.map((step) => step.arguments))
+  //     .flat()
+  //     .filter((arg) =>
+  //       ['inputTimeSeries', 'outputTimeSeries'].includes(arg.type ?? '')
+  //     );
+  //   const inputTSSteps = timeSeriesSteps
+  //     ?.filter((step) => step.type === 'inputTimeSeries')
+  //     .map((v) => v.value);
+  //   const outputTSSteps = timeSeriesSteps
+  //     ?.filter((step) => step.type === 'outputTimeSeries')
+  //     .map((v) => v.value);
+
+  //   const inputs = values.inputTimeSeries.filter((g) =>
+  //     inputTSSteps?.includes(g.type)
+  //   );
+  //   const outputs = values.outputTimeSeries.filter((g) =>
+  //     outputTSSteps?.includes(g.type)
+  //   );
+
+  //   setValues((prevState) => ({
+  //     ...prevState,
+  //     outputTimeSeries: outputs,
+  //     inputTimeSeries: inputs,
+  //   }));
+  // }, [
+  //   values.routine,
+  //   values.inputTimeSeries,
+  //   values.outputTimeSeries,
+  //   setValues,
+  // ]);
+
   const handleNewStep = (procedure: CalculationProcedure) => {
     const newStep: CalculationStep = {
       step: procedure.steps.length + 1,

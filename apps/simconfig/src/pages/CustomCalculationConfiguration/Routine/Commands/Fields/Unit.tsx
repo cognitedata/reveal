@@ -15,21 +15,28 @@ import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
 import type { AppLocationGenerics } from 'routes';
 
-export function Unit({ routineIndex, step }: ConfigurationFieldProps) {
+interface UnitFieldProps extends ConfigurationFieldProps {
+  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
+}
+
+export function Unit({ routineIndex, step, timeSeriesPrefix }: UnitFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
+  const timeSeriesTarget =
+    timeSeriesPrefix === 'inputTimeSeries'
+      ? values.inputTimeSeries
+      : values.outputTimeSeries;
+
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
   const timeSerieIndex = getTimeSerieIndexByType(
-    values.inputTimeSeries,
+    timeSeriesTarget,
     step.arguments.value ?? ''
   );
   const tsIdx =
-    timeSerieIndex !== -1 ? timeSerieIndex : values.inputTimeSeries.length;
-  const isUnitTypeInTimeSerie = Object.entries(
-    values.inputTimeSeries[tsIdx] ?? {}
-  )
+    timeSerieIndex !== -1 ? timeSerieIndex : timeSeriesTarget.length;
+  const isUnitTypeInTimeSerie = Object.entries(timeSeriesTarget[tsIdx])
     .map(([entry]) => entry)
     .includes('unitType');
 
@@ -37,13 +44,14 @@ export function Unit({ routineIndex, step }: ConfigurationFieldProps) {
     return null;
   }
 
-  const timeserieUnitType = values.inputTimeSeries[tsIdx]
+  const timeserieUnitType = timeSeriesTarget[tsIdx]
     .unitType as keyof DefinitionMap['map']['unitType'];
+
   const unitLabels = definitions.map.unitType[timeserieUnitType];
   const TIMESERIES_UNIT_OPTIONS: ValueOptionType<string>[] = Object.entries(
     unitLabels
   ).map(([value, label]) => ({ label, value }));
-  const formikPath = `routine.inputTimeSeries.${routineIndex}.unit`;
+  const formikPath = `routine.${timeSeriesPrefix}.${routineIndex}.unit`;
 
   return (
     <InputRow>
@@ -54,16 +62,16 @@ export function Unit({ routineIndex, step }: ConfigurationFieldProps) {
           name={formikPath}
           options={TIMESERIES_UNIT_OPTIONS}
           value={{
-            value: values.inputTimeSeries[tsIdx].unit,
+            value: timeSeriesTarget[tsIdx].unit,
             label: getOptionLabel(
               TIMESERIES_UNIT_OPTIONS,
-              values.inputTimeSeries[tsIdx].unit ?? ''
+              timeSeriesTarget[tsIdx].unit ?? ''
             ),
           }}
           width={300}
           onChange={({ value }: ValueOptionType<string>) => {
             setFieldValue(formikPath, value);
-            setFieldValue(`inputTimeSeries.${tsIdx}.unit`, value);
+            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.unit`, value);
           }}
         />
       </div>

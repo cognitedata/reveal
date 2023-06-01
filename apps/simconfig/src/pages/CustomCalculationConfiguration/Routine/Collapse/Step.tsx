@@ -39,13 +39,28 @@ export function Step({
   }, []);
 
   const handleDeleteStep = (routineOrder: number, stepOrder: number) => {
-    if (values.routine) {
-      const routine = cloneDeep(values.routine);
+    const calculation = cloneDeep(values);
+    if (calculation.routine) {
+      const { routine } = calculation;
       const stepRoutine = routine[routineOrder - 1];
+      const currentStep = stepRoutine.steps.find(
+        (step) => step.step === stepOrder
+      );
+      if (currentStep?.arguments.type === 'inputTimeSeries') {
+        calculation.inputTimeSeries = calculation.inputTimeSeries.filter(
+          (ts) => ts.type !== currentStep.arguments.value
+        );
+      }
+
+      if (currentStep?.arguments.type === 'outputTimeSeries') {
+        calculation.outputTimeSeries = calculation.outputTimeSeries.filter(
+          (ts) => ts.type !== currentStep.arguments.value
+        );
+      }
       stepRoutine.steps = stepRoutine.steps
         .filter((step) => step.step !== stepOrder)
         .map((step, index) => ({ ...step, step: index + 1 }));
-      setValues((prevState) => ({ ...prevState, routine }));
+      setValues(calculation);
     }
   };
 
