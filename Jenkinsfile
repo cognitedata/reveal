@@ -259,6 +259,7 @@ pods {
           changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
           def isReleaseApp = { change -> change.label.startsWith("//apps/" + appName) }
           changedPublishFas = changedPublishFas.findAll(isReleaseApp)
+          changedPublishFirebase = changedOrAdded.findAll(changeHasTag('publish_firebase'))
         }
 
         def targetComment = { changes, name, emoji ->
