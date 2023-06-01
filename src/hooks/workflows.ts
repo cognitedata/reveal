@@ -28,13 +28,49 @@ export const useWorkflows = () => {
   );
 };
 
-export const useWorkflow = (externalId: string) => {
-  const { data, ...queryProps } = useWorkflows();
+const getWorkflowQueryKey = (externalId: string) => [
+  ...getWorkflowsQueryKey(),
+  externalId,
+];
 
-  return {
-    data: data?.find((w) => w.externalId === externalId),
-    ...queryProps,
-  };
+type WorkflowTaskType = 'function' | 'transformation' | 'http' | 'dynamic';
+
+type WorkflowTaskDependency = {
+  externalId: string;
+};
+
+type WorkflowTaskDefinition = {
+  externalId: string;
+  type: WorkflowTaskType;
+  name?: string;
+  description?: string;
+  parameters: unknown; // TODO
+  retries?: number;
+  timeout?: number;
+  dependsOn: WorkflowTaskDependency[];
+};
+
+type WorkflowDefinition = {
+  hash: string;
+  description?: string;
+  version: string;
+  tasks: WorkflowTaskDefinition[];
+};
+
+type WorkflowWithVersions = Pick<WorkflowRead, 'externalId' | 'createdTime'> & {
+  versions: WorkflowDefinition[];
+};
+
+export const useWorkflow = (externalId: string) => {
+  const sdk = useSDK();
+
+  return useQuery<WorkflowWithVersions>(getWorkflowQueryKey(externalId), () =>
+    sdk
+      .get<WorkflowWithVersions>(
+        `api/v1/projects/${getProject()}/workflows/${externalId}`
+      )
+      .then((res) => res.data)
+  );
 };
 
 type CreateWorkflowVariables = WorkflowCreate;
