@@ -64,7 +64,7 @@ const App = () => {
                             }
                           />
                           <Route
-                            path={`${ROOT_PATH}/:id`}
+                            path={`${ROOT_PATH}/:externalId`}
                             element={
                               <Suspense fallback={<div>Loading...</div>}>
                                 <Flow />

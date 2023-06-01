@@ -54,15 +54,17 @@ const getFlow = async (sdk: CogniteClient, externalId: string) => {
 
 export const getFlowItemKey = (externalId: string) => ['flow', externalId];
 
+export const useFile = useFlow;
+
 export function useFlow(
   externalId: string,
   opts?: Omit<
-    UseQueryOptions<AFlow, Error>,
+    UseQueryOptions<AFlow, CogniteError>,
     'queryKey' | 'queryFn' | 'structuralSharing'
   >
 ) {
   const sdk = useSDK();
-  return useQuery<AFlow, Error>(
+  return useQuery<AFlow, CogniteError>(
     getFlowItemKey(externalId),
     () => getFlow(sdk, externalId),
     {
@@ -79,6 +81,8 @@ export function useFlow(
     }
   );
 }
+
+export const useCreateFile = useCreateFlow;
 
 export function useCreateFlow() {
   const sdk = useSDK();

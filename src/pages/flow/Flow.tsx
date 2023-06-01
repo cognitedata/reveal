@@ -7,28 +7,46 @@ import {
   useWorkflowBuilderContext,
 } from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
-import { useFlow } from 'hooks/files';
+import { useCreateFile, useFile } from 'hooks/files';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
+import { useEffect } from 'react';
 
 const Flow = (): JSX.Element => {
-  const { id } = useParams<{ id: string }>();
-  const { data, error, isInitialLoading } = useFlow(id!, { enabled: !!id });
+  const { externalId } = useParams<{ externalId: string }>();
 
-  if (error) {
+  const { data, error, isInitialLoading } = useFile(externalId!, { retry: 0 });
+  const { mutate: createFile, isIdle, isLoading } = useCreateFile();
+
+  const isMissingError =
+    (error?.missing?.[0] as any | undefined)?.externalId === externalId;
+
+  useEffect(() => {
+    {
+      if (isMissingError && isIdle) {
+        createFile({
+          id: externalId!,
+          name: externalId!,
+          description: '',
+          canvas: {
+            nodes: [] as any, // FIXME: any
+            edges: [] as any, // FIXME: any
+          },
+        });
+      }
+    }
+  }, [createFile, externalId, isIdle, isMissingError]);
+
+  if (error && !isMissingError) {
     return <>ERROR: {JSON.stringify(error)}</>;
   }
 
-  if (isInitialLoading) {
+  if (isInitialLoading || isLoading || !data) {
     return <Loader />;
   }
 
-  if (!data || !id) {
-    return <>wtf?</>;
-  }
-
   return (
-    <FlowContextProvider externalId={id} initialFlow={data}>
+    <FlowContextProvider externalId={externalId!} initialFlow={data}>
       <FlowContainer />
     </FlowContextProvider>
   );
@@ -40,7 +58,6 @@ function FlowContainer() {
   return (
     <StyledFlowContainer>
       <CanvasTopBar />
-
       <Content>
         {previewHash && <PreviewFeedback />}
         {isHistoryVisible && <FloatingHistoryPanel />}
