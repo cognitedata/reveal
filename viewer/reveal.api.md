@@ -806,7 +806,6 @@ export interface Image360Annotation {
     readonly annotation: AnnotationModel;
     getCenter(out?: Vector3): Vector3;
     getColor(): Color;
-    getOriginalColor(): Color;
     getVisible(): boolean;
     setColor(color?: Color): void;
     setVisible(visible?: boolean): void;
