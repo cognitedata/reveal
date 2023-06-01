@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Revision3D, HttpError } from '@cognite/sdk';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
@@ -14,7 +14,7 @@ const fetchRevisions = ({ modelId }: Args): Promise<Revision3D[]> => {
 export function useRevisions(modelId: number) {
   const [startTime, _] = useState(Date.now());
   const queryClient = useQueryClient();
-  const queryKey = [QUERY_KEY.REVISIONS, { modelId }];
+  const queryKey = QUERY_KEY.REVISIONS({ modelId });
 
   return useQuery<Revision3D[], HttpError>(
     queryKey,

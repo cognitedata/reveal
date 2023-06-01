@@ -65,11 +65,11 @@ export default function ModelRevisions({ model }: Props) {
 
   const { flow } = getFlow();
   const { data: hasThreedDeleteCapability, isFetched: isFetchedThreedDelete } =
-    usePermissions(flow, 'threedAcl', 'DELETE');
+    usePermissions(flow as any, 'threedAcl', 'DELETE');
   const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
-    usePermissions(flow, 'threedAcl', 'CREATE');
+    usePermissions(flow as any, 'threedAcl', 'CREATE');
   const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
-    usePermissions(flow, 'filesAcl', 'WRITE');
+    usePermissions(flow as any, 'filesAcl', 'WRITE');
 
   const showDeleteModelButton = hasThreedDeleteCapability;
   const showButtons = hasThreedCreateCapability && hasFilesWriteCapability;

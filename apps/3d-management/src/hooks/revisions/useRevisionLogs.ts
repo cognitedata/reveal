@@ -1,5 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { RevisionLog3D } from 'utils/sdk/3dApiUtils';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
 import { RevisionIds } from 'utils/types';
@@ -23,7 +23,7 @@ export function useRevisionLogs(args: RevisionIds) {
   const [startTime, _] = useState(Date.now());
 
   return useQuery<RevisionLog3D[], HttpError>(
-    [QUERY_KEY.REVISIONS, args],
+    QUERY_KEY.REVISIONS(args),
     fetchLogs(args),
     {
       refetchOnMount: true,
