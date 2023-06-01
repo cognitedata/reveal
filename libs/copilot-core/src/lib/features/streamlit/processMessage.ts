@@ -1,6 +1,6 @@
-import { getChatCompletions } from '@data-exploration-lib/domain-layer';
-
 import sdk from '@cognite/cdf-sdk-singleton';
+
+import { getChatCompletions } from '@data-exploration-lib/domain-layer';
 
 import { CopilotMessage, ProcessMessageFunc } from '../../types';
 import {

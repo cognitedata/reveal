@@ -1585,10 +1585,10 @@
   dependencies:
     lodash "^4.17.20"
 
-"@cognite/auth-react@^0.0.14-beta":
-  version "0.0.14-beta"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.14-beta.tgz#14d2870a7beb00ca7383c586f05154ba27939217"
-  integrity sha512-9JW40grcVmUUYniSMjYvuXuWgyohcVVuBC1JitMpY7ltSv5XM2O8NcQg/WFBd+YpDMN2rUVHHA1BPn4/CKV/dA==
+"@cognite/auth-react@^0.0.15-beta":
+  version "0.0.15-beta"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.15-beta.tgz#79b60af5a058a2185143f221e61585e7af613a7d"
+  integrity sha512-OKRdmgrEFlDxLqx1pMdiqu+awFraPyLAplivV8MfYz6vXZ/ERuA9ckPFiL58ZdDUSpiLmPhunkysIwMqbOD0iA==
   dependencies:
     "@auth0/auth0-spa-js" "2.0.4"
     "@azure/msal-browser" "2.35.0"

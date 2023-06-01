@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'apps/flexible-data-explorer/**'
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
