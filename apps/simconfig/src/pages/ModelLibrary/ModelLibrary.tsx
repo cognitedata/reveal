@@ -169,12 +169,14 @@ export function ModelLibrary() {
             modelFiles={slicedModelFiles}
           />
         </div>
-        <PaginationStyled
-          itemsPerPage={itemsPerPage}
-          setItemPerPage={setItemPerPage}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-        />
+        {!isModalLibraryEmpty && (
+          <PaginationStyled
+            itemsPerPage={itemsPerPage}
+            setItemPerPage={setItemPerPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
+        )}
       </ModelLibrarySidebar>
       <ModelLibraryContent>
         <ModelDetails

@@ -64,10 +64,11 @@ export function ModelVersionList({
     return <Skeleton.List lines={4} borders />;
   }
 
-  const slicedModels = paginateData(
-    data?.modelFileList ?? [],
-    pageNumber
-  ) as ModelFile[];
+  if (data?.modelFileList.length === 0) {
+    return null;
+  }
+
+  const slicedModels = paginateData(data?.modelFileList ?? [], pageNumber);
 
   const totalPages = getTotalPages(data?.modelFileList ?? []);
 
