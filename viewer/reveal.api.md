@@ -1251,10 +1251,10 @@ export type OverlayCollectionOptions = {
 // @public
 export type OverlayEventHandler<ContentType> = (event: {
     targetOverlay: Overlay3D<ContentType>;
-    htmlOverlay: HTMLElement;
+    htmlTextOverlay: HTMLElement;
     mousePosition: {
-        clientX: number;
-        clientY: number;
+        offsetX: number;
+        offsetY: number;
     };
 }) => void;
 
