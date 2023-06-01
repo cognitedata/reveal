@@ -2,6 +2,7 @@ import {
   Avatar,
   AvatarGroup,
   Button,
+  Chip,
   Colors,
   Flex,
   Menu,
@@ -14,7 +15,7 @@ import { useTranslation } from 'common';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
 import { toPng } from 'html-to-image';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
 import {
   WorkflowDefinitionCreate,
@@ -22,8 +23,9 @@ import {
   useCreateWorkflowDefinition,
 } from 'hooks/workflows';
 import {
+  areWorkflowDefinitionsSame,
   convertCanvasToWorkflowDefinition,
-  getLastVersion,
+  getLastWorkflowDefinition,
 } from 'utils/workflows';
 
 type CanvasTopBarProps = {
@@ -37,6 +39,27 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
 
   const { flow, setHistoryVisible, userState, otherUserStates } =
     useWorkflowBuilderContext();
+
+  const lastWorkflowDefinition = useMemo(
+    () => getLastWorkflowDefinition(workflow),
+    [workflow]
+  );
+
+  const lastVersion = parseInt(
+    getLastWorkflowDefinition(workflow)?.version ?? ''
+  );
+  const nextVersion = lastVersion ? lastVersion + 1 : 1;
+
+  const shouldPublish = useMemo(
+    () =>
+      !lastWorkflowDefinition ||
+      !areWorkflowDefinitionsSame(
+        lastWorkflowDefinition.tasks,
+        convertCanvasToWorkflowDefinition(flow)
+      ),
+    [flow, lastWorkflowDefinition]
+  );
+
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
@@ -70,9 +93,6 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
       description: '',
     };
 
-    const lastVersion = parseInt(getLastVersion(workflow)?.version ?? '');
-    const nextVersion = lastVersion ? lastVersion + 1 : 1;
-
     createWorkflowDefinition({
       externalId: workflow.externalId,
       version: `${nextVersion}`,
@@ -99,11 +119,22 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
             </AvatarGroup>
             <SecondaryTopbar.Divider />
             <Flex gap={12}>
-              <Button onClick={handlePublish} type="primary">
+              <Button
+                disabled={!shouldPublish}
+                onClick={handlePublish}
+                type="primary"
+              >
                 {t('publish-version')}
               </Button>
             </Flex>
           </Flex>
+        }
+        extraContentLeft={
+          <Chip
+            label={`v${shouldPublish ? `${nextVersion} (Draft)` : lastVersion}`}
+            size="small"
+            type={shouldPublish ? 'default' : 'neutral'}
+          />
         }
         optionsDropdownProps={{
           appendTo: getContainer(),
