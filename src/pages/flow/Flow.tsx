@@ -13,7 +13,7 @@ import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useCreateFile, useFile } from 'hooks/files';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
-import { useWorkflow } from 'hooks/workflows';
+import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
@@ -68,17 +68,21 @@ const Flow = (): JSX.Element => {
 
   return (
     <FlowContextProvider externalId={externalId!} initialFlow={file}>
-      <FlowContainer />
+      <FlowContainer workflow={workflow} />
     </FlowContextProvider>
   );
 };
 
-function FlowContainer() {
+type FlowContainerProps = {
+  workflow: WorkflowWithVersions;
+};
+
+function FlowContainer({ workflow }: FlowContainerProps) {
   const { isHistoryVisible, previewHash } = useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
-      <CanvasTopBar />
+      <CanvasTopBar workflow={workflow} />
       <Content>
         {previewHash && <PreviewFeedback />}
         {isHistoryVisible && <FloatingHistoryPanel />}

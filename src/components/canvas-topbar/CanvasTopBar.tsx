@@ -1,19 +1,39 @@
-import { Avatar, AvatarGroup, Colors, Flex, Menu } from '@cognite/cogs.js';
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Colors,
+  Flex,
+  Menu,
+} from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { getContainer } from 'utils';
 import { useTranslation } from 'common';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
-import CanvasTopbarPublishButton from './CanvasTopBarPublishButton';
-import CanvasTopBarDiscardChangesButton from './CanvasTopBarDiscardChangesButton';
 import { toPng } from 'html-to-image';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useState } from 'react';
 import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
+import {
+  WorkflowDefinitionCreate,
+  WorkflowWithVersions,
+  useCreateWorkflowDefinition,
+} from 'hooks/workflows';
+import {
+  convertCanvasToWorkflowDefinition,
+  getLastVersion,
+} from 'utils/workflows';
 
-export const CanvasTopBar = () => {
+type CanvasTopBarProps = {
+  workflow: WorkflowWithVersions;
+};
+
+export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const { mutate: createWorkflowDefinition } = useCreateWorkflowDefinition();
 
   const { flow, setHistoryVisible, userState, otherUserStates } =
     useWorkflowBuilderContext();
@@ -43,6 +63,23 @@ export const CanvasTopBar = () => {
     }).then(downloadCanvasToImage);
   };
 
+  const handlePublish = () => {
+    const tasks = convertCanvasToWorkflowDefinition(flow);
+    const workflowDefinition: WorkflowDefinitionCreate = {
+      tasks,
+      description: '',
+    };
+
+    const lastVersion = parseInt(getLastVersion(workflow)?.version ?? '');
+    const nextVersion = lastVersion ? lastVersion + 1 : 1;
+
+    createWorkflowDefinition({
+      externalId: workflow.externalId,
+      version: `${nextVersion}`,
+      workflowDefinition,
+    });
+  };
+
   return (
     <Container>
       <SecondaryTopbar
@@ -61,9 +98,10 @@ export const CanvasTopBar = () => {
               ))}
             </AvatarGroup>
             <SecondaryTopbar.Divider />
-            <Flex gap={10}>
-              <CanvasTopBarDiscardChangesButton />
-              <CanvasTopbarPublishButton />
+            <Flex gap={12}>
+              <Button onClick={handlePublish} type="primary">
+                {t('publish-version')}
+              </Button>
             </Flex>
           </Flex>
         }

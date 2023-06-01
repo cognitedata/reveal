@@ -18,22 +18,14 @@ type ParentNode = BaseWorkflowBuilderNode<'parent', ParentNodeData>;
 /* PROCESS NODE */
 /****************/
 
-export const PROCESS_TYPES = [
-  'transformation',
-  'webhook',
-  'workflow',
-  'function',
-] as const;
+export const PROCESS_TYPES = ['transformation', 'function'] as const;
 export type ProcessType = typeof PROCESS_TYPES[number];
 export const PROCESS: Record<string, ProcessType> = {
   TRANSFORMATION: 'transformation',
-  WEBHOOK: 'webhook',
-  WORKFLOW: 'workflow',
+  FUNCTION: 'function',
 };
 export const PROCESS_ICON: Record<ProcessType, IconType> = {
   transformation: 'Code',
-  webhook: 'FrameTool',
-  workflow: 'Pipeline',
   function: 'Function',
 };
 
@@ -50,6 +42,7 @@ type BaseProcessNodeData<
   I extends ProcessItem,
   P = {}
 > = {
+  processExternalId?: string;
   processType: T;
   processDescription: D;
   processItem: I;
@@ -66,22 +59,6 @@ type TransformationNodeData = BaseProcessNodeData<
   TransformationNodeProps
 >;
 
-type WebhookNodeProps = {};
-type WebhookNodeData = BaseProcessNodeData<
-  'webhook',
-  string,
-  string,
-  WebhookNodeProps
->;
-
-type WorkflowNodeProps = {};
-type WorkflowkNodeData = BaseProcessNodeData<
-  'workflow',
-  string,
-  string,
-  WorkflowNodeProps
->;
-
 type FunctionNodeProps = {};
 type FunctionNodeData = BaseProcessNodeData<
   'function',
@@ -90,11 +67,7 @@ type FunctionNodeData = BaseProcessNodeData<
   FunctionNodeProps
 >;
 
-export type ProcessNodeData =
-  | TransformationNodeData
-  | WebhookNodeData
-  | WorkflowkNodeData
-  | FunctionNodeData;
+export type ProcessNodeData = TransformationNodeData | FunctionNodeData;
 export type ProcessNode = BaseWorkflowBuilderNode<'process', ProcessNodeData>;
 
 /********************/

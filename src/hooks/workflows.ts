@@ -4,6 +4,7 @@ import {
   UseMutationOptions,
   useMutation,
   useQuery,
+  useQueryClient,
 } from '@tanstack/react-query';
 
 const getWorkflowsQueryKey = () => ['flows', 'workflow-list'];
@@ -39,26 +40,34 @@ type WorkflowTaskDependency = {
   externalId: string;
 };
 
-type WorkflowTaskDefinition = {
+export type WorkflowTaskDefinition = {
   externalId: string;
   type: WorkflowTaskType;
   name?: string;
   description?: string;
-  parameters: unknown; // TODO
+  parameters?: unknown; // TODO
   retries?: number;
   timeout?: number;
   dependsOn: WorkflowTaskDependency[];
 };
 
-type WorkflowDefinition = {
+export type WorkflowDefinitionRead = {
   hash: string;
   description?: string;
   version: string;
   tasks: WorkflowTaskDefinition[];
 };
 
-type WorkflowWithVersions = Pick<WorkflowRead, 'externalId' | 'createdTime'> & {
-  versions: WorkflowDefinition[];
+export type WorkflowDefinitionCreate = Pick<
+  WorkflowDefinitionRead,
+  'description' | 'tasks'
+>;
+
+export type WorkflowWithVersions = Pick<
+  WorkflowRead,
+  'externalId' | 'createdTime'
+> & {
+  versions: { [version: string]: WorkflowDefinitionRead };
 };
 
 export const useWorkflow = (externalId: string) => {
@@ -91,5 +100,40 @@ export const useCreateWorkflow = (
         })
         .then((res) => res.data),
     options
+  );
+};
+
+type CreateWorkflowDefinitionVariables = {
+  externalId: string;
+  version: string;
+  workflowDefinition: WorkflowDefinitionCreate;
+};
+
+export const useCreateWorkflowDefinition = () => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    WorkflowWithVersions,
+    unknown,
+    CreateWorkflowDefinitionVariables
+  >(
+    ({ externalId, version, workflowDefinition }) =>
+      sdk
+        .post<WorkflowWithVersions>(
+          `api/v1/projects/${getProject()}/workflows/${externalId}/versions`,
+          {
+            data: {
+              version,
+              workflowDefinition,
+            },
+          }
+        )
+        .then((res) => res.data),
+    {
+      onSuccess: ({ externalId }) => {
+        queryClient.invalidateQueries(getWorkflowQueryKey(externalId));
+      },
+    }
   );
 };

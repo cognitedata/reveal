@@ -153,16 +153,10 @@ export const ProcessNodeRenderer = ({
                   {t('transformation')}
                 </Menu.Item>
                 <Menu.Item
-                  icon="FrameTool"
-                  onClick={() => handleAddNode('webhook', 'left')}
+                  icon="Function"
+                  onClick={() => handleAddNode('function', 'left')}
                 >
-                  {t('webhook')}
-                </Menu.Item>
-                <Menu.Item
-                  icon="Pipeline"
-                  onClick={() => handleAddNode('workflow', 'left')}
-                >
-                  {t('workflow')}
+                  {t('function')}
                 </Menu.Item>
               </Menu>
             }
@@ -198,16 +192,10 @@ export const ProcessNodeRenderer = ({
                   {t('transformation')}
                 </Menu.Item>
                 <Menu.Item
-                  icon="FrameTool"
-                  onClick={() => handleAddNode('webhook', 'right')}
+                  icon="Function"
+                  onClick={() => handleAddNode('function', 'right')}
                 >
-                  {t('webhook')}
-                </Menu.Item>
-                <Menu.Item
-                  icon="Pipeline"
-                  onClick={() => handleAddNode('workflow', 'right')}
-                >
-                  {t('workflow')}
+                  {t('function')}
                 </Menu.Item>
               </Menu>
             }

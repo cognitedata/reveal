@@ -69,5 +69,6 @@
   "validation-error-field-required": "You must enter a value in this field",
   "create-workflow": "Create workflow",
   "workflow_one": "1 workflow",
-  "workflow_other": "{{count}} workflows"
+  "workflow_other": "{{count}} workflows",
+  "publish-version": "Publish version"
 }

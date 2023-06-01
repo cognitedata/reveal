@@ -97,24 +97,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
           </Option>
         );
       }
-      case 'workflow': {
-        return (
-          <Option
-            key={t('create-new-item', {
-              item: processType,
-            })}
-            value={t('create-new-item', {
-              item: processType,
-            })}
-          >
-            <Link href="./" target="_blank">
-              {t('create-new-item', {
-                item: processType,
-              })}
-            </Link>
-          </Option>
-        );
-      }
       case 'function': {
         return (
           <Option
@@ -133,24 +115,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
           </Option>
         );
       }
-      case 'webhook': {
-        return (
-          <Option
-            key={t('create-new-item', {
-              item: processType,
-            })}
-            value={t('create-new-item', {
-              item: processType,
-            })}
-          >
-            <Body level={2}>
-              {t('create-new-item', {
-                item: processType,
-              })}
-            </Body>
-          </Option>
-        );
-      }
     }
   };
 
@@ -166,17 +130,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
             </Option>
           ));
       }
-      case 'workflow': {
-        if (flowData) {
-          return flowData
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(({ externalId, name }) => (
-              <Option key={externalId} value={externalId}>
-                {name}
-              </Option>
-            ));
-        }
-      }
       case 'function': {
         if (functionsData) {
           return functionsData
@@ -187,21 +140,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
               </Option>
             ));
         }
-      }
-      case 'webhook': {
-        const nodesData = nodes.map((node) => {
-          return node.data as ProcessNodeData;
-        });
-        const webhookList = nodesData.filter((node) => {
-          return node.processType === 'webhook';
-        });
-        return webhookList
-          .sort((a, b) => a.processType.localeCompare(b.processType))
-          .map(({ processType }) => (
-            <Option key={processType} value={processType}>
-              {processType}
-            </Option>
-          ));
       }
     }
   };
