@@ -68,6 +68,7 @@ export const EditSourceDetailsModal = ({
         if (values.host && values.port) {
           editMQTTSource({
             externalId: source.externalId,
+            type: source.type,
             update: {
               host: {
                 set: values.host,
