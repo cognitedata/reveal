@@ -210,8 +210,6 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
                 <LineageSubTitle>
                   {t('lineage-transformations-subtitle')}
                 </LineageSubTitle>
-                <strong>{t}</strong>
-
                 {disableTransformations ? (
                   <NoDataText>
                     {t('lineage-transformations-disabled')}

@@ -36,7 +36,7 @@ const DataSetEditor = ({
   const { t } = useTranslation();
   const { selectedDataSet, setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSetWithExtpipes, isLoading: isFetchingDataSet } =
+  const { dataSetWithExtpipes, isInitialLoading: isFetchingDataSet } =
     useDataSetWithExtpipes(selectedDataSet);
 
   const { updateDataSet, isLoading: isUpdating } = useUpdateDataSetMutation();
@@ -51,7 +51,7 @@ const DataSetEditor = ({
   const { updateOwners, isLoading: isUpdatingOwners } =
     useUpdateDataSetOwners();
 
-  const { owners, isLoading: isFetchingOwners } =
+  const { owners, isInitialLoading: isFetchingOwners } =
     useDataSetOwners(selectedDataSet);
 
   useEffect(() => {
@@ -70,6 +70,12 @@ const DataSetEditor = ({
     isCreating ||
     isFetchingOwners ||
     isUpdatingOwners;
+
+  console.log('isFetchingDataSet', isFetchingDataSet);
+  console.log('isUpdating', isUpdating);
+  console.log('isCreating', isCreating);
+  console.log('isFetchingOwners', isFetchingOwners);
+  console.log('isUpdatingOwners', isUpdatingOwners);
 
   useEffect(() => {
     if (createdDataSetId) {

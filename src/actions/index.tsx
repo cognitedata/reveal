@@ -294,7 +294,7 @@ export const useDataSetWithExtpipes = (id?: number) => {
 
 export const useDataSetOwners = (
   id?: number
-): { owners: Group[]; isLoading: boolean; error: any } => {
+): { owners: Group[]; isInitialLoading: boolean; error: any } => {
   const { data: owners, ...rest } = useQuery(
     getDataSetOwnersByIdKey(String(id)),
     () => (id ? getAllSetOwners(id) : []),

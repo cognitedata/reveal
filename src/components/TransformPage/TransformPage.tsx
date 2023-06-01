@@ -201,7 +201,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           )
         );
       } catch (e) {
-        toast.error({ message: t('invalid-search-value') });
+        toast.error(t('invalid-search-value'));
         setSearchValue('');
       }
     } else {
