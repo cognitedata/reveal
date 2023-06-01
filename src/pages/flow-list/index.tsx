@@ -1,16 +1,16 @@
-import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
 import List from './List';
-import CreateButton from './CreateButton';
 import styled from 'styled-components';
 import { useTranslation } from 'common';
 import SearchInput from './SearchInput';
 import Count from './Count';
 import { useState } from 'react';
-import CreateWorkflowModal from 'components/workflow-modal/CreateWorkflowModal';
+import { CreateWorkflowModal } from 'components/workflow-modal/CreateWorkflowModal';
 
 export default function FlowList() {
   const { t } = useTranslation();
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <ListLayoutWrapper direction="column">
@@ -19,11 +19,9 @@ export default function FlowList() {
             <Icon type="FlowChart" />
             <Title level={3}>{t('list-title')}</Title>
           </Flex>
-
-          <CreateButton
-            showCreateModal={showCreateModal}
-            setShowCreateModal={setShowCreateModal}
-          />
+          <Button onClick={() => setIsModalOpen(true)} type="primary">
+            {t('list-create-flow')}
+          </Button>
         </Flex>
 
         <Body level={2}>{t('list-description')}</Body>
@@ -34,8 +32,8 @@ export default function FlowList() {
         <List />
       </ListLayoutWrapper>
       <CreateWorkflowModal
-        showWorkflowModal={showCreateModal}
-        setShowWorkflowModal={setShowCreateModal}
+        onCancel={() => setIsModalOpen(false)}
+        visible={isModalOpen}
       />
     </>
   );
