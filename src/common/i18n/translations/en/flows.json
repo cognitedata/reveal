@@ -80,5 +80,7 @@
   "results": "Results",
   "definition": "Definition",
   "id": "ID",
-  "no-error-details": "No error details"
+  "no-error-details": "No error details",
+  "close": "Close",
+  "configure-process": "Configure process"
 }

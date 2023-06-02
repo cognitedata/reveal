@@ -4,8 +4,8 @@ import {
   Body,
   IconType,
   Icon,
-  Title,
   Button,
+  Modal,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AutoComplete, Select } from 'antd';
@@ -17,7 +17,6 @@ import { useTransformationList } from 'hooks/transformation';
 import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
 import { ProcessNodeData, ProcessType } from 'types';
-import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 import { ProcessNode } from 'types';
 import { DefaultOptionType } from 'antd/lib/select';
 import FormFieldWrapper from 'components/form-field-wrapper';
@@ -111,75 +110,76 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   };
 
   return (
-    <FloatingPanel right>
-      <Flex alignItems="flex-start" justifyContent="space-between">
-        <Flex direction="column">
-          <Title level={6}>{t('node-configuration-panel-component')}</Title>
+    <Modal
+      onCancel={() => setFocusedProcessNodeId(undefined)}
+      hideFooter
+      title={t('configure-process')}
+      visible
+    >
+      <Flex direction="column" gap={12}>
+        <FormFieldWrapper title={t('process-type')}>
+          <Select
+            value={selectedNode?.data.processType}
+            onChange={handleComponentChange}
+          >
+            {nodeOptions.map(({ icon, label, value }) => (
+              <Option key={value} value={value}>
+                <Container>
+                  <Icon type={icon} />
+                  <Body level={2}>{label}</Body>
+                </Container>
+              </Option>
+            ))}
+          </Select>
+        </FormFieldWrapper>
+        <FormFieldWrapper title={t('external-id')}>
+          <AutoComplete
+            placeholder={t('node-configuration-panel-item-placeholder')}
+            options={itemOptions}
+            value={selectedNode?.data.processExternalId ?? ''}
+            filterOption={(input, option) => {
+              if (
+                typeof option?.value === 'string' &&
+                option.value.toLowerCase().includes(input.toLowerCase())
+              ) {
+                return true;
+              }
+              if (
+                typeof option?.label === 'string' &&
+                option.label.toLowerCase().includes(input.toLowerCase())
+              ) {
+                return true;
+              }
+              return false;
+            }}
+            onChange={handleItemChange}
+          />
+        </FormFieldWrapper>
+        <InputExp
+          fullWidth
+          name="label"
+          label={t('description')}
+          placeholder={t('enter-description')}
+          value={selectedNode?.data.processDescription ?? ''}
+          onChange={(e) => {
+            const value = e.target.value;
+            changeNodes((nodes) => {
+              const node = nodes.find((node) => node.id === selectedNode?.id);
+              const nodeData = node?.data as ProcessNodeData;
+              nodeData.processDescription = value;
+            });
+          }}
+        />
+        <Flex justifyContent="flex-end">
+          <Button
+            onClick={() => setFocusedProcessNodeId(undefined)}
+            type="ghost"
+          >
+            {t('close')}
+          </Button>
         </Flex>
-        <Button
-          icon="CloseLarge"
-          onClick={() => {
-            setFocusedProcessNodeId(undefined);
-          }}
-          type="ghost"
-        />
       </Flex>
-      <FormFieldWrapper title={t('process-type')}>
-        <Select
-          value={selectedNode?.data.processType}
-          onChange={handleComponentChange}
-          style={{ width: 326 }}
-        >
-          {nodeOptions.map(({ icon, label, value }) => (
-            <Option key={value} value={value}>
-              <Container>
-                <Icon type={icon} />
-                <Body level={2}>{label}</Body>
-              </Container>
-            </Option>
-          ))}
-        </Select>
-      </FormFieldWrapper>
-      <FormFieldWrapper title={t('external-id')}>
-        <AutoComplete
-          placeholder={t('node-configuration-panel-item-placeholder')}
-          options={itemOptions}
-          value={selectedNode?.data.processExternalId ?? ''}
-          filterOption={(input, option) => {
-            if (
-              typeof option?.value === 'string' &&
-              option.value.toLowerCase().includes(input.toLowerCase())
-            ) {
-              return true;
-            }
-            if (
-              typeof option?.label === 'string' &&
-              option.label.toLowerCase().includes(input.toLowerCase())
-            ) {
-              return true;
-            }
-            return false;
-          }}
-          onChange={handleItemChange}
-          style={{ width: 326, flex: 1 }}
-        />
-      </FormFieldWrapper>
-      <InputExp
-        name="label"
-        label={t('description')}
-        placeholder={t('enter-description')}
-        value={selectedNode?.data.processDescription ?? ''}
-        onChange={(e) => {
-          const value = e.target.value;
-          changeNodes((nodes) => {
-            const node = nodes.find((node) => node.id === selectedNode?.id);
-            const nodeData = node?.data as ProcessNodeData;
-            nodeData.processDescription = value;
-          });
-        }}
-        style={{ width: 326 }}
-      />
-    </FloatingPanel>
+    </Modal>
   );
 };
 
