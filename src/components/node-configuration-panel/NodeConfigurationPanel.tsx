@@ -44,7 +44,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   }, [nodes, focusedProcessNodeId]);
 
   const nodeOptions: {
-    value: string;
+    value: ProcessType;
     label: string;
     icon: IconType;
   }[] = [
@@ -57,16 +57,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
       value: 'function',
       label: t('function'),
       icon: 'Function',
-    },
-    {
-      value: 'webhook',
-      label: t('webhook'),
-      icon: 'FrameTool',
-    },
-    {
-      value: 'workflow',
-      label: t('workflow'),
-      icon: 'Pipeline',
     },
   ];
 
