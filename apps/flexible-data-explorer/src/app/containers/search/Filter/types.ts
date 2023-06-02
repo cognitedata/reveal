@@ -1,25 +1,12 @@
-export enum Operator {
-  STARTS_WITH = 'Starts with',
-  NOT_STARTS_WITH = 'Does not start with',
-  CONTAINS = 'Contains',
-  NOT_CONTAINS = 'Does not contain',
-  BETWEEN = 'Is between',
-  NOT_BETWEEN = 'Is not between',
-  GREATER_THAN = 'Is greater than',
-  LESS_THAN = 'Is less than',
-  EQUALS = 'Is equal to',
-  NOT_EQUALS = 'Is not equal to',
-  BEFORE = 'Is before',
-  NOT_BEFORE = 'Is not before',
-  AFTER = 'Is after',
-  NOT_AFTER = 'Is not after',
-  ON = 'Is on',
-  NOT_ON = 'Is not on',
-  IS_TRUE = 'Is true',
-  IS_FALSE = 'Is false',
-  IS_SET = 'Is set',
-  IS_NOT_SET = 'Is not set',
-}
+import {
+  Operator,
+  StringOperator,
+  NumberOperator,
+  DateOperator,
+  BooleanOperator,
+} from './operators';
+
+export * from './operators';
 
 export type NumericRange = [number, number];
 
@@ -31,7 +18,7 @@ export type InputValueTypeMap = {
   'numeric-range': NumericRange;
   date: Date;
   'date-range': DateRange;
-  boolean: 'boolean';
+  boolean: boolean;
   'no-input': never;
 };
 
@@ -53,11 +40,12 @@ export type ApplyFilterCallback<TConfig extends BaseConfig> = <
   value: ValueType<TConfig[K]>
 ) => void;
 
-export interface BaseFilterProps<TConfig extends BaseConfig> {
+export interface BaseFilterProps<T extends Operator> {
+  operators?: T[];
   value?: FieldValue;
   name: string;
   onBackClick: () => void;
-  onApplyClick: ApplyFilterCallback<TConfig>;
+  onApplyClick: (operator: T, value: ValueType<InputType>) => void;
 }
 
 export interface DataType {
@@ -70,9 +58,16 @@ export interface Field {
   type: FieldType;
 }
 
-export type FieldType = 'string' | 'number' | 'boolean' | 'date';
+export type FieldType = 'string' | 'number' | 'date' | 'boolean';
 
-export interface Option extends DataType {
+export interface OperatorConfig {
+  string: StringOperator[];
+  number: NumberOperator[];
+  date: DateOperator[];
+  boolean: BooleanOperator[];
+}
+
+export interface DataTypeOption extends DataType {
   fields: Field[];
 }
 
@@ -81,4 +76,6 @@ export interface FieldValue {
   value: ValueType<InputType>;
 }
 
-export type FilterValue = Record<string, Record<string, FieldValue>>;
+export type ValueByField = Record<string, FieldValue>;
+
+export type ValueByDataType = Record<string, ValueByField>;

@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
-import { BaseFilterProps, Operator } from '../../types';
+import { BaseFilterProps, Operator, StringOperator } from '../../types';
+import { processFilterConfig } from '../../utils';
 import { CommonFilter } from '../CommonFilter';
 
-const CONFIG = {
+export const CONFIG = {
   [Operator.STARTS_WITH]: 'string',
   [Operator.NOT_STARTS_WITH]: 'string',
   [Operator.CONTAINS]: 'string',
@@ -12,8 +14,15 @@ const CONFIG = {
   [Operator.IS_NOT_SET]: 'no-input',
 } as const;
 
-export type StringFilterProps = BaseFilterProps<typeof CONFIG>;
+export type StringFilterProps = BaseFilterProps<StringOperator>;
 
-export const StringFilter: React.FC<StringFilterProps> = (props) => {
-  return <CommonFilter config={CONFIG} {...props} />;
+export const StringFilter: React.FC<StringFilterProps> = ({
+  operators,
+  ...props
+}) => {
+  const config = useMemo(() => {
+    return processFilterConfig(CONFIG, operators);
+  }, [operators]);
+
+  return <CommonFilter config={config} {...props} />;
 };

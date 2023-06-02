@@ -4,7 +4,7 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
 
-import { Filter } from './Filter';
+import { SearchBarFilter } from './Filter';
 
 export const SearchFilters = React.memo(() => {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ export const SearchFilters = React.memo(() => {
         <Chip type="neutral" label="Filter" />
       </ChipGroup> */}
 
-      <Dropdown placement="bottom-end" content={<Filter />}>
+      <Dropdown placement="bottom-end" content={<SearchBarFilter />}>
         <Button
           icon="Filter"
           onClick={(e) => {

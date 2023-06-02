@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
-import { BaseFilterProps, Operator } from '../../types';
+import { BaseFilterProps, DateOperator, Operator } from '../../types';
+import { processFilterConfig } from '../../utils';
 import { CommonFilter } from '../CommonFilter';
 
 const CONFIG = {
@@ -16,8 +18,15 @@ const CONFIG = {
   [Operator.IS_NOT_SET]: 'no-input',
 } as const;
 
-export type DateFilterProps = BaseFilterProps<typeof CONFIG>;
+export type DateFilterProps = BaseFilterProps<DateOperator>;
 
-export const DateFilter: React.FC<DateFilterProps> = (props) => {
-  return <CommonFilter config={CONFIG} {...props} />;
+export const DateFilter: React.FC<DateFilterProps> = ({
+  operators,
+  ...props
+}) => {
+  const config = useMemo(() => {
+    return processFilterConfig(CONFIG, operators);
+  }, [operators]);
+
+  return <CommonFilter config={config} {...props} />;
 };

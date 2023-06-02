@@ -1,1 +1,2 @@
-export * from './Filter';
+export * from './filters';
+export * from './types';

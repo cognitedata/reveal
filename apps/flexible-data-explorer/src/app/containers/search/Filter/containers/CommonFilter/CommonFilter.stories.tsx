@@ -1,6 +1,6 @@
 import { ComponentStory } from '@storybook/react';
 
-import { Operator } from '../../types';
+import { InputType, Operator } from '../../types';
 
 import { CommonFilter } from './CommonFilter';
 
@@ -22,6 +22,6 @@ Example.args = {
     [Operator.NOT_BETWEEN]: 'date-range',
     [Operator.IS_TRUE]: 'boolean',
     [Operator.IS_SET]: 'no-input',
-  },
+  } as Record<Operator, InputType>,
   name: 'Filter name',
 };

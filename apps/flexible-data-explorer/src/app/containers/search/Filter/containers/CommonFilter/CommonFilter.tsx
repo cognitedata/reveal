@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
-import { BaseConfig, BaseFilterProps, ValueType } from '../../types';
+import { BaseFilterProps, InputType, Operator, ValueType } from '../../types';
 
 import { CommonFilterInput } from './CommonFilterInput';
 import {
@@ -10,21 +10,18 @@ import {
   isApplyButtonDisabled,
 } from './utils';
 
-export interface CommonFilterProps<TConfig extends BaseConfig>
-  extends BaseFilterProps<TConfig> {
-  config: TConfig;
+export interface CommonFilterProps<TOperator extends Operator>
+  extends BaseFilterProps<TOperator> {
+  config: Record<TOperator, InputType>;
 }
 
-export const CommonFilter = <
-  TOperator extends string,
-  TConfig extends BaseConfig
->({
+export const CommonFilter = <TOperator extends Operator>({
   config,
   value: fieldValue,
   name,
   onBackClick,
   onApplyClick,
-}: CommonFilterProps<TConfig>) => {
+}: CommonFilterProps<TOperator>) => {
   const operators = useMemo(() => {
     return Object.keys(config) as TOperator[];
   }, [config]);
@@ -33,7 +30,7 @@ export const CommonFilter = <
     getInitialOperator(operators, fieldValue)
   );
 
-  const [value, setValue] = useState<ValueType<TConfig[TOperator]> | undefined>(
+  const [value, setValue] = useState<ValueType<InputType> | undefined>(
     getInitialValue(operators, fieldValue)
   );
 
@@ -58,7 +55,11 @@ export const CommonFilter = <
         onChange={handleChangeOperator}
       />
 
-      <CommonFilterInput type={inputType} value={value} onChange={setValue} />
+      <CommonFilterInput<InputType>
+        type={inputType}
+        value={value}
+        onChange={setValue}
+      />
 
       <ApplyButton
         disabled={isApplyButtonDisabled(inputType, value)}

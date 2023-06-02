@@ -1,12 +1,12 @@
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
-import { Option } from '../types';
+import { DataTypeOption } from '../../../types';
 
 import { transformDefFieldsToFilterFields } from './transformDefFieldsToFilterFields';
 
 export const transformDefTypesToFilterOptions = (
   data: DataModelTypeDefsType[]
-): Option[] => {
+): DataTypeOption[] => {
   return data.map(({ name, description, fields }) => {
     return {
       name,

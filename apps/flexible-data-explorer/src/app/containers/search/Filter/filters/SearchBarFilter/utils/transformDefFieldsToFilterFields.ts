@@ -1,7 +1,7 @@
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import compact from 'lodash/compact';
 
-import { Field } from '../types';
+import { Field } from '../../../types';
 
 import { getFieldType } from './getFieldType';
 

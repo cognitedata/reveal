@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
-import { BaseFilterProps, Operator } from '../../types';
+import { BaseFilterProps, NumberOperator, Operator } from '../../types';
+import { processFilterConfig } from '../../utils';
 import { CommonFilter } from '../CommonFilter';
 
 const CONFIG = {
@@ -14,8 +16,15 @@ const CONFIG = {
   [Operator.IS_NOT_SET]: 'no-input',
 } as const;
 
-export type NumberFilterProps = BaseFilterProps<typeof CONFIG>;
+export type NumberFilterProps = BaseFilterProps<NumberOperator>;
 
-export const NumberFilter: React.FC<NumberFilterProps> = (props) => {
-  return <CommonFilter config={CONFIG} {...props} />;
+export const NumberFilter: React.FC<NumberFilterProps> = ({
+  operators,
+  ...props
+}) => {
+  const config = useMemo(() => {
+    return processFilterConfig(CONFIG, operators);
+  }, [operators]);
+
+  return <CommonFilter config={config} {...props} />;
 };

@@ -3,8 +3,8 @@ import {
   DateFilter,
   NumberFilter,
   StringFilter,
-} from '../containers';
-import { FieldType } from '../types';
+} from '../../../containers';
+import { FieldType } from '../../../types';
 
 export const getFilterByFieldType = (type: FieldType) => {
   switch (type) {
