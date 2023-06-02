@@ -23,6 +23,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 import { getToken } from '@cognite/cdf-sdk-singleton';
 import { v4 } from 'uuid';
+import { WorkflowExecution } from 'hooks/workflows';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -49,6 +50,8 @@ type FlowContextT = {
   setOtherUserStates: Dispatch<SetStateAction<UserState[]>>;
   activeViewMode: ViewMode;
   setActiveViewMode: Dispatch<SetStateAction<ViewMode>>;
+  selectedExecution?: WorkflowExecution;
+  setSelectedExecution: Dispatch<SetStateAction<WorkflowExecution | undefined>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -109,6 +112,10 @@ export const FlowContextProvider = ({
 
   const [focusedProcessNodeId, setFocusedProcessNodeId] = useState<
     string | undefined
+  >(undefined);
+
+  const [selectedExecution, setSelectedExecution] = useState<
+    WorkflowExecution | undefined
   >(undefined);
 
   const { data: userInfo } = useUserInfo();
@@ -341,6 +348,8 @@ export const FlowContextProvider = ({
         setFocusedProcessNodeId,
         activeViewMode,
         setActiveViewMode,
+        selectedExecution,
+        setSelectedExecution,
       }}
     >
       {children}

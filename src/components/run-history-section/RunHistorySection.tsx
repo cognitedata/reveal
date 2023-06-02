@@ -17,6 +17,7 @@ import { CodeSnippet, Timestamp } from '@cognite/cdf-utilities';
 import { json } from '@codemirror/lang-json';
 import { useTranslation } from 'common';
 import InfoBox from 'components/info-box/InfoBox';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;
@@ -26,6 +27,9 @@ export const RunHistorySection = ({
   workflow,
 }: RunHistorySectionProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const { selectedExecution, setSelectedExecution } =
+    useWorkflowBuilderContext();
 
   const { data: executions } = useWorkflowExecutions(workflow.externalId);
 
@@ -59,9 +63,12 @@ export const RunHistorySection = ({
     <Container>
       {executions?.map((item) => {
         const { id = '' } = item;
+        const isSelected =
+          !!selectedExecution?.id && selectedExecution.id === item.id;
         return (
           <div key={id} id={id}>
             <StyledCollapse
+              $isSelected={isSelected}
               bordered={false}
               expandIcon={({ isActive }) => (
                 <Icon type={isActive ? 'ChevronUp' : 'ChevronDown'} />
@@ -137,11 +144,12 @@ export const RunHistorySection = ({
                       </FieldContainer>
                     </StyledDetailsGrid>
                     <Button
+                      disabled={isSelected}
                       onClick={() => {
-                        // TODO: navigate to run page
+                        setSelectedExecution(item);
                       }}
                     >
-                      {t('view-run')}
+                      {isSelected ? t('run-is-selected') : t('view-run')}
                     </Button>
                   </Flex>
                 )}
@@ -162,9 +170,11 @@ const Container = styled.div`
   overflow-y: auto;
 `;
 
-const StyledCollapse = styled(Collapse)`
+const StyledCollapse = styled(Collapse)<{ $isSelected?: boolean }>`
   border: 1px solid ${Colors['border--interactive--disabled']};
   box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  background-color: ${({ $isSelected }) =>
+    $isSelected ? Colors['surface--status-neutral--muted--default--alt'] : ''};
 `;
 
 const StyledDetailsGrid = styled.div`

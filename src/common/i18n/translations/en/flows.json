@@ -85,5 +85,6 @@
   "configure-process": "Configure process",
   "view-run": "View run",
   "edit-mode": "Edit mode",
-  "run-history": "Run history"
+  "run-history": "Run history",
+  "run-is-selected": "Run is selected"
 }

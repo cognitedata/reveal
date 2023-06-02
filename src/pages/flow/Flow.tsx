@@ -16,6 +16,7 @@ import PreviewFeedback from 'components/preview-feedback';
 import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
 import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
 import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
+import RunCanvas from 'components/run-canvas/RunCanvas';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
@@ -100,7 +101,9 @@ function FlowContainer({ workflow }: FlowContainerProps) {
           </CanvasSection>
         ) : (
           <>
-            <RunCanvasSection>canvas</RunCanvasSection>
+            <RunCanvasSection>
+              <RunCanvas />
+            </RunCanvasSection>
             <RunHistorySectionContainer>
               <RunHistorySection workflow={workflow} />
             </RunHistorySectionContainer>
