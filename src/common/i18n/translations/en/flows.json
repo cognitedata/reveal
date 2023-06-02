@@ -72,5 +72,6 @@
   "workflow_other": "{{count}} workflows",
   "publish-version": "Publish version",
   "process-type": "Process type",
-  "not-set": "Not set"
+  "not-set": "Not set",
+  "run-as-current-user": "Run as current user"
 }

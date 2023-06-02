@@ -6,6 +6,8 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { createSession } from './sessions';
+import { ProcessType } from 'types';
 
 const getWorkflowsQueryKey = () => ['flows', 'workflow-list'];
 
@@ -149,6 +151,81 @@ export const useCreateWorkflowDefinition = () => {
       onSuccess: ({ externalId }) => {
         queryClient.invalidateQueries(getWorkflowQueryKey(externalId));
       },
+    }
+  );
+};
+
+type RunWorkflowVariables = {
+  externalId: string;
+  version: string;
+};
+
+type TaskExecutionStatus =
+  | 'IN_PROGRESS'
+  | 'CANCELED'
+  | 'FAILED'
+  | 'FAILED_WITH_TERMINAL_ERROR'
+  | 'COMPLETED'
+  | 'COMPLETED_WITH_ERRORS'
+  | 'SCHEDULED'
+  | 'TIMED_OUT'
+  | 'SKIPPED';
+
+type TaskExecution = {
+  id?: string;
+  externalId?: string;
+  status?: TaskExecutionStatus;
+  taskType?: ProcessType;
+  startTime?: number;
+  endTime?: number;
+  input?: unknown; // TODO
+  output?: unknown; // TODO
+};
+
+type WorkflowExecutionStatus =
+  | 'RUNNING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'TIMED_OUT'
+  | 'TERMINATED'
+  | 'PAUSED';
+
+type WorkflowExecution = {
+  id?: string;
+  workflowExternalId?: string;
+  workflowDefinition: WorkflowDefinitionRead;
+  version?: string;
+  status?: WorkflowExecutionStatus;
+  executedTasks: TaskExecution[];
+  input?: unknown; // TODO
+  output?: unknown; // TODO
+  createdTime?: number;
+  startTime?: number;
+  endTime?: number;
+  reasonForIncompletion?: string;
+};
+
+export const useRunWorkflow = () => {
+  const sdk = useSDK();
+
+  return useMutation<WorkflowExecution, unknown, RunWorkflowVariables>(
+    async (variables) => {
+      const session = await createSession(sdk);
+
+      return sdk
+        .post<WorkflowExecution>(
+          `api/v1/projects/${getProject()}/workflows/${
+            variables.externalId
+          }/versions/${variables.version}/run`,
+          {
+            data: {
+              authentication: {
+                nonce: session.nonce,
+              },
+            },
+          }
+        )
+        .then((res) => res.data);
     }
   );
 };

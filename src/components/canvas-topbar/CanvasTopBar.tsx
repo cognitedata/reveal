@@ -4,6 +4,7 @@ import {
   Button,
   Chip,
   Colors,
+  Dropdown,
   Flex,
   Menu,
 } from '@cognite/cogs.js';
@@ -21,6 +22,7 @@ import {
   WorkflowDefinitionCreate,
   WorkflowWithVersions,
   useCreateWorkflowDefinition,
+  useRunWorkflow,
 } from 'hooks/workflows';
 import {
   areWorkflowDefinitionsSame,
@@ -36,6 +38,7 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const { mutate: createWorkflowDefinition } = useCreateWorkflowDefinition();
+  const { mutate: runWorkflow } = useRunWorkflow();
 
   const { flow, setHistoryVisible, userState, otherUserStates } =
     useWorkflowBuilderContext();
@@ -100,6 +103,13 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
     });
   };
 
+  const handleRun = () => {
+    runWorkflow({
+      externalId: workflow.externalId,
+      version: `${lastVersion}`,
+    });
+  };
+
   return (
     <Container>
       <SecondaryTopbar
@@ -126,6 +136,24 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
               >
                 {t('publish-version')}
               </Button>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Item onClick={handleRun}>
+                      {t('run-as-current-user')}
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button
+                  disabled={shouldPublish}
+                  icon="ChevronDown"
+                  iconPlacement="right"
+                  type="primary"
+                >
+                  {t('run')}
+                </Button>
+              </Dropdown>
             </Flex>
           </Flex>
         }
