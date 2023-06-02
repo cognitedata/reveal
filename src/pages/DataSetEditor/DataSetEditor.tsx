@@ -71,12 +71,6 @@ const DataSetEditor = ({
     isFetchingOwners ||
     isUpdatingOwners;
 
-  console.log('isFetchingDataSet', isFetchingDataSet);
-  console.log('isUpdating', isUpdating);
-  console.log('isCreating', isCreating);
-  console.log('isFetchingOwners', isFetchingOwners);
-  console.log('isUpdatingOwners', isUpdatingOwners);
-
   useEffect(() => {
     if (createdDataSetId) {
       setSelectedDataSet(createdDataSetId);
