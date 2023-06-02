@@ -4,10 +4,12 @@
 
 import { Metadata } from '@cognite/sdk';
 import { Historical360ImageSet, Image360DescriptorProvider } from '../types';
-import { Cdf360FdmProvider, DM360Identifier } from './Cdf360FdmProvider';
+import { Cdf360FdmProvider, DM360CollectionIdentifier } from './Cdf360FdmProvider';
 import { Cdf360EventProvider } from './Cdf360EventProvider';
 
-export class Cdf360CombinedDescriptorProvider implements Image360DescriptorProvider<Metadata | DM360Identifier> {
+export class Cdf360CombinedDescriptorProvider
+  implements Image360DescriptorProvider<Metadata | DM360CollectionIdentifier>
+{
   private readonly _eventProvider: Cdf360EventProvider;
   private readonly _fdmProvider: Cdf360FdmProvider;
 
@@ -17,7 +19,7 @@ export class Cdf360CombinedDescriptorProvider implements Image360DescriptorProvi
   }
 
   public get360ImageDescriptors(
-    metadataFilter: Metadata | DM360Identifier,
+    metadataFilter: Metadata | DM360CollectionIdentifier,
     preMultipliedRotation: boolean
   ): Promise<Historical360ImageSet[]> {
     if (isFdmIdentifier(metadataFilter)) {
@@ -26,8 +28,10 @@ export class Cdf360CombinedDescriptorProvider implements Image360DescriptorProvi
       return this._eventProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);
     }
 
-    function isFdmIdentifier(metadataFilter: Metadata | DM360Identifier): metadataFilter is DM360Identifier {
-      const fdmFilter = metadataFilter as DM360Identifier;
+    function isFdmIdentifier(
+      metadataFilter: Metadata | DM360CollectionIdentifier
+    ): metadataFilter is DM360CollectionIdentifier {
+      const fdmFilter = metadataFilter as DM360CollectionIdentifier;
       return fdmFilter !== undefined && fdmFilter.space !== undefined && fdmFilter.dataModelExternalId !== undefined;
     }
   }

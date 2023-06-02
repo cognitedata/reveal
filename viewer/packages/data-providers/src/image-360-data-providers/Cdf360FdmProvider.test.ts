@@ -10,7 +10,7 @@ describe(Cdf360FdmProvider.name, () => {
     const sdk = new CogniteClient({
       getToken: () => Promise.resolve(''),
       appId: 'MyApp',
-      project: 'connections-industries',
+      project: '3d-test',
       baseUrl: 'https://greenfield.cognitedata.com'
     });
 
@@ -18,9 +18,9 @@ describe(Cdf360FdmProvider.name, () => {
 
     await provider.get360ImageDescriptors(
       {
-        dataModelExternalId: 'Image360Space',
-        space: 'Connections_360',
-        image360CollectionExternalId: 'asd'
+        dataModelExternalId: 'Image360DM',
+        space: 'Image_360',
+        image360CollectionExternalId: 'c_RC_2'
       },
       false
     );

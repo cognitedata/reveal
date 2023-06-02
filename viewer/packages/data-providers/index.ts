@@ -21,12 +21,7 @@ export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-o
 export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/DummyPointCloudStylableObjectProvider';
 
 export { Image360Provider, Image360DataProvider } from './src/Image360Provider';
-export {
-  Cdf360FdmProvider,
-  DM360CollectionIdentifier,
-  DM360SiteIdentifier,
-  DM360Identifier
-} from './src/image-360-data-providers/Cdf360FdmProvider';
+export { Cdf360FdmProvider, DM360CollectionIdentifier } from './src/image-360-data-providers/Cdf360FdmProvider';
 export { Cdf360EventProvider } from './src/image-360-data-providers/Cdf360EventProvider';
 export { Cdf360CombinedDescriptorProvider } from './src/image-360-data-providers/Cdf360CombinedDescriptorProvider';
 export {

@@ -7,14 +7,13 @@ import {
   Historical360ImageSet,
   Image360FileDescriptor,
   Image360EventDescriptor,
-  Image360DescriptorProvider
+  Image360DescriptorProvider,
+  Image360Descriptor
 } from '../types';
 import { get360ImageCollectionsQuery } from './listCollections';
 import { Euler, Matrix4 } from 'three';
-import zip from 'lodash/zip';
 import { cadFromCdfToThreeMatrix } from '@reveal/utilities/src/constants';
-
-export type DM360Identifier = DM360CollectionIdentifier | DM360SiteIdentifier;
+import assert from 'assert';
 
 export type DM360CollectionIdentifier = {
   space: string;
@@ -22,52 +21,67 @@ export type DM360CollectionIdentifier = {
   image360CollectionExternalId: string;
 };
 
-export type DM360SiteIdentifier = {
-  space: string;
-  dataModelExternalId: string;
-  image360SiteExternalId: string;
+type JSONData = {
+  getImage360CollectionById: {
+    items: Image360Collection[];
+  };
 };
 
-type CubeMap = {
-  back: string;
-  bottom: string;
-  front: string;
-  left: string;
-  right: string;
-  top: string;
-};
-
-type Image360EntityResult = {
-  label: string;
-  translation: { x: number; y: number; z: number };
-  eulerRotation: { x: number; y: number; z: number };
-  cubeMap: CubeMap;
+type Image360Collection = {
   externalId: string;
-};
-
-type Image360CollectionResult = {
-  entities: { items: Image360EntityResult[] };
   label: string;
-  externalId: string;
+  stations: {
+    items: Image360Station[];
+  };
 };
 
-type Edge = { node: Image360CollectionResult };
+type Image360Station = {
+  externalId: string;
+  label: string;
+  revisions: {
+    items: Image360Revision[];
+  };
+};
 
-type Image360CollectionJsonData = { edges: Edge[]; items: { label: string }[] };
+type Image360Revision = {
+  externalId: string;
+  label: string;
+  timeTaken: number | null;
+  translation: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  eulerRotation: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  cubeMap: {
+    back: FileMetadata;
+    bottom: FileMetadata;
+    front: FileMetadata;
+    left: FileMetadata;
+    right: FileMetadata;
+    top: FileMetadata;
+  };
+};
 
-type JSONData = { getConnectionsImage360CollectionById: Image360CollectionJsonData };
+type FileMetadata = {
+  id: number;
+  mimeType: 'image/jpeg' | 'image/png';
+};
 
-export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Identifier> {
+export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360CollectionIdentifier> {
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
   }
-  public async get360ImageDescriptors(metadataFilter: DM360Identifier, _: boolean): Promise<Historical360ImageSet[]> {
-    if (isSiteIdentifier(metadataFilter)) {
-      throw new Error('Not implemented');
-    }
-
+  public async get360ImageDescriptors(
+    metadataFilter: DM360CollectionIdentifier,
+    _: boolean
+  ): Promise<Historical360ImageSet[]> {
     const { dataModelExternalId, space, image360CollectionExternalId } = metadataFilter;
 
     const baseUrl = this._sdk.getBaseUrl();
@@ -80,76 +94,76 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Identi
 
     const data = result.data.data as JSONData;
 
-    const collectionId = data.getConnectionsImage360CollectionById.edges[0].node.externalId;
-    const collectionLabel = data.getConnectionsImage360CollectionById.edges[0].node.label;
+    const collections = data.getImage360CollectionById.items;
+    assert(collections.length === 1, 'Expected exactly one collection to be returned from the query');
 
-    const image360Entities = data.getConnectionsImage360CollectionById.edges[0].node.entities.items;
+    const collection = collections[0];
+
+    const collectionId = collection.externalId;
+    const collectionLabel = collection.label;
+
+    const image360Stations = collection.stations.items;
 
     const imgs = await Promise.all(
-      image360Entities.map(p => this.createHistorical360ImageSet(p, collectionId, collectionLabel))
+      image360Stations.map(station => this.createHistorical360ImageSet(station, collectionId, collectionLabel))
     );
     return imgs;
-
-    function isSiteIdentifier(
-      metadataFilter: DM360CollectionIdentifier | DM360SiteIdentifier
-    ): metadataFilter is DM360SiteIdentifier {
-      return (metadataFilter as DM360SiteIdentifier).image360SiteExternalId !== undefined;
-    }
   }
 
   private async createHistorical360ImageSet(
-    image360EventResult: Image360EntityResult,
+    image360Station: Image360Station,
     collectionId: string,
     collectionLabel: string
   ): Promise<Historical360ImageSet> {
-    const descriptor = this.getImage360Descriptor(collectionId, collectionLabel, image360EventResult);
-    const faceExternalIds = Object.entries(image360EventResult.cubeMap).map(([face, fileExternalId]) => {
-      return { face, fileExternalId };
-    });
+    const revisions = image360Station.revisions.items;
 
-    const fileInfos = await this._sdk.files.retrieve(
-      faceExternalIds.map(p => {
-        return { externalId: p.fileExternalId };
-      })
-    );
+    assert(revisions.length >= 0, 'Expected at least one revision to be returned from the query');
 
-    const image360FileDescriptors = zip(faceExternalIds, fileInfos).map(([faceMetadata, fileInfo]) => {
-      const q: Image360FileDescriptor = {
-        face: faceMetadata!.face as Image360FileDescriptor['face'],
-        fileId: fileInfo!.id!,
-        mimeType: fileInfo!.mimeType as Image360FileDescriptor['mimeType']
-      };
-      return q;
-    });
+    const primaryRevision = revisions[0];
+    const primaryRevisionTransform = this.getRevisionTransform(primaryRevision);
 
-    return { ...descriptor, imageRevisions: [{ faceDescriptors: image360FileDescriptors }] };
+    const image360Descriptor: Image360EventDescriptor = {
+      collectionId,
+      collectionLabel,
+      id: image360Station.externalId,
+      label: image360Station.label,
+      transform: primaryRevisionTransform
+    };
+
+    const imageRevisions = await Promise.all(revisions.map(revision => this.getRevisionDescriptor(revision)));
+
+    return { ...image360Descriptor, imageRevisions };
   }
 
-  private getImage360Descriptor(
-    collectionId: string,
-    collectionLabel: string,
-    image360EventResult: Image360EntityResult
-  ): Image360EventDescriptor {
+  private getRevisionTransform(revision: Image360Revision): Matrix4 {
     const transform = getTranslation();
     transform.multiply(getEulerRotation());
     transform.premultiply(cadFromCdfToThreeMatrix);
-    return {
-      collectionId,
-      collectionLabel,
-      id: image360EventResult.externalId,
-      label: image360EventResult.label,
-      transform
-    };
+    return transform;
 
     function getEulerRotation(): Matrix4 {
-      const { x, y, z } = image360EventResult.eulerRotation;
+      const { x, y, z } = revision.eulerRotation;
       const eulerRotation = new Euler(x, y, z, 'XYZ');
       return new Matrix4().makeRotationFromEuler(eulerRotation);
     }
 
     function getTranslation(): Matrix4 {
-      const { x, y, z } = image360EventResult.translation;
+      const { x, y, z } = revision.translation;
       return new Matrix4().makeTranslation(x, y, z);
     }
+  }
+
+  private async getRevisionDescriptor(revision: Image360Revision): Promise<Image360Descriptor> {
+    const faceDescriptors: Image360FileDescriptor[] = Object.entries(revision.cubeMap).map(
+      ([faceKey, fileMetadata]) => {
+        const face = faceKey as Image360FileDescriptor['face'];
+        return { face, fileId: fileMetadata.id, mimeType: fileMetadata.mimeType };
+      }
+    );
+
+    return {
+      timestamp: revision.timeTaken ?? undefined,
+      faceDescriptors
+    };
   }
 }
