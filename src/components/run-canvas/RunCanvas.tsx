@@ -1,19 +1,22 @@
 import { Body, Colors, Flex } from '@cognite/cogs.js';
+import { useQuery } from '@tanstack/react-query';
 import { DELETE_KEY_CODES, MAX_ZOOM, MIN_ZOOM, useTranslation } from 'common';
 import { Controls } from 'components/controls';
 import { FlowBuilderContainer } from 'components/flow-builder';
 import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { ComponentType } from 'react';
+import { ComponentType, useMemo } from 'react';
 import {
   Background,
   BackgroundVariant,
+  Edge,
   NodeProps,
   ReactFlow,
   SelectionMode,
 } from 'reactflow';
 import styled from 'styled-components';
-import { WorkflowBuilderNodeType } from 'types';
+import { ProcessNode, WorkflowBuilderNodeType } from 'types';
+import { computeLayout } from 'utils/layout';
 
 type RunCanvasProps = {};
 
@@ -29,9 +32,57 @@ const RunCanvas = ({}: RunCanvasProps): JSX.Element => {
 
   const { selectedExecution } = useWorkflowBuilderContext();
 
-  const nodes = [] as any;
-  const edges = [] as any;
   const edgeTypes = [] as any;
+
+  const { data: layout } = useQuery(
+    ['workflows', 'run-layout', selectedExecution?.id],
+    () => computeLayout(selectedExecution!),
+    {
+      enabled: !!selectedExecution,
+    }
+  );
+
+  const [nodes, edges] = useMemo<[ProcessNode[], Edge[]]>(() => {
+    if (!layout) {
+      return [[], []];
+    }
+
+    const n: ProcessNode[] = [];
+    const e: Edge[] = [];
+
+    layout.children?.forEach(({ id, x, y }) => {
+      const workflowTask = selectedExecution?.workflowDefinition.tasks.find(
+        ({ externalId }) => externalId === id
+      );
+      if (workflowTask && x !== undefined && y !== undefined) {
+        n.push({
+          data: {
+            processExternalId: id,
+            processType: workflowTask.type,
+            processDescription: workflowTask.description ?? '',
+            processProps: {},
+          },
+          id,
+          position: { x, y },
+          type: 'process',
+        });
+      }
+    });
+
+    layout.edges?.forEach(({ id, sources, targets }) => {
+      const sourceExternalId = sources[0];
+      const targetExternalId = targets[0];
+
+      e.push({
+        id,
+        source: sourceExternalId,
+        target: targetExternalId,
+        type: 'customEdge',
+      });
+    });
+
+    return [n, e];
+  }, [layout, selectedExecution]);
 
   if (!selectedExecution) {
     return (

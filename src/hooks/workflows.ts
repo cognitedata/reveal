@@ -36,7 +36,7 @@ const getWorkflowQueryKey = (externalId: string) => [
   externalId,
 ];
 
-type WorkflowTaskType = 'function' | 'transformation' | 'http' | 'dynamic';
+type WorkflowTaskType = 'function' | 'transformation';
 
 type WorkflowTaskDependency = {
   externalId: string;
