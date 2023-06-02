@@ -102,6 +102,7 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
       optionLabelProp="label"
       getPopupContainer={getContainer}
       filterOption={handleFilter}
+      style={{ width: '100%' }}
     >
       {optionGroups}
     </Select>
