@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { WorkflowWithVersions, useWorkflowExecutions } from 'hooks/workflows';
 import { Collapse } from 'antd';
 import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { CodeSnippet } from '@cognite/cdf-utilities';
+import { json } from '@codemirror/lang-json';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;
@@ -39,6 +41,8 @@ export const RunHistorySection = ({
     });
   };
 
+  const extensions = useMemo(() => [json()], []);
+
   return (
     <Container>
       {executions?.map((item) => {
@@ -71,7 +75,20 @@ export const RunHistorySection = ({
                   />
                 }
               >
-                content
+                {tabViews[id] === 'sql' ? (
+                  <div>
+                    <CodeSnippet
+                      extensions={extensions}
+                      value={JSON.stringify(
+                        item.workflowDefinition.tasks,
+                        undefined,
+                        2
+                      )}
+                    />
+                  </div>
+                ) : (
+                  <div>content</div>
+                )}
               </Collapse.Panel>
             </StyledCollapse>
           </div>
