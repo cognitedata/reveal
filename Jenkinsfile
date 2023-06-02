@@ -142,6 +142,7 @@ pods {
                     shouldPublishSourceMap: false,
                     firebaseJson: 'firebase.json',
                     buildFolder: 'build',
+                    isFusionSubapp: true
                   )
                 }
               }
