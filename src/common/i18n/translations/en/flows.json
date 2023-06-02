@@ -71,5 +71,6 @@
   "workflow_one": "1 workflow",
   "workflow_other": "{{count}} workflows",
   "publish-version": "Publish version",
-  "process-type": "Process type"
+  "process-type": "Process type",
+  "not-set": "Not set"
 }

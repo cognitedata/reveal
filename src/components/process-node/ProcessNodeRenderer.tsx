@@ -121,15 +121,19 @@ export const ProcessNodeRenderer = ({
           <ProcessNodeIconContainer>
             <ProcessNodeIcon type={PROCESS_ICON[data.processType]} />
           </ProcessNodeIconContainer>
-          <Flex direction="column" gap={2}>
+          <Flex direction="column">
             <ProcessNodeTitle level={3}>
-              {data.processExternalId
-                ? data.processExternalId
-                : t(`component-title-${data.processType}`, {
-                    postProcess: 'uppercase',
-                  })}
+              {t(`component-title-${data.processType}`, {
+                postProcess: 'uppercase',
+              })}
             </ProcessNodeTitle>
-            <div>{data.processDescription}</div>
+            {data.processExternalId ? (
+              <Body level={3}>{data.processExternalId}</Body>
+            ) : (
+              <Body level={3} muted>
+                {t('not-set')}
+              </Body>
+            )}
           </Flex>
         </Flex>
         {otherUsers.length > 0 && (
