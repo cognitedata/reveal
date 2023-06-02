@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Flex, Loader } from '@cognite/cogs.js';
+import { Colors, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
@@ -86,10 +86,13 @@ function FlowContainer({ workflow }: FlowContainerProps) {
     <StyledFlowContainer>
       <CanvasTopBar workflow={workflow} />
       <Content>
-        {previewHash && <PreviewFeedback />}
-        {isHistoryVisible && <FloatingHistoryPanel />}
-        {isNodeConfigurationPanelVisible && <NodeConfigurationPanel />}
-        <Canvas />
+        <CanvasContainer>
+          {previewHash && <PreviewFeedback />}
+          {isHistoryVisible && <FloatingHistoryPanel />}
+          {isNodeConfigurationPanelVisible && <NodeConfigurationPanel />}
+          <Canvas />
+        </CanvasContainer>
+        <InspectSectionContainer>inspect</InspectSectionContainer>
       </Content>
     </StyledFlowContainer>
   );
@@ -101,8 +104,19 @@ const StyledFlowContainer = styled(Flex).attrs({ direction: 'column' })`
 `;
 
 const Content = styled.div`
+  display: flex;
   flex: 1;
   position: relative;
+`;
+
+const CanvasContainer = styled.div`
+  flex: 1;
+  position: relative;
+`;
+
+const InspectSectionContainer = styled.div`
+  border-left: 1px solid ${Colors['border--interactive--default']};
+  width: 400px;
 `;
 
 export default Flow;
