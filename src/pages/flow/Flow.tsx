@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Colors, Flex, Loader } from '@cognite/cogs.js';
+import { Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
@@ -87,12 +87,14 @@ function FlowContainer({ workflow }: FlowContainerProps) {
     <StyledFlowContainer>
       <CanvasTopBar workflow={workflow} />
       <Content>
-        <CanvasContainer>
-          {previewHash && <PreviewFeedback />}
-          {isHistoryVisible && <FloatingHistoryPanel />}
-          {focusedProcessNodeId && <NodeConfigurationPanel />}
-          <Canvas />
-        </CanvasContainer>
+        <CanvasSection>
+          <CanvasContainer>
+            {previewHash && <PreviewFeedback />}
+            {isHistoryVisible && <FloatingHistoryPanel />}
+            {focusedProcessNodeId && <NodeConfigurationPanel />}
+            <Canvas />
+          </CanvasContainer>
+        </CanvasSection>
         <InspectSectionContainer>
           <InspectSection workflow={workflow} />
         </InspectSectionContainer>
@@ -107,20 +109,30 @@ const StyledFlowContainer = styled(Flex).attrs({ direction: 'column' })`
 `;
 
 const Content = styled.div`
+  background-color: ${Colors['surface--strong']};
   display: flex;
   flex: 1;
+  height: calc(100% - 57px);
   position: relative;
+`;
+
+const CanvasSection = styled.div`
+  flex: 1;
+  height: 100%;
+  padding: 12px 6px 12px 12px;
 `;
 
 const CanvasContainer = styled.div`
-  flex: 1;
   position: relative;
+  height: 100%;
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  padding: 12px;
 `;
 
 const InspectSectionContainer = styled.div`
-  background-color: ${Colors['surface--strong']};
-  border-left: 1px solid ${Colors['border--interactive--default']};
-  padding: 12px;
+  padding: 12px 12px 12px 6px;
   width: 600px;
 `;
 
