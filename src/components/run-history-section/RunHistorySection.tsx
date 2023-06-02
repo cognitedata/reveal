@@ -1,12 +1,13 @@
-import { Colors, Elevations, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Elevations, Icon, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { WorkflowWithVersions, useWorkflowExecutions } from 'hooks/workflows';
 import { Collapse } from 'antd';
 import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
 import { useMemo, useState } from 'react';
-import { CodeSnippet } from '@cognite/cdf-utilities';
+import { CodeSnippet, Timestamp } from '@cognite/cdf-utilities';
 import { json } from '@codemirror/lang-json';
+import { useTranslation } from 'common';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;
@@ -15,6 +16,8 @@ type RunHistorySectionProps = {
 export const RunHistorySection = ({
   workflow,
 }: RunHistorySectionProps): JSX.Element => {
+  const { t } = useTranslation();
+
   const { data: executions } = useWorkflowExecutions(workflow.externalId);
 
   const [expandedRunHistoryCards, setExpandedRunHistoryCards] = useState<
@@ -87,7 +90,38 @@ export const RunHistorySection = ({
                     />
                   </div>
                 ) : (
-                  <div>content</div>
+                  <StyledDetailsGrid>
+                    <FieldContainer>
+                      <Overline level={3} muted>
+                        {t('id')}
+                      </Overline>
+                      <Body level={3}>{item.id}</Body>
+                    </FieldContainer>
+                    <FieldContainer>
+                      <Overline level={3} muted>
+                        {t('created-at')}
+                      </Overline>
+                      <Body level={3}>
+                        <Timestamp absolute timestamp={item.createdTime} />
+                      </Body>
+                    </FieldContainer>
+                    <FieldContainer>
+                      <Overline level={3} muted>
+                        {t('started-at')}
+                      </Overline>
+                      <Body level={3}>
+                        <Timestamp absolute timestamp={item.startTime} />
+                      </Body>
+                    </FieldContainer>
+                    <FieldContainer>
+                      <Overline level={3} muted>
+                        {t('finished-at')}
+                      </Overline>
+                      <Body level={3}>
+                        <Timestamp absolute timestamp={item.endTime} />
+                      </Body>
+                    </FieldContainer>
+                  </StyledDetailsGrid>
                 )}
               </Collapse.Panel>
             </StyledCollapse>
@@ -107,4 +141,18 @@ const Container = styled.div`
 const StyledCollapse = styled(Collapse)`
   border: 1px solid ${Colors['border--interactive--disabled']};
   box-shadow: ${Elevations['elevation--surface--non-interactive']};
+`;
+
+const StyledDetailsGrid = styled.div`
+  background-color: ${Colors['surface--medium']};
+  border-radius: 6px;
+  display: grid;
+  gap: 12px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, max-content));
+  padding: 12px;
+`;
+
+const FieldContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
