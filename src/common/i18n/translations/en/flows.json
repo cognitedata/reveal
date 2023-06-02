@@ -86,5 +86,6 @@
   "view-run": "View run",
   "edit-mode": "Edit mode",
   "run-history": "Run history",
-  "run-is-selected": "Run is selected"
+  "run-is-selected": "Run is selected",
+  "select-a-run-to-start": "Select a run to start"
 }

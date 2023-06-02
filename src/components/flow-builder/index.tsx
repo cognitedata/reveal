@@ -337,7 +337,7 @@ export const FlowBuilder = (): JSX.Element => {
   }
 
   return (
-    <Container
+    <FlowBuilderContainer
       ref={reactFlowContainer}
       onContextMenu={(e) => {
         e.preventDefault();
@@ -395,15 +395,15 @@ export const FlowBuilder = (): JSX.Element => {
         contextMenu={contextMenu}
         onClose={() => setContextMenu(undefined)}
       />
-    </Container>
+    </FlowBuilderContainer>
   );
 };
 
-const StyledMiniMap = styled(MiniMap)`
+export const StyledMiniMap = styled(MiniMap)`
   margin-bottom: 60px;
 `;
 
-const Container = styled.div`
+export const FlowBuilderContainer = styled.div`
   background-color: ${Colors['surface--strong']};
   height: 100%;
   position: relative;
