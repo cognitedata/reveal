@@ -4,12 +4,17 @@ export const getTenant = (location = window.location) => {
   if (!pathname) {
     return defaultTenant;
   }
-  const match = pathname.replace('/cdf', '').match(/^\/([a-z0-9-]+)\/?/);
-  if (!match) {
-    return defaultTenant;
-  }
 
-  return match[1].trim();
+  // if unified signin, the url is apps.cognite.com/cdf/project
+  // otherwise is fusion.cognite.com/project
+  // when splitting, for fusion index is 1, for /cdf is 2
+  const projectPathParamLocation = isUsingUnifiedSignin() ? 2 : 1;
+
+  const match = new URL(window.location.href).pathname.split('/')[
+    projectPathParamLocation
+  ];
+
+  return match || defaultTenant;
 };
 
 // Very temporary hack, just testing out things
