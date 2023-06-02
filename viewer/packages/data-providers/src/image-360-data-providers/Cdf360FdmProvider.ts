@@ -144,6 +144,13 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
     function getEulerRotation(): Matrix4 {
       const { x, y, z } = revision.eulerRotation;
       const eulerRotation = new Euler(x, y, z, 'XYZ');
+      // console.log(
+      //   new Euler().setFromRotationMatrix(
+      //     new Matrix4().makeRotationFromEuler(eulerRotation).premultiply(cadFromCdfToThreeMatrix),
+      //     'XYZ'
+      //   )
+      // );
+      console.log(eulerRotation);
       return new Matrix4().makeRotationFromEuler(eulerRotation);
     }
 
