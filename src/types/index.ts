@@ -34,18 +34,16 @@ export const isProcessType = (t?: string): t is ProcessType => {
 };
 
 export type ProcessDescription = string;
-export type ProcessItem = string;
+export type processExternalId = string;
 
 type BaseProcessNodeData<
   T extends ProcessType,
   D extends ProcessDescription,
-  I extends ProcessItem,
   P = {}
 > = {
-  processExternalId?: string;
+  processExternalId: string;
   processType: T;
   processDescription: D;
-  processItem: I;
   processProps: P;
 };
 
@@ -55,14 +53,12 @@ type TransformationNodeProps = {
 type TransformationNodeData = BaseProcessNodeData<
   'transformation',
   string,
-  string,
   TransformationNodeProps
 >;
 
 type FunctionNodeProps = {};
 type FunctionNodeData = BaseProcessNodeData<
   'function',
-  string,
   string,
   FunctionNodeProps
 >;

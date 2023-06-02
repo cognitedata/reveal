@@ -47,7 +47,7 @@ const AddNodeButton = ({
       data: {
         processType,
         processDescription: '',
-        processItem: '',
+        processExternalId: '',
         processProps: {},
       },
     };

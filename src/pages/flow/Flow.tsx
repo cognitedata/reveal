@@ -14,6 +14,7 @@ import { useCreateFile, useFile } from 'hooks/files';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
 import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
+import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
@@ -78,7 +79,8 @@ type FlowContainerProps = {
 };
 
 function FlowContainer({ workflow }: FlowContainerProps) {
-  const { isHistoryVisible, previewHash } = useWorkflowBuilderContext();
+  const { isNodeConfigurationPanelVisible, isHistoryVisible, previewHash } =
+    useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
@@ -86,6 +88,7 @@ function FlowContainer({ workflow }: FlowContainerProps) {
       <Content>
         {previewHash && <PreviewFeedback />}
         {isHistoryVisible && <FloatingHistoryPanel />}
+        {isNodeConfigurationPanelVisible && <NodeConfigurationPanel />}
         <Canvas />
       </Content>
     </StyledFlowContainer>

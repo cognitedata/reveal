@@ -58,6 +58,7 @@ export const FlowBuilder = (): JSX.Element => {
     changeFlow,
     userState,
     setUserState,
+    setIsNodeConfigurationPanelVisible,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -140,6 +141,11 @@ export const FlowBuilder = (): JSX.Element => {
             );
           }
         });
+        if (newState.selectedObjectIds.length === 1) {
+          setIsNodeConfigurationPanelVisible(true);
+        } else {
+          setIsNodeConfigurationPanelVisible(false);
+        }
         return newState;
       });
     }
@@ -277,7 +283,7 @@ export const FlowBuilder = (): JSX.Element => {
               data: {
                 processType: type,
                 processDescription: '',
-                processItem: '',
+                processExternalId: '',
                 processProps: {},
               },
             };

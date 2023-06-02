@@ -70,5 +70,6 @@
   "create-workflow": "Create workflow",
   "workflow_one": "1 workflow",
   "workflow_other": "{{count}} workflows",
-  "publish-version": "Publish version"
+  "publish-version": "Publish version",
+  "process-type": "Process type"
 }

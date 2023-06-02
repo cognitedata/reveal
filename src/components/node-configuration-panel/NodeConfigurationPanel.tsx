@@ -4,38 +4,36 @@ import {
   Body,
   IconType,
   Icon,
-  Link,
   Title,
   Button,
 } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Select } from 'antd';
+import { AutoComplete, Select } from 'antd';
 import { useMemo } from 'react';
 
 import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useTransformationList } from 'hooks/transformation';
-import { useFlowList } from 'hooks/files';
 import { useFunctions } from 'hooks/functions';
 import { collectPages } from 'utils';
 import { ProcessNodeData, ProcessType } from 'types';
 import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 import { ProcessNode } from 'types';
+import { DefaultOptionType } from 'antd/lib/select';
+import FormFieldWrapper from 'components/form-field-wrapper';
 
 const { Option } = Select;
 
 export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
-  const { nodes, changeNodes, userState } = useWorkflowBuilderContext();
+  const { nodes, changeNodes, setIsNodeConfigurationPanelVisible, userState } =
+    useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
   const transformationList = useMemo(() => collectPages(data), [data]);
 
-  const { data: flowData } = useFlowList({ staleTime: 0 });
-
-  const { data: functionsData } = useFunctions();
+  const { data: functionList = [] } = useFunctions();
 
   const selectedNode = useMemo(() => {
     const { selectedObjectIds } = userState;
@@ -76,92 +74,42 @@ export const NodeConfigurationPanel = (): JSX.Element => {
     },
   ];
 
-  const itemCreateNewOption = () => {
+  const itemOptions: DefaultOptionType[] = useMemo(() => {
     const processType = selectedNode?.data.processType;
     switch (processType) {
-      case 'transformation': {
-        return (
-          <Option
-            key={t('create-new-item', {
-              item: processType,
-            })}
-            value={t('create-new-item', {
-              item: processType,
-            })}
-          >
-            <Link href={createLink('/transformations')} target="_blank">
-              {t('create-new-item', {
-                item: processType,
-              })}
-            </Link>
-          </Option>
-        );
-      }
-      case 'function': {
-        return (
-          <Option
-            key={t('create-new-item', {
-              item: processType,
-            })}
-            value={t('create-new-item', {
-              item: processType,
-            })}
-          >
-            <Link href={createLink('/functions')} target="_blank">
-              {t('create-new-item', {
-                item: processType,
-              })}
-            </Link>
-          </Option>
-        );
-      }
-    }
-  };
-
-  const itemOptions = () => {
-    const processType = selectedNode?.data.processType;
-    switch (processType) {
-      case 'transformation': {
+      case 'transformation':
         return transformationList
           .sort((a, b) => a.name.localeCompare(b.name))
-          .map(({ externalId, name }) => (
-            <Option key={externalId} value={externalId}>
-              {name}
-            </Option>
-          ));
-      }
-      case 'function': {
-        if (functionsData) {
-          return functionsData
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(({ externalId, name }) => (
-              <Option key={externalId} value={externalId}>
-                {name}
-              </Option>
-            ));
-        }
-      }
+          .map(({ externalId, name }) => ({
+            label: name,
+            value: externalId,
+          }));
+      case 'function':
+        return functionList
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(({ externalId, name }) => ({
+            label: name,
+            value: externalId,
+          }));
+      default:
+        return [];
     }
-  };
+  }, [functionList, transformationList, selectedNode]);
 
   const handleComponentChange = (value: ProcessType) => {
     changeNodes((nodes) => {
       const node = nodes.find((node) => node.id === selectedNode?.id);
       const nodeData = node?.data as ProcessNodeData;
       nodeData.processType = value;
-      nodeData.processItem = '';
+      nodeData.processExternalId = '';
     });
   };
 
   const handleItemChange = (value: string) => {
-    let newValue = value;
-    if (value === `Create new ${selectedNode?.data.processType}`) {
-      newValue = '';
-    }
     changeNodes((nodes) => {
       const node = nodes.find((node) => node.id === selectedNode?.id);
       const nodeData = node?.data as ProcessNodeData;
-      nodeData.processItem = newValue;
+      nodeData.processExternalId = value;
     });
   };
 
@@ -174,12 +122,12 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Button
           icon="CloseLarge"
           onClick={() => {
-            // TODO: add close functionality
+            setIsNodeConfigurationPanelVisible(false);
           }}
           type="ghost"
         />
       </Flex>
-      <Flex direction="column">
+      <FormFieldWrapper title={t('process-type')}>
         <Select
           value={selectedNode?.data.processType}
           onChange={handleComponentChange}
@@ -194,35 +142,36 @@ export const NodeConfigurationPanel = (): JSX.Element => {
             </Option>
           ))}
         </Select>
-      </Flex>
-      <Flex direction="column">
-        <Body level={2} strong>
-          {t('node-configuration-panel-item')}
-        </Body>
-        <Select
+      </FormFieldWrapper>
+      <FormFieldWrapper title={t('external-id')}>
+        <AutoComplete
           placeholder={t('node-configuration-panel-item-placeholder')}
-          value={
-            selectedNode?.data.processItem === ''
-              ? undefined
-              : selectedNode?.data.processItem
-          }
+          options={itemOptions}
+          value={selectedNode?.data.processExternalId ?? ''}
+          filterOption={(input, option) => {
+            if (
+              typeof option?.value === 'string' &&
+              option.value.toLowerCase().includes(input.toLowerCase())
+            ) {
+              return true;
+            }
+            if (
+              typeof option?.label === 'string' &&
+              option.label.toLowerCase().includes(input.toLowerCase())
+            ) {
+              return true;
+            }
+            return false;
+          }}
           onChange={handleItemChange}
           style={{ width: 326, flex: 1 }}
-        >
-          {itemCreateNewOption()}
-          {itemOptions()}
-        </Select>
-      </Flex>
+        />
+      </FormFieldWrapper>
       <InputExp
         name="label"
-        label={t('node-configuration-panel-label')}
-        placeholder={t('node-configuration-panel-label-placeholder')}
-        value={
-          selectedNode?.data.processDescription === '' ||
-          selectedNode?.data.processDescription === undefined
-            ? ''
-            : selectedNode?.data.processDescription
-        }
+        label={t('description')}
+        placeholder={t('enter-description')}
+        value={selectedNode?.data.processDescription ?? ''}
         onChange={(e) => {
           const value = e.target.value;
           changeNodes((nodes) => {
@@ -231,7 +180,6 @@ export const NodeConfigurationPanel = (): JSX.Element => {
             nodeData.processDescription = value;
           });
         }}
-        variant="solid"
         style={{ width: 326 }}
       />
     </FloatingPanel>
