@@ -79,5 +79,6 @@
   "inspect-panel-title-run-history": "Run history",
   "results": "Results",
   "definition": "Definition",
-  "id": "ID"
+  "id": "ID",
+  "no-error-details": "No error details"
 }

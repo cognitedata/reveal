@@ -1,4 +1,11 @@
-import { Body, Colors, Elevations, Icon, Overline } from '@cognite/cogs.js';
+import {
+  Body,
+  Colors,
+  Elevations,
+  Flex,
+  Icon,
+  Overline,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { WorkflowWithVersions, useWorkflowExecutions } from 'hooks/workflows';
@@ -8,6 +15,7 @@ import { useMemo, useState } from 'react';
 import { CodeSnippet, Timestamp } from '@cognite/cdf-utilities';
 import { json } from '@codemirror/lang-json';
 import { useTranslation } from 'common';
+import InfoBox from 'components/info-box/InfoBox';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;
@@ -75,6 +83,7 @@ export const RunHistorySection = ({
                     isExpanded={expandedRunHistoryCards.includes(id)}
                     tabView={tabViews[id]}
                     updateTabView={(view) => handleUpdateTabView(id, view)}
+                    execution={item}
                   />
                 }
               >
@@ -90,38 +99,43 @@ export const RunHistorySection = ({
                     />
                   </div>
                 ) : (
-                  <StyledDetailsGrid>
-                    <FieldContainer>
-                      <Overline level={3} muted>
-                        {t('id')}
-                      </Overline>
-                      <Body level={3}>{item.id}</Body>
-                    </FieldContainer>
-                    <FieldContainer>
-                      <Overline level={3} muted>
-                        {t('created-at')}
-                      </Overline>
-                      <Body level={3}>
-                        <Timestamp absolute timestamp={item.createdTime} />
-                      </Body>
-                    </FieldContainer>
-                    <FieldContainer>
-                      <Overline level={3} muted>
-                        {t('started-at')}
-                      </Overline>
-                      <Body level={3}>
-                        <Timestamp absolute timestamp={item.startTime} />
-                      </Body>
-                    </FieldContainer>
-                    <FieldContainer>
-                      <Overline level={3} muted>
-                        {t('finished-at')}
-                      </Overline>
-                      <Body level={3}>
-                        <Timestamp absolute timestamp={item.endTime} />
-                      </Body>
-                    </FieldContainer>
-                  </StyledDetailsGrid>
+                  <Flex direction="column" gap={12}>
+                    <InfoBox status="critical">
+                      {item.reasonForIncompletion || t('no-error-details')}
+                    </InfoBox>
+                    <StyledDetailsGrid>
+                      <FieldContainer>
+                        <Overline level={3} muted>
+                          {t('id')}
+                        </Overline>
+                        <Body level={3}>{item.id}</Body>
+                      </FieldContainer>
+                      <FieldContainer>
+                        <Overline level={3} muted>
+                          {t('created-at')}
+                        </Overline>
+                        <Body level={3}>
+                          <Timestamp absolute timestamp={item.createdTime} />
+                        </Body>
+                      </FieldContainer>
+                      <FieldContainer>
+                        <Overline level={3} muted>
+                          {t('started-at')}
+                        </Overline>
+                        <Body level={3}>
+                          <Timestamp absolute timestamp={item.startTime} />
+                        </Body>
+                      </FieldContainer>
+                      <FieldContainer>
+                        <Overline level={3} muted>
+                          {t('finished-at')}
+                        </Overline>
+                        <Body level={3}>
+                          <Timestamp absolute timestamp={item.endTime} />
+                        </Body>
+                      </FieldContainer>
+                    </StyledDetailsGrid>
+                  </Flex>
                 )}
               </Collapse.Panel>
             </StyledCollapse>

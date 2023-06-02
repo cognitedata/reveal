@@ -190,7 +190,7 @@ type WorkflowExecutionStatus =
   | 'TERMINATED'
   | 'PAUSED';
 
-type WorkflowExecution = {
+export type WorkflowExecution = {
   id?: string;
   workflowExternalId?: string;
   workflowDefinition: WorkflowDefinitionRead;

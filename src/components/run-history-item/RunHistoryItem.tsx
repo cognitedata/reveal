@@ -1,25 +1,66 @@
-import { SegmentedControl } from '@cognite/cogs.js';
+import { IconType, SegmentedControl } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import TabHeader from 'components/tab-header/TabHeader';
+import { WorkflowExecution } from 'hooks/workflows';
+import { formatTime } from '@cognite/cdf-utilities';
+import { ColorStatus } from 'components/tab-header/TabHeader';
 
 interface RunHistoryItemProps {
   isExpanded?: boolean;
   tabView?: string;
   updateTabView: (view: string) => void;
+  execution: WorkflowExecution;
 }
+
+const getRunStatusIcon = (
+  execution: WorkflowExecution
+): { icon: IconType; status: ColorStatus } => {
+  switch (execution.status) {
+    case 'COMPLETED':
+      return {
+        icon: 'CheckmarkFilled',
+        status: 'success',
+      };
+    case 'FAILED':
+    case 'TERMINATED':
+    case 'TIMED_OUT':
+      return {
+        icon: 'ErrorFilled',
+        status: 'critical',
+      };
+    case 'PAUSED':
+      return {
+        icon: 'Pause',
+        status: 'undefined',
+      };
+    case 'RUNNING':
+      return {
+        icon: 'Loader',
+        status: 'neutral',
+      };
+    default:
+      return {
+        icon: 'InfoFilled',
+        status: 'neutral',
+      };
+  }
+};
 
 const RunHistoryItem = ({
   isExpanded,
   updateTabView,
   tabView,
+  execution,
 }: RunHistoryItemProps) => {
   const { t } = useTranslation();
 
+  const iconDetails = getRunStatusIcon(execution);
+
   return (
     <TabHeader
-      description="description" // TODO
+      description={`v${execution.workflowDefinition.version}`}
       extra={
         isExpanded ? (
           <StyledSegmentedControlContainer onClick={(e) => e.stopPropagation()}>
@@ -38,9 +79,11 @@ const RunHistoryItem = ({
           </StyledSegmentedControlContainer>
         ) : undefined
       }
-      icon="InfoFilled" // TODO
-      status="neutral"
-      title="title" // TODO
+      icon={iconDetails.icon}
+      status={iconDetails.status}
+      title={
+        execution.createdTime ? formatTime(execution.createdTime, true) : '-'
+      }
     />
   );
 };
