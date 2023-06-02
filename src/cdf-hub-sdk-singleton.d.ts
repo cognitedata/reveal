@@ -16,7 +16,7 @@ declare module '@cognite/cdf-sdk-singleton' {
     env?: string
   ): Promise<void>;
   export declare function getToken(): Promise<string>;
-  export declare function getFlow(): { flow: Flow };
+  export declare function getFlow(): { flow: any };
   export declare function getUserInformation(): Promise<any>;
 
   declare const sdk: CogniteClient;
