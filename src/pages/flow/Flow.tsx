@@ -15,6 +15,7 @@ import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
 import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
 import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
+import InspectSection from 'components/inspect-section/InspectSection';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
@@ -92,7 +93,9 @@ function FlowContainer({ workflow }: FlowContainerProps) {
           {focusedProcessNodeId && <NodeConfigurationPanel />}
           <Canvas />
         </CanvasContainer>
-        <InspectSectionContainer>inspect</InspectSectionContainer>
+        <InspectSectionContainer>
+          <InspectSection workflow={workflow} />
+        </InspectSectionContainer>
       </Content>
     </StyledFlowContainer>
   );
@@ -115,7 +118,9 @@ const CanvasContainer = styled.div`
 `;
 
 const InspectSectionContainer = styled.div`
+  background-color: ${Colors['surface--strong']};
   border-left: 1px solid ${Colors['border--interactive--default']};
+  padding: 12px;
   width: 400px;
 `;
 

@@ -23,6 +23,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 import { getToken } from '@cognite/cdf-sdk-singleton';
 import { v4 } from 'uuid';
+import { InspectSectionKey } from 'components/inspect-section/InspectSection';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -47,6 +48,8 @@ type FlowContextT = {
   setUserState: Dispatch<SetStateAction<UserState>>;
   otherUserStates: UserState[];
   setOtherUserStates: Dispatch<SetStateAction<UserState[]>>;
+  activeInspectSectionKey: InspectSectionKey;
+  setActiveInspectSectionKey: Dispatch<SetStateAction<InspectSectionKey>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -100,6 +103,9 @@ export const FlowContextProvider = ({
   const [previewHash, setPreviewHash] = useState<string | undefined>();
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
+
+  const [activeInspectSectionKey, setActiveInspectSectionKey] =
+    useState<InspectSectionKey>('run-history');
 
   const [focusedProcessNodeId, setFocusedProcessNodeId] = useState<
     string | undefined
@@ -333,6 +339,8 @@ export const FlowContextProvider = ({
         setOtherUserStates,
         focusedProcessNodeId,
         setFocusedProcessNodeId,
+        activeInspectSectionKey,
+        setActiveInspectSectionKey,
       }}
     >
       {children}

@@ -73,5 +73,6 @@
   "publish-version": "Publish version",
   "process-type": "Process type",
   "not-set": "Not set",
-  "run-as-current-user": "Run as current user"
+  "run-as-current-user": "Run as current user",
+  "inspect-panel-title-run-history": "Run history"
 }
