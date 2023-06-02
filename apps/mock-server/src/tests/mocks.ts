@@ -117,17 +117,20 @@ enum _RelationDirection {
   OUTWARDS
 }
 
+
 """
 Defines the relation field's details
 
 * name: Overrides the name property of the relation definition. This is merely metadata, and should not be confused with the property identifier!
 * direction: The direction to follow the edges filtered by 'type'.
 * type: Specifies the edge type, namespaced by 'space', where the 'externalId' corresponds to the edge type name.
+* edgeSource: Specifies the GraphQL type which defines the edge properties to be stored for this relation
 """
 directive @relation(
-  type: _DirectRelationRef!
+  type: _DirectRelationRef
   name: String
   direction: _RelationDirection
+  edgeSource: String
 ) on FIELD_DEFINITION
 
 """
@@ -141,6 +144,11 @@ Specifies that the view is imported, which means the view definition needs to al
 The imported view can omit fields, and container directives.
 """
 directive @import on OBJECT | INTERFACE
+
+"""
+Specifies if a type will be used for representing edge properties
+"""
+directive @edge on OBJECT | INTERFACE
 
 type Post {
   externalId: ID!

@@ -39,6 +39,12 @@ export const mixerApiBuiltInTypes = [
     fieldDirective: false,
   },
   {
+    name: 'edge',
+    type: 'DIRECTIVE',
+    body: 'directive @edge on OBJECT | INTERFACE',
+    fieldDirective: false,
+  },
+  {
     name: 'mapping',
     type: 'DIRECTIVE',
     body: 'directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION',
@@ -58,9 +64,19 @@ export const mixerApiBuiltInTypes = [
       OUTWARDS
     }
 
+    """
+    Defines the relation field's details
+    
+    * name: Overrides the name property of the relation definition. This is merely metadata, and should not be confused with the property identifier!
+    * direction: The direction to follow the edges filtered by 'type'.
+    * type: Specifies the edge type, namespaced by 'space', where the 'externalId' corresponds to the edge type name.
+    * edgeSource: Specifies the GraphQL type which defines the edge properties to be stored for this relation
+    """
     directive @relation(
-      type: _DirectRelationRef!,
+      type: _DirectRelationRef
+      name: String
       direction: _RelationDirection
+      edgeSource: String
     ) on FIELD_DEFINITION
     `,
     fieldDirective: true,
