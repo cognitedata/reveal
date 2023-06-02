@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { formatDistance, format } from 'date-fns';
-import { sortBy } from 'lodash';
+import { omit, sortBy } from 'lodash';
 
 import { Button, Table, InputExp, toast, Tooltip } from '@cognite/cogs.js';
 
@@ -101,7 +101,13 @@ const IndustryCanvasHome = () => {
         aria-label="Delete canvas"
         onClick={(ev) => {
           ev.stopPropagation();
-          setCanvasToDelete(row);
+          setCanvasToDelete(
+            omit(row, [
+              'createdByUserProfile',
+              'createdAtDate',
+              'updatedAtDate',
+            ])
+          );
         }}
       />
     </Tooltip>
