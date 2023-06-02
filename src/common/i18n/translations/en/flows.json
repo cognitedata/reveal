@@ -74,5 +74,7 @@
   "process-type": "Process type",
   "not-set": "Not set",
   "run-as-current-user": "Run as current user",
-  "inspect-panel-title-run-history": "Run history"
+  "inspect-panel-title-run-history": "Run history",
+  "results": "Results",
+  "definition": "Definition"
 }

@@ -121,7 +121,7 @@ const InspectSectionContainer = styled.div`
   background-color: ${Colors['surface--strong']};
   border-left: 1px solid ${Colors['border--interactive--default']};
   padding: 12px;
-  width: 400px;
+  width: 600px;
 `;
 
 export default Flow;

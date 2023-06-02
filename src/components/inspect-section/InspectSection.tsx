@@ -1,6 +1,7 @@
 import { Button, Colors, Elevations } from '@cognite/cogs.js';
 import { Tabs } from 'antd';
 import { useTranslation } from 'common';
+import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { WorkflowWithVersions } from 'hooks/workflows';
 import styled from 'styled-components';
@@ -29,8 +30,7 @@ export const InspectSection = ({
   const renderSection = (key: InspectSectionKey) => {
     switch (key) {
       case 'run-history':
-        // return <RunHistorySection transformation={transformation} />;
-        return <div>run history</div>;
+        return <RunHistorySection workflow={workflow} />;
     }
   };
 

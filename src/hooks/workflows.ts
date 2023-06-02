@@ -229,3 +229,34 @@ export const useRunWorkflow = () => {
     }
   );
 };
+
+const getWorkflowExecutionsQueryKey = (externalId: string) => [
+  'flows',
+  'workflow-executions',
+  externalId,
+];
+
+export const useWorkflowExecutions = (externalId: string) => {
+  const sdk = useSDK();
+
+  return useQuery<WorkflowExecution[]>(
+    getWorkflowExecutionsQueryKey(externalId),
+    () =>
+      sdk
+        .post<{ items: WorkflowExecution[] }>(
+          `api/v1/projects/${getProject()}/workflows/executions/list`,
+          {
+            data: {
+              filter: {
+                workflowFilters: [
+                  {
+                    externalId,
+                  },
+                ],
+              },
+            },
+          }
+        )
+        .then((res) => res.data.items)
+  );
+};
