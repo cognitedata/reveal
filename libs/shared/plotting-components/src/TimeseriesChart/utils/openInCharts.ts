@@ -1,6 +1,6 @@
-import { createLink } from '@cognite/cdf-utilities';
-
 import { DateRange } from '../types';
+
+import { createLink } from './utils';
 
 /**
  * https://cognitedata.atlassian.net/wiki/spaces/PI/pages/2867596394/Open+in+Charts+from+other+apps
