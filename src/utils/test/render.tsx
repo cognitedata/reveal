@@ -2,7 +2,7 @@ import * as React from 'react';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { render, RenderOptions } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { styleScope } from 'styles/styleScope';
 
 export default (
