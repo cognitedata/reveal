@@ -40,12 +40,27 @@ type WorkflowTaskDependency = {
   externalId: string;
 };
 
+type FunctionParameters = {
+  function: {
+    externalId: string;
+    data?: unknown;
+  };
+};
+
+type TransformationParameters = {
+  transformation: {
+    externalId: string;
+  };
+};
+
+type WorkflowTaskParameters = TransformationParameters | FunctionParameters;
+
 export type WorkflowTaskDefinition = {
   externalId: string;
   type: WorkflowTaskType;
   name?: string;
   description?: string;
-  parameters?: unknown; // TODO
+  parameters: WorkflowTaskParameters;
   retries?: number;
   timeout?: number;
   dependsOn: WorkflowTaskDependency[];

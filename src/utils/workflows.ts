@@ -35,6 +35,11 @@ export const convertCanvasToWorkflowDefinition = (
       const task: WorkflowTaskDefinition = {
         dependsOn: [],
         externalId: (n.data as ProcessNodeData).processExternalId!,
+        parameters: {
+          [(n.data as ProcessNodeData).processType]: {
+            externalId: (n.data as ProcessNodeData).processExternalId!,
+          },
+        } as any, // TODO: fix type
         name: n.id,
         type: (n.data as ProcessNodeData).processType,
       };
