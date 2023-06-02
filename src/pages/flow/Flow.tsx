@@ -79,7 +79,7 @@ type FlowContainerProps = {
 };
 
 function FlowContainer({ workflow }: FlowContainerProps) {
-  const { isNodeConfigurationPanelVisible, isHistoryVisible, previewHash } =
+  const { focusedProcessNodeId, isHistoryVisible, previewHash } =
     useWorkflowBuilderContext();
 
   return (
@@ -89,7 +89,7 @@ function FlowContainer({ workflow }: FlowContainerProps) {
         <CanvasContainer>
           {previewHash && <PreviewFeedback />}
           {isHistoryVisible && <FloatingHistoryPanel />}
-          {isNodeConfigurationPanelVisible && <NodeConfigurationPanel />}
+          {focusedProcessNodeId && <NodeConfigurationPanel />}
           <Canvas />
         </CanvasContainer>
         <InspectSectionContainer>inspect</InspectSectionContainer>

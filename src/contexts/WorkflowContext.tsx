@@ -29,8 +29,8 @@ type FlowContextT = {
   externalId: string;
   isComponentsPanelVisible: boolean;
   setIsComponentsPanelVisible: Dispatch<SetStateAction<boolean>>;
-  isNodeConfigurationPanelVisible: boolean;
-  setIsNodeConfigurationPanelVisible: Dispatch<SetStateAction<boolean>>;
+  focusedProcessNodeId?: string;
+  setFocusedProcessNodeId: Dispatch<SetStateAction<string | undefined>>;
   changeFlow: (fn: Automerge.ChangeFn<AFlow>, logger?: Logger) => void;
   flow: AFlow;
   flowRef: MutableRefObject<AFlow>;
@@ -94,14 +94,16 @@ export const FlowContextProvider = ({
   const { data: token } = useQuery(['token'], getToken, {
     refetchInterval: 60000,
   });
-  const [isNodeConfigurationPanelVisible, setIsNodeConfigurationPanelVisible] =
-    useState(false);
   const [isComponentsPanelVisible, setIsComponentsPanelVisible] =
     useState(false);
   const [isHistoryVisible, setHistoryVisible] = useState(false);
   const [previewHash, setPreviewHash] = useState<string | undefined>();
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
+
+  const [focusedProcessNodeId, setFocusedProcessNodeId] = useState<
+    string | undefined
+  >(undefined);
 
   const { data: userInfo } = useUserInfo();
   const { mutate: updateFlow } = useUpdateFlow();
@@ -329,8 +331,8 @@ export const FlowContextProvider = ({
         setUserState,
         otherUserStates,
         setOtherUserStates,
-        isNodeConfigurationPanelVisible,
-        setIsNodeConfigurationPanelVisible,
+        focusedProcessNodeId,
+        setFocusedProcessNodeId,
       }}
     >
       {children}

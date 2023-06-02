@@ -17,6 +17,7 @@ import ReactFlow, {
   EdgeSelectionChange,
   NodeSelectionChange,
   NodePositionChange,
+  NodeMouseHandler,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -58,7 +59,7 @@ export const FlowBuilder = (): JSX.Element => {
     changeFlow,
     userState,
     setUserState,
-    setIsNodeConfigurationPanelVisible,
+    setFocusedProcessNodeId,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -123,6 +124,12 @@ export const FlowBuilder = (): JSX.Element => {
     }
   };
 
+  const onNodeDoubleClick: NodeMouseHandler = (_, node) => {
+    if (!!node.data?.processType) {
+      setFocusedProcessNodeId(node.id);
+    }
+  };
+
   const onNodesChange = (changes: NodeChange[]) => {
     const selectChanges = changes.filter(
       (c) => c.type === 'select'
@@ -141,11 +148,6 @@ export const FlowBuilder = (): JSX.Element => {
             );
           }
         });
-        if (newState.selectedObjectIds.length === 1) {
-          setIsNodeConfigurationPanelVisible(true);
-        } else {
-          setIsNodeConfigurationPanelVisible(false);
-        }
         return newState;
       });
     }
@@ -357,6 +359,7 @@ export const FlowBuilder = (): JSX.Element => {
         onDrop={onDrop}
         onEdgesChange={onEdgesChange}
         onInit={setReactFlowInstance}
+        onNodeDoubleClick={onNodeDoubleClick}
         onNodesChange={onNodesChange}
         onEdgeContextMenu={(e, edge) => {
           setContextMenu({

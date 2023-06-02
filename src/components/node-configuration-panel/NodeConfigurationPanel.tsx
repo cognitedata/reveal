@@ -27,7 +27,7 @@ const { Option } = Select;
 export const NodeConfigurationPanel = (): JSX.Element => {
   const { t } = useTranslation();
 
-  const { nodes, changeNodes, setIsNodeConfigurationPanelVisible, userState } =
+  const { nodes, changeNodes, focusedProcessNodeId, setFocusedProcessNodeId } =
     useWorkflowBuilderContext();
 
   const { data } = useTransformationList();
@@ -36,16 +36,13 @@ export const NodeConfigurationPanel = (): JSX.Element => {
   const { data: functionList = [] } = useFunctions();
 
   const selectedNode = useMemo(() => {
-    const { selectedObjectIds } = userState;
-    if (selectedObjectIds.length === 1) {
-      const n = nodes.find(({ id }) => id === selectedObjectIds[0]);
-      if (n && !!(n.data as ProcessNodeData).processType) {
-        return n as ProcessNode;
-      }
+    const n = nodes.find(({ id }) => id === focusedProcessNodeId);
+    if (n && !!(n.data as ProcessNodeData).processType) {
+      return n as ProcessNode;
     }
 
     return undefined;
-  }, [nodes, userState]);
+  }, [nodes, focusedProcessNodeId]);
 
   const nodeOptions: {
     value: string;
@@ -122,7 +119,7 @@ export const NodeConfigurationPanel = (): JSX.Element => {
         <Button
           icon="CloseLarge"
           onClick={() => {
-            setIsNodeConfigurationPanelVisible(false);
+            setFocusedProcessNodeId(undefined);
           }}
           type="ghost"
         />
