@@ -15,7 +15,7 @@ import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
 import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
 import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
-import InspectSection from 'components/inspect-section/InspectSection';
+import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
@@ -80,24 +80,32 @@ type FlowContainerProps = {
 };
 
 function FlowContainer({ workflow }: FlowContainerProps) {
-  const { focusedProcessNodeId, isHistoryVisible, previewHash } =
-    useWorkflowBuilderContext();
+  const {
+    activeViewMode,
+    focusedProcessNodeId,
+    isHistoryVisible,
+    previewHash,
+  } = useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
       <CanvasTopBar workflow={workflow} />
       <Content>
-        <CanvasSection>
-          <CanvasContainer>
+        {activeViewMode === 'edit' ? (
+          <CanvasSection>
             {previewHash && <PreviewFeedback />}
             {isHistoryVisible && <FloatingHistoryPanel />}
             {focusedProcessNodeId && <NodeConfigurationPanel />}
             <Canvas />
-          </CanvasContainer>
-        </CanvasSection>
-        <InspectSectionContainer>
-          <InspectSection workflow={workflow} />
-        </InspectSectionContainer>
+          </CanvasSection>
+        ) : (
+          <>
+            <RunCanvasSection>canvas</RunCanvasSection>
+            <RunHistorySectionContainer>
+              <RunHistorySection workflow={workflow} />
+            </RunHistorySectionContainer>
+          </>
+        )}
       </Content>
     </StyledFlowContainer>
   );
@@ -113,27 +121,41 @@ const Content = styled.div`
   display: flex;
   flex: 1;
   height: calc(100% - 57px);
+  gap: 12px;
+  padding: 12px;
   position: relative;
 `;
 
 const CanvasSection = styled.div`
-  flex: 1;
-  height: 100%;
-  padding: 12px 6px 12px 12px;
-`;
-
-const CanvasContainer = styled.div`
   position: relative;
   height: 100%;
   background-color: ${Colors['surface--muted']};
   border-radius: 6px;
   box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  flex: 1;
   padding: 12px;
 `;
 
-const InspectSectionContainer = styled.div`
-  padding: 12px 12px 12px 6px;
+const RunCanvasSection = styled.div`
+  position: relative;
+  height: 100%;
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  flex: 1;
+  padding: 12px;
+`;
+
+const RunHistorySectionContainer = styled.div`
+  position: relative;
+  height: 100%;
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
   width: 600px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
 `;
 
 export default Flow;

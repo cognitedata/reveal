@@ -7,6 +7,7 @@ import {
   Dropdown,
   Flex,
   Menu,
+  SegmentedControl,
 } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
@@ -15,7 +16,7 @@ import { getContainer } from 'utils';
 import { useTranslation } from 'common';
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
 import { toPng } from 'html-to-image';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { ViewMode, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useMemo, useState } from 'react';
 import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
 import {
@@ -40,8 +41,14 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
   const { mutate: createWorkflowDefinition } = useCreateWorkflowDefinition();
   const { mutate: runWorkflow } = useRunWorkflow();
 
-  const { flow, setHistoryVisible, userState, otherUserStates } =
-    useWorkflowBuilderContext();
+  const {
+    flow,
+    setHistoryVisible,
+    userState,
+    otherUserStates,
+    activeViewMode,
+    setActiveViewMode,
+  } = useWorkflowBuilderContext();
 
   const lastWorkflowDefinition = useMemo(
     () => getLastWorkflowDefinition(workflow),
@@ -120,6 +127,19 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
             <Flex>
               <FlowSaveIndicator />
             </Flex>
+            <SecondaryTopbar.Divider />
+            <SegmentedControl
+              onButtonClicked={(k) => setActiveViewMode(k as ViewMode)}
+              size="medium"
+              currentKey={activeViewMode}
+            >
+              <SegmentedControl.Button key="edit">
+                {t('edit-mode')}
+              </SegmentedControl.Button>
+              <SegmentedControl.Button key="runs">
+                {t('run-history')}
+              </SegmentedControl.Button>
+            </SegmentedControl>
             <SecondaryTopbar.Divider />
             <Avatar text={userState.name ?? userState.connectionId} />
             <AvatarGroup>

@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Colors,
   Elevations,
   Flex,
@@ -135,6 +136,13 @@ export const RunHistorySection = ({
                         </Body>
                       </FieldContainer>
                     </StyledDetailsGrid>
+                    <Button
+                      onClick={() => {
+                        // TODO: navigate to run page
+                      }}
+                    >
+                      {t('view-run')}
+                    </Button>
                   </Flex>
                 )}
               </Collapse.Panel>

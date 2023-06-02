@@ -82,5 +82,8 @@
   "id": "ID",
   "no-error-details": "No error details",
   "close": "Close",
-  "configure-process": "Configure process"
+  "configure-process": "Configure process",
+  "view-run": "View run",
+  "edit-mode": "Edit mode",
+  "run-history": "Run history"
 }

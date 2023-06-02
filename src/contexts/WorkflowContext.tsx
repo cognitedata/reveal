@@ -23,7 +23,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 import { getToken } from '@cognite/cdf-sdk-singleton';
 import { v4 } from 'uuid';
-import { InspectSectionKey } from 'components/inspect-section/InspectSection';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -48,8 +47,8 @@ type FlowContextT = {
   setUserState: Dispatch<SetStateAction<UserState>>;
   otherUserStates: UserState[];
   setOtherUserStates: Dispatch<SetStateAction<UserState[]>>;
-  activeInspectSectionKey: InspectSectionKey;
-  setActiveInspectSectionKey: Dispatch<SetStateAction<InspectSectionKey>>;
+  activeViewMode: ViewMode;
+  setActiveViewMode: Dispatch<SetStateAction<ViewMode>>;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -88,6 +87,8 @@ export type UserState = {
   selectedObjectIds: string[];
 };
 
+export type ViewMode = 'edit' | 'run-history';
+
 export const FlowContextProvider = ({
   externalId,
   children,
@@ -104,8 +105,7 @@ export const FlowContextProvider = ({
   const [flowState, setFlowState] = useState(initialFlow);
   const flowRef = useRef(initialFlow);
 
-  const [activeInspectSectionKey, setActiveInspectSectionKey] =
-    useState<InspectSectionKey>('run-history');
+  const [activeViewMode, setActiveViewMode] = useState<ViewMode>('edit');
 
   const [focusedProcessNodeId, setFocusedProcessNodeId] = useState<
     string | undefined
@@ -339,8 +339,8 @@ export const FlowContextProvider = ({
         setOtherUserStates,
         focusedProcessNodeId,
         setFocusedProcessNodeId,
-        activeInspectSectionKey,
-        setActiveInspectSectionKey,
+        activeViewMode,
+        setActiveViewMode,
       }}
     >
       {children}
