@@ -36,6 +36,7 @@ const authFlows: Partial<Record<AuthFlow, AuthFlowProvider>> = {
   },
 };
 
+// Method to get the authenticated user from the authState
 export function getAuthenticatedUser({
   project,
   authState,
