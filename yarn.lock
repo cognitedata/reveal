@@ -2019,38 +2019,6 @@
     tippy.js "6.2.0"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@^7.12.1":
-  version "7.14.7"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.14.7.tgz#a5d4c9cdbbb9617acfbd870897b10c4fa36768a2"
-  integrity sha512-IU1YOQAi7+WqEzKCKIzYuQUreVwYm5oOOwpWGRBG0/uW4SYFSHNg2cVxM+u3NbfbZuJVXVM0JwpG6lDl6YrXeg==
-  dependencies:
-    "@emotion/react" "^11.9.3"
-    "@emotion/styled" "^11.9.3"
-    "@mui/base" "^5.0.0-alpha.97"
-    "@mui/joy" "^5.0.0-alpha.36"
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.4.3"
-    axios "^0.21.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    csstype "^2.6.7"
-    dayjs "^1.9.7"
-    deepdash "^5.3.9"
-    focus-visible "^5.1.0"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.16.1"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    resize-observer-polyfill "^1.5.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
-
 "@cognite/login-utils@^4.0.0":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@cognite/login-utils/-/login-utils-4.1.2.tgz#4b4e635f2d1a321cb9481d0825db4089c5c24ae6"
@@ -3591,14 +3559,6 @@
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/@types/react-date-range/-/react-date-range-1.4.4.tgz#235910d6c00d9be905fc5de037a8820616bb2a79"
   integrity sha512-9Y9NyNgaCsEVN/+O4HKuxzPbVjRVBGdOKRxMDcsTRWVG62lpYgnxefNckTXDWup8FvczoqPW0+ESZR6R1yymDg==
-  dependencies:
-    "@types/react" "*"
-    date-fns "^2.16.1"
-
-"@types/react-date-range@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@types/react-date-range/-/react-date-range-1.4.3.tgz#3578c28858fe5198c1fa021ca21dc50dfb0ad774"
-  integrity sha512-hCZOoRPcyb+st3mZhcyPYnBQ83h0eNcTfCjPTj5EgqrPKnMGCy58TiEJXHV0ozCMOtLqH7Y80ldc19SKfKbuXA==
   dependencies:
     "@types/react" "*"
     date-fns "^2.16.1"
@@ -9031,7 +8991,7 @@ makeerror@1.0.x:
   dependencies:
     tmpl "1.0.x"
 
-match-sorter@6.3.1, match-sorter@^6.3.0:
+match-sorter@6.3.1:
   version "6.3.1"
   resolved "https://registry.npmjs.org/match-sorter/-/match-sorter-6.3.1.tgz"
   integrity sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==
@@ -11542,16 +11502,6 @@ react-list@^0.8.13:
   integrity sha512-LSxfvdwB9Ip+E+8NBtLPW2pcIngzuV0rSoH9nMt9C2lFjZEbnoBY/ib/Zx121jPgFgg3xYkMlMXSzx5gaiP5ig==
   dependencies:
     prop-types "15"
-
-react-modal@^3.11.2:
-  version "3.11.2"
-  resolved "https://registry.npmjs.org/react-modal/-/react-modal-3.11.2.tgz"
-  integrity sha512-o8gvvCOFaG1T7W6JUvsYjRjMVToLZgLIsi5kdhFIQCtHxDkA47LznX62j+l6YQkpXDbvQegsDyxe/+JJsFQN7w==
-  dependencies:
-    exenv "^1.2.0"
-    prop-types "^15.5.10"
-    react-lifecycles-compat "^3.0.0"
-    warning "^4.0.3"
 
 react-refresh@^0.11.0:
   version "0.11.0"
