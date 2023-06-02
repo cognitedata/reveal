@@ -68,15 +68,15 @@ describe('CodeCompletionServiceTest', () => {
         }),
         expect.objectContaining({
           kind: 3,
-          label: 'edge',
-        }),
-        expect.objectContaining({
-          kind: 3,
           label: 'import',
         }),
         expect.objectContaining({
           label: 'view',
           kind: 3,
+        }),
+        expect.objectContaining({
+          kind: 3,
+          label: 'edge',
         }),
         expect.objectContaining({
           kind: 3,
