@@ -19,6 +19,8 @@ export const mixerApiBuiltInTypes = [
   { name: 'JSONObject', type: 'SCALAR', dmsType: 'json', tsType: 'any' },
   { name: 'Date', type: 'SCALAR', dmsType: 'date', tsType: 'Date' },
   { name: 'Boolean', type: 'SCALAR', dmsType: 'boolean', tsType: 'boolean' },
+  { name: 'File', type: 'SCALAR', dmsType: 'text', tsType: 'string' },
+  { name: 'Sequence', type: 'SCALAR', dmsType: 'text', tsType: 'string' },
   { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text', tsType: 'string' },
   {
     name: 'readonly',

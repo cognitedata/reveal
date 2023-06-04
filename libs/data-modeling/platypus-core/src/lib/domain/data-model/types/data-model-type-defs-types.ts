@@ -14,6 +14,7 @@ type BultinFieldTypeNames =
   | 'Boolean'
   | 'DataPoint'
   | 'DataPointValue'
+  | 'File'
   | 'Float'
   | 'Float32'
   | 'Float64'
@@ -21,6 +22,7 @@ type BultinFieldTypeNames =
   | 'Int32'
   | 'Int64'
   | 'JSONObject'
+  | 'Sequence'
   | 'String'
   | 'TimeSeries'
   | 'Timestamp';
