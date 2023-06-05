@@ -47,7 +47,7 @@ const printType = (value: any, type: ColumnDataType) => {
         minimumFractionDigits: 2,
       });
     case ColumnDataType.Custom:
-      return value.externalId;
+      return !value ? '' : value.externalId;
     case ColumnDataType.Json:
       return JSON.stringify(value);
     default:
