@@ -8,11 +8,14 @@ import {
   useState,
 } from 'react';
 
+import { isEqual } from 'lodash';
+
 import { useSDK } from '@cognite/sdk-provider';
 import {
   Annotation,
   ContainerConfig,
   ContainerType,
+  IdsByType,
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
@@ -34,6 +37,7 @@ import {
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
 import {
   deserializeCanvasDocument,
+  getRemovedIdsByType,
   serializeCanvasState,
 } from '../utils/utils';
 
@@ -200,15 +204,36 @@ const useAutoSaveState = (
   canvasState: IndustryCanvasState,
   hasFinishedInitialLoad: boolean,
   activeCanvas: SerializedCanvasDocument | undefined,
-  saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>
+  saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>,
+  deleteCanvasIdsByType: ({
+    ids,
+    canvasExternalId,
+  }: {
+    ids: IdsByType;
+    canvasExternalId: string;
+  }) => Promise<void>
 ) => {
   useEffect(() => {
-    if (hasFinishedInitialLoad && activeCanvas !== undefined) {
-      saveCanvas({
-        ...activeCanvas,
-        data: serializeCanvasState(canvasState),
-      });
+    if (!hasFinishedInitialLoad || activeCanvas === undefined) {
+      return;
     }
+
+    const serializedData = serializeCanvasState(canvasState);
+    if (isEqual(serializedData, activeCanvas.data)) {
+      return;
+    }
+
+    (async () => {
+      // Delete the annotations and containers nodes that have been removed from the canvas
+      await deleteCanvasIdsByType({
+        canvasExternalId: activeCanvas.externalId,
+        ids: getRemovedIdsByType(activeCanvas.data, serializedData),
+      });
+      await saveCanvas({
+        ...activeCanvas,
+        data: serializedData,
+      });
+    })();
     // activeCanvas will change with every save, so we don't want to include it in the dependency array
     // if included, it will lead to an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,7 +277,8 @@ const usePersistence = (
   canvasState: IndustryCanvasState,
   replaceState: (state: IndustryCanvasState) => void
 ) => {
-  const { activeCanvas, saveCanvas } = useIndustryCanvasContext();
+  const { activeCanvas, saveCanvas, deleteCanvasIdsByType } =
+    useIndustryCanvasContext();
   const { hasFinishedInitialLoad } = useAutoLoadState(
     activeCanvas,
     replaceState
@@ -261,7 +287,8 @@ const usePersistence = (
     canvasState,
     hasFinishedInitialLoad,
     activeCanvas,
-    saveCanvas
+    saveCanvas,
+    deleteCanvasIdsByType
   );
 };
 

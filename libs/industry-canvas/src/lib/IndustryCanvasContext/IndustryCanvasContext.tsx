@@ -1,10 +1,12 @@
 import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
+import { IdsByType } from '@cognite/unified-file-viewer';
 
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
+import { useDeleteCanvasIdsByTypeMutation } from '../hooks/use-mutation/useDeleteCanvasIdsByTypeMutation';
 import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
 import { useListCanvases } from '../hooks/use-query/useListCanvases';
 import { useUserProfileContext } from '../hooks/use-query/useUserProfile';
@@ -27,6 +29,13 @@ export type IndustryCanvasContextType = {
     canvas: IndustryCanvasState
   ) => Promise<SerializedCanvasDocument>;
   archiveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>;
+  deleteCanvasIdsByType: ({
+    ids,
+    canvasExternalId,
+  }: {
+    ids: IdsByType;
+    canvasExternalId: string;
+  }) => Promise<void>;
   isCreatingCanvas: boolean;
   isSavingCanvas: boolean;
   isLoadingCanvas: boolean;
@@ -51,6 +60,9 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
   },
   setCanvasId: () => {
     throw new Error('setCanvasId called before initialisation');
+  },
+  deleteCanvasIdsByType: () => {
+    throw new Error('deleteCanvasIdsByType called before initialisation');
   },
   isCreatingCanvas: false,
   isSavingCanvas: false,
@@ -83,6 +95,8 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     useCanvasCreateMutation(canvasService);
   const { mutateAsync: archiveCanvas, isLoading: isArchivingCanvas } =
     useCanvasArchiveMutation(canvasService);
+  const { mutateAsync: deleteCanvasIdsByType } =
+    useDeleteCanvasIdsByTypeMutation(canvasService);
   const {
     data: canvases,
     isLoading: isListingCanvases,
@@ -122,6 +136,22 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     [activeCanvas, canvases, archiveCanvas, refetchCanvases, setCanvasId]
   );
 
+  const deleteCanvasIdsByTypeWrapper = useCallback(
+    async ({
+      ids,
+      canvasExternalId,
+    }: {
+      ids: IdsByType;
+      canvasExternalId: string;
+    }) => {
+      if (ids.annotationIds.length === 0 && ids.containerIds.length === 0) {
+        return;
+      }
+      return deleteCanvasIdsByType({ ids, canvasExternalId });
+    },
+    [deleteCanvasIdsByType]
+  );
+
   return (
     <IndustryCanvasContext.Provider
       value={{
@@ -138,6 +168,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         archiveCanvas: archiveCanvasWrapper,
         initializeWithContainerReferences,
         setCanvasId,
+        deleteCanvasIdsByType: deleteCanvasIdsByTypeWrapper,
       }}
     >
       {children}

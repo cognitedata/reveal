@@ -169,7 +169,6 @@ export type CanvasDocument = {
   updatedAt: ISOString;
   updatedBy: UserIdentifier;
 
-  version: number;
   data: IndustryCanvasState;
 };
 

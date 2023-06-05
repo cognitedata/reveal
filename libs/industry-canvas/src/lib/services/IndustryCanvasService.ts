@@ -1,12 +1,27 @@
+import { omit } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import type { CogniteClient } from '@cognite/sdk';
+import { IdsByType } from '@cognite/unified-file-viewer';
 
 import { UserProfile } from '../hooks/use-query/useUserProfile';
 import { SerializedCanvasDocument } from '../types';
 import { FDMClient, gql } from '../utils/FDMClient';
 
+import {
+  getAnnotationOrContainerExternalId,
+  getSerializedCanvasStateFromFDMCanvasState,
+  upsertCanvas,
+} from './dataModelUtils';
+import { FDMCanvasState } from './types';
+
 export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
+
+export enum ModelNames {
+  CANVAS = 'Canvas',
+  CONTAINER_REFERENCE = 'ContainerReference',
+  CANVAS_ANNOTATION = 'CanvasAnnotation',
+}
 
 type PageInfo = {
   hasNextPage: boolean;
@@ -16,11 +31,9 @@ type PageInfo = {
 };
 
 export class IndustryCanvasService {
-  public readonly CANVAS_DATA_SCHEMA_VERSION = 1;
   public readonly SPACE_VERSION = 1;
-  public readonly SPACE_EXTERNAL_ID = 'IndustryCanvasNextRelease'; // TODO(marvin): refer to system data model once that's done
-  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasNextRelease'; // TODO(marvin): refer to system data model once that's done
-  public readonly CANVAS_MODEL_NAME = 'Canvas';
+  public readonly SPACE_EXTERNAL_ID = 'MarvinV4'; // TODO(marvin): fix once data model is verified
+  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasV4'; // TODO(marvin): fix once data model is verified
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
   private fdmClient: FDMClient;
@@ -40,36 +53,69 @@ export class IndustryCanvasService {
     canvasId: string
   ): Promise<SerializedCanvasDocument> {
     const res = await this.fdmClient.graphQL<{
-      canvases: { items: SerializedCanvasDocument[] };
+      canvases: {
+        items: (Omit<SerializedCanvasDocument, 'data'> & FDMCanvasState)[];
+      };
     }>(
+      // TODO(DEGR-2457): add support for paginating through containerReferences and canvasAnnotations
       gql`
-        query GetCanvasById($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
-          canvases: list${this.CANVAS_MODEL_NAME}(filter: $filter) {
+        query GetCanvasById($filter: _List${ModelNames.CANVAS}Filter) {
+          canvases: listCanvas(filter: $filter) {
             items {
               externalId
               name
-              version
               isArchived
               createdAt
               createdBy
               updatedAt
               updatedBy
-              data
+              containerReferences (first: ${this.LIST_LIMIT}) {
+                items {
+                  id
+                  type
+                  resourceId
+                  resourceSubId
+                  label
+                  properties
+                  width
+                  height
+                  maxWidth
+                  maxHeight
+                  x
+                  y
+                }
+              }
+              canvasAnnotations (first: ${this.LIST_LIMIT}) {
+                items {
+                  id
+                  type
+                  containerId
+                  isSelectable
+                  isDraggable
+                  isResizable
+                  properties
+                  metadata
+                }
+              }
             }
           }
         }
       `,
       this.DATA_MODEL_EXTERNAL_ID,
-      {
-        filter: {
-          and: [
-            { externalId: { eq: canvasId } },
-            { version: { eq: this.CANVAS_DATA_SCHEMA_VERSION } },
-          ],
-        },
-      }
+      { filter: { externalId: { eq: canvasId } } }
     );
-    return res.canvases.items[0];
+    if (res.canvases.items.length === 0) {
+      throw new Error(`Couldn't find canvas with id ${canvasId}`);
+    }
+
+    const fdmCanvas = res.canvases.items[0];
+    return {
+      ...omit(fdmCanvas, ['canvasAnnotations', 'containerReferences']),
+      data: getSerializedCanvasStateFromFDMCanvasState({
+        containerReferences: fdmCanvas.containerReferences,
+        canvasAnnotations: fdmCanvas.canvasAnnotations,
+      }),
+    };
   }
 
   private async getPaginatedCanvasData(
@@ -82,8 +128,8 @@ export class IndustryCanvasService {
       canvases: { items: SerializedCanvasDocument[]; pageInfo: PageInfo };
     }>(
       gql`
-        query ListCanvases($filter: _List${this.CANVAS_MODEL_NAME}Filter) {
-          canvases: list${this.CANVAS_MODEL_NAME}(
+        query ListCanvases($filter: _List${ModelNames.CANVAS}Filter) {
+          canvases: list${ModelNames.CANVAS}(
             filter: $filter,
             first: ${limit},
             after: ${cursor === undefined ? null : `"${cursor}"`},
@@ -92,12 +138,10 @@ export class IndustryCanvasService {
             items {
               externalId
               name
-              version
               createdAt
               createdBy
               updatedAt
               updatedBy
-              data
             }
             pageInfo {
               startCursor
@@ -111,15 +155,7 @@ export class IndustryCanvasService {
       this.DATA_MODEL_EXTERNAL_ID,
       {
         filter: {
-          and: [
-            { version: { eq: this.CANVAS_DATA_SCHEMA_VERSION } },
-            {
-              or: [
-                { isArchived: { eq: false } },
-                { isArchived: { isNull: true } },
-              ],
-            },
-          ],
+          or: [{ isArchived: { eq: false } }, { isArchived: { isNull: true } }],
         },
       }
     );
@@ -128,7 +164,7 @@ export class IndustryCanvasService {
     paginatedData.push(...items);
     if (pageInfo.hasNextPage) {
       return await this.getPaginatedCanvasData(
-        pageInfo.startCursor,
+        pageInfo.endCursor,
         paginatedData,
         limit
       );
@@ -149,33 +185,40 @@ export class IndustryCanvasService {
       updatedBy: this.userProfile.userIdentifier,
       updatedAt: new Date().toISOString(),
     };
-    await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
-      { ...updatedCanvas },
-    ]);
+    await upsertCanvas(this.fdmClient, updatedCanvas);
     // This will induce an error because timestamps for instance will be incorrect
-    return canvas;
+    return updatedCanvas;
   }
 
   public async archiveCanvas(canvas: SerializedCanvasDocument): Promise<void> {
-    await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
-      { ...canvas, isArchived: true },
+    await this.fdmClient.upsertNodes([
+      {
+        modelName: ModelNames.CANVAS,
+        ...omit(canvas, ['data']),
+        isArchived: true,
+      },
     ]);
   }
 
   public async createCanvas(
     canvas: SerializedCanvasDocument
   ): Promise<SerializedCanvasDocument> {
-    const serializedCanvasState: SerializedCanvasDocument = {
-      ...canvas,
-    };
-    await this.fdmClient.upsertNodes(this.CANVAS_MODEL_NAME, [
-      serializedCanvasState,
-    ]);
-    return canvas;
+    return await upsertCanvas(this.fdmClient, canvas);
   }
 
   public async deleteCanvasById(canvasId: string): Promise<void> {
     await this.fdmClient.deleteNodes(canvasId);
+  }
+
+  public async deleteCanvasIdsByType(
+    ids: IdsByType,
+    canvasId: string
+  ): Promise<void> {
+    await this.fdmClient.deleteNodes(
+      [...ids.annotationIds, ...ids.containerIds].map((id) =>
+        getAnnotationOrContainerExternalId(id, canvasId)
+      )
+    );
   }
 
   public makeEmptyCanvas = (): SerializedCanvasDocument => {
@@ -190,7 +233,6 @@ export class IndustryCanvasService {
         containerReferences: [],
         canvasAnnotations: [],
       },
-      version: this.CANVAS_DATA_SCHEMA_VERSION,
     };
   };
 }

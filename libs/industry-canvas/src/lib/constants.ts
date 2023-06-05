@@ -6,6 +6,7 @@ export enum QueryKeys {
   CREATE_CANVAS = 'canvas.create',
   ARCHIVE_CANVAS = 'canvas.archive',
   LIST_CANVASES = 'canvas.list',
+  DELETE_CANVAS_ITEMS = 'canvas.delete-items',
   USER_PROFILE = 'user-profile',
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
 }

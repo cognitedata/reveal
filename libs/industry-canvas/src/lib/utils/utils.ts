@@ -1,4 +1,7 @@
+import { differenceBy } from 'lodash';
+
 import { CogniteClient } from '@cognite/sdk/dist/src/index';
+import { IdsByType } from '@cognite/unified-file-viewer';
 
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
@@ -10,6 +13,8 @@ import {
   SerializedCanvasDocument,
   CanvasDocument,
 } from '../types';
+
+import { isNotUndefined } from './isNotUndefined';
 
 export const serializeCanvasState = (
   state: IndustryCanvasState
@@ -55,5 +60,21 @@ export const deserializeCanvasDocument = async (
   return {
     ...canvasDocument,
     data: await deserializeCanvasState(sdk, canvasDocument.data),
+  };
+};
+
+export const getRemovedIdsByType = (
+  currentState: SerializedIndustryCanvasState,
+  prevState: SerializedIndustryCanvasState
+): IdsByType => {
+  return {
+    annotationIds: differenceBy(
+      currentState.canvasAnnotations.map((anno) => anno.id),
+      prevState.canvasAnnotations.map((anno) => anno.id)
+    ),
+    containerIds: differenceBy(
+      currentState.containerReferences.map((ref) => ref.id),
+      prevState.containerReferences.map((ref) => ref.id)
+    ).filter(isNotUndefined),
   };
 };
