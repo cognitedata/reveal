@@ -4,31 +4,41 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
 
-import { SearchBarFilter } from './Filter';
+import { SearchBarFilter, ValueByDataType } from './Filter';
 
-export const SearchFilters = React.memo(() => {
-  const { t } = useTranslation();
+export interface SearchFiltersProps {
+  value: ValueByDataType;
+  onChange: (value: ValueByDataType) => void;
+}
 
-  return (
-    <>
-      {/* <ChipGroup size="small" overflow={2}>
+export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
+  ({ value, onChange }) => {
+    const { t } = useTranslation();
+
+    return (
+      <>
+        {/* <ChipGroup size="small" overflow={2}>
         <Chip type="neutral" label="Movie name starts with 'Harry Potter'" />
         <Chip type="neutral" label="Filter" />
         <Chip type="neutral" label="Filter" />
         <Chip type="neutral" label="Filter" />
       </ChipGroup> */}
 
-      <Dropdown placement="bottom-end" content={<SearchBarFilter />}>
-        <Button
-          icon="Filter"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
+        <Dropdown
+          placement="bottom-end"
+          content={<SearchBarFilter value={value} onChange={onChange} />}
         >
-          {t('filter_button', 'Filters')}
-        </Button>
-      </Dropdown>
-    </>
-  );
-});
+          <Button
+            icon="Filter"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            {t('filter_button', 'Filters')}
+          </Button>
+        </Dropdown>
+      </>
+    );
+  }
+);

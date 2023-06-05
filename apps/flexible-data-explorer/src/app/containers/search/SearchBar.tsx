@@ -6,7 +6,10 @@ import { Icon } from '@cognite/cogs.js';
 
 import { useClickOutsideListener } from '../../hooks/listeners/useClickOutsideListener';
 import { useNavigation } from '../../hooks/useNavigation';
-import { useSearchQueryParams } from '../../hooks/useParams';
+import {
+  useSearchFilterParams,
+  useSearchQueryParams,
+} from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
 
@@ -26,6 +29,7 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
 
   const [queryParams] = useSearchQueryParams();
   const [localQuery, setLocalQuery] = useState('');
+  const [filterParams, setFilterParams] = useSearchFilterParams();
   const [isFocused, setFocus] = useState(false);
 
   const closePreview = useCallback(() => {
@@ -67,7 +71,7 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
           }}
         />
 
-        <SearchFilters />
+        <SearchFilters value={filterParams} onChange={setFilterParams} />
       </Content>
 
       {isFocused && <SearchPreview />}

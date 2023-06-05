@@ -1,18 +1,31 @@
 import { useMemo } from 'react';
 
-import noop from 'lodash/noop';
-
 import { useTypesDataModelQuery } from '../../../../../services/dataModels/query/useTypesDataModelQuery';
 import { FilterBuilderByDataType } from '../../containers';
+import { ValueByDataType } from '../../types';
 
 import { transformDefTypesToFilterOptions } from './utils';
 
-export const SearchBarFilter: React.FC = () => {
+export interface SearchBarFilterProps {
+  value: ValueByDataType;
+  onChange: (value: ValueByDataType) => void;
+}
+
+export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
+  value,
+  onChange,
+}) => {
   const { data = [] } = useTypesDataModelQuery();
 
   const dataTypes = useMemo(() => {
     return transformDefTypesToFilterOptions(data);
   }, [data]);
 
-  return <FilterBuilderByDataType dataTypes={dataTypes} onChange={noop} />;
+  return (
+    <FilterBuilderByDataType
+      dataTypes={dataTypes}
+      value={value}
+      onChange={onChange}
+    />
+  );
 };

@@ -15,12 +15,13 @@ export const useSearchDataTypesQuery = () => {
   return useQuery(
     queryKeys.searchDataTypes(query, client.getHeaders),
     async () => {
-      const results = await client.searchDataTypes(query, data);
+      const results = await client.searchDataTypes(query);
 
       return results;
     },
     {
       enabled: !!data,
+      suspense: true,
     }
   );
 };
