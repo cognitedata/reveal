@@ -11,6 +11,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { CogDataList } from '@cognite/cog-data-grid';
 import { Button, CollapsablePanel, Icon } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
+import { Timeseries } from '@cognite/sdk/dist/src';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
@@ -34,6 +35,8 @@ export type DataPreviewSidebarData =
       externalId: string;
       fieldName: string;
       instanceSpace: string;
+      listType: string;
+      listValues: { externalId: string }[];
     }
   | {
       type: 'json';
@@ -42,6 +45,11 @@ export type DataPreviewSidebarData =
     }
   | {
       type: 'timeseries';
+      fieldName: string;
+      externalId: string;
+    }
+  | {
+      type: 'file';
       fieldName: string;
       externalId: string;
     };
@@ -65,22 +73,70 @@ export const CollapsiblePanelContainer: React.FC<
   dataModelVersion,
   dataModelType,
 }) => {
-  const [resourceId, setResourceId] = useState<number | undefined>();
+  const [resourceIds, setResourceId] = useState<Timeseries[] | undefined>();
   useEffect(() => {
-    if (!data || data.type !== 'timeseries') {
+    if (!data || (data.type !== 'timeseries' && data.type !== 'list')) {
       setResourceId(undefined);
       return;
     }
+
+    if (data.type === 'list' && data.listType !== 'TimeSeries') {
+      setResourceId(undefined);
+      return;
+    }
+
+    let externalIds: { externalId: string }[];
+    if (data.type === 'list') {
+      externalIds = data.listValues;
+    } else {
+      externalIds = [{ externalId: data.externalId }];
+    }
+
     getCogniteSDKClient()
-      .timeseries.retrieve([{ externalId: data.externalId }])
-      .then(([{ id }]) => setResourceId(id));
+      .timeseries.retrieve(externalIds)
+      .then((timeseries) => setResourceId(timeseries));
   }, [data]);
   const getSidebarContent = () => {
     if (!data) {
       return null;
     }
 
-    if (data.type === 'list') {
+    if (
+      data.type === 'timeseries' ||
+      (data.type === 'list' && data.listType === 'TimeSeries')
+    ) {
+      return resourceIds ? (
+        resourceIds.map((ts) => (
+          <SDKProvider sdk={getCogniteSDKClient()}>
+            <p>{ts.externalId}</p>
+            <TimeseriesChart
+              timeseriesId={ts.id}
+              variant="small"
+              height={200}
+              dateRange={[
+                new Date(
+                  `${
+                    new Date().getFullYear() - 1
+                  }-${new Date().getMonth()}-${new Date().getDay()}`
+                ),
+                new Date(),
+              ]}
+            />
+            <a
+              href={createLink(
+                `/explore/timeSeries/${ts.id}${window.location.search}`
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
+            </a>
+          </SDKProvider>
+        ))
+      ) : (
+        <Icon type="Loader" />
+      );
+    } else if (data.type === 'list') {
       return (
         <ListPreview
           externalId={data.externalId}
@@ -97,35 +153,8 @@ export const CollapsiblePanelContainer: React.FC<
       );
 
       return <CogDataList data-cy="instance-values" listData={listData} />;
-    } else if (data.type === 'timeseries') {
-      return resourceId ? (
-        <SDKProvider sdk={getCogniteSDKClient()}>
-          <TimeseriesChart
-            timeseriesId={resourceId}
-            variant="small"
-            height={200}
-            dateRange={[
-              new Date(
-                `${
-                  new Date().getFullYear() - 1
-                }-${new Date().getMonth()}-${new Date().getDay()}`
-              ),
-              new Date(),
-            ]}
-          />
-          <a
-            href={createLink(
-              `/explore/timeSeries/${resourceId}${window.location.search}`
-            )}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
-          </a>
-        </SDKProvider>
-      ) : (
-        <Icon type="Loader" />
-      );
+    } else if (data.type === 'file') {
+      return null;
     } else {
       return (
         <InstancePreview

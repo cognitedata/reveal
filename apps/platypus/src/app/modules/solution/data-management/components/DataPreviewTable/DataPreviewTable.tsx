@@ -427,6 +427,8 @@ export const DataPreviewTable = forwardRef<
             fieldName: field,
             instanceSpace,
             type: 'list',
+            listType: fieldType.type.name,
+            listValues: currValue,
           });
         } else if (fieldType.type.name === 'JSONObject') {
           setSidebarData({
@@ -452,6 +454,12 @@ export const DataPreviewTable = forwardRef<
             externalId: currValue.externalId,
             fieldName: field,
             type: 'timeseries',
+          });
+        } else if (fieldType.type.name === 'File') {
+          setSidebarData({
+            externalId: currValue.externalId,
+            fieldName: field,
+            type: 'file',
           });
         } else {
           setSidebarData(undefined);
