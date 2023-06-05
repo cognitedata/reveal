@@ -86,11 +86,12 @@ export const useScheduledCalculationCreateMutate = () => {
                   graph: {
                     granularity: `${calculation.period}${calculation.periodType.value?.[0]}`,
                     steps: workflowSteps.map(
-                      ({ op, inputs, version, step }) => ({
+                      ({ op, inputs, version, step, params }) => ({
                         op,
                         inputs,
                         version,
                         step,
+                        params,
                         raw: true,
                       })
                     ),

@@ -1,15 +1,13 @@
 import { CogniteExternalId } from '@cognite/sdk';
 import { ComputationStep } from '@cognite/calculation-backend';
 
-type ScheduledCalculationStep = Omit<ComputationStep, 'params'>;
-
 export type CalculationTaskSchedule = {
   externalId: CogniteExternalId;
   name?: string;
   description?: string;
   period: number;
   offset?: number;
-  graph: { granularity: string; steps: ScheduledCalculationStep[] };
+  graph: { granularity: string; steps: ComputationStep[] };
   targetTimeseriesExternalId: string;
   createdTime?: number;
 };

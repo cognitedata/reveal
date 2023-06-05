@@ -279,6 +279,12 @@ export const updateVisibilityForAllSources = (
       ...ts,
       enabled,
     })),
+    scheduledCalculationCollection: chart.scheduledCalculationCollection?.map(
+      (sc) => ({
+        ...sc,
+        enabled,
+      })
+    ),
   };
 };
 

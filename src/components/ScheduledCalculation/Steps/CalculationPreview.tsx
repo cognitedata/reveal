@@ -94,18 +94,18 @@ export const CalculationPreview = memo(({ workflowId, period }: Props) => {
         </PreviewStatus>
       )}
 
-      {data && data.datapoints.length && data.isDownsampled && (
+      {data && data.datapoints.length && data.isDownsampled ? (
         <PreviewStatus $variant="warning">
           <Icon type="WarningFilled" />
           {t['The calculation will run on aggregates']}
         </PreviewStatus>
-      )}
+      ) : null}
 
-      {data && data.datapoints.length && !data.isDownsampled && (
+      {data && data.datapoints.length && !data.isDownsampled ? (
         <PreviewStatus $variant="success">
           <Icon type="Checkmark" />
         </PreviewStatus>
-      )}
+      ) : null}
 
       <PlotlyChart {...plotProps} />
     </>
