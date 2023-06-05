@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { isEqual } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -33,6 +33,7 @@ import {
   SerializedCanvasDocument,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
+  SerializedIndustryCanvasState,
 } from '../types';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
 import {
@@ -200,6 +201,33 @@ const addNewContainers = (
   };
 };
 
+const SAVE_CANVAS_DEBOUNCE_TIME_MS = 700;
+const debouncedSaveCanvas = debounce(
+  async (
+    activeCanvas: SerializedCanvasDocument,
+    serializedData: SerializedIndustryCanvasState,
+    saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>,
+    deleteCanvasIdsByType: ({
+      ids,
+      canvasExternalId,
+    }: {
+      ids: IdsByType;
+      canvasExternalId: string;
+    }) => Promise<void>
+  ) => {
+    // Delete the annotations and containers nodes that have been removed from the canvas
+    await deleteCanvasIdsByType({
+      canvasExternalId: activeCanvas.externalId,
+      ids: getRemovedIdsByType(activeCanvas.data, serializedData),
+    });
+    await saveCanvas({
+      ...activeCanvas,
+      data: serializedData,
+    });
+  },
+  SAVE_CANVAS_DEBOUNCE_TIME_MS
+);
+
 const useAutoSaveState = (
   canvasState: IndustryCanvasState,
   hasFinishedInitialLoad: boolean,
@@ -223,17 +251,12 @@ const useAutoSaveState = (
       return;
     }
 
-    (async () => {
-      // Delete the annotations and containers nodes that have been removed from the canvas
-      await deleteCanvasIdsByType({
-        canvasExternalId: activeCanvas.externalId,
-        ids: getRemovedIdsByType(activeCanvas.data, serializedData),
-      });
-      await saveCanvas({
-        ...activeCanvas,
-        data: serializedData,
-      });
-    })();
+    debouncedSaveCanvas(
+      activeCanvas,
+      serializedData,
+      saveCanvas,
+      deleteCanvasIdsByType
+    );
     // activeCanvas will change with every save, so we don't want to include it in the dependency array
     // if included, it will lead to an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps

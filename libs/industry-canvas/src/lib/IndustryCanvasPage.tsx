@@ -387,7 +387,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           </Tooltip>
 
           <Button onClick={onResourceSelectorOpen}>
-            <Icon type="Plus" /> Add data...
+            <Icon type="Plus" /> Add data
           </Button>
 
           <Dropdown

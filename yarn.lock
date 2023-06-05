@@ -1903,6 +1903,26 @@
     lodash "4.17.21"
     mixpanel-browser "2.45.0"
 
+"@cognite/plotting-components@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@cognite/plotting-components/-/plotting-components-0.0.10.tgz#d6242d6b45492a6156babeda7344ff654fbd3bfc"
+  integrity sha512-tF1t40pDyM1qZQCY+p5E+AeMxZxNQyNkaGJopkqALedpMAAUT0DLcRqubdIHjauF77zDAKAUbKdARAxQQVSIlg==
+  dependencies:
+    "@cognite/cogs.js" "^9.15.0"
+    "@cognite/sdk" "^7.19.1"
+    "@cognite/sdk-provider" "^2.0.6"
+    "@tanstack/react-query" "^4.6.1"
+    "@testing-library/jest-dom" "^5.16.5"
+    dayjs "^1.11.7"
+    html2canvas "^1.4.1"
+    lodash "^4.17.21"
+    plotly.js "^2.18.2"
+    query-string "^6.14.1"
+    rc-collapse "1.11.8"
+    react-datepicker "^3.3.0"
+    react-plotly.js "^2.6.0"
+    styled-components "5.3.6"
+
 "@cognite/react-container@^9.1.1":
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-9.1.1.tgz#0dabd9aea7a92d6377b460a43f5a9e9be41e18e2"
@@ -2162,12 +2182,13 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^13.3.1":
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.3.1.tgz#ead146eb499c0fb876139e730fdab80500029404"
-  integrity sha512-zBtNzZTHSCRvbl40ieFbBZJJFqmboVAW5ECbQ4WUagi+neC67kaeRh+vHCSqg5Shj3G4GYiwzWgcSzQg8UcJIg==
+"@cognite/unified-file-viewer@^13.4.1":
+  version "13.4.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.4.1.tgz#b95ba9703c78f8127a6edabbd02e93c851bde823"
+  integrity sha512-g0vRrQcoJ4ZOODBpo6AM3OD98OxJGYNmaKhldA7Iot+3vhrpLSgog4IvzWxSVgJkfWVhWuoqeixcmNfHF4dwqA==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
+    "@cognite/plotting-components" "^0.0.10"
     "@cognite/reveal" "^4.1.2"
     "@cognite/sdk" "^7.13.0"
     "@mathigon/euclid" "^1.1.6"

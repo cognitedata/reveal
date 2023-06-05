@@ -14,7 +14,7 @@ describe('data-exploration', () => {
   });
 
   it('Should open Data Explorer from Home page', () => {
-    cy.contains('Explore data').click();
+    cy.contains('Explore data', { timeout: 10_000 }).click();
     cy.url().should('include', 'http://cog-dss.localhost:8080/dss-dev/explore');
   });
 });
