@@ -9,13 +9,10 @@ export const getCursorPosition = (
   }
 
   const chartBounds = chartRef.current.getBoundingClientRect();
-  const { parentElement } = chartRef.current;
-
+  const { offsetParent } = chartRef.current;
   let x = event.clientX - chartBounds.left;
   let y = event.clientY - chartBounds.top;
-
-  const transform = parentElement && getComputedStyle(parentElement).transform;
-
+  const transform = offsetParent && getComputedStyle(offsetParent).transform;
   if (!transform || transform === 'none') {
     return { x, y };
   }
