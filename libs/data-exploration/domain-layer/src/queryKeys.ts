@@ -255,6 +255,8 @@ export const queryKeys = {
       filter,
       query,
     ] as const,
+  documentContainer: (file: any) =>
+    [...queryKeys.documents(), 'container', file] as const,
 
   // FILE
   files: () => [...queryKeys.all, 'file'] as const,

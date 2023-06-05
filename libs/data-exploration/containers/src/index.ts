@@ -1,3 +1,4 @@
+export * from './Document';
 export * from './Filters';
 export * from './Search';
 export * from './ThreeD';

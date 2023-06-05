@@ -1,10 +1,16 @@
 import React, { FC } from 'react';
 
+import styled from 'styled-components';
+
 import { ResourceDetailsTemplate } from '@data-exploration/components';
 
 import { Collapse, Title } from '@cognite/cogs.js';
 
-import { SelectableItemsProps, EMPTY_OBJECT } from '@data-exploration-lib/core';
+import {
+  SelectableItemsProps,
+  EMPTY_OBJECT,
+  APPLICATION_ID,
+} from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
   useDocumentSearchResultQuery,
@@ -20,6 +26,7 @@ import {
   SequenceDetailsTable,
   TimeseriesDetailsTable,
 } from '../../DetailsTable';
+import { DocumentPreview } from '../../Document';
 import { FileInfo } from '../../Info';
 import { ResourceSelection } from '../../ResourceSelector';
 import {
@@ -28,6 +35,7 @@ import {
   EVENTS,
   FILES,
   NO_DETAILS_AVAILABLE,
+  PREVIEW,
   SEQUENCES,
   TIME_SERIES,
 } from '../constant';
@@ -125,7 +133,21 @@ export const DocumentDetails: FC<
       onClose={onClose}
       onSelectClicked={onSelect}
     >
-      <StyledCollapse accordion ghost defaultActiveKey="document-details">
+      <StyledCollapse accordion ghost defaultActiveKey="document-preview">
+        <Collapse.Panel key="document-preview" header={<h4>{PREVIEW}</h4>}>
+          <PreviewWrapper>
+            {parentDocument?.id && (
+              <DocumentPreview
+                key={parentDocument.id}
+                id={`${APPLICATION_ID}-${parentDocument.id}`}
+                applicationId={APPLICATION_ID}
+                fileId={parentDocument?.id}
+                creatable={false}
+                contextualization={false}
+              />
+            )}
+          </PreviewWrapper>
+        </Collapse.Panel>
         <Collapse.Panel key="document-details" header={<h4>{DETAILS}</h4>}>
           {parentDocument ? (
             <FileInfo file={parentDocument as any} />
@@ -214,3 +236,7 @@ export const DocumentDetails: FC<
     </ResourceDetailsTemplate>
   );
 };
+
+const PreviewWrapper = styled.div`
+  height: 500px;
+`;

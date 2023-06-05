@@ -5,3 +5,4 @@ export const TIME_SERIES = 'Time Series';
 export const FILES = 'Files';
 export const EVENTS = 'Events';
 export const SEQUENCES = 'Sequences';
+export const PREVIEW = 'Preview';

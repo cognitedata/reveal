@@ -38,6 +38,7 @@ export const ActionTools = ({
   setEditMode = noop,
   filesAcl = false,
   annotationsAcl = false,
+  hideEdit = false,
 }: {
   file: FileInfo;
   fileViewerRef?: UnifiedViewer;
@@ -54,6 +55,7 @@ export const ActionTools = ({
   setEditMode?: () => void;
   filesAcl: boolean;
   annotationsAcl: boolean;
+  hideEdit: boolean;
 } & UseSearchBarState &
   Pick<
     SearchBarProps,
@@ -96,7 +98,7 @@ export const ActionTools = ({
             onPreviousResult={onPreviousResult}
           />
         )}
-        {!editMode && (
+        {!editMode && !hideEdit && (
           <ToolBar>
             <EditFileButton
               item={{ type: 'file', id: file.id! }}
