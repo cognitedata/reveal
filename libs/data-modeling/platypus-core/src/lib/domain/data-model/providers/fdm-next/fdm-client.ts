@@ -303,6 +303,7 @@ export class FdmClient implements FlexibleDataModelingClient {
       space: dto.space,
       externalId: dto.externalId,
       version: dto.version,
+      previousVersion: dto.previousVersion,
       graphQlDml: dto.schema,
       name: dto.name,
       description: dto.description,

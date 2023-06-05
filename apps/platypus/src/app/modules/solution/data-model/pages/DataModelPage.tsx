@@ -256,6 +256,7 @@ export const DataModelPage = () => {
             externalId: dataModelExternalId,
             schema: graphQlSchema,
             version: newVersion,
+            previousVersion: selectedDataModelVersion?.version,
           },
           'NEW_VERSION'
         );

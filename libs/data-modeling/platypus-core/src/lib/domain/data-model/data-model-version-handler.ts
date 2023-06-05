@@ -112,6 +112,7 @@ export class DataModelVersionHandler {
       lastUpdatedTime: dto.lastUpdatedTime || Date.now(),
       status: dto.status || DataModelVersionStatus.PUBLISHED,
       version: dto.version ?? '1',
+      previousVersion: dto.previousVersion,
     };
 
     // Validate Data Model

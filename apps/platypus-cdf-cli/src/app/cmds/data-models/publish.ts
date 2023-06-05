@@ -55,6 +55,13 @@ export const commandArgs = [
     promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
   {
+    name: 'previous-version',
+    description:
+      'The version to check breaking change against. Defaults to latest version.',
+    type: CommandArgumentType.STRING,
+    required: false,
+  },
+  {
     name: 'dry-run',
     description:
       'Perform a dry run. Will only validate the data model without publishing.',
@@ -85,6 +92,7 @@ type DataModelPublishCommandArgs = BaseArgs & {
   space: string;
   'dry-run': boolean;
   'auto-increment': boolean;
+  'previous-version': string;
   version?: string;
 };
 
@@ -117,7 +125,7 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
-    const dataModelResponse = await this.dataModelsHandler.fetch({
+    const dataModelResponse = await this.dataModelsHandler.fetchVersions({
       dataModelId: args['external-id'],
       space: args.space,
     });
@@ -128,10 +136,53 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
+    const versions = dataModelResponse.getValue();
+    let previousVersion = versions
+      .sort(
+        // latest first
+        (a, b) => b.lastUpdatedTime - a.lastUpdatedTime
+      )
+      .find((el, i) =>
+        // previous version specified? then choose previous version, otherwise, latest
+        args['previous-version']
+          ? el.version === args['previous-version']
+          : i === 0
+      );
+
+    if (!previousVersion) {
+      if (args['previous-version']) {
+        Response.error(
+          `The previous version ${args['previous-version']} does not exist.`
+        );
+        return;
+      }
+    }
+
+    const {
+      version: currentVersion,
+      schema: currentVersionDML,
+      name: currentVersionName,
+      description: currentVersionDesc,
+    } = previousVersion || {
+      version: undefined,
+      schema: '',
+      name: undefined,
+      description: undefined,
+    };
+    // if no changes in DML
+    if (currentVersionDML.trim() === graphqlSchema.trim()) {
+      Response.success(
+        'The data model will not be updated as the file is identical to the current version.'
+      );
+      return;
+    }
+
     if (!args.version) {
       if (args['auto-increment']) {
-        const { version: currentVersion } = dataModelResponse.getValue();
-        args['version'] = autoIncrementVersion(currentVersion);
+        args['version'] = autoIncrementVersion(
+          // use the most recent version
+          versions[0].version
+        );
       } else {
         Response.error('You must specify a version or use `--auto-increment`.');
         return;
@@ -141,6 +192,7 @@ export class PublishCmd extends CLICommand {
     const dto: CreateDataModelVersionDTO = {
       externalId: args['external-id'],
       schema: graphqlSchema,
+      previousVersion: args['previous-version'] || currentVersion,
       version: args['version'],
       space: args['space'],
     };
@@ -177,12 +229,11 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
-    const dataModelMetadata = dataModelResponse.getValue();
     const response = await this.dataModelVersionsHandler.publish(
       {
         ...dto,
-        name: dataModelMetadata.name,
-        description: dataModelMetadata.description,
+        name: currentVersionName,
+        description: currentVersionDesc,
       },
       'PATCH'
     );

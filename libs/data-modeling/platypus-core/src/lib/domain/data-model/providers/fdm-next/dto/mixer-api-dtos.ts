@@ -2,6 +2,7 @@ export interface GraphQlDmlVersionDTO {
   space: string;
   externalId: string;
   version: string;
+  previousVersion?: string;
   name?: string;
   description?: string;
   graphQlDml?: string;

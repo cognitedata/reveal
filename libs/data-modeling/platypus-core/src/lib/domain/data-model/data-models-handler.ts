@@ -16,7 +16,7 @@ import {
 import { DataModelsApiService } from './providers/fdm-next';
 import { DataModelInstanceDTO } from './providers/fdm-next/dto/dms-data-model-dtos';
 import { ListSpacesDTO } from './providers/fdm-next/dto/dms-space-dtos';
-import { DataModel, SpaceDTO, SpaceInstance } from './types';
+import { DataModel, DataModelVersion, SpaceDTO, SpaceInstance } from './types';
 
 export class DataModelsHandler {
   constructor(
@@ -44,6 +44,18 @@ export class DataModelsHandler {
     return this.fdmClient
       .fetchDataModel(dto)
       .then((dataModel) => Result.ok(dataModel))
+      .catch((err: PlatypusError) => Result.fail(err));
+  }
+
+  /**
+   * Fetch the versions of specified DataModel
+   * @param dto
+   * @returns
+   */
+  fetchVersions(dto: FetchDataModelDTO): Promise<Result<DataModelVersion[]>> {
+    return this.fdmClient
+      .listDataModelVersions({ externalId: dto.dataModelId, space: dto.space })
+      .then((dataModels) => Result.ok(dataModels))
       .catch((err: PlatypusError) => Result.fail(err));
   }
 
