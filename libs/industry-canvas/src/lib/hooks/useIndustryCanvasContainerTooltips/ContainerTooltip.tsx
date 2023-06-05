@@ -23,8 +23,8 @@ import {
 import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
 
-const navigateToPath = (path: string) => {
-  const link = createLink(path);
+const navigateToPath = (path: string, query?: any) => {
+  const link = createLink(path, query);
   window.open(link, '_blank');
 };
 
@@ -150,15 +150,71 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip content="Last day">
               <Button
-                icon="String"
-                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
-              />
+                size="medium"
+                onClick={() =>
+                  onUpdateContainer({
+                    ...selectedContainer,
+                    startDate: dayjs()
+                      .subtract(1, 'day')
+                      .startOf('day')
+                      .toDate(),
+                    endDate: dayjs().endOf('day').toDate(),
+                  })
+                }
+                aria-label="Last day"
+              >
+                1d
+              </Button>
             </Tooltip>
+
+            <Tooltip content="Last month">
+              <Button
+                onClick={() =>
+                  onUpdateContainer({
+                    ...selectedContainer,
+                    startDate: dayjs()
+                      .subtract(1, 'month')
+                      .startOf('day')
+                      .toDate(),
+                    endDate: dayjs().endOf('day').toDate(),
+                  })
+                }
+                type="ghost"
+                size="medium"
+                aria-label="Last month"
+              >
+                1m
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="Last year">
+              <Button
+                onClick={() =>
+                  onUpdateContainer({
+                    ...selectedContainer,
+                    startDate: dayjs()
+                      .subtract(1, 'year')
+                      .startOf('day')
+                      .toDate(),
+                    endDate: dayjs().endOf('day').toDate(),
+                  })
+                }
+                type="ghost"
+                size="medium"
+                aria-label="Last year"
+              >
+                1y
+              </Button>
+            </Tooltip>
+
             <DateRangePrompt
+              // The date range can change from interacting inside of the TimeseriesContainer,
+              // this is a workaround to make sure the date range prompt shows rerenders to
+              // show the correct thing when the date range changes.
+              key={`${selectedContainer.startDate}_${selectedContainer.endDate}`}
               initialRange={{
                 startDate: selectedContainer.startDate,
                 endDate: selectedContainer.endDate,
@@ -188,6 +244,30 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 });
               }}
             />
+          </>
+          <>
+            <Tooltip content="Change label">
+              <Button
+                icon="String"
+                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
+                type="ghost"
+                aria-label="Change label"
+              />
+            </Tooltip>
+            <Tooltip content="Open in Charts">
+              <Button
+                icon="LineChart"
+                onClick={() =>
+                  navigateToPath('/charts', {
+                    timeserieIds: [selectedContainer.metadata.resourceId],
+                    startTime: selectedContainer.startDate.getTime(),
+                    endTime: selectedContainer.endDate.getTime(),
+                  })
+                }
+                type="ghost"
+                aria-label="Open in Charts"
+              />
+            </Tooltip>
             <Tooltip content="Open in Data Explorer">
               <Button
                 icon="ExternalLink"
