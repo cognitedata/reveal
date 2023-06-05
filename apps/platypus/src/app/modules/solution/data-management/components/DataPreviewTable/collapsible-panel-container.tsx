@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react';
 
 import {
+  BultinFieldTypeNames,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
@@ -22,37 +23,16 @@ import { InstancePreview } from './InstancePreview/InstancePreview';
 import { ListPreview } from './ListPreview/ListPreview';
 import { SidePanel } from './SidePanel';
 
-export type DataPreviewSidebarData =
-  | {
-      type: 'custom';
-      externalId: string;
-      fieldName: string;
-      fieldType: DataModelTypeDefsType;
-      instanceSpace: string;
-    }
-  | {
-      type: 'list';
-      externalId: string;
-      fieldName: string;
-      instanceSpace: string;
-      listType: string;
-      listValues: { externalId: string }[];
-    }
-  | {
-      type: 'json';
-      fieldName: string;
-      json: KeyValueMap;
-    }
-  | {
-      type: 'timeseries';
-      fieldName: string;
-      externalId: string;
-    }
-  | {
-      type: 'file';
-      fieldName: string;
-      externalId: string;
-    };
+export type DataPreviewSidebarData = {
+  fieldName: string;
+  fieldType?: DataModelTypeDefsType;
+  instanceExternalId: string;
+  instanceSpace: string;
+  isList: boolean;
+  json?: KeyValueMap;
+  listValues?: { externalId: string }[];
+  type: BultinFieldTypeNames | 'custom';
+};
 
 export type CollapsiblePanelContainerProps = {
   children: ReactElement;
@@ -73,40 +53,34 @@ export const CollapsiblePanelContainer: React.FC<
   dataModelVersion,
   dataModelType,
 }) => {
-  const [resourceIds, setResourceId] = useState<Timeseries[] | undefined>();
+  const [timeSeriesIds, setTimeSeriesIds] = useState<
+    Timeseries[] | undefined
+  >();
+
   useEffect(() => {
-    if (!data || (data.type !== 'timeseries' && data.type !== 'list')) {
-      setResourceId(undefined);
+    // if no data or not timeseries
+    if (!data || data.type !== 'TimeSeries') {
+      setTimeSeriesIds(undefined);
       return;
     }
 
-    if (data.type === 'list' && data.listType !== 'TimeSeries') {
-      setResourceId(undefined);
-      return;
-    }
-
-    let externalIds: { externalId: string }[];
-    if (data.type === 'list') {
-      externalIds = data.listValues;
-    } else {
-      externalIds = [{ externalId: data.externalId }];
-    }
+    const externalIds = data.isList
+      ? data.listValues!
+      : [{ externalId: data.instanceExternalId }];
 
     getCogniteSDKClient()
       .timeseries.retrieve(externalIds)
-      .then((timeseries) => setResourceId(timeseries));
+      .then((timeseries) => setTimeSeriesIds(timeseries));
   }, [data]);
+
   const getSidebarContent = () => {
     if (!data) {
       return null;
     }
 
-    if (
-      data.type === 'timeseries' ||
-      (data.type === 'list' && data.listType === 'TimeSeries')
-    ) {
-      return resourceIds ? (
-        resourceIds.map((ts) => (
+    if (data.type === 'TimeSeries') {
+      return timeSeriesIds ? (
+        timeSeriesIds.map((ts) => (
           <SDKProvider sdk={getCogniteSDKClient()}>
             <p>{ts.externalId}</p>
             <TimeseriesChart
@@ -136,10 +110,10 @@ export const CollapsiblePanelContainer: React.FC<
       ) : (
         <Icon type="Loader" />
       );
-    } else if (data.type === 'list') {
+    } else if (data.isList) {
       return (
         <ListPreview
-          externalId={data.externalId}
+          externalId={data.instanceExternalId}
           field={data.fieldName}
           dataModelType={dataModelType}
           dataModelTypeDefs={dataModelTypeDefs}
@@ -147,19 +121,19 @@ export const CollapsiblePanelContainer: React.FC<
           instanceSpace={data.instanceSpace}
         />
       );
-    } else if (data.type === 'json') {
-      const listData = Object.keys(data.json).map(
-        (key) => `${key}: ${data.json[key]}`
+    } else if (data.type === 'JSONObject') {
+      const listData = Object.keys(data.json!).map(
+        (key) => `${key}: ${data.json![key]}`
       );
 
       return <CogDataList data-cy="instance-values" listData={listData} />;
-    } else if (data.type === 'file') {
-      return null;
+    } else if (data.type === 'File') {
+      return <p>File</p>;
     } else {
       return (
         <InstancePreview
-          externalId={data.externalId}
-          dataModelType={data.fieldType}
+          externalId={data.instanceExternalId}
+          dataModelType={data.fieldType!}
           dataModelExternalId={dataModelVersion.externalId}
           dataModelSpace={dataModelVersion.space}
           instanceSpace={data.instanceSpace}

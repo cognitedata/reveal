@@ -10,7 +10,7 @@ export interface DirectiveProps {
   arguments?: ArgumentNodeProps[];
 }
 
-type BultinFieldTypeNames =
+export type BultinFieldTypeNames =
   | 'Boolean'
   | 'DataPoint'
   | 'DataPointValue'
