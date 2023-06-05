@@ -33,6 +33,7 @@
     "@storybook/react": "7.0.17",
     "@storybook/react-webpack5": "7.0.17",
     "@storybook/testing-library": "0.1.0",
+    "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
     "@types/styled-components": "5.1.26",
     "@types/three": "0.152.0",
@@ -50,5 +51,9 @@
   "packageManager": "yarn@3.5.1",
   "files": [
     "./dist/*"
-  ]
+  ],
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "style-loader": "^3.3.3"
+  }
 }

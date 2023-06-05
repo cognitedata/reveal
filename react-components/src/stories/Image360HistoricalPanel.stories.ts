@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360HistoricalPanel } from '../components';
+import { Image360HistoricalPanel } from '../components/Panel';
 
 const meta = {
   title: 'Example/Image360HistoricalPanel',

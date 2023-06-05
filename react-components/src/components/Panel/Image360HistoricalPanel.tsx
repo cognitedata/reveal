@@ -24,6 +24,7 @@ export const Image360HistoricalPanel = ({
   };
 
   return (
+    <Container isExpanded={revisionDetailsExpanded!}>
     <Tooltip content="360 Image historical details">
       <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded!}>
         {!revisionDetailsExpanded && (
@@ -38,6 +39,7 @@ export const Image360HistoricalPanel = ({
         )}
       </StyledToolBar>
     </Tooltip>
+    </Container>
   )
 };
 
@@ -46,17 +48,13 @@ const StyledToolBar = styled.div<{ isExpanded: boolean }>`
   bottom: 30px;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  width: fit-content;
-  height: 28px;
-  padding: 0px 10px 0px 10px;
+  padding: 0px 0px 0px 5px;
   background: #FFFFFF;
-  border-radius: 6px;
 
   ${({ isExpanded }) =>
   isExpanded &&
     `
-    padding: 0px 15px 0px 0px;
+    padding: 0px 0px 0px 25px;
   `}
 `;
 
@@ -93,4 +91,23 @@ const StyledChipCount = styled(Chip)`
     font-size: 12px;
     line-height: 16px;
   }
+`;
+
+const Container = styled.div<{ isExpanded: boolean }>`
+  position: relative;
+  left: calc(100% - 150px);
+  width: 140px;
+  height: 28px;
+  background-color: white;
+  padding: 4px 2px;
+  align-items: center;
+  display: flex;
+  border-radius: 6px;
+
+  ${({ isExpanded }) =>
+  isExpanded &&
+    `
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  `}
 `;

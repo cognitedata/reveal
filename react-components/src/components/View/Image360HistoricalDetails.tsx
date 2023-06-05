@@ -12,16 +12,11 @@ import { uniqueId } from 'lodash';
 
 export interface Image360HistoricalDetailsProps{
   viewer: Cognite3DViewer;
-  stationId?: string;
-  stationName?: string;
-  collectionId?: string;
   image360Entity?: Image360;
 };
 
 export const Image360HistoricalDetails = ({
   viewer,
-  stationId,
-  stationName,
   image360Entity
 }: Image360HistoricalDetailsProps) => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
@@ -38,18 +33,9 @@ export const Image360HistoricalDetails = ({
   const [minWidth, setMinWidth] = useState('100px');
 
   useEffect(() => {
+
     const fetchRevisionCollection = async () => {
       if (image360Entity) {
-        // Remove old image urls
-        setImageUrls((urls) => {
-          urls.forEach((url) => {
-            if (url) {
-              URL.revokeObjectURL(url);
-            }
-          });
-          return [];
-        });
-
         const revisions = image360Entity.getRevisions();
         const revisionDates = revisions.map((revision) => revision.date);
         const imageDatas = await Promise.all(revisions.map( async revision => await revision.getPreviewThumbnailUrl()));
@@ -65,14 +51,27 @@ export const Image360HistoricalDetails = ({
         });
 
         setRevisionCollection(collection);
+        setActiveRevision(0);
       }
     };
 
     fetchRevisionCollection();
+
+    return() => {
+      // Remove image urls
+      imageUrls.forEach((url) => {
+        setTimeout(() => {
+          if (url) {
+            URL.revokeObjectURL(url);
+          }
+        }, 250);
+      });
+      setImageUrls([]);
+    };
   }, [image360Entity]);
 
   useEffect(() => {
-    const newMinWidth = revisionDetailsExpanded ? '90%' : '100px';
+    const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
     setMinWidth(newMinWidth);
   }, [revisionDetailsExpanded]);
 
@@ -92,8 +91,8 @@ export const Image360HistoricalDetails = ({
           <Image360HistoricalSummary
             key={uniqueId()}
             viewer={viewer}
-            stationId={stationId}
-            stationName={stationName}
+            stationId={image360Entity?.id}
+            stationName={image360Entity?.label}
             activeRevision={activeRevision}
             setActiveRevision={setActiveRevision}
             revisionCollection={revisionCollection}
@@ -110,5 +109,5 @@ const DetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: fit-content;
-  width: fit-content;
+  width: 100%;
 `;

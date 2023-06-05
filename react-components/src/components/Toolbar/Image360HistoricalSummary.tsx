@@ -77,6 +77,12 @@ export const Image360HistoricalSummary = ({
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
   max-width: 200px;
+
+  //Restrict text length
+  overflow:hidden;
+  display:inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledFlex = styled(Flex)`
@@ -101,6 +107,12 @@ const StyledDetail = styled(Detail)`
   letter-spacing: -0.006em;
   font-feature-settings: 'ss04' on;
   color: rgba(0, 0, 0, 0.9);
+
+  //Restrict text length
+  overflow:hidden;
+  display:inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledLayoutGridContainer = styled.div`
