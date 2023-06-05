@@ -72,7 +72,10 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
             content={isEditingStroke ? 'Close color palette' : 'Change color'}
           >
             <StrokeButton
-              color={SHAPE_ANNOTATION_STROKE_COLOR_MAP.YELLOW}
+              color={
+                shapeAnnotation.style?.stroke ??
+                SHAPE_ANNOTATION_STROKE_COLOR_MAP.YELLOW
+              }
               isToggled={isEditingStroke}
               ariaLabel="Edit stroke color"
               onClick={() => {
@@ -85,7 +88,10 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
             content={isEditingFill ? 'Close color palette' : 'Change color'}
           >
             <FillButton
-              color={SHAPE_ANNOTATION_FILL_COLOR_MAP.BLUE}
+              color={
+                shapeAnnotation.style?.fill ??
+                SHAPE_ANNOTATION_FILL_COLOR_MAP.BLUE
+              }
               isToggled={isEditingFill}
               ariaLabel="Edit fill color"
               onClick={() => {
