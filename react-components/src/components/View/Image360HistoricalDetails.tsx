@@ -8,7 +8,7 @@ import { Image360HistoricalPanel } from '../Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
 import { formatDate } from '../utils/FormatDate';
 import styled from 'styled-components';
-import { uniqueId } from 'lodash';
+import uniqueId from 'lodash/uniqueId';
 
 export interface Image360HistoricalDetailsProps{
   viewer: Cognite3DViewer;

@@ -7,7 +7,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
-import { uniqueId } from 'lodash';
+import uniqueId from 'lodash/uniqueId';
 
 export interface Image360RevisionDetails{
   date?: string;
