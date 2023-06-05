@@ -11,9 +11,9 @@ const initialState: FilterState = {
   asset: {},
   timeseries: {},
   file: {},
+  document: {},
   sequence: {},
   event: {},
-  document: {},
 };
 
 type Action = {
@@ -56,8 +56,8 @@ function reducer(state: FilterState, action: Action) {
 
 export const useFilterState = (initialFilter: Partial<FilterState> = {}) => {
   const [state, dispatch] = useReducer(reducer, {
-    ...initialFilter,
     ...initialState,
+    ...initialFilter,
   });
 
   const setter = (

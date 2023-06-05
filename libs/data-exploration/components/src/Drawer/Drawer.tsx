@@ -38,7 +38,7 @@ export const Drawer: React.FC<PropsWithChildren<DrawerProps>> = ({
 };
 
 const StyledDrawer = styled.div<{ visible?: boolean; width?: string }>`
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   isolation: isolate;
@@ -63,7 +63,10 @@ const Overlay = styled.div<{ visible?: boolean }>`
 
 const ClosedButton = styled.div`
   position: absolute;
-  top: 30px;
-  left: 16%;
+  top: 20px;
+  left: 17%;
   z-index: ${zIndex.DRAWER};
+  .cogs.cogs-button--type-tertiary:hover:not([aria-disabled='true']) {
+    background: white;
+  }
 `;

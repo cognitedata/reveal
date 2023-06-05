@@ -45,7 +45,6 @@ export const ResourceSelectorTable = ({
     enableSelection: selectionMode === 'multiple',
     id: `${resourceType}-resource-selector`,
     query,
-    filter: { ...filter.common, ...filter[resourceType as keyof FilterState] },
     selectedRows: selectedRows[resourceType],
 
     onRowSelection: (
@@ -79,25 +78,50 @@ export const ResourceSelectorTable = ({
     onClick,
     onFilterChange,
   };
-  const documentProps = {
-    ...commonProps,
-    filter: filter.document,
-  };
+  console.log({ resourceType, filter }, 'ResourceselectorTytpe');
 
   switch (resourceType) {
     case 'asset':
       return (
-        <AssetSearchResults showCount isTreeEnabled={false} {...commonProps} />
+        <AssetSearchResults
+          showCount
+          isTreeEnabled={false}
+          {...commonProps}
+          filter={{ ...filter.common, ...filter.asset }}
+        />
       );
 
     case 'file':
-      return <DocumentSearchResults {...documentProps} />;
+      return (
+        <DocumentSearchResults
+          {...commonProps}
+          filter={{ ...filter.common, ...filter.document }}
+        />
+      );
     case 'event':
-      return <EventSearchResults showCount {...commonProps} />;
+      return (
+        <EventSearchResults
+          showCount
+          {...commonProps}
+          filter={{ ...filter.common, ...filter.event }}
+        />
+      );
     case 'timeSeries':
-      return <TimeseriesSearchResults showCount {...commonProps} />;
+      return (
+        <TimeseriesSearchResults
+          showCount
+          {...commonProps}
+          filter={{ ...filter.common, ...filter.timeseries }}
+        />
+      );
     case 'sequence':
-      return <SequenceSearchResults showCount {...commonProps} />;
+      return (
+        <SequenceSearchResults
+          showCount
+          {...commonProps}
+          filter={{ ...filter.common, ...filter.sequence }}
+        />
+      );
     default:
       return <div>ResourceSelectorTable</div>;
   }

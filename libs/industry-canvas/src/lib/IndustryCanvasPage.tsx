@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { ResourceSelector } from '@data-exploration/containers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { v4 as uuid } from 'uuid';
 
@@ -17,17 +18,15 @@ import {
   toast,
   Tooltip,
 } from '@cognite/cogs.js';
-import {
-  isNotUndefined,
-  ResourceItem,
-  useResourceSelector,
-} from '@cognite/data-exploration';
+import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
+
+import { useDialog } from '@data-exploration-lib/core';
 
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
@@ -71,7 +70,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     useState<UnifiedViewer | null>(null);
   const [shouldShowConnectionAnnotations, setShouldShowConnectionAnnotations] =
     useState<boolean>(true);
-  const { openResourceSelector } = useResourceSelector();
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [
@@ -114,6 +112,11 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     setTool,
   });
 
+  const {
+    isOpen: visibleResourceSelector,
+    open: onResourceSelectorOpen,
+    close: onResourceSelectorClose,
+  } = useDialog();
   const { selectedCanvasAnnotation, selectedContainer } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
@@ -220,61 +223,50 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     ]
   );
 
-  const onAddResourcePress = () => {
-    openResourceSelector({
-      resourceTypes: ['file', 'timeSeries', 'asset', 'event'],
-      selectionMode: 'multiple',
-      onSelect: () => {
-        // It's a required prop, but we don't really want to do anything on
-        // select.
-        return undefined;
-      },
-      onClose: async (confirmed: boolean, results?: ResourceItem[]) => {
-        if (!confirmed) {
-          // Selector closed for other reasons than selecting resources
-          return;
-        }
+  const onAddResourcePress = async (
+    results?: ResourceItem | ResourceItem[]
+  ) => {
+    onResourceSelectorClose();
+    if (results && Array.isArray(results)) {
+      if (unifiedViewerRef === null) {
+        return;
+      }
 
-        if (unifiedViewerRef === null) {
-          return;
-        }
-
-        if (results === undefined || results.length === 0) {
-          toast.error(
-            <div>
-              <h4>Could not add resource(s) to your canvas</h4>
-              <p>At least one resource needs to be selected.</p>
-            </div>,
-            {
-              toastId: 'industry-canvas-no-selected-resources-to-add-error',
-              position: TOAST_POSITION,
-            }
-          );
-          return;
-        }
-
-        const supportedResourceItems = (
-          await Promise.all(
-            results.map(async (resourceItem) => {
-              const isSupported = await isSupportedResourceItem(
-                sdk,
-                resourceItem
-              );
-              return isSupported ? resourceItem : undefined;
-            })
-          )
-        ).filter(isNotUndefined);
-
-        if (supportedResourceItems.length === 0) {
-          // TODO: Improve messaging if selected resources are not supported
-          return;
-        }
-
-        onAddContainerReferences(
-          supportedResourceItems.map(resourceItemToContainerReference)
+      if (results === undefined || results.length === 0) {
+        toast.error(
+          <div>
+            <h4>Could not add resource(s) to your canvas</h4>
+            <p>At least one resource needs to be selected.</p>
+          </div>,
+          {
+            toastId: 'industry-canvas-no-selected-resources-to-add-error',
+            position: TOAST_POSITION,
+          }
         );
-      },
-    });
+        return;
+      }
+
+      const supportedResourceItems = (
+        await Promise.all(
+          results.map(async (resourceItem) => {
+            const isSupported = await isSupportedResourceItem(
+              sdk,
+              resourceItem
+            );
+            return isSupported ? resourceItem : undefined;
+          })
+        )
+      ).filter(isNotUndefined);
+
+      if (supportedResourceItems.length === 0) {
+        // TODO: Improve messaging if selected resources are not supported
+        return;
+      }
+
+      onAddContainerReferences(
+        supportedResourceItems.map(resourceItemToContainerReference)
+      );
+    }
   };
 
   useEffect(() => {
@@ -332,6 +324,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   return (
     <>
+      <ResourceSelector
+        onSelect={onAddResourcePress}
+        visible={visibleResourceSelector}
+        onClose={onResourceSelectorClose}
+        visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
+        selectionMode="multiple"
+      />
       <PageTitle title="Industry Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
@@ -387,7 +386,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             />
           </Tooltip>
 
-          <Button onClick={onAddResourcePress}>
+          <Button onClick={onResourceSelectorOpen}>
             <Icon type="Plus" /> Add data...
           </Button>
 
