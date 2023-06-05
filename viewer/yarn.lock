@@ -832,7 +832,7 @@ __metadata:
     sparse-octree: 7.1.6
     stats.js: 0.17.0
     three: 0.152.2
-    three-stdlib: 2.23.4
+    three-stdlib: 2.23.7
     ts-jest: 29.1.0
     ts-loader: 9.4.3
     tsc-alias: 1.8.6
@@ -11387,9 +11387,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.23.4":
-  version: 2.23.4
-  resolution: "three-stdlib@npm:2.23.4"
+"three-stdlib@npm:2.23.7":
+  version: 2.23.7
+  resolution: "three-stdlib@npm:2.23.7"
   dependencies:
     "@types/draco3d": ^1.4.0
     "@types/offscreencanvas": ^2019.6.4
@@ -11404,7 +11404,7 @@ resolve@~1.19.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.128.0"
-  checksum: da676dca345841c11c9129d3d8cdf15e7d84dc958fd80833e48b9f3faf1ce166989dc17bf3aad3d70856785efdde890f4194f78b740c9f2a043a8ca1b295a407
+  checksum: 43fe585c7ddf70029f82703179bc979ca0c12a34ff868436817c58a3d3d7634145c0e79d362917c2b6d09c33fab037a5f8dfdddd8ca71efb7b559c833e83b504
   languageName: node
   linkType: hard
 
