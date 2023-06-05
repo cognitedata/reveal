@@ -32,8 +32,8 @@ export const useExpandedIdParams = (): [
   return [expandedId, setExpandedId];
 };
 
-export const useSearchQueryParams = () => {
-  const [searchParams] = useSearchParams();
+export const useSearchQueryParams = (): [string, (query?: string) => void] => {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  return searchParams.get('searchQuery') || '';
+  return [searchParams.get('searchQuery') || '', setSearchParams];
 };

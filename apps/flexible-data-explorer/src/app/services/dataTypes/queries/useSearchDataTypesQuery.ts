@@ -8,9 +8,9 @@ import { queryKeys } from '../../queryKeys';
 export const useSearchDataTypesQuery = () => {
   const client = useFDM();
 
-  const { data, isLoading } = useTypesDataModelQuery();
+  const { data } = useTypesDataModelQuery();
 
-  const query = useSearchQueryParams();
+  const [query] = useSearchQueryParams();
 
   return useQuery(
     queryKeys.searchDataTypes(query, client.getHeaders),
@@ -20,7 +20,7 @@ export const useSearchDataTypesQuery = () => {
       return results;
     },
     {
-      enabled: data !== undefined || !isLoading,
+      enabled: !!data,
     }
   );
 };

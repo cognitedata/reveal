@@ -258,7 +258,14 @@ export class FDMClient extends BaseFDMClient {
 
     const payload = query(constructPayload);
 
-    const result = await this.gqlRequest<Record<string, any>>(payload);
+    const result = await this.gqlRequest<
+      Record<
+        string,
+        {
+          items: any[];
+        }
+      >
+    >(payload);
 
     return result;
   }

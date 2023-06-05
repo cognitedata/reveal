@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import styled, { css } from 'styled-components';
 
@@ -7,6 +6,7 @@ import { Icon } from '@cognite/cogs.js';
 
 import { useClickOutsideListener } from '../../hooks/listeners/useClickOutsideListener';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useSearchQueryParams } from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
 
@@ -20,15 +20,12 @@ interface Props {
 
 export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
   const { t } = useTranslation();
+  const navigate = useNavigation();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const navigate = useNavigation();
-  const [searchParams] = useSearchParams();
-
-  const searchQuery = searchParams.get('searchQuery');
-
-  const [query, setQuery] = useState('');
+  const [queryParams] = useSearchQueryParams();
+  const [localQuery, setLocalQuery] = useState('');
   const [isFocused, setFocus] = useState(false);
 
   const closePreview = useCallback(() => {
@@ -36,10 +33,11 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
   }, []);
 
   useEffect(() => {
-    if (query !== searchQuery) {
-      setQuery(searchQuery ?? '');
+    // The query in the url have higher precedence than the local query. Make sure that it is synced.
+    if (localQuery !== queryParams) {
+      setLocalQuery(queryParams ?? '');
     }
-  }, [searchQuery]);
+  }, [queryParams]);
 
   useClickOutsideListener(closePreview, ref);
 
@@ -54,18 +52,18 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
               (e.target as any).blur();
 
               closePreview();
-              navigate.toSearchPage(query);
+              navigate.toSearchPage(localQuery);
             }
           }}
           onFocus={() => {
             setFocus(true);
           }}
-          value={query ?? ''}
+          value={localQuery ?? ''}
           placeholder={t('search_button', 'Search...')}
           onChange={(e) => {
             e.preventDefault();
 
-            setQuery(e.target.value);
+            setLocalQuery(e.target.value);
           }}
         />
 

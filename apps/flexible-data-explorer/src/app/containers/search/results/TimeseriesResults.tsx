@@ -42,7 +42,7 @@ const columns = [
 ];
 
 export const TimeseriesResults = () => {
-  const query = useSearchQueryParams();
+  const [query] = useSearchQueryParams();
   const navigate = useNavigation();
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =

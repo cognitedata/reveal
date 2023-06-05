@@ -73,6 +73,7 @@ const Header = styled.div`
   background: linear-gradient(180deg, #fafafa 0%, rgba(243, 244, 248, 0) 100%);
   backdrop-filter: blur(8px);
   z-index: ${zIndex.PAGE_HEADER};
+  padding: 0 16px;
 `;
 
 const Actions = styled.div<{ align?: 'left' | 'right' }>`
