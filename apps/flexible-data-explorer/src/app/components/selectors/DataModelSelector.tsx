@@ -97,7 +97,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background-color: var(--default-bg-color);
-  height: 100%;
+  height: calc(100% - var(--top-bar-height));
 `;
 
 const Content = styled.div`

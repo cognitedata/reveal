@@ -26,7 +26,6 @@ export const PageBody: React.FC<PropsWithChildren<Props>> = ({
 };
 
 const Container = styled.div`
-  background-color: var(--default-bg-color);
   height: 100%;
   display: flex;
   justify-content: center;
