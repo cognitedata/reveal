@@ -1,13 +1,14 @@
 import { PropsWithChildren } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { BaseWidgetProps } from '../Widget';
 
 export const WidgetBody = ({
   children,
   state,
-}: PropsWithChildren<{ state?: BaseWidgetProps['state'] }>) => {
+  fullWidth,
+}: PropsWithChildren<Pick<BaseWidgetProps, 'state' | 'fullWidth'>>) => {
   const renderContent = () => {
     if (state === 'loading') {
       return <p>Loading...</p>;
@@ -15,11 +16,19 @@ export const WidgetBody = ({
     return children;
   };
 
-  return <Container>{renderContent()}</Container>;
+  return <Container fullWidth={fullWidth}>{renderContent()}</Container>;
 };
 
-const Container = styled.div`
+const Container = styled.div<Pick<BaseWidgetProps, 'fullWidth'>>`
   padding: 16px;
   height: 100%;
   overflow: auto;
+
+  ${(props) => {
+    if (props.fullWidth) {
+      return css`
+        padding: 0;
+      `;
+    }
+  }}
 `;

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { SearchBar } from './containers/search/SearchBar';
 import { HomePage } from './pages/HomePage';
+import { FilePage } from './pages/Instances/FilePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
 import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
 import { ListPage } from './pages/ListPage';
@@ -40,6 +41,7 @@ const Routes = () => {
           <Route path="list/:dataType" element={<ListPage />} />
 
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
+          <Route path="file/:externalId" element={<FilePage />} />
 
           <Route
             path=":dataType/:instanceSpace/:externalId/overview?"
@@ -64,7 +66,7 @@ const Routes = () => {
 export default Routes;
 
 const Container = styled.div`
-  height: 100%;
+  height: calc(100% - var(--top-bar-height));
   display: flex;
   flex-direction: column;
 `;

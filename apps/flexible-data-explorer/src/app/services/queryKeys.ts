@@ -1,3 +1,5 @@
+import { FileInfo } from '@cognite/sdk/dist/src';
+
 import { DataModel, Instance } from './types';
 
 export const queryKeys = {
@@ -12,4 +14,6 @@ export const queryKeys = {
 
   instance: (instance: Instance, dataModel?: DataModel) =>
     [...queryKeys.all, 'instance', instance, dataModel] as const,
+
+  fileContainer: (file?: FileInfo) => [...queryKeys.all, 'file', file] as const,
 };

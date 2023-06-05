@@ -15,7 +15,7 @@ export const PageWidgets: React.FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <Content>
+    <Content hasExpandedWidget={!!expandedId}>
       <Container hasExpandedWidget={!!expandedId}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
@@ -68,7 +68,15 @@ const Container = styled.div<{ hasExpandedWidget: boolean }>`
   }}
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ hasExpandedWidget: boolean }>`
   display: flex;
   justify-content: center;
+
+  ${({ hasExpandedWidget }) => {
+    if (hasExpandedWidget) {
+      return css`
+        height: 100%;
+      `;
+    }
+  }}
 `;

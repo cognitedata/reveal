@@ -32,7 +32,7 @@ export const TableContainer = styled.div`
   width: 100%;
   display: flex;
   padding-bottom: 0;
-  height: 100%;
+  /* height: 100%; */
   flex-direction: column;
 `;
 

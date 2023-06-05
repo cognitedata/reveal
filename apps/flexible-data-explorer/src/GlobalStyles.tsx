@@ -28,5 +28,9 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  return <div className={styleScope.styleScope}>{props.children}</div>;
+  return (
+    <div className={styleScope.styleScope} style={{ height: '100%' }}>
+      {props.children}
+    </div>
+  );
 }

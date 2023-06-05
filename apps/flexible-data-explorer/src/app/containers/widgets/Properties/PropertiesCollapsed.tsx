@@ -30,7 +30,7 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
             const value = data?.[key];
 
             return (
-              <Content>
+              <Content key={`properties-collapsed-${key}`}>
                 <Body level={3}>{key}</Body>
                 <Body strong>{JSON.stringify(value)}</Body>
               </Content>
