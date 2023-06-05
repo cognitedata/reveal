@@ -25,6 +25,7 @@ import overlay3DIconFrag from './overlay3DIcon.frag';
 
 export type OverlayPointsParameters = {
   spriteTexture: Texture;
+  maskTexture?: Texture;
   minPixelSize: number;
   maxPixelSize: number;
   radius: number;
@@ -59,11 +60,13 @@ export class OverlayPointsObject extends Group {
       radius,
       colorTint = new Color(1, 1, 1),
       depthMode = LessEqualDepth,
-      collectionOpacity = 1
+      collectionOpacity = 1,
+      maskTexture
     } = materialParameters;
 
     const frontMaterial = this.createIconsMaterial(
       spriteTexture,
+      maskTexture,
       collectionOpacity,
       depthMode,
       minPixelSize,
@@ -75,6 +78,7 @@ export class OverlayPointsObject extends Group {
 
     const backMaterial = this.createIconsMaterial(
       spriteTexture,
+      maskTexture,
       0.5,
       GreaterDepth,
       minPixelSize,
@@ -151,7 +155,8 @@ export class OverlayPointsObject extends Group {
   }
 
   private createIconsMaterial(
-    texture: Texture,
+    colorTexture: Texture,
+    maskTexture: Texture | undefined,
     collectionOpacity: number,
     depthFunction: DepthModes,
     minPixelSize: number,
@@ -162,13 +167,17 @@ export class OverlayPointsObject extends Group {
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
-        map: { value: texture },
+        colorTexture: { value: colorTexture },
+        maskTexture: { value: maskTexture },
         radius: { value: radius },
         colorTint: { value: colorTint },
         renderSize: { value: new Vector2(1, 1) },
         collectionOpacity: { value: collectionOpacity },
         renderDownScale: { value: 1 },
         pixelSizeRange: { value: new Vector2(minPixelSize, maxPixelSize) }
+      },
+      defines: {
+        isMaskDefined: maskTexture !== undefined
       },
       vertexShader: glsl(overlay3DIconVert),
       fragmentShader: glsl(overlay3DIconFrag),

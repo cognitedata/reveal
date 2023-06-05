@@ -370,5 +370,5 @@ function isAssetLinkAnnotationData(
 }
 
 function isIdEither(assetRef: { id?: number; externalId?: string }): assetRef is IdEither {
-  return assetRef.id !== undefined && assetRef.externalId !== undefined;
+  return assetRef.id !== undefined || assetRef.externalId !== undefined;
 }

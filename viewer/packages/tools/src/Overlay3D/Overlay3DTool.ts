@@ -2,7 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/api';
-import { assertNever, EventTrigger, DisposedDelegate, PointerEventData } from '@reveal/utilities';
+import {
+  assertNever,
+  EventTrigger,
+  DisposedDelegate,
+  PointerEventData,
+  pixelToNormalizedDeviceCoordinates
+} from '@reveal/utilities';
 import * as THREE from 'three';
 import {
   Overlay3DCollection,
@@ -24,8 +30,8 @@ export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
  */
 export type OverlayEventHandler<ContentType> = (event: {
   targetOverlay: Overlay3D<ContentType>;
-  htmlOverlay: HTMLElement;
-  mousePosition: { clientX: number; clientY: number };
+  htmlTextOverlay: HTMLElement;
+  mousePosition: { offsetX: number; offsetY: number };
 }) => void;
 
 /**
@@ -45,6 +51,31 @@ export type Overlay3DToolParameters = {
 };
 
 /**
+ * Parameters for instantiating the OverlayCollection.
+ */
+export type OverlayCollectionOptions = {
+  /**
+   * Sets default overlay color for newly added overlays.
+   * Default is yellow.
+   * */
+  defaultOverlayColor?: THREE.Color;
+  /**
+   * Sets default texture for all overlays of this OverlayCollection.
+   * Must be a square texture, recommended size is at least `maxPointSize` for
+   * not pixelated overlays.
+   */
+  overlayTexture?: THREE.Texture;
+  /**
+   * Sets default mask for all overlays of this OverlayCollection,
+   * denoting where overlay color should be placed compared to texture color.
+   * Must be a square texture with the same size as `overlayTexture`.
+   * Texture should be monochrome. Internally, R channel is used for
+   * denoting pixels that should be colored by texture and not by overlay color.
+   */
+  overlayTextureMask?: THREE.Texture;
+};
+
+/**
  * Tool for adding and interacting with 2D overlays positioned at points in
  */
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
@@ -58,7 +89,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
   private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
-  private _textOverlayVisible = true;
+  private _textOverlayVisible = false;
 
   private readonly _events = {
     hover: new EventTrigger<OverlayEventHandler<ContentType>>(),
@@ -85,11 +116,16 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
    * @param overlays Array of overlays to add.
    * @returns Overlay group containing it's id.
    */
-  createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType> {
+  createOverlayCollection(
+    overlays?: OverlayInfo<ContentType>[],
+    options?: OverlayCollectionOptions
+  ): OverlayCollection<ContentType> {
     const { _viewer: viewer } = this;
 
     const points = new Overlay3DCollection<ContentType>(overlays, {
-      defaultOverlayColor: this._defaultOverlayColor
+      defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor,
+      overlayTexture: options?.overlayTexture,
+      overlayTextureMask: options?.overlayTextureMask
     });
 
     viewer.on('cameraChange', () => {
@@ -147,6 +183,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
   /**
    * Sets whether text overlay is visible.
+   * Default is false.
    */
   setTextOverlayVisible(visible: boolean): void {
     this._textOverlayVisible = visible;
@@ -234,24 +271,26 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   private readonly onMouseMove = (event: MouseEvent) => {
     const { _textOverlay: textOverlay } = this;
 
-    const intersectedOverlay = this.intersectPointsMarkers(event);
-
+    const intersectedOverlay = this.intersectPointsMarkers({ offsetX: event.offsetX, offsetY: event.offsetY });
     if (intersectedOverlay) {
       this.positionTextOverlay(event);
-      this._events.hover.fire({ targetOverlay: intersectedOverlay, mousePosition: event, htmlOverlay: textOverlay });
+      this._events.hover.fire({
+        targetOverlay: intersectedOverlay,
+        mousePosition: event,
+        htmlTextOverlay: textOverlay
+      });
     } else {
       textOverlay.style.opacity = '0';
     }
   };
 
   private readonly onMouseClick = (event: PointerEventData) => {
-    const intersectedOverlay = this.intersectPointsMarkers({ clientX: event.offsetX, clientY: event.offsetY });
-
+    const intersectedOverlay = this.intersectPointsMarkers({ offsetX: event.offsetX, offsetY: event.offsetY });
     if (intersectedOverlay) {
       this._events.click.fire({
         targetOverlay: intersectedOverlay,
-        htmlOverlay: this._textOverlay,
-        mousePosition: { clientX: event.offsetX, clientY: event.offsetY }
+        htmlTextOverlay: this._textOverlay,
+        mousePosition: { offsetX: event.offsetX, offsetY: event.offsetY }
       });
     }
   };
@@ -263,10 +302,16 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     _textOverlay.style.opacity = _textOverlayVisible ? '1' : '0';
   }
 
-  private intersectPointsMarkers(mouseCoords: { clientX: number; clientY: number }): Overlay3DIcon<ContentType> | null {
+  private intersectPointsMarkers(mouseCoords: { offsetX: number; offsetY: number }): Overlay3DIcon<ContentType> | null {
     const { _viewer, _raycaster, _temporaryVec } = this;
+    const { clientWidth, clientHeight } = _viewer.domElement;
 
-    const { x, y } = this.convertPixelCoordinatesToNormalized(mouseCoords, _viewer.domElement);
+    const { x, y } = pixelToNormalizedDeviceCoordinates(
+      mouseCoords.offsetX,
+      mouseCoords.offsetY,
+      clientWidth,
+      clientHeight
+    );
     const camera = _viewer.cameraManager.getCamera();
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     _raycaster.setFromCamera(_temporaryVec.set(x, y), camera);
@@ -306,20 +351,6 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     }
 
     return null;
-  }
-
-  private convertPixelCoordinatesToNormalized(
-    mouseCoords: { clientX: number; clientY: number },
-    domElement: HTMLElement
-  ) {
-    const clientRect = domElement.getBoundingClientRect();
-    const pixelX = mouseCoords.clientX - clientRect.left;
-    const pixelY = mouseCoords.clientY - clientRect.top;
-
-    const x = (pixelX / domElement.clientWidth) * 2 - 1;
-    const y = (pixelY / domElement.clientHeight) * -2 + 1;
-
-    return { x, y };
   }
 
   private createTextOverlay(text: string, horizontalOffset: number): HTMLElement {

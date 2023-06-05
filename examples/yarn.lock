@@ -3835,10 +3835,10 @@ text-segmentation@^1.0.3:
   dependencies:
     utrie "^1.0.2"
 
-three-stdlib@2.21.11:
-  version "2.21.11"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.11.tgz#ee058f1522edf17f994b4a80307568dd553bd52e"
-  integrity sha512-fFeaMOc3lpup4A/FrSKHmp/PNYmyxyV8dzMorJpYyZBdIGAn5BmokGSN9ei8t7Wv9thxCW+VLaxA6csxTl5MYg==
+three-stdlib@2.22.4:
+  version "2.22.4"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.22.4.tgz#82d03a68a68edd1f0e7f0505a8172d3066de821b"
+  integrity sha512-p0weU9twEEaXxZF1b5eG7eWJ7br8DlfggjeDC2ATwP7yArJjPYhEZ2HTk/fJHl394SMPJf365P4yENNFoUqcgA==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"

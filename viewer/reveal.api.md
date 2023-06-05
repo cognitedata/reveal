@@ -351,6 +351,7 @@ export class Cognite3DViewer {
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
+    get360ImageCollections(): Image360Collection[];
     // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
     getGlobalClippingPlanes(): THREE_2.Plane[];
@@ -382,7 +383,9 @@ export class Cognite3DViewer {
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
+    // @deprecated
     remove360Images(...image360Entities: Image360[]): Promise<void>;
+    remove360ImageSet(imageCollection: Image360Collection): void;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
     get renderParameters(): RenderParameters;
@@ -840,7 +843,7 @@ export type Image360AnnotationIntersection = {
 
 // @public
 export interface Image360Collection {
-    findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     readonly id: string;
@@ -1202,7 +1205,7 @@ export interface Overlay3D<ContentType> {
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
     clear(): void;
-    createOverlayCollection(overlays?: OverlayInfo<ContentType>[]): OverlayCollection<ContentType>;
+    createOverlayCollection(overlays?: OverlayInfo<ContentType>[], options?: OverlayCollectionOptions): OverlayCollection<ContentType>;
     dispose(): void;
     getCollections(): OverlayCollection<ContentType>[];
     getTextOverlayVisible(): boolean;
@@ -1239,12 +1242,19 @@ export interface OverlayCollection<ContentType> {
 }
 
 // @public
+export type OverlayCollectionOptions = {
+    defaultOverlayColor?: THREE_2.Color;
+    overlayTexture?: THREE_2.Texture;
+    overlayTextureMask?: THREE_2.Texture;
+};
+
+// @public
 export type OverlayEventHandler<ContentType> = (event: {
     targetOverlay: Overlay3D<ContentType>;
-    htmlOverlay: HTMLElement;
+    htmlTextOverlay: HTMLElement;
     mousePosition: {
-        clientX: number;
-        clientY: number;
+        offsetX: number;
+        offsetY: number;
     };
 }) => void;
 

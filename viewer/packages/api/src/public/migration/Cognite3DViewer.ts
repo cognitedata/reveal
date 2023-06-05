@@ -818,14 +818,30 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Returns a list of added 360 image collections.
+   */
+  get360ImageCollections(): Image360Collection[] {
+    return this._image360ApiHelper?.getImageCollections() ?? [];
+  }
+
+  /**
    * Remove a set of 360 images.
    * @param image360Entities
+   * @deprecated
    */
   remove360Images(...image360Entities: Image360[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.remove360Images(image360Entities.map(entity => entity as Image360Entity));
+  }
+
+  /**
+   * Removes a previously added 360 image collection from the viewer.
+   * @param imageCollection Collection to remove.
+   */
+  remove360ImageSet(imageCollection: Image360Collection): void {
+    this._image360ApiHelper?.remove360ImageCollection(imageCollection);
   }
 
   /**

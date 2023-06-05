@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.2.0",
+  "version": "4.3.1",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -76,7 +76,7 @@
     "rxjs": "7.8.1",
     "skmeans": "0.11.3",
     "sparse-octree": "7.1.6",
-    "three-stdlib": "2.22.4"
+    "three-stdlib": "2.23.7"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.37.0",
@@ -85,7 +85,7 @@
     "@types/dat.gui": "0.7.10",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
-    "@types/jest": "29.5.1",
+    "@types/jest": "29.5.2",
     "@types/jest-environment-puppeteer": "5.0.3",
     "@types/jest-image-snapshot": "6.1.0",
     "@types/jsdom": "21.1.1",
@@ -97,8 +97,8 @@
     "@types/stats": "0.16.30",
     "@types/three": "0.152.1",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.59.7",
-    "@typescript-eslint/parser": "5.59.7",
+    "@typescript-eslint/eslint-plugin": "5.59.8",
+    "@typescript-eslint/parser": "5.59.8",
     "concurrently": "8.0.1",
     "cross-env": "7.0.3",
     "dat.gui": "0.7.9",
@@ -120,7 +120,7 @@
     "jest-extended": "3.2.4",
     "jest-image-snapshot": "6.1.0",
     "jest-puppeteer": "8.0.6",
-    "jsdom": "22.0.0",
+    "jsdom": "22.1.0",
     "moq.ts": "10.0.6",
     "nock": "13.3.1",
     "prettier": "2.8.8",
