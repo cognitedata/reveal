@@ -118,12 +118,25 @@ const actionRenderers = {
 
 const TextMessage = ({
   message: {
-    data: { content },
+    data: { content, actions },
   },
 }: {
   message: { data: CopilotTextMessage };
 }) => {
-  return <Body level={2}>{content}</Body>;
+  return (
+    <Flex direction="column" gap={4}>
+      <Body level={2}>{content}</Body>
+      {actions && (
+        <Flex gap={4}>
+          {actions.map((el) => (
+            <Button onClick={el.onClick} key={el.content}>
+              {el.content}
+            </Button>
+          ))}
+        </Flex>
+      )}
+    </Flex>
+  );
 };
 const CodeMessage = ({
   message: {

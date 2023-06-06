@@ -1,9 +1,13 @@
-export type CopilotSupportedFeatureType = 'Streamlit';
+export type CopilotSupportedFeatureType = 'Streamlit' | 'IndustryCanvas';
+
+type DefaultMessage = {
+  actions?: CopilotAction[];
+};
 
 export type CopilotTextMessage = {
   type: 'text';
   content: string;
-};
+} & DefaultMessage;
 
 export type CopilotCodeMessage = {
   type: 'code';
@@ -11,8 +15,7 @@ export type CopilotCodeMessage = {
   prevContent?: string;
   highlightLines?: [number, number][]; // [start, end]
   language: 'python';
-  actions?: CopilotAction[];
-};
+} & DefaultMessage;
 
 export type CopilotUserMessage = CopilotTextMessage;
 export type CopilotBotMessage = CopilotTextMessage | CopilotCodeMessage;

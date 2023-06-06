@@ -61,7 +61,11 @@ export interface StreamlitEvents extends CopilotEvents {
 
 Also in this example, we gave unique names for each Event, this is not required, but makes debugging easier.
 
-Now, lets say in `processMessage`, you want to trigger an event to get all the code, then you can do the following.
+**Copilot side**
+
+Now, lets say in `processMessage` in Copilot, you want to trigger an event to get all the code, then you can do the following.
+
+In this case, you want to add a way to listen to `GET_CODE_RESPONSE` from the App, and then send a `GET_CODE` to the App.
 
 ```typescript
 // creates a listener for `GET_CODE_RESPONSE` from Copilot, we will use the returned function later
@@ -77,11 +81,16 @@ const removeEventListener = addToCopilotEventListener<StreamlitEvents>(
     removeEventListener();
   })
 );
+
 // send the event to the App (from the Copilot) to trigger a response.
-window.dispatchEvent(FromCopilotEvent<StreamlitEvents, 'GET_CODE'>('GET_CODE', null));
+sendFromCopilotEvent<StreamlitEvents, 'GET_CODE'>('GET_CODE', null);
 ```
 
+**App side**
+
 You would do the inverse of the To/From but the same logic as above in the app. However, you can also use the provided hook builder - `createCopilotEventHandlerHooks`.
+
+In this case you are listening to `GET_CODE` from the Copilot, and then sending a `GET_CODE_RESPONSE` to the Copilot.
 
 ```typescript
 export const { useToCopilotEventHandler, useFromCopilotEventHandler } = createCopilotEventHandlerHooks<StreamlitEvents>();
@@ -91,12 +100,10 @@ export const { useToCopilotEventHandler, useFromCopilotEventHandler } = createCo
 
 // creates a handler for `GET_CODE` from Copilot
 const handler = useCallback(() => {
-  window.dispatchEvent(
-    // send a `GET_CODE_RESPONSE` to Copilot
-    ToCopilotEvent<StreamlitEvents, 'GET_CODE_RESPONSE'>('GET_CODE_RESPONSE', {
-      content: editorRef?.getModel()?.getValue(),
-    })
-  );
+  // send a `GET_CODE_RESPONSE` to Copilot
+  sendToCopilotEvent<StreamlitEvents, 'GET_CODE_RESPONSE'>('GET_CODE_RESPONSE', {
+    content: editorRef?.getModel()?.getValue(),
+  });
 });
 
 // creates a listener for `GET_CODE` from Copilot
