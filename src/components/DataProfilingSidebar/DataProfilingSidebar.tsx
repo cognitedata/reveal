@@ -5,7 +5,7 @@
 import styled from 'styled-components/macro';
 import { FunctionComponent, useState, useMemo } from 'react';
 import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
-import { Chart } from 'models/chart/types';
+import { Chart, ChartSource } from 'models/chart/types';
 import { makeDefaultTranslations } from 'utils/translations';
 import { StatusStatusEnum } from '@cognite/calculation-backend';
 import {
@@ -18,7 +18,6 @@ import {
   SidebarFormLabel,
   SourceSelect,
 } from 'components/Common/SidebarElements';
-import { SourceList, Source } from 'domain/chart/types';
 import { convertMillisecondsToSeconds } from './helpers';
 import Boxplot from './Boxplot';
 import Metrics from './Metrics';
@@ -115,7 +114,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               ...chart?.workflowCollection?.find((flow) => flow.id === x.id),
             }),
       }))
-      .filter(Boolean) as SourceList;
+      .filter(Boolean) as ChartSource[];
   }, [
     chart.sourceCollection,
     chart.timeSeriesCollection,
@@ -133,7 +132,9 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
     },
   ];
 
-  const [selectedSource, setSelectedSource] = useState<Source | undefined>();
+  const [selectedSource, setSelectedSource] = useState<
+    ChartSource | undefined
+  >();
   const [selectedDistribution, setselectedDistribution] =
     useState<DistributionOptionType>(distributionOptions[0]);
 

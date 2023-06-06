@@ -3,16 +3,15 @@
  */
 
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
-import { FunctionComponent, useEffect, useMemo } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { omit } from 'lodash';
 import { useTranslations } from 'hooks/translations';
 import {
   Chart,
+  ChartSource,
   ChartThreshold,
   ChartThresholdEventFilter,
-  ChartTimeSeries,
-  ChartWorkflow,
 } from 'models/chart/types';
 import {
   addChartThreshold,
@@ -35,11 +34,7 @@ import {
   ContentOverflowWrapper,
 } from 'components/Common/SidebarElements';
 import useThresholdsResults from 'hooks/threshold-calculations';
-
-type OptionType = {
-  value: string;
-  label: string;
-};
+import { useChartSourcesValue } from 'models/chart/selectors';
 
 type Props = {
   visible: boolean;
@@ -57,26 +52,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
   _useThresholds,
 }: Props) => {
   const { t } = useTranslations(Thresholds.translationKeys, 'ThresholdSidebar');
-
-  const availableSources = useMemo(() => {
-    return (chart.sourceCollection ?? [])
-      .map((x) =>
-        x.type === 'timeseries'
-          ? {
-              type: 'timeseries',
-              ...chart?.timeSeriesCollection?.find((ts) => ts.id === x.id),
-            }
-          : {
-              type: 'workflow',
-              ...chart?.workflowCollection?.find((flow) => flow.id === x.id),
-            }
-      )
-      .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
-  }, [
-    chart.sourceCollection,
-    chart.timeSeriesCollection,
-    chart.workflowCollection,
-  ]);
+  const sources = useChartSourcesValue();
 
   const handleAddThreshold = () => {
     const thresholdCount = chart.thresholdCollection?.length || 0;
@@ -107,9 +83,9 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
     );
   };
 
-  const handleChangeSelectedSource = (id: string, source: OptionType) => {
+  const handleChangeSelectedSource = (id: string, source: ChartSource) => {
     updateChart((oldChart) =>
-      updateChartThresholdSelectedSource(oldChart!, id, source.value)
+      updateChartThresholdSelectedSource(oldChart!, id, source.id)
     );
   };
 
@@ -180,7 +156,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
       <ContentOverflowWrapper>
         <Thresholds
           thresholds={chart.thresholdCollection || []}
-          sources={availableSources}
+          sources={sources}
           onRemoveThreshold={handleRemoveThreshold}
           onToggleThreshold={handleToggleThreshold}
           onDuplicateThreshold={handleDuplicateThreshold}

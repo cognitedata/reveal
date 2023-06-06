@@ -1,5 +1,10 @@
 import { useEffect, useCallback } from 'react';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+  ChartSource,
+} from 'models/chart/types';
 import { useSDK } from '@cognite/sdk-provider';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
@@ -19,12 +24,13 @@ import {
 } from '@cognite/calculation-backend';
 
 export const useDataProfiling = (
-  sourceItem: ChartTimeSeries | ChartWorkflow | undefined,
+  sourceItem: ChartSource | undefined,
   dateFrom: string,
   dateTo: string,
   enabled: boolean
 ) => {
   const sdk = useSDK();
+  // @ts-ignore todo(DEGR-2458) should dataProfiling be enabled for scheduled calculation?
   const dataProfilingCall = sourceItem?.dataProfilingCalls?.[0];
   const [, setChart] = useRecoilState(chartAtom);
   const sourceId = sourceItem?.id;

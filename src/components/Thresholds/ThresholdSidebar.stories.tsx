@@ -12,6 +12,7 @@ type Props = React.ComponentProps<typeof ThresholdSidebar>;
 export default {
   component: ThresholdSidebar,
   title: 'Components/Thresholds/Sidebar',
+  decorators: [(story) => <RecoilRoot>{story()}</RecoilRoot>],
 } as Meta;
 
 const useThresholdsMock: typeof useThresholdsResults = () => {
@@ -58,9 +59,7 @@ const MockedThresholdSidebar = (args: any) => {
 const Template: Story<Props> = (args) => {
   return (
     <div style={{ width: '400px' }}>
-      <RecoilRoot>
-        <MockedThresholdSidebar {...args} />
-      </RecoilRoot>
+      <MockedThresholdSidebar {...args} />
     </div>
   );
 };

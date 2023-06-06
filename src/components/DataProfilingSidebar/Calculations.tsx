@@ -4,12 +4,7 @@
 
 import { FunctionComponent, useState } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
-import {
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-  ChartWorkflowV2,
-} from 'models/chart/types';
+import { Chart, ChartSource, ChartWorkflowV2 } from 'models/chart/types';
 import { Switch } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 import { getEntryColor } from 'utils/colors';
@@ -22,7 +17,7 @@ import { addWorkflow, removeSource } from 'models/chart/updates';
 
 type Props = {
   chart: Chart;
-  source: ChartTimeSeries | ChartWorkflow;
+  source: ChartSource;
   updateChart: (update: (c: Chart | undefined) => Chart) => void;
 };
 

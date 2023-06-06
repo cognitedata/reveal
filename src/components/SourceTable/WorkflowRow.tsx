@@ -15,6 +15,7 @@ import { formatValueForDisplay } from 'utils/numbers';
 import { WorkflowState } from 'models/calculation-results/types';
 import { getIconTypeFromStatus } from 'components/StatusIcon/StatusIcon';
 import AlertIcon from 'components/AlertIcon/AlertIcon';
+import { ScheduledCalculationModal } from 'components/ScheduledCalculation/ScheduledCalculationModal';
 import {
   DropdownWithoutMaxWidth,
   SourceDescription,
@@ -65,7 +66,8 @@ const defaultTranslations = makeDefaultTranslations(
   'Remove this calculation?',
   'Edit calculation',
   'Duplicate',
-  'Threshold'
+  'Threshold',
+  'Save & Schedule'
 );
 
 function WorkflowRow({
@@ -92,6 +94,7 @@ function WorkflowRow({
   onDuplicateCalculation = () => {},
 }: Props) {
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+  const [sCModalVisible, setSCModalVisible] = useState<boolean>(false);
   const {
     id,
     enabled,
@@ -122,201 +125,216 @@ function WorkflowRow({
   const status = calculationResult?.status;
 
   return (
-    <SourceRow
-      onClick={() => onRowClick(id)}
-      aria-hidden={!enabled}
-      aria-selected={isSelected}
-      onDoubleClick={openNodeEditor}
-      ref={draggable ? provided?.innerRef : null}
-      {...provided?.draggableProps}
-      {...provided?.dragHandleProps}
-    >
-      <td
-        style={{ textAlign: 'center', paddingLeft: 0 }}
-        className="downloadChartHide"
+    <>
+      <SourceRow
+        onClick={() => onRowClick(id)}
+        aria-hidden={!enabled}
+        aria-selected={isSelected}
+        onDoubleClick={openNodeEditor}
+        ref={draggable ? provided?.innerRef : null}
+        {...provided?.draggableProps}
+        {...provided?.dragHandleProps}
       >
-        <DropdownWithoutMaxWidth
-          disabled={!enabled}
-          content={
-            <AppearanceDropdown
-              selectedColor={color}
-              selectedLineStyle={lineStyle}
-              selectedLineWeight={lineWeight}
-              selectedInterpolation={interpolation}
-              onUpdate={onUpdateAppearance}
-              translations={
-                useTranslations(
-                  AppearanceDropdown.translationKeys,
-                  'AppearanceDropdown'
-                ).t
-              }
-            />
-          }
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
         >
-          <StyleButton
+          <DropdownWithoutMaxWidth
             disabled={!enabled}
-            icon="Function"
-            styleColor={color}
-            label="Workflow Function"
-          />
-        </DropdownWithoutMaxWidth>
-      </td>
-      <td>
-        <SourceItem disabled={!enabled} key={id}>
-          <SourceStatus
-            onClick={(event) => {
-              event.stopPropagation();
-              onStatusIconClick();
-            }}
-            onDoubleClick={(event) => event.stopPropagation()}
+            content={
+              <AppearanceDropdown
+                selectedColor={color}
+                selectedLineStyle={lineStyle}
+                selectedLineWeight={lineWeight}
+                selectedInterpolation={interpolation}
+                onUpdate={onUpdateAppearance}
+                translations={
+                  useTranslations(
+                    AppearanceDropdown.translationKeys,
+                    'AppearanceDropdown'
+                  ).t
+                }
+              />
+            }
           >
-            <StyledVisibilityIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
-          </SourceStatus>
-          <SourceName>
-            <TranslatedEditableText
-              isError={hasError}
-              value={name || 'noname'}
-              onChange={(value) => {
-                onUpdateName(value);
-                setIsEditingName(false);
+            <StyleButton
+              disabled={!enabled}
+              icon="Function"
+              styleColor={color}
+              label="Workflow Function"
+            />
+          </DropdownWithoutMaxWidth>
+        </td>
+        <td>
+          <SourceItem disabled={!enabled} key={id}>
+            <SourceStatus
+              onClick={(event) => {
+                event.stopPropagation();
+                onStatusIconClick();
               }}
-              onCancel={() => setIsEditingName(false)}
-              editing={isEditingName}
-              hideButtons
-            />
-          </SourceName>
-          {call && status === 'Running' && (
-            <StyledStatusIcon type={getIconTypeFromStatus(status)} />
-          )}
-        </SourceItem>
-      </td>
-      {isWorkspaceMode && (
-        <>
-          <td className="bordered col-status">
-            {hasError && status === 'Success' && (
-              <AlertIcon
-                icon="ErrorFilled"
-                variant="danger"
-                onClick={() => onErrorIconClick(id)}
-                onDoubleClick={(event) => event.stopPropagation()}
+              onDoubleClick={(event) => event.stopPropagation()}
+            >
+              <StyledVisibilityIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
+            </SourceStatus>
+            <SourceName>
+              <TranslatedEditableText
+                isError={hasError}
+                value={name || 'noname'}
+                onChange={(value) => {
+                  onUpdateName(value);
+                  setIsEditingName(false);
+                }}
+                onCancel={() => setIsEditingName(false)}
+                editing={isEditingName}
+                hideButtons
               />
+            </SourceName>
+            {call && status === 'Running' && (
+              <StyledStatusIcon type={getIconTypeFromStatus(status)} />
             )}
-            {!hasError && hasWarning && status === 'Success' && (
-              <AlertIcon
-                icon="WarningFilled"
-                variant="warning"
-                onClick={() => onErrorIconClick(id)}
-                onDoubleClick={(event) => event.stopPropagation()}
+          </SourceItem>
+        </td>
+        {isWorkspaceMode && (
+          <>
+            <td className="bordered col-status">
+              {hasError && status === 'Success' && (
+                <AlertIcon
+                  icon="ErrorFilled"
+                  variant="danger"
+                  onClick={() => onErrorIconClick(id)}
+                  onDoubleClick={(event) => event.stopPropagation()}
+                />
+              )}
+              {!hasError && hasWarning && status === 'Success' && (
+                <AlertIcon
+                  icon="WarningFilled"
+                  variant="warning"
+                  onClick={() => onErrorIconClick(id)}
+                  onDoubleClick={(event) => event.stopPropagation()}
+                />
+              )}
+            </td>
+            <td className="bordered" />
+            <td className="bordered">
+              <SourceItem disabled={!enabled}>
+                <SourceName>
+                  <SourceDescription>
+                    <Tooltip content={name || 'noname'} maxWidth={350}>
+                      <>{name || 'noname'}</>
+                    </Tooltip>
+                  </SourceDescription>
+                </SourceName>
+              </SourceItem>
+            </td>
+            <td className="bordered">
+              <SourceItem disabled={!isVisible}>
+                {formatValueForDisplay(summary?.min)}
+              </SourceItem>
+            </td>
+            <td className="bordered">
+              <SourceItem disabled={!isVisible}>
+                {formatValueForDisplay(summary?.max)}
+              </SourceItem>
+            </td>
+            <td className="bordered">
+              <SourceItem disabled={!isVisible}>
+                {formatValueForDisplay(summary?.mean)}
+              </SourceItem>
+            </td>
+            <td className="col-unit">
+              <UnitDropdown
+                unit={unit}
+                preferredUnit={preferredUnit}
+                customUnitLabel={customUnitLabel}
+                onOverrideUnitClick={onOverrideUnitClick}
+                onConversionUnitClick={onConversionUnitClick}
+                onResetUnitClick={onResetUnitClick}
+                onCustomUnitLabelClick={onCustomUnitLabelClick}
+                translations={unitDropdownTranslations}
               />
-            )}
-          </td>
-          <td className="bordered" />
-          <td className="bordered">
-            <SourceItem disabled={!enabled}>
-              <SourceName>
-                <SourceDescription>
-                  <Tooltip content={name || 'noname'} maxWidth={350}>
-                    <>{name || 'noname'}</>
-                  </Tooltip>
-                </SourceDescription>
-              </SourceName>
-            </SourceItem>
-          </td>
-          <td className="bordered">
-            <SourceItem disabled={!isVisible}>
-              {formatValueForDisplay(summary?.min)}
-            </SourceItem>
-          </td>
-          <td className="bordered">
-            <SourceItem disabled={!isVisible}>
-              {formatValueForDisplay(summary?.max)}
-            </SourceItem>
-          </td>
-          <td className="bordered">
-            <SourceItem disabled={!isVisible}>
-              {formatValueForDisplay(summary?.mean)}
-            </SourceItem>
-          </td>
-          <td className="col-unit">
-            <UnitDropdown
-              unit={unit}
-              preferredUnit={preferredUnit}
-              customUnitLabel={customUnitLabel}
-              onOverrideUnitClick={onOverrideUnitClick}
-              onConversionUnitClick={onConversionUnitClick}
-              onResetUnitClick={onResetUnitClick}
-              onCustomUnitLabelClick={onCustomUnitLabelClick}
-              translations={unitDropdownTranslations}
-            />
-          </td>
-          <td className="downloadChartHide col-action" />
-          <td
-            style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide col-action"
-          >
-            <Popconfirm
-              onConfirm={onRemoveSourceClick}
-              okText={t.Remove}
-              cancelText={t.Cancel}
-              content={
-                <div style={{ textAlign: 'left' }}>
-                  {t['Remove this calculation?']}
-                </div>
-              }
+            </td>
+            <td className="downloadChartHide col-action" />
+            <td
+              style={{ textAlign: 'center', paddingLeft: 0 }}
+              className="downloadChartHide col-action"
+            >
+              <Popconfirm
+                onConfirm={onRemoveSourceClick}
+                okText={t.Remove}
+                cancelText={t.Cancel}
+                content={
+                  <div style={{ textAlign: 'left' }}>
+                    {t['Remove this calculation?']}
+                  </div>
+                }
+              >
+                <Button
+                  type="ghost"
+                  icon="Delete"
+                  style={{ height: 28 }}
+                  aria-label="delete"
+                />
+              </Popconfirm>
+            </td>
+            <td
+              style={{ textAlign: 'center', paddingLeft: 0 }}
+              className="downloadChartHide col-action"
             >
               <Button
                 type="ghost"
-                icon="Delete"
+                icon="Info"
+                onClick={(event) => {
+                  if (isSelected) {
+                    event.stopPropagation();
+                  }
+                  onInfoClick(id);
+                }}
                 style={{ height: 28 }}
-                aria-label="delete"
+                aria-label="info"
               />
-            </Popconfirm>
-          </td>
-          <td
-            style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide col-action"
-          >
-            <Button
-              type="ghost"
-              icon="Info"
-              onClick={(event) => {
-                if (isSelected) {
-                  event.stopPropagation();
-                }
-                onInfoClick(id);
-              }}
-              style={{ height: 28 }}
-              aria-label="info"
-            />
-          </td>
-          <td
-            style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHide col-action"
-          >
-            <Dropdown.Uncontrolled
-              options={[
-                {
-                  label: t['Edit calculation'],
-                  icon: 'Function',
-                  onClick: openNodeEditor,
-                },
-                {
-                  label: t.Duplicate,
-                  icon: 'Duplicate',
-                  /**
-                   * TODO: Move this logic out and pass back in as prop
-                   */
-                  onClick: () => {
-                    onDuplicateCalculation();
-                    trackUsage('ChartView.DuplicateCalculation');
+            </td>
+            <td
+              style={{ textAlign: 'center', paddingLeft: 0 }}
+              className="downloadChartHide col-action"
+            >
+              <Dropdown.Uncontrolled
+                options={[
+                  {
+                    label: t['Edit calculation'],
+                    icon: 'Function',
+                    onClick: openNodeEditor,
                   },
-                },
-              ]}
-            />
-          </td>
-        </>
-      )}
-    </SourceRow>
+                  {
+                    label: t.Duplicate,
+                    icon: 'Duplicate',
+                    /**
+                     * TODO: Move this logic out and pass back in as prop
+                     */
+                    onClick: () => {
+                      onDuplicateCalculation();
+                      trackUsage('ChartView.DuplicateCalculation');
+                    },
+                  },
+                  {
+                    label: t['Save & Schedule'],
+                    icon: 'Clock',
+                    onClick: () => {
+                      setSCModalVisible(true);
+                    },
+                  },
+                ]}
+              />
+            </td>
+          </>
+        )}
+      </SourceRow>
+      {sCModalVisible ? (
+        <ScheduledCalculationModal
+          workflowId={workflow.id}
+          onClose={() => setSCModalVisible(false)}
+        />
+      ) : null}
+    </>
   );
 }
 

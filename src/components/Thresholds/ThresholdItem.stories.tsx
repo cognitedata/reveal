@@ -3,6 +3,7 @@
  */
 import { Meta, Story } from '@storybook/react';
 import useThresholdsResults from 'hooks/threshold-calculations';
+import { RecoilRoot } from 'recoil';
 import ThresholdItem from './ThresholdItem';
 
 type Props = React.ComponentProps<typeof ThresholdItem>;
@@ -10,6 +11,7 @@ type Props = React.ComponentProps<typeof ThresholdItem>;
 export default {
   component: ThresholdItem,
   title: 'Components/Thresholds/Item',
+  decorators: [(story) => <RecoilRoot>{story()}</RecoilRoot>],
 } as Meta;
 
 const storyStyles = {

@@ -221,6 +221,7 @@ export const ScheduledCalculationRow = ({
               unit={unit}
               preferredUnit={preferredUnit}
               customUnitLabel={customUnitLabel}
+              originalUnit={scheduledCalculationResult?.series?.unit}
               onOverrideUnitClick={onOverrideUnitClick}
               onConversionUnitClick={onConversionUnitClick}
               onResetUnitClick={onResetUnitClick}

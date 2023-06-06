@@ -1,9 +1,5 @@
 import { ComponentProps, useState } from 'react';
-import {
-  ChartThreshold,
-  ChartTimeSeries,
-  ChartWorkflow,
-} from 'models/chart/types';
+import { ChartSource, ChartThreshold } from 'models/chart/types';
 import ThresholdItem from 'components/Thresholds/ThresholdItem';
 import { Button, Collapse } from '@cognite/cogs.js';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
@@ -18,7 +14,7 @@ import {
 interface Props
   extends Omit<ComponentProps<typeof ThresholdItem>, 'threshold'> {
   thresholds: ChartThreshold[];
-  sources: (ChartTimeSeries | ChartWorkflow)[];
+  sources: ChartSource[];
   onUpdateThresholdName: (id: string, name: string) => void;
   onAddThreshold: () => void;
 }

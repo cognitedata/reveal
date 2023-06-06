@@ -3,7 +3,6 @@ import {
   Button,
   Collapse,
   Flex,
-  IconType,
   Input,
   Popconfirm,
   Select,
@@ -11,6 +10,7 @@ import {
 import { Col, Row } from 'antd';
 import useThresholdsResults from 'hooks/threshold-calculations';
 import {
+  ChartSource,
   ChartThreshold,
   ChartThresholdEventFilter,
   ChartTimeSeries,
@@ -25,11 +25,11 @@ import {
   ExpandIcon,
   SidebarInnerCollapse,
   FilterSelect,
-  SourceSelect,
   SidebarFormLabel,
   SidebarInnerBox,
   SidebarChip,
 } from 'components/Common/SidebarElements';
+import { SourceSelector } from 'components/Common/SourceSelector';
 
 import { useFilterValue } from './useFilterValue';
 
@@ -59,7 +59,7 @@ type OptionType = {
 
 type Props = {
   threshold: ChartThreshold;
-  sources: (ChartTimeSeries | ChartWorkflow)[];
+  sources: ChartSource[];
   onRemoveThreshold: (diff: any) => void;
   onToggleThreshold: (id: string, visibility: boolean) => void;
   onDuplicateThreshold: (id: string) => void;
@@ -154,19 +154,6 @@ const ThresholdItem = ({
   const { data } = _useThresholds(threshold, selectedSourceType!, identifier!);
 
   const result = data ? data.results : undefined;
-
-  const selectedOptionIcon: IconType =
-    sources.find((item) => item.id === selectedSource?.id)?.type === 'workflow'
-      ? 'Function'
-      : 'Timeseries';
-
-  const selectedOptionColor: string =
-    sources.find((item) => item.id === selectedSource?.id)?.color || '#ccc';
-
-  const sourceOptions: OptionType[] = sources.map((item) => ({
-    value: item.id,
-    label: item.name,
-  }));
 
   const currentInputUnit = selectedSource?.unit;
   const currentOutputUnit = selectedSource?.preferredUnit;
@@ -301,15 +288,9 @@ const ThresholdItem = ({
   return (
     <>
       <SidebarFormLabel>{t.Source}</SidebarFormLabel>
-      <SourceSelect
-        iconBg={selectedOptionColor}
-        options={sourceOptions}
-        icon={selectedOptionIcon}
-        value={{
-          value: selectedSource?.id || 'not-selected',
-          label: selectedSource?.name || 'Please select',
-        }}
-        onChange={(source: OptionType) => onSelectSource(threshold.id, source)}
+      <SourceSelector
+        onChange={(source: ChartSource) => onSelectSource(threshold.id, source)}
+        value={selectedSource}
       />
       <SidebarFormLabel>{t.Type}:</SidebarFormLabel>
       <Row justify="space-between" gutter={8}>

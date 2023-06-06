@@ -6,6 +6,7 @@ import { useArgs } from '@storybook/client-api';
 import useThresholdsResults from 'hooks/threshold-calculations';
 import { ChartThreshold } from 'models/chart/types';
 import { v4 as uuidv4 } from 'uuid';
+import { RecoilRoot } from 'recoil';
 import ThresholdsComponent from './Thresholds';
 
 type Props = React.ComponentProps<typeof ThresholdsComponent>;
@@ -13,6 +14,7 @@ type Props = React.ComponentProps<typeof ThresholdsComponent>;
 export default {
   component: ThresholdsComponent,
   title: 'Components/Thresholds/Collapse',
+  decorators: [(story) => <RecoilRoot>{story()}</RecoilRoot>],
 } as Meta;
 
 const useThresholdsMock: typeof useThresholdsResults = () => ({

@@ -21,7 +21,7 @@ const DeleteModalHeader = ({ title }: { title: string }) => {
 
 type Props = {
   name: string;
-  onOk: (deleteTimeseries: boolean) => void;
+  onOk: (deleteTimeseries: boolean) => Promise<void>;
   onCancel: () => void;
 };
 
@@ -43,6 +43,7 @@ export const ScheduledCalculationDeleteModal = ({
     'ScheduledCalculationDeleteModal'
   );
   const [deleteTimeseries, setDeleteTimeseries] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   return (
     <StyledModal
       appElement={document.getElementsByTagName('body')}
@@ -55,7 +56,18 @@ export const ScheduledCalculationDeleteModal = ({
           <Button type="ghost" onClick={onCancel}>
             {t.Cancel}
           </Button>
-          <Button type="danger" onClick={() => onOk(deleteTimeseries)}>
+          <Button
+            type="danger"
+            onClick={async () => {
+              try {
+                setIsDeleting(true);
+                await onOk(deleteTimeseries);
+              } finally {
+                setIsDeleting(false);
+              }
+            }}
+            loading={isDeleting}
+          >
             {t['Yes, delete scheduled']}
           </Button>
         </Flex>
@@ -70,7 +82,7 @@ export const ScheduledCalculationDeleteModal = ({
           />
         </Body>
         <Checkbox
-          onChange={(val) => setDeleteTimeseries(val)}
+          onChange={(val: boolean) => setDeleteTimeseries(val)}
           name="DeleteScheduledCalculation"
           checked={deleteTimeseries}
           value={deleteTimeseries}

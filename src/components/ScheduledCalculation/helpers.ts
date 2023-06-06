@@ -7,6 +7,7 @@ import { Chart, ChartWorkflow, ChartWorkflowV2 } from 'models/chart/types';
 import { toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
 import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
+import { Timeseries } from '@cognite/sdk';
 import { ScheduleCalculationFieldValues } from '../../domain/scheduled-calculation/internal/types';
 import { addScheduledCalculation } from '../../models/chart/updates-calculation';
 import { STEPS } from '../../domain/scheduled-calculation/internal/constants';
@@ -31,7 +32,7 @@ export const handleNext = ({
   >;
   formMethods: UseFormReturn<ScheduleCalculationFieldValues>;
   createScheduledCalculation: UseMutateAsyncFunction<
-    CalculationTaskSchedule,
+    [Timeseries, CalculationTaskSchedule],
     unknown,
     {
       calculation: ScheduleCalculationFieldValues;
@@ -72,19 +73,26 @@ export const handleNext = ({
           });
           return undefined;
         })
-        .then((scheduledCalculation) => {
-          if (scheduledCalculation) {
+        .then((response) => {
+          if (response) {
+            const [timeseries, scheduledCalculation] = response;
             setChart((oldChart) =>
               addScheduledCalculation(
                 oldChart!,
                 adaptCalculationForClonedScheduledCalculation(
                   workflow as ChartWorkflowV2,
                   oldChart!.id,
-                  scheduledCalculation.externalId
+                  scheduledCalculation,
+                  timeseries
                 )
               )
             );
             setStepInfo({ loading: false, currentStep: STEPS.SUCCESS });
+          } else {
+            setStepInfo({
+              loading: false,
+              currentStep: STEPS.RETRY_ERROR_STEP,
+            });
           }
         });
 

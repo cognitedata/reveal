@@ -29,7 +29,11 @@ export const useScheduledCalculationCreateMutate = () => {
   const { mutateAsync: createNonce } = useCreateSessionNonce();
   const { mutateAsync: createTimeseries } = useTimeseriesCreateMutate();
 
-  return useMutation<CalculationTaskSchedule, CogniteError, MutateProps>(
+  return useMutation<
+    [Timeseries, CalculationTaskSchedule],
+    CogniteError,
+    MutateProps
+  >(
     ({ calculation, workflowSteps }) => {
       const period =
         calculation.period * PERIOD_MULTIPLIER[calculation.periodType.value!];
@@ -72,38 +76,41 @@ export const useScheduledCalculationCreateMutate = () => {
             throw new Error('Could not create nonce from credentials!');
           }
         })
-        .then(([timeseries, nonceResponse]) =>
-          createScheduledCalculation(
-            {
-              items: [
-                {
-                  name: calculation.name,
-                  externalId: `${adaptedNameForExternalId}_${now}`,
-                  description: calculation.description,
-                  targetTimeseriesExternalId: timeseries.externalId!,
-                  period,
-                  nonce: nonceResponse.items[0].nonce,
-                  graph: {
-                    granularity: `${calculation.period}${calculation.periodType.value?.[0]}`,
-                    steps: workflowSteps.map(
-                      ({ op, inputs, version, step, params }) => ({
-                        op,
-                        inputs,
-                        version,
-                        step,
-                        params,
-                        raw: true,
-                      })
-                    ),
+        .then(async ([timeseries, nonceResponse]) => {
+          try {
+            const scheduledCalculation = await createScheduledCalculation(
+              {
+                items: [
+                  {
+                    name: calculation.name,
+                    externalId: `${adaptedNameForExternalId}_${now}`,
+                    description: calculation.description,
+                    targetTimeseriesExternalId: timeseries.externalId!,
+                    period,
+                    nonce: nonceResponse.items[0].nonce,
+                    graph: {
+                      granularity: `${calculation.period}${calculation.periodType.value?.[0]}`,
+                      steps: workflowSteps.map(
+                        ({ op, inputs, version, step, params }) => ({
+                          op,
+                          inputs,
+                          version,
+                          step,
+                          params,
+                          raw: true,
+                        })
+                      ),
+                    },
                   },
-                },
-              ],
-            },
-            sdk
-          )
-        )
-        .then(({ data }) => {
-          return data.items?.[0];
+                ],
+              },
+              sdk
+            );
+            // need to use timeseries to set unit in scheduledCalculationCollection item
+            return [timeseries, scheduledCalculation?.data?.items?.[0]];
+          } catch {
+            throw new Error('Could not create scheduled calculation.');
+          }
         });
     },
     {

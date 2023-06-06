@@ -78,7 +78,7 @@ import { flow } from 'lodash';
 import { getUnitConverter } from 'utils/units';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 
-import { chartSources } from 'models/chart/selectors';
+import { useChartSourcesValue } from 'models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import ChartViewPageSecondaryAppBar from 'pages/ChartViewPage/ChartViewPageSecondaryAppBar';
 
@@ -286,7 +286,7 @@ const ChartViewPage = () => {
     }
   }, [chart, setChart]);
 
-  const sources = useRecoilValue(chartSources);
+  const sources = useChartSourcesValue();
 
   useEffect(() => {
     /**

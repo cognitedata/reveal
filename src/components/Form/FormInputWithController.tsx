@@ -32,6 +32,7 @@ type Props = RegisterOptions<any> & {
   title?: string;
   info?: string;
   radioValue?: string;
+  autoFocus?: boolean;
 };
 
 const FieldLabel = ({
@@ -69,6 +70,7 @@ export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
   title,
   info,
   radioValue,
+  autoFocus,
   children,
 }) => (
   <>
@@ -105,6 +107,7 @@ export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
                 onChange={onChange} // send value to hook form
                 value={value}
                 placeholder={placeholder}
+                autoFocus={autoFocus}
               />
             )}
             {type === 'textarea' && (

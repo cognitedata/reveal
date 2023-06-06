@@ -18,7 +18,7 @@ import { useRecoilValue } from 'recoil';
 import { calculationSummaries } from 'models/calculation-results/selectors';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
 import { useParams, useNavigate } from 'react-router-dom';
-import { chartSources } from 'models/chart/selectors';
+import { useChartSourcesValue } from 'models/chart/selectors';
 import ConnectedLinkedAssetsSidebar from 'containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {
@@ -26,7 +26,7 @@ const FileViewPage = () => {
     useParams<{ chartId: string; assetId: string }>();
   const { data: chart } = useInitializedChart(chartId);
 
-  const sources = useRecoilValue(chartSources);
+  const sources = useChartSourcesValue();
 
   const summaries = {
     ...useRecoilValue(timeseriesSummaries),

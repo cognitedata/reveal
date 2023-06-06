@@ -1,12 +1,19 @@
-import { Icon } from '@cognite/cogs.js';
+import { Icon, IconType } from '@cognite/cogs.js';
+import { SourceType } from 'models/chart/types';
 import { SourceIconContainer } from './elements';
+
+const SourceIconMap: Record<SourceType, IconType> = {
+  workflow: 'Function',
+  timeseries: 'Timeseries',
+  scheduledCalculation: 'Clock',
+};
 
 export const SourceIcon = ({
   color,
   type,
 }: {
   color: string;
-  type: 'timeseries' | 'workflow';
+  type: SourceType;
 }) => {
   return (
     <SourceIconContainer
@@ -17,7 +24,7 @@ export const SourceIcon = ({
       <Icon
         size={12}
         style={{ marginRight: 0 }}
-        type={type === 'workflow' ? 'Function' : 'Timeseries'}
+        type={type ? SourceIconMap[type] : 'Timeseries'}
         aria-label={type === 'workflow' ? 'Workflow Function' : 'Timeseries'}
       />
     </SourceIconContainer>

@@ -71,6 +71,7 @@ export const Step2Body = ({ workflowId }: { workflowId: string }) => {
             title={t.Name}
             required="Name is required"
             placeholder="Enter the name for scheduled calculation"
+            autoFocus
           />
         </FlexGrow>
         <Flex alignItems="end" gap={8}>

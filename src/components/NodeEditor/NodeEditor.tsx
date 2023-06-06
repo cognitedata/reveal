@@ -16,7 +16,6 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
 import { useOperations } from 'models/operations/atom';
 import { availableWorkflows } from 'models/calculation-results/selectors';
-import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
 import { SourceOption } from './V2/types';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
@@ -57,8 +56,6 @@ const NodeEditor = ({
    */
   const calculationData = useRecoilValue(availableWorkflows);
   const result = calculationData.find(({ id }) => id === sourceId);
-  const scheduledCalculationData =
-    useScheduledCalculationDataValue()?.[sourceId];
 
   /**
    * Generate all source options
@@ -68,9 +65,6 @@ const NodeEditor = ({
     .map((source) => {
       return getSourceOption(source);
     });
-
-  const readOnly =
-    Boolean(login?.id && !isOwner) || Boolean(scheduledCalculationData);
 
   /**
    * Trigger toast if error is present
@@ -102,6 +96,9 @@ const NodeEditor = ({
   );
 
   const sourceType = workflow?.type || scheduledCalculation?.type;
+
+  const readOnly =
+    Boolean(login?.id && !isOwner) || sourceType === 'scheduledCalculation';
 
   /**
    * Generate update function for workflow
