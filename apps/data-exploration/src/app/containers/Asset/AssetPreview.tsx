@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { AssetInfo } from '@data-exploration/containers';
 
+import { createLink } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback, ResourceTypes } from '@cognite/data-exploration';
 import { Asset, CogniteError } from '@cognite/sdk';
@@ -19,6 +20,7 @@ import {
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 import { AssetHierarchyTab } from './AssetHierarchyTab';
 
@@ -72,6 +74,15 @@ export const AssetPreview = ({
     }
   );
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // TODO(DEGR-2521): refactor this
+  const onClickHandler = (rootAssetId: number) => {
+    const search = getSearchParams(location.search);
+    navigate(createLink(`/explore/search/asset/${rootAssetId}`, search));
+  };
+
   if (!isFetched) {
     return <Loader />;
   }
@@ -111,7 +122,7 @@ export const AssetPreview = ({
         additionalTabs={[
           <Tabs.Tab label="Details" key="details" tabKey="details">
             <DetailsTabWrapper>
-              <AssetInfo asset={asset} />
+              <AssetInfo asset={asset} onClickRootAsset={onClickHandler} />
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,

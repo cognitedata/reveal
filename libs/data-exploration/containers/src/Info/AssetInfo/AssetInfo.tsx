@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { GeneralDetails, TimeDisplay } from '@data-exploration/components';
+import noop from 'lodash/noop';
 
 import { Asset } from '@cognite/sdk';
 
@@ -8,15 +9,27 @@ import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-
 
 type Props = {
   asset: Asset;
+  onClickRootAsset?: (rootAssetId: number) => void;
 };
 
-export const AssetInfo = ({ asset }: Props) => {
+export const AssetInfo = ({ asset, onClickRootAsset = noop }: Props) => {
   const { data: mappings, isFetched } = useDetailedMappingsByAssetIdQuery(
     asset.id
   );
 
+  const onClickHandler = (rootAsset: Asset) => {
+    if (asset.id !== rootAsset.id) {
+      onClickRootAsset(rootAsset.id);
+    }
+  };
+
   return (
     <GeneralDetails>
+      <GeneralDetails.RootAssetItem
+        assetId={asset.id}
+        onClick={onClickHandler}
+      />
+
       <GeneralDetails.Item
         key={`name-${asset.name}`}
         name="Name"
