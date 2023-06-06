@@ -208,6 +208,7 @@ export type WorkflowExecution = {
 
 export const useRunWorkflow = () => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
   return useMutation<WorkflowExecution, unknown, RunWorkflowVariables>(
     async (variables) => {
@@ -227,13 +228,19 @@ export const useRunWorkflow = () => {
           }
         )
         .then((res) => res.data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['flows', 'workflow-execution']);
+      },
     }
   );
 };
 
 const getWorkflowExecutionsQueryKey = (externalId: string) => [
   'flows',
-  'workflow-executions',
+  'workflow-execution',
+  'list',
   externalId,
 ];
 
@@ -264,7 +271,8 @@ export const useWorkflowExecutions = (externalId: string) => {
 
 const getWorkflowExecutionDetailsQueryKey = (executionId: string) => [
   'flows',
-  'execution-details',
+  'workflow-execution',
+  'details',
   executionId,
 ];
 
