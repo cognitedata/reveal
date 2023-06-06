@@ -371,6 +371,7 @@ const MainContainer = styled(Flex)<{ isFilterFeatureEnabled?: boolean }>`
     isFilterFeatureEnabled ? '0px' : '16px'};
   height: 100%;
   flex: 1;
+  padding-bottom: 50px;
   overflow: auto;
 `;
 

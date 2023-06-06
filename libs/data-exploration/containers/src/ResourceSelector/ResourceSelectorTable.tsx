@@ -78,7 +78,6 @@ export const ResourceSelectorTable = ({
     onClick,
     onFilterChange,
   };
-  console.log({ resourceType, filter }, 'ResourceselectorTytpe');
 
   switch (resourceType) {
     case 'asset':

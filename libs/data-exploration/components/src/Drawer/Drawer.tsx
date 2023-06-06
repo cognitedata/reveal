@@ -64,7 +64,7 @@ const Overlay = styled.div<{ visible?: boolean }>`
 const ClosedButton = styled.div`
   position: absolute;
   top: 20px;
-  left: 17%;
+  left: 15%;
   z-index: ${zIndex.DRAWER};
   .cogs.cogs-button--type-tertiary:hover:not([aria-disabled='true']) {
     background: white;
