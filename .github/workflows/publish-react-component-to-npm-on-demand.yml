@@ -1,18 +1,6 @@
 name: Publish React Component to NPM on Demand
 
-on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - labeled
-    branches:
-      - '**'
-  # workflow_dispatch:
-  #   inputs:
-  #     version:
-  #       required: true
+on: workflow_dispatch
 
 jobs:
   build:
