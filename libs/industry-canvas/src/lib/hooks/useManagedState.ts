@@ -25,7 +25,11 @@ import {
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
-import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
+import {
+  SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
+  ZOOM_TO_FIT_MARGIN,
+  ZOOM_DURATION_SECONDS,
+} from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
   CanvasAnnotation,
@@ -409,9 +413,16 @@ const useManagedState = ({
           hoverId: undefined,
           clickedContainerAnnotationId: undefined,
         });
+
+        if (e.evt.altKey) {
+          unifiedViewer?.zoomToContainerById(containerConfig.id, {
+            relativeMargin: ZOOM_TO_FIT_MARGIN,
+            duration: ZOOM_DURATION_SECONDS,
+          });
+        }
       },
     }),
-    []
+    [unifiedViewer]
   );
 
   const addContainerReferences = useCallback(

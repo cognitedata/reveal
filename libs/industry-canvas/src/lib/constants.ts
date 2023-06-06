@@ -13,19 +13,11 @@ export enum QueryKeys {
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';
 
-export const PERCENTAGE_VALUES = {
-  '10%': 0.1,
-  '25%': 0.25,
-  '50%': 0.5,
-  '75%': 0.75,
-  '100%': 1.0,
-  '125%': 1.25,
-  '150%': 1.5,
-  '200%': 2.0,
-  '300%': 3.0,
-  '400%': 4.0,
-} as const;
-
+export const STAGE_ALT_CLICK_ZOOM_LEVEL = 0.25;
+export const ZOOM_LEVELS = [
+  0.05, 0.1, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0,
+] as const;
+export const ZOOM_DURATION_SECONDS = 0.1;
 export const ZOOM_TO_FIT_MARGIN = 0.07;
 
 export const FONT_SIZE = {

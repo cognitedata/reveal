@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
 
-import { PERCENTAGE_VALUES } from '../constants';
+import { ZOOM_LEVELS } from '../constants';
 import convertToPercentage from '../utils/convertToPercentage';
 
 export type ZoomControlsProps = {
@@ -35,16 +35,16 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({
         placement="top-start"
         content={
           <Menu>
-            {Object.entries(PERCENTAGE_VALUES).map(([key, value]) => (
+            {ZOOM_LEVELS.map((zoomValue) => (
               <Menu.Item
-                key={`item-percentage-key-${key}`}
+                key={`item-percentage-key-${zoomValue}`}
                 onClick={() => {
                   if (setZoomScale !== undefined) {
-                    setZoomScale(value);
+                    setZoomScale(zoomValue);
                   }
                 }}
               >
-                {key}
+                {`${Math.round(zoomValue * 100)}%`}
               </Menu.Item>
             ))}
           </Menu>

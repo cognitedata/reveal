@@ -24,6 +24,7 @@ import {
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
+  ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 
 import { useDialog } from '@data-exploration-lib/core';
@@ -36,6 +37,7 @@ import {
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
+  ZOOM_TO_FIT_MARGIN,
 } from './constants';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useManagedState from './hooks/useManagedState';
@@ -78,6 +80,9 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
   ] = useState(false);
   const { tool, setTool } = useManagedTool(ToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
+
+  const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
+    useState(false);
 
   const sdk = useSDK();
   const {
@@ -294,6 +299,22 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     hasConsumedInitializeWithContainerReferences,
     onAddContainerReferences,
   ]);
+
+  useEffect(() => {
+    if (unifiedViewerRef === null || hasZoomedToFitOnInitialLoad) {
+      return;
+    }
+
+    if (container.children === undefined || container.children.length === 0) {
+      return;
+    }
+
+    unifiedViewerRef.zoomToFit(ZoomToFitMode.NATURAL, {
+      relativeMargin: ZOOM_TO_FIT_MARGIN,
+      duration: 0,
+    });
+    setHasZoomedToFitOnInitialLoad(true);
+  }, [hasZoomedToFitOnInitialLoad, unifiedViewerRef, container]);
 
   const onKeyDown: KeyboardEventHandler<HTMLElement> = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
