@@ -13,7 +13,6 @@ import ReactFlow, {
   SelectionMode,
   EdgeChange,
   NodeProps,
-  MiniMap,
   EdgeSelectionChange,
   NodeSelectionChange,
   NodePositionChange,
@@ -388,7 +387,6 @@ export const FlowBuilder = (): JSX.Element => {
         <Controls />
         <CanvasToolbar />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        <StyledMiniMap />
       </ReactFlow>
       <ContextMenu
         containerRef={reactFlowContainer}
@@ -398,10 +396,6 @@ export const FlowBuilder = (): JSX.Element => {
     </FlowBuilderContainer>
   );
 };
-
-export const StyledMiniMap = styled(MiniMap)`
-  margin-bottom: 60px;
-`;
 
 export const FlowBuilderContainer = styled.div`
   background-color: ${Colors['surface--strong']};
