@@ -40,7 +40,7 @@ jobs:
       - name: Setup Cognite CICD Yarn
         working-directory: react-components
         run: |
-          yarn whoami
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .yarnrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
