@@ -13,17 +13,17 @@ import { uniqueId } from 'lodash';
 export interface Image360RevisionDetails{
   date?: string;
   imageUrl?: string;
-  index?: number;
-  image360Entity?: Image360;
+  index: number;
+  image360Entity: Image360;
 };
 
 export interface Image360HistoricalSummaryProps{
   stationId?: string;
   stationName?: string;
-  revisionCollection?: Image360RevisionDetails[];
-  activeRevision?: number;
-  setActiveRevision?: (index: number) => void;
   viewer?: Cognite3DViewer;
+  revisionCollection: Image360RevisionDetails[];
+  activeRevision: number;
+  setActiveRevision: (index: number) => void;
 };
 
 export const Image360HistoricalSummary = ({
@@ -37,7 +37,7 @@ export const Image360HistoricalSummary = ({
 
   const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
     if(viewer && revisionDetails.image360Entity) {
-      setActiveRevision!(index)
+      setActiveRevision(index)
       const revisions = revisionDetails.image360Entity.getRevisions();
       const revisionIndex = revisionDetails.index!;
       if (revisionIndex >= 0 && revisionIndex < revisions.length) {
@@ -55,7 +55,7 @@ export const Image360HistoricalSummary = ({
 
       <StyledLayoutGridContainer>
         <StyledLayoutGrid>
-          { revisionCollection?.map((revisionDetails, index) => (
+          { revisionCollection.map((revisionDetails, index) => (
             <RevisionItem
               key={uniqueId()}
               onClick={onRevisionChanged.bind(null, revisionDetails, index)}
