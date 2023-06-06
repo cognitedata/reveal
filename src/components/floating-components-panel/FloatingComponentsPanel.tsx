@@ -68,7 +68,6 @@ export const FloatingPanel = styled.div<{ right?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: calc(100% - ${FLOATING_ELEMENT_MARGIN * 2}px);
   ${({ right }) => (right ? 'right' : 'left')}: ${FLOATING_PANEL_MARGIN}px;
   padding: 12px;
   position: absolute;
