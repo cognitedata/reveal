@@ -14,6 +14,7 @@ import { useTranslation } from 'common';
 import { PROCESS_ICON, ProcessNodeData } from 'types';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { ColorStatus } from 'components/tab-header/TabHeader';
+import { useWorkflowExecutionDetails } from 'hooks/workflows';
 
 const BASE_NODE_HANDLE_SIZE = 16;
 
@@ -24,7 +25,14 @@ export const RunNodeRenderer = ({
 
   const { selectedExecution } = useWorkflowBuilderContext();
 
-  const task = selectedExecution?.executedTasks?.find(
+  const { data: executionDetails } = useWorkflowExecutionDetails(
+    selectedExecution?.id!,
+    {
+      enabled: !!selectedExecution?.id,
+    }
+  );
+
+  const task = executionDetails?.executedTasks?.find(
     ({ externalId }) => externalId === data.processExternalId
   );
 
@@ -85,7 +93,7 @@ export const RunNodeRenderer = ({
           <Flex alignItems="center">
             <Icon
               type={icon}
-              css={{ fill: Colors[`text-icon--status-${status}`] }}
+              css={{ color: Colors[`text-icon--status-${status}`] }}
             />
           </Flex>
         </Flex>

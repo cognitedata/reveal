@@ -2,6 +2,7 @@ import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UseMutationOptions,
+  UseQueryOptions,
   useMutation,
   useQuery,
   useQueryClient,
@@ -193,6 +194,7 @@ export type WorkflowExecution = {
   id?: string;
   workflowExternalId?: string;
   workflowDefinition: WorkflowDefinitionRead;
+  engineExecutionId?: string;
   version?: string;
   status?: WorkflowExecutionStatus;
   executedTasks?: TaskExecution[];
@@ -257,5 +259,29 @@ export const useWorkflowExecutions = (externalId: string) => {
           }
         )
         .then((res) => res.data.items)
+  );
+};
+
+const getWorkflowExecutionDetailsQueryKey = (executionId: string) => [
+  'flows',
+  'execution-details',
+  executionId,
+];
+
+export const useWorkflowExecutionDetails = (
+  executionId: string,
+  options?: UseQueryOptions<WorkflowExecution>
+) => {
+  const sdk = useSDK();
+
+  return useQuery<WorkflowExecution>(
+    getWorkflowExecutionDetailsQueryKey(executionId),
+    () =>
+      sdk
+        .get<WorkflowExecution>(
+          `api/v1/projects/${getProject()}/workflows/executions/${executionId}`
+        )
+        .then((res) => res.data),
+    options
   );
 };

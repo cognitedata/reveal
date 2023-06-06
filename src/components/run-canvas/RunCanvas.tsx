@@ -2,6 +2,7 @@ import { Body, Colors, Flex } from '@cognite/cogs.js';
 import { useQuery } from '@tanstack/react-query';
 import { DELETE_KEY_CODES, MAX_ZOOM, MIN_ZOOM, useTranslation } from 'common';
 import { Controls } from 'components/controls';
+import { CustomRunEdge } from 'components/custom-run-edge/CustomRunEdge';
 import { FlowBuilderContainer } from 'components/flow-builder';
 import { RunNodeRenderer } from 'components/run-node/RunNodeRenderer';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
@@ -10,6 +11,7 @@ import {
   Background,
   BackgroundVariant,
   Edge,
+  MarkerType,
   NodeProps,
   ReactFlow,
   SelectionMode,
@@ -27,12 +29,14 @@ const NODE_TYPES: Record<
   process: RunNodeRenderer,
 };
 
+const EDGE_TYPES = {
+  customRunEdge: CustomRunEdge,
+};
+
 const RunCanvas = ({}: RunCanvasProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { selectedExecution } = useWorkflowBuilderContext();
-
-  const edgeTypes = [] as any;
 
   const { data: layout } = useQuery(
     ['workflows', 'run-layout', selectedExecution?.id],
@@ -77,7 +81,12 @@ const RunCanvas = ({}: RunCanvasProps): JSX.Element => {
         id,
         source: sourceExternalId,
         target: targetExternalId,
-        type: 'customEdge',
+        type: 'customRunEdge',
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          height: 16,
+          width: 16,
+        },
       });
     });
 
@@ -106,7 +115,7 @@ const RunCanvas = ({}: RunCanvasProps): JSX.Element => {
         multiSelectionKeyCode={null}
         selectionMode={SelectionMode.Partial}
         nodeTypes={NODE_TYPES}
-        edgeTypes={edgeTypes}
+        edgeTypes={EDGE_TYPES}
         minZoom={MIN_ZOOM}
         maxZoom={MAX_ZOOM}
       >
