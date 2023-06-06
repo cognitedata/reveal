@@ -32,6 +32,11 @@ export const RunNodeRenderer = ({
     }
   );
 
+  useWorkflowExecutionDetails(selectedExecution?.id!, {
+    enabled: !!selectedExecution?.id,
+    refetchInterval: !executionDetails?.endTime ? 3000 : 0,
+  });
+
   const task = executionDetails?.executedTasks?.find(
     ({ externalId }) => externalId === data.processExternalId
   );
