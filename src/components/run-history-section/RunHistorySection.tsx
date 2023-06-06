@@ -18,6 +18,7 @@ import { json } from '@codemirror/lang-json';
 import { useTranslation } from 'common';
 import InfoBox from 'components/info-box/InfoBox';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { StyledEmptyStateContainer } from 'components/run-canvas/RunCanvas';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;
@@ -31,7 +32,9 @@ export const RunHistorySection = ({
   const { selectedExecution, setSelectedExecution } =
     useWorkflowBuilderContext();
 
-  const { data: executions } = useWorkflowExecutions(workflow.externalId);
+  const { data: executions, isInitialLoading } = useWorkflowExecutions(
+    workflow.externalId
+  );
 
   const [expandedRunHistoryCards, setExpandedRunHistoryCards] = useState<
     string[]
@@ -58,6 +61,14 @@ export const RunHistorySection = ({
   };
 
   const extensions = useMemo(() => [json()], []);
+
+  if (isInitialLoading) {
+    return (
+      <StyledEmptyStateContainer>
+        <Icon type="Loader" />
+      </StyledEmptyStateContainer>
+    );
+  }
 
   return (
     <Container>
