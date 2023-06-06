@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { DELETE_KEY_CODES, MAX_ZOOM, MIN_ZOOM, useTranslation } from 'common';
 import { Controls } from 'components/controls';
 import { FlowBuilderContainer } from 'components/flow-builder';
-import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
+import { RunNodeRenderer } from 'components/run-node/RunNodeRenderer';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { ComponentType, useMemo } from 'react';
 import {
@@ -24,7 +24,7 @@ const NODE_TYPES: Record<
   Extract<WorkflowBuilderNodeType, 'process'>,
   ComponentType<NodeProps>
 > = {
-  process: ProcessNodeRenderer,
+  process: RunNodeRenderer,
 };
 
 const RunCanvas = ({}: RunCanvasProps): JSX.Element => {

@@ -10,13 +10,21 @@ const ALLOWED_PROCESS_TYPES: ProcessType[] = ['transformation', 'function'];
 
 export const getLastWorkflowDefinition = (
   workflowWithVersions: WorkflowWithVersions
-): WorkflowDefinitionRead | undefined => {
+): { workflowDefinition?: WorkflowDefinitionRead; version?: string } => {
   const versions = Object.keys(workflowWithVersions.versions);
   if (versions.length === 0) {
-    return undefined;
+    return {
+      workflowDefinition: undefined,
+      version: undefined,
+    };
   }
 
-  return workflowWithVersions.versions[versions[versions.length - 1]];
+  const lastVersion = versions[versions.length - 1];
+
+  return {
+    workflowDefinition: workflowWithVersions.versions[lastVersion],
+    version: lastVersion,
+  };
 };
 
 export const convertCanvasToWorkflowDefinition = (

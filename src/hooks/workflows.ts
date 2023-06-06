@@ -71,7 +71,6 @@ export type WorkflowTaskDefinition = {
 export type WorkflowDefinitionRead = {
   hash: string;
   description?: string;
-  version: string;
   tasks: WorkflowTaskDefinition[];
 };
 
@@ -196,7 +195,7 @@ export type WorkflowExecution = {
   workflowDefinition: WorkflowDefinitionRead;
   version?: string;
   status?: WorkflowExecutionStatus;
-  executedTasks: TaskExecution[];
+  executedTasks?: TaskExecution[];
   input?: unknown; // TODO
   output?: unknown; // TODO
   createdTime?: number;

@@ -50,15 +50,12 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
     setActiveViewMode,
   } = useWorkflowBuilderContext();
 
-  const lastWorkflowDefinition = useMemo(
-    () => getLastWorkflowDefinition(workflow),
-    [workflow]
-  );
+  const { workflowDefinition: lastWorkflowDefinition, version: lastVersion } =
+    useMemo(() => getLastWorkflowDefinition(workflow), [workflow]);
 
-  const lastVersion = parseInt(
-    getLastWorkflowDefinition(workflow)?.version ?? ''
-  );
-  const nextVersion = lastVersion ? lastVersion + 1 : 1;
+  const lastVersionAsNumber = parseInt(lastVersion ?? '');
+
+  const nextVersion = lastVersionAsNumber ? lastVersionAsNumber + 1 : 1;
 
   const shouldPublish = useMemo(
     () =>

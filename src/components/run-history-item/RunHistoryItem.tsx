@@ -60,7 +60,7 @@ const RunHistoryItem = ({
 
   return (
     <TabHeader
-      description={`v${execution.workflowDefinition.version}`}
+      description={`v${execution.version}`}
       extra={
         isExpanded ? (
           <StyledSegmentedControlContainer onClick={(e) => e.stopPropagation()}>
