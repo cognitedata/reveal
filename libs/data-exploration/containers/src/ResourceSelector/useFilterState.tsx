@@ -64,11 +64,19 @@ export const useFilterState = (initialFilter: Partial<FilterState> = {}) => {
     resourceType: FilterResourceType,
     nextValue: FilterState[keyof FilterState]
   ) => {
-    return dispatch({ value: nextValue, type: resourceType as any });
+    // The resource type  key come as 'timeSeries' but the filter state key has it in 'timeseries'
+    return dispatch({
+      value: nextValue,
+      type: resourceType.toLowerCase() as any,
+    });
   };
 
   const resetter = (resourceType: FilterResourceType) => {
-    dispatch({ clear: true, type: resourceType as any, value: {} });
+    dispatch({
+      clear: true,
+      type: resourceType.toLowerCase() as any,
+      value: {},
+    });
   };
   return { state, setter, resetter };
 };

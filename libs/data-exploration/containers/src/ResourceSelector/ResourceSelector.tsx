@@ -273,7 +273,10 @@ export const ResourceSelector = ({
                 query={debouncedQuery}
                 resourceType={activeKey}
                 onFilterChange={(nextState) => {
-                  setter(activeKey, nextState);
+                  setter(
+                    activeKey === 'file' ? 'document' : activeKey,
+                    nextState
+                  );
                 }}
                 onClick={({ id, externalId }) => {
                   setPreviewItem({ id, externalId, type: activeKey });

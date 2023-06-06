@@ -46,7 +46,10 @@ export const ResourceSelectorTable = ({
     id: `${resourceType}-resource-selector`,
     query,
     selectedRows: selectedRows[resourceType],
-
+    filter: {
+      ...filter.common,
+      ...filter[resourceType.toLowerCase() as keyof FilterState],
+    },
     onRowSelection: (
       updater: Updater<RowSelectionState>,
       data: ResourceItem[]
@@ -82,12 +85,7 @@ export const ResourceSelectorTable = ({
   switch (resourceType) {
     case 'asset':
       return (
-        <AssetSearchResults
-          showCount
-          isTreeEnabled={false}
-          {...commonProps}
-          filter={{ ...filter.common, ...filter.asset }}
-        />
+        <AssetSearchResults showCount isTreeEnabled={false} {...commonProps} />
       );
 
     case 'file':
@@ -98,29 +96,11 @@ export const ResourceSelectorTable = ({
         />
       );
     case 'event':
-      return (
-        <EventSearchResults
-          showCount
-          {...commonProps}
-          filter={{ ...filter.common, ...filter.event }}
-        />
-      );
+      return <EventSearchResults showCount {...commonProps} />;
     case 'timeSeries':
-      return (
-        <TimeseriesSearchResults
-          showCount
-          {...commonProps}
-          filter={{ ...filter.common, ...filter.timeseries }}
-        />
-      );
+      return <TimeseriesSearchResults showCount {...commonProps} />;
     case 'sequence':
-      return (
-        <SequenceSearchResults
-          showCount
-          {...commonProps}
-          filter={{ ...filter.common, ...filter.sequence }}
-        />
-      );
+      return <SequenceSearchResults showCount {...commonProps} />;
     default:
       return <div>ResourceSelectorTable</div>;
   }
