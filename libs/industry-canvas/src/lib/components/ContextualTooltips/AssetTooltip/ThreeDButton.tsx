@@ -23,10 +23,10 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
   assetId,
   onAddThreeD,
 }) => {
-  const { data: mappings, isLoading } =
+  const { data: mappings, isInitialLoading } =
     useDetailedMappingsByAssetIdQuery(assetId);
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return <Button icon="Loader" inverted onClick={noop} />;
   }
 
