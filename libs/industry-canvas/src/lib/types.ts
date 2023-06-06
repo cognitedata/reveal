@@ -136,6 +136,22 @@ type ResourceMetadata = {
 };
 export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 
+// TODO: We should improve the typing here -- update this together with the TODO above.
+export const isIndustryCanvasContainerConfig = (
+  container: ContainerConfig
+): container is IndustryCanvasContainerConfig => {
+  if (container.type === ContainerType.FLEXIBLE_LAYOUT) {
+    return 'metadata' in container;
+  }
+
+  const metadata = container.metadata;
+  if (container.type === ContainerType.REVEAL) {
+    return metadata !== undefined && 'modelId' in metadata;
+  }
+
+  return metadata !== undefined && 'resourceId' in container.metadata;
+};
+
 export type IndustryCanvasTimeSeriesContainerConfig =
   Metadata<ResourceMetadata> & TimeseriesContainerProps<ResourceMetadata>;
 

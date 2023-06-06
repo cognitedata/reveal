@@ -38,6 +38,7 @@ import {
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
   SerializedIndustryCanvasState,
+  isIndustryCanvasContainerConfig,
 } from '../types';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
 import {
@@ -335,7 +336,17 @@ const useManagedState = ({
   usePersistence(canvasState, replaceState);
 
   const onUpdateRequest: UpdateHandlerFn = useCallback(
-    ({ containers: updatedContainers, annotations: updatedAnnotations }) =>
+    ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
+      const validUpdatedContainers = updatedContainers.filter(
+        isIndustryCanvasContainerConfig
+      );
+      if (
+        validUpdatedContainers.length === 0 &&
+        updatedAnnotations.length === 0
+      ) {
+        return;
+      }
+
       pushState(({ container, canvasAnnotations }) => {
         // If there is only one annotation in the update set, select it
         if (updatedAnnotations.length === 1) {
@@ -358,13 +369,14 @@ const useManagedState = ({
         }
 
         return {
-          container: getNextUpdatedContainer(container, updatedContainers),
+          container: getNextUpdatedContainer(container, validUpdatedContainers),
           canvasAnnotations: getNextUpdatedAnnotations(
             canvasAnnotations,
             updatedAnnotations
           ),
         };
-      }),
+      });
+    },
     [pushState, setTool, unifiedViewer]
   );
 
