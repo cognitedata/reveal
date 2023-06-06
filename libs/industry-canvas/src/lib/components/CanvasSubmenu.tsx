@@ -13,11 +13,13 @@ type CanvasSubmenuProps = {
   onCopyLinkClick: (canvas: SerializedCanvasDocument) => void;
   onDeleteCanvasClick: (canvas: SerializedCanvasDocument) => void;
   onCanvasItemClick: (canvas: SerializedCanvasDocument) => void;
+  isCanvasLocked: boolean;
 };
 
 const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
   canvas,
   isActiveCanvas,
+  isCanvasLocked,
   onRenameCanvasClick,
   onCopyLinkClick,
   onDeleteCanvasClick,
@@ -37,6 +39,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
           </Menu.Item>
           {isActiveCanvas && (
             <Menu.Item
+              disabled={isCanvasLocked}
               icon="Edit"
               iconPlacement="left"
               onClick={onRenameCanvasClick}
@@ -48,6 +51,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
             style={{
               color: Colors['text-icon--status-critical'],
             }}
+            disabled={isCanvasLocked}
             destructive={true}
             icon="Delete"
             iconPlacement="left"

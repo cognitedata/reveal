@@ -9,6 +9,7 @@ export enum QueryKeys {
   DELETE_CANVAS_ITEMS = 'canvas.delete-items',
   USER_PROFILE = 'user-profile',
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
+  LOCKING = 'canvas.locking',
 }
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';

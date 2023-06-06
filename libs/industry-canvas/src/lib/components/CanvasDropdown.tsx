@@ -39,6 +39,7 @@ type CanvasDropdownProps = Pick<
   | 'setCanvasId'
 > & {
   setIsEditingTitle: Dispatch<SetStateAction<boolean>>;
+  isCanvasLocked: boolean;
 };
 
 const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
@@ -51,6 +52,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   isCreatingCanvas,
   setIsEditingTitle,
   setCanvasId,
+  isCanvasLocked,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
@@ -71,6 +73,9 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   };
 
   const onDeleteCanvas = (canvas: SerializedCanvasDocument) => {
+    if (isCanvasLocked) {
+      return;
+    }
     setCanvasToDelete(canvas);
     setIsMenuOpen(false);
   };
@@ -85,6 +90,10 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   };
 
   const onRenameCanvasClick = () => {
+    if (isCanvasLocked) {
+      return;
+    }
+
     setIsEditingTitle(true);
     setIsMenuOpen(false);
   };
@@ -124,6 +133,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                     <CanvasSubmenu
                       canvas={activeCanvas}
                       isActiveCanvas
+                      isCanvasLocked={isCanvasLocked}
                       onRenameCanvasClick={onRenameCanvasClick}
                       onCopyLinkClick={onCopyLinkClick}
                       onDeleteCanvasClick={onDeleteCanvas}
@@ -141,6 +151,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                       <CanvasSubmenu
                         canvas={canvas}
                         isActiveCanvas={false}
+                        isCanvasLocked={isCanvasLocked}
                         onRenameCanvasClick={onRenameCanvasClick}
                         onCopyLinkClick={onCopyLinkClick}
                         onDeleteCanvasClick={onDeleteCanvas}

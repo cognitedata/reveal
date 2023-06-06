@@ -17,6 +17,7 @@ import {
   Icon,
   toast,
   Tooltip,
+  Chip,
 } from '@cognite/cogs.js';
 import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
@@ -96,6 +97,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     createCanvas,
     initializeWithContainerReferences,
     setCanvasId,
+    isCanvasLocked,
   } = useIndustryCanvasContext();
 
   const {
@@ -116,6 +118,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     unifiedViewer: unifiedViewerRef,
     setTool,
   });
+
+  useEffect(() => {
+    if (isCanvasLocked && tool !== ToolType.PAN) {
+      setTool(ToolType.PAN);
+    }
+  }, [isCanvasLocked, setTool, tool]);
 
   const {
     isOpen: visibleResourceSelector,
@@ -159,6 +167,10 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
   const onAddContainerReferences: OnAddContainerReferences = useCallback(
     (containerReferences: ContainerReference[]) => {
       if (unifiedViewerRef === null) {
+        return;
+      }
+
+      if (isCanvasLocked) {
         return;
       }
 
@@ -225,12 +237,17 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       selectedContainer?.id,
       clickedContainerAnnotation,
       container?.children,
+      isCanvasLocked,
     ]
   );
 
   const onAddResourcePress = async (
     results?: ResourceItem | ResourceItem[]
   ) => {
+    if (isCanvasLocked) {
+      return;
+    }
+
     onResourceSelectorClose();
     if (results && Array.isArray(results)) {
       if (unifiedViewerRef === null) {
@@ -370,6 +387,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
               saveCanvas={saveCanvas}
               isEditingTitle={isEditingTitle}
               setIsEditingTitle={setIsEditingTitle}
+              isCanvasLocked={isCanvasLocked}
             />
             {!isEditingTitle && (
               <CanvasDropdown
@@ -382,18 +400,31 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
                 isSavingCanvas={isSavingCanvas}
                 setIsEditingTitle={setIsEditingTitle}
                 setCanvasId={setCanvasId}
+                isCanvasLocked={isCanvasLocked}
               />
             )}
           </Flex>
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
+          {isCanvasLocked && (
+            <Chip
+              type="warning"
+              icon="Lock"
+              label="Canvas locked"
+              tooltipProps={{
+                content:
+                  'Canvas is being edited by another user and is therefore not editable',
+                position: 'bottom',
+              }}
+            />
+          )}
           <Tooltip content="Undo" position="bottom">
             <Button
               type="ghost"
               icon="Restore"
               onClick={undo.fn}
-              disabled={undo.isDisabled}
+              disabled={isCanvasLocked || undo.isDisabled}
               aria-label="Undo"
             />
           </Tooltip>
@@ -402,12 +433,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
               type="ghost"
               icon="Refresh"
               onClick={redo.fn}
-              disabled={redo.isDisabled}
+              disabled={isCanvasLocked || redo.isDisabled}
               aria-label="Redo"
             />
           </Tooltip>
 
-          <Button onClick={onResourceSelectorOpen}>
+          <Button onClick={onResourceSelectorOpen} disabled={isCanvasLocked}>
             <Icon type="Plus" /> Add data
           </Button>
 
@@ -461,6 +492,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           setTool={setTool}
           onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
           toolOptions={toolOptions}
+          isCanvasLocked={isCanvasLocked}
         />
         <DragOverIndicator isDragging={isDragging} />
       </PreviewTabWrapper>

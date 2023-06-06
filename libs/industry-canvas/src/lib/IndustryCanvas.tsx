@@ -43,6 +43,7 @@ export type IndustryCanvasProps = {
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   tool: ToolType;
   setTool: Dispatch<SetStateAction<ToolType>>;
+  isCanvasLocked: boolean;
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -85,6 +86,7 @@ export const IndustryCanvas = ({
   onUpdateAnnotationStyleByType,
   shouldShowConnectionAnnotations,
   toolOptions,
+  isCanvasLocked,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
@@ -274,7 +276,11 @@ export const IndustryCanvas = ({
         shouldAllowDragDrop={false} // We are using our own drag and drop handlers
       />
       <ToolbarWrapper>
-        <ToolbarComponent activeTool={tool} onToolChange={setTool} />
+        <ToolbarComponent
+          activeTool={tool}
+          onToolChange={setTool}
+          isCanvasLocked={isCanvasLocked}
+        />
       </ToolbarWrapper>
       <ZoomControlsWrapper>
         <ZoomControls

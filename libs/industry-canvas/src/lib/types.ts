@@ -174,7 +174,7 @@ export type SerializedIndustryCanvasState = {
 export type UserIdentifier = string;
 type ISOString = string;
 
-export type CanvasDocument = {
+export type CanvasMetadata = {
   externalId: string;
   name: string;
   isArchived?: boolean;
@@ -184,9 +184,9 @@ export type CanvasDocument = {
 
   updatedAt: ISOString;
   updatedBy: UserIdentifier;
-
-  data: IndustryCanvasState;
 };
+
+export type CanvasDocument = CanvasMetadata & { data: IndustryCanvasState };
 
 export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
   data: SerializedIndustryCanvasState;

@@ -19,6 +19,7 @@ type CanvasTitleProps = Pick<
 > & {
   isEditingTitle: boolean;
   setIsEditingTitle: Dispatch<SetStateAction<boolean>>;
+  isCanvasLocked: boolean;
 };
 
 export const CanvasTitle: React.FC<CanvasTitleProps> = ({
@@ -26,6 +27,7 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
   saveCanvas,
   isEditingTitle,
   setIsEditingTitle,
+  isCanvasLocked,
 }) => {
   const [inputRef, setInputRef] = useState<HTMLInputElement | null>(null);
   const [name, setName] = useState(activeCanvas?.name ?? DEFAULT_CANVAS_NAME);
@@ -90,11 +92,19 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
     setIsEditingTitle,
   ]);
 
+  const onCanvasTitleClick = () => {
+    if (isCanvasLocked) {
+      return;
+    }
+
+    setIsEditingTitle(true);
+  };
+
   return (
     <StyledCanvasTitle
       isEditable={isEditingTitle}
       level={3}
-      onClick={() => setIsEditingTitle(true)}
+      onClick={onCanvasTitleClick}
     >
       {isEditingTitle ? (
         <Input

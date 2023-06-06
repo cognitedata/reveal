@@ -5,7 +5,7 @@ import type { CogniteClient } from '@cognite/sdk';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
 import { UserProfile } from '../hooks/use-query/useUserProfile';
-import { SerializedCanvasDocument } from '../types';
+import { CanvasMetadata, SerializedCanvasDocument } from '../types';
 import { FDMClient, gql } from '../utils/FDMClient';
 
 import {
@@ -116,6 +116,39 @@ export class IndustryCanvasService {
         canvasAnnotations: fdmCanvas.canvasAnnotations,
       }),
     };
+  }
+
+  public async getCanvasMetadataById(
+    canvasId: string
+  ): Promise<CanvasMetadata> {
+    const res = await this.fdmClient.graphQL<{
+      canvases: {
+        items: CanvasMetadata[];
+      };
+    }>(
+      gql`
+        query GetCanvasById($filter: _List${ModelNames.CANVAS}Filter) {
+          canvases: listCanvas(filter: $filter) {
+            items {
+              externalId
+              name
+              isArchived
+              createdAt
+              createdBy
+              updatedAt
+              updatedBy
+            }
+          }
+        }
+      `,
+      this.DATA_MODEL_EXTERNAL_ID,
+      { filter: { externalId: { eq: canvasId } } }
+    );
+    if (res.canvases.items.length === 0) {
+      throw new Error(`Couldn't find canvas with id ${canvasId}`);
+    }
+
+    return res.canvases.items[0];
   }
 
   private async getPaginatedCanvasData(

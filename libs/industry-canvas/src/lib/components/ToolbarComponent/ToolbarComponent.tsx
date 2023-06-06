@@ -14,6 +14,7 @@ import ToolTooltip from './ToolTooltip';
 export type ToolbarComponentProps = {
   activeTool: ToolType;
   onToolChange: (tool: ToolType) => void;
+  isCanvasLocked: boolean;
 };
 
 export const ToolTypeByShortcutKey: Record<string, ToolType> = {
@@ -29,6 +30,7 @@ export const ShortcutKeysByToolType = invert(ToolTypeByShortcutKey);
 const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
   activeTool,
   onToolChange,
+  isCanvasLocked,
 }) => {
   const [isShapeToolActive, setIsShapeToolActive] = useState(false);
 
@@ -50,6 +52,22 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
       activeTool === ToolType.RECTANGLE || activeTool === ToolType.ELLIPSE
     );
   }, [activeTool]);
+
+  if (isCanvasLocked) {
+    return (
+      <ToolBar direction="vertical">
+        <Tooltip content="Grab" position="right">
+          <Button
+            icon="Grab"
+            type="ghost"
+            toggled={activeTool === ToolType.PAN}
+            aria-label="Grab"
+            onClick={() => onToolChange(ToolType.PAN)}
+          />
+        </Tooltip>
+      </ToolBar>
+    );
+  }
 
   return (
     <>
