@@ -12,7 +12,6 @@ import {
 } from '../types';
 import { get360ImageCollectionsQuery } from './listCollections';
 import { Euler, Matrix4 } from 'three';
-import { cadFromCdfToThreeMatrix } from '@reveal/utilities/src/constants';
 import assert from 'assert';
 
 export type DM360CollectionIdentifier = {
@@ -32,6 +31,10 @@ type Image360Collection = {
   label: string;
   stations: {
     items: Image360Station[];
+  };
+  pageInfo: {
+    hasNextPage: boolean;
+    endCursor: string;
   };
 };
 
@@ -94,6 +97,8 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
 
     const data = result.data.data as JSONData;
 
+    console.log(data.getImage360CollectionById);
+
     const collections = data.getImage360CollectionById.items;
     assert(collections.length === 1, 'Expected exactly one collection to be returned from the query');
 
@@ -108,6 +113,18 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
       image360Stations.map(station => this.createHistorical360ImageSet(station, collectionId, collectionLabel))
     );
     return imgs;
+  }
+
+  private async fetchImageCollection(metadataFilter: DM360CollectionIdentifier): Promise<void> {
+    const { dataModelExternalId, space, image360CollectionExternalId } = metadataFilter;
+
+    const baseUrl = this._sdk.getBaseUrl();
+    const project = this._sdk.project;
+    const graphQlEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/1/graphql`;
+
+    const result = await this._sdk.post(graphQlEndpoint, {
+      data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space) }
+    });
   }
 
   private async createHistorical360ImageSet(
@@ -138,25 +155,17 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
   private getRevisionTransform(revision: Image360Revision): Matrix4 {
     const transform = getTranslation();
     transform.multiply(getEulerRotation());
-    transform.premultiply(cadFromCdfToThreeMatrix);
     return transform;
 
     function getEulerRotation(): Matrix4 {
       const { x, y, z } = revision.eulerRotation;
-      const eulerRotation = new Euler(x, y, z, 'XYZ');
-      // console.log(
-      //   new Euler().setFromRotationMatrix(
-      //     new Matrix4().makeRotationFromEuler(eulerRotation).premultiply(cadFromCdfToThreeMatrix),
-      //     'XYZ'
-      //   )
-      // );
-      console.log(eulerRotation);
+      const eulerRotation = new Euler(x, z, -y, 'XYZ');
       return new Matrix4().makeRotationFromEuler(eulerRotation);
     }
 
     function getTranslation(): Matrix4 {
       const { x, y, z } = revision.translation;
-      return new Matrix4().makeTranslation(x, y, z);
+      return new Matrix4().makeTranslation(x, z, -y);
     }
   }
 

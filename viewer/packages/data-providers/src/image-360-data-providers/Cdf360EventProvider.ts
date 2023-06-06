@@ -163,15 +163,6 @@ export class Cdf360EventProvider implements Image360DescriptorProvider<Metadata>
       );
       const rotationAngle = MathUtils.DEG2RAD * parseFloat(transformationData.rotation_angle);
       const rotationMatrix = new Matrix4().makeRotationAxis(rotationAxis, rotationAngle);
-
-      const newRotationAxis = new Vector3(
-        rotationAxisComponents[0],
-        rotationAxisComponents[1],
-        rotationAxisComponents[2]
-      );
-      console.log(new Matrix4().makeRotationAxis(newRotationAxis, rotationAngle));
-      // console.log(transformationData.rotation_axis);
-
       const translationMatrix = new Matrix4().makeTranslation(translation.x, translation.y, translation.z);
 
       return adjustPreMultipliedTransform(translationMatrix, rotationMatrix);

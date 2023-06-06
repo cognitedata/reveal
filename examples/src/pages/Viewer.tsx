@@ -433,19 +433,16 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
-      // const asd = await viewer.add360ImageSet('datamodels', {
-      //   dataModelExternalId: 'Image360DM',
-      //   space: 'Image_360',
-      //   image360CollectionExternalId: 'c_RC_2'
-      // });
-
-      const asd = await viewer.add360ImageSet('events', {
-        site_id: 'c_RC_2'
+      const collection = await viewer.add360ImageSet('datamodels', {
+        dataModelExternalId: 'Image360DM',
+        space: 'Image_360',
+        image360CollectionExternalId: 'Hibernia_RS2'
       });
 
-      viewer.enter360Image(asd.image360Entities[0]);
+      collection.image360Entities.forEach(image360 => {
+        console.log(image360.getRevisions().length);
+      });
 
-      console.log(asd.image360Entities[0].transform);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

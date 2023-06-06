@@ -7,9 +7,9 @@ export const get360ImageCollectionsQuery = (externalId: string, space: string): 
   query MyQuery {
     getImage360CollectionById(instance: {space: "${space}", externalId: "${externalId}"}) {
       items {
-        stations {
+        stations(first: 1000) {
           items {
-            revisions {
+            revisions(first: 1000) {
               items {
                 externalId
                 label
@@ -53,6 +53,10 @@ export const get360ImageCollectionsQuery = (externalId: string, space: string): 
             }
             label
             externalId
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
           }
         }
         label
