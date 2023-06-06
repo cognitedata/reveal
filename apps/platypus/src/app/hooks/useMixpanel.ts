@@ -62,14 +62,15 @@ export type TRACKING_TOKENS =
   | 'ChatGPTSearch.Failed'
   | 'Navigate';
 
+const track = async (eventName: TRACKING_TOKENS, properties?: Dict) => {
+  return trackEvent(eventName, {
+    cluster: getCluster(),
+    project: getProject(),
+    ...properties,
+  });
+};
 export const useMixpanel = () => ({
-  track: async (eventName: TRACKING_TOKENS, properties?: Dict) => {
-    return trackEvent(eventName, {
-      cluster: getCluster(),
-      project: getProject(),
-      ...properties,
-    });
-  },
+  track,
 });
 
 export const useMixpanelPathTracking = () => {
