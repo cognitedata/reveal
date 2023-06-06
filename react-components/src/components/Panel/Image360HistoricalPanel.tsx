@@ -8,8 +8,8 @@ import styled from 'styled-components';
 
 export interface Image360HistoricalPanelProps {
   revisionCount?: number;
-  revisionDetailsExpanded?: boolean;
-  setRevisionDetailsExpanded?: (detailed: boolean) => void;
+  revisionDetailsExpanded: boolean;
+  setRevisionDetailsExpanded: (detailed: boolean) => void;
 }
 
 export const Image360HistoricalPanel = ({
@@ -24,9 +24,9 @@ export const Image360HistoricalPanel = ({
   };
 
   return (
-    <Container isExpanded={revisionDetailsExpanded!}>
+    <Container isExpanded={revisionDetailsExpanded}>
     <Tooltip content="360 Image historical details">
-      <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded!}>
+      <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
         {!revisionDetailsExpanded && (
           <>
             <StyledChip icon='History' iconPlacement='right' label='Details' hideTooltip />

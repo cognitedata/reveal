@@ -14,7 +14,7 @@ export interface Image360RevisionDetails{
   date?: string;
   imageUrl?: string;
   index: number;
-  image360Entity: Image360;
+  image360Entity: Image360 | undefined;
 };
 
 export interface Image360HistoricalSummaryProps{

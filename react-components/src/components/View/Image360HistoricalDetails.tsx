@@ -27,7 +27,7 @@ export const Image360HistoricalDetails = ({
       date?: string;
       imageUrl?: string;
       index: number;
-      image360Entity: Image360;
+      image360Entity: Image360 | undefined;
     }[]
   >([]);
   const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
