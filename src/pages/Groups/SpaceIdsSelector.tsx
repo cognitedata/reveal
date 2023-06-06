@@ -31,6 +31,7 @@ const SpaceIdsSelector = ({
         label: `${el.space} ${el.name ? ` (${el.name})` : ''}`,
       }))}
       getPopupContainer={getContainer}
+      style={{ width: '100%' }}
     />
   );
 };
