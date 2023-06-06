@@ -251,7 +251,10 @@ const getWorkflowExecutionsQueryKey = (externalId: string) => [
   externalId,
 ];
 
-export const useWorkflowExecutions = (externalId: string) => {
+export const useWorkflowExecutions = (
+  externalId: string,
+  options?: UseQueryOptions<WorkflowExecution[]>
+) => {
   const sdk = useSDK();
 
   return useQuery<WorkflowExecution[]>(
@@ -272,7 +275,8 @@ export const useWorkflowExecutions = (externalId: string) => {
             },
           }
         )
-        .then((res) => res.data.items)
+        .then((res) => res.data.items),
+    options
   );
 };
 

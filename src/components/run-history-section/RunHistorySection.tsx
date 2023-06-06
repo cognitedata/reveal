@@ -33,7 +33,10 @@ export const RunHistorySection = ({
     useWorkflowBuilderContext();
 
   const { data: executions, isInitialLoading } = useWorkflowExecutions(
-    workflow.externalId
+    workflow.externalId,
+    {
+      refetchInterval: 5000,
+    }
   );
 
   const [expandedRunHistoryCards, setExpandedRunHistoryCards] = useState<
