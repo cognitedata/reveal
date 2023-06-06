@@ -1,0 +1,55 @@
+name: Publish React Component to NPM on Demand
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+    branches:
+      - '**'
+  # workflow_dispatch:
+  #   inputs:
+  #     version:
+  #       required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+
+      - name: Setup Cognite CICD
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Install NPM dependencies
+        working-directory: react-components
+        run: yarn install --immutable
+
+      - name: Build production version
+        working-directory: react-components
+        run: yarn run build:prod
+
+      - name: Publish to NPM
+        working-directory: react-components
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm publish --dry-run
