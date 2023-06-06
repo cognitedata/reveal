@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import {
   ColumnType,
@@ -8,9 +8,10 @@ import {
 } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
-import { WorkflowRead } from 'hooks/workflows';
+import { WorkflowRead, useDeleteWorkflow } from 'hooks/workflows';
 import { getContainer } from 'utils';
 import Link from 'components/link/Link';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 type WorkflowTableProps = {
   workflows: WorkflowRead[];
@@ -26,6 +27,15 @@ type WorkflowTableColumn = ColumnType<WorkflowTableRecord> & {
 
 const WorkflowTable = ({ workflows }: WorkflowTableProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const { mutate: deleteWorkflow } = useDeleteWorkflow();
+
+  const handleDelete = useCallback(
+    (externalId: string): void => {
+      deleteWorkflow({ externalId });
+    },
+    [deleteWorkflow]
+  );
 
   const columns: WorkflowTableColumn[] = useMemo(
     () => [
@@ -50,8 +60,27 @@ const WorkflowTable = ({ workflows }: WorkflowTableProps): JSX.Element => {
           <Timestamp timestamp={new Date(value).getTime()} />
         ),
       },
+      {
+        key: 'options',
+        dataIndex: 'externalId',
+        title: '',
+        width: 30,
+        render: (value: string) => (
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Item onClick={() => handleDelete(value)}>
+                  {t('delete')}
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button icon="EllipsisHorizontal" size="small" type="ghost" />
+          </Dropdown>
+        ),
+      },
     ],
-    [t]
+    [t, handleDelete]
   );
 
   const dataSource = useMemo(

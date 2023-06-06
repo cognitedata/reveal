@@ -105,6 +105,7 @@ export const useCreateWorkflow = (
   options?: UseMutationOptions<WorkflowRead, unknown, CreateWorkflowVariables>
 ) => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
   return useMutation<WorkflowRead, unknown, CreateWorkflowVariables>(
     (workflow) =>
@@ -116,7 +117,13 @@ export const useCreateWorkflow = (
           },
         })
         .then((res) => res.data),
-    options
+    {
+      ...options,
+      onSuccess: (...args) => {
+        queryClient.invalidateQueries(getWorkflowsQueryKey());
+        options?.onSuccess?.(...args);
+      },
+    }
   );
 };
 
@@ -291,5 +298,34 @@ export const useWorkflowExecutionDetails = (
         )
         .then((res) => res.data),
     options
+  );
+};
+
+type DeleteWorkflowVariables = {
+  externalId: string;
+};
+
+export const useDeleteWorkflow = () => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<unknown, unknown, DeleteWorkflowVariables>(
+    ({ externalId }) =>
+      sdk.post(`api/v1/projects/${getProject()}/workflows/delete`, {
+        data: [
+          {
+            externalId,
+          },
+        ],
+      }),
+    {
+      onSuccess: (_, { externalId }) => {
+        queryClient.invalidateQueries(getWorkflowsQueryKey());
+        queryClient.invalidateQueries(getWorkflowQueryKey(externalId));
+        queryClient.invalidateQueries(
+          getWorkflowExecutionsQueryKey(externalId)
+        );
+      },
+    }
   );
 };

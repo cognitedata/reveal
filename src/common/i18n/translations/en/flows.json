@@ -87,5 +87,6 @@
   "edit-mode": "Edit mode",
   "run-history": "Run history",
   "run-is-selected": "Run is selected",
-  "select-a-run-to-start": "Select a run to start"
+  "select-a-run-to-start": "Select a run to start",
+  "delete": "Delete"
 }
