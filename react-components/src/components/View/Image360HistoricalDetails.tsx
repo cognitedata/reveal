@@ -8,7 +8,8 @@ import { Image360HistoricalPanel } from '../Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
 import { formatDate } from '../utils/FormatDate';
 import styled from 'styled-components';
-import uniqueId from 'lodash/uniqueId';
+// Using named import to avoid react component creation error when default import is used.
+import { uniqueId } from 'lodash';
 
 export interface Image360HistoricalDetailsProps{
   viewer: Cognite3DViewer;
@@ -60,11 +61,9 @@ export const Image360HistoricalDetails = ({
     return() => {
       // Remove image urls
       imageUrls.forEach((url) => {
-        setTimeout(() => {
           if (url) {
             URL.revokeObjectURL(url);
           }
-        }, 250);
       });
       setImageUrls([]);
     };

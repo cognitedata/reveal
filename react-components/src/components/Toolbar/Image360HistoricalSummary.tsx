@@ -7,7 +7,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
-import uniqueId from 'lodash/uniqueId';
+// Using named import to avoid react component creation error when default import is used.
+import { uniqueId } from 'lodash';
 
 export interface Image360RevisionDetails{
   date?: string;
