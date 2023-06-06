@@ -17,6 +17,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
+    "@cognite/reveal": "^4.3.1",
     "react": ">=18",
     "styled-components": ">=5"
   },
@@ -25,7 +26,7 @@
     "@babel/preset-react": "7.22.3",
     "@babel/preset-typescript": "7.21.5",
     "@cognite/cogs.js": "^9.13.2",
-    "@cognite/reveal": "link:../viewer",
+    "@cognite/reveal": "^4.3.1",
     "@storybook/addon-essentials": "7.0.18",
     "@storybook/addon-interactions": "7.0.18",
     "@storybook/addon-links": "7.0.18",
