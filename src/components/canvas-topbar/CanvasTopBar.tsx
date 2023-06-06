@@ -1,6 +1,4 @@
 import {
-  Avatar,
-  AvatarGroup,
   Button,
   Chip,
   Colors,
@@ -39,16 +37,10 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const { mutate: createWorkflowDefinition } = useCreateWorkflowDefinition();
-  const { mutate: runWorkflow } = useRunWorkflow();
+  const { mutateAsync: runWorkflow } = useRunWorkflow();
 
-  const {
-    flow,
-    setHistoryVisible,
-    userState,
-    otherUserStates,
-    activeViewMode,
-    setActiveViewMode,
-  } = useWorkflowBuilderContext();
+  const { flow, setHistoryVisible, activeViewMode, setActiveViewMode } =
+    useWorkflowBuilderContext();
 
   const { workflowDefinition: lastWorkflowDefinition, version: lastVersion } =
     useMemo(() => getLastWorkflowDefinition(workflow), [workflow]);
@@ -111,6 +103,8 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
     runWorkflow({
       externalId: workflow.externalId,
       version: `${lastVersion}`,
+    }).then(() => {
+      setActiveViewMode('run-history');
     });
   };
 
@@ -137,13 +131,6 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
                 {t('run-history')}
               </SegmentedControl.Button>
             </SegmentedControl>
-            <SecondaryTopbar.Divider />
-            <Avatar text={userState.name ?? userState.connectionId} />
-            <AvatarGroup>
-              {otherUserStates.map(({ connectionId, name }) => (
-                <Avatar key={connectionId} text={name ?? connectionId} />
-              ))}
-            </AvatarGroup>
             <SecondaryTopbar.Divider />
             <Flex gap={12}>
               <Button
