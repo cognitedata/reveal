@@ -11,7 +11,7 @@ export const EventDetailsTable = (
   props: Omit<TableProps<InternalEventsData>, 'columns'>
 ) => {
   const columns = useMemo(
-    () => [Table.Columns.type()],
+    () => [Table.Columns.type(), Table.Columns.description()],
     []
   ) as ColumnDef<InternalEventsData>[];
   return (
