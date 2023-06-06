@@ -58,9 +58,12 @@ const getFirstVisibleColumn = <T,>(
 ) => {
   const visibleColumnIds = visibleColumns.map((col) => col.id);
 
-  return columnOrder.length
-    ? columnOrder.find((column) => visibleColumnIds.includes(column))
-    : visibleColumnIds[0];
+  if (columnOrder.length === 0) {
+    return visibleColumnIds[0] === 'select'
+      ? visibleColumnIds[1]
+      : visibleColumnIds[0];
+  }
+  return columnOrder.find((column) => visibleColumnIds.includes(column));
 };
 const LabelMatcherWrapper = styled.div`
   display: flex;
