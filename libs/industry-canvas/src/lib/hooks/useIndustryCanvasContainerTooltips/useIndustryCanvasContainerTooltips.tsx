@@ -43,7 +43,7 @@ const useIndustryCanvasContainerTooltips = ({
   );
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
-  const { isLoading: isOcrDataLoading, data: ocrData } =
+  const { isInitialLoading: isOcrDataLoading, data: ocrData } =
     useContainerOcrData(selectedContainer);
 
   useEffect(() => {
