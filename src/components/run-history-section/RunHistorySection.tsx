@@ -125,9 +125,11 @@ export const RunHistorySection = ({
                   </div>
                 ) : (
                   <Flex direction="column" gap={12}>
-                    <InfoBox status="critical">
-                      {item.reasonForIncompletion || t('no-error-details')}
-                    </InfoBox>
+                    {item.reasonForIncompletion && (
+                      <InfoBox status="critical">
+                        {item.reasonForIncompletion}
+                      </InfoBox>
+                    )}
                     <StyledDetailsGrid>
                       <FieldContainer>
                         <Overline level={3} muted>
