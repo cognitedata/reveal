@@ -145,7 +145,8 @@ pods {
               environment: 'production',
               firebaseJson: 'firebase.json',
               buildCommand: 'yarn build',
-              buildFolder: 'build'
+              buildFolder: 'build',
+              isFusionSubapp: true
             )
           }
         }
