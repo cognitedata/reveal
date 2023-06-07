@@ -34,7 +34,6 @@ function AppBarCommonActions({
   const t = { ...defaultTranslations, ...translations };
   return (
     <TopBar.Actions
-      className="downloadChartHide"
       actions={[
         {
           key: 'help',

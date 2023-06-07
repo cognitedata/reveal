@@ -1,25 +1,17 @@
-import {
-  ComponentProps,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { ComponentProps, useContext, useState } from 'react';
 
 import DateTimeRangeSelector from '@charts-app/components/DateTime/DateTimeRangeSelector';
 import { Delimiters } from '@charts-app/utils/csv';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
+import { Checkbox, SegmentedControl, Tooltip, Modal } from '@cognite/cogs.js';
 
 import { CSVModalContext } from './CSVModalContext';
 import {
-  ModalWrapper,
   ExampleText,
   FullWidthInput,
   Label,
   FieldContainer,
-  ButtonGroup,
   BottomContainer,
   StatusContainer,
   StatusText,
@@ -79,7 +71,6 @@ export const CSVModal = ({
   const { useChartAtom, useExportToCSV, useSDK } = useContext(CSVModalContext);
   const t = { ...defaultTranslations, ...translations };
   const [chart] = useChartAtom();
-  const [isModalVisible, setIsModalVisible] = useState(isOpen);
   const [selectedDelimiterId, setSelectedDelimiterId] = useState(
     delimiterOptions[0].id
   );
@@ -95,15 +86,6 @@ export const CSVModal = ({
     ...(chart?.timeSeriesCollection || []),
     ...(chart?.workflowCollection || []),
   ].every((source) => !source.enabled);
-
-  useEffect(() => {
-    setIsModalVisible(isOpen);
-  }, [isOpen]);
-
-  const handleCloseModal = useCallback(() => {
-    setIsModalVisible(false);
-    onClose();
-  }, [onClose]);
 
   const [isRawDownload, setIsRawDownload] = useState(false);
 
@@ -121,10 +103,15 @@ export const CSVModal = ({
   });
 
   return (
-    <ModalWrapper
+    <Modal
       title={t['Export to CSV']}
-      visible={isModalVisible}
-      onCancel={handleCloseModal}
+      visible={isOpen}
+      onCancel={onClose}
+      cancelText={t.Cancel}
+      okText={t.Export}
+      okDisabled={isExporting || hasNoSourcesVisible}
+      onOk={onExport}
+      size="medium"
     >
       <p>
         {
@@ -171,23 +158,21 @@ export const CSVModal = ({
       </FieldContainer>
 
       <FieldContainer>
-        <Checkbox
-          name="rawDatapoints"
-          checked={isRawDownload}
-          onChange={(e) => setIsRawDownload(e.target.checked)}
-        />
-        <Label>
-          <Tooltip
-            maxWidth={350}
-            content={
-              t[
-                'Download raw data points from the source - without aggregation, limited to 100,000 points per time series'
-              ]
-            }
-          >
-            <>{t['Download raw data (separate file per time series)']}</>
-          </Tooltip>
-        </Label>
+        <Tooltip
+          maxWidth={350}
+          content={
+            t[
+              'Download raw data points from the source - without aggregation, limited to 100,000 points per time series'
+            ]
+          }
+        >
+          <Checkbox
+            name="rawDatapoints"
+            checked={Boolean(isRawDownload)}
+            onChange={(event) => setIsRawDownload(event.target.checked)}
+            label={t['Download raw data (separate file per time series)']}
+          />
+        </Tooltip>
       </FieldContainer>
 
       <FieldContainer>
@@ -212,23 +197,21 @@ export const CSVModal = ({
       </FieldContainer>
 
       <FieldContainer>
-        <Checkbox
-          name="humanReadableDates"
-          checked={isHumanReadableDates}
-          onChange={(e) => setIsHumanReadableDates(e.target.checked)}
-        />
-        <Label>
-          <Tooltip
-            maxWidth={350}
-            content={
-              t[
-                "Set the date format to 'yyyy-mm-dd HH-mm-ss' - otherwise it will be a timestamp"
-              ]
-            }
-          >
-            <>{t['Human readable dates']}</>
-          </Tooltip>
-        </Label>
+        <Tooltip
+          maxWidth={350}
+          content={
+            t[
+              "Set the date format to 'yyyy-mm-dd HH-mm-ss' - otherwise it will be a timestamp"
+            ]
+          }
+        >
+          <Checkbox
+            name="humanReadableDates"
+            checked={Boolean(isHumanReadableDates)}
+            onChange={(event) => setIsHumanReadableDates(event.target.checked)}
+            label={t['Human readable dates']}
+          />
+        </Tooltip>
       </FieldContainer>
 
       <BottomContainer>
@@ -236,7 +219,11 @@ export const CSVModal = ({
           {error && (
             <Tooltip maxWidth={350} content={error.message}>
               <StatusText title={error.message}>
-                <StatusIcon style={{ color: 'var(--cogs-red)' }} type="Error" />{' '}
+                <StatusIcon
+                  // @ts-ignore // todo(DEGR-0001)
+                  style={{ color: 'var(--cogs-red)' }}
+                  type="Error"
+                />{' '}
                 {t['Export failed']}
               </StatusText>
             </Tooltip>
@@ -252,6 +239,7 @@ export const CSVModal = ({
             >
               <StatusText>
                 <StatusIcon
+                  // @ts-ignore // todo(DEGR-0001)
                   style={{ color: 'var(--cogs-yellow)' }}
                   type="WarningFilled"
                 />{' '}
@@ -267,6 +255,7 @@ export const CSVModal = ({
           {!error && isDoneExporting && (
             <StatusText>
               <StatusIcon
+                // @ts-ignore // todo(DEGR-0001)
                 style={{ color: 'var(--cogs-green)' }}
                 type="Checkmark"
               />{' '}
@@ -274,24 +263,8 @@ export const CSVModal = ({
             </StatusText>
           )}
         </StatusContainer>
-        <ButtonGroup>
-          <Button
-            onClick={handleCloseModal}
-            style={{ marginRight: 5 }}
-            type="secondary"
-          >
-            {t.Cancel}
-          </Button>
-          <Button
-            disabled={isExporting || hasNoSourcesVisible}
-            onClick={onExport}
-            type="primary"
-          >
-            {t.Export}
-          </Button>
-        </ButtonGroup>
       </BottomContainer>
-    </ModalWrapper>
+    </Modal>
   );
 };
 

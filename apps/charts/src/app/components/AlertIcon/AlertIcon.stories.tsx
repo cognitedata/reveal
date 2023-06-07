@@ -20,27 +20,27 @@ export const Error = Template.bind({});
 
 IconOnly.args = {
   icon: 'InfoFilled',
-  variant: 'default',
+  type: 'default',
   onClick: () => {},
 };
 
 Info.args = {
   value: 'Info',
   icon: 'InfoFilled',
-  variant: 'default',
+  type: 'default',
   onClick: () => {},
 };
 
 Warning.args = {
   value: 'Warning',
   icon: 'WarningFilled',
-  variant: 'warning',
+  type: 'warning',
   onClick: () => {},
 };
 
 Error.args = {
   value: 'Error',
   icon: 'ErrorFilled',
-  variant: 'danger',
+  type: 'danger',
   onClick: () => {},
 };

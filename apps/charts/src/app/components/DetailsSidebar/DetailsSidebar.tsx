@@ -57,7 +57,11 @@ const renderStatusIcon = (status?: StatusStatusEnum) => {
       return <Icon type="Checkmark" />;
     case StatusStatusEnum.Failed:
     case StatusStatusEnum.Error:
-      return <Icon type="ExclamationMark" />;
+      return (
+        <Tooltip content="Failed">
+          <Icon type="ExclamationMark" />
+        </Tooltip>
+      );
     default:
       return null;
   }

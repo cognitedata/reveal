@@ -26,13 +26,8 @@ export const AccessDeniedModal = ({ capabilities, visible, onOk }: Props) => {
       visible={visible}
       title={t['Capabilities Required']}
       onCancel={onOk}
-      footer={
-        <Flex justifyContent="end">
-          <Button type="primary" onClick={onOk}>
-            Close
-          </Button>
-        </Flex>
-      }
+      size="medium"
+      icon="InfoFilled"
     >
       <Flex direction="column">
         <Body level={2}>

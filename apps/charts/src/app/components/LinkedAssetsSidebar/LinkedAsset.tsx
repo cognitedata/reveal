@@ -79,7 +79,7 @@ export default function LinkedAsset({
             <Icon type="Assets" size={14} style={{ marginRight: 5 }} />
             <Highlighter
               highlightStyle={{
-                backgroundColor: Colors['yellow-4'].alpha(0.4),
+                backgroundColor: Colors['decorative--yellow--400'],
               }}
               searchWords={removeIllegalCharacters(highlight).split(' ')}
               textToHighlight={asset.name}
@@ -92,7 +92,7 @@ export default function LinkedAsset({
             {highlight && asset.description ? (
               <Highlighter
                 highlightStyle={{
-                  backgroundColor: Colors['yellow-4'].alpha(0.4),
+                  backgroundColor: Colors['decorative--yellow--400'],
                 }}
                 searchWords={removeIllegalCharacters(highlight).split(' ')}
                 textToHighlight={asset.description}
@@ -170,7 +170,7 @@ export default function LinkedAsset({
           )}
           {asset.totalTimeSeries > timeseries.length && (
             <Button
-              type="link"
+              type="ghost"
               onClick={() => onAssetClick(asset.id)}
               style={{ marginTop: 10 }}
             >

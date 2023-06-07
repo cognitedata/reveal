@@ -136,17 +136,6 @@ export const MonitoringSidebarBlueButton = styled(Button)`
   }
 `;
 
-export const MonitoringSidebarEllipsis = styled(Icon)`
-  &&& {
-    color: var(--cogs-text-icon--status-neutral);
-    background: var(--cogs-surface--status-neutral--muted--default);
-    padding: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    top: 0px;
-  }
-`;
-
 export const SidebarCollapseAlert = styled(SidebarCollapseWrapped)`
   &&& {
     .rc-collapse-item {

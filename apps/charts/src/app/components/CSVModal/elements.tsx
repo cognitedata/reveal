@@ -4,15 +4,7 @@
 
 import styled from 'styled-components';
 
-import { Icon, Input, Modal } from '@cognite/cogs.js';
-
-export const ModalWrapper = styled(Modal)`
-  max-width: 450px;
-  .cogs-modal-header {
-    border-bottom: none;
-    font-size: var(--cogs-t3-font-size);
-  }
-`;
+import { Icon, Input } from '@cognite/cogs.js';
 
 export const ExampleText = styled.p`
   font-size: 10px;
@@ -30,8 +22,6 @@ export const Label = styled.label`
 export const FieldContainer = styled.div`
   margin-top: 20px;
 `;
-
-export const ButtonGroup = styled.div``;
 
 export const BottomContainer = styled.div`
   margin-top: 40px;

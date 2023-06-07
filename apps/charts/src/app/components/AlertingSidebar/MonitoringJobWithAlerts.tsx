@@ -8,7 +8,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { head } from 'lodash';
 
-import { Col, Icon, Menu, Modal, Row, Title } from '@cognite/cogs.js';
+import { Col, Icon, Menu, Modal, Row, Chip } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
@@ -16,7 +16,6 @@ import {
   TimeseriesContainer,
   DropdownMenuItem,
   ModalBody,
-  MonitoringSidebarEllipsis,
   DropdownActionAlerts,
 } from './elements';
 import { useListAlerts } from './hooks';
@@ -135,9 +134,10 @@ const MonitoringJobWithAlerts = ({ job, translations }: Props) => {
                 </div>
               }
             >
-              <MonitoringSidebarEllipsis
-                size={22}
-                type="EllipsisVertical"
+              <Chip
+                icon="EllipsisVertical"
+                type="neutral"
+                size="small"
                 onClick={(event) => {
                   event.stopPropagation(); // to not toggle alert when clicking menu
                   if (isMenuOpen) {
@@ -178,10 +178,9 @@ const ConfirmModalResolveAlerts = ({
       okText="Yes, I understand"
       onOk={onMarkAllAlertsResolved}
       onCancel={onCloseModal}
+      size="large"
+      title={t['Are you sure you want to mark all as resolved ?']}
     >
-      <Title level={4}>
-        {t['Are you sure you want to mark all as resolved ?']}
-      </Title>
       <ModalBody>
         {
           t[

@@ -35,7 +35,7 @@ const AppBar = ({
   const t = { ...defaultTranslations, ...translations };
 
   return (
-    <TopBar style={{ backgroundColor: '#FFF' }}>
+    <TopBar>
       <TopBar.Left>
         <TopBar.Logo title={t['Cognite Charts']} onClick={onLogoClick} />
         <div id="appbar-left" style={{ flexGrow: 1 }} />

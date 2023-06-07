@@ -63,7 +63,6 @@ export const UsageWithPortals = () => {
           {dayjs('2022-12-22T10:00:00Z').format('MMMM D, YYYY')} · John Doe
         </div>
         <TopBar.Actions
-          className="downloadChartHide"
           actions={[
             {
               key: 'help',
