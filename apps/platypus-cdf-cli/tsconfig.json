@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "files": [],
+  "include": [],
+  "exclude": ["**/*.spec.ts", "jest.config.ts", "**/codegen-static/**"],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

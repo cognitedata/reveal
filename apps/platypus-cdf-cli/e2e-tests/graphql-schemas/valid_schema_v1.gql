@@ -1,0 +1,9 @@
+type User {
+  name: String
+  age: Int
+  posts: [Post]
+}
+
+type Post {
+  title: String
+}

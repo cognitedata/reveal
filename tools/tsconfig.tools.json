@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../dist/out-tsc/tools",
+    "module": "commonjs",
+    "target": "es5",
+    "types": ["node"],
+    "importHelpers": false
+  },
+  "include": ["**/*.ts"]
+}

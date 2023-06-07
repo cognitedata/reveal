@@ -1,0 +1,37 @@
+import { ItemList, ItemsWithCursor } from '../../dto/dms-common-dtos';
+import {
+  ListQueryParams,
+  SearchParams,
+  SpaceDTO,
+  SpaceInstanceDTO,
+} from '../../dto/dms-space-dtos';
+
+import { BaseApiService } from './base-api.service';
+
+export class SpacesApiService extends BaseApiService {
+  upsert(spaces: SpaceDTO[]): Promise<ItemList<SpaceInstanceDTO>> {
+    return this.sendPostRequest('spaces', { items: spaces });
+  }
+
+  list(
+    queryParams?: ListQueryParams
+  ): Promise<ItemsWithCursor<SpaceInstanceDTO>> {
+    return this.sendGetRequest('spaces', queryParams ?? {});
+  }
+
+  getByIds(items: string[]): Promise<ItemList<SpaceInstanceDTO>> {
+    return this.sendPostRequest('spaces/byids', {
+      items: items.map((space) => ({ space })),
+    });
+  }
+
+  search(params: SearchParams): Promise<ItemList<SpaceInstanceDTO>> {
+    return this.sendPostRequest('datamodels/delete', params);
+  }
+
+  delete(items: Array<string>): Promise<''> {
+    return this.sendPostRequest('spaces/delete', {
+      items: items,
+    });
+  }
+}

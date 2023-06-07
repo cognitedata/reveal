@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-iot-hub",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev iot-hub",
+    "build": "../../scripts/build.sh production iot-hub",
+    "test": "../../scripts/test.sh iot-hub",
+    "lint": "../../scripts/lint.sh iot-hub",
+    "lint:fix": "../../scripts/lint.sh --fix iot-hub"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

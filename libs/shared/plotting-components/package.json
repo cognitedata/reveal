@@ -1,0 +1,8 @@
+{
+  "name": "@cognite/plotting-components",
+  "version": "0.0.10",
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

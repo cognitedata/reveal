@@ -1,0 +1,96 @@
+{
+  "npmScope": "fusion",
+  "affected": {
+    "defaultBase": "master"
+  },
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": true
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "nxbuild",
+          "nxlint",
+          "nxtest",
+          "e2e",
+          "build-storybook"
+        ],
+        "parallel": 1
+      }
+    }
+  },
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "bundler": "webpack",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint",
+        "unitTestRunner": "jest"
+      }
+    },
+    "@nrwl/web:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/web:library": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "platypus",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "build-storybook": {
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/.storybook/**/*",
+        "!{projectRoot}/.storybook/**/*",
+        "!{projectRoot}/.storybook/**/*"
+      ]
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": ["{workspaceRoot}/babel.config.json"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)"
+    ]
+  }
+}

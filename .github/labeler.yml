@@ -1,0 +1,28 @@
+fusion-maintainers:
+  - '*'
+
+platypus:
+  - apps/platypus/**/*
+
+data-explorer:
+  - apps/data-exploration/*
+  - apps/data-exploration/**/*
+  - apps/flexible-data-explorer/*
+  - apps/flexible-data-explorer/**/*
+  - libs/data-exploration-components/*
+  - libs/data-exploration-components/**/*
+  - libs/data-exploration/**
+  - libs/shared/plotting-components/*
+  - libs/shared/plotting-components/**/*
+
+coding-conventions:
+  - apps/coding-conventions/*
+  - apps/coding-conventions/**/*
+
+unified-file-viewer:
+  - libs/industry-canvas/*
+  - libs/industry-canvas/**/*
+
+contextualization:
+  - libs/contextualization/*
+  - libs/contextualization/**/*

@@ -1,0 +1,52 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+apps/platypus-e2e/coverage
+apps/platypus-e2e/.nyc_output
+
+# production
+/build
+/dist
+/tmp
+/storybook-static
+build-storybook.log
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+cli/lib
+
+storybook-static
+junit.xml
+
+.env
+
+/.docz
+/dist
+
+generated/
+dm-client/
+#Cypress
+
+cypress/downloads
+cypress/screenshots
+cypress/videos
+
+.yalc/
+yalc.lock
+/.idea/
+/.log/

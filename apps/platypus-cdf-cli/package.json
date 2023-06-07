@@ -1,0 +1,29 @@
+{
+  "name": "@cognite/cdf-cli",
+  "version": "2.2.0",
+  "description": "A CLI for Cognite Data Fusion",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/platypus.git",
+    "directory": "apps/platypus-cdf-cli"
+  },
+  "author": "Cognite",
+  "license": "Apache-2.0",
+  "main": "./main.js",
+  "engines": {
+    "node": ">=16"
+  },
+  "bin": {
+    "cdf": "./main.js"
+  },
+  "dependencies": {
+    "@cognite/sdk": "5.4.0",
+    "tslib": "^2.0.0",
+    "locate-path": "^3.0.0",
+    "lowercase-keys": "^3.0.0",
+    "typescript": "^4.8.4"
+  },
+  "resolutions": {
+    "graphql": "^15.6.1"
+  }
+}

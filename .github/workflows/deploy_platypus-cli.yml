@@ -1,0 +1,50 @@
+name: Release & Deploy Platypus CLI
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'apps/platypus-cdf-cli/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+
+      - name: Install Dependency & Build
+        run: |
+          yarn install --frozen-lockfile
+          rm .npmrc
+          yarn build production platypus-cdf-cli
+
+      - name: Deploy PlatypusCLI to npm 🚀
+        id: publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          tag: latest
+          access: public
+          check-version: true
+          package: ./dist/apps/platypus-cdf-cli/package.json
+
+      - name: Create Release
+        if: steps.publish.outputs.type != 'none'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: cdf-cli-${{ steps.publish.outputs.version }}
+          title: Platypus CDF CLI Release ${{ steps.publish.outputs.version }}
+          files: |
+            ./dist/apps/platypus-cdf-cli/*.js*

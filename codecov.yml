@@ -1,0 +1,47 @@
+coverage:
+  status:
+    project:
+      default: off
+      apps:
+        flags:
+          - data-exploration
+          - flexible-data-explorer
+          - mock-server
+          - platypus
+          - platypus-cdf-cli
+      libs:
+        flags:
+          - cog-data-grid
+          - data-exploration-core
+          - data-exploration-domain-layer
+          - data-exploration-components
+          - platypus-common-utils
+          - platypus-core
+      e2e:
+        flags:
+          - platypus-e2e
+    patch: off
+    changes: off
+
+# adding Flags to your `layout` configuration to show up in the PR comment
+comment:
+  layout: 'reach, diff, flags, files'
+  behavior: default
+  require_changes: false
+  require_base: yes
+  require_head: yes
+  branches: null
+
+flags:
+  apps:
+    paths: #note, accepts globs, not regexes
+      - apps/
+    carryforward: false
+  libs:
+    paths: #note, accepts globs, not regexes
+      - libs/
+    carryforward: false
+  e2e:
+    paths:
+      - apps/
+    carryforward: false

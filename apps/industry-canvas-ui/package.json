@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-industry-canvas-ui",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev industry-canvas-ui",
+    "build": "../../scripts/build.sh production industry-canvas-ui",
+    "test": "../../scripts/test.sh industry-canvas-ui",
+    "lint": "../../scripts/lint.sh industry-canvas-ui",
+    "lint:fix": "../../scripts/lint.sh --fix industry-canvas-ui"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

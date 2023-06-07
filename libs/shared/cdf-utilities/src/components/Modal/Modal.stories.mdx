@@ -1,0 +1,91 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { MemoryRouter } from 'react-router-dom';
+
+import { Button } from '@cognite/cogs.js';
+import Modal from './Modal';
+import DeleteModal from '../DeleteModal';
+
+import { Meta, Story } from '@storybook/addon-docs';
+import { useArgs } from '@storybook/client-api';
+
+<Meta
+  title="Components/Modal"
+  component={Modal}
+  argTypes={{
+    onCancel: { control: false },
+    onOk: { control: false },
+    getContainer: { control: false },
+    zIndex: { control: false },
+  }}
+  args={{
+    visible: true,
+    title: 'Test',
+    closable: true,
+    centered: true,
+  }}
+/>
+
+# Modal
+
+This is a generic `Modal` component. You can either use it as is, or use one of the variants.
+
+## Examples
+
+### Basic
+
+This is an example of a modal with some text.
+
+<Story name="Basic">
+  {(args) => {
+    const [_args, updateArgs] = useArgs();
+    const closeModal = () => updateArgs({ visible: false });
+    return (
+      <MemoryRouter>
+        <Modal {...args} onCancel={closeModal} onOk={closeModal} >
+          Hello World!
+        </Modal>
+      </MemoryRouter>
+    );
+  }}
+</Story>
+
+### Cogs buttons
+
+An example of a modal with custom footer using Cogs buttons.
+
+<Story name="Cogs buttons">
+  {(args) => {
+    const [_args, updateArgs] = useArgs();
+    const closeModal = () => updateArgs({ visible: false });
+    const footer = <Button onClick={closeModal}>Close</Button>;
+    return (
+      <MemoryRouter>
+        <Modal {...args} footer={footer} onCancel={closeModal} onOk={closeModal} >
+          Hello World!
+        </Modal>
+      </MemoryRouter>
+    );
+  }}
+</Story>
+
+### Delete Modal
+
+An example delete modal, created using the base modal, exported as a seperate component.
+
+<Story
+  name="Delete Modal"
+  args={{
+    title: 'Delete Example',
+    bodyText: 'Are you sure you want to delete [name]? Contents of this object will be deleted.',
+    checkboxLabel: 'Yes, I’m sure I want to delete [name]'
+  }}>
+  {(args) => {
+    const [_args, updateArgs] = useArgs();
+    const closeModal = () => updateArgs({ visible: false });
+    return (
+      <MemoryRouter>
+        <DeleteModal {...args} onCancel={closeModal} onOk={closeModal} />
+      </MemoryRouter>
+    );
+  }}
+</Story>

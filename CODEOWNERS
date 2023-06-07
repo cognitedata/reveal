@@ -1,0 +1,45 @@
+## NOTE: Separate the apps/libs folder for respective teams in groups and the paths in ascending order!
+
+# NB: Avoid using 'markdown' as file format for this file --> use plain text or download 'CODEOWNERS' ext. on marketplace
+
+# General
+/.devcontainer/                   @cognitedata/fusion-maintainers
+/.github/                         @cognitedata/fusion-maintainers
+/.storybook/                      @cognitedata/fusion-maintainers
+/.vscode/                         @cognitedata/fusion-maintainers
+/bin/                             @cognitedata/fusion-maintainers
+/scripts/                         @cognitedata/fusion-maintainers
+/tools/                           @cognitedata/fusion-maintainers
+/*                                @cognitedata/fusion-maintainers
+
+# Platypus
+apps/mock-server                  @cognitedata/cdf-user-experience
+apps/platypus                     @cognitedata/cdf-user-experience
+apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
+apps/platypus-e2e                 @cognitedata/cdf-user-experience
+
+libs/data-modeling                @cognitedata/cdf-user-experience
+
+# Team data-explorer
+apps/data-exploration             @cognitedata/explorers
+apps/flexible-data-explorer       @cognitedata/explorers
+
+libs/data-exploration/            @cognitedata/explorers
+libs/data-exploration-components  @cognitedata/explorers
+libs/shared/plotting-components   @cognitedata/explorers
+
+# Team UFV
+libs/industry-canvas              @cognitedata/unified-file-viewer
+apps/industry-canvas-ui              @cognitedata/unified-file-viewer
+
+# Coding conventions
+apps/coding-conventions           @deep-cognite @CimStordal
+
+# Contextualization
+libs/contextualization              @dlcognite @cognitedata/contextualization
+
+# Copilot
+apps/copilot              @dlcognite @andeplane @miladh @trygveu
+
+# IoT Hub
+apps/iot-hub              @dlcognite @geircognite @muradsater

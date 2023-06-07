@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-coding-conventions",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev coding-conventions",
+    "build": "../../scripts/build.sh production coding-conventions",
+    "test": "../../scripts/test.sh coding-conventions",
+    "lint": "../../scripts/lint.sh coding-conventions",
+    "lint:fix": "../../scripts/lint.sh --fix coding-conventions"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "branches": [
+    "master",
+    "alpha",
+    "beta",
+    { "name": "prerelease-*", "prerelease": true}
+  ],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits",
+        "releaseRules": [
+          {"type": "docs", "release": "patch"},
+          {"type": "chore", "release": "patch"},
+          {"type": "chore", "breaking": true, "release": "major"},
+          {"type": "refactor", "release": "patch"},
+          {"type": "refactor", "breaking": true, "release": "major"},
+          {"type": "style", "release": "minor"},
+          {"type": "style", "breaking": true, "release": "major"},
+          {"type": "test", "release": "patch"},
+          {"type": "test", "breaking": true, "release": "major"}
+        ]
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    "@semantic-release/npm",
+    "@semantic-release/github"
+  ]
+}
