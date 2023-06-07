@@ -23,6 +23,7 @@ import {
   CognitePointCloudModel,
   Intersection,
   ViewerState,
+  Image360,
   Image360Collection,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
@@ -46,6 +47,7 @@ type Props = {
   image360SiteId?: string;
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
+  setImage360Entity?: (entity: Image360 | undefined) => void;
   image360Entities?: { siteId: string; images: Image360Collection }[];
   onViewerClick?: (intersection: Intersection | null) => void;
   children?: (childProps: ChildProps) => JSX.Element;
@@ -58,6 +60,7 @@ export function Reveal({
   image360SiteId,
   nodesSelectable,
   initialViewerState,
+  setImage360Entity,
   onViewerClick,
   image360Entities,
 }: Props) {
@@ -94,7 +97,7 @@ export function Reveal({
       domElement: revealContainerRef.current,
       continuousModelStreaming: true,
       loadingIndicatorStyle: {
-        placement: 'bottomRight',
+        placement: 'topRight',
         opacity: 1,
       },
     });
@@ -179,6 +182,13 @@ export function Reveal({
             ),
           });
         }
+
+        imageCollection.on('image360Entered', (image360) => {
+          setImage360Entity?.(image360);
+        });
+        imageCollection.on('image360Exited', () => {
+          setImage360Entity?.(undefined);
+        });
       }
 
       const threeDModel = model instanceof CogniteCadModel ? model : undefined;

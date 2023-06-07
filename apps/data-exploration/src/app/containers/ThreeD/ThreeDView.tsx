@@ -15,9 +15,11 @@ import { Colors, Flex } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   CognitePointCloudModel,
+  Image360,
   Image360Collection,
   Intersection,
 } from '@cognite/reveal';
+import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -121,11 +123,20 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     { siteId: string; images: Image360Collection }[]
   >([]);
 
-  const [is360ImagesMode, setIs360ImagesMode] = useState<boolean>(false);
+  const [image360Entity, setImage360Entity] = useState<Image360 | undefined>(
+    undefined
+  );
 
   const [loadedSecondaryModels, setLoadedSecondaryModels] = useState<
     (CogniteCadModel | CognitePointCloudModel)[]
   >([]);
+
+  const [is360HistoricalPanelExpanded, setIs360HistoricalPanelExpanded] =
+    useState<boolean>(false);
+
+  const handleExpand = useCallback((isExpanded: boolean) => {
+    setIs360HistoricalPanelExpanded(isExpanded);
+  }, []);
 
   useEffect(() => {
     if (viewer && setViewState) {
@@ -292,6 +303,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             revisionId={revisionId ?? -1}
             nodesSelectable={nodesSelectable && !assetDetailsExpanded}
             initialViewerState={initialUrlViewState}
+            setImage360Entity={setImage360Entity}
             onViewerClick={onViewerClick}
             image360Entities={imageEntities}
           >
@@ -311,7 +323,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   images360={images360}
                   imageEntities={imageEntities}
                   setImageEntities={setImageEntities}
-                  setIs360ImagesMode={setIs360ImagesMode}
+                  setImage360Entity={setImage360Entity}
                   viewer={revealViewer}
                 />
                 <MouseWheelAction
@@ -322,48 +334,57 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   viewer={revealViewer}
                   onLabelClick={onLabelClick}
                 />
-                <StyledToolBar>
-                  {!is360ImagesMode && (
-                    <>
-                      <ExpandButton
-                        viewer={revealViewer}
-                        model={revealThreeDModel ?? revealPointCloudModel}
-                      />
-                      <FocusAssetButton
-                        selectedAssetId={selectedAssetId}
-                        viewer={revealViewer}
-                        threeDModel={revealThreeDModel}
-                      />
-                      <StyledToolBarDivider />
-                      <PointSizeSlider
-                        pointCloudModel={revealPointCloudModel}
-                        viewer={revealViewer}
-                      />
-                      <Slicer
-                        viewer={revealViewer}
-                        viewerModel={revealThreeDModel ?? revealPointCloudModel}
-                      />
-                      <PointToPointMeasurementButton
-                        model={revealThreeDModel ?? revealPointCloudModel}
-                        viewer={revealViewer}
-                        nodesSelectable={nodesSelectable}
-                        setNodesSelectable={setNodesSelectable}
-                      />
-                    </>
-                  )}
-                  {!assetDetailsExpanded && !is360ImagesMode && (
-                    <AssetsHighlightButton
-                      labelsVisibility={labelsVisibility}
-                      setLabelsVisibility={setLabelsVisibility}
-                      overlayTool={overlayTool}
+                {!image360Entity && (
+                  <StyledToolBar>
+                    <ExpandButton
+                      viewer={revealViewer}
+                      model={revealThreeDModel ?? revealPointCloudModel}
+                    />
+                    <FocusAssetButton
+                      selectedAssetId={selectedAssetId}
+                      viewer={revealViewer}
                       threeDModel={revealThreeDModel}
                     />
+                    <StyledToolBarDivider />
+                    <PointSizeSlider
+                      pointCloudModel={revealPointCloudModel}
+                      viewer={revealViewer}
+                    />
+                    <Slicer
+                      viewer={revealViewer}
+                      viewerModel={revealThreeDModel ?? revealPointCloudModel}
+                    />
+                    <PointToPointMeasurementButton
+                      model={revealThreeDModel ?? revealPointCloudModel}
+                      viewer={revealViewer}
+                      nodesSelectable={nodesSelectable}
+                      setNodesSelectable={setNodesSelectable}
+                    />
+                    {!assetDetailsExpanded && (
+                      <AssetsHighlightButton
+                        labelsVisibility={labelsVisibility}
+                        setLabelsVisibility={setLabelsVisibility}
+                        overlayTool={overlayTool}
+                        threeDModel={revealThreeDModel}
+                      />
+                    )}
+                    <StyledToolBarDivider />
+                    <HighQualityToggle viewer={revealViewer} />
+                    <ShareButton />
+                    <HelpButton />
+                  </StyledToolBar>
+                )}
+                <Image360HistoricalPanel
+                  isExpanded={is360HistoricalPanelExpanded}
+                >
+                  {image360Entity && (
+                    <Image360HistoricalDetails
+                      viewer={revealViewer}
+                      image360Entity={image360Entity!}
+                      onExpand={handleExpand}
+                    />
                   )}
-                  <StyledToolBarDivider />
-                  <HighQualityToggle viewer={revealViewer} />
-                  <ShareButton />
-                  <HelpButton />
-                </StyledToolBar>
+                </Image360HistoricalPanel>
                 <SidebarContainer gap={15}>
                   {(revealThreeDModel ||
                     (revealPointCloudModel && pointCloudSearchFeatureFlag)) && (
@@ -408,6 +429,17 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     </>
   );
 };
+
+const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
+  position: absolute;
+  bottom: ${({ isExpanded }) => (isExpanded ? '0px' : '10px')};
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: fit-content;
+  max-width: 100%;
+  min-width: fill-available;
+`;
 
 const NodePreviewContainer = styled.div`
   position: absolute;

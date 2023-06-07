@@ -16,6 +16,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   Image360Collection,
+  Image360,
 } from '@cognite/reveal';
 import {
   Asset,
@@ -565,7 +566,7 @@ export const getImages360QueryFn =
         { siteId: string; images: Image360Collection }[]
       >
     ) => void,
-    setIs360ImagesMode?: (mode: boolean) => void,
+    setImage360Entity?: (entity: Image360 | undefined) => void,
     rotationMatrix?: THREE.Matrix4,
     translationMatrix?: THREE.Matrix4
   ) =>
@@ -622,20 +623,17 @@ export const getImages360QueryFn =
       setImageEntities((prevState) =>
         prevState.concat({ siteId, images: images360Set })
       );
-
-      images360Set.on('image360Entered', () => {
-        setIs360ImagesMode?.(true);
+      images360Set.on('image360Entered', (image360) => {
+        setImage360Entity?.(image360);
       });
       images360Set.on('image360Exited', () => {
-        setIs360ImagesMode?.(false);
+        setImage360Entity?.(undefined);
       });
     } else if (!applied && hasAdded) {
       const images360ToRemove = imageEntities.find(
         ({ siteId: tmId }) => siteId === tmId
       );
       if (images360ToRemove) {
-        images360ToRemove.images.off('image360Entered', _.noop);
-        images360ToRemove.images.off('image360Exited', _.noop);
         await viewer.remove360Images(
           ...images360ToRemove.images.image360Entities
         );
