@@ -71,15 +71,11 @@ export function useRecentViewLocalStorage<T>(
   const queryKey = `rv-${viewType}`;
   const project = getProject();
 
-  return useQuery<T>(
-    queryKey,
-    () => {
-      return getRvFromLocal(project, viewType) ?? defaultValue;
-    },
-    {
-      initialData: () => getRvFromLocal(project, viewType) ?? defaultValue,
-    }
-  );
+  return useQuery<T>([queryKey], () => {
+    return getRvFromLocal(project, viewType) ?? defaultValue;
+  }, {
+    initialData: () => getRvFromLocal(project, viewType) ?? defaultValue,
+  });
 }
 
 export const useAddToRecentLocalStorage = () => {

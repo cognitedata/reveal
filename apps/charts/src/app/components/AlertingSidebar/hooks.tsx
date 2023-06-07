@@ -19,15 +19,14 @@ import {
  */
 export const useListMonitoringTasks = () => {
   const sdk = useSDK();
-  return useQuery(`monitoring-list-tasks`, () =>
+  return useQuery([`monitoring-list-tasks`], () =>
     sdk
       .get<MonitoringJobsAlertsResponsePayload>(
         `apps/v1/projects/${sdk.project}/charts/monitoring/alerts`
       )
       .then(({ data }) => {
         return data.items;
-      })
-  );
+      }));
 };
 
 /**
@@ -44,15 +43,14 @@ export const useListMonitoringTasks = () => {
  */
 export const useListAlerts = (taskId: string) => {
   const sdk = useSDK();
-  return useQuery(`monitoring-list-alerts-${taskId}`, () =>
+  return useQuery([`monitoring-list-alerts-${taskId}`], () =>
     sdk
       .get<AlertResponsePayload>(
         `apps/v1/projects/${sdk.project}/charts/monitoring/${taskId}/alerts`
       )
       .then(({ data }) => {
         return data.items;
-      })
-  );
+      }));
 };
 
 /**
@@ -69,7 +67,7 @@ export const useListAlerts = (taskId: string) => {
  */
 export const useAlertingStatus = (taskId: string) => {
   const sdk = useSDK();
-  return useQuery(`monitoring-list-alerts-${taskId}`, () =>
+  return useQuery([`monitoring-list-alerts-${taskId}`], () =>
     sdk
       .post<AlertResponsePayload>(
         `apps/v1/projects/${sdk.project}/charts/monitoring/alerts`,
@@ -77,6 +75,5 @@ export const useAlertingStatus = (taskId: string) => {
       )
       .then(({ data }) => {
         return data.items;
-      })
-  );
+      }));
 };

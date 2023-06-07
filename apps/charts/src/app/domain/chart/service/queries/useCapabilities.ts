@@ -17,19 +17,15 @@ export type CapabilityWithExperimentAcl = {
 export const useCapabilities = (): UseQueryResult<CogniteCapability> => {
   const sdk = useSDK();
 
-  return useQuery<CogniteCapability>(
-    'capabilities',
-    async () => {
-      try {
-        const response = await getCapabilities(sdk);
-        return response.data.capabilities;
-      } catch (e) {
-        return [];
-      }
-    },
-    {
-      staleTime: Infinity,
-      cacheTime: Infinity,
+  return useQuery<CogniteCapability>(['capabilities'], async () => {
+    try {
+      const response = await getCapabilities(sdk);
+      return response.data.capabilities;
+    } catch (e) {
+      return [];
     }
-  );
+  }, {
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
 };

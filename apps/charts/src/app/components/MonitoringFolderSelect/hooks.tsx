@@ -58,13 +58,12 @@ export const useCreateMonitoringFolder = () => {
 export const useMonitoringFolders = () => {
   const sdk = useSDK();
 
-  return useQuery<MonitoringFolder[]>(`monitoring-folders`, () =>
+  return useQuery<MonitoringFolder[]>([`monitoring-folders`], () =>
     sdk
       .get<MonitoringFolderListPayload>(
         `apps/v1/projects/${sdk.project}/charts/monitoring/folders`
       )
       .then(({ data }) => {
         return data.items;
-      })
-  );
+      }));
 };

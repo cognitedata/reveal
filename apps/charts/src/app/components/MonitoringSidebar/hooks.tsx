@@ -268,7 +268,7 @@ export const useMonitoringSubscripitionList = (
 ) => {
   const sdk = useSDK();
   const ids = channelIds.join(',');
-  return useQuery(`monitoring-subscriptions-list-${ids}`, () =>
+  return useQuery([`monitoring-subscriptions-list-${ids}`], () =>
     sdk
       .post<MonitoringSubscriptionsListResponse>(
         `apps/v1/projects/${sdk.project}/charts/monitoring/subscriptions`,
@@ -279,8 +279,7 @@ export const useMonitoringSubscripitionList = (
           },
         }
       )
-      .then(({ data }) => data)
-  );
+      .then(({ data }) => data));
 };
 
 /**
@@ -297,18 +296,14 @@ export const useMonitoringSubscripitionList = (
  */
 export const useListAlerts = (jobId: string, enabled = true) => {
   const sdk = useSDK();
-  return useQuery(
-    `monitoring-list-alerts-${jobId}`,
-    () =>
-      sdk
-        .get<AlertResponsePayload>(
-          `apps/v1/projects/${sdk.project}/charts/monitoring/${jobId}/alerts`
-        )
-        .then(({ data }) => {
-          return data.items;
-        }),
-    {
-      enabled,
-    }
-  );
+  return useQuery([`monitoring-list-alerts-${jobId}`], () =>
+    sdk
+      .get<AlertResponsePayload>(
+        `apps/v1/projects/${sdk.project}/charts/monitoring/${jobId}/alerts`
+      )
+      .then(({ data }) => {
+        return data.items;
+      }), {
+    enabled,
+  });
 };

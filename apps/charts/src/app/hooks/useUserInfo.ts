@@ -10,10 +10,7 @@ export type UserInfo = {
 };
 
 export const useUserInfo = () => {
-  const { data, isLoading, isFetched } = useQuery<UserInfo>(
-    'user-info',
-    getUserInformation
-  );
+  const { data, isLoading, isFetched } = useQuery<UserInfo>(['user-info'], getUserInformation);
 
   return { data, isLoading, isFetched };
 };

@@ -6,7 +6,7 @@ export const useUserInfo = () => {
     data: userInfoData,
     isLoading,
     isFetched,
-  } = useQuery('user-info', getUserInformation);
+  } = useQuery(['user-info'], getUserInformation);
 
   const data = {
     displayName: userInfoData.displayName,

@@ -9,7 +9,7 @@ export const useAnnotations = (file: FileInfo | undefined) => {
   const { id: fileId } = file || {};
   const sdk = useSDK();
 
-  return useQuery<AnnotationModel[]>(`annotations-file-${fileId}`, () =>
+  return useQuery<AnnotationModel[]>([`annotations-file-${fileId}`], () =>
     sdk
       .post<AnnotationsData>(
         `api/v1/projects/${sdk.project}/annotations/list`,
@@ -25,6 +25,5 @@ export const useAnnotations = (file: FileInfo | undefined) => {
       )
       .then(({ data }) => {
         return data.items;
-      })
-  );
+      }));
 };
