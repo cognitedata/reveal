@@ -14,11 +14,13 @@ import { uniqueId } from 'lodash';
 export interface Image360HistoricalDetailsProps{
   viewer: Cognite3DViewer;
   image360Entity?: Image360;
+  onExpand?: (isExpanded: boolean) => void;
 };
 
 export const Image360HistoricalDetails = ({
   viewer,
-  image360Entity
+  image360Entity,
+  onExpand
 }: Image360HistoricalDetailsProps) => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
@@ -72,6 +74,9 @@ export const Image360HistoricalDetails = ({
   useEffect(() => {
     const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
     setMinWidth(newMinWidth);
+    if (onExpand) {
+      onExpand(revisionDetailsExpanded);
+    }
   }, [revisionDetailsExpanded]);
 
   return(

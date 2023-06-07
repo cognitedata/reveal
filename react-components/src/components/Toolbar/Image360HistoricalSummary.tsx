@@ -77,7 +77,7 @@ export const Image360HistoricalSummary = ({
 
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
-  max-width: 200px;
+  margin-bottom: 10px;
 
   //Restrict text length
   overflow:hidden;
@@ -87,7 +87,7 @@ const StyledSubFlex = styled(Flex)`
 `;
 
 const StyledFlex = styled(Flex)`
-  max-width: 200px;
+  max-width: 25%;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
@@ -99,7 +99,6 @@ const StyledFlex = styled(Flex)`
 `;
 
 const StyledDetail = styled(Detail)`
-  max-width: 200px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
@@ -119,7 +118,7 @@ const StyledDetail = styled(Detail)`
 const StyledLayoutGridContainer = styled.div`
   position: absolute;
   width: 70%;
-  height: 112px;
+  height: 140px;
   right: 20px;
   overflow-x: auto;
 `;
@@ -131,11 +130,15 @@ const StyledLayoutGrid = styled.div`
   gap: 6px;
   justify-content: flex-end;
   min-width: fit-content;
+
+  &::-webkit-scrollbar {
+    width: 18px;
+  }
 `;
 
 const RevisionItem = styled.div`
   width: 160px;
-  height: 112px;
+  height: 120px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -145,7 +148,7 @@ const RevisionItem = styled.div`
 `;
 
 const OverviewContainer = styled.div`
-  height: 136px;
+  height: 165px;
   display: flex;
   flex-direction: column;
   padding: 16px 16px 8px 16px;
