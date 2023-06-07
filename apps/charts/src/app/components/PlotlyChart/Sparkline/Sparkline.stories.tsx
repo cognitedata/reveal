@@ -1,5 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import dayjs from 'dayjs';
+
 import Sparkline from './Sparkline';
 
 type Props = React.ComponentProps<typeof Sparkline>;

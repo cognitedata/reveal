@@ -4,6 +4,7 @@
 
 import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
+
 import Metrics from './Metrics';
 
 type Props = React.ComponentProps<typeof Metrics>;

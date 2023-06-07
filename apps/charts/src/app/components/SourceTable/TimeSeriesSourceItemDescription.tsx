@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { Tooltip } from '@cognite/cogs.js';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { SourceDescription } from './elements';
 
 type Props = {

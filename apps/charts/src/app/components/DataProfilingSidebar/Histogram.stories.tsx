@@ -4,6 +4,7 @@
 
 import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
+
 import Histogram from './Histogram';
 
 type Props = React.ComponentProps<typeof Histogram>;

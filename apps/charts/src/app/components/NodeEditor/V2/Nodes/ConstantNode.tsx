@@ -1,10 +1,14 @@
-import { Input } from '@cognite/cogs.js';
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-import Joi from 'joi';
 import { memo, useEffect, useState, useCallback } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
+
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+import Joi from 'joi';
 import styled from 'styled-components/macro';
+
+import { Input } from '@cognite/cogs.js';
+
 import { NodeTypes } from '../types';
+
 import { NodeWrapper, NoDragWrapper } from './elements';
 import NodeHandle from './NodeHandle';
 import NodeWithActionBar from './NodeWithActionBar';

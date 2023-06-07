@@ -14,9 +14,9 @@ import {
 } from '@charts-app/components/Common/SidebarElements';
 import { useCdfEvent } from '@charts-app/hooks/cdf-assets';
 import { activeEventIdAtom } from '@charts-app/models/event-results/atom';
-import { useRecoilState } from 'recoil';
 import { formatDate } from '@charts-app/utils/date';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useRecoilState } from 'recoil';
 
 import { Body, Button, Title, Row, Col, Input } from '@cognite/cogs.js';
 

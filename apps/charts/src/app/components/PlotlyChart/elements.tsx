@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+
 import { Icon } from '@cognite/cogs.js';
 
 /* eslint-disable @cognite/no-number-z-index */

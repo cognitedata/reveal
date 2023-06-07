@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-import { Menu } from '@cognite/cogs.js';
-import { availableColors } from '@charts-app/utils/colors';
-import { trackUsage } from '@charts-app/services/metrics';
-
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Interpolation, LineStyle } from '@charts-app/models/chart/types';
-import { InterpolationStepIcon, InterpolationLinearIcon } from './Icons';
+import { trackUsage } from '@charts-app/services/metrics';
+import { availableColors } from '@charts-app/utils/colors';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Menu } from '@cognite/cogs.js';
+
 import {
   DropdownWrapper,
   MenuWrapper,
@@ -14,6 +14,7 @@ import {
   WeightLine,
   TypeLine,
 } from './elements';
+import { InterpolationStepIcon, InterpolationLinearIcon } from './Icons';
 
 type AppearanceDropdownProps = {
   selectedColor: string;

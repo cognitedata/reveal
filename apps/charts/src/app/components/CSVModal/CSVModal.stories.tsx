@@ -1,6 +1,9 @@
 import { ComponentProps } from 'react';
+
 import { Meta, Story } from '@storybook/react';
+
 import { CogniteClient } from '@cognite/sdk';
+
 import { CSVModal } from './CSVModal';
 import { CSVModalContext, CSVModalContextInterface } from './CSVModalContext';
 

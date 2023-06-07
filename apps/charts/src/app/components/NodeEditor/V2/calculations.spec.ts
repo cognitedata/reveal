@@ -1,5 +1,7 @@
-import { Calculation } from '@cognite/calculation-backend';
 import { fullListOfOperations } from '@charts-app/models/operations/mocks';
+
+import { Calculation } from '@cognite/calculation-backend';
+
 import { validateSteps } from './calculations';
 
 describe('validateSteps', () => {

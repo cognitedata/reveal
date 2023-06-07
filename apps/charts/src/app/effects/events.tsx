@@ -5,18 +5,19 @@
  */
 
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { useDebounce } from 'use-debounce';
-import { isEqual } from 'lodash';
-import { getTime } from 'date-fns';
-import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { EventFilter, CogniteClient } from '@cognite/sdk';
 
+import { transformNewFilterToOldFilter } from '@charts-app/components/EventSidebar/helpers';
 import chartAtom from '@charts-app/models/chart/atom';
 import { ChartEventFilters } from '@charts-app/models/chart/types';
 import { eventResultsAtom } from '@charts-app/models/event-results/atom';
-import { transformNewFilterToOldFilter } from '@charts-app/components/EventSidebar/helpers';
+import { useQuery } from '@tanstack/react-query';
+import { getTime } from 'date-fns';
+import { isEqual } from 'lodash';
+import { useRecoilState } from 'recoil';
+import { useDebounce } from 'use-debounce';
+
+import { EventFilter, CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 export function EventResultEffects() {
   const [chart] = useRecoilState(chartAtom);

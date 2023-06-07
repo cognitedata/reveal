@@ -1,19 +1,24 @@
-import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
-
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
 
 import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
 import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
 import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
+import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
 import {
   useComponentTranslations,
   useTranslations,
 } from '@charts-app/hooks/translations';
-import { ChartWorkflow, ScheduledCalculation } from '@charts-app/models/chart/types';
+import {
+  ChartWorkflow,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
 import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
 import { formatValueForDisplay } from '@charts-app/utils/numbers';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
 import { Button, toast, Tooltip } from '@cognite/cogs.js';

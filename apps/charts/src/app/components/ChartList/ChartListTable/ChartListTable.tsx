@@ -1,9 +1,13 @@
-import { Skeleton } from 'antd';
+import { useContext } from 'react';
+
+import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
 import {
   getTranslationsForComponent,
   makeDefaultTranslations,
   translationKeys,
 } from '@charts-app/utils/translations';
+import { Skeleton } from 'antd';
+
 import {
   A,
   Detail,
@@ -12,12 +16,11 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { useContext } from 'react';
-import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
-import { ChartListProps } from '../types';
+
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
-import formatOwner from '../formatOwner';
 import { ChartListContext } from '../context';
+import formatOwner from '../formatOwner';
+import { ChartListProps } from '../types';
 
 const defaultTranslations = makeDefaultTranslations(
   'Preview',

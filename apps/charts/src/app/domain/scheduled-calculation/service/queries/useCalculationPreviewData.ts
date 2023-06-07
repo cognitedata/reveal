@@ -1,15 +1,17 @@
 /**
  * Get calc datapoints for Scheduled Calc prevew
  */
-import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
 
-import { CalculationResultQueryAggregateEnum } from '@cognite/calculation-backend';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import { fetchCalculationQueryResult } from '@charts-app/services/calculation-backend';
 import { calculateGranularity } from '@charts-app/utils/timeseries';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+
+import { CalculationResultQueryAggregateEnum } from '@cognite/calculation-backend';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { useGetWorkflow } from '../../../chart/internal/queries/useGetWorkflow';
 
 const POINTS_PER_SERIES_IN_PREVIEW = 100;

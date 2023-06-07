@@ -1,10 +1,13 @@
-import { TopBar, TopBarLogoProps } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
+
 import {
   getTranslationsForComponent,
   makeDefaultTranslations,
   translationKeys,
 } from '@charts-app/utils/translations';
+
+import { TopBar, TopBarLogoProps } from '@cognite/cogs.js';
+
 import AppBarCommonActions from './AppBarCommonActions';
 
 const defaultTranslations = makeDefaultTranslations(

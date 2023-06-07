@@ -1,10 +1,11 @@
-import { ChartThresholdEventFilter } from '@charts-app/models/chart/types';
 import {
   useState,
   useCallback,
   ChangeEventHandler,
   KeyboardEventHandler,
 } from 'react';
+
+import { ChartThresholdEventFilter } from '@charts-app/models/chart/types';
 
 type FilterHanlderProps = {
   defaultValue?: number;

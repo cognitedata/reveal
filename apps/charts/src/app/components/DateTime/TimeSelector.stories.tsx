@@ -2,8 +2,10 @@
  * TimeSelector StoryBook
  */
 
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import TimeSelector from './TimeSelector';
 
 export default {

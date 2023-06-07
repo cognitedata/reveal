@@ -3,8 +3,9 @@
  * @returns ShowHideButton
  */
 
-import { Icon } from '@cognite/cogs.js';
 import { MouseEventHandler } from 'react';
+
+import { Icon } from '@cognite/cogs.js';
 
 interface Props {
   enabled: boolean;

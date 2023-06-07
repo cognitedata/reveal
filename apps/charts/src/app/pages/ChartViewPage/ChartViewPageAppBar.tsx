@@ -1,12 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { Flex, TopBar } from '@cognite/cogs.js';
+
 import AppBarLeft from '@charts-app/components/AppBar/AppBarLeft';
 import AppBarRight from '@charts-app/components/AppBar/AppBarRight';
 import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
-import dayjs from 'dayjs';
 import chartAtom from '@charts-app/models/chart/atom';
+import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
+
+import { Flex, TopBar } from '@cognite/cogs.js';
+
 import { ChartActions } from '../../components/TopBar/ChartActions';
+
 import { ChartName } from './elements';
 
 type Props = {

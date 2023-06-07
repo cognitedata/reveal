@@ -2,8 +2,10 @@
  * ChartViewHeader Header StoryBook
  */
 
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import ChartViewHeader from './ChartViewHeader';
 
 export default {

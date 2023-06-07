@@ -1,3 +1,5 @@
+import { RAW_DATA_POINTS_THRESHOLD } from '@charts-app/utils/constants';
+
 import {
   CogniteClient,
   DatapointsMultiQuery,
@@ -5,7 +7,6 @@ import {
   DatapointAggregate,
   Datapoints,
 } from '@cognite/sdk';
-import { RAW_DATA_POINTS_THRESHOLD } from '@charts-app/utils/constants';
 
 export function fetchRawOrAggregatedDatapoints(
   sdk: CogniteClient,

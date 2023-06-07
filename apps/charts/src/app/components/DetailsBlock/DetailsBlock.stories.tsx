@@ -1,6 +1,8 @@
+import { ComponentProps } from 'react';
+
 import { Meta, Story } from '@storybook/react';
 import { Col, List, Row } from 'antd';
-import { ComponentProps } from 'react';
+
 import DetailsBlock from './DetailsBlock';
 
 export default {

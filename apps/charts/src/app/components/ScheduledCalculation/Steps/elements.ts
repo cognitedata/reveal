@@ -1,5 +1,6 @@
-import { Flex, Icon, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Flex, Icon, Body } from '@cognite/cogs.js';
 
 export const Steps2Column = styled(Flex)`
   width: 50%;

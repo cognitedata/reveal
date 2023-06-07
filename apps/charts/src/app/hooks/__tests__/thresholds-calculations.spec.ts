@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { Chart, ChartThreshold } from '../../models/chart/types';
 
+import { Chart, ChartThreshold } from '../../models/chart/types';
 import useThresholdsResults, {
   thresholdParameters,
 } from '../threshold-calculations';

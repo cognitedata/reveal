@@ -2,8 +2,10 @@
  * Appearance/Style Dropdown StoryBook
  */
 
-import { Meta, Story } from '@storybook/react';
 import React from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import AppearanceDropdown, { ColorDropdown } from './AppearanceDropdown';
 
 type Props = React.ComponentProps<typeof AppearanceDropdown>;

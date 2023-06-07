@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { EmptyStateContainer, EmptyStateTitle, EmptyStateText } from './styles';
 
 const defaultTranslations = makeDefaultTranslations(

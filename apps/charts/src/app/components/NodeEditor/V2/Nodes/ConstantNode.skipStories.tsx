@@ -1,10 +1,13 @@
 import { ComponentProps } from 'react';
-import { Meta, Story } from '@storybook/react';
 import { ReactFlowProvider } from 'react-flow-renderer';
+
 import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-import ConstantNode from './ConstantNode';
+import { Meta, Story } from '@storybook/react';
+
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 import { NodeTypes } from '../types';
+
+import ConstantNode from './ConstantNode';
 
 export default {
   component: ConstantNode,

@@ -1,4 +1,5 @@
 import { Skeleton } from 'antd';
+
 import PlotlyChart from '../PlotlyChart';
 
 interface Props {

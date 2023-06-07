@@ -1,8 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
-import { SessionAPIPayload } from '../types';
+
 import { getCapabilities } from '../../service/network/getCapabilities';
 import { createSession } from '../network/createSession';
+import { SessionAPIPayload } from '../types';
 
 /**
  * Create Session Nonce

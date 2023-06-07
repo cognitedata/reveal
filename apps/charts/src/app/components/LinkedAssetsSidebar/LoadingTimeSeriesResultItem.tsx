@@ -1,7 +1,9 @@
 import styled from 'styled-components';
-import { Checkbox, Icon } from '@cognite/cogs.js';
+
 import Sparkline from '@charts-app/components/PlotlyChart/Sparkline/Sparkline';
 import { Skeleton } from 'antd';
+
+import { Checkbox, Icon } from '@cognite/cogs.js';
 
 export default function LoadingTimeSeriesResultItem() {
   return (

@@ -1,6 +1,9 @@
-import { useChartAtom } from '@charts-app/models/chart/atom';
 import React from 'react';
+
+import { useChartAtom } from '@charts-app/models/chart/atom';
+
 import { useSDK } from '@cognite/sdk-provider';
+
 import { useExportToCSV } from './hooks';
 
 export interface CSVModalContextInterface {

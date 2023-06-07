@@ -1,8 +1,9 @@
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+
 import {
   OperationVersionParams,
   OperationVersionParamsTypeEnum,
 } from '@cognite/calculation-backend';
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 
 interface ParameterFormBase {
   nodeId: string;

@@ -1,12 +1,6 @@
 /* eslint camelcase: 0 */
 
 import {
-  ComputationStep,
-  Operation,
-  OperationVersionParams,
-  OperationVersionParamsTypeEnum,
-} from '@cognite/calculation-backend';
-import {
   Node,
   FlowElement,
   getIncomers,
@@ -16,18 +10,30 @@ import {
   isEdge,
   removeElements,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2, ScheduledCalculation } from '@charts-app/models/chart/types';
-import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
+
 import {
   FunctionNodeData,
   FunctionNodeDataDehydrated,
 } from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
+import {
+  ChartWorkflowV2,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
 import { compareVersions } from 'compare-versions';
 import { uniqBy } from 'lodash';
-import { NodeTypes } from './types';
+
+import {
+  ComputationStep,
+  Operation,
+  OperationVersionParams,
+  OperationVersionParamsTypeEnum,
+} from '@cognite/calculation-backend';
+
+import { passthroughOperationDefinition } from './calculations';
 import { AUTO_ALIGN_PARAM } from './constants';
 import { SourceNodeData } from './Nodes/SourceNode';
-import { passthroughOperationDefinition } from './calculations';
+import { NodeTypes } from './types';
 
 export function transformParamInput(
   type: OperationVersionParamsTypeEnum,

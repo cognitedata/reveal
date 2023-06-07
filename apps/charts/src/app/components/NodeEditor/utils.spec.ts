@@ -1,9 +1,11 @@
+import { ChartTimeSeries } from '@charts-app/models/chart/types';
+import { fullListOfOperations } from '@charts-app/models/operations/mocks';
+
 import {
   ComputationStep,
   TimeSeriesInputTypeEnum,
 } from '@cognite/calculation-backend';
-import { ChartTimeSeries } from '@charts-app/models/chart/types';
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
+
 import {
   getOperationsGroupedByCategory,
   resolveTimeseriesSourceInSteps,

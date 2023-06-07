@@ -1,8 +1,9 @@
 import ReactMarkdown from 'react-markdown';
+
 import 'katex/dist/katex.min.css';
-import RemarkMathPlugin from 'remark-math';
 import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
 import rehypeKatex from 'rehype-katex';
+import RemarkMathPlugin from 'remark-math';
 
 function Markdown(props: ReactMarkdownOptions) {
   const newProps: ReactMarkdownOptions = {

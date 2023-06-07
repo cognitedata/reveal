@@ -1,25 +1,28 @@
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
+
+import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';
 import { useScheduledCalculationCreateMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useOperations } from '@charts-app/models/operations/atom';
-import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';
-import { StyledModal } from './elements';
-import { ModalHeader } from './ModalHeader';
-import { ModalBody } from './ModalBody';
-import { ModalFooter } from './ModalFooter';
-import {
-  ScheduleCalculationFieldValues,
-  ScheduledCalculationModalProps,
-  StepInfo,
-} from '../../domain/scheduled-calculation/internal/types';
+
 import { useGetWorkflow } from '../../domain/chart/internal/queries/useGetWorkflow';
 import {
   DEFAULT_STEP_INFO,
   STEP_WIDTH,
   DEFAULT_VALUES,
 } from '../../domain/scheduled-calculation/internal/constants';
+import {
+  ScheduleCalculationFieldValues,
+  ScheduledCalculationModalProps,
+  StepInfo,
+} from '../../domain/scheduled-calculation/internal/types';
+
+import { StyledModal } from './elements';
 import { handleNext } from './helpers';
+import { ModalBody } from './ModalBody';
+import { ModalFooter } from './ModalFooter';
+import { ModalHeader } from './ModalHeader';
 
 export const ScheduledCalculationModal = ({
   onClose,

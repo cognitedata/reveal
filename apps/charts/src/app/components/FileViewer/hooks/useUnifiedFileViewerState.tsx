@@ -1,21 +1,23 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { CogniteAnnotation } from '@cognite/annotations';
+import { FileInfo } from '@cognite/sdk';
 import {
   Annotation,
   OCRAnnotation,
   TooltipAnchorPosition,
   TooltipConfig,
 } from '@cognite/unified-file-viewer';
-import { useEffect, useMemo, useState } from 'react';
-import { FileInfo } from '@cognite/sdk';
+
 import { AnnotationPopover } from '../components/AnnotationPopover';
 import { styleForSelected } from '../constants';
 import { AnnotationModel } from '../sdk/sdkTypes';
 import { ExtendedAnnotation } from '../types';
-import { getExtendedAnnotationsFromSVGAnnotations } from '../utils/getExtendedAnnotationsFromSVGAnnotations';
+import { getContainerId } from '../utils/getContainerId';
 import getExtendedAnnotationsFromAnnotationsApi from '../utils/getExtendedAnnotationsFromAnnotationsApi';
 import { getExtendedAnnotationsFromCogniteAnnotation } from '../utils/getExtendedAnnotationsFromCogniteAnnotation';
 import { getExtendedAnnotationsFromOCRAnnotations } from '../utils/getExtendedAnnotationsFromOCRAnnotations';
-import { getContainerId } from '../utils/getContainerId';
+import { getExtendedAnnotationsFromSVGAnnotations } from '../utils/getExtendedAnnotationsFromSVGAnnotations';
 
 /**
  * @param file Selected file

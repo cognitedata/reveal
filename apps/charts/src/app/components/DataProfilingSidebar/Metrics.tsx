@@ -2,10 +2,12 @@
  * Data Profiling Metrics
  */
 import { FunctionComponent } from 'react';
-import styled from 'styled-components/macro';
+
 import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
-import { Tooltip } from '@cognite/cogs.js';
 import { List, Row, Col } from 'antd';
+import styled from 'styled-components/macro';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 type Source = {
   label: string;

@@ -1,13 +1,17 @@
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { Flex, Button, Title } from '@cognite/cogs.js';
-import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
 import { useFormContext } from 'react-hook-form';
+
 import FormError from '@charts-app/components/Form/FormError';
-import { FormInputWithController } from '../../Form/FormInputWithController';
-import { FlexGrow, Steps2Column } from './elements';
-import { CalculationPreview } from './CalculationPreview';
+import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Flex, Button, Title } from '@cognite/cogs.js';
+
 import { ScheduleCalculationFieldValues } from '../../../domain/scheduled-calculation/internal/types';
+import { FormInputWithController } from '../../Form/FormInputWithController';
+
+import { CalculationPreview } from './CalculationPreview';
+import { FlexGrow, Steps2Column } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
   'Save result and schedule the calculation',

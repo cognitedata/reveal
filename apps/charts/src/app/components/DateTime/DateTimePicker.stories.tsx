@@ -1,6 +1,8 @@
+import { ComponentProps } from 'react';
+
 import { Meta, Story } from '@storybook/react';
 import dayjs from 'dayjs';
-import { ComponentProps } from 'react';
+
 import DateTimePicker from './DateTimePicker';
 
 export default {

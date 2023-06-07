@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Icon, Modal, Flex, Title } from '@cognite/cogs.js';
 
 export const StyledIcon = styled(Icon)`

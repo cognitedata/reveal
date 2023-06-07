@@ -1,8 +1,11 @@
-import { Flex, Title } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import ChartListGridItem from './ChartListGridItem';
-import { ChartListProps } from '../types';
+
+import { Flex, Title } from '@cognite/cogs.js';
+
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
+import { ChartListProps } from '../types';
+
+import ChartListGridItem from './ChartListGridItem';
 
 const defaultTranslations = makeDefaultTranslations(
   "Your search didn't return any results",

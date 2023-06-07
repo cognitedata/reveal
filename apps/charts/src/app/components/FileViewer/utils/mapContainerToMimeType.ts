@@ -1,5 +1,6 @@
 import { FileInfo } from '@cognite/sdk';
 import { ContainerType } from '@cognite/unified-file-viewer';
+
 import {
   PREVIEWABLE_DOCUMENT_TYPES,
   PREVIEWABLE_IMAGE_TYPES,

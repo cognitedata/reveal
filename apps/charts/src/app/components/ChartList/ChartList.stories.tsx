@@ -1,6 +1,8 @@
+import { ComponentProps } from 'react';
+
 import { Meta, Story } from '@storybook/react';
 import dayjs from 'dayjs';
-import { ComponentProps } from 'react';
+
 import ChartList from './ChartList';
 import { ChartListContext, ChartListContextInterface } from './context';
 import { PreviewPlotContainerMock } from './mocks';

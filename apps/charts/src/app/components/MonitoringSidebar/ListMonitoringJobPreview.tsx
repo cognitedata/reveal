@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Row } from 'antd';
+
 import styled from 'styled-components';
+
 import Dropdown from '@charts-app/components/Dropdown/Dropdown';
-import { Button, Icon, toast, Body } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { nanoid } from 'nanoid';
 import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from '@charts-app/utils/constants';
-import { trackUsage } from '@charts-app/services/metrics';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { head } from 'lodash';
-import { Timeseries } from '@cognite/sdk';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { Col, Row } from 'antd';
 import { format } from 'date-fns';
-import { MonitoringJob } from './types';
+import { head } from 'lodash';
+import { nanoid } from 'nanoid';
+
+import { Button, Icon, toast, Body } from '@cognite/cogs.js';
+import { Timeseries } from '@cognite/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import { SubscriptionLoader } from './elements';
 import {
   useListAlerts,
   useMonitoringJobsDelete,
@@ -24,9 +28,9 @@ import {
   useMonitoringSubscriptionCreate,
   useMonitoringSubscriptionDelete,
 } from './hooks';
-import { SubscriptionLoader } from './elements';
-import { validateEmail } from './utils';
 import JobCondition from './JobCondition';
+import { MonitoringJob } from './types';
+import { validateEmail } from './utils';
 
 const defaultTranslations = makeDefaultTranslations(
   'Delete',

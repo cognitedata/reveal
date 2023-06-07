@@ -1,15 +1,19 @@
-import { Button, Input, InputProps } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
-import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
 import { useState } from 'react';
+
 import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+import styled from 'styled-components/macro';
+
+import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
+import { Button, Input, InputProps } from '@cognite/cogs.js';
+
 import { transformParamInput } from '../../../transforms';
-import FunctionParameterFormLabel from './FunctionParameterFormLabel';
-import { ParameterFormProps } from './types';
-import FunctionParameterSelect from './FunctionParameterSelect';
+import { NoDragWrapper } from '../../elements';
+
 import { InputContainer } from './elements';
 import FunctionParameterCheckbox from './FunctionParameterCheckbox';
-import { NoDragWrapper } from '../../elements';
+import FunctionParameterFormLabel from './FunctionParameterFormLabel';
+import FunctionParameterSelect from './FunctionParameterSelect';
+import { ParameterFormProps } from './types';
 
 const FunctionParameterForm = ({
   nodeId,

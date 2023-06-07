@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Colors, Icon } from '@cognite/cogs.js';
 
 export const Loader = () => (

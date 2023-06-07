@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import * as React from 'react';
+
 import styled from 'styled-components';
-import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
+
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
+
 import ClickBoundary from './ClickBoundary';
 
 export interface EditableTextProps {

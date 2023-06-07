@@ -1,11 +1,14 @@
-import { Asset } from '@cognite/sdk';
-import dayjs from 'dayjs';
+import { ComponentProps } from 'react';
+
 import LinkedAssetsSidebar from '@charts-app/components/LinkedAssetsSidebar/LinkedAssetsSidebar';
 import useAssetsTimeseries from '@charts-app/hooks/cdf/assets/queries/useAssetsTimeseries';
 import useTimeseriesAggregatedDatapoints from '@charts-app/hooks/cdf/timeseries/queries/useTimeseriesAggregatedDatapoints';
-import { ComponentProps } from 'react';
 import useSimpleMemo from '@charts-app/hooks/useSimpleMemo';
 import isTruthy from '@charts-app/utils/isTruthy';
+import dayjs from 'dayjs';
+
+import { Asset } from '@cognite/sdk';
+
 import linkedAssetsSelector from '../selectors/linkedAssetsSelector';
 
 /**

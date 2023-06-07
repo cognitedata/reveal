@@ -1,5 +1,6 @@
-import { Button, Input } from '@cognite/cogs.js';
 import { useState } from 'react';
+
+import { Button, Input } from '@cognite/cogs.js';
 
 export const SearchBar = ({
   searchQuery,

@@ -3,17 +3,23 @@
  */
 
 import { FunctionComponent, useState } from 'react';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { Chart, ChartSource, ChartWorkflowV2 } from '@charts-app/models/chart/types';
-import { Switch } from '@cognite/cogs.js';
-import { v4 as uuidv4 } from 'uuid';
-import { getEntryColor } from '@charts-app/utils/colors';
 import { Elements } from 'react-flow-renderer';
+
 import {
   NodeDataDehydratedVariants,
   NodeTypes,
 } from '@charts-app/components/NodeEditor/V2/types';
+import {
+  Chart,
+  ChartSource,
+  ChartWorkflowV2,
+} from '@charts-app/models/chart/types';
 import { addWorkflow, removeSource } from '@charts-app/models/chart/updates';
+import { getEntryColor } from '@charts-app/utils/colors';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Switch } from '@cognite/cogs.js';
 
 type Props = {
   chart: Chart;

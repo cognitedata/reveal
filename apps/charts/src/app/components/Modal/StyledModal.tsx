@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Modal } from '@cognite/cogs.js';
 
 export const StyledModal = styled(Modal)`

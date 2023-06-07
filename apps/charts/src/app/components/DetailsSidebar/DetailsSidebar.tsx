@@ -1,7 +1,25 @@
 /* eslint camelcase: 0 */
 
 import { useState } from 'react';
+
+import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
+import {
+  Sidebar,
+  ContentOverflowWrapper,
+  TopContainer,
+  TopContainerAside,
+  TopContainerTitle,
+} from '@charts-app/components/Common/SidebarElements';
+import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { ChartSource } from '@charts-app/models/chart/types';
+import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
+import { formatValueForDisplay } from '@charts-app/utils/numbers';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { getUnitConverter } from '@charts-app/utils/units';
 import { Col, List, Row } from 'antd';
+
+import { v4 as uuidv4 } from 'uuid';
 import {
   StatisticsResult,
   StatisticsResultResults,
@@ -15,23 +33,9 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { v4 as uuidv4 } from 'uuid';
 
-import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
-import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
-import { ChartSource } from '@charts-app/models/chart/types';
-import { formatValueForDisplay } from '@charts-app/utils/numbers';
-import { getUnitConverter } from '@charts-app/utils/units';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useTranslations } from '@charts-app/hooks/translations';
-import {
-  Sidebar,
-  ContentOverflowWrapper,
-  TopContainer,
-  TopContainerAside,
-  TopContainerTitle,
-} from '@charts-app/components/Common/SidebarElements';
-import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
+import { Histogram } from '../Histogram/Histogram';
+
 import {
   Container,
   HistogramWrapper,
@@ -40,7 +44,6 @@ import {
 } from './elements';
 import { MetadataList } from './MetadataList';
 import { getDisplayUnit } from './utils';
-import { Histogram } from '../Histogram/Histogram';
 
 const renderStatusIcon = (status?: StatusStatusEnum) => {
   switch (status) {

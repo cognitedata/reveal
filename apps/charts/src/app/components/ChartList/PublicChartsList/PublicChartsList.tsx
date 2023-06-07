@@ -1,11 +1,13 @@
+import { ComponentProps } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useComponentTranslations } from '@charts-app/hooks/translations';
+
+import { EmptyStatePublicCharts } from '@charts-app/components/EmptyStates';
 import useMyChartsList from '@charts-app/hooks/charts/hooks/useMyChartsList';
 import usePublicChartsList from '@charts-app/hooks/charts/hooks/usePublicChartsList';
-import { createInternalLink } from '@charts-app/utils/link';
-import { ComponentProps } from 'react';
+import { useComponentTranslations } from '@charts-app/hooks/translations';
 import { trackUsage } from '@charts-app/services/metrics';
-import { EmptyStatePublicCharts } from '@charts-app/components/EmptyStates';
+import { createInternalLink } from '@charts-app/utils/link';
+
 import ChartList from '../ChartList';
 
 type Props = {

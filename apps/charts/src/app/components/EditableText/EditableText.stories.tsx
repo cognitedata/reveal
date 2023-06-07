@@ -2,8 +2,10 @@
  * EditableText StoryBook
  */
 
-import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import EditableText from './EditableText';
 
 type Props = React.ComponentProps<typeof EditableText>;

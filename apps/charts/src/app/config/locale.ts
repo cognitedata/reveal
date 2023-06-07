@@ -5,6 +5,7 @@ import 'dayjs/locale/en-gb';
 import 'dayjs/locale/nb';
 import 'dayjs/locale/ja';
 import { enGB, enUS, ja, nb } from 'date-fns/locale';
+
 import i18n from './i18n';
 
 dayjs.extend(localizedFormat);

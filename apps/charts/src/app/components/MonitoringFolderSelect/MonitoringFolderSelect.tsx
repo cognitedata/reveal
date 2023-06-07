@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Row } from 'antd';
 import { Controller } from 'react-hook-form';
 
-import { Button, Icon, Select, toast } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components';
-import { CogniteError } from '@cognite/sdk';
+
 import { trackUsage } from '@charts-app/services/metrics';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { Divider, Row } from 'antd';
 import debounce from 'lodash/debounce';
+
+import { Button, Icon, Select, toast } from '@cognite/cogs.js';
+import { CogniteError } from '@cognite/sdk';
+
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations(

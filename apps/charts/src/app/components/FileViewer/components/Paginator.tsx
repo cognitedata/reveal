@@ -1,6 +1,8 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { useEffect, useMemo, useState } from 'react';
+
 import styled from 'styled-components';
+
 import { Pagination } from '@cognite/cogs.js';
 import {
   ContainerConfig,

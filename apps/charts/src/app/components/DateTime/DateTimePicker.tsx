@@ -1,10 +1,13 @@
-import { Flex } from '@cognite/cogs.js';
-import dayjs from 'dayjs';
 import { ComponentProps, useEffect, useState } from 'react';
+
+import dayjs from 'dayjs';
+
+import { Flex } from '@cognite/cogs.js';
+
 import DateTimeRangeSelector from './DateTimeRangeSelector';
-import { RelativeTimeOption } from './types';
-import TimePeriodSelector from './TimePeriodSelector';
 import { TimePeriodMenu } from './TimePeriodMenu';
+import TimePeriodSelector from './TimePeriodSelector';
+import { RelativeTimeOption } from './types';
 
 type Props = ComponentProps<typeof DateTimeRangeSelector> & {
   hideTimePeriodSelector?: boolean;

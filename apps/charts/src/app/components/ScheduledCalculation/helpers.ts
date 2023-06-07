@@ -1,17 +1,24 @@
 import { Dispatch, SetStateAction } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+
+import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
+import {
+  Chart,
+  ChartWorkflow,
+  ChartWorkflowV2,
+} from '@charts-app/models/chart/types';
 import { captureMessage } from '@sentry/react';
 import { UseMutateAsyncFunction } from '@tanstack/react-query';
-import { ComputationStep } from '@cognite/calculation-backend';
-import { Chart, ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
-import { toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
-import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
+
+import { ComputationStep } from '@cognite/calculation-backend';
+import { toast } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
-import { ScheduleCalculationFieldValues } from '../../domain/scheduled-calculation/internal/types';
-import { addScheduledCalculation } from '../../models/chart/updates-calculation';
+
 import { STEPS } from '../../domain/scheduled-calculation/internal/constants';
 import { adaptCalculationForClonedScheduledCalculation } from '../../domain/scheduled-calculation/internal/transformers/adaptCalculationForClonedScheduledCalculation';
+import { ScheduleCalculationFieldValues } from '../../domain/scheduled-calculation/internal/types';
+import { addScheduledCalculation } from '../../models/chart/updates-calculation';
 
 export const handleNext = ({
   workflow,

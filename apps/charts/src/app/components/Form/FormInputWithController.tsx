@@ -1,7 +1,12 @@
-import { Radio, OptionType, Tooltip } from '@cognite/cogs.js';
-import { Controller, Control, RegisterOptions } from 'react-hook-form';
 import { FC, PropsWithChildren } from 'react';
+import { Controller, Control, RegisterOptions } from 'react-hook-form';
+
 import { UnitSelector } from '@charts-app/components/UnitDropdown/UnitSelector';
+
+import { Radio, OptionType, Tooltip } from '@cognite/cogs.js';
+
+import { SourceSelector } from '../Common/SourceSelector';
+
 import {
   FormInput,
   FormTextarea,
@@ -11,7 +16,6 @@ import {
   FieldTitle,
   FieldTitleInfo,
 } from './elements';
-import { SourceSelector } from '../Common/SourceSelector';
 
 type Props = RegisterOptions<any> & {
   name: string;

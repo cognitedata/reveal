@@ -1,14 +1,18 @@
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import ToolboxFunctionDropdown from '@charts-app/components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
-import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
 import { useState } from 'react';
-import styled from 'styled-components/macro';
-import { Operation } from '@cognite/calculation-backend';
 import { Elements } from 'react-flow-renderer';
-import { NodeTypes, SourceOption, NodeDataVariants } from './types';
+
+import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
+import ToolboxFunctionDropdown from '@charts-app/components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
+import styled from 'styled-components/macro';
+
+import { Operation } from '@cognite/calculation-backend';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+
 import { defaultTranslations } from '../translations';
 import { getOperationsGroupedByCategory } from '../utils';
+
 import { useCanvasSize } from './CanvasContext';
+import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 
 interface AddButtonProps {
   elements: Elements<NodeDataVariants>;
@@ -115,7 +119,7 @@ const AddMenu = ({
             addFunctionNode(event, func);
           }}
         >
-          <Menu.Item appendIcon="ChevronRight">{t.Function}</Menu.Item>
+          <Menu.Item icon="ChevronRight">{t.Function}</Menu.Item>
         </ToolboxFunctionDropdown>
       )}
       <Menu.Item onClick={addConstantNode}>{t.Constant}</Menu.Item>

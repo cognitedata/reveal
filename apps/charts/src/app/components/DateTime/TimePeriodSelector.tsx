@@ -1,7 +1,9 @@
-import { Button } from '@cognite/cogs.js';
 import { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { TimePeriodProps } from './types';
+
+import { Button } from '@cognite/cogs.js';
+
 import { relativeTimeOptions } from './constants';
+import { TimePeriodProps } from './types';
 
 const TimePeriodSelector = ({
   onPeriodChange,

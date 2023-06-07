@@ -1,9 +1,11 @@
-import { useMonitoringFoldersWithJobs } from '@charts-app/components/MonitoringSidebar/hooks';
 import React, { useEffect, useState } from 'react';
-import { getFromLocalStorage } from '@cognite/storage';
+
+import { useMonitoringFoldersWithJobs } from '@charts-app/components/MonitoringSidebar/hooks';
 import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
-import { NotificationDot } from '@cognite/cogs.js';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
+
+import { NotificationDot } from '@cognite/cogs.js';
+import { getFromLocalStorage } from '@cognite/storage';
 
 export const jobsToAlerts = (taskData: any): number => {
   return (

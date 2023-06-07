@@ -1,28 +1,31 @@
 import * as React from 'react';
 import { Route, Routes as ReactRoutes } from 'react-router-dom';
-import { Loader, toast } from '@cognite/cogs.js';
-import PageLayout from '@charts-app/components/Layout/PageLayout';
-import { useFirebaseInit } from '@charts-app/hooks/firebase';
-import * as Sentry from '@sentry/react';
+
 import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
+import PageLayout from '@charts-app/components/Layout/PageLayout';
 import SecondaryTopBar from '@charts-app/components/SecondaryTopBar/SecondaryTopBar';
-import { getProject, getCluster } from '@cognite/cdf-utilities';
-import { getFlow } from '@cognite/auth-utils';
+import { useFirebaseInit } from '@charts-app/hooks/firebase';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { identifyUserForMetrics } from '@charts-app/services/metrics';
+import * as Sentry from '@sentry/react';
+
+import { getFlow } from '@cognite/auth-utils';
+import { getProject, getCluster } from '@cognite/cdf-utilities';
+import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
-import TenantSelectorView from './TenantSelector/TenantSelector';
-import UserProfile from './UserProfile/UserProfile';
+
 import ChartListPage from './ChartListPage/ChartListPage';
 import ChartViewPage from './ChartViewPage/ChartViewPage';
 import FileViewPage from './FileViewPage/FileViewPage';
+import TenantSelectorView from './TenantSelector/TenantSelector';
+import UserProfile from './UserProfile/UserProfile';
 
 /**
  * Fusion and Legacy Charts have slightly different paths.
  * Fusion includes :subAppPath because it needs to be aware which subapp is active.
  * Legacy Charts is only Charts so it does not have this param.
  */
-const getPath = (basePath: string = '') => {
+const getPath = (basePath = '') => {
   const newPath = `/:project/:subAppPath/${basePath}`;
   return newPath;
 };

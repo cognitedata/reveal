@@ -1,12 +1,16 @@
 import { ComponentProps } from 'react';
-import { Meta, Story } from '@storybook/react';
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
+
 import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+import { fullListOfOperations } from '@charts-app/models/operations/mocks';
+import { Meta, Story } from '@storybook/react';
+
 import { Operation } from '@cognite/calculation-backend';
-import FunctionNode from './FunctionNode';
+
 import ReactFlowNodeEditor from '../../ReactFlowNodeEditor';
 import { NodeTypes } from '../../types';
+
+import FunctionNode from './FunctionNode';
 
 export default {
   component: FunctionNode,

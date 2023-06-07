@@ -3,6 +3,7 @@ import {
   getAnnotationsFromLegacyCogniteAnnotations,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
+
 import { ExtendedAnnotation } from '../types';
 
 const filterApplicableAnnotations = (annotation: ExtendedAnnotation) =>

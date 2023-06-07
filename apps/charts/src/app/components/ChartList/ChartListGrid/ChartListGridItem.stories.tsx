@@ -1,7 +1,10 @@
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import { ChartListContext, ChartListContextInterface } from '../context';
 import { PreviewPlotContainerMock } from '../mocks';
+
 import ChartListGridItem from './ChartListGridItem';
 
 export default {

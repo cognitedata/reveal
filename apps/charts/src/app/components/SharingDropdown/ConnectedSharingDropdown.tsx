@@ -1,10 +1,13 @@
-import { Dropdown } from '@cognite/cogs.js';
+import { ComponentProps } from 'react';
+
 import { useComponentTranslations } from '@charts-app/hooks/translations';
 import { useIsChartOwner } from '@charts-app/hooks/user';
 import chartAtom from '@charts-app/models/chart/atom';
-import { ComponentProps } from 'react';
-import { useRecoilState } from 'recoil';
 import { trackUsage } from '@charts-app/services/metrics';
+import { useRecoilState } from 'recoil';
+
+import { Dropdown } from '@cognite/cogs.js';
+
 import SharingDropdown from './SharingDropdown';
 
 type Props = {

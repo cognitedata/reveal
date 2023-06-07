@@ -1,10 +1,11 @@
 /**
  * Threshold Sidebar
  */
-import { Meta, Story } from '@storybook/react';
 import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import chartAtom from '@charts-app/models/chart/atom';
+import { Meta, Story } from '@storybook/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
+
 import ThresholdSidebar from './ThresholdSidebar';
 
 type Props = React.ComponentProps<typeof ThresholdSidebar>;

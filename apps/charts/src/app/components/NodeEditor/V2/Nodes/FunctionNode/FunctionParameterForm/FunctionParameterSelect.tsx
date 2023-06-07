@@ -1,5 +1,7 @@
 import { Select } from '@cognite/cogs.js';
+
 import { NoDragWrapper } from '../../elements';
+
 import { InputContainer } from './elements';
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormElementProps } from './types';

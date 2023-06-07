@@ -1,5 +1,6 @@
-import { Button, Flex, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button, Flex, Menu } from '@cognite/cogs.js';
 
 export const StyledMenu = styled(Menu)`
   align-items: flex-start;

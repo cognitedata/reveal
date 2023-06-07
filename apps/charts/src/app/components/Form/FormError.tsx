@@ -1,6 +1,9 @@
-import styled from 'styled-components';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { FieldErrors } from 'react-hook-form';
+
+import styled from 'styled-components';
+
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import {
   InfoBoxHeadingContainer,
   InfoBoxHeadingIconRed,

@@ -1,8 +1,9 @@
+import { compareVersions } from 'compare-versions';
+import { sortBy } from 'lodash';
+import styled from 'styled-components/macro';
+
 import { Operation } from '@cognite/calculation-backend';
 import { Icon, Menu } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
-import { sortBy } from 'lodash';
-import { compareVersions } from 'compare-versions';
 
 const FunctionsList = ({
   category,

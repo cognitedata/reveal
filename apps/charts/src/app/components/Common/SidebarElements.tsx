@@ -1,6 +1,8 @@
 /**
  * Common Elements
  */
+import styled from 'styled-components/macro';
+
 import {
   Icon,
   Switch,
@@ -9,7 +11,6 @@ import {
   Label,
   Skeleton,
 } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
 
 export const Toolbar = styled.aside`
   &&& {

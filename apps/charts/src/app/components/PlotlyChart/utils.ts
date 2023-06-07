@@ -1,11 +1,5 @@
-import {
-  CogniteEvent,
-  DatapointAggregate,
-  Datapoints,
-  DoubleDatapoint,
-} from '@cognite/sdk';
-import dayjs from 'dayjs';
-import groupBy from 'lodash/groupBy';
+import { isEventSelected } from '@charts-app/components/EventSidebar/helpers';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
   ChartThreshold,
   ChartTimeSeries,
@@ -13,15 +7,26 @@ import {
   LineStyle,
   ScheduledCalculation,
 } from '@charts-app/models/chart/types';
-import { roundToSignificantDigits } from '@charts-app/utils/numbers';
-import { DEFAULT_EVENT_COLOR, hexToRGBA } from '@charts-app/utils/colors';
-import { convertUnits, convertThresholdUnits, units } from '@charts-app/utils/units';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { isThresholdValid } from '@charts-app/utils/threshold';
 import { ChartEventResults } from '@charts-app/models/event-results/types';
-import { isEventSelected } from '@charts-app/components/EventSidebar/helpers';
 import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+import { DEFAULT_EVENT_COLOR, hexToRGBA } from '@charts-app/utils/colors';
+import { roundToSignificantDigits } from '@charts-app/utils/numbers';
+import {
+  convertUnits,
+  convertThresholdUnits,
+  units,
+} from '@charts-app/utils/units';
+import dayjs from 'dayjs';
+import groupBy from 'lodash/groupBy';
+import { isThresholdValid } from '@charts-app/utils/threshold';
+
+import {
+  CogniteEvent,
+  DatapointAggregate,
+  Datapoints,
+  DoubleDatapoint,
+} from '@cognite/sdk';
 
 export type PlotlyEventData = {
   [key: string]: any;

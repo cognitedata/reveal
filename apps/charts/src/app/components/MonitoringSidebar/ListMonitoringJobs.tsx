@@ -1,5 +1,3 @@
-import { CHARTS_FOLDER_PREFIX } from '@charts-app/domain/monitoring/constants';
-
 import React, { memo, useEffect, useState } from 'react';
 
 import {
@@ -7,17 +5,18 @@ import {
   ExpandIcon,
   LoadingRow,
 } from '@charts-app/components/Common/SidebarElements';
+import { CHARTS_FOLDER_PREFIX } from '@charts-app/domain/monitoring/constants';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useChartAtom } from '@charts-app/models/chart/atom';
-import { Col, Row } from 'antd';
-import difference from 'lodash/difference';
-import head from 'lodash/head';
 import { trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
   MONITORING_FILTER,
 } from '@charts-app/utils/constants';
+import { Col, Row } from 'antd';
+import difference from 'lodash/difference';
+import head from 'lodash/head';
 
 import { Collapse } from '@cognite/cogs.js';
 

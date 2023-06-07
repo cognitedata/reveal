@@ -1,12 +1,14 @@
-import { Icon } from '@cognite/cogs.js';
 import { Skeleton } from 'antd';
+
+import { Icon } from '@cognite/cogs.js';
+
 import { AssetItem } from './elements/AssetItem';
-import { TSList } from './elements/TSList';
-import { Row } from './elements/Row';
+import { Description } from './elements/Description';
 import { InfoContainer } from './elements/InfoContainer';
 import { ResourceNameWrapper } from './elements/ResourceNameWrapper';
-import { Description } from './elements/Description';
 import { Right } from './elements/Right';
+import { Row } from './elements/Row';
+import { TSList } from './elements/TSList';
 import LoadingTimeSeriesResultItem from './LoadingTimeSeriesResultItem';
 
 export default function LoadingLinkedAsset() {

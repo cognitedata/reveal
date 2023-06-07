@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { CogniteClient } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
 

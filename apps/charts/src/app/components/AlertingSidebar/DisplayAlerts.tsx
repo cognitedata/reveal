@@ -1,17 +1,20 @@
-import { Collapse, Flex, Body } from '@cognite/cogs.js';
 import { useState } from 'react';
-import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
+
+import EmptyState from '@charts-app/components/AlertingSidebar/EmptyState';
 import {
   CollapsePanelTitle,
   ExpandIcon,
   LoadingRow,
 } from '@charts-app/components/Common/SidebarElements';
-import EmptyState from '@charts-app/components/AlertingSidebar/EmptyState';
-import { trackUsage } from '@charts-app/services/metrics';
 import JobCondition from '@charts-app/components/MonitoringSidebar/JobCondition';
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
+import { trackUsage } from '@charts-app/services/metrics';
+
+import { Collapse, Flex, Body } from '@cognite/cogs.js';
+
+import { AlertsList } from './AlertsList';
 import { SidebarCollapseAlert, ConditionContainer } from './elements';
 import MonitoringJobWithAlerts from './MonitoringJobWithAlerts';
-import { AlertsList } from './AlertsList';
 
 type DisplayAlertsProps = {
   isFetching: boolean;

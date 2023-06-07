@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import { Input, Select, Col, Icon, Textarea } from '@cognite/cogs.js';
+
 import { Input as AntdInput } from 'antd';
+
+import { Input, Select, Col, Icon, Textarea } from '@cognite/cogs.js';
 
 export const FormInputNumber = styled(AntdInput)`
   &&& {

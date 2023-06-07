@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
+
 import { SessionAPIPayload, SessionAPIResponse } from '../types';
 
 export const createSession = (payload: SessionAPIPayload, sdk: CogniteClient) =>

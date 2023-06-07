@@ -1,6 +1,8 @@
+import React from 'react';
+
 import { Meta, Story } from '@storybook/react';
 import dayjs from 'dayjs';
-import React from 'react';
+
 import LinkedAssetsSidebar from './LinkedAssetsSidebar';
 
 type Props = React.ComponentProps<typeof LinkedAssetsSidebar>;

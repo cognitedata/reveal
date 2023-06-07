@@ -1,3 +1,10 @@
+import { useCallback, useEffect, useMemo } from 'react';
+import { ReactFlowProvider } from 'react-flow-renderer';
+
+import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
+import { useIsChartOwner } from '@charts-app/hooks/user';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { availableWorkflows } from '@charts-app/models/calculation-results/selectors';
 import {
   Chart,
   ChartWorkflowV2,
@@ -7,19 +14,15 @@ import {
   updateScheduledCalculation,
   updateWorkflow,
 } from '@charts-app/models/chart/updates';
-import { useCallback, useEffect, useMemo } from 'react';
-import { ReactFlowProvider } from 'react-flow-renderer';
-import { Icon, toast } from '@cognite/cogs.js';
-import { SetterOrUpdater, useRecoilValue } from 'recoil';
-import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { useIsChartOwner } from '@charts-app/hooks/user';
 import { useOperations } from '@charts-app/models/operations/atom';
-import { availableWorkflows } from '@charts-app/models/calculation-results/selectors';
-import { SourceOption } from './V2/types';
+import { SetterOrUpdater, useRecoilValue } from 'recoil';
+
+import { Icon, toast } from '@cognite/cogs.js';
+
+import { defaultTranslations } from './translations';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
-import { defaultTranslations } from './translations';
+import { SourceOption } from './V2/types';
 
 interface Props {
   chart: Chart;

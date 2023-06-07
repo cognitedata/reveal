@@ -15,8 +15,8 @@ import {
   SourceSelect,
 } from '@charts-app/components/Common/SidebarElements';
 import { Chart, ChartSource } from '@charts-app/models/chart/types';
-import styled from 'styled-components/macro';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import styled from 'styled-components/macro';
 
 import { StatusStatusEnum } from '@cognite/calculation-backend';
 import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';

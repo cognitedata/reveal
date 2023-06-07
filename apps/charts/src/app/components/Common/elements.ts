@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Flex } from '@cognite/cogs.js';
 
 export const SourceOptionContainer = styled(Flex)`

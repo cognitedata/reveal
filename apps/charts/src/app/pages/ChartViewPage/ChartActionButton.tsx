@@ -1,5 +1,7 @@
-import { Dropdown, Menu, Icon } from '@cognite/cogs.js';
 import * as React from 'react';
+
+import { Dropdown, Menu, Icon } from '@cognite/cogs.js';
+
 import {
   ChartActionStyledButton,
   ChartActionMenu,

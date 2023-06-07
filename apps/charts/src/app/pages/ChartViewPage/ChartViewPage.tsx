@@ -5,15 +5,48 @@ import {
   useRef,
   useState,
 } from 'react';
-import get from 'lodash/get';
-import { useFlag } from '@cognite/react-feature-flags';
-import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
-import { useIsChartOwner } from '@charts-app/hooks/user';
+import { Elements } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
-import NodeEditor from '@charts-app/components/NodeEditor/NodeEditor';
+
+import { AccessDeniedModal } from '@charts-app/components/AccessDeniedModal/AccessDeniedModal';
+import { AlertingSidebar } from '@charts-app/components/AlertingSidebar/AlertingSidebar';
+import { Toolbar } from '@charts-app/components/Common/SidebarElements';
+import DataProfilingSidebar from '@charts-app/components/DataProfilingSidebar/DataProfilingSidebar';
+import DetailsSidebar from '@charts-app/components/DetailsSidebar/DetailsSidebar';
+import ErrorSidebar from '@charts-app/components/ErrorSidebar/ErrorSidebar';
+import EventSidebar from '@charts-app/components/EventSidebar/EventSidebar';
 import SplitPaneLayout from '@charts-app/components/Layout/SplitPaneLayout';
+import { MonitoringSidebar } from '@charts-app/components/MonitoringSidebar/MonitoringSidebar';
+import NodeEditor from '@charts-app/components/NodeEditor/NodeEditor';
+import {
+  NodeDataDehydratedVariants,
+  NodeTypes,
+} from '@charts-app/components/NodeEditor/V2/types';
+import PageTitle from '@charts-app/components/PageTitle/PageTitle';
 import ChartPlotContainer from '@charts-app/components/PlotlyChart/ChartPlotContainer';
+import SearchSidebar from '@charts-app/components/Search/SearchSidebar';
+import SourceTable from '@charts-app/components/SourceTable/SourceTable';
+import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
+import ThresholdSidebar from '@charts-app/components/Thresholds/ThresholdSidebar';
+import { useExperimentalCapabilitiesCheck } from '@charts-app/domain/chart';
+import {
+  MONITORING_CAPABILITIES,
+  ALERTING_CAPABILITIES,
+} from '@charts-app/domain/monitoring/constants';
+import { CalculationCollectionEffects } from '@charts-app/effects/calculations';
+import { EventResultEffects } from '@charts-app/effects/events';
+import { TimeseriesCollectionEffects } from '@charts-app/effects/timeseries';
 import { useUpdateChart } from '@charts-app/hooks/charts-storage';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { useIsChartOwner } from '@charts-app/hooks/user';
+import {
+  availableWorkflows,
+  calculationSummaries,
+} from '@charts-app/models/calculation-results/selectors';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import chartAtom from '@charts-app/models/chart/atom';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 import {
   ChartTimeSeries,
   ChartWorkflow,
@@ -21,18 +54,6 @@ import {
   ChartSource,
   ScheduledCalculation,
 } from '@charts-app/models/chart/types';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import {
-  SEARCH_KEY,
-  ACTIVE_SIDEBAR_KEY,
-  EVENT_SIDEBAR_KEY,
-  MONITORING_SIDEBAR_KEY,
-  ALERTING_SIDEBAR_KEY,
-  THRESHOLD_SIDEBAR_KEY,
-  ALERTING_FILTER,
-} from '@charts-app/utils/constants';
-import { startTimer, stopTimer, trackUsage } from '@charts-app/services/metrics';
-import { Modes } from '@charts-app/types';
 import {
   addWorkflow,
   addWorkflows,
@@ -44,61 +65,47 @@ import {
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
 } from '@charts-app/models/chart/updates';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import chartAtom from '@charts-app/models/chart/atom';
-import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
-import DetailsSidebar from '@charts-app/components/DetailsSidebar/DetailsSidebar';
-import ThresholdSidebar from '@charts-app/components/Thresholds/ThresholdSidebar';
-import SearchSidebar from '@charts-app/components/Search/SearchSidebar';
+import { eventResultsAtom } from '@charts-app/models/event-results/atom';
+import interactionsAtom from '@charts-app/models/interactions/atom';
+import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
+import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
+import ChartViewPageAppBar from '@charts-app/pages/ChartViewPage/ChartViewPageAppBar';
+import ChartViewPageSecondaryAppBar from '@charts-app/pages/ChartViewPage/ChartViewPageSecondaryAppBar';
+import { Modes } from '@charts-app/pages/types';
+import {
+  startTimer,
+  stopTimer,
+  trackUsage,
+} from '@charts-app/services/metrics';
 import { getEntryColor } from '@charts-app/utils/colors';
 import {
-  MONITORING_CAPABILITIES,
-  ALERTING_CAPABILITIES,
-} from '@charts-app/domain/monitoring/constants';
-
-import { v4 as uuidv4 } from 'uuid';
-import { Elements } from 'react-flow-renderer';
-
+  SEARCH_KEY,
+  ACTIVE_SIDEBAR_KEY,
+  EVENT_SIDEBAR_KEY,
+  MONITORING_SIDEBAR_KEY,
+  ALERTING_SIDEBAR_KEY,
+  THRESHOLD_SIDEBAR_KEY,
+  ALERTING_FILTER,
+} from '@charts-app/utils/constants';
 import {
-  NodeDataDehydratedVariants,
-  NodeTypes,
-} from '@charts-app/components/NodeEditor/V2/types';
-
-import SourceTable from '@charts-app/components/SourceTable/SourceTable';
-import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
-import {
-  availableWorkflows,
-  calculationSummaries,
-} from '@charts-app/models/calculation-results/selectors';
-import { TimeseriesCollectionEffects } from '@charts-app/effects/timeseries';
-import { CalculationCollectionEffects } from '@charts-app/effects/calculations';
-import { flow } from 'lodash';
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 import { getUnitConverter } from '@charts-app/utils/units';
-import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
+import { flow } from 'lodash';
+import get from 'lodash/get';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 
-import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
-import ChartViewPageAppBar from '@charts-app/ChartViewPage/ChartViewPageAppBar';
-import ChartViewPageSecondaryAppBar from '@charts-app/ChartViewPage/ChartViewPageSecondaryAppBar';
+import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 
-import PageTitle from '@charts-app/components/PageTitle/PageTitle';
-import ErrorSidebar from '@charts-app/components/ErrorSidebar/ErrorSidebar';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { Toolbar } from '@charts-app/components/Common/SidebarElements';
-import DataProfilingSidebar from '@charts-app/components/DataProfilingSidebar/DataProfilingSidebar';
-import EventSidebar from '@charts-app/components/EventSidebar/EventSidebar';
-import { eventResultsAtom } from '@charts-app/models/event-results/atom';
-import { EventResultEffects } from '@charts-app/effects/events';
-import { MonitoringSidebar } from '@charts-app/components/MonitoringSidebar/MonitoringSidebar';
-import { AlertingSidebar } from '@charts-app/components/AlertingSidebar/AlertingSidebar';
-import interactionsAtom from '@charts-app/models/interactions/atom';
-import { AccessDeniedModal } from '@charts-app/components/AccessDeniedModal/AccessDeniedModal';
-import { useExperimentalCapabilitiesCheck } from '@charts-app/domain/chart';
-import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
-import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
 import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';
-import NotificationIndicator from './NotificationIndicator';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
+
+import { ChartActionButton } from './ChartActionButton';
+import ChartViewHeader from './ChartViewHeader';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -107,13 +114,12 @@ import {
   ContentWrapper,
   TopPaneWrapper,
 } from './elements';
-import ChartViewHeader from './ChartViewHeader';
-import { ChartActionButton } from './ChartActionButton';
 import {
   useInitializedChart,
   useStatistics,
   useUploadCalculations,
 } from './hooks';
+import NotificationIndicator from './NotificationIndicator';
 
 const defaultTranslations = makeDefaultTranslations(
   'Data Profiling',

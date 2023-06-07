@@ -1,9 +1,10 @@
 import { renderHook } from '@testing-library/react-hooks';
+
 import { translationKeys } from '../../utils/translations';
-import NonTranslatableComponent from '../NonTranslatableComponent.mock';
 import ComponentWithTranslationsProp from '../ComponentWithTranslationsProp.mock';
-import { useTranslations, useComponentTranslations } from '../translations';
 import FunctionComponentWithoutTranslationsProp from '../FunctionComponentWithoutTranslationsProp.mock';
+import NonTranslatableComponent from '../NonTranslatableComponent.mock';
+import { useTranslations, useComponentTranslations } from '../translations';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, ready: false }),

@@ -2,8 +2,9 @@
  * Elements for CSV Modal
  */
 
-import { Icon, Input, Modal } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Icon, Input, Modal } from '@cognite/cogs.js';
 
 export const ModalWrapper = styled(Modal)`
   max-width: 450px;

@@ -3,14 +3,17 @@
  */
 
 import { memo, useMemo } from 'react';
-import { isBefore, sub } from 'date-fns';
 
 import PlotlyChart from '@charts-app/components/PlotlyChart/PlotlyChart';
 import { useCalculationPreviewData } from '@charts-app/domain/scheduled-calculation/service/queries/useCalculationPreviewData';
-import { Icon } from '@cognite/cogs.js';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { isBefore, sub } from 'date-fns';
+
+import { Icon } from '@cognite/cogs.js';
+
 import { useGetWorkflow } from '../../../domain/chart/internal/queries/useGetWorkflow';
+
 import { PreviewStatus } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(

@@ -5,9 +5,9 @@ import {
   readablePreviewableFileTypes,
 } from '@charts-app/components/FileList/utils';
 import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import * as pdfjs from 'pdfjs-dist';
 import styled from 'styled-components/macro';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';

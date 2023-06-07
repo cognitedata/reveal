@@ -1,7 +1,9 @@
-import { Title } from '@cognite/cogs.js';
 import { CSSProperties, FC } from 'react';
 import * as React from 'react';
+
 import styled from 'styled-components';
+
+import { Title } from '@cognite/cogs.js';
 
 interface DetailsBlockProps {
   title: string;

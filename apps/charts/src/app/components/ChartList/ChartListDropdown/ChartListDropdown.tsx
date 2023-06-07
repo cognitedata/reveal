@@ -1,5 +1,8 @@
 import ChartsDropdown from '@charts-app/components/Dropdown/Dropdown';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 
 const defaultTranslations = makeDefaultTranslations('Duplicate', 'Delete');
 

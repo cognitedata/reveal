@@ -32,11 +32,11 @@ import {
 } from '@charts-app/models/chart/updates-event-filters';
 import { activeEventFilterIdAtom } from '@charts-app/models/event-results/atom';
 import { ChartEventResults } from '@charts-app/models/event-results/types';
+import { DEFAULT_EVENT_COLOR } from '@charts-app/utils/colors';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Col, Row } from 'antd';
 import { isNil, omit, omitBy } from 'lodash';
 import { useRecoilState } from 'recoil';
-import { DEFAULT_EVENT_COLOR } from '@charts-app/utils/colors';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { v4 as uuidv4 } from 'uuid';
 
 import {

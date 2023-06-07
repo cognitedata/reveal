@@ -2,6 +2,7 @@
  * Event InfoBox Story
  */
 import { Meta, Story } from '@storybook/react';
+
 import EventInfoBox from './EventInfoBox';
 
 type Props = React.ComponentProps<typeof EventInfoBox>;

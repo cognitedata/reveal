@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
+
 import {
   MonitoringFolderCreatePayload,
   MonitoringFolder,
@@ -65,5 +67,6 @@ export const useMonitoringFolders = () => {
       )
       .then(({ data }) => {
         return data.items;
-      }));
+      })
+  );
 };

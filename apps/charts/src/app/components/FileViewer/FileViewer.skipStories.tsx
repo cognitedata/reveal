@@ -1,8 +1,11 @@
-import { Meta, Story } from '@storybook/react';
 import React from 'react';
+
 import { FileViewer } from '@charts-app/components/FileViewer/FileViewer';
-import { CogniteClient, FileInfo as File } from '@cognite/sdk';
+import { Meta, Story } from '@storybook/react';
 import { files } from 'stubs/files';
+
+import { CogniteClient, FileInfo as File } from '@cognite/sdk';
+
 // @ts-ignore
 import pdfFileUrl from './pdf/example.pdf';
 import dataExplorationDecorator from './utils/dataExplorationDecorator';

@@ -1,8 +1,11 @@
-import { expect } from '@storybook/jest';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
-import { DocumentIcon, Icon } from '@cognite/cogs.js';
-import { Meta, Story } from '@storybook/react';
 import React from 'react';
+
+import { expect } from '@storybook/jest';
+import { Meta, Story } from '@storybook/react';
+import { userEvent, waitFor, within } from '@storybook/testing-library';
+
+import { DocumentIcon, Icon } from '@cognite/cogs.js';
+
 import { FileList } from './FileList';
 import preview from './preview.mock.png';
 

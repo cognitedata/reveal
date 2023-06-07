@@ -1,5 +1,6 @@
-import styled from 'styled-components/macro';
 import Layers from '@charts-app/utils/z-index';
+import styled from 'styled-components/macro';
+
 import { Collapse } from '@cognite/cogs.js';
 
 export const NodeEditorContainer = styled.div`

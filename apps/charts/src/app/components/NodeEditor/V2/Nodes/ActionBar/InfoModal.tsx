@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
+
+import Markdown from '@charts-app/components/Markdown/Markdown';
+import styled from 'styled-components/macro';
+
 import { OperationVersion } from '@cognite/calculation-backend';
 import { Modal } from '@cognite/cogs.js';
-import Markdown from '@charts-app/components/Markdown/Markdown';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components/macro';
 
 type Props = {
   indslFunction: OperationVersion;
@@ -24,10 +26,8 @@ const InfoModal = ({
 
   return (
     <ModalWrapper
-      appElement={document.getElementsByTagName('body')}
       title={indslFunction.name}
       visible={isModalVisible}
-      footer={null}
       onCancel={() => {
         setIsModalVisible(false);
         onClose();

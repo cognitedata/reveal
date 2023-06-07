@@ -1,4 +1,5 @@
 import { ElementType, ReactNode } from 'react';
+
 import { openAsChartURL } from './openAsChartUrl';
 
 type FunctionProps = Parameters<typeof openAsChartURL>[0];

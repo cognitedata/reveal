@@ -1,5 +1,7 @@
-import { Icon, IconType } from '@cognite/cogs.js';
 import { SourceType } from '@charts-app/models/chart/types';
+
+import { Icon, IconType } from '@cognite/cogs.js';
+
 import { SourceIconContainer } from './elements';
 
 const SourceIconMap: Record<SourceType, IconType> = {

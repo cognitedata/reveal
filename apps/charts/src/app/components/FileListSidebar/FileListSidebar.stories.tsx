@@ -1,6 +1,9 @@
-import { DocumentIcon, Icon } from '@cognite/cogs.js';
-import { Meta, Story } from '@storybook/react';
 import React from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
+import { DocumentIcon, Icon } from '@cognite/cogs.js';
+
 import FileListSidebar from './FileListSidebar';
 import preview from './preview.mock.png';
 

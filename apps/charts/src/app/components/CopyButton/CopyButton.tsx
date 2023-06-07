@@ -1,5 +1,6 @@
-import { Button } from '@cognite/cogs.js';
 import { ComponentProps, MouseEventHandler, useState } from 'react';
+
+import { Button } from '@cognite/cogs.js';
 
 type Props = ComponentProps<typeof Button> & {
   value: string;

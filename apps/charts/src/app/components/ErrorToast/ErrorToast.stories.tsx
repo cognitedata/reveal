@@ -3,7 +3,9 @@
  */
 
 import { Meta, Story } from '@storybook/react';
+
 import { toast, Button, ToastContainer } from '@cognite/cogs.js';
+
 import ErrorToast from './ErrorToast';
 
 type Props = React.ComponentProps<typeof ErrorToast>;

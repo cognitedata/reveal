@@ -1,4 +1,5 @@
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { getProject } from '@cognite/cdf-utilities';
 
 const maxRecentViewLength = 10;
@@ -71,11 +72,15 @@ export function useRecentViewLocalStorage<T>(
   const queryKey = `rv-${viewType}`;
   const project = getProject();
 
-  return useQuery<T>([queryKey], () => {
-    return getRvFromLocal(project, viewType) ?? defaultValue;
-  }, {
-    initialData: () => getRvFromLocal(project, viewType) ?? defaultValue,
-  });
+  return useQuery<T>(
+    [queryKey],
+    () => {
+      return getRvFromLocal(project, viewType) ?? defaultValue;
+    },
+    {
+      initialData: () => getRvFromLocal(project, viewType) ?? defaultValue,
+    }
+  );
 }
 
 export const useAddToRecentLocalStorage = () => {

@@ -1,23 +1,25 @@
-import MonitoringAlertRow from '@charts-app/components/MonitoringAlert/MonitoringAlert';
 import { LoadingRow } from '@charts-app/components/Common/SidebarElements';
-import { Icon } from '@cognite/cogs.js';
+import MonitoringAlertRow from '@charts-app/components/MonitoringAlert/MonitoringAlert';
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   // MONITORING_SIDEBAR_KEY,
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from '@charts-app/utils/constants';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { trackUsage } from '@charts-app/services/metrics';
-import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useListAlerts } from './hooks';
+
+import { Icon } from '@cognite/cogs.js';
+
 import {
   AlertContainer,
   MonitoringSidebarBlueButton,
   JobContainer,
   DividerLine,
 } from './elements';
+import { useListAlerts } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations('Show all');
 

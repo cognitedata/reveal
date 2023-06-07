@@ -1,6 +1,8 @@
-import { Flex } from '@cognite/cogs.js';
-import PortalWait from '@charts-app/components/PortalWait/PortalWait';
 import { FC } from 'react';
+
+import PortalWait from '@charts-app/components/PortalWait/PortalWait';
+
+import { Flex } from '@cognite/cogs.js';
 
 const AppBarLeft: FC = (props) => {
   return (

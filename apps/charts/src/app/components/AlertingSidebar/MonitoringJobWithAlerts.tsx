@@ -1,16 +1,17 @@
-import { Col, Icon, Menu, Modal, Row, Title } from '@cognite/cogs.js';
-
-import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
 import React, { useState } from 'react';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { Timeseries } from '@cognite/sdk';
-import { head } from 'lodash';
 
-import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
 import { useAlertsResolveCreate } from '@charts-app/components/MonitoringAlert/hooks';
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
+import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { trackUsage } from '@charts-app/services/metrics';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { head } from 'lodash';
+
+import { Col, Icon, Menu, Modal, Row, Title } from '@cognite/cogs.js';
+import { Timeseries } from '@cognite/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
 import {
   TimeseriesContainer,
   DropdownMenuItem,
@@ -173,7 +174,6 @@ const ConfirmModalResolveAlerts = ({
 
   return (
     <Modal
-      appElement={document.getElementsByTagName('body')}
       visible={isConfirmModalOpen}
       okText="Yes, I understand"
       onOk={onMarkAllAlertsResolved}

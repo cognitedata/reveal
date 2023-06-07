@@ -21,9 +21,9 @@ import {
   downloadImage,
   toggleDownloadChartElements,
 } from '@charts-app/utils/charts';
+import { createInternalLink } from '@charts-app/utils/link';
 import { useRecoilState } from 'recoil';
 import useScreenshot from 'use-screenshot-hook';
-import { createInternalLink } from '@charts-app/utils/link';
 
 import { Button, Dropdown, Popconfirm, toast } from '@cognite/cogs.js';
 

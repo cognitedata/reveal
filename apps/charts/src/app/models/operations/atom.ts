@@ -1,7 +1,8 @@
-import { atom, AtomEffect, useRecoilValue } from 'recoil';
 import { fetchOperations } from '@charts-app/services/calculation-backend';
-import sdk from '@cognite/cdf-sdk-singleton';
+import { atom, AtomEffect, useRecoilValue } from 'recoil';
+
 import { Operation } from '@cognite/calculation-backend';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 const initializeOperationsEffect =
   (): AtomEffect<[boolean, Error?, Operation[]?]> =>

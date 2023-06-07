@@ -1,8 +1,11 @@
 import { FC } from 'react';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
+
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
+
+import { CogniteClient } from '@cognite/sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import { TEST_PROJECT, TEST_BASE_URL, TEST_APP_ID } from './testConstants';
 
 const testQueryClient = new QueryClient({

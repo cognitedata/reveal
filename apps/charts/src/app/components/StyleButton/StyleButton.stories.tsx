@@ -2,8 +2,10 @@
  * Style Button Storybook
  */
 
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import { StyleButton } from './StyleButton';
 
 export default {

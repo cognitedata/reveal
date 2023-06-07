@@ -1,5 +1,6 @@
-import { Select, OptionType } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Select, OptionType } from '@cognite/cogs.js';
 
 export type FilterOption = OptionType<'all' | 'current' | 'subscribed'>;
 

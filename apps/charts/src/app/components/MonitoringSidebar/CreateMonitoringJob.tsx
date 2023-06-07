@@ -1,22 +1,22 @@
-import { Col, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { toast } from '@cognite/cogs.js';
+import { useCreateSessionNonce } from '@charts-app/domain/chart';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { trackUsage, stopTimer } from '@charts-app/services/metrics';
+import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { Col, Row } from 'antd';
+import { head } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { head } from 'lodash';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { toast } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
-import { trackUsage, stopTimer } from '@charts-app/services/metrics';
-import { useCreateSessionNonce } from '@charts-app/domain/chart';
-import { FormTitle } from './elements';
+
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
 import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';
 import CreateMonitoringJobStep3 from './CreateMonitoringJobStep3';
-
+import { FormTitle } from './elements';
 import { useCreateMonitoringJob } from './hooks';
 import {
   CreateMonitoringJobStates,

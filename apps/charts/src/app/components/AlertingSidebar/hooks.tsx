@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
+
 import {
   AlertResponsePayload,
   MonitoringJobsAlertsResponsePayload,
@@ -26,7 +28,8 @@ export const useListMonitoringTasks = () => {
       )
       .then(({ data }) => {
         return data.items;
-      }));
+      })
+  );
 };
 
 /**
@@ -50,7 +53,8 @@ export const useListAlerts = (taskId: string) => {
       )
       .then(({ data }) => {
         return data.items;
-      }));
+      })
+  );
 };
 
 /**
@@ -75,5 +79,6 @@ export const useAlertingStatus = (taskId: string) => {
       )
       .then(({ data }) => {
         return data.items;
-      }));
+      })
+  );
 };

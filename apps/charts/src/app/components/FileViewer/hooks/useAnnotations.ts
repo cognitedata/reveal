@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
 import { AnnotationModel } from '../sdk/sdkTypes';
 
 export type AnnotationsData = { items: AnnotationModel[]; nextCursor?: string };
@@ -25,5 +27,6 @@ export const useAnnotations = (file: FileInfo | undefined) => {
       )
       .then(({ data }) => {
         return data.items;
-      }));
+      })
+  );
 };

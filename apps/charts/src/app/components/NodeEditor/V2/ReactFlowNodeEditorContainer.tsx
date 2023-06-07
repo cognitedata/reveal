@@ -1,4 +1,11 @@
 import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
   useStoreActions,
   Elements,
   Connection,
@@ -7,19 +14,27 @@ import {
   XYPosition,
   FlowTransform,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2, ScheduledCalculation } from '@charts-app/models/chart/types';
+
 import {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+  ChartWorkflowV2,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
+import Layers from '@charts-app/utils/z-index';
+import styled from 'styled-components/macro';
 import { v4 as uuidv4 } from 'uuid';
+
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
-import Layers from '@charts-app/utils/z-index';
+
+import { defaultTranslations } from '../translations';
+
+import { validateSteps } from './calculations';
+import { ConstantNodeDataDehydrated } from './Nodes/ConstantNode';
+import { FunctionNodeDataDehydrated } from './Nodes/FunctionNode/FunctionNode';
+import { OutputNodeDataDehydrated } from './Nodes/OutputNode';
+import { SourceNodeDataDehydrated } from './Nodes/SourceNode';
+import ReactFlowNodeEditor from './ReactFlowNodeEditor';
+import { getStepsFromWorkflowReactFlow } from './transforms';
 import {
   NodeTypes,
   SourceOption,
@@ -41,15 +56,7 @@ import {
   updateSourceItemInFlow,
   updateWorkflowName,
 } from './updates';
-import { ConstantNodeDataDehydrated } from './Nodes/ConstantNode';
-import { FunctionNodeDataDehydrated } from './Nodes/FunctionNode/FunctionNode';
-import { OutputNodeDataDehydrated } from './Nodes/OutputNode';
-import { SourceNodeDataDehydrated } from './Nodes/SourceNode';
 import { initializeParameterValues, rehydrateStoredFlow } from './utils';
-import ReactFlowNodeEditor from './ReactFlowNodeEditor';
-import { getStepsFromWorkflowReactFlow } from './transforms';
-import { validateSteps } from './calculations';
-import { defaultTranslations } from '../translations';
 
 type Props = {
   source: ChartWorkflowV2 | ScheduledCalculation;

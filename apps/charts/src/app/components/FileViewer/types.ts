@@ -2,7 +2,6 @@ import {
   CogniteAnnotation,
   PendingCogniteAnnotation,
 } from '@cognite/annotations';
-
 import { RectangleAnnotation } from '@cognite/unified-file-viewer';
 
 export interface ProposedCogniteAnnotation extends PendingCogniteAnnotation {

@@ -8,24 +8,37 @@ import {
 } from 'react';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { compact } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
-import { Chart, ChartTimeSeries } from '@charts-app/models/chart/types';
+
 import styled from 'styled-components';
-import dayjs from 'dayjs';
-import { useSDK } from '@cognite/sdk-provider';
-import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
+
 import DelayedComponent from '@charts-app/components/DelayedComponent';
-import { TimeseriesChart } from '@cognite/data-exploration';
-import { useSearchParam, useClearSearchParams } from '@charts-app/hooks/navigation';
-import { useMyCharts, useUpdateChart, useChart } from '@charts-app/hooks/charts-storage';
-import { Timeseries } from '@cognite/sdk';
+import {
+  useMyCharts,
+  useUpdateChart,
+  useChart,
+} from '@charts-app/hooks/charts-storage';
+import {
+  useSearchParam,
+  useClearSearchParams,
+} from '@charts-app/hooks/navigation';
+import {
+  addTimeseries,
+  convertTSToChartTS,
+} from '@charts-app/models/chart/updates';
 import { calculateDefaultYAxis } from '@charts-app/utils/axis';
 import { createInternalLink } from '@charts-app/utils/link';
-import { addTimeseries, convertTSToChartTS } from '@charts-app/models/chart/updates';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useTranslations } from '@charts-app/hooks/translations';
+import { Chart, ChartTimeSeries } from '@charts-app/models/chart/types';
+import dayjs from 'dayjs';
+import { compact } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
+import { TimeseriesChart } from '@cognite/data-exploration';
+import { Timeseries } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 const TIMESERIE_IDS_KEY = 'timeserieIds';
 const TIMESERIE_EXTERNAL_IDS_KEY = 'timeserieExternalIds';

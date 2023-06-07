@@ -1,18 +1,21 @@
-import { Icon, Button, Colors } from '@cognite/cogs.js';
-import Highlighter from 'react-highlight-words';
-import { removeIllegalCharacters } from '@charts-app/utils/text';
 import { ComponentProps } from 'react';
+import Highlighter from 'react-highlight-words';
+
+import { removeIllegalCharacters } from '@charts-app/utils/text';
+
+import { Icon, Button, Colors } from '@cognite/cogs.js';
+
 import { AssetItem } from './elements/AssetItem';
-import { ExactMatchLabel } from './elements/ExactMatchLabel';
-import { TSList } from './elements/TSList';
-import { Row } from './elements/Row';
-import { InfoContainer } from './elements/InfoContainer';
-import { ResourceNameWrapper } from './elements/ResourceNameWrapper';
 import { Description } from './elements/Description';
-import { Right } from './elements/Right';
+import { ExactMatchLabel } from './elements/ExactMatchLabel';
+import { InfoContainer } from './elements/InfoContainer';
 import { PnidButtonContainer } from './elements/PnidButtonContainer';
-import TimeSeriesResultItem from './TimeSeriesResultItem';
+import { ResourceNameWrapper } from './elements/ResourceNameWrapper';
+import { Right } from './elements/Right';
+import { Row } from './elements/Row';
+import { TSList } from './elements/TSList';
 import LoadingLinkedAsset from './LoadingLinkedAsset';
+import TimeSeriesResultItem from './TimeSeriesResultItem';
 
 type Props = {
   asset:

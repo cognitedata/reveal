@@ -13,8 +13,11 @@ import {
 } from '@charts-app/components/Common/SidebarElements';
 import { ChartEventFilters } from '@charts-app/models/chart/types';
 import { ChartEventResults } from '@charts-app/models/event-results/types';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 import { omit } from 'lodash';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
 
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import {

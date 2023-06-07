@@ -1,12 +1,13 @@
 /**
  * Threshold Item
  */
-import { Meta, Story } from '@storybook/react';
-import { useArgs } from '@storybook/client-api';
 import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import { ChartThreshold } from '@charts-app/models/chart/types';
-import { v4 as uuidv4 } from 'uuid';
+import { useArgs } from '@storybook/client-api';
+import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
+
 import ThresholdsComponent from './Thresholds';
 
 type Props = React.ComponentProps<typeof ThresholdsComponent>;

@@ -3,6 +3,7 @@ import {
   getDefaultStylesByResourceType,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
+
 import { ExtendedAnnotation } from '../types';
 
 export const getExtendedAnnotationsFromSVGAnnotations = (

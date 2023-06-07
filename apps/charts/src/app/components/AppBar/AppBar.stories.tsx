@@ -1,8 +1,12 @@
-import { Icon, Title, TopBar } from '@cognite/cogs.js';
+import React from 'react';
+
 import { Meta, Story } from '@storybook/react';
 import dayjs from 'dayjs';
-import React from 'react';
+
+import { Icon, Title, TopBar } from '@cognite/cogs.js';
+
 import EditableText from '../EditableText/EditableText';
+
 import AppBar from './AppBar';
 import AppBarLeft from './AppBarLeft';
 import AppBarRight from './AppBarRight';

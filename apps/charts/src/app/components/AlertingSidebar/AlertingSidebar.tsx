@@ -1,28 +1,32 @@
-import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import { useEffect } from 'react';
+
+import { jobsToAlerts } from '@charts-app/ChartViewPage/NotificationIndicator';
 import {
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
 } from '@charts-app/components/Common/SidebarElements';
-import { useEffect } from 'react';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useMonitoringFoldersWithJobs } from '@charts-app/components/MonitoringSidebar/hooks';
-import { saveToLocalStorage } from '@cognite/storage';
-import { jobsToAlerts } from '@charts-app/ChartViewPage/NotificationIndicator';
-import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   JobAndAlertsFilter,
   FilterOption,
   ALERTING_FILTER_OPTIONS,
 } from '@charts-app/components/MonitoringSidebar/JobAndAlertsFilter';
+import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { trackUsage } from '@charts-app/services/metrics';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
+import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useQueryClient } from '@tanstack/react-query';
+
+import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import { saveToLocalStorage } from '@cognite/storage';
+
 import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
-import { DisplayAlerts } from './DisplayAlerts';
 import { ALERTING_FILTER } from '../../utils/constants';
+
+import { DisplayAlerts } from './DisplayAlerts';
+import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
   'Alerts',

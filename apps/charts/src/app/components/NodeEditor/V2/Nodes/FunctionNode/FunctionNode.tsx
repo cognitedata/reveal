@@ -1,20 +1,24 @@
-import { Operation } from '@cognite/calculation-backend';
-import classNames from 'classnames';
 import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
-import styled from 'styled-components/macro';
-import { Flex } from '@cognite/cogs.js';
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+
 import Markdown from '@charts-app/components/Markdown/Markdown';
-import { NodeTypes } from '../../types';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+import classNames from 'classnames';
+import styled from 'styled-components/macro';
+
+import { Operation } from '@cognite/calculation-backend';
+import { Flex } from '@cognite/cogs.js';
+
 import {
   AUTO_ALIGN_PARAM,
   FUNCTION_NODE_DRAG_HANDLE_CLASSNAME,
   PIN_MIN_HEIGHT,
 } from '../../constants';
+import { NodeTypes } from '../../types';
 import { NodeWrapper } from '../elements';
 import NodeHandle from '../NodeHandle';
 import NodeWithActionBar from '../NodeWithActionBar';
+
 import FunctionParameterForm from './FunctionParameterForm/FunctionParameterForm';
 
 export type FunctionNodeDataDehydrated = {

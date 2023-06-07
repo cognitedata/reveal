@@ -1,12 +1,15 @@
-import { CogniteClient, DatapointAggregates } from '@cognite/sdk';
-import { Chart } from '@charts-app/models/chart/types';
 import { useCallback, useState } from 'react';
+
+import { Chart } from '@charts-app/models/chart/types';
 import { datapointsToCSV, Delimiters } from '@charts-app/utils/csv';
-import isTruthy from '@charts-app/utils/isTruthy';
-import JSZip from 'jszip';
 import { wait } from '@charts-app/utils/helpers';
-import { saveAs } from 'file-saver';
+import isTruthy from '@charts-app/utils/isTruthy';
 import { format as formatDate } from 'date-fns';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
+
+import { CogniteClient, DatapointAggregates } from '@cognite/sdk';
+
 import {
   fetchCalculationDataPoints,
   fetchRawCalculationDatapoints,

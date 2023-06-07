@@ -1,4 +1,11 @@
+import { MouseEvent, useContext } from 'react';
+
 import styled from 'styled-components';
+
+import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
+import { Chart } from '@charts-app/models/chart/types';
+import { Skeleton } from 'antd';
+
 import {
   A,
   Detail,
@@ -8,13 +15,10 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { MouseEvent, useContext } from 'react';
-import { Skeleton } from 'antd';
-import { Chart } from '@charts-app/models/chart/types';
-import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
+
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
-import formatOwner from '../formatOwner';
 import { ChartListContext } from '../context';
+import formatOwner from '../formatOwner';
 
 interface Props {
   chart: Chart;

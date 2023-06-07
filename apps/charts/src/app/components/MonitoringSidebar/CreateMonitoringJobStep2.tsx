@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Button, Icon } from '@cognite/cogs.js';
-import { Col, Row } from 'antd';
-import PortalWait from '@charts-app/components/PortalWait/PortalWait';
 import { useForm, FormProvider } from 'react-hook-form';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { CredentialsForm } from '@charts-app/components/CredentialsForm/CredentialsForm';
+import PortalWait from '@charts-app/components/PortalWait/PortalWait';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { Col, Row } from 'antd';
+
+import { Button, Icon } from '@cognite/cogs.js';
+
 import { FullWidthButton } from './elements';
 import { CreateMonitoringJobFormData } from './types';
 

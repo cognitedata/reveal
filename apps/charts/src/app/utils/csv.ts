@@ -1,6 +1,8 @@
-import { Aggregate, DatapointAggregates } from '@cognite/sdk';
-import { saveAs } from 'file-saver';
 import { format as formatDate } from 'date-fns';
+import { saveAs } from 'file-saver';
+
+import { Aggregate, DatapointAggregates } from '@cognite/sdk';
+
 import { getGranularityInMS } from './timeseries';
 
 interface DatapointsToCSVProps {

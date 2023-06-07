@@ -1,4 +1,7 @@
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 
 const defaultTranslations = makeDefaultTranslations('Test');
 

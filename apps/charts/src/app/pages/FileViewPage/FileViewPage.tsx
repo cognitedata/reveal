@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+import { FileList } from '@charts-app/components/FileList/FileList';
+import { FileViewer } from '@charts-app/components/FileViewer/FileViewer';
+import SplitPaneLayout from '@charts-app/components/Layout/SplitPaneLayout';
+import SourceTable from '@charts-app/components/SourceTable/SourceTable';
+import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
+import ConnectedLinkedAssetsSidebar from '@charts-app/containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
+import { useAsset } from '@charts-app/hooks/cdf-assets';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { calculationSummaries } from '@charts-app/models/calculation-results/selectors';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
+import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
+import { useInitializedChart } from '@charts-app/pages/ChartViewPage/hooks';
+import { trackUsage } from '@charts-app/services/metrics';
+import { createInternalLink } from '@charts-app/utils/link';
+import Layers from '@charts-app/utils/z-index';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components/macro';
+
 import { Body, Button, Loader, Title, Icon } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
-import { FileViewer } from '@charts-app/components/FileViewer/FileViewer';
-import { FileList } from '@charts-app/components/FileList/FileList';
-import { useAsset } from '@charts-app/hooks/cdf-assets';
-import styled from 'styled-components/macro';
-import SplitPaneLayout from '@charts-app/components/Layout/SplitPaneLayout';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import Layers from '@charts-app/utils/z-index';
-import { createInternalLink } from '@charts-app/utils/link';
-import { trackUsage } from '@charts-app/services/metrics';
-import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
-import { useTranslations } from '@charts-app/hooks/translations';
-import SourceTable from '@charts-app/components/SourceTable/SourceTable';
-import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
-import { useRecoilValue } from 'recoil';
-import { calculationSummaries } from '@charts-app/models/calculation-results/selectors';
-import { useInitializedChart } from '@charts-app/ChartViewPage/hooks';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
-import ConnectedLinkedAssetsSidebar from '@charts-app/containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {
   const { chartId = '', assetId } = useParams<{

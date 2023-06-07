@@ -1,5 +1,5 @@
-import { Chart, ScheduledCalculation } from './types';
 import { addItem, removeItem } from './helpers';
+import { Chart, ScheduledCalculation } from './types';
 
 /**
  * Add Scheduled Calculation

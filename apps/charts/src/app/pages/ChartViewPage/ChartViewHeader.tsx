@@ -2,10 +2,14 @@
  * ChartView Header
  */
 
-import { Button, Icon, Dropdown, Menu } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
+
 import DateTimePicker from '@charts-app/components/DateTime/DateTimePicker';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Button, Icon, Dropdown, Menu } from '@cognite/cogs.js';
+
+import ChartViewOptions from './ChartViewOptions';
 import {
   Header,
   WarningAlert,
@@ -14,7 +18,6 @@ import {
   MenuItemText,
   RangeWrapper,
 } from './elements';
-import ChartViewOptions from './ChartViewOptions';
 
 const defaultTranslations = makeDefaultTranslations(
   'Add time series',
@@ -84,7 +87,7 @@ const ChartViewHeader = ({
               <Menu>
                 <Menu.Header>{t.Imports}</Menu.Header>
                 <Menu.Item
-                  appendIcon="Function"
+                  icon="Function"
                   onClick={handleImportCalculationsClick}
                 >
                   <MenuItemText>{t['Import calculations']}</MenuItemText>

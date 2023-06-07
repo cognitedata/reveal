@@ -27,6 +27,7 @@ import {
 } from '@charts-app/services/calculation-backend';
 import { getHash } from '@charts-app/utils/hash';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 import { useFilePicker } from 'use-file-picker';
@@ -36,7 +37,6 @@ import {
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
 import { useSDK } from '@cognite/sdk-provider';
-import dayjs from 'dayjs';
 
 export const useInitializedChart = (chartId: string) => {
   /**

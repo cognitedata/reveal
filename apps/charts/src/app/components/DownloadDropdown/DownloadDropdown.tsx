@@ -2,9 +2,11 @@
  * Download Charts
  */
 import { ComponentProps, useState } from 'react';
-import { Button } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import Dropdown from '@charts-app/components/Dropdown/Dropdown';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Button } from '@cognite/cogs.js';
 
 const defaultTranslations = makeDefaultTranslations(
   'PNG',

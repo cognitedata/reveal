@@ -1,5 +1,12 @@
 import { ComponentProps } from 'react';
+
+import CopyButton from '@charts-app/components/CopyButton/CopyButton';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
+
 import {
   Button,
   Dropdown,
@@ -12,8 +19,6 @@ import {
   MiddleEllipsis,
   DropdownProps,
 } from '@cognite/cogs.js';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
-import CopyButton from '@charts-app/components/CopyButton/CopyButton';
 
 interface SharingDropdownProps extends DropdownProps {
   chart: {

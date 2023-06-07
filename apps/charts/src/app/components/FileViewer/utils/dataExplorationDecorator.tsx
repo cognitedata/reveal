@@ -1,10 +1,13 @@
 import React from 'react';
-import { CogniteClient } from '@cognite/sdk';
-import { makeDecorator, WrapperSettings } from '@storybook/addons';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import styled from 'styled-components';
+
+import { makeDecorator, WrapperSettings } from '@storybook/addons';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
+
+import { CogniteClient } from '@cognite/sdk';
+
 import { DataExplorationProvider } from '../../../context';
 
 type DataExplorationProviderParameters = {

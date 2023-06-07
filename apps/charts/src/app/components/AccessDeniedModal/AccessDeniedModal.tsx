@@ -1,6 +1,8 @@
-import { Flex, Button, Body } from '@cognite/cogs.js';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Flex, Button, Body } from '@cognite/cogs.js';
+
 import { StyledModal, StyledUl, ModalHeader } from './elements';
 
 type Props = {
@@ -21,7 +23,6 @@ export const AccessDeniedModal = ({ capabilities, visible, onOk }: Props) => {
   );
   return (
     <StyledModal
-      appElement={document.getElementsByTagName('body')}
       visible={visible}
       title={<ModalHeader title={t['Capabilities Required']} />}
       width={600}

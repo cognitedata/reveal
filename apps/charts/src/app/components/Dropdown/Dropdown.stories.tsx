@@ -2,9 +2,12 @@
  * Common Dropdown
  */
 
-import { Button } from '@cognite/cogs.js';
-import { Meta, Story } from '@storybook/react';
 import React, { useState } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
+import { Button } from '@cognite/cogs.js';
+
 import Dropdown from './Dropdown';
 
 type Props = React.ComponentProps<typeof Dropdown>;

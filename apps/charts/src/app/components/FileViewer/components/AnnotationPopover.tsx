@@ -5,10 +5,10 @@ import {
   useAssetTimeseries,
   useAssetList,
 } from '@charts-app/hooks/cdf-assets';
-import dayjs from 'dayjs';
 import chartAtom from '@charts-app/models/chart/atom';
-import { useRecoilState } from 'recoil';
 import { trackUsage } from '@charts-app/services/metrics';
+import dayjs from 'dayjs';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components/macro';
 
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';

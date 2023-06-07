@@ -1,7 +1,13 @@
 /* eslint camelcase: 0 */
 
+import {
+  Chart,
+  ChartWorkflow,
+  ChartWorkflowV2,
+} from '@charts-app/models/chart/types';
+
 import { Operation } from '@cognite/calculation-backend';
-import { Chart, ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
+
 import { resolveTimeseriesSourceInSteps } from './utils';
 import { getStepsFromWorkflowReactFlow } from './V2/transforms';
 

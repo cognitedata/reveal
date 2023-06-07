@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Row, Col, Dropdown, Menu, Icon, Modal, Title } from '@cognite/cogs.js';
+
+import styled from 'styled-components';
+
+import { trackUsage } from '@charts-app/services/metrics';
+import { durationFormatter } from '@charts-app/utils/date';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { format, formatDistance } from 'date-fns';
-import styled from 'styled-components';
-import { durationFormatter } from '@charts-app/utils/date';
-import { trackUsage } from '@charts-app/services/metrics';
-import { AlertResponse } from './types';
-import { useAlertsResolveCreate } from './hooks';
+
+import { Row, Col, Dropdown, Menu, Icon, Modal, Title } from '@cognite/cogs.js';
+
 import { AlertAction, AlertText, ModalBody } from './elements';
+import { useAlertsResolveCreate } from './hooks';
+import { AlertResponse } from './types';
 
 const defaultTranslations = makeDefaultTranslations(
   'Change Status',
@@ -88,7 +92,6 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
       </Col>
 
       <Modal
-        appElement={document.getElementsByTagName('body')}
         visible={isModalVisible}
         okText="Yes, I understand"
         onOk={() => {

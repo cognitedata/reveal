@@ -2,9 +2,12 @@
  * StatusIcon StoryBook
  */
 
-import { StatusStatusEnum } from '@cognite/calculation-backend';
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
+import { StatusStatusEnum } from '@cognite/calculation-backend';
+
 import { StatusIcon } from './StatusIcon';
 
 export default {

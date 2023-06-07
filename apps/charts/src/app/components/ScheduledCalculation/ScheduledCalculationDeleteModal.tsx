@@ -1,9 +1,13 @@
-import { Flex, Title, Button, Body, Checkbox, Icon } from '@cognite/cogs.js';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { Trans } from 'react-i18next';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useState } from 'react';
+import { Trans } from 'react-i18next';
+
 import styled from 'styled-components';
+
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Flex, Title, Button, Body, Checkbox, Icon } from '@cognite/cogs.js';
+
 import { StyledModal } from './elements';
 
 const StyledDeleteIcon = styled(Icon)`
@@ -46,7 +50,6 @@ export const ScheduledCalculationDeleteModal = ({
   const [isDeleting, setIsDeleting] = useState(false);
   return (
     <StyledModal
-      appElement={document.getElementsByTagName('body')}
       visible
       title={<DeleteModalHeader title="Delete scheduled calculation" />}
       width={600}
@@ -82,10 +85,9 @@ export const ScheduledCalculationDeleteModal = ({
           />
         </Body>
         <Checkbox
-          onChange={(val: boolean) => setDeleteTimeseries(val)}
+          onChange={(e) => setDeleteTimeseries(e.target.checked)}
           name="DeleteScheduledCalculation"
           checked={deleteTimeseries}
-          value={deleteTimeseries}
         >
           {t['Delete saved time series']}
         </Checkbox>

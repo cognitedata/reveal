@@ -1,6 +1,8 @@
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { NoAlerts } from '../Icons/NoAlerts';
+
 import {
   EmptyStateButton,
   EmptyStateButtonIcon,

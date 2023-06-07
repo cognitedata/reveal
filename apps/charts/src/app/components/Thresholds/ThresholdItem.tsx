@@ -1,25 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Button,
-  Collapse,
-  Flex,
-  Input,
-  Popconfirm,
-  Select,
-} from '@cognite/cogs.js';
-import { Col, Row } from 'antd';
-import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
-import {
-  ChartSource,
-  ChartThreshold,
-  ChartThresholdEventFilter,
-  ChartTimeSeries,
-  ChartWorkflow,
-} from '@charts-app/models/chart/types';
-import { convertMSToDisplay } from '@charts-app/utils/date';
-import { getUnitConverter } from '@charts-app/utils/units';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
-import { isThresholdValid } from '@charts-app/utils/threshold';
+
 import {
   ReverseSwitch,
   ExpandIcon,
@@ -30,6 +10,31 @@ import {
   SidebarChip,
 } from '@charts-app/components/Common/SidebarElements';
 import { SourceSelector } from '@charts-app/components/Common/SourceSelector';
+import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
+import {
+  ChartSource,
+  ChartThreshold,
+  ChartThresholdEventFilter,
+  ChartTimeSeries,
+  ChartWorkflow,
+} from '@charts-app/models/chart/types';
+import { convertMSToDisplay } from '@charts-app/utils/date';
+import { isThresholdValid } from '@charts-app/utils/threshold';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
+import { getUnitConverter } from '@charts-app/utils/units';
+import { Col, Row } from 'antd';
+
+import {
+  Button,
+  Collapse,
+  Flex,
+  Input,
+  Popconfirm,
+  Select,
+} from '@cognite/cogs.js';
 
 import { useFilterValue } from './useFilterValue';
 

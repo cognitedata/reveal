@@ -1,5 +1,6 @@
 import { Chart } from '@charts-app/models/chart/types';
 import { Skeleton } from 'antd';
+
 import { ChartingContainer } from './elements';
 import PlotlyChart from './PlotlyChart';
 import { usePreviewData } from './preview-hooks';

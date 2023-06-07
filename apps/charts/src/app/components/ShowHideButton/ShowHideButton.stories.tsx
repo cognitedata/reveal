@@ -3,7 +3,9 @@
  */
 
 import { ComponentProps, useState } from 'react';
+
 import { Meta, Story } from '@storybook/react';
+
 import { ShowHideButton } from './ShowHideButton';
 
 export default {

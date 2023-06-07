@@ -1,8 +1,10 @@
-import { Button, Flex } from '@cognite/cogs.js';
+import { useState } from 'react';
+
+import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useState } from 'react';
-import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
+
+import { Button, Flex } from '@cognite/cogs.js';
 
 import { ScheduledCalculationModal } from './ScheduledCalculationModal';
 

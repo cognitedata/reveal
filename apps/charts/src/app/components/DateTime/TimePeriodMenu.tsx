@@ -1,7 +1,9 @@
-import { Select, OptionType } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { TimePeriodProps } from './types';
+
+import { Select, OptionType } from '@cognite/cogs.js';
+
 import { relativeTimeOptions } from './constants';
+import { TimePeriodProps } from './types';
 
 type TimePeriodOption = OptionType<TimePeriodProps['optionSelected']>;
 

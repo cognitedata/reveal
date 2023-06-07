@@ -18,9 +18,8 @@ import { useTranslations } from '@charts-app/hooks/translations';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { isProduction } from '@charts-app/utils/environment';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import dayjs from 'dayjs';
+import { getAuth } from 'firebase/auth';
 
 import {
   Button,
@@ -36,27 +35,22 @@ const UserProfileWrap = styled(Flex)`
   width: 100%;
   box-shadow: rgb(0 0 0 / 10%) 0px -3px 16px;
   margin: 0 0 1rem;
-
   > article {
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-
     &.last-col {
       margin-left: auto;
       min-width: 12rem;
       text-align: center;
-
       > p {
         margin: 1rem 0 0;
       }
     }
-
     &.col-user {
       padding: 2rem 0;
       justify-content: center;
     }
-
     .tags {
       color: var(--cogs-greyscale-grey6);
     }
@@ -65,15 +59,12 @@ const UserProfileWrap = styled(Flex)`
 
 const LangAreaWrap = styled(Flex)`
   width: 100%;
-
   > article {
     padding: 2rem;
     border: 1px solid var(--cogs-greyscale-grey2);
-
     &.lang-col {
       flex: 1 1 auto;
     }
-
     .cogs-select {
       max-width: 15rem;
     }
@@ -272,9 +263,7 @@ const UserProfile = () => {
             <Display level={3}>User Information</Display>
             <pre>{JSON.stringify(user, null, 2)}</pre>
             <Display level={3}>Firebase User Information</Display>
-            <pre>
-              {JSON.stringify(firebase.auth()?.currentUser ?? {}, null, 2)}
-            </pre>
+            <pre>{JSON.stringify(getAuth()?.currentUser ?? {}, null, 2)}</pre>
             <Display level={3}>Firebase Token Information</Display>
             <pre>
               {parseJwt(localStorage.getItem('@cognite/charts/firebaseToken'))}

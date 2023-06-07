@@ -5,6 +5,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+
 import { Button, Dropdown, IconType, Menu } from '@cognite/cogs.js';
 
 import { Container, MenuText } from './elements';
@@ -42,7 +43,7 @@ const ChartsDropdown = ({
             {options.map((item) => (
               <Menu.Item
                 key={item.label}
-                appendIcon={item.icon}
+                icon={item.icon}
                 onClick={(event) => item.onClick(event)}
               >
                 <MenuText>{item.label}</MenuText>

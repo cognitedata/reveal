@@ -1,5 +1,6 @@
-import { Select } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
+
+import { Select } from '@cognite/cogs.js';
 
 export const SourceSelect = styled(Select)`
   width: 100%;

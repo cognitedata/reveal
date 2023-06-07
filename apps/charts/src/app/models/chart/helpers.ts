@@ -2,7 +2,6 @@
  * Helper Methods to mutate Chart
  */
 
-import { v4 as uuidv4 } from 'uuid';
 import {
   Chart,
   ChartTimeSeries,
@@ -12,6 +11,7 @@ import {
   UserInfo,
   SourceType,
 } from '@charts-app/models/chart/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const COLLECTION_TYPE_MAP: Record<CollectionType, SourceType> = {
   workflowCollection: 'workflow',

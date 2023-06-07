@@ -3,7 +3,9 @@
  */
 
 import { ReactNode } from 'react';
+
 import styled from 'styled-components';
+
 import Layers from '@charts-app/utils/z-index';
 
 type Props = {

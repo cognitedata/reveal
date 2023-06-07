@@ -1,3 +1,6 @@
+import { WorkflowResult } from '@charts-app/models/calculation-results/types';
+import { BACKEND_SERVICE_URL_KEY } from '@charts-app/utils/constants';
+import { isProduction } from '@charts-app/utils/environment';
 import queryString from 'query-string';
 
 import {
@@ -22,17 +25,13 @@ import {
   CalculationResultDatapointsInner,
 } from '@cognite/calculation-backend';
 import { getCluster } from '@cognite/cdf-utilities';
-
-import { BACKEND_SERVICE_URL_KEY } from '@charts-app/utils/constants';
+import { parseEnvFromCluster } from '@cognite/login-utils';
 import {
   CogniteClient,
   DatapointAggregate,
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
-import { isProduction } from '@charts-app/utils/environment';
-import { WorkflowResult } from '@charts-app/models/calculation-results/types';
-import { parseEnvFromCluster } from '@cognite/login-utils';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

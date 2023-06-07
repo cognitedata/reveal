@@ -1,6 +1,12 @@
-import { Button, Title } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
+
+import { Button, Title } from '@cognite/cogs.js';
+
 import { FileSidebar } from './elements/FileSidebar';
 import { Header } from './elements/Header';
 import { LinkedAssetList } from './elements/LinkedAssetList';

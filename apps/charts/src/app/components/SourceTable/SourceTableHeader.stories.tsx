@@ -2,8 +2,10 @@
  * SourceTable Header StoryBook
  */
 
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
 import { Table } from './elements';
 import { SourceTableHeader } from './SourceTableHeader';
 

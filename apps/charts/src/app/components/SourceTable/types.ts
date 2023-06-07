@@ -1,15 +1,17 @@
 import { ComponentProps } from 'react';
+
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
 } from '@charts-app/models/chart/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+
+import { ScheduledCalculationRow } from './ScheduledCalculationRow';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
-import { ScheduledCalculationRow } from './ScheduledCalculationRow';
 
 export type SourceRowsProps = {
   sources: (ChartTimeSeries | ChartWorkflow | ScheduledCalculation)[];

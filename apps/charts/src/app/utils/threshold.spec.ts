@@ -1,4 +1,5 @@
 import { ChartThreshold } from '@charts-app/models/chart/types';
+
 import { isThresholdValid } from './threshold';
 
 describe('isThresholdValid', () => {

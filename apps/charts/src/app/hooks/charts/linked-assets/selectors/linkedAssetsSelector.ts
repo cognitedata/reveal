@@ -1,8 +1,10 @@
-import { Asset } from '@cognite/sdk';
+import { ComponentProps } from 'react';
+
 import LinkedAssetsSidebar from '@charts-app/components/LinkedAssetsSidebar/LinkedAssetsSidebar';
 import useAssetsTimeseries from '@charts-app/hooks/cdf/assets/queries/useAssetsTimeseries';
 import useTimeseriesAggregatedDatapoints from '@charts-app/hooks/cdf/timeseries/queries/useTimeseriesAggregatedDatapoints';
-import { ComponentProps } from 'react';
+
+import { Asset } from '@cognite/sdk';
 
 type ResponseType = ComponentProps<typeof LinkedAssetsSidebar>['assets'];
 

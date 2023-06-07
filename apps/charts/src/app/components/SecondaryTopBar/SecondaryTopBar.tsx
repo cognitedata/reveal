@@ -1,8 +1,11 @@
 import React from 'react';
-import { Button, Colors, Flex } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
 import { createInternalLink } from '@charts-app/utils/link';
+
+import { Button, Colors, Flex } from '@cognite/cogs.js';
 
 const SecondaryTopBar = () => {
   const move = useNavigate();

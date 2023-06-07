@@ -3,6 +3,7 @@
  */
 
 import { selector } from 'recoil';
+
 import { eventResultsAtom, activeEventFilterIdAtom } from './atom';
 import { ChartEventResults } from './types';
 

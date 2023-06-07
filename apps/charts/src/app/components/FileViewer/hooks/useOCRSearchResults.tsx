@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
+
 import { FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { OCRAnnotation } from '@cognite/unified-file-viewer';
+
 import { retrieveOCRResults } from '../utils/retrieveOCRResults';
 
 export type OCRSearchResponse = { annotations: OCRAnnotation[] };

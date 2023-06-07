@@ -1,6 +1,7 @@
-import { Timestamp } from '@cognite/sdk';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
+
+import { Timestamp } from '@cognite/sdk';
 
 /**
  * convert ms to display

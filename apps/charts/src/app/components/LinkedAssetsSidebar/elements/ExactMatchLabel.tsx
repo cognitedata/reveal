@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Button, Colors } from '@cognite/cogs.js';
 
 export const ExactMatchLabel = styled(Button)`

@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
+
 import { AlertResolvePayload } from './types';
 
 /**

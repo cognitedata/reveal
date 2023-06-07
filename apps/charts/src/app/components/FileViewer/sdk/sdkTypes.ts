@@ -1,6 +1,7 @@
 // copied form https://github.com/cognitedata/cognite-sdk-js/blob/master/packages/stable/src/types.ts
 
 import { CogniteInternalId } from '@cognite/sdk-core';
+
 import { AnnotationData } from './types.gen';
 
 export type AnnotatedResourceType = 'file' | 'threedmodel';

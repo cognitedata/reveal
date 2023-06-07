@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
+
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { useEffect, useState } from 'react';
 import {
   Annotation,
   getDecomposedContextualizedSvg,

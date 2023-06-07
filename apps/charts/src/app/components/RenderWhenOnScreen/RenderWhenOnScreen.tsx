@@ -1,4 +1,5 @@
 import React, { ReactNode, useRef } from 'react';
+
 import { useOnScreen } from './hooks';
 
 export const RenderWhenOnScreen: React.FC<{

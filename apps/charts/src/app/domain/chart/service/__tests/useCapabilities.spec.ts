@@ -1,7 +1,8 @@
 import { setupServer } from 'msw/node';
 import { renderHookWithWrapper } from 'tests/testUtils';
-import { useCapabilities, useExperimentalCapabilitiesCheck } from '../queries';
+
 import { getMockCapabilities } from '../__mocks/getMockCapabilities';
+import { useCapabilities, useExperimentalCapabilitiesCheck } from '../queries';
 
 const mockServer = setupServer(getMockCapabilities());
 

@@ -1,10 +1,13 @@
 import { ComponentProps } from 'react';
-import { Meta, Story } from '@storybook/react';
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
+
+import { fullListOfOperations } from '@charts-app/models/operations/mocks';
+import { Meta, Story } from '@storybook/react';
+
+import { defaultTranslations } from '../translations';
+
 import { SourceNodeData } from './Nodes/SourceNode';
 import ReactFlowNodeEditor from './ReactFlowNodeEditor';
-import { defaultTranslations } from '../translations';
 
 export default {
   component: ReactFlowNodeEditor,

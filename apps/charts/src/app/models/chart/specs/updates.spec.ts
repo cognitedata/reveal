@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
+
 import { fullListOfOperations } from '../../operations/mocks';
+import { duplicateChart } from '../helpers';
 import {
   Chart,
   ChartTimeSeries,
@@ -20,7 +22,6 @@ import {
   updateWorkflowsToSupportVersions,
   addWorkflows,
 } from '../updates';
-import { duplicateChart } from '../helpers';
 
 describe('charts util', () => {
   const id = uuidv4();

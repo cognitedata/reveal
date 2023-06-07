@@ -1,3 +1,5 @@
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import {
   Button,
   Dropdown,
@@ -6,7 +8,7 @@ import {
   Switch,
   Tooltip,
 } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { DropdownTitle, DropdownWrapper } from './elements';
 
 type Props = {
@@ -59,7 +61,7 @@ const ChartViewOptions = ({
       >
         <Button
           icon="GridLines"
-          type={showGridlines ? 'link' : 'ghost'}
+          type="ghost"
           aria-label="view"
           onClick={() =>
             handleSettingsToggle(
@@ -75,7 +77,7 @@ const ChartViewOptions = ({
       >
         <Button
           icon="Timeseries"
-          type={showMinMax ? 'link' : 'ghost'}
+          type="ghost"
           aria-label="view"
           onClick={() =>
             handleSettingsToggle(CHART_SETTINGS_KEYS.SHOW_MIN_MAX, !showMinMax)
@@ -137,7 +139,7 @@ const ChartViewOptions = ({
       >
         <Button
           icon="StackedChart"
-          type={stackedMode ? 'link' : 'ghost'}
+          type="ghost"
           onClick={() => setStackedMode(!stackedMode)}
           aria-label="view"
           style={{ marginLeft: 4 }}

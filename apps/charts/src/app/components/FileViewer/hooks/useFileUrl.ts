@@ -1,7 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { FileInfo } from '@cognite/sdk';
-import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from '@tanstack/react-query';
+
+import { FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
+
 import { FILE_URL_REFETCH_INTERVAL } from '../constants';
 
 export const useFileUrl = (

@@ -2,11 +2,19 @@
  * Threshold
  */
 
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { FunctionComponent, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { omit } from 'lodash';
+
+import {
+  Sidebar,
+  TopContainer,
+  TopContainerAside,
+  TopContainerTitle,
+  ContentOverflowWrapper,
+} from '@charts-app/components/Common/SidebarElements';
+import Thresholds from '@charts-app/components/Thresholds/Thresholds';
+import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import { useTranslations } from '@charts-app/hooks/translations';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 import {
   Chart,
   ChartSource,
@@ -25,16 +33,10 @@ import {
   updateChartThresholdVisibility,
   updateChartThresholdEventFilters,
 } from '@charts-app/models/chart/updates-threshold';
-import Thresholds from '@charts-app/components/Thresholds/Thresholds';
-import {
-  Sidebar,
-  TopContainer,
-  TopContainerAside,
-  TopContainerTitle,
-  ContentOverflowWrapper,
-} from '@charts-app/components/Common/SidebarElements';
-import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
-import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
+import { omit } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
 type Props = {
   visible: boolean;

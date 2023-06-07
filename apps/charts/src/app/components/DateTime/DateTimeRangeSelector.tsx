@@ -1,5 +1,7 @@
-import { DateRange, Flex } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
+
+import { DateRange, Flex } from '@cognite/cogs.js';
+
 import TimeSelector from './TimeSelector';
 
 /**

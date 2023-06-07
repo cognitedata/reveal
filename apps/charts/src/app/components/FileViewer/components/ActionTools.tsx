@@ -1,10 +1,13 @@
 /* eslint-disable @cognite/no-number-z-index */
-import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
+
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
-import { SearchBar } from './SearchBar';
+
 import { useFileUrl } from '../hooks/useFileUrl';
+
+import { SearchBar } from './SearchBar';
 
 export const ActionTools = ({
   file,

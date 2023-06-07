@@ -1,5 +1,7 @@
 import { ComponentProps } from 'react';
+
 import styled from 'styled-components/macro';
+
 import ActionBar from './ActionBar/ActionBar';
 import { NodeWrapper } from './elements';
 

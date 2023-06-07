@@ -1,4 +1,3 @@
-import { ChartWorkflowV2, ScheduledCalculation } from '@charts-app/models/chart/types';
 import {
   addEdge,
   Connection,
@@ -10,6 +9,12 @@ import {
   removeElements,
   updateEdge,
 } from 'react-flow-renderer';
+
+import {
+  ChartWorkflowV2,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
+
 import {
   NodeTypes,
   NodeDataDehydratedVariants,

@@ -1,5 +1,7 @@
-import { Switch } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+
+import { Switch } from '@cognite/cogs.js';
+
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormElementProps } from './types';
 

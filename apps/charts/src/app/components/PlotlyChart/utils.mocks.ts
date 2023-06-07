@@ -1,3 +1,4 @@
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
   ChartThreshold,
   ChartTimeSeries,
@@ -6,7 +7,7 @@ import {
   LineStyle,
 } from '@charts-app/models/chart/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
+
 import { SeriesData } from './utils';
 
 export const eventDataExample: any[] = [
@@ -244,7 +245,7 @@ export const calculateSeriesDataCase1: {
     ],
     calculations: [
       {
-        version: 'v2' as 'v2',
+        version: 'v2' as const,
         settings: {
           autoAlign: true,
         },
@@ -302,7 +303,7 @@ export const calculateSeriesDataCase1: {
         enabled: true,
         lineStyle: 'solid' as LineStyle,
         id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
-        version: 'v2' as 'v2',
+        version: 'v2' as const,
         preferredUnit: '',
         customUnitLabel: '',
         name: 'Calc 2',
@@ -7118,7 +7119,7 @@ export const calculateSeriesDataCase2: {
     ],
     calculations: [
       {
-        version: 'v2' as 'v2',
+        version: 'v2' as const,
         settings: {
           autoAlign: true,
         },
@@ -7176,7 +7177,7 @@ export const calculateSeriesDataCase2: {
         enabled: true,
         lineStyle: 'solid' as LineStyle,
         id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
-        version: 'v2' as 'v2',
+        version: 'v2' as const,
         preferredUnit: '',
         customUnitLabel: 'custom',
         name: 'Calc 2',
@@ -11571,7 +11572,7 @@ export const calculateSeriesDataCase3: {
     ],
     calculations: [
       {
-        version: 'v2' as 'v2',
+        version: 'v2' as const,
         settings: {
           autoAlign: true,
         },
@@ -11631,7 +11632,7 @@ export const calculateSeriesDataCase3: {
         enabled: true,
         lineStyle: 'solid' as LineStyle,
         id: 'c7ee18d4-6526-4910-ac26-dbeaeadc6eeb',
-        version: 'v2' as 'v2',
+        version: 'v2' as const,
         preferredUnit: '',
         customUnitLabel: 'custom-2',
         name: 'Calc 2',

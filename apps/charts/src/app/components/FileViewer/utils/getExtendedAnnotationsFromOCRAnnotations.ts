@@ -3,6 +3,7 @@ import {
   OCRAnnotation,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
+
 import { ExtendedAnnotation } from '../types';
 
 export const getExtendedAnnotationsFromOCRAnnotations = (

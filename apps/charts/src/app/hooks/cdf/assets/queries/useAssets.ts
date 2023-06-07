@@ -1,6 +1,7 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteInternalId } from '@cognite/sdk';
 import { useQuery } from '@tanstack/react-query';
+
+import { CogniteInternalId } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 export default function useAssets(assetIds: CogniteInternalId[]) {
   const sdk = useSDK();

@@ -1,14 +1,14 @@
-import { Operation, OperationVersion } from '@cognite/calculation-backend';
-import { ChartWorkflowV2, ScheduledCalculation } from '@charts-app/models/chart/types';
 import { Elements, FlowElement, Node } from 'react-flow-renderer';
+
 import {
-  NodeTypes,
-  SourceOption,
-  NodeDataVariants,
-  NodeDataDehydratedVariants,
-  NodeCallbacks,
-} from './types';
-import { transformParamInput } from './transforms';
+  ChartWorkflowV2,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
+
+import { Operation, OperationVersion } from '@cognite/calculation-backend';
+
+import { defaultTranslations } from '../translations';
+
 import { FUNCTION_NODE_DRAG_HANDLE_CLASSNAME } from './constants';
 import {
   ConstantNodeData,
@@ -20,7 +20,14 @@ import {
 } from './Nodes/FunctionNode/FunctionNode';
 import { OutputNodeData, OutputNodeDataDehydrated } from './Nodes/OutputNode';
 import { SourceNodeData, SourceNodeDataDehydrated } from './Nodes/SourceNode';
-import { defaultTranslations } from '../translations';
+import { transformParamInput } from './transforms';
+import {
+  NodeTypes,
+  SourceOption,
+  NodeDataVariants,
+  NodeDataDehydratedVariants,
+  NodeCallbacks,
+} from './types';
 
 export const updatePosition = (
   els: Elements<NodeDataDehydratedVariants>,

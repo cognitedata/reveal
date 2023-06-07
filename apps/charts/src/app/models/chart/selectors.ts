@@ -1,7 +1,9 @@
 import { selector, useRecoilValue } from 'recoil';
+
+import { scheduledCalculationDataAtom } from '../scheduled-calculation-results/atom';
+
 import chartAtom from './atom';
 import { ChartSource } from './types';
-import { scheduledCalculationDataAtom } from '../scheduled-calculation-results/atom';
 
 export const chartSources = selector<ChartSource[]>({
   key: 'chartSources',

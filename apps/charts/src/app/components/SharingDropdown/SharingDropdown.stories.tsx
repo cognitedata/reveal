@@ -1,6 +1,9 @@
-import { Flex } from '@cognite/cogs.js';
-import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
+
+import { Meta, Story } from '@storybook/react';
+
+import { Flex } from '@cognite/cogs.js';
+
 import SharingDropdown from './SharingDropdown';
 
 export default {

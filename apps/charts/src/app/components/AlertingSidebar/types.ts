@@ -1,10 +1,11 @@
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
+
 import {
   CogniteExternalId,
   CogniteInternalId,
   Metadata,
   Timestamp,
 } from '@cognite/sdk';
-import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
 
 export type AlertResponse = {
   id: number;

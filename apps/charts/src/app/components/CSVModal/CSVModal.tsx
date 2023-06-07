@@ -1,5 +1,3 @@
-import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
-import DateTimeRangeSelector from '@charts-app/components/DateTime/DateTimeRangeSelector';
 import {
   ComponentProps,
   useCallback,
@@ -7,8 +5,13 @@ import {
   useEffect,
   useState,
 } from 'react';
+
+import DateTimeRangeSelector from '@charts-app/components/DateTime/DateTimeRangeSelector';
 import { Delimiters } from '@charts-app/utils/csv';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
+
 import { CSVModalContext } from './CSVModalContext';
 import {
   ModalWrapper,
@@ -119,10 +122,8 @@ export const CSVModal = ({
 
   return (
     <ModalWrapper
-      appElement={document.getElementsByTagName('body')}
       title={t['Export to CSV']}
       visible={isModalVisible}
-      footer={null}
       onCancel={handleCloseModal}
       width={750}
     >
@@ -173,8 +174,8 @@ export const CSVModal = ({
       <FieldContainer>
         <Checkbox
           name="rawDatapoints"
-          value={isRawDownload}
-          onChange={(checked: boolean) => setIsRawDownload(checked)}
+          checked={isRawDownload}
+          onChange={(e) => setIsRawDownload(e.target.checked)}
         />
         <Label>
           <Tooltip
@@ -214,8 +215,8 @@ export const CSVModal = ({
       <FieldContainer>
         <Checkbox
           name="humanReadableDates"
-          value={isHumanReadableDates}
-          onChange={(checked: boolean) => setIsHumanReadableDates(checked)}
+          checked={isHumanReadableDates}
+          onChange={(e) => setIsHumanReadableDates(e.target.checked)}
         />
         <Label>
           <Tooltip

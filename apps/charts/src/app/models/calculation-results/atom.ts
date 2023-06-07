@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+
 import { WorkflowState } from './types';
 
 export const workflowsAtom = atom<{

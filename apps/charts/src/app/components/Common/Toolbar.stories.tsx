@@ -1,8 +1,10 @@
 /**
  * Toolbar Story
  */
-import { Button, Tooltip } from '@cognite/cogs.js';
 import { Meta, Story } from '@storybook/react';
+
+import { Button, Tooltip } from '@cognite/cogs.js';
+
 import { Toolbar } from './SidebarElements';
 
 type Props = React.ComponentProps<typeof Toolbar>;

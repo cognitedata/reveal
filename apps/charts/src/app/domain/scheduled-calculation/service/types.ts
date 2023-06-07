@@ -1,5 +1,5 @@
-import { CogniteExternalId } from '@cognite/sdk';
 import { ComputationStep } from '@cognite/calculation-backend';
+import { CogniteExternalId } from '@cognite/sdk';
 
 export type CalculationTaskSchedule = {
   externalId: CogniteExternalId;

@@ -1,8 +1,9 @@
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { Flex, Button, Title } from '@cognite/cogs.js';
-import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
 import { CredentialsForm } from '@charts-app/components/CredentialsForm/CredentialsForm';
+import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Flex, Button, Title } from '@cognite/cogs.js';
 
 type BodyProps = {
   onUpdateCredsValidated: (validated: boolean) => void;

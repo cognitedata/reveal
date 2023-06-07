@@ -1,10 +1,3 @@
-import {
-  SCHEDULE_MINUTE_OPTIONS,
-  SCHEDULE_HOUR_OPTIONS,
-  MONITORING_THRESHOLD_ID,
-  MINIMUM_DURATION_LIMIT,
-} from '@charts-app/domain/monitoring/constants';
-
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -14,6 +7,12 @@ import {
 } from '@charts-app/components/Form/elements';
 import MonitoringFolderSelect from '@charts-app/components/MonitoringFolderSelect/MonitoringFolderSelect';
 import PortalWait from '@charts-app/components/PortalWait/PortalWait';
+import {
+  SCHEDULE_MINUTE_OPTIONS,
+  SCHEDULE_HOUR_OPTIONS,
+  MONITORING_THRESHOLD_ID,
+  MINIMUM_DURATION_LIMIT,
+} from '@charts-app/domain/monitoring/constants';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import {
@@ -27,9 +26,9 @@ import {
   updateChartThresholdUpperLimit,
 } from '@charts-app/models/chart/updates-threshold';
 import { useChartInteractionsAtom } from '@charts-app/models/interactions/atom';
-import { delay } from 'lodash';
 import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { delay } from 'lodash';
 
 import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
 

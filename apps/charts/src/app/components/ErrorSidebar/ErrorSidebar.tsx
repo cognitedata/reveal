@@ -2,9 +2,7 @@
  * Error Sidebar
  */
 
-import { Button, Infobox, Tooltip } from '@cognite/cogs.js';
 import { memo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   Sidebar,
@@ -15,10 +13,13 @@ import {
   ContentContainer,
   LoadingRow,
 } from '@charts-app/components/Common/SidebarElements';
+import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Button, Infobox, Tooltip } from '@cognite/cogs.js';
 
 type Props = {
   visible: boolean;

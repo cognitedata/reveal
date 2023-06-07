@@ -1,14 +1,22 @@
 import { useState } from 'react';
+
 import styled from 'styled-components';
-import Layers from '@charts-app/utils/z-index';
-import { Body, Flex, Collapse, Button, Icon, Title } from '@cognite/cogs.js';
-import { StyledModal } from '@charts-app/components/Modal/StyledModal';
-import { formatDate, convertMillisecondsToDuration } from '@charts-app/utils/date';
-import CopyButton from '@charts-app/components/CopyButton/CopyButton';
-import { HorizontalDivider } from '@charts-app/components/TopBar/elements';
+
 import { ExpandIcon } from '@charts-app/components/Common/SidebarElements';
-import { StyledCollapse } from './elements';
+import CopyButton from '@charts-app/components/CopyButton/CopyButton';
+import { StyledModal } from '@charts-app/components/Modal/StyledModal';
+import { HorizontalDivider } from '@charts-app/components/TopBar/elements';
+import {
+  formatDate,
+  convertMillisecondsToDuration,
+} from '@charts-app/utils/date';
+import Layers from '@charts-app/utils/z-index';
+
+import { Body, Flex, Collapse, Button, Icon, Title } from '@cognite/cogs.js';
+
 import { useScheduledCalculationDataValue } from '../../../models/scheduled-calculation-results/atom';
+
+import { StyledCollapse } from './elements';
 
 const SummaryWrapper = styled.div`
   padding: 8px;
@@ -94,7 +102,7 @@ export const ScheduledCalculationSummary = ({
       <DescriptionButtonContainer>
         <Button
           size="small"
-          type="link"
+          type="ghost"
           icon="Document"
           onClick={() => setIsDescriptionModalOpen(true)}
         >
@@ -105,7 +113,6 @@ export const ScheduledCalculationSummary = ({
       {isDescriptionModalOpen && (
         <StyledModal
           visible
-          appElement={document.getElementsByTagName('body')}
           onCancel={() => setIsDescriptionModalOpen(false)}
           footer={
             <Button

@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+
 import { ChartEventResults, EventsCollection } from './types';
 
 /**

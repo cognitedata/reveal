@@ -1,6 +1,8 @@
-import { Dropdown, Title, Menu } from '@cognite/cogs.js';
-import { Alert } from 'antd';
 import styled from 'styled-components';
+
+import { Alert } from 'antd';
+
+import { Dropdown, Title, Menu } from '@cognite/cogs.js';
 
 export const Header = styled.header`
   && {

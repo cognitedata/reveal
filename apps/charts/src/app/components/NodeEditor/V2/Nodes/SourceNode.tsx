@@ -1,9 +1,13 @@
-import { Select } from '@cognite/cogs.js';
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { memo, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
+
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import styled from 'styled-components/macro';
+
+import { Select } from '@cognite/cogs.js';
+
 import { NodeTypes, SourceOption } from '../types';
+
 import { ColorBlock, InputWrapper, NodeWrapper } from './elements';
 import NodeHandle from './NodeHandle';
 import NodeWithActionBar from './NodeWithActionBar';

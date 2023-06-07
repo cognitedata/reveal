@@ -1,8 +1,11 @@
+import { ComponentProps } from 'react';
+
 import { Meta, Story } from '@storybook/react';
 import dayjs from 'dayjs';
-import { ComponentProps } from 'react';
+
 import { ChartListContext, ChartListContextInterface } from '../context';
 import { PreviewPlotContainerMock } from '../mocks';
+
 import ChartListGrid from './ChartListGrid';
 
 export default {

@@ -3,11 +3,13 @@ import {
   AnnotationType as UfvAnnotationType,
   getDefaultStylesByResourceType,
 } from '@cognite/unified-file-viewer';
+
 import {
   AnnotationModel,
   AnnotationStatus as AnnotationsApiStatus,
 } from '../sdk/sdkTypes';
 import { ExtendedAnnotation } from '../types';
+
 import { getBoundingBoxFromAnnotationData, getRefResourceType } from './utils';
 
 const SUPPORTED_TYPES = ['diagrams.AssetLink', 'diagrams.FileLink'];

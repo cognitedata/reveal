@@ -1,4 +1,5 @@
 import { Meta, Story } from '@storybook/react';
+
 import OpenAsChartLink from './OpenAsChartLink';
 
 type Props = React.ComponentProps<typeof OpenAsChartLink>;

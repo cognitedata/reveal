@@ -4,6 +4,7 @@
 
 import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
+
 import Boxplot from './Boxplot';
 
 type Props = React.ComponentProps<typeof Boxplot>;

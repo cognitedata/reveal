@@ -1,5 +1,7 @@
 import { ComponentProps } from 'react';
+
 import { Meta, Story } from '@storybook/react';
+
 import EmptyResult from './EmptyResult';
 
 export default {

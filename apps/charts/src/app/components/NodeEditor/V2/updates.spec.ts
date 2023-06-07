@@ -1,4 +1,5 @@
 import { ChartWorkflowV2 } from '@charts-app/models/chart/types';
+
 import { updateFlowSettings, updateWorkflowName } from './updates';
 
 describe('updateWorkflowName', () => {

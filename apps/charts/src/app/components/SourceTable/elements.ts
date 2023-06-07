@@ -1,7 +1,8 @@
-import { Dropdown, Icon } from '@cognite/cogs.js';
+import Layers from '@charts-app/utils/z-index';
 import { Alert } from 'antd';
 import styled from 'styled-components/macro';
-import Layers from '@charts-app/utils/z-index';
+
+import { Dropdown, Icon } from '@cognite/cogs.js';
 
 export const SourceTableWrapper = styled.div`
   flex-grow: 1;

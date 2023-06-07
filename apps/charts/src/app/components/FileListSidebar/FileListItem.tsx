@@ -1,5 +1,7 @@
 import { MouseEventHandler, ReactNode } from 'react';
+
 import { Body, Overline } from '@cognite/cogs.js';
+
 import { PreviewContainer, ImagePreview } from './FileList';
 
 type Props = {

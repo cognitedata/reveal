@@ -1,5 +1,6 @@
-import { Button, Col } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button, Col } from '@cognite/cogs.js';
 
 export const AlertContainer = styled.div`
   font-weight: normal;
