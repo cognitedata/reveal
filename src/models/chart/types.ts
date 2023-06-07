@@ -14,7 +14,7 @@ export type Chart = {
   updatedAt: number;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
-  // TODO(DEGR-0000): Remove sourceCollection
+  // TODO(DEGR-2403): Remove sourceCollection
   // sourceCollection is complete garbage - its a merge copy of timeseries and workflow.
   // Either remove the sourceCollection or remove timeSeriesCollection and workflowCollection
   sourceCollection?: SourceCollectionData[];
@@ -118,7 +118,7 @@ export type ChartWorkflowV2 = ChartWorkflowBase & {
 export type ScheduledCalculation = Omit<
   ChartWorkflowV2,
   'type' | 'calls' | 'dataProfilingCalls'
-> & { type: 'scheduledCalculation' };
+> & { type: 'scheduledCalculation'; description?: string };
 
 export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;
 

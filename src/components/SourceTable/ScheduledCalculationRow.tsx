@@ -180,7 +180,9 @@ export const ScheduledCalculationRow = ({
           >
             <StyledVisibilityIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
           </SourceStatus>
-          <SourceName>{scheduledCalculationResult?.name}</SourceName>
+          <SourceName>
+            {scheduledCalculationResult?.name || scheduledCalculation.name}
+          </SourceName>
         </SourceItem>
       </td>
       {isWorkspaceMode && (
@@ -192,10 +194,18 @@ export const ScheduledCalculationRow = ({
               <SourceName>
                 <SourceDescription>
                   <Tooltip
-                    content={scheduledCalculationResult?.description || '-'}
+                    content={
+                      scheduledCalculationResult?.description ||
+                      scheduledCalculation.description ||
+                      '-'
+                    }
                     maxWidth={350}
                   >
-                    <>{scheduledCalculationResult?.description || '-'}</>
+                    <>
+                      {scheduledCalculationResult?.description ||
+                        scheduledCalculation.description ||
+                        '-'}
+                    </>
                   </Tooltip>
                 </SourceDescription>
               </SourceName>

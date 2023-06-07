@@ -237,6 +237,8 @@ const ReactFlowNodeEditor = ({
             onPaneClick={() => {
               setContextMenuPosition(undefined);
             }}
+            nodesConnectable={sourceType !== 'scheduledCalculation'}
+            nodesDraggable={sourceType !== 'scheduledCalculation'}
             onPaneContextMenu={(e) => {
               e.preventDefault();
               setContextMenuPosition(e);

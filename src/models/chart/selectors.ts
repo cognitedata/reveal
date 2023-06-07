@@ -29,9 +29,12 @@ export const chartSources = selector<ChartSource[]>({
             return (
               scheduledCalculation && {
                 ...scheduledCalculation,
-                // need to populate name from scheduledCalculationTask
+                // need to populate name & description from scheduledCalculationTask
                 name:
                   scheduledCalculationResult?.name || scheduledCalculation.name,
+                description:
+                  scheduledCalculationResult?.description ||
+                  scheduledCalculation.description,
               }
             );
           }

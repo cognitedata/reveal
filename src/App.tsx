@@ -108,6 +108,7 @@ export const RootApp = () => {
             >
               <SubAppWrapper title="Charts">
                 <Sentry.ErrorBoundary
+                  // Todo(DEGR-2403) Add a better error placeholder
                   fallback={<p>An error has occurred</p>}
                   showDialog
                 >

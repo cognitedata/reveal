@@ -198,7 +198,7 @@ export function calculateSeriesData({
         };
       })
       .filter((t) => t.enabled),
-    // Todo(DEGR-0000): find a DRY way, almost repeating timeseries
+    // Todo(DEGR-2403): find a DRY way, almost repeating timeseries
     ...scheduledCalculations
       .map((scheduledCalculation) => {
         const unitLabel =

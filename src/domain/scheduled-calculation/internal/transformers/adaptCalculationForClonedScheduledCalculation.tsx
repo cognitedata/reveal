@@ -21,6 +21,7 @@ export const adaptCalculationForClonedScheduledCalculation = (
     ...scheduledCalculation,
     type: 'scheduledCalculation',
     name: scheduledCalculationTask.name!,
+    description: scheduledCalculationTask.description,
     id: scheduledCalculationTask.externalId,
     createdAt: Date.now(),
     color: getEntryColor(chartId, scheduledCalculationTask.externalId),

@@ -11,6 +11,8 @@ import {
   fetchUserCharts,
   updateChart,
 } from 'services/charts-storage';
+import * as Sentry from '@sentry/react';
+import { isUndefined, omitBy } from 'lodash';
 
 export const useMyCharts = () => {
   const { data: { id, mail } = {} } = useUserInfo();
@@ -90,8 +92,11 @@ export const useUpdateChart = () => {
           },
           'dirty'
         );
-        // Todo(DEGR-0000): send sentry error upon failure from here
-        await updateChart(project, chart.id, updatedChart);
+        // firestore updation fails if any value is sent as undefined
+        // happened when we introduced scheduledCalculationCollection key,
+        // will be useful for future introduction of new keys ( hopefully, will move to FDM before that)
+        const cleanUpdatedChart = omitBy(updatedChart, isUndefined);
+        await updateChart(project, chart.id, cleanUpdatedChart);
       }
       return chart.id;
     },
@@ -116,7 +121,8 @@ export const useUpdateChart = () => {
           });
         }
       },
-      onError(_, chart) {
+      onError(error, chart) {
+        Sentry.captureException(error);
         cache.invalidateQueries(['chart', chart.id]);
       },
       onSettled() {

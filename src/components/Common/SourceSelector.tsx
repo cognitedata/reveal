@@ -4,7 +4,7 @@ import { OptionProps, components } from 'react-select';
 import { useChartSourcesValue } from 'models/chart/selectors';
 import { SourceOption } from 'components/NodeEditor/V2/types';
 import { SourceSelect } from 'components/Common/SidebarElements';
-import { ChartSource } from 'models/chart/types';
+import { ChartSource, SourceType } from 'models/chart/types';
 import { SourceIcon } from './SourceIcon';
 import { SourceOptionContainer, EllipsesText } from './elements';
 
@@ -13,7 +13,7 @@ interface SourceOptionType extends OptionProps<ChartSource, false> {
 }
 
 type SourceSelectorType = Omit<SelectProps<ChartSource>, 'options'> & {
-  onlyTimeseries?: boolean;
+  selectableSourceTypes?: SourceType[];
 };
 
 const Option = (props: SourceOptionType) => {
@@ -29,16 +29,16 @@ const Option = (props: SourceOptionType) => {
 
 export const SourceSelector = ({
   value,
-  onlyTimeseries,
+  selectableSourceTypes = ['timeseries', 'workflow'],
   ...rest
 }: SourceSelectorType) => {
   const sources = useChartSourcesValue();
   const options = useMemo<ChartSource[]>(
     () =>
-      onlyTimeseries
-        ? sources.filter((source) => source.type === 'timeseries')
-        : sources,
-    [sources, onlyTimeseries]
+      sources.filter((source) =>
+        source.type ? selectableSourceTypes.includes(source.type) : true
+      ),
+    [sources, selectableSourceTypes]
   );
 
   return (
