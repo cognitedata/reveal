@@ -18,7 +18,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool, SmartOverlayTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, Corner, AxisViewTool, Overlay3DTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -474,15 +474,15 @@ export function Viewer() {
 
       // Points of interest stuff
 
-      const overlayTool = new SmartOverlayTool(viewer);
+      const overlayTool = new Overlay3DTool<{text: string, id: number}>(viewer);
 
       const POIs = await listPOIs(client, project!);
 
       const labels = POIs.map((poi, index) => {
         const position = new THREE.Vector3(poi.position.x, poi.position.y, poi.position.z);
-        return { position, text: poi.description, id: index, color: new THREE.Color('red')}
+        return { position, content: { text: poi.description, id: index }, color: new THREE.Color('red')}
       });
-      overlayTool.addOverlays(labels);
+      const collection = overlayTool.createOverlayCollection(labels);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -502,7 +502,7 @@ export function Viewer() {
 
                 const position = point.add(new THREE.Vector3(0, 0.2, 0));
 
-                overlayTool.addOverlay({ position, text: `Clicked node with treeIndex ${treeIndex}`, id: treeIndex, color: new THREE.Color('red')});
+                collection.addOverlays([{ position, content: { text: `Clicked node with treeIndex ${treeIndex}`, id: treeIndex }, color: new THREE.Color('red')}]);
                 createPointOfInterest(client, project!, position, `Clicked node with treeIndex ${treeIndex}`);
 
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
@@ -573,7 +573,7 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
   const vec3ExternalId = "vec3-" + externalId;
   const observationExternalId = "observation-" + externalId;
   const checklistItemExternalId = "checklistitem-aasta-1";
-  const checklistExternalId = "06-02-daily-walk_report_1685565057172";
+  const checklistExternalId = "testingChecklist";
 
   const observationChecklistItemEdgeExternalId = checklistItemExternalId + observationExternalId;
   const checklistChecklistItemEdgeExternalId = checklistExternalId + checklistItemExternalId;
@@ -581,13 +581,6 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
   const createNewChecklistItem = false;
   const createNewChecklist = false;
 
-    const vec3ExternalId = "vec3-" + externalId + i;
-  const observationExternalId = "observation-" + externalId + i;
-  const checklistItemExternalId = "checklistitem-aasta-1";
-  const checklistExternalId = "06-02-daily-walk_report_1685565057172";
-
-  const observationChecklistItemEdgeExternalId = checklistItemExternalId + observationExternalId;
-  const checklistChecklistItemEdgeExternalId = checklistExternalId + checklistItemExternalId;
   const vec3fData = {
     data: {
       "replace": false,
@@ -615,6 +608,8 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
       ]
     }
   }
+  const images = ["kitchen-chalky-mink-DV889lLRsJTJfn4t6Aq3Gw==1677596590897-2048-front", 'spot_enterprice_4th floor 2022 fornebu old stack-gaunt-redbug-TyDlBILo6s5ijsXqEOgz7g==1670438144207-2048-front'];
+  const random = Math.random();
 
   const APMObservationData = {
     data: {
@@ -634,7 +629,7 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
               },
               "properties": {
                 description: description,
-                fileIds: ["kitchen-chalky-mink-DV889lLRsJTJfn4t6Aq3Gw==1677596590897-2048-front"],
+                fileIds: [ random > 0.5 ? (random > 0.8 ? images : images[0]) : (random < 0.1 ? [images[0], images[1], images[0], images[1]] : images[1])].flat(),
                 position: {
                   "externalId": vec3ExternalId,
                   space: fdmSpace
