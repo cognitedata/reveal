@@ -71,11 +71,11 @@ export interface DataTypeOption extends DataType {
   fields: Field[];
 }
 
+export type ValueByDataType = Record<string, ValueByField>;
+
+export type ValueByField = Record<string, FieldValue>;
+
 export interface FieldValue {
   operator: Operator;
   value: ValueType<InputType>;
 }
-
-export type ValueByField = Record<string, FieldValue>;
-
-export type ValueByDataType = Record<string, ValueByField>;

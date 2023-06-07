@@ -229,6 +229,7 @@ export class FDMClient extends BaseFDMClient {
 
   public async searchDataTypes(
     queryString: string,
+    filters: Record<string, unknown>,
     types: DataModelTypeDefsType[] = []
   ) {
     const constructPayload = types.map((item) => {
@@ -251,7 +252,11 @@ export class FDMClient extends BaseFDMClient {
         ],
         variables: {
           query: { value: queryString, required: true },
-          //todo: add filters here for data types
+          [`filter${dataType}`]: {
+            value: filters[dataType] || {},
+            name: 'filter',
+            type: `_Search${dataType}Filter`,
+          },
         },
       };
     });
