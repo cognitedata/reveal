@@ -171,6 +171,7 @@ export const IndustryCanvas = ({
 
   const { handleSelect, getAnnotationEditHandlers } = useEditOnSelect(
     unifiedViewerRef,
+    tool,
     setTool
   );
 

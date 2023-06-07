@@ -11,6 +11,7 @@ import { UnifiedViewerPointerEvent } from '@cognite/unified-file-viewer/dist/cor
 
 const useEditOnSelect = (
   unifiedViewerRef: MutableRefObject<UnifiedViewer | null>,
+  tool: ToolType,
   setTool: (tool: ToolType) => void
 ) => {
   const [selected, setSelected] = useState<IdsByType>({
@@ -36,11 +37,14 @@ const useEditOnSelect = (
   }, [selected.annotationIds]);
 
   const onAnnotationMouseDown = useCallback(() => {
+    if (tool !== ToolType.SELECT) {
+      return;
+    }
     // If the annotation has been selected by any means, and we register a mousedown on it,
     // enable editing for that annotation. The actual editing will be triggered onMouseUp
     // if the annotation was not dragged.
     setEditableAnnotationIds(selected.annotationIds);
-  }, [selected.annotationIds]);
+  }, [selected.annotationIds, tool]);
 
   const onAnnotationMouseUp = useCallback(
     (e: UnifiedViewerPointerEvent, annotation: Annotation) => {
