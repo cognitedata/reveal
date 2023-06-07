@@ -78,6 +78,9 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
+      ],
+      "@flexible-data-explorer/*": [
+        "apps/flexible-data-explorer/src/*"
       ]
     }
   },

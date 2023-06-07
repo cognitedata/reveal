@@ -3,36 +3,40 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export const useNavigation = () => {
   const navigate = useNavigate();
-  const { search } = useLocation(); // <-- current location being accessed
+  const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
+
+  // For migration: if we're located at the route, keep the route
+  // TODO: Better way to use navigate function to do this?
+  const basename = pathname.startsWith('/explore') ? '/explore' : '';
 
   const toSearchPage = useCallback(
     (query?: string) => {
       navigate({
-        pathname: `search`,
+        pathname: `${basename}/search`,
         search: `?searchQuery=${query}`,
       });
     },
-    [navigate]
+    [basename, navigate]
   );
 
   const toListPage = useCallback(
     (dataType: string) => {
       navigate({
-        pathname: `list/${dataType}`,
+        pathname: `${basename}/list/${dataType}`,
         // search: `?searchQuery=${query}`,
       });
     },
-    [navigate]
+    [basename, navigate]
   );
 
   const toHomePage = useCallback(
     (space: string, dataModel: string, version: string) => {
       navigate({
-        pathname: `/${dataModel}/${space}/${version}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}`,
       });
     },
-    [navigate]
+    [basename, navigate]
   );
 
   const toInstancePage = useCallback(
@@ -43,22 +47,22 @@ export const useNavigation = () => {
     ) => {
       const { space, dataModel, version } = params;
       navigate({
-        pathname: `/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
         search,
       });
     },
-    [navigate, params, search]
+    [basename, navigate, params, search]
   );
 
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
       const { space, dataModel, version } = params;
       navigate({
-        pathname: `/${dataModel}/${space}/${version}/timeseries/${externalId}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`,
         search,
       });
     },
-    [navigate, params, search]
+    [basename, navigate, params, search]
   );
 
   const toLandingPage = useCallback(() => {
