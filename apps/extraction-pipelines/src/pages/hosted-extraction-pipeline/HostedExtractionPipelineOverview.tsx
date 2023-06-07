@@ -37,12 +37,12 @@ export const HostedExtractionPipelineOverview = ({
       />
       <HostedExtractionPipelineSummaryBox
         content={t('continuously')}
-        icon="InputData"
+        icon="Calendar"
         title={t('scheduled-to-run')}
       />
       <HostedExtractionPipelineSummaryBox
         content={t('error', { count: errorCountInLast30Days })}
-        icon="InputData"
+        icon="Error"
         title={t('errors-in-the-last-30-days')}
       />
       <TopicFiltersSection source={source} $rowStart={source.jobs.length} />

@@ -37,7 +37,7 @@ export const TopicFilters = ({
           </Button>
         )
       }
-      icon="Columns"
+      icon="List"
       title={t('topic-filter', { count: 2 })}
     >
       {isCreateModalOpen && (

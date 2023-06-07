@@ -40,7 +40,7 @@ export const SourceAuthentication = ({
             {t('edit')}
           </Button>
         }
-        icon="Info"
+        icon="Credentials"
         items={[
           {
             key: 'username',
