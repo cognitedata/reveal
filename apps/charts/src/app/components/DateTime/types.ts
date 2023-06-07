@@ -1,7 +1,7 @@
 import { relativeTimeOptions } from './constants';
 
 export type RelativeTimeOption =
-  | typeof relativeTimeOptions[number]['label']
+  | (typeof relativeTimeOptions)[number]['label']
   | '';
 
 export type TimePeriodProps = {

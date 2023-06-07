@@ -56,7 +56,7 @@ const ChartListPage = () => {
     { value: 'updatedAt' as const, label: t.Updated },
   ];
 
-  const [sortOption, setSortOption] = useState<typeof sortOptions[number]>(
+  const [sortOption, setSortOption] = useState<(typeof sortOptions)[number]>(
     sortOptions[2]
   );
 

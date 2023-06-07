@@ -22,8 +22,10 @@ import { useChartSourcesValue } from 'models/chart/selectors';
 import ConnectedLinkedAssetsSidebar from 'containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {
-  const { chartId = '', assetId } =
-    useParams<{ chartId: string; assetId: string }>();
+  const { chartId = '', assetId } = useParams<{
+    chartId: string;
+    assetId: string;
+  }>();
   const { data: chart } = useInitializedChart(chartId);
 
   const sources = useChartSourcesValue();

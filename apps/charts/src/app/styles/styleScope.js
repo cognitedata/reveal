@@ -1,3 +1,3 @@
 module.exports = {
-    styleScope: 'cdf-charts-ui-style-scope',
+  styleScope: 'cdf-charts-ui-style-scope',
 };

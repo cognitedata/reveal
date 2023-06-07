@@ -206,7 +206,7 @@ const UserProfile = () => {
                   : availableLanguages[0]
               }
               icon={ready ? '' : 'Loader'}
-              onChange={(option: typeof availableLanguages[0]) =>
+              onChange={(option: (typeof availableLanguages)[0]) =>
                 i18n.changeLanguage(option.value)
               }
               options={availableLanguages}
@@ -251,7 +251,9 @@ const UserProfile = () => {
               <div>
                 <Select
                   value={startPageLayout}
-                  onChange={(option: typeof startPageLayoutOptions[number]) => {
+                  onChange={(
+                    option: (typeof startPageLayoutOptions)[number]
+                  ) => {
                     changeStartPageLayout(option.value);
                     setStartPageLayout(option);
                   }}

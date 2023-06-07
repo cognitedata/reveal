@@ -24,8 +24,9 @@ const FunctionParameterForm = ({
   };
   if (parameters.length === 0)
     throw new Error('Missing parameters for generating the form');
-  const [formData, setFormData] =
-    useState<{ [key: string]: any }>(parameterValues);
+  const [formData, setFormData] = useState<{ [key: string]: any }>(
+    parameterValues
+  );
 
   const handleFormValueChange = (
     param: string,

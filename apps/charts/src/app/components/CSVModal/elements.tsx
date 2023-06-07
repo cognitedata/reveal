@@ -41,12 +41,12 @@ export const BottomContainer = styled.div`
 
 export const StatusContainer = styled.div`
   display: flex;
-  align-items: center; ;
+  align-items: center;
 `;
 
 export const StatusText = styled.div`
   display: flex;
-  align-items: center; ;
+  align-items: center;
 `;
 
 export const StatusIcon = styled(Icon)`

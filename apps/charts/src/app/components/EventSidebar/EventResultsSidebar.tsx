@@ -42,7 +42,7 @@ const EventResultsSidebar = memo(
       activeEventFilterResultsSelector
     );
 
-    const [sortOption, setSortOption] = useState<typeof sortOptions[number]>(
+    const [sortOption, setSortOption] = useState<(typeof sortOptions)[number]>(
       sortOptions[1]
     );
 
