@@ -1,4 +1,4 @@
-import { RuleSeverity } from '@data-quality/codegen';
+import { RuleSeverity } from '@data-quality/api/codegen';
 
 import { Body, Chip } from '@cognite/cogs.js';
 

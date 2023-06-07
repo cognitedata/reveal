@@ -57,8 +57,8 @@
       "@data-exploration/containers": [
         "libs/data-exploration/containers/src/index.ts"
       ],
-      "@data-quality/codegen": [
-        "apps/platypus/src/app/modules/solution/data-quality/api/codegen/index.ts"
+      "@data-quality/*": [
+        "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@fusion/contextualization": ["libs/contextualization/src/index.ts"],

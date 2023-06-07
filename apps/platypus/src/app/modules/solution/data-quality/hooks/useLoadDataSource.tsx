@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -6,18 +6,21 @@ import {
   DataSourceDraft,
   useCreateDataSources,
   useListDataSources,
-} from '@data-quality/codegen';
+} from '@data-quality/api/codegen';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useQueryClient } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 
+/** Encapsulate data model id, data model space and data model version. */
 type DataModelOptions = {
   dataModelId: string;
   dataModelSpace: string;
   dataModelVersion: string;
 };
 
-type LoadDataSourceOptions = {
+type CreateDataSourceOptions = {
   onError: (error: any) => void;
 };
 
@@ -27,10 +30,11 @@ type LoadDataSourceOptions = {
 export const useLoadDataSource = (): {
   dataSource?: DataSourceDto;
   error: any;
-  loadingDataSource: boolean;
+  isLoading: boolean;
 } => {
-  const [dataSource, setDataSource] = useState<DataSourceDto>();
-  const [error, setError] = useState();
+  const queryClient = useQueryClient();
+
+  const { t } = useTranslation('useLoadDataSource');
 
   const {
     data: dataSourcesData,
@@ -40,10 +44,10 @@ export const useLoadDataSource = (): {
   } = useListDataSources({});
 
   const {
-    isLoading: createLoading,
-    mutateAsync: createDataSource,
-    status: createStatus,
-  } = useCreateDataSources({});
+    isLoading: createDataSourceLoading,
+    mutateAsync: createDataSourceMutation,
+    status: createDataSourceStatus,
+  } = useCreateDataSources({ mutationKey: ['createDataSource'] });
 
   const { dataModelExternalId, space, version } = useParams() as {
     dataModelExternalId: string;
@@ -59,36 +63,16 @@ export const useLoadDataSource = (): {
     dataModelVersion: selectedDataModelVersion.version,
   };
 
-  const loadingDataSource = dataSourcesLoading || createLoading;
+  const isLoading = dataSourcesLoading || createDataSourceLoading;
 
   useEffect(() => {
-    const loadDataSource = async ({ onError }: LoadDataSourceOptions) => {
+    const createDataSource = async ({ onError }: CreateDataSourceOptions) => {
       try {
-        // Start looking for a data source when we have the list of all datasources
-        if (dataSourcesLoading) return;
-
-        if (dataSourcesError) {
-          onError(dataSourcesError);
-          return;
-        }
-
-        // Try to find an existing data source in the list
-        const existingDataSource = findDataSource(
-          dataModelOptions,
-          dataSourcesData?.items
-        );
-
-        // Found an existing data source
-        if (existingDataSource) {
-          setDataSource(existingDataSource);
-          return;
-        }
-
         const { dataModelId, dataModelSpace, dataModelVersion } =
           dataModelOptions;
 
         // No existing data source found. Create a new one with the given params
-        if (!existingDataSource && createStatus === 'idle') {
+        if (createDataSourceStatus === 'idle') {
           const externalId = uuidv4();
 
           const newDataSource: DataSourceDraft = {
@@ -98,7 +82,7 @@ export const useLoadDataSource = (): {
             dataModelVersion,
           };
 
-          const createdDataSource = await createDataSource(
+          await createDataSourceMutation(
             {
               body: {
                 items: [newDataSource],
@@ -106,27 +90,46 @@ export const useLoadDataSource = (): {
             },
             { onSuccess: () => refetch() }
           );
-
-          setDataSource(createdDataSource.items[0]);
         }
       } catch (err: unknown) {
         onError(err);
       }
     };
 
-    loadDataSource({
+    // Start looking for a data source when we have the list of all datasources
+    if (dataSourcesLoading || dataSourcesError) return;
+
+    // Try to find an existing data source in the fetched list
+    const existingDataSource = findDataSource(
+      dataModelOptions,
+      dataSourcesData?.items
+    );
+    if (existingDataSource) return;
+
+    // Check if the createDataSource mutation is in use
+    const creatingDataSource = queryClient.isMutating({
+      mutationKey: ['createDataSource'],
+    });
+    if (creatingDataSource) return;
+
+    // No data source found, try to create it
+    createDataSource({
       onError: (err) => {
-        setError(err);
         Notification({
           type: 'error',
-          message: `Couldn't load data source. ${err?.message}`,
+          message: t(
+            'data_quality_not_found_ds',
+            "Something went wrong. We couldn't load the data source."
+          ),
           errors: JSON.stringify(err?.stack?.error),
         });
       },
     });
   });
 
-  return { dataSource, error, loadingDataSource };
+  const dataSource = findDataSource(dataModelOptions, dataSourcesData?.items);
+
+  return { dataSource, error: dataSourcesError, isLoading };
 };
 
 /** Looks for a data source that matches the given data model id, data mode space and data model version in a list of data sources. */

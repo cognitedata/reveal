@@ -1008,6 +1008,74 @@ export const useListAllRules = <TData = Responses.RuleListResponseWithCursor>(
   );
 };
 
+export type ValidateDataSourcePathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type ValidateDataSourceError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ValidateDataSourceVariables = {
+  pathParams?: ValidateDataSourcePathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * A validation job will be started on the current data source and all its rules.
+ */
+export const fetchValidateDataSource = (
+  variables: ValidateDataSourceVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    undefined,
+    ValidateDataSourceError,
+    undefined,
+    {},
+    {},
+    ValidateDataSourcePathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validate',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * A validation job will be started on the current data source and all its rules.
+ */
+export const useValidateDataSource = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      ValidateDataSourceError,
+      ValidateDataSourceVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    undefined,
+    ValidateDataSourceError,
+    ValidateDataSourceVariables
+  >(
+    (variables: ValidateDataSourceVariables) =>
+      fetchValidateDataSource({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: '/api/v1/projects/{project}/data-validation/datasources';
