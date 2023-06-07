@@ -1,4 +1,37 @@
 import {
+  useState,
+  ChangeEvent,
+  SetStateAction,
+  Dispatch,
+  useMemo,
+} from 'react';
+
+import styled from 'styled-components';
+
+import EmptyResult, {
+  defaultTranslations as emptyResultDefaultTranslations,
+} from 'components/Search/EmptyResult';
+import {
+  defaultTranslations as filterDropdownDefaultTranslation,
+  SearchFilterSettings,
+} from 'components/Search/FilterDropdown';
+import {
+  useAssetSearchResults,
+  useTimeseriesSearchResult,
+} from 'components/SearchResultTable/hooks';
+import SearchResultList from 'components/SearchResultTable/SearchResultList';
+import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
+import { useRootAssets } from 'hooks/cdf-assets';
+import { useSearchParam } from 'hooks/navigation';
+import { useTranslations } from 'hooks/translations';
+import { facilityAtom } from 'models/facility/atom';
+import { useRecoilState } from 'recoil';
+import { trackUsage } from 'services/metrics';
+import { useDebounce } from 'use-debounce';
+import { SEARCH_KEY } from 'utils/constants';
+import { makeDefaultTranslations } from 'utils/translations';
+
+import {
   Input,
   Tooltip,
   Button,
@@ -7,36 +40,7 @@ import {
   Dropdown,
   Icon,
 } from '@cognite/cogs.js';
-import SearchResultList from 'components/SearchResultTable/SearchResultList';
-import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
-import { useSearchParam } from 'hooks/navigation';
-import {
-  useState,
-  ChangeEvent,
-  SetStateAction,
-  Dispatch,
-  useMemo,
-} from 'react';
-import { trackUsage } from 'services/metrics';
-import styled from 'styled-components';
-import { SEARCH_KEY } from 'utils/constants';
-import { useDebounce } from 'use-debounce';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
-import {
-  defaultTranslations as filterDropdownDefaultTranslation,
-  SearchFilterSettings,
-} from 'components/Search/FilterDropdown';
-import EmptyResult, {
-  defaultTranslations as emptyResultDefaultTranslations,
-} from 'components/Search/EmptyResult';
-import { useRootAssets } from 'hooks/cdf-assets';
-import { useRecoilState } from 'recoil';
-import { facilityAtom } from 'models/facility/atom';
-import {
-  useAssetSearchResults,
-  useTimeseriesSearchResult,
-} from 'components/SearchResultTable/hooks';
+
 import FilterDropdown from './FilterDropdown';
 import SearchTooltip from './SearchTooltip';
 
@@ -206,22 +210,19 @@ const Search = ({
           <SegmentedControl.Button key="assets">
             {t['Equipment tag']}
             <SearchCount>
-              {filterSettings.isShowEmptyChecked &&
-                (assetCountLoading === false ? (
-                  `${assetTotalCount}`
-                ) : (
-                  <Icon type="Loader" />
-                ))}
+              {assetCountLoading &&
+              query &&
+              !filterSettings.isShowEmptyChecked ? (
+                <Icon type="Loader" />
+              ) : (
+                assetTotalCount
+              )}
             </SearchCount>
           </SegmentedControl.Button>
           <SegmentedControl.Button key="timeseries">
             {t['Time series']}
             <SearchCount>
-              {tsCountLoading === false ? (
-                `${tsTotalCount}`
-              ) : (
-                <Icon type="Loader" />
-              )}
+              {query && tsCountLoading ? <Icon type="Loader" /> : tsTotalCount}
             </SearchCount>
           </SegmentedControl.Button>
         </SegmentedControl>

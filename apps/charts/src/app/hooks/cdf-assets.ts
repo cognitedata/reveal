@@ -1,6 +1,7 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { Asset, ListResponse, Timeseries } from '@cognite/sdk';
 import { useQuery } from '@tanstack/react-query';
+
+import { Asset, ListResponse, Timeseries } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useAsset = (id?: number) => {
   const sdk = useSDK();
@@ -88,13 +89,13 @@ export const useLinkedAsset = (
       ]);
 
       if (timeseries.length === 0) {
-        return undefined;
+        return null;
       }
 
       const { assetId } = timeseries[0];
 
       if (!assetId) {
-        return undefined;
+        return null;
       }
 
       const assets = await sdk.assets.retrieve([{ id: assetId }]);
@@ -112,8 +113,8 @@ export const useCdfEvent = (eventId?: number, enabled = true) => {
     async () => {
       const event = await sdk.events.retrieve([{ id: eventId! }]);
 
-      if (!event) {
-        return undefined;
+      if (!event.length) {
+        return null;
       }
 
       return event[0];

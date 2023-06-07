@@ -1,17 +1,19 @@
-import { Icon, Button, Checkbox } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
-import { trackUsage } from 'services/metrics';
-import { useRecoilState } from 'recoil';
-import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
 } from 'components/Search/EmptyResult';
-import chartAtom from 'models/chart/atom';
-import { makeDefaultTranslations } from 'utils/translations';
+import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import { useTranslations } from 'hooks/translations';
+import chartAtom from 'models/chart/atom';
+import { useRecoilState } from 'recoil';
+import { trackUsage } from 'services/metrics';
+import styled from 'styled-components/macro';
+import { makeDefaultTranslations } from 'utils/translations';
+
+import { Icon, Button, Checkbox } from '@cognite/cogs.js';
+
+import { useTimeseriesSearchResult } from './hooks';
 import RecentViewSources from './RecentViewSources';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
-import { useTimeseriesSearchResult } from './hooks';
 
 type Props = {
   query: string;
@@ -54,7 +56,7 @@ export default function SearchTimeseries({ query, searchResults }: Props) {
     return <Icon type="CloseLarge" />;
   }
 
-  if (isLoading) {
+  if (isLoading && query) {
     return <Icon type="Loader" />;
   }
 

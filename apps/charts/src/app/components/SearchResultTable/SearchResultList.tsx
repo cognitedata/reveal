@@ -1,14 +1,16 @@
-import { Icon, Button } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
 } from 'components/Search/EmptyResult';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
 import { SearchFilter } from 'components/Search/Search';
+import { useTranslations } from 'hooks/translations';
+import styled from 'styled-components/macro';
+import { makeDefaultTranslations } from 'utils/translations';
+
+import { Icon, Button } from '@cognite/cogs.js';
+
 import AssetSearchHit from './AssetSearchHit';
-import RecentViewSources from './RecentViewSources';
 import { useAssetSearchResults } from './hooks';
+import RecentViewSources from './RecentViewSources';
 
 type Props = {
   query: string;
@@ -58,7 +60,7 @@ export default function SearchResultList({
     return <Icon type="CloseLarge" />;
   }
 
-  if (isLoading) {
+  if (isLoading && query) {
     return <Icon type="Loader" />;
   }
 

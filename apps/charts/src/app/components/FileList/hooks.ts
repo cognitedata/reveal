@@ -1,8 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
+import unionBy from 'lodash/unionBy';
+
+import { listFilesAnnotatedWithAssetId } from '@cognite/annotations';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from '@tanstack/react-query';
-import { listFilesAnnotatedWithAssetId } from '@cognite/annotations';
-import unionBy from 'lodash/unionBy';
+
 import { isFilePreviewable, isPreviewableImage } from './utils';
 
 export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
@@ -69,7 +71,7 @@ export const useFileIcon = (file: File) => {
     ['file', 'icon', file.id],
     async () => {
       if (!isFilePreviewable(file)) {
-        return undefined;
+        return null;
       }
 
       if (isPreviewableImage(file)) {

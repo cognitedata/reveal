@@ -1,5 +1,3 @@
-import { getProject } from '@cognite/cdf-utilities';
-import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 import config from 'config/config';
 import {
@@ -7,6 +5,10 @@ import {
   fetchFirebaseToken,
   initializeFirebase,
 } from 'services/firebase';
+
+import { getProject } from '@cognite/cdf-utilities';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { useAppsApiBaseUrl } from './config';
 
 const cacheOption = {
@@ -36,7 +38,7 @@ export const useFirebaseInit = (enabled: boolean) => {
         url,
         config.firebaseAppName
       );
-      await initializeFirebase(env!, token!);
+      return initializeFirebase(env!, token!);
     },
     {
       ...cacheOption,
