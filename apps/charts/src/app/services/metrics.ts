@@ -1,5 +1,4 @@
 import config from '@charts-app/config/config';
-import { UserInfo } from '@charts-app/hooks/useUserInfo';
 import {
   isDevelopment,
   isProduction,
@@ -61,7 +60,15 @@ export function stopTimer(eventName: string, properties = {}) {
 }
 
 export const identifyUserForMetrics = (
-  user: UserInfo | undefined,
+  user:
+    | {
+        displayName?: string;
+        givenName?: string;
+        id: string;
+        mail?: string;
+        userPrincipalName?: string;
+      }
+    | undefined,
   project: string,
   cluster: string,
   azureADTenant?: string

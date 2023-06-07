@@ -11,7 +11,7 @@ import { CogniteError } from '@cognite/sdk';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
 import { trackUsage, stopTimer } from '@charts-app/services/metrics';
-import { useCreateSessionNonce } from 'domain/chart';
+import { useCreateSessionNonce } from '@charts-app/domain/chart';
 import { FormTitle } from './elements';
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
 import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';

@@ -1,4 +1,4 @@
-import { useScheduledCalculationDeleteMutate } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
+import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
 
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';

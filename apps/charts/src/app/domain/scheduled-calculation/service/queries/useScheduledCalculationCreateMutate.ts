@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
-import { useCreateSessionNonce, SessionAPIResponse } from 'domain/chart';
+import { useCreateSessionNonce, SessionAPIResponse } from '@charts-app/domain/chart';
 import { ComputationStep } from '@cognite/calculation-backend';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { createScheduledCalculation } from '../network/createScheduledCalculation';

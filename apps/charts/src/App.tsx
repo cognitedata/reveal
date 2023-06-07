@@ -34,6 +34,7 @@ import {
 } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { DataExplorationProvider } from '@cognite/data-exploration';
+import { parseEnvFromCluster } from '@cognite/login-utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
@@ -42,8 +43,6 @@ import './config/locale';
 import 'services/metrics';
 
 // START SENTRY CODE
-
-import { parseEnvFromCluster } from '@cognite/login-utils';
 
 if (!isDevelopment && !config.sentryDSN) {
   throw new Error('SENTRY DSN is not present!');

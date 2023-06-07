@@ -3,7 +3,7 @@ import {
   SCHEDULE_HOUR_OPTIONS,
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
-} from 'domain/monitoring/constants';
+} from '@charts-app/domain/monitoring/constants';
 
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';

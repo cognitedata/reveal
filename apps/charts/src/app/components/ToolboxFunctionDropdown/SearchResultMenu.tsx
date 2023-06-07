@@ -1,6 +1,6 @@
 import { Operation } from '@cognite/calculation-backend';
 import { Menu } from '@cognite/cogs.js';
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import FunctionsList from './FunctionsList';
 
 const SearchResultMenu = ({

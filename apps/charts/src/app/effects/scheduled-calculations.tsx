@@ -10,9 +10,9 @@ import { useDebounce } from 'use-debounce';
 import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
 import { calculateGranularity } from '@charts-app/utils/timeseries';
 import { useScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/atom';
-import { useScheduledCalculationTasks } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
+import { useScheduledCalculationTasks } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
+import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
 
 export const ScheduledCalculationCollectionEffects = () => {
   const [chart] = useChartAtom();

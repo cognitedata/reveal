@@ -22,7 +22,7 @@ import {
   FunctionNodeData,
   FunctionNodeDataDehydrated,
 } from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import { uniqBy } from 'lodash';
 import { NodeTypes } from './types';
 import { AUTO_ALIGN_PARAM } from './constants';

@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { Operation } from '@cognite/calculation-backend';
 import { Button, Dropdown, Input, Modal } from '@cognite/cogs.js';
 import Layers from '@charts-app/utils/z-index';
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import Markdown from '@charts-app/components/Markdown/Markdown';
 import { useCanvasSize } from '@charts-app/components/NodeEditor/V2/CanvasContext';
 import CategoryMenu from './CategoryMenu';

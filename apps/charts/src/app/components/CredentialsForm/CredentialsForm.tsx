@@ -4,7 +4,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import debounce from 'lodash/debounce';
 import head from 'lodash/head';
 import { useFormContext, Path, PathValue } from 'react-hook-form';
-import { useCreateSessionNonce } from 'domain/chart';
+import { useCreateSessionNonce } from '@charts-app/domain/chart';
 import {
   ClientCredentialsWrapper,
   ClientCredentialsWrapperError,

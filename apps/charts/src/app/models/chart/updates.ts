@@ -30,7 +30,7 @@ import { SourceNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/N
 import { omit } from 'lodash';
 import { Operation } from '@cognite/calculation-backend';
 import { initializeParameterValues } from '@charts-app/components/NodeEditor/V2/utils';
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import { AxisUpdate } from '@charts-app/components/PlotlyChart/utils';
 import { removeItem, addItem } from './helpers';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useScheduledCalculationCreateMutate } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
+import { useScheduledCalculationCreateMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useOperations } from '@charts-app/models/operations/atom';
 import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';

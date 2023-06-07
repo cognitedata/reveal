@@ -1,4 +1,4 @@
-import { CHARTS_FOLDER_PREFIX } from 'domain/monitoring/constants';
+import { CHARTS_FOLDER_PREFIX } from '@charts-app/domain/monitoring/constants';
 
 import React, { memo, useEffect, useState } from 'react';
 

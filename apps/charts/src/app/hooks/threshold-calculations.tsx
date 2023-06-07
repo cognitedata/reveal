@@ -1,20 +1,22 @@
 import { useCallback, useEffect } from 'react';
-import { ChartThreshold } from '@charts-app/models/chart/types';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { useDebounce } from 'use-debounce';
+
 import {
   useCreateThreshold,
   useThresholdCreator,
   useThresholdIsReady,
   useThresholdResultData,
 } from '@charts-app/hooks/calculation-backend';
+import { usePrevious } from '@charts-app/hooks/usePrevious';
+import { useChartAtom } from '@charts-app/models/chart/atom';
+import { ChartThreshold } from '@charts-app/models/chart/types';
+import { updateChartThresholdProperties } from '@charts-app/models/chart/updates-threshold';
 import { getHash } from '@charts-app/utils/hash';
-import { usePrevious } from 'react-use';
+import { isThresholdValid } from '@charts-app/utils/threshold';
 import { milliseconds } from 'date-fns';
 import { omit } from 'lodash';
+import { useDebounce } from 'use-debounce';
+
 import { CreateThresholdsParams } from '@cognite/calculation-backend';
-import { updateChartThresholdProperties } from '@charts-app/models/chart/updates-threshold';
-import { isThresholdValid } from '@charts-app/utils/threshold';
 
 export const thresholdParameters = (
   dateFrom: string,
@@ -135,8 +137,8 @@ const useThresholdsResults = (
       return;
     }
 
-    const minUnitLiteral: string = String(threshold.filter.minUnit);
-    const maxnUnitLiteral: string = String(threshold.filter.maxUnit);
+    const minUnitLiteral = String(threshold.filter.minUnit);
+    const maxnUnitLiteral = String(threshold.filter.maxUnit);
 
     const params = thresholdParameters(
       dateFrom,

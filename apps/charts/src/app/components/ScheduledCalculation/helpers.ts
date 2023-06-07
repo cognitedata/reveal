@@ -6,7 +6,7 @@ import { ComputationStep } from '@cognite/calculation-backend';
 import { Chart, ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
-import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
+import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
 import { Timeseries } from '@cognite/sdk';
 import { ScheduleCalculationFieldValues } from '../../domain/scheduled-calculation/internal/types';
 import { addScheduledCalculation } from '../../models/chart/updates-calculation';

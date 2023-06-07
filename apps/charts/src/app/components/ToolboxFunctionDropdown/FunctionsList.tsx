@@ -2,7 +2,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { sortBy } from 'lodash';
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 
 const FunctionsList = ({
   category,

@@ -1,6 +1,6 @@
 import { TEST_BASE_URL } from 'tests/testConstants';
 import { rest, RequestHandler } from 'msw';
-import { MOCK_CAPABILITIES } from 'domain/chart/service/__fixtures/capabilities';
+import { MOCK_CAPABILITIES } from '@charts-app/domain/chart/service/__fixtures/capabilities';
 
 const inspectUrl = `${TEST_BASE_URL}/api/v1/token/inspect`;
 

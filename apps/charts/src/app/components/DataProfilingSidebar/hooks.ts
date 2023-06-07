@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
-import { usePrevious } from 'react-use';
 
 import { useCreateDataProfiling } from '@charts-app/hooks/calculation-backend';
+import { usePrevious } from '@charts-app/hooks/usePrevious';
 import chartAtom from '@charts-app/models/chart/atom';
 import {
   Chart,
@@ -9,15 +9,15 @@ import {
   ChartWorkflow,
   ChartSource,
 } from '@charts-app/models/chart/types';
-import { useQuery } from '@tanstack/react-query';
-import { useRecoilState } from 'recoil';
 import {
   waitForDataProfilingToFinish,
   waitForCalculationToFinish,
   fetchDataProfilingResult,
 } from '@charts-app/services/calculation-backend';
-import { useDebounce } from 'use-debounce';
 import { getHash } from '@charts-app/utils/hash';
+import { useQuery } from '@tanstack/react-query';
+import { useRecoilState } from 'recoil';
+import { useDebounce } from 'use-debounce';
 
 import {
   CreateDataProfilingParams,

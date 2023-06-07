@@ -1,16 +1,12 @@
-import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { useQuery } from '@tanstack/react-query';
 
-export type UserInfo = {
-  displayName: string;
-  givenName: string;
-  id: string;
-  mail: string;
-  userPricipalName: string;
-};
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 
 export const useUserInfo = () => {
-  const { data, isLoading, isFetched } = useQuery<UserInfo>(['user-info'], getUserInformation);
+  const { data, isLoading, isFetched } = useQuery(
+    ['user-info'],
+    getUserInformation
+  );
 
   return { data, isLoading, isFetched };
 };

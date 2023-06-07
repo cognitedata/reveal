@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
+
+import { getContainer } from '@charts-app/utils/getContainer';
+import { ConfigProvider } from 'antd';
+// import antTheme from './antd-theme.less'; // The .less import did not work
+import antTheme from 'antd/dist/antd.css';
+import katexCss from 'katex/dist/katex.min.css';
+
 import {
   Loader,
   Tooltip as CogsTooltip,
   Modal,
   DateRange,
 } from '@cognite/cogs.js';
-import { ConfigProvider } from 'antd';
-
-import { getContainer } from '@charts-app/utils/getContainer';
-import { styleScope } from 'styles/styleScope';
-
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-// import antTheme from './antd-theme.less'; // The .less import did not work
-import antTheme from 'antd/dist/antd.css';
-import katexCss from 'katex/dist/katex.min.css';
+
+import styleScope from './styleScope';
 
 // This will override the appendTo prop on all Tooltips used from cog
 CogsTooltip.defaultProps = {
@@ -21,7 +22,6 @@ CogsTooltip.defaultProps = {
   appendTo: getContainer,
 };
 
-// @ts-ignore
 Modal.defaultProps = {
   // @ts-ignore
   ...Modal.defaultProps,
@@ -53,7 +53,7 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
-      <div className={styleScope}>{props.children}</div>
+      <div className={styleScope.styleScope}>{props.children}</div>
     </ConfigProvider>
   );
 }

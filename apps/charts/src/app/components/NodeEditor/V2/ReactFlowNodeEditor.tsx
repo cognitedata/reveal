@@ -10,12 +10,12 @@ import ReactFlow, {
   XYPosition,
   FlowTransform,
 } from 'react-flow-renderer';
-import { usePrevious } from 'react-use';
 
 import AlertIcon from '@charts-app/components/AlertIcon/AlertIcon';
+import { usePrevious } from '@charts-app/hooks/usePrevious';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import { trackUsage } from '@charts-app/services/metrics';
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 
 import { Operation } from '@cognite/calculation-backend';
 import { Label } from '@cognite/cogs.js';
@@ -28,13 +28,11 @@ import AddButton, { AddMenu } from './AddButton';
 import { CanvasContext } from './CanvasContext';
 import EditorControls from './EditorControls/EditorControls';
 import EditorToolbar from './EditorToolbar/EditorToolbar';
+import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
 import ConstantNode from './Nodes/ConstantNode';
 import FunctionNode from './Nodes/FunctionNode/FunctionNode';
 import OutputNode from './Nodes/OutputNode';
 import SourceNode from './Nodes/SourceNode';
-
-
-import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
 import { ScheduledCalculationSummary } from './ScheduledCalculationSummary';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import { getOutputNodePosition } from './utils';

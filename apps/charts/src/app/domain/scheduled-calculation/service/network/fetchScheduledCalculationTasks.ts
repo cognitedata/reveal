@@ -1,5 +1,5 @@
 import { CogniteClient, ExternalId } from '@cognite/sdk';
-import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
+import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
 
 export const fetchScheduledCalculationTasks = (
   scheduledCalculationTaskIds: ExternalId[],

@@ -56,7 +56,7 @@ import { getEntryColor } from '@charts-app/utils/colors';
 import {
   MONITORING_CAPABILITIES,
   ALERTING_CAPABILITIES,
-} from 'domain/monitoring/constants';
+} from '@charts-app/domain/monitoring/constants';
 
 import { v4 as uuidv4 } from 'uuid';
 import { Elements } from 'react-flow-renderer';
@@ -94,7 +94,7 @@ import { MonitoringSidebar } from '@charts-app/components/MonitoringSidebar/Moni
 import { AlertingSidebar } from '@charts-app/components/AlertingSidebar/AlertingSidebar';
 import interactionsAtom from '@charts-app/models/interactions/atom';
 import { AccessDeniedModal } from '@charts-app/components/AccessDeniedModal/AccessDeniedModal';
-import { useExperimentalCapabilitiesCheck } from 'domain/chart';
+import { useExperimentalCapabilitiesCheck } from '@charts-app/domain/chart';
 import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
 import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
 import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';

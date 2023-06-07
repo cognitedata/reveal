@@ -5,13 +5,16 @@
 import { MouseEvent, useCallback } from 'react';
 
 import { LoadingRow } from '@charts-app/components/Common/SidebarElements';
+import { formatDate } from '@charts-app/utils/date';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
+import { GeneralDetails } from '@data-exploration/components';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
-import { formatDate } from '@charts-app/utils/date';
-import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
 
 import { Button, Micro } from '@cognite/cogs.js';
-import { AssetsItem } from '@cognite/data-exploration';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { EventDetails } from './elements';
@@ -121,7 +124,7 @@ const EventInfoBox = ({
             <Col span={12}>
               <Micro as="div">
                 {event.id && (
-                  <AssetsItem
+                  <GeneralDetails.AssetsItem
                     assetIds={event.assetIds}
                     type="event"
                     linkId={event.id}

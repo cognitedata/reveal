@@ -1,5 +1,5 @@
 import { ExternalId, Timeseries } from '@cognite/sdk';
-import { useScheduledCalculationTasks } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
+import { useScheduledCalculationTasks } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 export const useTimeseriesFromScheduledCalculations = (
