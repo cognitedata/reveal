@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -56,6 +57,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
+  const navigate = useNavigate();
   const { filteredCanvases } = useCanvasSearch({
     canvases,
     searchString,
@@ -96,6 +98,15 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 
     setIsEditingTitle(true);
     setIsMenuOpen(false);
+  };
+
+  const onCreateCanvasClick = async () => {
+    const { externalId } = await createCanvas({
+      canvasAnnotations: [],
+      container: EMPTY_FLEXIBLE_LAYOUT,
+    });
+
+    navigate(getCanvasLink(externalId));
   };
 
   return (
@@ -169,12 +180,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
               type="primary"
               icon="Plus"
               loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
-              onClick={() => {
-                createCanvas({
-                  canvasAnnotations: [],
-                  container: EMPTY_FLEXIBLE_LAYOUT,
-                });
-              }}
+              onClick={onCreateCanvasClick}
             >
               Create new canvas
             </CreateCanvasButton>
