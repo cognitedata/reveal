@@ -13,9 +13,10 @@ import {
   createRoutesFromChildren,
   matchRoutes,
 } from 'react-router-dom';
-import { IntercomProvider } from 'react-use-intercom';
 
 import config from '@charts-app/config/config';
+import Routes from '@charts-app/pages/Routes';
+import GlobalStyles from '@charts-app/styles/GlobalStyles';
 import { isDevelopment } from '@charts-app/utils/environment';
 import * as Sentry from '@sentry/react';
 import SentryRRWeb from '@sentry/rrweb';
@@ -40,13 +41,9 @@ import './config/i18n';
 import './config/locale';
 import 'services/metrics';
 
-import GlobalStyles from 'styles/GlobalStyles';
-
 // START SENTRY CODE
 
 import { parseEnvFromCluster } from '@cognite/login-utils';
-
-import Routes from './pages/Routes';
 
 if (!isDevelopment && !config.sentryDSN) {
   throw new Error('SENTRY DSN is not present!');
@@ -119,28 +116,16 @@ export const RootApp = () => {
                     loadingScreen={<Loader />}
                     login={() => loginAndAuthIfNeeded(project, env)}
                   >
-                    <IntercomProvider
-                      appId={config.intercomAppId}
-                      autoBoot
-                      initializeDelay={1000}
-                      autoBootProps={{
-                        hideDefaultLauncher: true,
-                        alignment: 'right',
-                        horizontalPadding: 20,
-                        verticalPadding: 20,
-                      }}
-                    >
-                      <RecoilRoot>
-                        <Router>
-                          <ToastContainer style={{ top: '5em' }} />
-                          {/* need root for png screenshot when we download chart  */}
-                          {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
-                          <div id="root">
-                            <Routes />
-                          </div>
-                        </Router>
-                      </RecoilRoot>
-                    </IntercomProvider>
+                    <RecoilRoot>
+                      <Router>
+                        <ToastContainer style={{ top: '5em' }} />
+                        {/* need root for png screenshot when we download chart  */}
+                        {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
+                        <div id="root">
+                          <Routes />
+                        </div>
+                      </Router>
+                    </RecoilRoot>
                   </AuthWrapper>
                 </Sentry.ErrorBoundary>
               </SubAppWrapper>
