@@ -1,4 +1,4 @@
-import { Chart } from 'models/chart/types';
+import { Chart } from '@charts-app/models/chart/types';
 import { EMPTY_ARRAY } from 'domain/constants';
 
 export const getTsIds = (chart: Chart | undefined) =>

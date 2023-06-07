@@ -1,4 +1,4 @@
-import { ChartThresholdEventFilter } from 'models/chart/types';
+import { ChartThresholdEventFilter } from '@charts-app/models/chart/types';
 import {
   useState,
   useCallback,

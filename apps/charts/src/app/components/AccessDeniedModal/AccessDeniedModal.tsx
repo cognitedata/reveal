@@ -1,6 +1,6 @@
 import { Flex, Button, Body } from '@cognite/cogs.js';
-import { useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { StyledModal, StyledUl, ModalHeader } from './elements';
 
 type Props = {

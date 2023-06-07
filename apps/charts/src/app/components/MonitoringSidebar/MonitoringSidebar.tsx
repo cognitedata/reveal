@@ -1,9 +1,5 @@
 import { memo, useEffect, useState } from 'react';
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
-import { makeDefaultTranslations } from 'utils/translations';
-
-import { useTranslations } from 'hooks/translations';
 import {
   ContentContainer,
   ContentOverflowWrapper,
@@ -12,19 +8,24 @@ import {
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
-} from 'components/Common/SidebarElements';
-import { useSearchParam } from 'hooks/navigation';
+} from '@charts-app/components/Common/SidebarElements';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { startTimer, trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
   MONITORING_SIDEBAR_SHOW_ALERTS,
   MONITORING_FILTER,
-} from 'utils/constants';
-import { startTimer, trackUsage } from 'services/metrics';
+} from '@charts-app/utils/constants';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+
 import CreateMonitoringJob from './CreateMonitoringJob';
-import ListMonitoringJobs from './ListMonitoringJobs';
 import ListMonitoringJobAlerts from './ListMonitoringJobAlerts';
+import ListMonitoringJobs from './ListMonitoringJobs';
 // Commenting out temporarily since ListJobs is not part of this PR
 // import ListMonitoringJobs from './ListMonitoringJobs';
 

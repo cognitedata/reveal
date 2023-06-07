@@ -2,12 +2,8 @@
  * Data Profiling Sidebar
  */
 
-import styled from 'styled-components/macro';
 import { FunctionComponent, useState, useMemo } from 'react';
-import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
-import { Chart, ChartSource } from 'models/chart/types';
-import { makeDefaultTranslations } from 'utils/translations';
-import { StatusStatusEnum } from '@cognite/calculation-backend';
+
 import {
   Sidebar,
   TopContainer,
@@ -17,14 +13,22 @@ import {
   ContentContainer,
   SidebarFormLabel,
   SourceSelect,
-} from 'components/Common/SidebarElements';
-import { convertMillisecondsToSeconds } from './helpers';
-import Boxplot from './Boxplot';
-import Metrics from './Metrics';
-import Histogram from './Histogram';
-import Calculations from './Calculations';
-import { useDataProfiling } from './hooks';
+} from '@charts-app/components/Common/SidebarElements';
+import { Chart, ChartSource } from '@charts-app/models/chart/types';
+import styled from 'styled-components/macro';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { StatusStatusEnum } from '@cognite/calculation-backend';
+import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
+
 import { SourceSelector } from '../Common/SourceSelector';
+
+import Boxplot from './Boxplot';
+import Calculations from './Calculations';
+import { convertMillisecondsToSeconds } from './helpers';
+import Histogram from './Histogram';
+import { useDataProfiling } from './hooks';
+import Metrics from './Metrics';
 
 type Props = {
   visible: boolean;

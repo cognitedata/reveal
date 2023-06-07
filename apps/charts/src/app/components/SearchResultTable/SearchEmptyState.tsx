@@ -1,8 +1,11 @@
-import { Timeseries } from '@cognite/sdk';
-import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
-import { AssetList } from 'components/SearchResultTable/SearchResultList';
-import { useRootAssets, useRootTimeseries } from 'hooks/cdf-assets';
 import React, { ComponentProps } from 'react';
+
+import AssetSearchHit from '@charts-app/components/SearchResultTable/AssetSearchHit';
+import { AssetList } from '@charts-app/components/SearchResultTable/SearchResultList';
+import { useRootAssets, useRootTimeseries } from '@charts-app/hooks/cdf-assets';
+
+import { Timeseries } from '@cognite/sdk';
+
 import RecentViewSources from './RecentViewSources';
 
 type renderTimeSeries = (timeseries: Timeseries[]) => React.ReactNode;

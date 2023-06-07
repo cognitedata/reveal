@@ -3,19 +3,8 @@
  */
 
 import { memo, useCallback, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { isNil, omit, omitBy } from 'lodash';
-import { useRecoilState } from 'recoil';
-import {
-  Button,
-  Collapse,
-  Dropdown,
-  Icon,
-  Menu,
-  Popconfirm,
-  Tooltip,
-} from '@cognite/cogs.js';
 
+import { ColorDropdown } from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
 import {
   ExpandIcon,
   Sidebar,
@@ -29,30 +18,43 @@ import {
   CollapsePanelTitle,
   SidebarFooterActions,
   ReverseSwitch,
-} from 'components/Common/SidebarElements';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
-import { Chart, ChartEventFilters } from 'models/chart/types';
-import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+} from '@charts-app/components/Common/SidebarElements';
+import ClickBoundary from '@charts-app/components/EditableText/ClickBoundary';
+import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
+import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { Chart, ChartEventFilters } from '@charts-app/models/chart/types';
 import {
   addEventFilters,
   initEventFilters,
   removeChartEventFilter,
   updateEventFiltersProperties,
-} from 'models/chart/updates-event-filters';
-import { activeEventFilterIdAtom } from 'models/event-results/atom';
-import { ChartEventResults } from 'models/event-results/types';
-import { StyleButton } from 'components/StyleButton/StyleButton';
+} from '@charts-app/models/chart/updates-event-filters';
+import { activeEventFilterIdAtom } from '@charts-app/models/event-results/atom';
+import { ChartEventResults } from '@charts-app/models/event-results/types';
 import { Col, Row } from 'antd';
-import { ColorDropdown } from 'components/AppearanceDropdown/AppearanceDropdown';
-import ClickBoundary from 'components/EditableText/ClickBoundary';
-import { DEFAULT_EVENT_COLOR } from 'utils/colors';
-import EventFilterForm from './EventFilterForm';
-import EventInfoBox from './EventInfoBox';
-import EventResultsSidebar from './EventResultsSidebar';
+import { isNil, omit, omitBy } from 'lodash';
+import { useRecoilState } from 'recoil';
+import { DEFAULT_EVENT_COLOR } from '@charts-app/utils/colors';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { v4 as uuidv4 } from 'uuid';
+
+import {
+  Button,
+  Collapse,
+  Dropdown,
+  Icon,
+  Menu,
+  Popconfirm,
+  Tooltip,
+} from '@cognite/cogs.js';
+
 import EventDetailsSidebar, {
   defaultTranslations as eventDetailDefaultTranslations,
 } from './EventDetailSidebar';
+import EventFilterForm from './EventFilterForm';
+import EventInfoBox from './EventInfoBox';
+import EventResultsSidebar from './EventResultsSidebar';
 
 type Props = {
   visible: boolean;

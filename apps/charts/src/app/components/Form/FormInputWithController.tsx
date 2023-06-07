@@ -1,7 +1,7 @@
 import { Radio, OptionType, Tooltip } from '@cognite/cogs.js';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
 import { FC, PropsWithChildren } from 'react';
-import { UnitSelector } from 'components/UnitDropdown/UnitSelector';
+import { UnitSelector } from '@charts-app/components/UnitDropdown/UnitSelector';
 import {
   FormInput,
   FormTextarea,

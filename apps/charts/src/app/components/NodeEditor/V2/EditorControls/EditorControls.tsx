@@ -1,6 +1,6 @@
 import { Dropdown, Icon } from '@cognite/cogs.js';
 import { Badge } from 'antd';
-import { defaultTranslations } from 'components/NodeEditor/translations';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { ComponentProps, useState } from 'react';
 import { Controls, ControlButton, useZoomPanHelper } from 'react-flow-renderer';
 import styled from 'styled-components/macro';

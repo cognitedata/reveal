@@ -1,7 +1,7 @@
 import { Aggregate, CogniteClient, DatapointAggregate } from '@cognite/sdk';
 import { subDays } from 'date-fns';
-import { Chart } from 'models/chart/types';
-import { convertUnits } from 'utils/units';
+import { Chart } from '@charts-app/models/chart/types';
+import { convertUnits } from '@charts-app/utils/units';
 import { roundToSignificantDigits } from './numbers';
 
 const OUTLIER_THRESHOLD = 1000;

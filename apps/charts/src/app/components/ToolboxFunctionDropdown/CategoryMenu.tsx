@@ -2,7 +2,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { sortBy } from 'lodash';
-import { useCanvasSize } from 'components/NodeEditor/V2/CanvasContext';
+import { useCanvasSize } from '@charts-app/components/NodeEditor/V2/CanvasContext';
 import FunctionsList from './FunctionsList';
 
 const CategoryMenu = ({

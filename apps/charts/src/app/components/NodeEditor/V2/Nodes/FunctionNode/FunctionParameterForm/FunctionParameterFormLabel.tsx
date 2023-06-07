@@ -1,5 +1,5 @@
 import { Tooltip } from '@cognite/cogs.js';
-import Markdown from 'components/Markdown/Markdown';
+import Markdown from '@charts-app/components/Markdown/Markdown';
 import styled from 'styled-components/macro';
 
 const FunctionParameterFormLabel = ({

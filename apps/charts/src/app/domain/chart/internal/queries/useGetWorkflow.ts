@@ -1,6 +1,6 @@
-import { useChartAtom } from 'models/chart/atom';
+import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useMemo } from 'react';
-import { ChartWorkflow } from 'models/chart/types';
+import { ChartWorkflow } from '@charts-app/models/chart/types';
 import { getWorkflow } from '../transformers/getWorkflow';
 
 export const useGetWorkflow = (workflowId: string) => {

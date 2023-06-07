@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { FieldErrors } from 'react-hook-form';
 import {
   InfoBoxHeadingContainer,

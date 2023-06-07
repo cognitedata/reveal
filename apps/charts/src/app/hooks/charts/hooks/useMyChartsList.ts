@@ -1,8 +1,8 @@
-import { useUserInfo } from 'hooks/useUserInfo';
-import { useUpdateChart } from 'hooks/charts-storage';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { useUpdateChart } from '@charts-app/hooks/charts-storage';
 import { filter, orderBy } from 'lodash';
-import { Chart } from 'models/chart/types';
-import { duplicateChart } from 'models/chart/helpers';
+import { Chart } from '@charts-app/models/chart/types';
+import { duplicateChart } from '@charts-app/models/chart/helpers';
 import useDeleteMyChart from '../mutations/useDeleteMyChart';
 import useMyCharts from '../queries/useMyCharts';
 

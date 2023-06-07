@@ -1,7 +1,7 @@
 import { Button } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Step3Container, Step3IconContainer } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(

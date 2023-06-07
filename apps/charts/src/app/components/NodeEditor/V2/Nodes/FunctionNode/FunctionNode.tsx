@@ -4,8 +4,8 @@ import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { Flex } from '@cognite/cogs.js';
-import { defaultTranslations } from 'components/NodeEditor/translations';
-import Markdown from 'components/Markdown/Markdown';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
+import Markdown from '@charts-app/components/Markdown/Markdown';
 import { NodeTypes } from '../../types';
 import {
   AUTO_ALIGN_PARAM,

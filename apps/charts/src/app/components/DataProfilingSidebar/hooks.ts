@@ -1,27 +1,29 @@
 import { useEffect, useCallback } from 'react';
+import { usePrevious } from 'react-use';
+
+import { useCreateDataProfiling } from '@charts-app/hooks/calculation-backend';
+import chartAtom from '@charts-app/models/chart/atom';
 import {
   Chart,
   ChartTimeSeries,
   ChartWorkflow,
   ChartSource,
-} from 'models/chart/types';
-import { useSDK } from '@cognite/sdk-provider';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import { usePrevious } from 'react-use';
-import { useDebounce } from 'use-debounce';
+} from '@charts-app/models/chart/types';
 import { useQuery } from '@tanstack/react-query';
-import { getHash } from 'utils/hash';
-import { useCreateDataProfiling } from 'hooks/calculation-backend';
+import { useRecoilState } from 'recoil';
 import {
   waitForDataProfilingToFinish,
   waitForCalculationToFinish,
   fetchDataProfilingResult,
-} from 'services/calculation-backend';
+} from '@charts-app/services/calculation-backend';
+import { useDebounce } from 'use-debounce';
+import { getHash } from '@charts-app/utils/hash';
+
 import {
   CreateDataProfilingParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useDataProfiling = (
   sourceItem: ChartSource | undefined,

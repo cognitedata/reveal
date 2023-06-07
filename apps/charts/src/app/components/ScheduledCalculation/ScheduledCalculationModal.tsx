@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useScheduledCalculationCreateMutate } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
-import { useChartAtom } from 'models/chart/atom';
-import { useOperations } from 'models/operations/atom';
-import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
+import { useChartAtom } from '@charts-app/models/chart/atom';
+import { useOperations } from '@charts-app/models/operations/atom';
+import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';
 import { StyledModal } from './elements';
 import { ModalHeader } from './ModalHeader';
 import { ModalBody } from './ModalBody';

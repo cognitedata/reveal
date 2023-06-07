@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Button, Checkbox, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
-import { removeIllegalCharacters } from 'utils/text';
-import Sparkline from 'components/PlotlyChart/Sparkline/Sparkline';
+import { removeIllegalCharacters } from '@charts-app/utils/text';
+import Sparkline from '@charts-app/components/PlotlyChart/Sparkline/Sparkline';
 import { ComponentProps, MouseEventHandler } from 'react';
 import { Skeleton } from 'antd';
 

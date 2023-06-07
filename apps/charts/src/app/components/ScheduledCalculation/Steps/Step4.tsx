@@ -1,7 +1,7 @@
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { Flex, Title, Button } from '@cognite/cogs.js';
-import { ThumbsUpAgree } from 'components/Icons/ThumbsUpAgree';
+import { ThumbsUpAgree } from '@charts-app/components/Icons/ThumbsUpAgree';
 import { CenterAlignedBody } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(

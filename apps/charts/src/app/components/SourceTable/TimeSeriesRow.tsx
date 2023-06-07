@@ -1,19 +1,25 @@
 import { ComponentProps, useState } from 'react';
-import { ChartTimeSeries } from 'models/chart/types';
-import { Button, Popconfirm } from '@cognite/cogs.js';
-import { useLinkedAsset } from 'hooks/cdf-assets';
-import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
-import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
-import { trackUsage } from 'services/metrics';
-import { formatValueForDisplay } from 'utils/numbers';
-import { DatapointsSummary } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { StyleButton } from 'components/StyleButton/StyleButton';
-import { useComponentTranslations, useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
+
+import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
+import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
+import { PnidButton } from '@charts-app/components/SearchResultTable/PnidButton';
+import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
+import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
+import { useLinkedAsset } from '@charts-app/hooks/cdf-assets';
+import {
+  useComponentTranslations,
+  useTranslations,
+} from '@charts-app/hooks/translations';
+import { ChartTimeSeries } from '@charts-app/models/chart/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+import { trackUsage } from '@charts-app/services/metrics';
+import { formatValueForDisplay } from '@charts-app/utils/numbers';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import { DatapointsSummary } from '@charts-app/utils/units';
+
+import { Button, Popconfirm } from '@cognite/cogs.js';
+
 import {
   SourceItem,
   SourceName,

@@ -3,24 +3,30 @@
  */
 
 import { useState, useCallback, memo, ComponentProps } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { Body, Button } from '@cognite/cogs.js';
-import { CogniteEvent } from '@cognite/sdk';
+
 import {
   ContentContainer,
   OverlayContentOverflowWrapper,
   SidebarChip,
   SidebarHeaderActions,
   SmallSelect,
-} from 'components/Common/SidebarElements';
-import { activeEventFilterResultsSelector } from 'models/event-results/selectors';
-import { EventsCollection, EventsEntry } from 'models/event-results/types';
+} from '@charts-app/components/Common/SidebarElements';
 import {
   activeEventIdAtom,
   selectedEventsAtom,
-} from 'models/event-results/atom';
+} from '@charts-app/models/event-results/atom';
+import { activeEventFilterResultsSelector } from '@charts-app/models/event-results/selectors';
+import {
+  EventsCollection,
+  EventsEntry,
+} from '@charts-app/models/event-results/types';
 import { Col, Row } from 'antd';
 import { orderBy } from 'lodash';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { Body, Button } from '@cognite/cogs.js';
+import { CogniteEvent } from '@cognite/sdk';
+
 import EventInfoBox from './EventInfoBox';
 import { isEventSelected } from './helpers';
 

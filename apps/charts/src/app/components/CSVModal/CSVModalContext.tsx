@@ -1,4 +1,4 @@
-import { useChartAtom } from 'models/chart/atom';
+import { useChartAtom } from '@charts-app/models/chart/atom';
 import React from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { useExportToCSV } from './hooks';

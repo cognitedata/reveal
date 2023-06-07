@@ -1,7 +1,7 @@
 import { Node, Connection } from '@cognite/connect';
 import { EventFilter } from '@cognite/sdk';
 import { FlowExportObject } from 'react-flow-renderer';
-import { NodeDataDehydratedVariants } from 'components/NodeEditor/V2/types';
+import { NodeDataDehydratedVariants } from '@charts-app/components/NodeEditor/V2/types';
 
 export type Chart = {
   version: number;

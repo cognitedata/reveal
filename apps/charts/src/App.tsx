@@ -13,36 +13,39 @@ import {
   createRoutesFromChildren,
   matchRoutes,
 } from 'react-router-dom';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { RecoilRoot } from 'recoil';
-import config from 'config/config';
 import { IntercomProvider } from 'react-use-intercom';
 
+import config from '@charts-app/config/config';
+import { isDevelopment } from '@charts-app/utils/environment';
+import * as Sentry from '@sentry/react';
+import SentryRRWeb from '@sentry/rrweb';
+import { BrowserTracing } from '@sentry/tracing';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { RecoilRoot } from 'recoil';
+
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   getCluster,
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import { FlagProvider } from '@cognite/react-feature-flags';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { SDKProvider } from '@cognite/sdk-provider';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { DataExplorationProvider } from '@cognite/data-exploration';
+import { FlagProvider } from '@cognite/react-feature-flags';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 import './config/i18n';
 import './config/locale';
 import 'services/metrics';
 
-import { isDevelopment } from 'utils/environment';
 import GlobalStyles from 'styles/GlobalStyles';
 
 // START SENTRY CODE
-import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
-import SentryRRWeb from '@sentry/rrweb';
+
 import { parseEnvFromCluster } from '@cognite/login-utils';
+
 import Routes from './pages/Routes';
 
 if (!isDevelopment && !config.sentryDSN) {

@@ -1,5 +1,5 @@
 import { Flex, Title } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import ChartListGridItem from './ChartListGridItem';
 import { ChartListProps } from '../types';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';

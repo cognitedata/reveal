@@ -1,5 +1,5 @@
 import { atom, AtomEffect, useRecoilValue } from 'recoil';
-import { fetchOperations } from 'services/calculation-backend';
+import { fetchOperations } from '@charts-app/services/calculation-backend';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Operation } from '@cognite/calculation-backend';
 

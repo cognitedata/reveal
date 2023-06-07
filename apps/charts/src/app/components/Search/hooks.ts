@@ -1,16 +1,17 @@
-import { Timeseries } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
-import { AxisUpdate } from 'components/PlotlyChart/utils';
-import { useAddToRecentLocalStorage } from 'hooks/recently-used';
-import chartAtom from 'models/chart/atom';
+import { AxisUpdate } from '@charts-app/components/PlotlyChart/utils';
+import { useAddToRecentLocalStorage } from '@charts-app/hooks/recently-used';
+import chartAtom from '@charts-app/models/chart/atom';
 import {
   removeTimeseries,
   convertTSToChartTS,
   addTimeseries,
   updateSourceAxisForChart,
-} from 'models/chart/updates';
+} from '@charts-app/models/chart/updates';
+import { calculateDefaultYAxis } from '@charts-app/utils/axis';
 import { useRecoilState } from 'recoil';
-import { calculateDefaultYAxis } from 'utils/axis';
+
+import { Timeseries } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useAddRemoveTimeseries = () => {
   const sdk = useSDK();

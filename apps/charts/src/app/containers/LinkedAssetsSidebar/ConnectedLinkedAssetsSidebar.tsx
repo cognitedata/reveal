@@ -1,10 +1,10 @@
 import { Asset } from '@cognite/sdk';
-import LinkedAssetsSidebar from 'components/LinkedAssetsSidebar/LinkedAssetsSidebar';
-import { useAddRemoveTimeseries } from 'components/Search/hooks';
+import LinkedAssetsSidebar from '@charts-app/components/LinkedAssetsSidebar/LinkedAssetsSidebar';
+import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
 import { useNavigate } from 'react-router-dom';
-import { useComponentTranslations } from 'hooks/translations';
-import useLinkedAssets from 'hooks/charts/linked-assets/hooks/useLinkedAssets';
-import { createInternalLink } from 'utils/link';
+import { useComponentTranslations } from '@charts-app/hooks/translations';
+import useLinkedAssets from '@charts-app/hooks/charts/linked-assets/hooks/useLinkedAssets';
+import { createInternalLink } from '@charts-app/utils/link';
 
 type Props = {
   onClose: () => void;

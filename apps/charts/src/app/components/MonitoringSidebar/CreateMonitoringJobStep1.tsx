@@ -1,36 +1,47 @@
-import { useEffect } from 'react';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useUserInfo } from 'hooks/useUserInfo';
-import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
-import MonitoringFolderSelect from 'components/MonitoringFolderSelect/MonitoringFolderSelect';
-import { useChartAtom } from 'models/chart/atom';
-import { useForm } from 'react-hook-form';
-import { delay } from 'lodash';
-import PortalWait from 'components/PortalWait/PortalWait';
-import {
-  addChartThreshold,
-  removeChartThreshold,
-  updateChartThresholdSelectedSource,
-  updateChartThresholdUpperLimit,
-} from 'models/chart/updates-threshold';
-import { ChartThreshold, ChartTimeSeries } from 'models/chart/types';
 import {
   SCHEDULE_MINUTE_OPTIONS,
   SCHEDULE_HOUR_OPTIONS,
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
 } from 'domain/monitoring/constants';
-import { useChartInteractionsAtom } from 'models/interactions/atom';
-import { trackUsage } from 'services/metrics';
-import { FieldHelperText, FieldTitleRequired } from 'components/Form/elements';
+
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+
+import {
+  FieldHelperText,
+  FieldTitleRequired,
+} from '@charts-app/components/Form/elements';
+import MonitoringFolderSelect from '@charts-app/components/MonitoringFolderSelect/MonitoringFolderSelect';
+import PortalWait from '@charts-app/components/PortalWait/PortalWait';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { useChartAtom } from '@charts-app/models/chart/atom';
+import {
+  ChartThreshold,
+  ChartTimeSeries,
+} from '@charts-app/models/chart/types';
+import {
+  addChartThreshold,
+  removeChartThreshold,
+  updateChartThresholdSelectedSource,
+  updateChartThresholdUpperLimit,
+} from '@charts-app/models/chart/updates-threshold';
+import { useChartInteractionsAtom } from '@charts-app/models/interactions/atom';
+import { delay } from 'lodash';
+import { trackUsage } from '@charts-app/services/metrics';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
+
+import { FormError } from '../Form/FormError';
+import { FormInputWithController } from '../Form/FormInputWithController';
+
 import {
   NotificationBox,
   NotificationEmail,
   FullWidthButton,
 } from './elements';
-import { FormInputWithController } from '../Form/FormInputWithController';
 import { CreateMonitoringJobFormData } from './types';
-import { FormError } from '../Form/FormError';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',

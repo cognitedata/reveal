@@ -1,5 +1,5 @@
 import { Operation, OperationVersion } from '@cognite/calculation-backend';
-import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
+import { ChartWorkflowV2, ScheduledCalculation } from '@charts-app/models/chart/types';
 import { Elements, FlowElement, Node } from 'react-flow-renderer';
 import {
   NodeTypes,

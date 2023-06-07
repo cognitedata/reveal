@@ -16,12 +16,12 @@ import {
   isEdge,
   removeElements,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
-import { NodeDataVariants } from 'components/NodeEditor/V2/types';
+import { ChartWorkflowV2, ScheduledCalculation } from '@charts-app/models/chart/types';
+import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
 import {
   FunctionNodeData,
   FunctionNodeDataDehydrated,
-} from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+} from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
 import compareVersions from 'compare-versions';
 import { uniqBy } from 'lodash';
 import { NodeTypes } from './types';

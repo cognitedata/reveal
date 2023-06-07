@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { SelectProps, SelectComponents } from '@cognite/cogs.js';
 import { OptionProps, components } from 'react-select';
-import { useChartSourcesValue } from 'models/chart/selectors';
-import { SourceOption } from 'components/NodeEditor/V2/types';
-import { SourceSelect } from 'components/Common/SidebarElements';
-import { ChartSource, SourceType } from 'models/chart/types';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
+import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
+import { SourceSelect } from '@charts-app/components/Common/SidebarElements';
+import { ChartSource, SourceType } from '@charts-app/models/chart/types';
 import { SourceIcon } from './SourceIcon';
 import { SourceOptionContainer, EllipsesText } from './elements';
 

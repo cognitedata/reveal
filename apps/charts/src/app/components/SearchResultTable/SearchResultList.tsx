@@ -1,10 +1,10 @@
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
-} from 'components/Search/EmptyResult';
-import { SearchFilter } from 'components/Search/Search';
-import { useTranslations } from 'hooks/translations';
+} from '@charts-app/components/Search/EmptyResult';
+import { SearchFilter } from '@charts-app/components/Search/Search';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
-import { makeDefaultTranslations } from 'utils/translations';
 
 import { Icon, Button } from '@cognite/cogs.js';
 

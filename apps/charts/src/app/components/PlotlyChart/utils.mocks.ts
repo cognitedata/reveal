@@ -4,9 +4,9 @@ import {
   ChartWorkflow,
   Interpolation,
   LineStyle,
-} from 'models/chart/types';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-results/types';
+} from '@charts-app/models/chart/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import { SeriesData } from './utils';
 
 export const eventDataExample: any[] = [

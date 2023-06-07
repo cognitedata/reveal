@@ -1,5 +1,5 @@
 import { CogniteEvent } from '@cognite/sdk';
-import { ChartEventFilters } from 'models/chart/types';
+import { ChartEventFilters } from '@charts-app/models/chart/types';
 
 export type EventsEntry = {
   id: number;

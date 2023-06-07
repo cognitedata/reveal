@@ -6,13 +6,13 @@ import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { FunctionComponent, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { omit } from 'lodash';
-import { useTranslations } from 'hooks/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import {
   Chart,
   ChartSource,
   ChartThreshold,
   ChartThresholdEventFilter,
-} from 'models/chart/types';
+} from '@charts-app/models/chart/types';
 import {
   addChartThreshold,
   initThresholdCollection,
@@ -24,17 +24,17 @@ import {
   updateChartThresholdUpperLimit,
   updateChartThresholdVisibility,
   updateChartThresholdEventFilters,
-} from 'models/chart/updates-threshold';
-import Thresholds from 'components/Thresholds/Thresholds';
+} from '@charts-app/models/chart/updates-threshold';
+import Thresholds from '@charts-app/components/Thresholds/Thresholds';
 import {
   Sidebar,
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
   ContentOverflowWrapper,
-} from 'components/Common/SidebarElements';
-import useThresholdsResults from 'hooks/threshold-calculations';
-import { useChartSourcesValue } from 'models/chart/selectors';
+} from '@charts-app/components/Common/SidebarElements';
+import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 
 type Props = {
   visible: boolean;

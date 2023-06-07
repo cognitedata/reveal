@@ -14,11 +14,11 @@ import {
   ContentOverflowWrapper,
   ContentContainer,
   LoadingRow,
-} from 'components/Common/SidebarElements';
-import { WorkflowState } from 'models/calculation-results/types';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
-import { StyleButton } from 'components/StyleButton/StyleButton';
+} from '@charts-app/components/Common/SidebarElements';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
 
 type Props = {
   visible: boolean;

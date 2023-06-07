@@ -23,15 +23,15 @@ import {
 } from '@cognite/calculation-backend';
 import { getCluster } from '@cognite/cdf-utilities';
 
-import { BACKEND_SERVICE_URL_KEY } from 'utils/constants';
+import { BACKEND_SERVICE_URL_KEY } from '@charts-app/utils/constants';
 import {
   CogniteClient,
   DatapointAggregate,
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
-import { isProduction } from 'utils/environment';
-import { WorkflowResult } from 'models/calculation-results/types';
+import { isProduction } from '@charts-app/utils/environment';
+import { WorkflowResult } from '@charts-app/models/calculation-results/types';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

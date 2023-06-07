@@ -1,7 +1,7 @@
 import { Flex, Title, Button, Body, Checkbox, Icon } from '@cognite/cogs.js';
-import { useTranslations } from 'hooks/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { Trans } from 'react-i18next';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { StyledModal } from './elements';

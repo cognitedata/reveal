@@ -1,11 +1,13 @@
 import { memo, ComponentProps } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import { useTranslations } from 'hooks/translations';
-import TimeSeriesRow from './TimeSeriesRow';
-import WorkflowRow from './WorkflowRow';
+
+import { useTranslations } from '@charts-app/hooks/translations';
+import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
+
 import { ScheduledCalculationRow } from './ScheduledCalculationRow';
+import TimeSeriesRow from './TimeSeriesRow';
 import { SourceRowsProps } from './types';
+import WorkflowRow from './WorkflowRow';
 
 const SourceRows = memo(
   ({

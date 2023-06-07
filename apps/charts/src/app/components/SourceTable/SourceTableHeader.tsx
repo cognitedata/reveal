@@ -2,10 +2,10 @@
  * SourceTable Header
  */
 
-import { ShowHideButton } from 'components/ShowHideButton/ShowHideButton';
+import { ShowHideButton } from '@charts-app/components/ShowHideButton/ShowHideButton';
 import { Modes } from 'pages/types';
 import { MouseEventHandler } from 'react';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { SourceItem, SourceName } from './elements';
 
 interface Props {

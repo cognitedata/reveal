@@ -1,9 +1,9 @@
 import { toast } from '@cognite/cogs.js';
 import { getProject } from '@cognite/cdf-utilities';
-import { useTranslations } from 'hooks/translations';
-import { Chart } from 'models/chart/types';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { Chart } from '@charts-app/models/chart/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteChart } from 'services/charts-storage';
+import { deleteChart } from '@charts-app/services/charts-storage';
 
 const useDeleteMyChart = () => {
   const queryClient = useQueryClient();

@@ -1,7 +1,7 @@
 /* eslint camelcase: 0 */
 import { useCallback, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { useChart, useUpdateChart } from 'hooks/charts-storage';
+import { useChart, useUpdateChart } from '@charts-app/hooks/charts-storage';
 import {
   ChartWorkflowV2,
   Chart,
@@ -9,13 +9,13 @@ import {
   ChartWorkflow,
   ScheduledCalculation,
   ChartSource,
-} from 'models/chart/types';
+} from '@charts-app/models/chart/types';
 import {
   updateChartDateRange,
   updateWorkflowsFromV1toV2,
   updateWorkflowsToSupportVersions,
-} from 'models/chart/updates';
-import chartAtom from 'models/chart/atom';
+} from '@charts-app/models/chart/updates';
+import chartAtom from '@charts-app/models/chart/atom';
 import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
 import { useDebounce } from 'use-debounce';
@@ -24,20 +24,20 @@ import {
   fetchStatisticsResult,
   waitForCalculationToFinish,
   waitForStatisticsToFinish,
-} from 'services/calculation-backend';
+} from '@charts-app/services/calculation-backend';
 
-import { useCreateStatistics } from 'hooks/calculation-backend';
+import { useCreateStatistics } from '@charts-app/hooks/calculation-backend';
 
 import {
   CreateStatisticsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
 
-import { getHash } from 'utils/hash';
+import { getHash } from '@charts-app/utils/hash';
 import { usePrevious } from 'react-use';
 import { useRecoilState } from 'recoil';
-import { useOperations } from 'models/operations/atom';
-import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
+import { useOperations } from '@charts-app/models/operations/atom';
+import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 
 export const useInitializedChart = (chartId: string) => {
   /**

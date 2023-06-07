@@ -1,7 +1,7 @@
 import { Icon, Infobox } from '@cognite/cogs.js';
 import { ReactNode } from 'react';
 import styled from 'styled-components/macro';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { FileListItem } from './FileListItem';
 
 const defaultTranslations = makeDefaultTranslations(

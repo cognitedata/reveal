@@ -1,4 +1,4 @@
-import { SourceOption } from 'components/NodeEditor/V2/types';
+import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
 
 export const mockSourceList: SourceOption[] = [
   {

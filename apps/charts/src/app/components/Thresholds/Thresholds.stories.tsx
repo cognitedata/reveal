@@ -3,8 +3,8 @@
  */
 import { Meta, Story } from '@storybook/react';
 import { useArgs } from '@storybook/client-api';
-import useThresholdsResults from 'hooks/threshold-calculations';
-import { ChartThreshold } from 'models/chart/types';
+import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
+import { ChartThreshold } from '@charts-app/models/chart/types';
 import { v4 as uuidv4 } from 'uuid';
 import { RecoilRoot } from 'recoil';
 import ThresholdsComponent from './Thresholds';

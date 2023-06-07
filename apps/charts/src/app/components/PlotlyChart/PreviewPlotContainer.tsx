@@ -1,4 +1,4 @@
-import { Chart } from 'models/chart/types';
+import { Chart } from '@charts-app/models/chart/types';
 import { Skeleton } from 'antd';
 import { ChartingContainer } from './elements';
 import PlotlyChart from './PlotlyChart';

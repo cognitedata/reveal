@@ -6,7 +6,7 @@ import {
   Switch,
   Tooltip,
 } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { DropdownTitle, DropdownWrapper } from './elements';
 
 type Props = {

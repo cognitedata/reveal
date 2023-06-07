@@ -11,13 +11,14 @@
  * to change the config.entry in the config-overrides as well.
  */
 
-import ReactDOM from 'react-dom';
 import React from 'react';
+import ReactDOM from 'react-dom';
+
+import config from '@charts-app/config/config';
 import singleSpaReact from 'single-spa-react';
 
-import config from 'config/config';
-import { isDevelopment, isPR } from './utils/environment';
 import { RootApp } from './App';
+import { isDevelopment, isPR } from './utils/environment';
 
 import './set-public-path';
 

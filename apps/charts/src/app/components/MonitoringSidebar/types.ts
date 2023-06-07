@@ -1,6 +1,7 @@
+import { AlertResponse } from '@charts-app/components/MonitoringAlert/types';
+import { ChartTimeSeries } from '@charts-app/models/chart/types';
+
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
-import { AlertResponse } from 'components/MonitoringAlert/types';
-import { ChartTimeSeries } from 'models/chart/types';
 
 export type MonitoringChannel = {
   name: string;

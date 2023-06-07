@@ -1,35 +1,40 @@
+import { CHARTS_FOLDER_PREFIX } from 'domain/monitoring/constants';
+
 import React, { memo, useEffect, useState } from 'react';
-import { Col, Row } from 'antd';
+
 import {
   CollapsePanelTitle,
   ExpandIcon,
   LoadingRow,
-} from 'components/Common/SidebarElements';
-import { Collapse } from '@cognite/cogs.js';
-import head from 'lodash/head';
+} from '@charts-app/components/Common/SidebarElements';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useChartAtom } from '@charts-app/models/chart/atom';
+import { Col, Row } from 'antd';
 import difference from 'lodash/difference';
-import { useSearchParam } from 'hooks/navigation';
+import head from 'lodash/head';
+import { trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
   MONITORING_FILTER,
-} from 'utils/constants';
-import { useChartAtom } from 'models/chart/atom';
-import { trackUsage } from 'services/metrics';
-import { CHARTS_FOLDER_PREFIX } from 'domain/monitoring/constants';
-import { SidebarChip, SidebarCollapseWrapped, ExpandTitle } from './elements';
-import { MonitoringFolderJobs, MonitoringJob } from './types';
-import { useMonitoringFoldersWithJobs } from './hooks';
-import ListMonitoringJobPreview from './ListMonitoringJobPreview';
+} from '@charts-app/utils/constants';
+
+import { Collapse } from '@cognite/cogs.js';
+
 import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
+
+import { SidebarChip, SidebarCollapseWrapped, ExpandTitle } from './elements';
 import EmptyState from './EmptyState';
+import { useMonitoringFoldersWithJobs } from './hooks';
 import {
   JobAndAlertsFilter,
   FilterOption,
   MONITORING_FILTER_OPTIONS,
 } from './JobAndAlertsFilter';
+import ListMonitoringJobPreview from './ListMonitoringJobPreview';
+import { MonitoringFolderJobs, MonitoringJob } from './types';
 
-const removePrefixFromFolder = (folderName: string = '') =>
+const removePrefixFromFolder = (folderName = '') =>
   folderName.replace(CHARTS_FOLDER_PREFIX, '');
 
 const ListMonitoringJobs = memo(() => {

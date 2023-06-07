@@ -1,19 +1,22 @@
 import { useEffect } from 'react';
-import { Checkbox, Icon, Title } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
-import { Asset, Timeseries } from '@cognite/sdk';
-import { useRecentViewLocalStorage } from 'hooks/recently-used';
-import { useCdfItems } from 'hooks/cognite-functions';
+
+import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
+import { useCdfItems } from '@charts-app/hooks/cognite-functions';
+import { useRecentViewLocalStorage } from '@charts-app/hooks/recently-used';
+import { useTranslations } from '@charts-app/hooks/translations';
+import chartAtom from '@charts-app/models/chart/atom';
+import { trackUsage } from '@charts-app/services/metrics';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
-import { useAddRemoveTimeseries } from 'components/Search/hooks';
-import chartAtom from 'models/chart/atom';
-import { trackUsage } from 'services/metrics';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
+import styled from 'styled-components/macro';
+
+import { Checkbox, Icon, Title } from '@cognite/cogs.js';
+import { Asset, Timeseries } from '@cognite/sdk';
+
 import AssetSearchHit from './AssetSearchHit';
-import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 import SearchEmptyState from './SearchEmptyState';
+import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
 const defaultTranslation = makeDefaultTranslations('Recently viewed');
 

@@ -17,21 +17,21 @@ import {
 } from '@cognite/cogs.js';
 import { v4 as uuidv4 } from 'uuid';
 
-import DetailsBlock from 'components/DetailsBlock/DetailsBlock';
+import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
 import { SourceCircle, SourceSquare } from 'pages/ChartViewPage/elements';
-import { ChartSource } from 'models/chart/types';
-import { formatValueForDisplay } from 'utils/numbers';
-import { getUnitConverter } from 'utils/units';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
+import { ChartSource } from '@charts-app/models/chart/types';
+import { formatValueForDisplay } from '@charts-app/utils/numbers';
+import { getUnitConverter } from '@charts-app/utils/units';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import {
   Sidebar,
   ContentOverflowWrapper,
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
-} from 'components/Common/SidebarElements';
-import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
+} from '@charts-app/components/Common/SidebarElements';
+import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import {
   Container,
   HistogramWrapper,

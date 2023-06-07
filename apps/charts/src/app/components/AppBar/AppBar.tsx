@@ -4,7 +4,7 @@ import {
   getTranslationsForComponent,
   makeDefaultTranslations,
   translationKeys,
-} from 'utils/translations';
+} from '@charts-app/utils/translations';
 import AppBarCommonActions from './AppBarCommonActions';
 
 const defaultTranslations = makeDefaultTranslations(

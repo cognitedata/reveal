@@ -1,7 +1,14 @@
 import { useCallback, useState } from 'react';
+
 import styled from 'styled-components';
-import { ASSET_KEY, SEARCH_KEY, TS_SEARCH_KEY } from 'utils/constants';
-import { useSearchParam } from 'hooks/navigation';
+
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import {
+  ASSET_KEY,
+  SEARCH_KEY,
+  TS_SEARCH_KEY,
+} from '@charts-app/utils/constants';
+
 import Search, { SearchFilter } from './Search';
 import SearchInAsset from './SearchInAsset';
 

@@ -8,18 +8,18 @@ import {
   Select,
 } from '@cognite/cogs.js';
 import { Col, Row } from 'antd';
-import useThresholdsResults from 'hooks/threshold-calculations';
+import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import {
   ChartSource,
   ChartThreshold,
   ChartThresholdEventFilter,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/chart/types';
-import { convertMSToDisplay } from 'utils/date';
-import { getUnitConverter } from 'utils/units';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import { isThresholdValid } from 'utils/threshold';
+} from '@charts-app/models/chart/types';
+import { convertMSToDisplay } from '@charts-app/utils/date';
+import { getUnitConverter } from '@charts-app/utils/units';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import { isThresholdValid } from '@charts-app/utils/threshold';
 import {
   ReverseSwitch,
   ExpandIcon,
@@ -28,8 +28,8 @@ import {
   SidebarFormLabel,
   SidebarInnerBox,
   SidebarChip,
-} from 'components/Common/SidebarElements';
-import { SourceSelector } from 'components/Common/SourceSelector';
+} from '@charts-app/components/Common/SidebarElements';
+import { SourceSelector } from '@charts-app/components/Common/SourceSelector';
 
 import { useFilterValue } from './useFilterValue';
 

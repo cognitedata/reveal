@@ -1,33 +1,36 @@
 import { useEffect, useState } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  isFilePreviewable,
+  readablePreviewableFileTypes,
+} from '@charts-app/components/FileList/utils';
+import { useTranslations } from '@charts-app/hooks/translations';
 import * as pdfjs from 'pdfjs-dist';
+import styled from 'styled-components/macro';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   ContainerConfig,
   getContainerConfigFromFileInfo,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import styled from 'styled-components/macro';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
-import {
-  isFilePreviewable,
-  readablePreviewableFileTypes,
-} from 'components/FileList/utils';
+
+import { ActionTools } from './components/ActionTools';
 import { Loader } from './components/Loader';
-import { useUnifiedFileViewerState } from './hooks/useUnifiedFileViewerState';
+import { Paginator } from './components/Paginator';
 import {
   MAX_CONTAINER_HEIGHT,
   MAX_CONTAINER_WIDTH,
   ROOT_CONTAINER_ID,
 } from './constants';
-import { ActionTools } from './components/ActionTools';
-import { Paginator } from './components/Paginator';
-import { useOCRSearchResults } from './hooks/useOCRSearchResults';
 import { useAnnotations } from './hooks/useAnnotations';
 import { useEventAnnotations } from './hooks/useEventAnnotations';
-import { getContainerId } from './utils/getContainerId';
 import { useExtractedAnnotations } from './hooks/useExtractedAnnotations';
+import { useOCRSearchResults } from './hooks/useOCRSearchResults';
+import { useUnifiedFileViewerState } from './hooks/useUnifiedFileViewerState';
+import { getContainerId } from './utils/getContainerId';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 

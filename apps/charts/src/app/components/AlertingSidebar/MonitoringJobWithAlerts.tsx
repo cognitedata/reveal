@@ -1,16 +1,16 @@
 import { Col, Icon, Menu, Modal, Row, Title } from '@cognite/cogs.js';
 
-import { MonitoringJob } from 'components/MonitoringSidebar/types';
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
 import React, { useState } from 'react';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
 import { head } from 'lodash';
 
-import { useAddRemoveTimeseries } from 'components/Search/hooks';
-import { useAlertsResolveCreate } from 'components/MonitoringAlert/hooks';
-import { useChartAtom } from 'models/chart/atom';
-import { trackUsage } from 'services/metrics';
+import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
+import { useAlertsResolveCreate } from '@charts-app/components/MonitoringAlert/hooks';
+import { useChartAtom } from '@charts-app/models/chart/atom';
+import { trackUsage } from '@charts-app/services/metrics';
 import {
   TimeseriesContainer,
   DropdownMenuItem,

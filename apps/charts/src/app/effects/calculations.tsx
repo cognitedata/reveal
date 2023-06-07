@@ -2,27 +2,27 @@ import {
   Calculation,
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
-import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
-import { isWorkflowRunnable } from 'components/NodeEditor/utils';
-import { validateSteps } from 'components/NodeEditor/V2/calculations';
+import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';
+import { isWorkflowRunnable } from '@charts-app/components/NodeEditor/utils';
+import { validateSteps } from '@charts-app/components/NodeEditor/V2/calculations';
 import dayjs from 'dayjs';
 import {
   useCalculationQueryResult,
   useCalculationStatus,
   useCreateCalculation,
-} from 'hooks/calculation-backend';
-import { workflowsAtom } from 'models/calculation-results/atom';
-import chartAtom from 'models/chart/atom';
-import { ChartWorkflowV2 } from 'models/chart/types';
+} from '@charts-app/hooks/calculation-backend';
+import { workflowsAtom } from '@charts-app/models/calculation-results/atom';
+import chartAtom from '@charts-app/models/chart/atom';
+import { ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { CHART_POINTS_PER_SERIES } from 'utils/constants';
-import { getHash } from 'utils/hash';
-import { calculateGranularity } from 'utils/timeseries';
+import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
+import { getHash } from '@charts-app/utils/hash';
+import { calculateGranularity } from '@charts-app/utils/timeseries';
 import { useDebounce } from 'use-debounce';
-import { updateWorkflow } from 'models/chart/updates';
+import { updateWorkflow } from '@charts-app/models/chart/updates';
 import { isEqual } from 'lodash';
-import { useOperations } from 'models/operations/atom';
+import { useOperations } from '@charts-app/models/operations/atom';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);

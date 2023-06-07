@@ -17,11 +17,11 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
-import { WorkflowResult } from 'models/calculation-results/types';
+import { RAW_DATA_POINTS_THRESHOLD } from '@charts-app/utils/constants';
+import { WorkflowResult } from '@charts-app/models/calculation-results/types';
 import { useCallback } from 'react';
-import { ChartThreshold } from 'models/chart/types';
-import { getHash } from 'utils/hash';
+import { ChartThreshold } from '@charts-app/models/chart/types';
+import { getHash } from '@charts-app/utils/hash';
 import {
   createCalculation,
   createStatistics,

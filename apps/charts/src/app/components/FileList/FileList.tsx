@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react';
 import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import styled from 'styled-components/macro';
-import DelayedComponent from 'components/DelayedComponent';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
+import DelayedComponent from '@charts-app/components/DelayedComponent';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { useFileIcon, useFilesAssetAppearsIn } from './hooks';
 import { isFilePreviewable } from './utils';
 

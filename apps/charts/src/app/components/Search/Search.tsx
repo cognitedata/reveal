@@ -10,26 +10,26 @@ import styled from 'styled-components';
 
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
-} from 'components/Search/EmptyResult';
+} from '@charts-app/components/Search/EmptyResult';
 import {
   defaultTranslations as filterDropdownDefaultTranslation,
   SearchFilterSettings,
-} from 'components/Search/FilterDropdown';
+} from '@charts-app/components/Search/FilterDropdown';
 import {
   useAssetSearchResults,
   useTimeseriesSearchResult,
-} from 'components/SearchResultTable/hooks';
-import SearchResultList from 'components/SearchResultTable/SearchResultList';
-import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
-import { useRootAssets } from 'hooks/cdf-assets';
-import { useSearchParam } from 'hooks/navigation';
-import { useTranslations } from 'hooks/translations';
-import { facilityAtom } from 'models/facility/atom';
+} from '@charts-app/components/SearchResultTable/hooks';
+import SearchResultList from '@charts-app/components/SearchResultTable/SearchResultList';
+import SearchTimeseries from '@charts-app/components/SearchResultTable/SearchTimeseries';
+import { useRootAssets } from '@charts-app/hooks/cdf-assets';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { facilityAtom } from '@charts-app/models/facility/atom';
+import { trackUsage } from '@charts-app/services/metrics';
+import { SEARCH_KEY } from '@charts-app/utils/constants';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
-import { trackUsage } from 'services/metrics';
 import { useDebounce } from 'use-debounce';
-import { SEARCH_KEY } from 'utils/constants';
-import { makeDefaultTranslations } from 'utils/translations';
 
 import {
   Input,

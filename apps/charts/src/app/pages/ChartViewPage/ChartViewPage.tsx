@@ -8,20 +8,20 @@ import {
 import get from 'lodash/get';
 import { useFlag } from '@cognite/react-feature-flags';
 import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
-import { useIsChartOwner } from 'hooks/user';
+import { useIsChartOwner } from '@charts-app/hooks/user';
 import { useParams } from 'react-router-dom';
-import NodeEditor from 'components/NodeEditor/NodeEditor';
-import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import ChartPlotContainer from 'components/PlotlyChart/ChartPlotContainer';
-import { useUpdateChart } from 'hooks/charts-storage';
+import NodeEditor from '@charts-app/components/NodeEditor/NodeEditor';
+import SplitPaneLayout from '@charts-app/components/Layout/SplitPaneLayout';
+import ChartPlotContainer from '@charts-app/components/PlotlyChart/ChartPlotContainer';
+import { useUpdateChart } from '@charts-app/hooks/charts-storage';
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
   ChartSource,
   ScheduledCalculation,
-} from 'models/chart/types';
-import { useSearchParam } from 'hooks/navigation';
+} from '@charts-app/models/chart/types';
+import { useSearchParam } from '@charts-app/hooks/navigation';
 import {
   SEARCH_KEY,
   ACTIVE_SIDEBAR_KEY,
@@ -30,8 +30,8 @@ import {
   ALERTING_SIDEBAR_KEY,
   THRESHOLD_SIDEBAR_KEY,
   ALERTING_FILTER,
-} from 'utils/constants';
-import { startTimer, stopTimer, trackUsage } from 'services/metrics';
+} from '@charts-app/utils/constants';
+import { startTimer, stopTimer, trackUsage } from '@charts-app/services/metrics';
 import { Modes } from 'pages/types';
 import {
   addWorkflow,
@@ -43,16 +43,16 @@ import {
   updateChartSource,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
-} from 'models/chart/updates';
+} from '@charts-app/models/chart/updates';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
-import { useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
-import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
-import SearchSidebar from 'components/Search/SearchSidebar';
-import { getEntryColor } from 'utils/colors';
+import chartAtom from '@charts-app/models/chart/atom';
+import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import DetailsSidebar from '@charts-app/components/DetailsSidebar/DetailsSidebar';
+import ThresholdSidebar from '@charts-app/components/Thresholds/ThresholdSidebar';
+import SearchSidebar from '@charts-app/components/Search/SearchSidebar';
+import { getEntryColor } from '@charts-app/utils/colors';
 import {
   MONITORING_CAPABILITIES,
   ALERTING_CAPABILITIES,
@@ -64,36 +64,36 @@ import { Elements } from 'react-flow-renderer';
 import {
   NodeDataDehydratedVariants,
   NodeTypes,
-} from 'components/NodeEditor/V2/types';
+} from '@charts-app/components/NodeEditor/V2/types';
 
-import SourceTable from 'components/SourceTable/SourceTable';
-import { timeseriesAtom } from 'models/timeseries-results/atom';
+import SourceTable from '@charts-app/components/SourceTable/SourceTable';
+import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
 import {
   availableWorkflows,
   calculationSummaries,
-} from 'models/calculation-results/selectors';
-import { TimeseriesCollectionEffects } from 'effects/timeseries';
-import { CalculationCollectionEffects } from 'effects/calculations';
+} from '@charts-app/models/calculation-results/selectors';
+import { TimeseriesCollectionEffects } from '@charts-app/effects/timeseries';
+import { CalculationCollectionEffects } from '@charts-app/effects/calculations';
 import { flow } from 'lodash';
-import { getUnitConverter } from 'utils/units';
-import { timeseriesSummaries } from 'models/timeseries-results/selectors';
+import { getUnitConverter } from '@charts-app/utils/units';
+import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
 
-import { useChartSourcesValue } from 'models/chart/selectors';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import ChartViewPageSecondaryAppBar from 'pages/ChartViewPage/ChartViewPageSecondaryAppBar';
 
-import PageTitle from 'components/PageTitle/PageTitle';
-import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
-import { WorkflowState } from 'models/calculation-results/types';
-import { Toolbar } from 'components/Common/SidebarElements';
-import DataProfilingSidebar from 'components/DataProfilingSidebar/DataProfilingSidebar';
-import EventSidebar from 'components/EventSidebar/EventSidebar';
-import { eventResultsAtom } from 'models/event-results/atom';
-import { EventResultEffects } from 'effects/events';
-import { MonitoringSidebar } from 'components/MonitoringSidebar/MonitoringSidebar';
-import { AlertingSidebar } from 'components/AlertingSidebar/AlertingSidebar';
-import interactionsAtom from 'models/interactions/atom';
-import { AccessDeniedModal } from 'components/AccessDeniedModal/AccessDeniedModal';
+import PageTitle from '@charts-app/components/PageTitle/PageTitle';
+import ErrorSidebar from '@charts-app/components/ErrorSidebar/ErrorSidebar';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { Toolbar } from '@charts-app/components/Common/SidebarElements';
+import DataProfilingSidebar from '@charts-app/components/DataProfilingSidebar/DataProfilingSidebar';
+import EventSidebar from '@charts-app/components/EventSidebar/EventSidebar';
+import { eventResultsAtom } from '@charts-app/models/event-results/atom';
+import { EventResultEffects } from '@charts-app/effects/events';
+import { MonitoringSidebar } from '@charts-app/components/MonitoringSidebar/MonitoringSidebar';
+import { AlertingSidebar } from '@charts-app/components/AlertingSidebar/AlertingSidebar';
+import interactionsAtom from '@charts-app/models/interactions/atom';
+import { AccessDeniedModal } from '@charts-app/components/AccessDeniedModal/AccessDeniedModal';
 import { useExperimentalCapabilitiesCheck } from 'domain/chart';
 import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
 import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';

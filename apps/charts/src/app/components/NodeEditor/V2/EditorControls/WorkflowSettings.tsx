@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import { Icon, Menu, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
-import { defaultTranslations } from 'components/NodeEditor/translations';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 
 type Props = {

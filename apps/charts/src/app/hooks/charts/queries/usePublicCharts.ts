@@ -1,8 +1,8 @@
-import { useUserInfo } from 'hooks/useUserInfo';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import dayjs from 'dayjs';
 import { getProject } from '@cognite/cdf-utilities';
 import { useQuery } from '@tanstack/react-query';
-import { fetchPublicCharts } from 'services/charts-storage';
+import { fetchPublicCharts } from '@charts-app/services/charts-storage';
 import { ChartItem } from '../types';
 
 const usePublicCharts = () => {

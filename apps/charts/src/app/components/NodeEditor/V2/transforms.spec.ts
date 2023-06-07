@@ -1,6 +1,6 @@
 import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
-import { Chart, ChartWorkflowV2 } from 'models/chart/types';
-import { fullListOfOperations } from 'models/operations/mocks';
+import { Chart, ChartWorkflowV2 } from '@charts-app/models/chart/types';
+import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import {
   getStepsFromWorkflowReactFlow,
   transformParamInput,

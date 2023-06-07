@@ -1,8 +1,8 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { fullListOfOperations } from 'models/operations/mocks';
+import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
-import { defaultTranslations } from 'components/NodeEditor/translations';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { Operation } from '@cognite/calculation-backend';
 import FunctionNode from './FunctionNode';
 import ReactFlowNodeEditor from '../../ReactFlowNodeEditor';

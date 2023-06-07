@@ -2,8 +2,8 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
 import dayjs from 'dayjs';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { DataSetItem, LinkedAssetItem, MetadataItem } from './MetadataItem';
 
 type MetadataListProps = {

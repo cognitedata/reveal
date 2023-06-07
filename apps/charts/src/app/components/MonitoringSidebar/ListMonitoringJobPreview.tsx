@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
 import styled from 'styled-components';
-import Dropdown from 'components/Dropdown/Dropdown';
+import Dropdown from '@charts-app/components/Dropdown/Dropdown';
 import { Button, Icon, toast, Body } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useUserInfo } from 'hooks/useUserInfo';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { nanoid } from 'nanoid';
-import { useSearchParam } from 'hooks/navigation';
+import { useSearchParam } from '@charts-app/hooks/navigation';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SHOW_ALERTS,
-} from 'utils/constants';
-import { trackUsage } from 'services/metrics';
+} from '@charts-app/utils/constants';
+import { trackUsage } from '@charts-app/services/metrics';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { head } from 'lodash';
 import { Timeseries } from '@cognite/sdk';

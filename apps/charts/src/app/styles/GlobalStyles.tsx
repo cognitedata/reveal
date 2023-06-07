@@ -7,7 +7,7 @@ import {
 } from '@cognite/cogs.js';
 import { ConfigProvider } from 'antd';
 
-import { getContainer } from 'utils/getContainer';
+import { getContainer } from '@charts-app/utils/getContainer';
 import { styleScope } from 'styles/styleScope';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';

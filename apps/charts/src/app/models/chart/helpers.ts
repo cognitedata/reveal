@@ -11,7 +11,7 @@ import {
   ScheduledCalculation,
   UserInfo,
   SourceType,
-} from 'models/chart/types';
+} from '@charts-app/models/chart/types';
 
 const COLLECTION_TYPE_MAP: Record<CollectionType, SourceType> = {
   workflowCollection: 'workflow',

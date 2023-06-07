@@ -13,10 +13,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { EventFilter, CogniteClient } from '@cognite/sdk';
 
-import chartAtom from 'models/chart/atom';
-import { ChartEventFilters } from 'models/chart/types';
-import { eventResultsAtom } from 'models/event-results/atom';
-import { transformNewFilterToOldFilter } from 'components/EventSidebar/helpers';
+import chartAtom from '@charts-app/models/chart/atom';
+import { ChartEventFilters } from '@charts-app/models/chart/types';
+import { eventResultsAtom } from '@charts-app/models/event-results/atom';
+import { transformNewFilterToOldFilter } from '@charts-app/components/EventSidebar/helpers';
 
 export function EventResultEffects() {
   const [chart] = useRecoilState(chartAtom);

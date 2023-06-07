@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import config from 'config/config';
+import config from '@charts-app/config/config';
 import {
   fetchFirebaseEnvironment,
   fetchFirebaseToken,
   initializeFirebase,
-} from 'services/firebase';
+} from '@charts-app/services/firebase';
+import { useQuery } from '@tanstack/react-query';
 
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';

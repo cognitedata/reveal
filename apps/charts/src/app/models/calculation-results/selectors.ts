@@ -1,7 +1,7 @@
-import chartAtom from 'models/chart/atom';
-import { Chart } from 'models/chart/types';
+import chartAtom from '@charts-app/models/chart/atom';
+import { Chart } from '@charts-app/models/chart/types';
 import { selector } from 'recoil';
-import { getUnitConvertedDatapointsSummary } from 'utils/units';
+import { getUnitConvertedDatapointsSummary } from '@charts-app/utils/units';
 import { workflowsAtom } from './atom';
 import { WorkflowState } from './types';
 

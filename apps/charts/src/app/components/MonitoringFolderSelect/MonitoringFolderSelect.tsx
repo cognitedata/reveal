@@ -3,10 +3,10 @@ import { Divider, Row } from 'antd';
 import { Controller } from 'react-hook-form';
 
 import { Button, Icon, Select, toast } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components';
 import { CogniteError } from '@cognite/sdk';
-import { trackUsage } from 'services/metrics';
+import { trackUsage } from '@charts-app/services/metrics';
 import debounce from 'lodash/debounce';
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 

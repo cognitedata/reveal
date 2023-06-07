@@ -12,8 +12,8 @@ import {
   MiddleEllipsis,
   DropdownProps,
 } from '@cognite/cogs.js';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import CopyButton from 'components/CopyButton/CopyButton';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import CopyButton from '@charts-app/components/CopyButton/CopyButton';
 
 interface SharingDropdownProps extends DropdownProps {
   chart: {

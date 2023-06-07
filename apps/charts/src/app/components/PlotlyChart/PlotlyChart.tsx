@@ -7,15 +7,15 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
-} from 'models/chart/types';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-results/types';
+} from '@charts-app/models/chart/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
   ChartEventResults,
   EventsCollection,
-} from 'models/event-results/types';
-import { InteractionData } from 'models/interactions/types';
-import { ScheduledCalculationsDataMap } from 'models/scheduled-calculation-results/types';
+} from '@charts-app/models/event-results/types';
+import { InteractionData } from '@charts-app/models/interactions/types';
+import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,

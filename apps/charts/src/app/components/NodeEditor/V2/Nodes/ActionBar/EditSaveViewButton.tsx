@@ -1,6 +1,6 @@
 import { MouseEventHandler } from 'react';
 import { Button, IconType } from '@cognite/cogs.js';
-import { defaultTranslations } from 'components/NodeEditor/translations';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 
 type Props = {
   isEditing: boolean;

@@ -1,7 +1,9 @@
-import { useTranslations } from 'hooks/translations';
-import { ChartTimeSeries } from 'models/chart/types';
-import { Modes } from 'pages/types';
 import { ComponentProps } from 'react';
+
+import { useTranslations } from '@charts-app/hooks/translations';
+import { ChartTimeSeries } from '@charts-app/models/chart/types';
+import { Modes } from 'pages/types';
+
 import TimeSeriesRow from './TimeSeriesRow';
 
 type Props = {

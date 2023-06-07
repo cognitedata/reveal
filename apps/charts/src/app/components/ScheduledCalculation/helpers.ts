@@ -3,7 +3,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { captureMessage } from '@sentry/react';
 import { UseMutateAsyncFunction } from '@tanstack/react-query';
 import { ComputationStep } from '@cognite/calculation-backend';
-import { Chart, ChartWorkflow, ChartWorkflowV2 } from 'models/chart/types';
+import { Chart, ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
 import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';

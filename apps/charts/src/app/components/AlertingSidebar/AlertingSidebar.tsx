@@ -3,22 +3,22 @@ import {
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
-} from 'components/Common/SidebarElements';
+} from '@charts-app/components/Common/SidebarElements';
 import { useEffect } from 'react';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useMonitoringFoldersWithJobs } from 'components/MonitoringSidebar/hooks';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useMonitoringFoldersWithJobs } from '@charts-app/components/MonitoringSidebar/hooks';
 import { saveToLocalStorage } from '@cognite/storage';
 import { jobsToAlerts } from 'pages/ChartViewPage/NotificationIndicator';
-import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from 'utils/constants';
+import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   JobAndAlertsFilter,
   FilterOption,
   ALERTING_FILTER_OPTIONS,
-} from 'components/MonitoringSidebar/JobAndAlertsFilter';
-import { useChartAtom } from 'models/chart/atom';
-import { trackUsage } from 'services/metrics';
-import { useSearchParam } from 'hooks/navigation';
+} from '@charts-app/components/MonitoringSidebar/JobAndAlertsFilter';
+import { useChartAtom } from '@charts-app/models/chart/atom';
+import { trackUsage } from '@charts-app/services/metrics';
+import { useSearchParam } from '@charts-app/hooks/navigation';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
 import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
 import { DisplayAlerts } from './DisplayAlerts';

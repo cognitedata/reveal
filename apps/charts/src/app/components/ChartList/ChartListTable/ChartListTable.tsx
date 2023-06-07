@@ -3,7 +3,7 @@ import {
   getTranslationsForComponent,
   makeDefaultTranslations,
   translationKeys,
-} from 'utils/translations';
+} from '@charts-app/utils/translations';
 import {
   A,
   Detail,
@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { useContext } from 'react';
-import { RenderWhenOnScreen } from 'components/RenderWhenOnScreen/RenderWhenOnScreen';
+import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
 import { ChartListProps } from '../types';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import formatOwner from '../formatOwner';

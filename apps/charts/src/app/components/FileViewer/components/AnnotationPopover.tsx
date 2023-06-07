@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
-import { useAsset, useAssetTimeseries, useAssetList } from 'hooks/cdf-assets';
-import styled from 'styled-components/macro';
-import { TimeseriesChart } from '@cognite/data-exploration';
+import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
+import {
+  useAsset,
+  useAssetTimeseries,
+  useAssetList,
+} from '@charts-app/hooks/cdf-assets';
 import dayjs from 'dayjs';
-import { trackUsage } from 'services/metrics';
+import chartAtom from '@charts-app/models/chart/atom';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import { useAddRemoveTimeseries } from 'components/Search/hooks';
+import { trackUsage } from '@charts-app/services/metrics';
+import styled from 'styled-components/macro';
+
+import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
+import { TimeseriesChart } from '@cognite/data-exploration';
 
 export const AnnotationPopover = ({
   resourceId,

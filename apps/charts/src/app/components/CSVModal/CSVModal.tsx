@@ -1,5 +1,5 @@
 import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
-import DateTimeRangeSelector from 'components/DateTime/DateTimeRangeSelector';
+import DateTimeRangeSelector from '@charts-app/components/DateTime/DateTimeRangeSelector';
 import {
   ComponentProps,
   useCallback,
@@ -7,8 +7,8 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Delimiters } from 'utils/csv';
-import { makeDefaultTranslations } from 'utils/translations';
+import { Delimiters } from '@charts-app/utils/csv';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { CSVModalContext } from './CSVModalContext';
 import {
   ModalWrapper,

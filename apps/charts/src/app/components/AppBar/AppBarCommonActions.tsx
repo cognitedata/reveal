@@ -1,7 +1,12 @@
-import { Avatar, Icon, Menu, TopBar } from '@cognite/cogs.js';
-import config from 'config/config';
 import { MouseEventHandler } from 'react';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
+
+import config from '@charts-app/config/config';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
+
+import { Avatar, Icon, Menu, TopBar } from '@cognite/cogs.js';
 
 const defaultTranslations = makeDefaultTranslations(
   'Help',

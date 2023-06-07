@@ -1,6 +1,6 @@
 import { OperationVersion } from '@cognite/calculation-backend';
 import { Modal } from '@cognite/cogs.js';
-import Markdown from 'components/Markdown/Markdown';
+import Markdown from '@charts-app/components/Markdown/Markdown';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 

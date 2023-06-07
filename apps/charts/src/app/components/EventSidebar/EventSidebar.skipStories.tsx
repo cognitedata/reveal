@@ -1,10 +1,10 @@
 /**
  * Event Sidebar Story
  */
+import chartAtom from '@charts-app/models/chart/atom';
 import { Meta, Story } from '@storybook/react';
-import chartAtom from 'models/chart/atom';
-import { RecoilRoot, useRecoilState } from 'recoil';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RecoilRoot, useRecoilState } from 'recoil';
 
 import EventSidebar from './EventSidebar';
 

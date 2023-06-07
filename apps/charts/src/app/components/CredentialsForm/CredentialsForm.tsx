@@ -1,6 +1,6 @@
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useMemo, useEffect, useState } from 'react';
-import { trackUsage } from 'services/metrics';
+import { trackUsage } from '@charts-app/services/metrics';
 import debounce from 'lodash/debounce';
 import head from 'lodash/head';
 import { useFormContext, Path, PathValue } from 'react-hook-form';
@@ -18,7 +18,7 @@ import {
   Line,
   ClientCredentialsDetails,
   ClientCredentialsOptionMessage,
-} from 'components/Form/elements';
+} from '@charts-app/components/Form/elements';
 import { Tooltip, Flex, Body } from '@cognite/cogs.js';
 import { FormInputWithController } from '../Form/FormInputWithController';
 import { FormError } from '../Form/FormError';

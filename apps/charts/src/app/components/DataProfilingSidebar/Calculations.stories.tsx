@@ -2,9 +2,10 @@
  * Calculations component Story
  */
 
+import chartAtom from '@charts-app/models/chart/atom';
 import { Meta, Story } from '@storybook/react';
-import chartAtom from 'models/chart/atom';
 import { RecoilRoot, useRecoilState } from 'recoil';
+
 import Calculations from './Calculations';
 
 type Props = React.ComponentProps<typeof Calculations>;

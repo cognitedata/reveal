@@ -1,6 +1,8 @@
-import { Menu } from '@cognite/cogs.js';
 import React, { useEffect, useState } from 'react';
-import { units, UnitTypes } from 'utils/units';
+
+import { units, UnitTypes } from '@charts-app/utils/units';
+
+import { Menu } from '@cognite/cogs.js';
 
 type Props = {
   selectedUnitType: UnitTypes | undefined;

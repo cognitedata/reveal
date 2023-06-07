@@ -3,7 +3,7 @@ import {
   isPR,
   isProduction,
   isStaging,
-} from 'utils/environment';
+} from '@charts-app/utils/environment';
 
 const env = process.env ?? {};
 

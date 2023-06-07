@@ -2,15 +2,15 @@ import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProject } from '@cognite/cdf-utilities';
-import { Chart } from 'models/chart/types';
-import { useUserInfo } from 'hooks/useUserInfo';
+import { Chart } from '@charts-app/models/chart/types';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import {
   deleteChart,
   fetchChart,
   fetchPublicCharts,
   fetchUserCharts,
   updateChart,
-} from 'services/charts-storage';
+} from '@charts-app/services/charts-storage';
 import * as Sentry from '@sentry/react';
 import { isUndefined, omitBy } from 'lodash';
 

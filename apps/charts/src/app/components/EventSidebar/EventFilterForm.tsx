@@ -3,6 +3,19 @@
  */
 
 import { useCallback, useMemo } from 'react';
+
+import {
+  ExpandIcon,
+  LoadingRow,
+  SidebarChip,
+  SidebarInnerBox,
+  SidebarInnerCollapse,
+} from '@charts-app/components/Common/SidebarElements';
+import { ChartEventFilters } from '@charts-app/models/chart/types';
+import { ChartEventResults } from '@charts-app/models/event-results/types';
+import { omit } from 'lodash';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import {
   AggregatedEventFilter,
@@ -13,18 +26,7 @@ import {
   StringFilter,
 } from '@cognite/data-exploration';
 import { InternalId } from '@cognite/sdk';
-import { omit } from 'lodash';
 
-import { ChartEventFilters } from 'models/chart/types';
-import {
-  ExpandIcon,
-  LoadingRow,
-  SidebarChip,
-  SidebarInnerBox,
-  SidebarInnerCollapse,
-} from 'components/Common/SidebarElements';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import { ChartEventResults } from 'models/event-results/types';
 import { GhostMetadataFilter } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(

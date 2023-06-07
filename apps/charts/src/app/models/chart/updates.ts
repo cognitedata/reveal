@@ -10,14 +10,14 @@ import {
   SourceCollectionData,
   CollectionType,
   StorableNode,
-} from 'models/chart/types';
-import { getEntryColor } from 'utils/colors';
+} from '@charts-app/models/chart/types';
+import { getEntryColor } from '@charts-app/utils/colors';
 import dayjs from 'dayjs';
 import {
   NodeDataDehydratedVariants,
   NodeTypes,
-} from 'components/NodeEditor/V2/types';
-import { FunctionNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+} from '@charts-app/components/NodeEditor/V2/types';
+import { FunctionNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
 import {
   Edge,
   Elements,
@@ -25,13 +25,13 @@ import {
   FlowExportObject,
   Node,
 } from 'react-flow-renderer';
-import { ConstantNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/ConstantNode';
-import { SourceNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/SourceNode';
+import { ConstantNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/Nodes/ConstantNode';
+import { SourceNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/Nodes/SourceNode';
 import { omit } from 'lodash';
 import { Operation } from '@cognite/calculation-backend';
-import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
+import { initializeParameterValues } from '@charts-app/components/NodeEditor/V2/utils';
 import compareVersions from 'compare-versions';
-import { AxisUpdate } from 'components/PlotlyChart/utils';
+import { AxisUpdate } from '@charts-app/components/PlotlyChart/utils';
 import { removeItem, addItem } from './helpers';
 
 function updateCollItem<T extends ChartSource>(

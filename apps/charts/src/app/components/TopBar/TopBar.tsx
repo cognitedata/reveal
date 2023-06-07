@@ -1,15 +1,19 @@
-import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
-import { useUserInfo } from 'hooks/useUserInfo';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components/macro';
-import dayjs from 'dayjs';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import { useTranslations } from 'hooks/translations';
-import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import config from 'config/config';
-import { useIntercom } from 'react-use-intercom';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useIntercom } from 'react-use-intercom';
+
+import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
+import config from '@charts-app/config/config';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import chartAtom from '@charts-app/models/chart/atom';
+import dayjs from 'dayjs';
+import styled from 'styled-components/macro';
+
+import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
+
+import { useRecoilState } from 'recoil';
+
 import { ChartActions } from './ChartActions';
 
 const TopBarWrapper = () => {

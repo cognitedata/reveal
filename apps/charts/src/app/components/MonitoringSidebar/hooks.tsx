@@ -1,7 +1,11 @@
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
-import { useUserInfo } from 'hooks/useUserInfo';
+
+import { SessionAPIResponse } from '../../domain/chart/internal/types';
 import { EMPTY_ARRAY } from '../../domain/constants';
+
 import {
   AlertResponsePayload,
   CreateMonitoringJobPayload,
@@ -11,7 +15,6 @@ import {
   MonitoringSubscriptionsListResponse,
   CreateMonitoringJobAPIResponse,
 } from './types';
-import { SessionAPIResponse } from '../../domain/chart/internal/types';
 
 /**
  * Create a Monitoring Job
@@ -279,7 +282,8 @@ export const useMonitoringSubscripitionList = (
           },
         }
       )
-      .then(({ data }) => data));
+      .then(({ data }) => data)
+  );
 };
 
 /**
@@ -296,14 +300,18 @@ export const useMonitoringSubscripitionList = (
  */
 export const useListAlerts = (jobId: string, enabled = true) => {
   const sdk = useSDK();
-  return useQuery([`monitoring-list-alerts-${jobId}`], () =>
-    sdk
-      .get<AlertResponsePayload>(
-        `apps/v1/projects/${sdk.project}/charts/monitoring/${jobId}/alerts`
-      )
-      .then(({ data }) => {
-        return data.items;
-      }), {
-    enabled,
-  });
+  return useQuery(
+    [`monitoring-list-alerts-${jobId}`],
+    () =>
+      sdk
+        .get<AlertResponsePayload>(
+          `apps/v1/projects/${sdk.project}/charts/monitoring/${jobId}/alerts`
+        )
+        .then(({ data }) => {
+          return data.items;
+        }),
+    {
+      enabled,
+    }
+  );
 };

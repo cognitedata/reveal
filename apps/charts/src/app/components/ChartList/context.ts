@@ -1,5 +1,6 @@
 import React from 'react';
-import PreviewPlotContainer from 'components/PlotlyChart/PreviewPlotContainer';
+
+import PreviewPlotContainer from '@charts-app/components/PlotlyChart/PreviewPlotContainer';
 
 export interface ChartListContextInterface {
   PreviewPlotContainer: typeof PreviewPlotContainer;

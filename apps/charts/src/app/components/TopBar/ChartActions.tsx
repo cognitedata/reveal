@@ -1,26 +1,32 @@
 import { ComponentProps, useEffect, useState } from 'react';
-import { Button, Dropdown, Popconfirm, toast } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
-import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
-import { updateChartDateRange } from 'models/chart/updates';
-import { trackUsage } from 'services/metrics';
-import { useUserInfo } from 'hooks/useUserInfo';
-import { useRecoilState } from 'recoil';
-import chartAtom from 'models/chart/atom';
-import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
-import { useTranslations } from 'hooks/translations';
-import { useIsChartOwner } from 'hooks/user';
+
+import CSVModal from '@charts-app/components/CSVModal/CSVModal';
+import DownloadDropdown from '@charts-app/components/DownloadDropdown/DownloadDropdown';
+import ConnectedSharingDropdown from '@charts-app/components/SharingDropdown/ConnectedSharingDropdown';
+import { currentDateRangeLocale } from '@charts-app/config/locale';
+import {
+  useDeleteChart,
+  useUpdateChart,
+} from '@charts-app/hooks/charts-storage';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { useIsChartOwner } from '@charts-app/hooks/user';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import chartAtom from '@charts-app/models/chart/atom';
+import { duplicateChart } from '@charts-app/models/chart/helpers';
+import { updateChartDateRange } from '@charts-app/models/chart/updates';
+import { trackUsage } from '@charts-app/services/metrics';
 import {
   downloadCalculations,
   downloadImage,
   toggleDownloadChartElements,
-} from 'utils/charts';
+} from '@charts-app/utils/charts';
+import { useRecoilState } from 'recoil';
 import useScreenshot from 'use-screenshot-hook';
-import CSVModal from 'components/CSVModal/CSVModal';
-import { createInternalLink } from 'utils/link';
-import { currentDateRangeLocale } from 'config/locale';
-import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
-import { duplicateChart } from 'models/chart/helpers';
+import { createInternalLink } from '@charts-app/utils/link';
+
+import { Button, Dropdown, Popconfirm, toast } from '@cognite/cogs.js';
+
 import {
   StyledMenu,
   HorizontalDivider,

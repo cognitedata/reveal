@@ -12,16 +12,16 @@ import {
   ChartWorkflow,
   LineStyle,
   ScheduledCalculation,
-} from 'models/chart/types';
-import { roundToSignificantDigits } from 'utils/numbers';
-import { DEFAULT_EVENT_COLOR, hexToRGBA } from 'utils/colors';
-import { convertUnits, convertThresholdUnits, units } from 'utils/units';
-import { WorkflowState } from 'models/calculation-results/types';
-import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { isThresholdValid } from 'utils/threshold';
-import { ChartEventResults } from 'models/event-results/types';
-import { isEventSelected } from 'components/EventSidebar/helpers';
-import { ScheduledCalculationsDataMap } from 'models/scheduled-calculation-results/types';
+} from '@charts-app/models/chart/types';
+import { roundToSignificantDigits } from '@charts-app/utils/numbers';
+import { DEFAULT_EVENT_COLOR, hexToRGBA } from '@charts-app/utils/colors';
+import { convertUnits, convertThresholdUnits, units } from '@charts-app/utils/units';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+import { isThresholdValid } from '@charts-app/utils/threshold';
+import { ChartEventResults } from '@charts-app/models/event-results/types';
+import { isEventSelected } from '@charts-app/components/EventSidebar/helpers';
+import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
 
 export type PlotlyEventData = {
   [key: string]: any;

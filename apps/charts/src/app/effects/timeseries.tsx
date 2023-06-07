@@ -2,16 +2,16 @@ import { useSDK } from '@cognite/sdk-provider';
 import { DatapointsMultiQuery } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import { isEqual } from 'lodash';
-import chartAtom from 'models/chart/atom';
-import { ChartTimeSeries } from 'models/chart/types';
-import { timeseriesAtom } from 'models/timeseries-results/atom';
+import chartAtom from '@charts-app/models/chart/atom';
+import { ChartTimeSeries } from '@charts-app/models/chart/types';
+import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
-import { fetchRawOrAggregatedDatapoints } from 'services/cdf-api';
+import { fetchRawOrAggregatedDatapoints } from '@charts-app/services/cdf-api';
 import { useDebounce } from 'use-debounce';
-import { CHART_POINTS_PER_SERIES } from 'utils/constants';
-import { calculateGranularity } from 'utils/timeseries';
+import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
+import { calculateGranularity } from '@charts-app/utils/timeseries';
 
 export function TimeseriesCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);

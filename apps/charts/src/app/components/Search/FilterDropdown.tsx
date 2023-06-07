@@ -1,7 +1,9 @@
+import styled from 'styled-components';
+
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { Checkbox, Menu, Select, Tooltip } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import styled from 'styled-components';
-import { makeDefaultTranslations } from 'utils/translations';
 
 export const defaultTranslations = makeDefaultTranslations(
   'Filters',

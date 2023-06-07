@@ -2,8 +2,8 @@ import { getCluster, getProject } from '@cognite/cdf-utilities';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 import { useSearchParams } from 'react-router-dom';
 import { omit } from 'lodash';
-import { CLUSTER_KEY } from 'utils/constants';
-import { isProduction } from 'utils/environment';
+import { CLUSTER_KEY } from '@charts-app/utils/constants';
+import { isProduction } from '@charts-app/utils/environment';
 
 export const useCluster = () => {
   const [searchParams, setSearchParams] = useSearchParams();

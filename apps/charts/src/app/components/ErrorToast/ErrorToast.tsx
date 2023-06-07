@@ -1,5 +1,5 @@
 import { Button, Flex } from '@cognite/cogs.js';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
 type Props = {
   title: string;

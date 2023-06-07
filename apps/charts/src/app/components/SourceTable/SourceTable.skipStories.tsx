@@ -2,10 +2,10 @@
  * SourceTable StoryBook
  */
 import { Meta, Story } from '@storybook/react';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
 import { ComponentProps } from 'react';
-import { DatapointsSummary } from 'utils/units';
-import { makeDefaultTranslations } from 'utils/translations';
+import { DatapointsSummary } from '@charts-app/utils/units';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

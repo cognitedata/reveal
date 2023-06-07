@@ -1,14 +1,14 @@
 import { Collapse, Flex, Body } from '@cognite/cogs.js';
 import { useState } from 'react';
-import { MonitoringJob } from 'components/MonitoringSidebar/types';
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
 import {
   CollapsePanelTitle,
   ExpandIcon,
   LoadingRow,
-} from 'components/Common/SidebarElements';
-import EmptyState from 'components/AlertingSidebar/EmptyState';
-import { trackUsage } from 'services/metrics';
-import JobCondition from 'components/MonitoringSidebar/JobCondition';
+} from '@charts-app/components/Common/SidebarElements';
+import EmptyState from '@charts-app/components/AlertingSidebar/EmptyState';
+import { trackUsage } from '@charts-app/services/metrics';
+import JobCondition from '@charts-app/components/MonitoringSidebar/JobCondition';
 import { SidebarCollapseAlert, ConditionContainer } from './elements';
 import MonitoringJobWithAlerts from './MonitoringJobWithAlerts';
 import { AlertsList } from './AlertsList';

@@ -1,9 +1,10 @@
-import { Menu } from '@cognite/cogs.js';
-import { units, UnitTypes } from 'utils/units';
-import styled from 'styled-components/macro';
-import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-
 import React, { useEffect, useState } from 'react';
+
+import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
+import { units, UnitTypes } from '@charts-app/utils/units';
+import styled from 'styled-components/macro';
+
+import { Menu } from '@cognite/cogs.js';
 
 type Props = {
   originalUnit?: string;

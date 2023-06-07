@@ -1,6 +1,6 @@
 import { Icon, Button, Colors } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
-import { removeIllegalCharacters } from 'utils/text';
+import { removeIllegalCharacters } from '@charts-app/utils/text';
 import { ComponentProps } from 'react';
 import { AssetItem } from './elements/AssetItem';
 import { ExactMatchLabel } from './elements/ExactMatchLabel';

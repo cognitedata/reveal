@@ -1,5 +1,5 @@
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { Flex, Button, Title, Body } from '@cognite/cogs.js';
 import { ErrorIcon } from './elements';
 

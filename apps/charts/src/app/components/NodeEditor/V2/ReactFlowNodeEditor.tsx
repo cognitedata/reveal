@@ -1,3 +1,4 @@
+import { useRef, useState, useCallback, useEffect } from 'react';
 import ReactFlow, {
   Background,
   OnLoadParams as RFInstance,
@@ -9,30 +10,34 @@ import ReactFlow, {
   XYPosition,
   FlowTransform,
 } from 'react-flow-renderer';
-
-import { trackUsage } from 'services/metrics';
-import { useRef, useState, useCallback, useEffect } from 'react';
-import { Operation } from '@cognite/calculation-backend';
 import { usePrevious } from 'react-use';
+
+import AlertIcon from '@charts-app/components/AlertIcon/AlertIcon';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { trackUsage } from '@charts-app/services/metrics';
 import compareVersions from 'compare-versions';
-import AlertIcon from 'components/AlertIcon/AlertIcon';
-import { WorkflowState } from 'models/calculation-results/types';
-import { useFlag } from '@cognite/react-feature-flags';
+
+import { Operation } from '@cognite/calculation-backend';
 import { Label } from '@cognite/cogs.js';
-import { NodeTypes, SourceOption, NodeDataVariants } from './types';
+import { useFlag } from '@cognite/react-feature-flags';
+
+import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
+import { defaultTranslations } from '../translations';
+
 import AddButton, { AddMenu } from './AddButton';
+import { CanvasContext } from './CanvasContext';
 import EditorControls from './EditorControls/EditorControls';
-import { getOutputNodePosition } from './utils';
-import FunctionNode from './Nodes/FunctionNode/FunctionNode';
+import EditorToolbar from './EditorToolbar/EditorToolbar';
 import ConstantNode from './Nodes/ConstantNode';
+import FunctionNode from './Nodes/FunctionNode/FunctionNode';
 import OutputNode from './Nodes/OutputNode';
 import SourceNode from './Nodes/SourceNode';
-import { defaultTranslations } from '../translations';
-import { CanvasContext } from './CanvasContext';
-import EditorToolbar from './EditorToolbar/EditorToolbar';
+
+
 import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
-import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
 import { ScheduledCalculationSummary } from './ScheduledCalculationSummary';
+import { NodeTypes, SourceOption, NodeDataVariants } from './types';
+import { getOutputNodePosition } from './utils';
 
 type Props = {
   id?: string;

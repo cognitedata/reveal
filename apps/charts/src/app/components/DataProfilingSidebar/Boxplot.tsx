@@ -6,7 +6,7 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import styled from 'styled-components/macro';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Tooltip } from '@cognite/cogs.js';
 import { DataProfilingResultResults } from '@cognite/calculation-backend';
 import EmptyState from './EmptyState';

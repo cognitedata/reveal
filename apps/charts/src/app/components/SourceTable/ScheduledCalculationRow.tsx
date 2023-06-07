@@ -1,18 +1,26 @@
-import { Button, toast, Tooltip } from '@cognite/cogs.js';
-import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
-import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
+import { useScheduledCalculationDeleteMutate } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
+
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { ChartWorkflow, ScheduledCalculation } from 'models/chart/types';
-import { DatapointsSummary } from 'utils/units';
-import { StyleButton } from 'components/StyleButton/StyleButton';
-import { useComponentTranslations, useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import { formatValueForDisplay } from 'utils/numbers';
-import { ScheduledCalculationData } from 'models/scheduled-calculation-results/types';
-import { useScheduledCalculationDeleteMutate } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
-import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';
+
+import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
+import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
+import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
+import {
+  useComponentTranslations,
+  useTranslations,
+} from '@charts-app/hooks/translations';
+import { ChartWorkflow, ScheduledCalculation } from '@charts-app/models/chart/types';
+import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
+import { formatValueForDisplay } from '@charts-app/utils/numbers';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+import { DatapointsSummary } from '@charts-app/utils/units';
+
+import { Button, toast, Tooltip } from '@cognite/cogs.js';
+
 import { useTimeseriesDeleteMutate } from '../../domain/scheduled-calculation/service/queries/useTimeseriesDeleteMutate';
+import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';
+
 import {
   DropdownWithoutMaxWidth,
   SourceDescription,

@@ -5,18 +5,21 @@
  */
 
 import { memo, useCallback, useState, ChangeEvent } from 'react';
-import { Body, Button, Title, Row, Col, Input } from '@cognite/cogs.js';
+
 import {
   ContentContainer,
   LoadingRow,
   OverlayContentOverflowWrapper,
   SidebarHeaderActions,
-} from 'components/Common/SidebarElements';
-import { makeDefaultTranslations } from 'utils/translations';
+} from '@charts-app/components/Common/SidebarElements';
+import { useCdfEvent } from '@charts-app/hooks/cdf-assets';
+import { activeEventIdAtom } from '@charts-app/models/event-results/atom';
 import { useRecoilState } from 'recoil';
-import { activeEventIdAtom } from 'models/event-results/atom';
-import { useCdfEvent } from 'hooks/cdf-assets';
-import { formatDate } from 'utils/date';
+import { formatDate } from '@charts-app/utils/date';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
+import { Body, Button, Title, Row, Col, Input } from '@cognite/cogs.js';
+
 import { EventDetailBox, MetadataWrapItem } from './elements';
 
 const MetadataRow = ({ label, value }: { label: string; value: any }) => (

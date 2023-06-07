@@ -2,7 +2,7 @@ import { Button, Input, InputProps } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
 import { useState } from 'react';
-import { defaultTranslations } from 'components/NodeEditor/translations';
+import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { transformParamInput } from '../../../transforms';
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormProps } from './types';

@@ -7,9 +7,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CalculationResultQueryAggregateEnum } from '@cognite/calculation-backend';
-import { fetchCalculationQueryResult } from 'services/calculation-backend';
-import { calculateGranularity } from 'utils/timeseries';
-import { WorkflowState } from 'models/calculation-results/types';
+import { fetchCalculationQueryResult } from '@charts-app/services/calculation-backend';
+import { calculateGranularity } from '@charts-app/utils/timeseries';
+import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import { useGetWorkflow } from '../../../chart/internal/queries/useGetWorkflow';
 
 const POINTS_PER_SERIES_IN_PREVIEW = 100;

@@ -1,11 +1,14 @@
-import { useSearchParam } from 'hooks/navigation';
-import { useTranslations } from 'hooks/translations';
 import React, { useState } from 'react';
-import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from 'utils/constants';
-import { makeDefaultTranslations } from 'utils/translations';
-import MonitoringAlertRow from 'components/MonitoringAlert/MonitoringAlert';
+
 import styled from 'styled-components';
-import { MonitoringSidebarBlueButton } from 'components/AlertingSidebar/elements';
+
+import { MonitoringSidebarBlueButton } from '@charts-app/components/AlertingSidebar/elements';
+import MonitoringAlertRow from '@charts-app/components/MonitoringAlert/MonitoringAlert';
+import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { useListAlerts, useMonitoringFoldersWithJobs } from './hooks';
 import ListMonitoringJobPreview from './ListMonitoringJobPreview';
 // import ListMonitoringJobPreview from './ListMonitoringJobPreview';

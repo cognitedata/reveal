@@ -1,8 +1,12 @@
-import config from 'config/config';
-import mixpanel from 'mixpanel-browser';
-import { isDevelopment, isProduction, isStaging } from 'utils/environment';
-import { UserInfo } from 'hooks/useUserInfo';
+import config from '@charts-app/config/config';
+import { UserInfo } from '@charts-app/hooks/useUserInfo';
+import {
+  isDevelopment,
+  isProduction,
+  isStaging,
+} from '@charts-app/utils/environment';
 import * as Sentry from '@sentry/react';
+import mixpanel from 'mixpanel-browser';
 
 const mixpanelConfig = {
   prefix: 'Charts',

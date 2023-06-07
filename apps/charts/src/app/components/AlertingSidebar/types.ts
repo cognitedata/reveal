@@ -4,7 +4,7 @@ import {
   Metadata,
   Timestamp,
 } from '@cognite/sdk';
-import { MonitoringJob } from 'components/MonitoringSidebar/types';
+import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
 
 export type AlertResponse = {
   id: number;

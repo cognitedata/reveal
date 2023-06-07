@@ -1,4 +1,4 @@
-import { Chart } from 'models/chart/types';
+import { Chart } from '@charts-app/models/chart/types';
 
 export type ChartItem = {
   id: string;

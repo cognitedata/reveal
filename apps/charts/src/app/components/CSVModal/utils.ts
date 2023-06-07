@@ -1,4 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
+import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
+import {
+  fetchCalculationQueriesResult,
+  fetchCalculationQueryResult,
+  fetchCalculationResult,
+} from '@charts-app/services/calculation-backend';
+import { pAll } from '@charts-app/utils/helpers';
+import {
+  calculateGranularity,
+  getGranularityInMS,
+} from '@charts-app/utils/timeseries';
+import dayjs from 'dayjs';
+import { range, last } from 'lodash';
+
 import {
   DatapointAggregates,
   DatapointsMultiQuery,
@@ -9,17 +24,6 @@ import {
   DatapointAggregate,
   DatapointsQueryExternalId,
 } from '@cognite/sdk';
-import dayjs from 'dayjs';
-
-import { range, last } from 'lodash';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import {
-  fetchCalculationQueriesResult,
-  fetchCalculationQueryResult,
-  fetchCalculationResult,
-} from 'services/calculation-backend';
-import { pAll } from 'utils/helpers';
-import { calculateGranularity, getGranularityInMS } from 'utils/timeseries';
 
 const CELL_LIMIT = 10000;
 

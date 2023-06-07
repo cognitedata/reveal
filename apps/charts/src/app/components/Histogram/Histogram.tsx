@@ -2,8 +2,8 @@
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { StatisticsResultResults } from '@cognite/calculation-backend';
-import { getUnitConverter } from 'utils/units';
-import { formatValueForDisplay } from 'utils/numbers';
+import { getUnitConverter } from '@charts-app/utils/units';
+import { formatValueForDisplay } from '@charts-app/utils/numbers';
 
 const Plot = createPlotlyComponent(Plotly);
 

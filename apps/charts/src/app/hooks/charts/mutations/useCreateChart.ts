@@ -1,9 +1,9 @@
-import { useUserInfo } from 'hooks/useUserInfo';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import dayjs from 'dayjs';
 import { getProject } from '@cognite/cdf-utilities';
-import { Chart } from 'models/chart/types';
+import { Chart } from '@charts-app/models/chart/types';
 import { useMutation } from '@tanstack/react-query';
-import { createChart } from 'services/charts-storage';
+import { createChart } from '@charts-app/services/charts-storage';
 import { v4 } from 'uuid';
 
 const useCreateChart = () => {

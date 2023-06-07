@@ -1,14 +1,17 @@
 import { ReactNode, useMemo } from 'react';
+import { useContainerQuery } from 'react-container-query';
+import Highlighter from 'react-highlight-words';
+
 import styled from 'styled-components';
+
+import { useTranslations } from '@charts-app/hooks/translations';
+import { removeIllegalCharacters } from '@charts-app/utils/text';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import dayjs from 'dayjs';
+
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
-import Highlighter from 'react-highlight-words';
-import { removeIllegalCharacters } from 'utils/text';
-import { useContainerQuery } from 'react-container-query';
-import { makeDefaultTranslations } from 'utils/translations';
-import { useTranslations } from 'hooks/translations';
 
 const defaultTranslation = makeDefaultTranslations(
   'Exact match on external id'

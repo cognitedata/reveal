@@ -3,7 +3,7 @@
  */
 import { FunctionComponent } from 'react';
 import styled from 'styled-components/macro';
-import DetailsBlock from 'components/DetailsBlock/DetailsBlock';
+import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
 import { Tooltip } from '@cognite/cogs.js';
 import { List, Row, Col } from 'antd';
 

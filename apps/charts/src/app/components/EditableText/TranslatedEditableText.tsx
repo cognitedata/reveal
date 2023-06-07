@@ -1,7 +1,7 @@
 /**
  * Translated wrapper for Editable Text
  */
-import { useTranslations } from 'hooks/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
 import EditableText, {
   defaultTranslations,
   EditableTextProps,

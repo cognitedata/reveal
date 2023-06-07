@@ -1,14 +1,16 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { SearchFilter } from '@charts-app/components/Search/Search';
+import { useQuery } from '@tanstack/react-query';
+import { last } from 'lodash';
+
+import { Asset, Timeseries, TimeseriesFilter } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   useAggregate,
   useCdfItems,
   useInfiniteSearch,
 } from '@cognite/sdk-react-query-hooks';
-import { Asset, Timeseries, TimeseriesFilter } from '@cognite/sdk';
-import { SearchFilter } from 'components/Search/Search';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from '@tanstack/react-query';
-import { last } from 'lodash';
 
 const MAX_SEARCH_OFFSET = 1000;
 const RESULTS_TO_FETCH = 20;

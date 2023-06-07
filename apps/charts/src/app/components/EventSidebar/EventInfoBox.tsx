@@ -3,14 +3,17 @@
  */
 
 import { MouseEvent, useCallback } from 'react';
+
+import { LoadingRow } from '@charts-app/components/Common/SidebarElements';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
+import { formatDate } from '@charts-app/utils/date';
+import { makeDefaultTranslations, translationKeys } from '@charts-app/utils/translations';
+
 import { Button, Micro } from '@cognite/cogs.js';
-import { CogniteEvent } from '@cognite/sdk';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import { LoadingRow } from 'components/Common/SidebarElements';
 import { AssetsItem } from '@cognite/data-exploration';
-import { formatDate } from 'utils/date';
+import { CogniteEvent } from '@cognite/sdk';
+
 import { EventDetails } from './elements';
 
 export const defaultTranslations = makeDefaultTranslations(

@@ -2,7 +2,7 @@
  * Translations for Node Editor
  */
 
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
 export const defaultTranslations = makeDefaultTranslations(
   'Add Node',

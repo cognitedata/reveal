@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
-import { FileViewer } from 'components/FileViewer/FileViewer';
+import { FileViewer } from '@charts-app/components/FileViewer/FileViewer';
 import { CogniteClient, FileInfo as File } from '@cognite/sdk';
 import { files } from 'stubs/files';
 // @ts-ignore

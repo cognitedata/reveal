@@ -4,8 +4,8 @@
 
 import { Button, Icon, Dropdown, Menu } from '@cognite/cogs.js';
 import { ComponentProps } from 'react';
-import DateTimePicker from 'components/DateTime/DateTimePicker';
-import { makeDefaultTranslations } from 'utils/translations';
+import DateTimePicker from '@charts-app/components/DateTime/DateTimePicker';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import {
   Header,
   WarningAlert,

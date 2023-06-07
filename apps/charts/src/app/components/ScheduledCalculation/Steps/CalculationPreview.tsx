@@ -5,11 +5,11 @@
 import { memo, useMemo } from 'react';
 import { isBefore, sub } from 'date-fns';
 
-import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
+import PlotlyChart from '@charts-app/components/PlotlyChart/PlotlyChart';
 import { useCalculationPreviewData } from 'domain/scheduled-calculation/service/queries/useCalculationPreviewData';
 import { Icon } from '@cognite/cogs.js';
-import { useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations } from 'utils/translations';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useGetWorkflow } from '../../../domain/chart/internal/queries/useGetWorkflow';
 import { PreviewStatus } from './elements';
 

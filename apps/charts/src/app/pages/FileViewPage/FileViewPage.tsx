@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Body, Button, Loader, Title, Icon } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
-import { FileViewer } from 'components/FileViewer/FileViewer';
-import { FileList } from 'components/FileList/FileList';
-import { useAsset } from 'hooks/cdf-assets';
+import { FileViewer } from '@charts-app/components/FileViewer/FileViewer';
+import { FileList } from '@charts-app/components/FileList/FileList';
+import { useAsset } from '@charts-app/hooks/cdf-assets';
 import styled from 'styled-components/macro';
-import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
+import SplitPaneLayout from '@charts-app/components/Layout/SplitPaneLayout';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import Layers from 'utils/z-index';
-import { createInternalLink } from 'utils/link';
-import { trackUsage } from 'services/metrics';
-import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
-import { useTranslations } from 'hooks/translations';
-import SourceTable from 'components/SourceTable/SourceTable';
-import { timeseriesSummaries } from 'models/timeseries-results/selectors';
+import Layers from '@charts-app/utils/z-index';
+import { createInternalLink } from '@charts-app/utils/link';
+import { trackUsage } from '@charts-app/services/metrics';
+import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
+import { useTranslations } from '@charts-app/hooks/translations';
+import SourceTable from '@charts-app/components/SourceTable/SourceTable';
+import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
 import { useRecoilValue } from 'recoil';
-import { calculationSummaries } from 'models/calculation-results/selectors';
+import { calculationSummaries } from '@charts-app/models/calculation-results/selectors';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useChartSourcesValue } from 'models/chart/selectors';
-import ConnectedLinkedAssetsSidebar from 'containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
+import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
+import ConnectedLinkedAssetsSidebar from '@charts-app/containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {
   const { chartId = '', assetId } = useParams<{

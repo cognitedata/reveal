@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { fullListOfOperations } from 'models/operations/mocks';
+import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { SourceNodeData } from './Nodes/SourceNode';
 import ReactFlowNodeEditor from './ReactFlowNodeEditor';

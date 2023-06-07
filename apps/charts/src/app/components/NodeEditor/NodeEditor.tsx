@@ -2,20 +2,20 @@ import {
   Chart,
   ChartWorkflowV2,
   ScheduledCalculation,
-} from 'models/chart/types';
+} from '@charts-app/models/chart/types';
 import {
   updateScheduledCalculation,
   updateWorkflow,
-} from 'models/chart/updates';
+} from '@charts-app/models/chart/updates';
 import { useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { Icon, toast } from '@cognite/cogs.js';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
-import ErrorToast from 'components/ErrorToast/ErrorToast';
-import { useUserInfo } from 'hooks/useUserInfo';
-import { useIsChartOwner } from 'hooks/user';
-import { useOperations } from 'models/operations/atom';
-import { availableWorkflows } from 'models/calculation-results/selectors';
+import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { useIsChartOwner } from '@charts-app/hooks/user';
+import { useOperations } from '@charts-app/models/operations/atom';
+import { availableWorkflows } from '@charts-app/models/calculation-results/selectors';
 import { SourceOption } from './V2/types';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';

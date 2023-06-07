@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import { Menu } from '@cognite/cogs.js';
-import { availableColors } from 'utils/colors';
-import { trackUsage } from 'services/metrics';
+import { availableColors } from '@charts-app/utils/colors';
+import { trackUsage } from '@charts-app/services/metrics';
 
-import { makeDefaultTranslations } from 'utils/translations';
-import { Interpolation, LineStyle } from 'models/chart/types';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { Interpolation, LineStyle } from '@charts-app/models/chart/types';
 import { InterpolationStepIcon, InterpolationLinearIcon } from './Icons';
 import {
   DropdownWrapper,
