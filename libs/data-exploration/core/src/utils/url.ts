@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import isUrl from 'is-url';
+import queryString from 'query-string';
 
 type UseSearchParamOpts<T> = {
   replace?: boolean;
@@ -58,4 +59,13 @@ export const useSearchParamString = (
 
 export const isValidUrl = (value: string) => {
   return isUrl(value);
+};
+
+// Parsed object is not stringified back correctly when `opts` is given as `arrayFormat: 'comma'`,
+// so be very careful while using with `opts` here!
+export const getSearchParams = (
+  searchParams: string,
+  opts?: queryString.StringifyOptions
+) => {
+  return queryString.parse(searchParams, opts);
 };

@@ -16,6 +16,7 @@ type BreadcrumbsProps = {
   };
 };
 
+// TODO: We have a new version `BreadcrumbsV2`, can remove this file after new navigation adoption.
 export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
   const location = useLocation();
   const navigate = useNavigate();

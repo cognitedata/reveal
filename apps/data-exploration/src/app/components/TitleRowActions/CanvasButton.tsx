@@ -8,7 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Chip, Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { ResourceItem } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -50,7 +50,7 @@ const CanvasButton: React.FC<CanvasButtonProps> = ({ item }) => {
         })}
         aria-label="Open in Industry Canvas"
       >
-        <Chip icon="Canvas" />
+        <Button icon="Canvas" />
       </Link>
     </Tooltip>
   );

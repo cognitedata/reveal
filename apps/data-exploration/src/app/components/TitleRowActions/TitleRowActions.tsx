@@ -27,6 +27,7 @@ export const TitleRowActions = ({
   beforeDefaultActions,
   hideDefaultCloseActions,
 }: TitleRowActionsProps) => {
+  // Instead we could do just =>> const activeId = item.id;
   const [activeId] = useCurrentResourceId();
 
   if (item.type === 'threeD') {

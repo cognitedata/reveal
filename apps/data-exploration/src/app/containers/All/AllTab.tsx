@@ -17,7 +17,6 @@ import { Asset } from '@cognite/sdk';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import {
   useCurrentResourceId,
   useCurrentResourceType,
@@ -28,8 +27,19 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
+import {
+  useBreakJourneyPromptToggle,
+  useJourneyLength,
+  usePushJourney,
+} from '../../hooks/detailsNavigation';
+import {
+  useFlagOverlayNavigation,
+  useFlagAdvancedFilters,
+} from '../../hooks/flags';
+
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [_, setCurrentResourceType] = useCurrentResourceType();
@@ -37,6 +47,9 @@ export const AllTab = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const search = getSearchParams(location.search);
+  const [pushJourney] = usePushJourney();
+  const [journeyLength] = useJourneyLength();
+  const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   const handleAllResultsClick = (type: ResourceType) => {
     trackUsage(EXPLORATION.CLICK.ALL_RESULTS, { resourceType: type });
@@ -44,6 +57,7 @@ export const AllTab = () => {
   };
 
   // We use the same function for both root asset and direct asset click.
+  // TODO: for journey?
   const handleParentAssetClick = (
     rootAsset: Asset,
     resourceId?: number,
@@ -53,11 +67,21 @@ export const AllTab = () => {
   };
 
   const handleSummaryRowClick = (rowType: ResourceType, id: number) => {
-    navigate(createLink(`/explore/${rowType}/${id}`, search), {
-      state: {
-        history: location.state?.history,
-      },
-    });
+    if (isDetailsOverlayEnabled) {
+      if (journeyLength > 1) {
+        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+        // console.log('TODO: here show modal and ask to terminate journey');
+        setPromptOpen(true, { id, type: rowType });
+      } else {
+        pushJourney({ id, type: rowType }, true);
+      }
+    } else {
+      navigate(createLink(`/explore/${rowType}/${id}`, search), {
+        state: {
+          history: location.state?.history,
+        },
+      });
+    }
   };
 
   return (
@@ -166,7 +190,7 @@ const AllTabContainer = styled.div`
   & > * {
     min-height: 365px;
     height: 100%;
-    min-width: 300px;
+    min-width: 380px;
     width: 100%;
   }
   & > *:last-child {

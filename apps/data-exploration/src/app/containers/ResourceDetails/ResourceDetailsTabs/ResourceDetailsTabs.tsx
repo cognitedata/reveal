@@ -56,6 +56,7 @@ const ResourceDetailTabContent = ({
     ResourceSelectionContext
   );
 
+  // TODO: is this used?
   const isSelected = (item: ResourceItem) => {
     return resourcesState.some(
       (el) =>
@@ -85,6 +86,7 @@ const ResourceDetailTabContent = ({
   );
 };
 
+// TODO: We have a new version `ResourceDetailsTabsV2`, can remove this file after new navigation adoption.
 export const ResourceDetailsTabs = ({
   parentResource,
   tab,

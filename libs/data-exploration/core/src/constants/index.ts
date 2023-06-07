@@ -8,3 +8,4 @@ export * from './object';
 export * from './searchConfig';
 export * from './timeseries';
 export * from './windowEvents';
+export * from './journey';

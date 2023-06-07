@@ -30,7 +30,15 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
+import {
+  useBreakJourneyPromptToggle,
+  useFlagOverlayNavigation,
+  useJourneyLength,
+  usePushJourney,
+} from '../../hooks';
+
 export const AssetSearchResultView = () => {
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [assetView, setAssetView] = useAssetViewState();
   const [, openPreview] = useCurrentResourceId();
   const [query] = useQueryString(SEARCH_KEY);
@@ -38,6 +46,9 @@ export const AssetSearchResultView = () => {
   const [assetFilter, setAssetFilter] = useAssetFilters();
   const navigate = useNavigate();
   const location = useLocation();
+  const [pushJourney] = usePushJourney();
+  const [journeyLength] = useJourneyLength();
+  const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected asset's id.
   const selectedAssetId = useSelectedResourceId();
@@ -48,15 +59,34 @@ export const AssetSearchResultView = () => {
   };
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id !== selectedAssetId ? item.id : undefined);
+    // TODO: move this logic in a function out!
+    if (isDetailsOverlayEnabled) {
+      if (journeyLength > 1) {
+        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+        setPromptOpen(true, { id: item.id, type: 'asset' });
+      } else {
+        pushJourney({ id: item.id, type: 'asset' }, true);
+      }
+    } else {
+      openPreview(item.id !== selectedAssetId ? item.id : undefined);
+    }
   };
 
   const handleShowAllAssetsClick = (item: Asset) => {
     if (item.parentId) {
-      const search = getSearchParams(location.search);
-      navigate(
-        createLink(`/explore/search/asset/${item.parentId}/children`, search)
-      );
+      if (isDetailsOverlayEnabled) {
+        if (journeyLength > 1) {
+          // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+          setPromptOpen(true, { id: item.parentId, type: 'asset' });
+        } else {
+          pushJourney({ id: item.parentId, type: 'asset' }, true);
+        }
+      } else {
+        const search = getSearchParams(location.search);
+        navigate(
+          createLink(`/explore/search/asset/${item.parentId}/children`, search)
+        );
+      }
     }
   };
 

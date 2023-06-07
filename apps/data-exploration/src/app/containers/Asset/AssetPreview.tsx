@@ -51,9 +51,11 @@ export const AssetPreview = ({
 
   const activeTab = tabType || tab || 'details';
 
+  // HERE
   const onTabChange = useOnPreviewTabChange(tabType, 'details');
   const [, openPreview] = useCurrentResourceId();
 
+  // HERE
   const handlePreviewClose = () => {
     openPreview(undefined);
   };

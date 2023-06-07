@@ -81,6 +81,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
   isGroupingFilesEnabled,
   onClick,
+  onParentAssetClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
@@ -148,6 +149,9 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
           id="file-linked-search-results"
           query={debouncedQuery}
           onRowClick={(file) => onClick(file)}
+          onRootAssetClick={(directAsset) => {
+            onParentAssetClick(directAsset.id);
+          }}
           data={items}
           // enableSorting
           // onSort={props => setSortBy(props)}

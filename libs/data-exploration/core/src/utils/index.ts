@@ -6,6 +6,7 @@ export * from './hasObjectAnyProperty';
 export * from './id';
 export * from './isElementHorizontallyInViewport';
 export * from './isEscapeButton';
+export * from './journey';
 export * from './localStorage';
 export * from './number';
 export * from './number';

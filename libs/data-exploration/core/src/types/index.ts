@@ -9,3 +9,4 @@ export * from './threeD';
 export * from './timeseries';
 export * from './dateRange';
 export * from './document';
+export * from './journey';

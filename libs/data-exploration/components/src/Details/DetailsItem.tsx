@@ -14,6 +14,8 @@ import {
   COPIED_TEXT,
   DASH,
   DATA_EXPLORATION_COMPONENT,
+  getSearchParams,
+  getSearchParamsWithJourneyAndSelectedTab,
   ResourceType,
   useClipboard,
   useMetrics,
@@ -166,10 +168,16 @@ export const AssetsItem = ({
     return <AssetItem id={assetIds[0]} />;
   }
 
+  const searchParams = getSearchParamsWithJourneyAndSelectedTab(
+    {
+      id: linkId,
+      type,
+    },
+    'asset'
+  );
   const assetsLink = createLink(
-    window.location.pathname.includes('/search')
-      ? `/explore/search/${type}/${linkId}/asset`
-      : `/explore/${type}/${linkId}/asset`
+    `/explore/search/${type}`,
+    getSearchParams(searchParams)
   );
   const assetsLinkText = `${assetIds.length} assets`;
   return (

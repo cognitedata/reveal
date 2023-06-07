@@ -13,7 +13,6 @@ import {
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
 import { FilePreview } from '@data-exploration-app/containers/File/FilePreview';
-import { useFlagDocumentGPT } from '@data-exploration-app/hooks';
 import {
   useCurrentResourceId,
   useQueryString,
@@ -23,11 +22,25 @@ import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
+import {
+  useBreakJourneyPromptToggle,
+  useJourneyLength,
+  usePushJourney,
+} from '../../hooks/detailsNavigation';
+import {
+  useFlagOverlayNavigation,
+  useFlagDocumentGPT,
+} from '../../hooks/flags';
+
 export const FileSearchResultView = () => {
   const isDocumentsGPTEnabled = useFlagDocumentGPT();
   const [, openPreview] = useCurrentResourceId();
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
   const [query] = useQueryString(SEARCH_KEY);
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+  const [pushJourney] = usePushJourney();
+  const [journeyLength] = useJourneyLength();
+  const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected file's id.
   const selectedFileId = useSelectedResourceId();
@@ -38,11 +51,24 @@ export const FileSearchResultView = () => {
   }, [selectedFileId]);
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id);
+    if (isDetailsOverlayEnabled) {
+      if (journeyLength > 1) {
+        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+        setPromptOpen(true, { id: item.id, type: 'file' });
+      } else {
+        pushJourney({ ...item, type: 'file' }, true);
+      }
+    } else {
+      openPreview(item.id);
+    }
   };
 
   const handleParentAssetClick = (rootAsset: Asset, resourceId?: number) => {
-    openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id);
+    if (isDetailsOverlayEnabled) {
+      pushJourney({ id: rootAsset.id, type: 'asset' });
+    } else {
+      openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id);
+    }
   };
 
   return (

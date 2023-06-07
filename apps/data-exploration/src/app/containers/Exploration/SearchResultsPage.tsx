@@ -39,6 +39,7 @@ import { useResourceFilter } from '@data-exploration-app/context/ResourceSelecti
 import {
   useFlagDocumentGPT,
   useFlagDocumentLabelsFilter,
+  useFlagOverlayNavigation,
 } from '@data-exploration-app/hooks';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import {
@@ -66,6 +67,9 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+
+import { BreakJourneyPrompt } from './BreakJourneyPrompt';
+import { DetailsOverlay } from './DetailsOverlay';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -101,6 +105,8 @@ function SearchPage() {
 
   const isDocumentGPTEnabled = useFlagDocumentGPT();
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
+
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
 
   const filterMap = useMemo(
     () => ({
@@ -259,6 +265,8 @@ function SearchPage() {
           </Wrapper>
         </MainContainer>
       </MainSearchContainer>
+      {isDetailsOverlayEnabled && <DetailsOverlay />}
+      {isDetailsOverlayEnabled && <BreakJourneyPrompt />}
     </RootHeightWrapper>
   );
 }

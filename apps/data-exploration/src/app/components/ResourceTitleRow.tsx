@@ -19,6 +19,7 @@ type Props = {
   hideDefaultCloseActions?: boolean;
 };
 
+// TODO: We have a new version `ResourceTitleRowV2`, can remove this file after new navigation adoption.
 export default function ResourceTitleRow({
   title,
   item: { type, id },

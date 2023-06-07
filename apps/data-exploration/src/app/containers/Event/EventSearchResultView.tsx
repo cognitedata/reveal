@@ -21,11 +21,22 @@ import {
 import { useEventsFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 
+import {
+  useBreakJourneyPromptToggle,
+  useFlagOverlayNavigation,
+  useJourneyLength,
+  usePushJourney,
+} from '../../hooks';
+
 export const EventSearchResultView = () => {
   const [, openPreview] = useCurrentResourceId();
   const [eventFilter, setEventFilter] = useEventsFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+  const [pushJourney] = usePushJourney();
+  const [journeyLength] = useJourneyLength();
+  const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected event's id.
   const selectedEventId = useSelectedResourceId();
@@ -34,11 +45,24 @@ export const EventSearchResultView = () => {
   const selectedRow = selectedEventId ? { [selectedEventId]: true } : {};
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id);
+    if (isDetailsOverlayEnabled) {
+      if (journeyLength > 1) {
+        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+        setPromptOpen(true, { id: item.id, type: 'event' });
+      } else {
+        pushJourney({ ...item, type: 'event' }, true);
+      }
+    } else {
+      openPreview(item.id);
+    }
   };
 
   const handleDirectAssetClick = (directAsset: Asset, resourceId?: number) => {
-    openPreview(resourceId, false, ResourceTypes.Asset, directAsset.id);
+    if (isDetailsOverlayEnabled) {
+      pushJourney({ id: directAsset.id, type: 'asset' });
+    } else {
+      openPreview(resourceId, false, ResourceTypes.Asset, directAsset.id);
+    }
   };
 
   return (
