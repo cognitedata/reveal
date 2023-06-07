@@ -1,0 +1,95 @@
+import React, { useEffect, useContext } from 'react';
+import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import {
+  FilePreviewUFV as CogniteFilePreview,
+  ErrorFeedback,
+  Loader,
+} from '@cognite/data-exploration';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
+import { FileInfo } from '@cognite/sdk';
+import isMatch from 'lodash/isMatch';
+import { Alert } from 'antd';
+import InteractiveIcon from './InteractiveIcon';
+import { APPLICATION_ID } from '../constants';
+
+export type FilePreviewTabType =
+  | 'preview'
+  | 'details'
+  | 'timeseries'
+  | 'files'
+  | 'sequences'
+  | 'events'
+  | 'assets';
+
+export const FilePreview = ({
+  fileId,
+  editMode,
+}: {
+  fileId: number;
+  editMode: boolean;
+}) => {
+  const { resourcesState, setResourcesState } = useContext(
+    ResourceSelectionContext
+  );
+
+  const isActive = resourcesState.some(
+    (el: { state: string; id: number; type: string }) =>
+      isMatch(el, { state: 'active', id: fileId, type: 'file' })
+  );
+  const { flow } = getFlow();
+  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: annotationsAcl } = usePermissions(
+    flow,
+    'annotationsAcl',
+    'WRITE'
+  );
+  // TODO: remove events:write once the migration to Annotations API is completed
+  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
+  const writeAccess = filesAcl && eventsAcl && annotationsAcl;
+
+  useEffect(() => {
+    if (fileId && !isActive) {
+      setResourcesState(
+        resourcesState
+          .filter((el) => el.state !== 'active')
+          .concat([{ id: fileId, type: 'file', state: 'active' }])
+      );
+    }
+  }, [isActive, resourcesState, fileId, setResourcesState]);
+
+  const {
+    data: fileInfo,
+    isFetched,
+    isError,
+    error,
+  } = useCdfItem<FileInfo>('files', {
+    id: fileId!,
+  });
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!fileInfo) {
+    return (
+      <Alert message={`File ${fileId} not found`} type="warning" closable />
+    );
+  }
+
+  return (
+    <CogniteFilePreview
+      id={`${APPLICATION_ID}-${fileId}`}
+      applicationId={APPLICATION_ID}
+      key={fileId}
+      fileId={fileId!}
+      creatable={editMode}
+      contextualization={writeAccess}
+      fileIcon={<InteractiveIcon />}
+    />
+  );
+};
