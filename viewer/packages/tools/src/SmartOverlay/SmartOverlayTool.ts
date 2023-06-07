@@ -38,7 +38,7 @@ export type OverlayEventHandler = (event: {
 export type SmartOverlayToolParameters = {
   /**
    * Max point markers size in pixels. Different platforms has limitations for this value.
-   * On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500. 
+   * On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500.
    * Default is 64.
    */
   maxPointSize?: number;
@@ -235,7 +235,7 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
   /**
    * Subscribes to overlay events.
    * @param event event to subscribe to.
-   * @param eventHandler 
+   * @param eventHandler
    */
   on(event: 'hover', eventHandler: OverlayEventHandler): void;
   on(event: 'click', eventHandler: OverlayEventHandler): void;
@@ -289,7 +289,7 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 
-  private onMouseMove = (event: MouseEvent) => {
+  private readonly onMouseMove = (event: MouseEvent) => {
     const { _textOverlay: textOverlay } = this;
 
     const intersection = this.intersectPointsMarkers(event);
@@ -313,7 +313,7 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     }
   }
 
-  private onMouseClick = (event: PointerEventData) => {
+  private readonly onMouseClick = (event: PointerEventData) => {
     const intersection = this.intersectPointsMarkers({ clientX: event.offsetX, clientY: event.offsetY });
 
     if (intersection) {
@@ -413,12 +413,12 @@ export class SmartOverlayTool extends Cognite3DViewerToolBase {
     textOverlay.setAttribute('class', 'text-overlay');
     textOverlay.style.cssText = `
             position: absolute;
-            
+
             /* Anchor to the center of the element and ignore events */
             transform: translate(${horizontalOffset}px, -50%);
             touch-action: none;
             user-select: none;
-                
+
             padding: 7px;
             max-width: 200px;
             color: #fff;

@@ -43,8 +43,7 @@ window.THREE = THREE;
 (window as any).reveal = reveal;
 
 type FDMQueryResponse = {
-  data:
-  {
+  data: {
     listAPM_Observation: {
       items: {
         description: string;
@@ -54,6 +53,29 @@ type FDMQueryResponse = {
           z: number;
         }
       } []
+    }
+  }
+};
+
+type FDMFilterQueryResponse = {
+  data: {
+    listAPM_Checklist: {
+      items: {
+        items: {
+          items: {
+            observations: {
+              items: {
+                description: string;
+                position: {
+                  x: number;
+                  y: number;
+                  z: number;
+                }
+              }[]
+            }
+          }[]
+        }
+      }[]
     }
   }
 };
@@ -537,28 +559,35 @@ export function Viewer() {
 async function createPointOfInterest(client: CogniteClient, project: string, position: Vector3, description: string): Promise<void> {
   console.log("Trying to create POI");
   const baseUrl = client.getBaseUrl();
-  const fdmSpace = 'Test_DMSv3';
+  const fdmSpace = 'APM_AppData';
 
   const vec3DataModelName = 'Vec3f'
   const APMObservationDataModelName = 'APM_Observation';
   const APMChecklistItemDataModelName = 'APM_ChecklistItem';
   const APMChecklistDataModelName = 'APM_Checklist';
-  const dataModelVersion = '3';
+  const dataModelVersion = '2';
 
   const fdmCreateEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances`;
 
   const externalId = performance.now().toString();
   const vec3ExternalId = "vec3-" + externalId;
   const observationExternalId = "observation-" + externalId;
-  const checklistItemExternalId = "checklistitem-3";
-  const checklistExternalId = "ivar-aasen";
+  const checklistItemExternalId = "checklistitem-aasta-1";
+  const checklistExternalId = "06-02-daily-walk_report_1685565057172";
 
   const observationChecklistItemEdgeExternalId = checklistItemExternalId + observationExternalId;
   const checklistChecklistItemEdgeExternalId = checklistExternalId + checklistItemExternalId;
 
-  const createNewChecklistItem = true;
+  const createNewChecklistItem = false;
   const createNewChecklist = false;
 
+    const vec3ExternalId = "vec3-" + externalId + i;
+  const observationExternalId = "observation-" + externalId + i;
+  const checklistItemExternalId = "checklistitem-aasta-1";
+  const checklistExternalId = "06-02-daily-walk_report_1685565057172";
+
+  const observationChecklistItemEdgeExternalId = checklistItemExternalId + observationExternalId;
+  const checklistChecklistItemEdgeExternalId = checklistExternalId + checklistItemExternalId;
   const vec3fData = {
     data: {
       "replace": false,
@@ -605,6 +634,7 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
               },
               "properties": {
                 description: description,
+                fileIds: ["kitchen-chalky-mink-DV889lLRsJTJfn4t6Aq3Gw==1677596590897-2048-front"],
                 position: {
                   "externalId": vec3ExternalId,
                   space: fdmSpace
@@ -739,33 +769,67 @@ async function createPointOfInterest(client: CogniteClient, project: string, pos
   // Create new edges
   const createChecklistItemObservationEdge = await client.post(fdmCreateEndpoint, APMChecklistItemObservationEdge);
   const createChecklistChecklistItemEdge = await client.post(fdmCreateEndpoint, APMChecklistChecklistItemEdge);
-
-  console.log("Finished creating instances");
 }
 
 async function listPOIs (sdk: CogniteClient, project: string) {
+  console.log("Listing POIs");
   const baseUrl = sdk.getBaseUrl();
   const fdmSpace = 'Test_DMSv3';
   const dataModelVersion = '3';
 
   const fdmQueryEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${fdmSpace}/datamodels/${fdmSpace}/versions/${dataModelVersion}/graphql`;
 
-  const fdmData = await sdk.post(fdmQueryEndpoint, {
+  // const fdmData = await sdk.post(fdmQueryEndpoint, {
+  //   data: {
+  //     query: `query MyQuery {
+  //       listAPM_Observation(first: 5) {
+  //         items {
+  //           description
+  //           position {
+  //             x
+  //             y
+  //             z
+  //           }
+  //         }
+  //       }
+  //     }`
+  //   }
+  // });
+
+  const checklistFilter = "Aasta";
+  const fdmFilteredChecklistData = await sdk.post(fdmQueryEndpoint, {
     data: {
       query: `query MyQuery {
-        listAPM_Observation {
+        listAPM_Checklist(filter: {externalId: {eq: "${checklistFilter}"}}) {
           items {
-            description
-            position {
-              x
-              y
-              z
+            items {
+              items {
+                observations {
+                  items {
+                    description
+                    position {
+                      x
+                      y
+                      z
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }`
     }
   });
-  console.log(fdmData);
-  return (fdmData.data as FDMQueryResponse).data.listAPM_Observation.items;
+
+  // console.log(fdmFilteredChecklistData.data);
+  // return (fdmData.data as FDMQueryResponse).data.listAPM_Observation.items;
+  return (fdmFilteredChecklistData.data as FDMFilterQueryResponse).data.listAPM_Checklist.items.flatMap(
+      checklistItem => checklistItem.items.items.flatMap(
+        observation => observation.observations.items
+      )
+    );
+
+  // console.log(apmChecklist);
+  // console.log(fdmFilteredChecklistData);
 }
