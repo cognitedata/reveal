@@ -6,7 +6,7 @@ import chartAtom from 'models/chart/atom';
 import { ChartTimeSeries } from 'models/chart/types';
 import { timeseriesAtom } from 'models/timeseries-results/atom';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { fetchRawOrAggregatedDatapoints } from 'services/cdf-api';
 import { useDebounce } from 'use-debounce';

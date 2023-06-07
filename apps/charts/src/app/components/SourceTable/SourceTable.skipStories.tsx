@@ -8,7 +8,7 @@ import { DatapointsSummary } from 'utils/units';
 import { makeDefaultTranslations } from 'utils/translations';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router';
 import SourceTable from './SourceTable';
 

@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { SessionAPIPayload } from '../types';
 import { getCapabilities } from '../../service/network/getCapabilities';

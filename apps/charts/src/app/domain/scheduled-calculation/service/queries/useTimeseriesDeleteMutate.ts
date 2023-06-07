@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ExternalId } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { deleteTimeseries } from '../network/deleteTimeseries';

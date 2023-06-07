@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteCapability } from '@cognite/sdk';
 import { getCapabilities } from '../network/getCapabilities';

@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { useRecentViewLocalStorage } from 'hooks/recently-used';
 import { useCdfItems } from 'hooks/cognite-functions';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import chartAtom from 'models/chart/atom';

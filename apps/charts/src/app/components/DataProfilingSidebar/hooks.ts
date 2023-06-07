@@ -10,7 +10,7 @@ import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { usePrevious } from 'react-use';
 import { useDebounce } from 'use-debounce';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getHash } from 'utils/hash';
 import { useCreateDataProfiling } from 'hooks/calculation-backend';
 import {

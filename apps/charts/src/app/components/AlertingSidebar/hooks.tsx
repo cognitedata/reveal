@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   AlertResponsePayload,

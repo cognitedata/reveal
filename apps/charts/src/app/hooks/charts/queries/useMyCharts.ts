@@ -1,7 +1,7 @@
 import { useUserInfo } from 'hooks/useUserInfo';
 import dayjs from 'dayjs';
 import { getProject } from '@cognite/cdf-utilities';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchUserCharts } from 'services/charts-storage';
 import { ChartItem } from '../types';
 

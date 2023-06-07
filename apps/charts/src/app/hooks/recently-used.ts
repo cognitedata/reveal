@@ -1,4 +1,4 @@
-import { QueryClient, useQuery, useQueryClient } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProject } from '@cognite/cdf-utilities';
 
 const maxRecentViewLength = 10;

@@ -1,6 +1,6 @@
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProject } from '@cognite/cdf-utilities';
 import { Chart } from 'models/chart/types';
 import { useUserInfo } from 'hooks/useUserInfo';

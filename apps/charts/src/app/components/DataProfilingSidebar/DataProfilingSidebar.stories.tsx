@@ -3,7 +3,7 @@
  */
 
 import { Meta, Story } from '@storybook/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import chartAtom from 'models/chart/atom';
 import { RecoilRoot, useRecoilState } from 'recoil';
 import DataProfilingSidebar from './DataProfilingSidebar';

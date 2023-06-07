@@ -13,8 +13,8 @@ import {
   createRoutesFromChildren,
   matchRoutes,
 } from 'react-router-dom';
-import { QueryClientProvider, QueryClient } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
 import config from 'config/config';

@@ -1,6 +1,6 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import config from 'config/config';
 import {
   fetchFirebaseEnvironment,

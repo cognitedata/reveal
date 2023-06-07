@@ -1,6 +1,6 @@
 import { Aggregate, DatapointAggregate, Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 
 export default function useTimeseriesAggregatedDatapoints(
   timeseries: Timeseries['id'][],

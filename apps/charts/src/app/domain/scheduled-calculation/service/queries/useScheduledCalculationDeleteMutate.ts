@@ -1,6 +1,6 @@
 import { ExternalId } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteScheduledCalculation } from '../network/deleteScheduledCalculation';
 
 export const useScheduledCalculationDeleteMutate = () => {

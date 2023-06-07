@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 import { isEqual } from 'lodash';
 import { getTime } from 'date-fns';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { EventFilter, CogniteClient } from '@cognite/sdk';
 

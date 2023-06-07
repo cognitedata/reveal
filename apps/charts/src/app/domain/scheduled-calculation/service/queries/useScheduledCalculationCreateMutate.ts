@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 import { useCreateSessionNonce, SessionAPIResponse } from 'domain/chart';

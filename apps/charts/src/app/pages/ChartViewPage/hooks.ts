@@ -19,7 +19,7 @@ import chartAtom from 'models/chart/atom';
 import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
 import { useDebounce } from 'use-debounce';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   fetchStatisticsResult,
   waitForCalculationToFinish,

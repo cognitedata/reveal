@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { isEqual } from 'lodash';
 import { useChartAtom } from 'models/chart/atom';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchRawOrAggregatedDatapoints } from 'services/cdf-api';
 import { useDebounce } from 'use-debounce';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';

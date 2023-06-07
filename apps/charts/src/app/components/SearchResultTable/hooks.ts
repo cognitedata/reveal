@@ -7,7 +7,7 @@ import { Asset, Timeseries, TimeseriesFilter } from '@cognite/sdk';
 import { SearchFilter } from 'components/Search/Search';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { last } from 'lodash';
 
 const MAX_SEARCH_OFFSET = 1000;

@@ -1,7 +1,7 @@
 import { Asset } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import useSimpleMemo from 'hooks/useSimpleMemo';
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 
 export default function useAssetsTimeseries(assets: Asset[]) {
   const sdk = useSDK();

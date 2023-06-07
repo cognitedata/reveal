@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { WorkflowState } from 'models/calculation-results/types';
 import { Chart } from 'models/chart/types';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchCalculationQueryResult } from 'services/calculation-backend';
 import { calculateGranularity } from 'utils/timeseries';
 import { useMemo } from 'react';

@@ -4,7 +4,7 @@
 import { Meta, Story } from '@storybook/react';
 import chartAtom from 'models/chart/atom';
 import { RecoilRoot, useRecoilState } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import EventSidebar from './EventSidebar';
 

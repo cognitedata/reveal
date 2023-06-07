@@ -16,7 +16,7 @@ import {
   useMutation,
   useQuery,
   UseQueryOptions,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { RAW_DATA_POINTS_THRESHOLD } from 'utils/constants';
 import { WorkflowResult } from 'models/calculation-results/types';
 import { useCallback } from 'react';

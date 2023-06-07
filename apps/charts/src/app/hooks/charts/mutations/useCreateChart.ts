@@ -2,7 +2,7 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import dayjs from 'dayjs';
 import { getProject } from '@cognite/cdf-utilities';
 import { Chart } from 'models/chart/types';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { createChart } from 'services/charts-storage';
 import { v4 } from 'uuid';
 

@@ -4,7 +4,7 @@ import {
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 type ErrorResponse = { message?: string };
 

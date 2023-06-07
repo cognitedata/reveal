@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { EMPTY_ARRAY } from '../../domain/constants';

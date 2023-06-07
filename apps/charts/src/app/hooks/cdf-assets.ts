@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { Asset, ListResponse, Timeseries } from '@cognite/sdk';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useAsset = (id?: number) => {
   const sdk = useSDK();

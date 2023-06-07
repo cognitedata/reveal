@@ -10,7 +10,7 @@ import { useMonitoringFoldersWithJobs } from 'components/MonitoringSidebar/hooks
 import { saveToLocalStorage } from '@cognite/storage';
 import { jobsToAlerts } from 'pages/ChartViewPage/NotificationIndicator';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from 'utils/constants';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   JobAndAlertsFilter,
   FilterOption,
