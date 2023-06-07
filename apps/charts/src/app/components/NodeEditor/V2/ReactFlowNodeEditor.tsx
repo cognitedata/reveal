@@ -18,7 +18,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { compareVersions } from 'compare-versions';
 
 import { Operation } from '@cognite/calculation-backend';
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
@@ -281,11 +281,7 @@ const ReactFlowNodeEditor = ({
                 <>
                   {calculationResult.loading && (
                     <div style={{ display: 'flex' }}>
-                      <AlertIcon
-                        variant="unknown"
-                        icon="Loader"
-                        value="Loading"
-                      />
+                      <AlertIcon type="default" icon="Loader" value="Loading" />
                     </div>
                   )}
                   {calculationResult.error &&
@@ -293,7 +289,7 @@ const ReactFlowNodeEditor = ({
                       <div style={{ display: 'flex' }}>
                         <AlertIcon
                           icon="ErrorFilled"
-                          variant="danger"
+                          type="danger"
                           value="Error"
                           onClick={() => onErrorIconClick(id)}
                         />
@@ -305,7 +301,7 @@ const ReactFlowNodeEditor = ({
                       <div style={{ display: 'flex' }}>
                         <AlertIcon
                           icon="WarningFilled"
-                          variant="warning"
+                          type="warning"
                           value={`Warning${
                             calculationResult.warnings.length > 1
                               ? `s (${calculationResult.warnings.length})`
@@ -328,9 +324,11 @@ const ReactFlowNodeEditor = ({
             {isPersistenceCalcEnabled &&
             sourceType === 'scheduledCalculation' ? (
               <ScheduleToolbar>
-                <Label size="medium" variant="normal">
-                  {t['Running on Schedule']}
-                </Label>
+                <Chip
+                  size="medium"
+                  type="default"
+                  label={t['Running on Schedule']}
+                />
               </ScheduleToolbar>
             ) : null}
           </>
