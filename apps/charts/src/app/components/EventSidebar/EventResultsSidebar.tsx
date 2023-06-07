@@ -136,15 +136,18 @@ const EventResultsSidebar = memo(
                 <Col span={16}>
                   <Body level={2}>
                     Selected results:{' '}
-                    <SidebarChip icon="Events" size="medium" $small>
-                      {selectedEventResults?.length}
-                    </SidebarChip>
+                    <SidebarChip
+                      icon="Events"
+                      size="medium"
+                      $small
+                      label={`${selectedEventResults?.length}`}
+                    />
                   </Body>
                 </Col>
                 <Col>
                   <Button
                     size="small"
-                    type="ghost-danger"
+                    type="ghost-destructive"
                     onClick={handleClearAllSelection}
                   >
                     Clear all
@@ -174,9 +177,12 @@ const EventResultsSidebar = memo(
               <Row align="middle" style={{ marginBottom: '8px' }}>
                 <Body level={2}>
                   Other results:{' '}
-                  <SidebarChip icon="Events" size="medium" $small>
-                    {remainingEventResults?.length}
-                  </SidebarChip>
+                  <SidebarChip
+                    icon="Events"
+                    size="medium"
+                    $small
+                    label={`${remainingEventResults?.length}`}
+                  />
                 </Body>
               </Row>
               {remainingEventResults?.map((event: CogniteEvent) => {

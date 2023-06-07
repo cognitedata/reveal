@@ -134,7 +134,7 @@ export const useUploadCalculations = ({
   });
 
   const handleImportCalculations = useCallback(
-    (string) => {
+    (string: string) => {
       let calculations: ChartWorkflowV2[] = [];
       try {
         calculations = JSON.parse(string);

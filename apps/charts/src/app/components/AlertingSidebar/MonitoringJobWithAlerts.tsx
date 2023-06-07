@@ -178,7 +178,6 @@ const ConfirmModalResolveAlerts = ({
       okText="Yes, I understand"
       onOk={onMarkAllAlertsResolved}
       onCancel={onCloseModal}
-      width={750}
     >
       <Title level={4}>
         {t['Are you sure you want to mark all as resolved ?']}

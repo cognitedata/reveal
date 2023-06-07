@@ -52,7 +52,6 @@ export const ScheduledCalculationDeleteModal = ({
     <StyledModal
       visible
       title={<DeleteModalHeader title="Delete scheduled calculation" />}
-      width={600}
       onCancel={onCancel}
       footer={
         <Flex justifyContent="end" gap={16}>
@@ -60,7 +59,7 @@ export const ScheduledCalculationDeleteModal = ({
             {t.Cancel}
           </Button>
           <Button
-            type="danger"
+            type="destructive"
             onClick={async () => {
               try {
                 setIsDeleting(true);

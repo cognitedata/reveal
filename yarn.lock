@@ -6194,6 +6194,11 @@
   resolved "https://registry.yarnpkg.com/@sentry/rrweb/-/rrweb-0.3.1.tgz#a0f7496e086a30679d7af227d62ab76cfd5ed934"
   integrity sha512-AJIy2yqjtgpcow3L1gyxxr6x+rqLN9HXMlsNNmLeUKlPBxaSMP47lM6aexI3V+XkKnRmOW05H21cLimyuM+59Q==
 
+"@sentry/rrweb@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@sentry/rrweb/-/rrweb-0.3.3.tgz#cbc55e6a99f88e98616a7141210b3f4544427b2a"
+  integrity sha512-GaPHoCpzUMW+SCyK/ZMxzZJb4snWE2VSj8vYddHcPnboIG2xH+V4XEGxpKbEXc5s0WGDuhPTQv1j1Q44/gt/kA==
+
 "@sentry/tracing@6.13.3":
   version "6.13.3"
   resolved "https://registry.yarnpkg.com/@sentry/tracing/-/tracing-6.13.3.tgz#ca657d4afa99c50f15e638fe38405bac33e780ee"

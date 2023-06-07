@@ -81,7 +81,7 @@ export default function AssetSearchHit({
       query={query}
       renderCheckbox={() => (
         <Checkbox
-          onClick={(e) => {
+          onChange={(e) => {
             e.preventDefault();
             handleTimeSeriesClick(ts);
             trackUsage('ChartView.AddTimeSeries', { source: 'search' });
@@ -150,7 +150,7 @@ export default function AssetSearchHit({
           {searchResultElements}
           {dataAmount && dataAmount.count > TIMESERIES_COUNT && (
             <TSItem>
-              <Button type="link" onClick={() => handleSelectAsset(asset.id)}>
+              <Button type="ghost" onClick={() => handleSelectAsset(asset.id)}>
                 {t['View all']} ({dataAmount.count})
               </Button>
             </TSItem>

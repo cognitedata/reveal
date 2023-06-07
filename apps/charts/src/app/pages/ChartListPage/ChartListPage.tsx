@@ -121,10 +121,12 @@ const ChartListPage = () => {
       <Flex style={{ margin: '10px 20px' }}>
         <Tabs
           activeKey={activeTab}
-          onChange={(activeKey) => setActiveTab(activeKey as typeof activeTab)}
+          onTabClick={(activeKey) =>
+            setActiveTab(activeKey as typeof activeTab)
+          }
         >
-          <Tabs.TabPane key="mine" tab={<span>{t['My charts']}</span>} />
-          <Tabs.TabPane key="public" tab={<span>{t['Public charts']}</span>} />
+          <Tabs.Tab key="mine" tabKey="mine" label={t['My charts']} />
+          <Tabs.Tab key="public" tabKey="public" label={t['Public charts']} />
         </Tabs>
         <div style={{ flexGrow: 1 }} />
         <div style={{ width: 200 }}>

@@ -182,15 +182,21 @@ const EventFilterForm = ({
         <p>
           {t['Number of events']}:
           <br />
-          <SidebarChip icon="Events" size="medium">
-            {isEventFilterValid && results.length > 0 ? results.length : '-'}
-          </SidebarChip>
+          <SidebarChip
+            icon="Events"
+            size="medium"
+            label={
+              isEventFilterValid && results.length > 0
+                ? `${results.length}`
+                : '-'
+            }
+          />
         </p>
       </SidebarInnerBox>
       <Button
         onClick={() => onShowEventResults(eventData.id)}
         disabled={!isEventFilterValid || !(results.length > 0)}
-        block
+        style={{ display: 'block' }}
       >
         {isEventFilterValid ? t['View results'] : t['Event filter is empty']}
         &nbsp; <Icon type="ArrowRight" />

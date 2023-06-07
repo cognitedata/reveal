@@ -45,9 +45,9 @@ export const Paginator = ({
     <ToolBar>
       {showPaginator && (
         <Pagination
-          current={currentPage}
-          total={totalPages}
-          onChange={handlePageChange}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
       )}
     </ToolBar>

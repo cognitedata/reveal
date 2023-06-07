@@ -41,6 +41,7 @@
     "@sentry/browser": "^7.19.0",
     "@sentry/node": "^7.5.1",
     "@sentry/react": "^7.54.0",
+    "@sentry/rrweb": "^0.3.3",
     "@swc/helpers": "~0.4.11",
     "@tanstack/react-query": "^4.6.1",
     "@tanstack/react-query-devtools": "^4.29.7",

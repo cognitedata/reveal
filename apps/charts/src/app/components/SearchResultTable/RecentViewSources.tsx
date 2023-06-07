@@ -58,7 +58,7 @@ const RecentViewSources = ({ viewType }: Props) => {
         timeseries={ts}
         renderCheckbox={() => (
           <Checkbox
-            onClick={(e) => {
+            onChange={(e) => {
               e.preventDefault();
               handleTimeSeriesClick(ts);
               trackUsage('ChartView.AddTimeSeries', {

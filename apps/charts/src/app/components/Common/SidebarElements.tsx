@@ -8,7 +8,7 @@ import {
   Switch,
   Collapse,
   Select,
-  Label,
+  Chip,
   Skeleton,
 } from '@cognite/cogs.js';
 
@@ -198,7 +198,7 @@ export const SidebarInnerBox = styled.div`
   }
 `;
 
-export const SidebarChip = styled(Label)<{ $small?: boolean }>`
+export const SidebarChip = styled(Chip)<{ $small?: boolean }>`
   &&& {
     margin-top: 4px;
     font-size: 12px;

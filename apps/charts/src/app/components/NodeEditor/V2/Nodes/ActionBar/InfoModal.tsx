@@ -32,7 +32,6 @@ const InfoModal = ({
         setIsModalVisible(false);
         onClose();
       }}
-      width={750}
     >
       <Markdown>{indslFunction.description || ''}</Markdown>
     </ModalWrapper>

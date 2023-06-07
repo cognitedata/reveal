@@ -80,7 +80,7 @@ export default function SearchTimeseries({ query, searchResults }: Props) {
       query={query}
       renderCheckbox={() => (
         <Checkbox
-          onClick={(e) => {
+          onChange={(e) => {
             e.preventDefault();
             handleTimeSeriesClick(ts);
             trackUsage('ChartView.AddTimeSeries', { source: 'search' });
@@ -100,7 +100,7 @@ export default function SearchTimeseries({ query, searchResults }: Props) {
       query={query}
       renderCheckbox={() => (
         <Checkbox
-          onClick={(e) => {
+          onChange={(e) => {
             e.preventDefault();
             handleTimeSeriesClick(timeseriesExactMatch);
           }}
@@ -120,7 +120,7 @@ export default function SearchTimeseries({ query, searchResults }: Props) {
       {searchResultElements}
       {hasNextPage && (
         <TSItem>
-          <Button type="link" onClick={() => fetchNextPage()}>
+          <Button type="ghost" onClick={() => fetchNextPage()}>
             {t['Additional time series']}
           </Button>
         </TSItem>

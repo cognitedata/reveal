@@ -125,7 +125,6 @@ export const CSVModal = ({
       title={t['Export to CSV']}
       visible={isModalVisible}
       onCancel={handleCloseModal}
-      width={750}
     >
       <p>
         {

@@ -245,9 +245,9 @@ const ListMonitoringJobPreview = ({
           ) : (
             <>
               {isSubscribed ? (
-                <ActionIcon type="BellFilled" onClick={handleUnsubscribe} />
+                <ActionIcon icon="BellFilled" onClick={handleUnsubscribe} />
               ) : (
-                <ActionIcon type="Bell" onClick={handleSubscribe} />
+                <ActionIcon icon="Bell" onClick={handleSubscribe} />
               )}
             </>
           )}
@@ -272,7 +272,7 @@ const ListMonitoringJobPreview = ({
             }}
           >
             <ActionIcon
-              type="EllipsisVertical"
+              icon="EllipsisVertical"
               onClick={() => setIsOpen(true)}
             />
           </Dropdown>
@@ -370,7 +370,7 @@ export const TimeseriesIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
-export const ActionIcon = styled(Icon)`
+export const ActionIcon = styled(Button)`
   &&& {
     position: relative;
     top: 3px;

@@ -155,7 +155,7 @@ const SearchInAsset = ({ query, setQuery, filter }: SearchInAssetProps) => {
                       query={urlQuery as unknown as string}
                       renderCheckbox={() => (
                         <Checkbox
-                          onClick={(e) => {
+                          onChange={(e) => {
                             e.preventDefault();
                             handleTimeSeriesClick(ts);
                             trackUsage('ChartView.AddTimeSeries', {

@@ -13,7 +13,7 @@ import {
 } from '@charts-app/models/chart/types';
 import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { Modes } from '@charts-app/types';
+import { Modes } from '@charts-app/pages/types';
 
 import { SourceTableWrapper, Table } from './elements';
 import { SourceTableHeader } from './SourceTableHeader';

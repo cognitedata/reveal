@@ -299,7 +299,7 @@ const EventSidebar = memo(
                               }
                             >
                               <Button
-                                type="ghost-danger"
+                                type="ghost-destructive"
                                 icon="Delete"
                                 aria-label="Delete"
                               />

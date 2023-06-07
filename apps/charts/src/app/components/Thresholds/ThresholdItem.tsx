@@ -395,18 +395,26 @@ const ThresholdItem = ({
         <Flex justifyContent="space-between">
           <p>
             {t['Number of events']} <br />
-            <SidebarChip icon="Events" size="medium">
-              {isThresholdValid(threshold) ? result?.count ?? '-' : '-'}
-            </SidebarChip>
+            <SidebarChip
+              icon="Events"
+              size="medium"
+              label={
+                isThresholdValid(threshold) ? `${result?.count}` ?? '-' : '-'
+              }
+            />
           </p>
           <p>
             {t['Total time']} {threshold.type} {t.threshold} <br />
-            <SidebarChip icon="Clock" size="medium">
-              {isThresholdValid(threshold) &&
-              typeof result?.cumulative_duration === 'number'
-                ? convertMSToDisplay(result?.cumulative_duration)
-                : '-'}
-            </SidebarChip>
+            <SidebarChip
+              icon="Clock"
+              size="medium"
+              label={
+                isThresholdValid(threshold) &&
+                typeof result?.cumulative_duration === 'number'
+                  ? convertMSToDisplay(result?.cumulative_duration)
+                  : '-'
+              }
+            />
           </p>
         </Flex>
       </SidebarInnerBox>
@@ -417,7 +425,11 @@ const ThresholdItem = ({
               content={`${t['Do you want to delete']} "${threshold.name}"?`}
               onConfirm={() => onRemoveThreshold(threshold.id)}
             >
-              <Button type="ghost-danger" icon="Delete" aria-label="Delete" />
+              <Button
+                type="ghost-destructive"
+                icon="Delete"
+                aria-label="Delete"
+              />
             </Popconfirm>
             <Button
               type="ghost"

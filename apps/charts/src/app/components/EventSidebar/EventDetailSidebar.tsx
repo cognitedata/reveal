@@ -48,7 +48,7 @@ const MetadataItemWithMore = memo(
         <br />
         {len > limit && (
           <Button
-            type="link"
+            type="ghost"
             size="small"
             onClick={() => setLoadMore((prevState) => !prevState)}
           >
@@ -181,7 +181,7 @@ const EventDetailsSidebar = memo(
                         size="small"
                         onClick={handleHideEmptyMetadat}
                         toggled={hideEmpty}
-                        block
+                        style={{ display: 'block' }}
                       >
                         {hideEmpty ? t['Show empty'] : t['Hide empty']}
                       </Button>

@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { jobsToAlerts } from '@charts-app/ChartViewPage/NotificationIndicator';
 import {
   TopContainer,
   TopContainerAside,
@@ -14,6 +13,7 @@ import {
 } from '@charts-app/components/MonitoringSidebar/JobAndAlertsFilter';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useChartAtom } from '@charts-app/models/chart/atom';
+import { jobsToAlerts } from '@charts-app/pages/ChartViewPage/NotificationIndicator';
 import { trackUsage } from '@charts-app/services/metrics';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';

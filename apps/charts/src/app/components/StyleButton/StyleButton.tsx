@@ -11,10 +11,10 @@
 
 import { Button, ButtonProps } from '@cognite/cogs.js';
 
-interface Props extends ButtonProps {
+type Props = ButtonProps & {
   styleColor: string;
   label: string;
-}
+};
 
 export const StyleButton = ({
   styleColor,

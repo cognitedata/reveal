@@ -3,7 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components/macro';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, Icon } from '@cognite/cogs.js';
+import { Body, Button } from '@cognite/cogs.js';
 import { Asset, DataSet, Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
@@ -43,7 +43,7 @@ export const MetadataItem = ({
             value
           )}
           {!!value && copyable && (
-            <CopyIcon type={iconType} onClick={copyValue} />
+            <CopyIcon icon={iconType} onClick={copyValue} />
           )}
         </Value>
       ) : (
@@ -127,9 +127,9 @@ const Value = styled(Body)`
   word-wrap: break-word;
 `;
 
-const CopyIcon = styled(Icon)`
-  color: ${(props: { type: 'Copy' | 'Checkmark' }) =>
-    props.type === 'Copy'
+const CopyIcon = styled(Button)`
+  color: ${(props: { icon: 'Copy' | 'Checkmark' }) =>
+    props.icon === 'Copy'
       ? 'var(--cogs-link-primary-default)'
       : 'var(--cogs-success)'};
   margin: 0 5px;

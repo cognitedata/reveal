@@ -2,7 +2,7 @@ import { ComponentProps } from 'react';
 
 import { useTranslations } from '@charts-app/hooks/translations';
 import { ChartTimeSeries } from '@charts-app/models/chart/types';
-import { Modes } from '@charts-app/types';
+import { Modes } from '@charts-app/pages/types';
 
 import TimeSeriesRow from './TimeSeriesRow';
 

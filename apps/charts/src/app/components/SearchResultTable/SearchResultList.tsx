@@ -96,7 +96,7 @@ export default function SearchResultList({
         <>
           {isFetchingNextPage && <Icon type="Loader" />}
           <Button
-            type="link"
+            type="ghost"
             onClick={() => fetchNextPage()}
             style={{ marginBottom: '20px' }}
           >

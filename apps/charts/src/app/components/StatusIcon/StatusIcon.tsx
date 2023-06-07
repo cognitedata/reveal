@@ -22,7 +22,7 @@ export const StatusIcon = ({ status }: Props) => {
       return <Icon type="Help" />;
     case StatusStatusEnum.Failed:
     case StatusStatusEnum.Error:
-      return <Icon type="Error" title="Failed" />;
+      return <Icon type="Error" />;
     default:
       return null;
   }

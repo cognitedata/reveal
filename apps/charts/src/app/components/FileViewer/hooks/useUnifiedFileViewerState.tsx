@@ -126,7 +126,7 @@ export const useUnifiedFileViewerState = ({
               label={focusedAnnotation.metadata.label}
             />
           ),
-          anchorTo: TooltipAnchorPosition.BOTTOM,
+          anchorTo: TooltipAnchorPosition.BOTTOM_CENTER,
         },
       ];
     }

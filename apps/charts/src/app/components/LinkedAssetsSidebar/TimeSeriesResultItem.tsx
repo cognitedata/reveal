@@ -18,7 +18,7 @@ type Props = {
     'datapoints' | 'startDate' | 'endDate' | 'loading'
   >;
   highlight?: string;
-  onCheckboxClick: MouseEventHandler<HTMLLabelElement>;
+  onCheckboxClick: () => void;
   checked: boolean;
   disabled?: boolean;
   checkboxTooltip?: string;
@@ -47,9 +47,9 @@ export default function TimeSeriesResultItem({
         <div>
           <Tooltip content={checkboxTooltip} disabled={!checkboxTooltip}>
             <Checkbox
-              onClick={(e) => {
+              onChange={(e) => {
                 e.preventDefault();
-                onCheckboxClick(e);
+                onCheckboxClick();
               }}
               name={externalId}
               checked={checked}

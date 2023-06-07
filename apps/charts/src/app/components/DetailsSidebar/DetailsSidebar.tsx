@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
 import {
   Sidebar,
   ContentOverflowWrapper,
@@ -14,12 +13,16 @@ import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { ChartSource } from '@charts-app/models/chart/types';
 import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
+import {
+  SourceCircle,
+  SourceSquare,
+} from '@charts-app/pages/ChartViewPage/elements';
 import { formatValueForDisplay } from '@charts-app/utils/numbers';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { getUnitConverter } from '@charts-app/utils/units';
 import { Col, List, Row } from 'antd';
-
 import { v4 as uuidv4 } from 'uuid';
+
 import {
   StatisticsResult,
   StatisticsResultResults,
@@ -54,7 +57,7 @@ const renderStatusIcon = (status?: StatusStatusEnum) => {
       return <Icon type="Checkmark" />;
     case StatusStatusEnum.Failed:
     case StatusStatusEnum.Error:
-      return <Icon type="ExclamationMark" title="Failed" />;
+      return <Icon type="ExclamationMark" />;
     default:
       return null;
   }

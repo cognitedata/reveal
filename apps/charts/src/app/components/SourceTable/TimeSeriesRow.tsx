@@ -170,10 +170,7 @@ function TimeSeriesRow({
                 onStatusIconClick();
               }}
             >
-              <StyledVisibilityIcon
-                type={isVisible ? 'EyeShow' : 'EyeHide'}
-                title="Toggle visibility"
-              />
+              <StyledVisibilityIcon type={isVisible ? 'EyeShow' : 'EyeHide'} />
             </SourceStatus>
           )}
           <SourceName title={name}>

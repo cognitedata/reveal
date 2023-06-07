@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Elements } from 'react-flow-renderer';
 
-import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
 import ToolboxFunctionDropdown from '@charts-app/components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
+import {
+  SourceCircle,
+  SourceSquare,
+} from '@charts-app/pages/ChartViewPage/elements';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';

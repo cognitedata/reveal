@@ -20,7 +20,6 @@ import GlobalStyles from '@charts-app/styles/GlobalStyles';
 import { isDevelopment } from '@charts-app/utils/environment';
 import * as Sentry from '@sentry/react';
 import SentryRRWeb from '@sentry/rrweb';
-import { BrowserTracing } from '@sentry/tracing';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
@@ -54,7 +53,7 @@ if (config.sentryDSN && !isDevelopment) {
     release: config.version,
     environment: config.environment,
     integrations: [
-      new BrowserTracing({
+      new Sentry.BrowserTracing({
         routingInstrumentation: Sentry.reactRouterV6Instrumentation(
           useEffect,
           useLocation,

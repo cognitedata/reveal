@@ -88,7 +88,7 @@ const renderStatusIcon = (status?: StatusStatusEnum) => {
       return <Icon type="Checkmark" />;
     case StatusStatusEnum.Failed:
     case StatusStatusEnum.Error:
-      return <Icon type="ExclamationMark" title="Failed" />;
+      return <Icon type="ExclamationMark" />;
     default:
       return null;
   }

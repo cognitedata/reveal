@@ -111,7 +111,6 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
         onCancel={() => {
           setIsModalVisible(false);
         }}
-        width={750}
       >
         <Title level={4}>{t['Change status to resolved']}</Title>
         <ModalBody>

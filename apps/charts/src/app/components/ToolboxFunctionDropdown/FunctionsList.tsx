@@ -3,7 +3,7 @@ import { sortBy } from 'lodash';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
-import { Icon, Menu } from '@cognite/cogs.js';
+import { Button, Menu } from '@cognite/cogs.js';
 
 const FunctionsList = ({
   category,
@@ -38,7 +38,7 @@ const FunctionsList = ({
               </span>
               {latestVersionOfOperation.description && (
                 <InfoButton
-                  type="Info"
+                  icon="Info"
                   id={`${operation.op}-info-button`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -66,7 +66,7 @@ const FunctionNameWrapper = styled.div`
   }
 `;
 
-const InfoButton = styled(Icon)`
+const InfoButton = styled(Button)`
   margin-left: 10px;
 `;
 

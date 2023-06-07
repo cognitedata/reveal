@@ -58,9 +58,11 @@ const ToolboxFunctionDropdown = ({
       <FunctionsDropdown
         visible={isDropdownVisible}
         // Prevent dropdown from closing on modal click
-        onClickOutside={
-          !isModalVisible ? () => setIsDropdownVisible(false) : () => {}
-        }
+        onClickOutside={() => {
+          if (!isModalVisible) {
+            setIsDropdownVisible(false);
+          }
+        }}
         zIndex={Layers.DROPDOWN}
         placement="right"
         content={
@@ -135,7 +137,6 @@ const ToolboxFunctionDropdown = ({
         onCancel={() => {
           setIsModalVisible(false);
         }}
-        width={750}
       >
         <Markdown>
           {latestVersionOfSelectedOperation?.description || ''}
@@ -147,10 +148,8 @@ const ToolboxFunctionDropdown = ({
 
 const FunctionsDropdown = styled(Dropdown)`
   width: 275px;
-
   .cogs-input-container {
     padding: 8px;
-
     input,
     input:hover,
     input:focus {

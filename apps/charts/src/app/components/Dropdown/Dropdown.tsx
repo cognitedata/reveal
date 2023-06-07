@@ -1,12 +1,12 @@
-import {
-  ComponentProps,
-  CSSProperties,
-  ReactElement,
-  useCallback,
-  useState,
-} from 'react';
+import { CSSProperties, ReactElement, useCallback, useState } from 'react';
 
-import { Button, Dropdown, IconType, Menu } from '@cognite/cogs.js';
+import {
+  Button,
+  ButtonProps,
+  Dropdown,
+  IconType,
+  Menu,
+} from '@cognite/cogs.js';
 
 import { Container, MenuText } from './elements';
 
@@ -60,7 +60,7 @@ const ChartsDropdown = ({
 
 interface UncontrolledDropdownProps
   extends Omit<Props, 'open' | 'onClose' | 'children'> {
-  btnProps?: Omit<ComponentProps<typeof Button>, 'onClick'>;
+  btnProps?: ButtonProps;
   label?: string;
 }
 

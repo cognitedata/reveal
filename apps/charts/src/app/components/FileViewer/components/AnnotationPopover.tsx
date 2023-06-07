@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
 import {
   useAsset,
@@ -112,7 +111,7 @@ const TimeseriesList = ({ assetId }: { assetId: number }) => {
             />
           </TimeseriesInfo>
           <Checkbox
-            onClick={(e) => {
+            onChange={(e) => {
               e.preventDefault();
               handleTimeSeriesClick(ts);
               trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });

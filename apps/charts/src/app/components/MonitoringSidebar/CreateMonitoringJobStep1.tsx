@@ -30,7 +30,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { delay } from 'lodash';
 
-import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
+import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
 
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
@@ -246,11 +246,7 @@ const CreateMonitoringJobStep1 = ({
             max={MINIMUM_DURATION_LIMIT}
             name="minimumDuration"
             placeholder="1"
-            suffix={
-              <Label size="small" variant="unknown">
-                {t.Minutes}
-              </Label>
-            }
+            suffix={<Chip size="small" type="default" label={t.Minutes} />}
             required={t['Minimum duration is required']}
             validate={{
               minDuration: (value: string) =>
@@ -280,11 +276,7 @@ const CreateMonitoringJobStep1 = ({
             name="schedule"
             placeholder="10"
             required={t['Schedule is required']}
-            suffix={
-              <Label size="small" variant="unknown">
-                {t.Minutes}
-              </Label>
-            }
+            suffix={<Chip size="small" type="default" label={t.Minutes} />}
           />
         </Col>
         <Col span={1}>&nbsp;</Col>

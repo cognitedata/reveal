@@ -21,16 +21,16 @@ import {
   useSearchParam,
   useClearSearchParams,
 } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { Chart, ChartTimeSeries } from '@charts-app/models/chart/types';
 import {
   addTimeseries,
   convertTSToChartTS,
 } from '@charts-app/models/chart/updates';
 import { calculateDefaultYAxis } from '@charts-app/utils/axis';
 import { createInternalLink } from '@charts-app/utils/link';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { Chart, ChartTimeSeries } from '@charts-app/models/chart/types';
 import dayjs from 'dayjs';
 import { compact } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -283,13 +283,13 @@ export const OpenInCharts: FC = () => {
         clearSearchParams();
         setVisible(false);
       }}
-      width={900}
+      size="large"
     >
       {(timeserieIds || timeserieExternalIds) && (
         <>
           <div>
             <Checkbox
-              onClick={(e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
+              onChange={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 if (isAllSelected) {
@@ -304,7 +304,7 @@ export const OpenInCharts: FC = () => {
                 }
               }}
               name="selectAllNone"
-              value={isAllSelected}
+              checked={isAllSelected}
             >
               {t['Select all/none']}
             </Checkbox>
@@ -315,12 +315,12 @@ export const OpenInCharts: FC = () => {
                   <Row>
                     <Left>
                       <Checkbox
-                        onClick={(e) => {
+                        onChange={(e) => {
                           e.preventDefault();
                           handleTimeSeriesClick(tItem);
                         }}
                         name={`${tItem.id}`}
-                        value={selectedIds.includes(tItem.id)}
+                        checked={selectedIds.includes(tItem.id)}
                       />
                       <InfoContainer>
                         <ResourceNameWrapper>

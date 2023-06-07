@@ -156,9 +156,11 @@ const ListMonitoringJobs = memo(() => {
                           </ExpandTitle>
                         </Col>
                         <Col>
-                          <SidebarChip icon="Alarm" size="medium">
-                            <div>{folder.count}</div>
-                          </SidebarChip>
+                          <SidebarChip
+                            icon="Alarm"
+                            size="medium"
+                            label={`${folder.count}`}
+                          />
                         </Col>
                       </Row>
                     </CollapsePanelTitle>

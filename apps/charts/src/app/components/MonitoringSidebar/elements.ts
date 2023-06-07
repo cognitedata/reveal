@@ -4,13 +4,13 @@ import {
   Button,
   Collapse,
   Icon,
-  Label,
+  Chip,
   Flex,
   Title,
   Body,
 } from '@cognite/cogs.js';
 
-export const SidebarChip = styled(Label)`
+export const SidebarChip = styled(Chip)`
   margin-left: 1em;
   font-size: 12px;
   line-height: 16px;

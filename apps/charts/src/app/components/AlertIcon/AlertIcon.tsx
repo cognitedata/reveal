@@ -6,19 +6,15 @@
 
 import { ComponentProps, MouseEventHandler } from 'react';
 
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 
-type Props = ComponentProps<typeof Label> & {
+type Props = ComponentProps<typeof Chip> & {
   value?: string;
   onDoubleClick?: MouseEventHandler<HTMLSpanElement>;
 };
 
-const AlertIcon = ({ value, ...rest }: Props) => {
-  return (
-    <Label size="medium" {...rest}>
-      {value}
-    </Label>
-  );
+const AlertIcon = ({ value = '', ...rest }: Props) => {
+  return <Chip size="medium" {...rest} label={value} />;
 };
 
 export default AlertIcon;
