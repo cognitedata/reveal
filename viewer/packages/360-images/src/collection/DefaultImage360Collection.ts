@@ -25,6 +25,7 @@ import {
 
 import { Image360DataProvider } from '@reveal/data-providers';
 import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -49,6 +50,7 @@ export class DefaultImage360Collection implements Image360Collection {
   private _defaultStyle: Image360AnnotationAppearance = {};
 
   private readonly _image360DataProvider: Image360DataProvider;
+  private readonly _annotationFilter: Image360AnnotationFilter;
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
@@ -94,6 +96,7 @@ export class DefaultImage360Collection implements Image360Collection {
     collectionLabel: string | undefined,
     entities: Image360Entity[],
     icons: IconCollection,
+    annotationFilter: Image360AnnotationFilter,
     image360DataProvider: Image360DataProvider
   ) {
     this._collectionId = collectionId;
@@ -101,6 +104,7 @@ export class DefaultImage360Collection implements Image360Collection {
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;
+    this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
   }
   /**
@@ -264,7 +268,7 @@ export class DefaultImage360Collection implements Image360Collection {
           .flat()
       )
       .flat();
-    return this._image360DataProvider.get360ImageAssets(fileDescriptors);
+    return this._image360DataProvider.get360ImageAssets(fileDescriptors, this._annotationFilter);
   }
 }
 

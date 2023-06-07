@@ -28,6 +28,7 @@ import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360F
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
 import assert from 'assert';
+import { Image360AnnotationFilter } from '@reveal/360-images/src/annotation/Image360AnnotationFilter';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -336,7 +337,10 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  public async get360ImageAssets(image360FileDescriptors: Image360FileDescriptor[]): Promise<IdEither[]> {
+  public async get360ImageAssets(
+    image360FileDescriptors: Image360FileDescriptor[],
+    annotationFilter: Image360AnnotationFilter
+  ): Promise<IdEither[]> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this._client.annotations
@@ -348,10 +352,13 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
           }
         })
         .autoPagingToArray();
-      const assetIds = annotationArray.map(annotation => {
-        assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
-        return annotation.data.assetRef;
-      });
+
+      const assetIds = annotationArray
+        .filter(annotation => annotationFilter.filter(annotation))
+        .map(annotation => {
+          assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
+          return annotation.data.assetRef;
+        });
 
       return assetIds;
     });

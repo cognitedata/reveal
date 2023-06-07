@@ -85,6 +85,7 @@ export class Image360CollectionFactory<T> {
       collectionLabel,
       entities,
       collectionIcons,
+      annotationFilterer,
       this._image360DataProvider
     );
 
