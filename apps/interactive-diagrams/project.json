@@ -1,0 +1,98 @@
+{
+  "name": "interactive-diagrams",
+  "sourceRoot": "apps/interactive-diagrams/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "build",
+        "index": "apps/interactive-diagrams/src/index.html",
+        "main": "apps/interactive-diagrams/src/index.tsx",
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "tsConfig": "apps/interactive-diagrams/tsconfig.app.json",
+        "assets": ["apps/interactive-diagrams/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/interactive-diagrams/webpack-config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "preview": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "production": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "options": {
+        "buildTarget": "interactive-diagrams:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "interactive-diagrams:build:development",
+          "hmr": true,
+          "liveReload": true
+        },
+
+        "preview": {
+          "buildTarget": "interactive-diagrams:build:preview",
+          "hmr": false
+        },
+        "production": {
+          "buildTarget": "interactive-diagrams:build:production",
+          "hmr": false
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/interactive-diagrams/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/platypus"],
+      "options": {
+        "jestConfig": "apps/interactive-diagrams/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
