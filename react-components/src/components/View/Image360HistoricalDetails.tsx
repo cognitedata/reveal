@@ -74,7 +74,9 @@ export const Image360HistoricalDetails = ({
   useEffect(() => {
     const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
     setMinWidth(newMinWidth);
-    onExpand!(revisionDetailsExpanded);
+    if (onExpand) {
+      onExpand(revisionDetailsExpanded);
+    }
   }, [revisionDetailsExpanded]);
 
   return(
