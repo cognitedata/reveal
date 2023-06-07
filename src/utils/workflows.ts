@@ -3,7 +3,6 @@ import {
   WorkflowTaskDefinition,
   WorkflowWithVersions,
 } from 'hooks/workflows';
-import { isEqual } from 'lodash';
 import { AFlow, ProcessNodeData, ProcessType } from 'types';
 
 const ALLOWED_PROCESS_TYPES: ProcessType[] = ['transformation', 'function'];
@@ -71,12 +70,21 @@ export const convertCanvasToWorkflowDefinition = (
   return tasks;
 };
 
+export const areWorkflowTaskDefinitionsSame = (
+  d1: WorkflowTaskDefinition,
+  d2: WorkflowTaskDefinition
+): boolean => {
+  return d1.externalId === d2.externalId && d1.type === d2.type;
+};
+
 export const areWorkflowDefinitionsSame = (
   tasks1: WorkflowDefinitionRead['tasks'],
   tasks2: WorkflowDefinitionRead['tasks']
 ): boolean => {
   return (
     tasks1.length === tasks2.length &&
-    tasks1.every((d1t) => tasks2.some((d2t) => isEqual(d1t, d2t)))
+    tasks1.every((d1t) =>
+      tasks2.some((d2t) => areWorkflowTaskDefinitionsSame(d1t, d2t))
+    )
   );
 };
