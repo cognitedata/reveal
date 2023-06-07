@@ -31,12 +31,18 @@ import {
   THREE_D_REVISION_ID_QUERY_PARAMETER_KEY as REVISION_KEY,
   THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY as HL_MODE_KEY,
   THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY as CUBEMAP_360_IMAGES_KEY,
-} from './utils';
+} from '../utils';
 
 export type SecondaryModelOptions = {
   modelId: number;
   revisionId: number;
   applied?: boolean;
+};
+
+export type SecondaryObjectsVisibilityState = {
+  models3d: boolean;
+  images360: boolean;
+  pointsOfInterest: boolean;
 };
 
 export type Image360DatasetOptions = {
@@ -83,6 +89,10 @@ type ThreeDContext = {
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
   images360: Image360DatasetOptions[];
   setImages360: Dispatch<SetStateAction<Image360DatasetOptions[]>>;
+  secondaryObjectsVisibilityState?: SecondaryObjectsVisibilityState;
+  setSecondaryObjectsVisibilityState: Dispatch<
+    SetStateAction<SecondaryObjectsVisibilityState>
+  >;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -108,6 +118,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setAssetHighlightMode: noop,
   images360: [],
   setImages360: noop,
+  setSecondaryObjectsVisibilityState: noop,
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -270,6 +281,13 @@ export const ThreeDContextProvider = ({
     initialAssetHighlightMode
   );
 
+  const [secondaryObjectsVisibilityState, setSecondaryObjectsVisibilityState] =
+    useState<SecondaryObjectsVisibilityState>({
+      models3d: true,
+      images360: true,
+      pointsOfInterest: true,
+    });
+
   const {
     isFetching: fetchingDefaultRevision,
     error,
@@ -364,6 +382,8 @@ export const ThreeDContextProvider = ({
         setAssetHighlightMode,
         images360,
         setImages360,
+        secondaryObjectsVisibilityState,
+        setSecondaryObjectsVisibilityState,
       }}
     >
       {children}

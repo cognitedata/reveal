@@ -23,14 +23,15 @@ import {
   CognitePointCloudModel,
   Intersection,
   ViewerState,
+  Image360Collection,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { ThreeDContext } from './contexts/ThreeDContext';
 import { use3DModel } from './hooks';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
 import RevealErrorFeedback from './RevealErrorFeedback';
 import RevealErrorToast from './RevealErrorToast';
-import { ThreeDContext } from './ThreeDContext';
 import { IMAGE_360_POSITION_THRESHOLD } from './utils';
 
 type ChildProps = {
@@ -45,6 +46,7 @@ type Props = {
   image360SiteId?: string;
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
+  image360Entities?: { siteId: string; images: Image360Collection }[];
   onViewerClick?: (intersection: Intersection | null) => void;
   children?: (childProps: ChildProps) => JSX.Element;
 };
@@ -57,25 +59,24 @@ export function Reveal({
   nodesSelectable,
   initialViewerState,
   onViewerClick,
+  image360Entities,
 }: Props) {
   const context = useContext(ThreeDContext);
-  const { setViewer, set3DModel, setPointCloudModel } = context;
+  const {
+    setViewer,
+    set3DModel,
+    setPointCloudModel,
+    secondaryObjectsVisibilityState,
+  } = context;
   const numOfClicks = useRef<number>(0);
   const clickTimer = useRef<NodeJS.Timeout>();
   const sdk = useSDK();
-
-  const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
-    null
-  );
 
   const [image360CollectionSiteId, setImage360CollectionSiteId] = useState<
     string[]
   >([]);
 
-  const handleMount = useCallback(
-    (node: HTMLDivElement | null) => setRevealContainer(node),
-    []
-  );
+  const revealContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     data: apiThreeDModel,
@@ -84,25 +85,23 @@ export function Reveal({
   } = use3DModel(modelId);
 
   const viewer = useMemo(() => {
-    if (!revealContainer) {
+    if (!revealContainerRef.current) {
       return;
     }
 
     return new Cognite3DViewer({
       sdk,
-      domElement: revealContainer!,
+      domElement: revealContainerRef.current,
       continuousModelStreaming: true,
       loadingIndicatorStyle: {
         placement: 'bottomRight',
         opacity: 1,
       },
     });
-  }, [revealContainer, sdk]);
+  }, [sdk, revealContainerRef.current]);
 
   useEffect(() => {
-    if (setViewer) {
-      setViewer(viewer);
-    }
+    setViewer(viewer);
   }, [setViewer, viewer]);
 
   const { data: models, error } = useQuery(
@@ -201,10 +200,31 @@ export function Reveal({
   );
 
   useEffect(() => {
+    if (!viewer) return;
+
+    viewer.models.forEach((model) => {
+      if (model instanceof CogniteCadModel) {
+        model.visible = secondaryObjectsVisibilityState?.models3d ?? true;
+      } else if (model instanceof CognitePointCloudModel) {
+        model.setDefaultPointCloudAppearance({
+          visible: secondaryObjectsVisibilityState?.models3d ?? true,
+        });
+      }
+    });
+
+    image360Entities?.forEach((image360) =>
+      image360.images.setIconsVisibility(
+        secondaryObjectsVisibilityState?.images360 ?? true
+      )
+    );
+
+    viewer.requestRedraw();
+  }, [secondaryObjectsVisibilityState, image360Entities, viewer]);
+
+  useEffect(() => {
     if (error) {
       toast.error(<RevealErrorToast error={error as { message?: string }} />, {
         toastId: 'reveal-model-load-error',
-        autoClose: false,
       });
     }
   }, [error]);
@@ -279,7 +299,7 @@ export function Reveal({
 
   return (
     <>
-      <RevealContainer id="revealContainer" ref={handleMount} />
+      <RevealContainer id="revealContainer" ref={revealContainerRef} />
       {children &&
         viewer &&
         models &&

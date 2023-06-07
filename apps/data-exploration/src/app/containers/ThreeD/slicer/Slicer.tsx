@@ -12,7 +12,7 @@ import {
 } from '@cognite/reveal';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import { ids } from '../../../../cogs-variables';

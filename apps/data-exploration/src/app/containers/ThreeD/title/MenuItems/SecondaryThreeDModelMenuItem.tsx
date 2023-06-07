@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { formatTime } from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 
@@ -55,7 +55,7 @@ export const SecondaryThreeDModelMenuItem = ({
   };
 
   const menuItemContent = (
-    <StyledMenuItemContent gap={8}>
+    <StyledSecondaryObjectMenuItemContent gap={8}>
       <Checkbox
         checked={!!options?.applied}
         disabled={!revisions?.length}
@@ -63,10 +63,10 @@ export const SecondaryThreeDModelMenuItem = ({
         onChange={(_, c) => handleClickModelMenuItem(!!c)}
       />
       <Flex alignItems="flex-start" direction="column">
-        <StyledSecondaryThreeDModelBody $isSelected={options?.applied}>
+        <StyledSecondaryObjectBody $isSelected={options?.applied}>
           {model.name}
-        </StyledSecondaryThreeDModelBody>
-        <StyledSecondaryThreeDModelDetail>
+        </StyledSecondaryObjectBody>
+        <StyledSecondaryObjectDetail>
           {selectedRevision ? (
             <>
               {`Revision ${selectedRevision.index} - ${
@@ -76,9 +76,9 @@ export const SecondaryThreeDModelMenuItem = ({
           ) : (
             <>-</>
           )}
-        </StyledSecondaryThreeDModelDetail>
+        </StyledSecondaryObjectDetail>
       </Flex>
-    </StyledMenuItemContent>
+    </StyledSecondaryObjectMenuItemContent>
   );
 
   if (!isFetched || revisions?.length === 0) {
@@ -115,7 +115,7 @@ export const SecondaryThreeDModelMenuItem = ({
   );
 };
 
-export const StyledSecondaryThreeDModelBody = styled(Body).attrs({
+export const StyledSecondaryObjectBody = styled(Body).attrs({
   level: 2,
   strong: true,
 })<{ $isSelected?: boolean }>`
@@ -123,7 +123,7 @@ export const StyledSecondaryThreeDModelBody = styled(Body).attrs({
     $isSelected && Colors['text-icon--interactive--default']};
 `;
 
-export const StyledSecondaryThreeDModelDetail = styled(Detail)`
+export const StyledSecondaryObjectDetail = styled(Detail)`
   color: ${Colors['text-icon--muted']};
 `;
 
@@ -132,7 +132,7 @@ export const StyledMenu = styled(Menu)`
   overflow-y: auto;
 `;
 
-export const StyledMenuItemContent = styled(Flex)`
+export const StyledSecondaryObjectMenuItemContent = styled(Flex)`
   margin-right: 16px;
 `;
 

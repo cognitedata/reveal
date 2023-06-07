@@ -4,16 +4,18 @@ import { Alert } from 'antd';
 
 import { createLink, PageTitle, SecondaryTopbar } from '@cognite/cdf-utilities';
 
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import {
   use3DModel,
   useImage360,
   useRevision,
   useRevisionIndex,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import SecondaryModelDropdown from '@data-exploration-app/containers/ThreeD/title/SecondaryModelDropdown';
+import MainModelDropdown from '@data-exploration-app/containers/ThreeD/title/Dropdowns/MainModelDropdown';
 
 import { getMainModelTitle } from '../utils';
+
+import { ThreeDTopbar } from './ThreeDTopbar';
 
 export const ThreeDTitle = ({
   id,
@@ -22,14 +24,7 @@ export const ThreeDTitle = ({
   id?: number;
   image360SiteId?: string;
 }): JSX.Element => {
-  const {
-    revisionId,
-    secondaryModels,
-    setSecondaryModels,
-    images360,
-    setImages360,
-    viewer,
-  } = useContext(ThreeDContext);
+  const { revisionId } = useContext(ThreeDContext);
 
   const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
 
@@ -45,7 +40,8 @@ export const ThreeDTitle = ({
 
   const goBackFallback = createLink('/explore/search/threeD');
 
-  const error = modelError || revisionError;
+  const error = modelError ?? revisionError;
+
   if (error && !image360SiteId) {
     return (
       <>
@@ -72,26 +68,21 @@ export const ThreeDTitle = ({
             ? '360 Image'
             : undefined
         }
-        dropdownProps={
-          viewer && {
-            content: (
-              <SecondaryModelDropdown
-                mainModel={apiThreeDModel}
-                mainRevision={revision}
-                mainImage360SiteId={image360SiteId}
-                secondaryModels={secondaryModels}
-                setSecondaryModels={setSecondaryModels}
-                images360={images360}
-                setImages360={setImages360}
-                viewer={viewer}
-              />
-            ),
-          }
-        }
+        dropdownProps={{
+          content: (
+            <MainModelDropdown
+              model={apiThreeDModel}
+              revision={revision}
+              image360SiteData={image360SiteData}
+            />
+          ),
+        }}
         extraContent={
-          revision
-            ? `Updated: ${revision.createdTime.toLocaleDateString()}`
-            : undefined
+          <ThreeDTopbar
+            model={apiThreeDModel}
+            mainRevision={revision}
+            mainImage360Data={image360SiteData}
+          />
         }
       />
     </>

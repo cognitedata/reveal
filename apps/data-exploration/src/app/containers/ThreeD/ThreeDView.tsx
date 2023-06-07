@@ -37,13 +37,13 @@ import { StyledSplitter } from '../elements';
 
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import { AssetPreviewSidebar } from './AssetPreviewSidebar';
+import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
 import Reveal from './Reveal';
 import { Slicer } from './slicer/Slicer';
-import { ThreeDContext } from './ThreeDContext';
 import { ThreeDTitle } from './title/ThreeDTitle';
 import {
   ExpandButton,
@@ -293,6 +293,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             nodesSelectable={nodesSelectable && !assetDetailsExpanded}
             initialViewerState={initialUrlViewState}
             onViewerClick={onViewerClick}
+            image360Entities={imageEntities}
           >
             {({
               pointCloudModel: revealPointCloudModel,
@@ -310,7 +311,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   images360={images360}
                   imageEntities={imageEntities}
                   setImageEntities={setImageEntities}
-                  is360ImagesMode={is360ImagesMode}
                   setIs360ImagesMode={setIs360ImagesMode}
                   viewer={revealViewer}
                 />

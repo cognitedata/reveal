@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -7,8 +7,8 @@ import { formatTime } from '@cognite/cdf-utilities';
 import { Body, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { Image360SiteData } from '@data-exploration-app/containers/ThreeD/hooks';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import {
   getMainModelSubtitle,
   getMainModelTitle,
@@ -62,43 +62,37 @@ export const MainThreeDModelMenuItem = ({
   }
 
   return (
-    <Menu.Submenu
-      content={
-        <Menu>
-          {revisions?.map(({ createdTime, id, index, published }) => (
-            <Menu.Item
-              toggled={id === revision?.id}
-              description={
-                published
-                  ? 'Published'
-                  : `Created: ${formatTime(createdTime.getTime())}`
-              }
-              key={id}
-              onClick={() => {
-                if (id !== revision?.id) {
-                  navigate(
-                    getStateUrl({
-                      revisionId: id,
-                      viewState,
-                      slicingState,
-                      selectedAssetId,
-                      assetDetailsExpanded,
-                      secondaryModels,
-                      images360,
-                      assetHighlightMode,
-                    })
-                  );
-                }
-              }}
-            >
-              Revision {index}
-            </Menu.Item>
-          ))}
-        </Menu>
-      }
-    >
-      {menuItemContent}
-    </Menu.Submenu>
+    <Menu>
+      {revisions?.map(({ createdTime, id, index, published }) => (
+        <Menu.Item
+          toggled={id === revision?.id}
+          description={
+            published
+              ? 'Published'
+              : `Created: ${formatTime(createdTime.getTime())}`
+          }
+          key={id}
+          onClick={() => {
+            if (id !== revision?.id) {
+              navigate(
+                getStateUrl({
+                  revisionId: id,
+                  viewState,
+                  slicingState,
+                  selectedAssetId,
+                  assetDetailsExpanded,
+                  secondaryModels,
+                  images360,
+                  assetHighlightMode,
+                })
+              );
+            }
+          }}
+        >
+          Revision {index}
+        </Menu.Item>
+      ))}
+    </Menu>
   );
 };
 

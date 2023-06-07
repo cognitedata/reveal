@@ -12,13 +12,13 @@ import {
   CognitePointCloudModel,
 } from '@cognite/reveal';
 
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import {
   SECONDARY_MODEL_BASE_QUERY_KEY,
   getSecondaryModelAppliedStateQueryKey,
   getSecondaryModelQueryFn,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 type LoadSecondaryModelsProps = {
   secondaryModels: SecondaryModelOptions[];

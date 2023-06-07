@@ -62,6 +62,7 @@ export type AugmentedMappingResponse = {
 export type Image360SiteData = {
   siteId: string;
   siteName: string;
+  lastUpdatedTime?: Date;
 };
 
 export const use3DModel = (id: number | undefined) => {
@@ -134,6 +135,7 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
   const img360 = images360Data[0];
   const image360SiteData: Image360SiteData = {
     siteId,
+    lastUpdatedTime: new Date(img360.lastUpdatedTime),
     siteName: img360.metadata?.site_name ?? 'No site name',
   };
   return image360SiteData;
@@ -559,9 +561,10 @@ export const getImages360QueryFn =
     applied?: boolean,
     imageEntities?: { siteId: string; images: Image360Collection }[],
     setImageEntities?: (
-      entities: { siteId: string; images: Image360Collection }[]
+      value: React.SetStateAction<
+        { siteId: string; images: Image360Collection }[]
+      >
     ) => void,
-    is360ImagesMode?: boolean,
     setIs360ImagesMode?: (mode: boolean) => void,
     rotationMatrix?: THREE.Matrix4,
     translationMatrix?: THREE.Matrix4
@@ -588,7 +591,7 @@ export const getImages360QueryFn =
 
     if (applied && !hasAdded) {
       const collectionTransform = translationMatrix?.multiply(rotationMatrix!);
-      let images360Set;
+      let images360Set: Image360Collection;
       try {
         // By default rotation are not premultiplied with models
         images360Set = await viewer.add360ImageSet(
@@ -616,12 +619,10 @@ export const getImages360QueryFn =
         viewer.enter360Image(currentImage360);
       }
 
-      setImageEntities(
-        imageEntities.concat({
-          siteId: siteId,
-          images: images360Set,
-        })
+      setImageEntities((prevState) =>
+        prevState.concat({ siteId, images: images360Set })
       );
+
       images360Set.on('image360Entered', () => {
         setIs360ImagesMode?.(true);
       });

@@ -8,11 +8,11 @@ import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import {
   AugmentedMapping,
   useInfiniteAssetMappings,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { getBoundingBoxesByNodeIds } from '@data-exploration-app/containers/ThreeD/utils';
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';

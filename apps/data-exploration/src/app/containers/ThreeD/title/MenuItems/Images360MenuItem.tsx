@@ -1,19 +1,25 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
-import styled from 'styled-components';
+import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 
-import { Body, Checkbox, Flex, Menu, Colors } from '@cognite/cogs.js';
+import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import {
+  StyledSecondaryObjectBody,
+  StyledSecondaryObjectDetail,
+  StyledSecondaryObjectMenuItemContent,
+} from './SecondaryThreeDModelMenuItem';
 
 export const Images360MenuItem = ({
   siteId,
   siteName,
   onChange,
   options,
+  imageCount,
 }: {
   siteId: string;
   siteName: string;
+  imageCount: number;
   onChange: (nextState: Image360DatasetOptions) => void;
   options?: Image360DatasetOptions;
 }) => {
@@ -37,31 +43,22 @@ export const Images360MenuItem = ({
   };
 
   const menuItemContent = (
-    <StyledMenuItemContent gap={8}>
+    <StyledSecondaryObjectMenuItemContent gap={8}>
       <Checkbox
-        checked={!!options?.applied}
+        checked={options?.applied ?? false}
         name={`site-${siteId}`}
         onChange={(_, checked) => handleClickModelMenuItem(!!checked)}
       />
       <Flex alignItems="flex-start" direction="column">
-        <StyledImages360Body $isSelected={options?.applied}>
+        <StyledSecondaryObjectBody $isSelected={options?.applied}>
           {siteName}
-        </StyledImages360Body>
+        </StyledSecondaryObjectBody>
+        <StyledSecondaryObjectDetail>
+          {imageCount + ' images'}
+        </StyledSecondaryObjectDetail>
       </Flex>
-    </StyledMenuItemContent>
+    </StyledSecondaryObjectMenuItemContent>
   );
 
   return <Menu.Item>{menuItemContent}</Menu.Item>;
 };
-
-export const StyledMenuItemContent = styled(Flex)`
-  margin-right: 16px;
-`;
-
-export const StyledImages360Body = styled(Body).attrs({
-  level: 2,
-  strong: true,
-})<{ $isSelected?: boolean }>`
-  color: ${({ $isSelected }) =>
-    $isSelected && Colors['text-icon--interactive--default']};
-`;

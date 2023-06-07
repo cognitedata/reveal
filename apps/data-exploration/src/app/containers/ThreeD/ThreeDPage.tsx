@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { useSearchParamString } from '@data-exploration-lib/core';
 
-import { ThreeDContextProvider } from './ThreeDContext';
+import { ThreeDContextProvider } from './contexts/ThreeDContext';
 import { ThreeDView } from './ThreeDView';
 
 export const ThreeDPage = () => {

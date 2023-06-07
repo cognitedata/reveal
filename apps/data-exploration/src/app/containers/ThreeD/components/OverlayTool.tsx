@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import {
   LabelEventHandler,
   SmartOverlayTool,
