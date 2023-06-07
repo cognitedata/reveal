@@ -1,74 +1,82 @@
 import firebase from 'firebase/app';
+import { signInWithCustomToken, getAuth } from 'firebase/auth';
+
+import { CogniteClient } from '@cognite/sdk';
+
 import 'firebase/firestore';
-import 'firebase/auth';
-import { Chart } from '@charts-app/models/chart/types';
-import { uniqBy } from 'lodash';
 
-const charts = (project: string) => {
-  return firebase
-    .firestore()
-    .collection('tenants')
-    .doc(project)
-    .collection('charts');
+type LoginToFirebaseResponse = {
+  firebaseToken: string;
+  experiments: string[];
 };
 
-export const fetchPublicCharts = async (projectId: string) => {
-  const snapshot = await charts(projectId)
-    .where('version', '==', 1)
-    .where('public', '==', true)
-    .get();
-  return snapshot.docs.map((doc) => doc.data()) as Chart[];
+type GetEnvironmentResponse = {
+  tenant: string;
+  config: EnvironmentConfig;
 };
 
-export const fetchUserCharts = async (
+type EnvironmentConfig = {
+  cognite: {
+    project: string;
+    baseUrl?: string;
+  };
+  firebase: {
+    databaseURL: string;
+  };
+};
+
+const auth = getAuth();
+export const fetchFirebaseToken = (
+  sdk: CogniteClient,
+  appsApiUrl: string,
   projectId: string,
-  userId: string,
-  userEmail?: string
+  firebaseAppName: string
 ) => {
-  const chartsWhereUserMatchesId = (
-    await charts(projectId)
-      .where('version', '==', 1)
-      .where('user', '==', userId)
-      .get()
-  ).docs.map((doc) => doc.data()) as Chart[];
+  return sdk
+    .get<LoginToFirebaseResponse>(`${appsApiUrl}/${projectId}/login/firebase`, {
+      params: {
+        tenant: projectId,
+        app: firebaseAppName,
+        json: true,
+      },
+      withCredentials: true,
+    })
+    .then((result) => {
+      const {
+        data: { firebaseToken: nextFirebaseToken },
+      } = result;
+      localStorage.setItem('@cognite/charts/firebaseToken', nextFirebaseToken);
+      return nextFirebaseToken as string;
+    });
+};
 
-  let chartsWhereUserMatchesEmail: Chart[];
+export const fetchFirebaseEnvironment = async (
+  sdk: CogniteClient,
+  projectId: string,
+  appsApiUrl: string,
+  firebaseAppName: string
+) => {
+  return sdk
+    .get<GetEnvironmentResponse>(`${appsApiUrl}/env`, {
+      params: {
+        tenant: projectId,
+        app: firebaseAppName,
+        version: '0.0.0',
+      },
+      withCredentials: true,
+    })
+    .then((result) => result.data.config);
+};
 
-  try {
-    chartsWhereUserMatchesEmail = !userEmail
-      ? []
-      : ((
-          await charts(projectId)
-            .where('version', '==', 1)
-            .where('user', '==', userEmail)
-            .get()
-        ).docs.map((doc) => doc.data()) as Chart[]);
-  } catch (err) {
-    chartsWhereUserMatchesEmail = [];
+export const initializeFirebase = async (
+  env: EnvironmentConfig,
+  token: string
+) => {
+  if (firebase.getApps().length !== 0) {
+    // If we're already initialized, don't do it again
+    return true;
   }
-
-  const userCharts = uniqBy(
-    [...chartsWhereUserMatchesId, ...chartsWhereUserMatchesEmail],
-    'id'
-  );
-
-  return userCharts;
+  firebase.initializeApp(env?.firebase as any);
+  await signInWithCustomToken(auth, token as string);
+  return true;
 };
-
-export const fetchChart = async (projectId: string, chartId: string) => {
-  return (await charts(projectId).doc(chartId).get()).data() as Chart;
-};
-
-export const deleteChart = async (projectId: string, chartId: string) => {
-  return charts(projectId).doc(chartId).delete();
-};
-
-export const updateChart = async (
-  projectId: string,
-  chartId: string,
-  content: Partial<Chart>
-) => {
-  return charts(projectId).doc(chartId).set(content, { merge: true });
-};
-
-export const createChart = updateChart;

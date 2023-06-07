@@ -1,9 +1,5 @@
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProject } from '@cognite/cdf-utilities';
-import { Chart } from '@charts-app/models/chart/types';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { Chart } from '@charts-app/models/chart/types';
 import {
   deleteChart,
   fetchChart,
@@ -12,7 +8,12 @@ import {
   updateChart,
 } from '@charts-app/services/charts-storage';
 import * as Sentry from '@sentry/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isUndefined, omitBy } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
+
+import { getProject } from '@cognite/cdf-utilities';
 
 export const useMyCharts = () => {
   const { data: { id, mail } = {} } = useUserInfo();
