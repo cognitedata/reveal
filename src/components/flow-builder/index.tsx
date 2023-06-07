@@ -13,10 +13,10 @@ import ReactFlow, {
   SelectionMode,
   EdgeChange,
   NodeProps,
-  MiniMap,
   EdgeSelectionChange,
   NodeSelectionChange,
   NodePositionChange,
+  NodeMouseHandler,
 } from 'reactflow';
 import styled from 'styled-components';
 
@@ -56,10 +56,9 @@ export const FlowBuilder = (): JSX.Element => {
   const {
     flow: flowState,
     changeFlow,
-    setSelectedObject,
-    setIsNodeConfigurationPanelOpen,
     userState,
     setUserState,
+    setFocusedProcessNodeId,
   } = useWorkflowBuilderContext();
 
   const reactFlowContainer = useRef<HTMLDivElement>(null);
@@ -124,6 +123,12 @@ export const FlowBuilder = (): JSX.Element => {
     }
   };
 
+  const onNodeDoubleClick: NodeMouseHandler = (_, node) => {
+    if (!!node.data?.processType) {
+      setFocusedProcessNodeId(node.id);
+    }
+  };
+
   const onNodesChange = (changes: NodeChange[]) => {
     const selectChanges = changes.filter(
       (c) => c.type === 'select'
@@ -143,14 +148,6 @@ export const FlowBuilder = (): JSX.Element => {
           }
         });
         return newState;
-      });
-      selectChanges.forEach(({ id, selected }) => {
-        if (selected) {
-          setSelectedObject(id);
-          setIsNodeConfigurationPanelOpen(true);
-        } else if (selectChanges.every((c) => !c.selected)) {
-          setIsNodeConfigurationPanelOpen(false);
-        }
       });
     }
 
@@ -287,7 +284,7 @@ export const FlowBuilder = (): JSX.Element => {
               data: {
                 processType: type,
                 processDescription: '',
-                processItem: '',
+                processExternalId: '',
                 processProps: {},
               },
             };
@@ -339,7 +336,7 @@ export const FlowBuilder = (): JSX.Element => {
   }
 
   return (
-    <Container
+    <FlowBuilderContainer
       ref={reactFlowContainer}
       onContextMenu={(e) => {
         e.preventDefault();
@@ -361,6 +358,7 @@ export const FlowBuilder = (): JSX.Element => {
         onDrop={onDrop}
         onEdgesChange={onEdgesChange}
         onInit={setReactFlowInstance}
+        onNodeDoubleClick={onNodeDoubleClick}
         onNodesChange={onNodesChange}
         onEdgeContextMenu={(e, edge) => {
           setContextMenu({
@@ -389,22 +387,17 @@ export const FlowBuilder = (): JSX.Element => {
         <Controls />
         <CanvasToolbar />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        <StyledMiniMap />
       </ReactFlow>
       <ContextMenu
         containerRef={reactFlowContainer}
         contextMenu={contextMenu}
         onClose={() => setContextMenu(undefined)}
       />
-    </Container>
+    </FlowBuilderContainer>
   );
 };
 
-const StyledMiniMap = styled(MiniMap)`
-  margin-bottom: 60px;
-`;
-
-const Container = styled.div`
+export const FlowBuilderContainer = styled.div`
   background-color: ${Colors['surface--strong']};
   height: 100%;
   position: relative;

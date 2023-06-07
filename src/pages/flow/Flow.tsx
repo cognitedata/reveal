@@ -1,53 +1,114 @@
-import { Flex, Loader } from '@cognite/cogs.js';
+import { useEffect } from 'react';
+
+import { Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Canvas } from 'components/canvas';
 import { useParams } from 'react-router-dom';
+
+import { Canvas } from 'components/canvas';
 import {
   FlowContextProvider,
   useWorkflowBuilderContext,
 } from 'contexts/WorkflowContext';
 import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
-import { useFlow } from 'hooks/files';
-import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
+import { useCreateFile, useFile } from 'hooks/files';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
+import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
+import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
+import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
+import RunCanvas from 'components/run-canvas/RunCanvas';
 
 const Flow = (): JSX.Element => {
-  const { id } = useParams<{ id: string }>();
-  const { data, error, isInitialLoading } = useFlow(id!, { enabled: !!id });
+  const { externalId } = useParams<{ externalId: string }>();
 
-  if (error) {
+  const { data: workflow, isInitialLoading: isInitialLoadingWorkflow } =
+    useWorkflow(externalId!);
+
+  const {
+    data: file,
+    error,
+    isInitialLoading: isInitialLoadingFile,
+  } = useFile(externalId!, {
+    enabled: !!workflow,
+    retry: 0,
+  });
+  const { mutate: createFile, isIdle, isLoading } = useCreateFile();
+
+  const isMissingError =
+    (error?.missing?.[0] as any | undefined)?.externalId === externalId;
+
+  useEffect(() => {
+    {
+      if (isMissingError && isIdle) {
+        createFile({
+          id: externalId!,
+          name: externalId!,
+          description: '',
+          canvas: {
+            nodes: [] as any, // FIXME: any
+            edges: [] as any, // FIXME: any
+          },
+        });
+      }
+    }
+  }, [createFile, externalId, isIdle, isMissingError]);
+
+  if (error && !isMissingError) {
     return <>ERROR: {JSON.stringify(error)}</>;
   }
 
-  if (isInitialLoading) {
+  if (isInitialLoadingFile || isInitialLoadingWorkflow || isLoading) {
     return <Loader />;
   }
 
-  if (!data || !id) {
-    return <>wtf?</>;
+  if (!workflow) {
+    return <div>not found</div>;
+  }
+
+  if (!file) {
+    return <div>not found</div>;
   }
 
   return (
-    <FlowContextProvider externalId={id} initialFlow={data}>
-      <FlowContainer />
+    <FlowContextProvider externalId={externalId!} initialFlow={file}>
+      <FlowContainer workflow={workflow} />
     </FlowContextProvider>
   );
 };
 
-function FlowContainer() {
-  const { isHistoryVisible, previewHash, isNodeConfigurationPanelOpen } =
-    useWorkflowBuilderContext();
+type FlowContainerProps = {
+  workflow: WorkflowWithVersions;
+};
+
+function FlowContainer({ workflow }: FlowContainerProps) {
+  const {
+    activeViewMode,
+    focusedProcessNodeId,
+    isHistoryVisible,
+    previewHash,
+  } = useWorkflowBuilderContext();
 
   return (
     <StyledFlowContainer>
-      <CanvasTopBar />
-
+      <CanvasTopBar workflow={workflow} />
       <Content>
-        {previewHash && <PreviewFeedback />}
-        {isHistoryVisible && <FloatingHistoryPanel />}
-        <Canvas />
-        {isNodeConfigurationPanelOpen && <NodeConfigurationPanel />}
+        {activeViewMode === 'edit' ? (
+          <CanvasSection>
+            {previewHash && <PreviewFeedback />}
+            {isHistoryVisible && <FloatingHistoryPanel />}
+            {focusedProcessNodeId && <NodeConfigurationPanel />}
+            <Canvas />
+          </CanvasSection>
+        ) : (
+          <>
+            <RunCanvasSection>
+              <RunCanvas />
+            </RunCanvasSection>
+            <RunHistorySectionContainer>
+              <RunHistorySection workflow={workflow} />
+            </RunHistorySectionContainer>
+          </>
+        )}
       </Content>
     </StyledFlowContainer>
   );
@@ -59,8 +120,45 @@ const StyledFlowContainer = styled(Flex).attrs({ direction: 'column' })`
 `;
 
 const Content = styled.div`
+  background-color: ${Colors['surface--strong']};
+  display: flex;
   flex: 1;
+  height: calc(100% - 57px);
+  gap: 12px;
+  padding: 12px;
   position: relative;
+`;
+
+const CanvasSection = styled.div`
+  position: relative;
+  height: 100%;
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  flex: 1;
+  padding: 12px;
+`;
+
+const RunCanvasSection = styled.div`
+  position: relative;
+  height: 100%;
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  flex: 1;
+  padding: 12px;
+`;
+
+const RunHistorySectionContainer = styled.div`
+  position: relative;
+  height: 100%;
+  background-color: ${Colors['surface--muted']};
+  border-radius: 6px;
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
+  width: 600px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
 `;
 
 export default Flow;

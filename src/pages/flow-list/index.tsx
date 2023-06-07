@@ -1,50 +1,85 @@
-import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
-import List from './List';
-import CreateButton from './CreateButton';
+import { Body, Button, Flex, Icon, Input, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useTranslation } from 'common';
-import SearchInput from './SearchInput';
-import Count from './Count';
-import { useState } from 'react';
-import CreateWorkflowModal from 'components/workflow-modal/CreateWorkflowModal';
+import { useMemo, useState } from 'react';
+import { CreateWorkflowModal } from 'components/workflow-modal/CreateWorkflowModal';
+import { useWorkflows } from 'hooks/workflows';
+import WorkflowTable from 'components/workflow-table/WorkflowTable';
 
 export default function FlowList() {
   const { t } = useTranslation();
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const {
+    data: workflows,
+    error,
+    isInitialLoading: isInitialLoadingWorkflows,
+  } = useWorkflows();
+
+  const filteredWorkflows = useMemo(
+    () =>
+      workflows?.filter(({ externalId, description }) => {
+        const lowercaseQuery = searchQuery.toLowerCase();
+        return (
+          externalId.toLowerCase().includes(lowercaseQuery) ||
+          description?.toLowerCase().includes(lowercaseQuery)
+        );
+      }) ?? [],
+    [workflows, searchQuery]
+  );
+
+  if (isInitialLoadingWorkflows || !workflows) {
+    return <Icon type="Loader" />;
+  }
+
+  if (error) {
+    return (
+      <div>
+        <p>Error</p>
+        <pre>{JSON.stringify(error, null, 2)}</pre>
+      </div>
+    );
+  }
+
   return (
     <>
-      <ListLayoutWrapper direction="column">
+      <ListLayoutWrapper>
         <Flex justifyContent="space-between" style={{ marginBottom: 8 }}>
           <Flex gap={10} alignItems="center">
             <Icon type="FlowChart" />
             <Title level={3}>{t('list-title')}</Title>
           </Flex>
-
-          <CreateButton
-            showCreateModal={showCreateModal}
-            setShowCreateModal={setShowCreateModal}
-          />
         </Flex>
-
-        <Body level={2}>{t('list-description')}</Body>
-        <Flex style={{ margin: '30px 0' }} alignItems="center" gap={10}>
-          <SearchInput />
-          <Count />
+        <Flex alignItems="center" justifyContent="space-between" gap={12}>
+          <Flex alignItems="center" gap={12}>
+            <Input
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('list-search-placeholder')}
+              value={searchQuery}
+            />
+            <Body level={2} muted>
+              {t('workflow_other', { count: filteredWorkflows.length })}
+            </Body>
+          </Flex>
+          <Button onClick={() => setIsModalOpen(true)} type="primary">
+            {t('create-workflow')}
+          </Button>
         </Flex>
-        <List />
+        <WorkflowTable workflows={filteredWorkflows} />
       </ListLayoutWrapper>
       <CreateWorkflowModal
-        showWorkflowModal={showCreateModal}
-        setShowWorkflowModal={setShowCreateModal}
+        onCancel={() => setIsModalOpen(false)}
+        visible={isModalOpen}
       />
     </>
   );
 }
 
-const ListLayoutWrapper = styled(Flex)`
+const ListLayoutWrapper = styled.div`
   width: 1096px;
   margin: 50px auto;
-  h1 {
-    margin: 0;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;

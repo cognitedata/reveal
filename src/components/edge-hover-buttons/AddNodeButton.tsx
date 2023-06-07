@@ -47,7 +47,7 @@ const AddNodeButton = ({
       data: {
         processType,
         processDescription: '',
-        processItem: '',
+        processExternalId: '',
         processProps: {},
       },
     };
@@ -96,18 +96,6 @@ const AddNodeButton = ({
               onClick={() => handleAddNode('transformation', xPos, yPos)}
             >
               {t('transformation')}
-            </Menu.Item>
-            <Menu.Item
-              icon="FrameTool"
-              onClick={() => handleAddNode('webhook', xPos, yPos)}
-            >
-              {t('webhook')}
-            </Menu.Item>
-            <Menu.Item
-              icon="Pipeline"
-              onClick={() => handleAddNode('workflow', xPos, yPos)}
-            >
-              {t('workflow')}
             </Menu.Item>
             <Menu.Item
               icon="Function"

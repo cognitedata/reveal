@@ -73,7 +73,7 @@ export const ProcessNodeRenderer = ({
       data: {
         processType,
         processDescription: '',
-        processItem: '',
+        processExternalId: '',
         processProps: {},
       },
     };
@@ -121,15 +121,19 @@ export const ProcessNodeRenderer = ({
           <ProcessNodeIconContainer>
             <ProcessNodeIcon type={PROCESS_ICON[data.processType]} />
           </ProcessNodeIconContainer>
-          <Flex direction="column" gap={2}>
+          <Flex direction="column">
             <ProcessNodeTitle level={3}>
-              {data.processItem
-                ? data.processItem
-                : t(`component-title-${data.processType}`, {
-                    postProcess: 'uppercase',
-                  })}
+              {t(`component-title-${data.processType}`, {
+                postProcess: 'uppercase',
+              })}
             </ProcessNodeTitle>
-            <div>{data.processDescription}</div>
+            {data.processExternalId ? (
+              <Body level={3}>{data.processExternalId}</Body>
+            ) : (
+              <Body level={3} muted>
+                {t('not-set')}
+              </Body>
+            )}
           </Flex>
         </Flex>
         {otherUsers.length > 0 && (
@@ -153,16 +157,10 @@ export const ProcessNodeRenderer = ({
                   {t('transformation')}
                 </Menu.Item>
                 <Menu.Item
-                  icon="FrameTool"
-                  onClick={() => handleAddNode('webhook', 'left')}
+                  icon="Function"
+                  onClick={() => handleAddNode('function', 'left')}
                 >
-                  {t('webhook')}
-                </Menu.Item>
-                <Menu.Item
-                  icon="Pipeline"
-                  onClick={() => handleAddNode('workflow', 'left')}
-                >
-                  {t('workflow')}
+                  {t('function')}
                 </Menu.Item>
               </Menu>
             }
@@ -198,16 +196,10 @@ export const ProcessNodeRenderer = ({
                   {t('transformation')}
                 </Menu.Item>
                 <Menu.Item
-                  icon="FrameTool"
-                  onClick={() => handleAddNode('webhook', 'right')}
+                  icon="Function"
+                  onClick={() => handleAddNode('function', 'right')}
                 >
-                  {t('webhook')}
-                </Menu.Item>
-                <Menu.Item
-                  icon="Pipeline"
-                  onClick={() => handleAddNode('workflow', 'right')}
-                >
-                  {t('workflow')}
+                  {t('function')}
                 </Menu.Item>
               </Menu>
             }
