@@ -1,7 +1,9 @@
-import { CogniteClient } from '@cognite/sdk';
 import firebase from 'firebase/app';
+import { signInWithCustomToken, getAuth } from 'firebase/auth';
+
+import { CogniteClient } from '@cognite/sdk';
+
 import 'firebase/firestore';
-import 'firebase/auth';
 
 type LoginToFirebaseResponse = {
   firebaseToken: string;
@@ -23,6 +25,7 @@ type EnvironmentConfig = {
   };
 };
 
+const auth = getAuth();
 export const fetchFirebaseToken = (
   sdk: CogniteClient,
   appsApiUrl: string,
@@ -69,11 +72,11 @@ export const initializeFirebase = async (
   env: EnvironmentConfig,
   token: string
 ) => {
-  if (firebase.apps.length !== 0) {
+  if (firebase.getApps().length !== 0) {
     // If we're already initialized, don't do it again
     return true;
   }
   firebase.initializeApp(env?.firebase as any);
-  await firebase.auth().signInWithCustomToken(token as string);
+  await signInWithCustomToken(auth, token as string);
   return true;
 };

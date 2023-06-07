@@ -1,6 +1,6 @@
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import ToolboxFunctionDropdown from '@charts-app/components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
-import { SourceCircle, SourceSquare } from 'pages/ChartViewPage/elements';
+import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
 import { useState } from 'react';
 import styled from 'styled-components/macro';
 import { Operation } from '@cognite/calculation-backend';

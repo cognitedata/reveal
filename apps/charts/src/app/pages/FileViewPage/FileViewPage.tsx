@@ -16,7 +16,7 @@ import SourceTable from '@charts-app/components/SourceTable/SourceTable';
 import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
 import { useRecoilValue } from 'recoil';
 import { calculationSummaries } from '@charts-app/models/calculation-results/selectors';
-import { useInitializedChart } from 'pages/ChartViewPage/hooks';
+import { useInitializedChart } from '@charts-app/ChartViewPage/hooks';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 import ConnectedLinkedAssetsSidebar from '@charts-app/containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';

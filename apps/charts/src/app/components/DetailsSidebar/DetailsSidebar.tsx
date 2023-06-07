@@ -18,7 +18,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
-import { SourceCircle, SourceSquare } from 'pages/ChartViewPage/elements';
+import { SourceCircle, SourceSquare } from '@charts-app/ChartViewPage/elements';
 import { ChartSource } from '@charts-app/models/chart/types';
 import { formatValueForDisplay } from '@charts-app/utils/numbers';
 import { getUnitConverter } from '@charts-app/utils/units';

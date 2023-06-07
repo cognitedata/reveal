@@ -8,7 +8,7 @@ import {
   ScheduledCalculation,
 } from '@charts-app/models/chart/types';
 import SourceRows from '@charts-app/components/SourceTable/SourceRows';
-import { Modes } from 'pages/types';
+import { Modes } from '@charts-app/types';
 import { ComponentProps, useCallback } from 'react';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';

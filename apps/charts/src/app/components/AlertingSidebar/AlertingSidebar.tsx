@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useMonitoringFoldersWithJobs } from '@charts-app/components/MonitoringSidebar/hooks';
 import { saveToLocalStorage } from '@cognite/storage';
-import { jobsToAlerts } from 'pages/ChartViewPage/NotificationIndicator';
+import { jobsToAlerts } from '@charts-app/ChartViewPage/NotificationIndicator';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
 import { useQueryClient } from '@tanstack/react-query';
 import {

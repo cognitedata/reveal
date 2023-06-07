@@ -32,7 +32,7 @@ import {
   ALERTING_FILTER,
 } from '@charts-app/utils/constants';
 import { startTimer, stopTimer, trackUsage } from '@charts-app/services/metrics';
-import { Modes } from 'pages/types';
+import { Modes } from '@charts-app/types';
 import {
   addWorkflow,
   addWorkflows,
@@ -79,8 +79,8 @@ import { getUnitConverter } from '@charts-app/utils/units';
 import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
 
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
-import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
-import ChartViewPageSecondaryAppBar from 'pages/ChartViewPage/ChartViewPageSecondaryAppBar';
+import ChartViewPageAppBar from '@charts-app/ChartViewPage/ChartViewPageAppBar';
+import ChartViewPageSecondaryAppBar from '@charts-app/ChartViewPage/ChartViewPageSecondaryAppBar';
 
 import PageTitle from '@charts-app/components/PageTitle/PageTitle';
 import ErrorSidebar from '@charts-app/components/ErrorSidebar/ErrorSidebar';
