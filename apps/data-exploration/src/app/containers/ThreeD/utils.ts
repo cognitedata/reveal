@@ -24,8 +24,8 @@ import {
   AnnotationFilterProps,
   AnnotationModel,
   AnnotationData,
- AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
-
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+} from '@cognite/sdk';
 
 import {
   Image360DatasetOptions,
@@ -83,10 +83,10 @@ const getAssetNodeCollectionQueryKey = (
   revisionId: number,
   assetId?: number
 ) => [
-    ...queryKeyBase(modelId, revisionId),
-    'node-asset-collection',
-    { assetId },
-  ];
+  ...queryKeyBase(modelId, revisionId),
+  'node-asset-collection',
+  { assetId },
+];
 
 const getBoundingBoxByNodeIdQueryKey = (
   modelId: number,
@@ -530,8 +530,9 @@ export function mixColorsToCSS(
   mixedColor.r = color1.r * ratio + color2.r * (1 - ratio);
   mixedColor.g = color1.g * ratio + color2.g * (1 - ratio);
   mixedColor.b = color1.b * ratio + color2.b * (1 - ratio);
-  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${mixedColor.b * 255
-    })`;
+  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${
+    mixedColor.b * 255
+  })`;
 }
 
 export function isCadIntersection(
@@ -566,7 +567,8 @@ export function getMainModelSubtitle(
   if (isImage360) {
     return '360 Image';
   } else {
-    return `Revision ${modelRevision?.index} - ${modelRevision?.published ? 'Published' : 'Unpublished'
-      }`;
+    return `Revision ${modelRevision?.index} - ${
+      modelRevision?.published ? 'Published' : 'Unpublished'
+    }`;
   }
 }

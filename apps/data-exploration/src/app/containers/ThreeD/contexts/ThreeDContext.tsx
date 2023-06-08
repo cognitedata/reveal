@@ -22,6 +22,7 @@ import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePre
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 
+import { PointsOfInterestCollection } from '../hooks';
 import {
   getStateUrl,
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,
@@ -90,6 +91,8 @@ type ThreeDContext = {
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
   images360: Image360DatasetOptions[];
   setImages360: Dispatch<SetStateAction<Image360DatasetOptions[]>>;
+  pointsOfInterest: PointsOfInterestCollection[];
+  setPointsOfInterest: Dispatch<SetStateAction<PointsOfInterestCollection[]>>;
   secondaryObjectsVisibilityState?: SecondaryObjectsVisibilityState;
   setSecondaryObjectsVisibilityState: Dispatch<
     SetStateAction<SecondaryObjectsVisibilityState>
@@ -121,6 +124,8 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setAssetHighlightMode: noop,
   images360: [],
   setImages360: noop,
+  pointsOfInterest: [],
+  setPointsOfInterest: noop,
   setSecondaryObjectsVisibilityState: noop,
   image360: undefined,
   setImage360: noop,
@@ -282,6 +287,9 @@ export const ThreeDContextProvider = ({
   >(initialSecondaryModels);
   const [images360, setImages360] =
     useState<Image360DatasetOptions[]>(initialImages360);
+  const [pointsOfInterest, setPointsOfInterest] = useState<
+    PointsOfInterestCollection[]
+  >([]);
   const [image360, setImage360] = useState<Image360Collection | undefined>(
     undefined
   );
@@ -390,6 +398,8 @@ export const ThreeDContextProvider = ({
         setAssetHighlightMode,
         images360,
         setImages360,
+        pointsOfInterest,
+        setPointsOfInterest,
         secondaryObjectsVisibilityState,
         setSecondaryObjectsVisibilityState,
         image360,
