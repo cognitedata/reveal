@@ -24,14 +24,13 @@ export const AnnotationPopover = ({
   annotationTitle?: string;
   fallbackText?: string;
 }) => {
-  if (!resourceId && !label) {
-    return <></>;
-  }
-
   const { data: selectedAsset, isLoading: isLoadingAsset } =
     useAsset(resourceId);
 
   const { data: assets, isLoading: isLoadingListAsset } = useAssetList(label);
+  if (!resourceId && !label) {
+    return <></>;
+  }
 
   const asset = selectedAsset || assets?.items[0];
   const isLoading = isLoadingAsset || isLoadingListAsset;
@@ -117,7 +116,7 @@ const TimeseriesList = ({ assetId }: { assetId: number }) => {
               trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
             }}
             name={`${ts.id}`}
-            value={
+            checked={
               !!chart?.timeSeriesCollection?.find(
                 (t) => t.tsExternalId === ts.externalId
               )

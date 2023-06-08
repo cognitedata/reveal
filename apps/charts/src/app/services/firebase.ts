@@ -1,5 +1,5 @@
-import firebase from 'firebase/app';
 import { signInWithCustomToken, getAuth } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
 
 import { CogniteClient } from '@cognite/sdk';
 
@@ -72,11 +72,11 @@ export const initializeFirebase = async (
   env: EnvironmentConfig,
   token: string
 ) => {
-  if (firebase.getApps().length !== 0) {
+  if (firebase.apps.length !== 0) {
     // If we're already initialized, don't do it again
     return true;
   }
-  firebase.initializeApp(env?.firebase as any);
+  firebase.initializeApp(env?.firebase);
   await signInWithCustomToken(auth, token as string);
   return true;
 };

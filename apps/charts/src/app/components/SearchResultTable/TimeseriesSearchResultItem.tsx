@@ -30,7 +30,7 @@ export default function TimeseriesSearchResultItem({
   dateRange?: [Date, Date];
   isExact?: boolean;
 }) {
-  const selectedDateRange = useMemo(
+  const selectedDateRange = useMemo<[Date, Date]>(
     () =>
       dateRange ?? [
         dayjs().subtract(1, 'years').startOf('day').toDate(),
