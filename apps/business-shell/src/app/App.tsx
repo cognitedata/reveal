@@ -40,8 +40,8 @@ function App() {
               )}
             >
               <FlagProvider
-                projectName="CDF-business-portal"
-                appName={`${client.project}`}
+                appName="business-portal"
+                projectName={`${client.project}`}
                 apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
                 remoteAddress={window.location.hostname}
               >
