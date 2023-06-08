@@ -1,5 +1,3 @@
-/// <reference types="react-app-rewired" />
-
 declare module '*.css';
 declare module '*.less';
 
@@ -13,3 +11,4 @@ declare module '*.png' {
   const content: any;
   export default content;
 }
+declare module '@cognite/gcs-browser-upload';
