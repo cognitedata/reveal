@@ -1,5 +1,11 @@
 declare module '@cognite/cdf-sdk-singleton' {
   import { CogniteClient } from '@cognite/sdk';
+  type UserInfo = {
+    displayName?: string;
+    id: string;
+    mail?: string;
+    userPrincipalName?: string;
+  };
 
   export declare type Flow =
     | 'COGNITE_AUTH'
@@ -16,7 +22,7 @@ declare module '@cognite/cdf-sdk-singleton' {
   ): Promise<void>;
   export declare function getToken(): Promise<string>;
   export declare function getFlow(): { flow: Flow };
-  export declare function getUserInformation(): Promise<any>;
+  export declare function getUserInformation(): Promise<UserInfo>;
 
   declare const sdk: CogniteClient;
   export default sdk;

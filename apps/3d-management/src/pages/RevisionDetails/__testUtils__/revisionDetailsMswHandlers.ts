@@ -1,5 +1,5 @@
-import { rest } from 'msw';
 import faker from 'faker';
+import { rest } from 'msw';
 
 export const fixtureModelId = faker.datatype.number();
 export const fixtureRevisionId = faker.datatype.number();

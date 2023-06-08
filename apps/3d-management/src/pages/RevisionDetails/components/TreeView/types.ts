@@ -1,4 +1,5 @@
 import { DataNode, EventDataNode } from 'antd/lib/tree';
+
 import { Node3D } from '@cognite/sdk';
 
 type DataNodeWithTitle = DataNode & {

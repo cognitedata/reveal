@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Button } from '@cognite/cogs.js';
 import { createLink } from '@3d-management/utils/cdf-utilities';
 import { projectName } from '@3d-management/utils';
@@ -57,7 +57,7 @@ const goBackOnClick = (props) => {
 const WorkerPage = (routerFunction) => (
   <Background>
     <Worker />
-    <TitleTextWorker>Nothing to see here....</TitleTextWorker>
+    <TitleTextWorker>Nothing to see here&hellip;.</TitleTextWorker>
     <TextParagraphWorker>
       The page you are trying to read does not exist. Please check your URL, or
       go back to the previous page.

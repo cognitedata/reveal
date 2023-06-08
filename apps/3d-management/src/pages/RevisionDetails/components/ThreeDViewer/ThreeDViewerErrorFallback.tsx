@@ -1,7 +1,9 @@
-import { Button, Title } from '@cognite/cogs.js';
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+
 import { logToSentry } from '@3d-management/utils';
+
+import { Button, Title } from '@cognite/cogs.js';
 
 type ThreeDViewerErrorFallbackProps = {
   error: Error;

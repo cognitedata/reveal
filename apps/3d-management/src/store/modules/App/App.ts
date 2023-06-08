@@ -1,4 +1,5 @@
 import { combineReducers, Dispatch } from 'redux';
+
 import { AppState } from './types';
 
 export const SELECT_MODEL = 'app/SET_SELECTED_MODELS';

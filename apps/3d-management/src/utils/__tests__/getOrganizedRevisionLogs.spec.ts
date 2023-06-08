@@ -1,5 +1,5 @@
-import { getOrganizedRevisionLogs } from '../getOrganizedRevisionLogs';
 import { revisionLogs } from '../../__fixtures__/revisionLogs';
+import { getOrganizedRevisionLogs } from '../getOrganizedRevisionLogs';
 
 describe('utils/getOrganizedRevisionLogs', () => {
   it('should return empty object if input logs are empty', () => {

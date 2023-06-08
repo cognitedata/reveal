@@ -1,5 +1,6 @@
 import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
 import { SelectedNode, TreeIndex } from '@3d-management/store/modules/TreeView';
+
 import { traverseTree } from './treeFunctions';
 
 enum Record {

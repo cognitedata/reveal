@@ -1,22 +1,20 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
-
-import {
-  ToolbarTreeView,
-  ToolbarTreeViewProps,
-} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-
-import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
-
-import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import {
   fixtureModelId,
   fixtureRevisionId,
 } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
+import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
+import {
+  ToolbarTreeView,
+  ToolbarTreeViewProps,
+} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+import { renderWithProviders } from '@3d-management/utils/test';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { setupServer } from 'msw/node';
-import { renderWithProviders } from '@3d-management/utils/test';
+
+import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 
 jest.mock('antd/lib/notification');
 

@@ -1,3 +1,11 @@
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
+import { RootState } from '@3d-management/store';
+import { SelectedNode } from '@3d-management/store/modules/TreeView';
+import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
+import debounce from 'lodash/debounce';
+
 import {
   TreeIndexNodeCollection,
   CogniteCadModel,
@@ -5,12 +13,6 @@ import {
   IndexSet,
   NumericRange,
 } from '@cognite/reveal';
-import React, { useEffect } from 'react';
-import { SelectedNode } from '@3d-management/store/modules/TreeView';
-import { useSelector } from 'react-redux';
-import { RootState } from '@3d-management/store';
-import debounce from 'lodash/debounce';
-import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
 
 export function useSelectedNodesHighlights({
   model,

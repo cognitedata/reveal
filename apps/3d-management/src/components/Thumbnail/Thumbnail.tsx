@@ -1,9 +1,12 @@
 import React, { ImgHTMLAttributes } from 'react';
-import Spinner from '@3d-management/components/Spinner';
-import { Tooltip, Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import { useRevisions } from '@3d-management/hooks/revisions';
+
+import Spinner from '@3d-management/components/Spinner';
 import { useThumbnailFileQuery } from '@3d-management/components/Thumbnail/useThumbnailFile';
+import { useRevisions } from '@3d-management/hooks/revisions';
+
+import { Tooltip, Icon } from '@cognite/cogs.js';
 
 const ThumbnailHint = styled.div`
   display: flex;

@@ -1,25 +1,26 @@
 import React, { ChangeEvent, FC } from 'react';
-import { Table, Popover, TableProps } from 'antd';
-import { Button, Input } from '@cognite/cogs.js';
+import { connect } from 'react-redux';
 
 import styled from 'styled-components';
-import dayjs from 'dayjs';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import Thumbnail from '@3d-management/components/Thumbnail';
+import { ThumbnailPreviewIcon } from '@3d-management/components/ThumbnailPreviewIcon';
 import EmptyState from '@3d-management/pages/AllModels/components/EmptyState';
 import { TableOperations } from '@3d-management/pages/AllModels/components/TableOperations';
-import Thumbnail from '@3d-management/components/Thumbnail';
-
 import {
   setSelectedModels,
   setModelTableState,
 } from '@3d-management/store/modules/App';
-import { Model3D } from '@cognite/sdk';
-import { DEFAULT_MARGIN_V } from '@3d-management/utils';
 import { AppState } from '@3d-management/store/modules/App/types';
-import { ThumbnailPreviewIcon } from '@3d-management/components/ThumbnailPreviewIcon';
+import { DEFAULT_MARGIN_V } from '@3d-management/utils';
+import { Table, Popover, TableProps } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
+import dayjs from 'dayjs';
+import { bindActionCreators } from 'redux';
+
+import { Button, Input } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
+
 import { EmptyStateOptions } from '../EmptyState/EmptyState';
 
 const NestedTable = styled(Table)`

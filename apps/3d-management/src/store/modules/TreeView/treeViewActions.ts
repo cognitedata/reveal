@@ -1,4 +1,23 @@
+import {
+  CustomDataNode,
+  TreeDataNode,
+} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
+import { node3dToTreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/converters';
+import {
+  hasBranch,
+  updateNodeById,
+} from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { ReduxThunk } from '@3d-management/store';
+import {
+  fetchAncestors,
+  FetchNodesArgs,
+  fetchRootTreeNodes,
+  fetchTreeNodes,
+} from '@3d-management/store/modules/TreeView/treeViewDataProvider';
+import {
+  getCheckedNodesAndStateOfUnknownChildren,
+  getSafeDispatch,
+} from '@3d-management/store/modules/TreeView/treeViewUtils';
 import {
   Actions,
   InitialFetch,
@@ -17,25 +36,6 @@ import {
   NodeSelected,
   TreeIndex,
 } from '@3d-management/store/modules/TreeView/types';
-import {
-  CustomDataNode,
-  TreeDataNode,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import {
-  fetchAncestors,
-  FetchNodesArgs,
-  fetchRootTreeNodes,
-  fetchTreeNodes,
-} from '@3d-management/store/modules/TreeView/treeViewDataProvider';
-import {
-  hasBranch,
-  updateNodeById,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { node3dToTreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/converters';
-import {
-  getCheckedNodesAndStateOfUnknownChildren,
-  getSafeDispatch,
-} from '@3d-management/store/modules/TreeView/treeViewUtils';
 
 export const fetchInitialNodes =
   (

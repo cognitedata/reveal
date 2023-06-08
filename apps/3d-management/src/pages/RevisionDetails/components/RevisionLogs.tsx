@@ -1,13 +1,16 @@
-import uniqBy from 'lodash/uniqBy';
-import { Timeline } from 'antd';
-import { mapStatusToColor } from '@3d-management/components/Status';
 import React from 'react';
-import { RevisionLog3D } from '@3d-management/utils/sdk/3dApiUtils';
-import dayjs from 'dayjs';
+
 import styled from 'styled-components';
-import { DEFAULT_MARGIN_V } from '@3d-management/utils';
+
+import { mapStatusToColor } from '@3d-management/components/Status';
 import { useUserInformation } from '@3d-management/hooks/useUserInformation';
+import { DEFAULT_MARGIN_V } from '@3d-management/utils';
+import { RevisionLog3D } from '@3d-management/utils/sdk/3dApiUtils';
 import { OrganizedRevisionLog } from '@3d-management/utils/types';
+import { Timeline } from 'antd';
+import dayjs from 'dayjs';
+import uniqBy from 'lodash/uniqBy';
+
 import { getOrganizedRevisionLogs } from '../../../utils/getOrganizedRevisionLogs';
 
 const EXTERNAL_LOG_NAME = {

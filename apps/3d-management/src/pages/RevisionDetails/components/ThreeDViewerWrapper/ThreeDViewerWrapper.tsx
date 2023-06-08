@@ -1,11 +1,14 @@
 import React, { lazy, useState } from 'react';
-import styled from 'styled-components';
-import zIndex from '@3d-management/utils/zIndex';
-import { Revision3DStatus, Revision3D } from '@cognite/sdk';
-import Thumbnail from '@3d-management/components/Thumbnail';
 
-import { CloseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
+import styled from 'styled-components';
+
 import { FallbackWrapper } from '@3d-management/components/FallbackWrapper';
+import Thumbnail from '@3d-management/components/Thumbnail';
+import zIndex from '@3d-management/utils/zIndex';
+import { CloseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
+
+import { Revision3DStatus, Revision3D } from '@cognite/sdk';
+
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
 const ERROR_TEXT: Record<Revision3DStatus, string> = {

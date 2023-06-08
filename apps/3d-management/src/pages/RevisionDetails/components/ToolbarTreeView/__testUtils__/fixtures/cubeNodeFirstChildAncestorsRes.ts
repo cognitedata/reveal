@@ -1,10 +1,10 @@
+import { cubeNodeChildrenRes } from './cubeNodeChildreRes';
 import {
   fixtureCubeNodeFirstChildId,
   fixtureCubeNodeId,
 } from './fixtureConsts';
-import { rootNodeObjRes } from './rootNodeObjRes';
 import { rootNodeChildrenRes } from './rootNodeChildrenRes';
-import { cubeNodeChildrenRes } from './cubeNodeChildreRes';
+import { rootNodeObjRes } from './rootNodeObjRes';
 
 export const cubeNodeFirstChildAncestorsRes = {
   items: [

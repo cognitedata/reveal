@@ -1,6 +1,8 @@
 import React from 'react';
-import { Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
 
 const EyeIcon = styled(Icon)`
   line-height: 0;

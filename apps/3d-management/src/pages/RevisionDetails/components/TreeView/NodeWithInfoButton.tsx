@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Icon } from '@cognite/cogs.js';
+
 import { TREE_NODE_CLASSNAME } from './constants';
 
 type Props = {

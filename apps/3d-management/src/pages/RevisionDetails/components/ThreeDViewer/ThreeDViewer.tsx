@@ -1,4 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+
+import styled from 'styled-components';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -8,10 +12,9 @@ import {
   AxisViewTool,
 } from '@cognite/reveal';
 
-import styled from 'styled-components';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
 import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
+
 import { ThreeDViewerProps } from './ThreeDViewer.d';
 
 const ThreeDViewerStyled = styled.div`

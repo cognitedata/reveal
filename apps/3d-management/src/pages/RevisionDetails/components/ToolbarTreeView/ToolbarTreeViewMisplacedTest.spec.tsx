@@ -1,23 +1,23 @@
 import React from 'react';
-import { setupServer } from 'msw/node';
-import { render, screen } from '@testing-library/react';
-
-import {
-  ToolbarTreeView,
-  ToolbarTreeViewProps,
-} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-
-import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 import { Provider } from 'react-redux';
-import configureStore from '@3d-management/store';
-import { createBrowserHistory } from 'history';
-import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
+
 import {
   fixtureCubeNodeFirstChildId,
   fixtureModelId,
   fixtureRevisionId,
 } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
+import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
+import {
+  ToolbarTreeView,
+  ToolbarTreeViewProps,
+} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+import configureStore from '@3d-management/store';
 import { expandArbitraryNode } from '@3d-management/store/modules/TreeView';
+import { render, screen } from '@testing-library/react';
+import { createBrowserHistory } from 'history';
+import { setupServer } from 'msw/node';
+
+import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 
 jest.mock('antd/lib/notification');
 
@@ -73,7 +73,6 @@ describe('ToolbarTreeView expand into node test', () => {
 
     expect(await screen.findByText('Cube')).toBeInTheDocument();
     expect(screen.queryByText('Cube (1)')).not.toBeInTheDocument();
-    // eslint-disable-next-line jest-dom/prefer-in-document
     expect(screen.queryAllByText('Load more...')).toHaveLength(1);
 
     // expect tree state

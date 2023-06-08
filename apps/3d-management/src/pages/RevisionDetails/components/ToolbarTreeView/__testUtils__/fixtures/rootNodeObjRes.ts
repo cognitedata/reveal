@@ -1,4 +1,5 @@
 import { Node3D } from '@cognite/sdk';
+
 import { fixtureRootNodeId, modifiedRootSubtreeSize } from './fixtureConsts';
 
 export const rootNodeObjRes: { items: [Node3D] } = {

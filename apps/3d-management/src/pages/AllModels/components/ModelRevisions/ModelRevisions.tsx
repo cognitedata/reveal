@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
-import { Model3D } from '@cognite/sdk';
-import { DEFAULT_MARGIN_V, getContainer } from '@3d-management/utils';
+
 import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
-import { message, Card, Modal } from 'antd';
-import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 import Thumbnail from '@3d-management/components/Thumbnail/Thumbnail';
-import { createLink } from '@3d-management/utils/cdf-utilities';
-
-import FileUploader from '@3d-management/pages/AllModels/components/FileUploader';
-
 import {
   useDeleteModelMutation,
   useUpdateModelMutation,
@@ -19,10 +13,17 @@ import {
   useCreateRevisionMutation,
   useRevisions,
 } from '@3d-management/hooks/revisions';
+import { useMetrics } from '@3d-management/hooks/useMetrics';
+import FileUploader from '@3d-management/pages/AllModels/components/FileUploader';
+import { DEFAULT_MARGIN_V, getContainer } from '@3d-management/utils';
+import { createLink } from '@3d-management/utils/cdf-utilities';
+import { message, Card, Modal } from 'antd';
 
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useNavigate } from 'react-router-dom';
+import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import { RevisionsTable } from './RevisionsTable';
 
 const RevisionWrapper = styled.div`

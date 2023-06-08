@@ -1,7 +1,18 @@
-import { Model3D } from '@cognite/sdk';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
 import React, { ChangeEvent, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { PageHeader } from '@3d-management/components/PageHeader';
+import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
+import Spinner from '@3d-management/components/Spinner';
+import { useCreateModelMutation } from '@3d-management/hooks/models';
+import { useModels } from '@3d-management/hooks/models/useModels';
+import { useCreateRevisionMutation } from '@3d-management/hooks/revisions';
+import { useMetrics } from '@3d-management/hooks/useMetrics';
+import FileUploader from '@3d-management/pages/AllModels/components/FileUploader';
 import ModelRevisions from '@3d-management/pages/AllModels/components/ModelRevisions/ModelRevisions';
+import ModelsTable from '@3d-management/pages/AllModels/components/ModelsTable/ModelsTable';
 import {
   APP_TITLE,
   DEFAULT_MARGIN_V,
@@ -9,20 +20,10 @@ import {
 } from '@3d-management/utils';
 import { Modal, Steps, message } from 'antd';
 
-import { Button, Flex, Input } from '@cognite/cogs.js';
-import FileUploader from '@3d-management/pages/AllModels/components/FileUploader';
-import Spinner from '@3d-management/components/Spinner';
-import { PageHeader } from '@3d-management/components/PageHeader';
-import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
-import ModelsTable from '@3d-management/pages/AllModels/components/ModelsTable/ModelsTable';
-
-import styled from 'styled-components';
-import { useCreateModelMutation } from '@3d-management/hooks/models';
-import { useModels } from '@3d-management/hooks/models/useModels';
-import { useCreateRevisionMutation } from '@3d-management/hooks/revisions';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useParams } from 'react-router-dom';
+import { Button, Flex, Input } from '@cognite/cogs.js';
+import { Model3D } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 const { Step } = Steps;
 

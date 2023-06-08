@@ -1,6 +1,8 @@
 import React, { CSSProperties } from 'react';
-import { Spin, SpinProps } from 'antd';
+
 import styled from 'styled-components';
+
+import { Spin, SpinProps } from 'antd';
 
 const StyledSpinner = styled(Spin)`
   width: 100%;

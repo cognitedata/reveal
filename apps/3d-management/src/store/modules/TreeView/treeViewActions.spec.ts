@@ -1,20 +1,20 @@
-import { fetchInitialNodes } from '@3d-management/store/modules/TreeView/treeViewActions';
-import { setupServer } from 'msw/node';
-import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
-import configureMockStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import {
   fixtureModelId,
   fixtureRevisionId,
 } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
+import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
+import { CustomDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
+import { RootState } from '@3d-management/store';
+import { fetchInitialNodes } from '@3d-management/store/modules/TreeView/treeViewActions';
 import { getInitialState } from '@3d-management/store/modules/TreeView/treeViewReducer';
 import {
   InitialFetch,
   InitialFetchOk,
   TreeViewState,
 } from '@3d-management/store/modules/TreeView/types';
-import { RootState } from '@3d-management/store';
-import { CustomDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
+import { setupServer } from 'msw/node';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);

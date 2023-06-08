@@ -1,5 +1,18 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+
 import styled, { ThemeProvider } from 'styled-components';
+
+import configureStore from '@3d-management/store';
+import GlobalStyles from '@3d-management/styles/GlobalStyles';
+import theme from '@3d-management/styles/theme';
+import { APP_TITLE, projectName } from '@3d-management/utils';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { createBrowserHistory } from 'history';
+
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   getEnv,
@@ -7,21 +20,12 @@ import {
   PageTitle,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import GlobalStyles from '@3d-management/styles/GlobalStyles';
-import { Provider } from 'react-redux';
-import configureStore from '@3d-management/store';
-import theme from '@3d-management/styles/theme';
-import { ModelRoutes } from './ModelRoutes';
 import { Loader } from '@cognite/cogs.js';
-import { createBrowserHistory } from 'history';
-import { APP_TITLE, projectName } from '@3d-management/utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { BrowserRouter } from 'react-router-dom';
+
 import ErrorBoundary from './components/ErrorBoundary';
+import { ModelRoutes } from './ModelRoutes';
 
 export const App = () => {
   const history = createBrowserHistory();

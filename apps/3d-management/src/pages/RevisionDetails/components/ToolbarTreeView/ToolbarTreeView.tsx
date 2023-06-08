@@ -1,13 +1,21 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { FallbackProps } from 'react-error-boundary';
+import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import ErrorBoundary from '@3d-management/components/ErrorBoundary';
+import Spinner from '@3d-management/components/Spinner';
+import { useFilteredNodesHighlights } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
+import { useViewerNodeClickListener } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
+import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
 import TreeView, {
   NodesTreeViewRefType,
 } from '@3d-management/pages/RevisionDetails/components/TreeView/NodesTreeView';
-import React, { useEffect, useRef, useState } from 'react';
 import {
   TreeDataNode,
   TreeLoadMoreNode,
 } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@3d-management/store';
 import {
   checkNodes,
@@ -21,19 +29,14 @@ import {
   TreeIndex,
   TreeViewState,
 } from '@3d-management/store/modules/TreeView';
-import Spinner from '@3d-management/components/Spinner';
-import styled from 'styled-components';
-import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import ErrorBoundary from '@3d-management/components/ErrorBoundary';
-import { Button, Title } from '@cognite/cogs.js';
-import { useViewerNodeClickListener } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
-import { useFilteredNodesHighlights } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
-import { FallbackProps } from 'react-error-boundary';
-import { NodeInfoModal } from './NodeInfoModal';
 
+import { Button, Title } from '@cognite/cogs.js';
+import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+
+import { useCheckedNodesVisibility } from './hooks/useCheckedNodesVisibility';
 import { useResizeHandler } from './hooks/useResizeHander';
 import { useSelectedNodesHighlights } from './hooks/useSelectedNodesHighlights';
-import { useCheckedNodesVisibility } from './hooks/useCheckedNodesVisibility';
+import { NodeInfoModal } from './NodeInfoModal';
 
 const Container = styled.div`
   display: flex;

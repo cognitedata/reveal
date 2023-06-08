@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Select } from 'antd';
+
 import { PointColorType } from '@cognite/reveal';
 
 const { Option } = Select;

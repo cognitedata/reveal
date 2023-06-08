@@ -1,20 +1,21 @@
 import React from 'react';
-import {
-  Actions,
-  TreeViewState,
-} from '@3d-management/store/modules/TreeView/types';
+
+import { LoadMore } from '@3d-management/pages/RevisionDetails/components/TreeView/LoadMore';
+import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
 import {
   addChildrenIntoTree,
   getNodeByTreeIndex,
   traverseTree,
   updateNodeById,
 } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { LoadMore } from '@3d-management/pages/RevisionDetails/components/TreeView/LoadMore';
 import {
   getCheckedNodesAndStateOfUnknownChildren,
   subtreeHasTreeIndex,
 } from '@3d-management/store/modules/TreeView/treeViewUtils';
+import {
+  Actions,
+  TreeViewState,
+} from '@3d-management/store/modules/TreeView/types';
 
 export function getInitialState(): TreeViewState {
   return {

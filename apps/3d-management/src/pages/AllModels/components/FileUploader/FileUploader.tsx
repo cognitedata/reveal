@@ -1,18 +1,20 @@
 import React from 'react';
-import { Upload, Modal, message } from 'antd';
-import { Button } from '@cognite/cogs.js';
 
-import UploadGCS from '@cognite/gcs-browser-upload';
-import mime from 'mime-types';
 import styled from 'styled-components';
-import { FileInfo, FileUploadResponse } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
+
+import { DEFAULT_MARGIN_V, getContainer, sleep } from '@3d-management/utils';
 import {
   fireErrorNotification,
   logToSentry,
 } from '@3d-management/utils/notifications';
-import { DEFAULT_MARGIN_V, getContainer, sleep } from '@3d-management/utils';
 import { FileAddOutlined } from '@ant-design/icons';
+import { Upload, Modal, message } from 'antd';
+import mime from 'mime-types';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { Button } from '@cognite/cogs.js';
+import UploadGCS from '@cognite/gcs-browser-upload';
+import { FileInfo, FileUploadResponse } from '@cognite/sdk';
 
 const { Dragger } = Upload;
 const { confirm } = Modal;

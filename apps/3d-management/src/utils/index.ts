@@ -1,4 +1,5 @@
 import { getProject } from '@cognite/cdf-utilities';
+
 import { styleScope } from './styleScope';
 
 export { default as zIndex } from './zIndex';

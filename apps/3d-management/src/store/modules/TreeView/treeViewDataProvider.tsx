@@ -1,15 +1,17 @@
 import React from 'react';
+
+import { LoadMore } from '@3d-management/pages/RevisionDetails/components/TreeView/LoadMore';
 import {
   CustomDataNode,
   TreeDataNode,
   TreeLoadMoreNode,
 } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { LoadMore } from '@3d-management/pages/RevisionDetails/components/TreeView/LoadMore';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { List3DNodesQuery, Node3D } from '@cognite/sdk';
 import { node3dToTreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/converters';
-import { getProject } from '@cognite/cdf-utilities';
 import { sortNaturally } from '@3d-management/utils';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import { List3DNodesQuery, Node3D } from '@cognite/sdk';
 
 export const FETCH_PARAMS: List3DNodesQuery = {
   depth: 1,

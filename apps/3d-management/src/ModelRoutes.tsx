@@ -1,9 +1,11 @@
 import React, { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { Loader } from '@cognite/cogs.js';
+
 import { FallbackWrapper } from '@3d-management/components/FallbackWrapper';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { Loader } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 // lazy loads
 const AllModels = lazy(() => import('@3d-management/pages/AllModels'));

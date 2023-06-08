@@ -1,15 +1,16 @@
 import React, { CSSProperties, useState } from 'react';
-import { Button } from '@cognite/cogs.js';
+
+import { fireErrorNotification } from '@3d-management/utils/notifications';
 import { Modal, message } from 'antd';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { FileUploadResponse, HttpError } from '@cognite/sdk';
-import { fireErrorNotification } from '@3d-management/utils/notifications';
+import { Button } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
+import { FileUploadResponse, HttpError } from '@cognite/sdk';
 
 type Props = {
   viewer: Cognite3DViewer;

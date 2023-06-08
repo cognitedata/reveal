@@ -1,5 +1,5 @@
-import addMinutes from 'date-fns/addMinutes';
 import addDays from 'date-fns/addDays';
+import addMinutes from 'date-fns/addMinutes';
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
 
 export class TimeUtils {

@@ -1,6 +1,8 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { MemoryRouter as Router } from 'react-router-dom';
+
+import { mount } from 'enzyme';
+
 import Breadcrumbs from './Breadcrumbs';
 
 describe('Breadcrumbs', () => {

@@ -1,3 +1,5 @@
+import noop from 'lodash/noop';
+
 export default {
-  trackEvent() {},
+  trackEvent: noop,
 };

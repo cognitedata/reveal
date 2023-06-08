@@ -26,6 +26,7 @@
           {
             "enforceBuildableLibDependency": true,
             "allow": [
+              "@3d-management",
               "@platypus-app",
               "@data-exploration-app",
               "@data-exploration-components",

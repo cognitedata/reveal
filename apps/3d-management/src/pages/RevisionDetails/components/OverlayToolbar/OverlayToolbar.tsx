@@ -6,6 +6,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+
+import styled from 'styled-components';
+
+import * as THREE from 'three';
+
 import { ToolBarButton, ToolBar, Slider, Icon, Menu } from '@cognite/cogs.js';
 import {
   CameraControlsOptions,
@@ -16,10 +21,6 @@ import {
   MeasurementTool,
   ResolutionOptions,
 } from '@cognite/reveal';
-
-import styled from 'styled-components';
-
-import * as THREE from 'three';
 
 const SliderContainer = styled(Menu)`
   width: 230px;

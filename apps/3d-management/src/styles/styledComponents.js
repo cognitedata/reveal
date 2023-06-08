@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { Input } from 'antd';
 
 export const FieldLabel = styled.p`

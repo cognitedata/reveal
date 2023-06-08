@@ -7,7 +7,7 @@ const {
 module.exports = composePlugins(
   withNx(),
   withReact(),
-  withSingleSpa({ useMockEnv }),
+  withSingleSpa({ useMockEnv: false }),
   (config) => {
     config.module.rules = [
       ...config.module.rules.filter((rule) => !Array.isArray(rule.oneOf)),

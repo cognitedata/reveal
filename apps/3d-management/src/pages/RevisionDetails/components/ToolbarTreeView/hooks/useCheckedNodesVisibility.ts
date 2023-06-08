@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect } from 'react';
 
+import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
+import { traverseTree } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { subtreeHasTreeIndex } from '@3d-management/store/modules/TreeView/treeViewUtils';
+import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
+
 import {
   TreeIndexNodeCollection,
   CogniteCadModel,
@@ -7,10 +12,6 @@ import {
   IndexSet,
   NumericRange,
 } from '@cognite/reveal';
-import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { traverseTree } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
-import { subtreeHasTreeIndex } from '@3d-management/store/modules/TreeView/treeViewUtils';
 
 type Args = {
   model: CogniteCadModel;

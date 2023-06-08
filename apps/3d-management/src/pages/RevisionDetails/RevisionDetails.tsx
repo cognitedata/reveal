@@ -1,39 +1,39 @@
-import styled from 'styled-components';
-import { Card, message, Modal } from 'antd';
-import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
-import {
-  APP_TITLE,
-  getContainer,
-  DEFAULT_MARGIN_V,
-} from '@3d-management/utils';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { createLink } from '@3d-management/utils/cdf-utilities';
-import dayjs from 'dayjs';
-import Status from '@3d-management/components/Status';
-import NotFound from '@3d-management/pages/NotFound';
-import Spinner from '@3d-management/components/Spinner';
+import styled from 'styled-components';
+
 import { PageHeader } from '@3d-management/components/PageHeader';
-
 import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
-import ThreeDViewerWrapper from '@3d-management/pages/RevisionDetails/components/ThreeDViewerWrapper';
-
-import { RevisionLogs } from '@3d-management/pages/RevisionDetails/components/RevisionLogs';
+import Spinner from '@3d-management/components/Spinner';
+import Status from '@3d-management/components/Status';
+import { useModels } from '@3d-management/hooks/models/useModels';
 import {
   useRevisions,
   useRevisionLogs,
   useUpdateRevisionMutation,
   useDeleteRevisionMutation,
 } from '@3d-management/hooks/revisions';
-import { useModels } from '@3d-management/hooks/models/useModels';
+import { useMetrics } from '@3d-management/hooks/useMetrics';
+import NotFound from '@3d-management/pages/NotFound';
+import { RevisionLogs } from '@3d-management/pages/RevisionDetails/components/RevisionLogs';
+import ThreeDViewerWrapper from '@3d-management/pages/RevisionDetails/components/ThreeDViewerWrapper';
+import {
+  APP_TITLE,
+  getContainer,
+  DEFAULT_MARGIN_V,
+} from '@3d-management/utils';
+import { createLink } from '@3d-management/utils/cdf-utilities';
+import { Card, message, Modal } from 'antd';
+import dayjs from 'dayjs';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useNavigate, useParams } from 'react-router-dom';
-import ThreeDViewerErrorBoundary from './components/ThreeDViewer/ThreeDViewerErrorFallback';
+
 import { FileLink } from './components/FileLink/FileLink';
+import ThreeDViewerErrorBoundary from './components/ThreeDViewer/ThreeDViewerErrorFallback';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
@@ -101,8 +101,8 @@ export default function RevisionDetails() {
     isFetched: isFetchedDeleteCapabilities,
   } = usePermissions(flow as any, 'threedAcl', 'DELETE');
 
-  const revisionId: number = Number(params.revisionId);
-  const modelId: number = Number(params.modelId);
+  const revisionId = Number(params.revisionId);
+  const modelId = Number(params.modelId);
 
   const [showLogs, setShowLogs] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);

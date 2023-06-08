@@ -1,19 +1,22 @@
 import React, { MutableRefObject } from 'react';
-import { Tree, TreeProps } from 'antd';
-import { SelectedNode, TreeIndex } from '@3d-management/store/modules/TreeView';
+
+import styled from 'styled-components';
+
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
 } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import styled from 'styled-components';
+import { SelectedNode, TreeIndex } from '@3d-management/store/modules/TreeView';
+import { Tree, TreeProps } from 'antd';
+
+import { INFO_BTN_CLASSNAME, TREE_NODE_CLASSNAME } from './constants';
+import { useKeyboardHandler } from './hooks/useKeyboardHandler';
 import {
   CustomDataNode,
   EventTreeNodeSelected,
   TreeDataNode,
   TreeLoadMoreNode,
 } from './types';
-import { useKeyboardHandler } from './hooks/useKeyboardHandler';
-import { INFO_BTN_CLASSNAME, TREE_NODE_CLASSNAME } from './constants';
 
 type ModifiedTreeProps = {
   treeData: Array<TreeDataNode>;

@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 
-import { Table, Popover } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
-import { Button } from '@cognite/cogs.js';
-
-import dayjs from 'dayjs';
-
-import EmptyState from '@3d-management/pages/AllModels/components/EmptyState';
-import { getContainer } from '@3d-management/utils';
-import { TableOperations } from '@3d-management/pages/AllModels/components/TableOperations';
 import Status from '@3d-management/components/Status';
 import Thumbnail from '@3d-management/components/Thumbnail';
-import { Revision3D } from '@cognite/sdk';
 import { ThumbnailPreviewIcon } from '@3d-management/components/ThumbnailPreviewIcon';
+import EmptyState from '@3d-management/pages/AllModels/components/EmptyState';
+import { TableOperations } from '@3d-management/pages/AllModels/components/TableOperations';
+import { getContainer } from '@3d-management/utils';
+import { Table, Popover } from 'antd';
+import { ColumnProps } from 'antd/lib/table';
+import dayjs from 'dayjs';
+
+import { Button } from '@cognite/cogs.js';
+import { Revision3D } from '@cognite/sdk';
+
 import { EmptyStateOptions } from '../EmptyState/EmptyState';
 
 type Props = {

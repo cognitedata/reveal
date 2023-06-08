@@ -1,9 +1,12 @@
 import React from 'react';
-import { useFiles } from '@3d-management/hooks/files/useFiles';
 import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { Button } from '@cognite/cogs.js';
+
+import { useFiles } from '@3d-management/hooks/files/useFiles';
+
 import { createLink } from '@cognite/cdf-utilities';
+import { Button } from '@cognite/cogs.js';
 
 export const FILE_NOT_FOUND_ERROR = 'File not found';
 export const RESTRICTED_FILE_ERROR = 'Insufficient access rights';

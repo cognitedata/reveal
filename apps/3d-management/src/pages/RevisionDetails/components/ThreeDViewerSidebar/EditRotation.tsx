@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Tuple3 } from '@cognite/sdk';
-import { Button as ButtonAnt, message } from 'antd';
 
+import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
+import * as Sentry from '@sentry/browser';
+import { Button as ButtonAnt, message } from 'antd';
+import antdRadioStyles from 'antd/es/radio/style/index.less';
+import * as THREE from 'three';
+
+import { useGlobalStyles } from '@cognite/cdf-utilities';
 import { Button, Dropdown, SegmentedControl, Menu } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
@@ -9,13 +14,7 @@ import {
   CognitePointCloudModel,
   CDF_TO_VIEWER_TRANSFORMATION,
 } from '@cognite/reveal';
-
-import * as Sentry from '@sentry/browser';
-import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
-import antdRadioStyles from 'antd/es/radio/style/index.less';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-
-import * as THREE from 'three';
+import { Tuple3 } from '@cognite/sdk';
 
 const ButtonGroup = ButtonAnt.Group;
 

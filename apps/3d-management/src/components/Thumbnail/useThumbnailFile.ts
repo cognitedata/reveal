@@ -1,6 +1,7 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification } from '@3d-management/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError } from '@cognite/sdk';
 
 async function fetchFile(fileId: number): Promise<string> {

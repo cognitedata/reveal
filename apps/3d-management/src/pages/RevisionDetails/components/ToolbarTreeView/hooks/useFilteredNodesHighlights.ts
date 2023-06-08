@@ -1,17 +1,19 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@3d-management/store';
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { RootState } from '@3d-management/store';
+import {
+  setNodeFilterLoadingState,
+  setNodePropertyFilter,
+} from '@3d-management/store/modules/toolbar/toolbarActions';
+import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
+
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
   PropertyFilterNodeCollection,
   CogniteCadModel,
   NodeOutlineColor,
 } from '@cognite/reveal';
-import {
-  setNodeFilterLoadingState,
-  setNodePropertyFilter,
-} from '@3d-management/store/modules/toolbar/toolbarActions';
-import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
 
 export function useFilteredNodesHighlights({
   model,

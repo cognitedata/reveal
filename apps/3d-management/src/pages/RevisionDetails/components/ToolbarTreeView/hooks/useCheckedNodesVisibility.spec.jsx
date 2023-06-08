@@ -1,5 +1,6 @@
 import { useCheckedNodesVisibility } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
-import { render } from '@testing-library/react';
+import { renderWithProviders } from '@3d-management/utils/test';
+import noop from 'lodash/noop';
 import React from 'react';
 
 function TestComponent({ model, treeData, checkedKeys }) {
@@ -176,13 +177,13 @@ describe('useCheckedNodesVisibility tests', () => {
             .sort();
         });
       },
-      updateStyledNodeCollection() {},
+      updateStyledNodeCollection: noop,
       unassignStyledNodeCollection: jest.fn(),
       styledNodeCollections: [],
     };
 
     // start with all checked
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       <TestComponent
         model={modelMock}
         treeData={treeData}

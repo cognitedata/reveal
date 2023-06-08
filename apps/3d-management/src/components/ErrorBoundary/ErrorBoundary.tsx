@@ -3,8 +3,10 @@ import {
   ErrorBoundary as ReactErrorBoundary,
   ErrorBoundaryPropsWithComponent,
 } from 'react-error-boundary';
-import { Button, Title } from '@cognite/cogs.js';
+
 import { logToSentry } from '@3d-management/utils';
+
+import { Button, Title } from '@cognite/cogs.js';
 
 const DefaultFallback = () => {
   return (

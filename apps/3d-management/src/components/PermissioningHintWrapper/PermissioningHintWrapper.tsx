@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from 'react';
-import { Tooltip } from 'antd';
+
 import { getContainer } from '@3d-management/utils';
+import { Tooltip } from 'antd';
 
 export default ({
   children,

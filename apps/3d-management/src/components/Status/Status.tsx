@@ -1,7 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Badge } from 'antd';
+
 import styled from 'styled-components';
+
+import { Badge } from 'antd';
+import PropTypes from 'prop-types';
 
 const mapStatusToBadge = {
   Done: 'success',

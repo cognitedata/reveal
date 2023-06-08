@@ -1,10 +1,12 @@
+import React from 'react';
+
+import { Select } from 'antd';
+
 import {
   Cognite3DViewer,
   CognitePointCloudModel,
   WellKnownAsprsPointClassCodes,
 } from '@cognite/reveal';
-import React from 'react';
-import { Select } from 'antd';
 
 type Props = {
   model: CognitePointCloudModel;

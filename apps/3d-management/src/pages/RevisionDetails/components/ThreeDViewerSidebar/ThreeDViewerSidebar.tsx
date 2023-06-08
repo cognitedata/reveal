@@ -1,28 +1,32 @@
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { useUpdateRevisionMutation } from '@3d-management/hooks/revisions';
+import { NodePropertyFilterIndicator } from '@3d-management/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
+import { ToolbarTreeView } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+import { RootState } from '@3d-management/store';
+import { toggleGhostMode } from '@3d-management/store/modules/toolbar';
+import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V } from '@3d-management/utils';
+import { Divider } from 'antd';
+import { Resizable } from 're-resizable';
+
+import { isProduction } from '@cognite/cdf-utilities';
+import { Switch } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   PointColorType,
 } from '@cognite/reveal';
-import React from 'react';
 import { Tuple3, RevisionCameraProperties } from '@cognite/sdk';
-import styled from 'styled-components';
-import { ToolbarTreeView } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V } from '@3d-management/utils';
-import { useFlag } from '@cognite/react-feature-flags';
-import { isProduction } from '@cognite/cdf-utilities';
-import { Switch } from '@cognite/cogs.js';
-import { useUpdateRevisionMutation } from '@3d-management/hooks/revisions';
-import { toggleGhostMode } from '@3d-management/store/modules/toolbar';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@3d-management/store';
-import { Resizable } from 're-resizable';
-import { Divider } from 'antd';
-import { NodePropertyFilterIndicator } from '@3d-management/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
+
+import { ClassPicker } from './ClassPicker';
+import { ColorTypePicker } from './ColorTypePicker';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
-import { ColorTypePicker } from './ColorTypePicker';
-import { ClassPicker } from './ClassPicker';
 
 type RevisionUpdatePayload = {
   modelId: number;
