@@ -4,7 +4,7 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
 
-import { SearchBarFilter, ValueByDataType } from './Filter';
+import { SearchBarFilter, ValueByDataType, AppliedFilters } from './Filter';
 
 export interface SearchFiltersProps {
   value: ValueByDataType;
@@ -17,12 +17,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
 
     return (
       <>
-        {/* <ChipGroup size="small" overflow={2}>
-        <Chip type="neutral" label="Movie name starts with 'Harry Potter'" />
-        <Chip type="neutral" label="Filter" />
-        <Chip type="neutral" label="Filter" />
-        <Chip type="neutral" label="Filter" />
-      </ChipGroup> */}
+        <AppliedFilters value={value} onRemove={onChange} />
 
         <Dropdown
           placement="bottom-end"
