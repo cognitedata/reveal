@@ -43,8 +43,8 @@ const ListWrapper = styled.div`
   font-weight: 600;
   padding: 16px 8px 0 8px;
   box-sizing: border-box;
-  border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
-  color: ${Colors['greyscale-grey6'].hex()};
+  border-right: 1px solid ${Colors['decorative--grayscale--400']};
+  color: ${Colors['decorative--grayscale--600']};
 `;
 
 const SearchBoxWrapper = styled(Input)`

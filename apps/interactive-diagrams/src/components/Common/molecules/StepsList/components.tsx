@@ -15,13 +15,13 @@ export const StyledStep = styled.div<StyledStepProps>`
   background-color: ${({ isCurrent }) => (isCurrent ? '#F7F8FA' : 'none')};
   color: ${({ isCurrent, wasVisited }) =>
     isCurrent || wasVisited
-      ? Colors['greyscale-grey9'].hex()
-      : Colors['greyscale-grey6'].hex()};
+      ? Colors['decorative--grayscale--900']
+      : Colors['decorative--grayscale--600']};
   a {
     color: ${({ isCurrent, wasVisited }) =>
       isCurrent || wasVisited
-        ? Colors['greyscale-grey9'].hex()
-        : Colors['greyscale-grey6'].hex()};
+        ? Colors['decorative--grayscale--900']
+        : Colors['decorative--grayscale--600']};
   }
   &:hover {
     background-color: ${({ wasVisited }) => (wasVisited ? '#f7f8fa' : 'none')};
@@ -31,18 +31,20 @@ export const StyledStep = styled.div<StyledStepProps>`
 export const StepNumber = styled.span.attrs((props: StyledStepProps) => {
   const { isCurrent, wasVisited, small = false } = props;
   const style: any = {
-    backgroundColor: Colors.white.hex(),
-    border: `${small ? '2' : '3'}px solid ${Colors['greyscale-grey6'].hex()}`,
+    backgroundColor: Colors['decorative--grayscale--white'],
+    border: `${small ? '2' : '3'}px solid ${
+      Colors['decorative--grayscale--600']
+    }`,
   };
   if (wasVisited) {
-    style.backgroundColor = Colors.green.hex();
-    style.color = Colors.white.hex();
-    style.border = `3px solid ${Colors.green.hex()}`;
+    style.backgroundColor = Colors['decorative--green--500'];
+    style.color = Colors['decorative--grayscale--white'];
+    style.border = `3px solid ${Colors['decorative--green--500']}`;
   }
   if (isCurrent) {
-    style.backgroundColor = Colors.midblue.hex();
-    style.color = Colors.white.hex();
-    style.border = `3px solid ${Colors.midblue.hex()}`;
+    style.backgroundColor = Colors['decorative--blue--500'];
+    style.color = Colors['decorative--grayscale--white'];
+    style.border = `3px solid ${Colors['decorative--blue--500']}`;
   }
   return { style };
 })<StyledStepProps>`
@@ -60,8 +62,8 @@ export const StepNumber = styled.span.attrs((props: StyledStepProps) => {
   user-select: none;
   color: ${({ isCurrent }) =>
     isCurrent
-      ? Colors['greyscale-grey9'].hex()
-      : Colors['greyscale-grey6'].hex()};
+      ? Colors['decorative--grayscale--900']
+      : Colors['decorative--grayscale--600']};
 `;
 
 export const StyledAdditionalText = styled(Body)`

@@ -19,7 +19,7 @@ export const selectStyles = {
     padding: 0,
   }),
   control: () => ({
-    border: `2px solid ${Colors['greyscale-grey4'].hex()} !important`,
+    border: `2px solid ${Colors['decorative--grayscale--400']} !important`,
     borderRadius: '6px !important',
     boxSizing: 'border-box',
     fontWeight: 'bold',

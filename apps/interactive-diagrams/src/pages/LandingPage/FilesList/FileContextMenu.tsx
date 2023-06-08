@@ -1,9 +1,10 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { DropdownMenu, MenuButton } from 'components/Common';
+import { DropdownMenu } from 'components/Common';
 import { useReviewFiles } from 'hooks';
 import { useWorkflowCreateNew } from 'modules/workflows';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
   file: FileInfo;
@@ -37,7 +38,7 @@ export const FileContextMenu = ({ file }: Props) => {
 
   return (
     <DropdownMenu column justify grow style={{ width: '250px' }}>
-      <MenuButton
+      <Button
         icon="Refresh"
         iconPlacement="left"
         style={buttonStyle}
@@ -45,8 +46,8 @@ export const FileContextMenu = ({ file }: Props) => {
         type="ghost"
       >
         Recontextualize diagram
-      </MenuButton>
-      <MenuButton
+      </Button>
+      <Button
         icon="Checkmark"
         iconPlacement="left"
         style={buttonStyle}
@@ -54,25 +55,25 @@ export const FileContextMenu = ({ file }: Props) => {
         type="ghost"
       >
         Approve pending tags
-      </MenuButton>
-      <MenuButton
+      </Button>
+      <Button
         icon="CloseLarge"
         iconPlacement="left"
         style={buttonStyle}
         onClick={onFileReject}
-        type="ghost-danger"
+        type="ghost-destructive"
       >
         Reject pending tags
-      </MenuButton>
-      <MenuButton
+      </Button>
+      <Button
         icon="Delete"
         iconPlacement="left"
         style={buttonStyle}
         onClick={onFileTagsClear}
-        type="ghost-danger"
+        type="ghost-destructive"
       >
         Clear all tags
-      </MenuButton>
+      </Button>
     </DropdownMenu>
   );
 };

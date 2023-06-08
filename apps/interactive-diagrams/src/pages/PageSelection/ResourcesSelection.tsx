@@ -39,7 +39,7 @@ export default function ResourcesSelection(
         title={
           <>
             Link to {targetLabel}{' '}
-            <span style={{ color: Colors['greyscale-grey5'].hex() }}>
+            <span style={{ color: Colors['decorative--grayscale--500'] }}>
               (optional)
             </span>
           </>

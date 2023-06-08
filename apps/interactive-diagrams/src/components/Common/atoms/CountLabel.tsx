@@ -11,7 +11,7 @@ export const CountLabel = (props: Props) => {
   const {
     value,
     color = 'white',
-    backgroundColor = Colors.midblue.hex(),
+    backgroundColor = Colors['decorative--blue--500'],
   } = props;
   return (
     <StyledLabel color={color} backgroundColor={backgroundColor}>

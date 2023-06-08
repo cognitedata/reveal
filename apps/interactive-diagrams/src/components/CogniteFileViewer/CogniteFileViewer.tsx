@@ -11,15 +11,15 @@ const Wrapper = styled.div`
   width: 100%;
   position: relative;
   display: flex;
-  background-color: ${Colors['greyscale-grey2'].hex()};
+  background-color: ${Colors['decorative--grayscale--200']};
   background-image: radial-gradient(
-    ${Colors['greyscale-grey4'].hex()} 10%,
+    ${Colors['decorative--grayscale--400']} 10%,
     transparent 10%
   );
   background-position: 0 0, 10px 10px;
   background-size: 20px 20px;
   button.cogs-menu-item {
-    color: ${Colors.black.hex()};
+    color: ${Colors['decorative--grayscale--black']};
   }
 `;
 

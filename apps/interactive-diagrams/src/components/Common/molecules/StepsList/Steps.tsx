@@ -18,7 +18,7 @@ const StyledSteps = styled.div`
   font-family: 'Inter';
   font-weight: 600;
   margin-right: 24px;
-  color: ${Colors['greyscale-grey6'].hex()};
+  color: ${Colors['decorative--grayscale--600']};
 `;
 
 export function Steps(props: StepsProps) {

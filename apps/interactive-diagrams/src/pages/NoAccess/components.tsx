@@ -3,7 +3,7 @@ import { Colors } from '@cognite/cogs.js';
 
 export const Warning = styled.div`
   font-size: 16px;
-  color: ${Colors['yellow-1'].hex()};
+  color: ${Colors['decorative--yellow--100']};
   font-weight: bold;
   margin-bottom: 14px;
   display: flex;

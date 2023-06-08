@@ -1,4 +1,3 @@
-export * from './FilePreviewOverview';
 export * from './Popover';
 export * from './WithLabel';
 export * from './InfoGrid';

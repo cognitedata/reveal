@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Tooltip } from 'antd';
-import { Button, Icon, Label } from '@cognite/cogs.js';
+import { Button, Icon, Chip } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { RootState } from 'store';
 import { Flex } from 'components/Common';
@@ -43,13 +43,15 @@ const convertStatusMap = (
     </Button>
   ),
   Failed: (
-    <Label size="medium" variant="danger">
-      <Flex align justify>
-        <span style={{ marginRight: '2px' }}>Failed</span>
-        <Tooltip title={error}>
-          <Icon type="Info" />
-        </Tooltip>
-      </Flex>
-    </Label>
+    <Tooltip title={error}>
+      <Chip
+        label="Failed"
+        icon="Info"
+        iconPlacement="right"
+        size="medium"
+        type="danger"
+        hideTooltip
+      />
+    </Tooltip>
   ),
 });

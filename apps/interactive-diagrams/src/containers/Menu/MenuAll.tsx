@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useReviewFiles, useActiveWorkflow, useConvertToSVG } from 'hooks';
 import { useWorkflowDiagramsIds } from 'modules/workflows';
 import { ModalSaveSVG } from 'containers';
-import { MenuButton, DropdownMenu } from 'components/Common';
+import { DropdownMenu } from 'components/Common';
+import { Button } from '@cognite/cogs.js';
 
 // Context menu for all contextualized diagrams
 export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
@@ -19,7 +20,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
 
   return (
     <DropdownMenu column justify grow>
-      <MenuButton
+      <Button
         type="ghost"
         aria-label="Button-Save-SVG-All"
         iconPlacement="left"
@@ -29,9 +30,9 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
         style={{ width: '100%', justifyContent: 'flex-start' }}
       >
         Save all as SVG
-      </MenuButton>
-      <MenuButton
-        type="ghost-danger"
+      </Button>
+      <Button
+        type="ghost-destructive"
         aria-label="Button-Reject-All"
         icon={isLoading ? 'Loader' : 'Delete'}
         iconPlacement="left"
@@ -40,7 +41,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
         style={{ width: '100%', justifyContent: 'flex-start' }}
       >
         Reject all pending tags
-      </MenuButton>
+      </Button>
       <ModalSaveSVG
         diagramIds={diagramIds}
         showModal={showModal}

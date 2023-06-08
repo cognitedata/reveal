@@ -1429,10 +1429,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^9.16.0":
-  version "9.16.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.16.3.tgz#f9fa24bc2358f7c9b8d784f9779105d168f2215c"
-  integrity sha512-jZgUbWxPPSZ525jjWREDcTWT0t0GKZts8mxFmyiO+1LenYqtiKfxSQJPxLaYdj50u2LbJO2d9c0+c1Gf651FWA==
+"@cognite/cogs.js@^9.16.4":
+  version "9.16.4"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.16.4.tgz#8cc4392322b11af2d7ec7c87b91cea875d719573"
+  integrity sha512-gibds7GwsL7HbeKGgcQPTB1HZfQ0ur5gdzn5dbyCrp9QaWXJjqidhMErwgHuC1go5R1jBHSiBkRsoITx2FUoFQ==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
@@ -1525,7 +1525,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@^1.1.1", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@^1.1.1", "@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:

@@ -45,7 +45,7 @@ const Wrapper = styled.div<{ isSelected: boolean }>`
   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-  background: ${Colors.white.hex()};
+  background: ${Colors['decorative--grayscale--white']};
   border-radius: 4px 4px 0px 0px;
   cursor: pointer;
   min-width: 100%;
@@ -53,13 +53,13 @@ const Wrapper = styled.div<{ isSelected: boolean }>`
   border-radius: 6px;
   border: ${(props) =>
     props.isSelected
-      ? `2px solid ${Colors['link-primary-default'].hex()}`
-      : `2px solid ${Colors['greyscale-grey4'].hex()}`};
+      ? `2px solid ${Colors['decorative--blue--500']}`
+      : `2px solid ${Colors['decorative--grayscale--400']}`};
 `;
 const Header = styled.div`
   width: 100%;
   height: 32px;
-  background: ${Colors['greyscale-grey2'].hex()};
+  background: ${Colors['decorative--grayscale--200']};
   border-radius: 4px 4px 0px 0px;
   img {
     position: relative;

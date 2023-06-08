@@ -21,18 +21,13 @@ export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
 
   return (
     <OptionWrapper>
-      <Flex
-        row
-        style={{ width: '100%', marginBottom: '12px', marginLeft: '-8px' }}
-      >
+      <Flex row style={{ width: '100%', marginBottom: '12px' }}>
         <Switch
+          label="Allow partial matches"
           name="partialMatchOption"
           value={partialMatch}
           onChange={onPartialMatchesChange}
         />
-        <Body level={2} strong>
-          Allow partial matches
-        </Body>
       </Flex>
       <Flex row style={{ width: '100%', marginBottom: '12px' }}>
         <Body level={2}>

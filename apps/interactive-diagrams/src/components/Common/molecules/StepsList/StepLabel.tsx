@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import { AppStateContext } from 'context';
 import { WorkflowStep } from 'modules/workflows';
 import { useJobStatusLabels } from 'hooks';
@@ -25,9 +25,7 @@ export const StepLabel = ({ step }: { step?: WorkflowStep }): JSX.Element => {
   if (step === 'review') {
     return (
       <div>
-        <Label size="small" variant={labelVariant}>
-          {jobLabel}
-        </Label>
+        <Chip label={jobLabel} size="small" type={labelVariant} />
       </div>
     );
   }

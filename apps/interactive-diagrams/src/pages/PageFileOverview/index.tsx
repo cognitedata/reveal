@@ -45,7 +45,15 @@ export default function PageFileOverview(props: Props) {
     dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
   }, [dispatch, fileIdNumber]);
 
-  if (isError) return <ErrorFeedback error={error} />;
+  if (isError)
+    return (
+      <ErrorFeedback
+        error={{
+          message: error.message || '',
+          status: 0,
+        }}
+      />
+    );
 
   return (
     <Wrapper>

@@ -23,7 +23,7 @@
   "dependencies": {
     "@cognite/annotations": "^1.1.0",
     "@cognite/cdf-utilities": "^0.11.1",
-    "@cognite/cogs.js": "^9.16.0",
+    "@cognite/cogs.js": "^9.16.4",
     "@cognite/data-exploration": "^5.63.3",
     "@cognite/gcs-browser-upload": "^1.1.1",
     "@cognite/griff-react": "~0.4.2",

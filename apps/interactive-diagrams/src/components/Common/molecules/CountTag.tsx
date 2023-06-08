@@ -43,12 +43,16 @@ const StyledTag = styled.span<{ pending: boolean }>`
   justify-content: center;
   padding: 4px 8px;
   background: ${({ pending }) =>
-    pending ? Colors['midblue-8'].hex() : 'white'};
+    pending ? Colors['decorative--blue--700'] : 'white'};
   border: 1px solid
     ${({ pending }) =>
-      pending ? Colors['midblue-6'].hex() : Colors['greyscale-grey5'].hex()};
+      pending
+        ? Colors['decorative--blue--600']
+        : Colors['decorative--grayscale--500']};
   color: ${({ pending }) =>
-    pending ? Colors['midblue-2'].hex() : Colors['greyscale-grey9'].hex()};
+    pending
+      ? Colors['decorative--blue--200']
+      : Colors['decorative--grayscale--900']};
   box-sizing: border-box;
   border-radius: 4px;
   flex: none;

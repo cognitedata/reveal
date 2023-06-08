@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import {
-  Colors,
-  Radio,
-  RadioProps,
-  Title,
-  Icon,
-  Tooltip,
-} from '@cognite/cogs.js';
-import { Flex } from 'components/Common';
+import { Colors, Radio, Title, Icon, Tooltip } from '@cognite/cogs.js';
+import { Flex } from '../atoms';
 
 type WrapperProps = {
   checked: boolean;
@@ -21,7 +14,7 @@ const Wrapper = styled.div.attrs(
       ...style,
       border: checked
         ? '2px solid #4A67FB'
-        : `2px solid ${Colors['greyscale-grey4'].hex()}`,
+        : `2px solid ${Colors['decorative--grayscale--400']}`,
     };
     if (maxWidth) {
       newStyle.maxWidth = `${maxWidth}px`;
@@ -62,66 +55,75 @@ const Wrapper = styled.div.attrs(
 `;
 
 const Collapse = styled.div`
-  border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-top: 1px solid ${Colors['decorative--grayscale--400']};
   width: 100%;
   padding: 14px;
 `;
 
-interface CollapsibleRadioProps extends RadioProps {
+interface CollapsibleRadioProps {
   children?: React.ReactNode;
-  title?: string;
-  info?: React.ReactNode;
-  style?: React.CSSProperties;
-  maxWidth?: number;
-  groupRadioValue: string;
-  setGroupRadioValue: (groupRadioValue: string) => void;
   collapse?: React.ReactNode;
+  groupRadioValue: string;
+  info?: React.ReactNode;
+  maxWidth?: number;
+  name: string;
+  setGroupRadioValue: (groupRadioValue: string) => void;
+  style?: React.CSSProperties;
+  title?: string;
+  value: string;
 }
 
 export const CollapsibleRadio = ({
-  title,
   children,
-  info,
   collapse,
-  maxWidth,
   groupRadioValue,
+  info,
+  maxWidth,
+  name,
   setGroupRadioValue,
   style,
-  ...otherProps
+  title,
+  value,
 }: CollapsibleRadioProps) => {
-  const [collapsed, setCollapsed] = useState(true);
-  const [isChecked, setIsChecked] = useState(false);
-
-  useEffect(() => {
-    const isThisRadioChecked = otherProps.value === groupRadioValue;
-    setIsChecked(isThisRadioChecked);
-    if (collapse) setCollapsed(!isThisRadioChecked);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupRadioValue]);
-
-  const onChange = (_isChecked: boolean, radioValue?: string) => {
-    if (radioValue) setGroupRadioValue(radioValue);
-  };
+  const isChecked = value === groupRadioValue;
+  const isCollapsed = !isChecked;
 
   return (
     <Wrapper checked={isChecked} style={style} maxWidth={maxWidth}>
-      <Radio {...otherProps} checked={isChecked} onChange={onChange}>
-        <Flex column style={{ width: '100%' }}>
+      <ClickableArea
+        onClick={() => {
+          setGroupRadioValue(value);
+        }}
+      >
+        <div>
+          <Radio checked={isChecked} name={name} value={value} />
+        </div>
+        <Flex
+          column
+          style={{
+            padding: '14px 14px 14px 0',
+            width: '100%',
+          }}
+        >
           <Flex row align style={{ justifyContent: 'space-between' }}>
             {title ? <Title level={5}>{title}</Title> : null}
             {info && (
               <Tooltip content={info}>
-                <Icon
-                  type="Info"
-                  style={{ color: Colors['greyscale-grey6'].hex() }}
-                />
+                <Icon type="Info" />
               </Tooltip>
             )}
           </Flex>
           {children ?? null}
         </Flex>
-      </Radio>
-      {collapse && !collapsed && <Collapse>{collapse}</Collapse>}
+      </ClickableArea>
+      {collapse && !isCollapsed && <Collapse>{collapse}</Collapse>}
     </Wrapper>
   );
 };
+
+const ClickableArea = styled.div`
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+`;

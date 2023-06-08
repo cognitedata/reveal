@@ -35,7 +35,7 @@ const Skeleton = styled.div.attrs(
   position: relative;
   height: 1em;
   overflow: hidden;
-  background-color: ${Colors['greyscale-grey3'].hex()};
+  background-color: ${Colors['decorative--grayscale--300']};
   border-radius: 4px;
 
   &:after {

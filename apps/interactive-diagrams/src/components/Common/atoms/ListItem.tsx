@@ -55,11 +55,12 @@ export const ListItemWrapper = styled.div<WrapperProps>`
     margin-bottom: 0px;
   }
   background: ${(props) =>
-    props.selected ? Colors['midblue-6'].hex() : 'inherit'};
-  color: ${(props) => (props.selected ? Colors['midblue-2'].hex() : 'inherit')};
+    props.selected ? Colors['decorative--blue--600'] : 'inherit'};
+  color: ${(props) =>
+    props.selected ? Colors['decorative--blue--200'] : 'inherit'};
   border-bottom: ${(props) =>
     props.bordered
-      ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+      ? `1px solid ${Colors['decorative--grayscale--300']}`
       : 'inherit'};
 
   .title {
@@ -68,6 +69,6 @@ export const ListItemWrapper = styled.div<WrapperProps>`
 
   &&:hover {
     background: ${(props) =>
-      props.selected ? Colors['midblue-6'].hex() : 'rgba(0,0,0,0.05)'};
+      props.selected ? Colors['decorative--blue--600'] : 'rgba(0,0,0,0.05)'};
   }
 `;

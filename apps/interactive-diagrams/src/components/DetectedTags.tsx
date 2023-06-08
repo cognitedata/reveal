@@ -18,7 +18,7 @@ const DetectedTags = ({ fileId, refetch }: DetectedTagsProps) => {
   if (!isFetched) return <Spin />;
   if (noTags)
     return (
-      <Body level={2} style={{ color: Colors['greyscale-grey6'].hex() }}>
+      <Body level={2} style={{ color: Colors['decorative--grayscale--600'] }}>
         No links
       </Body>
     );

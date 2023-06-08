@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
 import { Spin } from 'antd';
-import { Colors, Input } from '@cognite/cogs.js';
+import { Button, Colors, Input } from '@cognite/cogs.js';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { searchCountSelector } from 'pages/PageSelection/selectors';
-import { Flex, MenuButton } from 'components/Common';
+import { Flex } from 'components/Common';
 import {
   DataSetSelect,
   RootAssetSelect,
@@ -190,13 +190,13 @@ export default function SelectionBar(props: Props): JSX.Element {
           />
         </InputRow>
         <Selected>
-          <MenuButton
-            type="link"
+          <Button
+            type="ghost-accent"
             disabled={!selected && !showSelected}
             onClick={() => setShowSelected(!showSelected)}
           >
             {selectionButtonLabel}
-          </MenuButton>
+          </Button>
         </Selected>
       </StyledFlex>
       <FilterBar row>
@@ -231,11 +231,11 @@ const InputRow = styled(Flex)`
   }
 `;
 const Selected = styled.span`
-  color: ${Colors['greyscale-grey7'].hex()};
+  color: ${Colors['decorative--grayscale--700']};
   font-weight: 500;
 `;
 const Results = styled(Flex)`
-  color: ${Colors['greyscale-grey6'].hex()};
+  color: ${Colors['decorative--grayscale--600']};
   justify-content: flex-end;
   align-items: center;
   margin-bottom: 20px;

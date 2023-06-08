@@ -9,8 +9,8 @@ const Wrapper = styled.div.attrs(
   flex-direction: row;
   align-items: center;
   padding: 12px 16px;
-  background-color: ${Colors['midblue-7'].hex()};
-  color: ${Colors['midblue-2'].hex()};
+  background-color: ${Colors['decorative--blue--700']};
+  color: ${Colors['decorative--blue--200']};
   border-radius: 4px;
 `;
 
@@ -26,7 +26,7 @@ export function InfoField(props: InfoFieldProps) {
       <Icon
         type="Info"
         size={16}
-        style={{
+        css={{
           marginRight: '16px',
           minWidth: '16px',
           minHeight: '16px',

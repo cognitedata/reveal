@@ -7,8 +7,8 @@ const StyledModelInfo = styled.div<{ editable: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background-color: ${Colors.white.hex()};
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  background-color: ${Colors['decorative--grayscale--white']};
+  border: 1px solid ${Colors['decorative--grayscale--400']};
   border-radius: 4px;
   box-sizing: border-box;
   padding: 4px 8px;
@@ -42,8 +42,7 @@ export default function ModelInfo(props: Props): JSX.Element {
       {editable && (
         <Icon
           type="Edit"
-          style={{
-            color: Colors['greyscale-grey6'].hex(),
+          css={{
             marginLeft: '6px',
           }}
         />

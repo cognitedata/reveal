@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
-import { Input, Label } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Input, Chip } from '@cognite/cogs.js';
 import { Flex } from 'components/Common';
 import { AppStateContext } from 'context';
 
@@ -19,24 +18,16 @@ export const PrefixSettings = () => {
           onChange={onSvgPrefixChange}
           style={{ minWidth: '200px' }}
         />
-        <Label variant="unknown" style={{ marginLeft: '12px' }}>
-          _filename.svg
-        </Label>
+        <Chip
+          label="_filename.svg"
+          type="default"
+          css={{ marginLeft: '12px' }}
+        />
       </Flex>
-      <Label style={{ whiteSpace: 'nowrap', marginTop: '28px' }}>
-        <LabelStatic>Preview:</LabelStatic>
-        <LabelDynamic>&quot;{prefixPreview}&quot;</LabelDynamic>
-      </Label>
+      <Chip
+        label={`Preview: "${prefixPreview}"`}
+        css={{ whiteSpace: 'nowrap', marginTop: '28px' }}
+      />
     </Flex>
   );
 };
-
-const LabelStatic = styled.span`
-  font-weight: 500;
-  font-size: 13px;
-  margin-right: 3px;
-`;
-const LabelDynamic = styled.span`
-  font-weight: 600;
-  font-size: 15px;
-`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Graphic } from '@cognite/cogs.js';
+import { Illustrations } from '@cognite/cogs.js';
 import { Flex, PageTitle } from 'components/Common';
 
 export default function PageNotFound() {
@@ -7,7 +7,7 @@ export default function PageNotFound() {
     <>
       <PageTitle title="Page not found" />
       <Flex column align justify style={{ width: '100vw', height: '70vh' }}>
-        <Graphic type="Documents" />
+        <Illustrations.Solo type="EmptyStateSearchSad" />
       </Flex>
     </>
   );

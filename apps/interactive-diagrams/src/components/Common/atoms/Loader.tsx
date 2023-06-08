@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Colors } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
 export const Loader = () => {
   return (
@@ -18,7 +18,6 @@ const Wrapper = styled.div`
   align-items: center;
 
   svg {
-    color: ${Colors['greyscale-grey4'].hex()};
     width: 56px;
     height: 56px;
   }

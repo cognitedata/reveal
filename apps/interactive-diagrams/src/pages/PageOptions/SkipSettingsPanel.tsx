@@ -23,7 +23,7 @@ export default function SkipSettingsPanel() {
         name="skipSettingsOption"
         value={skipSettings}
         onChange={onSkipSettingsChange}
-        style={{ margin: '20px 0 0 -8px' }}
+        style={{ margin: '20px 0 0' }}
       />
     </SkipSettings>
   );

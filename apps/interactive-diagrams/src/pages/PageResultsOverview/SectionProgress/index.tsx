@@ -57,7 +57,7 @@ const SectionProgress = (): JSX.Element => {
             <Detail
               style={{
                 textAlign: 'center',
-                color: Colors['greyscale-grey6'].hex(),
+                color: Colors['decorative--grayscale--600'],
               }}
             >
               processed successfully
@@ -96,7 +96,7 @@ const Wrapper = styled.div`
   font-family: 'Inter';
   min-width: 340px;
   max-width: 340px;
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border: 1px solid ${Colors['decorative--grayscale--400']};
   border-radius: 8px;
   box-sizing: border-box;
 `;

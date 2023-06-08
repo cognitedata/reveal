@@ -41,7 +41,7 @@ export default function RunModelButton(): JSX.Element {
         <Body
           level={2}
           style={{
-            color: Colors['greyscale-grey6'].hex(),
+            color: Colors['decorative--grayscale--600'],
             marginLeft: '12px',
           }}
         >

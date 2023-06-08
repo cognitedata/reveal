@@ -34,26 +34,20 @@ export default function PageOptions(props: Props) {
       <Flex row style={{ paddingBottom: '50px' }}>
         <Flex column style={{ width: '100%' }}>
           <CollapsibleRadio
-            name="standard"
-            value="standard"
-            title="Standard model"
-            info={<StandardModelTooltip />}
             groupRadioValue={modelSelected}
-            setGroupRadioValue={onModelSet}
+            info={<StandardModelTooltip />}
             maxWidth={1024}
+            name="standard"
+            setGroupRadioValue={onModelSet}
             style={{ marginBottom: '14px' }}
+            title="Standard model"
+            value="standard"
           >
             <Body level={2}>
               This is recommended for most engineering diagrams.
             </Body>
           </CollapsibleRadio>
           <CollapsibleRadio
-            name="advanced"
-            value="advanced"
-            title="Advanced model"
-            groupRadioValue={modelSelected}
-            setGroupRadioValue={onModelSet}
-            maxWidth={1024}
             collapse={
               <>
                 <OptionPartialMatch workflowId={workflowId} />
@@ -61,6 +55,12 @@ export default function PageOptions(props: Props) {
                 <OptionFieldsToMatch workflowId={workflowId} />
               </>
             }
+            groupRadioValue={modelSelected}
+            maxWidth={1024}
+            name="advanced"
+            setGroupRadioValue={onModelSet}
+            title="Advanced model"
+            value="advanced"
           >
             <Body level={2}>
               Allows you to configure advanced options such as number of tokens

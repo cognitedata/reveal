@@ -21,27 +21,27 @@ export const progressData: ProgressData[] = [
   {
     type: 'completed',
     label: 'Done',
-    color: Colors['green-5'].hex(),
+    color: Colors['decorative--green--500'],
   },
   {
     type: 'running',
     label: 'In progress',
-    color: Colors['midblue-4'].hex(),
+    color: Colors['decorative--blue--400'],
   },
   {
     type: 'queued',
     label: 'Queued',
-    color: Colors['greyscale-grey4'].hex(),
+    color: Colors['decorative--grayscale--400'],
   },
   {
     type: 'failed',
     label: 'Failed',
-    color: Colors['red-4'].hex(),
+    color: Colors['decorative--red--400'],
   },
   {
     type: 'idle',
     label: 'Idle',
-    color: Colors['greyscale-grey4'].hex(),
+    color: Colors['decorative--grayscale--400'],
   },
 ];
 

@@ -10,7 +10,7 @@ const TooltipWrapper = styled(Flex)`
     margin: 8px 0;
   }
   & * {
-    color: ${Colors.white.hex()};
+    color: ${Colors['decorative--grayscale--white']};
   }
 `;
 

@@ -26,8 +26,3 @@ export const NameHeader = styled.h1`
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
-
-export const TabTitle = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-`;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Badge, Colors, Tabs } from '@cognite/cogs.js';
+import { Colors, Tabs } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import {
   FileDetails,
@@ -9,7 +9,7 @@ import {
 } from '@cognite/data-exploration';
 import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import { ContentWrapper, TabTitle } from '../components';
+import { ContentWrapper } from '../components';
 import { ResourceDetailTabContent } from './ResourceDetailTabContent';
 import styled from 'styled-components';
 
@@ -34,49 +34,41 @@ export default function Preview(props: Props) {
   return (
     <StyledTabs
       activeKey={activeTab}
-      onChange={(newTab) => {
+      onTabClick={(newTab) => {
         trackUsage(PNID_METRICS.fileViewer.viewTab, { tab: newTab });
         setActiveTab(newTab as FilePreviewTabType);
       }}
       style={{ paddingLeft: '20px' }}
     >
-      <Tabs.TabPane key="preview" tab={<TabTitle>Preview</TabTitle>}>
+      <Tabs.Tab tabKey="preview" label="Preview">
         <ContentWrapper>
           <CogniteFileViewer fileId={file?.id} editMode={editMode} />
         </ContentWrapper>
-      </Tabs.TabPane>
-      <Tabs.TabPane tab={<TabTitle>Diagram details</TabTitle>} key="info">
+      </Tabs.Tab>
+      <Tabs.Tab label="Diagram details" tabKey="info">
         <FileDetails file={file} />
         <Metadata metadata={file?.metadata} />
-      </Tabs.TabPane>
-      <Tabs.TabPane
-        key="assets"
-        tab={
-          <>
-            <TabTitle>Assets</TabTitle>
-            <Badge
-              text={counts?.asset ?? '—'}
-              background={Colors['greyscale-grey3'].hex()}
-            />
-          </>
-        }
+      </Tabs.Tab>
+      <Tabs.Tab
+        tabKey="assets"
+        chipRight={{
+          label: counts?.asset ?? '-',
+          size: 'small',
+        }}
+        label="Assets"
       >
         <ResourceDetailTabContent resource={resourceDetails} type="asset" />
-      </Tabs.TabPane>
-      <Tabs.TabPane
-        key="files"
-        tab={
-          <>
-            <TabTitle>Diagrams</TabTitle>
-            <Badge
-              text={counts?.file ?? '—'}
-              background={Colors['greyscale-grey3'].hex()}
-            />
-          </>
-        }
+      </Tabs.Tab>
+      <Tabs.Tab
+        tabKey="files"
+        chipRight={{
+          label: counts?.file ?? '-',
+          size: 'small',
+        }}
+        label="Diagrams"
       >
         <ResourceDetailTabContent resource={resourceDetails} type="file" />
-      </Tabs.TabPane>
+      </Tabs.Tab>
     </StyledTabs>
   );
 }
@@ -88,7 +80,7 @@ export const StyledTabs = styled(Tabs)`
   height: 100%;
 
   .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
     margin-bottom: 16px;
   }
   .rc-tabs-content-holder {

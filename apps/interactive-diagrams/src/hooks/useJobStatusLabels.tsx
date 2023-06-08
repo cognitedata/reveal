@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LabelVariants } from '@cognite/cogs.js';
+import { ChipProps } from '@cognite/cogs.js';
 import { JobStatus } from 'modules/types';
 import { useJobStatus } from 'hooks';
 import ResourcesLoaded from 'pages/PageResultsOverview/SectionResults/ResourcesLoaded';
@@ -9,7 +9,7 @@ export const useJobStatusLabels = () => {
   const labels = jobStatus ? statusLabels[jobStatus] : defaultStatusLabel;
 
   const [jobLabel, setJobLabel] = useState(labels.jobLabel);
-  const [labelVariant, setLabelVariant] = useState<LabelVariants>(
+  const [labelVariant, setLabelVariant] = useState<ChipProps['type']>(
     labels.labelVariant
   );
   const [buttonLabel, setButtonLabel] = useState(labels.buttonLabel);
@@ -26,14 +26,14 @@ export const useJobStatusLabels = () => {
 
 type StatusLabel = {
   jobLabel: string;
-  labelVariant: LabelVariants;
+  labelVariant: ChipProps['type'];
   buttonLabel: string | React.ReactNode;
 };
 
 const statusLabels: { [key in JobStatus]: StatusLabel } = {
   incomplete: {
     jobLabel: 'Waiting',
-    labelVariant: 'unknown',
+    labelVariant: 'default',
     buttonLabel: 'Run',
   },
   ready: {
@@ -43,12 +43,12 @@ const statusLabels: { [key in JobStatus]: StatusLabel } = {
   },
   loading: {
     jobLabel: 'Running...',
-    labelVariant: 'normal',
+    labelVariant: 'neutral',
     buttonLabel: <ResourcesLoaded />,
   },
   running: {
     jobLabel: 'In progress',
-    labelVariant: 'normal',
+    labelVariant: 'neutral',
     buttonLabel: 'Running...',
   },
   done: {

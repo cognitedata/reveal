@@ -8,7 +8,7 @@ export const DropdownMenu = styled(Flex)`
   border-radius: 8px;
   padding: 8px 4px;
   background-color: white;
-  box-shadow: 0 0 10px ${Colors['greyscale-grey3'].hex()};
+  box-shadow: 0 0 10px ${Colors['decorative--grayscale--300']};
   width: auto;
   & > * {
     flex: 1 1 0px;

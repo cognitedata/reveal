@@ -18,7 +18,7 @@ const StyledSubtitle = styled(Body)`
   font-weight: 400;
   size: 16px;
   line-height: 24px;
-  color: ${Colors['greyscale-grey7'].hex()};
+  color: ${Colors['decorative--grayscale--700']};
   margin-bottom: 12px;
   box-sizing: border-box;
 `;
@@ -27,7 +27,7 @@ const Line = styled.div`
   width: 36px;
   height: 4px;
   margin-top: 8px;
-  background: ${Colors['pink-3'].hex()};
+  background: ${Colors['decorative--pink--300']};
 `;
 
 export const PageTitle = (props: PageTitleProps) => {

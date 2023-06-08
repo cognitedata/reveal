@@ -5,20 +5,20 @@ import { JobStatus } from 'modules/types';
 export const SetUpWrapper = styled.div.attrs(
   ({ jobStatus }: { jobStatus: JobStatus }) => {
     const style: React.CSSProperties = {
-      border: `1px solid ${Colors['midblue-6'].hex()}`,
+      border: `1px solid ${Colors['decorative--blue--600']}`,
       backgroundColor: `#f6f9ff`,
     };
     if (jobStatus === 'done') {
-      style.border = `1px solid ${Colors['greyscale-grey4'].hex()}`;
-      style.backgroundColor = Colors.white.hex();
+      style.border = `1px solid ${Colors['decorative--grayscale--400']}`;
+      style.backgroundColor = Colors['decorative--grayscale--white'];
     }
     if (
       jobStatus === 'incomplete' ||
       jobStatus === 'error' ||
       jobStatus === 'rejected'
     ) {
-      style.border = `1px solid ${Colors['yellow-5'].hex()}`;
-      style.backgroundColor = `${Colors['yellow-8'].hex()}`;
+      style.border = `1px solid ${Colors['decorative--yellow--300']}`;
+      style.backgroundColor = `${Colors['decorative--yellow--100']}`;
     }
     return { style };
   }

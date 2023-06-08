@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Graphic, Title } from '@cognite/cogs.js';
+import { Illustrations, Title } from '@cognite/cogs.js';
 import { IconButton } from 'components/Common';
 import { useWorkflowCreateNew } from 'modules/workflows';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
@@ -26,7 +26,7 @@ export default function FilesListEmpty() {
     <div>
       <Title level={4}>Pending interactive diagrams</Title>
       <Wrapper>
-        <Graphic type="Documents" />
+        <Illustrations.Solo type="PAndIdDiagram" />
         <Title level={5} style={{ margin: '24px 0' }}>
           No pending interactive diagrams to review!
         </Title>

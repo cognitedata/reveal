@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { Title, Colors } from '@cognite/cogs.js';
 
 const StyledTitle = styled(Title)`
-  border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-bottom: 1px solid ${Colors['decorative--grayscale--400']};
 `;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border: 1px solid ${Colors['decorative--grayscale--400']};
   box-sizing: border-box;
   border-radius: 8px;
   padding: 0;

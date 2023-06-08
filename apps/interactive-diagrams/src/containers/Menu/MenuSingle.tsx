@@ -6,9 +6,10 @@ import {
   useFileStatus,
 } from 'hooks';
 import { ModalSaveSVG } from 'containers';
-import { MenuButton, DropdownMenu } from 'components/Common';
+import { DropdownMenu } from 'components/Common';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Button } from '@cognite/cogs.js';
 
 // Context menu for a single diagram
 export const MenuSingle = ({ file }: { file: FileInfo }) => {
@@ -34,7 +35,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
 
   return (
     <DropdownMenu column justify grow style={{ width: '200px' }}>
-      <MenuButton
+      <Button
         type="ghost"
         aria-label="Button-Approve-Single"
         icon={isLoading ? 'Loader' : 'Checkmark'}
@@ -44,8 +45,8 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Approve tags
-      </MenuButton>
-      <MenuButton
+      </Button>
+      <Button
         type="ghost"
         aria-label="Button-Save-SVG-Single"
         icon={isConverting ? 'Loader' : 'Save'}
@@ -55,9 +56,9 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Save as SVG
-      </MenuButton>
-      <MenuButton
-        type="ghost-danger"
+      </Button>
+      <Button
+        type="ghost-destructive"
         aria-label="Button-Reject-Single"
         icon={isLoading ? 'Loader' : 'CloseLarge'}
         iconPlacement="left"
@@ -66,9 +67,9 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Reject pending tags
-      </MenuButton>
-      <MenuButton
-        type="ghost-danger"
+      </Button>
+      <Button
+        type="ghost-destructive"
         aria-label="Button-Clear-Single"
         icon={isLoading ? 'Loader' : 'Delete'}
         iconPlacement="left"
@@ -77,7 +78,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Clear all tags
-      </MenuButton>
+      </Button>
       <ModalSaveSVG
         diagramIds={[file.id]}
         showModal={showModal}

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
-import { Modal } from 'antd';
-import { Button, Body, Colors } from '@cognite/cogs.js';
+import { Body, Colors, Modal } from '@cognite/cogs.js';
 import { v4 as uuid } from 'uuid';
 import { AppStateContext, PrefixType } from 'context';
 import { useConvertToSVG } from 'hooks';
@@ -34,66 +33,48 @@ export const ModalSaveSVG = (props: Props) => {
   const selectedDiagrams = diagramIds?.length ?? 0;
   const disabled = selectedDiagrams === 0;
 
-  const footer = (
-    <>
-      <Button
-        key="cancel"
-        onClick={onClickCancel}
-        type="secondary"
-        variant="ghost"
-      >
-        Cancel
-      </Button>
-      <Button
-        key="submit"
-        onClick={onClickOk}
-        type="primary"
-        disabled={disabled}
-      >
-        Save files ({selectedDiagrams})
-      </Button>
-    </>
-  );
-
   return (
     <Modal
-      visible={showModal}
+      okDisabled={disabled}
+      okText={`Save files (${selectedDiagrams})`}
       onCancel={onClickCancel}
       onOk={onClickOk}
       title="Save as SVG"
-      footer={[footer]}
-      style={{ minWidth: '720px' }}
+      visible={showModal}
     >
       <Flex column>
         {Boolean(nrOfPendingDiagramsToConvert) && (
           <InfoField style={{ marginBottom: '24px' }}>
             <Flex column>
-              <Body level={2} style={{ color: Colors['midblue-2'].hex() }}>
+              <Body
+                level={2}
+                style={{ color: Colors['decorative--blue--200'] }}
+              >
                 Only approved tags will be saved in the SVG.
               </Body>
             </Flex>
           </InfoField>
         )}
         <CollapsibleRadio
-          name={uuid()}
-          value="original"
-          title="Save with same name"
           groupRadioValue={prefixType}
-          setGroupRadioValue={onPrefixTypeSet}
           maxWidth={1024}
+          name={uuid()}
+          setGroupRadioValue={onPrefixTypeSet}
           style={{ marginBottom: '14px' }}
+          title="Save with same name"
+          value="original"
         >
           <Body level={2}>Save selected files with their initial names.</Body>
         </CollapsibleRadio>
         <CollapsibleRadio
-          name={uuid()}
-          value="custom"
-          title="Specify prefix before saving"
-          groupRadioValue={prefixType}
-          setGroupRadioValue={onPrefixTypeSet}
-          maxWidth={1024}
-          style={{ marginBottom: '14px' }}
           collapse={<PrefixSettings />}
+          groupRadioValue={prefixType}
+          maxWidth={1024}
+          name={uuid()}
+          setGroupRadioValue={onPrefixTypeSet}
+          style={{ marginBottom: '14px' }}
+          title="Specify prefix before saving"
+          value="custom"
         >
           <Body level={2}>Add a prefix to names of all selected files.</Body>
         </CollapsibleRadio>

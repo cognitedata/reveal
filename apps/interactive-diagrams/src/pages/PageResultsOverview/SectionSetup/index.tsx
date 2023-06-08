@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, Title, Label } from '@cognite/cogs.js';
+import { Body, Title, Chip } from '@cognite/cogs.js';
 import { ResourceType } from 'modules/types';
 import {
   useJobStatus,
@@ -48,9 +48,7 @@ export default function SectionSetup(): JSX.Element {
       <Flex column>
         <Flex row align style={{ justifyContent: 'space-between' }}>
           <Title level={5}>Setup for creating interactive diagrams</Title>
-          <Label size="small" variant={labelVariant}>
-            {jobLabel}
-          </Label>
+          <Chip label={jobLabel} size="small" type={labelVariant} />
         </Flex>
         <DetailsWrapper>
           {jobStatus === 'incomplete' ? (

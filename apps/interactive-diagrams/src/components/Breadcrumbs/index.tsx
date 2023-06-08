@@ -14,9 +14,9 @@ const Wrapper = styled.div`
   justify-content: flex-start;
   height: 48px;
   padding: 16px 40px;
-  background: ${Colors['greyscale-grey1'].hex()};
-  color: ${Colors['greyscale-grey6'].hex()};
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  background: ${Colors['decorative--grayscale--100']};
+  color: ${Colors['decorative--grayscale--600']};
+  border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
   font-weight: 400;
   font-style: 'Inter';
   font-size: 14px;

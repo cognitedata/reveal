@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TableProps as AntdTableProps } from 'antd/es/table';
 import { Table as AntdTable } from 'antd';
-import { Colors, Icon as CogsIcon } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 const PAGE_SIZE = 8;
@@ -49,11 +49,11 @@ export const Table = styled((props: CustomTableProps) => {
   .ant-table {
     background: ${(props) =>
       props.options?.secondary
-        ? Colors['greyscale-grey1'].hex()
-        : Colors.white.hex()};
+        ? Colors['decorative--grayscale--100']
+        : Colors['decorative--grayscale--white']};
     border: ${(props) =>
       props.options?.bordered
-        ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+        ? `1px solid ${Colors['decorative--grayscale--300']}`
         : 'none'};
     border-radius: ${(props) => (props.options?.bordered ? '8px' : '0')};
 
@@ -90,16 +90,18 @@ export const Table = styled((props: CustomTableProps) => {
     > td {
     background-color: ${(props) =>
       props.options?.secondary
-        ? Colors['greyscale-grey2'].hex()
-        : Colors['midblue-8'].hex()};
+        ? Colors['decorative--grayscale--200']
+        : Colors['decorative--blue--100']};
   }
   .ant-table-thead
     > tr
-    > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+    > th:not(:last-child):not(.ant-table-selection-column):not(
+      .ant-table-row-expand-icon-cell
+    ):not([colspan])::before {
     width: 0;
   }
   tr.ant-table-row-level-0 td {
-    border-top: 1px solid ${Colors['greyscale-grey2'].hex()};
+    border-top: 1px solid ${Colors['decorative--grayscale--200']};
     border-bottom: 0;
   }
 
@@ -109,8 +111,8 @@ export const Table = styled((props: CustomTableProps) => {
   th {
     background: ${(props) =>
       props.options?.secondary
-        ? Colors['greyscale-grey1'].hex()
-        : Colors.white.hex()};
+        ? Colors['decorative--grayscale--100']
+        : Colors['decorative--grayscale--white']};
   }
   td {
     cursor: ${(props) => (props.options?.pointer ? 'pointer' : 'default')};
@@ -124,26 +126,3 @@ export const Table = styled((props: CustomTableProps) => {
       props.options?.bordered ? '8px' : '4px'};
   }
 `;
-
-type IconExpandProps = {
-  record: any;
-};
-
-const Icon = styled(CogsIcon)`
-  transition: all 0.3s ease-out;
-  &.expanded {
-    transform: rotate(90deg);
-  }
-`;
-export function IconExpand(props: IconExpandProps) {
-  const { expanded, onExpand } = props.record;
-  return (
-    <Icon
-      type="ChevronRight"
-      className={expanded ? 'expanded' : ''}
-      onClick={(e) => {
-        onExpand(props.record, e);
-      }}
-    />
-  );
-}

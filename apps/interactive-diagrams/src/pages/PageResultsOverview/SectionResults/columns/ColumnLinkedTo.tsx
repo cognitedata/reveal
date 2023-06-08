@@ -15,7 +15,7 @@ export default function ColumnLinkedTo({ fileId }: Props): JSX.Element {
   );
   if (didFileFail)
     return (
-      <Body level={2} style={{ color: Colors['greyscale-grey6'].hex() }}>
+      <Body level={2} style={{ color: Colors['decorative--grayscale--600'] }}>
         No links
       </Body>
     );

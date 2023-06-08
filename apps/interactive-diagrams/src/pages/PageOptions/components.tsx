@@ -1,13 +1,5 @@
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import { Flex } from 'components/Common';
-
-export const Card = styled.div`
-  padding: 8px;
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
-  border-radius: 8px;
-  margin: 8px;
-`;
 
 export const OptionWrapper = styled(Flex)`
   padding: 0 24px 24px 24px;

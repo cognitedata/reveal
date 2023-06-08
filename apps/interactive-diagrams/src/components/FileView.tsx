@@ -72,7 +72,14 @@ export const FilePreview = ({
   }
 
   if (isError) {
-    return <ErrorFeedback error={error} />;
+    return (
+      <ErrorFeedback
+        error={{
+          message: error.message || '',
+          status: 0,
+        }}
+      />
+    );
   }
 
   if (!fileInfo) {

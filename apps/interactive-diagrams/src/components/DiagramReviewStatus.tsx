@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Icon, Label, LabelSize } from '@cognite/cogs.js';
+import { Chip, ChipProps } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { ReviewStatus, approvalDetails } from 'components/Filters';
 import { isFileApproved, isFilePending } from 'hooks';
 import { Tooltip } from 'antd';
 
-const StyledLabel = styled(Label)`
-  white-space: nowrap;
-`;
-
-type Props = { fileId: number; size?: LabelSize };
+type Props = { fileId: number; size?: ChipProps['size'] };
 
 export default function DiagramReviewStatus({ fileId, size }: Props) {
   const [fileStatus, setFileStatus] = useState<ReviewStatus>(
@@ -41,9 +36,16 @@ export default function DiagramReviewStatus({ fileId, size }: Props) {
 
   return (
     <Tooltip title={fileStatus.tooltip}>
-      <StyledLabel size={size} variant={fileStatus.variant}>
-        {isFetched ? fileStatus.label : <Icon type="Loader" />}
-      </StyledLabel>
+      <Chip
+        css={{
+          'white-space': 'nowrap',
+        }}
+        hideTooltip
+        icon={!isFetched ? 'Loader' : undefined}
+        label={fileStatus.label}
+        size={size}
+        type={fileStatus.variant}
+      />
     </Tooltip>
   );
 }

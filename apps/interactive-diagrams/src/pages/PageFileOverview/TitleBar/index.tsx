@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Colors, Dropdown, Title } from '@cognite/cogs.js';
+import { Button, Colors, Dropdown, Flex, Title } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useSteps } from 'hooks';
 import { WorkflowStep } from 'modules/workflows';
@@ -30,12 +30,12 @@ export default function TitleBar(props: Props) {
       </Button>
       <Title level={3} style={{ flex: 1, marginLeft: '16px' }}>
         <LoadingSkeleton loading={!file} width="200px">
-          {file?.name ?? '—'}
+          {file?.name ?? '-'}
         </LoadingSkeleton>
       </Title>
       <LoadingSkeleton loading={!file} width="100px">
         {file && (
-          <Buttons>
+          <Flex gap={4}>
             <EditFileButton
               item={{ type: 'file', id: file.id }}
               isActive={editMode}
@@ -48,7 +48,7 @@ export default function TitleBar(props: Props) {
                 type="secondary"
               />
             </Dropdown>
-          </Buttons>
+          </Flex>
         )}
       </LoadingSkeleton>
     </TitleRowWrapper>
@@ -60,17 +60,8 @@ const TitleRowWrapper = styled.div`
     margin: 0;
   }
   padding: 16px 8px;
-  border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-bottom: 1px solid ${Colors['decorative--grayscale--400']};
   display: flex;
   align-items: center;
   flex-grow: 0;
-`;
-
-const Buttons = styled.div`
-  display: inline-block;
-  overflow: hidden;
-
-  & > * {
-    margin-left: 4px;
-  }
 `;

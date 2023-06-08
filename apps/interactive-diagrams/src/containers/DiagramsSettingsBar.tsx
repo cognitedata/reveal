@@ -3,12 +3,12 @@ import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { Colors, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 import { diagramPreview } from 'routes/paths';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { getUrlWithQueryParams } from 'utils/config';
 import { ModalSaveSVG } from 'containers';
-import { Flex, MenuButton } from 'components/Common';
+import { Flex } from 'components/Common';
 import { useReviewFiles, useConvertToSVG, isFilePending } from 'hooks';
 import { useWorkflowCreateNew } from 'modules/workflows';
 
@@ -94,7 +94,7 @@ export const DiagramsSettingsBar = (props: Props) => {
         level={6}
         style={{
           margin: '0 8px',
-          color: Colors.white.hex(),
+          color: Colors['decorative--grayscale--white'],
         }}
       >
         {selectedDiagramsIds.length} diagrams selected
@@ -105,19 +105,18 @@ export const DiagramsSettingsBar = (props: Props) => {
             disabled={!isApproveDisabled}
             content="All of the selected diagrams are already approved or have no tags to reject."
           >
-            <MenuButton
-              type={primarySetting === 'reject' ? 'danger' : 'ghost-danger'}
-              variant={
-                primarySetting === 'reject' || isApproveDisabled
-                  ? 'default'
-                  : 'inverted'
+            <Button
+              type={
+                primarySetting === 'reject'
+                  ? 'destructive'
+                  : 'ghost-destructive'
               }
+              inverted={primarySetting !== 'reject' && !isApproveDisabled}
               onClick={() => onRejectDiagrams()}
               disabled={isApproveDisabled}
-              style={{ color: Colors['red-5'].hex() }}
             >
               Reject selected tags
-            </MenuButton>
+            </Button>
           </Tooltip>
         )}
         {settingButtons?.approve && (
@@ -125,58 +124,47 @@ export const DiagramsSettingsBar = (props: Props) => {
             disabled={!isApproveDisabled}
             content="All of the selected diagrams are already approved or have no tags to approve."
           >
-            <MenuButton
+            <Button
               type={primarySetting === 'approve' ? 'tertiary' : 'ghost'}
-              variant={
-                primarySetting === 'approve' || isApproveDisabled
-                  ? 'default'
-                  : 'inverted'
-              }
+              inverted={primarySetting !== 'approve' && !isApproveDisabled}
               onClick={() => onApproveDiagrams()}
               disabled={isApproveDisabled}
             >
               Approve selected tags
-            </MenuButton>
+            </Button>
           </Tooltip>
         )}
         {settingButtons?.preview && (
-          <MenuButton
+          <Button
             type={primarySetting === 'preview' ? 'tertiary' : 'ghost'}
-            variant={primarySetting === 'preview' ? 'default' : 'inverted'}
+            inverted={primarySetting !== 'preview'}
             onClick={onPreviewSelectedClick}
           >
             Preview selected
-          </MenuButton>
+          </Button>
         )}
         {settingButtons?.svgSave && (
-          <MenuButton
+          <Button
             type={primarySetting === 'svgSave' ? 'tertiary' : 'ghost'}
-            variant={primarySetting === 'svgSave' ? 'default' : 'inverted'}
+            inverted={primarySetting !== 'svgSave'}
             icon={isConverting ? 'Loader' : undefined}
             disabled={isConverting}
             onClick={onSaveSVGClick}
           >
             Save as SVG
-          </MenuButton>
+          </Button>
         )}
         {settingButtons?.recontextualize && (
-          <MenuButton
+          <Button
             type={primarySetting === 'recontextualize' ? 'tertiary' : 'ghost'}
-            variant={
-              primarySetting === 'recontextualize' ? 'default' : 'inverted'
-            }
+            inverted={primarySetting !== 'recontextualize'}
             disabled={isConverting}
             onClick={onRecontextualize}
           >
             Recontextualize
-          </MenuButton>
+          </Button>
         )}
-        <MenuButton
-          type="secondary"
-          icon="CloseLarge"
-          variant="inverted"
-          onClick={onClose}
-        />
+        <Button type="secondary" icon="CloseLarge" inverted onClick={onClose} />
         <ModalSaveSVG
           diagramIds={selectedDiagramsIds}
           showModal={showModal}
@@ -197,7 +185,7 @@ const Bar = styled.div<{ marginBottom: number }>`
   height: 52px;
   border-radius: 8px;
   margin-top: 8px;
-  background-color: ${Colors['greyscale-grey10'].hex()};
+  background-color: ${Colors['decorative--grayscale--1000']};
 `;
 const Buttons = styled(Flex)`
   & > * {

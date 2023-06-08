@@ -13,7 +13,7 @@ const StyledBadge = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  border: 2px solid ${Colors['greyscale-grey3'].hex()};
+  border: 2px solid ${Colors['decorative--grayscale--300']};
   border-radius: 5px;
   padding: 3px;
   margin: 3px;
