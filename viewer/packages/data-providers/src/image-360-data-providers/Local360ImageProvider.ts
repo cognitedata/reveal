@@ -3,7 +3,12 @@
  */
 import * as THREE from 'three';
 import { Image360Provider } from '../Image360Provider';
-import { Historical360ImageSet, Image360Face, Image360FileDescriptor } from '../types';
+import {
+  Historical360ImageSet,
+  Image360AnnotationFilterDelegate,
+  Image360Face,
+  Image360FileDescriptor
+} from '../types';
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk/dist/src';
 import { Image360AnnotationFilter } from '@reveal/360-images/src/annotation/Image360AnnotationFilter';
 
@@ -108,7 +113,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
 
   get360ImageAssets(
     _image360FileDescriptors: Image360FileDescriptor[],
-    _annotationFilter: Image360AnnotationFilter
+    _annotationFilter: Image360AnnotationFilterDelegate
   ): Promise<IdEither[]> {
     return Promise.resolve([]);
   }

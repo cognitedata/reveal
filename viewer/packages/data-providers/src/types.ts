@@ -2,8 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
-import { Image360AnnotationFilter } from '@reveal/360-images/src/annotation/Image360AnnotationFilter';
 import * as THREE from 'three';
+
+export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
 
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
@@ -37,7 +38,7 @@ export interface Image360FileProvider {
 export interface Image360AssetProvider {
   get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
-    annotationFilter: Image360AnnotationFilter
+    annotationFilter: Image360AnnotationFilterDelegate
   ): Promise<IdEither[]>;
 }
 

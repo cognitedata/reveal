@@ -24,11 +24,16 @@ import {
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationData
 } from '@cognite/sdk';
-import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
+import {
+  Historical360ImageSet,
+  Image360AnnotationFilterDelegate,
+  Image360EventDescriptor,
+  Image360Face,
+  Image360FileDescriptor
+} from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
 import assert from 'assert';
-import { Image360AnnotationFilter } from '@reveal/360-images/src/annotation/Image360AnnotationFilter';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -339,7 +344,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
   public async get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
-    annotationFilter: Image360AnnotationFilter
+    annotationFilter: Image360AnnotationFilterDelegate
   ): Promise<IdEither[]> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
@@ -353,8 +358,9 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         })
         .autoPagingToArray();
 
+      console.log('Applying filter!');
       const assetIds = annotationArray
-        .filter(annotation => annotationFilter.filter(annotation))
+        .filter(annotation => annotationFilter(annotation))
         .map(annotation => {
           assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
           return annotation.data.assetRef;

@@ -268,7 +268,9 @@ export class DefaultImage360Collection implements Image360Collection {
           .flat()
       )
       .flat();
-    return this._image360DataProvider.get360ImageAssets(fileDescriptors, this._annotationFilter);
+    return this._image360DataProvider.get360ImageAssets(fileDescriptors, annotation =>
+      this._annotationFilter.filter(annotation)
+    );
   }
 }
 
