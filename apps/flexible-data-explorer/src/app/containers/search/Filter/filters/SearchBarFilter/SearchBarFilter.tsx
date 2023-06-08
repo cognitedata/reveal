@@ -7,7 +7,7 @@ import { ValueByDataType } from '../../types';
 import { transformDefTypesToFilterOptions } from './utils';
 
 export interface SearchBarFilterProps {
-  value: ValueByDataType;
+  value?: ValueByDataType;
   onChange: (value: ValueByDataType) => void;
 }
 

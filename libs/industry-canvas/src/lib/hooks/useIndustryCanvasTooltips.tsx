@@ -48,6 +48,15 @@ const useIndustryCanvasTooltips = ({
   removeContainerById,
   onUpdateAnnotationStyleByType,
 }: UseTooltipsParams) => {
+  const containerTooltips = useIndustryCanvasContainerTooltips({
+    selectedContainer,
+    containers,
+    tooltipsOptions,
+    onUpdateTooltipsOptions,
+    onAddSummarizationSticky,
+    updateContainerById,
+    removeContainerById,
+  });
   const assetTooltips = useIndustryCanvasAssetTooltips(
     clickedContainerAnnotation,
     onAddContainerReferences
@@ -62,22 +71,13 @@ const useIndustryCanvasTooltips = ({
     onDeleteSelectedCanvasAnnotation,
     onUpdateAnnotationStyleByType,
   });
-  const containerTooltips = useIndustryCanvasContainerTooltips({
-    selectedContainer,
-    containers,
-    tooltipsOptions,
-    onUpdateTooltipsOptions,
-    onAddSummarizationSticky,
-    updateContainerById,
-    removeContainerById,
-  });
 
   return useMemo(() => {
     return [
+      ...containerTooltips,
       ...assetTooltips,
       ...canvasAnnotationTooltips,
       ...fileLinkTooltips,
-      ...containerTooltips,
     ];
   }, [
     assetTooltips,

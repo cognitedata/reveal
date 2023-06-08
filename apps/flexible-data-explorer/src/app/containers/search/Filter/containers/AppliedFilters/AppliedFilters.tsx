@@ -10,12 +10,12 @@ import { removeFilter } from '../../utils';
 import { getChipLabel } from './utils';
 
 export interface AppliedFiltersProps {
-  value: ValueByDataType;
+  value?: ValueByDataType;
   onRemove?: (value: ValueByDataType) => void;
 }
 
 export const AppliedFilters: React.FC<AppliedFiltersProps> = ({
-  value,
+  value = {},
   onRemove,
 }) => {
   const handleRemove = (dataType: string, field: string) => {

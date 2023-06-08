@@ -42,7 +42,7 @@ export const useSearchQueryParams = (): [string, (query?: string) => void] => {
 };
 
 export const useSearchFilterParams = (): [
-  ValueByDataType,
+  ValueByDataType | undefined,
   (query?: ValueByDataType) => void
 ] => {
   const [searchParams, setSearchParams] = useSearchParams();
