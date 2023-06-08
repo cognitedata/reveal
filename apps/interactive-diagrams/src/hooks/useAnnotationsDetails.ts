@@ -9,14 +9,14 @@ import {
 } from '@cognite/annotations';
 import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 import { FileInfo, CogniteEvent } from '@cognite/sdk';
-import { useInterval } from 'hooks';
+import { useInterval } from '@interactive-diagrams-app/hooks';
 import {
   getTaggedAnnotationFromAnnotationsApiAnnotation,
   getTaggedAnnotationFromEventAnnotation,
   isTaggedEventAnnotation,
   TaggedAnnotation,
 } from '../modules/workflows';
-import { listAnnotationsForFileFromAnnotationsApi } from 'utils/AnnotationUtils';
+import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 
 const TIMES_TO_REFETCH = 3;
 

@@ -1,17 +1,32 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { FileInfo } from '@cognite/sdk';
+
+import {
+  Flex,
+  IconButton,
+  Popover,
+  Dropdown,
+} from '@interactive-diagrams-app/components/Common';
+import DetectedTags from '@interactive-diagrams-app/components/DetectedTags';
+import DiagramReviewStatus from '@interactive-diagrams-app/components/DiagramReviewStatus';
+import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
+import { FileWithAnnotations } from '@interactive-diagrams-app/hooks';
+import {
+  trackUsage,
+  PNID_METRICS,
+} from '@interactive-diagrams-app/utils/Metrics';
+import {
+  dateSorter,
+  stringCompare,
+} from '@interactive-diagrams-app/utils/utils';
+
 import { Button } from '@cognite/cogs.js';
-import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { dateSorter, stringCompare } from 'utils/utils';
-import { Flex, IconButton, Popover, Dropdown } from 'components/Common';
-import { FileWithAnnotations } from 'hooks';
-import DiagramReviewStatus from 'components/DiagramReviewStatus';
-import InteractiveIcon from 'components/InteractiveIcon';
-import DetectedTags from 'components/DetectedTags';
-import { sortFilesByAnnotations } from './utils';
-import { FileContextMenu } from './FileContextMenu';
 import { FileSmallPreviewUFV } from '@cognite/data-exploration';
+import { FileInfo } from '@cognite/sdk';
+
+import { FileContextMenu } from './FileContextMenu';
+import { sortFilesByAnnotations } from './utils';
 
 const ActionsButtons = styled(Flex)`
   & > * {
@@ -76,7 +91,7 @@ export const getColumns = (onFileView: (file: FileInfo) => void) =>
       title: 'Actions',
       key: 'actions',
       width: '100px',
-      align: 'center' as 'center',
+      align: 'center' as const,
       render: (file: FileInfo) => {
         return (
           <ActionsButtons row align>

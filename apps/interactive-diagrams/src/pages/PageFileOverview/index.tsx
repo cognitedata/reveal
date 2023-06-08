@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { FileInfo } from '@cognite/sdk';
+import { useParams } from 'react-router-dom';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { useSteps, useActiveWorkflow } from '@interactive-diagrams-app/hooks';
+import { retrieveItemsById as retrieve } from '@interactive-diagrams-app/modules/files';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
+
 import { ErrorFeedback, Loader } from '@cognite/data-exploration';
-import { useSteps, useActiveWorkflow } from 'hooks';
-import { WorkflowStep } from 'modules/workflows';
-import { retrieveItemsById as retrieve } from 'modules/files';
-import { Flex } from 'components/Common';
+import { FileInfo } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import { Wrapper } from './components';
+import Preview from './Preview';
 import SidebarDiagrams from './SidebarDiagrams';
 import SidebarResource from './SidebarResource';
 import TitleBar from './TitleBar';
-import Preview from './Preview';
 
 type Props = {
   step: WorkflowStep;

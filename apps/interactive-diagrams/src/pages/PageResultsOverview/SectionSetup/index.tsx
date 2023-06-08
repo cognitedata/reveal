@@ -1,6 +1,6 @@
 import React from 'react';
-import { Body, Title, Chip } from '@cognite/cogs.js';
-import { ResourceType } from 'modules/types';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
 import {
   useJobStatus,
   useGoToStep,
@@ -8,12 +8,15 @@ import {
   useResourceCount,
   useJobStatusLabels,
   useJobStarted,
-} from 'hooks';
-import { Flex } from 'components/Common';
+} from '@interactive-diagrams-app/hooks';
+import { ResourceType } from '@interactive-diagrams-app/modules/types';
+
+import { Body, Title, Chip } from '@cognite/cogs.js';
+
 import { DetailsWrapper, SetUpWrapper } from './components';
 import ModelInfo from './ModelInfo';
-import SelectionInfo from './SelectionInfo';
 import RunModelButton from './RunModelButton';
+import SelectionInfo from './SelectionInfo';
 
 export default function SectionSetup(): JSX.Element {
   const { jobStarted } = useJobStarted();

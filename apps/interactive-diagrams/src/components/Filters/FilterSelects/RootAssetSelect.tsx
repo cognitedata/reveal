@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useSearch, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
 import { OptionType } from '@cognite/cogs.js';
-import { Select } from 'components/Common';
-import { useSelectFilter } from 'hooks';
+import { Select } from '@interactive-diagrams-app/components/Common';
+import { useSelectFilter } from '@interactive-diagrams-app/hooks';
 
 type Props = {
   selectedRootAssets?: number[];

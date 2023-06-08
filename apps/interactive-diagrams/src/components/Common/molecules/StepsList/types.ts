@@ -1,4 +1,4 @@
-import { WorkflowStep } from 'modules/types';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/types';
 
 export type StepsType = {
   path: string | undefined;

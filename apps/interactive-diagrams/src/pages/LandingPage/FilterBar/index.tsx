@@ -2,7 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
 import { FileRequestFilter, InternalId } from '@cognite/sdk';
-import { DataSetSelect, MimeTypeSelect } from 'components/Filters';
+import {
+  DataSetSelect,
+  MimeTypeSelect,
+} from '@interactive-diagrams-app/components/Filters';
 
 interface FilterBarProps {
   query: string;

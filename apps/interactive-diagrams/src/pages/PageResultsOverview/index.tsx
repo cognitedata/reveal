@@ -1,19 +1,31 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
+import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
+import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
+import { DiagramsSettingsBar } from '@interactive-diagrams-app/containers';
+import {
+  useActiveWorkflow,
+  useJobStatus,
+  useStartJobs,
+} from '@interactive-diagrams-app/hooks';
+import {
+  selectInteractiveDiagrams,
+  WorkflowStep,
+} from '@interactive-diagrams-app/modules/workflows';
+import {
+  landingPage,
+  diagramSelection,
+} from '@interactive-diagrams-app/routes/paths';
 import { useQueryClient } from '@tanstack/react-query';
 import { message } from 'antd';
-import { landingPage, diagramSelection } from 'routes/paths';
-import { useActiveWorkflow, useJobStatus, useStartJobs } from 'hooks';
-import { getUrlWithQueryParams } from 'utils/config';
-import { DiagramsSettingsBar } from 'containers';
-import { Flex, PageTitle } from 'components/Common';
-import { selectInteractiveDiagrams, WorkflowStep } from 'modules/workflows';
-import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
-import { getWorkflowItems, getSelectedDiagramsIds } from './selectors';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
+
 import SectionProgress from './SectionProgress';
-import SectionSetup from './SectionSetup';
 import SectionResults from './SectionResults';
+import SectionSetup from './SectionSetup';
+import { getWorkflowItems, getSelectedDiagramsIds } from './selectors';
 
 type Props = {
   step: WorkflowStep;

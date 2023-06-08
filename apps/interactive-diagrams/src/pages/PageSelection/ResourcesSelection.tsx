@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Filter } from 'modules/sdk-builder/types';
-import { Flex, PageTitle } from 'components/Common';
+import { Filter } from '@interactive-diagrams-app/modules/sdk-builder/types';
+import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
 import { Colors } from '@cognite/cogs.js';
-import { SelectionBar, SelectionTable } from 'pages/PageSelection/components';
+import {
+  SelectionBar,
+  SelectionTable,
+} from '@interactive-diagrams-app/pages/PageSelection/components';
 
 type SelectionProps = {
   filter: Filter;

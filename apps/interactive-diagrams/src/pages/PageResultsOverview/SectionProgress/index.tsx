@@ -1,10 +1,20 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import {
+  Flex,
+  DoughnutChart,
+} from '@interactive-diagrams-app/components/Common';
+import { progressData } from '@interactive-diagrams-app/components/Filters';
+import {
+  useResourceCount,
+  useParsingJob,
+} from '@interactive-diagrams-app/hooks';
+import { ApiStatusCount } from '@interactive-diagrams-app/modules/types';
+
 import { Colors, Title, Detail } from '@cognite/cogs.js';
-import { Flex, DoughnutChart } from 'components/Common';
-import { ApiStatusCount } from 'modules/types';
-import { useResourceCount, useParsingJob } from 'hooks';
-import { progressData } from 'components/Filters';
+
 import StatusSquare from '../StatusSquare';
 
 const SectionProgress = (): JSX.Element => {

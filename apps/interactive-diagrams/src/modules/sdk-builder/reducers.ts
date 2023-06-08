@@ -1,7 +1,8 @@
-import { InternalId, ExternalId } from '@cognite/sdk';
+import { ResourceType, Status } from '@interactive-diagrams-app/modules/types';
 import { createAction } from '@reduxjs/toolkit';
-import { ResourceType, Status } from 'modules/types';
-import { mapArrayToObj } from 'utils/utils';
+import { mapArrayToObj } from '@interactive-diagrams-app/utils/utils';
+
+import { InternalId, ExternalId } from '@cognite/sdk';
 
 /**
  * Action that allows us to update specific type of items from any part of the store.

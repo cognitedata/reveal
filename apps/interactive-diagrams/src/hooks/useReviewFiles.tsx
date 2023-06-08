@@ -23,17 +23,17 @@ import {
   getExternalIdFilter,
   updateAnnotations,
 } from '@cognite/annotations';
-import { useUserId } from 'hooks/useUserId';
+import { useUserId } from '@interactive-diagrams-app/hooks/useUserId';
 
-import { sleep } from 'utils/utils';
-import handleError from 'utils/handleError';
+import { sleep } from '@interactive-diagrams-app/utils/utils';
+import handleError from '@interactive-diagrams-app/utils/handleError';
 import {
   isTaggedAnnotationsApiAnnotation,
   isTaggedEventAnnotation,
 } from '../modules/workflows';
 import linkFileToAssetIds from '../utils/linkFileToAssetIds';
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
-import { listAnnotationsForFileFromAnnotationsApi } from 'utils/AnnotationUtils';
+import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 
 export const PENDING_LABEL = {
   externalId: 'Pending interactive engineering diagram',

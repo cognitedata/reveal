@@ -10,21 +10,21 @@ import {
   useSteps,
   useJobStarted,
   SavedSettings,
-} from 'hooks';
-import { doSearch } from 'modules/search';
+} from '@interactive-diagrams-app/hooks';
+import { doSearch } from '@interactive-diagrams-app/modules/search';
 import {
   PendingResourceSelection,
   WorkflowStep,
   updateSelection,
   removeSelection,
   getActiveWorkflowItems,
-} from 'modules/workflows';
-import { ResourceType, Filter } from 'modules/types';
-import { LS_KEY_SETTINGS } from 'stringConstants';
-import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
-import { Flex } from 'components/Common';
-import { searchCountSelector } from 'pages/PageSelection/selectors';
-import NotFound from 'pages/NotFound';
+} from '@interactive-diagrams-app/modules/workflows';
+import { ResourceType, Filter } from '@interactive-diagrams-app/modules/types';
+import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
+import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
+import NotFound from '@interactive-diagrams-app/pages/NotFound';
 import DiagramsSelection from './DiagramsSelection';
 import ResourcesSelection from './ResourcesSelection';
 

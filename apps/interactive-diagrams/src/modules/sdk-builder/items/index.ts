@@ -1,20 +1,23 @@
-import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { ExternalId, InternalId, CogniteInternalId } from '@cognite/sdk';
-import { RootState } from 'store';
 import {
   ResourceType,
   ItemsList,
   ItemsState,
   ItemsAsyncStatus,
-} from 'modules/types';
-import { mapArrayToObj } from 'utils/utils';
+} from '@interactive-diagrams-app/modules/types';
+import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '@interactive-diagrams-app/store';
+import { mapArrayToObj } from '@interactive-diagrams-app/utils/utils';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { ExternalId, InternalId, CogniteInternalId } from '@cognite/sdk';
+
+import { updateAction as update } from '../reducers';
+
 import {
   createItemSelector,
   createExternalIdMapSelector,
   createRetrieveSelector,
 } from './selectors';
-import { updateAction as update } from '../reducers';
 
 export default function buildItems<
   T extends InternalId & { externalId?: string },

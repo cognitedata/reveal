@@ -1,7 +1,7 @@
 import React from 'react';
 import Spin from 'antd/lib/spin';
-import { Flex, CountTag } from 'components/Common';
-import { useAnnotationsDetails } from 'hooks';
+import { Flex, CountTag } from '@interactive-diagrams-app/components/Common';
+import { useAnnotationsDetails } from '@interactive-diagrams-app/hooks';
 import { Body, Colors } from '@cognite/cogs.js';
 
 type DetectedTagsProps = {

@@ -1,4 +1,5 @@
-import builder from 'modules/sdk-builder';
+import builder from '@interactive-diagrams-app/modules/sdk-builder';
+
 import {
   Asset,
   AssetChangeById,

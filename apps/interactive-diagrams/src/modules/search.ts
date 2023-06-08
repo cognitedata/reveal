@@ -1,7 +1,12 @@
+import {
+  ResourceType,
+  Filter,
+} from '@interactive-diagrams-app/modules/sdk-builder/types';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
 import { AssetListScope, FilesSearchFilter } from '@cognite/sdk';
-import { ResourceType, Filter } from 'modules/sdk-builder/types';
+
 import {
   list as listAssets,
   search as searchAssets,

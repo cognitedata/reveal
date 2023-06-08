@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { AppStateContext } from '@interactive-diagrams-app/context';
+
 import { Input, Chip } from '@cognite/cogs.js';
-import { Flex } from 'components/Common';
-import { AppStateContext } from 'context';
 
 export const PrefixSettings = () => {
   const { svgPrefix, setSvgPrefix } = useContext(AppStateContext);

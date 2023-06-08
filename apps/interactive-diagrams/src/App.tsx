@@ -1,30 +1,31 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
+
+import { AppStateProvider } from '@interactive-diagrams-app/context';
+import { setItemInStorage } from '@interactive-diagrams-app/hooks';
+import RootApp from '@interactive-diagrams-app/pages/App';
+import { root } from '@interactive-diagrams-app/routes/paths';
+import store, {
+  persistedState,
+  loadLocalStorage,
+} from '@interactive-diagrams-app/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createBrowserHistory } from 'history';
+import debounce from 'lodash/debounce';
+import { LS_KEY_PREFIX } from '@interactive-diagrams-app/stringConstants';
+import { AntStyles, GlobalStyles } from '@interactive-diagrams-app/styles';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { SDKProvider } from '@cognite/sdk-provider';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import { Loader } from '@cognite/cogs.js';
 import {
   AuthWrapper,
   SubAppWrapper,
   getProject,
   getEnv,
 } from '@cognite/cdf-utilities';
-
-import { createBrowserHistory } from 'history';
-import debounce from 'lodash/debounce';
-
-import { LS_KEY_PREFIX } from 'stringConstants';
-import { setItemInStorage } from 'hooks';
-import store, { persistedState, loadLocalStorage } from 'store';
-import { AppStateProvider } from 'context';
-import { root } from 'routes/paths';
-
-import { AntStyles, GlobalStyles } from 'styles';
-import RootApp from 'pages/App';
+import { Loader } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 const App = () => {
   const history = createBrowserHistory();

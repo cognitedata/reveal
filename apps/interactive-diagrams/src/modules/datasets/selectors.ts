@@ -1,7 +1,8 @@
+import { DataSetCount } from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
 import { createSelector } from 'reselect';
+
 import { DataSet } from '@cognite/sdk';
-import { RootState } from 'store';
-import { DataSetCount } from 'modules/types';
 
 export const dataSetSelector =
   (id: number) =>

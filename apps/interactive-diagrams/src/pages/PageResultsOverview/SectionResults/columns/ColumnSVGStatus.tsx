@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { Tooltip } from 'antd';
 import { Button, Icon, Chip } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import { RootState } from 'store';
-import { Flex } from 'components/Common';
-import { translateError } from 'utils/handleError';
+import { RootState } from '@interactive-diagrams-app/store';
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { translateError } from '@interactive-diagrams-app/utils/handleError';
 
 type Props = { fileId: number };
 

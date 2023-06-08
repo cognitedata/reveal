@@ -5,7 +5,7 @@ import {
   selectAllDataSets,
   dataSetCounts,
   datasetsFetched,
-} from 'modules/datasets';
+} from '@interactive-diagrams-app/modules/datasets';
 
 export const useDatasets = () => {
   const dispatch = useDispatch();

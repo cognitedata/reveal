@@ -1,20 +1,23 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import {
-  list as listFiles,
-  count as countFiles,
-  retrieveItemsById as retrieveFiles,
-} from 'modules/files';
 import {
   list as listAssets,
   listParallel as listAssetsParallel,
   count as countAssets,
   retrieveItemsById as retrieveAssets,
-} from 'modules/assets';
+} from '@interactive-diagrams-app/modules/assets';
+import {
+  list as listFiles,
+  count as countFiles,
+  retrieveItemsById as retrieveFiles,
+} from '@interactive-diagrams-app/modules/files';
+import {
+  ResourceSelection,
+  ResourceType,
+} from '@interactive-diagrams-app/modules/types';
 import {
   workflowDiagramStatusSelector,
   workflowAllResourcesStatusSelector,
-} from 'modules/workflows';
-import { ResourceSelection, ResourceType } from 'modules/types';
+} from '@interactive-diagrams-app/modules/workflows';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 /**
  * Loads everything related to this particular workflow.

@@ -13,7 +13,7 @@ import {
   getTaggedAnnotationFromEventAnnotation,
   TaggedAnnotation,
 } from '../modules/workflows';
-import { listAnnotationsForFileFromAnnotationsApi } from 'utils/AnnotationUtils';
+import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 
 export type FileWithAnnotations = FileInfo & {
   annotations: TaggedAnnotation[];

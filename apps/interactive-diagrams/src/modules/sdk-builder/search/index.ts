@@ -1,15 +1,18 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { InternalId } from '@cognite/sdk';
-import { RootState } from 'store';
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
   ApiSearchResult,
   Query,
   ResourceType,
   ItemsList,
   SearchState,
-} from 'modules/types';
+} from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { InternalId } from '@cognite/sdk';
+
 import { updateAction as update } from '../reducers';
+
 import { createSearchSelector } from './selectors';
 
 export const defaultSearch: ApiSearchResult = { ids: [], status: undefined };

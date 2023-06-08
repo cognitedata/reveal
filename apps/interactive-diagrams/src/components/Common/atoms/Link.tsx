@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import { getUrlWithQueryParams } from 'utils/config';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
 
 type Props = {
   to?: string;

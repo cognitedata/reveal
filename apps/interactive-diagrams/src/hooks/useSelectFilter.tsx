@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OptionType } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
-import { RootState } from 'store';
-import { useActiveWorkflow } from 'hooks';
-import { workflowFiltersSelector } from 'modules/workflows';
-import { ResourceType, Filter } from 'modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
+import { useActiveWorkflow } from '@interactive-diagrams-app/hooks';
+import { workflowFiltersSelector } from '@interactive-diagrams-app/modules/workflows';
+import { ResourceType, Filter } from '@interactive-diagrams-app/modules/types';
 
 /**
  * Ensures that the filtered resources are loaded before the app attempts to select them.

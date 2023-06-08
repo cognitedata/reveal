@@ -1,6 +1,6 @@
 export {};
 
-// import { RootState } from 'store';
+// import { RootState } from '@interactive-diagrams-app/store';
 
 // export const searchSelector: (
 //   _: RootState

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
-import { Flex, LoadingSkeleton } from 'components/Common';
+import {
+  Flex,
+  LoadingSkeleton,
+} from '@interactive-diagrams-app/components/Common';
 import {
   DataSetSelect,
   LabelSelect,
@@ -9,7 +12,7 @@ import {
   StatusSelect,
   StatusType,
   FilterList,
-} from 'components/Filters';
+} from '@interactive-diagrams-app/components/Filters';
 import { SelectionFilter } from './types';
 
 type Props = {

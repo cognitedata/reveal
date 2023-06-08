@@ -1,13 +1,23 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+
+import { Dropdown } from '@interactive-diagrams-app/components/Common';
+import { MenuAll } from '@interactive-diagrams-app/containers';
+import {
+  useReviewFiles,
+  useActiveWorkflow,
+  isFilePending,
+} from '@interactive-diagrams-app/hooks';
+import {
+  useWorkflowDiagramsIds,
+  useWorkflowItems,
+} from '@interactive-diagrams-app/modules/workflows';
+import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
 import { Tooltip } from 'antd';
-import { Dropdown } from 'components/Common';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
+
 import { Button } from '@cognite/cogs.js';
-import { getUrlWithQueryParams } from 'utils/config';
-import { useWorkflowDiagramsIds, useWorkflowItems } from 'modules/workflows';
-import { diagramPreview } from 'routes/paths';
-import { MenuAll } from 'containers';
-import { useReviewFiles, useActiveWorkflow, isFilePending } from 'hooks';
+
 import { InfoWrapper } from './components';
 
 export default function DiagramActions() {

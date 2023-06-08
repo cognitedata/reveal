@@ -1,11 +1,14 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-import queryString from 'query-string';
-import { Drawer } from 'antd';
-import { onResourceSelected } from 'modules/app';
-import Layers from 'utils/zindex';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { onResourceSelected } from '@interactive-diagrams-app/modules/app';
+import { Drawer } from 'antd';
+import queryString from 'query-string';
+import Layers from '@interactive-diagrams-app/utils/zindex';
+
 import {
   AssetSmallPreviewUFV,
   FileSmallPreviewUFV,

@@ -1,6 +1,8 @@
-import { Body, Illustrations } from '@cognite/cogs.js';
-import { Flex } from 'components/Common';
 import React from 'react';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
+
+import { Body, Illustrations } from '@cognite/cogs.js';
 
 export default function ResultsTableEmpty() {
   return (

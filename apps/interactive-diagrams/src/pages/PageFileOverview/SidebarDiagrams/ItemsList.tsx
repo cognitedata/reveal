@@ -1,10 +1,14 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
+
+import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
+
 import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { getUrlWithQueryParams } from 'utils/config';
-import { diagramPreview } from 'routes/paths';
+
 import FileItem from './FileItem';
 
 type ItemsListProps = { diagrams?: FileInfo[] };

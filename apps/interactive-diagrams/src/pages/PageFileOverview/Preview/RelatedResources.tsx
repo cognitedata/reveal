@@ -11,7 +11,7 @@ import {
   AnnotationTable,
   AnnotatedWithTable,
 } from '@cognite/data-exploration';
-import { Select } from 'components/Common';
+import { Select } from '@interactive-diagrams-app/components/Common';
 
 import styled from 'styled-components';
 

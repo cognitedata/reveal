@@ -8,7 +8,7 @@ import {
   SmallTitle,
   ListItem,
   CountLabel,
-} from 'components/Common';
+} from '@interactive-diagrams-app/components/Common';
 import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
 import { AssetBreadcrumb } from '@cognite/data-exploration';
 

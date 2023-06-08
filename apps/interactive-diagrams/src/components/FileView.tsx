@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import ResourceSelectionContext from '@interactive-diagrams-app/context/ResourceSelectionContext';
 import {
   FilePreviewUFV as CogniteFilePreview,
   ErrorFeedback,

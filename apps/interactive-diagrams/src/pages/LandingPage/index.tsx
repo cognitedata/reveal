@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
+
+import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
+import { DiagramsSettingsBar } from '@interactive-diagrams-app/containers';
+import { useAnnotatedFiles } from '@interactive-diagrams-app/hooks';
+import { useWorkflowCreateNew } from '@interactive-diagrams-app/modules/workflows';
+import {
+  trackUsage,
+  PNID_METRICS,
+} from '@interactive-diagrams-app/utils/Metrics';
+
 import { Button, Title } from '@cognite/cogs.js';
-import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { Flex, PageTitle } from 'components/Common';
-import { useWorkflowCreateNew } from 'modules/workflows';
 import { FileRequestFilter } from '@cognite/sdk';
-import { useAnnotatedFiles } from 'hooks';
-import { DiagramsSettingsBar } from 'containers';
+
 import { Loading, TitleRow } from './components';
-import FilesListEmpty from './FilesList/FilesListEmpty';
 import FilesList from './FilesList';
+import FilesListEmpty from './FilesList/FilesListEmpty';
 import FilterBar from './FilterBar';
 
 export default function LandingPage() {

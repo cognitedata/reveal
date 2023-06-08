@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
-import { startPnidParsingWorkflow } from 'modules/workflows';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
 import {
   useJobStatusLabels,
   useJobStarted,
   useParsingJob,
   useJobStatus,
-} from 'hooks';
-import { Flex } from 'components/Common';
+} from '@interactive-diagrams-app/hooks';
+import { startPnidParsingWorkflow } from '@interactive-diagrams-app/modules/workflows';
+
+import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
 
 export default function RunModelButton(): JSX.Element {
   const dispatch = useDispatch();

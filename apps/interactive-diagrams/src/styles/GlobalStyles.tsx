@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { Tooltip as CogsTooltip, Modal as CogsModal } from '@cognite/cogs.js';
-import { getContainer } from 'utils/utils';
+import { getContainer } from '@interactive-diagrams-app/utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 import { ids } from 'cogs-variables';
 // import { useGlobalStyles } from '@cognite/cdf-utilities';

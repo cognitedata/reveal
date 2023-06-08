@@ -1,23 +1,10 @@
 import {
-  AnnotationBoundingBox,
-  CogniteAnnotation,
-  listAnnotationsForFile,
-} from '@cognite/annotations';
-import sdk from '@cognite/cdf-sdk-singleton';
-import {
-  AnnotationCreate,
-  AnnotationModel,
-  Asset,
-  FileChangeUpdate,
-  FileInfo,
-} from '@cognite/sdk';
-import {
   doesLabelExist,
   INTERACTIVE_LABEL,
   isFileApproved,
   isFilePending,
   PENDING_LABEL,
-} from 'hooks';
+} from '@interactive-diagrams-app/hooks';
 import {
   BoundingBox,
   FileAnnotationsCount,
@@ -30,20 +17,35 @@ import {
   TaggedEventAnnotation,
   Vertices,
   Workflow,
-} from 'modules/types';
+} from '@interactive-diagrams-app/modules/types';
 import {
   AnnotationSource,
   TaggedAnnotation,
   workflowAllResourcesStatusSelector,
   workflowDiagramStatusSelector,
-} from 'modules/workflows';
-import { RootState } from 'store';
+} from '@interactive-diagrams-app/modules/workflows';
+import { RootState } from '@interactive-diagrams-app/store';
 import {
   createPendingAnnotationsFromJob,
   listAnnotationsForFileFromAnnotationsApi,
-} from 'utils/AnnotationUtils';
-import { translateError } from 'utils/handleError';
-import { getUniqueValuesArray } from 'utils/utils';
+} from '@interactive-diagrams-app/utils/AnnotationUtils';
+import { translateError } from '@interactive-diagrams-app/utils/handleError';
+import { getUniqueValuesArray } from '@interactive-diagrams-app/utils/utils';
+
+import {
+  AnnotationBoundingBox,
+  CogniteAnnotation,
+  listAnnotationsForFile,
+} from '@cognite/annotations';
+import sdk from '@cognite/cdf-sdk-singleton';
+import {
+  AnnotationCreate,
+  AnnotationModel,
+  Asset,
+  FileChangeUpdate,
+  FileInfo,
+} from '@cognite/sdk';
+
 import { loadWorkflowDiagrams, loadWorkflowResources } from './actions';
 import { MatchFields } from './types';
 

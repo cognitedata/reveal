@@ -1,6 +1,9 @@
 import React from 'react';
-import { Select } from 'components/Common';
-import { useSelectFilter, useSelectionFetchStatus } from 'hooks';
+import { Select } from '@interactive-diagrams-app/components/Common';
+import {
+  useSelectFilter,
+  useSelectionFetchStatus,
+} from '@interactive-diagrams-app/hooks';
 import { mimeTypes } from './utils';
 
 type Props = {

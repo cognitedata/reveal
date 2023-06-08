@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { Flex } from 'components/Common/atoms/Flex';
+import { Flex } from '@interactive-diagrams-app/components/Common/atoms/Flex';
 
 export const DropdownMenu = styled(Flex)`
   flex-direction: column;

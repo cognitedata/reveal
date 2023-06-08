@@ -1,8 +1,13 @@
 import React, { useContext } from 'react';
+
+import { AppStateContext } from '@interactive-diagrams-app/context';
+import { SkipSettings } from '@interactive-diagrams-app/pages/PageOptions/components';
+import {
+  trackUsage,
+  PNID_METRICS,
+} from '@interactive-diagrams-app/utils/Metrics';
+
 import { Body, Title, Switch } from '@cognite/cogs.js';
-import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { AppStateContext } from 'context';
-import { SkipSettings } from 'pages/PageOptions/components';
 
 export default function SkipSettingsPanel() {
   const { skipSettings, setSkipSettings } = useContext(AppStateContext);

@@ -1,5 +1,5 @@
+import createRootReducer from '@interactive-diagrams-app/store/reducer';
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import createRootReducer from 'store/reducer';
 
 export function createStore(): any {
   const middleware = getDefaultMiddleware({

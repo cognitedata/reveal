@@ -1,4 +1,5 @@
-import { WorkflowStep } from 'modules/workflows';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
+
 import { paths } from './paths';
 
 export type PathData = {

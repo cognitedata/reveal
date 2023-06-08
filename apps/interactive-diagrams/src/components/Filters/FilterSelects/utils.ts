@@ -1,5 +1,8 @@
 import { Colors } from '@cognite/cogs.js';
-import { PENDING_LABEL, INTERACTIVE_LABEL } from 'hooks/useReviewFiles';
+import {
+  PENDING_LABEL,
+  INTERACTIVE_LABEL,
+} from '@interactive-diagrams-app/hooks/useReviewFiles';
 import { MimeType, ReviewStatus, ProgressData } from './types';
 
 export const mimeTypes: MimeType[] = [

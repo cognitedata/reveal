@@ -1,4 +1,4 @@
-import { StatusType } from 'components/Filters';
+import { StatusType } from '@interactive-diagrams-app/components/Filters';
 
 export type SelectionFilter = {
   nameQuery?: string;

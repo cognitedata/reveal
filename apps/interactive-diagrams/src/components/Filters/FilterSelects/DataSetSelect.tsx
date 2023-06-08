@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import { OptionType } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
-import { ResourceType } from 'modules/sdk-builder/types';
-import { stringContains } from 'utils/utils';
-import { useSelectFilter, useDatasets } from 'hooks';
-import { Select } from 'components/Common';
+import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
+import { stringContains } from '@interactive-diagrams-app/utils/utils';
+import { useSelectFilter, useDatasets } from '@interactive-diagrams-app/hooks';
+import { Select } from '@interactive-diagrams-app/components/Common';
 
 type Props = {
   resourceType: ResourceType;

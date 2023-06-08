@@ -1,9 +1,15 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { IconButton } from '@interactive-diagrams-app/components/Common';
+import { useWorkflowCreateNew } from '@interactive-diagrams-app/modules/workflows';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+
 import { Illustrations, Title } from '@cognite/cogs.js';
-import { IconButton } from 'components/Common';
-import { useWorkflowCreateNew } from 'modules/workflows';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 const Wrapper = styled.div`
   width: 100%;

@@ -8,7 +8,7 @@ import {
   ListItem,
   CountLabel,
   SmallTitle,
-} from 'components/Common';
+} from '@interactive-diagrams-app/components/Common';
 
 import { FileInfo, Asset } from '@cognite/sdk';
 import { FileInfoGrid } from './FileInfoGrid';

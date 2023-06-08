@@ -2,9 +2,9 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Progress } from 'antd';
 import { Body } from '@cognite/cogs.js';
-import { Flex } from 'components/Common';
-import { ResourceType } from 'modules/sdk-builder/types';
-import { useWorkflowLoadPercentages } from 'modules/workflows/hooks';
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
+import { useWorkflowLoadPercentages } from '@interactive-diagrams-app/modules/workflows/hooks';
 
 type Props = {
   type?: ResourceType | 'diagrams';

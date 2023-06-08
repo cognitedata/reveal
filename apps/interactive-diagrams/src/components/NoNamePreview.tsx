@@ -1,4 +1,8 @@
-import { InfoCell, InfoGrid, Popover } from 'components/Common';
+import {
+  InfoCell,
+  InfoGrid,
+  Popover,
+} from '@interactive-diagrams-app/components/Common';
 import React from 'react';
 
 type NoNamePreviewProps = {

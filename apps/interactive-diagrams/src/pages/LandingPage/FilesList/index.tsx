@@ -1,11 +1,17 @@
 import React from 'react';
+
+import { Table } from '@interactive-diagrams-app/components/Common';
+import { FileWithAnnotations } from '@interactive-diagrams-app/hooks';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+import { stringContains } from '@interactive-diagrams-app/utils/utils';
+import { Checkbox } from 'antd';
+
 import { createLink } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk';
-import { Checkbox } from 'antd';
-import { FileWithAnnotations } from 'hooks';
-import { stringContains } from 'utils/utils';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import { Table } from 'components/Common';
+
 import { getColumns } from './columns';
 
 type Props = {

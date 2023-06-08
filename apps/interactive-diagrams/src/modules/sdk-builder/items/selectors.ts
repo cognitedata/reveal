@@ -1,6 +1,3 @@
-import { createSelector } from '@reduxjs/toolkit';
-import { InternalId } from '@cognite/sdk';
-import { RootState } from 'store';
 import {
   Status,
   Result,
@@ -8,7 +5,11 @@ import {
   ItemsState,
   ItemStatus,
   ItemsAsyncStatus,
-} from 'modules/types';
+} from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
+import { createSelector } from '@reduxjs/toolkit';
+
+import { InternalId } from '@cognite/sdk';
 
 /**
  * Selects item by either ID or External ID.

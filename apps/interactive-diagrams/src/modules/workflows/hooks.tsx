@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
-import { Asset, FileInfo, IdEither } from '@cognite/sdk';
-import { diagramSelection } from 'routes/paths';
-import { LS_KEY_SETTINGS } from 'stringConstants';
-import { ResourceType } from 'modules/sdk-builder/types';
+
+import {
+  useLocalStorage,
+  selectParsingJobs,
+  SavedSettings,
+} from '@interactive-diagrams-app/hooks';
+import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
 import {
   standardModelOptions,
   createNewWorkflow,
@@ -18,10 +20,17 @@ import {
   workflowDiagramStatusSelector,
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
-} from 'modules/workflows';
-import { useLocalStorage, selectParsingJobs, SavedSettings } from 'hooks';
-import { RootState } from 'store/reducer';
-import { NUM_OF_RESOURCES_CHECKED, getUrlWithQueryParams } from 'utils/config';
+} from '@interactive-diagrams-app/modules/workflows';
+import { diagramSelection } from '@interactive-diagrams-app/routes/paths';
+import { RootState } from '@interactive-diagrams-app/store/reducer';
+import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
+import {
+  NUM_OF_RESOURCES_CHECKED,
+  getUrlWithQueryParams,
+} from '@interactive-diagrams-app/utils/config';
+
+import { Asset, FileInfo, IdEither } from '@cognite/sdk';
+import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 
 /**
  * Creates a new workflow.
@@ -57,7 +66,7 @@ export const useWorkflowCreateNew = () => {
  * @param type - 'diagrams' in case of diagrams, or ResourceType in case of resources
  * @param all
  */
-export const useWorkflowItems = (workflowId: number, all: boolean = false) => {
+export const useWorkflowItems = (workflowId: number, all = false) => {
   const diagrams = useWorkflowDiagrams(workflowId, all);
   const resources = useWorkflowResources(workflowId, all);
   return { diagrams, resources };
@@ -68,10 +77,7 @@ export const useWorkflowItems = (workflowId: number, all: boolean = false) => {
  * @param workflowId
  * @param all
  */
-export const useWorkflowDiagrams = (
-  workflowId: number,
-  all: boolean = false
-) => {
+export const useWorkflowDiagrams = (workflowId: number, all = false) => {
   const getDiagrams = useMemo(
     () => workflowDiagramsSelector(workflowId, all),
     [all, workflowId]
@@ -87,8 +93,8 @@ export const useWorkflowDiagrams = (
  */
 export const useWorkflowDiagramsIds = (
   workflowId: number,
-  all: boolean = false,
-  ignoreFailed: boolean = false
+  all = false,
+  ignoreFailed = false
 ) => {
   const parsingJob = useSelector(selectParsingJobs);
   const failedFiles =
@@ -110,10 +116,7 @@ export const useWorkflowDiagramsIds = (
  * @param workflowId
  * @param all
  */
-export const useWorkflowResources = (
-  workflowId: number,
-  all: boolean = false
-) => {
+export const useWorkflowResources = (workflowId: number, all = false) => {
   const getResources = useMemo(
     () => workflowAllResourcesSelector(workflowId, all),
     [all, workflowId]

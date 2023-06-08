@@ -1,4 +1,4 @@
-import { ApiCall } from 'modules/types';
+import { ApiCall } from '@interactive-diagrams-app/modules/types';
 
 export type CountState = {
   [key: string]: ApiCountResult;

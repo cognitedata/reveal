@@ -1,11 +1,15 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { LoadingSkeleton } from '@interactive-diagrams-app/components/Common';
+import { MenuSingle } from '@interactive-diagrams-app/containers';
+import { useSteps } from '@interactive-diagrams-app/hooks';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
+
 import { Button, Colors, Dropdown, Flex, Title } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { useSteps } from 'hooks';
-import { WorkflowStep } from 'modules/workflows';
-import { MenuSingle } from 'containers';
-import { LoadingSkeleton } from 'components/Common';
+
 import { EditFileButton } from './EditFileButton';
 
 type Props = {

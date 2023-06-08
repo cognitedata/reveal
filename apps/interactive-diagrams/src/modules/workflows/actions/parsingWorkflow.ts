@@ -1,16 +1,22 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileInfo } from '@cognite/sdk';
-import chunk from 'lodash/chunk';
-import { RootState } from 'store';
+import { PnidsParsingJobSchema } from '@interactive-diagrams-app/modules/types';
 import {
   resetWorkflowJobs,
   standardModelOptions,
   workflowDiagramsSelector,
   workflowAllResourcesSelector,
-} from 'modules/workflows';
-import { PnidsParsingJobSchema } from 'modules/types';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+} from '@interactive-diagrams-app/modules/workflows';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import chunk from 'lodash/chunk';
+import { RootState } from '@interactive-diagrams-app/store';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+
+import { FileInfo } from '@cognite/sdk';
+
 import { loadWorkflowAsync } from '../utils';
+
 import { startPnidParsingJob } from './parsingJobs';
 
 const CHUNK_SIZE = 50;

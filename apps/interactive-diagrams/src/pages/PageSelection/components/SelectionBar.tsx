@@ -4,10 +4,13 @@ import styled from 'styled-components';
 import omit from 'lodash/omit';
 import { Spin } from 'antd';
 import { Button, Colors, Input } from '@cognite/cogs.js';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import { ResourceType } from 'modules/sdk-builder/types';
-import { searchCountSelector } from 'pages/PageSelection/selectors';
-import { Flex } from 'components/Common';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
+import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
+import { Flex } from '@interactive-diagrams-app/components/Common';
 import {
   DataSetSelect,
   RootAssetSelect,
@@ -15,8 +18,8 @@ import {
   LabelSelect,
   FilterList,
   FilterMenu,
-} from 'components/Filters';
-import { useResourceCount } from 'hooks';
+} from '@interactive-diagrams-app/components/Filters';
+import { useResourceCount } from '@interactive-diagrams-app/hooks';
 
 type Props = {
   type: ResourceType | 'diagrams';

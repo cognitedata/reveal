@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
+
+import styled from 'styled-components';
+
+import { ContextFileViewer as CogniteFileViewer } from '@interactive-diagrams-app/components/CogniteFileViewer';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+
 import { Colors, Tabs } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
 import {
   FileDetails,
   Metadata,
   useRelatedResourceCounts,
   ResourceItem,
 } from '@cognite/data-exploration';
-import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { FileInfo } from '@cognite/sdk';
+
 import { ContentWrapper } from '../components';
+
 import { ResourceDetailTabContent } from './ResourceDetailTabContent';
-import styled from 'styled-components';
 
 type FilePreviewTabType = 'preview' | 'details' | 'files' | 'assets';
 type Props = {

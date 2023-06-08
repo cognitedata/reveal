@@ -1,17 +1,27 @@
 import React from 'react';
+
+import {
+  Flex,
+  PageTitle,
+  CollapsibleRadio,
+} from '@interactive-diagrams-app/components/Common';
+import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
+import {
+  useActiveWorkflow,
+  useSavedSettings,
+} from '@interactive-diagrams-app/hooks';
+import { ModelSelected } from '@interactive-diagrams-app/modules/types';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
+
 import { Body } from '@cognite/cogs.js';
-import { WorkflowStep } from 'modules/workflows';
-import { ModelSelected } from 'modules/types';
-import { useActiveWorkflow, useSavedSettings } from 'hooks';
-import { Flex, PageTitle, CollapsibleRadio } from 'components/Common';
-import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
+
 import {
   OptionPartialMatch,
   OptionMinTokens,
   OptionFieldsToMatch,
 } from './AdvancedOptions';
-import StandardModelTooltip from './StandardModelTooltip';
 import SkipSettingsPanel from './SkipSettingsPanel';
+import StandardModelTooltip from './StandardModelTooltip';
 
 type Props = {
   step: WorkflowStep;

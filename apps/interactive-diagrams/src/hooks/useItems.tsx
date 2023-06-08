@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
-import { usePrevious } from 'hooks';
+import { usePrevious } from '@interactive-diagrams-app/hooks';
 import { FileInfo } from '@cognite/sdk';
-import { searchItemSelector } from 'pages/PageSelection/selectors';
-import { RootState } from 'store';
-import { ResourceType, Filter } from 'modules/types';
+import { searchItemSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
+import { RootState } from '@interactive-diagrams-app/store';
+import { ResourceType, Filter } from '@interactive-diagrams-app/modules/types';
 
 export type Item = { id: number; name: string };
 

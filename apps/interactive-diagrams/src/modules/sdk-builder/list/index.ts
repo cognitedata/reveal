@@ -1,20 +1,23 @@
-import {
-  createAsyncThunk,
-  createAction,
-  PayloadAction,
-} from '@reduxjs/toolkit';
-import { InternalId } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { followCursorsGenerator } from 'helpers/Helpers';
+import { followCursorsGenerator } from '@interactive-diagrams-app/helpers/Helpers';
 import {
   ResourceState,
   ResourceType,
   ApiListResult,
   ApiResult,
   Query,
-} from 'modules/types';
-import { createListSelector } from './selectors';
+} from '@interactive-diagrams-app/modules/types';
+import {
+  createAsyncThunk,
+  createAction,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { InternalId } from '@cognite/sdk';
+
 import { updateAction as update } from '../reducers';
+
+import { createListSelector } from './selectors';
 
 export const defaultListState: ApiListResult = {};
 export interface ListStore {

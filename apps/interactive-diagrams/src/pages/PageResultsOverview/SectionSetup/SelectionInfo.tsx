@@ -1,6 +1,8 @@
 import React from 'react';
-import { ResourceType } from 'modules/types';
-import { useGoToStep } from 'hooks';
+
+import { useGoToStep } from '@interactive-diagrams-app/hooks';
+import { ResourceType } from '@interactive-diagrams-app/modules/types';
+
 import ModelInfo from './ModelInfo';
 
 type Props = {

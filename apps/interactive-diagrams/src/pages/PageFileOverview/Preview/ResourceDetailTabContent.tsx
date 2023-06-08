@@ -1,9 +1,12 @@
 import React, { useContext } from 'react';
-import ResourceSelectionContext from 'context/ResourceSelectionContext';
-import isMatch from 'lodash/isMatch';
-import { ResourceType, ResourceItem } from '@cognite/data-exploration';
 import { useHistory } from 'react-router-dom';
+
+import ResourceSelectionContext from '@interactive-diagrams-app/context/ResourceSelectionContext';
+import isMatch from 'lodash/isMatch';
+
 import { createLink } from '@cognite/cdf-utilities';
+import { ResourceType, ResourceItem } from '@cognite/data-exploration';
+
 import { RelatedResources } from './RelatedResources';
 
 export const ResourceDetailTabContent = ({

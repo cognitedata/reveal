@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Flex } from 'components/Common';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
 
 export const OptionWrapper = styled(Flex)`
   padding: 0 24px 24px 24px;

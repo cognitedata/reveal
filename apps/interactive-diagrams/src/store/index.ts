@@ -1,8 +1,9 @@
+import { createStore as createStoreDev } from '@interactive-diagrams-app/store/env/storeDev';
+import { createStore as createStoreProd } from '@interactive-diagrams-app/store/env/storeProd';
+import { createPreserveQueryAndHashHistory } from '@interactive-diagrams-app/store/history';
 import { Store, AnyAction } from '@reduxjs/toolkit';
 import { createBrowserHistory } from 'history';
-import { createPreserveQueryAndHashHistory } from 'store/history';
-import { createStore as createStoreDev } from 'store/env/storeDev';
-import { createStore as createStoreProd } from 'store/env/storeProd';
+
 import { RootState } from './reducer';
 
 export const history = createPreserveQueryAndHashHistory(createBrowserHistory, [

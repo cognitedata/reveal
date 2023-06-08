@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Popover as AntDPopover } from 'antd';
-import Layers from 'utils/zindex';
+import Layers from '@interactive-diagrams-app/utils/zindex';
 import { TooltipProps } from 'antd/lib/tooltip';
 
 interface PopoverProps {

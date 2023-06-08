@@ -13,7 +13,7 @@ import {
   AnnotationSource,
   PnidResponseEntity,
   TaggedAnnotation,
-} from 'modules/types';
+} from '@interactive-diagrams-app/modules/types';
 import { hasOwnProperty } from './utils';
 
 const CURRENT_VERSION_SEM_VER = '1.0.0';

@@ -1,6 +1,11 @@
+import {
+  Workflow,
+  WorkflowState,
+  ResourceSelection,
+} from '@interactive-diagrams-app/modules/types';
 import { createSlice } from '@reduxjs/toolkit';
-import { Workflow, WorkflowState, ResourceSelection } from 'modules/types';
-import { CURRENT_LS_VERSION } from 'stringConstants';
+import { CURRENT_LS_VERSION } from '@interactive-diagrams-app/stringConstants';
+
 import { startPnidParsingWorkflow, startPnidParsingJob } from './actions';
 import {
   setJobStatusReducer,

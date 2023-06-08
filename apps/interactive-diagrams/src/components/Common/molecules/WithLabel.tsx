@@ -1,5 +1,6 @@
 import React from 'react';
-import { SmallTitle } from 'components/Common';
+
+import { SmallTitle } from '@interactive-diagrams-app/components/Common';
 
 type Props = {
   title: string;

@@ -1,16 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { useActiveWorkflow } from '@interactive-diagrams-app/hooks';
 import {
   moveToStep,
   WorkflowStep,
   getActiveWorkflowSteps,
-} from 'modules/workflows';
-import { useActiveWorkflow } from 'hooks';
-import { routesMap } from 'routes/routesMap';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import { getUrlWithQueryParams } from 'utils/config';
-import { RootState } from 'store';
+} from '@interactive-diagrams-app/modules/workflows';
+import { routesMap } from '@interactive-diagrams-app/routes/routesMap';
+import { RootState } from '@interactive-diagrams-app/store';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
 
 export const useSteps = (step?: WorkflowStep) => {
   const history = useHistory();
@@ -18,7 +21,7 @@ export const useSteps = (step?: WorkflowStep) => {
 
   const routes = routesMap();
 
-  const goToNextStep = (skipStep: boolean = false, ...args: any) => {
+  const goToNextStep = (skipStep = false, ...args: any) => {
     trackUsage(PNID_METRICS.navigation.nextButton, {
       step,
     });

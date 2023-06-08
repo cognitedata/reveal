@@ -1,8 +1,12 @@
 import React from 'react';
+
+import {
+  PnidsConvertJobSchema,
+  ApiStatusCount,
+} from '@interactive-diagrams-app/modules/types';
 import { notification, Typography } from 'antd';
-import { PnidsConvertJobSchema, ApiStatusCount } from 'modules/types';
-import { ERRORS } from 'stringConstants';
-import { getContainer } from 'utils/utils';
+import { ERRORS } from '@interactive-diagrams-app/stringConstants';
+import { getContainer } from '@interactive-diagrams-app/utils/utils';
 
 const { Paragraph } = Typography;
 

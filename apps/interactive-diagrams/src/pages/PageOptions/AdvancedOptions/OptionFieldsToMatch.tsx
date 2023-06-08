@@ -1,11 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
+import { RootState } from '@interactive-diagrams-app/store';
 import { Body, Select, OptionType } from '@cognite/cogs.js';
-import { changeOptions, useSomeResources } from 'modules/workflows';
-import { getAllPossibleStringFields } from 'helpers';
-import { useJobStarted } from 'hooks';
-import { OptionWrapper } from 'pages/PageOptions/components';
+import {
+  changeOptions,
+  useSomeResources,
+} from '@interactive-diagrams-app/modules/workflows';
+import { getAllPossibleStringFields } from '@interactive-diagrams-app/helpers';
+import { useJobStarted } from '@interactive-diagrams-app/hooks';
+import { OptionWrapper } from '@interactive-diagrams-app/pages/PageOptions/components';
 
 type ResourceType = 'assets' | 'files';
 const defaultField: OptionType<React.ReactText> = {

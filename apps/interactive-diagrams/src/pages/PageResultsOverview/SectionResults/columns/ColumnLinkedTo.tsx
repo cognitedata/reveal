@@ -1,7 +1,7 @@
 import React from 'react';
 import { Body, Colors } from '@cognite/cogs.js';
-import { useParsingJob } from 'hooks';
-import DetectedTags from 'components/DetectedTags';
+import { useParsingJob } from '@interactive-diagrams-app/hooks';
+import DetectedTags from '@interactive-diagrams-app/components/DetectedTags';
 
 type Props = { fileId: number };
 

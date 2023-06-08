@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useContext, Suspense } from 'react';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   useRouteMatch,
   useHistory,
@@ -10,28 +9,28 @@ import {
 } from 'react-router-dom';
 
 import {
+  ResourceActionsProvider,
+  ResourceSelectionProvider,
+  AppStateContext,
+} from '@interactive-diagrams-app/context';
+import { setItemInStorage, useUserId } from '@interactive-diagrams-app/hooks';
+import { useUserInformation } from '@interactive-diagrams-app/hooks/useUserInformation';
+import NotFound from '@interactive-diagrams-app/pages/NotFound';
+import { staticRoot } from '@interactive-diagrams-app/routes/paths';
+import { LS_KEY_METRICS } from '@interactive-diagrams-app/stringConstants';
+import { trackUsage } from '@interactive-diagrams-app/utils/Metrics';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ids } from 'cogs-variables';
+import queryString from 'query-string';
+
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import {
   Loader,
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { ids } from 'cogs-variables';
 
-import queryString from 'query-string';
-import { trackUsage } from 'utils/Metrics';
-import { LS_KEY_METRICS } from 'stringConstants';
-import {
-  ResourceActionsProvider,
-  ResourceSelectionProvider,
-  AppStateContext,
-} from 'context';
-import NotFound from 'pages/NotFound';
-import { staticRoot } from 'routes/paths';
-
-import { setItemInStorage, useUserId } from 'hooks';
-import { useUserInformation } from 'hooks/useUserInformation';
-
-const Routes = React.lazy(() => import('routes'));
+const Routes = React.lazy(() => import('@interactive-diagrams-app/routes'));
 
 export default function App() {
   const {

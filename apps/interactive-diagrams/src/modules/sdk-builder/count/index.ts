@@ -1,7 +1,14 @@
+import {
+  ResourceType,
+  ApiCountResult,
+  CountState,
+  Query,
+} from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { RootState } from 'store';
-import { ResourceType, ApiCountResult, CountState, Query } from 'modules/types';
+
 import { createCountSelector } from './selectors';
 
 export const defaultCount: ApiCountResult = {};

@@ -1,6 +1,6 @@
-import interactiveDiagramIcon from 'assets/InteractiveIcon.svg';
-
 import React from 'react';
+
+import interactiveDiagramIcon from '../assets/InteractiveIcon.svg';
 
 const InteractiveIcon = () => {
   return (

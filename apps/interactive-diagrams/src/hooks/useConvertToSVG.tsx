@@ -3,20 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import isEqual from 'lodash/isEqual';
 import { FileInfo } from '@cognite/sdk';
-import { RootState } from 'store';
-import { AppStateContext } from 'context';
-import { useAnnotationsForFiles } from 'hooks';
-import { itemSelector as assetSelector } from 'modules/assets';
-import { itemSelector as fileSelector } from 'modules/files';
+import { RootState } from '@interactive-diagrams-app/store';
+import { AppStateContext } from '@interactive-diagrams-app/context';
+import { useAnnotationsForFiles } from '@interactive-diagrams-app/hooks';
+import { itemSelector as assetSelector } from '@interactive-diagrams-app/modules/assets';
+import { itemSelector as fileSelector } from '@interactive-diagrams-app/modules/files';
 import {
   boundingBoxToVertices,
   getTaggedAnnotationBoundingBox,
   isTaggedAnnotationsApiAnnotation,
   isTaggedEventAnnotation,
   TaggedAnnotation,
-} from 'modules/workflows';
-import { startConvertFileToSvgJob } from 'modules/svgConvert';
-import { Vertices } from 'modules/types';
+} from '@interactive-diagrams-app/modules/workflows';
+import { startConvertFileToSvgJob } from '@interactive-diagrams-app/modules/svgConvert';
+import { Vertices } from '@interactive-diagrams-app/modules/types';
 import getAssetIdsFromTaggedAnnotations from '../utils/getAssetIdsFromTaggedAnnotations';
 
 type DiagramToConvert = {

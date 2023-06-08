@@ -1,8 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import { Link, Flex } from 'components/Common';
-import { useCurrentStep } from 'hooks';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+import { Link, Flex } from '@interactive-diagrams-app/components/Common';
+import { useCurrentStep } from '@interactive-diagrams-app/hooks';
 import { StepsType, StyledStepProps } from './types';
 
 type Props = { substeps?: StepsType[] };

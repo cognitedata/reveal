@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Checkbox } from 'antd';
-import { FileInfo } from '@cognite/sdk';
-import { Table } from 'components/Common';
+
+import { Table } from '@interactive-diagrams-app/components/Common';
 import {
   ProgressType,
   ReviewStatus,
   approvalDetails,
-} from 'components/Filters';
-import {
-  selectInteractiveDiagrams,
-  useWorkflowDiagramsIds,
-} from 'modules/workflows';
+} from '@interactive-diagrams-app/components/Filters';
 import {
   useActiveWorkflow,
   useParsingJob,
   isFileApproved,
   isFilePending,
-} from 'hooks';
+} from '@interactive-diagrams-app/hooks';
+import {
+  selectInteractiveDiagrams,
+  useWorkflowDiagramsIds,
+} from '@interactive-diagrams-app/modules/workflows';
+import { Checkbox } from 'antd';
+
+import { FileInfo } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
 import { getSvgConvertJobs, getSelectedDiagramsIds } from '../selectors';
+
 import { getColumns, AdjustedFileInfo } from './columns';
 import { SelectionFilter } from './types';
 

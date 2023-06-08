@@ -1,12 +1,18 @@
 import React from 'react';
+
+import { Link, Flex } from '@interactive-diagrams-app/components/Common';
+import { useCompletedSteps } from '@interactive-diagrams-app/hooks';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/types';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+
 import { Icon } from '@cognite/cogs.js';
-import { useCompletedSteps } from 'hooks';
-import { WorkflowStep } from 'modules/types';
-import { Link, Flex } from 'components/Common';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+
 import { StyledStep, StepNumber } from './components';
-import { StepLabel } from './StepLabel';
 import { StepCombo } from './StepCombo';
+import { StepLabel } from './StepLabel';
 import { StepsType } from './types';
 
 type StepProps = {
@@ -31,7 +37,7 @@ export default function Step(props: StepProps) {
   } = props;
   const completedSteps = useCompletedSteps();
 
-  const isCombo: boolean = Boolean(substeps);
+  const isCombo = Boolean(substeps);
   const wasVisited: boolean = completedSteps.includes(workflowStep);
   const isCurrent: boolean = stepIndex === currentStepIndex;
   const isClickable: boolean =

@@ -7,10 +7,10 @@ import {
   Select as CogsSelect,
 } from '@cognite/cogs.js';
 import { Spin } from 'antd';
-import { Flex } from 'components/Common';
-import { FilterPlaceholder } from 'components/Filters';
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { FilterPlaceholder } from '@interactive-diagrams-app/components/Filters';
 import styled from 'styled-components';
-import Layers from 'utils/zindex';
+import Layers from '@interactive-diagrams-app/utils/zindex';
 import { CustomSelectProps } from './types';
 import { selectStyles } from './styles';
 

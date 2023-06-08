@@ -1,5 +1,9 @@
-import { WorkflowState, WorkflowStep } from 'modules/types';
-import { CURRENT_LS_VERSION } from 'stringConstants';
+import {
+  WorkflowState,
+  WorkflowStep,
+} from '@interactive-diagrams-app/modules/types';
+import { CURRENT_LS_VERSION } from '@interactive-diagrams-app/stringConstants';
+
 import { defaultInitialWorkflow, defaultJobs, standardModelOptions } from '..';
 
 type Action = {

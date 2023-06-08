@@ -1,8 +1,7 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileInfo } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import handleError from 'utils/handleError';
+import {
+  StartPnidParsingJobProps,
+  PollJobResultsProps,
+} from '@interactive-diagrams-app/modules/types';
 import {
   workflowDiagramsSelector,
   createJob,
@@ -10,8 +9,17 @@ import {
   finishJob,
   rejectJob,
   rejectModel,
-} from 'modules/workflows';
-import { StartPnidParsingJobProps, PollJobResultsProps } from 'modules/types';
+} from '@interactive-diagrams-app/modules/workflows';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import handleError from '@interactive-diagrams-app/utils/handleError';
+import {
+  PNID_METRICS,
+  trackUsage,
+} from '@interactive-diagrams-app/utils/Metrics';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
+
 import {
   mapAssetsToEntities,
   mapFilesToEntities,

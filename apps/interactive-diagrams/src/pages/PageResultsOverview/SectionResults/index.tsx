@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
+
+import {
+  Flex,
+  TitledSection,
+} from '@interactive-diagrams-app/components/Common';
+import {
+  useActiveWorkflow,
+  useJobStatus,
+  useParsingJob,
+} from '@interactive-diagrams-app/hooks';
+import { JobStatus } from '@interactive-diagrams-app/modules/types';
+import { useWorkflowTotalCounts } from '@interactive-diagrams-app/modules/workflows';
+
 import { Title } from '@cognite/cogs.js';
-import { Flex, TitledSection } from 'components/Common';
-import { useActiveWorkflow, useJobStatus, useParsingJob } from 'hooks';
-import { useWorkflowTotalCounts } from 'modules/workflows';
-import { JobStatus } from 'modules/types';
-import ResultsTable from './ResultsTable';
-import ResultsTableEmpty from './ResultsTableEmpty';
+
 import DiagramActions from './DiagramActions';
 import FilterBar from './FilterBar';
+import ResultsTable from './ResultsTable';
+import ResultsTableEmpty from './ResultsTableEmpty';
 import { SelectionFilter } from './types';
 
 export default function SectionResults() {

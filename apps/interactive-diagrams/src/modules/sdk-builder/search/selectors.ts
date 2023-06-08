@@ -1,7 +1,13 @@
+import {
+  Result,
+  Query,
+  SearchState,
+  ItemsList,
+} from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
 import { createSelector } from '@reduxjs/toolkit';
+
 import { InternalId } from '@cognite/sdk';
-import { RootState } from 'store';
-import { Result, Query, SearchState, ItemsList } from 'modules/types';
 
 export function createSearchSelector<T extends InternalId, Q extends Query>(
   itemsSelector: (_: RootState) => ItemsList<T>,

@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Chip, ChipProps } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { ReviewStatus, approvalDetails } from 'components/Filters';
-import { isFileApproved, isFilePending } from 'hooks';
+import {
+  ReviewStatus,
+  approvalDetails,
+} from '@interactive-diagrams-app/components/Filters';
+import { isFileApproved, isFilePending } from '@interactive-diagrams-app/hooks';
 import { Tooltip } from 'antd';
 
 type Props = { fileId: number; size?: ChipProps['size'] };

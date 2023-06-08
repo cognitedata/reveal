@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { useJobStarted } from '@interactive-diagrams-app/hooks';
+import { changeOptions } from '@interactive-diagrams-app/modules/workflows';
+import { OptionWrapper } from '@interactive-diagrams-app/pages/PageOptions/components';
+import { RootState } from '@interactive-diagrams-app/store';
+
 import { Body, Input } from '@cognite/cogs.js';
-import { changeOptions } from 'modules/workflows';
-import { useJobStarted } from 'hooks';
-import { Flex } from 'components/Common';
-import { OptionWrapper } from 'pages/PageOptions/components';
 
 export const OptionMinTokens = ({ workflowId }: { workflowId: number }) => {
   const dispatch = useDispatch();

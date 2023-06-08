@@ -1,15 +1,21 @@
 import React from 'react';
+
+import {
+  Flex,
+  LoadingSkeleton,
+} from '@interactive-diagrams-app/components/Common';
+import DiagramReviewStatus from '@interactive-diagrams-app/components/DiagramReviewStatus';
+import { StatusType } from '@interactive-diagrams-app/components/Filters';
+import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
+import { ApiStatusCount } from '@interactive-diagrams-app/modules/types';
+import { stringCompare } from '@interactive-diagrams-app/utils/utils';
+
 import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { ApiStatusCount } from 'modules/types';
-import { stringCompare } from 'utils/utils';
-import { Flex, LoadingSkeleton } from 'components/Common';
-import { StatusType } from 'components/Filters';
-import DiagramReviewStatus from 'components/DiagramReviewStatus';
-import InteractiveIcon from 'components/InteractiveIcon';
-import ColumnProgress from './ColumnProgress';
+
 import ColumnFileActions from './ColumnFileActions';
 import ColumnLinkedTo from './ColumnLinkedTo';
+import ColumnProgress from './ColumnProgress';
 import ColumnSVGStatus from './ColumnSVGStatus';
 
 export interface AdjustedFileInfo extends FileInfo {

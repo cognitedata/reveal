@@ -1,6 +1,8 @@
 import styled from 'styled-components';
+
+import { JobStatus } from '@interactive-diagrams-app/modules/types';
+
 import { Colors } from '@cognite/cogs.js';
-import { JobStatus } from 'modules/types';
 
 export const SetUpWrapper = styled.div.attrs(
   ({ jobStatus }: { jobStatus: JobStatus }) => {
