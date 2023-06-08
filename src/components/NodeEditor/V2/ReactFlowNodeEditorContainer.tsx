@@ -301,9 +301,11 @@ const ReactFlowNodeEditorContainer = ({
         shouldDeleteTimeseries,
       });
       onRemoveSourceClick(localWorkflow)();
+      onClose();
     },
     [
       onRemoveSourceClick,
+      onClose,
       localWorkflow,
       deleteScheduledCalculation,
       scheduledCalculationResult,
