@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { Body, Graphic, Title } from '@cognite/cogs.js';
+import { Body, Illustrations, Title } from '@cognite/cogs.js';
 
 export const defaultTranslations = makeDefaultTranslations(
   'No results found for',
@@ -22,7 +22,7 @@ const EmptyResult = ({ translations, itemType }: EmptyResultProps) => {
 
   return (
     <ErrorMessageContainer>
-      <Graphic type="Search" />
+      <Illustrations.Solo type="EmptyStateSearch" />
       <InfoMessageTitle
         level="4"
         style={{ color: 'var(--cogs-text-secondary)' }}

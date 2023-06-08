@@ -108,7 +108,7 @@ export default function AssetSearchHit({
             <Icon type="Assets" size={14} style={{ marginRight: 5 }} />
             <Highlighter
               highlightStyle={{
-                backgroundColor: Colors['yellow-4'].alpha(0.4),
+                backgroundColor: Colors['decorative--yellow--400'],
                 marginLeft: 5,
               }}
               searchWords={removeIllegalCharacters(query).split(' ')}
@@ -122,7 +122,7 @@ export default function AssetSearchHit({
           <Description>
             <Highlighter
               highlightStyle={{
-                backgroundColor: Colors['yellow-4'].alpha(0.4),
+                backgroundColor: Colors['decorative--yellow--400'],
                 marginLeft: 5,
               }}
               searchWords={removeIllegalCharacters(query).split(' ')}
@@ -163,7 +163,7 @@ export default function AssetSearchHit({
 
 const ExactMatchLabel = styled(Button)`
   && {
-    background-color: ${Colors['green-2'].alpha(0.3)};
+    background-color: ${Colors['decorative--green--200']};
     font-size: 10px;
     height: 20px;
     padding: 10px;
@@ -174,7 +174,7 @@ const ExactMatchLabel = styled(Button)`
 const AssetItem = styled.div<{ outline?: boolean }>`
   border: 1px solid var(--cogs-greyscale-grey4);
   ${(props) =>
-    props.outline && `border: 2px dashed ${Colors['green-2'].alpha(0.6)};`};
+    props.outline && `border: 2px dashed ${Colors['decorative--green--200']};`};
   border-radius: 5px;
   margin-bottom: 10px;
   padding: 10px 15px 0px 15px;

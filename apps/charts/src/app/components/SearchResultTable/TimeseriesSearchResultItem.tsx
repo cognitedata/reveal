@@ -69,7 +69,7 @@ export default function TimeseriesSearchResultItem({
                 <Icon type="Timeseries" style={{ minWidth: 14 }} />
                 <Highlighter
                   highlightStyle={{
-                    backgroundColor: Colors['yellow-4'].alpha(0.4),
+                    backgroundColor: Colors['decorative--yellow--400'],
                     marginLeft: 5,
                   }}
                   searchWords={removeIllegalCharacters(query).split(' ')}
@@ -79,7 +79,7 @@ export default function TimeseriesSearchResultItem({
               <Description>
                 <Highlighter
                   highlightStyle={{
-                    backgroundColor: Colors['yellow-4'].alpha(0.4),
+                    backgroundColor: Colors['decorative--yellow--400'],
                   }}
                   searchWords={removeIllegalCharacters(query).split(' ')}
                   textToHighlight={timeseries.description ?? ''}
@@ -121,7 +121,7 @@ const TSItem = styled.li<{ outline?: boolean }>`
   padding: 0 5px;
   && {
     ${(props) =>
-      props.outline && `border: 2px dashed ${Colors['green-2'].alpha(0.6)};`};
+      props.outline && `border: 2px dashed ${Colors['decorative--green--200']};`};
   }
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
@@ -133,7 +133,7 @@ const TSItem = styled.li<{ outline?: boolean }>`
 
 const ExactMatchLabel = styled(Button)`
   && {
-    background-color: ${Colors['green-2'].alpha(0.3)};
+    background-color: ${Colors['decorative--green--200']};
     font-size: 10px;
     height: 20px;
     padding: 10px;

@@ -23,14 +23,14 @@ const SearchSidebar = ({ visible, onClose }: SearchSidebarProps) => {
   const [tsUrlQuery = '', setTsUrlQuery] = useSearchParam(TS_SEARCH_KEY);
 
   const handleUrlQueryChange = useCallback(
-    (query) => {
+    (query: string) => {
       setUrlQuery(query);
     },
     [setUrlQuery]
   );
 
   const handleTsUrlQueryChange = useCallback(
-    (query) => {
+    (query: string) => {
       setTsUrlQuery(query);
     },
     [setTsUrlQuery]
