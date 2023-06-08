@@ -61,7 +61,7 @@ export const TopBar: FC<Props> = () => {
         <Dropdown maxWidth={800} content={<AppSelector />}>
           <Tabs size="xlarge" activeKey="never">
             <></>
-            <Tabs.Tab label="Apps" dropdown={true}>
+            <Tabs.Tab label="Apps" dropdown={true} style={{ marginLeft: 12 }}>
               Apps
             </Tabs.Tab>
           </Tabs>
