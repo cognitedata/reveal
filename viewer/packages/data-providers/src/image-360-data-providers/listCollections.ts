@@ -3,13 +3,13 @@
  */
 
 // Lists a specific 360 image collections in the project
-export const get360ImageCollectionsQuery = (externalId: string, space: string): string => `#graphql
+export const get360ImageCollectionsQuery = (externalId: string, space: string, cursor?: string): string => `#graphql
   query MyQuery {
     getImage360CollectionById(instance: {space: "${space}", externalId: "${externalId}"}) {
       items {
-        stations(first: 1000) {
+        stations(first: 1000 ${cursor ? `after: "${cursor}"` : ''}) {
           items {
-            revisions(first: 1000) {
+            revisions(first: 1000 ) {
               items {
                 externalId
                 label

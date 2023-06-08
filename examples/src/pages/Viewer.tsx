@@ -439,9 +439,7 @@ export function Viewer() {
         image360CollectionExternalId: 'Hibernia_RS2'
       });
 
-      collection.image360Entities.forEach(image360 => {
-        console.log(image360.getRevisions().length);
-      });
+      console.log(collection.image360Entities.length);
 
 
       viewer.on('click', async event => {

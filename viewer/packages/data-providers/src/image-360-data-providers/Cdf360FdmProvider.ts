@@ -31,10 +31,10 @@ type Image360Collection = {
   label: string;
   stations: {
     items: Image360Station[];
-  };
-  pageInfo: {
-    hasNextPage: boolean;
-    endCursor: string;
+    pageInfo: {
+      hasNextPage: boolean;
+      endCursor: string;
+    };
   };
 };
 
@@ -85,29 +85,12 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
     metadataFilter: DM360CollectionIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet[]> {
-    const { dataModelExternalId, space, image360CollectionExternalId } = metadataFilter;
+    const { image360CollectionExternalId } = metadataFilter;
 
-    const baseUrl = this._sdk.getBaseUrl();
-    const project = this._sdk.project;
-    const graphQlEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/1/graphql`;
+    const image360Stations = await this.fetchImageCollection(metadataFilter);
 
-    const result = await this._sdk.post(graphQlEndpoint, {
-      data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space) }
-    });
-
-    const data = result.data.data as JSONData;
-
-    console.log(data.getImage360CollectionById);
-
-    const collections = data.getImage360CollectionById.items;
-    assert(collections.length === 1, 'Expected exactly one collection to be returned from the query');
-
-    const collection = collections[0];
-
-    const collectionId = collection.externalId;
-    const collectionLabel = collection.label;
-
-    const image360Stations = collection.stations.items;
+    const collectionId = image360CollectionExternalId;
+    const collectionLabel = 'test';
 
     const imgs = await Promise.all(
       image360Stations.map(station => this.createHistorical360ImageSet(station, collectionId, collectionLabel))
@@ -115,16 +98,34 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
     return imgs;
   }
 
-  private async fetchImageCollection(metadataFilter: DM360CollectionIdentifier): Promise<void> {
+  private async fetchImageCollection(metadataFilter: DM360CollectionIdentifier): Promise<Image360Station[]> {
     const { dataModelExternalId, space, image360CollectionExternalId } = metadataFilter;
 
     const baseUrl = this._sdk.getBaseUrl();
     const project = this._sdk.project;
     const graphQlEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/1/graphql`;
 
-    const result = await this._sdk.post(graphQlEndpoint, {
-      data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space) }
-    });
+    const stations: Image360Station[] = [];
+
+    let hasNextPage = true;
+    let endCursor: string | undefined = undefined;
+
+    const start = performance.now();
+
+    while (hasNextPage) {
+      const result = await this._sdk.post(graphQlEndpoint, {
+        data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space, endCursor) }
+      });
+
+      const data = result.data.data as JSONData;
+      stations.push(...data.getImage360CollectionById.items[0].stations.items);
+      hasNextPage = data.getImage360CollectionById.items[0].stations.pageInfo.hasNextPage;
+      endCursor = data.getImage360CollectionById.items[0].stations.pageInfo.endCursor;
+    }
+
+    console.log(`Fetched ${stations.length} stations in ${performance.now() - start} ms`);
+
+    return stations;
   }
 
   private async createHistorical360ImageSet(
