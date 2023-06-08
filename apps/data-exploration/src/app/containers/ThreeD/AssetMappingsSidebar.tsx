@@ -11,8 +11,8 @@ import styled from 'styled-components';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import {
   Cognite3DViewer,
-  CognitePointCloudModel,
   CogniteModel,
+  Image360Collection,
 } from '@cognite/reveal';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -31,7 +31,7 @@ type ThreeDSidebarProps = {
   selectedAssetId?: number;
   setSelectedAssetId: (assetId?: number) => void;
   viewer: Cognite3DViewer;
-  threeDModel?: CogniteModel;
+  threeDModel?: CogniteModel | Image360Collection;
 };
 
 export const AssetMappingsSidebar = ({
@@ -51,8 +51,6 @@ export const AssetMappingsSidebar = ({
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
 
-  const isPointCloud = threeDModel instanceof CognitePointCloudModel;
-
   const {
     error,
     data,
@@ -60,7 +58,7 @@ export const AssetMappingsSidebar = ({
     fetchNextPage,
     isFetchingNextPage,
     isFetching,
-  } = useInfiniteAssetMappings(modelId, revisionId, 1000, isPointCloud);
+  } = useInfiniteAssetMappings(modelId, revisionId, threeDModel);
 
   useEffect(() => {
     if (hasNextPage && !isFetchingNextPage) {

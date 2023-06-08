@@ -15,6 +15,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   ViewerState,
+  Image360Collection,
 } from '@cognite/reveal';
 
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
@@ -93,6 +94,8 @@ type ThreeDContext = {
   setSecondaryObjectsVisibilityState: Dispatch<
     SetStateAction<SecondaryObjectsVisibilityState>
   >;
+  image360: Image360Collection | undefined;
+  setImage360: Dispatch<SetStateAction<Image360Collection | undefined>>;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -119,6 +122,8 @@ export const ThreeDContext = createContext<ThreeDContext>({
   images360: [],
   setImages360: noop,
   setSecondaryObjectsVisibilityState: noop,
+  image360: undefined,
+  setImage360: noop,
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -277,6 +282,9 @@ export const ThreeDContextProvider = ({
   >(initialSecondaryModels);
   const [images360, setImages360] =
     useState<Image360DatasetOptions[]>(initialImages360);
+  const [image360, setImage360] = useState<Image360Collection | undefined>(
+    undefined
+  );
   const [assetHighlightMode, setAssetHighlightMode] = useState<boolean>(
     initialAssetHighlightMode
   );
@@ -384,6 +392,8 @@ export const ThreeDContextProvider = ({
         setImages360,
         secondaryObjectsVisibilityState,
         setSecondaryObjectsVisibilityState,
+        image360,
+        setImage360,
       }}
     >
       {children}

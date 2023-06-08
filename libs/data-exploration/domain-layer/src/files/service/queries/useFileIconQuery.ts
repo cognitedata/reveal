@@ -15,15 +15,10 @@ export const useFileIconQuery = (file: FileInfo | undefined) => {
   return useQuery<ArrayBuffer | undefined>(
     queryKeys.fileIconQuery(file),
     () => {
-      if (!file) {
-        return undefined;
-      }
-      if (isFileOfType(file, VALID_IMAGE_TYPES)) {
-        return getFileIcon(sdk, file.id);
-      }
-      return undefined;
+      return getFileIcon(sdk, file!.id);
     },
     {
+      enabled: file !== undefined && isFileOfType(file, VALID_IMAGE_TYPES),
       retry: false,
       staleTime: Infinity,
     }

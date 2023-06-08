@@ -12,6 +12,7 @@ import uniqBy from 'lodash/uniqBy';
 import { Vector3 } from 'three';
 
 import {
+  CogniteModel,
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
@@ -29,6 +30,7 @@ import {
   AnnotationsBoundingVolume,
   AnnotationFilterRequest,
   CogniteInternalId,
+  InternalId,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -145,30 +147,39 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
 export const useInfiniteAssetMappings = (
   modelId?: number,
   revisionId?: number,
-  limit?: number,
-  isPointCloud?: boolean,
+  model?: CogniteModel | Image360Collection,
   config?: UseInfiniteQueryOptions<AugmentedMappingResponse, CogniteError>
 ) => {
+  const limit = 1000;
+
   const sdk = useSDK();
+
   return useInfiniteQuery<AugmentedMappingResponse, CogniteError>(
-    ['cdf', 'infinite', '3d', 'asset-mapping', modelId, revisionId],
+    [
+      'cdf',
+      'infinite',
+      '3d',
+      'asset-mapping',
+      modelId ?? (model as Image360Collection | undefined)?.id,
+      revisionId ?? 1,
+    ],
     async ({ pageParam }) => {
       let mappings:
         | Partial<AssetMapping3D>
         | { assetId: CogniteInternalId; annotationId?: number }[];
       let nextCursor: string | undefined;
-      if (modelId !== undefined && isPointCloud) {
+      if (modelId !== undefined && model instanceof CognitePointCloudModel) {
         const filter: AnnotationFilterProps = {
           annotatedResourceType: 'threedmodel',
           annotatedResourceIds: [{ id: modelId }],
           annotationType: 'pointcloud.BoundingVolume',
         };
         const annotationFilter: AnnotationFilterRequest = {
-          filter: filter,
+          filter,
         };
         const annotations = await getAnnotationsQueryFn(sdk, {
           cursor: pageParam,
-          limit: limit,
+          limit,
           filter: annotationFilter,
         });
 
@@ -178,27 +189,36 @@ export const useInfiniteAssetMappings = (
             ?.id as number,
         }));
         nextCursor = annotations.nextCursor;
-      } else {
+      } else if (modelId !== undefined && revisionId !== undefined) {
         const models = await getAssetMappingsQueryFn(sdk, modelId, revisionId, {
           limit,
           cursor: pageParam,
         });
         mappings = models.items;
         nextCursor = models.nextCursor;
+      } else {
+        const image360 = model as Image360Collection;
+        const assets = await image360.getAssetIds();
+        mappings = assets
+          .filter((a) => (a as InternalId).id !== undefined)
+          .map((a) => ({
+            assetId: (a as InternalId).id!,
+          }));
       }
+
       const uniqueAssets = uniqBy(mappings, 'assetId');
-      const assets =
-        uniqueAssets.length > 0
-          ? keyBy(
-              await sdk.assets.retrieve(
-                uniqueAssets.map(({ assetId }) => ({
-                  id: assetId,
-                })),
-                { ignoreUnknownIds: true }
-              ),
-              'id'
-            )
-          : {};
+
+      let assets = {} as Record<number, Asset>;
+      if (uniqueAssets.length > 0) {
+        const retrievedAssets = await sdk.assets.retrieve(
+          uniqueAssets.map(({ assetId }) => ({
+            id: assetId,
+          })),
+          { ignoreUnknownIds: true }
+        );
+        assets = keyBy(retrievedAssets, 'id');
+      }
+
       return {
         nextCursor: nextCursor,
         items: mappings
@@ -217,7 +237,7 @@ export const useInfiniteAssetMappings = (
     },
     {
       getNextPageParam: (r) => r.nextCursor,
-      enabled: Boolean(modelId && revisionId),
+      enabled: Boolean(!!model),
       ...config,
     }
   );

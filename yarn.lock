@@ -2078,9 +2078,9 @@
     three-stdlib "2.23.4"
 
 "@cognite/reveal@^4.1.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.2.tgz#1bdffa7defaf90ff00ea5e89ae4e908d2d52b82e"
-  integrity sha512-BU/TGWsXYx1PjXZVHn0yBinDvLfpfk6umXm76yPkOKx5tlgBpq1/gSELnfnZUKZ/l2YROGvniGMTaUNyBV9nzw==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
+  integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
@@ -7553,7 +7553,7 @@
   resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-18.6.4.tgz#40a3d0a93647124872dec8e0fd1bd5926695b6ca"
   integrity sha512-lB9lMjuqjtuJrx7/kOkqQBtllspPIN+96OvTCeJ2j5FEzinoAXTdAMFnDAQT1KVPRlnYfBrqxtqP66vDM40xxQ==
 
-"@tweenjs/tween.js@19.0.0":
+"@tweenjs/tween.js@19.0.0", "@tweenjs/tween.js@^19.0.0":
   version "19.0.0"
   resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-19.0.0.tgz#93d3169f665ddc184c3b1b7a1910bf7df3dfb5da"
   integrity sha512-QVbvSlnP7FcjKr1edg460BbUlpdGzmIOfvpsvHCj3JPIVZ9S9KeQLk9mB24VlDzPIl/a/ehAZPE95xFsmqm+pQ==

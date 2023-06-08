@@ -73,12 +73,12 @@ export default function NodePreview({
   });
 
   const parentResource = {
-    type: 'asset',
+    type: 'asset' as const,
     id: assetId,
     externalId: assetInfo?.externalId,
   };
 
-  const { counts } = useRelatedResourceCounts(parentResource as any);
+  const { counts } = useRelatedResourceCounts(parentResource);
 
   const details: Array<Details> = [
     {
