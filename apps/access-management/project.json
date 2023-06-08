@@ -1,23 +1,23 @@
 {
-  "name": "data-exploration",
-  "sourceRoot": "apps/data-exploration/src",
+  "name": "access-management",
+  "sourceRoot": "apps/access-management/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/data-exploration",
-        "index": "apps/data-exploration/src/index.html",
-        "main": "apps/data-exploration/src/index.tsx",
+        "outputPath": "dist/apps/access-management",
+        "index": "apps/access-management/src/index.html",
+        "main": "apps/access-management/src/index.tsx",
         "runtimeChunk": false,
         "vendorChunk": false,
         "commonChunk": false,
-        "tsConfig": "apps/data-exploration/tsconfig.app.json",
-        "assets": ["apps/data-exploration/src/assets"],
+        "tsConfig": "apps/access-management/tsconfig.app.json",
+        "assets": [],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/data-exploration/webpack-config.js"
+        "webpackConfig": "apps/access-management/webpack-config.js"
       },
       "configurations": {
         "development": {
@@ -57,22 +57,22 @@
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "options": {
-        "buildTarget": "data-exploration:build",
+        "buildTarget": "access-management:build",
         "hmr": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "data-exploration:build:development",
+          "buildTarget": "access-management:build:development",
           "hmr": true,
           "liveReload": true
         },
 
         "preview": {
-          "buildTarget": "data-exploration:build:preview",
+          "buildTarget": "access-management:build:preview",
           "hmr": false
         },
         "production": {
-          "buildTarget": "data-exploration:build:production",
+          "buildTarget": "access-management:build:production",
           "hmr": false
         }
       },
@@ -82,14 +82,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/data-exploration/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/access-management/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/data-exploration"],
+      "outputs": ["{workspaceRoot}/coverage/apps/access-management"],
       "options": {
-        "jestConfig": "apps/data-exploration/jest.config.ts",
+        "jestConfig": "apps/access-management/jest.config.ts",
         "passWithNoTests": true
       }
     }

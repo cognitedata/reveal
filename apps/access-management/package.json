@@ -1,12 +1,12 @@
 {
-  "name": "@cognite/cdf-data-exploration",
+  "name": "@cognite/cdf-access-management",
   "version": "2.4.0",
   "scripts": {
-    "start": "../../scripts/start.sh dev data-exploration",
-    "build": "../../scripts/build.sh production data-exploration",
-    "test": "../../scripts/test.sh data-exploration",
-    "lint": "../../scripts/lint.sh data-exploration",
-    "lint:fix": "../../scripts/lint.sh data-exploration --fix",
+    "start": "../../scripts/start.sh dev access-management",
+    "build": "../../scripts/build.sh production access-management",
+    "test": "../../scripts/test.sh access-management",
+    "lint": "../../scripts/lint.sh access-management",
+    "lint:fix": "../../scripts/lint.sh access-management --fix",
     "cypress:dev": "./scripts/cypress-dev.sh"
   },
   "dependencies": {},

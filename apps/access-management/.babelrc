@@ -16,7 +16,7 @@
     [
       "@cognite/babel-plugin-styled-components",
       {
-        "namespace": "data-exploration",
+        "namespace": "access-management",
         "fileName": false
       }
     ]

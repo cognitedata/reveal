@@ -1,5 +1,5 @@
 export default {
-  displayName: 'data-exploration',
+  displayName: 'access-management',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
@@ -12,7 +12,7 @@ export default {
       '<rootDir>/../../libs/shared/plotting-components/src',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/apps/data-exploration',
+  coverageDirectory: '../../coverage/apps/access-management',
   setupFilesAfterEnv: ['./src/setupTests.js'],
   collectCoverage: true,
   collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
