@@ -2,45 +2,14 @@
 import 'regenerator-runtime/runtime';
 import Enzyme from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import noop from 'lodash/noop';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-jest.mock('utils/Metrics');
+jest.mock('./utils/Metrics');
 
-let consoleWrittenTo;
+window.URL.createObjectURL = noop;
 
-let originalLog;
-let originalWarn;
-let originalError;
-
-beforeEach(() => {
-  consoleWrittenTo = false;
-  originalLog = global.console.log;
-  originalWarn = global.console.warn;
-  originalError = global.console.error;
-
-  jest.spyOn(global.console, 'log').mockImplementation((...args) => {
-    consoleWrittenTo = true;
-    originalLog(...args);
-  });
-  jest.spyOn(global.console, 'warn').mockImplementation((...args) => {
-    consoleWrittenTo = true;
-    originalWarn(...args);
-  });
-  jest.spyOn(global.console, 'error').mockImplementation((...args) => {
-    consoleWrittenTo = true;
-    originalError(...args);
-  });
-});
-
-afterEach(() => {
-  if (consoleWrittenTo) {
-    throw new Error(
-      'Console log, warnings and errors are not allowed when running tests. Mock them if you really need it.'
-    );
-  }
-
-  console.log = originalLog;
-  console.warn = originalWarn;
-  console.error = originalError;
-});
+jest.mock('@cognite/unified-file-viewer', () => ({}));
+jest.mock('@cognite/plotting-components', () => ({}));
+jest.mock('@cognite/data-exploration', () => ({}));

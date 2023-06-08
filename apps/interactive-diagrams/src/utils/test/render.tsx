@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { render, RenderOptions } from '@testing-library/react';
-import { ids } from 'cogs-variables';
+
+import { ids } from '../../cogs-variables';
 
 export default (
   ui: React.ReactElement,

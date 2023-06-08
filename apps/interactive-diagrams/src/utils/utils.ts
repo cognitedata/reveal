@@ -1,6 +1,7 @@
-import { ids } from 'cogs-variables';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment';
+
+import { ids } from '../cogs-variables';
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
 export const getContainer = () => {
