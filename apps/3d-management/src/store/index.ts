@@ -3,8 +3,8 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { isProduction } from '@cognite/cdf-utilities';
 import ReduxThunk from 'redux-thunk';
 
-import AppReducer from 'store/modules/App';
-import toolbarReducer from 'store/modules/toolbar';
+import AppReducer from '@3d-management/store/modules/App';
+import toolbarReducer from '@3d-management/store/modules/toolbar';
 import TreeViewReducer from './modules/TreeView';
 
 export * from './types';

@@ -5,19 +5,19 @@ import { render, screen } from '@testing-library/react';
 import {
   ToolbarTreeView,
   ToolbarTreeViewProps,
-} from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
 
 import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 import { Provider } from 'react-redux';
-import configureStore from 'store';
+import configureStore from '@3d-management/store';
 import { createBrowserHistory } from 'history';
-import { toolbarTreeViewMswHandlers } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
+import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import {
   fixtureCubeNodeFirstChildId,
   fixtureModelId,
   fixtureRevisionId,
-} from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
-import { expandArbitraryNode } from 'store/modules/TreeView';
+} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
+import { expandArbitraryNode } from '@3d-management/store/modules/TreeView';
 
 jest.mock('antd/lib/notification');
 

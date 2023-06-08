@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-import { createLink } from 'utils/cdf-utilities';
+import { createLink } from '@3d-management/utils/cdf-utilities';
 
 const propTypes = {
   to: PropTypes.oneOfType([

@@ -4,7 +4,7 @@ import {
   ErrorBoundaryPropsWithComponent,
 } from 'react-error-boundary';
 import { Button, Title } from '@cognite/cogs.js';
-import { logToSentry } from 'utils';
+import { logToSentry } from '@3d-management/utils';
 
 const DefaultFallback = () => {
   return (

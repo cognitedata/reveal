@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'utils';
+import { styleScope } from '@3d-management/utils';
 import { createMemoryHistory } from 'history';
-import configureStore from 'store';
+import configureStore from '@3d-management/store';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

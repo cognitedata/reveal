@@ -1,4 +1,4 @@
-import { useCheckedNodesVisibility } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
+import { useCheckedNodesVisibility } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
 import { render } from '@testing-library/react';
 import React from 'react';
 
@@ -10,20 +10,7 @@ function TestComponent({ model, treeData, checkedKeys }) {
 describe('useCheckedNodesVisibility tests', () => {
   it('correctly updates nodes visibility in reveal', async () => {
     const allTreeIndexes = [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
     ].sort();
     // 0
     // - 1,2

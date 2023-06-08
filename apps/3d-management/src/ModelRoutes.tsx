@@ -3,12 +3,14 @@ import { Route, Routes } from 'react-router-dom';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Loader } from '@cognite/cogs.js';
-import { FallbackWrapper } from 'components/FallbackWrapper';
+import { FallbackWrapper } from '@3d-management/components/FallbackWrapper';
 
 // lazy loads
-const AllModels = lazy(() => import('pages/AllModels'));
-const RevisionDetails = lazy(() => import('pages/RevisionDetails'));
-const NoAccessPage = lazy(() => import('pages/NoAccessPage'));
+const AllModels = lazy(() => import('@3d-management/pages/AllModels'));
+const RevisionDetails = lazy(
+  () => import('@3d-management/pages/RevisionDetails')
+);
+const NoAccessPage = lazy(() => import('@3d-management/pages/NoAccessPage'));
 
 export function ModelRoutes() {
   const { flow } = getFlow();

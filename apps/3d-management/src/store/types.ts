@@ -1,8 +1,8 @@
-import { AppState } from 'store/modules/App';
-import { TreeViewState } from 'store/modules/TreeView';
+import { AppState } from '@3d-management/store/modules/App';
+import { TreeViewState } from '@3d-management/store/modules/TreeView';
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { ToolbarState } from 'store/modules/toolbar';
+import { ToolbarState } from '@3d-management/store/modules/toolbar';
 
 export type RootState = {
   app: AppState;

@@ -1,28 +1,32 @@
 import styled from 'styled-components';
 import { Card, message, Modal } from 'antd';
 import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
-import { APP_TITLE, getContainer, DEFAULT_MARGIN_V } from 'utils';
-import { useMetrics } from 'hooks/useMetrics';
+import {
+  APP_TITLE,
+  getContainer,
+  DEFAULT_MARGIN_V,
+} from '@3d-management/utils';
+import { useMetrics } from '@3d-management/hooks/useMetrics';
 import React, { useState } from 'react';
 
-import { createLink } from 'utils/cdf-utilities';
+import { createLink } from '@3d-management/utils/cdf-utilities';
 import dayjs from 'dayjs';
-import Status from 'components/Status';
-import NotFound from 'pages/NotFound';
-import Spinner from 'components/Spinner';
-import { PageHeader } from 'components/PageHeader';
+import Status from '@3d-management/components/Status';
+import NotFound from '@3d-management/pages/NotFound';
+import Spinner from '@3d-management/components/Spinner';
+import { PageHeader } from '@3d-management/components/PageHeader';
 
-import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
-import ThreeDViewerWrapper from 'pages/RevisionDetails/components/ThreeDViewerWrapper';
+import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
+import ThreeDViewerWrapper from '@3d-management/pages/RevisionDetails/components/ThreeDViewerWrapper';
 
-import { RevisionLogs } from 'pages/RevisionDetails/components/RevisionLogs';
+import { RevisionLogs } from '@3d-management/pages/RevisionDetails/components/RevisionLogs';
 import {
   useRevisions,
   useRevisionLogs,
   useUpdateRevisionMutation,
   useDeleteRevisionMutation,
-} from 'hooks/revisions';
-import { useModels } from 'hooks/models/useModels';
+} from '@3d-management/hooks/revisions';
+import { useModels } from '@3d-management/hooks/models/useModels';
 
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';

@@ -1,5 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification } from 'utils';
+import { fireErrorNotification } from '@3d-management/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { HttpError } from '@cognite/sdk';
 

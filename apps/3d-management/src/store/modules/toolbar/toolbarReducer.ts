@@ -1,4 +1,7 @@
-import { Actions, ToolbarState } from 'store/modules/toolbar/types';
+import {
+  Actions,
+  ToolbarState,
+} from '@3d-management/store/modules/toolbar/types';
 
 function getInitialState(): ToolbarState {
   return {

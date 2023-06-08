@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFiles } from 'hooks/files/useFiles';
+import { useFiles } from '@3d-management/hooks/files/useFiles';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';

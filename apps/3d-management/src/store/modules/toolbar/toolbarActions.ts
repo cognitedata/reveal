@@ -3,10 +3,10 @@ import {
   GhostModeUpdated,
   SetNodePropertyFilter,
   SetNodePropertyLoadingState,
-} from 'store/modules/toolbar/types';
-import { RootState } from 'store';
+} from '@3d-management/store/modules/toolbar/types';
+import { RootState } from '@3d-management/store';
 
-import { NodePropertyFilterType } from 'utils';
+import { NodePropertyFilterType } from '@3d-management/utils';
 
 export const toggleGhostMode =
   (isEnabled?: boolean) =>

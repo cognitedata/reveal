@@ -5,18 +5,18 @@ import { screen } from '@testing-library/react';
 import {
   ToolbarTreeView,
   ToolbarTreeViewProps,
-} from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
+} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
 
 import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 
-import { toolbarTreeViewMswHandlers } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
+import { toolbarTreeViewMswHandlers } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import {
   fixtureModelId,
   fixtureRevisionId,
-} from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
+} from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
 import userEvent from '@testing-library/user-event';
 import { setupServer } from 'msw/node';
-import { renderWithProviders } from 'utils/test';
+import { renderWithProviders } from '@3d-management/utils/test';
 
 jest.mock('antd/lib/notification');
 

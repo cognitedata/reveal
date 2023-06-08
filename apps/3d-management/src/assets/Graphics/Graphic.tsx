@@ -1,7 +1,7 @@
 import React from 'react';
-import Favorites from 'assets/Graphics/EmptyStates/Favorites';
-import SearchEmpty from 'assets/Graphics/EmptyStates/SearchEmpty';
-import ThreeDModel from 'assets/Graphics/EmptyStates/ThreeDModel';
+import Favorites from '@3d-management/assets/Graphics/EmptyStates/Favorites';
+import SearchEmpty from '@3d-management/assets/Graphics/EmptyStates/SearchEmpty';
+import ThreeDModel from '@3d-management/assets/Graphics/EmptyStates/ThreeDModel';
 import { EmptyStateOptions } from '../../pages/AllModels/components/EmptyState/EmptyState';
 
 export const Graphic = ({ type }: { type: EmptyStateOptions }) => {

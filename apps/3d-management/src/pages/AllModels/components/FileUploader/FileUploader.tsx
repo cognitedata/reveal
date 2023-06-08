@@ -7,8 +7,11 @@ import mime from 'mime-types';
 import styled from 'styled-components';
 import { FileInfo, FileUploadResponse } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification, logToSentry } from 'utils/notifications';
-import { DEFAULT_MARGIN_V, getContainer, sleep } from 'utils';
+import {
+  fireErrorNotification,
+  logToSentry,
+} from '@3d-management/utils/notifications';
+import { DEFAULT_MARGIN_V, getContainer, sleep } from '@3d-management/utils';
 import { FileAddOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;

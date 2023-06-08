@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
+import { RootState } from '@3d-management/store';
 import React, { useEffect } from 'react';
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
@@ -10,8 +10,8 @@ import {
 import {
   setNodeFilterLoadingState,
   setNodePropertyFilter,
-} from 'store/modules/toolbar/toolbarActions';
-import { assignOrUpdateStyledNodeCollection } from 'utils/sdk/3dNodeStylingUtils';
+} from '@3d-management/store/modules/toolbar/toolbarActions';
+import { assignOrUpdateStyledNodeCollection } from '@3d-management/utils/sdk/3dNodeStylingUtils';
 
 export function useFilteredNodesHighlights({
   model,

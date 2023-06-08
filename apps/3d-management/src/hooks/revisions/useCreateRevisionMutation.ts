@@ -1,7 +1,7 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { CreateRevision3D, HttpError, Revision3D } from '@cognite/sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { fireErrorNotification, QUERY_KEY } from 'utils';
+import { fireErrorNotification, QUERY_KEY } from '@3d-management/utils';
 
 type CreateRevisionArgs = { modelId: number } & CreateRevision3D;
 

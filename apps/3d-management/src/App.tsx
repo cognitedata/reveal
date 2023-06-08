@@ -7,14 +7,14 @@ import {
   PageTitle,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import GlobalStyles from 'styles/GlobalStyles';
+import GlobalStyles from '@3d-management/styles/GlobalStyles';
 import { Provider } from 'react-redux';
-import configureStore from 'store';
-import theme from 'styles/theme';
-import { ModelRoutes } from 'ModelRoutes';
+import configureStore from '@3d-management/store';
+import theme from '@3d-management/styles/theme';
+import { ModelRoutes } from './ModelRoutes';
 import { Loader } from '@cognite/cogs.js';
 import { createBrowserHistory } from 'history';
-import { APP_TITLE, projectName } from 'utils';
+import { APP_TITLE, projectName } from '@3d-management/utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

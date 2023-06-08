@@ -7,15 +7,18 @@ import dayjs from 'dayjs';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import EmptyState from 'pages/AllModels/components/EmptyState';
-import { TableOperations } from 'pages/AllModels/components/TableOperations';
-import Thumbnail from 'components/Thumbnail';
+import EmptyState from '@3d-management/pages/AllModels/components/EmptyState';
+import { TableOperations } from '@3d-management/pages/AllModels/components/TableOperations';
+import Thumbnail from '@3d-management/components/Thumbnail';
 
-import { setSelectedModels, setModelTableState } from 'store/modules/App';
+import {
+  setSelectedModels,
+  setModelTableState,
+} from '@3d-management/store/modules/App';
 import { Model3D } from '@cognite/sdk';
-import { DEFAULT_MARGIN_V } from 'utils';
-import { AppState } from 'store/modules/App/types';
-import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
+import { DEFAULT_MARGIN_V } from '@3d-management/utils';
+import { AppState } from '@3d-management/store/modules/App/types';
+import { ThumbnailPreviewIcon } from '@3d-management/components/ThumbnailPreviewIcon';
 import { ColumnType } from 'antd/lib/table/interface';
 import { EmptyStateOptions } from '../EmptyState/EmptyState';
 

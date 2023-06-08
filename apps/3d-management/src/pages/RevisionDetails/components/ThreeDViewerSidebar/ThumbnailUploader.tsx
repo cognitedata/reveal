@@ -4,7 +4,7 @@ import { Modal, message } from 'antd';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { FileUploadResponse, HttpError } from '@cognite/sdk';
-import { fireErrorNotification } from 'utils/notifications';
+import { fireErrorNotification } from '@3d-management/utils/notifications';
 import {
   CogniteCadModel,
   Cognite3DViewer,

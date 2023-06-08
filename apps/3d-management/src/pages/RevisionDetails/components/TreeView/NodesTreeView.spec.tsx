@@ -3,17 +3,17 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import NodesTreeView, {
   NodesTreeViewProps,
-} from 'pages/RevisionDetails/components/TreeView/NodesTreeView';
+} from '@3d-management/pages/RevisionDetails/components/TreeView/NodesTreeView';
 import {
   TreeDataNode,
   TreeLoadMoreNode,
-} from 'pages/RevisionDetails/components/TreeView/types';
-import { node3dToTreeDataNode } from 'pages/RevisionDetails/components/TreeView/utils/converters';
+} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
+import { node3dToTreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/converters';
 import userEvent from '@testing-library/user-event';
-import { SelectedNode } from 'store/modules/TreeView';
-import { treeViewFocusContainerId } from 'pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import { convertKeysToSelectedNodes } from 'pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import { TrackedKeys } from 'pages/RevisionDetails/components/TreeView/hooks/useKeyboardHandler';
+import { SelectedNode } from '@3d-management/store/modules/TreeView';
+import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+import { convertKeysToSelectedNodes } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+import { TrackedKeys } from '@3d-management/pages/RevisionDetails/components/TreeView/hooks/useKeyboardHandler';
 
 const LOAD_MORE = 'Load more...';
 type ShortTreeNodeRecord = {

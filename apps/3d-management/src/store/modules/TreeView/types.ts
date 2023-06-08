@@ -1,7 +1,7 @@
 import {
   CustomDataNode,
   TreeDataNode,
-} from 'pages/RevisionDetails/components/TreeView/types';
+} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
 
 export type TreeIndex = number;
 export type TreeParent = {

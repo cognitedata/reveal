@@ -1,10 +1,10 @@
 import React, { MutableRefObject } from 'react';
 import { Tree, TreeProps } from 'antd';
-import { SelectedNode, TreeIndex } from 'store/modules/TreeView';
+import { SelectedNode, TreeIndex } from '@3d-management/store/modules/TreeView';
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
-} from 'pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+} from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
 import styled from 'styled-components';
 import {
   CustomDataNode,

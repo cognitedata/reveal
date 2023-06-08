@@ -1,4 +1,4 @@
-import { NodePropertyFilterType } from 'utils';
+import { NodePropertyFilterType } from '@3d-management/utils';
 
 export type ToolbarState = {
   ghostModeEnabled: boolean;

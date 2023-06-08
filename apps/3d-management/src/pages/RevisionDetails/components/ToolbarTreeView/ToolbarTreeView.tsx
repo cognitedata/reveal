@@ -1,14 +1,14 @@
 import TreeView, {
   NodesTreeViewRefType,
-} from 'pages/RevisionDetails/components/TreeView/NodesTreeView';
+} from '@3d-management/pages/RevisionDetails/components/TreeView/NodesTreeView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   TreeDataNode,
   TreeLoadMoreNode,
-} from 'pages/RevisionDetails/components/TreeView/types';
+} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
 import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'store';
+import { RootState } from '@3d-management/store';
 import {
   checkNodes,
   expandNodes,
@@ -20,14 +20,14 @@ import {
   selectNodes,
   TreeIndex,
   TreeViewState,
-} from 'store/modules/TreeView';
-import Spinner from 'components/Spinner';
+} from '@3d-management/store/modules/TreeView';
+import Spinner from '@3d-management/components/Spinner';
 import styled from 'styled-components';
-import { treeViewFocusContainerId } from 'pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import ErrorBoundary from 'components/ErrorBoundary';
+import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+import ErrorBoundary from '@3d-management/components/ErrorBoundary';
 import { Button, Title } from '@cognite/cogs.js';
-import { useViewerNodeClickListener } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
-import { useFilteredNodesHighlights } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
+import { useViewerNodeClickListener } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
+import { useFilteredNodesHighlights } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
 import { FallbackProps } from 'react-error-boundary';
 import { NodeInfoModal } from './NodeInfoModal';
 
