@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { useTranslation } from '@access-management/common/i18n';
 import { Tag, Typography } from 'antd';
-
 import { ColumnType } from 'antd/lib/table';
+
 import { ApiKeyObject } from '@cognite/sdk';
 
 import Actions from './Actions';
-import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
 

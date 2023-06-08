@@ -1,11 +1,13 @@
 import React from 'react';
 
+import {
+  TranslationKeys,
+  useTranslation,
+} from '@access-management/common/i18n';
 import { Form, Input } from 'antd';
+import { AZURE_APP_RESOURCE_ID } from '@access-management/utils/constants';
 
 import { Value } from './common';
-
-import { AZURE_APP_RESOURCE_ID } from 'utils/constants';
-import { TranslationKeys, useTranslation } from 'common/i18n';
 
 export type AzureADState = {
   appId: Value<string>;

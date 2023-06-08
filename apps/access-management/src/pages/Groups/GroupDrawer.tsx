@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Button as CogsButton } from '@cognite/cogs.js';
-import { Drawer, Form, Input, notification } from 'antd';
-import styled from 'styled-components';
-import { Group, GroupSpec } from '@cognite/sdk';
-import { useQueryClient } from '@tanstack/react-query';
 import { useRouteMatch } from 'react-router';
-import { useGroups, useUpdateGroup } from 'hooks';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@access-management/common/i18n';
+import { useQueryClient } from '@tanstack/react-query';
+import { Drawer, Form, Input, notification } from 'antd';
+import { useGroups, useUpdateGroup } from '@access-management/hooks';
+
+import { Button as CogsButton } from '@cognite/cogs.js';
+import { Group, GroupSpec } from '@cognite/sdk';
+
 import CapabilitiesSelector from './CapabilitiesSelector';
-import { useTranslation } from 'common/i18n';
 
 const Button = styled(CogsButton)`
   margin-right: 8px;

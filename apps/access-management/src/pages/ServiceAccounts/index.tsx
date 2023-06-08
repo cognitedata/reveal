@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+import { useTranslation } from '@access-management/common/i18n';
+import LegacyLoginFlowWarning from '@access-management/pages/IDP/LegacyLoginFlowWarning';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Form,
@@ -11,16 +14,18 @@ import {
   Table,
   notification,
 } from 'antd';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useGroups,
+  usePermissions,
+  useRefreshToken,
+} from '@access-management/hooks';
+import { sleep } from '@access-management/utils/utils';
+
 import { useSDK } from '@cognite/sdk-provider';
 
-import { sleep } from 'utils/utils';
-
-import { useGroups, usePermissions, useRefreshToken } from 'hooks';
-import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
-import columns from './columns';
 import { stringContains } from '../Groups/utils';
-import { useTranslation } from 'common/i18n';
+
+import columns from './columns';
 
 const { Option } = Select;
 

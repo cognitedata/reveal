@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
+import { useTranslation } from '@access-management/common/i18n';
+import { Select, Spin, Tooltip } from 'antd';
+
 import { SecurityCategory } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { Select, Spin, Tooltip } from 'antd';
-import { useTranslation } from 'common/i18n';
 
 const { Option } = Select;
 

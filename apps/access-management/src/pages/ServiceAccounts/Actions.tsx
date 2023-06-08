@@ -1,10 +1,12 @@
 import React from 'react';
-import { Modal, Dropdown, Menu, Typography, notification } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+
+import { useTranslation } from '@access-management/common/i18n';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Modal, Dropdown, Menu, Typography, notification } from 'antd';
+import { usePermissions, useRefreshToken } from '@access-management/hooks';
+
+import { Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions, useRefreshToken } from 'hooks';
-import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
 

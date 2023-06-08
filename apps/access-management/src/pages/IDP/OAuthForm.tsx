@@ -1,9 +1,12 @@
 import React from 'react';
 
+import {
+  TranslationKeys,
+  useTranslation,
+} from '@access-management/common/i18n';
 import { Form, Input } from 'antd';
 
 import { Value } from './common';
-import { TranslationKeys, useTranslation } from 'common/i18n';
 
 export type OAuthState = {
   clientId: Value<string>;
@@ -133,7 +136,7 @@ export const validateOAuthState = (
   _t: (key: TranslationKeys) => string,
   state: OAuthState,
   setState: (value: OAuthState) => void,
-  validateUrls: boolean = true
+  validateUrls = true
 ): boolean => {
   let failure = false;
   let newState = state;

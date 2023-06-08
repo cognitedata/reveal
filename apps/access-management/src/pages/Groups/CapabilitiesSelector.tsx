@@ -1,11 +1,13 @@
 import React, { forwardRef, useState } from 'react';
-import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
+
+import { useTranslation } from '@access-management/common/i18n';
+
 import { Button } from '@cognite/cogs.js';
+import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 
 import CapabilitiesList from './CapabilitiesList';
 import SingleCapabilityEditor from './SingleCapabilityEditor';
 import { isDeprecated } from './utils';
-import { useTranslation } from 'common/i18n';
 
 interface CapabilitiesSelectorProps {
   value: CogniteCapability;

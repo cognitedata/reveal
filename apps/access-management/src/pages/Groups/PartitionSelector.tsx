@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { useTranslation } from '@access-management/common/i18n';
 import Select from 'antd/lib/select';
-import { useTranslation } from 'common/i18n';
 
 interface PartitionSelectorProps {
   value: number[];

@@ -5,13 +5,13 @@ import { Radio, RadioChangeEvent } from 'antd';
 
 import { DataSet } from '@cognite/sdk';
 import { getScopeLabel, getCapabilityScopes } from './utils';
-import { RESOURCE_SELECTOR_LIMIT } from 'utils/constants';
+import { RESOURCE_SELECTOR_LIMIT } from '@access-management/utils/constants';
 
 import SecurityCategoriesSelector from './SecurityCategoriesSelector';
 import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@access-management/common/i18n';
 import SpaceIdsSelector from './SpaceIdsSelector';
 
 const SelectorContainer = styled.div`

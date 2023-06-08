@@ -1,8 +1,12 @@
 import React, { ChangeEvent, useState } from 'react';
-import { Body, Button, Checkbox, Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@access-management/common/i18n';
+
+import { Body, Button, Checkbox, Title } from '@cognite/cogs.js';
+
 import Modal, { ModalProps } from '../Modal/index';
-import { useTranslation } from 'common/i18n';
 
 type DeleteTableModalProps = {
   isOpen: boolean;

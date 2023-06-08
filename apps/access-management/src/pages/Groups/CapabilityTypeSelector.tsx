@@ -1,16 +1,20 @@
 import React, { ReactNode } from 'react';
+
 import styled from 'styled-components';
 
+import {
+  TranslationKeys,
+  useTranslation,
+} from '@access-management/common/i18n';
 import Select from 'antd/lib/select';
+import { getContainer } from '@access-management/utils/utils';
 
-import { getContainer } from 'utils/utils';
 import {
   getAclType,
   getCapabilityTypeGroups,
   getCapabilityFormattedName,
   getCapabilityDescription,
 } from './utils';
-import { TranslationKeys, useTranslation } from 'common/i18n';
 
 declare module 'antd/lib/select' {
   export interface OptionProps {

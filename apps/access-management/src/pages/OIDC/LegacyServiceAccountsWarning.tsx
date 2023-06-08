@@ -1,10 +1,16 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import CustomInfo from 'pages/components/CustomInfo';
-import { ServiceAccount } from '@cognite/sdk';
+
+import { useTranslation } from '@access-management/common/i18n';
+import CustomInfo from '@access-management/pages/components/CustomInfo';
+import {
+  usePermissions,
+  useDeleteServiceAccounts,
+} from '@access-management/hooks';
+
 import { getProject } from '@cognite/cdf-utilities';
-import { usePermissions, useDeleteServiceAccounts } from 'hooks';
-import { useTranslation } from 'common/i18n';
+import { ServiceAccount } from '@cognite/sdk';
 
 const LegacyServiceAccountsWarning = (props: {
   accounts: ServiceAccount[];

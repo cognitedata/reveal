@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { getContainer } from 'utils/utils';
+import { getContainer } from '@access-management/utils/utils';
 import { styleScope } from './styleScope';
 import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';

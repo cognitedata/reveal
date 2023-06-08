@@ -6,24 +6,27 @@ import {
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { Title, Loader, Button } from '@cognite/cogs.js';
-import Menu from 'antd/lib/menu';
-import { createLink, getCluster } from '@cognite/cdf-utilities';
-import APIKeys from 'pages/APIKeys';
-import Groups from 'pages/Groups';
-import IDP from 'pages/IDP';
-import OIDC from 'pages/OIDC';
-import UserProfiles from 'pages/UserProfiles';
-import SecurityCategories from 'pages/SecurityCategories';
-import ServiceAccounts from 'pages/ServiceAccounts';
+
+import { useTranslation } from '@access-management/common/i18n';
+import APIKeys from '@access-management/pages/APIKeys';
+import Groups from '@access-management/pages/Groups';
+import IDP from '@access-management/pages/IDP';
+import OIDC from '@access-management/pages/OIDC';
+import SecurityCategories from '@access-management/pages/SecurityCategories';
+import ServiceAccounts from '@access-management/pages/ServiceAccounts';
+import UserProfiles from '@access-management/pages/UserProfiles';
 import {
   useQueryClient,
   useIsFetching,
   useIsMutating,
 } from '@tanstack/react-query';
-import { useAuthConfiguration, usePermissions } from 'hooks';
-import { useTranslation } from 'common/i18n';
+import Menu from 'antd/lib/menu';
+import { useAuthConfiguration, usePermissions } from '@access-management/hooks';
+
+import { createLink, getCluster } from '@cognite/cdf-utilities';
+import { Title, Loader, Button } from '@cognite/cogs.js';
 
 export default function () {
   const { t } = useTranslation();

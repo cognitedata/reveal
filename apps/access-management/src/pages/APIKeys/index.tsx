@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 
-import { Col, Input, Checkbox, Row, Table } from 'antd';
+import { useTranslation } from '@access-management/common/i18n';
+import LegacyLoginFlowWarning from '@access-management/pages/IDP/LegacyLoginFlowWarning';
 import { useQuery } from '@tanstack/react-query';
+import { Col, Input, Checkbox, Row, Table } from 'antd';
+
 import { useSDK } from '@cognite/sdk-provider';
 
-import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
-import { useAPIKeyTableColumns } from './columns';
 import { stringContains } from '../Groups/utils';
-import { useTranslation } from 'common/i18n';
+
+import { useAPIKeyTableColumns } from './columns';
 
 export default function APIKeys() {
   const { t } = useTranslation();

@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { isEqual } from 'lodash';
-import { Select, Tag, notification } from 'antd';
-import { Icon, Button } from '@cognite/cogs.js';
+
+import { useTranslation } from '@access-management/common/i18n';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Select, Tag, notification } from 'antd';
+import {
+  useGroups,
+  usePermissions,
+  useRefreshToken,
+} from '@access-management/hooks';
+import { isEqual } from 'lodash';
+
+import { Icon, Button } from '@cognite/cogs.js';
+import { ServiceAccount } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { ServiceAccount } from '@cognite/sdk';
-import { useGroups, usePermissions, useRefreshToken } from 'hooks';
 import { stringContains } from '../Groups/utils';
-import { useTranslation } from 'common/i18n';
 
 function GroupTag({ id }: { id: number }) {
   const sdk = useSDK();

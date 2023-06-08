@@ -1,16 +1,22 @@
 import React from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useHistory, useRouteMatch } from 'react-router';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@access-management/common/i18n';
+import CustomInfo from '@access-management/pages/components/CustomInfo';
+import { hasAnyValidGroupForOIDC } from '@access-management/pages/Groups/utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { notification } from 'antd';
+import {
+  useAuthConfiguration,
+  useGroups,
+  usePermissions,
+} from '@access-management/hooks';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { notification } from 'antd';
-import styled from 'styled-components';
-import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
-import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import CustomInfo from 'pages/components/CustomInfo';
-import { useTranslation } from 'common/i18n';
 
 const LegacyLoginFlowWarning = () => {
   const { t } = useTranslation();
@@ -31,8 +37,9 @@ const LegacyLoginFlowWarning = () => {
     hasAnyValidGroup;
 
   const history = useHistory();
-  const match =
-    useRouteMatch<{ tenant: string; path: string }>('/:tenant/:path');
+  const match = useRouteMatch<{ tenant: string; path: string }>(
+    '/:tenant/:path'
+  );
 
   const { mutate: disableLegacyLoginFlow } = useMutation(
     () =>

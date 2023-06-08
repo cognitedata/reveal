@@ -1,3 +1,4 @@
+import { useTranslation } from '@access-management/common/i18n';
 import {
   useMutation,
   UseMutationOptions,
@@ -5,15 +6,14 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { notification } from 'antd';
+import { LEGACY_SESSION_TOKEN_KEY } from '@access-management/utils/constants';
+import { sleep } from '@access-management/utils/utils';
+
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
-import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient, Group } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
-import { useTranslation } from 'common/i18n';
-
-import { LEGACY_SESSION_TOKEN_KEY } from 'utils/constants';
-import { sleep } from 'utils/utils';
 
 export const useGroups = (all = false) => {
   const sdk = useSDK();

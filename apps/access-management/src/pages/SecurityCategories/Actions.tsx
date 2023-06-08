@@ -1,9 +1,11 @@
 import React from 'react';
-import { Menu, Modal, Dropdown, notification } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+
+import { useTranslation } from '@access-management/common/i18n';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Menu, Modal, Dropdown, notification } from 'antd';
+
+import { Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { useTranslation } from 'common/i18n';
 
 export default function Actions({ id }: { id: number }) {
   const { t } = useTranslation();

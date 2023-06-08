@@ -1,11 +1,13 @@
 import React from 'react';
-import { Checkbox, Form, notification } from 'antd';
-import { useSDK } from '@cognite/sdk-provider';
-import { Icon, Button } from '@cognite/cogs.js';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouteMatch } from 'react-router';
-import { UserProfilesConfigurationWarning } from 'pages/components/UserProfilesConfigurationWarning';
-import { useTranslation } from 'common/i18n';
+
+import { UserProfilesConfigurationWarning } from '@access-management/pages/components/UserProfilesConfigurationWarning';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Checkbox, Form, notification } from 'antd';
+import { useTranslation } from '@access-management/common/i18n';
+
+import { Icon, Button } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
 
 const formItemLayout = {
   labelCol: {

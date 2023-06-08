@@ -1,4 +1,4 @@
-import { styleScope } from 'styles/styleScope';
+import { styleScope } from '@access-management/styles/styleScope';
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
 export const getContainer = () => {

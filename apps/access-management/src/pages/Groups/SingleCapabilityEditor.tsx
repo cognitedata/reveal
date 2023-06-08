@@ -17,7 +17,10 @@ import ScopesSelector from './ScopesSelector';
 import ActionsSelector from './ActionsSelector';
 import CapabilityTypeSelector from './CapabilityTypeSelector';
 
-import { TranslationKeys, useTranslation } from 'common/i18n';
+import {
+  TranslationKeys,
+  useTranslation,
+} from '@access-management/common/i18n';
 
 interface SingleCapabilityEditorProps {
   visible: boolean;

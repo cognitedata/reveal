@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Icon, Tooltip, Infobox } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@access-management/common/i18n';
+
+import { Button, Icon, Tooltip, Infobox } from '@cognite/cogs.js';
+
 import DeleteConfirmModal from '../DeleteConfirmModal';
-import { useTranslation } from 'common/i18n';
 
 const CustomInfo = (props: any) => {
   const { t } = useTranslation();

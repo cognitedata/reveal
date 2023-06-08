@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@access-management/common/i18n';
+import { TreeSelect, Tooltip } from 'antd';
+import unionBy from 'lodash/unionBy';
+import { DB_TABLE_SEPARATOR } from '@access-management/utils/constants';
+import { getContainer } from '@access-management/utils/utils';
+
 import { Icon } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { TreeSelect, Tooltip } from 'antd';
-import styled from 'styled-components';
-import unionBy from 'lodash/unionBy';
-
-import { getContainer } from 'utils/utils';
-import { DB_TABLE_SEPARATOR } from 'utils/constants';
-import { useTranslation } from 'common/i18n';
 
 const TreeLabel = styled.span`
   margin: 0 8px;

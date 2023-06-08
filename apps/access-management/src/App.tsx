@@ -1,8 +1,14 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+import { translations } from '@access-management/common/i18n';
+import Home from '@access-management/pages/Home';
+import GlobalStyles from '@access-management/styles/GlobalStyles';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   getEnv,
@@ -11,10 +17,6 @@ import {
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import GlobalStyles from 'styles/GlobalStyles';
-import Home from 'pages/Home';
-import { translations } from 'common/i18n';
 
 const queryClient = new QueryClient({
   defaultOptions: {

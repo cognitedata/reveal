@@ -1,13 +1,17 @@
-import { useSDK } from '@cognite/sdk-provider';
 import React, { useState } from 'react';
+
+import { useTranslation } from '@access-management/common/i18n';
+import { AccessConfigurationWarning } from '@access-management/pages/components/AccessConfigurationWarning';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@cognite/cogs.js';
 import { Col, Form, Input, Modal, Row, Table, notification } from 'antd';
-import { getContainer } from 'utils/utils';
-import columns from './columns';
+import { getContainer } from '@access-management/utils/utils';
+
+import { Button } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { stringContains } from '../Groups/utils';
-import { AccessConfigurationWarning } from 'pages/components/AccessConfigurationWarning';
-import { useTranslation } from 'common/i18n';
+
+import columns from './columns';
 
 export default function SecurityCategories() {
   const { t } = useTranslation();

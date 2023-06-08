@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { useTranslation } from '@access-management/common/i18n';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Alert,
   Button,
@@ -12,25 +14,14 @@ import {
   Tooltip,
   notification,
 } from 'antd';
+import { usePermissions } from '@access-management/hooks';
+import {
+  GOOGLE_LOGIN_URL,
+  GOOGLE_LOGOUT_URL,
+  GOOGLE_TOKEN_URL,
+} from '@access-management/utils/constants';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from 'hooks';
-import AzureADForm, {
-  AzureADConfiguration,
-  AzureADState,
-  getAzureConfiguration,
-  validateAzureState,
-} from './AzureADForm';
-
-import OAuthForm, {
-  OAuth2Configuration,
-  OAuthState,
-  getOAuth2Configuration,
-  validateOAuthState,
-} from './OAuthForm';
-
-import { Value, validateDomainInput } from './common';
 
 import {
   Application,
@@ -38,14 +29,20 @@ import {
   COGNITE_APPLICATIONS,
   FUSION_APPLICATION,
 } from './applications';
+import AzureADForm, {
+  AzureADConfiguration,
+  AzureADState,
+  getAzureConfiguration,
+  validateAzureState,
+} from './AzureADForm';
+import { Value, validateDomainInput } from './common';
 import LegacyLoginFlowWarning from './LegacyLoginFlowWarning';
-import {
-  GOOGLE_LOGIN_URL,
-  GOOGLE_LOGOUT_URL,
-  GOOGLE_TOKEN_URL,
-} from 'utils/constants';
-
-import { useTranslation } from 'common/i18n';
+import OAuthForm, {
+  OAuth2Configuration,
+  OAuthState,
+  getOAuth2Configuration,
+  validateOAuthState,
+} from './OAuthForm';
 
 export type CurrentAuth = {
   type: string | undefined;

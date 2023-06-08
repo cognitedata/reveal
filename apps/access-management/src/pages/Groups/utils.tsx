@@ -1,3 +1,6 @@
+import { TranslationKeys } from '@access-management/common/i18n';
+import queryString from 'query-string';
+
 import { cognite } from '@cognite/acl-protos';
 import {
   AclGroups,
@@ -5,8 +8,6 @@ import {
   Group,
   SingleCogniteCapability,
 } from '@cognite/sdk';
-import { TranslationKeys } from 'common/i18n';
-import queryString from 'query-string';
 
 const capitalize = (s: string) =>
   s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();

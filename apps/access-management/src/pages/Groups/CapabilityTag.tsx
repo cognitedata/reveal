@@ -1,8 +1,11 @@
 import React from 'react';
-import { SingleCogniteCapability } from '@cognite/sdk';
+
+import { useTranslation } from '@access-management/common/i18n';
 import { Tag } from 'antd';
+
+import { SingleCogniteCapability } from '@cognite/sdk';
+
 import { getCapabilityName } from './utils';
-import { useTranslation } from 'common/i18n';
 
 type Props = {
   capability: SingleCogniteCapability;

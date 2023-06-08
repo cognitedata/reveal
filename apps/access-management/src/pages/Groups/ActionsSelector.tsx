@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
+import { useTranslation } from '@access-management/common/i18n';
 import Checkbox, { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
 import { getCapabilityActions, getActionLabel } from './utils';
-import { useTranslation } from 'common/i18n';
 
 interface ActionsSelectorProps {
   capabilityType: string;

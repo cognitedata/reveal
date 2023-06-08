@@ -1,6 +1,8 @@
 import * as React from 'react';
+
+import { useTranslation } from '@access-management/common/i18n';
+
 import CustomInfo from './CustomInfo';
-import { useTranslation } from 'common/i18n';
 
 export const UserProfilesConfigurationWarning = () => {
   const { t } = useTranslation();

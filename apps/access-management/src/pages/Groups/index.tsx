@@ -1,7 +1,10 @@
-import { useSDK } from '@cognite/sdk-provider';
 import React, { useEffect, useState } from 'react';
+import { useRouteMatch } from 'react-router';
+
+import { useTranslation } from '@access-management/common/i18n';
+import { AccessConfigurationWarning } from '@access-management/pages/components/AccessConfigurationWarning';
+import LegacyServiceAccountsWarning from '@access-management/pages/OIDC/LegacyServiceAccountsWarning';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Icon } from '@cognite/cogs.js';
 import {
   notification,
   Alert,
@@ -15,24 +18,23 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { getContainer } from 'utils/utils';
-import { Group } from '@cognite/sdk';
-import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
-
-import LegacyServiceAccountsWarning from 'pages/OIDC/LegacyServiceAccountsWarning';
 import {
   useAuthConfiguration,
   useGroups,
   usePermissions,
   useListServiceAccounts,
-} from 'hooks';
+} from '@access-management/hooks';
+import { getContainer } from '@access-management/utils/utils';
+
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import GroupDrawer from './GroupDrawer';
+import { Button, Icon } from '@cognite/cogs.js';
+import { Group } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import CapabilityTag from './CapabilityTag';
+import GroupDrawer from './GroupDrawer';
 import { isDeprecated, stringContains } from './utils';
-import { AccessConfigurationWarning } from 'pages/components/AccessConfigurationWarning';
-import { useTranslation } from 'common/i18n';
 
 const { Text } = Typography;
 

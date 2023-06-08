@@ -1,9 +1,12 @@
 import React from 'react';
-import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+
+import { useTranslation } from '@access-management/common/i18n';
 import List from 'antd/lib/list';
+
+import { Button } from '@cognite/cogs.js';
+import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
+
 import CapabilityTag from './CapabilityTag';
-import { useTranslation } from 'common/i18n';
 
 interface CapabilitiesTableProps {
   capabilities: CogniteCapability;

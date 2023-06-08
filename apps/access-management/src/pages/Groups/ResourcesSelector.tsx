@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
+
+import { useTranslation } from '@access-management/common/i18n';
 import { Select, Spin } from 'antd';
+
 import {
   SdkResourceType,
   useInfiniteList,
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
+
 import { stringContains } from './utils';
-import { useTranslation } from 'common/i18n';
 
 const { Option } = Select;
 

@@ -1,17 +1,23 @@
 import React from 'react';
+import { useRouteMatch } from 'react-router';
+
+import styled from 'styled-components';
+
+import {
+  TranslationKeys,
+  useTranslation,
+} from '@access-management/common/i18n';
+import { StyledHelpIcon } from '@access-management/pages/components/CustomInfo';
+import { OIDCConfigurationWarning } from '@access-management/pages/components/OIDCConfigurationWarning';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Checkbox, Form, Input, Select, notification } from 'antd';
 import InputNumber from 'antd/lib/input-number';
+import { useAuthConfiguration } from '@access-management/hooks';
+import { getContainer } from '@access-management/utils/utils';
+
+import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { OidcConfiguration } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getContainer } from 'utils/utils';
-import { useRouteMatch } from 'react-router';
-import { useAuthConfiguration } from 'hooks';
-import { StyledHelpIcon } from 'pages/components/CustomInfo';
-import styled from 'styled-components';
-import { OIDCConfigurationWarning } from 'pages/components/OIDCConfigurationWarning';
-import { TranslationKeys, useTranslation } from 'common/i18n';
 
 const formItemLayout = {
   labelCol: {
