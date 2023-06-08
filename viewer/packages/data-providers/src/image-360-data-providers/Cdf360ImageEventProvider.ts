@@ -358,7 +358,6 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         })
         .autoPagingToArray();
 
-      console.log('Applying filter!');
       const assetIds = annotationArray
         .filter(annotation => annotationFilter(annotation))
         .map(annotation => {
