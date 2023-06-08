@@ -1,6 +1,4 @@
-import { getTenant } from '@platypus-app/utils/tenant-utils';
-
-import { getCluster } from '@cognite/cdf-utilities';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 
@@ -48,7 +46,7 @@ export async function dataQualityFetch<
 >): Promise<TData> {
   const cdfClient = getCogniteSDKClient();
   const cluster = getCluster();
-  const tenant = getTenant();
+  const tenant = getProject();
 
   const baseUrl = `https://${cluster}`;
 

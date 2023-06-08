@@ -20,7 +20,6 @@ import {
 import {
   useCurrentResourceId,
   useQueryString,
-  useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
 import {
   useAssetFilters,
@@ -29,10 +28,12 @@ import {
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
   useBreakJourneyPromptToggle,
   useFlagOverlayNavigation,
+  useGetJourney,
   useJourneyLength,
   usePushJourney,
 } from '../../hooks';
@@ -47,11 +48,12 @@ export const AssetSearchResultView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [pushJourney] = usePushJourney();
+  const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected asset's id.
-  const selectedAssetId = useSelectedResourceId();
+  const selectedAssetId = getSelectedResourceId('asset', firstJourney);
 
   const handleViewChange = (nextView: AssetViewMode) => {
     setAssetView(nextView);
@@ -113,7 +115,7 @@ export const AssetSearchResultView = () => {
         />
       </SearchResultWrapper>
 
-      {Boolean(selectedAssetId) && (
+      {!isDetailsOverlayEnabled && Boolean(selectedAssetId) && (
         <SearchResultWrapper>
           <Routes>
             <Route

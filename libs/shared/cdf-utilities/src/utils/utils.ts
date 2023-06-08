@@ -1,12 +1,22 @@
 import queryString from 'query-string';
 
+import { unifiedSignInAppName, unifiedSigninUrls } from '../common';
+
 export const getQueryParameter = (parameterKey: string) => {
   const parameters = queryString.parse(window.location.search) ?? {};
   return parameters[parameterKey] ?? '';
 };
 
-export const getProject = () =>
-  new URL(window.location.href).pathname.split('/')[1];
+export const getProject = () => {
+  // if unified signin, the url is apps.cognite.com/cdf/project
+  // otherwise is fusion.cognite.com/project
+  // when splitting, for fusion index is 1, for /cdf is 2
+  const projectPathParamLocation = isUsingUnifiedSignin() ? 2 : 1;
+
+  return new URL(window.location.href).pathname.split('/')[
+    projectPathParamLocation
+  ];
+};
 
 export const getCluster = () => {
   const cluster = getQueryParameter('cluster');
@@ -16,6 +26,17 @@ export const getCluster = () => {
 export const getEnv = () => {
   const env = getQueryParameter('env');
   return Array.isArray(env) ? env[0] : env;
+};
+
+export const getOrganization = () => {
+  if (isUsingUnifiedSignin()) {
+    const organization = getQueryParameter('organization');
+    return Array.isArray(organization) ? organization[0] : organization;
+  }
+
+  // otherwise the organization is in the subdomain
+  // https://cog-appdev.dev.fusion.cogniteapp.com/
+  return window.location.hostname.split('.')[0];
 };
 
 export const getUrl = (
@@ -36,20 +57,27 @@ export const createLink = (
   opts?: queryString.StringifyOptions
 ): string => {
   // No more base project name
+  const cdfAppName = isUsingUnifiedSignin() ? `/${unifiedSignInAppName}` : '';
   const project = getProject() || '';
   const env = getEnv();
   const cluster = getCluster();
+  const organization = isUsingUnifiedSignin() ? getOrganization() : '';
   const query = queryString.stringify(
-    { ...queries, ...(env ? { env } : {}), ...(cluster ? { cluster } : {}) },
+    {
+      ...queries,
+      ...(env ? { env } : {}),
+      ...(cluster ? { cluster } : {}),
+      ...(organization ? { organization } : {}),
+    },
     opts
   );
   if (query.length > 0) {
-    return `/${project}${path}?${query}`;
+    return `${cdfAppName}/${project}${path}?${query}`;
   }
   if (path.length > 0 && path !== '/') {
-    return `/${project}${path}`;
+    return `${cdfAppName}/${project}${path}`;
   }
-  return `/${project}`;
+  return `${cdfAppName}/${project}`;
 };
 
 /**
@@ -115,4 +143,11 @@ export const getEnvironment = () => {
 export const isValidEmail = (email: string) => {
   // Just checking by length as it's super tricky and fragile to check by char here.
   return /^.{1,64}@.{1,255}$/.test(email);
+};
+
+export const isUsingUnifiedSignin = () => {
+  return (
+    unifiedSigninUrls.includes(window.location.host) &&
+    window.location.pathname.startsWith(`/${unifiedSignInAppName}`)
+  );
 };

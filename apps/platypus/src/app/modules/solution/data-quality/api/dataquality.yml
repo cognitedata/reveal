@@ -29,7 +29,7 @@ paths:
               $ref: "#/components/schemas/DataSourceCreateRequest"
         required: true
       x-capability:
-      - "DataSourcesAdminAcl:WRITE"
+      - "DatamodelsAcl:WRITE"
       responses:
         "200":
           $ref: "#/components/responses/DataSourceListResponse"
@@ -53,7 +53,7 @@ paths:
       - $ref: "#/components/parameters/project"
       - $ref: "#/components/parameters/Cursor"
       x-capability:
-      - "DataSourcesAclAdmin:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/DataSourceListResponseWithCursor"
@@ -78,7 +78,7 @@ paths:
               $ref: "#/components/schemas/DataSourceListIdsRequest"
         required: true
       x-capability:
-      - "DataSourcesAdminAcl:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/DataSourceListResponse"
@@ -102,7 +102,7 @@ paths:
               $ref: "#/components/schemas/DataSourceListIdsRequest"
         required: true
       x-capability:
-      - "DataSourcesAclAdmin:WRITE"
+      - "DatamodelsAcl:WRITE"
       responses:
         "200":
           $ref: "#/components/responses/DataSourceListIdsResponse"
@@ -131,7 +131,7 @@ paths:
               $ref: "#/components/schemas/RulesetCreateRequest"
         required: true
       x-capability:
-      - "RulesetsAdminAcl:WRITE"
+      - "DatamodelsAcl:WRITE"
       responses:
         "200":
           $ref: "#/components/responses/RulesetListResponse"
@@ -156,7 +156,7 @@ paths:
       - $ref: "#/components/parameters/dataSourceId"
       - $ref: "#/components/parameters/Cursor"
       x-capability:
-      - "RulesetsAclAdmin:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/RulesetListResponseWithCursor"
@@ -182,7 +182,7 @@ paths:
               $ref: "#/components/schemas/RulesetListIdsRequest"
         required: true
       x-capability:
-      - "RulesetAdminAcl:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/RulesetListResponse"
@@ -207,7 +207,7 @@ paths:
               $ref: "#/components/schemas/RulesetListIdsRequest"
         required: true
       x-capability:
-      - "RulesetsAclAdmin:WRITE"
+      - "DatamodelsAcl:WRITE"
       responses:
         "200":
           $ref: "#/components/responses/RulesetListIdsResponse"
@@ -237,7 +237,7 @@ paths:
               $ref: "#/components/schemas/RuleCreateRequest"
         required: true
       x-capability:
-      - "RulesAdminAcl:WRITE"
+      - "DatamodelsAcl:WRITE"
       responses:
         "200":
           $ref: "#/components/responses/RuleListResponse"
@@ -263,7 +263,7 @@ paths:
       - $ref: "#/components/parameters/rulesetId"
       - $ref: "#/components/parameters/Cursor"
       x-capability:
-      - "RulesAclAdmin:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/RuleListResponseWithCursor"
@@ -290,7 +290,7 @@ paths:
               $ref: "#/components/schemas/RuleListIdsRequest"
         required: true
       x-capability:
-      - "RuleAdminAcl:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/RuleListResponse"
@@ -316,7 +316,7 @@ paths:
               $ref: "#/components/schemas/RuleListIdsRequest"
         required: true
       x-capability:
-      - "RuleAclAdmin:WRITE"
+      - "DatamodelsAcl:WRITE"
       responses:
         "200":
           $ref: "#/components/responses/RuleListIdsResponse"
@@ -339,10 +339,27 @@ paths:
       - $ref: "#/components/parameters/dataSourceId"
       - $ref: "#/components/parameters/Cursor"
       x-capability:
-      - "RulesAclAdmin:READ"
+      - "DatamodelsAcl:READ"
       responses:
         "200":
           $ref: "#/components/responses/RuleListResponseWithCursor"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validate":
+    post:
+      tags:
+      - Validation
+      summary: Start a validation job for a data source.
+      description: >-
+        A validation job will be started on the current data source and all its rules.
+      operationId: validateDataSource
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      x-capability:
+      - "DatamodelsAcl:READ"
+      responses:
         "400":
           $ref: "#/components/responses/ErrorResponse"
 

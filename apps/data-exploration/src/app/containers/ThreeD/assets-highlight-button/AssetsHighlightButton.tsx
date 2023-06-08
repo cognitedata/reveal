@@ -38,8 +38,9 @@ const AssetsHighlightButton = ({
   const { data: assetMappings } = useInfiniteAssetMappings(
     threeDModel?.modelId,
     threeDModel?.revisionId,
-    1000
+    threeDModel
   );
+
   // Nothing loaded yet, so index is 0 - 1.
   const loadedPagesIndex = useRef(-1);
 

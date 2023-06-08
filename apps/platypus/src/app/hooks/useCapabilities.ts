@@ -1,13 +1,14 @@
 import {
-  checkPermissions,
-  KeysOfSCC,
   Capability,
   Combine,
   CombinedSCC,
+  KeysOfSCC,
+  checkPermissions,
 } from '@platypus-app/utils/capabilities';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { getTenant } from '@platypus-app/utils/tenant-utils';
 import { useQuery } from '@tanstack/react-query';
+
+import { getProject } from '@cognite/cdf-utilities';
 
 import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 
@@ -17,7 +18,7 @@ export function useCapabilities<T extends KeysOfSCC>(
   options?: { space?: string; checkAll?: boolean }
 ) {
   const { space, checkAll } = options || {};
-  const tenant = getTenant();
+  const tenant = getProject();
   const cdfClient = getCogniteSDKClient();
   const {
     data: token,

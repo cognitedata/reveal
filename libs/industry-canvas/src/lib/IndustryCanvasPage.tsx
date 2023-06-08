@@ -354,7 +354,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const handleGoBackToIndustryCanvasButtonClick = () => {
     navigate(
-      createLink('/explore/industryCanvas', {
+      createLink('/industrial-canvas', {
         [SEARCH_QUERY_PARAM_KEY]: queryString,
       })
     );

@@ -2048,12 +2048,20 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal@^4.1.2":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
-  integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
+"@cognite/reveal-react-components@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.1.1.tgz#bc02dd8efd805cec77a705828075ff22ad742773"
+  integrity sha512-9ysD9tOc9texkUQJ5kT4SNFs1hS9c4v3yiXzH3+r5FYHBZJoHD13Es36TfqMoi2fIMOHG7mKmbOUQWPt1bAByw==
   dependencies:
-    "@tweenjs/tween.js" "18.6.4"
+    lodash "^4.17.21"
+    style-loader "^3.3.3"
+
+"@cognite/reveal@4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.3.1.tgz#afd1f5043f428676fde729bac76cbaa5d4a41280"
+  integrity sha512-Qwwy7UxejCd8yQ3Bfn6j3qAV2JFf8M4NdVrko/5TXFcfGC9GcjP+pliP5KCLf3WDxN+malOok5dyTOEEqNlHGw==
+  dependencies:
+    "@tweenjs/tween.js" "19.0.0"
     assert "2.0.0"
     async-mutex "0.4.0"
     glslify "7.1.1"
@@ -2061,17 +2069,18 @@
     html2canvas "^1.4.1"
     lodash "4.17.21"
     loglevel "1.8.1"
-    mixpanel-browser "2.45.0"
+    mixpanel-browser "2.47.0"
     path-browserify "1.0.1"
-    rxjs "7.8.0"
+    random-seed "0.3.0"
+    rxjs "7.8.1"
     skmeans "0.11.3"
     sparse-octree "7.1.6"
-    three-stdlib "2.21.8"
+    three-stdlib "2.23.4"
 
-"@cognite/reveal@^4.2.2":
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.2.tgz#1bdffa7defaf90ff00ea5e89ae4e908d2d52b82e"
-  integrity sha512-BU/TGWsXYx1PjXZVHn0yBinDvLfpfk6umXm76yPkOKx5tlgBpq1/gSELnfnZUKZ/l2YROGvniGMTaUNyBV9nzw==
+"@cognite/reveal@^4.1.2":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.2.0.tgz#b0202bfbbf5ddf3b74c4a4b9adfb0c4a26136e24"
+  integrity sha512-99GJPFFqetYHEFxNoyxnnYpwXtHyZ2+fDtHi6vv4Z9bd+UmPuT8/m4n4HRDvJP6qkwrvbRKSuJA+Li5/VV0CLA==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
@@ -7539,10 +7548,15 @@
   dependencies:
     "@turf/helpers" "^6.5.0"
 
-"@tweenjs/tween.js@18.6.4":
+"@tweenjs/tween.js@18.6.4", "@tweenjs/tween.js@~18.6.4":
   version "18.6.4"
   resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-18.6.4.tgz#40a3d0a93647124872dec8e0fd1bd5926695b6ca"
   integrity sha512-lB9lMjuqjtuJrx7/kOkqQBtllspPIN+96OvTCeJ2j5FEzinoAXTdAMFnDAQT1KVPRlnYfBrqxtqP66vDM40xxQ==
+
+"@tweenjs/tween.js@19.0.0", "@tweenjs/tween.js@^19.0.0":
+  version "19.0.0"
+  resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-19.0.0.tgz#93d3169f665ddc184c3b1b7a1910bf7df3dfb5da"
+  integrity sha512-QVbvSlnP7FcjKr1edg460BbUlpdGzmIOfvpsvHCj3JPIVZ9S9KeQLk9mB24VlDzPIl/a/ehAZPE95xFsmqm+pQ==
 
 "@types/aria-query@^5.0.1":
   version "5.0.1"
@@ -7890,6 +7904,11 @@
   integrity sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==
   dependencies:
     "@types/ms" "*"
+
+"@types/draco3d@^1.4.0":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@types/draco3d/-/draco3d-1.4.2.tgz#7faccb809db2a5e19b9efb97c5f2eb9d64d527ea"
+  integrity sha512-goh23EGr6CLV6aKPwN1p8kBD/7tT5V/bLpToSbarKrwVejqNrspVrv8DhliteYkkhZYrlq/fwKZRRUzH4XN88w==
 
 "@types/emscripten@^1.38.0":
   version "1.39.6"
@@ -8578,6 +8597,11 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
+"@types/stats.js@*":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@types/stats.js/-/stats.js-0.17.0.tgz#0ed81d48e03b590c24da85540c1d952077a9fe20"
+  integrity sha512-9w+a7bR8PeB0dCT/HBULU2fMqf6BAzvKbxFboYhmDtDkKPiyXYbjoe2auwsXlEFI7CFNMF1dCv3dFH5Poy9R1w==
+
 "@types/styled-components@5.1.26":
   version "5.1.26"
   resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.26.tgz#5627e6812ee96d755028a98dae61d28e57c233af"
@@ -8614,12 +8638,16 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/three@0.149.0":
-  version "0.149.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.149.0.tgz#f48c03ffcf35b2d196f3532b51bc845e96f6090e"
-  integrity sha512-fgNBm9LWc65ER/W0cvoXdC0iMy7Ke9e2CONmEr6Jt8sDSY3sw4DgOubZfmdZ747dkPhbQrgRQAWwDEr2S/7IEg==
+"@types/three@0.152.0":
+  version "0.152.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.152.0.tgz#23d8a61461bac007e56dc0c0081fe22ca1e38421"
+  integrity sha512-9QdaV5bfZEqeQi0xkXLdnoJt7lgYZbppdBAgJSWRicdtZoCYJ34nS2QkdeuzXt+UXExofk4OWqMzdX71HeDOVg==
   dependencies:
+    "@tweenjs/tween.js" "~18.6.4"
+    "@types/stats.js" "*"
     "@types/webxr" "*"
+    fflate "~0.6.9"
+    lil-gui "~0.17.0"
 
 "@types/through@*":
   version "0.0.30"
@@ -8708,6 +8736,11 @@
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.1.tgz#4908349419104bd476a4252d04e4c3abb496748d"
   integrity sha512-xlFXPfgJR5vIuDefhaHuUM9uUgvPaXB6GKdXy2gdEh8gBWQZ2ul24AJz3foUd8NNKlSTQuWYJpCb1/pL81m1KQ==
+
+"@types/webxr@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.2.tgz#5d9627b0ffe223aa3b166de7112ac8a9460dc54f"
+  integrity sha512-szL74BnIcok9m7QwYtVmQ+EdIKwbjPANudfuvDrAF8Cljg9MKUlIoc1w5tjj9PMpeSH3U1Xnx//czQybJ0EfSw==
 
 "@types/ws@^8.5.1":
   version "8.5.4"
@@ -16245,7 +16278,7 @@ fflate@^0.4.4:
   resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.4.8.tgz#f90b82aefbd8ac174213abb338bd7ef848f0f5ae"
   integrity sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==
 
-fflate@^0.6.9:
+fflate@^0.6.9, fflate@~0.6.9:
   version "0.6.10"
   resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.6.10.tgz#5f40f9659205936a2d18abf88b2e7781662b6d43"
   integrity sha512-IQrh3lEPM93wVCEczc9SaAOvkmcoQn/G8Bo1e8ZPlY3X3bnAxWaBdvTdvM1hP62iZp0BXWDy4vTAy4fF0+Dlpg==
@@ -21332,6 +21365,11 @@ license-webpack-plugin@^4.0.2:
   dependencies:
     webpack-sources "^3.0.0"
 
+lil-gui@~0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/lil-gui/-/lil-gui-0.17.0.tgz#b41ae55d0023fcd9185f7395a218db0f58189663"
+  integrity sha512-MVBHmgY+uEbmJNApAaPbtvNh1RCAeMnKym82SBjtp5rODTYKWtM+MXHCifLe2H2Ti1HuBGBtK/5SyG4ShQ3pUQ==
+
 lilconfig@^2.0.3, lilconfig@^2.0.5, lilconfig@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.6.tgz#32a384558bd58af3d4c6e077dd1ad1d397bc69d4"
@@ -22860,6 +22898,11 @@ mixpanel-browser@2.45.0, mixpanel-browser@^2.45.0:
   version "2.45.0"
   resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.45.0.tgz#a2973be5b66e6d2799ef95a1e55b8ad8eede57e8"
   integrity sha512-PQ1DaTk68yyYtLA0iejmzPA9iNDhT4uIZpqZjRTw7HWpYfl123fydHb2laKanaKjm8YDmrGGz3+xZ4Q6joogyg==
+
+mixpanel-browser@2.47.0:
+  version "2.47.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.47.0.tgz#4e7fd3bb660c6f63443efbd169d1cd327db71ed4"
+  integrity sha512-Ldrva0fRBEIFWmEibBQO1PulfpJVF3pf28Guk09lDirDaSQqqU/xs9zQLwN2rL5VwVtsP1aD3JaCgaa98EjojQ==
 
 mixpanel@^0.13.0:
   version "0.13.0"
@@ -26169,6 +26212,13 @@ randexp@0.4.6:
     discontinuous-range "1.0.0"
     ret "~0.1.10"
 
+random-seed@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/random-seed/-/random-seed-0.3.0.tgz#d945f2e1f38f49e8d58913431b8bf6bb937556cd"
+  integrity sha512-y13xtn3kcTlLub3HKWXxJNeC2qK4mB59evwZ5EkeRlolx+Bp2ztF7LbcZmyCnOqlHQrLnfuNbi1sVmm9lPDlDA==
+  dependencies:
+    json-stringify-safe "^5.0.1"
+
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
@@ -28323,19 +28373,19 @@ rxjs@7.8.0, rxjs@^7.5.1, rxjs@^7.5.5:
   dependencies:
     tslib "^2.1.0"
 
+rxjs@7.8.1, rxjs@^7.5.4:
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz#6f6f3d99ea8044291efd92e7c7fcf562c4057543"
+  integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==
+  dependencies:
+    tslib "^2.1.0"
+
 rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.5.4:
   version "6.6.7"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
   integrity sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==
   dependencies:
     tslib "^1.9.0"
-
-rxjs@^7.5.4:
-  version "7.8.1"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz#6f6f3d99ea8044291efd92e7c7fcf562c4057543"
-  integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==
-  dependencies:
-    tslib "^2.1.0"
 
 safe-buffer@5.1.1:
   version "5.1.1"
@@ -29945,6 +29995,11 @@ style-loader@^3.3.0, style-loader@^3.3.1:
   resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.1.tgz#057dfa6b3d4d7c7064462830f9113ed417d38575"
   integrity sha512-GPcQ+LDJbrcxHORTRes6Jy2sfvK2kS6hpSfI/fXhPt+spVzxF6LJ1dHLN9zIGmVaaP044YKaIatFaufENRiDoQ==
 
+style-loader@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.3.tgz#bba8daac19930169c0c9c96706749a597ae3acff"
+  integrity sha512-53BiGLXAcll9maCYtZi2RCQZKa8NQQai5C4horqKyRmHj9H7QmcUyucrH+4KW/gBQbXM2AsB0axoEcFZPlfPcw==
+
 style-mod@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/style-mod/-/style-mod-4.0.0.tgz#97e7c2d68b592975f2ca7a63d0dd6fcacfe35a01"
@@ -30614,15 +30669,32 @@ three-stdlib@2.21.8:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
+three-stdlib@2.23.4:
+  version "2.23.4"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.23.4.tgz#21e415573f9cddb8dbc2dea0495cc35d8d390b8b"
+  integrity sha512-bNtKL0UsE/TeSQ30tb9qDoGEuO6hqJfLFVqIiWlVpgAs2W/aZcpSISaLP3q+L4E9NSGmpRzI3dGufmDj0AnQ7Q==
+  dependencies:
+    "@types/draco3d" "^1.4.0"
+    "@types/offscreencanvas" "^2019.6.4"
+    "@types/webxr" "^0.5.2"
+    chevrotain "^10.1.2"
+    draco3d "^1.4.1"
+    fflate "^0.6.9"
+    ktx-parse "^0.4.5"
+    mmd-parser "^1.0.4"
+    opentype.js "^1.3.3"
+    potpack "^1.0.1"
+    zstddec "^0.0.2"
+
 three@0.148.0:
   version "0.148.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.148.0.tgz#b6f62f9c84227f8d51c151bf17b67984ded8e4d7"
   integrity sha512-8uzVV+qhTPi0bOFs/3te3RW6hb3urL8jYEl6irjCWo/l6sr8MPNMcClFev/MMYeIxr0gmDcoXTy/8LXh/LXkfw==
 
-three@^0.149.0:
-  version "0.149.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.149.0.tgz#a9cf78b17d02f063ffe6dfca1e300eff2eab2927"
-  integrity sha512-tohpUxPDht0qExRLDTM8sjRLc5d9STURNrdnK3w9A+V4pxaTBfKWWT/IqtiLfg23Vfc3Z+ImNfvRw1/0CtxrkQ==
+three@0.152.2:
+  version "0.152.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.152.2.tgz#2ee0f2c504d31a4bc29b45495c12bded9fda7bfc"
+  integrity sha512-Ff9zIpSfkkqcBcpdiFo2f35vA9ZucO+N8TNacJOqaEE6DrB0eufItVMib8bK8Pcju/ZNT6a7blE1GhTpkdsILw==
 
 throat@^6.0.1:
   version "6.0.2"
