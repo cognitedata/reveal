@@ -9,7 +9,7 @@ import {
   Image360Face,
   Image360FileDescriptor
 } from '../types';
-import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk/dist/src';
+import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 
 type Local360ImagesDescriptor = {
   translation: {
