@@ -3,6 +3,8 @@ import {
   useCallback,
   ChangeEventHandler,
   KeyboardEventHandler,
+  ChangeEvent,
+  KeyboardEvent,
 } from 'react';
 
 import { ChartThresholdEventFilter } from '@charts-app/models/chart/types';
@@ -24,9 +26,12 @@ export const useFilterValue = ({
 ] => {
   const [filterValue, setFilterValue] = useState<string>(String(defaultValue));
 
-  const handleValueChange = useCallback((event) => {
-    setFilterValue(event.target.value);
-  }, []);
+  const handleValueChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setFilterValue(event.target.value);
+    },
+    []
+  );
 
   const handleValueUpdate = useCallback(() => {
     onEventFilterUpdate({
@@ -35,7 +40,7 @@ export const useFilterValue = ({
   }, [filterValue, onEventFilterUpdate, filterKey]);
 
   const handleValueKeyPress = useCallback(
-    (event) => {
+    (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
         handleValueUpdate();
       }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, ChangeEvent } from 'react';
 
 import {
   ReverseSwitch,
@@ -186,9 +186,12 @@ const ThresholdItem = ({
     setLowerLimit(String(convertedLowerLimit));
   }, [convertedLowerLimit]);
 
-  const handleLowerLimitChange = useCallback((event) => {
-    setLowerLimit(event.target.value);
-  }, []);
+  const handleLowerLimitChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setLowerLimit(event.target.value);
+    },
+    []
+  );
 
   const handleLowerLimitUpdateValue = useCallback(() => {
     // convert local state back to original unit before updating underlying data
@@ -204,7 +207,7 @@ const ThresholdItem = ({
   ]);
 
   const handleLowerLimitKeyPress = useCallback(
-    (event) => {
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
         handleLowerLimitUpdateValue();
       }
@@ -226,9 +229,12 @@ const ThresholdItem = ({
     setUpperLimit(String(convertedUpperLimit));
   }, [convertedUpperLimit]);
 
-  const handleUpperLimitChange = useCallback((event) => {
-    setUpperLimit(event.target.value);
-  }, []);
+  const handleUpperLimitChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setUpperLimit(event.target.value);
+    },
+    []
+  );
 
   const handleUpperLimitUpdateValue = useCallback(() => {
     // convert local state back to original unit before updating underlying data
@@ -244,7 +250,7 @@ const ThresholdItem = ({
   ]);
 
   const handleUpperLimitKeyPress = useCallback(
-    (event) => {
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
         handleUpperLimitUpdateValue();
       }

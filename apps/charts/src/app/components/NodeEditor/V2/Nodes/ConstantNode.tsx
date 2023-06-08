@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useCallback } from 'react';
+import { memo, useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 
 import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
@@ -64,7 +64,7 @@ const ConstantNode = memo(
     }, [isValid, id, onConstantChange, localValue]);
 
     const handleKeyPress = useCallback(
-      (event) => {
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
           handleUpdateValue();
           setIsInputVisible(false);
@@ -73,13 +73,16 @@ const ConstantNode = memo(
       [handleUpdateValue]
     );
 
-    const handleChange = useCallback((event) => {
+    const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
       setLocalValue(event.target.value);
     }, []);
 
-    const handleInputDoubleClick = useCallback((event) => {
-      event.stopPropagation();
-    }, []);
+    const handleInputDoubleClick = useCallback(
+      (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+        event.stopPropagation();
+      },
+      []
+    );
 
     return (
       <NodeWithActionBar

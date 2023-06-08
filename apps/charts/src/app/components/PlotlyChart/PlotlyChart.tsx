@@ -132,7 +132,7 @@ const PlotlyChart = ({
   );
 
   const handleMouseMoveOnChart = useCallback(
-    (e) => {
+    (e: React.MouseEvent<HTMLDivElement>) => {
       const classes = Array.from((e.target as HTMLElement)?.classList);
       const isMainArea = classes.includes('nsewdrag');
       handleToggleYAxisLocked(isMainArea);

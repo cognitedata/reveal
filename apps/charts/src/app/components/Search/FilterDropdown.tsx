@@ -71,7 +71,9 @@ const FilterDropdown = ({
       <Checkbox
         name="showEmpty"
         defaultChecked={settings.isShowEmptyChecked}
-        onChange={(val) => onFilterChange('isShowEmptyChecked', val)}
+        onChange={(event) =>
+          onFilterChange('isShowEmptyChecked', event.target.checked)
+        }
       >
         {t['Show empty equipment tags']}
       </Checkbox>
@@ -80,14 +82,18 @@ const FilterDropdown = ({
       <Checkbox
         name="ts"
         defaultChecked={settings.isTimeseriesChecked}
-        onChange={(val) => onFilterChange('isTimeseriesChecked', val)}
+        onChange={(event) =>
+          onFilterChange('isTimeseriesChecked', event.target.checked)
+        }
       >
         {t['Time series']}
       </Checkbox>
       <Checkbox
         name="step"
         defaultChecked={settings.isStepChecked}
-        onChange={(val) => onFilterChange('isStepChecked', val || undefined)}
+        onChange={(event) =>
+          onFilterChange('isStepChecked', event.target.checked)
+        }
       >
         {t['Step time series']}
       </Checkbox>

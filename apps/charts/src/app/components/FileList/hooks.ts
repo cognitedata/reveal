@@ -7,7 +7,10 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { isFilePreviewable, isPreviewableImage } from './utils';
 
-export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
+export const useFilesAssetAppearsIn = (
+  asset?: Asset | null,
+  enabled = true
+) => {
   const sdk = useSDK();
 
   return useQuery<File[]>(
