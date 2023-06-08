@@ -1,11 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 declare module '@cognite/cdf-sdk-singleton' {
-  import {
-    CogniteClient,
-    Acl,
-    SingleCogniteCapability,
-    AclScopeAll,
-  } from '@cognite/sdk';
+  import { CogniteClient } from '@cognite/sdk';
 
   export declare type Flow =
     | 'COGNITE_AUTH'
@@ -15,17 +9,15 @@ declare module '@cognite/cdf-sdk-singleton' {
     | 'FAKE_IDP'
     | 'UNKNOWN';
 
-  export declare function getFlow(): { flow: Flow };
-  export declare function getUserInformation(): Promise<{
-    displayName?: string;
-    id: string;
-    mail?: string;
-    userPrincipalName?: string;
-  }>;
+  export declare function logout(): void;
+
   export declare function loginAndAuthIfNeeded(
     project: string,
     env?: string
   ): Promise<void>;
+  export declare function getToken(): Promise<string>;
+  export declare function getFlow(): { flow: Flow };
+  export declare function getUserInformation(): Promise<any>;
 
   declare const sdk: CogniteClient;
   export default sdk;
