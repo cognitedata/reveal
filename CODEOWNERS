@@ -43,3 +43,5 @@ apps/copilot              @dlcognite @andeplane @miladh @trygveu
 
 # IoT Hub
 apps/iot-hub              @dlcognite @geircognite @muradsater
+
+apps/raw-explorer @cognitedata/team-hebe
