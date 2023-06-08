@@ -20,6 +20,7 @@ module.exports = composePlugins(
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(`Custom webpack config(${nodeEnv}) for charts was loaded...`);
 
+    config.resolve.fallback = { path: require.resolve('path-browserify') };
     if (useMockEnv) {
       return config;
     }

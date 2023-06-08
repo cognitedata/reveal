@@ -15,6 +15,7 @@ import {
 } from 'react-router-dom';
 
 import config from '@charts-app/config/config';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import Routes from '@charts-app/pages/Routes';
 import GlobalStyles from '@charts-app/styles/GlobalStyles';
 import { isDevelopment } from '@charts-app/utils/environment';
@@ -24,7 +25,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import sdk, { getFlow, loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   getCluster,
@@ -36,10 +37,6 @@ import { DataExplorationProvider } from '@cognite/data-exploration';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
-
-import './config/i18n';
-import './config/locale';
-import 'services/metrics';
 
 // START SENTRY CODE
 
@@ -85,8 +82,11 @@ const queryClient = new QueryClient({
 
 const env = parseEnvFromCluster(getCluster());
 const project = getProject();
+const flow = getFlow();
 
 export const RootApp = () => {
+  const { data: userInfo } = useUserInfo();
+
   return (
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
@@ -97,7 +97,8 @@ export const RootApp = () => {
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
             <DataExplorationProvider
-              // @ts-ignore
+              flow={flow.flow}
+              userInfo={userInfo}
               sdk={sdk}
               overrideURLMap={{
                 pdfjsWorkerSrc:

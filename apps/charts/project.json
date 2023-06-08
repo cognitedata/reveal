@@ -72,7 +72,10 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "charts:build",
-        "hmr": true
+        "hmr": true,
+        "port": 3000,
+        "ssl": true,
+        "allowedHosts": ".dev.fusion.cogniteapp.com"
       },
       "configurations": {
         "development": {
