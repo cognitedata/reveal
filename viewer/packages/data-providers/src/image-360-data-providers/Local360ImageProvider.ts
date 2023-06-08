@@ -10,7 +10,6 @@ import {
   Image360FileDescriptor
 } from '../types';
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk/dist/src';
-import { Image360AnnotationFilter } from '@reveal/360-images/src/annotation/Image360AnnotationFilter';
 
 type Local360ImagesDescriptor = {
   translation: {
