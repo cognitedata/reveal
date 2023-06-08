@@ -1,4 +1,12 @@
 import React, { useRef } from 'react';
+
+import styled from 'styled-components';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import { FilterPlaceholder } from '@interactive-diagrams-app/components/Filters';
+import Layers from '@interactive-diagrams-app/utils/zindex';
+import { Spin } from 'antd';
+
 import {
   Body,
   Button,
@@ -6,13 +14,9 @@ import {
   OptionType,
   Select as CogsSelect,
 } from '@cognite/cogs.js';
-import { Spin } from 'antd';
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { FilterPlaceholder } from '@interactive-diagrams-app/components/Filters';
-import styled from 'styled-components';
-import Layers from '@interactive-diagrams-app/utils/zindex';
-import { CustomSelectProps } from './types';
+
 import { selectStyles } from './styles';
+import { CustomSelectProps } from './types';
 
 export const Select = (props: CustomSelectProps) => {
   const { selectProps, tooltipProps } = props;

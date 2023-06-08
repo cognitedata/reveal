@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Chip } from '@cognite/cogs.js';
 
 type FilterProps = {

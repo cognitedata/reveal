@@ -1,8 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
-import configureStore from 'redux-mock-store';
+
 import { shallow } from 'enzyme';
+import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import App from '.';

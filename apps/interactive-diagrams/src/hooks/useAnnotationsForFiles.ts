@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
+
+import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 import uniqBy from 'lodash/uniqBy';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { FileInfo } from '@cognite/sdk';
+
 import {
   getIdFilter,
   getExternalIdFilter,
   convertEventsToAnnotations,
 } from '@cognite/annotations';
 import sdk from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
 import {
   getTaggedAnnotationFromAnnotationsApiAnnotation,
   getTaggedAnnotationFromEventAnnotation,
   TaggedAnnotation,
 } from '../modules/workflows';
-import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 
 export type FileWithAnnotations = FileInfo & {
   annotations: TaggedAnnotation[];

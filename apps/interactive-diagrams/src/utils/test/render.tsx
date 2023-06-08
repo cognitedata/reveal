@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { render, RenderOptions } from '@testing-library/react';
 import { ids } from 'cogs-variables';
 

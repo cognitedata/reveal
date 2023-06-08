@@ -1,13 +1,12 @@
 import { useContext, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
-import isEqual from 'lodash/isEqual';
-import { FileInfo } from '@cognite/sdk';
-import { RootState } from '@interactive-diagrams-app/store';
+
 import { AppStateContext } from '@interactive-diagrams-app/context';
 import { useAnnotationsForFiles } from '@interactive-diagrams-app/hooks';
 import { itemSelector as assetSelector } from '@interactive-diagrams-app/modules/assets';
 import { itemSelector as fileSelector } from '@interactive-diagrams-app/modules/files';
+import { startConvertFileToSvgJob } from '@interactive-diagrams-app/modules/svgConvert';
+import { Vertices } from '@interactive-diagrams-app/modules/types';
 import {
   boundingBoxToVertices,
   getTaggedAnnotationBoundingBox,
@@ -15,8 +14,12 @@ import {
   isTaggedEventAnnotation,
   TaggedAnnotation,
 } from '@interactive-diagrams-app/modules/workflows';
-import { startConvertFileToSvgJob } from '@interactive-diagrams-app/modules/svgConvert';
-import { Vertices } from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
+import isEqual from 'lodash/isEqual';
+import { createSelector } from 'reselect';
+
+import { FileInfo } from '@cognite/sdk';
+
 import getAssetIdsFromTaggedAnnotations from '../utils/getAssetIdsFromTaggedAnnotations';
 
 type DiagramToConvert = {

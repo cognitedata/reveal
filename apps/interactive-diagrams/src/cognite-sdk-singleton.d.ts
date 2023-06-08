@@ -1,6 +1,7 @@
 declare module '@cognite/cdf-sdk-singleton' {
-  import { CogniteClient } from '@cognite/sdk';
   import { Flow } from 'types';
+
+  import { CogniteClient } from '@cognite/sdk';
 
   export declare function getFlow(): { flow: Flow };
   export declare function getUserInformation(): Promise<any>;

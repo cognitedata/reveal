@@ -1,5 +1,6 @@
 import { History } from 'history';
 import queryString from 'query-string';
+
 import { OnResourceSelectedParams } from '.';
 
 export const onResourceSelected =

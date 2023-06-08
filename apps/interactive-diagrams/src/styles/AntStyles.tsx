@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useEffect } from 'react';
+
 import {
   ConfigProvider,
   Modal,
@@ -9,12 +10,6 @@ import {
   Spin,
   message,
 } from 'antd';
-import {
-  Icon,
-  Tooltip as CogsTooltip,
-  Modal as CogsModal,
-} from '@cognite/cogs.js';
-
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
 // import anchorStyle from 'antd/es/anchor/style/index.less';
@@ -32,7 +27,6 @@ import checkboxStyle from 'antd/es/checkbox/style/index.less';
 import collapseStyle from 'antd/es/collapse/style/index.less';
 // import commentStyle from 'antd/es/comment/style/index.less';
 import configProviderStyle from 'antd/es/config-provider/style/index.less';
-import coreStyle from 'antd/es/style/core/index.less';
 // import datePickerStyle from 'antd/es/date-picker/style/index.less';
 // import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 import dividerStyle from 'antd/es/divider/style/index.less';
@@ -67,6 +61,7 @@ import selectStyle from 'antd/es/select/style/index.less';
 // import sliderStyle from 'antd/es/slider/style/index.less';
 import spaceStyle from 'antd/es/space/style/index.less';
 import spinStyle from 'antd/es/spin/style/index.less';
+import coreStyle from 'antd/es/style/core/index.less';
 // import statisticStyle from 'antd/es/statistic/style/index.less';
 // import stepsStyle from 'antd/es/steps/style/index.less';
 // import switchStyle from 'antd/es/switch/style/index.less';
@@ -82,6 +77,13 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
+
+import {
+  Icon,
+  Tooltip as CogsTooltip,
+  Modal as CogsModal,
+} from '@cognite/cogs.js';
+
 import { ids } from '../cogs-variables';
 
 const styles = [

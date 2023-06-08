@@ -1,7 +1,10 @@
-import { Tooltip, Icon, AllIconTypes, Colors } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { abbreviateNumber } from '@interactive-diagrams-app/utils/utils';
+
+import { Tooltip, Icon, AllIconTypes, Colors } from '@cognite/cogs.js';
 
 type CountTagProps = {
   value: number;

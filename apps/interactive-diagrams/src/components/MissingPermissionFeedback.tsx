@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, SyntheticEvent } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+
+import { notification } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { notification } from 'antd';
-import { useParams, useHistory } from 'react-router-dom';
 
 type Props = {
   acl: string;

@@ -1,6 +1,7 @@
 // @ts-ignore
-import UploadGCS from '@cognite/gcs-browser-upload';
 import { UploadFile } from 'antd/lib/upload/interface';
+
+import UploadGCS from '@cognite/gcs-browser-upload';
 
 export default function GCSUploader(
   file: Blob | UploadFile,

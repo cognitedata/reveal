@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Button, ButtonProps as CogsButtonProps } from '@cognite/cogs.js';
 
 interface IconButtonProps extends CogsButtonProps {

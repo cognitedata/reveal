@@ -2,13 +2,13 @@ import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { AppStateContext } from '@interactive-diagrams-app/context';
-import isEqual from 'lodash/isEqual';
 import { ResourceType } from '@interactive-diagrams-app/modules/types';
 import {
   getCountAction,
   getActiveWorkflowItems,
   useWorkflowTotalCounts,
 } from '@interactive-diagrams-app/modules/workflows';
+import isEqual from 'lodash/isEqual';
 
 import { useActiveWorkflow } from './useActiveWorkflow';
 

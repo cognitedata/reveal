@@ -1,6 +1,8 @@
-import styled, { CSSProperties } from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import React from 'react';
+
+import styled, { CSSProperties } from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 type WrapperProps = {
   selected?: boolean;

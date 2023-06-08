@@ -1,4 +1,5 @@
 import mime from 'mime-types';
+
 import { FileInfo } from '@cognite/sdk';
 
 export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);

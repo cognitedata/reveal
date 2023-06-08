@@ -1,5 +1,7 @@
 import styled from 'styled-components';
+
 import { Colors, Body } from '@cognite/cogs.js';
+
 import { StyledStepProps } from './types';
 
 export const StyledStep = styled.div<StyledStepProps>`

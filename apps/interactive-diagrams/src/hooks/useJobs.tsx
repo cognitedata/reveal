@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { createSelector } from 'reselect';
-import { RootState } from '@interactive-diagrams-app/store';
+
 import {
   useInterval,
   useResourceCount,
@@ -9,16 +8,18 @@ import {
   useActiveWorkflow,
 } from '@interactive-diagrams-app/hooks';
 import {
+  JobStatus,
+  ApiStatusCount,
+  PnidsParsingJobSchema,
+} from '@interactive-diagrams-app/modules/types';
+import {
   getWorkflowJobs,
   setJobStatus,
   loadWorkflowAsync,
   pollJobResults,
 } from '@interactive-diagrams-app/modules/workflows';
-import {
-  JobStatus,
-  ApiStatusCount,
-  PnidsParsingJobSchema,
-} from '@interactive-diagrams-app/modules/types';
+import { RootState } from '@interactive-diagrams-app/store';
+import { createSelector } from 'reselect';
 
 export const useStartJobs = () => {
   const dispatch = useDispatch();

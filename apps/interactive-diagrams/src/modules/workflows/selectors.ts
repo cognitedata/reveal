@@ -5,8 +5,8 @@ import {
   Workflow,
   Filter,
 } from '@interactive-diagrams-app/modules/types';
-import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '@interactive-diagrams-app/store';
+import { createSelector } from '@reduxjs/toolkit';
 
 import { InternalId, Asset, FileInfo } from '@cognite/sdk';
 

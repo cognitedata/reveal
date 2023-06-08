@@ -13,8 +13,8 @@ import {
   useWorkflowItems,
 } from '@interactive-diagrams-app/modules/workflows';
 import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
-import { Tooltip } from 'antd';
 import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
+import { Tooltip } from 'antd';
 
 import { Button } from '@cognite/cogs.js';
 

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Body, Colors } from '@cognite/cogs.js';
 
 type Props = {

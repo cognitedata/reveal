@@ -1,11 +1,17 @@
-import { AnnotationModel } from '@cognite/sdk/dist/src';
 import React, { useEffect, useState } from 'react';
+
+import { useUserId } from '@interactive-diagrams-app/hooks/useUserId';
+import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
+import handleError from '@interactive-diagrams-app/utils/handleError';
+import { sleep } from '@interactive-diagrams-app/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Modal, notification } from 'antd';
 import chunk from 'lodash/chunk';
 import uniqBy from 'lodash/uniqBy';
-import { Modal, notification } from 'antd';
 
 import { Body } from '@cognite/cogs.js';
+import { AnnotationModel } from '@cognite/sdk/dist/src';
+
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
   useCdfItem,
@@ -23,17 +29,14 @@ import {
   getExternalIdFilter,
   updateAnnotations,
 } from '@cognite/annotations';
-import { useUserId } from '@interactive-diagrams-app/hooks/useUserId';
 
-import { sleep } from '@interactive-diagrams-app/utils/utils';
-import handleError from '@interactive-diagrams-app/utils/handleError';
 import {
   isTaggedAnnotationsApiAnnotation,
   isTaggedEventAnnotation,
 } from '../modules/workflows';
 import linkFileToAssetIds from '../utils/linkFileToAssetIds';
+
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
-import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 
 export const PENDING_LABEL = {
   externalId: 'Pending interactive engineering diagram',

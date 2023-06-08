@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+
+import { DropdownMenu } from '@interactive-diagrams-app/components/Common';
+import { ModalSaveSVG } from '@interactive-diagrams-app/containers';
 import {
   useReviewFiles,
   useActiveWorkflow,
   useConvertToSVG,
 } from '@interactive-diagrams-app/hooks';
 import { useWorkflowDiagramsIds } from '@interactive-diagrams-app/modules/workflows';
-import { ModalSaveSVG } from '@interactive-diagrams-app/containers';
-import { DropdownMenu } from '@interactive-diagrams-app/components/Common';
+
 import { Button } from '@cognite/cogs.js';
 
 // Context menu for all contextualized diagrams

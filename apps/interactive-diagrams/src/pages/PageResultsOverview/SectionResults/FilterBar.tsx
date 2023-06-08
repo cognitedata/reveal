@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+
 import styled from 'styled-components';
-import { Input } from '@cognite/cogs.js';
+
 import {
   Flex,
   LoadingSkeleton,
@@ -13,6 +14,9 @@ import {
   StatusType,
   FilterList,
 } from '@interactive-diagrams-app/components/Filters';
+
+import { Input } from '@cognite/cogs.js';
+
 import { SelectionFilter } from './types';
 
 type Props = {

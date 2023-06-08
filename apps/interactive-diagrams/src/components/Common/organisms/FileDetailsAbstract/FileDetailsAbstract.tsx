@@ -1,7 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
-import { Row } from 'antd';
+
 import {
   InfoGrid,
   InfoCell,
@@ -9,8 +9,11 @@ import {
   CountLabel,
   SmallTitle,
 } from '@interactive-diagrams-app/components/Common';
+import { Row } from 'antd';
 
+import { Icon } from '@cognite/cogs.js';
 import { FileInfo, Asset } from '@cognite/sdk';
+
 import { FileInfoGrid } from './FileInfoGrid';
 
 interface FileDetailsProps {

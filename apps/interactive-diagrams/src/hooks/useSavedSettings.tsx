@@ -6,7 +6,6 @@ import {
   useActiveWorkflow,
   useJobStarted,
 } from '@interactive-diagrams-app/hooks';
-import isEqual from 'lodash/isEqual';
 import {
   ModelSelected,
   WorkflowOptions,
@@ -16,6 +15,7 @@ import {
   standardModelOptions,
 } from '@interactive-diagrams-app/modules/workflows';
 import { RootState } from '@interactive-diagrams-app/store';
+import isEqual from 'lodash/isEqual';
 
 export type SavedSettings = {
   skip: boolean;

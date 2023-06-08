@@ -1,7 +1,10 @@
 import React from 'react';
-import { Colors, Tooltip } from '@cognite/cogs.js';
-import { truncateString } from '@interactive-diagrams-app/utils/utils';
+
 import styled from 'styled-components';
+
+import { truncateString } from '@interactive-diagrams-app/utils/utils';
+
+import { Colors, Tooltip } from '@cognite/cogs.js';
 
 interface BadgeProps {
   text: string;

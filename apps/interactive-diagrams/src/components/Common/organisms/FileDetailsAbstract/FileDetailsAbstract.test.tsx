@@ -1,6 +1,9 @@
 import React from 'react';
+
 import { mount } from 'enzyme';
+
 import { FileInfo } from '@cognite/sdk';
+
 import { FileDetailsAbstract } from './FileDetailsAbstract';
 
 const file: FileInfo = {

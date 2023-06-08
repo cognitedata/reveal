@@ -1,5 +1,5 @@
-import zipObject from 'lodash/zipObject';
 import flatten from 'lodash/flatten';
+import zipObject from 'lodash/zipObject';
 
 export const arrayToObject = <T extends { id: any }>(rows: T[]) => {
   return rows.reduce(

@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import isNumber from 'lodash/isNumber';
+
 import { useLoadStepOnMount } from '@interactive-diagrams-app/hooks';
 import {
   setActiveWorkflowId,
   getActiveWorkflowId,
   WorkflowStep,
 } from '@interactive-diagrams-app/modules/workflows';
+import isNumber from 'lodash/isNumber';
 
 // eslint-disable-next-line
 // TODO: handle the situations in which the active workflow data is not present in the local storage

@@ -10,11 +10,11 @@ import store, {
   persistedState,
   loadLocalStorage,
 } from '@interactive-diagrams-app/store';
+import { LS_KEY_PREFIX } from '@interactive-diagrams-app/stringConstants';
+import { AntStyles, GlobalStyles } from '@interactive-diagrams-app/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createBrowserHistory } from 'history';
 import debounce from 'lodash/debounce';
-import { LS_KEY_PREFIX } from '@interactive-diagrams-app/stringConstants';
-import { AntStyles, GlobalStyles } from '@interactive-diagrams-app/styles';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {

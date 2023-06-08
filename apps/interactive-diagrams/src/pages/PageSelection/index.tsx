@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useDebouncedCallback } from 'use-debounce';
-import { message } from 'antd';
+
+import { Flex } from '@interactive-diagrams-app/components/Common';
+import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
 import {
   useLocalStorage,
   usePreviousSelection,
@@ -12,6 +13,7 @@ import {
   SavedSettings,
 } from '@interactive-diagrams-app/hooks';
 import { doSearch } from '@interactive-diagrams-app/modules/search';
+import { ResourceType, Filter } from '@interactive-diagrams-app/modules/types';
 import {
   PendingResourceSelection,
   WorkflowStep,
@@ -19,12 +21,12 @@ import {
   removeSelection,
   getActiveWorkflowItems,
 } from '@interactive-diagrams-app/modules/workflows';
-import { ResourceType, Filter } from '@interactive-diagrams-app/modules/types';
-import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
-import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
 import NotFound from '@interactive-diagrams-app/pages/NotFound';
+import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
+import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
+import { message } from 'antd';
+import { useDebouncedCallback } from 'use-debounce';
+
 import DiagramsSelection from './DiagramsSelection';
 import ResourcesSelection from './ResourcesSelection';
 

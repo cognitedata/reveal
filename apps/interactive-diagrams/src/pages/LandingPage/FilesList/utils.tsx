@@ -1,5 +1,6 @@
-import { CogniteAnnotation } from '@cognite/annotations';
 import { FileWithAnnotations } from '@interactive-diagrams-app/hooks';
+
+import { CogniteAnnotation } from '@cognite/annotations';
 
 export const isAnAssetOrFileTag = (annotations: CogniteAnnotation[]) => {
   return (

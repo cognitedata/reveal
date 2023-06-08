@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
-import { Icon, Button } from '@cognite/cogs.js';
-import { Row } from 'antd';
+
 import {
   InfoGrid,
   InfoCell,
@@ -9,8 +9,11 @@ import {
   ListItem,
   CountLabel,
 } from '@interactive-diagrams-app/components/Common';
-import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
+import { Row } from 'antd';
+
+import { Icon, Button } from '@cognite/cogs.js';
 import { AssetBreadcrumb } from '@cognite/data-exploration';
+import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
 
 interface AssetDetailsProps {
   asset: Asset;

@@ -1,13 +1,16 @@
 import React, { useContext } from 'react';
-import { Body, Colors, Modal } from '@cognite/cogs.js';
-import { v4 as uuid } from 'uuid';
-import { AppStateContext, PrefixType } from '@interactive-diagrams-app/context';
-import { useConvertToSVG } from '@interactive-diagrams-app/hooks';
+
 import {
   CollapsibleRadio,
   Flex,
   InfoField,
 } from '@interactive-diagrams-app/components/Common';
+import { AppStateContext, PrefixType } from '@interactive-diagrams-app/context';
+import { useConvertToSVG } from '@interactive-diagrams-app/hooks';
+import { v4 as uuid } from 'uuid';
+
+import { Body, Colors, Modal } from '@cognite/cogs.js';
+
 import { PrefixSettings } from './PrefixSettings';
 
 type Props = {

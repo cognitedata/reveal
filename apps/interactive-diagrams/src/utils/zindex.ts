@@ -9,4 +9,4 @@ const LAYERS = [
   'MINIMUM', // 1
 ] as const;
 
-export default createLayers<typeof LAYERS[number]>(LAYERS);
+export default createLayers<(typeof LAYERS)[number]>(LAYERS);

@@ -1,9 +1,10 @@
-import sdk from '@cognite/cdf-sdk-singleton';
-import { CogniteClient, IdEither } from '@cognite/sdk';
 import {
   projectName,
   getCdfEnvFromUrl,
 } from '@interactive-diagrams-app/utils/config';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { CogniteClient, IdEither } from '@cognite/sdk';
 
 const useLocalApi = false; // Toggle on if using api locally
 

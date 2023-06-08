@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { TableProps as AntdTableProps } from 'antd/es/table';
-import { Table as AntdTable } from 'antd';
-import { Colors } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Table as AntdTable } from 'antd';
+import { TableProps as AntdTableProps } from 'antd/es/table';
+
+import { Colors } from '@cognite/cogs.js';
 
 const PAGE_SIZE = 8;
 const DEFAULT_PAGE = 1;
@@ -37,7 +40,7 @@ export const Table = styled((props: CustomTableProps) => {
       hideOnSinglePage: false,
       showSizeChanger: true,
       pageSize,
-      size: 'small' as 'small',
+      size: 'small' as const,
       current: page,
       onChange: onPaginationChange,
       onShowSizeChange: onPaginationChange,

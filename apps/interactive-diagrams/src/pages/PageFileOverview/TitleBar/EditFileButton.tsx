@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Tooltip } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from '@cognite/data-exploration';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const EditFileButton = ({
   item: { id, type },

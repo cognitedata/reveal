@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Spin } from 'antd';
 
 const LoadingWrapper = styled.div`

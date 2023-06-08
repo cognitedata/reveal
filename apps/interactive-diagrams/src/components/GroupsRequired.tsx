@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useMissingPermissions } from '@interactive-diagrams-app/hooks/usePermissions';
 import NoAccess from '@interactive-diagrams-app/pages/NoAccess';
 

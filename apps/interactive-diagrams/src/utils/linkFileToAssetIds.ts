@@ -1,5 +1,7 @@
 import { CogniteClient } from '@cognite/sdk/dist/src';
+
 import { TaggedAnnotation } from '../modules/workflows';
+
 import getAssetIdsFromTaggedAnnotations from './getAssetIdsFromTaggedAnnotations';
 
 export const linkFileToAssetIds = async (

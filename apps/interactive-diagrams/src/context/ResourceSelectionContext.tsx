@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 import {
   AssetFilterProps,

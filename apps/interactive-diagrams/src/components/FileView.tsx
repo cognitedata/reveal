@@ -1,17 +1,21 @@
 import React, { useEffect, useContext } from 'react';
+
 import ResourceSelectionContext from '@interactive-diagrams-app/context/ResourceSelectionContext';
+import { Alert } from 'antd';
+import isMatch from 'lodash/isMatch';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   FilePreviewUFV as CogniteFilePreview,
   ErrorFeedback,
   Loader,
 } from '@cognite/data-exploration';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
-import isMatch from 'lodash/isMatch';
-import { Alert } from 'antd';
-import InteractiveIcon from './InteractiveIcon';
+import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import { APPLICATION_ID } from '../constants';
+
+import InteractiveIcon from './InteractiveIcon';
 
 export type FilePreviewTabType =
   | 'preview'

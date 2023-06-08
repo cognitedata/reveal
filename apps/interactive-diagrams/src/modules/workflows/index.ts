@@ -3,8 +3,8 @@ import {
   WorkflowState,
   ResourceSelection,
 } from '@interactive-diagrams-app/modules/types';
-import { createSlice } from '@reduxjs/toolkit';
 import { CURRENT_LS_VERSION } from '@interactive-diagrams-app/stringConstants';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { startPnidParsingWorkflow, startPnidParsingJob } from './actions';
 import {

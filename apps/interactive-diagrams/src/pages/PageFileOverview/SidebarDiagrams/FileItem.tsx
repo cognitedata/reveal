@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from 'react';
+
 import styled from 'styled-components';
+
+import DiagramReviewStatus from '@interactive-diagrams-app/components/DiagramReviewStatus';
+import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
+
 import { Body, Colors } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
-import DiagramReviewStatus from '@interactive-diagrams-app/components/DiagramReviewStatus';
 
 type FileItemProps = {
   file: FileInfo;

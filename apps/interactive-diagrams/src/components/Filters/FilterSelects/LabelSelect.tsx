@@ -1,10 +1,11 @@
 import React from 'react';
 
+import { Select } from '@interactive-diagrams-app/components/Common';
+import { useSelectFilter } from '@interactive-diagrams-app/hooks';
+
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { LabelDefinition } from '@cognite/sdk';
 import { useList, usePermissions } from '@cognite/sdk-react-query-hooks';
-import { useSelectFilter } from '@interactive-diagrams-app/hooks';
-import { Select } from '@interactive-diagrams-app/components/Common';
 
 type Props = {
   selectedLabels?: string[];

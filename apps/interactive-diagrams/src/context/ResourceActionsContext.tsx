@@ -1,4 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react';
+
 import { RenderResourceActionsFunction } from '@cognite/data-exploration';
 
 export type ResourceActionsObserver = {

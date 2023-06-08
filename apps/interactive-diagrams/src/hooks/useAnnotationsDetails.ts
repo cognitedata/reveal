@@ -1,22 +1,25 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { useEffect, useState } from 'react';
+
+import { useInterval } from '@interactive-diagrams-app/hooks';
+import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import uniqBy from 'lodash/uniqBy';
+
 import {
   getIdFilter,
   getExternalIdFilter,
   convertEventsToAnnotations,
 } from '@cognite/annotations';
-import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { FileInfo, CogniteEvent } from '@cognite/sdk';
-import { useInterval } from '@interactive-diagrams-app/hooks';
+import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
+
 import {
   getTaggedAnnotationFromAnnotationsApiAnnotation,
   getTaggedAnnotationFromEventAnnotation,
   isTaggedEventAnnotation,
   TaggedAnnotation,
 } from '../modules/workflows';
-import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 
 const TIMES_TO_REFETCH = 3;
 

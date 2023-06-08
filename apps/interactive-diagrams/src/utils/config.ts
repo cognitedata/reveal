@@ -1,5 +1,6 @@
-import { createLink } from '@cognite/cdf-utilities';
 import queryString from 'query-string';
+
+import { createLink } from '@cognite/cdf-utilities';
 
 export const projectName = () =>
   new URL(window.location.href).pathname.split('/')[1];

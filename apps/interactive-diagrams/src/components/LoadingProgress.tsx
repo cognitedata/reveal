@@ -1,10 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Progress } from 'antd';
-import { Body } from '@cognite/cogs.js';
+
 import { Flex } from '@interactive-diagrams-app/components/Common';
 import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
 import { useWorkflowLoadPercentages } from '@interactive-diagrams-app/modules/workflows/hooks';
+import { Progress } from 'antd';
+
+import { Body } from '@cognite/cogs.js';
 
 type Props = {
   type?: ResourceType | 'diagrams';

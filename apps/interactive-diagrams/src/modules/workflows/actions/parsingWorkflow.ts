@@ -5,13 +5,13 @@ import {
   workflowDiagramsSelector,
   workflowAllResourcesSelector,
 } from '@interactive-diagrams-app/modules/workflows';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import chunk from 'lodash/chunk';
 import { RootState } from '@interactive-diagrams-app/store';
 import {
   PNID_METRICS,
   trackUsage,
 } from '@interactive-diagrams-app/utils/Metrics';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import chunk from 'lodash/chunk';
 
 import { FileInfo } from '@cognite/sdk';
 

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Icon, Tooltip } from '@cognite/cogs.js';
+
 import { Flex } from '@interactive-diagrams-app/components/Common';
-import StatusSquare from '@interactive-diagrams-app/pages/PageResultsOverview/StatusSquare';
 import { useFileStatus } from '@interactive-diagrams-app/hooks';
+import StatusSquare from '@interactive-diagrams-app/pages/PageResultsOverview/StatusSquare';
+
+import { Icon, Tooltip } from '@cognite/cogs.js';
 
 type Props = {
   file: any;

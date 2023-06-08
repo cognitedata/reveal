@@ -1,9 +1,12 @@
 import React, { useContext } from 'react';
-import { Chip } from '@cognite/cogs.js';
+
 import { AppStateContext } from '@interactive-diagrams-app/context';
-import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
 import { useJobStatusLabels } from '@interactive-diagrams-app/hooks';
+import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
 import { capitalizeFirstLetter } from '@interactive-diagrams-app/utils/utils';
+
+import { Chip } from '@cognite/cogs.js';
+
 import { StyledAdditionalText } from './components';
 
 export const StepLabel = ({ step }: { step?: WorkflowStep }): JSX.Element => {

@@ -1,16 +1,18 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { message } from 'antd';
-import { Tooltip } from '@cognite/cogs.js';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
-import { MenuSingle } from '@interactive-diagrams-app/containers';
+
 import {
   Flex,
   IconButton,
   Dropdown,
 } from '@interactive-diagrams-app/components/Common';
+import { MenuSingle } from '@interactive-diagrams-app/containers';
 import { useParsingJob, useJobStatus } from '@interactive-diagrams-app/hooks';
+import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
+import { message } from 'antd';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 type Props = { file: any };
 

@@ -1,6 +1,9 @@
 import React from 'react';
-import { Title, Body, Colors } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Title, Body, Colors } from '@cognite/cogs.js';
+
 import { Flex } from './Flex';
 
 interface PageTitleProps {

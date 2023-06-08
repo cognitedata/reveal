@@ -1,6 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Colors } from '@cognite/cogs.js';
+
 import Step from './Step';
 import { StepsProps, StepsType } from './types';
 

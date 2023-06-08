@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import isEqual from 'lodash/isEqual';
-import Chart, { ChartData, ChartConfiguration } from 'chart.js/auto';
+
 import { Flex } from '@interactive-diagrams-app/components/Common';
+import Chart, { ChartData, ChartConfiguration } from 'chart.js/auto';
+import isEqual from 'lodash/isEqual';
 
 // @ts-ignore
 Chart.defaults.datasets.doughnut.cutout = '75%';

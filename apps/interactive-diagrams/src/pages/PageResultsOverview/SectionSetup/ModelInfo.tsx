@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Colors, Icon, Body } from '@cognite/cogs.js';
 
 const StyledModelInfo = styled.div<{ editable: boolean }>`

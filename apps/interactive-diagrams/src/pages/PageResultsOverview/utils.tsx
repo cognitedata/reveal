@@ -4,9 +4,9 @@ import {
   PnidsConvertJobSchema,
   ApiStatusCount,
 } from '@interactive-diagrams-app/modules/types';
-import { notification, Typography } from 'antd';
 import { ERRORS } from '@interactive-diagrams-app/stringConstants';
 import { getContainer } from '@interactive-diagrams-app/utils/utils';
+import { notification, Typography } from 'antd';
 
 const { Paragraph } = Typography;
 

@@ -1,4 +1,10 @@
 import {
+  AnnotationSource,
+  PnidResponseEntity,
+  TaggedAnnotation,
+} from '@interactive-diagrams-app/modules/types';
+
+import {
   AnnotationBoundingBox,
   AnnotationResourceType,
 } from '@cognite/annotations';
@@ -9,11 +15,7 @@ import {
   CogniteClient,
   FileInfo,
 } from '@cognite/sdk';
-import {
-  AnnotationSource,
-  PnidResponseEntity,
-  TaggedAnnotation,
-} from '@interactive-diagrams-app/modules/types';
+
 import { hasOwnProperty } from './utils';
 
 const CURRENT_VERSION_SEM_VER = '1.0.0';

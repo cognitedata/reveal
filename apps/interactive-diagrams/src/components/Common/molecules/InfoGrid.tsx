@@ -1,6 +1,8 @@
 import React, { ReactNode, FunctionComponent } from 'react';
-import { Tooltip } from '@cognite/cogs.js';
+
 import styled, { css } from 'styled-components';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 type InfoGridProps = {
   noBorders?: boolean;

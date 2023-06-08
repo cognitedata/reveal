@@ -1,5 +1,5 @@
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type Permission = {
   label: string;

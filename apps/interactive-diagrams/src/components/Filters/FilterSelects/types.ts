@@ -1,5 +1,6 @@
-import { LabelVariants } from '@cognite/cogs.js';
 import { ApiStatusCount } from '@interactive-diagrams-app/modules/types';
+
+import { LabelVariants } from '@cognite/cogs.js';
 
 export type MimeType = {
   label: 'PDF' | 'JPG' | 'PNG';

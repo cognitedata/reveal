@@ -1,6 +1,8 @@
+import { useAnnotationsForFiles } from '@interactive-diagrams-app/hooks';
+
 import { FileInfo, FileRequestFilter } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useAnnotationsForFiles } from '@interactive-diagrams-app/hooks';
+
 import { PENDING_LABEL } from './useReviewFiles';
 
 export const useAnnotatedFiles = ({ filter = {} }: FileRequestFilter) => {

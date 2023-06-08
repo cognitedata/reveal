@@ -1,6 +1,6 @@
 import { ResourceType, Status } from '@interactive-diagrams-app/modules/types';
-import { createAction } from '@reduxjs/toolkit';
 import { mapArrayToObj } from '@interactive-diagrams-app/utils/utils';
+import { createAction } from '@reduxjs/toolkit';
 
 import { InternalId, ExternalId } from '@cognite/sdk';
 

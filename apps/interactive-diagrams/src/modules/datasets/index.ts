@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 import { DataSet } from '@cognite/sdk';
+
 import { Status } from '../sdk-builder/types';
+
 import { listDatasets, mergeDatasets } from './datasets';
 
 type DatasetsState = {

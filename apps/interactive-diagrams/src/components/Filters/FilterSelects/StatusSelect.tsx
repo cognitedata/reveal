@@ -1,12 +1,14 @@
 import React from 'react';
-import { OptionType } from '@cognite/cogs.js';
-import { useSelectFilter } from '@interactive-diagrams-app/hooks';
+
 import { Select } from '@interactive-diagrams-app/components/Common';
 import {
   approvalDetails,
   ReviewStatus,
   StatusType,
 } from '@interactive-diagrams-app/components/Filters';
+import { useSelectFilter } from '@interactive-diagrams-app/hooks';
+
+import { OptionType } from '@cognite/cogs.js';
 
 type Props = {
   statusType?: StatusType[];

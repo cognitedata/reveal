@@ -1,6 +1,8 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Body } from '@cognite/cogs.js';
 
 interface ColumnTitleProps {
   children: React.ReactNode;

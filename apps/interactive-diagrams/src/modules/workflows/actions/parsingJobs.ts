@@ -10,12 +10,12 @@ import {
   rejectJob,
   rejectModel,
 } from '@interactive-diagrams-app/modules/workflows';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import handleError from '@interactive-diagrams-app/utils/handleError';
 import {
   PNID_METRICS,
   trackUsage,
 } from '@interactive-diagrams-app/utils/Metrics';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { FileInfo } from '@cognite/sdk';

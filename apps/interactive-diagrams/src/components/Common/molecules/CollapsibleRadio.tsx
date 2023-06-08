@@ -1,6 +1,9 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Colors, Radio, Title, Icon, Tooltip } from '@cognite/cogs.js';
+
 import { Flex } from '../atoms';
 
 type WrapperProps = {

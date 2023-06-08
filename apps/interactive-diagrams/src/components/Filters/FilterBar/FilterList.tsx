@@ -1,14 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Button } from '@cognite/cogs.js';
-import { selectAllDataSets } from '@interactive-diagrams-app/modules/datasets';
+
 import { Flex } from '@interactive-diagrams-app/components/Common';
 import {
   StatusType,
   approvalDetails,
 } from '@interactive-diagrams-app/components/Filters';
-import { FilterTag } from './FilterTag';
+import { selectAllDataSets } from '@interactive-diagrams-app/modules/datasets';
+
+import { Button } from '@cognite/cogs.js';
+
 import { mimeTypes } from '../FilterSelects';
+
+import { FilterTag } from './FilterTag';
 
 type FilterListProps = {
   dataSetIds: Array<number>;

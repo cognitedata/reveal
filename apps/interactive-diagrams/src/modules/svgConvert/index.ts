@@ -1,5 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
 import { ERRORS } from '@interactive-diagrams-app/stringConstants';
+import { createSlice } from '@reduxjs/toolkit';
+
 import { startConvertFileToSvgJob } from './actions';
 
 type State = {

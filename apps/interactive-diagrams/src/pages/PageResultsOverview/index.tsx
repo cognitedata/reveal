@@ -18,9 +18,9 @@ import {
   landingPage,
   diagramSelection,
 } from '@interactive-diagrams-app/routes/paths';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
 import { useQueryClient } from '@tanstack/react-query';
 import { message } from 'antd';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
 
 import SectionProgress from './SectionProgress';
 import SectionResults from './SectionResults';

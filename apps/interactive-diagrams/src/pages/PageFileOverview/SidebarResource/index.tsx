@@ -5,9 +5,9 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { onResourceSelected } from '@interactive-diagrams-app/modules/app';
+import Layers from '@interactive-diagrams-app/utils/zindex';
 import { Drawer } from 'antd';
 import queryString from 'query-string';
-import Layers from '@interactive-diagrams-app/utils/zindex';
 
 import {
   AssetSmallPreviewUFV,
