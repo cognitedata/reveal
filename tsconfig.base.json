@@ -81,6 +81,9 @@
       ],
       "@flexible-data-explorer/*": [
         "apps/flexible-data-explorer/src/*"
+      ],
+      "@access-management/*": [
+        "apps/access-management/src/*"
       ]
     }
   },
