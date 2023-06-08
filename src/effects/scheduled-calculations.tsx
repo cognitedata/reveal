@@ -12,7 +12,7 @@ import { calculateGranularity } from 'utils/timeseries';
 import { useScheduledCalculationData } from 'models/scheduled-calculation-results/atom';
 import { useScheduledCalculationTasks } from 'domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
+import { ScheduledCalculationTask } from 'domain/scheduled-calculation/service/types';
 
 export const ScheduledCalculationCollectionEffects = () => {
   const [chart] = useChartAtom();
@@ -33,7 +33,7 @@ export const ScheduledCalculationCollectionEffects = () => {
 export const ScheduledCalculationEffects = ({
   task,
 }: {
-  task: CalculationTaskSchedule;
+  task: ScheduledCalculationTask;
 }) => {
   const [chart] = useChartAtom();
   const { dateFrom, dateTo } = chart!;

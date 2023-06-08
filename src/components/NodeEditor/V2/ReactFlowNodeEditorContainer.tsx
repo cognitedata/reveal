@@ -20,6 +20,9 @@ import { ComputationStep, Operation } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
+import { ScheduledCalculationData } from 'models/scheduled-calculation-results/types';
+import { useScheduledCalculationDeleteMutate } from 'domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
+import { ScheduledCalculationDeleteModal } from 'components/ScheduledCalculation/ScheduledCalculationDeleteModal';
 import {
   NodeTypes,
   SourceOption,
@@ -69,6 +72,10 @@ type Props = {
   calculationResult: ComponentProps<
     typeof ReactFlowNodeEditor
   >['calculationResult'];
+  scheduledCalculationResult?: ScheduledCalculationData;
+  onRemoveSourceClick: (
+    source: ChartWorkflowV2 | ScheduledCalculation
+  ) => () => void;
 };
 
 const ReactFlowNodeEditorContainer = ({
@@ -83,8 +90,17 @@ const ReactFlowNodeEditorContainer = ({
   translations: t,
   onErrorIconClick,
   calculationResult,
-}: // scheduledCalculationData,
-Props) => {
+  scheduledCalculationResult,
+  onRemoveSourceClick,
+}: Props) => {
+  const [sourceDeleteModalOpen, setSourceDeleteModalOpen] = useState(false);
+
+  /**
+   * Delete scheduled calculation task and remove entry from firestore collection
+   */
+  const { mutateAsync: deleteScheduledCalculation } =
+    useScheduledCalculationDeleteMutate();
+
   /**
    * Hook onto the internal react-flow state
    * to be able to set selected element
@@ -278,6 +294,22 @@ Props) => {
     [onUpdateWorkflow, localWorkflow, steps, isValid]
   );
 
+  const handleDeleteSource = useCallback(
+    async (shouldDeleteTimeseries: boolean) => {
+      await deleteScheduledCalculation({
+        scheduledCalculationResult,
+        shouldDeleteTimeseries,
+      });
+      onRemoveSourceClick(localWorkflow)();
+    },
+    [
+      onRemoveSourceClick,
+      localWorkflow,
+      deleteScheduledCalculation,
+      scheduledCalculationResult,
+    ]
+  );
+
   /**
    * Node handlers
    */
@@ -455,6 +487,7 @@ Props) => {
         onAddOutputNode={handleAddOutputNode}
         onMove={handleUpdatePositionAndZoom}
         onErrorIconClick={onErrorIconClick}
+        onDeleteSource={() => setSourceDeleteModalOpen(true)}
         translations={t}
       />
       <CloseButton
@@ -465,6 +498,13 @@ Props) => {
         }}
         aria-label={t.Close}
       />
+      {sourceDeleteModalOpen ? (
+        <ScheduledCalculationDeleteModal
+          onOk={handleDeleteSource}
+          name={scheduledCalculationResult?.name || ''}
+          onCancel={() => setSourceDeleteModalOpen(false)}
+        />
+      ) : null}
     </>
   );
 };

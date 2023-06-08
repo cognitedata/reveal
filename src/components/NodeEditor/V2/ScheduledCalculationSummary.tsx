@@ -16,7 +16,7 @@ const SummaryWrapper = styled.div`
   background-color: white;
   position: absolute;
   top: 5px;
-  left: 140px;
+  left: 178px;
   z-index: ${Layers.MINIMUM};
   display: flex;
   flex-direction: column;

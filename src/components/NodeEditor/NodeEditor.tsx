@@ -7,7 +7,7 @@ import {
   updateScheduledCalculation,
   updateWorkflow,
 } from 'models/chart/updates';
-import { useCallback, useEffect, useMemo } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { Icon, toast } from '@cognite/cogs.js';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
@@ -16,6 +16,7 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
 import { useOperations } from 'models/operations/atom';
 import { availableWorkflows } from 'models/calculation-results/selectors';
+import { useScheduledCalculationDataValue } from 'models/scheduled-calculation-results/atom';
 import { SourceOption } from './V2/types';
 import { getSourceOption, getSourcesFromChart } from './utils';
 import ReactFlowNodeEditorContainer from './V2/ReactFlowNodeEditorContainer';
@@ -28,6 +29,9 @@ interface Props {
   setChart: SetterOrUpdater<Chart | undefined>;
   translations: typeof defaultTranslations;
   onErrorIconClick: (id: string) => void;
+  onRemoveSourceClick: ComponentProps<
+    typeof ReactFlowNodeEditorContainer
+  >['onRemoveSourceClick'];
 }
 
 const NodeEditor = ({
@@ -37,6 +41,7 @@ const NodeEditor = ({
   setChart,
   translations,
   onErrorIconClick,
+  onRemoveSourceClick,
 }: Props) => {
   const t = useMemo(
     () => ({ ...defaultTranslations, ...translations }),
@@ -44,6 +49,7 @@ const NodeEditor = ({
   );
   const { data: login } = useUserInfo();
   const isOwner = useIsChartOwner(chart);
+  const scheduledCalculationData = useScheduledCalculationDataValue();
 
   /**
    * Get all operations
@@ -95,6 +101,8 @@ const NodeEditor = ({
     (sc) => sc.id === sourceId
   );
 
+  const scheduledCalculationResult = scheduledCalculationData?.[sourceId];
+
   const sourceType = workflow?.type || scheduledCalculation?.type;
 
   const readOnly =
@@ -143,7 +151,9 @@ const NodeEditor = ({
         readOnly={readOnly}
         translations={t}
         onErrorIconClick={onErrorIconClick}
+        onRemoveSourceClick={onRemoveSourceClick}
         calculationResult={result}
+        scheduledCalculationResult={scheduledCalculationResult}
       />
     </ReactFlowProvider>
   );

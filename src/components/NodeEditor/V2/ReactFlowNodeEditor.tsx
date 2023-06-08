@@ -18,7 +18,7 @@ import compareVersions from 'compare-versions';
 import AlertIcon from 'components/AlertIcon/AlertIcon';
 import { WorkflowState } from 'models/calculation-results/types';
 import { useFlag } from '@cognite/react-feature-flags';
-import { Label } from '@cognite/cogs.js';
+import { Label, Flex } from '@cognite/cogs.js';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import AddButton, { AddMenu } from './AddButton';
 import EditorControls from './EditorControls/EditorControls';
@@ -30,7 +30,12 @@ import SourceNode from './Nodes/SourceNode';
 import { defaultTranslations } from '../translations';
 import { CanvasContext } from './CanvasContext';
 import EditorToolbar from './EditorToolbar/EditorToolbar';
-import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
+import {
+  NodeEditorContainer,
+  ContextMenu,
+  ScheduleToolbar,
+  DeleteSourceButton,
+} from './elements';
 import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
 import { ScheduledCalculationSummary } from './ScheduledCalculationSummary';
 
@@ -64,6 +69,7 @@ type Props = {
   ) => void;
   onAddOutputNode: (position: XYPosition) => void;
   onMove: (transform: FlowTransform) => void;
+  onDeleteSource?: () => void;
   translations: typeof defaultTranslations;
   onErrorIconClick: (id: string) => void;
 };
@@ -90,6 +96,7 @@ const ReactFlowNodeEditor = ({
   onAddFunctionNode,
   onAddOutputNode,
   onMove,
+  onDeleteSource,
   translations: t,
   onErrorIconClick,
 }: Props) => {
@@ -274,6 +281,18 @@ const ReactFlowNodeEditor = ({
                 translations={t}
                 horizontal
               />
+              {isPersistenceCalcEnabled &&
+              sourceType === 'scheduledCalculation' ? (
+                <Flex>
+                  <DeleteSourceButton
+                    type="ghost"
+                    size="small"
+                    icon="Delete"
+                    onClick={onDeleteSource}
+                  />
+                </Flex>
+              ) : null}
+
               {calculationResult ? (
                 <>
                   {calculationResult.loading && (

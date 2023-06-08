@@ -2,12 +2,12 @@ import { ChartWorkflowV2, ScheduledCalculation } from 'models/chart/types';
 import { omit } from 'lodash';
 import { Timeseries } from '@cognite/sdk';
 import { getEntryColor } from 'utils/colors';
-import { CalculationTaskSchedule } from 'domain/scheduled-calculation/service/types';
+import { ScheduledCalculationTask } from 'domain/scheduled-calculation/service/types';
 
 export const adaptCalculationForClonedScheduledCalculation = (
   workflow: ChartWorkflowV2,
   chartId: string,
-  scheduledCalculationTask: CalculationTaskSchedule,
+  scheduledCalculationTask: ScheduledCalculationTask,
   timeseries: Timeseries
 ): ScheduledCalculation => {
   const scheduledCalculation = omit(

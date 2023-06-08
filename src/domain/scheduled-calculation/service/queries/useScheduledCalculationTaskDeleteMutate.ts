@@ -3,7 +3,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteScheduledCalculation } from '../network/deleteScheduledCalculation';
 
-export const useScheduledCalculationDeleteMutate = () => {
+export const useScheduledCalculationTaskDeleteMutate = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 

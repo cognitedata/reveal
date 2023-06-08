@@ -6,7 +6,7 @@ import { ComputationStep } from '@cognite/calculation-backend';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { createScheduledCalculation } from '../network/createScheduledCalculation';
 import { ScheduleCalculationFieldValues } from '../../internal/types';
-import { CalculationTaskSchedule } from '../types';
+import { ScheduledCalculationTask } from '../types';
 import { useTimeseriesCreateMutate } from './useTimeseriesCreateMutate';
 
 type MutateProps = {
@@ -30,7 +30,7 @@ export const useScheduledCalculationCreateMutate = () => {
   const { mutateAsync: createTimeseries } = useTimeseriesCreateMutate();
 
   return useMutation<
-    [Timeseries, CalculationTaskSchedule],
+    [Timeseries, ScheduledCalculationTask],
     CogniteError,
     MutateProps
   >(

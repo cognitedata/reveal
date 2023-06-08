@@ -2,9 +2,9 @@ import { Dropdown, Icon } from '@cognite/cogs.js';
 import { Badge } from 'antd';
 import { defaultTranslations } from 'components/NodeEditor/translations';
 import { ComponentProps, useState } from 'react';
-import { Controls, ControlButton, useZoomPanHelper } from 'react-flow-renderer';
-import styled from 'styled-components/macro';
+import { useZoomPanHelper } from 'react-flow-renderer';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
+import { CustomControlButtonGroup, CustomControlButton } from './elements';
 import WorkflowSettings from './WorkflowSettings';
 
 type Props = {
@@ -71,33 +71,5 @@ const EditorControls = ({
     </CustomControlButtonGroup>
   );
 };
-
-const CustomControlButtonGroup = styled(Controls)`
-  && {
-    border-radius: 6px;
-
-    .tippy-arrow {
-      color: #ffffff !important;
-    }
-  }
-`;
-
-const CustomControlButton = styled(ControlButton)`
-  && {
-    box-sizing: content-box; //added for fusion, will not impact legacy
-    width: 22px;
-    height: 22px;
-
-    &:first-child {
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
-    }
-
-    &:last-child {
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-    }
-  }
-`;
 
 export default EditorControls;

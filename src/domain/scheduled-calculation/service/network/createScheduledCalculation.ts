@@ -1,14 +1,14 @@
 import { CogniteClient } from '@cognite/sdk';
 import {
-  CalculationTaskSchedule,
-  CalculationTaskScheduledCreate,
+  ScheduledCalculationTask,
+  ScheduledCalculationTaskCreate,
 } from '../types';
 
 export const createScheduledCalculation = (
-  payload: { items: CalculationTaskScheduledCreate[] },
+  payload: { items: ScheduledCalculationTaskCreate[] },
   sdk: CogniteClient
 ) =>
-  sdk.post<{ items: CalculationTaskSchedule[] }>(
+  sdk.post<{ items: ScheduledCalculationTask[] }>(
     `api/v1/projects/${sdk.project}/calculations/schedules`,
     {
       data: payload,
