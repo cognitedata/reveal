@@ -1,4 +1,4 @@
-import { ComponentProps, MouseEventHandler } from 'react';
+import { ComponentProps } from 'react';
 import Highlighter from 'react-highlight-words';
 
 import styled from 'styled-components';
@@ -61,7 +61,7 @@ export default function TimeSeriesResultItem({
           <ResourceContainer>
             <InfoContainer>
               <ResourceNameWrapper>
-                <Icon type="Timeseries" style={{ minWidth: 14 }} />
+                <Icon type="Timeseries" css={{ minWidth: 14 }} />
                 {loading ? (
                   <Skeleton.Button active block style={{ height: 16 }} />
                 ) : (

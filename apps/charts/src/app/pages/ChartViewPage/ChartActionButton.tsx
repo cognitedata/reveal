@@ -56,7 +56,7 @@ export const ChartActionButton = ({
         }
       >
         <ChartActionButtonRef type="button">
-          <Icon type="AddLarge" style={{ color: 'white' }} size={18} />
+          <Icon type="AddLarge" css={{ color: 'white' }} size={18} />
         </ChartActionButtonRef>
       </Dropdown>
     </ChartActionContainer>

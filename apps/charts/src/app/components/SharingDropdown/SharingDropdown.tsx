@@ -103,7 +103,7 @@ const SharingDropdown = ({
                 value={shareableLink}
                 type="primary"
                 iconPlacement="right"
-                style={{ color: Colors['text-icon-on-contrast-strong'] }}
+                style={{ color: Colors['text-icon--on-contrast--strong'] }}
                 disabled={!chart.public}
               >
                 {t['Copy link']}

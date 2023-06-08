@@ -2,7 +2,7 @@
  * SourceTable Header
  */
 
-import { MouseEventHandler } from 'react';
+import { MouseEvent } from 'react';
 
 import { ShowHideButton } from '@charts-app/components/ShowHideButton/ShowHideButton';
 import { Modes } from '@charts-app/pages/types';
@@ -12,7 +12,7 @@ import { SourceItem, SourceName } from './elements';
 
 interface Props {
   mode: Modes;
-  onShowHideButtonClick?: MouseEventHandler<HTMLDivElement>;
+  onShowHideButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   showHideIconState?: boolean;
   translations?: typeof defaultTranslation;
 }

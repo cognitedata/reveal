@@ -105,7 +105,7 @@ export default function AssetSearchHit({
       <Row>
         <InfoContainer>
           <ResourceNameWrapper>
-            <Icon type="Assets" size={14} style={{ marginRight: 5 }} />
+            <Icon type="Assets" size={14} css={{ marginRight: 5 }} />
             <Highlighter
               highlightStyle={{
                 backgroundColor: Colors['decorative--yellow--400'],

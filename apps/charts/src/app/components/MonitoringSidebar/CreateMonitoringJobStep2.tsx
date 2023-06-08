@@ -61,7 +61,7 @@ const CreateMonitoringJobStep2 = ({
                 onBack(formValues);
               }}
             >
-              <Icon type="ArrowLeft" style={{ marginRight: 8 }} />
+              <Icon type="ArrowLeft" css={{ marginRight: 8 }} />
 
               {t.Back}
             </Button>
@@ -77,7 +77,7 @@ const CreateMonitoringJobStep2 = ({
               <AlarmIcon />
               {t['Start monitoring']}
               {isFormSubmitting && (
-                <Icon type="Loader" style={{ marginLeft: '0.5em' }} />
+                <Icon type="Loader" css={{ marginLeft: '0.5em' }} />
               )}
             </FullWidthButton>
           </Col>
@@ -87,7 +87,6 @@ const CreateMonitoringJobStep2 = ({
   );
 };
 
-// @ts-ignore
-const AlarmIcon = () => <Icon type="Alarm" style={{ marginRight: 8 }} />;
+const AlarmIcon = () => <Icon type="Alarm" css={{ marginRight: 8 }} />;
 
 export default CreateMonitoringJobStep2;

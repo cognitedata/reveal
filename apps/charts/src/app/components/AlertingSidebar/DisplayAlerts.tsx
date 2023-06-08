@@ -51,7 +51,7 @@ export const DisplayAlerts = ({
           <ExpandIcon
             $active={Boolean(isActive)}
             type="ChevronDownSmall"
-            style={{ top: '14px' }}
+            css={{ top: '14px' }}
           />
         )}
       >

@@ -79,7 +79,7 @@ const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const sparklineEndDate = dayjs().endOf('day').toDate();
 
   if (isLoading) {
-    return <Icon type="Loader" style={{ margin: 10 }} />;
+    return <Icon type="Loader" css={{ margin: 10 }} />;
   }
 
   if (timeseries.length === 0) {

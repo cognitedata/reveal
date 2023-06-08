@@ -17,7 +17,7 @@ export default function LoadingLinkedAsset() {
       <Row>
         <InfoContainer>
           <ResourceNameWrapper>
-            <Icon type="Assets" size={14} style={{ marginRight: 5 }} />
+            <Icon type="Assets" size={14} css={{ marginRight: 5 }} />
             <Skeleton.Button active block />
           </ResourceNameWrapper>
           <Description />

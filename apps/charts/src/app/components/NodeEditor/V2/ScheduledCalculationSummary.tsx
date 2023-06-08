@@ -63,7 +63,7 @@ export const ScheduledCalculationSummary = ({
           <ExpandIcon
             $active={Boolean(isActive)}
             type="ChevronDownSmall"
-            style={{ top: 16, position: 'absolute', right: 10 }}
+            css={{ top: 16, position: 'absolute', right: 10 }}
           />
         )}
       >

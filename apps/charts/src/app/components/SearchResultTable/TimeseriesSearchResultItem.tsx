@@ -66,7 +66,7 @@ export default function TimeseriesSearchResultItem({
           <ResourceContainer>
             <InfoContainer>
               <ResourceNameWrapper>
-                <Icon type="Timeseries" style={{ minWidth: 14 }} />
+                <Icon type="Timeseries" css={{ minWidth: 14 }} />
                 <Highlighter
                   highlightStyle={{
                     backgroundColor: Colors['decorative--yellow--400'],
@@ -121,7 +121,8 @@ const TSItem = styled.li<{ outline?: boolean }>`
   padding: 0 5px;
   && {
     ${(props) =>
-      props.outline && `border: 2px dashed ${Colors['decorative--green--200']};`};
+      props.outline &&
+      `border: 2px dashed ${Colors['decorative--green--200']};`};
   }
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);

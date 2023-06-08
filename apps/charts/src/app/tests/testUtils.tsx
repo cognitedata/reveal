@@ -27,7 +27,7 @@ const sdk = new CogniteClient({
   noAuthMode: true,
 });
 
-export const testWrapper: FC = ({ children }) => {
+export const testWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <SDKProvider sdk={sdk}>
       <QueryClientProvider client={testQueryClient}>

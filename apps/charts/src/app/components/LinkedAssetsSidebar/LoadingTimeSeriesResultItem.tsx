@@ -16,7 +16,7 @@ export default function LoadingTimeSeriesResultItem() {
           <ResourceContainer>
             <InfoContainer>
               <ResourceNameWrapper>
-                <Icon type="Timeseries" style={{ minWidth: 14 }} />
+                <Icon type="Timeseries" css={{ minWidth: 14 }} />
                 <Skeleton.Button active block style={{ height: 16 }} />
               </ResourceNameWrapper>
               <Description>

@@ -138,8 +138,7 @@ const MonitoringJobWithAlerts = ({ job, translations }: Props) => {
                 icon="EllipsisVertical"
                 type="neutral"
                 size="small"
-                onClick={(event) => {
-                  event.stopPropagation(); // to not toggle alert when clicking menu
+                onClick={() => {
                   if (isMenuOpen) {
                     onCloseDropdown();
                   } else {

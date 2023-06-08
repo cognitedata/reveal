@@ -3,20 +3,20 @@
  * @returns ShowHideButton
  */
 
-import { MouseEventHandler } from 'react';
+import { MouseEvent } from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
 interface Props {
   enabled: boolean;
-  onClick: () => void;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const ShowHideButton = ({ enabled, onClick }: Props) => {
   return (
     <Button
       icon={enabled ? 'EyeShow' : 'EyeHide'}
-      onClick={() => onClick()}
+      onClick={(event) => onClick(event)}
       title="Toggle visibility"
       style={{
         marginLeft: 7,

@@ -25,7 +25,7 @@ export const SourceIcon = ({
     >
       <Icon
         size={12}
-        style={{ marginRight: 0 }}
+        css={{ marginRight: 0 }}
         type={type ? SourceIconMap[type] : 'Timeseries'}
         aria-label={type === 'workflow' ? 'Workflow Function' : 'Timeseries'}
       />

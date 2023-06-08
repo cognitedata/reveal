@@ -330,7 +330,7 @@ const CreateMonitoringJobStep1 = ({
               }}
             >
               {t.Next}
-              <Icon type="ArrowRight" style={{ marginLeft: 8 }} />
+              <Icon type="ArrowRight" css={{ marginLeft: 8 }} />
             </FullWidthButton>
           </Col>
         </Row>

@@ -209,7 +209,7 @@ function WorkflowRow({
               {hasError && status === 'Success' && (
                 <AlertIcon
                   icon="ErrorFilled"
-                  variant="danger"
+                  type="danger"
                   onClick={() => onErrorIconClick(id)}
                   onDoubleClick={(event) => event.stopPropagation()}
                 />
@@ -217,7 +217,7 @@ function WorkflowRow({
               {!hasError && hasWarning && status === 'Success' && (
                 <AlertIcon
                   icon="WarningFilled"
-                  variant="warning"
+                  type="warning"
                   onClick={() => onErrorIconClick(id)}
                   onDoubleClick={(event) => event.stopPropagation()}
                 />

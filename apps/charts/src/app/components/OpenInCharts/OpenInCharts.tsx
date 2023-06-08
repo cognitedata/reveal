@@ -6,7 +6,6 @@ import {
   useCallback,
   useMemo,
 } from 'react';
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -324,7 +323,7 @@ export const OpenInCharts: FC = () => {
                       />
                       <InfoContainer>
                         <ResourceNameWrapper>
-                          <Icon type="Timeseries" style={{ minWidth: 14 }} />
+                          <Icon type="Timeseries" css={{ minWidth: 14 }} />
                           <span style={{ marginLeft: 5 }}>{tItem.name}</span>
                         </ResourceNameWrapper>
                         <Description>{tItem.description}</Description>
