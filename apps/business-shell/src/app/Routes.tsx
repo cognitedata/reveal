@@ -1,0 +1,37 @@
+import { Route, Routes } from 'react-router-dom';
+
+import ExplorerRoutes from '@flexible-data-explorer/app/Routes';
+import { IndustryCanvasPage } from '@fusion/industry-canvas';
+
+import { Flex } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
+
+import { AppSelector } from '../common/topbar/AppSelector';
+
+export const CoreRoutes = () => {
+  const { isEnabled } = useFlag('CDF_BUSINESS_isEnabled', {
+    forceRerender: true,
+    fallback: false,
+  });
+  if (!isEnabled) {
+    return (
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        style={{
+          height: 'calc(100vh - 56px)',
+          background: 'var(--cogs-surface--action--muted--default)',
+        }}
+      >
+        <AppSelector />
+      </Flex>
+    );
+  }
+  return (
+    <Routes>
+      <Route path="/explore/*" element={<ExplorerRoutes />} />
+      <Route path="/canvas/*" element={<IndustryCanvasPage />} />
+      <Route path="/charts/*" element={<div>On its way...</div>} />
+    </Routes>
+  );
+};

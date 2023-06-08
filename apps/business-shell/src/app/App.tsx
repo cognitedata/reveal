@@ -1,9 +1,7 @@
 import { ErrorBoundary } from 'react-error-boundary';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 import { AppContextProvider } from '@data-exploration-components/context/AppContext';
-import ExplorerRoutes from '@flexible-data-explorer/app/Routes';
-import { IndustryCanvasPage } from '@fusion/industry-canvas';
 import {
   QueryErrorResetBoundary,
   QueryClientProvider,
@@ -11,12 +9,14 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Button, ToastContainer } from '@cognite/cogs.js';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { useAuthContext } from '../common/auth/AuthProvider';
 import { TopBar } from '../common/topbar/top-bar';
 
 import { queryClient } from './queryClient';
+import { CoreRoutes } from './Routes';
 
 function App() {
   const { client } = useAuthContext();
@@ -39,24 +39,24 @@ function App() {
                 </div>
               )}
             >
-              <AppContextProvider
-                flow="AZURE_AD"
-                userInfo={<div />}
-                isAdvancedFiltersEnabled
+              <FlagProvider
+                projectName="CDF-business-portal"
+                appName={`${client.project}`}
+                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                remoteAddress={window.location.hostname}
               >
-                <Router window={window}>
-                  <TopBar />
-                  <Routes>
-                    <>
-                      <Route path="/explore/*" element={<ExplorerRoutes />} />
-                      <Route
-                        path="/canvas/*"
-                        element={<IndustryCanvasPage />}
-                      />
-                    </>
-                  </Routes>
-                </Router>
-              </AppContextProvider>
+                <AppContextProvider
+                  flow="AZURE_AD"
+                  userInfo={<div />}
+                  isAdvancedFiltersEnabled
+                >
+                  <Router window={window}>
+                    <TopBar />
+
+                    <CoreRoutes />
+                  </Router>
+                </AppContextProvider>
+              </FlagProvider>
             </ErrorBoundary>
           )}
         </QueryErrorResetBoundary>
