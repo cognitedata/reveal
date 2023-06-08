@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { Typography } from 'antd';
-
 import { ColumnType } from 'antd/lib/table';
+
 import { ServiceAccount } from '@cognite/sdk';
 
-import EditGroups from './EditGroups';
 import Actions from './Actions';
+import EditGroups from './EditGroups';
 
 const { Text } = Typography;
 

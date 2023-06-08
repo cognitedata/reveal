@@ -3,11 +3,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
-import CustomInfo from '@access-management/pages/components/CustomInfo';
 import {
   usePermissions,
   useDeleteServiceAccounts,
 } from '@access-management/hooks';
+import CustomInfo from '@access-management/pages/components/CustomInfo';
 
 import { getProject } from '@cognite/cdf-utilities';
 import { ServiceAccount } from '@cognite/sdk';

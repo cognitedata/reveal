@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
 import { AccessConfigurationWarning } from '@access-management/pages/components/AccessConfigurationWarning';
+import { getContainer } from '@access-management/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Col, Form, Input, Modal, Row, Table, notification } from 'antd';
-import { getContainer } from '@access-management/utils/utils';
 
 import { Button } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';

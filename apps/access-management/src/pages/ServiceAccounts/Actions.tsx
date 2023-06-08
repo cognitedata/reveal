@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
+import { usePermissions, useRefreshToken } from '@access-management/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Dropdown, Menu, Typography, notification } from 'antd';
-import { usePermissions, useRefreshToken } from '@access-management/hooks';
 
 import { Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';

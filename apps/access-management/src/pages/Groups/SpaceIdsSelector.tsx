@@ -1,10 +1,11 @@
 import React from 'react';
 
-import Select from 'antd/lib/select';
 import { useTranslation } from '@access-management/common/i18n';
-import { useQuery } from '@tanstack/react-query';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { getContainer } from '@access-management/utils/utils';
+import { useQuery } from '@tanstack/react-query';
+import Select from 'antd/lib/select';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 
 interface SpaceIdsSelectorProps {
   value: number[];

@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
+import { usePermissions } from '@access-management/hooks';
+import {
+  GOOGLE_LOGIN_URL,
+  GOOGLE_LOGOUT_URL,
+  GOOGLE_TOKEN_URL,
+} from '@access-management/utils/constants';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Alert,
@@ -14,12 +20,6 @@ import {
   Tooltip,
   notification,
 } from 'antd';
-import { usePermissions } from '@access-management/hooks';
-import {
-  GOOGLE_LOGIN_URL,
-  GOOGLE_LOGOUT_URL,
-  GOOGLE_TOKEN_URL,
-} from '@access-management/utils/constants';
 
 import { useSDK } from '@cognite/sdk-provider';
 

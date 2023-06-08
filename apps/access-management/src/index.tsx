@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ReactDOMClient from 'react-dom/client';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';

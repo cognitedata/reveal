@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
-import { TreeSelect, Tooltip } from 'antd';
-import unionBy from 'lodash/unionBy';
 import { DB_TABLE_SEPARATOR } from '@access-management/utils/constants';
 import { getContainer } from '@access-management/utils/utils';
+import { TreeSelect, Tooltip } from 'antd';
+import unionBy from 'lodash/unionBy';
 
 import { Icon } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';

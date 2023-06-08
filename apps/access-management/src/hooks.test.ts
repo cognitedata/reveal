@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { Group } from '@cognite/sdk';
+
 import { forUnitTests } from './hooks';
 
 describe('hooks', () => {

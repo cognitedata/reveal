@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Select, Tag, notification } from 'antd';
 import {
   useGroups,
   usePermissions,
   useRefreshToken,
 } from '@access-management/hooks';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Select, Tag, notification } from 'antd';
 import { isEqual } from 'lodash';
 
 import { Icon, Button } from '@cognite/cogs.js';

@@ -4,15 +4,15 @@ import { useHistory, useRouteMatch } from 'react-router';
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
-import CustomInfo from '@access-management/pages/components/CustomInfo';
-import { hasAnyValidGroupForOIDC } from '@access-management/pages/Groups/utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { notification } from 'antd';
 import {
   useAuthConfiguration,
   useGroups,
   usePermissions,
 } from '@access-management/hooks';
+import CustomInfo from '@access-management/pages/components/CustomInfo';
+import { hasAnyValidGroupForOIDC } from '@access-management/pages/Groups/utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { notification } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';

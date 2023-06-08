@@ -7,13 +7,13 @@ import {
   TranslationKeys,
   useTranslation,
 } from '@access-management/common/i18n';
+import { useAuthConfiguration } from '@access-management/hooks';
 import { StyledHelpIcon } from '@access-management/pages/components/CustomInfo';
 import { OIDCConfigurationWarning } from '@access-management/pages/components/OIDCConfigurationWarning';
+import { getContainer } from '@access-management/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Checkbox, Form, Input, Select, notification } from 'antd';
 import InputNumber from 'antd/lib/input-number';
-import { useAuthConfiguration } from '@access-management/hooks';
-import { getContainer } from '@access-management/utils/utils';
 
 import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { OidcConfiguration } from '@cognite/sdk';

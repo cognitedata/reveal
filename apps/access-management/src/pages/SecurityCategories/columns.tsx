@@ -1,8 +1,10 @@
 import React from 'react';
+
 import { Typography } from 'antd';
+import { ColumnType } from 'antd/lib/table';
 
 import { SecurityCategory } from '@cognite/sdk';
-import { ColumnType } from 'antd/lib/table';
+
 import Actions from './Actions';
 
 const { Text } = Typography;

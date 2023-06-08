@@ -6,8 +6,8 @@ import {
   TranslationKeys,
   useTranslation,
 } from '@access-management/common/i18n';
-import Select from 'antd/lib/select';
 import { getContainer } from '@access-management/utils/utils';
+import Select from 'antd/lib/select';
 
 import {
   getAclType,

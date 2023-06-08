@@ -2,8 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router';
 
 import { useTranslation } from '@access-management/common/i18n';
+import {
+  useAuthConfiguration,
+  useGroups,
+  usePermissions,
+  useListServiceAccounts,
+} from '@access-management/hooks';
 import { AccessConfigurationWarning } from '@access-management/pages/components/AccessConfigurationWarning';
 import LegacyServiceAccountsWarning from '@access-management/pages/OIDC/LegacyServiceAccountsWarning';
+import { getContainer } from '@access-management/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   notification,
@@ -19,13 +26,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import {
-  useAuthConfiguration,
-  useGroups,
-  usePermissions,
-  useListServiceAccounts,
-} from '@access-management/hooks';
-import { getContainer } from '@access-management/utils/utils';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Icon } from '@cognite/cogs.js';

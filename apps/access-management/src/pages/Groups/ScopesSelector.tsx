@@ -1,18 +1,19 @@
 import React from 'react';
+
 import styled from 'styled-components';
 
+import { useTranslation } from '@access-management/common/i18n';
+import { RESOURCE_SELECTOR_LIMIT } from '@access-management/utils/constants';
 import { Radio, RadioChangeEvent } from 'antd';
 
 import { DataSet } from '@cognite/sdk';
-import { getScopeLabel, getCapabilityScopes } from './utils';
-import { RESOURCE_SELECTOR_LIMIT } from '@access-management/utils/constants';
 
-import SecurityCategoriesSelector from './SecurityCategoriesSelector';
 import PartitionSelector from './PartitionSelector';
-import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
-import { useTranslation } from '@access-management/common/i18n';
+import ResourcesSelector from './ResourcesSelector';
+import SecurityCategoriesSelector from './SecurityCategoriesSelector';
 import SpaceIdsSelector from './SpaceIdsSelector';
+import { getScopeLabel, getCapabilityScopes } from './utils';
 
 const SelectorContainer = styled.div`
   margin-top: 10px;

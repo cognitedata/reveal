@@ -4,8 +4,8 @@ import {
   TranslationKeys,
   useTranslation,
 } from '@access-management/common/i18n';
-import { Form, Input } from 'antd';
 import { AZURE_APP_RESOURCE_ID } from '@access-management/utils/constants';
+import { Form, Input } from 'antd';
 
 import { Value } from './common';
 

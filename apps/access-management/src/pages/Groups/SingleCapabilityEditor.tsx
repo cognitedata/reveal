@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
+
+import {
+  TranslationKeys,
+  useTranslation,
+} from '@access-management/common/i18n';
+import { Form, Drawer, Divider } from 'antd';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import isEmpty from 'lodash/isEmpty';
+
+import { Icon, Button } from '@cognite/cogs.js';
 import { SingleCogniteCapability } from '@cognite/sdk';
 
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { Icon, Button } from '@cognite/cogs.js';
-import { Form, Drawer, Divider } from 'antd';
-
+import ActionsSelector from './ActionsSelector';
+import CapabilityTypeSelector from './CapabilityTypeSelector';
+import ScopesSelector from './ScopesSelector';
 import {
   getAclType,
   getActionsFromCapability,
   getScopeFromCapability,
   getCapabilityScopes,
 } from './utils';
-
-import ScopesSelector from './ScopesSelector';
-import ActionsSelector from './ActionsSelector';
-import CapabilityTypeSelector from './CapabilityTypeSelector';
-
-import {
-  TranslationKeys,
-  useTranslation,
-} from '@access-management/common/i18n';
 
 interface SingleCapabilityEditorProps {
   visible: boolean;

@@ -1,4 +1,6 @@
 import { useTranslation } from '@access-management/common/i18n';
+import { LEGACY_SESSION_TOKEN_KEY } from '@access-management/utils/constants';
+import { sleep } from '@access-management/utils/utils';
 import {
   useMutation,
   UseMutationOptions,
@@ -6,8 +8,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { notification } from 'antd';
-import { LEGACY_SESSION_TOKEN_KEY } from '@access-management/utils/constants';
-import { sleep } from '@access-management/utils/utils';
 
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';

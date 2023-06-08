@@ -4,9 +4,9 @@ import { useRouteMatch } from 'react-router';
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
+import { useGroups, useUpdateGroup } from '@access-management/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { Drawer, Form, Input, notification } from 'antd';
-import { useGroups, useUpdateGroup } from '@access-management/hooks';
 
 import { Button as CogsButton } from '@cognite/cogs.js';
 import { Group, GroupSpec } from '@cognite/sdk';

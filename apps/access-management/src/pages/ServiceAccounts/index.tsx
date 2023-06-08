@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
+import {
+  useGroups,
+  usePermissions,
+  useRefreshToken,
+} from '@access-management/hooks';
 import LegacyLoginFlowWarning from '@access-management/pages/IDP/LegacyLoginFlowWarning';
+import { sleep } from '@access-management/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Button,
@@ -14,12 +20,6 @@ import {
   Table,
   notification,
 } from 'antd';
-import {
-  useGroups,
-  usePermissions,
-  useRefreshToken,
-} from '@access-management/hooks';
-import { sleep } from '@access-management/utils/utils';
 
 import { useSDK } from '@cognite/sdk-provider';
 

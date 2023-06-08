@@ -1,11 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import React from 'react';
-import { getContainer } from '@access-management/utils/utils';
-import { styleScope } from './styleScope';
-import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
+
 import { createGlobalStyle } from 'styled-components';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+
+import { getContainer } from '@access-management/utils/utils';
 import {
   ConfigProvider,
   Modal,
@@ -15,6 +14,12 @@ import {
   Spin,
 } from 'antd';
 import antdReset from 'antd/es/style/reset.css';
+
+import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+
+import { styleScope } from './styleScope';
 
 const antdStyles = [antdReset];
 
