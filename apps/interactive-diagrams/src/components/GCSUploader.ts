@@ -1,12 +1,13 @@
 // @ts-ignore
 import { UploadFile } from 'antd/lib/upload/interface';
+import noop from 'lodash/noop';
 
 import UploadGCS from '@cognite/gcs-browser-upload';
 
 export default function GCSUploader(
   file: Blob | UploadFile,
   uploadUrl: string,
-  callback: (info: any) => void = () => {}
+  callback: (info: any) => void = noop
 ) {
   // This is what is recommended from google when uploading files.
   // https://github.com/QubitProducts/gcs-browser-upload

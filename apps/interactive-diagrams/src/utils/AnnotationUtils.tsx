@@ -69,14 +69,11 @@ const findSimilarMatches = (
       if (
         resourceType === 'file' &&
         taggedAnnotation.annotation.annotationType === 'diagrams.FileLink' &&
-        // @ts-expect-error
         (taggedAnnotation.annotation.data.fileRef.id === resourceId ||
-          // @ts-expect-error
           taggedAnnotation.annotation.data.fileRef.externalId ===
             resourceExternalId)
       ) {
         return isSimilarBoundingBox(
-          // @ts-expect-error
           taggedAnnotation.annotation.data.textRegion,
           box,
           threshold
@@ -86,14 +83,11 @@ const findSimilarMatches = (
       if (
         resourceType === 'asset' &&
         taggedAnnotation.annotation.annotationType === 'diagrams.AssetLink' &&
-        // @ts-expect-error
         (taggedAnnotation.annotation.data.assetRef.id === resourceId ||
-          // @ts-expect-error
           taggedAnnotation.annotation.data.assetRef.externalId ===
             resourceExternalId)
       ) {
         return isSimilarBoundingBox(
-          // @ts-expect-error
           taggedAnnotation.annotation.data.textRegion,
           box,
           threshold
@@ -183,7 +177,7 @@ export const createPendingAnnotationsFromJob = async (
           ) {
             return (
               // We can't refine the types right now
-              // @ts-expect-error
+
               taggedAnnotation.annotation.data.fileRef.id === resourceId
             );
           }
@@ -193,7 +187,7 @@ export const createPendingAnnotationsFromJob = async (
           ) {
             return (
               // We can't refine the types right now
-              // @ts-expect-error
+
               taggedAnnotation.annotation.data.assetRef.id === resourceId
             );
           }

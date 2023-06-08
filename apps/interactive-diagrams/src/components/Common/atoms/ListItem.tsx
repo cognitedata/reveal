@@ -2,6 +2,8 @@ import React from 'react';
 
 import styled, { CSSProperties } from 'styled-components';
 
+import noop from 'lodash/noop';
+
 import { Colors } from '@cognite/cogs.js';
 
 type WrapperProps = {
@@ -24,7 +26,7 @@ export const ListItem = ({
   bordered,
   style,
   id,
-  onClick = () => {},
+  onClick = noop,
 }: ListItemProps) => {
   return (
     <ListItemWrapper

@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 
+import noop from 'lodash/noop';
+
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 import {
   AssetFilterProps,
@@ -146,7 +148,7 @@ export const useSelectedResource = () => {
   };
 };
 
-const defaultOnSelect = () => {};
+const defaultOnSelect = noop;
 
 export type ResourceSelectionProps = {
   /**

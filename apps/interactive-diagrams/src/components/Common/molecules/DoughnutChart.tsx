@@ -4,6 +4,7 @@ import { Flex } from '@interactive-diagrams-app/components/Common';
 import Chart, { ChartData, ChartConfiguration } from 'chart.js/auto';
 import isEqual from 'lodash/isEqual';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Chart.defaults.datasets.doughnut.cutout = '75%';
 

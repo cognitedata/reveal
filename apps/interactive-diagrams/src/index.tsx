@@ -7,11 +7,9 @@ import singleSpaReact from 'single-spa-react';
 import App from './App';
 
 const lifecycles = singleSpaReact({
-  // @ts-ignore
   React,
   ReactDOMClient,
   rootComponent: App,
-  // @ts-ignore
   errorBoundary() {
     // eslint-disable-line
     // Customize the root error boundary for your microfrontend here.

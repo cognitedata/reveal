@@ -9,26 +9,25 @@ import { Modal, notification } from 'antd';
 import chunk from 'lodash/chunk';
 import uniqBy from 'lodash/uniqBy';
 
-import { Body } from '@cognite/cogs.js';
-import { AnnotationModel } from '@cognite/sdk/dist/src';
-
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
-  useCdfItem,
-  useCdfItems,
-  useList,
-} from '@cognite/sdk-react-query-hooks';
+  getIdFilter,
+  getExternalIdFilter,
+  updateAnnotations,
+} from '@cognite/annotations';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { Body } from '@cognite/cogs.js';
 import {
   ExternalLabelDefinition,
   FileChangeUpdate,
   FileInfo,
   CogniteEvent,
 } from '@cognite/sdk';
+import { AnnotationModel } from '@cognite/sdk/dist/src';
 import {
-  getIdFilter,
-  getExternalIdFilter,
-  updateAnnotations,
-} from '@cognite/annotations';
+  useCdfItem,
+  useCdfItems,
+  useList,
+} from '@cognite/sdk-react-query-hooks';
 
 import {
   isTaggedAnnotationsApiAnnotation,
@@ -432,7 +431,6 @@ export const useDeleteTags = () => {
 
   const { data: file } = useCdfItem<FileInfo>(
     'files',
-    // @ts-ignore
     { id: fileId! },
     { enabled: !!fileId }
   );

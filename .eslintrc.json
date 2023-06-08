@@ -34,7 +34,8 @@
               "@data-quality/codegen",
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
-              "@cognite/data-exploration"
+              "@cognite/data-exploration",
+              "@interactive-diagrams-app"
             ],
             "depConstraints": [
               {

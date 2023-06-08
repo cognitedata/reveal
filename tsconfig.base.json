@@ -60,6 +60,7 @@
       "@data-quality/codegen": [
         "apps/platypus/src/app/modules/solution/data-quality/api/codegen/index.ts"
       ],
+      "@interactive-diagrams-app/*": ["apps/interactive-diagrams/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
       "@fusion/copilot-core": ["libs/copilot-core/src/index.ts"],

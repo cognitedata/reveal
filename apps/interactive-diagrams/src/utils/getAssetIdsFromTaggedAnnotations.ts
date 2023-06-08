@@ -68,18 +68,18 @@ const getAssetIdsFromTaggedAnnotations = (
           };
           acc.push(currentEdit);
         }
-        // @ts-expect-error
+        // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
         if (taggedAnnotation.annotation.data.assetRef.id) {
           currentEdit.assetIds.add(
-            // @ts-expect-error
+            // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
             taggedAnnotation.annotation.data.assetRef.id
           );
         }
 
-        // @ts-expect-error
+        // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
         if (taggedAnnotation.annotation.data.assetRef.externalId) {
           currentEdit.assetExternalIds.add(
-            // @ts-expect-error
+            // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
             taggedAnnotation.annotation.data.assetRef.externalId
           );
         }

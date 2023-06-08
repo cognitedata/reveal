@@ -84,7 +84,7 @@ export const getColumns = (onFileView: (file: FileInfo) => void) =>
       render: (date: string) => {
         return <div>{new Date(date).toLocaleDateString()}</div>;
       },
-      sorter: dateSorter((x: any) => x?.lastUpdatedTime!),
+      sorter: dateSorter((x: any) => x?.lastUpdatedTime),
       defaultSortOrder: 'descend',
     },
     {

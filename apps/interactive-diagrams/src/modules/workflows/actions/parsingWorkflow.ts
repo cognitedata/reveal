@@ -12,6 +12,7 @@ import {
 } from '@interactive-diagrams-app/utils/Metrics';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import chunk from 'lodash/chunk';
+import noop from 'lodash/noop';
 
 import { FileInfo } from '@cognite/sdk';
 
@@ -94,7 +95,7 @@ export const startPnidParsingWorkflow = {
       await Promise.all(chunkedDiagrams);
     }
   ),
-  pending: () => {},
-  rejected: () => {},
-  fulfilled: () => {},
+  pending: noop,
+  rejected: noop,
+  fulfilled: noop,
 };

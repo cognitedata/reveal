@@ -14,6 +14,7 @@ import {
   trackUsage,
 } from '@interactive-diagrams-app/utils/Metrics';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import noop from 'lodash/noop';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { FileUploadResponse } from '@cognite/sdk';
@@ -187,5 +188,5 @@ export const startConvertFileToSvgJob = {
       }
     }
   ),
-  rejected: () => {},
+  rejected: noop,
 };

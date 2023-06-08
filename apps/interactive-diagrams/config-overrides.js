@@ -130,6 +130,7 @@ module.exports = {
     };
 
     // remove source map warning (see : https://github.com/facebook/create-react-app/discussions/11767#discussioncomment-3416044)
+    // eslint-disable-next-line @cognite/no-unissued-todos
     // todo: remove once data-exploration-components is properly updated to >5 versions
     config.ignoreWarnings = [
       {

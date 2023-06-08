@@ -191,9 +191,9 @@ export const createPendingAnnotations = async (
   const hasLinkedPendingTags = pendingAnnotations.some((annotation) => {
     if (annotation.annotationType === 'diagrams.FileLink') {
       return (
-        // @ts-expect-error
+        // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
         (annotation.data.fileRef.id ||
-          // @ts-expect-error
+          // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
           annotation.data.fileRef.externalId) &&
         annotation.status === 'suggested'
       );
@@ -201,9 +201,9 @@ export const createPendingAnnotations = async (
 
     if (annotation.annotationType === 'diagrams.AssetLink') {
       return (
-        // @ts-expect-error
+        // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
         (annotation.data.assetRef.id ||
-          // @ts-expect-error
+          // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
           annotation.data.assetRef.externalId) &&
         annotation.status === 'suggested'
       );
@@ -424,7 +424,7 @@ export const getTaggedAnnotationBoundingBox = (
     annotationType === 'diagrams.FileLink' ||
     annotationType === 'diagrams.UnhandledTextObject'
   ) {
-    // @ts-expect-error
+    // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
     return taggedAnnotation.annotation.data.textRegion;
   }
   // eslint-disable-next-line no-console

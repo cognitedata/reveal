@@ -161,10 +161,10 @@ const getSafeLabel = (
 
   if (
     isTaggedAnnotationsApiAnnotation(taggedAnnotation) &&
-    // @ts-expect-error
+    // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
     taggedAnnotation.annotation.data.text !== undefined
   ) {
-    // @ts-expect-error
+    // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
     return taggedAnnotation.annotation.data.text;
   }
 
@@ -200,18 +200,18 @@ export const selectLabelsForAnnotations = createSelector(
       switch (taggedAnnotation.annotation.annotationType) {
         case 'diagrams.AssetLink': {
           const asset = assets(
-            // @ts-expect-error
+            // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
             taggedAnnotation.annotation.data.assetRef.externalId ||
-              // @ts-expect-error
+              // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
               taggedAnnotation.annotation.data.assetRef.id
           );
           return asset?.name;
         }
         case 'diagrams.FileLink': {
           const file = files(
-            // @ts-expect-error
+            // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
             taggedAnnotation.annotation.data.fileRef.externalId ||
-              // @ts-expect-error
+              // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
               taggedAnnotation.annotation.data.fileRef.id
           );
           return file?.name;

@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten';
+import noop from 'lodash/noop';
 import zipObject from 'lodash/zipObject';
 
 export const arrayToObject = <T extends { id: any }>(rows: T[]) => {
@@ -39,9 +40,9 @@ export async function* followCursorsGenerator<T, K>(
 export async function callUntilCompleted(
   networkFn: () => Promise<{ status: number; data: { status: string } }>,
   completeCheckFn: (data: any) => boolean = () => true,
-  onCompleteFn: (data?: any) => void = () => {},
-  tickFn: (data: any) => void = () => {},
-  errorFn: (status: any) => void = () => {},
+  onCompleteFn: (data?: any) => void = noop,
+  tickFn: (data: any) => void = noop,
+  errorFn: (status: any) => void = noop,
   interval: number = 1000
 ) {
   try {

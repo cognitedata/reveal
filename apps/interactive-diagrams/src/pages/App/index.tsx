@@ -20,7 +20,6 @@ import { staticRoot } from '@interactive-diagrams-app/routes/paths';
 import { LS_KEY_METRICS } from '@interactive-diagrams-app/stringConstants';
 import { trackUsage } from '@interactive-diagrams-app/utils/Metrics';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ids } from 'cogs-variables';
 import queryString from 'query-string';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -29,6 +28,8 @@ import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
+
+import { ids } from '../../cogs-variables';
 
 const Routes = React.lazy(() => import('@interactive-diagrams-app/routes'));
 
@@ -85,6 +86,7 @@ export default function App() {
             <DataExplorationProvider
               flow={flow}
               userInfo={userInfo}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore:next-line
               sdk={sdk}
               styleScopeId={ids.styleScope}

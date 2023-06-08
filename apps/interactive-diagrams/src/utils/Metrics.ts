@@ -1,5 +1,6 @@
 import { getItemFromStorage } from '@interactive-diagrams-app/hooks';
 import { LS_KEY_METRICS } from '@interactive-diagrams-app/stringConstants';
+import includes from 'lodash/includes';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
@@ -23,7 +24,7 @@ export const trackUsage = (
   const metricsFromLs = getItemFromStorage<LSMetrics>(LS_KEY_METRICS);
   const username = metricsFromLs?.username ?? 'unknown';
 
-  if (host.indexOf('localhost') === -1) {
+  if (!includes(host, 'localhost')) {
     trackEvent(`EngineeringDiagrams.${event}`, {
       ...metadata,
       project: sdk.project,
