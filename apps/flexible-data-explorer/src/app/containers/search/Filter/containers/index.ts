@@ -1,3 +1,4 @@
+export * from './AppliedFilters';
 export * from './BooleanFilter';
 export * from './CommonFilter';
 export * from './DataTypeSelector';

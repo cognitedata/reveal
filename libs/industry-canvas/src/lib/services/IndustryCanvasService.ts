@@ -30,10 +30,17 @@ type PageInfo = {
   endCursor: string;
 };
 
+// NOTE: We manually omit createdTime from our Canvas type, since it's supplied
+// by FDM and we can't update it manually
+const omitCreatedTimeFromSerializedCanvas = (
+  canvas: SerializedCanvasDocument
+): Omit<SerializedCanvasDocument, 'createdTime'> =>
+  omit(canvas, ['createdTime']);
+
 export class IndustryCanvasService {
   public readonly SPACE_VERSION = 1;
-  public readonly SPACE_EXTERNAL_ID = 'MarvinV4'; // TODO(marvin): fix once data model is verified
-  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasV4'; // TODO(marvin): fix once data model is verified
+  public readonly SPACE_EXTERNAL_ID = 'MarvinV5'; // TODO(marvin): fix once data model is verified
+  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasV5'; // TODO(marvin): fix once data model is verified
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
   private fdmClient: FDMClient;
@@ -65,9 +72,9 @@ export class IndustryCanvasService {
               externalId
               name
               isArchived
-              createdAt
+              createdTime
               createdBy
-              updatedAt
+              updatedTime
               updatedBy
               containerReferences (first: ${this.LIST_LIMIT}) {
                 items {
@@ -133,9 +140,9 @@ export class IndustryCanvasService {
               externalId
               name
               isArchived
-              createdAt
+              createdTime
               createdBy
-              updatedAt
+              updatedTime
               updatedBy
             }
           }
@@ -166,14 +173,14 @@ export class IndustryCanvasService {
             filter: $filter,
             first: ${limit},
             after: ${cursor === undefined ? null : `"${cursor}"`},
-            sort: { createdAt: DESC }
+            sort: { updatedTime: DESC }
           ) {
             items {
               externalId
               name
-              createdAt
+              createdTime
               createdBy
-              updatedAt
+              updatedTime
               updatedBy
             }
             pageInfo {
@@ -216,9 +223,12 @@ export class IndustryCanvasService {
     const updatedCanvas: SerializedCanvasDocument = {
       ...canvas,
       updatedBy: this.userProfile.userIdentifier,
-      updatedAt: new Date().toISOString(),
+      updatedTime: new Date().toISOString(),
     };
-    await upsertCanvas(this.fdmClient, updatedCanvas);
+    await upsertCanvas(
+      this.fdmClient,
+      omitCreatedTimeFromSerializedCanvas(updatedCanvas)
+    );
     // This will induce an error because timestamps for instance will be incorrect
     return updatedCanvas;
   }
@@ -227,7 +237,7 @@ export class IndustryCanvasService {
     await this.fdmClient.upsertNodes([
       {
         modelName: ModelNames.CANVAS,
-        ...omit(canvas, ['data']),
+        ...omit(canvas, ['data', 'createdTime']),
         isArchived: true,
       },
     ]);
@@ -236,7 +246,10 @@ export class IndustryCanvasService {
   public async createCanvas(
     canvas: SerializedCanvasDocument
   ): Promise<SerializedCanvasDocument> {
-    return await upsertCanvas(this.fdmClient, canvas);
+    return await upsertCanvas(
+      this.fdmClient,
+      omitCreatedTimeFromSerializedCanvas(canvas)
+    );
   }
 
   public async deleteCanvasById(canvasId: string): Promise<void> {
@@ -258,8 +271,8 @@ export class IndustryCanvasService {
     return {
       externalId: uuid(),
       name: DEFAULT_CANVAS_NAME,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdTime: new Date().toISOString(),
+      updatedTime: new Date().toISOString(),
       updatedBy: this.userProfile.userIdentifier,
       createdBy: this.userProfile.userIdentifier,
       data: {

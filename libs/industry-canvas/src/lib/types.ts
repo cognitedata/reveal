@@ -179,10 +179,10 @@ export type CanvasMetadata = {
   name: string;
   isArchived?: boolean;
 
-  createdAt: ISOString;
+  readonly createdTime: ISOString;
   createdBy: UserIdentifier;
 
-  updatedAt: ISOString;
+  updatedTime: ISOString;
   updatedBy: UserIdentifier;
 };
 

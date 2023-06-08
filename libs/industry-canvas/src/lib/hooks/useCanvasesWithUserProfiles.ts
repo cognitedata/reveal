@@ -37,8 +37,8 @@ const useCanvasesWithUserProfiles = ({
       createdByUserProfile: userProfiles.find(
         (userProfile) => userProfile.userIdentifier === canvas.createdBy
       ),
-      createdAtDate: new Date(canvas.createdAt),
-      updatedAtDate: new Date(canvas.updatedAt),
+      createdAtDate: new Date(canvas.createdTime),
+      updatedAtDate: new Date(canvas.updatedTime),
     })
   );
 
