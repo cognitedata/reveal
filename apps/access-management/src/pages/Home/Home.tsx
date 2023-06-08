@@ -1,15 +1,17 @@
 import React from 'react';
 import {
-  Switch,
+  Routes,
   Route,
-  Redirect,
-  useHistory,
-  useRouteMatch,
+  Navigate,
+  useParams,
+  useLocation,
+  useNavigate,
 } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
+import { useAuthConfiguration, usePermissions } from '@access-management/hooks';
 import APIKeys from '@access-management/pages/APIKeys';
 import Groups from '@access-management/pages/Groups';
 import IDP from '@access-management/pages/IDP';
@@ -23,7 +25,6 @@ import {
   useIsMutating,
 } from '@tanstack/react-query';
 import Menu from 'antd/lib/menu';
-import { useAuthConfiguration, usePermissions } from '@access-management/hooks';
 
 import { createLink, getCluster } from '@cognite/cdf-utilities';
 import { Title, Loader, Button } from '@cognite/cogs.js';
@@ -40,14 +41,13 @@ export default function () {
   const { data: secCatRead } = usePermissions('securityCategoriesAcl', 'LIST');
   const { data: keysRead } = usePermissions('apikeysAcl', 'LIST');
 
-  const history = useHistory();
-
-  const { params } = useRouteMatch<{
+  const params = useParams<{
     tenant: string;
     path: string;
     page?: string;
   }>();
-  const { pathname, search, hash } = history.location;
+  const navigate = useNavigate();
+  const { pathname, search, hash } = useLocation();
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
 
@@ -77,7 +77,7 @@ export default function () {
         selectedKeys={[params.page || 'groups']}
         onClick={(e) => {
           if (e.key !== params.page) {
-            history.push(createLink(`/${params.path}/${e.key}`));
+            navigate(createLink(`/${params.path}/${e.key}`));
           }
         }}
         style={{ fontSize: '16px', marginBottom: '20px' }}
@@ -110,46 +110,50 @@ export default function () {
           </Menu.Item>
         )}
       </Menu>
-      <Switch>
-        <Redirect
-          from="/:url*(/+)"
-          to={{
-            pathname: pathname.slice(0, -1),
-            search,
-            hash,
-          }}
-        />
+      <Routes>
         <Route
           path={`/${params.tenant}/${params.path}/groups`}
-          component={Groups}
+          element={
+            <Navigate
+              to={{
+                pathname: pathname.slice(0, -1),
+                search,
+                hash,
+              }}
+            />
+          }
         />
+
         <Route
-          path={`/${params.tenant}/${params.path}`}
-          exact
-          component={Groups}
+          path={`/${params.tenant}/${params.path}/groups`}
+          element={<Groups />}
         />
+        <Route path={`/${params.tenant}/${params.path}`} element={<Groups />} />
         <Route
           path={`/${params.tenant}/${params.path}/api-keys`}
-          component={APIKeys}
+          element={<APIKeys />}
         />
-        <Route path={`/${params.tenant}/${params.path}/idp`} component={IDP} />
+        <Route
+          path={`/${params.tenant}/${params.path}/idp`}
+          element={<IDP />}
+        />
         <Route
           path={`/${params.tenant}/${params.path}/oidc`}
-          component={OIDC}
+          element={<OIDC />}
         />
         <Route
           path={`/${params.tenant}/${params.path}/user-profiles`}
-          component={UserProfiles}
+          element={<UserProfiles />}
         />
         <Route
           path={`/${params.tenant}/${params.path}/security-categories`}
-          component={SecurityCategories}
+          element={<SecurityCategories />}
         />
         <Route
           path={`/${params.tenant}/${params.path}/service-accounts`}
-          component={ServiceAccounts}
+          element={<ServiceAccounts />}
         />
-      </Switch>
+      </Routes>
     </StyledAppContainerDiv>
   );
 }

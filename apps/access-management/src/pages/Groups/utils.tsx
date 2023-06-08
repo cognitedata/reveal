@@ -321,6 +321,7 @@ export const getScopeLabel = (
         case 'securitycategories':
           return _t('security-categories');
       }
+      break;
     case 'spaceIdScope':
       return _t('space-ids');
   }

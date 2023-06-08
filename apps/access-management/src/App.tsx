@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import { translations } from '@access-management/common/i18n';
 import Home from '@access-management/pages/Home';
@@ -28,18 +28,18 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const appName = 'cdf-access-management';
+  // const appName = 'cdf-access-management';
   const projectName = getProject();
   const env = getEnv();
-  const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
+  // const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
 
   return (
     <I18nWrapper
-      flagProviderProps={{
-        apiToken: flagProviderApiToken,
-        appName,
-        projectName,
-      }}
+      // flagProviderProps={{
+      //   apiToken: flagProviderApiToken,
+      //   appName,
+      //   projectName,
+      // }}
       translations={translations}
       defaultNamespace="access-management"
     >
@@ -52,12 +52,10 @@ const App = () => {
             >
               <SDKProvider sdk={sdk}>
                 <Router>
-                  <Switch>
-                    <Route
-                      path={['/:tenant/:path/:page', '/:tenant/:path']}
-                      component={Home}
-                    />
-                  </Switch>
+                  <Routes>
+                    <Route path="/:tenant/:path" element={<Home />} />
+                    <Route path="/:tenant/:path/:page" element={<Home />} />
+                  </Routes>
                 </Router>
               </SDKProvider>
             </AuthWrapper>
