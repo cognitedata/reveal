@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Colors, Detail, Icon, Title } from '@cognite/cogs.js';
-import { Carousel } from 'antd';
 import styled from 'styled-components';
 
-import graphics from 'common/assets/graphics';
-import { useTranslation } from 'common/i18n';
+import graphics from '@raw-explorer/common/assets/graphics';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { Carousel } from 'antd';
+
+import { Colors, Detail, Icon, Title } from '@cognite/cogs.js';
 
 const FIRST_TIME_CAROUSEL_HEIGHT = 330;
 

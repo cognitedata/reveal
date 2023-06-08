@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import BaseTable, { AutoResizer, ColumnShape } from 'react-base-table';
+
 import styled from 'styled-components';
+
+import { ProfilingSidebar } from '@raw-explorer/components/ProfilingSidebar';
+import { useCellSelection } from '@raw-explorer/hooks/table-selection';
+import { TABLE_ROW_HEIGHT } from '@raw-explorer/utils/constants';
+
 import { Colors, Flex } from '@cognite/cogs.js';
 
-import { TABLE_ROW_HEIGHT } from 'utils/constants';
-
+import { Cell } from './Cell';
 import { HeaderRender, EmptyRender } from './customRenders';
 import { ExpandedCellModal } from './ExpandedCellModal';
-import { Cell } from './Cell';
-import { ProfilingSidebar } from 'components/ProfilingSidebar';
-import { useCellSelection } from 'hooks/table-selection';
 
 type Props = {
   rows: any;

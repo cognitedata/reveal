@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Select as AntdSelect, SelectProps } from 'antd';
 import styled from 'styled-components';
+
+import { Select as AntdSelect, SelectProps } from 'antd';
 
 const Select = (props: SelectProps<any>): JSX.Element => {
   return <StyledSelect {...(props as any)} />;

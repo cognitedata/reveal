@@ -1,18 +1,22 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { ProfileStatusMessage } from '@raw-explorer/components/ProfileStatus';
+import {
+  useActiveTableContext,
+  useProfilingSidebar,
+} from '@raw-explorer/contexts';
+import { useProfileResultType } from '@raw-explorer/hooks/profiling-service';
+import { useColumnSelection } from '@raw-explorer/hooks/table-selection';
+import { SIDEBAR_PROFILING_DRAWER_WIDTH } from '@raw-explorer/utils/constants';
 import { Drawer } from 'antd';
 
 import { Button, Colors, Flex } from '@cognite/cogs.js';
-import styled from 'styled-components';
 
-import { useActiveTableContext, useProfilingSidebar } from 'contexts';
-import { useColumnSelection } from 'hooks/table-selection';
-import { useProfileResultType } from 'hooks/profiling-service';
-import { SIDEBAR_PROFILING_DRAWER_WIDTH } from 'utils/constants';
-
-import { ProfileStatusMessage } from 'components/ProfileStatus';
 import { Header } from './Header';
 import { ProfilingData } from './ProfilingData';
-import { useTranslation } from 'common/i18n';
 
 export const ProfilingSidebar = (): JSX.Element => {
   const { t } = useTranslation();

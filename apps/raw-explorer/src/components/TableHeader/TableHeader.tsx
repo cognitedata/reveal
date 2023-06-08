@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Colors, Detail, Flex, Title } from '@cognite/cogs.js';
 
 type Props = {

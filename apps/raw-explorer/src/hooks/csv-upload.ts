@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import { CogniteError } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { PrimaryKeyMethod } from '@raw-explorer/components/CreateTableModal/CreateTableModal';
+import { sleep } from '@raw-explorer/utils/utils';
 import { notification } from 'antd';
 import PapaParse from 'papaparse';
 import { v4 as uuid } from 'uuid';
 
-import { useTranslation } from 'common/i18n';
-import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
-import { sleep } from 'utils/utils';
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import { CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { RAWUploadStatus, renderUploadError, UseUploadOptions } from './upload';
 

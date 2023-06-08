@@ -1,11 +1,11 @@
 import React from 'react';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { Section } from '@raw-explorer/components/ProfilingSection';
+import Distribution from '@raw-explorer/containers/Profiling/Distribution';
+import { Count } from '@raw-explorer/hooks/profiling-service';
+
 import { Flex } from '@cognite/cogs.js';
-
-import { Count } from 'hooks/profiling-service';
-
-import Distribution from 'containers/Profiling/Distribution';
-import { Section } from 'components/ProfilingSection';
-import { useTranslation } from 'common/i18n';
 
 type Props = {
   histogram?: Count[];

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
-import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
-import { notification } from 'antd';
 import styled from 'styled-components';
 
-import Modal, { ModalProps } from 'components/Modal/Modal';
-import { useDeleteTable } from 'hooks/sdk-queries';
-import { useCloseTable } from 'hooks/table-tabs';
-import { Trans, useTranslation } from 'common/i18n';
+import { Trans, useTranslation } from '@raw-explorer/common/i18n';
+import Modal, { ModalProps } from '@raw-explorer/components/Modal/Modal';
+import { useDeleteTable } from '@raw-explorer/hooks/sdk-queries';
+import { useCloseTable } from '@raw-explorer/hooks/table-tabs';
+import { notification } from 'antd';
+
+import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
 
 type DeleteTableModalProps = {
   databaseName: string;

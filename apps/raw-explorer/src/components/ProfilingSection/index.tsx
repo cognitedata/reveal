@@ -1,11 +1,12 @@
 import React from 'react';
+
 import styled from 'styled-components';
 
 import { Colors, Body } from '@cognite/cogs.js';
 
-import { SectionFrequency } from './SectionFrequency';
-import { SectionDistribution } from './SectionDistribution';
 import { SectionDistinctValues } from './SectionDistinctValues';
+import { SectionDistribution } from './SectionDistribution';
+import { SectionFrequency } from './SectionFrequency';
 
 export const DATA_MISSING = 'MISSING';
 

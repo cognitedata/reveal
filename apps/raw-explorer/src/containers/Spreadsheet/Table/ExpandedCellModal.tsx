@@ -1,11 +1,13 @@
 import React from 'react';
 import Draggable from 'react-draggable';
-import styled from 'styled-components';
-import { Modal } from 'antd';
-import { Body, Colors } from '@cognite/cogs.js';
 
-import { useCellSelection } from 'hooks/table-selection';
-import { TABLE_CELL_EXPANDED_WIDTH } from 'utils/constants';
+import styled from 'styled-components';
+
+import { useCellSelection } from '@raw-explorer/hooks/table-selection';
+import { TABLE_CELL_EXPANDED_WIDTH } from '@raw-explorer/utils/constants';
+import { Modal } from 'antd';
+
+import { Body, Colors } from '@cognite/cogs.js';
 
 export const ExpandedCellModal = (): JSX.Element => {
   const { selectedCell, isCellExpanded, setIsCellExpanded } =

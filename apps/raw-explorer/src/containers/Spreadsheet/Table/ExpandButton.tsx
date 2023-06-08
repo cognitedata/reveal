@@ -1,7 +1,9 @@
 import React from 'react';
+
+import { useCellSelection } from '@raw-explorer/hooks/table-selection';
+
 import { Icon } from '@cognite/cogs.js';
 
-import { useCellSelection } from 'hooks/table-selection';
 import { StyledExpandButton } from './Cell.styles';
 
 export const ExpandButton = (): JSX.Element => {

@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { TOOLTIP_DELAY_IN_MS } from 'utils/constants';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import { TOOLTIP_DELAY_IN_MS } from '@raw-explorer/utils/constants';
+
+import { Colors } from '@cognite/cogs.js';
 
 export type Count = {
   value: string;

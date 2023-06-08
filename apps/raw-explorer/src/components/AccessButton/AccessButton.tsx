@@ -1,9 +1,11 @@
 import React from 'react';
-import { Button, ButtonProps } from '@cognite/cogs.js';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { AccessPermission } from '@raw-explorer/utils/types';
+import { getActionLabel, getContainer } from '@raw-explorer/utils/utils';
 import { Popconfirm, Tooltip } from 'antd';
-import { getActionLabel, getContainer } from 'utils/utils';
-import { AccessPermission } from 'utils/types';
-import { useTranslation } from 'common/i18n';
+
+import { Button, ButtonProps } from '@cognite/cogs.js';
 
 type AccessButtonProps = ButtonProps & {
   permissions?: AccessPermission[];

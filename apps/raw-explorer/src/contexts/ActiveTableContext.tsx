@@ -5,15 +5,16 @@ import React, {
   useContext,
   useState,
 } from 'react';
+
 import styled from 'styled-components';
+
+import graphics from '@raw-explorer/common/assets/graphics';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { useTableRows } from '@raw-explorer/hooks/sdk-queries';
+import { DEFAULT_FILTER } from '@raw-explorer/hooks/table-filters';
+import { SpecificTable, useActiveTable } from '@raw-explorer/hooks/table-tabs';
+
 import { Colors, Title, Body, Loader } from '@cognite/cogs.js';
-
-import { useTableRows } from 'hooks/sdk-queries';
-import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
-import { DEFAULT_FILTER } from 'hooks/table-filters';
-
-import graphics from 'common/assets/graphics';
-import { useTranslation } from 'common/i18n';
 
 type ActiveTableState = {
   database: string;

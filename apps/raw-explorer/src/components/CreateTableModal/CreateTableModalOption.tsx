@@ -1,9 +1,11 @@
 import React from 'react';
 
-import { AllIconTypes, Body, Colors, Detail, Icon } from '@cognite/cogs.js';
-import icons, { IconType } from 'common/assets/icons';
 import styled from 'styled-components';
-import { CustomIcon } from 'components/CustomIcon';
+
+import icons, { IconType } from '@raw-explorer/common/assets/icons';
+import { CustomIcon } from '@raw-explorer/components/CustomIcon';
+
+import { AllIconTypes, Body, Colors, Detail, Icon } from '@cognite/cogs.js';
 
 type CreateTableModalOptionProps = {
   description: string;

@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Trans, useTranslation } from 'common/i18n';
+
+import { Trans, useTranslation } from '@raw-explorer/common/i18n';
+
+import { Icon } from '@cognite/cogs.js';
 
 const NoAccessPage = (): JSX.Element => {
   const { t } = useTranslation();

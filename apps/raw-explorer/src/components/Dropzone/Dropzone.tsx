@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Body, Colors, Detail, Icon, Title } from '@cognite/cogs.js';
-import { Upload } from 'antd';
-import { DraggerProps } from 'antd/lib/upload';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { Upload } from 'antd';
+import { DraggerProps } from 'antd/lib/upload';
+
+import { Body, Colors, Detail, Icon, Title } from '@cognite/cogs.js';
 
 type DropzoneProps = {
   description?: string;

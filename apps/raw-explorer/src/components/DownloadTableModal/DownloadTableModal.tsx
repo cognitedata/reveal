@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { trackEvent } from '@cognite/cdf-route-tracker';
+import { CSVLink } from 'react-csv';
 
-import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { CSVLink } from 'react-csv';
-import { escapeCSVValue } from 'utils/utils';
-import Modal, { ModalProps } from 'components/Modal/Modal';
-import Message from 'components/Message/Message';
-import { useDownloadData } from 'hooks/table-data';
-import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Message from '@raw-explorer/components/Message/Message';
+import Modal, { ModalProps } from '@raw-explorer/components/Modal/Modal';
+import { useDownloadData } from '@raw-explorer/hooks/table-data';
+import { RAW_PAGE_SIZE_LIMIT } from '@raw-explorer/utils/constants';
+import { escapeCSVValue } from '@raw-explorer/utils/utils';
+
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import { Button, Input } from '@cognite/cogs.js';
 import { RawDBRow } from '@cognite/sdk';
 
 type DownloadTableModalProps = {

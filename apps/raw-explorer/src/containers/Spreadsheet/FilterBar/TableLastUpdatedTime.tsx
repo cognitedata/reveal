@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Body, Colors, Detail, Flex, Icon } from '@cognite/cogs.js';
-import moment from 'moment';
 import styled from 'styled-components';
 
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import moment from 'moment';
+
+import { Body, Colors, Detail, Flex, Icon } from '@cognite/cogs.js';
 
 type TableLastUpdatedTimeProps = {
   isTableLastUpdatedTimeFetched?: boolean;

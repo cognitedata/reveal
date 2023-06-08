@@ -1,4 +1,14 @@
-import { useSDK } from '@cognite/sdk-provider';
+import { useEffect } from 'react';
+
+import { RAW_PAGE_SIZE_LIMIT } from '@raw-explorer/utils/constants';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+
 import {
   RawDB,
   RawDBTable,
@@ -6,15 +16,8 @@ import {
   RawDBRowInsert,
   CogniteError,
 } from '@cognite/sdk';
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
-  useMutation,
-  useQueryClient,
-} from 'react-query';
-import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
-import { useEffect } from 'react';
+import { useSDK } from '@cognite/sdk-provider';
+
 export const baseKey = 'raw-explorer';
 
 export const dbKey = (db: string) => [baseKey, db];

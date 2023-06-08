@@ -1,15 +1,16 @@
 import React, { useContext, useMemo } from 'react';
 
-import { Body, Colors, Detail, Icon } from '@cognite/cogs.js';
-import { RawDB } from '@cognite/sdk/';
 import styled from 'styled-components';
 
-import { RawExplorerContext } from 'contexts';
-import { useAllTables, useTableRows } from 'hooks/sdk-queries';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useAllTables, useTableRows } from '@raw-explorer/hooks/sdk-queries';
+import { useActiveTable } from '@raw-explorer/hooks/table-tabs';
+import { useSleep } from '@raw-explorer/utils/utils';
+
+import { Body, Colors, Detail, Icon } from '@cognite/cogs.js';
+import { RawDB } from '@cognite/sdk/';
 
 import SidePanelDatabaseListItemTooltip from './SidePanelDatabaseListItemTooltip';
-import { useActiveTable } from 'hooks/table-tabs';
-import { useSleep } from 'utils/utils';
 
 type SidePanelDatabaseListItemProps = {
   name: string;

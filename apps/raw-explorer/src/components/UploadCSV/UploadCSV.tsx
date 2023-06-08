@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 
-import { UploadChangeParam } from 'antd/lib/upload';
-import { notification } from 'antd';
-import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
-import { getContainer, trimFileExtension } from 'utils/utils';
-import { useActiveTableContext } from 'contexts';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { PrimaryKeyMethod } from '@raw-explorer/components/CreateTableModal/CreateTableModal';
+import CreateTableModalPrimaryKeyStep from '@raw-explorer/components/CreateTableModal/CreateTableModalPrimaryKeyStep';
+import CreateTableModalUploadStep from '@raw-explorer/components/CreateTableModal/CreateTableModalUploadStep';
+import Dropzone from '@raw-explorer/components/Dropzone/Dropzone';
+import Modal from '@raw-explorer/components/Modal/Modal';
+import { useActiveTableContext } from '@raw-explorer/contexts';
+import { DEFAULT_FILE_PROPS, useUpload } from '@raw-explorer/hooks/upload';
+import { UPLOAD_MODAL_WIDTH } from '@raw-explorer/utils/constants';
+import { getContainer, trimFileExtension } from '@raw-explorer/utils/utils';
+import { notification } from 'antd';
+import { UploadChangeParam } from 'antd/lib/upload';
 
-import Modal from 'components/Modal/Modal';
-import CreateTableModalUploadStep from 'components/CreateTableModal/CreateTableModalUploadStep';
-import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTableModalPrimaryKeyStep';
-import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
-import Dropzone from 'components/Dropzone/Dropzone';
-import { useTranslation } from 'common/i18n';
-import { DEFAULT_FILE_PROPS, useUpload } from 'hooks/upload';
+import { Button, Title } from '@cognite/cogs.js';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;

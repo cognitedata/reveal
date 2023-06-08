@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import CreateTableModal from '@raw-explorer/components/CreateTableModal/CreateTableModal';
+import SidePanelLevelWrapper from '@raw-explorer/components/SidePanel/SidePanelLevelWrapper';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useAllTables } from '@raw-explorer/hooks/sdk-queries';
+
 import { Button } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
-import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
-import { RawExplorerContext } from 'contexts';
+
 import SidePanelTableListContent from './SidePanelTableListContent';
 import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
-import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
-import { useAllTables } from 'hooks/sdk-queries';
-import { useTranslation } from 'common/i18n';
-import styled from 'styled-components';
 
 const SidePanelTableList = (): JSX.Element => {
   const { t } = useTranslation();

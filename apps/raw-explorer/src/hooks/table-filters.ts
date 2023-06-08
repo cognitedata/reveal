@@ -1,16 +1,15 @@
 import { useEffect, useMemo } from 'react';
 
-import { useActiveTableContext } from 'contexts';
-import { useActiveTable } from 'hooks/table-tabs';
+import { FilterType } from '@raw-explorer/components/FilterItem';
+import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   useColumnTypeCounts,
   useColumnType,
   FULL_PROFILE_LIMIT,
-} from 'hooks/profiling-service';
+} from '@raw-explorer/hooks/profiling-service';
+import { useActiveTable } from '@raw-explorer/hooks/table-tabs';
 
-import { FilterType } from 'components/FilterItem';
-
-export const ALL_FILTER: 'All' = 'All';
+export const ALL_FILTER = 'All' as const;
 export const DEFAULT_FILTER: FilterType = {
   type: ALL_FILTER,
   value: 0,

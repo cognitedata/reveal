@@ -78,6 +78,7 @@ storiesOf('Watchtower|AccessButton', module)
         user={mockUser}
         type="primary"
         confirmationMessage="Are you sure you want to click this?"
+        // eslint-disable-next-line lodash/prefer-noop, @typescript-eslint/no-empty-function
         onClick={() => {}}
       >
         I NEED CONFIRMATION

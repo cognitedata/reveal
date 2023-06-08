@@ -1,8 +1,10 @@
 import { ChangeEvent, ReactNode, useContext } from 'react';
 
-import { Button, Colors, Detail, Flex, Input, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { RawExplorerContext } from 'contexts';
+
+import { RawExplorerContext } from '@raw-explorer/contexts';
+
+import { Button, Colors, Detail, Flex, Input, Title } from '@cognite/cogs.js';
 
 type SidePanelLevelWrapperProps = {
   children: ReactNode;

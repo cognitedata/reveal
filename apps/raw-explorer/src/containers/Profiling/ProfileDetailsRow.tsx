@@ -1,10 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Flex, Colors } from '@cognite/cogs.js';
 
-import { Section, DATA_MISSING } from 'components/ProfilingSection';
-import { BooleanProfile, ColumnProfile } from 'hooks/profiling-service';
-import { useTranslation } from 'common/i18n';
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import {
+  Section,
+  DATA_MISSING,
+} from '@raw-explorer/components/ProfilingSection';
+import {
+  BooleanProfile,
+  ColumnProfile,
+} from '@raw-explorer/hooks/profiling-service';
+
+import { Flex, Colors } from '@cognite/cogs.js';
 
 type Props = {
   allCount: number;

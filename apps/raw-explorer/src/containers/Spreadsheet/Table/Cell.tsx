@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useCellSelection } from 'hooks/table-selection';
+import { useCellSelection } from '@raw-explorer/hooks/table-selection';
+
 import {
   StyledCellIndexColumn,
   StyledCellUnselected,

@@ -1,12 +1,13 @@
 import React, { ReactNode } from 'react';
 
-import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
 
-import { MODAL_WIDTH } from 'utils/constants';
-import { getContainer } from 'utils/utils';
-import { ZIndexLayer } from 'utils/zIndex';
+import { MODAL_WIDTH } from '@raw-explorer/utils/constants';
+import { getContainer } from '@raw-explorer/utils/utils';
+import { ZIndexLayer } from '@raw-explorer/utils/zIndex';
+import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
+
+import { Icon } from '@cognite/cogs.js';
 
 export type ModalProps = {
   children: ReactNode;

@@ -1,14 +1,15 @@
 import React, { useMemo, useState } from 'react';
-
-import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
-import { Alert } from 'antd';
-import { sortBy } from 'lodash';
 import { AutoResizer } from 'react-base-table';
+
 import styled from 'styled-components';
 
-import { useTranslation } from 'common/i18n';
-import { useActiveTableContext } from 'contexts';
-import { useFilteredColumns } from 'hooks/table-filters';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import {
+  ProfileStatusMessage,
+  ProfileCoverageLabel,
+} from '@raw-explorer/components/ProfileStatus';
+import { FilterBar } from '@raw-explorer/containers/Spreadsheet/FilterBar';
+import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   FULL_PROFILE_LIMIT,
   useQuickProfile,
@@ -16,15 +17,15 @@ import {
   useColumnType,
   useProfileResultType,
   ColumnProfile,
-} from 'hooks/profiling-service';
+} from '@raw-explorer/hooks/profiling-service';
+import { useFilteredColumns } from '@raw-explorer/hooks/table-filters';
+import { Alert } from 'antd';
+import { sortBy } from 'lodash';
 
-import { FilterBar } from 'containers/Spreadsheet/FilterBar';
-import {
-  ProfileStatusMessage,
-  ProfileCoverageLabel,
-} from 'components/ProfileStatus';
-import ProfileTableHeader from './ProfileTableHeader';
+import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
+
 import ProfileRow from './ProfileRow';
+import ProfileTableHeader from './ProfileTableHeader';
 
 export type SortableColumn = keyof ColumnProfile;
 

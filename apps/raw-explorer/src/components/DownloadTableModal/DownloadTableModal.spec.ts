@@ -1,5 +1,6 @@
-import { RawDBRow } from '@cognite/sdk';
 import { describe, expect, test } from '@jest/globals';
+
+import { RawDBRow } from '@cognite/sdk';
 
 import { prepareRows } from './DownloadTableModal';
 

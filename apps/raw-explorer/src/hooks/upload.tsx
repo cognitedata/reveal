@@ -1,6 +1,5 @@
-import { Trans } from 'common/i18n';
-
-import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
+import { Trans } from '@raw-explorer/common/i18n';
+import { PrimaryKeyMethod } from '@raw-explorer/components/CreateTableModal/CreateTableModal';
 
 import { useCSVUpload } from './csv-upload';
 import { useJSONUpload } from './json-upload';

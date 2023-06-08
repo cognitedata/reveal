@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
-import { RawExplorerContext } from 'contexts';
-import { useTableData } from 'hooks/table-data';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useTableData } from '@raw-explorer/hooks/table-data';
 
 const COLUMNS_IGNORE = ['column-index', 'lastUpdatedColumn', 'key'];
 

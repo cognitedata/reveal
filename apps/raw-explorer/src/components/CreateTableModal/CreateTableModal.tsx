@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 
-import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
-import { RawDBTable } from '@cognite/sdk';
-import { notification } from 'antd';
-import { useFormik } from 'formik';
 import styled from 'styled-components';
 
-import { Trans, useTranslation } from 'common/i18n';
-import { useUpload } from 'hooks/upload';
-import { useCreateTable } from 'hooks/sdk-queries';
-import { useActiveTable } from 'hooks/table-tabs';
-import { trimFileExtension } from 'utils/utils';
-import { CREATE_TABLE_MODAL_WIDTH } from 'utils/constants';
+import { Trans, useTranslation } from '@raw-explorer/common/i18n';
+import FormFieldWrapper from '@raw-explorer/components/FormFieldWrapper/FormFieldWrapper';
+import Modal, { ModalProps } from '@raw-explorer/components/Modal/Modal';
+import { useCreateTable } from '@raw-explorer/hooks/sdk-queries';
+import { useActiveTable } from '@raw-explorer/hooks/table-tabs';
+import { useUpload } from '@raw-explorer/hooks/upload';
+import { CREATE_TABLE_MODAL_WIDTH } from '@raw-explorer/utils/constants';
+import { trimFileExtension } from '@raw-explorer/utils/utils';
+import { notification } from 'antd';
+import { useFormik } from 'formik';
 
-import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import Modal, { ModalProps } from 'components/Modal/Modal';
+import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
+import { RawDBTable } from '@cognite/sdk';
+
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';

@@ -1,20 +1,19 @@
 import React, { useMemo } from 'react';
 
-import { Button, Title } from '@cognite/cogs.js';
-import { RawDB } from '@cognite/sdk/';
-
+import { useTranslation } from '@raw-explorer/common/i18n';
 import {
   StyledEmptyListDetail,
   StyledEmptyListTitle,
   StyledEmptyListWrapper,
   StyledNoItemsDetail,
   StyledNoItemsWrapper,
-} from 'components/SidePanel/SidePanelLevelWrapper';
+} from '@raw-explorer/components/SidePanel/SidePanelLevelWrapper';
+import { stringCompare } from '@raw-explorer/utils/utils';
 
-import { stringCompare } from 'utils/utils';
+import { Button, Title } from '@cognite/cogs.js';
+import { RawDB } from '@cognite/sdk/';
 
 import SidePanelDatabaseListItem from './SidePanelDatabaseListItem';
-import { useTranslation } from 'common/i18n';
 
 type SidePanelDatabaseListContentProps = {
   databases: RawDB[];

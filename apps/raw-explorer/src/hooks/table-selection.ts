@@ -1,9 +1,8 @@
 import { useContext, useMemo } from 'react';
 
-import { RawExplorerContext } from 'contexts';
-import { NO_CELL_SELECTED } from 'utils/table';
-
-import { useTableData } from 'hooks/table-data';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useTableData } from '@raw-explorer/hooks/table-data';
+import { NO_CELL_SELECTED } from '@raw-explorer/utils/table';
 
 export const useCellSelection = () => {
   const { selectedCell, setSelectedCell, isCellExpanded, setIsCellExpanded } =

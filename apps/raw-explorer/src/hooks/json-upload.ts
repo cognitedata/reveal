@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useSDK } from '@cognite/sdk-provider';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { PrimaryKeyMethod } from '@raw-explorer/components/CreateTableModal/CreateTableModal';
 import { notification } from 'antd';
 import { chunk, isArray } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
-import { useTranslation } from 'common/i18n';
-import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { RAWUploadStatus, renderUploadError, UseUploadOptions } from './upload';
 

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 
-import { Menu as AntMenu } from 'antd';
-import { Icon } from '@cognite/cogs.js';
-
 import styled from 'styled-components';
 
-import { useTableData } from 'hooks/table-data';
-import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
-import DownloadTableModal from 'components/DownloadTableModal/DownloadTableModal';
-import { useActiveTableContext } from 'contexts';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import DeleteTableModal from '@raw-explorer/components/DeleteTableModal/DeleteTableModal';
+import DownloadTableModal from '@raw-explorer/components/DownloadTableModal/DownloadTableModal';
+import { useActiveTableContext } from '@raw-explorer/contexts';
+import { useTableData } from '@raw-explorer/hooks/table-data';
+import { Menu as AntMenu } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
+
+import { Icon } from '@cognite/cogs.js';
 
 export const Menu = (): JSX.Element => {
   const { t } = useTranslation();

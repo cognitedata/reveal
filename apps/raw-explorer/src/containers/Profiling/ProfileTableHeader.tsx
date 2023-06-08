@@ -1,11 +1,14 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { ZIndexLayer } from '@raw-explorer/utils/zIndex';
+
 import { Colors, Icon } from '@cognite/cogs.js';
 
-import { ZIndexLayer } from 'utils/zIndex';
-import { TableCell } from './ProfileRow';
 import { SortableColumn } from '.';
-import { useTranslation } from 'common/i18n';
+import { TableCell } from './ProfileRow';
 
 type Props = {
   sortKey: SortableColumn;

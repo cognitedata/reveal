@@ -1,15 +1,18 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { Colors, Button } from '@cognite/cogs.js';
-import { Tabs as AntdTabs } from 'antd';
 
+import styled from 'styled-components';
+
+import { RawExplorerContext } from '@raw-explorer/contexts';
 import {
   useActiveTable,
   useCloseTable,
   useTableTabList,
-} from 'hooks/table-tabs';
-import { RawExplorerContext } from 'contexts';
-import { getContainer, getTableTabKey } from 'utils/utils';
+} from '@raw-explorer/hooks/table-tabs';
+import { getContainer, getTableTabKey } from '@raw-explorer/utils/utils';
+import { Tabs as AntdTabs } from 'antd';
+
+import { Colors, Button } from '@cognite/cogs.js';
+
 import TableTabListTitle from './TableTabListTitle';
 
 const { TabPane } = AntdTabs;

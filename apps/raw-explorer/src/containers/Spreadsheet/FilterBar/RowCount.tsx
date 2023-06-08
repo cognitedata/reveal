@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { Icon, Colors } from '@cognite/cogs.js';
-
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useActiveTableContext } from 'contexts';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   FULL_PROFILE_LIMIT,
   useFullProfile,
   Profile,
-} from 'hooks/profiling-service';
-import { useTranslation } from 'common/i18n';
+} from '@raw-explorer/hooks/profiling-service';
+
+import { Icon, Colors } from '@cognite/cogs.js';
 
 export default function RowCount() {
   const { t } = useTranslation();

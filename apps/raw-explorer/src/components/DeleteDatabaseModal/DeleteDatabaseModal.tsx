@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 
-import { Body, Colors, Modal, ModalProps } from '@cognite/cogs.js';
-import { notification } from 'antd';
 import styled from 'styled-components';
 
-import { RawExplorerContext } from 'contexts';
-import { useDeleteDatabase } from 'hooks/sdk-queries';
-import { useCloseDatabase } from 'hooks/table-tabs';
-import { Trans, useTranslation } from 'common/i18n';
+import { Trans, useTranslation } from '@raw-explorer/common/i18n';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useDeleteDatabase } from '@raw-explorer/hooks/sdk-queries';
+import { useCloseDatabase } from '@raw-explorer/hooks/table-tabs';
+import { notification } from 'antd';
+
+import { Body, Colors, Modal, ModalProps } from '@cognite/cogs.js';
 
 type DeleteDatabaseModalProps = {
   databaseName: string;
@@ -68,7 +69,7 @@ const DeleteDatabaseModal = ({
       onCancel={onCancel}
       title={t('delete-database-modal-title', { name: databaseName })}
       visible={visible}
-      size={'small'}
+      size="small"
       destructive
     >
       <StyledDeleteDatabaseModalBody level={2}>

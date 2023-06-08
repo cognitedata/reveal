@@ -1,9 +1,10 @@
 import React from 'react';
+
 import styled from 'styled-components';
 
-import { ProfileResultType } from 'hooks/profiling-service';
-import Message from 'components/Message/Message';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Message from '@raw-explorer/components/Message/Message';
+import { ProfileResultType } from '@raw-explorer/hooks/profiling-service';
 
 type ProfileStatusMessageProps = {
   resultType: ProfileResultType;

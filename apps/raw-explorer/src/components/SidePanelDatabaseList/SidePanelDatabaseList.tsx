@@ -1,15 +1,16 @@
 import React, { useMemo, useState } from 'react';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import CreateDatabaseModal from '@raw-explorer/components/CreateDatabaseModal/CreateDatabaseModal';
+import SidePanelLevelWrapper from '@raw-explorer/components/SidePanel/SidePanelLevelWrapper';
+import { useAllDatabases } from '@raw-explorer/hooks/sdk-queries';
+
 import { Button } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk/';
 
-import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
-import CreateDatabaseModal from 'components/CreateDatabaseModal/CreateDatabaseModal';
-import { useAllDatabases } from 'hooks/sdk-queries';
-
 import SidePanelDatabaseListContent from './SidePanelDatabaseListContent';
-import { useTranslation } from 'common/i18n';
-import styled from 'styled-components';
 
 const SidePanelDatabaseList = (): JSX.Element => {
   const { t } = useTranslation();

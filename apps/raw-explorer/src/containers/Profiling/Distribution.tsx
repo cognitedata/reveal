@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
 
-import { Body, Colors, Tooltip } from '@cognite/cogs.js';
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { Count } from '@raw-explorer/hooks/profiling-service';
 import { AxisBottom } from '@visx/axis';
 import { GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
@@ -9,10 +12,8 @@ import { scaleBand, scaleLinear } from '@visx/scale';
 import { Bar, BarStack } from '@visx/shape';
 import { TextProps } from '@visx/text/lib/Text';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
-import styled from 'styled-components';
 
-import { Count } from 'hooks/profiling-service';
-import { useTranslation } from 'common/i18n';
+import { Body, Colors, Tooltip } from '@cognite/cogs.js';
 
 const BOTTOM_AXIS_HEIGHT = 24;
 const MAXIMUM_BAR_WIDTH = 16;

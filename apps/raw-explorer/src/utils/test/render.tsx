@@ -1,6 +1,7 @@
 import React from 'react';
+
+import { styleScope } from '@raw-explorer/styles/styleScope';
 import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'styles/styleScope';
 
 export default (
   ui: React.ReactElement,

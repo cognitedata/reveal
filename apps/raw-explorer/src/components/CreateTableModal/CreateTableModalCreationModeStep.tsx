@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { UploadChangeParam } from 'antd/lib/upload';
 import styled from 'styled-components';
 
-import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import Dropzone from 'components/Dropzone/Dropzone';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Dropzone from '@raw-explorer/components/Dropzone/Dropzone';
+import FormFieldWrapper from '@raw-explorer/components/FormFieldWrapper/FormFieldWrapper';
+import { DEFAULT_FILE_PROPS } from '@raw-explorer/hooks/upload';
+import { UploadChangeParam } from 'antd/lib/upload';
 
-import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
-import { useTranslation } from 'common/i18n';
-import { DEFAULT_FILE_PROPS } from 'hooks/upload';
+import CreateTableModalOption from './CreateTableModalOption';
 
 type CreateTableModalCreationModeStepProps = {
   isCreatingTable: boolean;

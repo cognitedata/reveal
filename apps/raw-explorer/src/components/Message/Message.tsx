@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-import { AllIconTypes, Body, Button, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { AllIconTypes, Body, Button, Colors, Icon } from '@cognite/cogs.js';
 
 export type MessageType = 'info' | 'success' | 'warning' | 'error' | 'loading';
 

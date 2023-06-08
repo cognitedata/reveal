@@ -1,14 +1,15 @@
 import React from 'react';
 
-import { Body, Button, Colors, Icon, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import Message, { MessageType } from 'components/Message/Message';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Message, { MessageType } from '@raw-explorer/components/Message/Message';
 import {
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
-} from 'utils/constants';
-import { useTranslation } from 'common/i18n';
+} from '@raw-explorer/utils/constants';
+
+import { Body, Button, Colors, Icon, Overline } from '@cognite/cogs.js';
 
 type CreateTableModalUploadStepProps = {
   fileName?: string;

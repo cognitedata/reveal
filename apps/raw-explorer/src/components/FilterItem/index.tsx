@@ -1,9 +1,11 @@
 import React from 'react';
-import { Body, Button, Icon, IconType } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
 
-import { ColumnProfile } from 'hooks/profiling-service';
-import { ALL_FILTER } from 'hooks/table-filters';
+import { ColumnProfile } from '@raw-explorer/hooks/profiling-service';
+import { ALL_FILTER } from '@raw-explorer/hooks/table-filters';
+
+import { Body, Button, Icon, IconType } from '@cognite/cogs.js';
 
 export type FilterType = {
   type: ColumnProfile['type'] | typeof ALL_FILTER;

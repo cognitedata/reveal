@@ -1,15 +1,16 @@
 import React from 'react';
 
-import { Body, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import Select from 'components/Select/Select';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import FormFieldWrapper from '@raw-explorer/components/FormFieldWrapper/FormFieldWrapper';
+import Message from '@raw-explorer/components/Message/Message';
+import Select from '@raw-explorer/components/Select/Select';
+
+import { Body, Colors } from '@cognite/cogs.js';
 
 import { PrimaryKeyMethod } from './CreateTableModal';
 import CreateTableModalOption from './CreateTableModalOption';
-import Message from 'components/Message/Message';
-import { useTranslation } from 'common/i18n';
 
 type CreateTableModalPrimaryKeyStepProps = {
   columns?: string[];

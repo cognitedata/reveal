@@ -1,15 +1,16 @@
 import React, { useContext, useEffect } from 'react';
 
-import { Colors, Detail, Input, Modal, ModalProps } from '@cognite/cogs.js';
-import { RawDB } from '@cognite/sdk';
-import { notification } from 'antd';
-import { useFormik } from 'formik';
 import styled from 'styled-components';
 
-import { RawExplorerContext } from 'contexts';
-import { useCreateDatabase } from 'hooks/sdk-queries';
-import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import { Trans, useTranslation } from 'common/i18n';
+import { Trans, useTranslation } from '@raw-explorer/common/i18n';
+import FormFieldWrapper from '@raw-explorer/components/FormFieldWrapper/FormFieldWrapper';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useCreateDatabase } from '@raw-explorer/hooks/sdk-queries';
+import { notification } from 'antd';
+import { useFormik } from 'formik';
+
+import { Colors, Detail, Input, Modal, ModalProps } from '@cognite/cogs.js';
+import { RawDB } from '@cognite/sdk';
 
 type CreateDatabaseFormValues = {
   databaseName: string;
@@ -74,9 +75,7 @@ const CreateDatabaseModal = ({
                 {e.status === 403 && (
                   <>
                     <Trans i18nKey="error-insufficient-access" />
-                    <Trans
-                      i18nKey={'explorer-side-panel-databases-access-warning'}
-                    />
+                    <Trans i18nKey="explorer-side-panel-databases-access-warning" />
                   </>
                 )}
                 {e.status !== 403 && (
@@ -124,7 +123,7 @@ const CreateDatabaseModal = ({
         onCancel={onCancel}
         title={t('create-database-modal-title')}
         visible={visible}
-        size={'small'}
+        size="small"
       >
         <FormFieldWrapper
           isRequired

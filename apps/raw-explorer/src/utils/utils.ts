@@ -1,8 +1,9 @@
-import { Count } from 'hooks/profiling-service';
-import handleError from './handleError';
-import { styleScope } from 'styles/styleScope';
+import { Count } from '@raw-explorer/hooks/profiling-service';
+import { styleScope } from '@raw-explorer/styles/styleScope';
+import { QueryKey, useQuery, UseQueryOptions } from '@tanstack/react-query';
+
 import { RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR } from './constants';
-import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
+import handleError from './handleError';
 
 const nameToAclTypeMap = {
   '3d': 'threedAcl',

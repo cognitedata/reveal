@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnShape } from 'react-base-table';
-import isUndefined from 'lodash/isUndefined';
 
-import { RawDBRow } from '@cognite/sdk';
-import isBoolean from 'lodash/isBoolean';
-import isObject from 'lodash/isObject';
-import union from 'lodash/union';
-
-import { useActiveTableContext } from 'contexts';
-import { useTableRows } from 'hooks/sdk-queries';
+import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   FULL_PROFILE_LIMIT,
   useColumnType,
   useFullProfile,
   useQuickProfile,
-} from 'hooks/profiling-service';
-import { ALL_FILTER } from 'hooks/table-filters';
+} from '@raw-explorer/hooks/profiling-service';
+import { useTableRows } from '@raw-explorer/hooks/sdk-queries';
+import { ALL_FILTER } from '@raw-explorer/hooks/table-filters';
+import isBoolean from 'lodash/isBoolean';
+import isObject from 'lodash/isObject';
+import isUndefined from 'lodash/isUndefined';
+import union from 'lodash/union';
+
+import { RawDBRow } from '@cognite/sdk';
 
 export const PRIMARY_KEY_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_PRIMARY_KEY';
 export const LAST_UPDATED_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_LAST_UPDATED';

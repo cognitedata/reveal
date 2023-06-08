@@ -1,34 +1,37 @@
-import queryString from 'query-string';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useCellSelection } from 'hooks/table-selection';
+import { useCellSelection } from '@raw-explorer/hooks/table-selection';
+import queryString from 'query-string';
+
 import { getEnv, getProject } from '@cognite/cdf-utilities';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
-const getSetItems =
-  <T>(key: string, push: boolean, history: ReturnType<typeof useHistory>) =>
-  (newItems: T) => {
-    const search = queryString.parse(history?.location?.search, opts);
-    history[push ? 'push' : 'replace']({
-      pathname: history?.location?.pathname,
-      search: queryString.stringify(
-        {
-          ...search,
-          [key]: JSON.stringify(newItems),
-        },
-        opts
-      ),
-    });
-  };
 
 function useQueryParam<T>(
   key: string,
   defaultValue: T,
   push = false
 ): [T | undefined, (_: T | undefined) => void] {
-  const history = useHistory();
-
-  const search = queryString.parse(history?.location?.search, opts);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const getSetItems =
+    <T>(key: string, push: boolean) =>
+    (newItems: T) => {
+      const search = queryString.parse(location?.search, opts);
+      navigate(
+        `${location?.pathname}?${queryString.stringify(
+          {
+            ...search,
+            [key]: JSON.stringify(newItems),
+          },
+          opts
+        )}`,
+        {
+          replace: !push,
+        }
+      );
+    };
+  const search = queryString.parse(location?.search, opts);
   const item = (() => {
     try {
       const itemStr = (search[key] || '') as string;
@@ -40,7 +43,7 @@ function useQueryParam<T>(
     }
   })();
 
-  return [item, getSetItems<T | undefined>(key, push, history)];
+  return [item, getSetItems<T | undefined>(key, push)];
 }
 
 export type SpecificTable = [database: string, table: string, view?: string];
@@ -131,7 +134,7 @@ export function useActiveTable(): [
         const tabIndex = tabs.findIndex(
           ([tabDb, tabTable]) => tabDb === newDb && newTable === tabTable
         );
-        // console.log(tabIndex >= 0);
+
         if (tabIndex >= 0) {
           if (!view) {
             view = tabs[tabIndex][2];

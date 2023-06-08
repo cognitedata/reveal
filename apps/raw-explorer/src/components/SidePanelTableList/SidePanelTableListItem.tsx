@@ -1,13 +1,14 @@
 import React, { MouseEvent, useState } from 'react';
 
-import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
-import Dropdown from 'components/Dropdown/Dropdown';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useActiveTable } from 'hooks/table-tabs';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import DeleteTableModal from '@raw-explorer/components/DeleteTableModal/DeleteTableModal';
+import Dropdown from '@raw-explorer/components/Dropdown/Dropdown';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import { useActiveTable } from '@raw-explorer/hooks/table-tabs';
+
+import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
 
 type SidePanelTableListItemProps = {
   databaseName: string;

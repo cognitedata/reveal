@@ -1,10 +1,10 @@
 import React from 'react';
 
-import notification from 'antd/lib/notification';
+import { Trans, TranslationKeys } from '@raw-explorer/common/i18n';
 import { Typography } from 'antd';
+import notification from 'antd/lib/notification';
 
 import { getContainer } from './utils';
-import { Trans, TranslationKeys } from 'common/i18n';
 
 interface ApiError {
   duplicated: any[];

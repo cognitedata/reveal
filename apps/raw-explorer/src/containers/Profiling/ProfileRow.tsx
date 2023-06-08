@@ -1,22 +1,23 @@
 import React, { useMemo, useState } from 'react';
 
-import { Body, Button, Colors, Flex, Icon, Chip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import ColumnIcon from 'components/ColumnIcon';
-import { CustomIcon } from 'components/CustomIcon';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useActiveTableContext } from 'contexts';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import ColumnIcon from '@raw-explorer/components/ColumnIcon';
+import { CustomIcon } from '@raw-explorer/components/CustomIcon';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   ColumnProfile,
   FULL_PROFILE_LIMIT,
   useColumnType,
-} from 'hooks/profiling-service';
+} from '@raw-explorer/hooks/profiling-service';
+import { reduceHistogramBins } from '@raw-explorer/utils/utils';
+
+import { Body, Button, Colors, Flex, Icon, Chip } from '@cognite/cogs.js';
 
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
-import { reduceHistogramBins } from 'utils/utils';
-import { useTranslation } from 'common/i18n';
 
 type ProfileRowDataType = 'Empty' | 'Distinct' | 'Min' | 'Max' | 'Mean';
 
@@ -99,7 +100,9 @@ export default function ProfileRow({ allCount, profile }: Props) {
   return (
     <>
       <StyledTableRow key="profile" onClick={() => setExpanded(!expanded)}>
-        <TableCell>{<ColumnIcon dataKey={label} />}</TableCell>
+        <TableCell>
+          <ColumnIcon dataKey={label} />
+        </TableCell>
         <TableCell style={{ overflowWrap: 'anywhere' }}>{label}</TableCell>
         <TableCell>
           <NumberOrMissingTd

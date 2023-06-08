@@ -1,21 +1,23 @@
 import React, { useContext, useState } from 'react';
-
-import { Body, Button, Colors, Flex, Icon, Title } from '@cognite/cogs.js';
 import { ColumnShape } from 'react-base-table';
+
 import styled from 'styled-components';
 
+import { useTranslation } from '@raw-explorer/common/i18n';
+import ColumnIcon, {
+  COLUMN_ICON_WIDTH,
+} from '@raw-explorer/components/ColumnIcon';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import UploadCSV from '@raw-explorer/components/UploadCSV';
 import {
   RawExplorerContext,
   useActiveTableContext,
   useProfilingSidebar,
-} from 'contexts';
+} from '@raw-explorer/contexts';
+import { rowKey } from '@raw-explorer/hooks/sdk-queries';
+import { useQueryClient } from '@tanstack/react-query';
 
-import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
-import Tooltip from 'components/Tooltip/Tooltip';
-import UploadCSV from 'components/UploadCSV';
-import { useQueryClient } from 'react-query';
-import { rowKey } from 'hooks/sdk-queries';
-import { useTranslation } from 'common/i18n';
+import { Body, Button, Colors, Flex, Icon, Title } from '@cognite/cogs.js';
 
 const Comp = ({ item }: any) => item;
 
@@ -156,6 +158,7 @@ export const EmptyRender = (): JSX.Element => {
           style={{ color: Colors['text-icon--strong'] }}
           href="https://docs.cognite.com/api/v1/#operation/postRows"
           target="_blank"
+          rel="noreferrer"
         >
           <Box>
             <p className="text-icon">
@@ -207,6 +210,7 @@ const EmptyTableText = styled(Body)`
 const HeaderCell = styled(Body).attrs(
   ({ $isSelected }: { $isSelected: boolean }) => {
     if ($isSelected) return { style: { backgroundColor: '#F2F2F5' } };
+    return {};
   }
 )<{ $isSelected: boolean }>`
   width: 100%;

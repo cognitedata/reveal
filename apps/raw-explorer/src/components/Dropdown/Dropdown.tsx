@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { getContainer } from '@raw-explorer/utils/utils';
+import { ZIndexLayer } from '@raw-explorer/utils/zIndex';
+
 import {
   Dropdown as CogsDropdown,
   DropdownProps as CogsDropdownProps,
 } from '@cognite/cogs.js';
-
-import { ZIndexLayer } from 'utils/zIndex';
-import { getContainer } from 'utils/utils';
 
 type DropdownProps = CogsDropdownProps;
 

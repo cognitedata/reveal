@@ -1,13 +1,14 @@
 import React, { useContext, useState } from 'react';
 
-import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { RawExplorerContext } from 'contexts';
-import DeleteDatabaseModal from 'components/DeleteDatabaseModal/DeleteDatabaseModal';
-import Dropdown from 'components/Dropdown/Dropdown';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import DeleteDatabaseModal from '@raw-explorer/components/DeleteDatabaseModal/DeleteDatabaseModal';
+import Dropdown from '@raw-explorer/components/Dropdown/Dropdown';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+
+import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
 
 type SidePanelTableListHomeItemProps = {
   isEmpty?: boolean;

@@ -1,14 +1,15 @@
-import { Colors, Flex, Icon, Menu } from '@cognite/cogs.js';
-import { Dropdown } from 'antd';
-import { useTranslation } from 'common/i18n';
+import { useState } from 'react';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
 import {
   useActiveTable,
   useCloseTable,
   useCloseTables,
   useTableTabList,
-} from 'hooks/table-tabs';
+} from '@raw-explorer/hooks/table-tabs';
+import { Dropdown } from 'antd';
 
-import { useState } from 'react';
+import { Colors, Flex, Icon, Menu } from '@cognite/cogs.js';
 
 type TableTabListTitleProps = {
   db: string;

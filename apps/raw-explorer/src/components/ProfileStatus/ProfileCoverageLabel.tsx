@@ -1,15 +1,16 @@
 import React from 'react';
 
-import { Icon } from '@cognite/cogs.js';
 import styled, { keyframes } from 'styled-components';
 
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
 import {
   FULL_PROFILE_LIMIT,
   ProfileCoverageType,
   ProfileResultType,
-} from 'hooks/profiling-service';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useTranslation } from 'common/i18n';
+} from '@raw-explorer/hooks/profiling-service';
+
+import { Icon } from '@cognite/cogs.js';
 
 type ProfileCoverageLabelProps = {
   coverageType: ProfileCoverageType;
@@ -31,6 +32,7 @@ export const ProfileCoverageLabel = ({
         </StyledLabelRunning>
       );
     case 'partial':
+      // eslint-disable-next-line no-case-declarations
       const nrOfRows =
         nrOfProfiledRows && nrOfProfiledRows < FULL_PROFILE_LIMIT
           ? nrOfProfiledRows

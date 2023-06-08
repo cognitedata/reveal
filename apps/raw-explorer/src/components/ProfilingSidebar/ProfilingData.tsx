@@ -1,9 +1,14 @@
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
-import { Colors, Flex, Icon } from '@cognite/cogs.js';
 
-import { useActiveTableContext } from 'contexts';
-import { ColumnType } from 'hooks/table-data';
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import Message from '@raw-explorer/components/Message/Message';
+import {
+  Section,
+  DATA_MISSING,
+} from '@raw-explorer/components/ProfilingSection';
+import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   useColumnType,
   useQuickProfile,
@@ -13,11 +18,10 @@ import {
   BooleanProfile,
   ColumnProfile,
   FULL_PROFILE_LIMIT,
-} from 'hooks/profiling-service';
+} from '@raw-explorer/hooks/profiling-service';
+import { ColumnType } from '@raw-explorer/hooks/table-data';
 
-import Message from 'components/Message/Message';
-import { Section, DATA_MISSING } from 'components/ProfilingSection';
-import { useTranslation } from 'common/i18n';
+import { Colors, Flex, Icon } from '@cognite/cogs.js';
 
 type Props = { selectedColumn: ColumnType | undefined };
 

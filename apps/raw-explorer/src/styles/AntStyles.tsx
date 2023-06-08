@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
-import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { styleScope } from '@raw-explorer/styles/styleScope';
+import { getContainer } from '@raw-explorer/utils/utils';
 import {
   ConfigProvider,
   Modal,
@@ -9,7 +10,6 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
-
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
 // import anchorStyle from 'antd/es/anchor/style/index.less';
@@ -27,7 +27,6 @@ import carouselStyle from 'antd/es/carousel/style/index.less';
 // import collapseStyle from 'antd/es/collapse/style/index.less';
 // import commentStyle from 'antd/es/comment/style/index.less';
 // import configProviderStyle from 'antd/es/config-provider/style/index.less';
-import coreStyle from 'antd/es/style/core/index.less';
 // import datePickerStyle from 'antd/es/date-picker/style/index.less';
 // import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 // import dividerStyle from 'antd/es/divider/style/index.less';
@@ -38,8 +37,8 @@ import drawerStyle from 'antd/es/drawer/style/index.less';
 import gridStyle from 'antd/es/grid/style/index.less';
 // import iconStyle from 'antd/es/icon/style/index.less';
 // import imageStyle from 'antd/es/image/style/index.less';
-import inputNumberStyle from 'antd/es/input-number/style/index.less';
 import inputStyle from 'antd/es/input/style/index.less';
+import inputNumberStyle from 'antd/es/input-number/style/index.less';
 import layoutStyle from 'antd/es/layout/style/index.less';
 // import listStyle from 'antd/es/list/style/index.less';
 // import localeProviderStyle from 'antd/es/locale-provider/style/index.less';
@@ -62,6 +61,7 @@ import selectStyle from 'antd/es/select/style/index.less';
 // import sliderStyle from 'antd/es/slider/style/index.less';
 // import spaceStyle from 'antd/es/space/style/index.less';
 import spinStyle from 'antd/es/spin/style/index.less';
+import coreStyle from 'antd/es/style/core/index.less';
 // import statisticStyle from 'antd/es/statistic/style/index.less';
 // import stepsStyle from 'antd/es/steps/style/index.less';
 // import switchStyle from 'antd/es/switch/style/index.less';
@@ -78,8 +78,7 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 
-import { styleScope } from 'styles/styleScope';
-import { getContainer } from 'utils/utils';
+import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 const styles = [
   affixStyle,

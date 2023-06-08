@@ -1,17 +1,18 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { FilterItem, FilterType } from '@raw-explorer/components/FilterItem';
+import { Separator } from '@raw-explorer/components/Separator';
+import { useFilters } from '@raw-explorer/hooks/table-filters';
+import { FILTER_BAR_HEIGHT } from '@raw-explorer/utils/constants';
+
 import { Body, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 
-import { useFilters } from 'hooks/table-filters';
-
-import { FILTER_BAR_HEIGHT } from 'utils/constants';
-
-import { Separator } from 'components/Separator';
-import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
 import RowCount from './RowCount';
 import TableLastUpdatedTime from './TableLastUpdatedTime';
-import { useTranslation } from 'common/i18n';
 
 type Props = {
   className?: string;

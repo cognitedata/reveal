@@ -1,17 +1,25 @@
 import React, { useContext } from 'react';
 
-import { Colors, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import NoAccessPage from 'components/NoAccessPage/NoAccessPage';
-import SidePanel from 'components/SidePanel/SidePanel';
-import TableContent from 'containers/TableContent';
-import TableTabList from 'components/TableTabList';
-import { RawExplorerContext, ActiveTableProvider } from 'contexts';
-import { SIDE_PANEL_MAX_WIDTH, SIDE_PANEL_MIN_WIDTH } from 'utils/constants';
-import { useDatabases } from 'hooks/sdk-queries';
-import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
+import NoAccessPage from '@raw-explorer/components/NoAccessPage/NoAccessPage';
+import SidePanel from '@raw-explorer/components/SidePanel/SidePanel';
+import TableTabList from '@raw-explorer/components/TableTabList';
+import TableContent from '@raw-explorer/containers/TableContent';
+import {
+  RawExplorerContext,
+  ActiveTableProvider,
+} from '@raw-explorer/contexts';
+import { useDatabases } from '@raw-explorer/hooks/sdk-queries';
+import {
+  SIDE_PANEL_MAX_WIDTH,
+  SIDE_PANEL_MIN_WIDTH,
+} from '@raw-explorer/utils/constants';
 import { Allotment, LayoutPriority } from 'allotment';
+
+import { Colors, Loader } from '@cognite/cogs.js';
+
+import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
 
 export type RawExplorerSideMenuItem = 'raw';
 

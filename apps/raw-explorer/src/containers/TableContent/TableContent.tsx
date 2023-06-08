@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { TableHeader } from '@raw-explorer/components/TableHeader';
+import { Profiling } from '@raw-explorer/containers/Profiling';
+import { Spreadsheet } from '@raw-explorer/containers/Spreadsheet';
+import { useActiveTableContext } from '@raw-explorer/contexts';
+import { useFullProfile } from '@raw-explorer/hooks/profiling-service';
+import { useIsTableEmpty } from '@raw-explorer/hooks/table-data';
+import { TAB_HEIGHT } from '@raw-explorer/utils/constants';
 import { Tabs as AntdTabs } from 'antd';
 
-import { Spreadsheet } from 'containers/Spreadsheet';
-import { TableHeader } from 'components/TableHeader';
-import { Profiling } from 'containers/Profiling';
-
-import { TAB_HEIGHT } from 'utils/constants';
-import { useFullProfile } from 'hooks/profiling-service';
-import { useIsTableEmpty } from 'hooks/table-data';
-import { useActiveTableContext } from 'contexts';
-import { useTranslation } from 'common/i18n';
+import { Colors, Flex, Icon } from '@cognite/cogs.js';
 
 const { TabPane } = AntdTabs;
 

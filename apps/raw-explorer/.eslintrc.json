@@ -4,7 +4,13 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "rules": {       
+        "@nrwl/nx/enforce-module-boundaries": "off",
+        "@cognite/require-t-function": "warn",
+        "lodash/prefer-noop": "warn",
+        "@typescript-eslint/no-shadow": "warn",
+        "@cognite/no-number-z-index": "warn"
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],

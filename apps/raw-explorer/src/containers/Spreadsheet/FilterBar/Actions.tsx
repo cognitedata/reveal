@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 
-import { Button, Flex } from '@cognite/cogs.js';
-import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 
-import AccessButton from 'components/AccessButton';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import AccessButton from '@raw-explorer/components/AccessButton';
+import UploadCSV from '@raw-explorer/components/UploadCSV';
+import { useActiveTableContext } from '@raw-explorer/contexts';
+import { rowKey } from '@raw-explorer/hooks/sdk-queries';
+import { useQueryClient } from '@tanstack/react-query';
 import { Dropdown } from 'antd';
-import UploadCSV from 'components/UploadCSV';
-import { useActiveTableContext } from 'contexts';
-import { rowKey } from 'hooks/sdk-queries';
+
+import { Button, Flex } from '@cognite/cogs.js';
 
 import { Menu } from './Menu';
-import { useTranslation } from 'common/i18n';
 
 export const Actions = (): JSX.Element => {
   const { t } = useTranslation();

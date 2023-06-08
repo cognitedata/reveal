@@ -7,8 +7,8 @@ import React, {
   Dispatch,
 } from 'react';
 
-import { useActiveTable } from 'hooks/table-tabs';
-import { NO_CELL_SELECTED } from 'utils/table';
+import { useActiveTable } from '@raw-explorer/hooks/table-tabs';
+import { NO_CELL_SELECTED } from '@raw-explorer/utils/table';
 
 export enum RawExplorerModal {
   CreateDatabase,

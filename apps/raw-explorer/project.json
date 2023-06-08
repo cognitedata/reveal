@@ -14,7 +14,7 @@
         "vendorChunk": false,
         "commonChunk": false,
         "tsConfig": "apps/raw-explorer/tsconfig.app.json",
-        "assets": ["apps/raw-explorer/src/assets"],
+        "assets": [],
         "styles": [],
         "scripts": [],
         "webpackConfig": "apps/raw-explorer/webpack-config.js"

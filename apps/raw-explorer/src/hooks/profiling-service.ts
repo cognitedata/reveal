@@ -1,10 +1,10 @@
+import { tableKey } from '@raw-explorer/hooks/sdk-queries';
+import { PRIMARY_KEY_DATAKEY } from '@raw-explorer/hooks/table-data';
+import { ALL_FILTER } from '@raw-explorer/hooks/table-filters';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { zip } from 'lodash';
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery, UseQueryOptions } from 'react-query';
 
-import { PRIMARY_KEY_DATAKEY } from 'hooks/table-data';
-import { ALL_FILTER } from 'hooks/table-filters';
-import { tableKey } from 'hooks/sdk-queries';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
   ...tableKey(db, table),

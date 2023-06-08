@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 
-import { Icon } from '@cognite/cogs.js';
-import { useActiveTableContext } from 'contexts';
-import { FULL_PROFILE_LIMIT, useColumnType } from 'hooks/profiling-service';
+import { CustomIcon } from '@raw-explorer/components/CustomIcon';
+import { useActiveTableContext } from '@raw-explorer/contexts';
+import {
+  FULL_PROFILE_LIMIT,
+  useColumnType,
+} from '@raw-explorer/hooks/profiling-service';
 
-import { CustomIcon } from 'components/CustomIcon';
+import { Icon } from '@cognite/cogs.js';
 
 export const COLUMN_ICON_WIDTH = 50;
 

@@ -1,14 +1,16 @@
 import React from 'react';
-import { Colors, Icon, Flex, Loader } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
 
-import { useActiveTableContext } from 'contexts';
-import { useTableData, useIsTableEmpty } from 'hooks/table-data';
-import { useColumnType } from 'hooks/profiling-service';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { useActiveTableContext } from '@raw-explorer/contexts';
+import { useColumnType } from '@raw-explorer/hooks/profiling-service';
+import { useTableData, useIsTableEmpty } from '@raw-explorer/hooks/table-data';
+
+import { Colors, Icon, Flex, Loader } from '@cognite/cogs.js';
 
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
-import { useTranslation } from 'common/i18n';
 
 const Loading = styled.p<{ $visible: boolean }>`
   position: absolute;

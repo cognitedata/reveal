@@ -1,4 +1,5 @@
 import queryString from 'query-string';
+
 import { Metrics } from '@cognite/metrics';
 
 export const projectName = () =>

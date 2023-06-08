@@ -1,13 +1,14 @@
 import React, { useContext, useEffect } from 'react';
 
-import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import SidePanelTableList from 'components/SidePanelTableList/SidePanelTableList';
-import SidePanelDatabaseList from 'components/SidePanelDatabaseList/SidePanelDatabaseList';
-import { useTranslation } from 'common/i18n';
-import { RawExplorerContext } from 'contexts';
-import { useActiveTable } from 'hooks/table-tabs';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import SidePanelDatabaseList from '@raw-explorer/components/SidePanelDatabaseList/SidePanelDatabaseList';
+import SidePanelTableList from '@raw-explorer/components/SidePanelTableList/SidePanelTableList';
+import { RawExplorerContext } from '@raw-explorer/contexts';
+import { useActiveTable } from '@raw-explorer/hooks/table-tabs';
+
+import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
 
 type RawSidePanelProps = {
   onClose: () => void;

@@ -1,20 +1,26 @@
 import React, { useMemo } from 'react';
+
 import styled from 'styled-components';
 
-import { Body, Button, Colors, Title } from '@cognite/cogs.js';
-
-import { useActiveTableContext, useProfilingSidebar } from 'contexts';
-import { ColumnType } from 'hooks/table-data';
-import { useColumnNavigation } from 'hooks/table-navigation';
-import { FULL_PROFILE_LIMIT, useColumnType } from 'hooks/profiling-service';
-
+import { useTranslation } from '@raw-explorer/common/i18n';
+import ColumnIcon from '@raw-explorer/components/ColumnIcon';
+import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
+import {
+  useActiveTableContext,
+  useProfilingSidebar,
+} from '@raw-explorer/contexts';
+import {
+  FULL_PROFILE_LIMIT,
+  useColumnType,
+} from '@raw-explorer/hooks/profiling-service';
+import { ColumnType } from '@raw-explorer/hooks/table-data';
+import { useColumnNavigation } from '@raw-explorer/hooks/table-navigation';
 import {
   SIDEBAR_PROFILING_DRAWER_WIDTH,
   SIDEBAR_PROFILING_CLOSE_BUTTON_SPACE,
-} from 'utils/constants';
-import ColumnIcon from 'components/ColumnIcon';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { useTranslation } from 'common/i18n';
+} from '@raw-explorer/utils/constants';
+
+import { Body, Button, Colors, Title } from '@cognite/cogs.js';
 
 type Props = { selectedColumn: ColumnType | undefined };
 

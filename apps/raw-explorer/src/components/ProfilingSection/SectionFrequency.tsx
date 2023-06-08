@@ -1,8 +1,10 @@
 import React from 'react';
 
-import FrequencyStats, { Count } from 'containers/Profiling/FrequencyStats';
-import { Section } from 'components/ProfilingSection';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { Section } from '@raw-explorer/components/ProfilingSection';
+import FrequencyStats, {
+  Count,
+} from '@raw-explorer/containers/Profiling/FrequencyStats';
 
 type Props = {
   allCount: number;

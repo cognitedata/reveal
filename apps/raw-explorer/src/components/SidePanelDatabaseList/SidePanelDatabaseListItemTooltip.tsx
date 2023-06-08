@@ -1,9 +1,11 @@
 import React from 'react';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@raw-explorer/common/i18n';
+
 import { Body, Colors, Detail, Icon, Title, Tooltip } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
-import styled from 'styled-components';
-import { useTranslation } from 'common/i18n';
 
 type SidePanelDatabaseListItemTooltipProps = {
   children: React.ReactElement<any>;

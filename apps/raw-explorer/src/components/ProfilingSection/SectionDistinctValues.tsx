@@ -1,8 +1,9 @@
 import React from 'react';
-import { Body, Flex, Chip } from '@cognite/cogs.js';
 
-import { Section } from 'components/ProfilingSection';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@raw-explorer/common/i18n';
+import { Section } from '@raw-explorer/components/ProfilingSection';
+
+import { Body, Flex, Chip } from '@cognite/cogs.js';
 
 type Props = {
   allCount: number;
