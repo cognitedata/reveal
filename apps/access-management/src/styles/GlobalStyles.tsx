@@ -13,7 +13,6 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
-import antdReset from 'antd/es/style/reset.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
@@ -21,7 +20,7 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import { styleScope } from './styleScope';
 
-const antdStyles = [antdReset];
+const antdStyles = [];
 
 // This will override the appendTo prop on all Tooltips used from cogs
 Modal.defaultProps = {
