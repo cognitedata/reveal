@@ -222,6 +222,7 @@ export const useCreateMQTTSource = (
 
 type EditMQTTSourceVariables = {
   externalId: EditMQTTSource['externalId'];
+  type: MQTTSourceType;
   update: { [key: string]: { set: unknown } | { setNull: true } };
 };
 
@@ -242,6 +243,7 @@ export const useEditMQTTSource = (
               items: [
                 {
                   externalId: variables.externalId,
+                  type: variables.type,
                   update: variables.update,
                 },
               ],
