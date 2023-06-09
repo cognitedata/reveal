@@ -78,13 +78,14 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     const fileIds = descriptors.map(o => ({ id: o.fileId }));
 
     const annotationsResult = this._client.annotations.list({
+      limit: 1000,
       filter: {
         annotatedResourceType: 'file',
         annotatedResourceIds: fileIds
       }
     });
 
-    const annotationArray = await annotationsResult.autoPagingToArray();
+    const annotationArray = await annotationsResult.autoPagingToArray({ limit: Infinity });
 
     return annotationArray;
   }
@@ -341,13 +342,15 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this._client.annotations
         .list({
+          limit: 1000,
           filter: {
             annotatedResourceIds: idList.map(id => ({ id })),
             annotatedResourceType: 'file',
             annotationType: 'images.AssetLink'
           }
         })
-        .autoPagingToArray();
+        .autoPagingToArray({ limit: Infinity });
+
       const assetIds = annotationArray.map(annotation => {
         assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
         return annotation.data.assetRef;
