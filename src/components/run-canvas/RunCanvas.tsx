@@ -55,7 +55,7 @@ const RunCanvas = ({}: RunCanvasProps): JSX.Element => {
     const e: Edge[] = [];
 
     layout.children?.forEach(({ id, x, y }) => {
-      const workflowTask = selectedExecution?.workflowDefinition.tasks.find(
+      const workflowTask = selectedExecution?.workflowDefinition?.tasks.find(
         ({ externalId }) => externalId === id
       );
       if (workflowTask && x !== undefined && y !== undefined) {

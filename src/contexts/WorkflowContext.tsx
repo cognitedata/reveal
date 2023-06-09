@@ -20,7 +20,7 @@ import { AFlow, CanvasEdges, CanvasNodes } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUserInfo } from 'utils/user';
 import { v4 } from 'uuid';
-import { WorkflowExecution } from 'hooks/workflows';
+import { WorkflowExecutionDetails } from 'hooks/workflows';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {
@@ -47,8 +47,10 @@ type FlowContextT = {
   setOtherUserStates: Dispatch<SetStateAction<UserState[]>>;
   activeViewMode: ViewMode;
   setActiveViewMode: Dispatch<SetStateAction<ViewMode>>;
-  selectedExecution?: WorkflowExecution;
-  setSelectedExecution: Dispatch<SetStateAction<WorkflowExecution | undefined>>;
+  selectedExecution?: WorkflowExecutionDetails;
+  setSelectedExecution: Dispatch<
+    SetStateAction<WorkflowExecutionDetails | undefined>
+  >;
 };
 export const WorkflowContext = createContext<FlowContextT>(undefined!);
 
@@ -92,7 +94,7 @@ export const FlowContextProvider = ({
   >(undefined);
 
   const [selectedExecution, setSelectedExecution] = useState<
-    WorkflowExecution | undefined
+    WorkflowExecutionDetails | undefined
   >(undefined);
 
   const { data: userInfo } = useUserInfo();
