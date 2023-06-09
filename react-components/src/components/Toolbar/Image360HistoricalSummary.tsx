@@ -65,7 +65,7 @@ export const Image360HistoricalSummary = ({
                 isActive={activeRevision === index}
                 imageUrl={revisionDetails.imageUrl}
                 isLoading={false}/>
-              <Detail>{revisionDetails.date}</Detail>
+              <Detail style={{height:'16px'}}>{revisionDetails.date}</Detail>
             </RevisionItem>
           ))
           }
@@ -116,10 +116,8 @@ const StyledDetail = styled(Detail)`
 `;
 
 const StyledLayoutGridContainer = styled.div`
-  position: absolute;
   width: 70%;
-  height: 140px;
-  right: 20px;
+  height: fit-content;
   overflow-x: auto;
 `;
 
@@ -130,27 +128,23 @@ const StyledLayoutGrid = styled.div`
   gap: 6px;
   justify-content: flex-end;
   min-width: fit-content;
-
-  &::-webkit-scrollbar {
-    width: 18px;
-  }
 `;
 
 const RevisionItem = styled.div`
-  width: 160px;
-  height: 120px;
-  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   opacity: 0.8;
-  flex-shrink: 0;
+  gap: 10px;
 `;
 
 const OverviewContainer = styled.div`
-  height: 165px;
   display: flex;
-  flex-direction: column;
+  height: fit-content;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
   padding: 16px 16px 8px 16px;
   background: #FFFFFF;
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.25);
 `;

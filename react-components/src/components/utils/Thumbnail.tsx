@@ -49,6 +49,7 @@ const StyledThumbnail = styled.div<{ isActive: boolean }>`
   height: 90px;
   border: 1px solid #D9D9D9;
   border-radius: 12px;
+  gap: 6px;
 
   img {
     max-height: 100%;

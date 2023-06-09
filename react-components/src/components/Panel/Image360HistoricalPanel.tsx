@@ -76,7 +76,7 @@ const StyledChipCount = styled(Chip)`
   && {
     background: #5874FF;
     border-radius: 2px;
-    width: 20px;
+    width: fit-content;
     height: 20px;
     max-height: 20px;
     min-height: 20px;
