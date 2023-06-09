@@ -142,9 +142,12 @@ export class IconCollection {
       const points =
         this._proximityRadius === Infinity
           ? this._icons
-          : octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
-              return pointContainer.data;
-            });
+          : octree
+              .findPoints(camera.position, this._proximityRadius)
+              .map(pointContainer => {
+                return pointContainer.data;
+              })
+              .filter((point): point is Overlay3DIcon => point !== null);
 
       const closestPoints = points
         .sort((a, b) => {

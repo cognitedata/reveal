@@ -829,7 +829,7 @@ __metadata:
     rxjs: 7.8.1
     shx: 0.3.4
     skmeans: 0.11.3
-    sparse-octree: 7.1.6
+    sparse-octree: 7.1.8
     stats.js: 0.17.0
     three: 0.152.2
     three-stdlib: 2.23.7
@@ -839,7 +839,7 @@ __metadata:
     typescript: 5.1.3
     wasm-pack: 0.11.1
     webpack: 5.85.0
-    webpack-cli: 5.1.2
+    webpack-cli: 5.1.3
     webpack-dev-server: 4.15.0
     webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
@@ -10865,12 +10865,12 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"sparse-octree@npm:7.1.6":
-  version: 7.1.6
-  resolution: "sparse-octree@npm:7.1.6"
+"sparse-octree@npm:7.1.8":
+  version: 7.1.8
+  resolution: "sparse-octree@npm:7.1.8"
   peerDependencies:
     three: 0.x.x
-  checksum: 310fa0472815a15a2b6f04baf108720a9a953fc6f3e54318a18bd31f613a333a922ca3240306f678e075612a3adab06f63dd4cca73edc974fde73eaac2689798
+  checksum: 07074c703cd9cee9e3c1becc0b125356ffcea72713d47c4229b1ba3cd56ffbf68223c4a75586a0c6923a56e322b6383dd37b37e58c83471d2632e111a60c0a71
   languageName: node
   linkType: hard
 
@@ -12066,9 +12066,9 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:5.1.2":
-  version: 5.1.2
-  resolution: "webpack-cli@npm:5.1.2"
+"webpack-cli@npm:5.1.3":
+  version: 5.1.3
+  resolution: "webpack-cli@npm:5.1.3"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
     "@webpack-cli/configtest": ^2.1.1
@@ -12094,7 +12094,7 @@ typescript@~4.8.4:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 7bf33c82a6737dbf53294f467066395545884f648f44f961fbe16ed06d6c5fb3239ce51ad4b3af5b1ab038352a24861dbde8d92e0985a34c7bbd1893096b750e
+  checksum: 5bb8326bf8bdbc4118cb5dd17332429434a5ab6cde88d79c3d95abf23571c8213ce5e3ff2ca4e1e7145e6f16a4e78740f5d60f999b2e11a0ee37bb339d4da3e4
   languageName: node
   linkType: hard
 

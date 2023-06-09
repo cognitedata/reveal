@@ -96,7 +96,7 @@ describe(IconOctree.name, () => {
 
     const lods = [...set];
 
-    expect(lods.filter(p => p.data.data.includes(image360IconMock1)).length).toBe(1);
-    expect(lods.filter(p => p.data.data.includes(image360IconMock2)).length).toBe(1);
+    expect(lods.filter(p => p.data?.data.includes(image360IconMock1)).length).toBe(1);
+    expect(lods.filter(p => p.data?.data.includes(image360IconMock2)).length).toBe(1);
   });
 });
