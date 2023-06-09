@@ -4,6 +4,8 @@
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
 
+export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
+
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
@@ -34,7 +36,10 @@ export interface Image360FileProvider {
 }
 
 export interface Image360AssetProvider {
-  get360ImageAssets(image360FileDescriptors: Image360FileDescriptor[]): Promise<IdEither[]>;
+  get360ImageAssets(
+    image360FileDescriptors: Image360FileDescriptor[],
+    annotationFilter: Image360AnnotationFilterDelegate
+  ): Promise<IdEither[]>;
 }
 
 export type Historical360ImageSet = Image360EventDescriptor & {
