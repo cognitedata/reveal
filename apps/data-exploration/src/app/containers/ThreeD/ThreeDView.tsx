@@ -414,7 +414,9 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
                       setSelectedAssetId={(id) =>
-                        setSelectedAssetAndFitCamera(id, {})
+                        setSelectedAssetAndFitCamera(id, {
+                          imageEntity: image360Entity,
+                        })
                       }
                       viewer={revealViewer}
                       threeDModel={model}

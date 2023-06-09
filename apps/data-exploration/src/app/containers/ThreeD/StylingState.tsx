@@ -13,7 +13,7 @@ import {
   Image360Collection,
   InvertedNodeCollection,
 } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 
 import { SmartOverlayTool } from './tools/SmartOverlayTool';
 import {
@@ -21,8 +21,6 @@ import {
   getAnnotationByAssetId,
   fetchAssetNodeCollection,
 } from './utils';
-
-const DEFAULT_COLOR = new THREE.Color(0.8, 0.8, 0.3);
 
 export class StylingState {
   private _lastStyledImageAnnotations: Image360Annotation[] = [];
@@ -143,22 +141,7 @@ export class StylingState {
     }
 
     if (is360ImageCollection(threeDModel)) {
-      threeDModel.setDefaultAnnotationStyle({
-        color: new THREE.Color('#111111'),
-      });
-
-      if (assetId !== undefined) {
-        const annotationInfo = await threeDModel.findImageAnnotations({
-          assetRef: { id: assetId },
-        });
-
-        annotationInfo.forEach((info) => {
-          info.annotation.setColor(DEFAULT_COLOR);
-        });
-        this._lastStyledImageAnnotations = annotationInfo.map(
-          (i) => i.annotation
-        );
-      }
+      await this.highlight360Asset(assetId, threeDModel);
     }
 
     secondaryModels?.forEach((model) => {
@@ -225,21 +208,7 @@ export class StylingState {
     }
 
     if (is360ImageCollection(threeDModel)) {
-      const annotationInfo = await threeDModel.findImageAnnotations({
-        assetRef: { id: assetId },
-      });
-
-      if (annotationInfo.length === 0) {
-        return;
-      }
-
-      annotationInfo.forEach((info) =>
-        info.annotation.setColor(new THREE.Color('rgb(150, 150, 242)'))
-      );
-
-      this._lastStyledImageAnnotations = annotationInfo.map(
-        (i) => i.annotation
-      );
+      await this.highlight360Asset(assetId, threeDModel);
     }
   }
 
@@ -272,5 +241,24 @@ export class StylingState {
       // TODO: same as above
       return;
     }
+  }
+
+  private async highlight360Asset(
+    assetId: number,
+    threeDModel: Image360Collection
+  ): Promise<void> {
+    const annotationInfo = await threeDModel.findImageAnnotations({
+      assetRef: { id: assetId },
+    });
+
+    if (annotationInfo.length === 0) {
+      return;
+    }
+
+    annotationInfo.forEach((info) =>
+      info.annotation.setColor(new THREE.Color('rgb(150, 150, 242)'))
+    );
+
+    this._lastStyledImageAnnotations = annotationInfo.map((i) => i.annotation);
   }
 }
