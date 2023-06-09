@@ -1,10 +1,4 @@
-import {
-  FunctionComponent,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { FunctionComponent, PropsWithChildren } from 'react';
 import { Icon, Table } from '@cognite/cogs.js';
 import {
   LineageSection,
@@ -19,6 +13,8 @@ import {
   updateRawTableWithLastUpdate,
 } from 'components/Lineage/Extpipe/rawTablesUtils';
 import { useTranslation } from 'common/i18n';
+import { useQuery } from '@tanstack/react-query';
+import { getRawTableExtpipeLastUpdateTimeKey } from 'actions/keys';
 
 export interface RawExtpipeWithUpdateTime extends RawTable {
   lastUpdate: string;
@@ -36,20 +32,17 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
 }: PropsWithChildren<ExtpipeRawTablesProps>) => {
   const { t } = useTranslation();
   const { rawTablesColumnsWithExtpipe } = useRawTableColumns();
-  const [rawList, setRawList] = useState<RawExtpipeWithUpdateTime[]>([]);
 
-  const getRawTableExtpipeLastUpdateTime = useCallback(async () => {
-    const combinedRaws =
-      dataSet != null ? combineDataSetAndExtpipesRawTables(dataSet) : [];
-    const rawTables = await Promise.all(
-      combinedRaws.map((raw) => updateRawTableWithLastUpdate(raw, t))
-    );
-    setRawList(rawTables);
-  }, [dataSet, t]);
-
-  useEffect(() => {
-    getRawTableExtpipeLastUpdateTime();
-  }, [getRawTableExtpipeLastUpdateTime]);
+  const { data: rawList } = useQuery(getRawTableExtpipeLastUpdateTimeKey(), {
+    queryFn: async () => {
+      const combinedRaws =
+        dataSet != null ? combineDataSetAndExtpipesRawTables(dataSet) : [];
+      const rawTables = await Promise.all(
+        combinedRaws.map((raw) => updateRawTableWithLastUpdate(raw, t))
+      );
+      return rawTables;
+    },
+  });
 
   return (
     <LineageSection>
@@ -57,7 +50,7 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
         {t('raw-table_other', { postProcess: 'uppercase' })}
       </LineageTitle>
       <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
-      {isExtpipesFetched ? (
+      {isExtpipesFetched && rawList ? (
         <div className="resource-table">
           <Table
             columns={rawTablesColumnsWithExtpipe()}

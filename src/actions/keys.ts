@@ -33,3 +33,8 @@ export const getRetrieveByDataSetIdKey = (id: string, ...rest: any[]) => [
   id,
   ...rest,
 ];
+
+export const getRawTableExtpipeLastUpdateTimeKey = () => [
+  baseKey,
+  'rawTableExtpipLastUpdateTime',
+];
