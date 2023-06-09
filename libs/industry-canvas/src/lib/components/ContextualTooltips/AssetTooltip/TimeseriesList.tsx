@@ -63,8 +63,9 @@ const Container = styled.div`
   padding: 4px 0;
 `;
 
+const FOUR_AND_A_HALF_ROWS_HEIGHT = 192;
 const TimeseriesContainer = styled.div`
-  max-height: 107px;
+  max-height: ${FOUR_AND_A_HALF_ROWS_HEIGHT}px;
   overflow-y: auto;
   overflow-x: hidden;
 
