@@ -29,6 +29,7 @@ export class Image360RevisionEntity implements Image360Revision {
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private _annotations: ImageAnnotationObject[] | undefined = undefined;
+  private _annotationsPromise: Promise<ImageAnnotationObject[]> | undefined;
   private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
@@ -58,7 +59,16 @@ export class Image360RevisionEntity implements Image360Revision {
       return this._annotations;
     }
 
-    return this.loadAndSetAnnotations();
+    if (this._annotationsPromise !== undefined) {
+      return this._annotationsPromise;
+    }
+
+    this._annotationsPromise = new Promise<ImageAnnotationObject[]>(async (res, _rej) => {
+      this._annotations = await this.loadAndSetAnnotations();
+      res(this._annotations);
+    });
+
+    return this._annotationsPromise;
   }
 
   public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
@@ -150,7 +160,6 @@ export class Image360RevisionEntity implements Image360Revision {
       .filter(isDefined);
 
     this._image360VisualizationBox.setAnnotations(annotationObjects);
-    this._annotations = annotationObjects;
     this.propagateDefaultAppearanceToAnnotations();
 
     return annotationObjects;
