@@ -11,7 +11,7 @@ import { SelectProps, SelectComponents } from '@cognite/cogs.js';
 import { SourceOptionContainer, EllipsesText } from './elements';
 import { SourceIcon } from './SourceIcon';
 
-interface SourceOptionType extends OptionProps<ChartSource, false> {
+interface SourceOptionType extends OptionProps<ChartSource> {
   data: SourceOption;
 }
 
