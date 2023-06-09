@@ -1,20 +1,39 @@
 import { useCallback } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
+
+import { ValueByDataType } from '../containers/search/Filter';
+
+import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 
 export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
+  const [_, setQueryParams] = useSearchQueryParams();
+  const [__, setFilterParams] = useSearchFilterParams();
 
   // For migration: if we're located at the route, keep the route
   // TODO: Better way to use navigate function to do this?
   const basename = pathname.startsWith('/explore') ? '/explore' : '';
 
   const toSearchPage = useCallback(
-    (query?: string) => {
+    (searchQuery: string = '', filters: ValueByDataType = {}) => {
+      const params = createSearchParams({
+        searchQuery,
+        filters: JSON.stringify(filters),
+      });
+
+      setQueryParams(searchQuery);
+      setFilterParams(filters);
+
       navigate({
-        pathname: `${basename}/search`,
-        search: `?searchQuery=${query}`,
+        pathname: `search`,
+        search: `?${params.toString()}`,
       });
     },
     [basename, navigate]
