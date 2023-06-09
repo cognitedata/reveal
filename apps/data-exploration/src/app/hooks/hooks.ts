@@ -44,7 +44,7 @@ const getSetItems =
               ? newItems
               : encodeURIComponent(newItems),
           },
-          opts
+          { ...opts, skipNull: true, skipEmptyString: true }
         ),
       },
       { replace: !push }
@@ -64,24 +64,6 @@ export function useQueryString(
   const queryString = React.useMemo(() => decodeURIComponent(item), [item]);
 
   return [queryString, getSetItems(key, push, location, navigate)];
-}
-
-const emptyArray = [] as string[];
-export function useQueryStringArray(
-  key: string,
-  push = true
-): [string[], (_: any[]) => void] {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const search = qs.parse(location?.search, opts);
-  const rawItems = search[key];
-  if (!rawItems) {
-    return [emptyArray, getSetItems(key, push, location, navigate)];
-  }
-  const items = Array.isArray(rawItems) ? rawItems : [rawItems];
-
-  return [items, getSetItems(key, push, location, navigate)];
 }
 
 export const useCurrentSearchResourceTypeFromLocation = () => {
