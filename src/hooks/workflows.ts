@@ -200,7 +200,22 @@ type WorkflowExecutionStatus =
 export type WorkflowExecution = {
   id?: string;
   workflowExternalId?: string;
-  workflowDefinition: WorkflowDefinitionRead;
+  engineExecutionId?: string;
+  version?: string;
+  status?: WorkflowExecutionStatus;
+  executedTasks?: TaskExecution[];
+  input?: unknown; // TODO
+  output?: unknown; // TODO
+  createdTime?: number;
+  startTime?: number;
+  endTime?: number;
+  reasonForIncompletion?: string;
+};
+
+export type WorkflowExecutionDetails = {
+  id?: string;
+  workflowExternalId?: string;
+  workflowDefinition?: WorkflowDefinitionRead;
   engineExecutionId?: string;
   version?: string;
   status?: WorkflowExecutionStatus;
@@ -289,15 +304,15 @@ const getWorkflowExecutionDetailsQueryKey = (executionId: string) => [
 
 export const useWorkflowExecutionDetails = (
   executionId: string,
-  options?: UseQueryOptions<WorkflowExecution>
+  options?: UseQueryOptions<WorkflowExecutionDetails>
 ) => {
   const sdk = useSDK();
 
-  return useQuery<WorkflowExecution>(
+  return useQuery<WorkflowExecutionDetails>(
     getWorkflowExecutionDetailsQueryKey(executionId),
     () =>
       sdk
-        .get<WorkflowExecution>(
+        .get<WorkflowExecutionDetails>(
           `api/v1/projects/${getProject()}/workflows/executions/${executionId}`
         )
         .then((res) => res.data),

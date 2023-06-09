@@ -16,7 +16,10 @@ import { useMemo, useState } from 'react';
 import { Collapse } from 'antd';
 import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { WorkflowExecution } from 'hooks/workflows';
+import {
+  WorkflowExecution,
+  useWorkflowExecutionDetails,
+} from 'hooks/workflows';
 
 type RunHistorySectionItemProps = {
   item: WorkflowExecution;
@@ -29,7 +32,7 @@ export const RunHistorySectionItem = ({
 
   const extensions = useMemo(() => [json()], []);
 
-  const [tabView, setTabView] = useState<string>('definition');
+  const [tabView, setTabView] = useState<string>('results');
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -38,6 +41,17 @@ export const RunHistorySectionItem = ({
 
   const isSelected =
     !!selectedExecution?.id && selectedExecution.id === item.id;
+
+  const { data: execution, isInitialLoading } = useWorkflowExecutionDetails(
+    item?.id ?? '',
+    {
+      enabled: !!item?.id,
+    }
+  );
+
+  if (isInitialLoading) {
+    return <Icon type="Loader" />;
+  }
 
   return (
     <StyledCollapse
@@ -67,7 +81,7 @@ export const RunHistorySectionItem = ({
             <CodeSnippet
               extensions={extensions}
               value={JSON.stringify(
-                item.workflowDefinition.tasks,
+                execution?.workflowDefinition?.tasks,
                 undefined,
                 2
               )}
@@ -113,7 +127,7 @@ export const RunHistorySectionItem = ({
             <Button
               disabled={isSelected}
               onClick={() => {
-                setSelectedExecution(item);
+                setSelectedExecution(execution);
               }}
             >
               {isSelected ? t('run-is-selected') : t('view-run')}

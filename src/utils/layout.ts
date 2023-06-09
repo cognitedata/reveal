@@ -1,6 +1,6 @@
 import Elk from 'elkjs/lib/elk.bundled';
 
-import { WorkflowExecution } from 'hooks/workflows';
+import { WorkflowExecutionDetails } from 'hooks/workflows';
 
 type ElkNode = {
   id: string;
@@ -17,13 +17,13 @@ type ElkEdge = {
 const NODE_WIDTH = 350;
 const NODE_HEIGHT = 110;
 
-export const computeLayout = async (execution: WorkflowExecution) => {
+export const computeLayout = async (execution: WorkflowExecutionDetails) => {
   const elk = new Elk();
 
   const nodes: ElkNode[] = [];
   const edges: ElkEdge[] = [];
 
-  execution.workflowDefinition.tasks.forEach(({ externalId, dependsOn }) => {
+  execution.workflowDefinition?.tasks.forEach(({ externalId, dependsOn }) => {
     nodes.push({
       id: externalId,
       width: NODE_WIDTH,
