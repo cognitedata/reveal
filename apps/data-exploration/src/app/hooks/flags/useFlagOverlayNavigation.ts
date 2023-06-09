@@ -5,10 +5,11 @@ import { useFlag } from '@cognite/react-feature-flags';
  */
 export const useFlagOverlayNavigation = () => {
   // First create an unleash flag, this is a placeholder.
-  const { isEnabled } = useFlag('DATA_EXPLORATION_overlay_navigation', {
-    forceRerender: true,
-    fallback: false,
-  });
+  // const { isEnabled } = useFlag('DATA_EXPLORATION_overlay_navigation', {
+  //   forceRerender: true,
+  //   fallback: false,
+  // });
 
-  return isEnabled;
+  // return isEnabled;
+  return true;
 };
