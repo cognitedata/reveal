@@ -36,12 +36,12 @@ apps/industry-canvas-ui              @cognitedata/unified-file-viewer
 apps/coding-conventions           @deep-cognite @CimStordal
 
 # Contextualization
-libs/contextualization              @dlcognite @cognitedata/contextualization
+libs/contextualization              @davidlky @cognitedata/contextualization
 
 # Copilot
-apps/copilot              @dlcognite @andeplane @miladh @trygveu
+apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 # IoT Hub
-apps/iot-hub              @dlcognite @geircognite @muradsater
 
 apps/raw-explorer @cognitedata/team-hebe
+apps/iot-hub              @davidlky @geircognite @muradsater

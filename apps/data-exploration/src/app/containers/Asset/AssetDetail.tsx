@@ -14,6 +14,7 @@ import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/eleme
 import { ResourceDetailsTabsV2 } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useEndJourney,
+  usePushJourney,
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
@@ -39,6 +40,7 @@ export const AssetDetail = ({
   hideDefaultCloseActions?: boolean;
 }) => {
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
+  const [pushJourney] = usePushJourney();
   const [endJourney] = useEndJourney();
 
   const activeTab = selectedTab ?? 'details';
@@ -49,6 +51,10 @@ export const AssetDetail = ({
 
   const handleTabChange = (newTab: string) => {
     setSelectedTab(newTab);
+  };
+
+  const handleRootAssetClick = (rootAssetId: number) => {
+    pushJourney({ id: rootAssetId, type: 'asset' });
   };
 
   useEffect(() => {
@@ -108,7 +114,10 @@ export const AssetDetail = ({
         additionalTabs={[
           <Tabs.Tab label="Details" key="details" tabKey="details">
             <DetailsTabWrapper>
-              <AssetInfo asset={asset} />
+              <AssetInfo
+                asset={asset}
+                onClickRootAsset={handleRootAssetClick}
+              />
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,

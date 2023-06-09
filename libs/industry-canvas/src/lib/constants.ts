@@ -1,4 +1,7 @@
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
 export const TOAST_POSITION = 'top-left' as const;
+export const ANNOTATION_TOOLTIP_POSITION = TooltipAnchorPosition.BOTTOM_LEFT;
 
 export enum QueryKeys {
   GET_CANVAS = 'canvas.get',
