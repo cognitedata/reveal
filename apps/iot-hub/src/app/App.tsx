@@ -8,12 +8,16 @@ import styled from 'styled-components/macro';
 import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 
+import { useIoT } from './context/IoTHubContext';
+import { ConnectionStringPage } from './pages/ConnectionStringPage';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
 
 function App() {
   const project = getProject();
   const basename = `${project}/iot`;
+
+  const { isValidParams } = useIoT();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -25,7 +29,7 @@ function App() {
           window={window}
           children={
             <StyledPage>
-              <Routes />
+              {isValidParams ? <Routes /> : <ConnectionStringPage />}
             </StyledPage>
           }
         />
