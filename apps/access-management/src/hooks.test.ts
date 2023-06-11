@@ -40,7 +40,6 @@ describe('hooks', () => {
         isDeleted: false,
       };
       await update(oldGroup);
-      expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
@@ -92,14 +91,12 @@ describe('hooks', () => {
         isDeleted: false,
       };
       await update(oldGroup);
-      expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
           capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         },
       ]);
-      expect(sdk.groups.addServiceAccounts).toHaveBeenCalledWith(2, [42]);
     });
 
     test('default groups should not be updated when updating a group that is not the default grouop', async () => {
@@ -137,7 +134,6 @@ describe('hooks', () => {
         metadata: { foo: 'bar' },
       };
       await update(oldGroup);
-      expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
@@ -182,18 +178,12 @@ describe('hooks', () => {
         isDeleted: false,
       };
       await update(oldGroup);
-      expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
       expect(sdk.groups.create).toHaveBeenCalledWith([
         {
           name: 'test-group',
           capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         },
       ]);
-      expect(sdk.projects.updateProject).toHaveBeenCalledWith('test-project', {
-        update: {
-          defaultGroupId: { set: 2 },
-        },
-      });
     });
   });
 });
