@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useRouteMatch } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useTranslation } from '@access-management/common/i18n';
 import {
@@ -49,7 +49,7 @@ export default function Groups() {
   const [showEditGroupDrawer, setShowEdit] = useState<Group | undefined>();
 
   const [searchValue, setSearchValue] = useState('');
-  const match = useRouteMatch<{ tenant: string }>('/:tenant');
+  const { tenant } = useParams();
   const { data: readPermission, isFetched: readPermFetched } = usePermissions(
     'groupsAcl',
     'LIST'
@@ -62,10 +62,10 @@ export default function Groups() {
   >();
 
   const { data: project, isFetched: projectFetched } = useQuery(
-    ['project', match?.params.tenant],
-    () => sdk.projects.retrieve(match?.params.tenant!),
+    ['project', tenant],
+    () => sdk.projects.retrieve(tenant!),
     {
-      enabled: !!match?.params.tenant,
+      enabled: !!tenant,
       refetchInterval: localDefaultGroup ? 1000 : false,
     }
   );

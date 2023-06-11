@@ -1,5 +1,4 @@
-import React from 'react';
-import { useRouteMatch } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -58,7 +57,7 @@ export default function OIDCConfigContainer() {
   const { t } = useTranslation();
   const cache = useQueryClient();
   const sdk = useSDK();
-  const match = useRouteMatch<{ tenant: string }>('/:tenant');
+  const { tenant } = useParams();
 
   const { mutate, isLoading: updating } = useMutation(
     (update: any) =>
@@ -96,7 +95,7 @@ export default function OIDCConfigContainer() {
 
   const { data: projectSettings, isFetched: areProjectSettingsFetched } =
     useQuery(['project-settings'], () => {
-      return sdk.projects.retrieve(match?.params.tenant!);
+      return sdk.projects.retrieve(tenant!);
     });
   const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
     useAuthConfiguration();

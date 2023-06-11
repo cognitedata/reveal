@@ -1,11 +1,9 @@
-import React from 'react';
 import {
   Routes,
   Route,
-  Navigate,
   useParams,
-  useLocation,
   useNavigate,
+  useMatch,
 } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -44,16 +42,15 @@ export default function () {
   const params = useParams<{
     tenant: string;
     path: string;
-    page?: string;
   }>();
+  const page = useMatch(`/${params.tenant}/${params.path}/:page`)?.params.page;
   const navigate = useNavigate();
-  const { pathname, search, hash } = useLocation();
 
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
 
-  const env = getCluster().split('.')[0];
+  const env = getCluster()?.split('.')[0];
   const isUnsupportedCluster =
-    env == 'sapc-01' || env == 'openfield' || env == 'okd-dev-01';
+    env === 'sapc-01' || env === 'openfield' || env === 'okd-dev-01';
 
   if (!isFetched) {
     return <Loader />;
@@ -74,9 +71,9 @@ export default function () {
       </Title>
       <Menu
         mode="horizontal"
-        selectedKeys={[params.page || 'groups']}
+        selectedKeys={[page || 'groups']}
         onClick={(e) => {
-          if (e.key !== params.page) {
+          if (e.key !== page) {
             navigate(createLink(`/${params.path}/${e.key}`));
           }
         }}
@@ -111,48 +108,14 @@ export default function () {
         )}
       </Menu>
       <Routes>
-        <Route
-          path={`/${params.tenant}/${params.path}/groups`}
-          element={
-            <Navigate
-              to={{
-                pathname: pathname.slice(0, -1),
-                search,
-                hash,
-              }}
-            />
-          }
-        />
-
-        <Route
-          path={`/${params.tenant}/${params.path}/groups`}
-          element={<Groups />}
-        />
-        <Route path={`/${params.tenant}/${params.path}`} element={<Groups />} />
-        <Route
-          path={`/${params.tenant}/${params.path}/api-keys`}
-          element={<APIKeys />}
-        />
-        <Route
-          path={`/${params.tenant}/${params.path}/idp`}
-          element={<IDP />}
-        />
-        <Route
-          path={`/${params.tenant}/${params.path}/oidc`}
-          element={<OIDC />}
-        />
-        <Route
-          path={`/${params.tenant}/${params.path}/user-profiles`}
-          element={<UserProfiles />}
-        />
-        <Route
-          path={`/${params.tenant}/${params.path}/security-categories`}
-          element={<SecurityCategories />}
-        />
-        <Route
-          path={`/${params.tenant}/${params.path}/service-accounts`}
-          element={<ServiceAccounts />}
-        />
+        <Route path="" element={<Groups />} />
+        <Route path="groups" element={<Groups />} />
+        <Route path="api-keys" element={<APIKeys />} />
+        <Route path="idp" element={<IDP />} />
+        <Route path="oidc" element={<OIDC />} />
+        <Route path="user-profiles" element={<UserProfiles />} />
+        <Route path="security-categories" element={<SecurityCategories />} />
+        <Route path="service-accounts" element={<ServiceAccounts />} />
       </Routes>
     </StyledAppContainerDiv>
   );

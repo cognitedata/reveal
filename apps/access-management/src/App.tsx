@@ -53,8 +53,8 @@ const App = () => {
               <SDKProvider sdk={sdk}>
                 <Router>
                   <Routes>
-                    <Route path="/:tenant/:path" element={<Home />} />
-                    <Route path="/:tenant/:path/:page" element={<Home />} />
+                    <Route path="/:tenant/:path/*" element={<Home />} />
+                    {/* <Route path="/:tenant/:path/:page/*" element={<Home />} /> */}
                   </Routes>
                 </Router>
               </SDKProvider>
