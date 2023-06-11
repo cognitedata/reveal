@@ -60,7 +60,7 @@ export const UserProfileProvider = ({
   ) {
     return (
       <LoaderWrapper>
-        <Icon type="Loader" />;
+        <Icon type="Loader" />
       </LoaderWrapper>
     );
   }

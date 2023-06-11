@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import { ValueByDataType } from '../containers/search/Filter';
-import { decodeSearchParams, encodeSearchParams } from '../utils/searchParams';
 
 export enum ParamKeys {
   ExpandedId = 'expandedId',
@@ -38,7 +37,17 @@ export const useExpandedIdParams = (): [
 export const useSearchQueryParams = (): [string, (query?: string) => void] => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  return [searchParams.get('searchQuery') || '', setSearchParams];
+  const setSearchQueryParams = useCallback(
+    (query?: string) => {
+      setSearchParams((currentParams) => {
+        currentParams.set('searchQuery', query ?? '');
+        return currentParams;
+      });
+    },
+    [setSearchParams]
+  );
+
+  return [searchParams.get('searchQuery') || '', setSearchQueryParams];
 };
 
 export const useSearchFilterParams = (): [
@@ -48,17 +57,21 @@ export const useSearchFilterParams = (): [
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchFilterParams = useMemo(() => {
-    return decodeSearchParams(searchParams).filters;
+    const filters = searchParams.get('filters');
+
+    if (filters) {
+      return JSON.parse(filters) as ValueByDataType;
+    }
+
+    return undefined;
   }, [searchParams]);
 
   const setSearchFilterParams = useCallback(
     (query?: ValueByDataType) => {
-      setSearchParams((prevState) =>
-        encodeSearchParams({
-          ...prevState,
-          filters: JSON.stringify(query),
-        })
-      );
+      setSearchParams((currentParams) => {
+        currentParams.set('filters', JSON.stringify(query));
+        return currentParams;
+      });
     },
     [setSearchParams]
   );

@@ -1,4 +1,10 @@
-import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
+import {
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -20,9 +26,9 @@ import {
   Chip,
 } from '@cognite/cogs.js';
 import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import {
-  ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
   ZoomToFitMode,
@@ -35,6 +41,7 @@ import { CanvasTitle } from './components/CanvasTitle';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
+  CommentsFeatureFlagKey,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
@@ -50,7 +57,12 @@ import {
   IndustryCanvasProvider,
   useIndustryCanvasContext,
 } from './IndustryCanvasContext';
-import { ContainerReference, ContainerReferenceType } from './types';
+import {
+  ContainerReference,
+  ContainerReferenceType,
+  IndustryCanvasToolType,
+  isCommentAnnotation,
+} from './types';
 import { UserProfileProvider } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
@@ -79,7 +91,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     hasConsumedInitializeWithContainerReferences,
     setHasConsumedInitializeWithContainerReferences,
   ] = useState(false);
-  const { tool, setTool } = useManagedTool(ToolType.SELECT);
+  const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
 
   const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
@@ -117,11 +129,23 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
   } = useManagedState({
     unifiedViewer: unifiedViewerRef,
     setTool,
+    tool,
   });
 
+  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
+    fallback: false,
+  });
+
+  // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
+  const commentAnnotations = useMemo(
+    () =>
+      isCommentsEnabled ? canvasAnnotations.filter(isCommentAnnotation) : [],
+    [isCommentsEnabled, canvasAnnotations]
+  );
+
   useEffect(() => {
-    if (isCanvasLocked && tool !== ToolType.PAN) {
-      setTool(ToolType.PAN);
+    if (isCanvasLocked && tool !== IndustryCanvasToolType.PAN) {
+      setTool(IndustryCanvasToolType.PAN);
     }
   }, [isCanvasLocked, setTool, tool]);
 
@@ -493,6 +517,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
           toolOptions={toolOptions}
           isCanvasLocked={isCanvasLocked}
+          commentAnnotations={commentAnnotations}
         />
         <DragOverIndicator isDragging={isDragging} />
       </PreviewTabWrapper>
