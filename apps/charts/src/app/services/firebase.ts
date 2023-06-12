@@ -25,7 +25,6 @@ type EnvironmentConfig = {
   };
 };
 
-const auth = getAuth();
 export const fetchFirebaseToken = (
   sdk: CogniteClient,
   appsApiUrl: string,
@@ -77,6 +76,6 @@ export const initializeFirebase = async (
     return true;
   }
   firebase.initializeApp(env?.firebase);
-  await signInWithCustomToken(auth, token as string);
+  await signInWithCustomToken(getAuth(), token as string);
   return true;
 };
