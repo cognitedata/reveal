@@ -4,11 +4,28 @@
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
-import { Image360Collection } from './Image360Collection';
+import cloneDeep from 'lodash/cloneDeep';
+import {
+  Image360AnnotationAssetFilter,
+  Image360AnnotationAssetQueryResult,
+  Image360Collection
+} from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360Annotation } from '../annotation/Image360Annotation';
+import {
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  IdEither,
+  CogniteInternalId,
+  InternalId,
+  ExternalId
+} from '@cognite/sdk';
+
+import { Image360DataProvider } from '@reveal/data-providers';
+import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -32,6 +49,9 @@ export class DefaultImage360Collection implements Image360Collection {
 
   private _defaultStyle: Image360AnnotationAppearance = {};
 
+  private readonly _image360DataProvider: Image360DataProvider;
+  private readonly _annotationFilter: Image360AnnotationFilter;
+
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
@@ -39,9 +59,14 @@ export class DefaultImage360Collection implements Image360Collection {
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
+  private readonly _collectionLabel: string | undefined;
 
   get id(): string {
     return this._collectionId;
+  }
+
+  get label(): string | undefined {
+    return this._collectionLabel;
   }
 
   get targetRevisionDate(): Date | undefined {
@@ -66,11 +91,21 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._isCollectionVisible;
   }
 
-  constructor(collectionId: string, entities: Image360Entity[], icons: IconCollection) {
+  constructor(
+    collectionId: string,
+    collectionLabel: string | undefined,
+    entities: Image360Entity[],
+    icons: IconCollection,
+    annotationFilter: Image360AnnotationFilter,
+    image360DataProvider: Image360DataProvider
+  ) {
     this._collectionId = collectionId;
+    this._collectionLabel = collectionLabel;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;
+    this._annotationFilter = annotationFilter;
+    this._image360DataProvider = image360DataProvider;
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -114,7 +149,7 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public setIconsVisibility(visible: boolean): void {
     this._isCollectionVisible = visible;
-    this.image360Entities.forEach(entity => entity.icon.setVisibility(visible));
+    this.image360Entities.forEach(entity => entity.icon.setVisible(visible));
   }
 
   /**
@@ -143,8 +178,12 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
+  public setSelectedForAll(selected: boolean): void {
+    this.image360Entities.forEach(entity => (entity.icon.selected = selected));
+  }
+
   public setSelectedVisibility(visible: boolean): void {
-    this.image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
+    this._icons.hoverSpriteVisibility = visible;
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
@@ -172,8 +211,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._needsRedraw = false;
   }
 
-  get defaultStyle(): Image360AnnotationAppearance {
-    return this._defaultStyle;
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance {
+    return cloneDeep(this._defaultStyle);
   }
 
   public setDefaultAnnotationStyle(defaultStyle: Image360AnnotationAppearance): void {
@@ -182,4 +221,63 @@ export class DefaultImage360Collection implements Image360Collection {
       entity.getRevisions().forEach(revision => revision.setDefaultAppearance(defaultStyle))
     );
   }
+
+  public async findImageAnnotations(
+    filter: Image360AnnotationAssetFilter
+  ): Promise<Image360AnnotationAssetQueryResult[]> {
+    const imageIds = await this._image360DataProvider.getFilesByAssetRef(filter.assetRef);
+    const imageIdSet = new Set<CogniteInternalId>(imageIds);
+
+    const entityAnnotationsPromises = this.image360Entities.map(getEntityAnnotationsForAsset);
+    const entityAnnotations = await Promise.all(entityAnnotationsPromises);
+    return entityAnnotations.flat();
+
+    async function getEntityAnnotationsForAsset(entity: Image360Entity): Promise<Image360AnnotationAssetQueryResult[]> {
+      const revisionPromises = entity.getRevisions().map(async revision => {
+        const annotations = await getRevisionAnnotationsForAsset(revision);
+
+        return annotations.map(annotation => ({ image: entity, revision, annotation }));
+      });
+
+      const revisionMatches = await Promise.all(revisionPromises);
+      return revisionMatches.flat();
+    }
+
+    async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity): Promise<Image360Annotation[]> {
+      const relevantDescriptors = revision.getDescriptors().faceDescriptors.filter(desc => imageIdSet.has(desc.fileId));
+
+      if (relevantDescriptors.length === 0) {
+        return [];
+      }
+
+      const annotations = await revision.getAnnotations();
+
+      return annotations.filter(a => {
+        const assetLink = a.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+        return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, filter.assetRef);
+      });
+    }
+  }
+
+  getAssetIds(): Promise<IdEither[]> {
+    const fileDescriptors = this.image360Entities
+      .map(entity =>
+        entity
+          .getRevisions()
+          .map(revision => revision.getDescriptors().faceDescriptors)
+          .flat()
+      )
+      .flat();
+    return this._image360DataProvider.get360ImageAssets(fileDescriptors, annotation =>
+      this._annotationFilter.filter(annotation)
+    );
+  }
+}
+
+function matchesAssetRef(assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink, matchRef: IdEither): boolean {
+  return (
+    ((matchRef as InternalId).id !== undefined && assetLink.assetRef.id === (matchRef as InternalId).id) ||
+    ((matchRef as ExternalId).externalId !== undefined &&
+      assetLink.assetRef.externalId === (matchRef as ExternalId).externalId)
+  );
 }

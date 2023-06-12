@@ -11,9 +11,11 @@ import {
   Image360CollectionFactory,
   Image360Facade,
   Image360,
+  IconsOptions,
   Image360RevisionEntity,
   DefaultImage360Collection,
-  Image360AnnotationIntersection
+  Image360AnnotationIntersection,
+  Image360AnnotationFilterOptions
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
@@ -28,6 +30,7 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
+import pull from 'lodash/pull';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -35,6 +38,7 @@ export class Image360ApiHelper {
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
   private _needsRedraw: boolean = false;
+  private readonly _imageCollections: Image360Collection[] = [];
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -72,7 +76,8 @@ export class Image360ApiHelper {
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
-    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    iconsOptions?: IconsOptions
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
     const device = determineCurrentDevice();
@@ -80,7 +85,8 @@ export class Image360ApiHelper {
       image360DataProvider,
       sceneHandler,
       onBeforeSceneRendered,
-      device
+      device,
+      iconsOptions
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
@@ -134,7 +140,8 @@ export class Image360ApiHelper {
   public async add360ImageSet(
     eventFilter: Metadata,
     collectionTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean
+    preMultipliedRotation: boolean,
+    annotationOptions?: Image360AnnotationFilterOptions
   ): Promise<Image360Collection> {
     const id: string | undefined = eventFilter.site_id;
     if (id === undefined) {
@@ -143,10 +150,22 @@ export class Image360ApiHelper {
     if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
       throw new Error(`Image set with id=${id} has already been added`);
     }
-    const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+
+    const imageCollection = await this._image360Facade.create(
+      eventFilter,
+      annotationOptions,
+      collectionTransform,
+      preMultipliedRotation
+    );
+
+    this._imageCollections.push(imageCollection);
 
     this._needsRedraw = true;
     return imageCollection;
+  }
+
+  public getImageCollections(): Image360Collection[] {
+    return [...this._imageCollections];
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
@@ -158,6 +177,20 @@ export class Image360ApiHelper {
     }
 
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
+    this._needsRedraw = true;
+  }
+
+  public remove360ImageCollection(collection: Image360Collection): void {
+    if (
+      this._interactionState.currentImage360Entered !== undefined &&
+      collection.image360Entities.includes(this._interactionState.currentImage360Entered)
+    ) {
+      this.exit360Image();
+    }
+
+    pull(this._imageCollections, collection);
+
+    (collection as DefaultImage360Collection).dispose();
     this._needsRedraw = true;
   }
 
@@ -191,11 +224,13 @@ export class Image360ApiHelper {
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
     this._interactionState.enteredCollection = imageCollection;
 
-    lastEntered360ImageEntity?.icon.setVisibility(imageCollection.isCollectionVisible);
-    image360Entity.icon.setVisibility(false);
+    if (lastEntered360ImageEntity) {
+      lastEntered360ImageEntity.icon.setVisible(imageCollection.isCollectionVisible);
+    }
+
+    image360Entity.icon.setVisible(false);
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
-    this._image360Facade.allHoverIconsVisibility = false;
 
     // Only do transition if we are swithing between entities.
     // Revisions are updated instantly (for now).
@@ -348,7 +383,7 @@ export class Image360ApiHelper {
       const imageCollection = this._image360Facade.getCollectionContainingEntity(
         this._interactionState.currentImage360Entered
       );
-      this._interactionState.currentImage360Entered.icon.setVisibility(imageCollection.isCollectionVisible);
+      this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
       imageCollection.events.image360Exited.fire();
 
       this._interactionState.currentImage360Entered.deactivateAnnotations();
@@ -434,7 +469,7 @@ export class Image360ApiHelper {
 
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
-    this._image360Facade.allHoverIconsVisibility = false;
+    this._image360Facade.allIconsSelected = false;
     const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
 
     const { x: width, y: height } = size;
@@ -444,17 +479,18 @@ export class Image360ApiHelper {
       this._activeCameraManager.getCamera()
     );
 
-    if (entity !== undefined) {
-      entity.icon.hoverSpriteVisible = true;
-    }
-
     if (entity === this._interactionState.currentImage360Hovered) {
+      entity?.icon.updateHoverSpriteScale();
+
       return;
     }
 
     if (entity !== undefined) {
-      entity.icon.hoverSpriteVisible = true;
+      this._image360Facade.hoverIconVisibility = true;
+      entity.icon.selected = true;
       this._debouncePreLoad(entity);
+    } else {
+      this._image360Facade.hoverIconVisibility = false;
     }
 
     this._needsRedraw = true;

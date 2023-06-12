@@ -6,11 +6,54 @@ import { Image360 } from './../entity/Image360';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360Revision } from '../entity/Image360Revision';
+import { IdEither } from '@cognite/sdk';
+import { Image360Annotation } from '../annotation/Image360Annotation';
+
+/**
+ * Filter for finding annotations related to an asset
+ */
+export type Image360AnnotationAssetFilter = {
+  /**
+   * Reference to the wanted asset
+   */
+  assetRef: IdEither;
+};
+
+/**
+ * Result item from an asset annotation query
+ */
+export type Image360AnnotationAssetQueryResult = {
+  /**
+   * The Image360 to which the result annotation belongs
+   */
+  image: Image360;
+  /**
+   * The image revision to which the result annotation belongs
+   */
+  revision: Image360Revision;
+  /**
+   * The found annotation
+   */
+  annotation: Image360Annotation;
+};
 
 /**
  * A wrapper that represents a set of 360 images.
  */
 export interface Image360Collection {
+  /**
+   * The id of the collection.
+   * @returns The id of the collection.
+   */
+  readonly id: string;
+
+  /**
+   * The label of the collection.
+   * @returns The label of the collection.
+   */
+  readonly label: string | undefined;
+
   /**
    * A list containing all the 360 images in this set.
    */
@@ -54,7 +97,22 @@ export interface Image360Collection {
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
+   * Get the assigned default style affecting all annotations
+   */
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+
+  /**
    * Assign a default style which affects all annotations
    */
   setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
+
+  /**
+   * Find 360 images associated with an asset through CDF annotations
+   */
+  findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+
+  /**
+   * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
+   */
+  getAssetIds(): Promise<IdEither[]>;
 }

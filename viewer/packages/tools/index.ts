@@ -20,6 +20,13 @@ export {
   AbsolutePosition,
   RelativePosition
 } from './src/AxisView/types';
+export {
+  Overlay3DTool,
+  Overlay3DToolParameters,
+  OverlayEventHandler,
+  OverlayToolEvent,
+  OverlayCollectionOptions
+} from './src/Overlay3D/Overlay3DTool';
 export { TimelineTool } from './src/Timeline/TimelineTool';
 export { Keyframe } from './src/Timeline/Keyframe';
 export { TimelineDateUpdateDelegate } from './src/Timeline/types';

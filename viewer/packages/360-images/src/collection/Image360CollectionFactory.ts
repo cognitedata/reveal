@@ -2,39 +2,46 @@
  * Copyright 2023 Cognite AS
  */
 
+import assert from 'assert';
+import zip from 'lodash/zip';
+import uniqBy from 'lodash/uniqBy';
 import { Image360Provider } from '@reveal/data-providers';
 import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
-import zip from 'lodash/zip';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { Image360Icon } from '../icons/Image360Icon';
-import { IconCollection } from '../icons/IconCollection';
+import { IconCollection, IconsOptions } from '../icons/IconCollection';
 import { Vector3 } from 'three';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
-import uniq from 'lodash/uniq';
-import assert from 'assert';
+import { Image360AnnotationFilterOptions } from '../annotation/types';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
   private readonly _sceneHandler: SceneHandler;
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
+  private readonly _iconsOptions: IconsOptions | undefined;
   private readonly _device: DeviceDescriptor;
+
   constructor(
     image360DataProvider: Image360Provider<T>,
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
-    device: DeviceDescriptor
+    device: DeviceDescriptor,
+    iconsOptions?: IconsOptions
   ) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
     this._onBeforeSceneRendered = onBeforeSceneRendered;
+    this._iconsOptions = iconsOptions;
     this._device = device;
   }
 
   public async create(
     dataProviderFilter: T,
     postTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean
+    preMultipliedRotation: boolean,
+    annotationFilter: Image360AnnotationFilterOptions
   ): Promise<DefaultImage360Collection> {
     const historicalDescriptors = await this._image360DataProvider.get360ImageDescriptors(
       dataProviderFilter,
@@ -43,8 +50,15 @@ export class Image360CollectionFactory<T> {
     historicalDescriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = historicalDescriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new IconCollection(points, this._sceneHandler, this._onBeforeSceneRendered);
+    const collectionIcons = new IconCollection(
+      points,
+      this._sceneHandler,
+      this._onBeforeSceneRendered,
+      this._iconsOptions
+    );
     const icons = collectionIcons.icons;
+
+    const annotationFilterer = new Image360AnnotationFilter(annotationFilter);
 
     const entities = zip(historicalDescriptors, icons)
       .filter(isDefined)
@@ -53,21 +67,31 @@ export class Image360CollectionFactory<T> {
           descriptor,
           this._sceneHandler,
           this._image360DataProvider,
+          annotationFilterer,
           descriptor.transform,
           icon,
           this._device
         );
       });
 
-    const collectionIds = uniq(historicalDescriptors.map(desc => desc.collectionId));
+    const uniqueCollections = uniqBy(historicalDescriptors, desc => desc.collectionId);
 
-    assert(collectionIds.length === 1);
+    assert(uniqueCollections.length === 1);
 
-    return new DefaultImage360Collection(collectionIds[0], entities, collectionIcons);
+    const { collectionId, collectionLabel } = uniqueCollections[0];
+
+    return new DefaultImage360Collection(
+      collectionId,
+      collectionLabel,
+      entities,
+      collectionIcons,
+      annotationFilterer,
+      this._image360DataProvider
+    );
 
     function isDefined(
-      pair: [Historical360ImageSet | undefined, Image360Icon | undefined]
-    ): pair is [Historical360ImageSet, Image360Icon] {
+      pair: [Historical360ImageSet | undefined, Overlay3DIcon | undefined]
+    ): pair is [Historical360ImageSet, Overlay3DIcon] {
       return pair[0] !== undefined && pair[1] !== undefined;
     }
   }

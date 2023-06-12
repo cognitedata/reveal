@@ -80,12 +80,16 @@ export {
 export {
   Image360,
   Image360Revision,
-  Image360Metadata,
   Image360Visualization,
   Image360Collection,
   Image360EnteredDelegate,
   Image360ExitedDelegate,
   Image360AnnotationIntersection,
   Image360AnnotationAppearance,
-  Image360Annotation
+  Image360Annotation,
+  Image360AnnotationAssetFilter,
+  Image360AnnotationAssetQueryResult,
+  Image360AnnotationFilterOptions
 } from '../packages/360-images';
+
+export { OverlayCollection, OverlayInfo, Overlay3D, DefaultOverlay3DContentType } from '../packages/3d-overlays';

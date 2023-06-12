@@ -95,7 +95,7 @@ export class CognitePointCloudModel {
 
   /**
    * Gets transformation matrix that has previously been
-   * set with {@link CognitePointCloudmodel.setModelTransformation}.
+   * set with {@link CognitePointCloudModel.setModelTransformation}.
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
@@ -105,7 +105,7 @@ export class CognitePointCloudModel {
   /**
    * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
-   * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
+   * Does not include any custom transformations set by {@link CognitePointCloudModel.setModelTransformation}
    * @param out Preallocated `THREE.Matrix4` (optional)
    */
   getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {

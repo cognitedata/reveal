@@ -20,9 +20,9 @@ import { degToRad } from 'three/src/math/MathUtils';
 import TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three-stdlib';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
-import { IconOctree } from '../src/icons/IconOctree';
+import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
-import { Image360Icon } from '../src/icons/Image360Icon';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
@@ -50,7 +50,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     this.setupMouseClickEvenetHandler(renderer, facade, camera, cameraControls);
   }
 
-  private getOctreeVisualizationObject(icons: Image360Icon[]) {
+  private getOctreeVisualizationObject(icons: Overlay3DIcon[]) {
     const bounds = IconOctree.getMinimalOctreeBoundsFromIcons(icons);
     bounds.min.y = bounds.min.y - 0.5;
     bounds.max.y = bounds.max.y + 1;
@@ -97,7 +97,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
       await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = true;
-      entity.icon.setVisibility(false);
+      entity.icon.setVisible(false);
 
       if (lastClicked !== undefined) {
         this.transition360Image(lastClicked, entity, camera, cameraControls);
@@ -172,7 +172,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera: THREE.PerspectiveCamera
   ) {
     renderer.domElement.addEventListener('mousemove', async event => {
-      entities.forEach(p => (p.icon.hoverSpriteVisible = false));
       const { x, y } = event;
       const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
         x,
@@ -185,7 +184,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         this.render();
         return;
       }
-      entity.icon.hoverSpriteVisible = true;
+      entity.icon.selected = true;
       await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = false;
       this.render();
@@ -253,6 +252,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const collectionTransform = translation.multiply(rotation);
     const collection = await image360Facade.create(
       { site_id: '6th floor v3 - enterprise' },
+      {},
       collectionTransform,
       false
     );
@@ -277,17 +277,21 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(177));
     const translation = new THREE.Matrix4().makeTranslation(11, 49, 32);
     const collectionTransform = translation.multiply(rotation);
-    const collection1 = await image360Facade.create({ site_id: 'helideck-site-2' }, collectionTransform);
+    const collection1 = await image360Facade.create({ site_id: 'helideck-site-2' }, {}, collectionTransform);
 
     const rotation2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(40));
     const translation2 = new THREE.Matrix4().makeTranslation(34, 30, 46);
     const collectionTransform2 = translation2.multiply(rotation2);
-    const collection2 = await image360Facade.create({ site_id: 'j-tube-diesel-header-tank' }, collectionTransform2);
+    const collection2 = await image360Facade.create({ site_id: 'j-tube-diesel-header-tank' }, {}, collectionTransform2);
 
     const rotation3 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(96));
     const translation3 = new THREE.Matrix4().makeTranslation(176, 37, 56);
     const collectionTransform3 = translation3.multiply(rotation3);
-    const collection3 = await image360Facade.create({ site_id: 'se-stairs-module-5-boot-room' }, collectionTransform3);
+    const collection3 = await image360Facade.create(
+      { site_id: 'se-stairs-module-5-boot-room' },
+      {},
+      collectionTransform3
+    );
 
     return {
       facade: image360Facade,

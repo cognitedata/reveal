@@ -31,7 +31,9 @@ export default (_, argv) => {
       ]
     },
     externals: [
-      nodeExternals()
+      nodeExternals({
+        importType: 'module'
+      })
     ],
     resolve: {
       extensions: ['.tsx', '.ts'],

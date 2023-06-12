@@ -17,32 +17,37 @@ import assert from 'assert';
 import { Box3, Vector3 } from 'three';
 import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 export class Image360RevisionEntity implements Image360Revision {
   private readonly _imageProvider: Image360DataProvider;
   private readonly _image360Descriptor: Image360Descriptor;
-  private readonly _image360VisualzationBox: Image360VisualizationBox;
+  private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _previewTextures: Image360Texture[];
   private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
   private _annotations: ImageAnnotationObject[] | undefined = undefined;
+  private _annotationsPromise: Promise<ImageAnnotationObject[]> | undefined;
+  private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
     imageProvider: Image360DataProvider,
     image360Descriptor: Image360Descriptor,
-    image360VisualzationBox: Image360VisualizationBox
+    image360VisualizationBox: Image360VisualizationBox,
+    annotationFilterer: Image360AnnotationFilter
   ) {
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
-    this._image360VisualzationBox = image360VisualzationBox;
+    this._image360VisualizationBox = image360VisualizationBox;
     this._previewTextures = [];
     this._fullResolutionTextures = [];
+    this._annotationFilterer = annotationFilterer;
   }
 
   /**
-   * The date of this revision. Undefined if the revison is undated.
+   * The date of this revision. Undefined if the revision is undated.
    * @returns Date | undefined
    */
   get date(): Date | undefined {
@@ -54,15 +59,24 @@ export class Image360RevisionEntity implements Image360Revision {
       return this._annotations;
     }
 
-    return this.loadAndSetAnnotations();
+    if (this._annotationsPromise !== undefined) {
+      return this._annotationsPromise;
+    }
+
+    this._annotationsPromise = new Promise<ImageAnnotationObject[]>(async (res, _rej) => {
+      this._annotations = await this.loadAndSetAnnotations();
+      res(this._annotations);
+    });
+
+    return this._annotationsPromise;
   }
 
-  intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+  public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
     if (this._annotations === undefined) {
       return undefined;
     }
 
-    const intersectedAnnotations = this._annotations.filter(a => raycaster.intersectObject(a.getObject()).length > 0);
+    const intersectedAnnotations = this._annotations.filter(a => a.getVisible() && a.intersects(raycaster));
 
     const smallestIntersectedBox = minBy(intersectedAnnotations, annotation => {
       const boundSize = new Box3().setFromObject(annotation.getObject()).getSize(new Vector3());
@@ -77,7 +91,7 @@ export class Image360RevisionEntity implements Image360Revision {
    *
    * This will start the download of both low and full resolution textures and return one promise for when each texture set is ready.
    * If the low resolution images are completed first the full resolution download and texture loading will continue in the background,
-   * and applyFullResolutionTextures can be called to apply full resolution textures to the image360VisualzationBox at a desired time.
+   * and applyFullResolutionTextures can be called to apply full resolution textures to the image360VisualizationBox at a desired time.
    *
    * @returns lowResolutionCompleted A promise for when the low resolution images are done loading.
    * @returns fullResolutionCompleted A promise for when the full resolution images are done loading.
@@ -94,6 +108,23 @@ export class Image360RevisionEntity implements Image360Revision {
     return { lowResolutionCompleted, fullResolutionCompleted };
   }
 
+  public async getPreviewThumbnailUrl(
+    face?: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom'
+  ): Promise<string | undefined> {
+    const selectedFace = face ?? 'front';
+    const faceDescriptor = this._image360Descriptor.faceDescriptors.find(desc => desc.face === selectedFace);
+    if (faceDescriptor === undefined) {
+      return undefined;
+    }
+    const previewImageFiles = await this._imageProvider.getLowResolution360ImageFiles([faceDescriptor]);
+    if (previewImageFiles.length !== 1) {
+      return undefined;
+    }
+    const previewImageFile = previewImageFiles[0];
+    const blob = new Blob([previewImageFile.data], { type: previewImageFile.mimeType });
+    return window.URL.createObjectURL(blob);
+  }
+
   private async loadPreviewTextures(abortSignal?: AbortSignal): Promise<void> {
     const previewImageFiles = await this._imageProvider.getLowResolution360ImageFiles(
       this._image360Descriptor.faceDescriptors,
@@ -102,7 +133,7 @@ export class Image360RevisionEntity implements Image360Revision {
     if (this._fullResolutionTextures.length === 6) {
       return;
     }
-    const previewTextures = await this._image360VisualzationBox.loadFaceTextures(previewImageFiles);
+    const previewTextures = await this._image360VisualizationBox.loadFaceTextures(previewImageFiles);
     this._previewTextures = previewTextures;
   }
 
@@ -112,22 +143,23 @@ export class Image360RevisionEntity implements Image360Revision {
       abortSignal
     );
 
-    const textures = await this._image360VisualzationBox.loadFaceTextures(fullImageFiles);
+    const textures = await this._image360VisualizationBox.loadFaceTextures(fullImageFiles);
     this._fullResolutionTextures = textures;
   }
 
   private async loadAndSetAnnotations(): Promise<ImageAnnotationObject[]> {
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
 
-    const annotationObjects = annotationData
+    const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
+
+    const annotationObjects = filteredAnnotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
         return ImageAnnotationObject.createAnnotationObject(data, faceDescriptor.face);
       })
       .filter(isDefined);
 
-    this._image360VisualzationBox.setAnnotations(annotationObjects);
-    this._annotations = annotationObjects;
+    this._image360VisualizationBox.setAnnotations(annotationObjects);
     this.propagateDefaultAppearanceToAnnotations();
 
     return annotationObjects;
@@ -153,21 +185,21 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 
   /**
-   * Apply cached textures to the image360VisualzationBox.
+   * Apply cached textures to the image360VisualizationBox.
    */
   public applyTextures(): void {
     if (this._fullResolutionTextures.length === 6) {
-      this._image360VisualzationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
       return;
     }
     if (this._previewTextures.length === 6) {
-      this._image360VisualzationBox.loadImages(this._previewTextures);
+      this._image360VisualizationBox.loadImages(this._previewTextures);
       return;
     }
   }
 
   /**
-   * Apply full resolution textures to the image360VisualzationBox.
+   * Apply full resolution textures to the image360VisualizationBox.
    * This has no effect if full resolution has already been applied.
    */
   public async applyFullResolutionTextures(): Promise<void> {
@@ -176,12 +208,16 @@ export class Image360RevisionEntity implements Image360Revision {
     try {
       await this._onFullResolutionCompleted;
       this._onFullResolutionCompleted = undefined;
-      this._image360VisualzationBox.loadImages(this._fullResolutionTextures);
+      this._image360VisualizationBox.loadImages(this._fullResolutionTextures);
       if (this._previewTextures.length === 6) {
         this._previewTextures.forEach(t => t.texture.dispose());
         this._previewTextures = [];
       }
     } catch (e) {}
+  }
+
+  public getDescriptors(): Image360Descriptor {
+    return this._image360Descriptor;
   }
 }
 

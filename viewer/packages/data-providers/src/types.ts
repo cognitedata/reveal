@@ -1,8 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
+
+export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
 
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
@@ -14,6 +16,7 @@ export interface BinaryFileProvider {
 
 export interface Image360AnnotationProvider {
   get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
+  getFilesByAssetRef(assetId: IdEither): Promise<CogniteInternalId[]>;
 }
 
 export interface Image360DescriptorProvider<T> {
@@ -32,6 +35,13 @@ export interface Image360FileProvider {
   ): Promise<Image360Face[]>;
 }
 
+export interface Image360AssetProvider {
+  get360ImageAssets(
+    image360FileDescriptors: Image360FileDescriptor[],
+    annotationFilter: Image360AnnotationFilterDelegate
+  ): Promise<IdEither[]>;
+}
+
 export type Historical360ImageSet = Image360EventDescriptor & {
   imageRevisions: Image360Descriptor[];
 };
@@ -43,9 +53,9 @@ export type Image360Descriptor = {
 
 export type Image360EventDescriptor = {
   id: string;
-  label: string;
+  label: string | undefined;
   collectionId: string;
-  collectionLabel: string;
+  collectionLabel: string | undefined;
   transform: THREE.Matrix4;
 };
 

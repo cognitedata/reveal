@@ -2,34 +2,33 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferGeometry, Matrix4, Shape, ShapeGeometry } from 'three';
+import { BufferGeometry, Matrix4, Shape, ShapeGeometry, Vector2 } from 'three';
 
-import { AnnotationsObjectDetection } from '@cognite/sdk';
+import { AnnotationsPolygon } from '@cognite/sdk';
 
 import { ImageAnnotationObjectData } from './ImageAnnotationData';
-import assert from 'assert';
 
 export class PolygonAnnotationData implements ImageAnnotationObjectData {
   private readonly _geometry: ShapeGeometry;
+  private readonly _outlinePoints: Vector2[];
 
-  constructor(annotation: AnnotationsObjectDetection) {
-    this._geometry = this.createGeometry(annotation);
+  constructor(polygon: AnnotationsPolygon) {
+    this._geometry = this.createGeometry(polygon);
+    this._outlinePoints = getBoundPoints(polygon);
   }
 
-  createGeometry(annotation: AnnotationsObjectDetection): ShapeGeometry {
-    assert(annotation.polygon !== undefined);
+  createGeometry(polygon: AnnotationsPolygon): ShapeGeometry {
+    const points = polygon.vertices.map(({ x, y }) => ({ x: 0.5 - x, y: 0.5 - y }));
 
-    const points = annotation.polygon.vertices.map(({ x, y }) => ({ x: 0.5 - x, y: 0.5 - y }));
+    const polygonShape = new Shape();
 
-    const polygon = new Shape();
-
-    polygon.moveTo(points[0].x, points[0].y);
+    polygonShape.moveTo(points[0].x, points[0].y);
     points.forEach((v, ind) => {
       if (ind === 0) return;
-      polygon.lineTo(v.x, v.y);
+      polygonShape.lineTo(v.x, v.y);
     });
 
-    return new ShapeGeometry(polygon);
+    return new ShapeGeometry(polygonShape);
   }
 
   getGeometry(): BufferGeometry {
@@ -39,4 +38,12 @@ export class PolygonAnnotationData implements ImageAnnotationObjectData {
   getNormalizationMatrix(): Matrix4 {
     return new Matrix4().makeTranslation(0, 0, 0.5);
   }
+
+  getOutlinePoints(): Vector2[] {
+    return this._outlinePoints;
+  }
+}
+
+function getBoundPoints(polygon: AnnotationsPolygon): Vector2[] {
+  return polygon.vertices.map(v => new Vector2(0.5 - v.x, 0.5 - v.y));
 }

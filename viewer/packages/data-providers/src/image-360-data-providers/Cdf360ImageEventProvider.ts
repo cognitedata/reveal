@@ -8,6 +8,7 @@ import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
+import chunk from 'lodash/chunk';
 
 import {
   AnnotationModel,
@@ -18,11 +19,22 @@ import {
   FileInfo,
   FileLink,
   IdEither,
-  Metadata
+  Metadata,
+  CogniteInternalId,
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  AnnotationData,
+  AnnotationFilterProps
 } from '@cognite/sdk';
-import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
+import {
+  Historical360ImageSet,
+  Image360AnnotationFilterDelegate,
+  Image360EventDescriptor,
+  Image360Face,
+  Image360FileDescriptor
+} from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
+import assert from 'assert';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -34,9 +46,9 @@ type Event360TransformationData = {
 
 type Event360Filter = {
   site_id: string;
-  site_name: string;
+  site_name?: string;
   station_id: string;
-  station_name: string;
+  station_name?: string;
 };
 
 export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
@@ -72,16 +84,31 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
     const fileIds = descriptors.map(o => ({ id: o.fileId }));
 
-    const annotationsResult = this._client.annotations.list({
-      filter: {
-        annotatedResourceType: 'file',
-        annotatedResourceIds: fileIds
-      }
+    return this.listFileAnnotations({
+      annotatedResourceType: 'file',
+      annotatedResourceIds: fileIds
     });
+  }
 
-    const annotationArray = await annotationsResult.autoPagingToArray();
+  public async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
+    // TODO: Use SDK properly when support for 'reverselookup' arrives (Håkon, May 11th 2023)
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/annotations/reverselookup`;
 
-    return annotationArray;
+    const filterObject: object = {
+      data: {
+        limit: 1000,
+        filter: {
+          annotatedResourceType: 'file',
+          annotationType: 'images.AssetLink',
+          data: {
+            assetRef
+          }
+        }
+      }
+    };
+    const response = await this._client.post(url, filterObject);
+
+    return response.data.items.map((a: { id: number }) => a.id);
   }
 
   public async get360ImageFiles(
@@ -277,12 +304,12 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
     function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
       const translationComponents = transformationData.translation.split(',').map(parseFloat);
-      const milimetersInMeters = 1000;
+      const millimetersInMeters = 1000;
       const translation = new THREE.Vector3(
         translationComponents[0],
         translationComponents[2],
         -translationComponents[1]
-      ).divideScalar(milimetersInMeters);
+      ).divideScalar(millimetersInMeters);
       const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
       const rotationAxis = new THREE.Vector3(
         rotationAxisComponents[0],
@@ -310,5 +337,50 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  public async get360ImageFaces(): Promise<void> {}
+  public async get360ImageAssets(
+    image360FileDescriptors: Image360FileDescriptor[],
+    annotationFilter: Image360AnnotationFilterDelegate
+  ): Promise<IdEither[]> {
+    const fileIds = image360FileDescriptors.map(desc => desc.fileId);
+    const assetListPromises = chunk(fileIds, 1000).map(async idList => {
+      const annotationArray = await this.listFileAnnotations({
+        annotatedResourceIds: idList.map(id => ({ id })),
+        annotatedResourceType: 'file',
+        annotationType: 'images.AssetLink'
+      });
+
+      const assetIds = annotationArray
+        .filter(annotation => annotationFilter(annotation))
+        .map(annotation => {
+          assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
+          return annotation.data.assetRef;
+        });
+
+      return assetIds;
+    });
+
+    const assetIds = (await Promise.all(assetListPromises)).flat().filter(isIdEither);
+
+    return assetIds;
+  }
+
+  private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
+    return this._client.annotations
+      .list({
+        limit: 1000,
+        filter
+      })
+      .autoPagingToArray({ limit: Infinity });
+  }
+}
+
+function isAssetLinkAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
+  const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+  return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
+}
+
+function isIdEither(assetRef: { id?: number; externalId?: string }): assetRef is IdEither {
+  return assetRef.id !== undefined || assetRef.externalId !== undefined;
 }

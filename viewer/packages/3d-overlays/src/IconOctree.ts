@@ -8,28 +8,28 @@ import minBy from 'lodash/minBy';
 import pullAll from 'lodash/pullAll';
 import { Node, PointOctant, PointOctree } from 'sparse-octree';
 import { Box3, Matrix4, Vector3 } from 'three';
-import { Image360Icon } from '../icons/Image360Icon';
+import { Overlay3DIcon } from './Overlay3DIcon';
 
 type NodeMetadata = {
-  icon: Image360Icon;
+  icon: Overlay3DIcon;
   level: number;
 };
 
-export class IconOctree extends PointOctree<Image360Icon> {
+export class IconOctree extends PointOctree<Overlay3DIcon> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
-  public static getMinimalOctreeBoundsFromIcons(icons: Image360Icon[]): Box3 {
-    return new Box3().setFromPoints(icons.map(icon => icon.position));
+  public static getMinimalOctreeBoundsFromIcons(icons: Overlay3DIcon[]): Box3 {
+    return new Box3().setFromPoints(icons.map(icon => icon.getPosition()));
   }
 
-  constructor(icons: Image360Icon[], bounds: Box3, maxLeafSize: number) {
+  constructor(icons: Overlay3DIcon[], bounds: Box3, maxLeafSize: number) {
     super(bounds.min, bounds.max, 0, maxLeafSize);
-    icons.forEach(icon => this.set(icon.position, icon));
+    icons.forEach(icon => this.set(icon.getPosition(), icon));
     this.filterEmptyLeaves();
     this._nodeCenters = this.populateNodeCenters();
   }
 
-  public getNodeIcon(node: Node): Image360Icon | undefined {
+  public getNodeIcon(node: Node): Overlay3DIcon | undefined {
     const nodeMetadata = this._nodeCenters.get(node);
     assert(nodeMetadata !== undefined);
     return nodeMetadata.icon;
@@ -39,9 +39,9 @@ export class IconOctree extends PointOctree<Image360Icon> {
     areaThreshold: number,
     projection: Matrix4,
     minimumLevel = 0
-  ): Set<PointOctant<Image360Icon>> {
+  ): Set<PointOctant<Overlay3DIcon>> {
     const root = this.findNodesByLevel(0)[0];
-    const selectedNodes = new Set<PointOctant<Image360Icon>>();
+    const selectedNodes = new Set<PointOctant<Overlay3DIcon>>();
 
     const nodesToProcess = [root];
 
@@ -86,7 +86,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
     let level = this.getDepth();
     this.traverseLevelsBottomUp(nodes => {
       nodes.forEach(node => {
-        if (this.hasData(node)) {
+        if (this.hasData(node) && node.data) {
           nodeCenters.set(node, { icon: this.getClosestToAverageIcon(node.data.data), level });
         } else if (this.hasChildren(node)) {
           const icons = node.children!.map(child => nodeCenters.get(child)!.icon);
@@ -122,20 +122,20 @@ export class IconOctree extends PointOctree<Image360Icon> {
     return node.children === null && !this.hasData(node);
   }
 
-  private hasData(node: Node): node is PointOctant<Image360Icon> {
+  private hasData(node: Node): node is PointOctant<Overlay3DIcon> {
     return this.isPointOctant(node) && node.data !== null;
   }
 
-  private isPointOctant(node: Node): node is PointOctant<Image360Icon> {
+  private isPointOctant(node: Node): node is PointOctant<Overlay3DIcon> {
     return node instanceof PointOctant;
   }
 
-  private getClosestToAverageIcon(icons: Image360Icon[]): Image360Icon {
+  private getClosestToAverageIcon(icons: Overlay3DIcon[]): Overlay3DIcon {
     const center = icons
-      .reduce((result, currentValue) => result.add(currentValue.position), new Vector3())
+      .reduce((result, currentValue) => result.add(currentValue.getPosition()), new Vector3())
       .divideScalar(icons.length);
 
-    const minDistanceIcon = minBy(icons, icon => icon.position.distanceToSquared(center));
+    const minDistanceIcon = minBy(icons, icon => icon.getPosition().distanceToSquared(center));
 
     assert(minDistanceIcon !== undefined);
 

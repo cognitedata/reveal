@@ -32,12 +32,12 @@ export type NodeAppearance = {
   /**
    * When set to true, the node is rendered in front
    * of all other nodes even if it's occluded.
-   * Note that this take precedence over {@link renderGhosted}.
+   * Note that this take precedence over {@link NodeAppearance.renderGhosted}.
    */
   readonly renderInFront?: boolean;
   /**
    * When set to true, the node is rendered ghosted, i.e.
-   * transparent with a fixed color. This has no effect if {@link renderInFront}
+   * transparent with a fixed color. This has no effect if {@link NodeAppearance.renderInFront}
    * is `true`.
    */
   readonly renderGhosted?: boolean;

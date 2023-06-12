@@ -7,9 +7,10 @@ import * as THREE from 'three';
 import { Image360Provider } from '@reveal/data-providers';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { It, Mock } from 'moq.ts';
+import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { Image360Icon } from '../src/icons/Image360Icon';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
+import { Image360AnnotationFilter } from '../src/annotation/Image360AnnotationFilter';
 
 describe(Image360Entity.name, () => {
   test('transformation should be respected', () => {
@@ -29,7 +30,7 @@ describe(Image360Entity.name, () => {
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
     const mock360ImageProvider = new Mock<Image360Provider<any>>();
-    const mock360ImageIcon = new Mock<Image360Icon>().object();
+    const mock360ImageIcon = new Mock<Overlay3DIcon>().object();
 
     const testTranslation = new THREE.Matrix4().makeTranslation(4, 5, 6);
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
@@ -38,6 +39,7 @@ describe(Image360Entity.name, () => {
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
+      new Image360AnnotationFilter({}),
       testTranslation,
       mock360ImageIcon,
       desktopDevice

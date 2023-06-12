@@ -41,7 +41,8 @@ import {
   Intersection,
   CadModelBudget,
   CadIntersection,
-  ResolutionOptions
+  ResolutionOptions,
+  RenderParameters
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -119,6 +120,15 @@ export class Cognite3DViewer {
    */
   get domElement(): HTMLElement {
     return this._domElement;
+  }
+
+  /**
+   * Returns parameters of THREE.WebGLRenderer used by the viewer.
+   */
+  get renderParameters(): RenderParameters {
+    return {
+      renderSize: this._renderer.getSize(new THREE.Vector2())
+    };
   }
 
   /**
@@ -316,7 +326,10 @@ export class Cognite3DViewer {
         this._domElement,
         this._activeCameraManager,
         this._mouseHandler,
-        this._events.beforeSceneRendered
+        this._events.beforeSceneRendered,
+        {
+          platformMaxPointsSize: getMaxPointSize(this._renderer)
+        }
       );
     }
 
@@ -406,10 +419,10 @@ export class Cognite3DViewer {
   /**
    * Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
    * @see {@link https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects}
-   * ```ts
+   * ```js
    * // Viewer is no longer in use, free up memory
    * viewer.dispose();
-   * ```.
+   * ```
    */
   dispose(): void {
     if (this.isDisposed) {
@@ -563,7 +576,7 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraStop', callback: CameraStopDelegate): void;
   /**
-   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
+   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link Cognite3DViewer.on}.
    */
   off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
   /**
@@ -790,7 +803,8 @@ export class Cognite3DViewer {
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
       eventFilter,
       collectionTransform,
-      preMultipliedRotation
+      preMultipliedRotation,
+      add360ImageOptions?.annotationFilter
     );
 
     const numberOf360Images = image360Collection.image360Entities.length;
@@ -804,14 +818,30 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Returns a list of added 360 image collections.
+   */
+  get360ImageCollections(): Image360Collection[] {
+    return this._image360ApiHelper?.getImageCollections() ?? [];
+  }
+
+  /**
    * Remove a set of 360 images.
    * @param image360Entities
+   * @deprecated
    */
   remove360Images(...image360Entities: Image360[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.remove360Images(image360Entities.map(entity => entity as Image360Entity));
+  }
+
+  /**
+   * Removes a previously added 360 image collection from the viewer.
+   * @param imageCollection Collection to remove.
+   */
+  remove360ImageSet(imageCollection: Image360Collection): void {
+    this._image360ApiHelper?.remove360ImageCollection(imageCollection);
   }
 
   /**
@@ -1645,4 +1675,10 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     }
   };
   return revealOptions;
+}
+
+function getMaxPointSize(renderer: THREE.WebGLRenderer): number {
+  const gl = renderer.getContext();
+  const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
+  return maxPointSize;
 }

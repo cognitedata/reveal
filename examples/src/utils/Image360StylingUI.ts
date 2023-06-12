@@ -2,8 +2,6 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationsObjectDetection } from '@cognite/sdk';
-
 import * as dat from 'dat.gui';
 
 import { Image360UI } from './Image360UI';

@@ -6,11 +6,13 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
 import { EventDispatcher } from 'three';
+import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { Node3D } from '@cognite/sdk';
@@ -30,6 +32,7 @@ export type AbsolutePosition = {
 export type AddImage360Options = {
     collectionTransform?: THREE.Matrix4;
     preMultipliedRotation?: boolean;
+    annotationFilter?: Image360AnnotationFilterOptions;
 };
 
 // @public
@@ -247,6 +250,7 @@ export class CameraManagerHelper {
         position: THREE_2.Vector3;
         target: THREE_2.Vector3;
     };
+    static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
     static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3): THREE_2.Vector3;
     static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
 }
@@ -347,6 +351,7 @@ export class Cognite3DViewer {
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
+    get360ImageCollections(): Image360Collection[];
     // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
     getGlobalClippingPlanes(): THREE_2.Plane[];
@@ -378,9 +383,12 @@ export class Cognite3DViewer {
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
+    // @deprecated
     remove360Images(...image360Entities: Image360[]): Promise<void>;
+    remove360ImageSet(imageCollection: Image360Collection): void;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
+    get renderParameters(): RenderParameters;
     requestRedraw(): void;
     setBackgroundColor(backgroundColor: {
         color?: THREE_2.Color;
@@ -706,6 +714,11 @@ export const DefaultNodeAppearance: {
     };
 };
 
+// @public
+export type DefaultOverlay3DContentType = {
+    [key: string]: string;
+};
+
 // @public (undocumented)
 export const DefaultPointCloudAppearance: CompletePointCloudAppearance;
 
@@ -778,18 +791,22 @@ export type HtmlOverlayToolOptions = {
     clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
 
-// @public (undocumented)
+// @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
-    getImageMetadata(): Image360Metadata;
     getRevisions(): Image360Revision[];
+    readonly id: string;
     readonly image360Visualization: Image360Visualization;
+    readonly label: string | undefined;
     readonly transform: THREE.Matrix4;
 }
 
 // @public
 export interface Image360Annotation {
     readonly annotation: AnnotationModel;
+    getCenter(out?: Vector3): Vector3;
+    getColor(): Color;
+    getVisible(): boolean;
     setColor(color?: Color): void;
     setVisible(visible?: boolean): void;
 }
@@ -801,6 +818,23 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
+export type Image360AnnotationAssetFilter = {
+    assetRef: IdEither;
+};
+
+// @public
+export type Image360AnnotationAssetQueryResult = {
+    image: Image360;
+    revision: Image360Revision;
+    annotation: Image360Annotation;
+};
+
+// @public
+export type Image360AnnotationFilterOptions = {
+    status?: 'all' | AnnotationStatus | AnnotationStatus[];
+};
+
+// @public
 export type Image360AnnotationIntersection = {
     type: 'image360Annotation';
     annotation: Image360Annotation;
@@ -809,7 +843,12 @@ export type Image360AnnotationIntersection = {
 
 // @public
 export interface Image360Collection {
+    findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    getAssetIds(): Promise<IdEither[]>;
+    getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    readonly id: string;
     readonly image360Entities: Image360[];
+    readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
@@ -828,17 +867,11 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 // @public
 export type Image360ExitedDelegate = () => void;
 
-// @public (undocumented)
-export type Image360Metadata = {
-    station: string;
-    collection: string;
-    date?: Date;
-};
-
 // @public
 export interface Image360Revision {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation[]>;
+    getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
 
 // @public
@@ -1158,6 +1191,83 @@ export class NumericRange {
 // @public
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
+// @public
+export interface Overlay3D<ContentType> {
+    getColor(): Color;
+    getContent(): ContentType;
+    getPosition(): Vector3;
+    getVisible(): boolean;
+    setColor(color: Color): void;
+    setVisible(visible: boolean): void;
+}
+
+// @public
+export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
+    constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
+    clear(): void;
+    createOverlayCollection(overlays?: OverlayInfo<ContentType>[], options?: OverlayCollectionOptions): OverlayCollection<ContentType>;
+    dispose(): void;
+    getCollections(): OverlayCollection<ContentType>[];
+    getTextOverlayVisible(): boolean;
+    getVisible(): boolean;
+    // (undocumented)
+    off(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    off(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    off(event: 'disposed', eventHandler: DisposedDelegate): void;
+    on(event: 'hover', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    on(event: 'click', eventHandler: OverlayEventHandler<ContentType>): void;
+    // (undocumented)
+    on(event: 'disposed', eventHandler: DisposedDelegate): void;
+    removeOverlayCollection(overlayCollection: OverlayCollection<ContentType>): void;
+    setTextOverlayVisible(visible: boolean): void;
+    setVisible(visible: boolean): void;
+}
+
+// @public
+export type Overlay3DToolParameters = {
+    maxPointSize?: number;
+    defaultOverlayColor: THREE_2.Color;
+};
+
+// @public
+export interface OverlayCollection<ContentType> {
+    addOverlays(overlays: OverlayInfo<ContentType>[]): Overlay3D<ContentType>[];
+    getOverlays(): Overlay3D<ContentType>[];
+    removeAllOverlays(): void;
+    removeOverlays(overlays: Overlay3D<ContentType>[]): void;
+    setVisibility(visibility: boolean): void;
+}
+
+// @public
+export type OverlayCollectionOptions = {
+    defaultOverlayColor?: THREE_2.Color;
+    overlayTexture?: THREE_2.Texture;
+    overlayTextureMask?: THREE_2.Texture;
+};
+
+// @public
+export type OverlayEventHandler<ContentType> = (event: {
+    targetOverlay: Overlay3D<ContentType>;
+    htmlTextOverlay: HTMLElement;
+    mousePosition: {
+        offsetX: number;
+        offsetY: number;
+    };
+}) => void;
+
+// @public
+export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
+    position: THREE.Vector3;
+    content: ContentType;
+    color?: THREE.Color;
+};
+
+// @public
+export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
+
 // @public (undocumented)
 export type PointCloudAppearance = {
     color?: Color;
@@ -1279,6 +1389,11 @@ export function registerNodeCollectionType<T extends NodeCollection>(nodeCollect
 export type RelativePosition = {
     corner: Corner;
     padding: THREE_2.Vector2;
+};
+
+// @public
+export type RenderParameters = {
+    renderSize: THREE.Vector2;
 };
 
 // @public
