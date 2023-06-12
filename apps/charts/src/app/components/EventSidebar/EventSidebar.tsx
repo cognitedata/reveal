@@ -322,7 +322,8 @@ const EventSidebar = memo(
                             <ReverseSwitch
                               name={`showEvents_${eventFilter.id}`}
                               checked={eventFilter.visible}
-                              onChange={(val) => {
+                              onChange={(val: boolean) => {
+                                // todo(DEGR-2397) check if this is working fine
                                 handleToggleEventFilter(eventFilter.id, val);
                               }}
                             >

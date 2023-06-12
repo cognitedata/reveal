@@ -41,7 +41,7 @@ const emptySourceOption: SourceOption = {
   value: '',
 };
 
-const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
+const SourceNode = memo<NodeProps<SourceNodeData>>(({ id, data, selected }) => {
   const {
     readOnly,
     selectedSourceId,

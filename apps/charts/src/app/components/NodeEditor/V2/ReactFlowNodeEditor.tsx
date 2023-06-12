@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, ReactNode } from 'react';
 import ReactFlow, {
   Background,
   OnLoadParams as RFInstance,
@@ -9,6 +9,7 @@ import ReactFlow, {
   Node,
   XYPosition,
   FlowTransform,
+  NodeTypesType,
 } from 'react-flow-renderer';
 
 import AlertIcon from '@charts-app/components/AlertIcon/AlertIcon';
@@ -69,6 +70,14 @@ type Props = {
   onMove: (transform: FlowTransform) => void;
   translations: typeof defaultTranslations;
   onErrorIconClick: (id: string) => void;
+};
+
+// todo(DEGR-2397) check if this is working fine
+const NODE_TYPES: NodeTypesType = {
+  [NodeTypes.SOURCE]: SourceNode as unknown as ReactNode,
+  [NodeTypes.FUNCTION]: FunctionNode as unknown as ReactNode,
+  [NodeTypes.CONSTANT]: ConstantNode as unknown as ReactNode,
+  [NodeTypes.OUTPUT]: OutputNode as unknown as ReactNode,
 };
 
 const ReactFlowNodeEditor = ({
@@ -140,8 +149,9 @@ const ReactFlowNodeEditor = ({
    * Transform handler (position and zoom)
    */
   const handleMove = useCallback(
-    (transform) => {
-      onMove(transform);
+    (transform: FlowTransform | undefined) => {
+      // todo(DEGR-2397) check if this is working fine
+      transform && onMove(transform);
     },
     [onMove]
   );
@@ -226,12 +236,7 @@ const ReactFlowNodeEditor = ({
             defaultPosition={position}
             defaultZoom={zoom}
             elements={flowElements}
-            nodeTypes={{
-              [NodeTypes.SOURCE]: SourceNode,
-              [NodeTypes.FUNCTION]: FunctionNode,
-              [NodeTypes.CONSTANT]: ConstantNode,
-              [NodeTypes.OUTPUT]: OutputNode,
-            }}
+            nodeTypes={NODE_TYPES}
             onLoad={setReactFlowInstance}
             onElementsRemove={onElementsRemove}
             onConnect={onConnect}

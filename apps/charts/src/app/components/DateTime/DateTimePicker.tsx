@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect, useState } from 'react';
 
-import dayjs from 'dayjs';
+import dayjs, { ManipulateType } from 'dayjs';
 
 import { Flex } from '@cognite/cogs.js';
 
@@ -35,7 +35,7 @@ const DateTimePicker = (props: Props) => {
   const handlePeriodChange = (period: RelativeTimeOption) => {
     const nowDate = new Date();
     const startDate = dayjs(nowDate)
-      .subtract(parseInt(period[0], 10), period[1])
+      .subtract(parseInt(period[0], 10), period[1] as ManipulateType)
       .toDate();
 
     const newRange = {

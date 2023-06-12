@@ -447,7 +447,7 @@ const ThresholdItem = ({
           <ReverseSwitch
             name={`showThreshold_${threshold.id}`}
             checked={threshold.visible}
-            onChange={(val) => {
+            onChange={(val: boolean) => {
               if (!showBtnVisibility) return;
               onToggleThreshold(threshold.id, val);
             }}
