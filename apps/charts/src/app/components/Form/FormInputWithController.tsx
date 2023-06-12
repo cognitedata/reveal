@@ -37,6 +37,7 @@ type Props = RegisterOptions<any> & {
   info?: string;
   radioValue?: string;
   autoFocus?: boolean;
+  label?: string;
 };
 
 const FieldLabel = ({
@@ -76,6 +77,7 @@ export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
   radioValue,
   autoFocus,
   children,
+  label,
 }) => (
   <>
     <FieldLabel title={title} info={info} required={required} />
@@ -117,7 +119,7 @@ export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
             {type === 'textarea' && (
               <FormTextarea
                 ref={ref}
-                onBlur={onBlur} // notify when input is touched
+                // onBlur={onBlur} // not present on type
                 onChange={onChange} // send value to hook form
                 value={value}
                 placeholder={placeholder}
@@ -147,13 +149,13 @@ export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
               <Radio
                 id={id}
                 ref={ref}
-                onBlur={onBlur} // notify when input is touched
-                onClick={onChange}
+                name={name}
+                // onBlur={onBlur} // not present on type
+                onChange={onChange}
                 checked={value === radioValue}
                 value={radioValue}
-              >
-                {children}
-              </Radio>
+                label={label}
+              />
             )}
             {type === 'unit' && (
               <UnitSelector

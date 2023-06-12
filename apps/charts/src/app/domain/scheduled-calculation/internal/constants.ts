@@ -12,13 +12,6 @@ export const DEFAULT_STEP_INFO: StepInfo = {
   loading: false,
 };
 
-export const STEP_WIDTH: Record<number, number> = {
-  1: 620,
-  2: 908,
-  3: 604,
-  4: 620,
-};
-
 export const DEFAULT_VALUES = {
   clientId: '',
   clientSecret: '',

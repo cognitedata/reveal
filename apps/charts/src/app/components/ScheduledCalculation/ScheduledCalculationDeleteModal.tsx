@@ -51,29 +51,31 @@ export const ScheduledCalculationDeleteModal = ({
   return (
     <StyledModal
       visible
-      title={<DeleteModalHeader title="Delete scheduled calculation" />}
+      icon="Delete"
+      title="Delete scheduled calculation"
       onCancel={onCancel}
-      footer={
-        <Flex justifyContent="end" gap={16}>
-          <Button type="ghost" onClick={onCancel}>
-            {t.Cancel}
-          </Button>
-          <Button
-            type="destructive"
-            onClick={async () => {
-              try {
-                setIsDeleting(true);
-                await onOk(deleteTimeseries);
-              } finally {
-                setIsDeleting(false);
-              }
-            }}
-            loading={isDeleting}
-          >
-            {t['Yes, delete scheduled']}
-          </Button>
-        </Flex>
-      }
+      hideFooter
+      // footer={
+      //   <Flex justifyContent="end" gap={16}>
+      //     <Button type="ghost" onClick={onCancel}>
+      //       {t.Cancel}
+      //     </Button>
+      //     <Button
+      //       type="destructive"
+      //       onClick={async () => {
+      //         try {
+      //           setIsDeleting(true);
+      //           await onOk(deleteTimeseries);
+      //         } finally {
+      //           setIsDeleting(false);
+      //         }
+      //       }}
+      //       loading={isDeleting}
+      //     >
+      //       {t['Yes, delete scheduled']}
+      //     </Button>
+      //   </Flex>
+      // }
     >
       <Flex direction="column" gap={16}>
         <Body level={2} as="span">

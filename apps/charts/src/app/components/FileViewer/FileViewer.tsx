@@ -26,7 +26,6 @@ import {
   ROOT_CONTAINER_ID,
 } from './constants';
 import { useAnnotations } from './hooks/useAnnotations';
-import { useEventAnnotations } from './hooks/useEventAnnotations';
 import { useExtractedAnnotations } from './hooks/useExtractedAnnotations';
 import { useOCRSearchResults } from './hooks/useOCRSearchResults';
 import { useUnifiedFileViewerState } from './hooks/useUnifiedFileViewerState';
@@ -56,14 +55,12 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
   const sdk = useSDK();
 
   const { extractedAnnotations } = useExtractedAnnotations(file);
-  const { data: annotationsFromEvents } = useEventAnnotations(file);
   const { data: annotationsFromAnnotations } = useAnnotations(file);
   const { ocrSearchResultAnnotations, ocrResultsAvailable } =
     useOCRSearchResults(file, currentPage, searchQuery);
 
   const { annotations, popovers, onStageClick } = useUnifiedFileViewerState({
     file,
-    annotationsFromEvents,
     annotationsFromAnnotations,
     extractedAnnotations,
     ocrSearchResultAnnotations,

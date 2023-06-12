@@ -14,6 +14,8 @@ export default {
 } as Meta;
 
 const Template: Story<ComponentProps<typeof EditorControls>> = (args) => (
+  // eslint-disable-next-line
+  // @ts-ignore todo(DEGR-2397) react 18 has FC without children
   <ReactFlowProvider>
     <EditorControls {...args} />
   </ReactFlowProvider>
@@ -22,6 +24,8 @@ const Template: Story<ComponentProps<typeof EditorControls>> = (args) => (
 const HorizontalTemplate: Story<ComponentProps<typeof EditorControls>> = (
   args
 ) => (
+  // eslint-disable-next-line
+  // @ts-ignore todo(DEGR-2397) react 18 has FC without children
   <ReactFlowProvider>
     <EditorToolbar>
       <EditorControls {...args} />

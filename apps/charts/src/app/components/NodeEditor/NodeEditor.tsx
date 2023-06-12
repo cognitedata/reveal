@@ -83,6 +83,25 @@ const NodeEditor = ({
     }
   }, [operationsError, t]);
 
+  /**
+   * Generate update function for workflow
+   */
+  const handleUpdateWorkflow = useCallback(
+    (wf: ChartWorkflowV2 | ScheduledCalculation) => {
+      setChart((oldChart) => {
+        if (sourceType === 'scheduledCalculation') {
+          return updateScheduledCalculation(
+            oldChart!,
+            sourceId,
+            wf as ScheduledCalculation
+          );
+        }
+        return updateWorkflow(oldChart!, sourceId, wf as ChartWorkflowV2);
+      });
+    },
+    [setChart, sourceId]
+  );
+
   if (isLoadingOperations) {
     return <Icon type="Loader" />;
   }
@@ -103,25 +122,6 @@ const NodeEditor = ({
   const readOnly =
     Boolean(login?.id && !isOwner) || sourceType === 'scheduledCalculation';
 
-  /**
-   * Generate update function for workflow
-   */
-  const handleUpdateWorkflow = useCallback(
-    (wf: ChartWorkflowV2 | ScheduledCalculation) => {
-      setChart((oldChart) => {
-        if (sourceType === 'scheduledCalculation') {
-          return updateScheduledCalculation(
-            oldChart!,
-            sourceId,
-            wf as ScheduledCalculation
-          );
-        }
-        return updateWorkflow(oldChart!, sourceId, wf as ChartWorkflowV2);
-      });
-    },
-    [setChart, sourceId]
-  );
-
   if (!(workflow || scheduledCalculation)) {
     return <div>No calculation selected</div>;
   }
@@ -134,6 +134,8 @@ const NodeEditor = ({
   ) as ChartWorkflowV2[];
 
   return (
+    // eslint-disable-next-line
+    // @ts-ignore todo(DEGR-2397) react 18 has FC without children
     <ReactFlowProvider>
       <ReactFlowNodeEditorContainer
         source={workflow || scheduledCalculation!}

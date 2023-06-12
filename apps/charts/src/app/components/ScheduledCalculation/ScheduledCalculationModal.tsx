@@ -6,10 +6,11 @@ import { useScheduledCalculationCreateMutate } from '@charts-app/domain/schedule
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useOperations } from '@charts-app/models/operations/atom';
 
+import { ModalSize, ModalDefaultProps } from '@cognite/cogs.js';
+
 import { useGetWorkflow } from '../../domain/chart/internal/queries/useGetWorkflow';
 import {
   DEFAULT_STEP_INFO,
-  STEP_WIDTH,
   DEFAULT_VALUES,
 } from '../../domain/scheduled-calculation/internal/constants';
 import {
@@ -23,6 +24,13 @@ import { handleNext } from './helpers';
 import { ModalBody } from './ModalBody';
 import { ModalFooter } from './ModalFooter';
 import { ModalHeader } from './ModalHeader';
+
+const STEP_WIDTH: Record<string, ModalDefaultProps['size']> = {
+  1: 'small',
+  2: 'large',
+  3: 'medium',
+  4: 'medium',
+};
 
 export const ScheduledCalculationModal = ({
   onClose,
@@ -48,28 +56,30 @@ export const ScheduledCalculationModal = ({
     <StyledModal
       visible
       onCancel={onClose}
-      title={<ModalHeader currentStep={currentStep} />}
-      footer={
-        <ModalFooter
-          currentStep={currentStep}
-          credsValidated={credsValidated}
-          onClose={onClose}
-          onNext={() =>
-            handleNext({
-              workflow: workflow!,
-              formMethods,
-              setStepInfo,
-              currentStep,
-              createScheduledCalculation,
-              workflowSteps,
-              setChart,
-            })
-          }
-          loading={loading}
-        />
-      }
-      width={STEP_WIDTH[currentStep]}
+      hideFooter
+      title=""
+      // footer={
+      //   <ModalFooter
+      //     currentStep={currentStep}
+      //     credsValidated={credsValidated}
+      //     onClose={onClose}
+      //     onNext={() =>
+      //       handleNext({
+      //         workflow: workflow!,
+      //         formMethods,
+      //         setStepInfo,
+      //         currentStep,
+      //         createScheduledCalculation,
+      //         workflowSteps,
+      //         setChart,
+      //       })
+      //     }
+      //     loading={loading}
+      //   />
+      // }
+      size={STEP_WIDTH[currentStep]}
     >
+      <ModalHeader currentStep={currentStep} />
       <FormProvider {...formMethods}>
         <ModalBody
           currentStep={currentStep}
@@ -78,6 +88,23 @@ export const ScheduledCalculationModal = ({
           workflowId={workflowId}
         />
       </FormProvider>
+      <ModalFooter
+        currentStep={currentStep}
+        credsValidated={credsValidated}
+        onClose={onClose}
+        onNext={() =>
+          handleNext({
+            workflow: workflow!,
+            formMethods,
+            setStepInfo,
+            currentStep,
+            createScheduledCalculation,
+            workflowSteps,
+            setChart,
+          })
+        }
+        loading={loading}
+      />
     </StyledModal>
   );
 };

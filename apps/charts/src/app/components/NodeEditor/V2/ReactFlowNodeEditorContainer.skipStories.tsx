@@ -18,6 +18,10 @@ const Template: Story<ComponentProps<typeof ReactFlowNodeEditorContainer>> = (
 ) => {
   return (
     <div style={{ width: 'calc(100vw - 30px)', height: 'calc(100vh - 30px)' }}>
+      {/* 
+    todo(DEGR-2397) react 18 has FC without children
+    eslint-disable-next-line
+    @ts-ignore*/}
       <ReactFlowProvider>
         <ReactFlowNodeEditorContainer {...args} />
       </ReactFlowProvider>

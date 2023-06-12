@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { CogniteAnnotation } from '@cognite/annotations';
-import { FileInfo } from '@cognite/sdk';
+import { FileInfo, AnnotationModel } from '@cognite/sdk';
 import {
   Annotation,
   OCRAnnotation,
@@ -11,17 +10,14 @@ import {
 
 import { AnnotationPopover } from '../components/AnnotationPopover';
 import { styleForSelected } from '../constants';
-import { AnnotationModel } from '../sdk/sdkTypes';
 import { ExtendedAnnotation } from '../types';
 import { getContainerId } from '../utils/getContainerId';
 import getExtendedAnnotationsFromAnnotationsApi from '../utils/getExtendedAnnotationsFromAnnotationsApi';
-import { getExtendedAnnotationsFromCogniteAnnotation } from '../utils/getExtendedAnnotationsFromCogniteAnnotation';
 import { getExtendedAnnotationsFromOCRAnnotations } from '../utils/getExtendedAnnotationsFromOCRAnnotations';
 import { getExtendedAnnotationsFromSVGAnnotations } from '../utils/getExtendedAnnotationsFromSVGAnnotations';
 
 /**
  * @param file Selected file
- * @param assetAnnotationsFromEvents Asset annotations get by Events API
  * @param assetAnnotationsFromAnnotations Asset annotations get by Annotation API
  * @param extractedAnnotations Annotations extracted by File (eg: SVG)
  * @param ocrSearchResultAnnotations Filtered OCR Annotations by input string
@@ -29,7 +25,6 @@ import { getExtendedAnnotationsFromSVGAnnotations } from '../utils/getExtendedAn
  */
 type UnifiedFileViewerStateProps = {
   file: FileInfo | undefined;
-  annotationsFromEvents?: CogniteAnnotation[];
   annotationsFromAnnotations?: AnnotationModel[];
   extractedAnnotations?: Annotation[];
   ocrSearchResultAnnotations: OCRAnnotation[];
@@ -38,7 +33,6 @@ type UnifiedFileViewerStateProps = {
 
 export const useUnifiedFileViewerState = ({
   file,
-  annotationsFromEvents,
   annotationsFromAnnotations,
   extractedAnnotations,
   ocrSearchResultAnnotations,
@@ -56,10 +50,6 @@ export const useUnifiedFileViewerState = ({
     if (fileId) {
       setAnnotations(
         [
-          ...getExtendedAnnotationsFromCogniteAnnotation(
-            annotationsFromEvents,
-            getContainerId(fileId)
-          ),
           ...getExtendedAnnotationsFromAnnotationsApi(
             annotationsFromAnnotations || [],
             getContainerId(fileId)
@@ -94,7 +84,6 @@ export const useUnifiedFileViewerState = ({
     }
   }, [
     fileId,
-    annotationsFromEvents,
     annotationsFromAnnotations,
     extractedAnnotations,
     ocrSearchResultAnnotations,

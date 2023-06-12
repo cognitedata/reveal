@@ -1,4 +1,4 @@
-import { FieldErrors } from 'react-hook-form';
+import { FieldErrors, FieldValues as FormFieldValues } from 'react-hook-form';
 
 import styled from 'styled-components';
 
@@ -12,11 +12,11 @@ import {
 
 const defaultTranslations = makeDefaultTranslations('Error validating data');
 
-type Props<FieldValues> = {
+type Props<FieldValues extends FormFieldValues> = {
   translations?: typeof defaultTranslations;
   errors: FieldErrors<FieldValues>;
 };
-export const FormError = <TFieldValues,>({
+export const FormError = <TFieldValues extends FormFieldValues>({
   errors,
   translations,
 }: Props<TFieldValues>) => {

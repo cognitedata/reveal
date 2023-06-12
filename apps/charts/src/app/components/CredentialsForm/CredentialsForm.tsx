@@ -21,7 +21,7 @@ import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import debounce from 'lodash/debounce';
 import head from 'lodash/head';
 
-import { Tooltip, Flex, Body } from '@cognite/cogs.js';
+import { Tooltip, Flex } from '@cognite/cogs.js';
 
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
@@ -147,11 +147,8 @@ export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
             id={`userCredentials-${uniqueFormId}`}
             radioValue="USER_CREDS"
             key={`userCredentials-${uniqueFormId}`}
-          >
-            <Body level={2} strong>
-              {t['Use CDF sign-in credentials']}
-            </Body>
-          </FormInputWithController>
+            label={t['Use CDF sign-in credentials']}
+          />
         </Flex>
       </ClientCredentialsWrapper>
       <Divider>
@@ -167,11 +164,8 @@ export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
             id={`clientSecret-${uniqueFormId}`}
             radioValue="CLIENT_SECRET"
             key={`clientSecret-${uniqueFormId}`}
-          >
-            <Body level={2} strong>
-              {t['Use CDF Client ID and Client secret']}
-            </Body>
-          </FormInputWithController>
+            label={t['Use CDF Client ID and Client secret']}
+          />
         </Flex>
         <ClientCredentialsOptionMessage>
           {t['This option provides a more stable service']}

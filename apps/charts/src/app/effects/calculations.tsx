@@ -247,6 +247,8 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
 
   useEffect(() => {
     if (response === null && call?.status === 'Success') {
+      // eslint-disable-next-line
+      // @ts-ignore todo(DEGR-2397) figure better way
       refetchResponse();
     }
   }, [call?.status, response, refetchResponse]);

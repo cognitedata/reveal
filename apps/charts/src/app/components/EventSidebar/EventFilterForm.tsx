@@ -98,6 +98,8 @@ const EventFilterForm = ({
       />
       <AggregatedEventFilter
         field="type"
+        // eslint-disable-next-line
+        // @ts-ignore todo(DEGR-2397) fix dataSetIds & assetSubtreeIds filters
         filter={filters}
         setValue={(newValue) => {
           handleUpdateFilters({ ...filters, type: newValue });
@@ -107,6 +109,8 @@ const EventFilterForm = ({
       />
       <AggregatedEventFilter
         field="subtype"
+        // eslint-disable-next-line
+        // @ts-ignore todo(DEGR-2397) fix dataSetIds & assetSubtreeIds filters
         filter={filters}
         setValue={(newValue) => {
           handleUpdateFilters({ ...filters, subtype: newValue });

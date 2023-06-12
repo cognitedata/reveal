@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { PropsWithChildren } from 'react';
 
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
@@ -40,7 +40,7 @@ export const testWrapper = ({ children }: { children: React.ReactNode }) => {
 export const renderHookWithWrapper = <TProps, TResult>(
   fn: (props: TProps) => TResult
 ) => {
-  return renderHook<TProps, TResult>(fn, {
+  return renderHook<PropsWithChildren<TProps>, TResult>(fn, {
     wrapper: ({ children }) => testWrapper({ children }),
   });
 };

@@ -24,6 +24,10 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
       height: 'calc(100vh - 30px)',
     }}
   >
+    {/* 
+    todo(DEGR-2397) react 18 has FC without children
+    eslint-disable-next-line
+    @ts-ignore*/}
     <ReactFlowProvider>
       <ReactFlowNodeEditor
         sources={[]}

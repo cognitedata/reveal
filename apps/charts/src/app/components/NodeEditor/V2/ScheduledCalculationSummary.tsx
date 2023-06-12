@@ -114,20 +114,17 @@ export const ScheduledCalculationSummary = ({
         <StyledModal
           visible
           onCancel={() => setIsDescriptionModalOpen(false)}
-          footer={
-            <Button
-              type="ghost"
-              onClick={() => setIsDescriptionModalOpen(false)}
-            >
-              Cancel
-            </Button>
-          }
-          title={
-            <Flex gap={8} alignItems="center">
-              <Icon type="Document" />
-              <Title level={5}>Description</Title>
-            </Flex>
-          }
+          hideFooter
+          // footer={
+          //   <Button
+          //     type="ghost"
+          //     onClick={() => setIsDescriptionModalOpen(false)}
+          //   >
+          //     Cancel
+          //   </Button>
+          // }
+          icon="Document"
+          title="Description"
         >
           {scheduledCalculationData?.description}
         </StyledModal>
