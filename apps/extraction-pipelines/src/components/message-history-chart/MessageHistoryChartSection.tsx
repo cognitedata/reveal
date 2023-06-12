@@ -22,8 +22,6 @@ export const MessageHistoryChartSection = ({
   const [aggregationInterval, setAggregationInterval] =
     useState<AggregationInterval>('hourly');
 
-  //   console.log(jobs);
-
   return (
     <Section
       borderless

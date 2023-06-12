@@ -31,7 +31,6 @@ export const MessageHistoryChart = ({
 
   const aggregations = useMemo(() => {
     const metrics = jobs.flatMap(({ metrics }) => metrics);
-    // console.log(metrics);
 
     return getMetricAggregations(
       metrics,

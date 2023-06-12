@@ -305,5 +305,9 @@
   "message-transform-succeed": "{{count}} message transformed successfully",
   "message-transform-succeed_other": "{{count}} messages transformed successfully",
   "message-transform-failed_one": "{{count}} message couldn't transformed",
-  "message-transform-failed_other": "{{count}} messages couldn't transformed"
+  "message-transform-failed_other": "{{count}} messages couldn't transformed",
+  "values-written-succeed_one": "{{count}} values written",
+  "values-written-succeed_other": "{{count}} value written",
+  "values-written-failed_one": "{{count}} value failed to write",
+  "values-written-failed_other": "{{count}} values failed to write"
 }

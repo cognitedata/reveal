@@ -5,11 +5,11 @@ import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import {
-  getMetricAggregationErrorCount,
-  getMetricAggregationSuccessCount,
+  getWriteFailureAggregationErrorCount,
+  getWriteDataAggregationSuccessCount,
   getMetricAggregations,
 } from 'utils/hostedExtractors';
-import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
+import { BAR_HEIGHT, DataHistoryChartItem } from './DataHistoryChartItem';
 
 type DataHistoryChartProps = {
   className?: string;
@@ -26,7 +26,6 @@ export const DataHistoryChart = ({
 
   const aggregations = useMemo(() => {
     const metrics = jobs.flatMap(({ metrics }) => metrics);
-
     return getMetricAggregations(
       metrics,
       aggregationInterval,
@@ -40,15 +39,15 @@ export const DataHistoryChart = ({
         return 0;
       }
 
-      const successCount = getMetricAggregationSuccessCount(data);
-      const errorCount = getMetricAggregationErrorCount(data);
+      const successCount = getWriteDataAggregationSuccessCount(data);
+      const errorCount = getWriteFailureAggregationErrorCount(data);
       return successCount + errorCount;
     })
   );
 
   const totalErrorCount = useMemo(() => {
     return aggregations.reduce((acc, cur) => {
-      return acc + getMetricAggregationErrorCount(cur.data);
+      return acc + getWriteFailureAggregationErrorCount(cur.data);
     }, 0);
   }, [aggregations]);
 
@@ -95,7 +94,7 @@ export const DataHistoryChart = ({
         </XAxis>
         <ChartContent>
           {aggregations.map((aggregation) => (
-            <MessageHistoryChartItem
+            <DataHistoryChartItem
               key={aggregation.startTime}
               aggregation={aggregation}
               yMax={yMax}
