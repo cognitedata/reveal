@@ -76,7 +76,7 @@
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "react-app-rewired test --watchAll",
     "test:debugger": "react-app-rewired --inspect-brk test --runInBand --no-cache",
-    "test:once": "react-app-rewired test --watchAll=false",
+    "test:once": "react-app-rewired test --watchAll=false --silent",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
