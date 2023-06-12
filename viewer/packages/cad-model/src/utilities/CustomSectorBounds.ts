@@ -12,7 +12,14 @@ type TransformedNode = {
   inSectors: Set<number>;
 };
 
-// todo: class docs
+/**
+ * An instance of this class is used dynamically alter the sector bounding boxes when model nodes are given custom transforms.
+ * The bounding box of a sector is kept equal to it's original value, unless:
+ * - A node with geometry in the sector is transformed such that the original value would not fully contain the node geometry
+ * - Descendants of the sector has grown, and are no longer contained within the original bounding box.
+ * The set of sectors a tree index has geometry does not need to be known initially. This set of sectors, and the node transform,
+ * are set independently.
+ */
 export class CustomSectorBounds {
   private readonly _treeIndexToTransformedNodeMap = new Map<number, TransformedNode>();
   private readonly _sectorIdToTransformedNodesMap = new Map<number, Set<TransformedNode>>();
@@ -167,10 +174,8 @@ export class CustomSectorBounds {
 
       if (!minimumBounds.equals(originalBoundingBox)) {
         this.setCustomSectorBounds(sector.id, minimumBounds);
-        //console.log('Indirect sector', sector.id, 'expanded');
       } else {
         this.clearCustomSectorBounds(sector.id);
-        //console.log('Indirect sector', sector.id, 'reset');
       }
     }
   }
@@ -182,8 +187,6 @@ export class CustomSectorBounds {
    * @returns True if the new sector bounds are different from the original values. False otherwise
    */
   private updateSector(sectorId: number, customBoundingBoxes: THREE.Box3[]): void {
-    //console.log('updateSector for sector with id', sectorId);
-
     const originalSectorBounds = this.getOriginalSectorBounds(sectorId);
 
     if (customBoundingBoxes.length) {
@@ -197,79 +200,13 @@ export class CustomSectorBounds {
 
       if (!newSectorBounds.equals(originalSectorBounds)) {
         this.setCustomSectorBounds(sectorId, newSectorBounds);
-
-        //const minExpandedBy = newSectorBounds.min.clone().sub(originalSectorBounds.min);
-        //const maxExpandedBy = newSectorBounds.max.clone().sub(originalSectorBounds.max);
-        //console.log('  Sector bounds min expanded by', minExpandedBy, 'and max expanded by', maxExpandedBy);
-
         return;
       }
     }
 
     // Reset sector bounds back to the original bounds
     this.clearCustomSectorBounds(sectorId);
-
-    //console.log('  Sector bounds reset');
   }
-  /*
-  private inflateAncestorsOf(sectorId: number, sectorsWithCustomBounds: Set<number>): void {
-    console.log('  inflateAncestorsOf called on sector', sectorId);
-    const parentId = this.sectorIdOfParent(this.sectorMetadata(sectorId).path);
-    console.log('    parentId is:', parentId);
-    if (parentId !== undefined) {
-      const originalParentBounds = this.getOriginalSectorBounds(parentId);
-
-      // Check if the parent has custom bounds. In that case, we should only expand it
-      let newParentBounds: THREE.Box3;
-      if (sectorsWithCustomBounds.has(parentId)) {
-        newParentBounds = this.sectorMetadata(parentId).subtreeBoundingBox.clone();
-      } else {
-        newParentBounds = originalParentBounds.clone();
-      }
-
-      // Compute the new bounding box for this parent by expanding it to fit all the children
-      for (const child of this.sectorMetadata(parentId).children) {
-        newParentBounds.expandByPoint(child.subtreeBoundingBox.min);
-        newParentBounds.expandByPoint(child.subtreeBoundingBox.max);
-      }
-
-      // Modify sector bounds
-      if (!newParentBounds.equals(originalParentBounds)) {
-        this.setCustomSectorBounds(parentId, newParentBounds);
-        console.log('    parent bounds set to:', newParentBounds);
-      } else {
-        this.clearCustomSectorBounds(parentId);
-        console.log('    parent bounds reset');
-      }
-
-      // Recursively modify all ancestors
-      this.inflateAncestorsOf(parentId, sectorsWithCustomBounds);
-    }
-  }
-
-  private sectorIdOfParent(sectorPath: string): number | undefined {
-    const pathElements = sectorPath
-      .split('/')
-      .filter(x => x.length > 0)
-      .map(x => Number(x));
-
-    pathElements.pop(); // Remove one to get the parent
-
-    if (pathElements.length) {
-      // Start at root sector
-      let node = this.cadNode.rootSector as SectorNode;
-      pathElements.shift();
-
-      // And traverse children to reach the desired parent
-      for (const childIndex of pathElements) {
-        node = node.children[childIndex] as SectorNode;
-      }
-      return node.sectorId;
-    }
-
-    return undefined;
-  }
-  */
 
   private getOriginalSectorBounds(sectorId: number): THREE.Box3 {
     let originalSectorBounds = this._originalSectorBounds.get(sectorId);

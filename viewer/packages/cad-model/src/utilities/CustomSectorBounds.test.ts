@@ -102,8 +102,8 @@ describe('CustomSectorBounds', () => {
 
   const nodeA: DummyNode = { treeIndex: 1000, originalBoundingBox: boundsFrom(0, 0, 1, 1) };
   const nodeB: DummyNode = { treeIndex: 1001, originalBoundingBox: boundsFrom(3, 1, 4, 2) };
-  //const nodeC: DummyNode = { treeIndex: 1002, originalBoundingBox: boundsFrom(2.5, 2.5, 3.5, 3.5) };
-  //const nodeD: DummyNode = { treeIndex: 1003, originalBoundingBox: boundsFrom(5, 6.5, 7, 7.5) };
+  const nodeC: DummyNode = { treeIndex: 1002, originalBoundingBox: boundsFrom(2.5, 2.5, 3.5, 3.5) };
+  const nodeD: DummyNode = { treeIndex: 1003, originalBoundingBox: boundsFrom(5, 6.5, 7, 7.5) };
 
   beforeEach(() => {
     // Define sectors
@@ -136,77 +136,34 @@ describe('CustomSectorBounds', () => {
       originalSectorBounds.set(sectorId, sectorMetadata.subtreeBoundingBox.clone());
     }
 
-    setupCadNodeMock();
+    // Setup CadNode mock
+    cadNodeMock = new Mock<CadNode>();
+    cadNodeMock.setup(x => x.sectorScene.getSectorById).returns((sectorId: number) => sectorMetadataById.get(sectorId));
+    cadNodeMock.setup(x => x.sectorScene.getAllSectors).returns(() => [...sectorMetadataById.values()]);
 
     customSectorBounds = new CustomSectorBounds(cadNodeMock.object());
   });
 
-  function setupCadNodeMock(): void {
-    /*
-    // The tree of SectorNode mocks needs to be built bottom up, due to the way a mock is built.
-    // The .setup() on a node needs the .object() of every one of its children, meaning they already have to
-    // have their children done, and so on...
-
-    // Sort the sectors by descending depth
-    const sectorsSortedByDepth: SectorMetadata[] = [];
-    for (const [_, sectorMetadata] of sectorMetadataById) {
-      sectorsSortedByDepth.push(sectorMetadata);
-    }
-    sectorsSortedByDepth.sort((a, b) => b.depth - a.depth);
-
-    const sectorNodes = new Map<number, SectorNode>();
-
-    // Start building the tree of sector node mocks
-    for (const sectorMetadata of sectorsSortedByDepth) {
-      // Create the mock
-      const sectorNodeMock = new Mock<SectorNode>();
-
-      // Gather all the child mocks
-      const children: SectorNode[] = [];
-      for (const child of sectorMetadata.children) {
-        const childNode = sectorNodes.get(child.id);
-        if (!childNode) {
-          fail('Internal test setup error');
-        }
-        children.push(childNode);
-      }
-
-      // Attach children
-      sectorNodeMock.setup(x => x.children).returns(children);
-
-      // Make it return its id
-      sectorNodeMock.setup(x => x.sectorId).returns(sectorMetadata.id);
-
-      // Store this mock node for use in the ancestors' children arrays
-      sectorNodes.set(sectorMetadata.id, sectorNodeMock.object());
-    }
-
-    // Get a reference to the root sector node
-    const sectorNodeRoot = sectorNodes.get(sectorMetadataRoot.id);
-    if (!sectorNodeRoot) {
-      fail('Internal test setup error');
-    }
-
-    console.log(sectorNodeRoot.children);
-    */
-
-    // Finally, create the CadNode mock
-    cadNodeMock = new Mock<CadNode>();
-    cadNodeMock.setup(x => x.sectorScene.getSectorById).returns((sectorId: number) => sectorMetadataById.get(sectorId));
-    cadNodeMock.setup(x => x.sectorScene.getAllSectors).returns(() => [...sectorMetadataById.values()]);
-    //cadNodeMock.setup(x => x.rootSector).returns(sectorNodeRoot as RootSectorNode);
-  }
-
   test('Transform single node', () => {
     expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeFalse();
 
-    // Transform node A, which is known to be in sector 2
+    // Register node A
     customSectorBounds.registerTransformedNode(nodeA.treeIndex, nodeA.originalBoundingBox);
-    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [2]);
-    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(-1, 0));
-    customSectorBounds.recomputeSectorBounds();
+    customSectorBounds.recomputeSectorBounds(); // Missing sectors and transform, nothing should happen
 
     expect(customSectorBounds.isRegistered(nodeA.treeIndex)).toBeTrue();
+    [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
+
+    // Set transform
+    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(-1, 0));
+    customSectorBounds.recomputeSectorBounds(); // Still missing sectors, nothing should happen
+
+    [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
+
+    // Set sectors
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [2]);
+    customSectorBounds.recomputeSectorBounds(); // Bounds will be changed now
+
     expectBoundsApproximatelyEqual(2, boundsFrom(-1, 0, 2, 2)); // Contains the node
     expectBoundsApproximatelyEqual(1, boundsFrom(-1, 0, 4, 4)); // Should expand to contain child
     expectBoundsApproximatelyEqual(0, boundsFrom(-1, 0, 8, 8)); // Should expand to contain child
@@ -261,7 +218,7 @@ describe('CustomSectorBounds', () => {
     customSectorBounds.recomputeSectorBounds();
 
     expectBoundsApproximatelyEqual(2, boundsFrom(-1, 0, 2, 2)); // Contains node A
-    expectBoundsApproximatelyEqual(1, boundsFrom(-1, 0, 5, 4)); // Affect directly by node B, and indirectly by node A (which is in a child sector)
+    expectBoundsApproximatelyEqual(1, boundsFrom(-1, 0, 5, 4)); // Affected directly by node B, and indirectly by node A (which is in a child sector)
     expectBoundsApproximatelyEqual(0, boundsFrom(-1, 0, 8, 8)); // Should expand to contain child
     [3, 4, 5].forEach(i => expectOriginalBounds(i));
 
@@ -276,6 +233,131 @@ describe('CustomSectorBounds', () => {
 
     // Transform of node A is reset
     customSectorBounds.unregisterTransformedNode(nodeA.treeIndex);
+    customSectorBounds.recomputeSectorBounds();
+
+    [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
+  });
+
+  test('Sector with no overlap with node bounding box should never be affected', () => {
+    // Transform node A, wrongfully said to contain geometry in sector 3
+    customSectorBounds.registerTransformedNode(nodeA.treeIndex, nodeA.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [3]);
+    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(100, 0));
+    customSectorBounds.recomputeSectorBounds();
+
+    [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
+  });
+
+  test('Sector with partial overlap with node bounding box should only be affect by intersection', () => {
+    // Transform node C, which is only partially inside sector 3
+    customSectorBounds.registerTransformedNode(nodeC.treeIndex, nodeC.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeC.treeIndex, [3]);
+    customSectorBounds.updateNodeTransform(nodeC.treeIndex, translation(0, -1));
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(3, boundsFrom(2, 2, 8, 8)); // Contains part of node C
+    [0, 1, 2, 4, 5].forEach(i => expectOriginalBounds(i));
+  });
+
+  test('Transform node present in both parent and child sector', () => {
+    // Transform node A, in sector 1 and 2
+    customSectorBounds.registerTransformedNode(nodeA.treeIndex, nodeA.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [1, 2]);
+    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(-1, 0));
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(2, boundsFrom(-1, 0, 2, 2)); // Contains node A
+    expectBoundsApproximatelyEqual(1, boundsFrom(-1, 0, 4, 4)); // Contains node A
+    expectBoundsApproximatelyEqual(0, boundsFrom(-1, 0, 8, 8)); // Should expand to contain child
+    [3, 4, 5].forEach(i => expectOriginalBounds(i));
+  });
+
+  test('Transform node present in two sibling sectors', () => {
+    // Transform node D, in sector 4 and 5
+    customSectorBounds.registerTransformedNode(nodeD.treeIndex, nodeD.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeD.treeIndex, [4, 5]);
+    customSectorBounds.updateNodeTransform(nodeD.treeIndex, translation(-4, 0));
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(5, boundsFrom(2, 4, 8, 8)); // Contains node D
+    expectBoundsApproximatelyEqual(4, boundsFrom(1, 6, 8, 8)); // Contains node D
+    expectBoundsApproximatelyEqual(3, boundsFrom(1, 3, 8, 8)); // Should expand to contain children
+    [0, 1, 2].forEach(i => expectOriginalBounds(i));
+  });
+
+  test('Transform node before knowledge of which sectors the node has geometry in', () => {
+    // Register node A with empty sector set
+    customSectorBounds.registerTransformedNode(nodeA.treeIndex, nodeA.originalBoundingBox);
+    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(-1, 0));
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, []);
+    customSectorBounds.recomputeSectorBounds();
+
+    [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
+
+    // Update knowledge of sectors for node A
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [2]);
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(2, boundsFrom(-1, 0, 2, 2)); // Contains the node
+    expectBoundsApproximatelyEqual(1, boundsFrom(-1, 0, 4, 4)); // Should expand to contain child
+    expectBoundsApproximatelyEqual(0, boundsFrom(-1, 0, 8, 8)); // Should expand to contain child
+    [3, 4, 5].forEach(i => expectOriginalBounds(i));
+  });
+
+  test('Complex sequence with multiple transforms and nodes', () => {
+    // Transform node A
+    customSectorBounds.registerTransformedNode(nodeA.treeIndex, nodeA.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [1, 2]);
+    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(0, -0.5));
+
+    // Transform node B
+    customSectorBounds.registerTransformedNode(nodeB.treeIndex, nodeB.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeB.treeIndex, [1]);
+    customSectorBounds.updateNodeTransform(nodeB.treeIndex, translation(0, -2));
+
+    // Transform node C
+    customSectorBounds.registerTransformedNode(nodeC.treeIndex, nodeC.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeC.treeIndex, [1]);
+    customSectorBounds.updateNodeTransform(nodeC.treeIndex, translation(0, -1));
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(2, boundsFrom(0, -0.5, 2, 2)); // Driven by node A
+    expectBoundsApproximatelyEqual(1, boundsFrom(0, -1, 4, 4)); // Driven by node B
+    expectBoundsApproximatelyEqual(0, boundsFrom(0, -1, 8, 8)); // Shold expand to contain sector 1
+    [3, 4, 5].forEach(i => expectOriginalBounds(i));
+
+    // Transform node B again, making sector 1 contract slightly
+    customSectorBounds.updateNodeTransform(nodeB.treeIndex, translation(0, -1));
+    customSectorBounds.recomputeSectorBounds();
+    expectBoundsApproximatelyEqual(1, boundsFrom(0, -0.5, 4, 4)); // Should contract because node B is no longer pushing
+    expectBoundsApproximatelyEqual(0, boundsFrom(0, -0.5, 8, 8)); // Should contract because it can
+
+    // Node C is disovered to have geometry in sector 3
+    customSectorBounds.updateNodeSectors(nodeC.treeIndex, [3]);
+    customSectorBounds.recomputeSectorBounds();
+    expectBoundsApproximatelyEqual(3, boundsFrom(2, 2, 8, 8)); // Contains part of node C
+
+    // Transform node D
+    customSectorBounds.registerTransformedNode(nodeD.treeIndex, nodeD.originalBoundingBox);
+    customSectorBounds.updateNodeSectors(nodeD.treeIndex, [5]);
+    customSectorBounds.updateNodeTransform(nodeD.treeIndex, translation(2, 0));
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(5, boundsFrom(6, 4, 9, 8)); // Contains node D
+    expectBoundsApproximatelyEqual(3, boundsFrom(2, 2, 9, 8)); // Affected by node C and D
+    expectBoundsApproximatelyEqual(0, boundsFrom(0, -0.5, 9, 8)); // Shold expand to contain sector 3 (and 1 from before)
+
+    // Node D is disovered to have geometry in sector 4
+    customSectorBounds.updateNodeSectors(nodeD.treeIndex, [4]);
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(4, boundsFrom(3, 6, 9, 8));
+
+    // Unregister all nodes
+    customSectorBounds.unregisterTransformedNode(nodeA.treeIndex);
+    customSectorBounds.unregisterTransformedNode(nodeB.treeIndex);
+    customSectorBounds.unregisterTransformedNode(nodeC.treeIndex);
+    customSectorBounds.unregisterTransformedNode(nodeD.treeIndex);
     customSectorBounds.recomputeSectorBounds();
 
     [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
