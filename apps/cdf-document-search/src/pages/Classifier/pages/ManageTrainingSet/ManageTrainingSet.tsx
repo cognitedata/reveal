@@ -13,7 +13,7 @@ import { ClassifierProps } from '../router';
 
 import { LabelsModal } from './components/modal/LabelsModal';
 import { ManageTrainingSetNavigation } from './components/navigation/ManageTrainSetNavigation';
-import { TrainingSetsTable } from './components/table/TrainingSetsTable';
+import { TrainingSetsTable } from './components';
 
 export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
   const { classifierName } = useClassifierName();

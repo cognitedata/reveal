@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
@@ -40,13 +40,15 @@ export const useDocumentsClassifiersQuery = () => {
     }
   );
 
-  const data = queryResults.data?.pages.reduce<DocumentsClassifier[]>(
-    (result, page) => {
-      const items = page.items;
-      return [...result, ...items];
-    },
-    []
-  );
+  const data = useMemo(() => {
+    return queryResults.data?.pages.reduce<DocumentsClassifier[]>(
+      (result, page) => {
+        const items = page.items;
+        return [...result, ...items];
+      },
+      []
+    );
+  }, [queryResults.data?.pages]);
 
   return {
     data,

@@ -9,10 +9,6 @@ module.exports = composePlugins(
   withSingleSpa({ useMockEnv: false }),
   (config) => {
     const nodeEnv = process.env.NODE_ENV || 'production';
-    console.log(process.env);
-    console.log(
-      `Custom webpack config(${nodeEnv}) for Document Search was loaded...`
-    );
 
     config.resolve.fallback = { path: require.resolve('path-browserify') };
 
@@ -68,7 +64,9 @@ module.exports = composePlugins(
       ],
     });
 
-    const { styleScope } = require(`../../apps/document-search/src/styleScope`);
+    const {
+      styleScope,
+    } = require(`../../apps/cdf-document-search/src/styleScope`);
 
     config.module.rules.push({
       test: /\.css$/,

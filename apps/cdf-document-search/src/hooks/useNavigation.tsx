@@ -14,12 +14,8 @@ export type Navigation = {
 
 const useBuildUrl = () => {
   const { search } = useLocation();
-  const query = React.useMemo(() => new URLSearchParams(search), [search]);
 
-  const environment = query.get('env');
-
-  return (url: string) =>
-    [url, environment && `?env=${environment}`].filter(Boolean).join('');
+  return (url: string) => url + search;
 };
 
 export const useNavigation = (): Navigation => {

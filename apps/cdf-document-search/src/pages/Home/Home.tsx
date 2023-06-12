@@ -103,7 +103,7 @@ const HomePage = () => {
       <ReviewModelModal
         classifier={selectedClassifier}
         visible={Boolean(selectedClassifier)}
-        toggleVisibility={toggleConfusionMatrixModal}
+        toggleVisibility={() => toggleConfusionMatrixModal(undefined)}
         onDeployClick={handleDeployClassifierClick}
       />
     </>
