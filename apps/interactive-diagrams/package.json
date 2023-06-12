@@ -7,34 +7,10 @@
     "test": "../../scripts/test.sh interactive-diagrams",
     "lint": "../../scripts/lint.sh interactive-diagrams",
     "lint:fix": "../../scripts/lint.sh interactive-diagrams --fix",
-    "cypress:dev": "./scripts/cypress-dev.sh",
-    "semantic-release": "semantic-release"
+    "cypress:dev": "./scripts/cypress-dev.sh"
   },
-  "dependencies": {
-    "react-redux": "^7.2.2",
-    "react-router-dom": "^5.2.0",
-    "use-debounce": "^4.0.0"
-  },
-  "devDependencies": {
-    "@commitlint/travis-cli": "^12.1.4",
-    "@semantic-release/commit-analyzer": "^9.0.1",
-    "@semantic-release/github": "^8.0.1",
-    "@semantic-release/release-notes-generator": "^10.0.2",
-    "@testing-library/react": "^10.4.9",
-    "@types/jest": "^26.0.21",
-    "@types/node": "^14.14.32",
-    "@types/sinon": "^9.0.10",
-    "concurrently": "^5.3.0",
-    "cross-var": "^1.1.0",
-    "customize-cra": "^1.0.0",
-    "less": "3.12.2",
-    "less-loader": "7.0.1",
-    "pretty-quick": "^3.1.0",
-    "react-app-rewired": "^2.2.1",
-    "semantic-release": "^20.1.0",
-    "sinon": "^9.2.3",
-    "style-loader": "^1.3.0"
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!react-dnd-html5-backend)/"
@@ -57,26 +33,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "release": {
-    "branches": [
-      "master"
-    ],
-    "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      [
-        "@semantic-release/release-notes-generator",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      "@semantic-release/github"
     ]
   },
   "resolutions": {
