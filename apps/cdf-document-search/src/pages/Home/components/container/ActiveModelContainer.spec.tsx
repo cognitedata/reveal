@@ -1,9 +1,7 @@
 import React from 'react';
-
+import { testRender } from 'apps/cdf-document-search/src/utils/test/render';
 import { screen, fireEvent } from '@testing-library/react';
-import { fixtureClassifier } from '../../../../../../cdf-document-search/src/__fixtures__/sdk/classifier';
-import { testRender } from '../../../../../../cdf-document-search/src/utils/test/render';
-
+import { fixtureClassifier } from 'apps/cdf-document-search/src/__fixtures__/sdk/classifier';
 import { ActiveModelContainer } from './ActiveModelContainer';
 
 jest.mock('react-router-dom', () => ({

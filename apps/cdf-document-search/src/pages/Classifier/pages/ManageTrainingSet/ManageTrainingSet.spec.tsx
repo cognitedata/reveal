@@ -1,12 +1,10 @@
-import React from 'react';
-
 import { screen } from '@testing-library/react';
+import React from 'react';
+import { testRender } from 'apps/cdf-document-search/src/utils/test/render';
 import {
   mockClassifierName,
   mockProject,
-} from '../../../../../../cdf-document-search/src/__mocks__/sdk';
-import { testRender } from '../../../../../../cdf-document-search/src/utils/test/render';
-
+} from 'apps/cdf-document-search/src/__mocks__/sdk';
 import { ManageTrainingSets } from './ManageTrainingSet';
 
 jest.mock('react-router-dom', () => ({
