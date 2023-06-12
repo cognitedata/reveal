@@ -39,7 +39,7 @@ export default function DeleteScheduleButton({ id }: Props) {
 
   return (
     <Button
-      icon={isLoading ? 'Loading' : 'Delete'}
+      icon={isLoading ? 'Loader' : 'Delete'}
       onClick={e => {
         e.stopPropagation();
         Modal.confirm({

@@ -119,7 +119,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [dataSetId, setDataSetId] = useState<undefined | number>(undefined);
 
   const addSecret = () => {
-    setSecrets((prevSecrets) => [
+    setSecrets(prevSecrets => [
       ...prevSecrets,
       { key: '', value: '', keyTouched: false, valueTouched: false } as Secret,
     ]);
@@ -219,13 +219,13 @@ export default function UploadFunctionModal({ onCancel }: Props) {
       style={{ top: 20 }}
       onCancel={onCancel}
       footer={[
-        <Button key="cance" icon="XLarge" onClick={onCancel}>
+        <Button key="cance" icon="CloseLarge" onClick={onCancel}>
           Cancel
         </Button>,
         <Button
           type="primary"
           key="upload"
-          icon={isLoading ? 'Loading' : 'Upload'}
+          icon={isLoading ? 'Loader' : 'Upload'}
           disabled={disableForm || !canBeSubmitted}
           onClick={handleSubmit}
           htmlType="submit"
@@ -294,9 +294,9 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               <InputNumber
                 disabled={disableForm}
                 name="datasetId"
-                style={{width:"100%"}}
+                style={{ width: '100%' }}
                 value={dataSetId}
-                onChange={(value) => setDataSetId(value)}
+                onChange={value => setDataSetId(value)}
               />
             </Form.Item>
           </Col>
@@ -419,7 +419,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               <Dropdown
                 content={
                   <Menu>
-                    {runtimes.map((rt) => (
+                    {runtimes.map(rt => (
                       <Menu.Item key={rt.value} onClick={() => setRuntime(rt)}>
                         {rt.label}
                       </Menu.Item>
@@ -427,7 +427,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                   </Menu>
                 }
               >
-                <Button icon="ChevronDownCompact" iconPlacement="right">
+                <Button icon="ChevronDownSmall" iconPlacement="right">
                   {runtime.label}
                 </Button>
               </Dropdown>

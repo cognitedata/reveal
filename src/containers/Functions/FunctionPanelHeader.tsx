@@ -50,7 +50,7 @@ export default function FunctionPanelHeader({ id, name }: Props) {
         <PullRight>
           <LastFunctionCall
             id={id}
-            renderLoading={() => <Icon type="Loading" />}
+            renderLoading={() => <Icon type="Loader" />}
             renderMissing={() => <Tag>Not called yet</Tag>}
             renderCall={(functionId: number, call: Call) => (
               <FunctionCallStatus id={functionId} callId={call.id} />

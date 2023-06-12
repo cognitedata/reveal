@@ -16,7 +16,7 @@ export default function CallFunctionButton({ id }: Props) {
     <>
       <Tooltip placement="top" content="Click to call the function">
         <Button
-          icon="TriangleRight"
+          icon="Triangle"
           size="small"
           style={{
             justifyContent: 'center',

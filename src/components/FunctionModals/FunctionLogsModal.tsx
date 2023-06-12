@@ -130,7 +130,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
       footer={[
         <Button
           key="close"
-          icon="XLarge"
+          icon="CloseLarge"
           onClick={onCancel}
           style={{
             /** Padding needed because of inconsistent icon sizes in cogs * */
@@ -142,7 +142,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
         <Button
           key="button"
           type="primary"
-          icon={fetching ? 'Loading' : 'Refresh'}
+          icon={fetching ? 'Loader' : 'Refresh'}
           disabled={fetching}
           onClick={update}
         >
