@@ -81,6 +81,9 @@
       ],
       "@flexible-data-explorer/*": [
         "apps/flexible-data-explorer/src/*"
+      ],
+      "@data-catalog-app/*": [
+        "apps/data-catalog/src/*"
       ]
     }
   },

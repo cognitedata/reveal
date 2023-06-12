@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ReactNode } from 'react';
-import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import ConfigProvider from 'antd/lib/config-provider';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import consoleStyle from './global.css';
 
+import { styleScope } from '@data-catalog-app/styles/styleScope';
+import { getContainer } from '@data-catalog-app/utils/shared';
 import antdStyle from 'antd/dist/antd.css';
-import antdTheme from './antd-theme.less';
+import ConfigProvider from 'antd/lib/config-provider';
 
-import { styleScope } from 'styles/styleScope';
-import { getContainer } from 'utils/shared';
+import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+
+import antdTheme from './antd-theme.less';
+import consoleStyle from './global.css';
 
 // This will override the appendTo prop on all Tooltips used from cogs
 // @ts-ignore

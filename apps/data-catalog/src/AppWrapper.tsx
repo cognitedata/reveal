@@ -1,19 +1,19 @@
+import { useEffect } from 'react';
+
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
-  SubAppWrapper,
   AuthWrapper,
+  SubAppWrapper,
   getEnv,
   getProject,
 } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
-import './set-public-path';
 import App from './app/App';
-import GlobalStyles from './GlobalStyles';
-import { useEffect } from 'react';
-
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { translations } from './app/common/i18n';
+import './set-public-path';
+import GlobalStyles from './styles/GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'data-catalog';
