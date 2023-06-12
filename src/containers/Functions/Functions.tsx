@@ -143,15 +143,17 @@ function Functions() {
           </Button>
         </div>
       </Row>
+      <br />
       <Input
         name="filter"
         prefix={
           <Icon
             type="Search"
-            // style={{
-            //   height: '16px',
-            //   width: '16px',
-            // }}
+            // @ts-ignore
+            style={{
+              height: '16px',
+              width: '16px',
+            }}
           />
         }
         placeholder="Search by name, external id, or owner"
