@@ -222,6 +222,7 @@ export const useCreateMQTTSource = (
 
 type EditMQTTSourceVariables = {
   externalId: EditMQTTSource['externalId'];
+  type: MQTTSourceType;
   update: { [key: string]: { set: unknown } | { setNull: true } };
 };
 
@@ -242,6 +243,7 @@ export const useEditMQTTSource = (
               items: [
                 {
                   externalId: variables.externalId,
+                  type: variables.type,
                   update: variables.update,
                 },
               ],
@@ -381,7 +383,7 @@ type MQTTFormatPrefixConfig = {
 };
 
 export type MQTTFormat = {
-  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell';
+  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell' | 'value';
   prefix?: MQTTFormatPrefixConfig;
 };
 

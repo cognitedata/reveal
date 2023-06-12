@@ -37,18 +37,18 @@ export const HostedExtractionPipelineOverview = ({
       />
       <HostedExtractionPipelineSummaryBox
         content={t('continuously')}
-        icon="InputData"
+        icon="Calendar"
         title={t('scheduled-to-run')}
       />
       <HostedExtractionPipelineSummaryBox
         content={t('error', { count: errorCountInLast30Days })}
-        icon="InputData"
+        icon="Error"
         title={t('errors-in-the-last-30-days')}
       />
-      <TopicFiltersSection source={source} />
+      <TopicFiltersSection source={source} $rowStart={source.jobs.length} />
       <SourceDetailsSection source={source} />
       <SourceAuthenticationSection source={source} />
-      <SourceStatusSection source={source} />
+      {source.jobs.length > 0 && <SourceStatusSection source={source} />}
     </OverviewGrid>
   );
 };
@@ -66,9 +66,10 @@ const HostedExtractionPipelineSummaryBox = styled(SummaryBox)`
   grid-row: span 1;
 `;
 
-const TopicFiltersSection = styled(TopicFilters)`
+const TopicFiltersSection = styled(TopicFilters)<{ $rowStart: number }>`
   grid-column: start / second;
-  grid-row: second / end;
+  grid-row: ${({ $rowStart }) => ($rowStart === 0 ? 'first' : 'second')} / end;
+
   margin-bottom: 0;
 `;
 

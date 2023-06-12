@@ -225,13 +225,10 @@ export const CreateJobsModal = ({
       type: 'cognite',
     },
     {
-      type: 'siemens',
-    },
-    {
-      type: 'tmc',
-    },
-    {
       type: 'rockwell',
+    },
+    {
+      type: 'value',
     },
   ];
 

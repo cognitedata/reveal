@@ -69,6 +69,7 @@ export const EditSourceAuthenticationModal = ({
         if (values.username && values.password) {
           editMQTTSource({
             externalId: source.externalId,
+            type: source.type,
             update: {
               username: {
                 set: values.username,

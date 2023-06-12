@@ -144,14 +144,6 @@ export const CreateSourceModal = ({
           statusText={errors.externalId}
           value={values.externalId}
         />
-        <FormFieldWrapper isRequired title={t('form-protocol-version')}>
-          <Select
-            onChange={(e) => setFieldValue('type', e)}
-            options={MQTT_SOURCE_TYPE_OPTIONS}
-            placeholder={t('form-protocol-version-placeholder')}
-            value={values.type}
-          />
-        </FormFieldWrapper>
         <InputExp
           clearable
           fullWidth
@@ -166,6 +158,14 @@ export const CreateSourceModal = ({
           statusText={errors.host}
           value={values.host}
         />
+        <FormFieldWrapper isRequired title={t('form-protocol-version')}>
+          <Select
+            onChange={(e) => setFieldValue('type', e)}
+            options={MQTT_SOURCE_TYPE_OPTIONS}
+            placeholder={t('form-protocol-version-placeholder')}
+            value={values.type}
+          />
+        </FormFieldWrapper>
         <InputExp
           clearable
           fullWidth
